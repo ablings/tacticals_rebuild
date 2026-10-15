@@ -44,3 +44,7 @@ Started 2026-10-14 on the main PC.
   Brightness 3, Ambient 121, exposure -0.15, ClockTime 12, sage ColorShift_Bottom, one Atmosphere with RIVALS values, Lobby_Bloom /
   Lobby_DOF / SunRays disabled (kept by name: scripts look them up). Two Sky objects remain (Sky, Lobby_Sky): decide which.
 - Technology is still ShadowMap (3): patch to Future (4) offline with `tools/set_technology.py` while the place is closed.
+
+## Computer use (Edward, 2026-10-14 23:00)
+- While Edward is on the PC: do NOTHING that needs tabbing into a window (no computer use, no File menu saves, no Import 3D).
+  Work through scripts, the Studio MCP and the Blender MCP only; leave saves and imports for Edward or for when he says so.
