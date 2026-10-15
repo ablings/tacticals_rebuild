@@ -62,3 +62,4 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   `Training_OrigCF`). There are 19 new RoomLight Training lights. UNDO via `fix/place_training.lua UNDO`.
 - 2026-10-15 place_showroom: the kit is in `Showroom.Rooms4`. The old `U_Showroom__*` meshes and `Showroom.Sign` are hidden
   (Rooms4_* attributes). The hook parts are untouched; the kit table moved +0.2 to BenchTop's real top (404.4).
+- 2026-10-15 overlap_fix (notes/overlap_fix.md): 46 kit meshes nudged/scaled <= 0.07 (originals in Overlap_OrigCF/Overlap_OrigSize); openings ~0.14 narrower (decor proud). Props.Rotor hidden; 4 Duels FX3 beacons hidden + untagged LobbyBeacon (Overlap_Tags). UNDO via `fix/overlap_fix.lua UNDO`.
