@@ -60,3 +60,6 @@ Started 2026-10-14 on the main PC.
 - After the overlap fix: a fresh agent does a **lap in Play mode** at player height through every room; anything still overlapping is
   logged with its **root cause**; the causes and prevention rules go into the vault (roblox-build-workflow: 6 Blender Modelling Method
   and the Studio finishing page) (Edward, 2026-10-15).
+- After the lap and the particle cleanup, once everything is sound: **RIVALS vs Tacticals diff**. Go through the RIVALS place, then the
+  rebuild, and list everything RIVALS has that ours doesn't (rooms/areas, interactive features, displays, signage, props, lighting,
+  effects), with captures. Edward picks which to implement; build nothing from the list until he does (Edward, 2026-10-15).
