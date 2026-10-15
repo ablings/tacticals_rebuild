@@ -1,0 +1,6422 @@
+[
+ {
+  "name": "S_Walls__wall_kick",
+  "piece": "S_Walls",
+  "material": "wall_kick",
+  "rgb": [
+   88,
+   87,
+   83
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 220,
+  "size_studio": [
+   64.0,
+   7.0,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   3.5,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Walls__trim_metal",
+  "piece": "S_Walls",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 924,
+  "size_studio": [
+   64.0,
+   12.3,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   6.15,
+   89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Walls__band_olive",
+  "piece": "S_Walls",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 220,
+  "size_studio": [
+   64.0,
+   2.8,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   8.5,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Walls__wall_body",
+  "piece": "S_Walls",
+  "material": "wall_body",
+  "rgb": [
+   107,
+   106,
+   102
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 220,
+  "size_studio": [
+   64.0,
+   2.2,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   11.1,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Walls__wall_light",
+  "piece": "S_Walls",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 100,
+  "size_studio": [
+   64.0,
+   1.3,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   12.85,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Door__wall_light",
+  "piece": "S_Door",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 292,
+  "size_studio": [
+   19.6,
+   13.5,
+   6.0
+  ],
+  "center_studio": [
+   -0.0,
+   6.75,
+   67.0
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Door__trim_metal",
+  "piece": "S_Door",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 236,
+  "size_studio": [
+   19.8,
+   12.45,
+   6.25
+  ],
+  "center_studio": [
+   -0.0,
+   6.22,
+   67.12
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Door__band_olive",
+  "piece": "S_Door",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 88,
+  "size_studio": [
+   19.6,
+   2.8,
+   6.15
+  ],
+  "center_studio": [
+   -0.0,
+   8.5,
+   67.07
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Door__plate_metal",
+  "piece": "S_Door",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 44,
+  "size_studio": [
+   11.0,
+   0.29,
+   6.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.11,
+   67.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Door__hazard",
+  "piece": "S_Door",
+  "material": "hazard",
+  "rgb": [
+   255,
+   255,
+   255
+  ],
+  "studio": "SmoothPlastic + Texture hub_hazard_stripe",
+  "tris": 12,
+  "size_studio": [
+   11.0,
+   0.08,
+   0.6
+  ],
+  "center_studio": [
+   -0.0,
+   0.04,
+   70.3
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": "TX_hazard_stripe 4x1 Top"
+ },
+ {
+  "name": "C_CorrN__wall_kick",
+  "piece": "C_CorrN",
+  "material": "wall_kick",
+  "rgb": [
+   88,
+   87,
+   83
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 88,
+  "size_studio": [
+   13.8,
+   7.0,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   3.5,
+   56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__trim_metal",
+  "piece": "C_CorrN",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 572,
+  "size_studio": [
+   13.8,
+   13.0,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   6.5,
+   56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__band_olive",
+  "piece": "C_CorrN",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 88,
+  "size_studio": [
+   13.8,
+   2.8,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   8.5,
+   56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__door_leaf",
+  "piece": "C_CorrN",
+  "material": "door_leaf",
+  "rgb": [
+   72,
+   72,
+   70
+  ],
+  "studio": "Metal + TacCorrugatedMetal",
+  "tris": 88,
+  "size_studio": [
+   13.8,
+   2.85,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   11.57,
+   56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacCorrugatedMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__wall_plate",
+  "piece": "C_CorrN",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 352,
+  "size_studio": [
+   10.8,
+   4.9,
+   13.6
+  ],
+  "center_studio": [
+   -0.0,
+   3.85,
+   56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__beam_metal",
+  "piece": "C_CorrN",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 420,
+  "size_studio": [
+   10.8,
+   13.0,
+   9.9
+  ],
+  "center_studio": [
+   -0.0,
+   6.5,
+   56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__ceiling",
+  "piece": "C_CorrN",
+  "material": "ceiling",
+  "rgb": [
+   112,
+   111,
+   107
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 44,
+  "size_studio": [
+   13.8,
+   1.2,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   13.6,
+   56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__neon_lamp",
+  "piece": "C_CorrN",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 12,
+  "size_studio": [
+   1.2,
+   0.15,
+   13.8
+  ],
+  "center_studio": [
+   -0.0,
+   12.52,
+   56.5
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__plate_metal",
+  "piece": "C_CorrN",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 44,
+  "size_studio": [
+   10.8,
+   0.25,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.12,
+   56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__floor_border",
+  "piece": "C_CorrN",
+  "material": "floor_border",
+  "rgb": [
+   36,
+   36,
+   34
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 88,
+  "size_studio": [
+   10.8,
+   0.27,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.11,
+   56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__neon_cream",
+  "piece": "C_CorrN",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 24,
+  "size_studio": [
+   8.18,
+   0.47,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.17,
+   56.5
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrN__hazard",
+  "piece": "C_CorrN",
+  "material": "hazard",
+  "rgb": [
+   255,
+   255,
+   255
+  ],
+  "studio": "SmoothPlastic + Texture hub_hazard_stripe",
+  "tris": 12,
+  "size_studio": [
+   8.6,
+   0.08,
+   0.7
+  ],
+  "center_studio": [
+   -0.0,
+   0.04,
+   63.65
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": "TX_hazard_stripe 4x1 Top"
+ },
+ {
+  "name": "S_Piers__wall_light",
+  "piece": "S_Piers",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 1296,
+  "size_studio": [
+   64.0,
+   13.5,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   6.75,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Piers__trim_metal",
+  "piece": "S_Piers",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 1056,
+  "size_studio": [
+   64.0,
+   12.3,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   6.15,
+   89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Piers__band_olive",
+  "piece": "S_Piers",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 528,
+  "size_studio": [
+   64.0,
+   2.8,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   8.5,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Lights__trim_metal",
+  "piece": "S_Lights",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 2888,
+  "size_studio": [
+   57.8,
+   3.2,
+   39.3
+  ],
+  "center_studio": [
+   -0.0,
+   11.7,
+   89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Lights__neon_lamp",
+  "piece": "S_Lights",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 2536,
+  "size_studio": [
+   57.1,
+   2.6,
+   38.6
+  ],
+  "center_studio": [
+   -0.0,
+   11.65,
+   89.75
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Lights__dark_metal",
+  "piece": "S_Lights",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 1192,
+  "size_studio": [
+   57.2,
+   2.32,
+   38.7
+  ],
+  "center_studio": [
+   -0.0,
+   12.19,
+   89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Walls__wall_plate",
+  "piece": "S_Walls",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 1760,
+  "size_studio": [
+   59.4,
+   5.2,
+   40.9
+  ],
+  "center_studio": [
+   -0.0,
+   3.9,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__wall_light",
+  "piece": "S_Displays",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 1668,
+  "size_studio": [
+   60.0,
+   7.2,
+   21.1
+  ],
+  "center_studio": [
+   -0.0,
+   3.6,
+   88.35
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__trim_metal",
+  "piece": "S_Displays",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 792,
+  "size_studio": [
+   60.0,
+   6.35,
+   21.5
+  ],
+  "center_studio": [
+   -0.0,
+   3.18,
+   88.25
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__dark_metal",
+  "piece": "S_Displays",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 2228,
+  "size_studio": [
+   59.4,
+   5.4,
+   19.98
+  ],
+  "center_studio": [
+   -0.0,
+   3.9,
+   88.21
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__neon_lamp",
+  "piece": "S_Displays",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 48,
+  "size_studio": [
+   58.8,
+   0.2,
+   16.05
+  ],
+  "center_studio": [
+   -0.0,
+   6.45,
+   89.88
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__label_cream",
+  "piece": "S_Displays",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 240,
+  "size_studio": [
+   57.7,
+   4.2,
+   19.67
+  ],
+  "center_studio": [
+   -0.45,
+   2.45,
+   88.07
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__crate_green",
+  "piece": "S_Displays",
+  "material": "crate_green",
+  "rgb": [
+   65,
+   94,
+   56
+  ],
+  "studio": "SmoothPlastic (military green)",
+  "tris": 572,
+  "size_studio": [
+   11.83,
+   3.65,
+   19.78
+  ],
+  "center_studio": [
+   -23.53,
+   3.02,
+   88.14
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__case_dark",
+  "piece": "S_Displays",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 704,
+  "size_studio": [
+   47.37,
+   3.7,
+   13.8
+  ],
+  "center_studio": [
+   5.52,
+   3.15,
+   89.45
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__drum_olive",
+  "piece": "S_Displays",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 364,
+  "size_studio": [
+   48.01,
+   1.71,
+   11.95
+  ],
+  "center_studio": [
+   5.2,
+   4.1,
+   90.38
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__beam_metal",
+  "piece": "S_Shelves",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 792,
+  "size_studio": [
+   37.9,
+   6.7,
+   1.75
+  ],
+  "center_studio": [
+   -0.0,
+   3.35,
+   109.57
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__trim_metal",
+  "piece": "S_Shelves",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 616,
+  "size_studio": [
+   37.6,
+   6.4,
+   1.8
+  ],
+  "center_studio": [
+   -0.0,
+   3.5,
+   109.6
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__dark_metal",
+  "piece": "S_Shelves",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 2044,
+  "size_studio": [
+   37.6,
+   7.2,
+   1.31
+  ],
+  "center_studio": [
+   -0.0,
+   4.08,
+   109.36
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__drum_olive",
+  "piece": "S_Shelves",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 1652,
+  "size_studio": [
+   32.93,
+   5.75,
+   1.56
+  ],
+  "center_studio": [
+   -1.97,
+   3.36,
+   109.6
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__case_dark",
+  "piece": "S_Shelves",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 572,
+  "size_studio": [
+   33.1,
+   6.1,
+   1.1
+  ],
+  "center_studio": [
+   -1.85,
+   3.53,
+   109.55
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__crate_green",
+  "piece": "S_Shelves",
+  "material": "crate_green",
+  "rgb": [
+   65,
+   94,
+   56
+  ],
+  "studio": "SmoothPlastic (military green)",
+  "tris": 1188,
+  "size_studio": [
+   33.65,
+   7.0,
+   1.3
+  ],
+  "center_studio": [
+   1.82,
+   3.98,
+   109.55
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__label_cream",
+  "piece": "S_Shelves",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 360,
+  "size_studio": [
+   32.65,
+   6.4,
+   1.14
+  ],
+  "center_studio": [
+   1.82,
+   4.03,
+   109.43
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Shelves__door_leaf",
+  "piece": "S_Shelves",
+  "material": "door_leaf",
+  "rgb": [
+   72,
+   72,
+   70
+  ],
+  "studio": "Metal + TacCorrugatedMetal",
+  "tris": 132,
+  "size_studio": [
+   5.85,
+   5.6,
+   0.1
+  ],
+  "center_studio": [
+   5.62,
+   3.4,
+   109.45
+  ],
+  "material_studio": "Metal",
+  "variant": "TacCorrugatedMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Signs__sign_board",
+  "piece": "S_Signs",
+  "material": "sign_board",
+  "rgb": [
+   39,
+   40,
+   37
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 108,
+  "size_studio": [
+   12.0,
+   1.75,
+   0.7
+  ],
+  "center_studio": [
+   -0.0,
+   11.18,
+   110.0
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Signs__neon_olive",
+  "piece": "S_Signs",
+  "material": "neon_olive",
+  "rgb": [
+   88,
+   101,
+   48
+  ],
+  "studio": "Neon",
+  "tris": 48,
+  "size_studio": [
+   12.0,
+   1.75,
+   0.12
+  ],
+  "center_studio": [
+   -0.0,
+   11.18,
+   109.59
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Signs__label_cream",
+  "piece": "S_Signs",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 44,
+  "size_studio": [
+   4.8,
+   0.3,
+   0.3
+  ],
+  "center_studio": [
+   -0.0,
+   10.1,
+   109.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__wall_kick",
+  "piece": "S_Counter",
+  "material": "wall_kick",
+  "rgb": [
+   88,
+   87,
+   83
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 44,
+  "size_studio": [
+   25.6,
+   0.55,
+   2.1
+  ],
+  "center_studio": [
+   3.0,
+   0.28,
+   101.95
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__wall_body",
+  "piece": "S_Counter",
+  "material": "wall_body",
+  "rgb": [
+   107,
+   106,
+   102
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 132,
+  "size_studio": [
+   26.0,
+   3.4,
+   4.5
+  ],
+  "center_studio": [
+   3.0,
+   1.7,
+   102.85
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__wall_plate",
+  "piece": "S_Counter",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 440,
+  "size_studio": [
+   25.72,
+   1.65,
+   0.22
+  ],
+  "center_studio": [
+   3.0,
+   1.62,
+   100.49
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__trim_metal",
+  "piece": "S_Counter",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 440,
+  "size_studio": [
+   23.68,
+   1.95,
+   0.3
+  ],
+  "center_studio": [
+   4.3,
+   1.62,
+   100.45
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__band_olive",
+  "piece": "S_Counter",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 44,
+  "size_studio": [
+   26.0,
+   0.4,
+   0.18
+  ],
+  "center_studio": [
+   3.0,
+   2.8,
+   100.51
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__trim_light",
+  "piece": "S_Counter",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 132,
+  "size_studio": [
+   26.3,
+   0.35,
+   4.95
+  ],
+  "center_studio": [
+   3.0,
+   3.58,
+   102.72
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__plate_metal",
+  "piece": "S_Counter",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 56,
+  "size_studio": [
+   25.4,
+   3.78,
+   7.65
+  ],
+  "center_studio": [
+   3.0,
+   1.89,
+   104.38
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__dark_metal",
+  "piece": "S_Counter",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 308,
+  "size_studio": [
+   25.6,
+   4.33,
+   2.5
+  ],
+  "center_studio": [
+   3.0,
+   3.57,
+   102.35
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__label_cream",
+  "piece": "S_Counter",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 44,
+  "size_studio": [
+   3.2,
+   1.2,
+   0.08
+  ],
+  "center_studio": [
+   7.0,
+   1.65,
+   100.34
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__screen",
+  "piece": "S_Counter",
+  "material": "screen",
+  "rgb": [
+   18,
+   22,
+   20
+  ],
+  "studio": "Glass / SurfaceGui screen",
+  "tris": 24,
+  "size_studio": [
+   16.64,
+   1.01,
+   0.05
+  ],
+  "center_studio": [
+   5.0,
+   5.11,
+   101.62
+  ],
+  "material_studio": "Glass",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Counter__neon_cream",
+  "piece": "S_Counter",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 24,
+  "size_studio": [
+   16.64,
+   0.06,
+   0.05
+  ],
+  "center_studio": [
+   5.0,
+   4.55,
+   101.62
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__floor_border",
+  "piece": "S_Plinth",
+  "material": "floor_border",
+  "rgb": [
+   36,
+   36,
+   34
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 960,
+  "size_studio": [
+   10.6,
+   0.62,
+   10.6
+  ],
+  "center_studio": [
+   -0.0,
+   0.11,
+   88.0
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__neon_olive",
+  "piece": "S_Plinth",
+  "material": "neon_olive",
+  "rgb": [
+   88,
+   101,
+   48
+  ],
+  "studio": "Neon",
+  "tris": 768,
+  "size_studio": [
+   8.8,
+   0.78,
+   8.8
+  ],
+  "center_studio": [
+   -0.0,
+   0.19,
+   88.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__plate_metal",
+  "piece": "S_Plinth",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 960,
+  "size_studio": [
+   8.1,
+   1.12,
+   8.1
+  ],
+  "center_studio": [
+   -0.0,
+   0.36,
+   88.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__disc_plate",
+  "piece": "S_Plinth",
+  "material": "disc_plate",
+  "rgb": [
+   75,
+   75,
+   72
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 508,
+  "size_studio": [
+   5.8,
+   1.05,
+   5.8
+  ],
+  "center_studio": [
+   -0.0,
+   0.32,
+   88.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__dark_metal",
+  "piece": "S_Plinth",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 936,
+  "size_studio": [
+   7.5,
+   3.6,
+   7.5
+  ],
+  "center_studio": [
+   -0.0,
+   2.72,
+   88.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__trim_metal",
+  "piece": "S_Plinth",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 792,
+  "size_studio": [
+   9.67,
+   4.56,
+   9.67
+  ],
+  "center_studio": [
+   -0.0,
+   2.28,
+   88.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__neon_cream",
+  "piece": "S_Plinth",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 492,
+  "size_studio": [
+   9.25,
+   1.0,
+   9.25
+  ],
+  "center_studio": [
+   -0.0,
+   1.8,
+   88.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__trim_light",
+  "piece": "S_Plinth",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 428,
+  "size_studio": [
+   9.09,
+   2.6,
+   9.09
+  ],
+  "center_studio": [
+   -0.0,
+   1.48,
+   88.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__case_dark",
+  "piece": "S_Plinth",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 88,
+  "size_studio": [
+   1.62,
+   1.25,
+   0.26
+  ],
+  "center_studio": [
+   -1.39,
+   3.58,
+   88.0
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Plinth__drum_olive",
+  "piece": "S_Plinth",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 88,
+  "size_studio": [
+   1.7,
+   1.31,
+   0.32
+  ],
+  "center_studio": [
+   0.5,
+   3.51,
+   88.0
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Floor__floor_field",
+  "piece": "S_Floor",
+  "material": "floor_field",
+  "rgb": [
+   62,
+   62,
+   60
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 1056,
+  "size_studio": [
+   54.7,
+   1.0,
+   36.2
+  ],
+  "center_studio": [
+   -0.0,
+   -0.5,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Floor__floor_border",
+  "piece": "S_Floor",
+  "material": "floor_border",
+  "rgb": [
+   36,
+   36,
+   34
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 188,
+  "size_studio": [
+   60.0,
+   1.02,
+   41.5
+  ],
+  "center_studio": [
+   -0.0,
+   -0.49,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Floor__trim_metal",
+  "piece": "S_Floor",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 176,
+  "size_studio": [
+   55.4,
+   0.27,
+   36.9
+  ],
+  "center_studio": [
+   -0.0,
+   -0.06,
+   89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Floor__floor_insert",
+  "piece": "S_Floor",
+  "material": "floor_insert",
+  "rgb": [
+   80,
+   79,
+   76
+  ],
+  "studio": "Metal + TacCorrugatedMetal",
+  "tris": 44,
+  "size_studio": [
+   6.0,
+   0.23,
+   12.2
+  ],
+  "center_studio": [
+   -0.0,
+   -0.09,
+   75.1
+  ],
+  "material_studio": "Metal",
+  "variant": "TacCorrugatedMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Lines__neon_cream",
+  "piece": "S_Lines",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 592,
+  "size_studio": [
+   13.95,
+   0.47,
+   25.27
+  ],
+  "center_studio": [
+   -0.0,
+   -0.17,
+   81.64
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Lines__neon_olive",
+  "piece": "S_Lines",
+  "material": "neon_olive",
+  "rgb": [
+   88,
+   101,
+   48
+  ],
+  "studio": "Neon",
+  "tris": 288,
+  "size_studio": [
+   13.42,
+   0.47,
+   13.42
+  ],
+  "center_studio": [
+   -0.0,
+   -0.17,
+   88.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Floor__hazard",
+  "piece": "S_Floor",
+  "material": "hazard",
+  "rgb": [
+   255,
+   255,
+   255
+  ],
+  "studio": "SmoothPlastic + Texture hub_hazard_stripe",
+  "tris": 12,
+  "size_studio": [
+   25.0,
+   0.08,
+   0.7
+  ],
+  "center_studio": [
+   3.0,
+   0.04,
+   99.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": "TX_hazard_stripe 4x1 Top"
+ },
+ {
+  "name": "S_Displays__band_olive",
+  "piece": "S_Displays",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 132,
+  "size_studio": [
+   2.5,
+   0.25,
+   15.5
+  ],
+  "center_studio": [
+   -18.0,
+   2.33,
+   85.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__trim_light",
+  "piece": "S_Displays",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 132,
+  "size_studio": [
+   2.9,
+   0.25,
+   15.9
+  ],
+  "center_studio": [
+   -18.0,
+   3.12,
+   85.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Displays__neon_cream",
+  "piece": "S_Displays",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 36,
+  "size_studio": [
+   2.5,
+   0.1,
+   15.5
+  ],
+  "center_studio": [
+   -18.0,
+   0.45,
+   85.5
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__trim_metal",
+  "piece": "S_Racks",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 792,
+  "size_studio": [
+   3.52,
+   4.6,
+   16.0
+  ],
+  "center_studio": [
+   22.0,
+   2.3,
+   86.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__dark_metal",
+  "piece": "S_Racks",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 4224,
+  "size_studio": [
+   3.44,
+   4.6,
+   15.6
+  ],
+  "center_studio": [
+   22.0,
+   3.0,
+   86.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__beam_metal",
+  "piece": "S_Racks",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 264,
+  "size_studio": [
+   0.6,
+   5.7,
+   16.0
+  ],
+  "center_studio": [
+   22.0,
+   3.55,
+   86.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__wall_plate",
+  "piece": "S_Racks",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 88,
+  "size_studio": [
+   0.3,
+   5.15,
+   15.2
+  ],
+  "center_studio": [
+   22.0,
+   3.42,
+   86.0
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__neon_lamp",
+  "piece": "S_Racks",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 24,
+  "size_studio": [
+   0.4,
+   0.1,
+   15.2
+  ],
+  "center_studio": [
+   22.0,
+   5.95,
+   86.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__label_cream",
+  "piece": "S_Racks",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 24,
+  "size_studio": [
+   2.84,
+   0.3,
+   11.6
+  ],
+  "center_studio": [
+   22.0,
+   0.35,
+   86.0
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__case_dark",
+  "piece": "S_Racks",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 2640,
+  "size_studio": [
+   2.8,
+   3.55,
+   14.32
+  ],
+  "center_studio": [
+   22.0,
+   2.62,
+   86.0
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Racks__drum_olive",
+  "piece": "S_Racks",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 880,
+  "size_studio": [
+   2.72,
+   1.7,
+   14.32
+  ],
+  "center_studio": [
+   22.0,
+   3.55,
+   86.0
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Ceiling__ceiling",
+  "piece": "S_Ceiling",
+  "material": "ceiling",
+  "rgb": [
+   112,
+   111,
+   107
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 44,
+  "size_studio": [
+   64.0,
+   1.5,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   14.25,
+   89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Ceiling__ceiling_gloss",
+  "piece": "S_Ceiling",
+  "material": "ceiling_gloss",
+  "rgb": [
+   66,
+   68,
+   62
+  ],
+  "studio": "SmoothPlastic / Pearlescent-style variant",
+  "tris": 880,
+  "size_studio": [
+   57.6,
+   0.35,
+   39.5
+  ],
+  "center_studio": [
+   -0.0,
+   13.32,
+   89.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Ceiling__trim_metal",
+  "piece": "S_Ceiling",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 880,
+  "size_studio": [
+   58.1,
+   0.18,
+   40.0
+  ],
+  "center_studio": [
+   -0.0,
+   13.09,
+   89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Beams__beam_metal",
+  "piece": "S_Beams",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 2376,
+  "size_studio": [
+   60.0,
+   1.0,
+   41.5
+  ],
+  "center_studio": [
+   -0.0,
+   13.0,
+   89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Props__crate_green",
+  "piece": "S_Props",
+  "material": "crate_green",
+  "rgb": [
+   65,
+   94,
+   56
+  ],
+  "studio": "SmoothPlastic (military green)",
+  "tris": 704,
+  "size_studio": [
+   56.9,
+   6.7,
+   37.9
+  ],
+  "center_studio": [
+   -0.0,
+   3.5,
+   89.55
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Props__dark_metal",
+  "piece": "S_Props",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 3000,
+  "size_studio": [
+   57.4,
+   7.0,
+   37.9
+  ],
+  "center_studio": [
+   -0.0,
+   3.5,
+   89.55
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Props__label_cream",
+  "piece": "S_Props",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 132,
+  "size_studio": [
+   54.6,
+   4.45,
+   37.94
+  ],
+  "center_studio": [
+   -0.0,
+   4.09,
+   89.55
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Props__drum_olive",
+  "piece": "S_Props",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 2224,
+  "size_studio": [
+   50.1,
+   4.0,
+   37.12
+  ],
+  "center_studio": [
+   -1.05,
+   2.0,
+   89.16
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "S_Props__case_dark",
+  "piece": "S_Props",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 784,
+  "size_studio": [
+   6.0,
+   4.52,
+   2.4
+  ],
+  "center_studio": [
+   -24.0,
+   2.26,
+   106.4
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__wall_kick",
+  "piece": "A_Walls",
+  "material": "wall_kick",
+  "rgb": [
+   88,
+   87,
+   83
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 220,
+  "size_studio": [
+   66.0,
+   7.0,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   3.5,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__trim_metal",
+  "piece": "A_Walls",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 920,
+  "size_studio": [
+   66.0,
+   20.3,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   10.15,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__band_olive",
+  "piece": "A_Walls",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 220,
+  "size_studio": [
+   66.0,
+   2.8,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   8.5,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__wall_body",
+  "piece": "A_Walls",
+  "material": "wall_body",
+  "rgb": [
+   107,
+   106,
+   102
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 264,
+  "size_studio": [
+   66.0,
+   5.5,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   12.75,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__wall_dark",
+  "piece": "A_Walls",
+  "material": "wall_dark",
+  "rgb": [
+   79,
+   78,
+   74
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 260,
+  "size_studio": [
+   66.0,
+   1.1,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   16.05,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__trim_light",
+  "piece": "A_Walls",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 260,
+  "size_studio": [
+   66.0,
+   0.3,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   16.6,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__wall_upper",
+  "piece": "A_Walls",
+  "material": "wall_upper",
+  "rgb": [
+   141,
+   140,
+   134
+  ],
+  "studio": "Concrete + TacRibbed",
+  "tris": 260,
+  "size_studio": [
+   66.0,
+   3.6,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   18.4,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacRibbed",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__wall_light",
+  "piece": "A_Walls",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 112,
+  "size_studio": [
+   66.0,
+   1.8,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   21.1,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Door__wall_light",
+  "piece": "A_Door",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 292,
+  "size_studio": [
+   19.6,
+   13.6,
+   4.0
+  ],
+  "center_studio": [
+   -0.0,
+   6.8,
+   -66.0
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Door__trim_metal",
+  "piece": "A_Door",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 236,
+  "size_studio": [
+   19.8,
+   12.45,
+   4.25
+  ],
+  "center_studio": [
+   -0.0,
+   6.22,
+   -66.12
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Door__band_olive",
+  "piece": "A_Door",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 132,
+  "size_studio": [
+   19.6,
+   6.4,
+   4.15
+  ],
+  "center_studio": [
+   -0.0,
+   10.3,
+   -66.07
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Door__plate_metal",
+  "piece": "A_Door",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 44,
+  "size_studio": [
+   11.0,
+   0.29,
+   4.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.11,
+   -66.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Door__hazard",
+  "piece": "A_Door",
+  "material": "hazard",
+  "rgb": [
+   255,
+   255,
+   255
+  ],
+  "studio": "SmoothPlastic + Texture hub_hazard_stripe",
+  "tris": 12,
+  "size_studio": [
+   11.0,
+   0.08,
+   0.6
+  ],
+  "center_studio": [
+   -0.0,
+   0.04,
+   -68.3
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": "TX_hazard_stripe 4x1 Top"
+ },
+ {
+  "name": "C_CorrS__wall_kick",
+  "piece": "C_CorrS",
+  "material": "wall_kick",
+  "rgb": [
+   88,
+   87,
+   83
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 88,
+  "size_studio": [
+   13.8,
+   7.0,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   3.5,
+   -56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__trim_metal",
+  "piece": "C_CorrS",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 572,
+  "size_studio": [
+   13.8,
+   13.0,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   6.5,
+   -56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__band_olive",
+  "piece": "C_CorrS",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 88,
+  "size_studio": [
+   13.8,
+   2.8,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   8.5,
+   -56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__door_leaf",
+  "piece": "C_CorrS",
+  "material": "door_leaf",
+  "rgb": [
+   72,
+   72,
+   70
+  ],
+  "studio": "Metal + TacCorrugatedMetal",
+  "tris": 88,
+  "size_studio": [
+   13.8,
+   2.85,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   11.57,
+   -56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacCorrugatedMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__wall_plate",
+  "piece": "C_CorrS",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 352,
+  "size_studio": [
+   10.8,
+   4.9,
+   13.6
+  ],
+  "center_studio": [
+   -0.0,
+   3.85,
+   -56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__beam_metal",
+  "piece": "C_CorrS",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 420,
+  "size_studio": [
+   10.8,
+   13.0,
+   9.9
+  ],
+  "center_studio": [
+   -0.0,
+   6.5,
+   -56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__ceiling",
+  "piece": "C_CorrS",
+  "material": "ceiling",
+  "rgb": [
+   112,
+   111,
+   107
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 44,
+  "size_studio": [
+   13.8,
+   1.2,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   13.6,
+   -56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__neon_lamp",
+  "piece": "C_CorrS",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 12,
+  "size_studio": [
+   1.2,
+   0.15,
+   13.8
+  ],
+  "center_studio": [
+   -0.0,
+   12.52,
+   -56.5
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__plate_metal",
+  "piece": "C_CorrS",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 44,
+  "size_studio": [
+   10.8,
+   0.25,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.12,
+   -56.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__floor_border",
+  "piece": "C_CorrS",
+  "material": "floor_border",
+  "rgb": [
+   36,
+   36,
+   34
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 88,
+  "size_studio": [
+   10.8,
+   0.27,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.11,
+   -56.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__neon_cream",
+  "piece": "C_CorrS",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 24,
+  "size_studio": [
+   8.18,
+   0.47,
+   15.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.17,
+   -56.5
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "C_CorrS__hazard",
+  "piece": "C_CorrS",
+  "material": "hazard",
+  "rgb": [
+   255,
+   255,
+   255
+  ],
+  "studio": "SmoothPlastic + Texture hub_hazard_stripe",
+  "tris": 12,
+  "size_studio": [
+   8.6,
+   0.08,
+   0.7
+  ],
+  "center_studio": [
+   -0.0,
+   0.04,
+   -63.65
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": "TX_hazard_stripe 4x1 Top"
+ },
+ {
+  "name": "A_Piers__wall_light",
+  "piece": "A_Piers",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 1188,
+  "size_studio": [
+   66.0,
+   22.0,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   11.0,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Piers__trim_metal",
+  "piece": "A_Piers",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 1012,
+  "size_studio": [
+   66.0,
+   20.8,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   10.4,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Piers__band_olive",
+  "piece": "A_Piers",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 484,
+  "size_studio": [
+   66.0,
+   2.8,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   8.5,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Lights__trim_metal",
+  "piece": "A_Lights",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 2260,
+  "size_studio": [
+   59.8,
+   11.5,
+   43.3
+  ],
+  "center_studio": [
+   -0.0,
+   15.95,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Lights__neon_lamp",
+  "piece": "A_Lights",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 2300,
+  "size_studio": [
+   62.0,
+   10.85,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   16.02,
+   -89.75
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Lights__dark_metal",
+  "piece": "A_Lights",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 1068,
+  "size_studio": [
+   59.1,
+   5.36,
+   44.05
+  ],
+  "center_studio": [
+   -0.0,
+   15.02,
+   -90.47
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Walls__wall_plate",
+  "piece": "A_Walls",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 3696,
+  "size_studio": [
+   62.0,
+   13.7,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   8.15,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__wall_light",
+  "piece": "A_GunWall",
+  "material": "wall_light",
+  "rgb": [
+   120,
+   119,
+   115
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 336,
+  "size_studio": [
+   20.7,
+   15.0,
+   1.9
+  ],
+  "center_studio": [
+   -6.25,
+   7.5,
+   -111.55
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__trim_metal",
+  "piece": "A_GunWall",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 660,
+  "size_studio": [
+   20.9,
+   13.6,
+   2.1
+  ],
+  "center_studio": [
+   -6.25,
+   6.8,
+   -111.45
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__band_olive",
+  "piece": "A_GunWall",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 88,
+  "size_studio": [
+   20.8,
+   2.8,
+   2.0
+  ],
+  "center_studio": [
+   -6.25,
+   8.5,
+   -111.5
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__wall_plate",
+  "piece": "A_GunWall",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 44,
+  "size_studio": [
+   18.3,
+   12.75,
+   0.7
+  ],
+  "center_studio": [
+   -6.25,
+   7.23,
+   -112.15
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__beam_metal",
+  "piece": "A_GunWall",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 220,
+  "size_studio": [
+   12.44,
+   12.75,
+   0.15
+  ],
+  "center_studio": [
+   -6.25,
+   7.23,
+   -111.72
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__neon_lamp",
+  "piece": "A_GunWall",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 12,
+  "size_studio": [
+   17.7,
+   0.15,
+   0.5
+  ],
+  "center_studio": [
+   -6.25,
+   13.02,
+   -111.35
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__dark_metal",
+  "piece": "A_GunWall",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 3520,
+  "size_studio": [
+   17.8,
+   8.57,
+   0.75
+  ],
+  "center_studio": [
+   -6.05,
+   6.98,
+   -111.28
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__case_dark",
+  "piece": "A_GunWall",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 1584,
+  "size_studio": [
+   16.9,
+   8.35,
+   0.32
+  ],
+  "center_studio": [
+   -6.5,
+   6.77,
+   -111.1
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__drum_olive",
+  "piece": "A_GunWall",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 528,
+  "size_studio": [
+   15.05,
+   8.31,
+   0.32
+  ],
+  "center_studio": [
+   -5.57,
+   6.76,
+   -111.1
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_GunWall__label_cream",
+  "piece": "A_GunWall",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 144,
+  "size_studio": [
+   14.55,
+   7.18,
+   0.03
+  ],
+  "center_studio": [
+   -6.08,
+   6.07,
+   -111.24
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Signs__sign_board",
+  "piece": "A_Signs",
+  "material": "sign_board",
+  "rgb": [
+   39,
+   40,
+   37
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 216,
+  "size_studio": [
+   30.2,
+   7.9,
+   2.0
+  ],
+  "center_studio": [
+   2.5,
+   14.65,
+   -111.3
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Signs__neon_olive",
+  "piece": "A_Signs",
+  "material": "neon_olive",
+  "rgb": [
+   88,
+   101,
+   48
+  ],
+  "studio": "Neon",
+  "tris": 96,
+  "size_studio": [
+   30.2,
+   7.9,
+   1.42
+  ],
+  "center_studio": [
+   2.5,
+   14.65,
+   -110.89
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Signs__label_cream",
+  "piece": "A_Signs",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 44,
+  "size_studio": [
+   6.0,
+   0.4,
+   0.3
+  ],
+  "center_studio": [
+   -6.5,
+   15.3,
+   -111.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Floor__plate_metal",
+  "piece": "A_Floor",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 44,
+  "size_studio": [
+   18.3,
+   0.05,
+   3.5
+  ],
+  "center_studio": [
+   -6.25,
+   0.03,
+   -108.85
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Floor__hazard",
+  "piece": "A_Floor",
+  "material": "hazard",
+  "rgb": [
+   255,
+   255,
+   255
+  ],
+  "studio": "SmoothPlastic + Texture hub_hazard_stripe",
+  "tris": 24,
+  "size_studio": [
+   34.0,
+   0.08,
+   2.8
+  ],
+  "center_studio": [
+   1.6,
+   0.04,
+   -105.7
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": "TX_hazard_stripe 4x1 Top"
+ },
+ {
+  "name": "A_Supply__stair",
+  "piece": "A_Supply",
+  "material": "stair",
+  "rgb": [
+   94,
+   93,
+   89
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 44,
+  "size_studio": [
+   14.0,
+   0.85,
+   4.9
+  ],
+  "center_studio": [
+   11.6,
+   0.43,
+   -110.05
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__plate_metal",
+  "piece": "A_Supply",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 56,
+  "size_studio": [
+   13.8,
+   2.93,
+   7.55
+  ],
+  "center_studio": [
+   11.5,
+   2.32,
+   -108.72
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__trim_metal",
+  "piece": "A_Supply",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 528,
+  "size_studio": [
+   14.14,
+   6.8,
+   7.8
+  ],
+  "center_studio": [
+   11.67,
+   4.0,
+   -108.6
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__wall_kick",
+  "piece": "A_Supply",
+  "material": "wall_kick",
+  "rgb": [
+   88,
+   87,
+   83
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 44,
+  "size_studio": [
+   13.2,
+   0.55,
+   2.1
+  ],
+  "center_studio": [
+   11.8,
+   0.28,
+   -106.35
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__wall_body",
+  "piece": "A_Supply",
+  "material": "wall_body",
+  "rgb": [
+   107,
+   106,
+   102
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 132,
+  "size_studio": [
+   13.6,
+   3.4,
+   4.5
+  ],
+  "center_studio": [
+   11.8,
+   1.7,
+   -107.25
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__wall_plate",
+  "piece": "A_Supply",
+  "material": "wall_plate",
+  "rgb": [
+   102,
+   101,
+   97
+  ],
+  "studio": "Concrete + TacConcretePanels",
+  "tris": 220,
+  "size_studio": [
+   13.32,
+   1.65,
+   0.22
+  ],
+  "center_studio": [
+   11.8,
+   1.62,
+   -104.89
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcretePanels",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__band_olive",
+  "piece": "A_Supply",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 44,
+  "size_studio": [
+   13.6,
+   0.4,
+   0.18
+  ],
+  "center_studio": [
+   11.8,
+   2.8,
+   -104.91
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__trim_light",
+  "piece": "A_Supply",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 132,
+  "size_studio": [
+   13.9,
+   0.35,
+   4.95
+  ],
+  "center_studio": [
+   11.8,
+   3.58,
+   -107.12
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__dark_metal",
+  "piece": "A_Supply",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 660,
+  "size_studio": [
+   13.2,
+   7.2,
+   6.61
+  ],
+  "center_studio": [
+   11.8,
+   4.78,
+   -108.81
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__label_cream",
+  "piece": "A_Supply",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 140,
+  "size_studio": [
+   12.05,
+   6.88,
+   7.4
+  ],
+  "center_studio": [
+   11.62,
+   4.49,
+   -108.4
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__screen",
+  "piece": "A_Supply",
+  "material": "screen",
+  "rgb": [
+   18,
+   22,
+   20
+  ],
+  "studio": "Glass / SurfaceGui screen",
+  "tris": 12,
+  "size_studio": [
+   1.64,
+   1.01,
+   0.05
+  ],
+  "center_studio": [
+   8.0,
+   5.11,
+   -106.03
+  ],
+  "material_studio": "Glass",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__neon_cream",
+  "piece": "A_Supply",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 12,
+  "size_studio": [
+   1.64,
+   0.06,
+   0.05
+  ],
+  "center_studio": [
+   8.0,
+   4.55,
+   -106.03
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__beam_metal",
+  "piece": "A_Supply",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 176,
+  "size_studio": [
+   6.3,
+   7.4,
+   1.55
+  ],
+  "center_studio": [
+   15.4,
+   3.7,
+   -111.68
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__case_dark",
+  "piece": "A_Supply",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 220,
+  "size_studio": [
+   5.0,
+   6.1,
+   0.9
+  ],
+  "center_studio": [
+   15.3,
+   4.23,
+   -111.65
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__drum_olive",
+  "piece": "A_Supply",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 220,
+  "size_studio": [
+   4.6,
+   5.35,
+   0.05
+  ],
+  "center_studio": [
+   15.3,
+   4.26,
+   -111.18
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__crate_green",
+  "piece": "A_Supply",
+  "material": "crate_green",
+  "rgb": [
+   65,
+   94,
+   56
+  ],
+  "studio": "SmoothPlastic (military green)",
+  "tris": 264,
+  "size_studio": [
+   5.3,
+   7.0,
+   1.1
+  ],
+  "center_studio": [
+   15.5,
+   4.68,
+   -111.65
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Supply__door_leaf",
+  "piece": "A_Supply",
+  "material": "door_leaf",
+  "rgb": [
+   72,
+   72,
+   70
+  ],
+  "studio": "Metal + TacCorrugatedMetal",
+  "tris": 88,
+  "size_studio": [
+   3.9,
+   5.6,
+   0.1
+  ],
+  "center_studio": [
+   7.05,
+   4.0,
+   -111.65
+  ],
+  "material_studio": "Metal",
+  "variant": "TacCorrugatedMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__floor_border",
+  "piece": "A_Dais",
+  "material": "floor_border",
+  "rgb": [
+   36,
+   36,
+   34
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 1148,
+  "size_studio": [
+   11.6,
+   0.82,
+   11.6
+  ],
+  "center_studio": [
+   -10.0,
+   0.21,
+   -96.0
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__neon_olive",
+  "piece": "A_Dais",
+  "material": "neon_olive",
+  "rgb": [
+   88,
+   101,
+   48
+  ],
+  "studio": "Neon",
+  "tris": 860,
+  "size_studio": [
+   9.6,
+   1.52,
+   9.6
+  ],
+  "center_studio": [
+   -10.0,
+   0.56,
+   -96.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__plate_metal",
+  "piece": "A_Dais",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 960,
+  "size_studio": [
+   8.9,
+   1.2,
+   8.9
+  ],
+  "center_studio": [
+   -10.0,
+   0.4,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__neon_cream",
+  "piece": "A_Dais",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 1136,
+  "size_studio": [
+   9.81,
+   1.92,
+   9.81
+  ],
+  "center_studio": [
+   -10.0,
+   0.76,
+   -96.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__disc_plate",
+  "piece": "A_Dais",
+  "material": "disc_plate",
+  "rgb": [
+   75,
+   75,
+   72
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 832,
+  "size_studio": [
+   5.8,
+   0.42,
+   5.8
+  ],
+  "center_studio": [
+   -10.0,
+   0.81,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__disc_center",
+  "piece": "A_Dais",
+  "material": "disc_center",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "SmoothPlastic (dark olive paint)",
+  "tris": 252,
+  "size_studio": [
+   2.1,
+   0.65,
+   2.1
+  ],
+  "center_studio": [
+   -10.0,
+   0.93,
+   -96.0
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__dark_metal",
+  "piece": "A_Dais",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 764,
+  "size_studio": [
+   8.3,
+   18.6,
+   8.3
+  ],
+  "center_studio": [
+   -10.0,
+   10.3,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__trim_metal",
+  "piece": "A_Dais",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 876,
+  "size_studio": [
+   10.23,
+   19.4,
+   10.23
+  ],
+  "center_studio": [
+   -10.0,
+   9.7,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__trim_light",
+  "piece": "A_Dais",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 260,
+  "size_studio": [
+   9.65,
+   21.82,
+   9.65
+  ],
+  "center_studio": [
+   -10.0,
+   11.09,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Dais__neon_lamp",
+  "piece": "A_Dais",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 384,
+  "size_studio": [
+   4.6,
+   0.12,
+   4.6
+  ],
+  "center_studio": [
+   -10.0,
+   18.56,
+   -96.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Racks__trim_metal",
+  "piece": "A_Racks",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 1584,
+  "size_studio": [
+   62.0,
+   6.6,
+   21.1
+  ],
+  "center_studio": [
+   -0.0,
+   3.3,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Racks__dark_metal",
+  "piece": "A_Racks",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 7040,
+  "size_studio": [
+   62.0,
+   5.4,
+   21.1
+  ],
+  "center_studio": [
+   -0.0,
+   3.6,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Racks__beam_metal",
+  "piece": "A_Racks",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 352,
+  "size_studio": [
+   62.0,
+   6.6,
+   21.5
+  ],
+  "center_studio": [
+   -0.0,
+   3.3,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Racks__neon_lamp",
+  "piece": "A_Racks",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 48,
+  "size_studio": [
+   60.2,
+   0.12,
+   20.5
+  ],
+  "center_studio": [
+   -0.0,
+   6.24,
+   -89.75
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Racks__label_cream",
+  "piece": "A_Racks",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 48,
+  "size_studio": [
+   59.0,
+   0.35,
+   13.35
+  ],
+  "center_studio": [
+   -0.0,
+   0.52,
+   -89.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Racks__case_dark",
+  "piece": "A_Racks",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 4224,
+  "size_studio": [
+   62.0,
+   3.55,
+   18.99
+  ],
+  "center_studio": [
+   -0.0,
+   2.78,
+   -89.93
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Racks__drum_olive",
+  "piece": "A_Racks",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 1408,
+  "size_studio": [
+   62.0,
+   1.7,
+   17.97
+  ],
+  "center_studio": [
+   -0.0,
+   3.7,
+   -90.48
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__trim_light",
+  "piece": "A_Benches",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 88,
+  "size_studio": [
+   14.0,
+   0.3,
+   6.9
+  ],
+  "center_studio": [
+   16.0,
+   2.85,
+   -85.25
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__plate_metal",
+  "piece": "A_Benches",
+  "material": "plate_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacFloorPlate",
+  "tris": 24,
+  "size_studio": [
+   13.5,
+   0.03,
+   6.4
+  ],
+  "center_studio": [
+   16.0,
+   3.02,
+   -85.25
+  ],
+  "material_studio": "Metal",
+  "variant": "TacFloorPlate",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__beam_metal",
+  "piece": "A_Benches",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 352,
+  "size_studio": [
+   13.76,
+   2.7,
+   6.66
+  ],
+  "center_studio": [
+   16.0,
+   1.35,
+   -85.25
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__dark_metal",
+  "piece": "A_Benches",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 928,
+  "size_studio": [
+   13.48,
+   6.2,
+   6.68
+  ],
+  "center_studio": [
+   16.04,
+   3.8,
+   -85.22
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__drum_olive",
+  "piece": "A_Benches",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 88,
+  "size_studio": [
+   10.0,
+   1.8,
+   6.5
+  ],
+  "center_studio": [
+   17.7,
+   1.75,
+   -85.25
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__case_dark",
+  "piece": "A_Benches",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 352,
+  "size_studio": [
+   11.55,
+   0.32,
+   5.85
+  ],
+  "center_studio": [
+   15.17,
+   3.19,
+   -85.82
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__trim_metal",
+  "piece": "A_Benches",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 176,
+  "size_studio": [
+   10.8,
+   3.63,
+   5.36
+  ],
+  "center_studio": [
+   16.0,
+   4.89,
+   -85.22
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__crate_green",
+  "piece": "A_Benches",
+  "material": "crate_green",
+  "rgb": [
+   65,
+   94,
+   56
+  ],
+  "studio": "SmoothPlastic (military green)",
+  "tris": 88,
+  "size_studio": [
+   9.5,
+   0.85,
+   5.26
+  ],
+  "center_studio": [
+   18.0,
+   3.42,
+   -84.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__label_cream",
+  "piece": "A_Benches",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 24,
+  "size_studio": [
+   8.5,
+   0.25,
+   5.3
+  ],
+  "center_studio": [
+   18.0,
+   3.47,
+   -84.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Benches__neon_lamp",
+  "piece": "A_Benches",
+  "material": "neon_lamp",
+  "rgb": [
+   161,
+   157,
+   145
+  ],
+  "studio": "Neon",
+  "tris": 24,
+  "size_studio": [
+   10.4,
+   0.08,
+   5.0
+  ],
+  "center_studio": [
+   16.0,
+   6.16,
+   -85.25
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__trim_metal",
+  "piece": "A_Displays",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 308,
+  "size_studio": [
+   10.7,
+   3.2,
+   3.0
+  ],
+  "center_studio": [
+   7.25,
+   1.6,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__case_dark",
+  "piece": "A_Displays",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 308,
+  "size_studio": [
+   10.2,
+   2.41,
+   2.5
+  ],
+  "center_studio": [
+   7.25,
+   1.71,
+   -96.0
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__band_olive",
+  "piece": "A_Displays",
+  "material": "band_olive",
+  "rgb": [
+   120,
+   136,
+   66
+  ],
+  "studio": "Concrete + TacConcrete (olive paint)",
+  "tris": 44,
+  "size_studio": [
+   10.3,
+   0.25,
+   2.6
+  ],
+  "center_studio": [
+   7.25,
+   1.97,
+   -96.0
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__trim_light",
+  "piece": "A_Displays",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 44,
+  "size_studio": [
+   10.5,
+   0.2,
+   2.8
+  ],
+  "center_studio": [
+   7.25,
+   2.4,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__dark_metal",
+  "piece": "A_Displays",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 452,
+  "size_studio": [
+   9.9,
+   0.4,
+   2.2
+  ],
+  "center_studio": [
+   7.25,
+   2.7,
+   -96.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__glass",
+  "piece": "A_Displays",
+  "material": "glass",
+  "rgb": [
+   150,
+   190,
+   215
+  ],
+  "studio": "Glass, Transparency 0.6",
+  "tris": 12,
+  "size_studio": [
+   10.2,
+   0.06,
+   2.5
+  ],
+  "center_studio": [
+   7.25,
+   3.15,
+   -96.0
+  ],
+  "material_studio": "Glass",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.6,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__neon_cream",
+  "piece": "A_Displays",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 12,
+  "size_studio": [
+   9.9,
+   0.06,
+   0.15
+  ],
+  "center_studio": [
+   7.25,
+   2.57,
+   -97.03
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__drum_olive",
+  "piece": "A_Displays",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 88,
+  "size_studio": [
+   1.7,
+   0.32,
+   1.31
+  ],
+  "center_studio": [
+   5.2,
+   2.75,
+   -95.41
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Displays__label_cream",
+  "piece": "A_Displays",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 12,
+  "size_studio": [
+   2.0,
+   0.4,
+   0.04
+  ],
+  "center_studio": [
+   7.25,
+   1.4,
+   -97.28
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Floor__floor_field",
+  "piece": "A_Floor",
+  "material": "floor_field",
+  "rgb": [
+   62,
+   62,
+   60
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 1056,
+  "size_studio": [
+   56.7,
+   1.0,
+   40.2
+  ],
+  "center_studio": [
+   -0.0,
+   -0.5,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Floor__floor_border",
+  "piece": "A_Floor",
+  "material": "floor_border",
+  "rgb": [
+   36,
+   36,
+   34
+  ],
+  "studio": "Concrete + TacFloorConcrete",
+  "tris": 188,
+  "size_studio": [
+   62.0,
+   1.02,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   -0.49,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacFloorConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Floor__trim_metal",
+  "piece": "A_Floor",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 176,
+  "size_studio": [
+   57.4,
+   0.27,
+   40.9
+  ],
+  "center_studio": [
+   -0.0,
+   -0.06,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Floor__floor_insert",
+  "piece": "A_Floor",
+  "material": "floor_insert",
+  "rgb": [
+   80,
+   79,
+   76
+  ],
+  "studio": "Metal + TacCorrugatedMetal",
+  "tris": 44,
+  "size_studio": [
+   6.0,
+   0.23,
+   13.0
+  ],
+  "center_studio": [
+   -0.0,
+   -0.09,
+   -73.5
+  ],
+  "material_studio": "Metal",
+  "variant": "TacCorrugatedMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Lines__neon_cream",
+  "piece": "A_Lines",
+  "material": "neon_cream",
+  "rgb": [
+   180,
+   177,
+   166
+  ],
+  "studio": "Neon",
+  "tris": 232,
+  "size_studio": [
+   20.6,
+   0.47,
+   35.96
+  ],
+  "center_studio": [
+   -6.66,
+   -0.17,
+   -84.98
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Lines__neon_olive",
+  "piece": "A_Lines",
+  "material": "neon_olive",
+  "rgb": [
+   88,
+   101,
+   48
+  ],
+  "studio": "Neon",
+  "tris": 592,
+  "size_studio": [
+   15.36,
+   0.47,
+   15.36
+  ],
+  "center_studio": [
+   -10.0,
+   -0.17,
+   -96.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Ceiling__ceiling",
+  "piece": "A_Ceiling",
+  "material": "ceiling",
+  "rgb": [
+   112,
+   111,
+   107
+  ],
+  "studio": "Concrete + TacConcrete",
+  "tris": 44,
+  "size_studio": [
+   66.0,
+   1.5,
+   49.5
+  ],
+  "center_studio": [
+   -0.0,
+   22.75,
+   -89.75
+  ],
+  "material_studio": "Concrete",
+  "variant": "TacConcrete",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Ceiling__ceiling_gloss",
+  "piece": "A_Ceiling",
+  "material": "ceiling_gloss",
+  "rgb": [
+   66,
+   68,
+   62
+  ],
+  "studio": "SmoothPlastic / Pearlescent-style variant",
+  "tris": 880,
+  "size_studio": [
+   59.6,
+   0.35,
+   43.5
+  ],
+  "center_studio": [
+   -0.0,
+   21.83,
+   -89.75
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Ceiling__trim_metal",
+  "piece": "A_Ceiling",
+  "material": "trim_metal",
+  "rgb": [
+   108,
+   107,
+   104
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 880,
+  "size_studio": [
+   60.1,
+   0.18,
+   44.0
+  ],
+  "center_studio": [
+   -0.0,
+   21.59,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Beams__beam_metal",
+  "piece": "A_Beams",
+  "material": "beam_metal",
+  "rgb": [
+   67,
+   67,
+   65
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 2552,
+  "size_studio": [
+   62.0,
+   2.2,
+   45.5
+  ],
+  "center_studio": [
+   -0.0,
+   20.9,
+   -89.75
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Lights__trim_light",
+  "piece": "A_Lights",
+  "material": "trim_light",
+  "rgb": [
+   124,
+   123,
+   119
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 28,
+  "size_studio": [
+   0.2,
+   7.4,
+   0.2
+  ],
+  "center_studio": [
+   -0.0,
+   18.3,
+   -90.0
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Props__crate_green",
+  "piece": "A_Props",
+  "material": "crate_green",
+  "rgb": [
+   65,
+   94,
+   56
+  ],
+  "studio": "SmoothPlastic (military green)",
+  "tris": 1100,
+  "size_studio": [
+   58.5,
+   7.85,
+   41.8
+  ],
+  "center_studio": [
+   -0.0,
+   3.92,
+   -89.7
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Props__dark_metal",
+  "piece": "A_Props",
+  "material": "dark_metal",
+  "rgb": [
+   48,
+   48,
+   46
+  ],
+  "studio": "Metal + TacMetal",
+  "tris": 4584,
+  "size_studio": [
+   59.0,
+   8.0,
+   41.8
+  ],
+  "center_studio": [
+   -0.0,
+   4.0,
+   -89.7
+  ],
+  "material_studio": "Metal",
+  "variant": "TacMetal",
+  "variant_folder": "MaterialService.TacHub1",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Props__label_cream",
+  "piece": "A_Props",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 204,
+  "size_studio": [
+   56.2,
+   6.58,
+   41.84
+  ],
+  "center_studio": [
+   -0.0,
+   3.64,
+   -89.7
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Props__drum_olive",
+  "piece": "A_Props",
+  "material": "drum_olive",
+  "rgb": [
+   107,
+   122,
+   58
+  ],
+  "studio": "Metal (dark olive paint)",
+  "tris": 2224,
+  "size_studio": [
+   53.5,
+   4.0,
+   41.52
+  ],
+  "center_studio": [
+   -1.65,
+   2.0,
+   -90.04
+  ],
+  "material_studio": "Metal",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "A_Props__case_dark",
+  "piece": "A_Props",
+  "material": "case_dark",
+  "rgb": [
+   48,
+   49,
+   46
+  ],
+  "studio": "SmoothPlastic",
+  "tris": 784,
+  "size_studio": [
+   6.0,
+   4.52,
+   2.4
+  ],
+  "center_studio": [
+   23.0,
+   2.26,
+   -70.6
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": true,
+  "collision_fidelity": "PreciseConvexDecomposition",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "K_Scale2",
+  "piece": "K_Scale2",
+  "material": "label_cream",
+  "rgb": [
+   236,
+   232,
+   218
+  ],
+  "studio": "SmoothPlastic (SurfaceGui text later)",
+  "tris": 12,
+  "size_studio": [
+   10.0,
+   10.0,
+   10.0
+  ],
+  "center_studio": [
+   -0.0,
+   120.0,
+   0.0
+  ],
+  "material_studio": "SmoothPlastic",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": true,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ },
+ {
+  "name": "K_Marker2",
+  "piece": "K_Marker2",
+  "material": "neon_olive",
+  "rgb": [
+   88,
+   101,
+   48
+  ],
+  "studio": "Neon",
+  "tris": 36,
+  "size_studio": [
+   10.0,
+   8.0,
+   6.0
+  ],
+  "center_studio": [
+   20.0,
+   119.0,
+   2.0
+  ],
+  "material_studio": "Neon",
+  "variant": "",
+  "variant_folder": "",
+  "can_collide": false,
+  "collision_fidelity": "Box",
+  "cast_shadow": false,
+  "transparency": 0.0,
+  "texture_overlay": ""
+ }
+]
