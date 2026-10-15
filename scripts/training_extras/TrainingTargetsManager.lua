@@ -8,6 +8,8 @@
 -- A pop hides the target (face off, CanQuery off) for Respawn seconds and tells clients (Events.Training.TargetPop).
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WeaponUtil = require(ReplicatedStorage.Modules.Shared.WeaponUtil)
+local STUDIO = game:GetService("RunService"):IsStudio()
+local function why(reason) if STUDIO then workspace:SetAttribute("TX_LastTargetShot", reason) end end   -- Studio-only test trace
 local manager = {}
 
 local ok, TX = pcall(require, ReplicatedStorage.Modules.Shared.Config.TrainingConfig)
@@ -30,8 +32,8 @@ local function pop(target: BasePart, shooter: Player)
 end
 
 function manager.OnShot(origin: Vector3, endPos: Vector3, shooter: Player?)
-	if not (ok and popEvent and TX.On("Bullseyes")) then return end
-	if not shooter or shooter:GetAttribute("InTraining") ~= true then return end
+	if not (ok and popEvent and TX.On("Bullseyes")) then return why("off") end
+	if not shooter or shooter:GetAttribute("InTraining") ~= true then return why("not in training") end
 	if typeof(origin) ~= "Vector3" or typeof(endPos) ~= "Vector3" then return end
 	local seg = endPos - origin
 	local len = seg.Magnitude
@@ -44,22 +46,23 @@ function manager.OnShot(origin: Vector3, endPos: Vector3, shooter: Player?)
 		local a = v:Dot(dir)
 		if a > 0 then
 			local d = (v - dir * a).Magnitude
-			if d <= R + 0.3 then
+			if d <= R - 0.02 then   -- the client's own ray (same origin + end point) went through the ball
 				-- where the bullet enters the ball: it must be at or before the shot's end point (no hits behind a dummy)
 				local entry = a - math.sqrt(math.max(R * R - math.min(d, R) ^ 2, 0))
-				if entry <= len + 0.3 and (not bestEntry or entry < bestEntry) then best, bestEntry = t, entry end
+				if entry <= len + 0.05 and (not bestEntry or entry < bestEntry) then best, bestEntry = t, entry end
 			end
 		end
 	end
-	if not best then return end
+	if not best then return why("no target on the shot") end
 	-- first thing hit wins: from the muzzle toward the target, the first world part must be that target (walls, other
 	-- live targets in front; characters ignored as in WeaponUtil.IsPathClear)
 	local params = RaycastParams.new()
 	params.FilterType = Enum.RaycastFilterType.Exclude
 	params.FilterDescendantsInstances = WeaponUtil.GetAllCharacters()
 	local r = workspace:Raycast(origin, (best.Position - origin) * 1.05, params)
-	if r and r.Instance ~= best then return end
+	if r and r.Instance ~= best then return why("blocked by " .. r.Instance.Name) end
 	pop(best, shooter)
+	why("popped " .. best:GetFullName())
 end
 
 function manager.Start()

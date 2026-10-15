@@ -13,7 +13,7 @@ local C = {
 	RoomBox = { Min = Vector3.new(-140, 588, -140), Max = Vector3.new(364, 660, 140) },
 	Bullseyes = { Enabled = true, Radius = 1.5, Respawn = 3, MaxRange = 600 },
 	DpsDummies = { Enabled = true, Window = 3, MinSpan = 1, Idle = 2.5, Hold = 2 },
-	JumpPads = { Enabled = true, Cooldown = 0.6, Headroom = 7, Apex = 6 },
+	JumpPads = { Enabled = true, Cooldown = 0.6, Headroom = 4, Apex = 6 },   -- Headroom: root apex this far under CeilingY
 	Tightropes = { Enabled = true },
 	SwapBins = { Enabled = true, AllowUnowned = true, Reach = 12 },   -- AllowUnowned: Training-only trial of guns you don't own
 	CeilingY = 648,                     -- Training ceiling (floor 600 + 48)

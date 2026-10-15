@@ -4,6 +4,7 @@
 local manager = {}
 
 function manager.OnShot(origin: Vector3, endPos: Vector3, shooter: Player?)
+	if game:GetService("RunService"):IsStudio() then workspace:SetAttribute("TX_LastTargetShot", "shim called") end   -- Studio-only test trace
 	local targets = shared.Get and shared.Get("TrainingTargetsManager")
 	if targets and targets.OnShot then targets.OnShot(origin, endPos, shooter) end
 end

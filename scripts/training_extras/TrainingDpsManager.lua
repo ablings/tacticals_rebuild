@@ -2,7 +2,8 @@
 -- (notes/training_extras_done.md). One dummy per LobbyMap.Training.Extras.DpsDummies.DpsSpot (built by fix/place_training.lua).
 -- Not counted in TrainingManager's alive dummies and not on EnemySpots. Hits arrive through the same BindableEvent "OnHit"
 -- CombatManager already fires for range dummies (no CombatManager change). Readout: damage of the last `Window` seconds of
--- the current burst / its length (min `MinSpan`), 5 Hz; after `Idle` s without hits it holds greyed for `Hold` s, then 0.
+-- the current burst up to the last hit / that span (min `MinSpan`), 5 Hz; after `Idle` s without hits it holds greyed for
+-- `Hold` s, then resets to 0.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
 local TweenService = game:GetService("TweenService")
@@ -62,7 +63,7 @@ local function spawnAt(spot: BasePart, parent: Instance)
 	local small = label(plate, "Detail", UDim2.fromScale(0.05, 0.64), UDim2.fromScale(0.9, 0.3), SAGE, FONT_B)
 	local tag = label(gui, "Tag", UDim2.fromScale(0.2, 0.02), UDim2.fromScale(0.6, 0.3), SAGE, FONT_B); tag.Text = "DPS TEST"
 	big.Text = "0 DPS"; small.Text = "LAST 0 · TOTAL 0"
-	local st = { samples = {}, burstStart = 0, lastHit = -math.huge, last = 0, total = 0, big = big, small = small, text = "", gui = gui }
+	local st = { samples = {}, burstStart = 0, lastHit = -math.huge, last = 0, total = 0, big = big, small = small , gui = gui }
 	local onHit = Instance.new("BindableEvent"); onHit.Name = "OnHit"    -- fired by CombatManager on every confirmed hit
 	onHit.Event:Connect(function(_, zone, damage)
 		local now = os.clock()
@@ -88,16 +89,15 @@ local function tick()
 		if idle > IDLE + HOLD then
 			text, detail, colour = "0 DPS", "LAST 0 · TOTAL 0", DIM
 		else
-			while st.samples[1] and st.samples[1].t < now - W do table.remove(st.samples, 1) end
-			local span = math.clamp(math.min(now, st.lastHit + 0.001) - st.burstStart, MIN, W)
-			if idle > IDLE then span = math.clamp(st.lastHit - st.burstStart, MIN, W) end
-			local sum, from = 0, (idle > IDLE and st.lastHit or now) - span
-			for _, s in st.samples do if s.t >= from then sum += s.d end end
-			if idle > IDLE then text = st.text ~= "" and st.text or "0 DPS" else text = fmt(sum / span) .. " DPS" end
+			-- rolling window ending at the last hit: steady while you fire, frozen (greyed) once you stop
+			while st.samples[1] and st.samples[1].t < st.lastHit - W do table.remove(st.samples, 1) end
+			local span = math.clamp(st.lastHit - st.burstStart, MIN, W)
+			local sum = 0
+			for _, s in st.samples do if s.t >= st.lastHit - span then sum += s.d end end
+			text = fmt(sum / span) .. " DPS"
 			detail = "LAST " .. fmt(st.last) .. " · TOTAL " .. fmt(st.total)
 			colour = idle > IDLE and DIM or CREAM
 		end
-		if idle <= IDLE then st.text = text end
 		if st.big.Text ~= text then st.big.Text = text end
 		if st.small.Text ~= detail then st.small.Text = detail end
 		if st.big.TextColor3 ~= colour then st.big.TextColor3 = colour end

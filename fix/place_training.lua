@@ -302,34 +302,34 @@ local EXTRAS = {
 local OLIVE_BAND = rgb(111, 114, 57)
 -- Tile look (step 2 retune, 2026-10-15): Edward's standard = the old Training grid tiles (pale clean tiles, clearly visible
 -- grid lines) + RIVALS' range (Plastic Parts, 5x5 grid Texture, grey tint). SmoothPlastic, no material variant, neutral greys.
--- Measured in edit captures: the lobby Atmosphere (blue, density 0.255) + sky diffuse shift every grey toward teal
--- (rendered/input ~ R 0.87, G 0.98, B 1.07 at 30-40 studs). neutral(v) pre-compensates so the tiles render as neutral
--- grey of value ~v at play distances (a little warm up close). Nominal value = the argument.
-local function neutral(v, k) k = k or 1   -- k > 1: extra compensation (the ceiling sees the most sky diffuse)
-	return Color3.fromRGB(math.min(255, math.floor(v * (1 + 0.15 * k) + 0.5)), v, math.floor(v * (1 - 0.11 * k) + 0.5)) end
+-- Measured in Play (the room's PointLights on, out/training/play_*.png): rendered / input ~ R 1.03, G 1.00, B 0.98, so
+-- neutral(v) leans the input a hair cool to read as a neutral grey of value ~v. (Edit-time captures, lights off, read every
+-- grey teal: judge colours in Play, not in edit captures.)  k scales the lean (the ceiling, lit from below, warms more).
+local function neutral(v, k) k = k or 1
+	return Color3.fromRGB(math.floor(v * (1 - 0.03 * k) + 0.5), v, math.min(255, math.floor(v * (1 + 0.02 * k) + 0.5))) end
 local SP = M.SmoothPlastic
 local KIND = {
-	floor   = {neutral(196), SP, "", true, true, false, "Floor"},
-	gfloor  = {neutral(196), SP, "", true, true, false, "GalleryFloor"},
-	wall    = {neutral(184), SP, "", true, true, false, "Wall"},
-	ceiling = {neutral(150, 1.6), SP, "", true, true, true, "Ceiling"},
-	plaza   = {neutral(168), SP, "", true, true, false, "SpawnPlaza"},
-	block   = {neutral(206), SP, "", true, true, false, "Block"},
-	bastion = {neutral(176), SP, "", true, true, false, "Bastion"},
-	tower   = {neutral(186), SP, "", true, true, false, "Tower"},
-	mid     = {neutral(198), SP, "", true, true, false, "MidBlock"},
-	tall    = {neutral(200), SP, "", true, true, false, "Wall"},
-	pillar  = {neutral(188), SP, "", true, true, false, "Pillar"},
-	low     = {neutral(214), SP, "", true, true, false, "LowWall"},
-	block4  = {neutral(200), SP, "", true, true, false, "LowBlock"},
-	counter = {neutral(160), SP, "", true, true, false, "Counter"},
+	floor   = {neutral(214), SP, "", true, true, false, "Floor"},
+	gfloor  = {neutral(214), SP, "", true, true, false, "GalleryFloor"},
+	wall    = {neutral(206), SP, "", true, true, false, "Wall"},
+	ceiling = {neutral(190, 2), SP, "", true, true, true, "Ceiling"},
+	plaza   = {neutral(186), SP, "", true, true, false, "SpawnPlaza"},
+	block   = {neutral(224), SP, "", true, true, false, "Block"},
+	bastion = {neutral(196), SP, "", true, true, false, "Bastion"},
+	tower   = {neutral(204), SP, "", true, true, false, "Tower"},
+	mid     = {neutral(216), SP, "", true, true, false, "MidBlock"},
+	tall    = {neutral(218), SP, "", true, true, false, "Wall"},
+	pillar  = {neutral(206), SP, "", true, true, false, "Pillar"},
+	low     = {neutral(232), SP, "", true, true, false, "LowWall"},
+	block4  = {neutral(218), SP, "", true, true, false, "LowBlock"},
+	counter = {neutral(176), SP, "", true, true, false, "Counter"},
 	crate   = {rgb(65, 94, 56), M.SmoothPlastic, "", false, true, false, "Crate"},
 	bridge  = {rgb(108, 107, 104), M.Metal, "TacFloorPlate", false, true, true, "Bridge"},
 	ramp    = {rgb(108, 107, 104), M.Metal, "TacFloorPlate", false, true, true, "Ramp"},
 	truss   = {rgb(67, 67, 65), M.Metal, "", false, true, true, "Truss"},
 	line    = {rgb(96, 108, 52), M.Neon, "", false, false, true, "Line"},
 }
-local GFLOOR_TONE = {[0] = neutral(196), [1] = neutral(178), [2] = neutral(160)}   -- 25-stud bands: pale / mid grey (was sage)
+local GFLOOR_TONE = {[0] = neutral(214), [1] = neutral(194), [2] = neutral(176)}   -- 25-stud bands: pale / mid grey (was sage)
 local LINE_TONE = {olive = rgb(70, 78, 38), cream = rgb(180, 177, 166)}   -- olive Neon: 96,108,52 read lime under Future
 -- grid Texture: TX_overlay_grid has 2-px lines per 512-px tile (thin, fades at range): two copies 0.06 apart make the
 -- line read like the old Training grout; dark grey tint, 0.45 transparency (RIVALS 0.75 is for its 4x thicker line art).
