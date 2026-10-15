@@ -1,13 +1,12 @@
-# Training room (Edward, 2026-10-15): keep the current Tacticals Training look as the standard
+# Training room (Edward, 2026-10-15): REBUILD, Parts-first like RIVALS, more space, RIVALS range mechanics
 
-Edward: "the training room in the actual map is a good standard for what it should look like with grid tiles". RIVALS also builds its
-range in Studio with Parts and a 5x5 grid Texture. So Training (floating, floor y 600, 172 x 238, ceiling ~636) is NOT rebuilt from a new
-kit. Keep its geometry, layout and grid-tile treatment. Only:
-1. Check how it renders under the new lighting (Future + Realistic, RIVALS values): it was designed under the old lighting; adjust
-   colours/texture tints/transparency so the grid tiles read the way they did (compare with captures of the live place's Training,
-   read-only, and the survey captures) and fit the rebuild palette (neutral greys, the olive accent band where a band exists, cream
-   lines; no lime). Respect the RoomLight logic (lights only switch on near the Training centre during play).
-2. Fix anything broken (z-fighting, gaps, floating parts) without changing the layout.
-3. Keep every hook (FLOOR_Y 600, Arrivals, EnemySpots, TrainingArrive, y>540 / y<-25 logic, RoomLight Training (0,606,0) r175).
-Idempotent, UNDO-able script fix/place_training.lua; before/after captures out/training/ (lights forced on for the captures, restored
-after); report notes/training.md. No extra kid-friendly elements.
+Edward: the current Tacticals Training (grid tiles) is the visual standard; but rebuild it "with more space and the rivals mechanics".
+RIVALS builds its range in Studio with Parts (Lobby.ShootingRange 374 Parts vs 70 MeshParts; ~1,180 Parts with a 5x5 grid Texture).
+
+Step 1 (research, read-only): what RIVALS' shooting range does as a player sees it (layout, lanes, distances, target types, moving
+targets, pop-ups, respawn, hit feedback, damage numbers, any HUD, how you enter/leave), and what Tacticals' Training does today
+(scripts in out/survey/src/*.lua: arrival, EnemySpots, dummies, FLOOR_Y 600 logic). Output a spec (notes/training_spec.md) of the new
+room: footprint (bigger than 172 x 238, within the floating y 600 platform logic), zones, cover, target lanes, which mechanics we add
+or change in Tacticals' own scripts (own code, never RIVALS code), and what stays. Edward approves the spec before any script changes.
+Step 2 (build, after approval): Parts-first in Studio, grid tiles like the current room and RIVALS, own grid texture TX_overlay_grid,
+Tac variants, palette; then the mechanics in Tacticals' scripts; keep every hook that remains relevant.
