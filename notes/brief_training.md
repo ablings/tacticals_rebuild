@@ -1,4 +1,7 @@
-# Training room (Edward, 2026-10-15): REBUILD, Parts-first like RIVALS, more space, RIVALS range mechanics
+# Training room (Edward, 2026-10-15): REBUILD, Parts-first like RIVALS, more space, RIVALS-level content
+
+Edward clarified: not new mechanics, but "amount of npcs and stuff": match RIVALS' range in content (number of target NPCs/dummies,
+props, cover, density, space) using Tacticals' existing scripts unchanged.
 
 Edward: the current Tacticals Training (grid tiles) is the visual standard; but rebuild it "with more space and the rivals mechanics".
 RIVALS builds its range in Studio with Parts (Lobby.ShootingRange 374 Parts vs 70 MeshParts; ~1,180 Parts with a 5x5 grid Texture).
