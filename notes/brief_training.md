@@ -13,3 +13,19 @@ room: footprint (bigger than 172 x 238, within the floating y 600 platform logic
 or change in Tacticals' own scripts (own code, never RIVALS code), and what stays. Edward approves the spec before any script changes.
 Step 2 (build, after approval): Parts-first in Studio, grid tiles like the current room and RIVALS, own grid texture TX_overlay_grid,
 Tac variants, palette; then the mechanics in Tacticals' scripts; keep every hook that remains relevant.
+
+## Edward's answers (2026-10-15)
+- Roof/walkable block level at **24** studs; the room has a **ceiling** (not open sky). Default chosen: ceiling at +48 (24 headroom over
+  the roof deck).
+- **Raise alive dummies** 24 -> 35.
+- **Script-only RIVALS extras: yes** ("would be cool"): floating 1-HP bullseye targets, infinite-HP DPS dummies with a damage-per-second
+  readout, jump pads, tightropes, weapon-swap bins. Own code in Tacticals' scripts (never RIVALS code), fitted to Tacticals' combat and
+  weapon systems; each feature isolated and switchable.
+- Not answered, defaults: the gallery is always kept filled (its 16 spots guaranteed); lights ON (closed room) with the RoomFX Training
+  radius widened to cover the new arena and gallery.
+
+## Build order
+1. Room geometry Parts-first in Studio (grid tiles, palette, ceiling, roof level 24, ramps/ladders, gallery, signs, NotCover rules,
+   Arrivals/EnemySpots folders filled per the spec), hide the old Training UNDO-ably; check FLOOR_Y logic and walk routes.
+2. Script changes (own code), one feature per module with a flag: alive count 35, gallery fill, RoomFX radius, then bullseyes,
+   DPS dummies, jump pads, tightropes, weapon-swap bins. Test each in Play (server + client) in the local copy.
