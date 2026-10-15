@@ -71,8 +71,15 @@ local L_HANGAR_HOME = Vector3.new(114, 19.0, 0)        -- under the E_Lights dow
 -- 1v1 pad boards: the hub1 west wall (x -95..-90) buries the old Holo (x -92.8) and PostCollide (x -93.8..-91.8).
 -- Move them onto the kit's 1v1 pylon (x -97.6..-95.6, z +-17.5..19.5). sign = z side of the pad.
 local ONE_V_ONE = {Pad_1v1_A = -1, Pad_1v1_B = 1}
-local HOLO_POS = Vector3.new(-96.6, 24.5, 18.5)        -- z multiplied by the sign
-local POST_POS = Vector3.new(-96.6, 18.4, 18.5)        -- same size (2 x 4.8 x 2), bottom 16.0 as before
+-- Holo: rooms3_kit.md proposed (-96.6, 24.5, +-18.5) over the pylon, but the PadBoards billboard is 11 wide and only 1.6 studs
+-- from the wall face there: 40 % of it was behind the wall from the pads, the door and the hall (ray test), and QueueManager's
+-- stepOffCFrame (dir = Holo -> team zone) put Team2 leavers inside the 3v3 Team1 zone. At x -100.5 (over the pad's centre line,
+-- between the two team cells) the board is 100 % visible from every viewpoint and both step-off spots are free floor in no zone.
+local HOLO_POS = Vector3.new(-100.5, 24.5, 18.5)       -- z multiplied by the sign
+local POST_POS = Vector3.new(-96.6, 18.4, 18.5)        -- inside the kit pylon (x -97.6..-95.6); same size 2 x 4.8 x 2, bottom 16.0
+-- Duels doorway floor: the hub1 west wall has no floor through its door (x -95..-90); the old U_East / U_DuelsShell meshes carried
+-- it. Own threshold plate from the Duels floor to the hub top landing plate (west edge x -90.0), top 16.0.
+local DOOR_FILL = {x0 = -95.3, x1 = -90.0, z = 5.6, top = 16.0}
 -- sign text on solid backing plates in front of the boards (hub2 lesson): {name, board mesh, face normal x sign, centre y,
 -- centre z, plate w (along z), plate h, text}. Boards face along x.
 local SIGNS = {
@@ -214,8 +221,11 @@ for _, part in R3:GetDescendants() do
 	part.CanCollide = collide; part.CanQuery = collide and slot ~= "clip"; part.CanTouch = false
 	if collide then
 		nCol += 1
-		local cf = BOX[part.Name] and Enum.CollisionFidelity.Box or Enum.CollisionFidelity.PreciseConvexDecomposition
-		if BOX[part.Name] then nBox += 1 end
+		-- X_Clip: the manifest says Box, but one box around the whole clip mesh (open edge + both side walls) fills the pad
+		-- (x 127.6..152.6, z +-28.6, y 1.4..18) and blocked the walk round the barrier: PCD keeps the separate clip slabs
+		local box = BOX[part.Name] and slot ~= "clip"
+		local cf = box and Enum.CollisionFidelity.Box or Enum.CollisionFidelity.PreciseConvexDecomposition
+		if box then nBox += 1 end
 		if part.CollisionFidelity ~= cf then part.CollisionFidelity = cf end
 	end
 	part:SetAttribute("NotCover", true) -- lobby only; cheap (rooms3_kit.md step 2)
@@ -230,6 +240,18 @@ for _, part in R3:GetDescendants() do
 	if nMesh % 50 == 0 then task.wait() end
 end
 say("meshes styled", nMesh, "colliding", nCol, "box", nBox)
+
+---------------------------------------------------------------- 2b. Duels doorway threshold plate (collides; NotCover); before the U_East check, which then sees it
+do
+	local fill = ensure(R3, "D_DoorFill", "Model")
+	local p = fill:FindFirstChild("DoorThreshold") or Instance.new("Part")
+	p.Name = "DoorThreshold"; p.Anchored = true; p.CanCollide = true; p.CanQuery = true; p.CanTouch = false; p.CastShadow = true
+	p.Size = Vector3.new(DOOR_FILL.x1 - DOOR_FILL.x0, 1, DOOR_FILL.z * 2)
+	p.CFrame = CFrame.new((DOOR_FILL.x0 + DOOR_FILL.x1) / 2, DOOR_FILL.top - 0.5, 0)
+	p.Material = M.Metal; p.MaterialVariant = "TacFloorPlate"; p.Color = rgb(95, 85, 78); p.Reflectance = 0
+	p:SetAttribute("NotCover", true); p.Parent = fill
+	say("DoorThreshold", f3(p.Position), f3(p.Size))
+end
 
 ---------------------------------------------------------------- 3. hide the old Duels / energy-wall / Exfil shell and the energy-wall FX (restorable)
 local rpAll = RaycastParams.new(); rpAll.FilterType = Enum.RaycastFilterType.Exclude; rpAll.RespectCanCollide = true
