@@ -1,6 +1,6 @@
 # Overlap sweep (overlap_fix), Studio only
 
-Done 2026-10-15 in `Tacticals_rebuild.rbxl` (studio id e1d5a8da-8b35-4181-8da9-4d5eaa59c96a) only. **Not saved** (the lead saves).
+Done 2026-10-15 in `Tacticals_rebuild.rbxl` (studio id 8ef4e21a-3525-484b-91af-79d7677aa213) only. **Not saved** (the lead saves).
 Nothing touched in Training, the live "tacticals (placeId ...)" studio, RIVALS or the replica. No computer use, no Blender.
 
 ## Files

@@ -1,6 +1,6 @@
 # Rooms pass 3, placement in Studio (rooms3_place): Duels hall + west deck, Exfil hangar + helipad
 
-Done 2026-10-15. All work was in `Tacticals_rebuild.rbxl` only: studio id e1d5a8da-8b35-4181-8da9-4d5eaa59c96a, the local copy, confirmed
+Done 2026-10-15. All work was in `Tacticals_rebuild.rbxl` only: studio id 8ef4e21a-3525-484b-91af-79d7677aa213, the local copy, confirmed
 with list_roblox_studios.
 
 **Not saved.** The lead saves with File > Save to File.

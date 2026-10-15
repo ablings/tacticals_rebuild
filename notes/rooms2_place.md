@@ -1,6 +1,6 @@
 # Rooms pass 2, placement in Studio (rooms2_place): Shop + Armory + both corridors
 
-Done 2026-10-15, only in `Tacticals_rebuild.rbxl` (studio id e1d5a8da-8b35-4181-8da9-4d5eaa59c96a, the local copy, checked with
+Done 2026-10-15, only in `Tacticals_rebuild.rbxl` (studio id 8ef4e21a-3525-484b-91af-79d7677aa213, the local copy, checked with
 list_roblox_studios). **Not saved**: the lead saves with File > Save to File. Nothing was touched in the live "tacticals (placeId ...)"
 studio, the RIVALS place or the replica. No computer use, no Blender, no RIVALS ids. Only our own TacHub1 variants and texture ids were used.
 

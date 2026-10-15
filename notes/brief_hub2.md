@@ -1,5 +1,5 @@
 # Hub polish pass (Studio only), after the switch to Future (2026-10-15)
-Studio id e1d5a8da-8b35-4181-8da9-4d5eaa59c96a (Tacticals_rebuild.rbxl). Lighting is now Future + Realistic.
+Studio id 8ef4e21a-3525-484b-91af-79d7677aa213 (Tacticals_rebuild.rbxl). Lighting is now Future + Realistic.
 Fix, by script (extend fix/place_hub1.lua or add fix/hub2.lua, idempotent, UNDO-able):
 1. Floor reads dark navy-blue; RIVALS floors are dark neutral grey (36-62). Retune floor colours/variants so they render neutral.
 2. Olive drums/barrels read lime: use the style guide's military green family, not band olive.
