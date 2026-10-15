@@ -368,7 +368,7 @@ ExfilFX. Every hook used is one that already exists (`OnHit`, `afterShot` → `S
 5. Leave with [M]: tools are stripped and no training UI (picker, readouts) stays on screen.
 
 ## Edward's answers (2026-10-15)
-1. Shooting while airborne from a jump pad: **yes** (relax the no-shooting-in-air rule only for jump-pad launches in Training, behind the
+1. Jump pads exist **only in Training** (never in matches or the rest of the lobby). Shooting while airborne from a Training jump pad: **yes** (relax the no-shooting-in-air rule only for jump-pad launches in Training, behind the
    JumpPads flag; restore the normal rule on landing).
 2. Weapon bins: **let players try guns they don't own** (do the optional second phase: a server-authorised Training-only trial that
    never grants ownership, ends when the player leaves Training or picks another bin; verify the shop/ownership data is never written).
