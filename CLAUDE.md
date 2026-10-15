@@ -38,3 +38,9 @@ Started 2026-10-14 on the main PC.
   Concrete+Corrugated_02a 106, Pearlescent variants, ConcretePanels-02a, Corrugated_01a, Wood01a; 1,438 Texture objects; neutral greys
   (151,153,163), (163,162,165), (108,107,106), (124,123,126), (48,48,48); accents purple (193,70,255)/(115,73,162), gold
   (255,215,0)/(163,135,51).
+
+## Lighting state (2026-10-14 22:36)
+- RIVALS lighting values applied to the copy by script (originals backed up in ServerStorage._PreRebuildLighting): Realistic,
+  Brightness 3, Ambient 121, exposure -0.15, ClockTime 12, sage ColorShift_Bottom, one Atmosphere with RIVALS values, Lobby_Bloom /
+  Lobby_DOF / SunRays disabled (kept by name: scripts look them up). Two Sky objects remain (Sky, Lobby_Sky): decide which.
+- Technology is still ShadowMap (3): patch to Future (4) offline with `tools/set_technology.py` while the place is closed.
