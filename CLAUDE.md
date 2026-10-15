@@ -57,3 +57,6 @@ Started 2026-10-14 on the main PC.
   particles** (no air dust/motes, drifting specks, steam, random sparks). Rule: keep purpose-bound FX (queue pads/holograms, featured
   displays, dummy hits, lamp/beam light shafts, Training extras); remove ambient ones (the floating white specks, motes, steam, sparks,
   drifting particles in the hub/rooms/hangar).
+- After the overlap fix: a fresh agent does a **lap in Play mode** at player height through every room; anything still overlapping is
+  logged with its **root cause**; the causes and prevention rules go into the vault (roblox-build-workflow: 6 Blender Modelling Method
+  and the Studio finishing page) (Edward, 2026-10-15).

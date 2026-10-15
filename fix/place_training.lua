@@ -164,7 +164,58 @@ local LAYOUT = {
 	{kind="line", x0=-20, z0=-20.25, x1=20, z1=-19.75, h=0.2, y0=0, tone="olive"},
 	{kind="line", x0=-20, z0=19.75, x1=20, z1=20.25, h=0.2, y0=0, tone="olive"},
 	{kind="line", x0=-20.25, z0=-20, x1=-19.75, z1=20, h=0.2, y0=0, tone="olive"},
-	{kind="line", x0=19.75, z0=-20, x1=20.25, z1=20, h=0.2, y0=0, tone="olive"}
+	{kind="line", x0=19.75, z0=-20, x1=20.25, z1=20, h=0.2, y0=0, tone="olive"},
+	{kind="mid", x0=98, z0=70, x1=110, z1=80, h=12, y0=0},
+	{kind="mid", x0=56, z0=68, x1=64, z1=76, h=8, y0=0},
+	{kind="low", x0=22, z0=96, x1=32, z1=98, h=3.5, y0=0},
+	{kind="low", x0=110, z0=92, x1=120, z1=94, h=3.5, y0=0},
+	{kind="pillar", x0=118, z0=60, x1=122, z1=64, h=12, y0=0},
+	{kind="pillar", x0=84, z0=40, x1=88, z1=44, h=12, y0=0},
+	{kind="tall", x0=40, z0=84, x1=42, z1=96, h=10, y0=0},
+	{kind="low", x0=86, z0=120, x1=96, z1=122, h=3.5, y0=0},
+	{kind="low", x0=24, z0=30, x1=34, z1=32, h=3.5, y0=0},
+	{kind="mid", x0=108, z0=8, x1=116, z1=16, h=10, y0=0},
+	{kind="mid", x0=36, z0=-32, x1=48, z1=-26, h=8, y0=0},
+	{kind="mid", x0=96, z0=-60, x1=104, z1=-52, h=10, y0=0},
+	{kind="pillar", x0=60, z0=-110, x1=64, z1=-106, h=12, y0=0},
+	{kind="pillar", x0=116, z0=-60, x1=120, z1=-56, h=12, y0=0},
+	{kind="low", x0=24, z0=-108, x1=34, z1=-106, h=3.5, y0=0},
+	{kind="crate", x0=52, z0=-82, x1=56, z1=-78, h=4, y0=0},
+	{kind="crate", x0=78, z0=-86, x1=82, z1=-82, h=4, y0=0},
+	{kind="mid", x0=-49, z0=-80, x1=-43, z1=-70, h=8, y0=0},
+	{kind="mid", x0=-90, z0=-76, x1=-82, z1=-66, h=12, y0=0},
+	{kind="tall", x0=-30, z0=-60, x1=-28, z1=-48, h=10, y0=0},
+	{kind="pillar", x0=-30, z0=-84, x1=-26, z1=-80, h=12, y0=0},
+	{kind="mid", x0=-108, z0=-100, x1=-100, z1=-92, h=10, y0=0},
+	{kind="low", x0=-112, z0=-30, x1=-102, z1=-28, h=3.5, y0=0},
+	{kind="crate", x0=-68, z0=-40, x1=-64, z1=-36, h=4, y0=0},
+	{kind="low", x0=-88, z0=-100, x1=-86, z1=-90, h=3.5, y0=0},
+	{kind="crate", x0=-30, z0=-120, x1=-26, z1=-116, h=4, y0=0},
+	{kind="low", x0=-100, z0=-126, x1=-90, z1=-124, h=3.5, y0=0},
+	{kind="low", x0=-80, z0=24, x1=-70, z1=26, h=3.5, y0=0},
+	{kind="low", x0=-100, z0=22, x1=-90, z1=24, h=3.5, y0=0},
+	{kind="pillar", x0=-118, z0=-4, x1=-114, z1=0, h=12, y0=0},
+	{kind="crate", x0=-42, z0=22, x1=-38, z1=26, h=4, y0=0},
+	{kind="low", x0=-124, z0=10, x1=-122, z1=20, h=3.5, y0=0},
+	{kind="crate", x0=8, z0=108, x1=12, z1=112, h=4, y0=0},
+	{kind="low", x0=-14, z0=120, x1=-4, z1=122, h=3.5, y0=0},
+	{kind="pad", x0=66, z0=94, x1=70, z1=98, h=0.4, y0=0},
+	{kind="pad", x0=86, z0=58, x1=90, z1=62, h=0.4, y0=0},
+	{kind="pad", x0=28, z0=50, x1=32, z1=54, h=0.4, y0=0},
+	{kind="pad", x0=-34, z0=22, x1=-30, z1=26, h=0.4, y0=0},
+	{kind="pad", x0=-101, z0=-124, x1=-97, z1=-120, h=0.4, y0=0},
+	{kind="pad", x0=94, z0=-110, x1=98, z1=-106, h=0.4, y0=0},
+	{kind="pad", x0=82, z0=96, x1=86, z1=100, h=0.4, y0=24},
+	{kind="pad", x0=-66, z0=25, x1=-62, z1=29, h=0.4, y0=0},
+	{kind="bin", x0=15.5, z0=-18.5, x1=18.5, z1=-15.5, h=3, y0=0},
+	{kind="bin", x0=-18.5, z0=15.5, x1=-15.5, z1=18.5, h=3, y0=0},
+	{kind="bin", x0=124.5, z0=-1.5, x1=127.5, z1=1.5, h=3, y0=0},
+	{kind="bin", x0=-41.5, z0=-25.5, x1=-38.5, z1=-22.5, h=3, y0=0},
+	{kind="bin", x0=108.5, z0=-31.5, x1=111.5, z1=-28.5, h=3, y0=0},
+	{kind="bin", x0=-13.5, z0=114.5, x1=-10.5, z1=117.5, h=3, y0=0},
+	{kind="bin", x0=-77.5, z0=82.5, x1=-74.5, z1=85.5, h=3, y0=24},
+	{kind="bin", x0=118.5, z0=-121.5, x1=121.5, z1=-118.5, h=3, y0=24},
+	{kind="bin", x0=96.5, z0=108.5, x1=99.5, z1=111.5, h=3, y0=24}
 }
 local SPOTS = {
 	{x=161, z=20, roof=0, zone="gallery", gallery={dist=25, lane="N"}},
@@ -237,39 +288,56 @@ local SIGNS = {
 	{kind="floor", x=0, z=-12, y=0, text="[M] LEAVE", face="up"}
 }
 local LIGHTS = {{x=-96, z=-96}, {x=-96, z=-32}, {x=-96, z=32}, {x=-96, z=96}, {x=-32, z=-96}, {x=-32, z=-32}, {x=-32, z=32}, {x=-32, z=96}, {x=32, z=-96}, {x=32, z=-32}, {x=32, z=32}, {x=32, z=96}, {x=96, z=-96}, {x=96, z=-32}, {x=96, z=32}, {x=96, z=96}, {x=180, z=0}, {x=244, z=0}, {x=308, z=0}}
+local EXTRAS = {
+	pads = {{x=68, z=96, y=0, lx=56, ly=36, lz=96}, {x=88, z=60, y=0, lx=100, ly=36, lz=60}, {x=30, z=52, y=0, lx=40, ly=36, lz=52}, {x=-32, z=24, y=0, lx=-32, ly=24, lz=42}, {x=-99, z=-122, y=0, lx=-110, ly=24, lz=-110}, {x=96, z=-108, y=0, lx=114, ly=24, lz=-114}, {x=84, z=98, y=24, lx=56, ly=36, lz=96}, {x=-64, z=27, y=0, lx=-66, ly=24, lz=40}},
+	ropes = {{x0=60, z0=96, x1=96, z1=60, y=36}, {x0=96, z0=60, x1=44, z1=52, y=36}, {x0=40, z0=56, x1=56, z1=92, y=36}, {x0=-22, z0=40, x1=54, z1=40, y=24}},
+	bins = {{x=17, z=-17, y=0}, {x=-17, z=17, y=0}, {x=126, z=0, y=0}, {x=-40, z=-24, y=0}, {x=110, z=-30, y=0}, {x=-12, z=116, y=0}, {x=-76, z=84, y=24}, {x=120, z=-120, y=24}, {x=98, z=110, y=24}},
+	dps = {{x=173, z=6, face="-x"}, {x=223, z=-6, face="-x"}, {x=273, z=6, face="-x"}, {x=323, z=-6, face="-x"}, {x=-6, z=-40, face="plaza"}, {x=8, z=-70, face="plaza"}, {x=-8, z=-88, face="plaza"}, {x=6, z=-118, face="plaza"}},
+	bulls = {{x=106.9, y=14, z=47.5}, {x=-33.1, y=31.7, z=-93.9}, {x=-37.6, y=12.9, z=-17}, {x=113.4, y=37.6, z=30.1}, {x=29.9, y=19.1, z=-89.5}, {x=-15.5, y=35.1, z=-20.4}, {x=-52.6, y=38.4, z=56.7}, {x=120.1, y=38, z=98.1}, {x=-114.8, y=17.7, z=-16.1}, {x=-56.5, y=38.1, z=-33.2}, {x=78.3, y=14.5, z=-4.4}, {x=119, y=15.5, z=-3.1}, {x=-63.4, y=35.9, z=55.4}, {x=-4.8, y=14.1, z=-56.9}, {x=-113.1, y=27.1, z=14.6}, {x=74.9, y=39.1, z=34.7}, {x=-105.9, y=34.2, z=54.6}, {x=-61, y=26.3, z=-21.7}, {x=106.5, y=23.2, z=69.2}, {x=111.5, y=37.4, z=-24.5}, {x=57.9, y=26.9, z=60}, {x=-85.3, y=38.5, z=-5.7}, {x=-65.6, y=15.4, z=-72.2}, {x=-7.7, y=17.8, z=-43.5}, {x=81.4, y=12.8, z=-86.5}, {x=1.6, y=13.3, z=71.1}, {x=90.2, y=36.9, z=-121.7}, {x=-101.2, y=21, z=-83.7}, {x=-32.1, y=39.8, z=-110.9}, {x=118.8, y=35.8, z=-16.1}, {x=7.1, y=19.1, z=67.7}, {x=108, y=25.4, z=-5.7}, {x=-3.8, y=16.5, z=-90.8}, {x=102.7, y=15.3, z=-47.2}, {x=-116.9, y=11.8, z=26.8}, {x=-13.4, y=19.5, z=-24.2}, {x=-116.4, y=39, z=16.3}, {x=-93.3, y=36, z=-60.5}, {x=102.3, y=35.9, z=-103.5}, {x=49.5, y=27.2, z=-23.3}, {x=82.8, y=39.2, z=50.4}, {x=-24.7, y=27.9, z=53.4}, {x=77.8, y=21.6, z=16.2}, {x=47.3, y=17.7, z=-53.9}, {x=-98.3, y=37.1, z=-54.1}, {x=-44.3, y=21.7, z=-83.8}, {x=-13.7, y=34, z=22.5}, {x=70.5, y=26, z=-38.5}, {x=41.3, y=39.1, z=104.6}, {x=-23.2, y=22.5, z=-56}, {x=-36.4, y=12.5, z=-106.4}, {x=84, y=34.9, z=-104.9}, {x=-56.7, y=28.7, z=-96.1}, {x=-110.3, y=34.9, z=63.9}, {x=102.5, y=12.3, z=-27.3}, {x=3.5, y=26, z=82.7}, {x=31.2, y=35, z=116.2}, {x=-80, y=35.6, z=67.2}, {x=-40.8, y=34.6, z=61.8}, {x=-100.2, y=38.9, z=82.1}, {x=81.9, y=26.6, z=-13.7}, {x=-79.5, y=39.5, z=82}, {x=-58.2, y=20.9, z=92.1}, {x=-11.7, y=13.9, z=109}, {x=91.3, y=30.2, z=18.6}, {x=-14.3, y=31.1, z=-80}, {x=95.8, y=13.8, z=11.4}, {x=22.3, y=34.7, z=105}, {x=-97.7, y=16, z=47.2}, {x=-27.7, y=24.4, z=-83.6}, {x=23.8, y=31.7, z=-97.1}, {x=45.7, y=24.6, z=-9.8}, {x=98, y=26.7, z=-39.1}, {x=22.3, y=24.7, z=-52.8}, {x=53.3, y=37.3, z=-25}, {x=-34.8, y=24.5, z=-119.2}, {x=111.9, y=34.9, z=-46.7}, {x=-13.5, y=27.8, z=121.9}, {x=94.7, y=34.9, z=100.9}, {x=117.8, y=11.8, z=-8.6}, {x=91.4, y=33.9, z=8.7}, {x=-88, y=38.1, z=-69.7}, {x=38.1, y=10.9, z=-58.6}, {x=-66.2, y=37.3, z=111.1}, {x=48.9, y=39.6, z=120.9}, {x=103, y=11.4, z=16.6}, {x=-50.8, y=39.7, z=18.4}, {x=-105.8, y=35.9, z=114.7}, {x=102.2, y=23.4, z=68.1}, {x=44.4, y=14.8, z=115.7}, {x=-14.7, y=21.9, z=62.3}, {x=75.6, y=14.2, z=70.1}, {x=102.1, y=29.4, z=-24.8}, {x=-8.3, y=11.3, z=72.4}, {x=9.2, y=39.9, z=44.7}, {x=-43.9, y=40, z=34}, {x=-98, y=15, z=-45.5}, {x=85.7, y=13.7, z=-77.4}, {x=-74.6, y=37.8, z=110.9}, {x=-63.8, y=31.1, z=101.7}, {x=-43.3, y=24.7, z=15.4}, {x=35.8, y=32.1, z=7.8}, {x=20.7, y=34, z=71.2}, {x=114.6, y=17.7, z=-81.3}, {x=-48.1, y=37.1, z=61.3}, {x=39.5, y=31.2, z=20.3}, {x=-6.2, y=31.1, z=-40}, {x=-36.5, y=16.2, z=-90}, {x=-89.6, y=17.2, z=-14.4}, {x=-85.3, y=36, z=60.9}, {x=61.5, y=16.9, z=86.8}, {x=95.3, y=33, z=-52.3}, {x=115.5, y=14.9, z=51.1}, {x=-19.8, y=25.8, z=-41.8}, {x=-118.3, y=39.8, z=34.7}, {x=-1.5, y=15.6, z=-94.5}, {x=100.4, y=14.7, z=-18}, {x=-46.6, y=14.8, z=-61.8}, {x=-21.6, y=38.7, z=15.3}, {x=-89.9, y=33.2, z=19.7}},
+}
 --@LAYOUT_END
 
 ---------------------------------------------------------------- palette per piece kind
 -- {colour, material, variant, grid?, collide?, notCover?, name}
 local OLIVE_BAND = rgb(111, 114, 57)
--- Future + the blue sky read every light grey as teal (first capture): warm compensation as hub2 did for the floor
--- (hub2: +14 R / -10 B on the dark floor). Applied to the grid-tile greys only; nominal palette value in the comment.
-local function warm(r, g, b) return Color3.fromRGB(math.min(255, r + 12), g, math.max(0, b - 14)) end
+-- Tile look (step 2 retune, 2026-10-15): Edward's standard = the old Training grid tiles (pale clean tiles, clearly visible
+-- grid lines) + RIVALS' range (Plastic Parts, 5x5 grid Texture, grey tint). SmoothPlastic, no material variant, neutral greys.
+-- Measured in edit captures: the lobby Atmosphere (blue, density 0.255) + sky diffuse shift every grey toward teal
+-- (rendered/input ~ R 0.87, G 0.98, B 1.07 at 30-40 studs). neutral(v) pre-compensates so the tiles render as neutral
+-- grey of value ~v at play distances (a little warm up close). Nominal value = the argument.
+local function neutral(v, k) k = k or 1   -- k > 1: extra compensation (the ceiling sees the most sky diffuse)
+	return Color3.fromRGB(math.min(255, math.floor(v * (1 + 0.15 * k) + 0.5)), v, math.floor(v * (1 - 0.11 * k) + 0.5)) end
+local SP = M.SmoothPlastic
 local KIND = {
-	floor   = {warm(186, 183, 174), M.Concrete, "TacConcrete", true, true, false, "Floor"},
-	gfloor  = {warm(167, 173, 152), M.Concrete, "TacConcrete", true, true, false, "GalleryFloor"},
-	wall    = {warm(150, 156, 142), M.Concrete, "TacConcrete", true, true, false, "Wall"},
-	ceiling = {warm(128, 132, 122), M.Concrete, "TacConcrete", true, true, true, "Ceiling"},
-	plaza   = {warm(150, 148, 138), M.Concrete, "TacConcrete", true, true, false, "SpawnPlaza"},
-	block   = {warm(167, 173, 152), M.Concrete, "TacConcrete", true, true, false, "Block"},
-	bastion = {warm(140, 146, 128), M.Concrete, "TacConcrete", true, true, false, "Bastion"},
-	tower   = {warm(151, 153, 147), M.Concrete, "TacRibbed", true, true, false, "Tower"},
-	tall    = {warm(176, 180, 168), M.Concrete, "TacConcrete", true, true, false, "Wall"},
-	pillar  = {warm(151, 153, 147), M.Concrete, "TacConcrete", true, true, false, "Pillar"},
-	low     = {warm(190, 192, 182), M.Concrete, "TacConcrete", true, true, false, "LowWall"},
-	block4  = {warm(176, 180, 168), M.Concrete, "TacConcrete", true, true, false, "LowBlock"},
-	counter = {warm(130, 132, 126), M.Concrete, "TacConcrete", true, true, false, "Counter"},
+	floor   = {neutral(196), SP, "", true, true, false, "Floor"},
+	gfloor  = {neutral(196), SP, "", true, true, false, "GalleryFloor"},
+	wall    = {neutral(184), SP, "", true, true, false, "Wall"},
+	ceiling = {neutral(150, 1.6), SP, "", true, true, true, "Ceiling"},
+	plaza   = {neutral(168), SP, "", true, true, false, "SpawnPlaza"},
+	block   = {neutral(206), SP, "", true, true, false, "Block"},
+	bastion = {neutral(176), SP, "", true, true, false, "Bastion"},
+	tower   = {neutral(186), SP, "", true, true, false, "Tower"},
+	mid     = {neutral(198), SP, "", true, true, false, "MidBlock"},
+	tall    = {neutral(200), SP, "", true, true, false, "Wall"},
+	pillar  = {neutral(188), SP, "", true, true, false, "Pillar"},
+	low     = {neutral(214), SP, "", true, true, false, "LowWall"},
+	block4  = {neutral(200), SP, "", true, true, false, "LowBlock"},
+	counter = {neutral(160), SP, "", true, true, false, "Counter"},
 	crate   = {rgb(65, 94, 56), M.SmoothPlastic, "", false, true, false, "Crate"},
 	bridge  = {rgb(108, 107, 104), M.Metal, "TacFloorPlate", false, true, true, "Bridge"},
 	ramp    = {rgb(108, 107, 104), M.Metal, "TacFloorPlate", false, true, true, "Ramp"},
 	truss   = {rgb(67, 67, 65), M.Metal, "", false, true, true, "Truss"},
 	line    = {rgb(96, 108, 52), M.Neon, "", false, false, true, "Line"},
 }
-local GFLOOR_TONE = {[0] = warm(167, 173, 152), [1] = warm(196, 192, 182), [2] = warm(150, 152, 146)}
+local GFLOOR_TONE = {[0] = neutral(196), [1] = neutral(178), [2] = neutral(160)}   -- 25-stud bands: pale / mid grey (was sage)
 local LINE_TONE = {olive = rgb(70, 78, 38), cream = rgb(180, 177, 166)}   -- olive Neon: 96,108,52 read lime under Future
+-- grid Texture: TX_overlay_grid has 2-px lines per 512-px tile (thin, fades at range): two copies 0.06 apart make the
+-- line read like the old Training grout; dark grey tint, 0.45 transparency (RIVALS 0.75 is for its 4x thicker line art).
+local GRID_SPT, GRID_T, GRID_C = 5, 0.45, rgb(58, 58, 58)
+local GRID_SPT_BIG = {ceiling = 10}                                  -- ceiling tiles 10 studs (less busy overhead)
 -- which folder each kind goes to inside Range2
 local GROUP = {floor = "Floor", gfloor = "Gallery", wall = "Shell", ceiling = "Shell", plaza = "Plaza", block = "Blocks", bastion = "Blocks",
-	tower = "Towers", tall = "Cover", pillar = "Cover", low = "Cover", block4 = "Cover", counter = "Gallery", crate = "Cover",
+	tower = "Towers", mid = "Cover", tall = "Cover", pillar = "Cover", low = "Cover", block4 = "Cover", counter = "Gallery", crate = "Cover",
 	bridge = "Access", ramp = "Access", truss = "Access", line = "Lines"}
 
 ---------------------------------------------------------------- hide helpers (own attribute set Training_*)
@@ -319,6 +387,8 @@ local OLD_SPOTS, OLD_ARR = "Training_EnemySpots_Old", "Training_Arrivals_Old"
 ---------------------------------------------------------------- UNDO
 if UNDO then
 	local r2 = T:FindFirstChild("Range2"); if r2 then r2:Destroy(); say("Range2 removed") end
+	local ex = T:FindFirstChild("Extras"); if ex then ex:Destroy(); say("Extras removed") end
+	local off = SS:FindFirstChild("_TrainingExtrasOff"); if off then off:Destroy() end
 	local n = 0
 	for _, d in T:GetDescendants() do if d:GetAttribute("TrainingHidden") then n += unhideOne(d) end end
 	say("unhidden", n)
@@ -355,11 +425,33 @@ local old = T:FindFirstChild("Range2"); if old then old:Destroy() end
 local R = Instance.new("Folder"); R.Name = "Range2"
 local nParts, nTex = 0, 0
 local ALLF = {F.Top, F.Bottom, F.Front, F.Back, F.Left, F.Right}
-local function grid(p)
+-- World-aligned grid (step 2): every face's tiles start on world multiples of the tile size, so the lines run on from box
+-- to box. Texture origin per face measured in Studio (UV test cube): side faces V from the top edge downward; Top U along
+-- -X from max X, V along -Z from max Z; Front (-Z) U from max X toward -X; Right (+X) U from max Z toward -Z; Back (+Z) U
+-- from min X toward +X; Left (-X) U from min Z toward +Z. Boundaries sit at U = -offset (mod tile), hence offset = s * w0.
+local function wmod(v, m) return v - m * math.floor(v / m) end
+local function gridOffsets(p, face, spt)
+	local c, h = p.Position, p.Size / 2
+	local x0, x1, y1, z0, z1 = c.X - h.X, c.X + h.X, c.Y + h.Y, c.Z - h.Z, c.Z + h.Z
+	if face == F.Top or face == F.Bottom then return wmod(-x1, spt), wmod(-z1, spt) end
+	local v = wmod(-y1, spt)
+	if face == F.Front then return wmod(-x1, spt), v
+	elseif face == F.Back then return wmod(x0, spt), v
+	elseif face == F.Right then return wmod(-z1, spt), v
+	else return wmod(z0, spt), v end
+end
+local function grid(p, spt)
+	spt = spt or GRID_SPT
+	local aligned = p.ClassName == "Part" and p.CFrame.Rotation == CFrame.identity
 	for _, f in ALLF do
-		local t = Instance.new("Texture"); t.Name = "Grid"; t.Texture = GRID; t.Face = f
-		t.StudsPerTileU = 5; t.StudsPerTileV = 5; t.Color3 = Color3.new(0, 0, 0); t.Transparency = 0.75; t.Parent = p
-		nTex += 1
+		local ou, ov = 0, 0
+		if aligned then ou, ov = gridOffsets(p, f, spt) end
+		for k = 0, 1 do
+			local t = Instance.new("Texture"); t.Name = "Grid"; t.Texture = GRID; t.Face = f
+			t.StudsPerTileU = spt; t.StudsPerTileV = spt; t.Color3 = GRID_C; t.Transparency = GRID_T
+			t.OffsetStudsU = ou + k * 0.06; t.OffsetStudsV = ov + k * 0.06; t.Parent = p
+			nTex += 1
+		end
 	end
 end
 local function grime(p)
@@ -381,6 +473,7 @@ local function deco(p) -- non-colliding, never cover, never blocks a shot
 end
 local counts = {}
 for _, it in LAYOUT do
+	if it.kind == "pad" or it.kind == "bin" then continue end     -- extras: built from EXTRAS into Training.Extras (section 6)
 	local k = KIND[it.kind]
 	if not k then say("no kind", it.kind); continue end
 	local folder = ensure(R, GROUP[it.kind])
@@ -409,7 +502,7 @@ for _, it in LAYOUT do
 	p.CastShadow = k[2] ~= M.Neon
 	if k[6] then p:SetAttribute("NotCover", true) end
 	if it.kind == "line" then deco(p) end
-	if k[4] then grid(p) end
+	if k[4] then grid(p, GRID_SPT_BIG[it.kind]) end
 	if it.kind == "crate" then
 		grime(p)
 		-- dark steel straps round the crate (decor)
@@ -531,4 +624,110 @@ for _, s in SPOTS do
 	end
 end
 say("Arrivals", #af:GetChildren(), "TrainingArrive", ta and f3(ta.Position), "EnemySpots", #sf:GetChildren(), "gallery (Gallery=true)", nGal)
+---------------------------------------------------------------- 6. Training extras geometry (step 2): Training.Extras.<Feature>
+-- Read by the step-2 scripts (notes/training_extras_done.md). A feature switched off in Shared.Config.TrainingConfig (or by the
+-- ReplicatedStorage attribute TX_<Feature> = false) has its folder moved to ServerStorage._TrainingExtrasOff by
+-- TrainingExtrasManager at server start, so it leaves nothing behind.
+do
+	local oldEx = T:FindFirstChild("Extras"); if oldEx then oldEx:Destroy() end
+	local EX = Instance.new("Folder"); EX.Name = "Extras"
+	local nEx = {}
+	local function count(k) nEx[k] = (nEx[k] or 0) + 1 end
+	-- jump pads: dark steel plate, olive Neon ring + chevrons; LandAt = world point on the landing surface
+	local PF = ensure(EX, "JumpPads")
+	for i, pd in EXTRAS.pads do
+		local top = FLOOR + pd.y
+		local land = Vector3.new(pd.lx, FLOOR + pd.ly, pd.lz)
+		local c = Vector3.new(pd.x, top + 0.2, pd.z)
+		local flat = Vector3.new(land.X, c.Y, land.Z)
+		local cf = (flat - c).Magnitude > 0.1 and CFrame.lookAt(c, flat) or CFrame.new(c)
+		local base = mk("Part", "JumpPad", Vector3.new(4, 0.4, 4), cf, rgb(48, 48, 46), M.Metal, "TacMetal", PF)
+		base.CanCollide = true; base.CanQuery = true; base.CanTouch = false; base:SetAttribute("NotCover", true)
+		base:SetAttribute("LandAt", land); base:SetAttribute("Apex", 6); base:SetAttribute("PadId", i)
+		CS:AddTag(base, "TrainingJumpPad")
+		for _, e in {{0, 1.75, 4, 0.5}, {0, -1.75, 4, 0.5}, {1.75, 0, 0.5, 3}, {-1.75, 0, 0.5, 3}} do      -- ring
+			local r = mk("Part", "PadRing", Vector3.new(e[3], 0.06, e[4]), cf * CFrame.new(e[1], 0.22, e[2]), rgb(96, 108, 52), M.Neon, "", PF)
+			deco(r); r.CastShadow = false
+		end
+		for _, z in {0.6, -0.4} do                                                                          -- chevrons toward the landing (-Z = look)
+			for _, sgn in {-1, 1} do
+				local a = mk("Part", "PadArrow", Vector3.new(1.3, 0.06, 0.3), cf * CFrame.new(sgn * 0.42, 0.22, z) * CFrame.Angles(0, sgn * math.rad(-40), 0), rgb(180, 177, 166), M.Neon, "", PF)
+				deco(a); a.CastShadow = false
+			end
+		end
+		count("pads")
+	end
+	-- tightropes: visual rope (non-colliding) + invisible 1.2-wide walk box flush with the end surfaces (NotCover)
+	local TF = ensure(EX, "Tightropes")
+	for _, rp in EXTRAS.ropes do
+		local y = FLOOR + rp.y
+		local a, b = Vector3.new(rp.x0, y, rp.z0), Vector3.new(rp.x1, y, rp.z1)
+		local dir = (b - a).Unit
+		local a2, b2 = a - dir, b + dir                                      -- 1 stud into each end surface: no gap at the edge
+		local len, mid = (b2 - a2).Magnitude, (a2 + b2) / 2
+		local down = Vector3.new(0, 0.2, 0)
+		local walk = mk("Part", "RopeWalk", Vector3.new(1.2, 0.4, len), CFrame.lookAt(mid - down, b2 - down), rgb(120, 110, 90), M.Fabric, "", TF)
+		walk.Transparency = 1; walk.CanCollide = true; walk.CanQuery = true; walk.CanTouch = false; walk.CastShadow = false
+		walk:SetAttribute("NotCover", true)
+		local vis = mk("Part", "Rope", Vector3.new(len, 0.45, 0.45), CFrame.lookAt(mid - down, b2 - down) * CFrame.Angles(0, math.rad(90), 0), rgb(200, 186, 150), M.Fabric, "", TF)
+		vis.Shape = Enum.PartType.Cylinder; deco(vis)
+		for _, e in {a, b} do                                                                                -- olive end posts
+			for _, sd in {-1, 1} do
+				local side = dir:Cross(Vector3.yAxis) * sd * 0.9
+				local post = mk("Part", "RopePost", Vector3.new(0.3, 2.2, 0.3), CFrame.new(e + side + Vector3.new(0, 1.1, 0)), OLIVE_BAND, M.Metal, "", TF)
+				deco(post)
+			end
+		end
+		count("ropes")
+	end
+	-- weapon-swap bins: olive weapon crates with an F prompt (Training only: TrainingBinsController / TrainingBinsManager)
+	local BF = ensure(EX, "SwapBins")
+	for _, bn in EXTRAS.bins do
+		local m = Instance.new("Model"); m.Name = "SwapBin"
+		local y = FLOOR + bn.y
+		local at = Vector3.new(bn.x, y + 1.25, bn.z)
+		local face = Vector3.new(0, at.Y, 0) - at
+		local cf = CFrame.lookAt(at, at + (face.Magnitude > 1 and face.Unit or Vector3.xAxis))
+		local body = mk("Part", "Body", Vector3.new(3, 2.5, 3), cf, rgb(65, 94, 56), M.SmoothPlastic, "", m)
+		body.CanCollide = true; body.CanQuery = true; grime(body)
+		local lid = mk("Part", "Lid", Vector3.new(3.2, 0.35, 3.2), cf * CFrame.new(0, 1.42, 0), rgb(48, 48, 46), M.Metal, "TacMetal", m)
+		lid.CanCollide = true; lid.CanQuery = true
+		local stripe = mk("Part", "Stripe", Vector3.new(3.06, 0.3, 3.06), cf * CFrame.new(0, 0.55, 0), rgb(180, 177, 166), M.Neon, "", m)
+		deco(stripe); stripe.CastShadow = false
+		local att = Instance.new("Attachment"); att.Name = "PromptAt"; att.Position = Vector3.new(0, 1.6, 0); att.Parent = body
+		local pr = Instance.new("ProximityPrompt"); pr.Name = "BinPrompt"; pr.ActionText = "Change Weapon"; pr.ObjectText = "Weapon Crate"
+		pr.KeyboardKeyCode = Enum.KeyCode.F; pr.GamepadKeyCode = Enum.KeyCode.ButtonY; pr.HoldDuration = 0; pr.MaxActivationDistance = 8
+		pr.RequiresLineOfSight = false; pr:SetAttribute("TrainingBin", true); pr.Parent = att
+		m:SetAttribute("TrainingBin", true); m.PrimaryPart = body; m.Parent = BF
+		count("bins")
+	end
+	-- DPS dummy spots (1-stud markers, surface + 3, facing the shooter) for TrainingDpsManager
+	local DF = ensure(EX, "DpsDummies")
+	for _, d in EXTRAS.dps do
+		local pos = Vector3.new(d.x, FLOOR + 3, d.z)
+		local cf = d.face == "-x" and CFrame.lookAt(pos, pos - Vector3.xAxis) or CFrame.lookAt(pos, Vector3.new(0, pos.Y, 0))
+		local p = marker("DpsSpot", Vector3.new(1, 1, 1), cf, DF); p:SetAttribute("Zone", d.face == "-x" and "gallery" or "boulevard")
+		count("dps")
+	end
+	-- floating 1-HP bullseyes: the Ball is the hit volume (CanQuery on: the first thing a shot meets wins, so no collaterals),
+	-- the face is a camera-facing BillboardGui (Scale = studs, Scale-only UI rule). TrainingTargetsManager pops / respawns them.
+	local BU = ensure(EX, "Bullseyes")
+	local RINGS = {{1, rgb(196, 40, 40)}, {0.78, rgb(236, 232, 218)}, {0.56, rgb(196, 40, 40)}, {0.34, rgb(236, 232, 218)}, {0.14, rgb(196, 40, 40)}}
+	for i, b in EXTRAS.bulls do
+		local p = Instance.new("Part"); p.Name = "Bullseye"; p.Shape = Enum.PartType.Ball; p.Size = Vector3.new(3, 3, 3)
+		p.Position = Vector3.new(b.x, FLOOR + b.y, b.z); p.Anchored = true; p.Transparency = 1; p.CanCollide = false; p.CanQuery = true
+		p.CanTouch = false; p.CastShadow = false; p:SetAttribute("NotCover", true); CS:AddTag(p, "TrainingTarget")
+		local g = Instance.new("BillboardGui"); g.Name = "Face"; g.Size = UDim2.fromScale(3, 3); g.LightInfluence = 0.25; g.MaxDistance = 400
+		g.Parent = p
+		for _, r in RINGS do
+			local f = Instance.new("Frame"); f.AnchorPoint = Vector2.new(0.5, 0.5); f.Position = UDim2.fromScale(0.5, 0.5)
+			f.Size = UDim2.fromScale(r[1], r[1]); f.BackgroundColor3 = r[2]; f.BorderSizePixel = 0; f.Parent = g
+			local uc = Instance.new("UICorner"); uc.CornerRadius = UDim.new(0.5, 0); uc.Parent = f
+		end
+		p.Parent = BU
+		count("bullseyes")
+	end
+	EX.Parent = T
+	local cs2 = {}; for k, v in nEx do table.insert(cs2, k .. "=" .. v) end; table.sort(cs2); say("Extras", table.concat(cs2, " "))
+end
 return table.concat(log, "\n")
