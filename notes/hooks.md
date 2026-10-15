@@ -49,3 +49,9 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   `Config.MatchPlaceId`. Neither depends on map geometry.
 - Workspace.StreamingEnabled is off, so scripts' streaming-safe tag hooks are not exercised; turning streaming on in the
   rebuild would break the many direct `WaitForChild`/`FindFirstChild` paths above.
+
+## Changes made by the rebuild (keep in sync)
+- 2026-10-15 rooms3_place: `Duels.Pad_1v1_A/B.Holo` moved (-92.8, 24.5, -/+18.75) -> (-100.5, 24.5, -/+18.5) and `PostCollide`
+  (-92.8, 18.4, -/+18.75) -> (-96.6, 18.4, -/+18.5) (hub1 west wall buried them). Originals in attribute `Rooms3_OrigCF`; UNDO via
+  `fix/place_rooms3.lua UNDO`. Holo also steers QueueManager.stepOffCFrame (dir Holo -> zone): re-check landing spots if it moves again.
+- `Exfil.L_Hangar` (114, 15, 0) -> (114, 19, 0). `FX.SparkDuels` untagged LobbySpark (kept in `Rooms3_Tags`).
