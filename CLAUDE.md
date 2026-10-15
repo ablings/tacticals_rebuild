@@ -48,3 +48,7 @@ Started 2026-10-14 on the main PC.
 ## Computer use (Edward, 2026-10-14 23:00)
 - While Edward is on the PC: do NOTHING that needs tabbing into a window (no computer use, no File menu saves, no Import 3D).
   Work through scripts, the Studio MCP and the Blender MCP only; leave saves and imports for Edward or for when he says so.
+
+## Queued (Edward, 2026-10-15)
+- After the rebuild: **remove particle effects that RIVALS doesn't have** (compare RIVALS' lobby ParticleEmitters/Beams/Trails/Fire/
+  Smoke/Sparkles with Tacticals'; hide/disable UNDO-ably, and remove the matching LobbyFX tags so scripts don't re-enable them).
