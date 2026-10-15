@@ -138,3 +138,16 @@ one floor at player height); if the tiling is off, change StudsPerTile, not the 
 - Sky shows through the gate corridors and the tunnel in the previews only because those rooms are not in the Blender scene.
 - Duels hall, energy wall, shop/armory interiors and hangar are not in this pass.
 - Haunch prisms smooth-shade a little round under weighted normals (reads as a rolled haunch); fine at distance.
+
+## Texture upload FBX (for Import 3D under Gunsy Funsy)
+- `kit/hub_r1_tex.fbx` (12.3 MB, textures **embedded**): **16 texture sets**, one 4 x 4-stud quad each named `TX_<name>`, laid in a
+  grid at Studio y 200 (x 200..218, z 0..18), away from the hub. Each quad's Principled material is wired to its images so Import 3D
+  makes a SurfaceAppearance per quad: 7 PBR sets (concrete_smooth, concrete_panels, floor_concrete, corrugated_fine: colour + normal +
+  roughness; corrugated_metal, metal_floorplate, metal_satin: + metalness `hub_metalness_085.png`) and 9 overlay/decal sets (colour
+  only, alpha wired where the PNG has alpha; grate_alpha also carries its normal). All images <= 1024 px.
+- `kit/hub_r1_tex_map.json`: quad name -> files per slot, intended MaterialVariant / Texture use, StudsPerTile, quad position.
+  After import, read each quad's SurfaceAppearance ColorMap/NormalMap/RoughnessMap/MetalnessMap ids, build the MaterialVariants and
+  Texture objects from them, then delete the quads.
+- Verified by re-importing the FBX into a scratch Blender scene (since removed): all 16 quads came back with every map linked and
+  packed at full size. Generator: `tools/hub_tex_fbx.py` (`build()`, `verify()`); quads live in the `TexQuads` collection of
+  hub_kit.blend.

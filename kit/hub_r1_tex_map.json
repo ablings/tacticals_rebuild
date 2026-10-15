@@ -1,0 +1,262 @@
+{
+ "note": "Import kit/hub_r1_tex.fbx with Import 3D (Creator = Gunsy Funsy): each TX_ quad gets a SurfaceAppearance whose ColorMap/NormalMap/RoughnessMap/MetalnessMap asset ids are the uploaded images. Copy those ids into MaterialVariants / Texture objects per 'use', then delete the quads.",
+ "sets": {
+  "TX_concrete_smooth": {
+   "files": {
+    "color": "hub_concrete_smooth_color.png",
+    "normal": "hub_concrete_smooth_normal.png",
+    "roughness": "hub_concrete_smooth_rough.png"
+   },
+   "use": "MaterialVariant 'TacConcrete' (base Concrete) = MaterialService Concrete override; all wall mass, frames, ceilings",
+   "studs_per_tile": 12,
+   "maps": [
+    "color",
+    "normal",
+    "roughness"
+   ],
+   "studio_pos": [
+    200.0,
+    200.0,
+    0.0
+   ]
+  },
+  "TX_concrete_panels": {
+   "files": {
+    "color": "hub_concrete_panels_color.png",
+    "normal": "hub_concrete_panels_normal.png",
+    "roughness": "hub_concrete_panels_rough.png"
+   },
+   "use": "MaterialVariant 'TacConcretePanels' (base Concrete): wall bay plates, door-frame cheeks, cladding",
+   "studs_per_tile": 20,
+   "maps": [
+    "color",
+    "normal",
+    "roughness"
+   ],
+   "studio_pos": [
+    206.0,
+    200.0,
+    0.0
+   ]
+  },
+  "TX_corrugated_metal": {
+   "files": {
+    "color": "hub_corrugated_metal_color.png",
+    "normal": "hub_corrugated_metal_normal.png",
+    "roughness": "hub_corrugated_metal_rough.png",
+    "metalness": "hub_metalness_085.png"
+   },
+   "use": "MaterialVariant 'TacCorrugatedMetal' (base Metal): tunnel cladding, crate panels, upper shell bands, catwalk kick plates",
+   "studs_per_tile": 16,
+   "maps": [
+    "color",
+    "normal",
+    "roughness",
+    "metalness=hub_metalness_085.png"
+   ],
+   "studio_pos": [
+    212.0,
+    200.0,
+    0.0
+   ]
+  },
+  "TX_corrugated_fine": {
+   "files": {
+    "color": "hub_corrugated_fine_color.png",
+    "normal": "hub_corrugated_fine_normal.png",
+    "roughness": "hub_corrugated_fine_rough.png"
+   },
+   "use": "MaterialVariant 'TacRibbed' (base Concrete): upper wall band shells and roof soffit panels (ribs from normal only)",
+   "studs_per_tile": 10,
+   "maps": [
+    "color(flat)",
+    "normal",
+    "roughness"
+   ],
+   "studio_pos": [
+    218.0,
+    200.0,
+    0.0
+   ]
+  },
+  "TX_metal_floorplate": {
+   "files": {
+    "color": "hub_metal_floorplate_color.png",
+    "normal": "hub_metal_floorplate_normal.png",
+    "roughness": "hub_metal_floorplate_rough.png",
+    "metalness": "hub_metalness_085.png"
+   },
+   "use": "MaterialVariant 'TacFloorPlate' (base Metal or DiamondPlate override): centre ring plates, landing, catwalk/bridge decks, door thresholds",
+   "studs_per_tile": 20,
+   "maps": [
+    "color",
+    "normal",
+    "roughness",
+    "metalness=hub_metalness_085.png"
+   ],
+   "studio_pos": [
+    200.0,
+    200.0,
+    6.0
+   ]
+  },
+  "TX_floor_concrete": {
+   "files": {
+    "color": "hub_floor_concrete_color.png",
+    "normal": "hub_floor_concrete_normal.png",
+    "roughness": "hub_floor_concrete_rough.png"
+   },
+   "use": "MaterialVariant 'TacFloorConcrete' (base Concrete, used only on floor slabs): hub floor field and borders (tinted 36-62)",
+   "studs_per_tile": 20,
+   "maps": [
+    "color",
+    "normal",
+    "roughness"
+   ],
+   "studio_pos": [
+    206.0,
+    200.0,
+    6.0
+   ]
+  },
+  "TX_metal_satin": {
+   "files": {
+    "color": "hub_metal_satin_color.png",
+    "normal": "hub_metal_satin_normal.png",
+    "roughness": "hub_metal_satin_rough.png",
+    "metalness": "hub_metalness_085.png"
+   },
+   "use": "MaterialVariant 'TacMetal' (base Metal) = MaterialService Metal override: trims, kerbs, pilaster caps, rails, door leaves",
+   "studs_per_tile": 10,
+   "maps": [
+    "color",
+    "normal",
+    "roughness",
+    "metalness=hub_metalness_085.png"
+   ],
+   "studio_pos": [
+    212.0,
+    200.0,
+    6.0
+   ]
+  },
+  "TX_overlay_panel_lines": {
+   "files": {
+    "color": "hub_overlay_panel_lines.png"
+   },
+   "use": "Texture (Top face), Color3 ~81 grey, Transparency 0 (0.9 as dark overlay): spawn-disc plates, pad floors, landing",
+   "studs_per_tile": "20 x 20",
+   "maps": null,
+   "studio_pos": [
+    218.0,
+    200.0,
+    6.0
+   ]
+  },
+  "TX_overlay_grid": {
+   "files": {
+    "color": "hub_overlay_grid.png"
+   },
+   "use": "Texture, all faces, Transparency 0.75, Color3 black: training range boxes (not used in the hub)",
+   "studs_per_tile": "5 x 5",
+   "maps": null,
+   "studio_pos": [
+    200.0,
+    200.0,
+    12.0
+   ]
+  },
+  "TX_grate_alpha": {
+   "files": {
+    "color": "hub_grate_alpha.png",
+    "normal": "hub_grate_normal.png"
+   },
+   "use": "Texture (Top) on near-black host part, Color3 70-80: drain grates round the spawn disc, catwalk deck insets",
+   "studs_per_tile": "3 x 3",
+   "maps": null,
+   "studio_pos": [
+    206.0,
+    200.0,
+    12.0
+   ]
+  },
+  "TX_trim_strip": {
+   "files": {
+    "color": "hub_trim_strip.png"
+   },
+   "use": "Texture (front faces), Color3 59-81 grey: door reveals, the 2x4 display-wall role, panel strip above the olive band",
+   "studs_per_tile": "8 x 1",
+   "maps": null,
+   "studio_pos": [
+    212.0,
+    200.0,
+    12.0
+   ]
+  },
+  "TX_grime_overlay": {
+   "files": {
+    "color": "hub_grime_overlay.png"
+   },
+   "use": "Texture, Color3 black, Transparency 0.92-0.95: lower wall kick zones and props only (never on bands or floors)",
+   "studs_per_tile": 4,
+   "maps": null,
+   "studio_pos": [
+    218.0,
+    200.0,
+    12.0
+   ]
+  },
+  "TX_hazard_stripe": {
+   "files": {
+    "color": "hub_hazard_stripe.png"
+   },
+   "use": "Texture (Top/front), Color3 white: pad edges, lift edges, kerb faces at the riser, KEEP CLEAR zones (cream on near-black)",
+   "studs_per_tile": "4 x 1",
+   "maps": null,
+   "studio_pos": [
+    200.0,
+    200.0,
+    18.0
+   ]
+  },
+  "TX_lane_marking": {
+   "files": {
+    "color": "hub_lane_marking.png"
+   },
+   "use": "Texture/Decal (Top), Color3 cream 236,232,218 at 0.2 transp.: runway lane marking along walkways into each gate (edge lines + dashes)",
+   "studs_per_tile": "16 x 4",
+   "maps": null,
+   "studio_pos": [
+    206.0,
+    200.0,
+    18.0
+   ]
+  },
+  "TX_chevron": {
+   "files": {
+    "color": "hub_chevron.png"
+   },
+   "use": "Decal (Top), cream: direction chevrons toward gates",
+   "studs_per_tile": "decal 4 x 4",
+   "maps": null,
+   "studio_pos": [
+    212.0,
+    200.0,
+    18.0
+   ]
+  },
+  "TX_louvre": {
+   "files": {
+    "color": "hub_louvre.png"
+   },
+   "use": "Texture (Bottom) on Neon ceiling strips, Color3 black, Transparency 0.5",
+   "studs_per_tile": "0.6 x 1",
+   "maps": null,
+   "studio_pos": [
+    218.0,
+    200.0,
+    18.0
+   ]
+  }
+ }
+}
