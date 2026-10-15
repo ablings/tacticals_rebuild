@@ -266,7 +266,7 @@ local KIND = {
 	line    = {rgb(96, 108, 52), M.Neon, "", false, false, true, "Line"},
 }
 local GFLOOR_TONE = {[0] = warm(167, 173, 152), [1] = warm(196, 192, 182), [2] = warm(150, 152, 146)}
-local LINE_TONE = {olive = rgb(96, 108, 52), cream = rgb(180, 177, 166)}
+local LINE_TONE = {olive = rgb(70, 78, 38), cream = rgb(180, 177, 166)}   -- olive Neon: 96,108,52 read lime under Future
 -- which folder each kind goes to inside Range2
 local GROUP = {floor = "Floor", gfloor = "Gallery", wall = "Shell", ceiling = "Shell", plaza = "Plaza", block = "Blocks", bastion = "Blocks",
 	tower = "Towers", tall = "Cover", pillar = "Cover", low = "Cover", block4 = "Cover", counter = "Gallery", crate = "Cover",

@@ -55,3 +55,10 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   (-92.8, 18.4, -/+18.75) -> (-96.6, 18.4, -/+18.5) (hub1 west wall buried them). Originals in attribute `Rooms3_OrigCF`; UNDO via
   `fix/place_rooms3.lua UNDO`. Holo also steers QueueManager.stepOffCFrame (dir Holo -> zone): re-check landing spots if it moves again.
 - `Exfil.L_Hangar` (114, 15, 0) -> (114, 19, 0). `FX.SparkDuels` untagged LobbySpark (kept in `Rooms3_Tags`).
+- 2026-10-15 place_training (notes/training_build.md): the new room is in `Training.Range2`. The old Arena and its 12 lights are
+  hidden (Training_* attributes; the lights are untagged RoomLight). `Training.Arrivals` (16 on a ring round (0,600,0)) and
+  `Training.EnemySpots` (44; 16 `GallerySpot` with `Gallery = true`, `Distance`, `Lane`) are new folders. The originals are in
+  `ServerStorage._RebuildRemoved.Training_*_Old`. `TrainingArrive` moved (-10.05,603.2,-110) -> (0,603.3,0) facing +x (original in
+  `Training_OrigCF`). There are 19 new RoomLight Training lights. UNDO via `fix/place_training.lua UNDO`.
+- 2026-10-15 place_showroom: the kit is in `Showroom.Rooms4`. The old `U_Showroom__*` meshes and `Showroom.Sign` are hidden
+  (Rooms4_* attributes). The hook parts are untouched; the kit table moved +0.2 to BenchTop's real top (404.4).
