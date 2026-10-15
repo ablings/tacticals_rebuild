@@ -52,3 +52,8 @@ Started 2026-10-14 on the main PC.
 ## Queued (Edward, 2026-10-15)
 - After the rebuild: **remove particle effects that RIVALS doesn't have** (compare RIVALS' lobby ParticleEmitters/Beams/Trails/Fire/
   Smoke/Sparkles with Tacticals'; hide/disable UNDO-ably, and remove the matching LobbyFX tags so scripts don't re-enable them).
+  RIVALS inventory (read 2026-10-15): 388 ParticleEmitters + 94 Beams, all attached to a purpose: dummy-head hit FX (Training), queue
+  holograms, featured weapon/bundle display sparkles, jump shards, lamp light beams, tightrope beams, one vent VFX. **No ambient
+  particles** (no air dust/motes, drifting specks, steam, random sparks). Rule: keep purpose-bound FX (queue pads/holograms, featured
+  displays, dummy hits, lamp/beam light shafts, Training extras); remove ambient ones (the floating white specks, motes, steam, sparks,
+  drifting particles in the hub/rooms/hangar).
