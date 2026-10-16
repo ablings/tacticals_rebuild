@@ -371,3 +371,13 @@ Aligned to `notes/ui_match_hud.md`. **Its names are kept.** The match place's ex
 7. **Restyle the Warehouse** to the Tacticals palette now (phase 4), or keep it as the match place has it?
 8. **Is the ~100 invisible-part collision shell per live match** acceptable as "no lobby lag" (see the risks)?
 9. **The match place gets the same vote + loadout flow** through MatchCore: OK to change its RoundManager in a later pass (backups kept)?
+
+## Edward 2026-10-16 (after the design)
+- **Maps are data-driven.** The Warehouse/"Garage" is a blueprint for *mechanics* only; every future map has its own layout and
+  size. Nothing may hard-code Warehouse geometry. A map registry `ReplicatedStorage.DuelMaps.<MapId>` (MapInfo: name, image,
+  Modes, spawns per team, bounds, visual vs collision folders, slot footprint) drives loading, slots, spawns and the vote list.
+- **The Warehouse is 1v1 only** (its size suits 1v1; 2v2/3v3 get their own maps or versions later). MapList is filtered by mode. A pad whose
+  mode has no eligible map gets `NoMap = true` and doesn't count down; the UI shows "no maps yet".
+- Lead defaults for the open questions: casual only; rewards like a casual online match capped at once per opponent pair per 10 min;
+  leaving counts as a loss; vote shows Warehouse + Random; 6 arenas max; spectate from the TV and a pad prompt, with the spectator's character
+  staying in the lobby; restyle later; the collision shell is OK (Edward: "yes"); MatchCore in the match place later.
