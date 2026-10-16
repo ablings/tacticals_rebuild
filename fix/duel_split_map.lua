@@ -1,0 +1,212 @@
+-- duel_split_map.lua : lobby duels map registry. Builds every map in MAPS from its ported source
+-- (ServerStorage._DuelSource.<Id>, made by tools/duel_map_port.py from the match place) into two layers + a MapInfo module:
+--   ReplicatedStorage.DuelMaps.<Id>            Folder (attrs DisplayName, Image, Modes)
+--     MapInfo   ModuleScript   the registry entry (generated, see below); read by MapRegistry on server and client
+--     Visual    Model          the whole map, nothing collides / queries / touches, no prompts. Client-only clone (ArenaLoader).
+--     Lighting  Configuration  Lighting property attributes + effect children (Atmosphere / Bloom / ColorCorrection)
+--   ServerStorage.DuelMaps.<Id>.Solid  Model   only the parts that collide / query / touch, invisible, no shadows, no
+--     lights / SurfaceAppearances / GUIs / prompts; + Spawns (A1.., B1.. markers).
+-- Both layers are re-centred so the template origin (0,0,0) = the middle of the map's footprint at floor level;
+-- an arena is placed with Model:PivotTo(CFrame.new(slotOrigin)). Every part with a twin in the other layer has SolidId = n.
+-- Nothing here assumes one map's geometry: footprint, floor, spawns and modes all come from MAPS + the source model.
+-- Lobby duels phase 1 (2026-10-16). Idempotent (rebuilds the outputs). Tacticals_rebuild.rbxl only (studio 8ef4e21a).
+-- UNDO: python tools/run_luau.py fix/duel_split_map.lua UNDO  (removes the outputs; the _DuelSource stays)
+local UNDO = false --@UNDO
+
+-- One entry per map. Model = the map model inside the source folder; Spawns = team -> list of marker paths (inside the
+-- source folder); a team with one marker and several players lines teammates up beside it (SpawnSpacing studs).
+-- Modes = which pad modes may play this map (Edward 2026-10-16: the Warehouse suits 1v1 only).
+local MAPS = {
+	Warehouse = {
+		DisplayName = "Warehouse",
+		Image = "", -- ui/art/map_warehouse.png once uploaded (needs Edward's OK)
+		Modes = { "1v1" },
+		Model = "Warehouse",
+		Spawns = { A = { "MatchSpawns.SpawnA" }, B = { "MatchSpawns.SpawnB" } },
+		SpawnSpacing = 4,
+		-- dynamic pieces: phase 2 (ArenaDoors / ArenaShootables); listed so the loader can follow their Solid twins
+		Dynamic = { "Interactive" },
+		Lighting = {
+			props = { Brightness = 2, ClockTime = 13, Ambient = Color3.fromRGB(72, 76, 84), OutdoorAmbient = Color3.fromRGB(78, 82, 90),
+				ExposureCompensation = -0.1, EnvironmentDiffuseScale = 0.5, EnvironmentSpecularScale = 0.08, ShadowSoftness = 0.12,
+				ColorShift_Top = Color3.new(0, 0, 0), ColorShift_Bottom = Color3.new(0, 0, 0) },
+			effects = {
+				{ "Atmosphere", { Density = 0.38, Offset = 0.1, Color = Color3.fromRGB(60, 62, 70), Decay = Color3.fromRGB(20, 20, 26), Glare = 0, Haze = 1.4 } },
+				{ "BloomEffect", { Intensity = 0.2, Size = 20, Threshold = 2.4 } },
+				{ "ColorCorrectionEffect", { Brightness = 0, Contrast = 0.28, Saturation = -0.15, TintColor = Color3.fromRGB(236, 240, 255) } },
+			},
+		},
+	},
+}
+
+local RS, SS = game:GetService("ReplicatedStorage"), game:GetService("ServerStorage")
+local log = {}
+local function say(...) local t = {} for _, v in ipairs({ ... }) do table.insert(t, tostring(v)) end table.insert(log, table.concat(t, " ")) end
+local function at(root, path) local o = root; for p in path:gmatch("[^%.]+") do o = o and o:FindFirstChild(p) end return o end
+
+local function folder(parent, name)
+	local f = parent:FindFirstChild(name) or Instance.new("Folder")
+	f.Name = name; f.Parent = parent
+	return f
+end
+
+if UNDO then
+	for id in MAPS do
+		local a = RS:FindFirstChild("DuelMaps") and RS.DuelMaps:FindFirstChild(id)
+		local b = SS:FindFirstChild("DuelMaps") and SS.DuelMaps:FindFirstChild(id)
+		if a then a:Destroy() end
+		if b then b:Destroy() end
+		say(id, "layers removed")
+	end
+	for _, f in { RS:FindFirstChild("DuelMaps"), SS:FindFirstChild("DuelMaps") } do
+		if f and #f:GetChildren() == 0 then f:Destroy() end
+	end
+	return table.concat(log, "\n")
+end
+
+local function v3(v) return string.format("Vector3.new(%.3f, %.3f, %.3f)", v.X, v.Y, v.Z) end
+
+for id, cfg in MAPS do
+	local src = SS:FindFirstChild("_DuelSource") and SS._DuelSource:FindFirstChild(id)
+	local model = src and src:FindFirstChild(cfg.Model)
+	if not model then say(id, "SKIPPED: no ServerStorage._DuelSource." .. id .. "." .. cfg.Model .. " (run tools/duel_map_port.py)"); continue end
+
+	-- template origin: footprint centre, floor = lowest spawn marker bottom
+	local bbCF, bbSize = model:GetBoundingBox()
+	local floorY = math.huge
+	local spawnMarkers = {}
+	for team, paths in cfg.Spawns do
+		spawnMarkers[team] = {}
+		for _, p in paths do
+			local m = at(src, p)
+			if m then
+				-- floor under the marker = the highest colliding part top below it (the source is in ServerStorage: no raycasts)
+				local best = m.Position.Y - m.Size.Y / 2
+				local top = -math.huge
+				for _, d in model:GetDescendants() do
+					if d:IsA("BasePart") and d.CanCollide then
+						local rel = d.CFrame:PointToObjectSpace(m.Position)
+						local h = d.Size / 2
+						local t = d.Position.Y + h.Y
+						if math.abs(rel.X) <= h.X and math.abs(rel.Z) <= h.Z and t <= m.Position.Y + 0.5 and t > top then top = t end
+					end
+				end
+				if top > -math.huge then best = top end
+				floorY = math.min(floorY, best)
+				table.insert(spawnMarkers[team], m)
+			else say(id, "WARN spawn marker missing:", p) end
+		end
+	end
+	if floorY == math.huge then floorY = bbCF.Position.Y - bbSize.Y / 2 end
+	local origin = Vector3.new(bbCF.Position.X, floorY, bbCF.Position.Z)
+	local shift = CFrame.new(-origin)
+
+	-- work copy: give every BasePart a SolidId if it will have a Solid twin
+	local work = model:Clone()
+	local nSolid = 0
+	for _, d in work:GetDescendants() do
+		if d:IsA("BasePart") and (d.CanCollide or d.CanQuery or d.CanTouch) then nSolid += 1; d:SetAttribute("SolidId", nSolid) end
+	end
+	work:PivotTo(shift * work:GetPivot())
+
+	-- Visual layer
+	local visual = work:Clone()
+	visual.Name = "Visual"
+	for _, d in visual:GetDescendants() do
+		if d:IsA("BasePart") then d.CanCollide = false; d.CanQuery = false; d.CanTouch = false; d.Anchored = true
+		elseif d:IsA("ProximityPrompt") then d:Destroy() end
+	end
+
+	-- Solid layer
+	local solid = work:Clone()
+	solid.Name = "Solid"
+	local drop = {}
+	for _, d in solid:GetDescendants() do
+		if d:IsA("BasePart") then
+			if d:GetAttribute("SolidId") then
+				d.Transparency = 1; d.CastShadow = false; d.Anchored = true
+			else table.insert(drop, d) end
+		elseif not (d:IsA("Model") or d:IsA("Folder")) then
+			table.insert(drop, d)
+		end
+	end
+	for _, d in drop do
+		if d.Parent then
+			for _, c in d:GetChildren() do if c:IsA("BasePart") or c:IsA("Model") or c:IsA("Folder") then c.Parent = d.Parent end end
+			d:Destroy()
+		end
+	end
+	local pruned = true
+	while pruned do
+		pruned = false
+		for _, d in solid:GetDescendants() do
+			if (d:IsA("Model") or d:IsA("Folder")) and #d:GetChildren() == 0 then d:Destroy(); pruned = true end
+		end
+	end
+	-- spawns (waiting / dead players stand in the slot's Hold, made by LobbyDuelManager, not in the map)
+	local spawns = Instance.new("Folder"); spawns.Name = "Spawns"; spawns.Parent = solid
+	for team, list in spawnMarkers do
+		for i, m in list do
+			local s = Instance.new("Part")
+			s.Name = team .. i; s.Size = Vector3.new(2, 0.2, 2); s.Transparency = 1; s.Anchored = true
+			s.CanCollide = false; s.CanQuery = false; s.CanTouch = false; s.CastShadow = false
+			local cf = shift * m.CFrame
+			s.CFrame = cf - Vector3.new(0, cf.Position.Y - 0.1, 0)
+			s:SetAttribute("Team", team); s:SetAttribute("Index", i)
+			s.Parent = spawns
+		end
+	end
+	solid.WorldPivot = CFrame.new()
+	visual.WorldPivot = CFrame.new()
+
+	-- outputs
+	local rsMaps, ssMaps = folder(RS, "DuelMaps"), folder(SS, "DuelMaps")
+	local old = rsMaps:FindFirstChild(id); if old then old:Destroy() end
+	old = ssMaps:FindFirstChild(id); if old then old:Destroy() end
+	local entry = Instance.new("Folder"); entry.Name = id
+	entry:SetAttribute("DisplayName", cfg.DisplayName); entry:SetAttribute("Image", cfg.Image)
+	entry:SetAttribute("Modes", table.concat(cfg.Modes, ","))
+	visual.Parent = entry
+	local light = Instance.new("Configuration"); light.Name = "Lighting"
+	for k, v in cfg.Lighting.props do light:SetAttribute(k, v) end
+	for _, e in cfg.Lighting.effects do
+		local fx = Instance.new(e[1]); fx.Name = "Duel" .. e[1]
+		for k, v in e[2] do fx[k] = v end
+		fx.Parent = light
+	end
+	light.Parent = entry
+	local _, vSize = visual:GetBoundingBox()
+	local modes = {}
+	for _, m in cfg.Modes do table.insert(modes, string.format("%q", m)) end
+	local dyn = {}
+	for _, m in cfg.Dynamic or {} do table.insert(dyn, string.format("%q", m)) end
+	local info = Instance.new("ModuleScript"); info.Name = "MapInfo"
+	info.Source = table.concat({
+		"-- MapInfo: lobby duels map registry entry, GENERATED by fix/duel_split_map.lua (edit MAPS there and re-run, not this).",
+		"-- Template origin (0,0,0) = footprint centre at floor level. Size = the map's bounding box.",
+		"return {",
+		string.format("\tId = %q,", id),
+		string.format("\tDisplayName = %q,", cfg.DisplayName),
+		string.format("\tImage = %q,", cfg.Image),
+		"\tModes = { " .. table.concat(modes, ", ") .. " },",
+		"\tSize = " .. v3(vSize) .. ",",
+		"\tSpawnSpacing = " .. (cfg.SpawnSpacing or 4) .. ",",
+		"\tKillDepth = 30,",
+		"\tWorkspaceName = " .. string.format("%q", cfg.Model) .. ",",
+		"\tDynamic = { " .. table.concat(dyn, ", ") .. " },",
+		"\tSourceOrigin = " .. v3(origin) .. ",",
+		"}",
+	}, "\n")
+	info.Parent = entry
+	entry.Parent = rsMaps
+	local sEntry = Instance.new("Folder"); sEntry.Name = id
+	solid.Parent = sEntry
+	sEntry.Parent = ssMaps
+	work:Destroy()
+	local nv, ns = 0, 0
+	for _, d in visual:GetDescendants() do if d:IsA("BasePart") then nv += 1 end end
+	for _, d in solid:GetDescendants() do if d:IsA("BasePart") then ns += 1 end end
+	say(id, "visual parts", nv, "instances", #visual:GetDescendants(), "| solid parts", ns, "instances", #solid:GetDescendants(),
+		"| size", vSize, "| origin", origin, "| modes", table.concat(cfg.Modes, ","))
+end
+return table.concat(log, "\n")

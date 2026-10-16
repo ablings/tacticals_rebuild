@@ -147,3 +147,15 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   UH-60 kit (Edward 2026-10-16)` ... `-- [/EXFIL]` block with the POSE block; fade now waits `LIFT_T` = 2.9 s (was 2.6), fade length / jump / CabinPoint /
   Training entry unchanged. Backup `ServerStorage._RebuildRemoved.ExfilFX_Orig` (Disabled). If the heli, CabinPoint or the pad change, re-tune the POSE
   numbers in `fix/exfil_lift.lua`, re-run it, and `check_heli.lua` must give RESULT fails 0. UNDO via `fix/exfil_lift.lua UNDO`.
+- 2026-10-16 lobby_duels phase 1 (notes/lobby_duels_phase1.md): **in-lobby pad duels**. New: `ReplicatedStorage.DuelMaps.<MapId>` (map registry:
+  `MapInfo`, `Visual`, `Lighting`), `ServerStorage.DuelMaps.<MapId>.Solid`, `ServerStorage._DuelSource.Warehouse` (the script-ported match-place
+  Warehouse + MatchSpawns), `MaterialService.DuelMaps_Warehouse` (WH_Floor variant), modules `Modules.Shared.MapRegistry` / `MatchState`,
+  `ServerScriptService.Shared.MatchCore`, `Managers.LobbyDuelManager`, `StarterPlayerScripts.ArenaLoader`. `Modules.Shared.Config.MatchConfig`
+  **replaced** by the match place's superset + duel keys (`PadDuelsInLobby` etc.). Runtime (made at server start): `ReplicatedStorage.LobbyDuels`,
+  `ReplicatedStorage.MatchFlow`, `Events.Match.MatchAnnounce/MatchResults`, `Workspace.DuelArenas`; pad Models get `NoMap` / `NoMapText`.
+  **[DUEL] source edits** (backups `ServerStorage._RebuildRemoved.DUEL_<name>_Orig`): TrainingGate.On (+InDuel), TrainingManager (no strip/hangar/entry
+  while InDuel), LobbyFallCatch, CombatManager / MeleeManager / GadgetManager (per-match CombatEnabled / InfiniteAmmo via MatchState, same-match
+  damage guard, no friendly fire, LastHitZone / LastAttackKind, kit for InDuel), QueueManager (duelHandoff at countdown end, NoMap pads never count
+  down, duelists never hold a pad, JoinPad/QuickJoin refuse duelists, snapshot `duelWait` / `noMap`, Studio `DuelTestSolo`). Player attrs used:
+  DuelMatch, InDuel, Alive, LoadoutReady, OwnedItems, MatchDeaths. Arenas live at x >= 4000, y 100 (holds at y 40): nothing of the lobby may be
+  built there. UNDO via `fix/lobby_duels_install.lua UNDO`, then `fix/duel_split_map.lua UNDO`.

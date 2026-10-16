@@ -1,6 +1,46 @@
 # Lobby duels: design (in-lobby pad matches on the Warehouse)
 
-Status: design only, **nothing built**. The facts behind it are in `notes/lobby_duels_survey.md`. The UI side is in `notes/ui_match_hud.md` (UI session).
+Status: **phase 1 built 2026-10-16** (see `notes/lobby_duels_phase1.md`; what differs from this design is in §0 below). The facts behind it
+are in `notes/lobby_duels_survey.md`. The UI side is in `notes/ui_match_hud.md` (UI session); UI asks in `notes/lobby_duels_ui_requests.md`.
+
+## 0. Changes since the design (2026-10-16)
+
+### Map registry (Edward via the lead: the Warehouse is a blueprint for MECHANICS, not for layout)
+Every future map has its own layout and size, so **no duel code assumes Warehouse geometry, names or dimensions**.
+- `ReplicatedStorage.DuelMaps.<MapId>` (Folder, attrs `DisplayName`, `Image`, `Modes` "1v1,..."):
+  - `MapInfo` (ModuleScript, generated): `Id, DisplayName, Image, Modes = {...}, Size (bounding box), SpawnSpacing, KillDepth,
+    WorkspaceName (name of the client clone), Dynamic (folders whose parts follow their Solid twin, phase 2), SourceOrigin`.
+  - `Visual` (Model, client clone), `Lighting` (Configuration: Lighting attrs + effect children).
+- `ServerStorage.DuelMaps.<MapId>.Solid` (Model): the collision shell + `Spawns` (`A1, A2.., B1..` markers; a team with one marker lines
+  teammates up beside it, `SpawnSpacing` apart).
+- Both layers are re-centred on build: template origin (0,0,0) = footprint centre at floor level, so an arena is placed with
+  `PivotTo(CFrame.new(slotOrigin))` and never needs the old `TemplatePivot`.
+- `MapRegistry` (`ReplicatedStorage.Modules.Shared.MapRegistry`): `List / Get / ForMode(mode) / HasMode(mode) / SlotSpacing()`.
+  The vote list, the loader, the slot allocator and the spawn logic read only this. Slot spacing = max(1000, biggest footprint + 700).
+- Built by `fix/duel_split_map.lua` from `ServerStorage._DuelSource.<MapId>`; one `MAPS` entry per map (model name, spawn marker paths,
+  modes, lighting values). Porting a map from the match place is `tools/duel_map_port.py` (script serialisation, no clipboard).
+- The dead/waiting "Bench" is no longer part of a map: LobbyDuelManager makes a `Hold` floor per slot (60 under the slot origin).
+
+### Modes per map
+- The **Warehouse is 1v1 only** (`Modes = {"1v1"}`): its size suits 1v1; 2v2 / 3v3 get their own maps later.
+- MapVote's `MapList` = maps whose `Modes` include the match mode; "Random" picks among those.
+- A pad mode with **no eligible map never starts an in-lobby match**: the pad stays a queue but doesn't count down. LobbyDuelManager
+  sets `NoMap = true` + `NoMapText = "No maps yet for 2v2"` on the pad Model; QueueManager's `bayIsFull` [DUEL] returns false for it and
+  the `QueueState` rows carry `noMap`. PadUI shows "NO 2V2 MAPS YET" (UI session, deploy 16).
+
+### Entry point name
+- The hand-off is **`LobbyDuelManager.StartMatch(pad, mode, teams)`**, not `Start(...)` as in §4/§7: ModuleLoader calls every
+  manager's `.Start()` at boot, so a gameplay `Start` collides with it.
+
+### Lead defaults on the open questions (§9) - Edward may change any of them
+1. Rewards: XP + scissors + gun XP + stats exactly as a casual online match (`MatchConfig.Rewards`), but **at most one reward per opponent
+   pair per 10 minutes** (`DuelRewardCooldown = 600`, per lobby server; the summary carries `RewardCooldown = true` when skipped).
+2. Pad duels are **casual only, never ranked** (`DuelRanked = false`).
+3. Leaving mid-match = a **loss for the leaver (no rewards) and a win for the other side** (forfeit).
+4. The vote shows **Warehouse + Random** (eligible maps + Random).
+5. **Up to 6 concurrent arenas** (`MaxArenas = 6`; the allocator is written for N).
+6. Spectate (phase 3) from **both** the Duels TV and a pad prompt; the spectator's character **stays in the lobby**.
+7. Restyle the Warehouse later. 8. The collision shell is acceptable. 9. MatchCore in the match place comes later (phase 4).
 
 Edward's request:
 - The duel **pads** (QueueManager, 6 pads: 1v1/2v2/3v3) run the whole match **inside the lobby server**, with no teleport, on a port
