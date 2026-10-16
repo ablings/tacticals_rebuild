@@ -55,7 +55,8 @@ end
 -- one value, cleaned; nil if it isn't valid for that row
 local function clean(row, v)
 	if row.kind == "toggle" then
-		return type(v) == "boolean" and v or nil
+		if type(v) == "boolean" then return v end -- (not `and v or nil`: that turned a saved OFF into the default)
+		return nil
 	elseif row.kind == "slider" then
 		if type(v) ~= "number" or v ~= v then return nil end
 		return math.clamp(v, row.min, row.max)

@@ -120,9 +120,15 @@ local function allCharacters(): {Instance}
 end
 
 -- [SET] lobby duels: the arena's collision shell (workspace.DuelArenas.<matchId>) has big CanCollide blockers that raycasts
--- can't see (CanQuery false, e.g. OutOfBounds at the doors), so the camera tests those boxes itself. Hold / FX are skipped.
+-- can't see (CanQuery false, e.g. OutOfBounds at the doors), so the camera tests those boxes itself. Hold / FX / Props are
+-- skipped. The match place does the same for its native map.
 local arenaBlockers, arenaBlockersFor = {}, nil
 local function duelArena(): Instance?
+	-- match place: the map sits natively in Workspace (same Warehouse build, same OutOfBounds blockers)
+	if not workspace:FindFirstChild("LobbyMap") then
+		for _, c in workspace:GetChildren() do if c:GetAttribute("DuelArena") ~= nil then return c end end
+		return workspace:FindFirstChild("Warehouse")
+	end
 	local id = Players.LocalPlayer:GetAttribute("DuelMatch") or Players.LocalPlayer:GetAttribute("DuelSpectate")
 	if not id or not (Players.LocalPlayer:GetAttribute("InDuel") or Players.LocalPlayer:GetAttribute("DuelSpectate")) then return nil end
 	local arenas = workspace:FindFirstChild("DuelArenas")
@@ -134,7 +140,7 @@ local function refreshArenaBlockers()
 	arenaBlockersFor, arenaBlockers = arena, {}
 	if not arena then return end
 	for _, p in arena:GetDescendants() do
-		if p:IsA("BasePart") and p.CanCollide and not p.CanQuery and not p:FindFirstAncestor("Hold") and not p:FindFirstAncestor("FX") then
+		if p:IsA("BasePart") and p.CanCollide and not p.CanQuery and not p:FindFirstAncestor("Hold") and not p:FindFirstAncestor("FX") and not p:FindFirstAncestor("Props") then
 			local sz = p.Size
 			local big = math.max(sz.X, sz.Y, sz.Z)
 			local mid = sz.X + sz.Y + sz.Z - big - math.min(sz.X, sz.Y, sz.Z)

@@ -284,6 +284,7 @@ local function showResults(sum)
 	if sum.Scissors then table.insert(bits, "+" .. sum.Scissors .. " scissors") end
 	if sum.RatingChange then table.insert(bits, (sum.RatingChange >= 0 and "+" or "") .. sum.RatingChange .. " SR") end
 	resRewards.Text = table.concat(bits, "   ")
+	if sum.TestMatch or sum.Aborted then resRewards.Text = sum.Aborted and "Match ended early: no rewards" or "Test match: no rewards" end
 	results.Visible = true
 end
 

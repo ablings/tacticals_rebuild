@@ -25,6 +25,7 @@ FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
+    ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),  # same file in both places; QuickIntro only in the match place
 ]
 
 
@@ -72,10 +73,13 @@ MATCH_FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
     ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
+    ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),
 ]
 MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory")]
+# old pass-38 match HUD pieces that DuelHUD / MatchFlowUI replace (see the file)
+MATCH_PATCHES = [open(os.path.join(HERE, 'matchplace', 'match_patches.lua'), encoding='utf-8').read()]
 if '--match' in sys.argv:
-    FILES, SET_FILES, PATCHES = MATCH_FILES, MATCH_SET_FILES, []
+    FILES, SET_FILES, PATCHES = MATCH_FILES, MATCH_SET_FILES, MATCH_PATCHES
 
 
 def long_string(s):
