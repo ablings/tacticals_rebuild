@@ -819,6 +819,21 @@ LobbyUI.OpenSettings = openSettings
 -- Full-screen RIVALS-style Tasks layout (ReplicatedStorage.UIKit.MissionsScreen) over the real quests.
 local MissionsScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("MissionsScreen"))
 local PlayScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("PlayScreen"))
+local CodesScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("CodesScreen"))
+local codesReady = false
+local function openCodes(initOnly)
+	if not codesReady then
+		codesReady = true
+		CodesScreen.Init({
+			ask = function(action, ...) local ok, r = pcall(Request.InvokeServer, Request, action, ...) return ok and r end,
+			getData = function() return data end,
+			onOpen = function() if gui then gui.Enabled = false end end,
+			onClose = function() if gui then gui.Enabled = true end end,
+		})
+	end
+	if initOnly then return end
+	if CodesScreen.IsOpen() then CodesScreen.Close() else CodesScreen.Open() end
+end
 local Tooltip = require(script:WaitForChild("Tooltip"))
 local missionsReady = false
 local function openMissions(initOnly)
@@ -977,6 +992,7 @@ local function prewarmMenus()
 	pcall(openMissions, true)
 	pcall(openPlay, true)
 	pcall(openShop, nil, true)
+	pcall(openCodes, true)
 	local list = {}
 	local function add(root)
 		if not root then return end
@@ -987,7 +1003,7 @@ local function prewarmMenus()
 			end
 		end
 	end
-	for _, name in { "ShopUI2", "MissionsUI", "PlayUI", "SettingsUI", "PracticeSettings" } do add(player.PlayerGui:FindFirstChild(name)) end
+	for _, name in { "ShopUI2", "MissionsUI", "PlayUI", "SettingsUI", "CodesUI" } do add(player.PlayerGui:FindFirstChild(name)) end
 	add(ReplicatedStorage:FindFirstChild("Repository"))
 	add(ReplicatedStorage:FindFirstChild("UIIcons"))
 	pcall(function() game:GetService("ContentProvider"):PreloadAsync(list) end)
@@ -1001,6 +1017,7 @@ local function closeScreens(keep)
 	if keep ~= "Missions" and MissionsScreen.IsOpen() then MissionsScreen.Close() end
 	if keep ~= "Settings" and SettingsScreen.IsOpen and SettingsScreen.IsOpen() then SettingsScreen.Close() end
 	if keep ~= "Shop" and Shop.IsOpen and Shop.IsOpen() then Shop.Close() end
+	if keep ~= "Codes" and CodesScreen.IsOpen() then CodesScreen.Close() end
 end
 LobbyUI.CloseScreens = closeScreens
 
@@ -1028,6 +1045,12 @@ function LobbyUI.Open(id: string)
 		LobbyUI.Close()
 		Shop.Close()
 		whenReady(openPlay)
+		return
+	end
+	if id == "Codes" then -- CODES is full-screen too (UIKit.CodesScreen, UI session 2026-10-16)
+		LobbyUI.Close()
+		Shop.Close()
+		whenReady(openCodes)
 		return
 	end
 	if id == "Missions" or id == "Quests" then -- MISSIONS is full-screen too (UIKit.MissionsScreen)

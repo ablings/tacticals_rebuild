@@ -12,6 +12,7 @@ FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyUIController", "ModuleScript", "lobby/LobbyUIController.lua"),
     ("ServerScriptService", "PublicStats", "Script", "hud/PublicStats.server.lua"),
     ("ReplicatedStorage.UIKit", "PlayScreen", "ModuleScript", "play/PlayScreen.lua"),
+    ("ReplicatedStorage.UIKit", "CodesScreen", "ModuleScript", "lobby/CodesScreen.lua"),
     ("ReplicatedStorage.UIKit", "Tac", "ModuleScript", "lobby/Tac.lua"),
     ("ReplicatedStorage.UIKit", "Kit", "ModuleScript", "lobby/Kit.lua"),
     ("ReplicatedStorage.UIKit", "ShopScreen", "ModuleScript", "shop/ShopScreen.lua"),

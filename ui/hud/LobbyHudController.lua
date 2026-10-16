@@ -14,6 +14,7 @@ local RunService = game:GetService("RunService")
 
 local LobbyHud = {}
 local buildCorner
+local resetNav = function() end
 
 local UIKit = ReplicatedStorage:WaitForChild("UIKit")
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -345,6 +346,8 @@ function LobbyHud.Start()
 		n.vp = Icons.Viewport(n.holder, n.it.Build(), { view = n.it.View, zoom = n.it.Zoom * 1.12 })
 	end
 	Icons.Viewport(clipHolder, Icons.Clipboard(), { view = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), zoom = 1.1 })
+	local navResets = {}
+	function resetNav() for _, f in navResets do f() end end
 	for _, n in navButtons do
 		local base = n.b.Position
 		local function away() return root:GetAttribute("PushedAway") == true end -- a menu is open: no hover (RIVALS)
@@ -379,6 +382,14 @@ function LobbyHud.Start()
 			Kit.tween(n.s, 0.15, { Scale = 1 })
 			Kit.tween(n.b, 0.15, { Position = base })
 		end)
+		table.insert(navResets, function()
+			hovered = false; gen += 1
+			n.tip.Visible = false; n.tip.Position = tipBase
+			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(false) end
+			n.s.Scale = 1
+			n.b.Position = base
+		end)
+		n.b.Activated:Connect(function() task.defer(resetNav) end) -- a click opens something: the bubble goes with it
 		n.b.MouseButton1Down:Connect(function() if not away() then Kit.tween(n.s, 0.06, { Scale = 1.02 }) end end)
 		n.b.MouseButton1Up:Connect(function() if not away() then Kit.tween(n.s, 0.12, { Scale = 1.12 }, Enum.EasingStyle.Back) end end)
 	end
@@ -646,6 +657,7 @@ function LobbyHud.Start()
 	local kitShown = false
 	local function pushAside(away)
 		root:SetAttribute("PushedAway", away)
+		resetNav()
 		for o, h in homes do
 			if o.Name == "PlayerList" and not lbOn then continue end -- hidden by Tab: leave it off screen
 			Kit.tween(o, away and h.t or 0.25, { Position = away and h.away or h.home }, away and Enum.EasingStyle.Quad or Enum.EasingStyle.Back,
@@ -669,6 +681,7 @@ function LobbyHud.Start()
 		root.Visible = (on or menuAway or kitRoom) and not hide
 		if kitRoom ~= kitShown then
 			kitShown = kitRoom
+			resetNav()
 			for _, c in root:GetChildren() do
 				if c:IsA("GuiObject") and c.Name ~= "Scissors" then
 					if kitRoom then c:SetAttribute("KitHid", c.Visible); c.Visible = false
