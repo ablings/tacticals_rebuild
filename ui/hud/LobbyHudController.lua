@@ -636,6 +636,7 @@ function LobbyHud.Start()
 		end
 	end
 	local pushedAway = false
+	local kitShown = false
 	local function pushAside(away)
 		for o, h in homes do
 			if o.Name == "PlayerList" and not lbOn then continue end -- hidden by Tab: leave it off screen
@@ -653,7 +654,20 @@ function LobbyHud.Start()
 		-- RIVALS: a menu opening pushes the HUD out to the sides (and back when it closes); anything else hides it at once
 		local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
 		local menuAway = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
-		root.Visible = (on or menuAway) and not hide
+		-- Kit room (LobbyUI on, its dock hidden by the Armory): RIVALS keeps the currency pill up there, nothing else
+		local kitDock = lobbyGui and lobbyGui:FindFirstChild("Dock", true)
+		local kitRoom = lobbyGui ~= nil and lobbyGui.Enabled and kitDock ~= nil and not kitDock.Visible
+			and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
+		root.Visible = (on or menuAway or kitRoom) and not hide
+		if kitRoom ~= kitShown then
+			kitShown = kitRoom
+			for _, c in root:GetChildren() do
+				if c:IsA("GuiObject") and c.Name ~= "Scissors" then
+					if kitRoom then c:SetAttribute("KitHid", c.Visible); c.Visible = false
+					elseif c:GetAttribute("KitHid") ~= nil then c.Visible = c:GetAttribute("KitHid"); c:SetAttribute("KitHid", nil) end
+				end
+			end
+		end
 		if menuAway ~= pushedAway then
 			pushedAway = menuAway
 			pushAside(menuAway)
@@ -685,10 +699,10 @@ function LobbyHud.Start()
 		end
 		-- Hide Missions (Settings > Video > Interface)
 		local noMissions = player:GetAttribute("Setting_HideSideTasks") == true
-		missions.Visible = not noMissions
-		toPads.Visible = not noMissions
+		missions.Visible = not noMissions and not kitShown
+		toPads.Visible = not noMissions and not kitShown
 		local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
-		seek.Visible = q ~= nil and st == "Searching"
+		seek.Visible = q ~= nil and st == "Searching" and not kitShown
 		if seek.Visible then
 			local def = Config.QueueById and Config.QueueById(q)
 			seekMode.Text = "SEARCHING  " .. (def and (string.upper(def.Mode) .. (def.Ranked and " RANKED" or "")) or "")
