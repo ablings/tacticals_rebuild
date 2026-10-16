@@ -1,0 +1,137 @@
+local __TG = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("TrainingGate"))
+-- StarterPlayer/StarterPlayerScripts/Client/Controllers/AimPoseController (ModuleScript)
+-- Bends the body up/down with the aim while a weapon is out, for you and for everyone else.
+-- The waist only bends so far (a real back has limits); past that the head and both arms carry on,
+-- so the gun still points where you aim without the spine folding backwards.
+--   * Your pitch is sent to the server a few times per second (unreliable remote, cosmetic only)
+--   * The server stores it as the character attribute AimPitch (clamped)
+--   * Every client applies everyone's pitch locally
+-- Hit validation doesn't depend on this; the server allows for small pose differences.
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+RunService = __TG.RunService
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Config"):WaitForChild("CoverConfig"))
+local AimPitchRemote = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Combat"):WaitForChild("AimPitch")
+
+local localPlayer = Players.LocalPlayer
+
+local controller = {}
+local currentPitch = setmetatable({}, { __mode = "k" }) -- [Model] = smoothed degrees (losing one is harmless)
+local lastSentPitch, lastSentTime = 0, 0
+local myHeadPitch = 0 -- radians, read by HeadLookController (it owns your own neck)
+
+-- How the aim is shared out (degrees). Positive = looking up.
+local WAIST_UP, WAIST_DOWN = 25, 20       -- the most the back bends
+local WAIST_SHARE = 0.55                  -- of the aim taken by the waist before it maxes out
+local ARMS_UP, ARMS_DOWN = 55, 45         -- the arms raise/lower the gun the rest of the way
+local HEAD_UP, HEAD_DOWN = 35, 30
+
+local function hasWeaponOut(character: Model): boolean
+	local tool = character:FindFirstChildOfClass("Tool")
+	return tool ~= nil and tool:GetAttribute("WeaponId") ~= nil
+end
+
+-- A joint's rest pose lives in either a Motor6D's C0 or (newer rigs) its AnimationConstraint's
+-- torso-side attachment. The rest pose is stored ON the joint as an attribute, so it can never be lost
+-- and re-captured while bent (that was the "stuck leaning back" bug: a weak table forgot it).
+local function jointTarget(joint: Instance?): (Instance?, string?)
+	if not joint then return nil, nil end
+	if joint:IsA("Motor6D") then return joint, "C0" end
+	if joint:IsA("AnimationConstraint") then
+		local a0 = (joint :: AnimationConstraint).Attachment0
+		if a0 then return a0, "CFrame" end
+	end
+	return nil, nil
+end
+
+local function restOf(obj: Instance, prop: string): CFrame
+	local rest = obj:GetAttribute("AimPoseRest")
+	if typeof(rest) ~= "CFrame" then
+		rest = (obj :: any)[prop]
+		obj:SetAttribute("AimPoseRest", rest)
+	end
+	return rest
+end
+
+local function bend(joint: Instance?, degrees: number)
+	local obj, prop = jointTarget(joint)
+	if not obj or not prop then return end
+	(obj :: any)[prop] = restOf(obj, prop) * CFrame.Angles(math.rad(degrees), 0, 0)
+end
+
+-- Split an aim pitch into waist / arms / head
+local function share(pitch: number): (number, number, number)
+	local waist = math.clamp(pitch * WAIST_SHARE, -WAIST_DOWN, WAIST_UP)
+	local rest = pitch - waist
+	local arms = math.clamp(rest, -ARMS_DOWN, ARMS_UP)
+	local head = math.clamp(rest * 0.7, -HEAD_DOWN, HEAD_UP)
+	return waist, arms, head
+end
+
+-- For HeadLookController: how far your own head should tilt for the aim right now (radians)
+function controller.GetHeadPitch(): number
+	return myHeadPitch
+end
+
+local function update(dt: number)
+	-- Your own pitch from the camera
+	local myCharacter = localPlayer.Character
+	local myHumanoid = myCharacter and myCharacter:FindFirstChildOfClass("Humanoid")
+	local myPitch = 0
+	-- Only while the gun is raised (aiming / just fired); with the gun lowered you stand normally
+	local cameraController = shared.Get and shared.Get("CameraController")
+	local raised = cameraController ~= nil and cameraController.IsFacingCamera()
+	if myCharacter and myHumanoid and myHumanoid.Health > 0 and hasWeaponOut(myCharacter) and raised then
+		myPitch = math.deg(math.asin(math.clamp(workspace.CurrentCamera.CFrame.LookVector.Y, -1, 1)))
+		-- Aim RELATIVE to how your body is tilted right now. Sliding (leaning back) or diving (thrown forward)
+		-- tilts the hips; bending the back/arms by the world aim on top of that sent the gun way too high.
+		local lower = myCharacter:FindFirstChild("LowerTorso") or myCharacter:FindFirstChild("HumanoidRootPart")
+		if lower then
+			local tilt = math.deg(math.asin(math.clamp(lower.CFrame.LookVector.Y, -1, 1)))
+			myPitch -= tilt
+		end
+	end
+
+	local now = os.clock()
+	if now - lastSentTime >= 1 / Config.AimPitchSendRate and math.abs(myPitch - lastSentPitch) > 1 then
+		lastSentTime, lastSentPitch = now, myPitch
+		AimPitchRemote:FireServer(myPitch)
+	end
+
+	local blend = 1 - math.exp(-15 * dt)
+	for _, player in Players:GetPlayers() do
+		local character = player.Character
+		local upperTorso = character and character:FindFirstChild("UpperTorso")
+		if upperTorso then
+			local target = 0
+			if hasWeaponOut(character) then
+				target = (player == localPlayer) and myPitch or (character:GetAttribute("AimPitch") or 0)
+			end
+			local pitch = (currentPitch[character] or 0) + (target - (currentPitch[character] or 0)) * blend
+			if math.abs(pitch) < 0.05 then pitch = 0 end
+			currentPitch[character] = pitch
+
+			local waist, arms, head = share(pitch)
+			bend(upperTorso:FindFirstChild("Waist"), waist)
+			local rightArm = character:FindFirstChild("RightUpperArm")
+			local leftArm = character:FindFirstChild("LeftUpperArm")
+			bend(rightArm and rightArm:FindFirstChild("RightShoulder"), arms)
+			bend(leftArm and leftArm:FindFirstChild("LeftShoulder"), arms)
+			if player == localPlayer then
+				myHeadPitch = math.rad(head) -- HeadLookController owns your neck and blends this in
+			else
+				local headPart = character:FindFirstChild("Head")
+				bend(headPart and headPart:FindFirstChild("Neck"), head)
+			end
+		end
+	end
+end
+
+function controller.Start()
+	RunService.RenderStepped:Connect(update)
+end
+
+return controller
