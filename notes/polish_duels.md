@@ -73,3 +73,31 @@ surfaces and Neon, not by SpotLights** (RIVALS has one pad SpotLight in the whol
 - The Holo `Beam` (queue-pad Holo beam bug, an open question) is untouched.
 - The emblem letter is upright for players walking up from the centre aisle.
 - Queued for import: nothing (no Blender kit was needed).
+
+## Round 2 (2026-10-16 night): taste tweaks from review_duels.md
+**Re-run order: `fix/polish_duels.lua` -> `fix/polish_duels2.lua`** (polish_duels rebuilds `Polish.Duels`, dropping `Round2` and
+the touched Polish parts: run duels2 again after it). UNDO: `python tools/run_luau.py fix/polish_duels2.lua UNDO` first, then
+polish_duels UNDO. Originals in attribute `PolishDuels2_Orig`; new parts in `Polish.Duels.Round2` (mode plates, yokes, hangers,
+posts); the briefing board's new front gui is `BriefingBoard.Round2Gui`. Sheet: `out/polish/duels/sheet2.jpg`.
+
+1. **Brightness ladder, measured** (`tools/part_pixels.py`, door + pad views): team A cream frames ~230 (clipped, the brightest),
+   team B olive frames, then the lanes, then the chevrons. Lanes Neon 236,232,218 -> **103,101,94** (rendered 233 -> 136-144);
+   the Duels aisle chevrons (`Features.Wayfinding.Chevrons` bars at x < -94) and the old pad dashes `Rooms3.D_Pads__label_cream`
+   cream -> 150,140,122 SmoothPlastic (rendered 166-185 bluish -> 102-112, B-R +7). Neon response is not linear: 92 rendered 105,
+   103 rendered 136, 112 rendered 160; step in small values and re-measure.
+2. **Team B frames olive, not lime**: Neon 90,106,42 (rendered 117,156,48, G/R 1.33) -> **94,99,46** (rendered 127,141,50 close up,
+   G/R 1.11, B/R 0.39: olive). 112,118,54 rendered 168,181,58, which still read chartreuse: at that brightness olive reads as
+   yellow-green, so olive has to stay darker than cream. The DropPits' inner olive line still reads lime (not touched; Features).
+3. **Mode plates 1.5x (7.8 x 2.25) and readable from the aisle.** The Play PadBoard (11 x 6 studs, Holo + 2.6, y 24.1-30.1) sits
+   right under the old 1v1 plates, so "lower" had to be worked out against it: 1v1 / 2v2 plates now hang at the pad's aisle edge
+   (z +-9.8, centre y 27.6, 11.6 over the floor, -20 deg), from a yoke under the long gantry; from the aisle they sit above the
+   PadBoard behind them. 3v3 plates stand on top of their cross gantry (bottom 33.3): their PadBoard (z +-28.6) is in front of the
+   gantry, so lower would hide them behind it. Text: mode + PAD nn only. Old plates/stripes/hangers hidden (guis disabled).
+4. **ARENA DECK board**: front gui replaced by two lines, ARENA DECK (0.46 of the board height) and STEP ON A PLATE TO QUEUE (0.38),
+   both full width; the TEAM A/B legend and the mode list are gone (the pad letters carry the teams).
+
+Logic: `check_polish_duels` 0 clips (72 probes, 181 parts), support: only the known lane gap -0.002 (the first run flagged the new
+hangers: a beam running along z can't carry two hangers 5.8 apart across it, so they hang from a yoke), hooks 6 pads ok, 0 new
+collidable parts, 0 new lights (99 enabled in Edit), walk paths clear, PadBoards patched. **Play**: hub -> Duels door -> Pad_1v1_A
+team 1: `QueueMode = 1v1`, `Team1Count` 0 -> 1. From the aisle in Play the plates read above the PadBoards (`d2_play_aisle.jpg`).
+UNDO round trip: restored 78 instances, removed Round2; re-applied twice, identical.
