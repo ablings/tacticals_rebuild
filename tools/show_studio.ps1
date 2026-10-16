@@ -8,7 +8,7 @@ public class SW { [DllImport("user32.dll")] public static extern bool ShowWindow
 [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr a, int x,int y,int cx,int cy,uint f); }
 '@
 $pat = if ($which -eq 'rivals') { '*RIVALS(1)*' } else { '*Tacticals_rebuild*' }
-$h = (Get-Process RobloxStudioBeta | Where-Object { $_.MainWindowTitle -like $pat }).MainWindowHandle
+$h = (Get-Process RobloxStudioBeta | Where-Object { $_.MainWindowTitle -like $pat } | Select-Object -First 1).MainWindowHandle
 if (-not $h) { Write-Error "window not found: $which"; exit 1 }
 [SW]::ShowWindow($h, 4) | Out-Null                                  # SW_SHOWNOACTIVATE
 [SW]::SetWindowPos($h, [IntPtr]::Zero, 1920, 0, 1920, 1040, 0x0010) | Out-Null  # HWND_TOP, SWP_NOACTIVATE
