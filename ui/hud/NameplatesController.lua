@@ -120,7 +120,10 @@ function Nameplates.Start()
 			or player:GetAttribute("Setting_HideHUD") == true
 		for p, e in plates do
 			if e.gui and e.gui.Parent then
-				e.gui.Enabled = not hideAll and p:GetAttribute("InTraining") ~= true
+				-- too close to the camera it would fill the screen (it's sized in studs): hide it inside ~9 studs
+				local head = e.gui.Adornee
+				local near = head and (workspace.CurrentCamera.CFrame.Position - head.Position).Magnitude < 9
+				e.gui.Enabled = not hideAll and not near and p:GetAttribute("InTraining") ~= true
 				local which, v = statOf(p)
 				e.badgeText.Text = tostring(v)
 				e.vip.Visible = p:GetAttribute("VIP") == true
