@@ -283,7 +283,8 @@ local function update(dt: number)
 	if CoverController and (CoverController.IsInCover() or CoverController.IsMoving()) then
 		sprinting = false
 		setPose(nil)
-		currentSpeed = hum.WalkSpeed
+		local adminSpeed = localPlayer:GetAttribute("AdminSpeed") -- keep currentSpeed unscaled (see the WalkSpeed line below)
+		currentSpeed = hum.WalkSpeed / (type(adminSpeed) == "number" and adminSpeed > 0 and adminSpeed / Config.Speeds.Walk or 1)
 		return
 	end
 	local aiming = CameraController and CameraController.IsAiming()
@@ -317,7 +318,10 @@ local function update(dt: number)
 	else currentSpeed = math.max(target, currentSpeed - step) end
 	-- stunned (flashbang): everything is slower
 	local stunScale = (localPlayer:GetAttribute("StunUntil") or 0) > os.clock() and (localPlayer:GetAttribute("StunScale") or 1) or 1
-	hum.WalkSpeed = currentSpeed * stunScale * weaponSpeedScale(hum.Parent)
+	-- [SET] admin ;speed: the AdminSpeed attribute replaces the base walk speed (sprint / crouch scale with it)
+	local adminSpeed = localPlayer:GetAttribute("AdminSpeed")
+	local adminScale = type(adminSpeed) == "number" and adminSpeed > 0 and adminSpeed / Config.Speeds.Walk or 1
+	hum.WalkSpeed = currentSpeed * stunScale * weaponSpeedScale(hum.Parent) * adminScale
 
 	-- Crouch poses (legs only; the gun arms keep doing their thing)
 	if crouched then
