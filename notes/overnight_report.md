@@ -76,5 +76,7 @@ From a pre-polish file, run in this order:
 11. `backdrop_sky.lua` (2026-10-16: TimesSquare hidden + sky-base backdrop; leave `HIDE_TIMESSQUARE = false` in polish_exfil)
 12. `place_heli.lua` (2026-10-16: UH-60-class exfil helicopter kit; only after `kit/heli.fbx` has been imported, see `notes/heli_kit.md`;
     then `check_heli.lua`. Independent of the polish scripts; it never touches Exfil / Polish parts)
+13. `exfil_lift.lua` (2026-10-16: new ExfilFX lift path for the UH-60 kit, marked `-- [EXFIL]`; backup `_RebuildRemoved.ExfilFX_Orig`;
+    after place_heli, then `check_heli.lua` must say RESULT fails 0. Edits only the ExfilFX script, never map parts)
 
 To undo, run the same scripts with `UNDO` in reverse order.

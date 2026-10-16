@@ -125,3 +125,45 @@ UNDO: `python tools/run_luau.py fix/place_heli.lua UNDO`.
   - A metal-proxy touch on the jump arc. The cutscene moves the character by CFrame, so it doesn't collide.
 - Play: jump into the open door, lift-off, then the player lands in Training (InTraining = true). Console is baseline only.
 - Saved 12:50.
+
+## Lift path (2026-10-16, Edward approved): `fix/exfil_lift.lua`
+The old ExfilFX path (x + 3.2e^2, y + 2.2e^1.5, roll) flew the kit through the east-edge gear and carried the rotor disc under the
+hangar mouth. The old check's "body vs E_Gear" hits were partly the placed meshes' query hulls (Box fidelity: e.g. HX_Body__metal
+answers as a 10 x 9.6 x 30.5 box), so check_heli now sweeps the manifest proxies + rotor discs, never the placed meshes.
+
+**Obstacles (real geometry: rays + 1-stud probe voxels against every visible part made queryable, CanQuery restored):**
+| Obstacle | Where | Limits |
+|---|---|---|
+| EXFIL sign (E_Signs label / board) | x 123.9..124.6, bottom y 14.96 / 15.42, z +-6 | main rotor (top = 10.25 + lift) must stay below while its west edge is west of x 124.6 |
+| Mouth lintel (E_Mouth band / trim) | x 124.5..127.7, bottom 16.96 / 18.10 | same, for x < 127.7 |
+| Hangar roof edge (E_Ceiling) | x <= 128.4, bottom 20.10 (beams 18.2 further in) | rotor west edge (117.5 at rest) must pass x 128.4 before the climb |
+| Corner lamp masts (E_Gear beam / dark_metal / neon_lamp) | x 148..150, |z| 22..26, top 14.7..15.5 | tail rotor (z 17..24) during the taxi |
+| Corner beacon posts (Features.Beacons PostN/S) | x 149.2..150, |z| 24.6..25.4, y 15..22.5 | tail rotor / departure |
+| Edge crates, drums, cases (E_Gear) | x 128.5..149.4, |z| 20..25, top <= 6.8; east band x 149.2 y 7.5..9.8 | hull and tail wheel low |
+| Pad walls / rail | z +-26..28, top 10.4 / 13.5 | nothing comes near |
+| Windsock (Polish.Exfil.Round2) | (152.2, 1.5..8.9, 24.8) | not near |
+| Hangar mouth beacons | x 126, z +-26.4, y 21.6..28.8 | not near |
+| Backdrop platforms (Polish.Backdrop) | >= 100 studs away | not near |
+| ExfilBarrier ForceField curtain | x 127.5, y 0..13, z +-12 | trigger; the rotor already crosses it at rest (allowed, reported) |
+Inside the pad (x 129..150, |z| < 21) nothing stands above y ~4.6: the pad is open sky; the only real squeeze is the rotor under the
+hangar mouth and the corner masts.
+
+**The curve** (offset about the CabinPoint position, world axes; e = s since lift start; LIFT_T 2.9 s, then the 0.6 s fade while it keeps flying):
+1. Spool 0..0.5: rotor speed ramps 9 -> 22 rad/s (tail 18 -> 40) over 0.8 s, +0.5 up, 2.5 deg nose-down.
+2. Hover-taxi right 0.35..1.4: +11.7 x, -2 z, +2.6 up (rotor stays under the sign / lintel), 2 deg bank into the slide, 6 deg right yaw
+   (swings the tail rotor away from the NE lamp mast).
+3. Vertical climb 1.15..2.05: +10 up at x +11.7 (rotor west edge at x 129.2, past the roof edge), level.
+4. Departure from 1.75: accelerates along the nose (d = 6.5t^2 + 2t), yaw right to 68 deg (nose south -> ESE), 13 deg nose-down, 16 deg
+   right bank, still climbing 3/s. Cabin at e 2.4 (146, 19, -5), e 3.3 (161, 22, -9).
+Camera (`liftCam`): starts at the old shot (120, 9, -18), dollies out through the hangar mouth to the pad's SW corner (130, 7, -21.5)
+by e 2.2 and rises 1.5: the departure is seen from under the rotor against open sky instead of under the lintel.
+
+**Check (fix/check_heli.lua, 30 Hz, e 0..3.5, 147 proxies + main disc r 15.6 + hub + tail disc r 3.85):** overlaps 0; wheel contact
+only before lift-off; barrier curtain crossed until e 1.07 (allowed); after lift-off nothing within 1.0 stud except the parked-position
+neighbours (crates beside the stabilator at e 0.33, as at rest); camera never inside / through geometry or near a disc, cabin never hidden,
+rotor hub never hidden, body in frame every frame. Jump arc clear. RESULT fails 0 (`out/heli/check_heli_lift.txt`).
+**Play** (lock taken / released, two runs): barrier walk at (121 -> 129, -1), lift as above, InTraining = true, landed in Training
+(0, 603.1, 14) / (-9.9, 603.1, -9.9); console baseline. Strip: **`out/heli/lift_strip.jpg`** (frames `out/heli/lift/`; MCP captures take
+~0.5 s each, so two offset runs were interleaved).
+Seen in the strip, not mine: the lobby HUD (missions, PLAY, currency) stays visible over the cutscene (UI session).
+UNDO: `python tools/run_luau.py fix/exfil_lift.lua UNDO` (reverts the three marked edits; the source then equals the backup).
