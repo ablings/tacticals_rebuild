@@ -66,8 +66,13 @@ Check the room analogues in RIVALS before each room (lobby, shop counter, weapon
 **Edward 22:55:** the Shop is a UGC/cosmetic shop, not a supply store. The rounds 1-2 supply dressing (ammo, rations, price boards)
 must be reworked into cosmetic displays (Shop round 3, after the Armory). Keep the warm light, ceiling and wood/cream materials.
 
+**Edward 23:05:** the featured weapon and every weapon in the Armory (racks, bays, gun wall) are PLACEHOLDERS until he picks the real
+ones. Armory round 2 makes them swap-ready: each weapon sits in a named slot Model (`WeaponSlot_<area>_<n>`) with an Attachment/anchor
+pose and a `WeaponId` attribute. One config module (`ArmoryWeaponSlots`) lists slot -> model, and a short swap guide goes in
+notes. Keep one consistent neutral placeholder look (e.g. the same rifle everywhere) and leave the featured-weapon hook working.
+
 ## Order
-1. Shop  2. Armory  3. Duels  4. Exfil  5. Gate corridors  6. Hub  7. Training touch-up  8. Showroom  9. Final whole-lobby lap
+1. Shop  2. Armory (round 2 = swap-ready weapon slots, after Shop round 3)  3. Duels  4. Exfil  5. Gate corridors  6. Hub  7. Training touch-up  8. Showroom  9. Final whole-lobby lap
    (fresh agent) + a sheet of every room side by side to prove they read differently.
 Open questions for Edward (don't block on them): ad DevProductId, crate colour, TimesSquare towers, queue-pad Holo beam bug.
 
