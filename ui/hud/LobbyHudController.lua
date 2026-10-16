@@ -59,6 +59,7 @@ local ICON_GEAR = "rbxasset://textures/ui/Settings/MenuBarIcons/GameSettingsTab.
 local ICON_X = "rbxasset://textures/ui/InspectMenu/x.png"
 local ICON_PLAYERS = "rbxasset://textures/ui/Settings/MenuBarIcons/PlayersTabIcon.png"
 local ICON_CODES = "rbxasset://textures/ui/Settings/MenuBarIcons/HelpTab.png"
+local ICON_HUD = "rbxasset://textures/ui/Settings/MenuBarIcons/CaptureTab.png"
 local BAR_BG, BAR_T, BAR_ICON = Color3.fromRGB(18, 18, 21), 0.08, Color3.fromRGB(247, 247, 248)
 buildCorner = function(gui, cb)
 	local TweenService = game:GetService("TweenService")
@@ -101,6 +102,7 @@ buildCorner = function(gui, cb)
 	local settings = button("Settings", ICON_GEAR, "Change your controls & graphics")
 	local codes = button("Codes", ICON_CODES, "Redeem a code")
 	local list = button("PlayerList", ICON_PLAYERS, "Open the player list")
+	local hud = button("HUD", ICON_HUD, "Enable your HUD")
 
 	local BODYI = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Italic)
 	local function line(y)
@@ -141,10 +143,12 @@ buildCorner = function(gui, cb)
 	function ctl.layout()
 		if not isOpen then settings.b.Visible = false; codes.b.Visible = false end
 		local left = placeBar(mainPill, W - 12, isOpen and { open, settings, codes } or { open })
-		if not cb.listShown() then
-			left = placeBar(ctxPill, left - GAP, { list })
+		local ctxItems = {}
+		if not cb.listShown() then table.insert(ctxItems, list) else list.b.Visible = false end
+		if cb.hudHidden and cb.hudHidden() then table.insert(ctxItems, hud) else hud.b.Visible = false end
+		if #ctxItems > 0 then
+			left = placeBar(ctxPill, left - GAP, ctxItems)
 		else
-			list.b.Visible = false
 			ctxPill.Visible = false
 		end
 		for _, l in { region, stats } do
@@ -164,6 +168,7 @@ buildCorner = function(gui, cb)
 	settings.b.Activated:Connect(function() isOpen = false; ctl.layout(); cb.openSettings() end)
 	codes.b.Activated:Connect(function() isOpen = false; ctl.layout(); if cb.openCodes then cb.openCodes() end end)
 	list.b.Activated:Connect(function() cb.openList() end)
+	hud.b.Activated:Connect(function() if cb.showHud then cb.showHud() end end)
 	ctl.layout()
 	return ctl
 end
@@ -359,14 +364,21 @@ function LobbyHud.Start()
 			Kit.toScale(row, Vector2.new(LB_W, 40))
 		end
 	end
+	local function lobbyData()
+		local v = player:GetAttribute("Setting_LobbyData")
+		if v == "Level" or v == "Wins" then lbStat = v; modeIcon(); buildList(true) end
+	end
+	player:GetAttributeChangedSignal("Setting_LobbyData"):Connect(lobbyData)
 	modeIcon()
+	lobbyData()
 	lbMode.Activated:Connect(function()
 		lbStat = lbStat == "Level" and "Wins" or "Level"
 		modeIcon()
 		buildList(true)
 	end)
 	-- Tab / x: the list slides off to the right and back, constant speed so spamming Tab reverses mid-way
-	local corner
+	local corner, hudHidden
+	local hudFlip = false -- Hide HUD flipped by its hotkey / the corner button (declared before the corner uses it)
 	local lbHome = lb.Position
 	local lbOn = true
 	local function setList(on)
@@ -381,10 +393,23 @@ function LobbyHud.Start()
 		openCodes = function() if LobbyUI then LobbyUI.Open("Codes") end end,
 		openList = function() setList(true) end,
 		listShown = function() return lbOn end,
+		hudHidden = function() return hudHidden and hudHidden() end,
+		showHud = function() hudFlip = not hudFlip; corner.layout() end,
 	})
+	local function bound(action, fallback)
+		local name = player:GetAttribute("Bind_" .. action)
+		local ok, kc = pcall(function() return name and Enum.KeyCode[name] end)
+		return (ok and kc) or fallback
+	end
+	-- Hide HUD (Settings > Video > Interface, or its hotkey): the setting, flipped by the hotkey / the corner button
+	hudHidden = function() return (player:GetAttribute("Setting_HideHUD") == true) ~= hudFlip end
 	UserInputService.InputBegan:Connect(function(i, gp)
-		if not gp and i.KeyCode == Enum.KeyCode.Tab then setList(not lbOn) end
+		if gp then return end
+		if i.KeyCode == bound("OpenScoreboard", Enum.KeyCode.Tab) then setList(not lbOn) end
+		local hk = bound("HideHUD", nil)
+		if hk and i.KeyCode == hk then hudFlip = not hudFlip; corner.layout() end
 	end)
+	player:GetAttributeChangedSignal("Setting_HideHUD"):Connect(function() hudFlip = false; corner.layout() end)
 
 	---------------------------------------------------------------------------------------------- follow the lobby
 	local function lobbyShown()
@@ -396,11 +421,40 @@ function LobbyHud.Start()
 		if player:GetAttribute("InTraining") or player:GetAttribute("Deploying") then return false end
 		return true
 	end
+	-- Padded HUD: everything pulled in from the screen edges (TV safe area), always or while a controller is in use
+	local lastPad = false
+	UserInputService.LastInputTypeChanged:Connect(function(t) lastPad = t.Name:find("Gamepad") ~= nil end)
+	local function padded()
+		local v = player:GetAttribute("Setting_PaddedHUD") or "Using Controller"
+		return v == "Always On" or (v == "Using Controller" and lastPad)
+	end
+	-- the rest of the lobby HUD (PLAY row, dock) hides with Hide HUD too; the dock's own state is put back after
+	local dockSaved
 	local k = 0
 	RunService.Heartbeat:Connect(function(dt)
 		local on = lobbyShown()
-		root.Visible = on
-		if corner then corner.frame.Visible = on end
+		local hide = hudHidden()
+		root.Visible = on and not hide
+		if corner then corner.frame.Visible = on or (hide and not player:GetAttribute("InTraining")) end
+		local pad = padded()
+		root.Size = pad and UDim2.fromScale(0.94, 0.92) or UDim2.fromScale(1, 1)
+		root.Position = pad and UDim2.fromScale(0.03, 0.04) or UDim2.fromScale(0, 0)
+		local lobby = player.PlayerGui:FindFirstChild("LobbyUI")
+		local dock = lobby and lobby:FindFirstChild("Dock", true)
+		local row = player.PlayerGui:FindFirstChild("PlayRowUI")
+		if hide then
+			if dock and dockSaved == nil then dockSaved = dock.Visible end
+			if dock then dock.Visible = false end
+			if row then row.Enabled = false end
+		elseif dockSaved ~= nil then
+			if dock then dock.Visible = dockSaved end
+			if row and lobby then row.Enabled = lobby.Enabled end
+			dockSaved = nil
+		end
+		-- Hide Missions (Settings > Video > Interface)
+		local noMissions = player:GetAttribute("Setting_HideSideTasks") == true
+		missions.Visible = not noMissions
+		toPads.Visible = not noMissions
 		local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
 		seek.Visible = q ~= nil and st == "Searching"
 		if seek.Visible then

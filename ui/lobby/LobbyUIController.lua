@@ -146,6 +146,8 @@ end
 -- Toasts
 -------------------------------------------------------------------------------
 local function toast(text: string, kind: string?)
+	-- Settings > Account > Delivery Mode = Disabled: no pop-ups (UI session 2026-10-16)
+	if player:GetAttribute("Setting_DeliveryMode") == "Disabled" then return end
 	if not toastHost then return end
 	local color = kind == "good" and THEME.Good or kind == "bad" and THEME.Bad or THEME.Cyan
 	local t = new("Frame", {

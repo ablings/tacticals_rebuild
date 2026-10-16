@@ -1,0 +1,88 @@
+-- Client/Controllers/SettingsEffectsController (ModuleScript, auto-loaded): the settings that change the world on
+-- this client. SettingsConfig.Apply turns the saved profile into player attributes (Setting_<Name>); this follows them.
+--   Optimized Lighting  - no global shadows, the lobby bloom / depth of field off
+--   Optimized Textures  - surface images (SurfaceAppearance / Texture / Decal) under the lobby map hidden
+--   SFX Volume          - FlashController routes every world sound through SoundService.World; it is nested under
+--                         SoundService.Effects so the SFX slider (Effects.Volume) reaches them (volumes multiply)
+-- Everything is restored when the setting goes back off. (UI session 2026-10-16)
+local Players = game:GetService("Players")
+local Lighting = game:GetService("Lighting")
+local SoundService = game:GetService("SoundService")
+
+local SettingsEffects = {}
+local player = Players.LocalPlayer
+
+local function setting(name) return player:GetAttribute("Setting_" .. name) end
+
+-- Optimized Lighting ------------------------------------------------------------------------------------------
+local lightingSaved
+local function applyLighting()
+	local on = setting("OptimizedLighting") == true
+	if on and not lightingSaved then
+		lightingSaved = { shadows = Lighting.GlobalShadows, fx = {} }
+		Lighting.GlobalShadows = false
+		for _, name in { "Lobby_Bloom", "Lobby_DOF", "Lobby_SunRays" } do
+			local fx = Lighting:FindFirstChild(name)
+			if fx and fx:IsA("PostEffect") then lightingSaved.fx[fx] = fx.Enabled; fx.Enabled = false end
+		end
+	elseif not on and lightingSaved then
+		Lighting.GlobalShadows = lightingSaved.shadows
+		for fx, was in lightingSaved.fx do if fx.Parent then fx.Enabled = was end end
+		lightingSaved = nil
+	end
+end
+
+-- Optimized Textures ------------------------------------------------------------------------------------------
+local hidden -- [instance] = original Transparency (Texture / Decal) or original Parent (SurfaceAppearance)
+local function applyTextures()
+	local on = setting("OptimizedTextures") == true
+	local map = workspace:FindFirstChild("LobbyMap")
+	if on and not hidden and map then
+		hidden = {}
+		for _, d in map:GetDescendants() do
+			if d:IsA("Decal") then -- Texture is a Decal too
+				hidden[d] = d.Transparency
+				d.Transparency = 1
+			elseif d:IsA("SurfaceAppearance") then
+				hidden[d] = d.Parent
+				d.Parent = nil
+			end
+		end
+	elseif not on and hidden then
+		for d, v in hidden do
+			if d:IsA("SurfaceAppearance") then
+				if v and v.Parent then d.Parent = v end
+			else
+				d.Transparency = v
+			end
+		end
+		hidden = nil
+	end
+end
+
+-- SFX: nest the World group under Effects -----------------------------------------------------------------------
+local function nestWorld()
+	local world = SoundService:FindFirstChild("World")
+	local effects = SoundService:FindFirstChild("Effects")
+	if not effects then
+		effects = Instance.new("SoundGroup")
+		effects.Name = "Effects"
+		effects.Parent = SoundService
+	end
+	if world and world:IsA("SoundGroup") and world.Parent ~= effects then world.Parent = effects end
+end
+
+function SettingsEffects.Start()
+	for _, name in { "OptimizedLighting", "OptimizedTextures" } do
+		player:GetAttributeChangedSignal("Setting_" .. name):Connect(function()
+			applyLighting()
+			applyTextures()
+		end)
+	end
+	applyLighting()
+	applyTextures()
+	SoundService.ChildAdded:Connect(function(c) if c.Name == "World" then task.defer(nestWorld) end end)
+	nestWorld()
+end
+
+return SettingsEffects

@@ -11,6 +11,9 @@ FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyUIController", "ModuleScript", "lobby/LobbyUIController.lua"),
     ("ServerScriptService", "PublicStats", "Script", "hud/PublicStats.server.lua"),
     ("ReplicatedStorage.UIKit", "PlayScreen", "ModuleScript", "play/PlayScreen.lua"),
+    ("ReplicatedStorage.UIKit", "SettingsData", "ModuleScript", "settings/SettingsData.lua"),
+    ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
 ]
 
 
