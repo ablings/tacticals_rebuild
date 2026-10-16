@@ -45,8 +45,10 @@ local function send(...)
 	local _, id = stateObject()
 	if id then ev:FireServer(id, ...) else ev:FireServer(...) end
 end
+local function inLobby() return ReplicatedStorage:FindFirstChild("LobbyDuels") ~= nil or workspace:FindFirstChild("LobbyMap") ~= nil end
 local function inMatch()
-	if player:GetAttribute("DuelMatch") or player:GetAttribute("DuelSpectate") then return true end
+	-- lobby: only while this player's match object exists (it's destroyed on the return)
+	if inLobby() then return stateObject() ~= nil and stateObject() ~= ReplicatedStorage end
 	return player:GetAttribute("InMatch") == true or ReplicatedStorage:GetAttribute("LiveMatch") == true
 end
 local function spectator() return player:GetAttribute("DuelSpectate") ~= nil and player:GetAttribute("DuelMatch") == nil end
@@ -150,6 +152,7 @@ local feed = new("Frame", { Name = "KillFeed", BackgroundTransparency = 1, Posit
 	{ new("UIListLayout", { Padding = UDim.new(0.02, 0), SortOrder = Enum.SortOrder.LayoutOrder, HorizontalAlignment = Enum.HorizontalAlignment.Right }) })
 local feedN = 0
 local function nameOf(uid)
+	if (uid or 0) < 0 then return "Test bot" end
 	local p = Players:GetPlayerByUserId(uid or 0)
 	return p and p.DisplayName or "?"
 end
@@ -235,6 +238,18 @@ UserInputService.InputBegan:Connect(function(i, gp)
 	if i.KeyCode == Enum.KeyCode.Q then cycle(-1) elseif i.KeyCode == Enum.KeyCode.E then cycle(1) end
 end)
 
+local leaveDuel = new("TextButton", { Name = "LeaveDuel", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(30, 30), Size = UDim2.fromOffset(150, 52),
+	BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, Visible = false, Parent = root }, { corner(10) })
+label(leaveDuel, "Leave", FX, 28, 0, 0, 150, 52, WHITE)
+local leaveArmed = 0
+leaveDuel.Activated:Connect(function()
+	-- forfeit asks twice (RIVALS-style confirm: the button turns red for 3 s)
+	if os.clock() - leaveArmed < 3 then send("Leave"); leaveDuel.Visible = false; return end
+	leaveArmed = os.clock()
+	leaveDuel.BackgroundColor3 = BAD; leaveDuel.BackgroundTransparency = 0.1
+	task.delay(3, function() leaveDuel.BackgroundColor3 = BLACK; leaveDuel.BackgroundTransparency = 0.35 end)
+end)
+
 ---------------------------------------------------------------------------------------------------- results
 local results = new("Frame", { Name = "Results", Position = UDim2.fromOffset(560, 230), Size = UDim2.fromOffset(800, 600), BackgroundColor3 = BLACK,
 	BackgroundTransparency = 0.25, Visible = false, Parent = root }, { corner(14) })
@@ -283,11 +298,12 @@ local function fillBox(box, ids)
 		local uid = ids[i]
 		s.h.Visible = uid ~= nil
 		if uid then
-			local p = Players:GetPlayerByUserId(uid)
-			local dead = not p or p:GetAttribute("Alive") == false
+			local p = uid > 0 and Players:GetPlayerByUserId(uid) or nil
+			local dead = (uid > 0 and not p) or (p and p:GetAttribute("Alive") == false)
 			s.h.ImageTransparency = dead and 0.65 or 0
 			s.x1.Visible, s.x2.Visible = dead, dead
-			if heads[uid] then s.h.Image = heads[uid]
+			if uid < 0 then s.h.Image = ""
+			elseif heads[uid] then s.h.Image = heads[uid]
 			elseif heads[uid] == nil then
 				heads[uid] = false
 				task.spawn(function()
@@ -300,7 +316,7 @@ local function fillBox(box, ids)
 end
 
 ---------------------------------------------------------------------------------------------------- wiring
-local lastState, lastScoreMine, lastScoreTheirs, resultsShown
+local lastState, lastScoreMine, lastScoreTheirs, resultsShown, lastMatchId
 local function hookEvents()
 	local ev = ReplicatedStorage:WaitForChild("MatchFlow", 30)
 	if ev then
@@ -309,6 +325,7 @@ local function hookEvents()
 			local kind, data = b, c
 			if type(a) == "string" and (a == "Kill" or a == "Arena" or a == "Return") then kind, data = a, b end
 			if kind == "Kill" and type(data) == "table" then addKill(data) end
+			if kind == "Return" then results.Visible = false; banner.Visible = false end
 		end)
 	end
 	local m = ReplicatedStorage:FindFirstChild("Events") and ReplicatedStorage.Events:FindFirstChild("Match")
@@ -325,11 +342,20 @@ RunService.RenderStepped:Connect(function()
 	local o = stateObject()
 	local state = o and o:GetAttribute("MatchState")
 	local playing = inMatch() and (state == "Countdown" or state == "Live" or state == "RoundEnd" or state == "MatchEnd")
+	-- a new match (or none): the old card / banner never carries over
+	local _, mid = stateObject()
+	if mid ~= lastMatchId then
+		lastMatchId = mid
+		results.Visible = false; banner.Visible = false; resultsShown = false; lastState = nil
+		for _, c in feed:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
+	end
+	if not inMatch() then results.Visible = false end
 	gui.Enabled = playing or results.Visible
 	if not gui.Enabled then
 		lastState = nil; resultsShown = false
 		return
 	end
+	leaveDuel.Visible = inLobby() and not spectator() and state ~= "MatchEnd"
 	-- score bar
 	local myTeam = player:GetAttribute("Team") or "A"
 	if spectator() then myTeam = "A" end

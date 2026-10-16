@@ -37,6 +37,14 @@ local FLAT = Vector3.new(1, 0, 1)
 
 local localPlayer = Players.LocalPlayer
 
+-- [SET] the duel arena: any Workspace child tagged DuelArena (lobby duels, any map), else workspace.Warehouse (match place)
+local function arenaMap()
+	for _, c in workspace:GetChildren() do
+		if c:GetAttribute("DuelArena") ~= nil then return c end
+	end
+	return workspace:FindFirstChild("Warehouse")
+end
+
 -- [SET] Settings > Hotkeys / Controls (UI session 2026-10-16): binds and settings arrive as player attributes
 local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
 local Get = shared.Get
@@ -98,7 +106,7 @@ local function castWorld(origin: Vector3, direction: Vector3, extraIgnore: Insta
 	end
 	if extraIgnore then table.insert(list, extraIgnore) end
 	-- set dressing (bottles, chairs, pallets...) and shootables (barrels, valves) are never cover
-	local mapModel = workspace:FindFirstChild("Warehouse")
+	local mapModel = arenaMap()
 	if mapModel then
 		for _, name in { "Props", "Shootables" } do
 			local f = mapModel:FindFirstChild(name)
@@ -342,7 +350,7 @@ local lastBlockerBox: { cf: CFrame, size: Vector3 }? = nil
 local function getObstacles()
 	if obstacleBoxes and os.clock() - obstaclesBuiltAt < 5 then return obstacleBoxes end
 	obstacleBoxes, obstaclesBuiltAt = {}, os.clock()
-	local map = workspace:FindFirstChild("Warehouse")
+	local map = arenaMap()
 	local floor = map and map:FindFirstChild("CollisionProxies") and map.CollisionProxies:FindFirstChild("COLP_Floor")
 	local floorTop = floor and floor.Position.Y + floor.Size.Y / 2 or 0.4
 	for _, folderName in { "Props", "Shootables" } do

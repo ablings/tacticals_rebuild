@@ -349,6 +349,10 @@ local function refresh()
 		if noMap(b) then
 			countLabel.Text = "VS"
 			if sub then sub.Text = "NO " .. modeName(b.mode) .. " MAPS YET" end
+		elseif b.duelWait then
+			-- every arena is busy: the bay waits instead of counting down
+			countLabel.Text = "VS"
+			if sub then sub.Text = tostring(b.duelWait) end
 		elseif b.state == "Countdown" then
 			countLabel.Text = tostring(b.countdown or "")
 			if sub then sub.Text = "DEPLOYING IN" end

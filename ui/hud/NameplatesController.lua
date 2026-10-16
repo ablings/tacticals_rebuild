@@ -123,7 +123,9 @@ function Nameplates.Start()
 				-- too close to the camera it would fill the screen (it's sized in studs): hide it inside ~9 studs
 				local head = e.gui.Adornee
 				local near = head and (workspace.CurrentCamera.CFrame.Position - head.Position).Magnitude < 9
-				e.gui.Enabled = not hideAll and not near and p:GetAttribute("InTraining") ~= true
+				-- only plates of people in the same place as you: same duel (or both in the lobby)
+				local sameSpace = (p:GetAttribute("DuelMatch") or false) == (player:GetAttribute("DuelMatch") or false)
+				e.gui.Enabled = not hideAll and not near and sameSpace and p:GetAttribute("InTraining") ~= true
 				local which, v = statOf(p)
 				e.badgeText.Text = tostring(v)
 				e.vip.Visible = p:GetAttribute("VIP") == true

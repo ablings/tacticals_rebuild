@@ -142,7 +142,10 @@ local function teamList(key)
 	local ok, ids = pcall(function() return HttpService:JSONDecode(st(key) or "") end)
 	if not ok or type(ids) ~= "table" then return nil end
 	local out = {}
-	for _, uid in ids do table.insert(out, Players:GetPlayerByUserId(uid) or { UserId = uid, _gone = true }) end
+	for _, uid in ids do
+		local p = Players:GetPlayerByUserId(uid)
+		table.insert(out, { UserId = uid, player = p, gone = p == nil and uid > 0, bot = uid < 0 })
+	end
 	return out
 end
 local function fillTeams(boxes)
@@ -152,7 +155,7 @@ local function fillTeams(boxes)
 		teams = { A = {}, B = {} }
 		for _, p in Players:GetPlayers() do
 			local t = p:GetAttribute(STATE.Team) or "A"
-			table.insert(teams[t] or teams.A, p)
+			table.insert(teams[t] or teams.A, { UserId = p.UserId, player = p })
 		end
 	end
 	local left = teams[mine] or teams.A
@@ -163,12 +166,14 @@ local function fillTeams(boxes)
 			local p = list[i]
 			s.h.Visible = p ~= nil; s.lv.Visible = p ~= nil
 			if p then
-				local lv = (not p._gone) and p:GetAttribute(STATE.Level) or nil
-				local ready = (not p._gone) and p:GetAttribute("LoadoutReady") == true
-				s.ll.Text = ready and "✓" or tostring(lv or "-")
+				local pl = p.player
+				local lv = pl and pl:GetAttribute(STATE.Level) or nil
+				local ready = pl and pl:GetAttribute("LoadoutReady") == true
+				s.ll.Text = ready and "✓" or (p.bot and "BOT" or tostring(lv or "-"))
 				s.lv.BackgroundColor3 = ready and Color3.fromRGB(70, 180, 60) or Color3.fromRGB(20, 18, 24)
-				s.h.ImageTransparency = p._gone and 0.6 or 0
-				if heads[p.UserId] then s.h.Image = heads[p.UserId]
+				s.h.ImageTransparency = p.gone and 0.6 or 0
+				if p.bot then s.h.Image = ""
+				elseif heads[p.UserId] then s.h.Image = heads[p.UserId]
 				else task.spawn(function()
 					local ok, im = pcall(Players.GetUserThumbnailAsync, Players, p.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 					if ok then heads[p.UserId] = im; s.h.Image = im end

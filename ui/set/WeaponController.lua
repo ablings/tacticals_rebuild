@@ -241,7 +241,13 @@ local function fire()
 	if not equipped or not isAlive() then return end
 	local config = equipped.config
 
-	if ReplicatedStorage:GetAttribute("CombatEnabled") == false then return end -- countdown / between rounds
+	-- [SET] per-match flag: lobby duels keep it on their own state object (MatchState.For), the match place on ReplicatedStorage
+	local stateObj = ReplicatedStorage
+	pcall(function()
+		local MS = require(ReplicatedStorage.Modules.Shared:FindFirstChild("MatchState"))
+		stateObj = MS.For(localPlayer) or ReplicatedStorage
+	end)
+	if stateObj:GetAttribute("CombatEnabled") == false then return end -- countdown / between rounds
 	local now = os.clock()
 	if now - lastFireTime < config.FireInterval then return end
 	if isReloading() then return end

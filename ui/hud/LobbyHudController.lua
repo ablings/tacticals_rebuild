@@ -711,7 +711,9 @@ function LobbyHud.Start()
 		local lobby = player.PlayerGui:FindFirstChild("LobbyUI")
 		local dock = lobby and lobby:FindFirstChild("Dock", true)
 		local row = player.PlayerGui:FindFirstChild("PlayRowUI")
-		if hide then
+		-- in a duel (playing or watching) the PLAY row and the dock go too, like Hide HUD (the hotbar stays)
+		local inDuel = player:GetAttribute("InDuel") == true or player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("DuelSpectate") ~= nil
+		if hide or inDuel then
 			if dock and dockSaved == nil then dockSaved = dock.Visible end
 			if dock then dock.Visible = false end
 			if row then row.Enabled = false end
