@@ -74,5 +74,7 @@ From a pre-polish file, run in this order:
 9. `polish_final.lua` (**always last**: re-running polish_olive resets the olive Neon)
 10. `no_panel_prompts.lua` (2026-10-16: dialogue-only NPCs, counter / gun-wall / dais prompts hidden; independent of the polish scripts)
 11. `backdrop_sky.lua` (2026-10-16: TimesSquare hidden + sky-base backdrop; leave `HIDE_TIMESSQUARE = false` in polish_exfil)
+12. `place_heli.lua` (2026-10-16: UH-60-class exfil helicopter kit; only after `kit/heli.fbx` has been imported, see `notes/heli_kit.md`;
+    then `check_heli.lua`. Independent of the polish scripts; it never touches Exfil / Polish parts)
 
 To undo, run the same scripts with `UNDO` in reverse order.
