@@ -290,6 +290,7 @@ local lastBoxKey, lastJoinKey
 local function menusOpen()
 	local lobby = player.PlayerGui:FindFirstChild("LobbyUI")
 	return (lobby and not lobby.Enabled and not hidden[lobby]) or player:GetAttribute("InTraining") == true
+		or player:GetAttribute("InCutscene") == true
 end
 local function refresh()
 	local me, b = mine()
@@ -348,6 +349,7 @@ end
 player:GetAttributeChangedSignal("Deploying"):Connect(refresh)
 player:GetAttributeChangedSignal("MM_Status"):Connect(refresh)
 player:GetAttributeChangedSignal("InTraining"):Connect(refresh)
+player:GetAttributeChangedSignal("InCutscene"):Connect(refresh)
 task.spawn(function()
 	local r = busyAsk("GetQueue")
 	if r and r.snapshot then snap = r.snapshot end

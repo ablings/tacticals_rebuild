@@ -430,12 +430,22 @@ function LobbyHud.Start()
 	end
 	-- the rest of the lobby HUD (PLAY row, dock) hides with Hide HUD too; the dock's own state is put back after
 	local dockSaved
+	local cutShown = false
 	local k = 0
 	RunService.Heartbeat:Connect(function(dt)
 		local on = lobbyShown()
-		local hide = hudHidden()
+		-- a cutscene (exfil heli etc.; ExfilFX sets InCutscene) hides everything, the corner and the fight HUD too
+		local cut = player:GetAttribute("InCutscene") == true
+		local hide = hudHidden() or cut
 		root.Visible = on and not hide
-		if corner then corner.frame.Visible = on or (hide and not player:GetAttribute("InTraining")) end
+		if corner then corner.frame.Visible = not cut and (on or (hide and not player:GetAttribute("InTraining"))) end
+		if cut ~= cutShown then
+			cutShown = cut
+			for _, name in { "Hotbar", "Vitals" } do
+				local g = player.PlayerGui:FindFirstChild(name)
+				if g then g.Enabled = not cut end
+			end
+		end
 		local pad = padded()
 		root.Size = pad and UDim2.fromScale(0.94, 0.92) or UDim2.fromScale(1, 1)
 		root.Position = pad and UDim2.fromScale(0.03, 0.04) or UDim2.fromScale(0, 0)
