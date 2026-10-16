@@ -32,6 +32,10 @@ The UI session owns the screen by default. Tacticals gets windows of up to 15 mi
 Import 3D, then message "screen free", or "skip" if there's nothing to do. Edward had the UI session halt first so he could grant
 the overnight computer-use permissions (Roblox Studio, Blender 5.2).
 
+Saving when the computer-use lock is still held by the paused UI session: front the Tacticals window (AppActivate). Check the
+foreground title is `...Tacticals_rebuild.rbxl - Roblox Studio`, send Ctrl+S with SendKeys (that is Save to File for a place
+opened from file), then check the .rbxl modified time and that the foreground title didn't change, meaning no dialog opened.
+
 ## Room identities (same RIVALS language, a different mood per room)
 Shared language everywhere: near-black floors, mid-grey walls, Neon accent lines, the olive/cream palette as thin lines only. The
 rooms differ by **light colour/temperature, key material, signature prop and accent ratio**:
