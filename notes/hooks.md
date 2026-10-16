@@ -72,3 +72,9 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   disabled (originals in `PFX_OrigEnabled`); `LobbySpark` removed from SparkBridgeA/B/Gantry (`PFX_Tags`). LobbyFX: floor pulses and
   spark bursts gated by `[PFX]` flag `workspace.PFX_AmbientFX` (false); original source in `ServerStorage._RebuildRemoved.PFX_LobbyFX_Orig`.
   UNDO via `fix/particles_fix.lua UNDO`.
+- 2026-10-15 features (notes/features_done.md): `LobbyMap.Signs.Screen_Leaderboard` now exists (LeaderboardScreen lights up). New
+  `LobbyMap.Features` (DropPits, screens, Wayfinding, Spotlights, Beacons, InteractFX, VentPuffs). **Duels floor collision moved**:
+  `Rooms3.D_Floor.D_Floor__floor_border/__floor_field` CanCollide false (`LF_OrigCollide`), collision = `Features.DropPits.FloorProxy`
+  (two holes at x -117..-111, z +-12..22). Screens are found by tag `LobbyScreen` + attribute `Screen`. New remote (only with an ad product id):
+  `Events.Lobby.LF_WatchAd`; attributes `ReplicatedStorage.LF_LiveDuels / LF_Likes* / LF_AdReady`, player `LF_PitReturn`.
+  UNDO via `fix/install_features.lua UNDO`.

@@ -73,12 +73,19 @@ end
 -- Duels hall (lane, medallion, pads with their 16.34 team plates on top; obstacles excluded by taking the walkable band)
 local lo, hi = math.huge, -math.huge
 local hallMiss, hallHigh = 0, {}
+-- [FEAT] the feature pass's drop pits (LobbyMap.Features.DropPits.Pit_*.Catch footprints) are holes on purpose: skipped here
+local pitBoxes = {}
+local FDP = LM:FindFirstChild("Features") and LM.Features:FindFirstChild("DropPits")
+for _, d in (FDP and FDP:GetDescendants() or {}) do if d:IsA("BasePart") and d.Name == "Catch" then table.insert(pitBoxes, d) end end
+local function inPit(x, z) for _, c in pitBoxes do if math.abs(x - c.Position.X) <= c.Size.X / 2 and math.abs(z - c.Position.Z) <= c.Size.Z / 2 then return true end end return false end
+local pitSkipped = 0
 for x = -137, -97, 2 do for z = -42, 42, 2 do
 	local y, who = floorAt(x, z, 21)
-	if not y then hallMiss += 1 elseif y > 16.6 then hallHigh[who] = (hallHigh[who] or 0) + 1 else lo = math.min(lo, y); hi = math.max(hi, y) end
+	if not y and inPit(x, z) then pitSkipped += 1 elseif not y then hallMiss += 1 elseif y > 16.6 then hallHigh[who] = (hallHigh[who] or 0) + 1 else lo = math.min(lo, y); hi = math.max(hi, y) end
 end end
 local hh = {}; for k, v in hallHigh do table.insert(hh, k .. " x" .. v) end
 say("Duels hall walkable floor", f2(lo), "..", f2(hi), "missing", hallMiss, "| raised (obstacles: pylons, props):", #hh > 0 and table.concat(hh, ", ") or "none")
+say("Duels hall drop-pit points skipped (holes by design, [FEAT])", pitSkipped)
 flag(hallMiss == 0 and lo >= 15.9, "Duels hall floor gap")
 grid("west deck", -197, -158, -26, 26, 21, 15.95, 0.1)
 -- hangar / pad: props (workbench, lockers, bowser, GPU, crates) stand on the floor; only floor-level hits count
