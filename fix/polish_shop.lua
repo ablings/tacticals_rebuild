@@ -19,7 +19,7 @@ local function say(s) table.insert(log, s) end
 -- 1. Recolour table (the room's own Rooms2 meshes only: every S_* mesh is used by the Shop alone)
 ---------------------------------------------------------------------------------------------------
 local C = Color3.fromRGB
-local WARM_NEON = C(228, 186, 128)     -- ceiling strips + display lamps: warm white, not blue-white
+local WARM_NEON = C(214, 180, 138)     -- ceiling strips + display lamps: warm white, not blue-white
 local RECOLOUR = {
 	-- walls: cream dominant (olive band, metal trim untouched)
 	{"S_Walls", "S_Walls__wall_kick",   {Color = C(178, 170, 150)}},
@@ -29,8 +29,13 @@ local RECOLOUR = {
 	{"S_Piers", "S_Piers__wall_light",  {Color = C(212, 206, 188)}},
 	{"S_Displays", "S_Displays__wall_light", {Color = C(206, 199, 180)}},
 	-- ceiling: warm the cool grey so the warm pools read
-	{"S_Ceiling", "S_Ceiling__ceiling",       {Color = C(128, 120, 106)}},
-	{"S_Ceiling", "S_Ceiling__ceiling_gloss", {Color = C(74, 64, 52)}},
+	-- round 2: Plastic (no sky specular: the Concrete variant and Metal picked up the blue sky and read cold)
+	{"S_Ceiling", "S_Ceiling__ceiling",       {Color = C(206, 194, 170), Material = Enum.Material.Plastic, MaterialVariant = ""}},
+	{"S_Ceiling", "S_Ceiling__ceiling_gloss", {Color = C(150, 136, 112), Material = Enum.Material.Plastic, MaterialVariant = ""}},
+	{"S_Ceiling", "S_Ceiling__trim_metal",    {Color = C(92, 78, 62), Material = Enum.Material.Plastic, MaterialVariant = ""}},
+	{"S_Beams", "S_Beams__beam_metal",        {Color = C(70, 56, 42), Material = Enum.Material.Plastic, MaterialVariant = ""}},
+	{"S_Lights", "S_Lights__dark_metal",      {Color = C(58, 48, 38), Material = Enum.Material.Plastic, MaterialVariant = ""}},
+	{"S_Lights", "S_Lights__trim_metal",      {Color = C(120, 104, 84), Material = Enum.Material.Plastic, MaterialVariant = ""}},
 	-- counter: cream body, darker warm kick (olive band and trims kept)
 	{"S_Counter", "S_Counter__wall_body",  {Color = C(222, 216, 198)}},
 	{"S_Counter", "S_Counter__wall_plate", {Color = C(232, 226, 208)}},
@@ -209,11 +214,12 @@ local WARM_BULB = C(240, 192, 128)
 -- 2. Pendant lamps over the counter (the room's signature warm pools)
 ---------------------------------------------------------------------------------------------------
 local pend = grp("CounterPendants")
-for i, x in ipairs({-6.5, 0, 6.5, 14}) do
+-- round 2: no pendant at x 0 (it hid the SUPPLY sign from the entrance)
+for i, x in ipairs({-6.5, 6.5, 14}) do
 	local z = 102
 	local top = ceilingAt(x, z)
 	local m = grp("Pendant" .. i, pend)
-	local shadeBot = 9.0   -- shade: olive drum 0.55 tall above a glowing diffuser disc (olive edge ring seen from below)
+	local shadeBot = 9.6   -- (raised 0.6 in round 2: keeps the NPC tag clear) shade: olive drum 0.55 tall above a glowing diffuser disc (olive edge ring seen from below)
 	local cordLen = top + 0.15 - (shadeBot + 1.35)
 	local V = CFrame.Angles(0, 0, math.rad(90))
 	part(m, "Cord", Vector3.new(cordLen, 0.1, 0.1), CFrame.new(x, shadeBot + 1.35 + cordLen / 2, z) * V, NEAR_BLACK, Enum.Material.SmoothPlastic, {shape = Enum.PartType.Cylinder})
@@ -221,11 +227,12 @@ for i, x in ipairs({-6.5, 0, 6.5, 14}) do
 	part(m, "ShadeTop", Vector3.new(0.3, 1.25, 1.25), CFrame.new(x, shadeBot + 0.8, z) * V, OLIVE_D, Enum.Material.Metal, {shape = Enum.PartType.Cylinder})
 	part(m, "Shade", Vector3.new(0.55, 1.9, 1.9), CFrame.new(x, shadeBot + 0.375, z) * V, OLIVE_D, Enum.Material.Metal, {shape = Enum.PartType.Cylinder})
 	part(m, "Diffuser", Vector3.new(0.06, 1.55, 1.55), CFrame.new(x, shadeBot + 0.07, z) * V, WARM_BULB, Enum.Material.Neon, {shape = Enum.PartType.Cylinder})
-	if i == 4 then continue end   -- the east pendant glows only (budget); the three over the service run cast the pools
+	if i == 3 then continue end   -- the east pendant glows only (budget); the two over the service run cast the pools
 	local host = part(m, "LightHost", Vector3.new(0.2, 0.2, 0.2), CFrame.new(x, shadeBot - 0.05, z), WARM_BULB, Enum.Material.SmoothPlastic)
 	host.Transparency = 1
 	local s = Instance.new("SpotLight"); s.Face = Enum.NormalId.Bottom; s.Angle = 82; s.Range = 13
-	s.Brightness = 1.6; s.Color = WARM_LIGHT; s.Shadows = (i == 2); s.Parent = host
+	-- Brightness measured in round 2: +10..36 levels on the wood top at 3, +45 peak at 6
+	s.Brightness = 4; s.Range = 14; s.Color = WARM_LIGHT; s.Shadows = (i == 1); s.Parent = host
 	roomLight(host)
 end
 
@@ -342,43 +349,52 @@ local eUnit = shelfUnit("WallShelfE", CFrame.new(eBackX - unitD / 2, floorAt(26,
 -- 66 lights were already enabled in Play near the Shop, against the ~45 comment in RoomFX)
 
 ---------------------------------------------------------------------------------------------------
--- 5. Back-shelf wash lights (wall brackets over both shelf banks behind the counter)
----------------------------------------------------------------------------------------------------
-local wash = grp("ShelfWash")
-for i, x in ipairs({-15, 15}) do
-	local zWall = 109.88   -- band trim face; brackets start just in front of it
-	local y = 9.85
-	local m = grp("Wash" .. i, wash)
-	for _, dx in ipairs({-3.2, 3.2}) do
-		part(m, "Bracket", Vector3.new(0.12, 0.12, 1.25), CFrame.new(x + dx, y + 0.06, zWall - 0.66), NEAR_BLACK, Enum.Material.Metal)
-	end
-	local bar = part(m, "Housing", Vector3.new(7.2, 0.3, 0.42), CFrame.new(x, y, zWall - 1.3), NEAR_BLACK, Enum.Material.Metal)
-	part(m, "Strip", Vector3.new(7.0, 0.04, 0.22), CFrame.new(x, y - 0.13, zWall - 1.3), WARM_BULB, Enum.Material.Neon)
-	local s = Instance.new("SurfaceLight"); s.Face = Enum.NormalId.Bottom; s.Angle = 75; s.Range = 10; s.Brightness = 1.3
-	s.Color = WARM_LIGHT; s.Shadows = false; s.Parent = bar
-	roomLight(bar)
-end
-
----------------------------------------------------------------------------------------------------
--- 6. Price / stock boards on the back wall (cream boards, olive header tab), flanking SUPPLY
+-- 5+6. Price / stock boards over the back shelving (round 2: bigger, real content) with a picture-light
+--      on top of each that washes the board and the shelves below it (the room's 2 shelf lights).
+--      Free wall: x 11.25..18.75 between the pier and the capsule light; the olive band face is z 110.0 and
+--      its trims project to 109.88, so the board's back face sits at 109.80 (0.08 off the trim).
 ---------------------------------------------------------------------------------------------------
 local boards = grp("Boards")
-local bBot = math.max(trimTop + 0.08, 10.45)
-local bTop = 11.9   -- free wall between the pier (x 11.25) and the capsule light (x 18.75); ceiling strips hang in front above 11.65
+local bBot, bTop = 7.85, 11.9          -- above the shelf tops (7.68), below the ceiling strips' ends
 local bH = bTop - bBot
-local bZ = backUpper - 0.08 - 0.06   -- back face 0.08 in front of the wall face
+local bZ = 109.80 - 0.06               -- frame centre (0.12 thick)
 local BOARDS = {
-	{-14.6, "01", "FIELD STOCK", "RATIONS  ·  WATER  ·  MED KITS"},
-	{14.6, "02", "REQUISITION", "SELECT AT COUNTER  ·  ISSUE BAY 2"},
+	{-14.6, "01", "FIELD STOCK", {
+		{"FIELD RATION  MRE", "50"}, {"CANTEEN  1 L", "35"}, {"MED KIT  IFAK", "120"}, {"AMMO CAN  7.62", "80"},
+	}, "PRICES IN CREDITS  ·  ISSUE AT COUNTER"},
+	{14.6, "02", "REQUISITION", {
+		{"SMOKE CANISTER", "60"}, {"PARACHUTE PACK", "150"}, {"FIELD UNIFORM", "90"}, {"PLATE CARRIER", "200"},
+	}, "SHOW TAGS  ·  COLLECT FROM BAY 2"},
 }
+local INK = C(10, 12, 10)
 for i, b in ipairs(BOARDS) do
-	local frame = part(boards, "Frame" .. i, Vector3.new(6.0, bH, 0.12), CFrame.new(b[1], bBot + bH / 2, bZ), WOOD_D, Enum.Material.Wood)
-	local face = part(boards, "Board" .. i, Vector3.new(5.7, bH - 0.24, 0.1), CFrame.new(b[1], bBot + bH / 2, bZ - 0.1), CREAM, Enum.Material.SmoothPlastic)
-	label(face, Enum.NormalId.Front, {
-		{text = b[2], x = 0, y = 0, w = 0.13, h = 1, color = CREAM, bg = OLIVE_D},
-		{text = b[3], x = 0.16, y = 0.06, w = 0.82, h = 0.52, align = Enum.TextXAlignment.Left},
-		{text = b[4], x = 0.16, y = 0.6, w = 0.82, h = 0.32, align = Enum.TextXAlignment.Left, medium = true, color = C(70, 76, 44)},
-	}, {pps = 50})
+	local m = grp("Board" .. i, boards)
+	part(m, "Frame", Vector3.new(6.0, bH, 0.12), CFrame.new(b[1], bBot + bH / 2, bZ), WOOD_D, Enum.Material.Wood)
+	local face = part(m, "Face", Vector3.new(5.76, bH - 0.24, 0.1), CFrame.new(b[1], bBot + bH / 2, bZ - 0.1), CREAM, Enum.Material.SmoothPlastic)
+	local lines = {
+		{text = "", x = 0, y = 0, w = 1, h = 0.2, bg = OLIVE_D},
+		{text = b[2], x = 0.03, y = 0.025, w = 0.12, h = 0.15, color = CREAM},
+		{text = b[3], x = 0.17, y = 0.025, w = 0.8, h = 0.15, color = CREAM, align = Enum.TextXAlignment.Left},
+	}
+	for r, row in ipairs(b[4]) do
+		local y = 0.25 + (r - 1) * 0.165
+		table.insert(lines, {text = row[1], x = 0.05, y = y, w = 0.7, h = 0.12, color = INK, align = Enum.TextXAlignment.Left})
+		table.insert(lines, {text = row[2], x = 0.72, y = y, w = 0.23, h = 0.12, color = INK, align = Enum.TextXAlignment.Right})
+		table.insert(lines, {text = "", x = 0.05, y = y + 0.14, w = 0.9, h = 0.006, bg = C(160, 154, 136)})
+	end
+	table.insert(lines, {text = b[5], x = 0.05, y = 0.9, w = 0.9, h = 0.07, color = C(70, 76, 44), medium = true})
+	label(face, Enum.NormalId.Front, lines, {pps = 60})
+	-- picture light on top: two arms from the frame top, a housing 1 stud out, Neon strip + SurfaceLight facing down
+	-- kept to the inner 3.4 studs: the ceiling strip ends dip to y ~11.7 over the outer end of each board
+	local lx = b[1] - math.sign(b[1]) * 0.7
+	for _, dx in ipairs({-1.3, 1.3}) do
+		part(m, "Arm", Vector3.new(0.1, 0.1, 0.95), CFrame.new(lx + dx, bTop + 0.09, bZ - 0.47), NEAR_BLACK, Enum.Material.Metal)
+	end
+	local bar = part(m, "Lamp", Vector3.new(3.4, 0.22, 0.34), CFrame.new(lx, bTop + 0.12, bZ - 1.05), NEAR_BLACK, Enum.Material.Metal)
+	part(m, "LampStrip", Vector3.new(3.2, 0.04, 0.2), CFrame.new(lx, bTop + 0.0, bZ - 1.05), WARM_BULB, Enum.Material.Neon)
+	local s = Instance.new("SurfaceLight"); s.Face = Enum.NormalId.Bottom; s.Angle = 80; s.Range = 9; s.Brightness = 1.4
+	s.Color = WARM_LIGHT; s.Shadows = false; s.Parent = bar
+	roomLight(bar)
 end
 
 ---------------------------------------------------------------------------------------------------

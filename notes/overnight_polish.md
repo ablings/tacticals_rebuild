@@ -67,3 +67,4 @@ Open questions for Edward (don't block on them): ad DevProductId, crate colour, 
 ## Progress
 (append one line per finished room: time, commit, sheet path, saved yes/no)
 - Shop: 22:22 fix/polish_shop.lua (warm 3000K pendants + shelf washes, cream walls/counter, wood top + shelving, boards, stock clusters, entry bins, A-frame, mat); checks pass, Play walk OK; sheet out/polish/shop/sheet.jpg (Studio captures blank: ray-render after frames, light not yet judged); saved: no. Notes: notes/polish_shop.md
+- Shop round 2 (lead review): real captures via tools/show_studio.ps1; warm Plastic ceiling/beams, boards with item rows + picture lights, centre pendant removed (hid SUPPLY), pools measured +13..44; sheet rebuilt with real before/after/RIVALS; saved: no.

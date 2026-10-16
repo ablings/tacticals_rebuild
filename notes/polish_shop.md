@@ -10,7 +10,8 @@ no RIVALS ids. Built from Parts plus the place's own `ServerStorage.PropKit` / `
 | Clip / support / hook check (read-only) | `fix/check_polish_shop.lua` |
 | Capture set (6 player-height cameras) | `python tools/polish_shop_capture.py <prefix>` |
 | Raycast albedo render (fallback when captures are blank) | `python tools/ray_render.py <out.png> cx,cy,cz lx,ly,lz [W H FOV]` |
-| Sheet | `out/polish/shop/sheet.jpg` (gitignored, like all of out/) |
+| Sheet | `out/polish/shop/sheet.jpg` (gitignored, like all of out/): real BEFORE (polish undone) / AFTER / RIVALS captures |
+| Show a Studio window for captures | `pwsh -NoProfile -File tools/show_studio.ps1 tacticals|rivals` |
 
 ## Identity
 Warm, inviting quartermaster store: the only room with **warm 3000K pools, wood and a cream envelope**. Cream dominant, olive kept as
@@ -69,3 +70,28 @@ the trim band, near-black floor kept (RIVALS language), no particles, nothing ki
 - **Light budget**: in Play at the counter 74 lights were enabled in Workspace before trimming (66 before this pass), well over
   the ~45 comment in RoomFX. This pass adds 5. The overall count is a lobby-wide issue for the final lap.
 - Queued for import: nothing (no Blender asset was needed; the props are Parts and existing kit models).
+
+## Round 2 (lead review, real captures once the windows were shown)
+Captures work after `tools/show_studio.ps1`; the sheet now has real BEFORE (polish UNDOne in the same session) / AFTER / RIVALS frames
+(RIVALS market hall and UGC shop stage captured read-only, plus the old shelving capture). The round-1 ray-render frames were dropped.
+- **(a) Cold ceiling**: the panels, gloss panels, ceiling trims, beams and strip housings were Concrete/Metal picking up the blue sky
+  specular. Now Plastic in warm values: panels 206,194,170, gloss 150,136,112, trims 92,78,62, beams 70,56,42, housings 58,48,38 /
+  120,104,84. Strip Neon 214,180,138 (218,168,108 read lemon-yellow). 19 recolours in total, originals in `PolishShop_Orig`.
+- **(b) Boards**: rebuilt larger (6.0 x 4.05, over the olive band between the pier and the capsule light, back face 0.08 off the band
+  trim) with real content, all in Scale: olive header bar ("01 FIELD STOCK", "02 REQUISITION"), four item rows with prices
+  (near-black on cream, ruled lines), footer line. A picture light on top of each (Neon strip + the SurfaceLight that used to be the
+  separate shelf wash) lights the board and the shelves. **The "blank white rectangles" were the first capture after the script
+  re-created the SurfaceGuis**: the GUI texture is not drawn yet in that frame. A second capture shows the text; in Play the boards
+  exist from load. Capture once to warm up after every re-run.
+- **(c) QUARTERMASTER**: full from the entrance. At the lead camera it is cut ("QUARTERMASTI") **identically with the polish undone**
+  (before_lead.png), so it is not from this pass. It is not occlusion (rays to the tag are clear), not MaxDistance (100 changes
+  nothing) and not the tag width (240 px cut at the same screen x). It is the NPC's own `Tag` BillboardGui (hook, not touched); left
+  for the lead.
+- **(d) Pools**: measured on the wood top in an edit-time Future capture, pendants on vs off: **+13..44 grey levels** under the two
+  pendants (Brightness 4, range 14), the centre (emitter) unchanged. The centre pendant was removed because it hid the SUPPLY sign
+  from the entrance; the remaining two cast the pools (one with shadows), the east one glows only.
+- Lights now: **4 new** (2 pendant spots, 2 board picture lights), all RoomLight Room=Shop. Shadow casters in LobbyMap: 9.
+- Re-checked after round 2: check_polish_shop 0 clips, hooks as before. (Play walk, check_rooms2/3/hub1/training were run in round 1;
+  round 2 only moved things above head height and recoloured.)
+- Lesson: twice a sed edit that appended a comment to a Luau line (`... then  -- note`, `... do -- note`, `...; -- note s.Parent = host`)
+  commented out the rest of the line: once a parse error, once silently unparented lights. Put comments on their own line.
