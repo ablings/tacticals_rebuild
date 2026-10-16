@@ -14,8 +14,25 @@ FILES = [
     ("ReplicatedStorage.UIKit", "SettingsData", "ModuleScript", "settings/SettingsData.lua"),
     ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
+    ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
 ]
 
+
+# [SET] gameplay scripts patched so Settings work (Tacticals session handed these over, 2026-10-16).
+# The first deploy copies each original to ServerStorage._RebuildRemoved.SET_<name>_Orig (UNDO = put that Source back).
+C = "StarterPlayer.StarterPlayerScripts.Client.Controllers"
+SET_FILES = [
+    (C, "CameraController", "set/CameraController.lua"),
+    (C, "ExplosionController", "set/ExplosionController.lua"),
+    (C, "FlashController", "set/FlashController.lua"),
+    (C, "WeaponController", "set/WeaponController.lua"),
+    (C + ".WeaponController", "WeaponEffects", "set/WeaponEffects.lua"),
+    (C, "MovementController", "set/MovementController.lua"),
+    (C, "CoverController", "set/CoverController.lua"),
+    (C, "HotbarController", "set/HotbarController.lua"),
+    (C, "GadgetController", "set/GadgetController.lua"),
+    (C, "HealthBarController", "set/HealthBarController.lua"),
+]
 
 # small source patches to scripts the UI session doesn't own (idempotent)
 PATCHES = [
@@ -40,10 +57,16 @@ def build():
     for parent, name, cls, path in FILES:
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
         parts.append(f"put(at('{parent}'), '{name}', '{cls}', {long_string(src)})")
+    parts.append("local SS = game:GetService('ServerStorage'); local bin = SS:FindFirstChild('_RebuildRemoved') or Instance.new('Folder'); bin.Name = '_RebuildRemoved'; bin.Parent = SS")
+    for parent, name, path in SET_FILES:
+        src = open(os.path.join(HERE, path), encoding='utf-8').read()
+        parts.append(f"do local s = at('{parent}'):FindFirstChild('{name}') or error('missing {name}'); "
+                     f"if not bin:FindFirstChild('SET_{name}_Orig') and not s.Source:find('[SET]', 1, true) then local b = s:Clone(); b.Name = 'SET_{name}_Orig'; b:ClearAllChildren(); b.Parent = bin end; "
+                     f"s.Source = {long_string(src)} end")
     for code in PATCHES:
         parts.append("do " + code + " end")
     parts.append("if rec then CHS:FinishRecording(rec, Enum.FinishRecordingOperation.Commit) end")
-    parts.append(f"return 'deployed {len(FILES)} files'")
+    parts.append(f"return 'deployed {len(FILES)} files + {len(SET_FILES)} [SET] scripts'")
     return "\n".join(parts)
 
 

@@ -74,9 +74,9 @@ return {
 			} },
 			{ title = "Controls", rows = {
 				{ kind = "toggle", name = "Toggle Aim", icon = "aim", value = false, desc = "Tap to start and stop aiming instead of holding. Doesn't change touch controls" },
-				{ kind = "toggle", name = "Toggle Crouch", icon = "crouch", value = false, desc = "Tap to crouch and stand instead of holding" },
+				{ kind = "toggle", name = "Toggle Crouch", icon = "crouch", value = true, desc = "Tap to crouch and stand. Off: hold to stay crouched" },
 				{ kind = "toggle", name = "Toggle Sprint", icon = "sprint", value = false, desc = "Tap to start and stop sprinting instead of holding" },
-				{ kind = "toggle", name = "Auto Sprint", icon = "sprint", value = true, desc = "Run by default without holding the sprint button" },
+				{ kind = "toggle", name = "Auto Sprint", icon = "sprint", value = false, desc = "Run by default without holding the sprint button" },
 				{ kind = "toggle", name = "Easy Slide", icon = "effects2", value = true, desc = "Slide by crouching while sprinting" },
 				{ kind = "toggle", name = "Easy Gun Bash", key = "Easy Quick Attack", icon = "effects2", value = true, desc = "Gun bash with a single press, even while aiming" },
 				{ kind = "toggle", name = "Bash Keeps Aim", key = "Quick Attack Keeping", icon = "inking", value = true, desc = "Go straight back to aiming after a gun bash" },

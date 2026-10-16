@@ -40,6 +40,9 @@ local SetGunHandRemote = Combat:WaitForChild("SetGunHand")
 local Get = shared.Get
 local localPlayer = Players.LocalPlayer
 
+-- [SET] Settings > Hotkeys / Controls (UI session 2026-10-16): binds and settings arrive as player attributes
+local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
+
 -- // Root
 local controller = {}
 
@@ -410,8 +413,9 @@ local function equip(tool: Tool)
 	end
 
 	local keys = WeaponConfig.Keybinds
-	ContextActionService:BindAction("WeaponFire", onInput, false, keys.Fire)
-	ContextActionService:BindAction("WeaponReload", onInput, false, keys.Reload)
+	-- [SET] your Fire / Reload binds (re-read on every equip), plus the pad triggers
+	ContextActionService:BindAction("WeaponFire", onInput, false, Binds.Key(localPlayer, "Fire", keys.Fire), Enum.KeyCode.ButtonR2)
+	ContextActionService:BindAction("WeaponReload", onInput, false, Binds.Key(localPlayer, "Reload", keys.Reload), Enum.KeyCode.ButtonX)
 
 	HUD.SetWeapon(config.DisplayName)
 	refreshHUD()
@@ -525,12 +529,18 @@ function controller.Start()
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false) -- our own HUD replaces the hotbar
 	end)
 
-	ContextActionService:BindAction("WeaponHolster", function(_, inputState)
-		if inputState == Enum.UserInputState.Begin then
-			toggleHolster()
-		end
-		return Enum.ContextActionResult.Pass
-	end, false, WeaponConfig.Keybinds.Holster)
+	-- [SET] Equip Gun follows Settings > Hotkeys
+	local function bindHolster()
+		ContextActionService:UnbindAction("WeaponHolster")
+		ContextActionService:BindAction("WeaponHolster", function(_, inputState)
+			if inputState == Enum.UserInputState.Begin then
+				toggleHolster()
+			end
+			return Enum.ContextActionResult.Pass
+		end, false, Binds.Key(localPlayer, "EquipGun", WeaponConfig.Keybinds.Holster))
+	end
+	bindHolster()
+	Binds.Changed(localPlayer, "EquipGun", bindHolster)
 
 	HitConfirm.OnClientEvent:Connect(function(zone: string, _damage: number, killed: boolean)
 		HUD.ShowHitmarker(zone, killed)
@@ -561,7 +571,7 @@ function controller.Start()
 		local index = table.find(list, current) or 0
 		SelectWeapon:FireServer(list[index % #list + 1])
 		return Enum.ContextActionResult.Sink
-	end, false, WeaponConfig.Keybinds.SelectWeapon)
+	end, false, Binds.Key(localPlayer, "CycleWeapon", WeaponConfig.Keybinds.SelectWeapon)) -- [SET] Cycle Weapon
 
 	if localPlayer.Character and __TG.On() then
 		task.spawn(bindCharacter, localPlayer.Character)

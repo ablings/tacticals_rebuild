@@ -23,6 +23,22 @@ local Config = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("S
 local SetStance = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Movement"):WaitForChild("SetStance")
 
 local localPlayer = Players.LocalPlayer
+
+-- [SET] Settings > Hotkeys / Controls (UI session 2026-10-16): binds and settings arrive as player attributes
+local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
+local function isDown(k): boolean
+	if not k then return false end
+	if k.EnumType == Enum.UserInputType then return UserInputService:IsMouseButtonPressed(k) end
+	return UserInputService:IsKeyDown(k)
+end
+local sprintToggled = false -- [SET] Toggle Sprint: on until you stop, aim or fire
+local sprintBlockedAt = 0
+-- [SET] Shift (your Sprint bind) held, or Toggle Sprint / Auto Sprint asking to run
+local function wantsSprint(): boolean
+	if localPlayer:GetAttribute("Setting_AutoSprint") == true then return true end
+	if localPlayer:GetAttribute("Setting_ToggleSprint") == true then return sprintToggled end
+	return isDown(Binds.Key(localPlayer, "Sprint", Config.Keybinds.Sprint))
+end
 local Get = shared.Get
 local FLAT = Vector3.new(1, 0, 1)
 
@@ -255,8 +271,13 @@ local function update(dt: number)
 	if updateSlide() then return end
 	if localPlayer:GetAttribute("Cutscene") then setPose(nil) return end -- a cutscene is driving you
 
-	local shiftDown = UserInputService:IsKeyDown(Config.Keybinds.Sprint) and UserInputService:GetFocusedTextBox() == nil
+	local shiftDown = wantsSprint() and UserInputService:GetFocusedTextBox() == nil -- [SET]
 	if not shiftDown then sprintBlocked = false end
+	-- [SET] with Auto / Toggle Sprint the key isn't held: a block from firing / aiming wears off after a moment
+	if sprintBlocked and not isDown(Binds.Key(localPlayer, "Sprint", Config.Keybinds.Sprint)) and os.clock() - sprintBlockedAt > 0.8
+		and not (CameraController and CameraController.IsAiming()) then
+		sprintBlocked = false
+	end
 
 	-- Cover owns movement while you're in it / moving between covers
 	if CoverController and (CoverController.IsInCover() or CoverController.IsMoving()) then
@@ -266,8 +287,9 @@ local function update(dt: number)
 		return
 	end
 	local aiming = CameraController and CameraController.IsAiming()
-	if aiming then sprintBlocked = true end
+	if aiming then sprintBlocked = true; sprintBlockedAt = os.clock(); sprintToggled = false end
 	local moving = hum.MoveDirection.Magnitude > 0.1
+	if not moving then sprintToggled = false end -- [SET] Toggle Sprint ends when you stop
 
 	local target
 	sprinting = false
@@ -312,19 +334,44 @@ end
 
 -- // Input
 local function onInputBegan(input: InputObject, gameProcessed: boolean)
-	-- C or Ctrl (either one) crouches / slides
-	local isCrouchKey = input.KeyCode == Config.Keybinds.Crouch or input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl
-	if gameProcessed or not isCrouchKey then return end
+	if gameProcessed then return end
+	-- [SET] Toggle Sprint: tap your Sprint key to start / stop running
+	if Binds.Matches(localPlayer, "Sprint", input, Config.Keybinds.Sprint) and localPlayer:GetAttribute("Setting_ToggleSprint") == true then
+		sprintToggled = not sprintToggled
+	end
+	-- [SET] the Slide key slides while sprinting, whatever Easy Slide says
+	local slideKey = Binds.Key(localPlayer, "Slide", nil)
+	if slideKey and Binds.Matches(localPlayer, "Slide", input, nil) then
+		if isAlive() and sprinting and not crouched and not sliding and os.clock() - lastSlide > Config.Slide.Cooldown
+			and not (CoverController and (CoverController.IsInCover() or CoverController.IsMoving())) then
+			startSlide()
+		end
+		return
+	end
+	-- your Crouch bind (C by default) or Ctrl crouches / slides
+	local isCrouchKey = Binds.Matches(localPlayer, "Crouch", input, Config.Keybinds.Crouch) or input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl
+	if not isCrouchKey then return end
 	if not isAlive() then return end
 	-- In cover, C is the cover crouch (CoverController handles it)
 	if CoverController and (CoverController.IsInCover() or CoverController.IsMoving()) then return end
 	if sliding then return end
-	-- sprinting: C slides instead of crouching
-	if sprinting and not crouched and os.clock() - lastSlide > Config.Slide.Cooldown then
+	-- sprinting: C slides instead of crouching ([SET] unless Easy Slide is off)
+	if sprinting and not crouched and os.clock() - lastSlide > Config.Slide.Cooldown and localPlayer:GetAttribute("Setting_EasySlide") ~= false then
 		startSlide()
 		return
 	end
+	-- [SET] Toggle Crouch off = hold to crouch (let go to stand, see onInputEnded)
+	if localPlayer:GetAttribute("Setting_ToggleCrouch") == false then setCrouched(true) return end
 	setCrouched(not crouched)
+end
+
+-- [SET] hold-to-crouch: letting go of the key stands you up
+local function onInputEnded(input: InputObject)
+	if localPlayer:GetAttribute("Setting_ToggleCrouch") ~= false then return end
+	local isCrouchKey = Binds.Matches(localPlayer, "Crouch", input, Config.Keybinds.Crouch) or input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl
+	if not isCrouchKey or not crouched then return end
+	if CoverController and (CoverController.IsInCover() or CoverController.IsMoving()) then return end
+	setCrouched(false)
 end
 
 local function bindCharacter(character: Model)
@@ -358,6 +405,8 @@ end
 -- Called when firing: drop to walk speed; sprint resumes only after Shift is pressed again
 function controller.StopSprint()
 	sprintBlocked = true
+	sprintBlockedAt = os.clock() -- [SET]
+	sprintToggled = false
 	if sprinting and humanoid then
 		sprinting = false
 		currentSpeed = crouched and Config.Speeds.Crouch or Config.Speeds.Walk
@@ -369,7 +418,7 @@ end
 -- walk/sprint speed instead of easing up from zero. Returns the speed to carry.
 function controller.OnVaultLanded(): number
 	setCrouched(false)
-	local shiftDown = UserInputService:IsKeyDown(Config.Keybinds.Sprint)
+	local shiftDown = wantsSprint() -- [SET]
 	currentSpeed = (shiftDown and not sprintBlocked) and Config.Speeds.Sprint or Config.Speeds.Walk
 	if humanoid then humanoid.WalkSpeed = currentSpeed end
 	return currentSpeed
@@ -399,6 +448,7 @@ function controller.Start()
 	if localPlayer.Character and __TG.On() then task.spawn(bindCharacter, localPlayer.Character) end
 	__TG.CharacterAdded:Connect(bindCharacter)
 	UserInputService.InputBegan:Connect(onInputBegan)
+	UserInputService.InputEnded:Connect(onInputEnded) -- [SET] hold-to-crouch
 	RunService.Heartbeat:Connect(update)
 end
 

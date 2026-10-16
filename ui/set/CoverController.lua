@@ -36,6 +36,9 @@ local RENDER_PRIORITY = Enum.RenderPriority.Camera.Value - 1 -- before the camer
 local FLAT = Vector3.new(1, 0, 1)
 
 local localPlayer = Players.LocalPlayer
+
+-- [SET] Settings > Hotkeys / Controls (UI session 2026-10-16): binds and settings arrive as player attributes
+local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
 local Get = shared.Get
 
 -- // Root
@@ -77,7 +80,10 @@ worldParams.IgnoreWater = true
 local forceFast = false -- a scripted (tutorial) move: counts as Shift held
 local function sprintHeld(): boolean
 	if forceFast then return true end
-	if UserInputService:IsKeyDown(Config.Keybinds.Sprint) then return true end
+	local sk = Binds.Key(Players.LocalPlayer, "Sprint", Config.Keybinds.Sprint) -- [SET] your Sprint bind
+	if sk.EnumType == Enum.UserInputType and UserInputService:IsMouseButtonPressed(sk) then return true end
+	if sk.EnumType == Enum.KeyCode and UserInputService:IsKeyDown(sk) then return true end
+	if Players.LocalPlayer:GetAttribute("Setting_AutoSprint") == true then return true end -- [SET] Auto Sprint
 	return RunService:IsStudio() and Players.LocalPlayer:GetAttribute("TestShift") == true
 end
 
@@ -2321,11 +2327,17 @@ function controller.Start()
 	__TG.CharacterAdded:Connect(bindCharacter)
 	task.spawn(getControls)
 
-	ContextActionService:BindAction("Cover", onCoverKey, false, Config.Keybinds.Cover)
-	ContextActionService:BindAction("CoverCrouch", onCrouchKey, false, Config.Keybinds.Crouch, Enum.KeyCode.LeftControl, Enum.KeyCode.RightControl) -- C or Ctrl
-	ContextActionService:BindAction("CoverDash", onDashKey, false, Config.Keybinds.Dash)
-	ContextActionService:BindActionAtPriority("CoverVault", onJumpKey, false,
-		Enum.ContextActionPriority.High.Value, Config.Keybinds.Vault)
+	-- [SET] Take Cover / Crouch / Dash / Jump-Vault follow Settings > Hotkeys (rebound when they change)
+	local function bindCover()
+		for _, a in { "Cover", "CoverCrouch", "CoverDash", "CoverVault" } do ContextActionService:UnbindAction(a) end
+		ContextActionService:BindAction("Cover", onCoverKey, false, Binds.Key(localPlayer, "TakeCover", Config.Keybinds.Cover), Enum.KeyCode.ButtonB)
+		ContextActionService:BindAction("CoverCrouch", onCrouchKey, false, Binds.Key(localPlayer, "Crouch", Config.Keybinds.Crouch), Enum.KeyCode.LeftControl, Enum.KeyCode.RightControl) -- C or Ctrl
+		ContextActionService:BindAction("CoverDash", onDashKey, false, Binds.Key(localPlayer, "Dash", Config.Keybinds.Dash))
+		ContextActionService:BindActionAtPriority("CoverVault", onJumpKey, false,
+			Enum.ContextActionPriority.High.Value, Binds.Key(localPlayer, "Jump", Config.Keybinds.Vault))
+	end
+	bindCover()
+	for _, a in { "TakeCover", "Crouch", "Dash", "Jump" } do Binds.Changed(localPlayer, a, bindCover) end
 	RunService:BindToRenderStep(RENDER_NAME, RENDER_PRIORITY, update)
 
 	-- Studio-only test hook: lets automated playtests press Q/E with a chosen crosshair ray.

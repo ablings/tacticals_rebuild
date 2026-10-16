@@ -14,7 +14,9 @@ RunService = __TG.RunService
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundTrim = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("SoundTrim"))
 local ContextActionService = game:GetService("ContextActionService")
+local UserInputService = game:GetService("UserInputService") -- [SET] Scroll Equip
 ContextActionService = __TG.ContextActionService
+UserInputService = __TG.UserInputService
 
 local Shared = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Config")
 local HotbarConfig = require(Shared:WaitForChild("HotbarConfig"))
@@ -24,6 +26,9 @@ local UITheme = require(ReplicatedStorage.Modules.Shared:WaitForChild("UITheme")
 local MeleeRemote = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Combat"):WaitForChild("Melee")
 
 local localPlayer = Players.LocalPlayer
+
+-- [SET] Settings > Hotkeys / Controls (UI session 2026-10-16): binds and settings arrive as player attributes
+local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
 local Get = shared.Get
 local controller = {}
 
@@ -182,12 +187,19 @@ local SUB = Color3.fromRGB(196, 194, 182) -- pass 34 (lobby training copy): bone
 local RED = Color3.fromRGB(255, 90, 100)
 local BLUE = Color3.fromRGB(200, 214, 150)
 
-local TILE = Vector2.new(132, 84)                              -- one tile
-local GAP = 8                                                  -- between tiles
-local RENDER = Vector2.new(176, 112)                           -- the item's render box: bigger than the tile, so it spills out
-local RENDER_LIFT = -8                                         -- the render sits this far above the tile's centre
-local TILE_GREY, TILE_T = Color3.fromRGB(70, 78, 58), 0.5  -- a tile: light grey glass
-local HELD_FILL, HELD_T = Color3.fromRGB(22, 25, 20), 0.25      -- the one in your hands: dark glass + a black fade
+-- [UI] restyle (UI session 2026-10-16, Edward: RIVALS' aesthetics, classy, no olive / corner brackets on gameplay UI):
+-- RIVALS' row of dark glass tiles, the held one bigger and lighter with a soft white edge, white type, the big 3D items
+-- spilling over the tiles. Built in 1920x1080 design px on a UIKit canvas, then Kit.toScale (Scale only).
+local TILE = Vector2.new(186, 124)                             -- one tile (design px)
+local GAP = 14                                                 -- between tiles
+local RENDER = Vector2.new(244, 160)                           -- the item's render box: bigger than the tile, so it spills out
+local RENDER_LIFT = -10                                        -- the render sits this far above the tile's centre
+local TILE_GREY, TILE_T = Color3.fromRGB(0, 0, 0), 0.55       -- a tile: dark glass
+local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in your hands: lighter glass
+local BONE = Color3.fromRGB(255, 255, 255)
+local STENCIL = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+local UIKitFolder = ReplicatedStorage:WaitForChild("UIKit")
+local Kit = require(UIKitFolder:WaitForChild("Kit"))
 local ICON_FOV = 30
 local TI = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 local POP = TweenInfo.new(0.32, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
@@ -463,22 +475,20 @@ local function round(f: GuiObject, r: number)
 	c.Parent = f
 end
 
--- where the held item's name sits: left of its tile, level with it
-local function nameAt(i: number): UDim2
-	return UDim2.new(1, -(TILE.X + 30), 1, -(i - 1) * (TILE.Y + GAP) - TILE.Y / 2)
-end
-
 local function makeTile(i: number)
+	-- a row, left to right: 1 gun, 2 melee, 3 gadget; anchored bottom-centre so the held one grows upwards
 	local tile = Instance.new("Frame")
 	tile.Name = "Slot" .. i
-	tile.AnchorPoint = Vector2.new(1, 1)
-	tile.Position = UDim2.new(1, 0, 1, -(i - 1) * (TILE.Y + GAP))
+	tile.AnchorPoint = Vector2.new(0.5, 1)
+	tile.Position = UDim2.fromOffset((i - 1) * (TILE.X + GAP) + TILE.X / 2, TILE.Y)
 	tile.Size = UDim2.fromOffset(TILE.X, TILE.Y)
 	tile.BackgroundColor3 = TILE_GREY
 	tile.BackgroundTransparency = TILE_T
 	tile.BorderSizePixel = 0
 	tile.ZIndex = 1
-	round(tile, 8)
+	local grow = Instance.new("UIScale")
+	grow.Scale = 0.86
+	grow.Parent = tile
 	-- held: a black fade toward the bottom of the tile
 	local fade = Instance.new("Frame")
 	fade.Name = "Fade"
@@ -487,22 +497,36 @@ local function makeTile(i: number)
 	fade.BackgroundTransparency = 1
 	fade.BorderSizePixel = 0
 	fade.ZIndex = 2
-	round(fade, 8)
 	local g = Instance.new("UIGradient")
 	g.Rotation = 90
 	g.Transparency = NumberSequence.new({
-		NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.3, 0.8), NumberSequenceKeypoint.new(1, 0.08),
+		NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.35, 0.85), NumberSequenceKeypoint.new(1, 0.1),
 	})
 	g.Parent = fade
 	fade.Parent = tile
+	round(tile, 10)
+	round(fade, 10)
+	-- the held one gets a soft white edge
+	local edge = Instance.new("UIStroke")
+	edge.Color = WHITE
+	edge.Thickness = 2
+	edge.Transparency = 1
+	edge.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	edge.Parent = tile
 
 	-- slot key, top left
-	local key = text(tile, FONT, 14, SUB, 9)
-	key.Name = "Key"
-	key.Position = UDim2.fromOffset(9, 6)
-	key.Size = UDim2.fromOffset(12, 14)
+	local keyBox = Instance.new("Frame")
+	keyBox.Name = "KeyBox"
+	keyBox.Position = UDim2.fromOffset(8, 6)
+	keyBox.Size = UDim2.fromOffset(20, 22)
+	keyBox.BackgroundTransparency = 1
+	keyBox.BorderSizePixel = 0
+	keyBox.ZIndex = 9
+	keyBox.Parent = tile
+	local key = text(keyBox, STENCIL, 18, SUB, 10)
 	key.TextXAlignment = Enum.TextXAlignment.Left
-	key.TextYAlignment = Enum.TextYAlignment.Top
+	key.Name = "Key"
+	key.Size = UDim2.fromScale(1, 1)
 	key.Text = tostring(i)
 	shade(key, 1)
 
@@ -511,27 +535,27 @@ local function makeTile(i: number)
 	count.Name = "Count"
 	count.BackgroundTransparency = 1
 	count.AnchorPoint = Vector2.new(0, 1)
-	count.Position = UDim2.new(0, 9, 1, -3)
-	count.Size = UDim2.fromOffset(TILE.X - 16, 30)
+	count.Position = UDim2.new(0, 10, 1, -6)
+	count.Size = UDim2.fromOffset(TILE.X - 20, 40)
 	count.ZIndex = 9
 	local list = Instance.new("UIListLayout")
 	list.FillDirection = Enum.FillDirection.Horizontal
 	list.VerticalAlignment = Enum.VerticalAlignment.Bottom
 	list.SortOrder = Enum.SortOrder.LayoutOrder
-	list.Padding = UDim.new(0, 4)
+	list.Padding = UDim.new(0, 5)
 	list.Parent = count
-	local big = text(count, FONT_HEAVY, 28, WHITE, 9)
+	local big = text(count, STENCIL, 40, WHITE, 9)
 	big.Name = "Big"
 	big.LayoutOrder = 1
 	big.AutomaticSize = Enum.AutomaticSize.X
-	big.Size = UDim2.fromOffset(0, 30)
+	big.Size = UDim2.fromOffset(0, 40)
 	big.TextYAlignment = Enum.TextYAlignment.Bottom
 	shade(big, 1.5)
-	local small = text(count, FONT, 15, SUB, 9)
+	local small = text(count, STENCIL, 21, SUB, 9)
 	small.Name = "Small"
 	small.LayoutOrder = 2
 	small.AutomaticSize = Enum.AutomaticSize.X
-	small.Size = UDim2.fromOffset(0, 22)
+	small.Size = UDim2.fromOffset(0, 24)
 	small.TextYAlignment = Enum.TextYAlignment.Bottom
 	local pad = Instance.new("UIPadding")
 	pad.PaddingBottom = UDim.new(0, 3)
@@ -549,8 +573,8 @@ local function makeTile(i: number)
 
 	local icon = makeRender(tile)
 	tile.Parent = column
-	return { tile = tile, fade = fade, key = key, big = big, small = small, bullets = bullets, icon = icon,
-		title = "", selected = nil, empty = nil }
+	return { tile = tile, fade = fade, key = key, keyBox = keyBox, big = big, small = small, bullets = bullets, icon = icon,
+		edge = edge, grow = grow, title = "", selected = nil, empty = nil }
 end
 
 -- the gun tile's bullets icon: the mesh render, or three drawn rounds if the mesh isn't there
@@ -578,7 +602,7 @@ local function keycap(parent: Instance, key: string, order: number)
 	cap.AutomaticSize = Enum.AutomaticSize.X
 	cap.Size = UDim2.fromOffset(22, 22)
 	cap.BackgroundColor3 = BLACK
-	cap.BackgroundTransparency = 0.42 -- the armory's panel glass
+	cap.BackgroundTransparency = 0.42 -- dark glass, like the tiles
 	cap.BorderSizePixel = 0
 	round(cap, 6)
 	cap.FontFace = FONT
@@ -594,13 +618,15 @@ local function buildUI()
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "Hotbar"
 	gui.ResetOnSpawn = false
+	gui.IgnoreGuiInset = true
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- every item draws over every tile, so they can spill onto the next one
+	local canvas = Kit.canvas(gui) -- [UI] 1920x1080 design canvas
 
 	-- quick controls (very bottom right): just text + keycaps, no box
 	local hints = Instance.new("Frame")
 	hints.Name = "Controls"
 	hints.AnchorPoint = Vector2.new(1, 1)
-	hints.Position = UDim2.new(1, -22, 1, -14)
+	hints.Position = UDim2.fromScale(1 - 22 / 1920, 1 - 14 / 1080)
 	hints.AutomaticSize = Enum.AutomaticSize.X
 	hints.Size = UDim2.fromOffset(0, 26)
 	hints.BackgroundTransparency = 1
@@ -610,31 +636,47 @@ local function buildUI()
 	hlist.SortOrder = Enum.SortOrder.LayoutOrder
 	hlist.Padding = UDim.new(0, 6)
 	hlist.Parent = hints
-	for i, entry in HotbarConfig.Hints or {} do
-		local label = text(hints, FONT, 16, WHITE, 1)
-		label.LayoutOrder = i * 10
-		label.AutomaticSize = Enum.AutomaticSize.X
-		label.Size = UDim2.fromOffset(0, 22)
-		label.Text = (i > 1 and "    " or "") .. entry[1]
-		shade(label, 1)
-		keycap(hints, entry[2], i * 10 + 1)
+	-- [SET] the quick-controls strip uses Tacticals' names and your binds (rebuilt when a bind changes)
+	local HINTS = {
+		{ "Take Cover", "TakeCover", "Q" }, { "Gun Bash", "GunBash", "F" }, { "Throw Gadget", "ThrowGadget", "G" }, { "Reload", "Reload", "R" },
+	}
+	local function keyName(action, fallback)
+		local k = Binds.Key(localPlayer, action, nil)
+		if not k then return fallback end
+		local short = { MouseButton1 = "M1", MouseButton2 = "M2", MouseButton3 = "M3", LeftShift = "Shift", LeftControl = "Ctrl",
+			LeftAlt = "Alt", One = "1", Two = "2", Three = "3", Four = "4", Five = "5", Six = "6", Seven = "7", Eight = "8", Nine = "9", Zero = "0" }
+		return short[k.Name] or k.Name
 	end
-	hints.Parent = gui
+	local function buildHints()
+		for _, c in hints:GetChildren() do if not c:IsA("UIListLayout") then c:Destroy() end end
+		for i, entry in HINTS do
+			local label = text(hints, FONT, 16, WHITE, 1)
+			label.LayoutOrder = i * 10
+			label.AutomaticSize = Enum.AutomaticSize.X
+			label.Size = UDim2.fromOffset(0, 22)
+			label.Text = (i > 1 and "    " or "") .. entry[1]
+			shade(label, 1)
+			keycap(hints, keyName(entry[2], entry[3]), i * 10 + 1)
+		end
+	end
+	buildHints()
+	for _, entry in HINTS do Binds.Changed(localPlayer, entry[2], buildHints) end
+	hints.Parent = canvas
 
 	column = Instance.new("Frame")
 	column.Name = "Tiles"
 	column.AnchorPoint = Vector2.new(1, 1)
-	column.Position = UDim2.new(1, -26, 1, -54)
-	column.Size = UDim2.fromOffset(TILE.X, 3 * TILE.Y + 2 * GAP)
+	column.Position = UDim2.fromOffset(1920 - 30, 1080 - 64)
+	column.Size = UDim2.fromOffset(3 * TILE.X + 2 * GAP, TILE.Y)
 	column.BackgroundTransparency = 1
-	column.Parent = gui
+	column.Parent = canvas
 
-	-- name of what's in your hands, beside its tile
-	heldName = text(column, FONT_HEAVY, 36, WHITE, 10)
+	-- name of what's in your hands: big stencil type above the row, an olive bar at its right end
+	heldName = text(column, STENCIL, 56, BONE, 10)
 	heldName.Name = "HeldName"
-	heldName.AnchorPoint = Vector2.new(1, 0.5)
-	heldName.Position = nameAt(1)
-	heldName.Size = UDim2.fromOffset(420, 42)
+	heldName.AnchorPoint = Vector2.new(1, 1)
+	heldName.Position = UDim2.new(1, -4, 0, -12)
+	heldName.Size = UDim2.fromOffset(520, 62)
 	heldName.TextXAlignment = Enum.TextXAlignment.Right
 	heldName.TextTransparency = 1
 	heldStroke = shade(heldName, 2)
@@ -644,6 +686,9 @@ local function buildUI()
 		slots[i] = makeTile(i)
 	end
 	addBullets(slots[GUN].bullets)
+	Kit.toScale(column, Vector2.new(3 * TILE.X + 2 * GAP, TILE.Y)) -- [UI] Scale only
+	column.Position = UDim2.fromScale((1920 - 30) / 1920, (1080 - 64) / 1080)
+	column.Size = UDim2.fromScale((3 * TILE.X + 2 * GAP) / 1920, TILE.Y / 1080)
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
 end
 
@@ -712,19 +757,17 @@ local function refreshUI()
 	if active ~= shownActive then
 		shownActive = active
 		if active > 0 then
-			local at = nameAt(active)
-			heldName.Text = slots[active].title
-			heldName.Position = at + UDim2.fromOffset(14, 0)
+			heldName.Text = string.upper(slots[active].title)
 			heldName.TextTransparency = 1
 			heldStroke.Transparency = 1
-			TweenService:Create(heldName, TweenInfo.new(0.22, Enum.EasingStyle.Quint), { Position = at, TextTransparency = 0 }):Play()
+			TweenService:Create(heldName, TweenInfo.new(0.22, Enum.EasingStyle.Quint), { TextTransparency = 0 }):Play()
 			TweenService:Create(heldStroke, TI, { Transparency = 0.45 }):Play()
 		else
 			TweenService:Create(heldName, TI, { TextTransparency = 1 }):Play()
 			TweenService:Create(heldStroke, TI, { Transparency = 1 }):Play()
 		end
 	elseif active > 0 then
-		heldName.Text = slots[active].title
+		heldName.Text = string.upper(slots[active].title)
 	end
 
 	for i, sl in slots do
@@ -733,12 +776,14 @@ local function refreshUI()
 		if sl.selected ~= on or sl.empty ~= empty then
 			sl.selected, sl.empty = on, empty
 			TweenService:Create(sl.tile, TI, { BackgroundColor3 = on and HELD_FILL or TILE_GREY, BackgroundTransparency = on and HELD_T or TILE_T }):Play()
+			TweenService:Create(sl.grow, POP, { Scale = on and 1 or 0.86 }):Play()
+			TweenService:Create(sl.edge, TI, { Transparency = on and 0.35 or 1 }):Play()
 			TweenService:Create(sl.fade, TI, { BackgroundTransparency = on and 0 or 1 }):Play()
 			TweenService:Create(sl.icon.scale, POP, { Scale = on and 1.08 or 0.92 }):Play()
 			local tint = empty and Color3.fromRGB(90, 96, 80) or (on and Color3.fromRGB(236, 232, 218) or Color3.fromRGB(200, 198, 186))
 			TweenService:Create(sl.icon.main, TI, { ImageColor3 = tint, ImageTransparency = empty and 0.4 or 0 }):Play()
 			TweenService:Create(sl.icon.shadow, TI, { ImageTransparency = empty and 0.8 or 0.45 }):Play()
-			sl.key.TextColor3 = on and WHITE or SUB
+			sl.key.TextColor3 = on and BONE or SUB
 		end
 	end
 end
@@ -754,25 +799,61 @@ function controller.Start()
 	PPS.PromptHidden:Connect(function(prompt)
 		if prompt.KeyboardKeyCode == MeleeConfig.QuickMelee.Key then promptsShown = math.max(promptsShown - 1, 0) end
 	end)
-	ContextActionService:BindActionAtPriority("QuickMelee", function(_, state)
-		if promptsShown > 0 then return Enum.ContextActionResult.Pass end
-		if state == Enum.UserInputState.Begin then quickMelee() end
-		return Enum.ContextActionResult.Sink
-	end, false, 2500, MeleeConfig.QuickMelee.Key)
+	-- [SET] Gun Bash, slot keys: Settings > Hotkeys (rebound when they change)
+	local function slotKeys()
+		return {
+			Binds.Key(localPlayer, "EquipGun", HotbarConfig.Keys[1]),
+			Binds.Key(localPlayer, "EquipMelee", HotbarConfig.Keys[2]),
+			Binds.Key(localPlayer, "EquipGadget", HotbarConfig.Keys[3]),
+		}
+	end
+	local function bindQuickMelee()
+		ContextActionService:UnbindAction("QuickMelee")
+		ContextActionService:BindActionAtPriority("QuickMelee", function(_, state)
+			if promptsShown > 0 then return Enum.ContextActionResult.Pass end
+			if state == Enum.UserInputState.Begin then quickMelee() end
+			return Enum.ContextActionResult.Sink
+		end, false, 2500, Binds.Key(localPlayer, "GunBash", MeleeConfig.QuickMelee.Key), Enum.KeyCode.ButtonR1)
+	end
+	bindQuickMelee()
+	Binds.Changed(localPlayer, "GunBash", bindQuickMelee)
 	-- the kit can change mid-session (tutorial 2 swaps smoke for flash): keep the gadget slot current
 	for _, attribute in { "KitGadget", "SmokeCharges", "FlashCharges", "Loadout", "KitMelee" } do
 		localPlayer:GetAttributeChangedSignal(attribute):Connect(function() task.defer(refreshUI) end)
 	end
-	ContextActionService:BindActionAtPriority("HotbarSlots", function(_, state, input)
-		if state ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
-		local slot = table.find(HotbarConfig.Keys, input.KeyCode)
-		if slot == 1 then
-			smokeMode = false
-			return Enum.ContextActionResult.Pass -- WeaponController draws / holsters the gun
+	local function bindSlots()
+		ContextActionService:UnbindAction("HotbarSlots")
+		local keys = slotKeys()
+		ContextActionService:BindActionAtPriority("HotbarSlots", function(_, state, input)
+			if state ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
+			local slot = table.find(keys, input.KeyCode)
+			if slot == 1 then
+				smokeMode = false
+				return Enum.ContextActionResult.Pass -- WeaponController draws / holsters the gun
+			end
+			if slot then select(slot) end
+			return Enum.ContextActionResult.Sink
+		end, false, 2500, table.unpack(keys))
+	end
+	bindSlots()
+	for _, a in { "EquipGun", "EquipMelee", "EquipGadget" } do Binds.Changed(localPlayer, a, bindSlots) end
+	-- [SET] Game > Controls > Scroll Equip: the mouse wheel steps gun -> melee -> gadget
+	local lastScroll = 0
+	UserInputService.InputChanged:Connect(function(input, gp)
+		if gp or input.UserInputType ~= Enum.UserInputType.MouseWheel then return end
+		if localPlayer:GetAttribute("Setting_ScrollEquip") == false or os.clock() - lastScroll < 0.15 then return end
+		local Cam = Get("CameraController")
+		if Cam and Cam.IsMouseFree and Cam.IsMouseFree() then return end
+		lastScroll = os.clock()
+		local order = { GUN, MELEE, GADGET }
+		local i = table.find(order, controller.ActiveSlot()) or 1
+		for step = 1, 3 do
+			local nextSlot = order[(i - 1 + (input.Position.Z < 0 and step or -step)) % 3 + 1]
+			local before = controller.ActiveSlot()
+			select(nextSlot)
+			if controller.ActiveSlot() ~= before then break end
 		end
-		if slot then select(slot) end
-		return Enum.ContextActionResult.Sink
-	end, false, 2500, table.unpack(HotbarConfig.Keys))
+	end)
 
 	-- Left click with the melee (2) or gadget (3) out (above the gun's fire binding)
 	ContextActionService:BindActionAtPriority("HotbarUse", function(_, state)

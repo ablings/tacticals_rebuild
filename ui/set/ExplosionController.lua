@@ -55,6 +55,7 @@ end
 -- // Camera shake ------------------------------------------------------------------------------------------
 local shake = { amount = 0, decay = 3 }
 local function addShake(amount: number, decay: number?)
+	if localPlayer:GetAttribute("Setting_CameraShake") == false then return end -- [SET] Video > Camera Shake
 	shake.amount = math.max(shake.amount, amount)
 	shake.decay = decay or 3
 end

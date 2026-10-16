@@ -43,6 +43,14 @@ local RENDER_PRIORITY = Enum.RenderPriority.Camera.Value + 1 -- after Roblox's d
 
 local localPlayer = Players.LocalPlayer
 
+-- [SET] Settings > ... (UI session 2026-10-16): player settings arrive as attributes (SettingsConfig.Apply)
+local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
+local function setting(name: string, default: any): any
+	local v = localPlayer:GetAttribute("Setting_" .. name)
+	if v == nil then return default end
+	return v
+end
+
 -- // Root
 local controller = {}
 
@@ -164,15 +172,20 @@ local function update(dt: number)
 		UserInputService.MouseIconEnabled = false
 
 		local delta = UserInputService:GetMouseDelta()
-		local sensitivity = math.rad(Config.Sensitivity) * (state.aimHeld and Config.AimSensitivityMultiplier or 1)
+		-- [SET] Video > Camera: Sensitivity, While Aiming, While Scoped (50% = the tuned default)
+		local sensitivity = math.rad(Config.Sensitivity) * setting("Sensitivity", 100) / 100
+			* (state.aimHeld and Config.AimSensitivityMultiplier * setting("WhileAiming", 50) / 50 or 1)
 		local scopeNow = ScopeRef()
 		if scopeNow and scopeNow.UsesScope() then
 			sensitivity *= lerp(1, scopeNow.FOV() / Config.Aim.FOV, scopeNow.Zoom()) -- through a scope: slower look to match the zoom
+			sensitivity *= setting("WhileScoped", 50) / 50
 		else
 			local scopeFOV = state.aimHeld and weaponAimFOV()
 			if scopeFOV then sensitivity *= scopeFOV / Config.Aim.FOV end -- zoomed guns: slower look to match
 		end
-		local invert = Config.InvertY and -1 or 1
+		local invert = (Config.InvertY ~= (setting("InvertedY", false) == true)) and -1 or 1 -- [SET] Inverted Y
+		local invertX = setting("InvertedX", false) == true and -1 or 1 -- [SET] Inverted X
+		local sensX, sensY = setting("Horizontal", 100) / 100, setting("Vertical", 100) / 100 -- [SET] Horizontal / Vertical
 
 		local guide = state.guide
 		if guide and guide.getTarget then
@@ -209,9 +222,9 @@ local function update(dt: number)
 		end
 		do
 			if not state.guide then
-				state.yaw -= delta.X * sensitivity
+				state.yaw -= delta.X * sensitivity * sensX * invertX
 				state.pitch = math.clamp(
-					state.pitch - delta.Y * sensitivity * invert,
+					state.pitch - delta.Y * sensitivity * sensY * invert,
 					math.rad(Config.PitchMin),
 					math.rad(Config.PitchMax)
 				)
@@ -449,9 +462,11 @@ end
 
 -- // Input
 local function onAim(_, inputState: Enum.UserInputState)
+	-- [SET] Game > Controls > Toggle Aim: tap to start / stop aiming (touch keeps its own control)
+	local toggle = setting("ToggleAim", false) == true
 	if inputState == Enum.UserInputState.Begin then
-		state.aimHeld = not state.mouseFree
-	elseif inputState == Enum.UserInputState.End or inputState == Enum.UserInputState.Cancel then
+		if toggle then state.aimHeld = not state.aimHeld and not state.mouseFree else state.aimHeld = not state.mouseFree end
+	elseif (inputState == Enum.UserInputState.End and not toggle) or inputState == Enum.UserInputState.Cancel then
 		state.aimHeld = false
 	end
 	return Enum.ContextActionResult.Pass -- weapons also need to see right-click
@@ -602,8 +617,16 @@ function controller.Start()
 	localPlayer:GetAttributeChangedSignal("Setting_GunHand"):Connect(function() state.shoulder = preferredShoulder() end)
 	localPlayer.CharacterAdded:Connect(function() state.shoulder = preferredShoulder() end)
 
-	ContextActionService:BindAction("CameraAim", onAim, false, Config.Keybinds.Aim)
-	ContextActionService:BindAction("CameraShoulderSwap", onShoulderSwap, false, Config.Keybinds.ShoulderSwap)
+	-- [SET] Settings > Hotkeys: Aim / Shoulder Swap follow your binds (config keys as the fallback)
+	local function bindCamera()
+		ContextActionService:UnbindAction("CameraAim")
+		ContextActionService:UnbindAction("CameraShoulderSwap")
+		ContextActionService:BindAction("CameraAim", onAim, false, Binds.Key(localPlayer, "Aim", Config.Keybinds.Aim), Enum.KeyCode.ButtonL2)
+		ContextActionService:BindAction("CameraShoulderSwap", onShoulderSwap, false, Binds.Key(localPlayer, "ShoulderSwap", Config.Keybinds.ShoulderSwap))
+	end
+	bindCamera()
+	Binds.Changed(localPlayer, "Aim", bindCamera)
+	Binds.Changed(localPlayer, "ShoulderSwap", bindCamera)
 
 	-- (pass 45) hold Left Alt (rebindable: Settings > Hotkeys > Free Cursor) to get the mouse back for a moment
 	local function freeKey(): Enum.KeyCode

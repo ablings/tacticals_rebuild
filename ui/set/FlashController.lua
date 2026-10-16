@@ -125,8 +125,11 @@ local function update()
 		local t = (now - blindStart) / math.max(blindEnd - blindStart, 0.01)
 		b = blindPeak * (t < 0.4 and 1 or (1 - (t - 0.4) / 0.6) ^ 1.6)
 	end
+	-- [SET] Video > Accessibility > Dark Blinds: the screen goes dark instead of burning white
+	local dark = localPlayer:GetAttribute("Setting_DarkBlinds") == true
+	white.BackgroundColor3 = dark and Color3.fromRGB(6, 6, 8) or Color3.fromRGB(255, 255, 252)
 	white.BackgroundTransparency = 1 - math.clamp(b, 0, 1)
-	cc.Brightness = 0.6 * b
+	cc.Brightness = (dark and -0.35 or 0.6) * b
 	cc.Contrast = -0.4 * b
 	cc.Saturation = -0.9 * b
 	blur.Size = 18 * b
@@ -149,6 +152,7 @@ local function update()
 		local s = swayStrength * (1 - (now - stunStart) / math.max(stunEnd - stunStart, 0.01))
 		local cam = workspace.CurrentCamera
 		local tt = now * 2.3
+		if localPlayer:GetAttribute("Setting_CameraShake") == false then s = 0 end -- [SET] Camera Shake
 		cam.CFrame = cam.CFrame * CFrame.Angles(math.rad(math.sin(tt) * 2.2 * s), math.rad(math.cos(tt * 0.8) * 3 * s), math.rad(math.sin(tt * 1.3) * 2 * s))
 	else
 		swayStrength = 0

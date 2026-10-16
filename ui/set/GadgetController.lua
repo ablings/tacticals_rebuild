@@ -19,6 +19,9 @@ local Config = GadgetConfig.Smoke
 local ThrowGadget = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Combat"):WaitForChild("ThrowGadget")
 
 local localPlayer = Players.LocalPlayer
+
+-- [SET] Settings > Hotkeys / Controls (UI session 2026-10-16): binds and settings arrive as player attributes
+local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
 local controller = {}
 
 local SIM_STEP = 0.04
@@ -646,7 +649,7 @@ function controller.Start()
 			return Enum.ContextActionResult.Sink
 		end
 		return Enum.ContextActionResult.Pass
-	end, false, GadgetConfig.Keybinds.Smoke)
+	end, false, Binds.Key(localPlayer, "ThrowGadget", GadgetConfig.Keybinds.Smoke), Enum.KeyCode.ButtonL1) -- [SET] Throw Gadget bind
 
 	RunService.RenderStepped:Connect(updateArc)
 	RunService.Heartbeat:Connect(function()

@@ -87,17 +87,23 @@ local function flashMuzzle(tool: Tool?, effectConfig)
 			light.Brightness = bp.Light.Brightness
 			if light:IsA("PointLight") then light.Range = bp.Light.Range end
 		end
-		light.Enabled = true
-		task.delay(bp and bp.Light and bp.Light.Time or 0.045, function() light.Enabled = false end)
+		if game:GetService("Players").LocalPlayer:GetAttribute("Setting_HideMuzzleFlashes") ~= true then -- [SET]
+			light.Enabled = true
+			task.delay(bp and bp.Light and bp.Light.Time or 0.045, function() light.Enabled = false end)
+		end
 	end
 	local function emit(name: string, count: number)
 		if count <= 0 then return end
 		local e = muzzle:FindFirstChild(name)
 		if e and e:IsA("ParticleEmitter") then e:Emit(count) end
 	end
-	emit("FlashCore", bp and bp.Core or 3)
-	emit("FlashSide", bp and bp.Side or 1)
-	emit("FlashParticles", bp and bp.Sparks or 6)
+	-- [SET] Video > Graphics > Hide Muzzle Flashes: no flash particles (the smoke stays)
+	local noFlash = game:GetService("Players").LocalPlayer:GetAttribute("Setting_HideMuzzleFlashes") == true
+	if not noFlash then
+		emit("FlashCore", bp and bp.Core or 3)
+		emit("FlashSide", bp and bp.Side or 1)
+		emit("FlashParticles", bp and bp.Sparks or 6)
+	end
 	emit("MuzzleSmoke", bp and bp.Smoke or 4)
 	-- a thin ring of compressed air snaps out of the muzzle for a frame
 	if bp and bp.Ring then

@@ -11,89 +11,80 @@ local TweenService = game:GetService("TweenService")
 local localPlayer = Players.LocalPlayer
 local controller = {}
 
-local WIDTH, HEIGHT = 300, 14
+local WIDTH, HEIGHT = 330, 18 -- the bar (design px)
 local COLOR_OK = Color3.fromRGB(236, 232, 218) -- bone (pass 34)
 local COLOR_LOW = Color3.fromRGB(240, 70, 60)
 local LOW_AT = 0.3 -- fraction of max health
+-- [UI] restyle (UI session 2026-10-16, Edward: RIVALS' aesthetics, classy, no olive / brackets on gameplay UI):
+-- no plate, just the big white number with a cross and a rounded quartered bar on dark glass, like RIVALS.
+-- Built in 1920x1080 design px on a UIKit canvas, then Kit.toScale (Scale only).
+local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
+local STENCIL = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+local FIELD = Color3.fromRGB(200, 200, 206)
 
 local gui, fill, trail, number, frame
 local shown, trailValue = 1, 1
 local lastHitAt = 0
 
+local function box(parent, props)
+	local f = Instance.new("Frame")
+	f.BorderSizePixel = 0
+	for k, v in props do f[k] = v end
+	f.Parent = parent
+	return f
+end
+
 local function build()
 	gui = Instance.new("ScreenGui")
 	gui.Name = "Vitals"
 	gui.ResetOnSpawn = false
-	frame = Instance.new("Frame")
-	frame.Name = "Health"
-	frame.AnchorPoint = Vector2.new(0, 1)
-	frame.Position = UDim2.new(0, 22, 1, -62) -- (the noise meter sits under it)
-	frame.Size = UDim2.fromOffset(WIDTH, 48)
-	frame.BackgroundTransparency = 1
-	frame.Parent = gui
+	gui.IgnoreGuiInset = true
+	local canvas = Kit.canvas(gui)
+	local root = box(canvas, { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1) })
+	local W, H = WIDTH + 44, 88
+	frame = box(root, { Name = "Health", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(28, 1080 - 64), Size = UDim2.fromOffset(W, H),
+		BackgroundTransparency = 1 })
 
 	local label = Instance.new("TextLabel")
 	label.BackgroundTransparency = 1
-	label.Size = UDim2.fromOffset(120, 18)
-	label.Font = Enum.Font.GothamBold
-	label.TextSize = 12
-	label.TextColor3 = Color3.fromRGB(160, 164, 148)
+	label.Position = UDim2.fromOffset(20, 22)
+	label.Size = UDim2.fromOffset(160, 22)
+	label.FontFace = STENCIL
+	label.TextSize = 19
+	label.TextColor3 = FIELD
 	label.TextXAlignment = Enum.TextXAlignment.Left
 	label.Text = "HEALTH"
+	label.ZIndex = 3
 	label.Parent = frame
+
+	-- medical cross beside the number
+	local cross = box(frame, { AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(W - 112, 14), Size = UDim2.fromOffset(26, 26), BackgroundTransparency = 1, ZIndex = 3 })
+	box(cross, { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(26, 9), BackgroundColor3 = COLOR_OK, ZIndex = 3 })
+	box(cross, { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(9, 26), BackgroundColor3 = COLOR_OK, ZIndex = 3 })
 
 	number = Instance.new("TextLabel")
 	number.BackgroundTransparency = 1
 	number.AnchorPoint = Vector2.new(1, 0)
-	number.Position = UDim2.new(1, 0, 0, -8)
-	number.Size = UDim2.fromOffset(120, 28)
-	number.Font = Enum.Font.GothamBlack
-	number.TextSize = 26
+	number.Position = UDim2.fromOffset(W - 18, 2)
+	number.Size = UDim2.fromOffset(90, 50)
+	number.FontFace = STENCIL
+	number.TextSize = 46
 	number.TextColor3 = COLOR_OK
 	number.TextXAlignment = Enum.TextXAlignment.Right
 	number.Text = "100"
+	number.ZIndex = 3
 	number.Parent = frame
 
-	local back = Instance.new("Frame")
-	back.Name = "Bar"
-	back.Position = UDim2.fromOffset(0, 24)
-	back.Size = UDim2.fromOffset(WIDTH, HEIGHT)
-	back.BackgroundColor3 = Color3.fromRGB(14, 16, 12)
-	back.BackgroundTransparency = 0.3
-	back.BorderSizePixel = 0
-	back.ClipsDescendants = true
-	local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0, 1) c.Parent = back
-	back.Parent = frame
-
-	trail = Instance.new("Frame")
-	trail.Name = "Damage"
-	trail.Size = UDim2.fromScale(1, 1)
-	trail.BackgroundColor3 = Color3.fromRGB(255, 150, 120)
-	trail.BackgroundTransparency = 0.25
-	trail.BorderSizePixel = 0
-	local tc = Instance.new("UICorner") tc.CornerRadius = UDim.new(0, 3) tc.Parent = trail
-	trail.Parent = back
-
-	fill = Instance.new("Frame")
-	fill.Name = "Fill"
-	fill.Size = UDim2.fromScale(1, 1)
-	fill.BackgroundColor3 = COLOR_OK
-	fill.BorderSizePixel = 0
-	local fc = Instance.new("UICorner") fc.CornerRadius = UDim.new(0, 3) fc.Parent = fill
-	fill.Parent = back
-
+	local back = box(frame, { Name = "Bar", Position = UDim2.fromOffset(20, 56), Size = UDim2.fromOffset(WIDTH, HEIGHT),
+		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5, ClipsDescendants = true, ZIndex = 3 })
+	local rc = Instance.new("UICorner") rc.CornerRadius = UDim.new(0, 5) rc.Parent = back
+	trail = box(back, { Name = "Damage", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(255, 150, 120), BackgroundTransparency = 0.25, ZIndex = 3 })
+	fill = box(back, { Name = "Fill", Size = UDim2.fromScale(1, 1), BackgroundColor3 = COLOR_OK, ZIndex = 4 })
 	-- quarter ticks
 	for i = 1, 3 do
-		local tick = Instance.new("Frame")
-		tick.Position = UDim2.new(i / 4, -1, 0, 0)
-		tick.Size = UDim2.new(0, 2, 1, 0)
-		tick.BackgroundColor3 = Color3.fromRGB(14, 14, 16)
-		tick.BackgroundTransparency = 0.4
-		tick.BorderSizePixel = 0
-		tick.ZIndex = 3
-		tick.Parent = back
+		box(back, { Position = UDim2.new(i / 4, -2, 0, 0), Size = UDim2.new(0, 4, 1, 0), BackgroundColor3 = Color3.fromRGB(12, 14, 11), ZIndex = 5 })
 	end
-
+	Kit.toScale(root)
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
 end
 
