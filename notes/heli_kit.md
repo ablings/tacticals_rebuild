@@ -15,7 +15,7 @@ Survey: `notes/heli_survey.md` (every hook). Reference and stud scale: `notes/he
 
 ## The model
 UH-60 Black Hawk layout at 2.29 studs/m in length, 2.74 in height, 3.05 in width (a standing R15 must fit the cabin). Nose -Z, tail +Z,
-starboard +X, exactly the old model's frame: pivot (133, -0.1, 0), mast at x 133 z 0, rotor plane y 10.2, nose z -12.95, tail z 22.75.
+starboard +X, exactly the old model's frame: pivot (133, -0.1, 0), mast at x 133 z 0, rotor plane y 10.2, nose z -13.62, tail z 22.75.
 - Fuselage: one loft of 15 rounded-rectangle stations (pchip-smoothed, 38 rings x 31 samples), blunt nose, two-pane windscreen +
   eyebrow windows, cockpit door / lower door / gunner windows each side (near-black glass recessed 0.04 in 0.17-proud dark frames),
   door outlines as proud seams, tapering tail cone, swept pylon, stabilator below the tail-rotor disc.
@@ -30,18 +30,37 @@ starboard +X, exactly the old model's frame: pivot (133, -0.1, 0), mast at x 133
 - Craft: every closed part bevelled (0.02-0.16), smooth shading + 40 deg sharp edges + WeightedNormal (face area, keep sharp) on all
   opaque meshes, overlays 0.08-0.17 proud with side walls (never flush), Z-up export with the S2B convention of the earlier kits.
 
-## Pieces, triangles, colours (9,725 tris, 19 meshes)
+## Glazing v2 (Edward: "the windows look fake", 2026-10-16)
+Why v1 read fake: panes were flat near-black patches laid on the skin (decals), the same black as the trim, no seal, and the
+windshield did not follow the nose. v2, in `tools/heli_kit.py` (`windows_def`, `glazing_parts`, `fuselage`, `door_leaf`):
+- **Real openings in the hull.** The loft rings are sampled at 36 angles (offset half a step so the windshield centre post is one
+  column); for every pane the nearest ring samples are snapped onto its edge angles and rings are inserted at its edge stations, so
+  the opening is cut along true grid lines and those quads are simply not built. Asserts catch clashing snaps / overlapping panes.
+- **Glass conforms and sits recessed 0.045** behind the skin (the cut quads offset along the surface normal), a **dark matte shell
+  0.45 behind** (no interior, no sky), dark jamb walls, and a **raised seal** round each opening (0.06 proud, 0.10 wide, trim colour).
+- **Layout (UH-60):** two-piece windshield wrapping the nose with a centre post (z -11.30..-9.40), overhead roof windows over the
+  pilots, cockpit door windows, chin windows low on the nose, gunner windows just behind the cockpit, two windows in the closed
+  starboard cabin door and two in the open port door leaf (cut through the 0.16 leaf the same way). Cockpit door outlines and the
+  starboard cabin door outline stay as proud seams.
+- **Nose re-lofted** sharper and lower (tip at z -13.62, y ~2.2; raked windshield line), still inside the old footprint (z >= -14.1).
+- Glass in Studio: Glass 40,48,52, T 0.25, Reflectance 0.3 (place_heli applies Transparency/Reflectance/CastShadow from the
+  manifest). Eevee close-ups in a light sky: `out/heli/ev_cockpit.png`, `ev_cockpit_match.png` (same camera as the old capture
+  `out/heli/old_cockpit.jpg`), `ev_cabin_stbd.png`, `ev_door_port.png`, `ev_34front.png`; v1 workbench renders kept in `out/heli/v1/`.
+- Check (proxies, 147 + discs): 0 fails, same results as v1 (static clips 0, lift clear to e 1.95, camera/jump arc clear).
+
+## Pieces, triangles, colours (10,183 tris, 21 meshes; glazing v2)
 | Mesh | Tris | Colour (base) | Studio | Collision |
 |---|---|---|---|---|
-| HX_Body__olive | 2,590 | 84,90,50 military olive | SmoothPlastic | **CanCollide, Hull** (the only collider), CanQuery |
+| HX_Body__olive | 2,614 | 84,90,50 military olive | SmoothPlastic | **CanCollide, Hull** (the only collider), CanQuery |
 | HX_Body__olive_dark | 428 | 64,70,40 (fairing, nacelles) | SmoothPlastic | off (query on) |
-| HX_Body__trim_dark | 2,352 | 30,32,30 (frames, seams, jamb, tyres, antennas, cutters) | SmoothPlastic | off |
-| HX_Body__glass | 116 | 16,20,20 | Glass, T 0, Reflectance 0.15 | off |
+| HX_Body__trim_dark | 2,348 | 30,32,30 (window seals + jambs, door seams, door jamb, tyres, antennas, cutters) | SmoothPlastic | off |
+| HX_Body__glass | 228 | 40,48,52 dark blue-grey | **Glass, Transparency 0.25, Reflectance 0.3**, no shadow (alt: SmoothPlastic R 0.35 T 0.25) | off |
+| HX_Body__glass_back | 228 | 14,16,16 matte | SmoothPlastic, no shadow: the dark shell 0.45 behind each pane | off |
 | HX_Body__metal | 1,413 | 160,154,142 warm grey (exhausts, mast, struts, hubs, rails, steps) | Metal (+ TacMetal variant if present) | off |
 | HX_Body__cream | 530 | 236,232,218 (07 stencils, band) | SmoothPlastic | off, no shadow |
 | HX_Body__cabin | 18 | 24,26,23 plain dark cabin volume | SmoothPlastic | off |
 | HX_Body__nav_red / nav_green / nav_amber | 116 each | 255,60,40 / 60,255,110 / 255,170,40 | Neon | off |
-| HX_Door__olive / __glass / __trim_dark | 118 / 8 / 76 | as body | | leaf Hull collide |
+| HX_Door__olive / __glass / __glass_back / __trim_dark | 172 / 16 / 16 / 96 | as body | | leaf Hull collide |
 | HX_RotorMain__blade / __cream / __metal | 272 / 224 / 796 | 34,36,34 / cream tips / warm grey | | off; **Rotor = Main** |
 | HX_RotorTail__blade / __cream / __metal | 176 / 176 / 84 | same | | off; **Rotor = Tail** |
 Max per mesh 2,590 (limit 20k). The olive (84,90,50) is well below the lobby olive band (renders ~138,130,60), so it reads drab
@@ -52,7 +71,7 @@ olive, not lime; measure the render after placing and lift towards 92,98,56 if i
    **Creator = the Gunsy Funsy group**; tick **Insert Using Scene Position** and **Anchored**; leave normals as authored; Import.
    It arrives near the world origin above the hub (the FBX is authored around the heli pivot; the cube K_Scale7 sits at (0, 60, 0)).
    Close the Import Queue panel afterwards.
-2. Confirm by script: 19 `HX_*` MeshParts + `K_Scale7` + `K_Marker7` under one import Model. `K_Scale7.Size` / 10 = the import scale
+2. Confirm by script: 21 `HX_*` MeshParts + `K_Scale7` + `K_Marker7` under one import Model. `K_Scale7.Size` / 10 = the import scale
    (earlier Tacticals kits came in at 1, 11.4, 20, 31; never assume). `fix/place_heli.lua` measures it and detects a 180-degree turn
    from K_Marker7; it also prints the largest deviation of any mesh from its manifest position (should be < 0.05).
 3. `python tools/run_luau.py fix/place_heli.lua` (run it twice if the first report looks odd: it undoes and re-applies).
@@ -68,7 +87,7 @@ olive, not lime; measure the render after placing and lift towards 92,98,56 if i
 2. Find the import by `K_Scale7` (Workspace or ServerStorage), scale + turn from the markers.
 3. Move the 13 old `U_Heli*` meshes to `ServerStorage._RebuildRemoved.Heli_Old` (not deleted; they would otherwise still be lifted by
    ExfilFX). Heli Model, its name, WorldPivot and `Mast` unchanged.
-4. Place the 19 meshes in `LobbyMap.Heli.HX` at pivot + manifest centre with manifest size and style; anchored; CanTouch false;
+4. Place the 21 meshes in `LobbyMap.Heli.HX` at pivot + manifest centre with manifest size and style; anchored; CanTouch false;
    `NotCover` + `HeliKit` attributes; `Rotor` on the rotor meshes.
 5. `TailHub` -> (134.7, 9.4, 20.6), `TailAxis` -> (-0.940, -0.342, 0) (originals in `HeliKit_OrigTailHub/Axis`).
 6. Markers to `ServerStorage._RebuildRemoved`; the empty import Model is removed.

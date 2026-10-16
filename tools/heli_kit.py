@@ -28,7 +28,8 @@ MATS = {
     "olive":      ((84, 90, 50),    0.0, 0.55, False, "SmoothPlastic", (True, True, "Hull", True, 0, 0)),
     "olive_dark": ((64, 70, 40),    0.0, 0.6,  False, "SmoothPlastic", (False, True, "Box", True, 0, 0)),
     "trim_dark":  ((30, 32, 30),    0.0, 0.6,  False, "SmoothPlastic", (False, False, "Box", True, 0, 0)),
-    "glass":      ((16, 20, 20),    0.0, 0.08, False, "Glass", (False, False, "Box", True, 0, 0.15)),
+    "glass":      ((40, 48, 52),    0.0, 0.05, False, "Glass", (False, False, "Box", False, 0.25, 0.3)),
+    "glass_back": ((14, 16, 16),    0.0, 0.95, False, "SmoothPlastic", (False, False, "Box", False, 0, 0)),
     "metal":      ((160, 154, 142), 0.85, 0.4, False, "Metal", (False, False, "Box", True, 0, 0)),
     "cream":      ((236, 232, 218), 0.0, 0.6,  False, "SmoothPlastic", (False, False, "Box", False, 0, 0)),
     "cabin":      ((24, 26, 23),    0.0, 0.9,  False, "SmoothPlastic", (False, False, "Box", True, 0, 0)),
@@ -60,6 +61,13 @@ def make_material(name):
         b.inputs["Emission Color"].default_value = (*lin, 1)
         b.inputs["Emission Strength"].default_value = 4.0
     m.diffuse_color = (*lin, 1)
+    if name == "glass":   # Eevee look of Roblox Glass at T 0.25 / Reflectance 0.3
+        b.inputs["Alpha"].default_value = 0.78
+        b.inputs["Roughness"].default_value = 0.04
+        try:
+            m.surface_render_method = "DITHERED"
+        except Exception:
+            pass
     m["studio"] = studio
     m["rgb"] = list(rgb)
     return m
@@ -165,13 +173,14 @@ def dome(piece, mat, c, r, d, seg=10):
 # ------------------------------------------------------------------ fuselage loft
 # stations: z, yb, yt, hw, rb, rt
 ST = [
-    (-12.70, 2.70, 3.60, 0.70, 0.30, 0.35),
-    (-12.35, 2.00, 4.25, 1.80, 0.70, 0.90),
-    (-11.75, 1.45, 4.75, 2.80, 0.80, 1.20),
-    (-11.00, 1.15, 5.05, 3.30, 0.80, 1.40),
-    (-10.20, 1.05, 5.70, 3.50, 0.80, 1.50),
-    (-9.30, 1.00, 6.55, 3.58, 0.80, 1.60),
-    (-8.30, 1.00, 7.20, 3.60, 0.80, 1.60),
+    # sharper, sloped UH-60 nose: low pointed tip, long raked windshield line (v2, Edward: "windows look fake")
+    (-13.45, 1.95, 2.55, 0.40, 0.15, 0.20),
+    (-13.05, 1.55, 3.30, 1.35, 0.45, 0.55),
+    (-12.35, 1.20, 4.05, 2.40, 0.70, 0.90),
+    (-11.45, 1.05, 4.80, 3.08, 0.80, 1.20),
+    (-10.40, 1.00, 5.75, 3.46, 0.80, 1.45),
+    (-9.35, 1.00, 6.60, 3.58, 0.80, 1.60),
+    (-8.35, 1.00, 7.20, 3.60, 0.80, 1.60),
     (-7.30, 1.00, 7.40, 3.60, 0.80, 1.60),
     (7.00, 1.00, 7.40, 3.60, 0.80, 1.60),
     (8.60, 1.50, 7.38, 3.48, 0.85, 1.58),
@@ -181,7 +190,7 @@ ST = [
     (16.80, 5.50, 7.16, 0.80, 0.40, 0.50),
     (18.40, 5.85, 7.10, 0.46, 0.30, 0.36),
 ]
-NOSE_POLE = Vector((0, 3.15, -12.98))
+NOSE_POLE = Vector((0, 2.22, -13.62))
 TAIL_POLE = Vector((0, 6.48, 18.58))
 
 def _pchip(xs, ys):
@@ -274,52 +283,139 @@ DOOR_Z0, DOOR_Z1, DOOR_Y0, DOOR_Y1 = -2.2, 3.0, 1.4, 6.5
 LIN_X, LIN_Y0, LIN_Y1, LIN_Z0, LIN_Z1 = 3.0, 1.25, 6.6, -2.7, 4.6
 CAB_Z = -4.0   # a station inside the constant section
 
+# glazing set INTO the hull (v2): every pane is a real opening in the loft grid (grid lines snapped onto its edges), with the
+# glass recessed GLASS_RECESS behind the skin and conforming to it, a dark matte shell SHELL_DEPTH behind (depth, no interior,
+# no sky), dark jamb walls, and a thin raised seal (SEAL_H proud, SEAL_W wide) round the opening.
+GLASS_RECESS, SHELL_DEPTH, SEAL_H, SEAL_W = 0.045, 0.45, 0.06, 0.10
+N_RING = 36
+TOP = math.pi / 2
+
+def _port(y0, y1, zref):
+    return a_at(zref, y1, -1), a_at(zref, y0, -1)
+
+def windows_def():
+    """(name, z0, z1, a0, a1): port side + mirrored starboard (a -> pi - a). UH-60 layout (notes/heli_reference.md)."""
+    W = []
+    def both(name, z0, z1, a0, a1, sides=(-1, 1)):
+        for sd in sides:
+            if sd < 0:
+                W.append((name + "_P", z0, z1, a0, a1))
+            else:
+                W.append((name + "_S", z0, z1, math.pi - a1, math.pi - a0))
+    both("Windshield", -11.30, -9.40, TOP + 0.08, TOP + 1.02)          # two big panes wrapping the nose, centre post between
+    both("Overhead", -8.95, -7.35, TOP + 0.13, TOP + 0.58)             # roof windows over the pilots
+    both("CockpitDoor", -9.10, -6.95, *_port(3.95, 6.30, -8.4))        # main side window in each cockpit door
+    both("Chin", -12.1, -11.0, *_port(1.85, 2.95, -11.5))            # lower nose (chin) windows by the pedals
+    both("Gunner", -5.55, -3.40, *_port(4.35, 6.20, CAB_Z))            # gunner windows just behind the cockpit
+    both("CabinDoorA", -1.55, 0.15, *_port(4.30, 6.00, CAB_Z), sides=(1,))   # starboard cabin door (closed): two windows
+    both("CabinDoorB", 0.65, 2.35, *_port(4.30, 6.00, CAB_Z), sides=(1,))
+    return W
+
+def glazing_parts(P, N, rect, accp="HX_Body", recess=GLASS_RECESS, depth=SHELL_DEPTH):
+    """Glass, dark shell, jamb and raised seal for one opening rect (i0, i1, k0, k1) on a point grid P[i][k] with normals N."""
+    i0, i1, k0, k1 = rect
+    gl, sh, tr = acc(accp, "glass"), acc(accp, "glass_back"), acc(accp, "trim_dark")
+    ni, nk = len(P), len(P[0])
+    def T(i, k, di, dk):
+        a = P[min(max(i + di, 0), ni - 1)][min(max(k + dk, 0), nk - 1)]
+        b = P[min(max(i - di, 0), ni - 1)][min(max(k - dk, 0), nk - 1)]
+        return (a - b).normalized()
+    for i in range(i0, i1):
+        for k in range(k0, k1):
+            q = [(i, k), (i, k + 1), (i + 1, k + 1), (i + 1, k)]
+            nc = sum((N[a][b] for a, b in q), Vector()).normalized()
+            face(gl, [P[a][b] - N[a][b] * recess for a, b in q], nc)
+            face(sh, [P[a][b] - N[a][b] * depth for a, b in q], nc)
+    loop = [(i, k0) for i in range(i0, i1)] + [(i1, k) for k in range(k0, k1)] + \
+           [(i, k1) for i in range(i1, i0, -1)] + [(i0, k) for k in range(k1, k0, -1)]
+    def out_dir(i, k):
+        si = -1 if i == i0 else (1 if i == i1 else 0)
+        sk = -1 if k == k0 else (1 if k == k1 else 0)
+        d = T(i, k, 1, 0) * si + T(i, k, 0, 1) * sk
+        n = N[i][k]; d = (d - n * d.dot(n)).normalized()
+        return d * (SEAL_W * (1.41 if si and sk else 1.0))
+    for j in range(len(loop)):
+        (iu, ku), (iv, kv) = loop[j], loop[(j + 1) % len(loop)]
+        Pu, Pv, nu, nv = P[iu][ku], P[iv][kv], N[iu][ku], N[iv][kv]
+        du, dv = out_dir(iu, ku), out_dir(iv, kv)
+        face(tr, [Pu + nu * SEAL_H, Pv + nv * SEAL_H, Pv - nv * depth, Pu - nu * depth], -(du + dv))            # jamb + seal inner wall
+        face(tr, [Pu + nu * SEAL_H, Pv + nv * SEAL_H, Pv + nv * SEAL_H + dv, Pu + nu * SEAL_H + du], nu + nv)  # seal top
+        face(tr, [Pu + du - nu * 0.03, Pv + dv - nv * 0.03, Pv + dv + nv * SEAL_H, Pu + du + nu * SEAL_H], du + dv)  # seal outer wall
+
 def fuselage():
     a_top = a_at(CAB_Z, DOOR_Y1, -1); a_bot = a_at(CAB_Z, DOOR_Y0, -1)
-    A = sorted(set([2 * math.pi * k / 30 for k in range(30)] + [a_top, a_bot]))
-    # drop uniform samples closer than 0.04 rad to a door angle (no slivers)
-    A = [a for a in A if a in (a_top, a_bot) or min(abs(a - a_top), abs(a - a_bot)) > 0.04]
+    openings = [(n, z0, z1, a0, a1, "glass") for (n, z0, z1, a0, a1) in windows_def()]
+    openings.append(("Door_P", DOOR_Z0, DOOR_Z1, a_top, a_bot, "door"))
+    A0 = [-math.pi / 2 + 2 * math.pi * (k + 0.5) / N_RING for k in range(N_RING)]   # no sample on the top centre line: the windshield centre post is one column
+    snaps = []   # snap index per opening edge (same for every ring the opening spans)
+    for (n, z0, z1, a0, a1, kind) in openings:
+        k0 = min(range(N_RING), key=lambda k: abs(A0[k] - a0)); k1 = min(range(N_RING), key=lambda k: abs(A0[k] - a1))
+        assert k1 > k0, n
+        snaps.append((k0, k1))
     Z = []
     for i in range(len(ST) - 1):
         z0, z1 = ST[i][0], ST[i + 1][0]
-        nsub = 1 if (z1 - z0) > 6 else (3 if z0 < -9 else 2)
+        nsub = 1 if (z1 - z0) > 6 else 2
         Z += [z0 + (z1 - z0) * k / nsub for k in range(nsub)]
     Z += [ST[-1][0]]
-    Z = sorted(set([round(z, 4) for z in Z] + [DOOR_Z0, DOOR_Z1, -5.6, 5.2]))
+    edges = set()
+    for o in openings:
+        edges |= {round(o[1], 4), round(o[2], 4)}
+    Z = sorted(set(round(z, 4) for z in Z) | edges)
+    Zf = []
+    for z in Z:   # drop non-edge rings closer than 0.25 to an edge ring (no slivers)
+        if z in edges or min(abs(z - e) for e in edges) > 0.25:
+            Zf.append(z)
+    Z = Zf
     bm = acc("HX_Body", "olive")
-    R = [[bm.verts.new(surf(z, a)) for a in A] for z in Z]
-    n = len(A)
-    hole = []
+    Pg, Ng = [], []
+    for z in Z:
+        A = list(A0)
+        used = {}
+        for (o, (k0, k1)) in zip(openings, snaps):
+            if o[1] - 1e-4 <= z <= o[2] + 1e-4:
+                for k, a in ((k0, o[3]), (k1, o[4])):
+                    assert abs(used.get(k, a) - a) < 1e-9, ("snap clash", o[0], k)
+                    used[k] = a; A[k] = a
+        assert all(A[k] < A[k + 1] for k in range(N_RING - 1)), ("ring order", z)
+        Pg.append([surf(z, a) for a in A]); Ng.append([normal_at(z, a) for a in A])
+    R = [[bm.verts.new(p) for p in row] for row in Pg]
+    n = N_RING
+    rects, hole = {}, set()
+    for (o, (k0, k1)) in zip(openings, snaps):
+        i0 = Z.index(round(o[1], 4)); i1 = Z.index(round(o[2], 4))
+        rects[o[0]] = ((i0, i1, k0, k1), o[5])
+        for i in range(i0, i1):
+            for k in range(k0, k1):
+                assert (i, k) not in hole, ("overlap", o[0])
+                hole.add((i, k))
     for i in range(len(Z) - 1):
         for k in range(n):
-            k2 = (k + 1) % n
-            inhole = (Z[i] >= DOOR_Z0 - 1e-6 and Z[i + 1] <= DOOR_Z1 + 1e-6 and A[k] >= a_top - 1e-9 and
-                      (A[k2] if k2 else 2 * math.pi) <= a_bot + 1e-9)
-            if inhole:
-                hole.append((i, k))
+            if (i, k) in hole:
                 continue
+            k2 = (k + 1) % n
             bm.faces.new((R[i][k], R[i][k2], R[i + 1][k2], R[i + 1][k]))
     pn = bm.verts.new(NOSE_POLE); pt = bm.verts.new(TAIL_POLE)
     for k in range(n):
         k2 = (k + 1) % n
         bm.faces.new((pn, R[0][k2], R[0][k]))
         bm.faces.new((pt, R[-1][k], R[-1][k2]))
-    # jamb: shell hole boundary -> the flat liner wall at x = -LIN_X (dark trim), facing into the opening
-    hs = set(hole)
+    for name, (rect, kind) in rects.items():
+        if kind == "glass":
+            glazing_parts(Pg, Ng, rect)
+    # door: jamb from the hole boundary to the flat liner wall at x = -LIN_X (dark trim), facing into the opening
+    (i0, i1, k0, k1), _ = rects["Door_P"]
     jb = acc("HX_Body", "trim_dark")
     ctr = Vector((-3.3, (DOOR_Y0 + DOOR_Y1) / 2, (DOOR_Z0 + DOOR_Z1) / 2))
     def jquad(p, q):
         p2 = Vector((-LIN_X, p.y, p.z)); q2 = Vector((-LIN_X, q.y, q.z))
-        mid = (p + q) / 2
-        want = ctr - mid; want.x = 0
+        want = ctr - (p + q) / 2; want.x = 0
         face(jb, [p, q, q2, p2], want)
-    for (i, k) in hole:
-        k2 = (k + 1) % n
-        if (i - 1, k) not in hs: jquad(R[i][k].co.copy(), R[i][k2].co.copy())
-        if (i + 1, k) not in hs: jquad(R[i + 1][k].co.copy(), R[i + 1][k2].co.copy())
-        if (i, k - 1) not in hs: jquad(R[i][k].co.copy(), R[i + 1][k].co.copy())
-        if (i, k + 1) not in hs: jquad(R[i][k2].co.copy(), R[i + 1][k2].co.copy())
-    return len(Z), n
+    for i in range(i0, i1):
+        jquad(Pg[i][k0], Pg[i + 1][k0]); jquad(Pg[i][k1], Pg[i + 1][k1])
+    for k in range(k0, k1):
+        jquad(Pg[i0][k], Pg[i0][k + 1]); jquad(Pg[i1][k], Pg[i1][k + 1])
+    return len(Z), n, len(rects)
 
 def cabin_liner():
     """Plain dark cabin volume, faces inward, port wall open at the door."""
@@ -404,25 +500,48 @@ def seam(z0, z1, rng, w=0.09, off=0.1):
     patch("HX_Body", "trim_dark", z1 - w, z1, lambda z: (rng(z)[0] + da, rng(z)[1] - da), off, sides=off, nz=1)
 
 def glazing():
-    top = math.pi / 2
-    # windscreen: two panes split by a centre post
-    window(-10.95, -8.55, const_rng(top + 0.07, top + 0.95))
-    window(-10.95, -8.55, const_rng(top - 0.95, top - 0.07))
-    # eyebrow (overhead) windows
-    window(-8.35, -7.05, const_rng(top + 0.14, top + 0.62))
-    window(-8.35, -7.05, const_rng(top - 0.62, top - 0.14))
-    for s in (-1, 1):
-        window(-9.25, -6.45, side_rng(3.9, 6.25, s))      # cockpit door window
-        window(-9.7, -8.15, side_rng(2.05, 3.35, s))      # lower door window
-        window(-5.55, -3.35, side_rng(4.35, 6.2, s))      # gunner window
-        seam(-9.85, -6.05, side_rng(1.55, 6.65, s))       # cockpit door outline
-    window(-0.7, 1.9, side_rng(4.3, 6.05, 1))             # starboard cabin door window (door closed)
+    """Panel outlines only; the panes themselves are cut into the loft in fuselage()."""
+    for sd in (-1, 1):
+        seam(-9.35, -6.7, side_rng(1.55, 6.75, sd))        # cockpit door outline round the door window
     seam(DOOR_Z0, DOOR_Z1, side_rng(DOOR_Y0, DOOR_Y1, 1))  # starboard cabin door outline
+
+def door_leaf():
+    """Open port cabin door leaf, slid aft (z 3.15..8.35), 0.16 thick, two windows cut through it like the hull's."""
+    zs = [3.15, 3.55, 4.5, 5.45, 5.95, 6.9, 7.85, 8.35]
+    hs = [1.45, 2.9, 4.3, 5.2, 6.05, 6.5]
+    TOPO, BOT = 0.30, 0.14
+    base = []
+    for z in zs:
+        row = []
+        for h in hs:
+            a = a_at(z, h, -1); row.append((surf(z, a), normal_at(z, a)))
+        base.append(row)
+    P = [[p + n * TOPO for p, n in row] for row in base]
+    B = [[p + n * BOT for p, n in row] for row in base]
+    N = [[n for p, n in row] for row in base]
+    wins = [(1, 3, 2, 4), (4, 6, 2, 4)]
+    hole = {(i, k) for (i0, i1, k0, k1) in wins for i in range(i0, i1) for k in range(k0, k1)}
+    ol = acc("HX_Door", "olive")
+    for i in range(len(zs) - 1):
+        for k in range(len(hs) - 1):
+            q = [(i, k), (i, k + 1), (i + 1, k + 1), (i + 1, k)]
+            nc = sum((N[a][b] for a, b in q), Vector()).normalized()
+            if (i, k) not in hole:
+                face(ol, [P[a][b] for a, b in q], nc)
+            face(ol, [B[a][b] for a, b in q], -nc)
+    ni, nk = len(zs) - 1, len(hs) - 1
+    edges = [((i, 0), (i + 1, 0)) for i in range(ni)] + [((i, nk), (i + 1, nk)) for i in range(ni)] + \
+            [((0, k), (0, k + 1)) for k in range(nk)] + [((ni, k), (ni, k + 1)) for k in range(nk)]
+    cen = sum((P[i][k] for i in range(len(zs)) for k in range(len(hs))), Vector()) / (len(zs) * len(hs))
+    for (a, b), (c, d) in edges:
+        want = (P[a][b] + P[c][d]) / 2 - cen; nn = N[a][b]; want = want - nn * want.dot(nn)
+        face(ol, [P[a][b], P[c][d], B[c][d], B[a][b]], want)
+    for w in wins:
+        glazing_parts(P, N, w, accp="HX_Door", depth=TOPO - BOT - 0.01)
 
 def door_and_rails():
     # open port door leaf, slid aft over the cabin side
-    patch("HX_Door", "olive", 3.15, 8.35, side_rng(1.45, 6.5, -1), 0.30, sides=0.16)
-    window(4.35, 6.85, side_rng(4.3, 6.05, -1), glass_off=0.36, frame_off=0.42, piece="HX_Door")
+    door_leaf()
     # rails (metal): upper over the door and the leaf, lower under the leaf's track
     for s in (-1, 1):
         z0 = DOOR_Z0 - 0.4 if s < 0 else DOOR_Z0 - 0.2
@@ -655,7 +774,7 @@ def finalize():
         coll = "REF" if piece.startswith("REF_") else ("Markers" if piece.startswith("K_") else "Heli")
         collection(coll).objects.link(ob)
         me.materials.append(make_material(mat))
-        if not piece.startswith(("K_", "REF_")) and not MATS[mat][3] and mat not in ("glass", "cabin"):
+        if not piece.startswith(("K_", "REF_")) and not MATS[mat][3] and mat not in ("glass", "glass_back", "cabin"):
             wn = ob.modifiers.new("WeightedNormal", "WEIGHTED_NORMAL"); wn.mode = "FACE_AREA"; wn.keep_sharp = True
             wn.weight = 50
             try:
@@ -745,6 +864,72 @@ def previews():
     bpy.data.objects.remove(co, do_unlink=True); bpy.data.objects.remove(g, do_unlink=True)
     return out
 
+def eevee_views():
+    """Eevee close-ups in a light environment (sun + sky + pale ground) so the glass reflectance and the seals read."""
+    sc = bpy.context.scene
+    for eng in ("BLENDER_EEVEE", "BLENDER_EEVEE_NEXT"):
+        try:
+            sc.render.engine = eng; break
+        except Exception:
+            pass
+    try:
+        sc.eevee.use_raytracing = True
+    except Exception:
+        pass
+    try:
+        sc.eevee.taa_render_samples = 48
+    except Exception:
+        pass
+    sc.view_settings.view_transform = "AgX"
+    sc.render.resolution_x, sc.render.resolution_y = 1400, 900
+    world = bpy.data.worlds.get("World") or bpy.data.worlds.new("World"); sc.world = world
+    world.use_nodes = True
+    nt = world.node_tree; N = nt.nodes; L = nt.links
+    for nd in list(N):
+        N.remove(nd)
+    out = N.new("ShaderNodeOutputWorld"); bg = N.new("ShaderNodeBackground")
+    grad = N.new("ShaderNodeTexGradient"); ramp = N.new("ShaderNodeValToRGB"); tc = N.new("ShaderNodeTexCoord")
+    mp = N.new("ShaderNodeMapping"); mp.inputs["Rotation"].default_value = (0, -math.pi / 2, 0)
+    ramp.color_ramp.elements[0].color = (0.75, 0.78, 0.8, 1); ramp.color_ramp.elements[1].color = (0.25, 0.45, 0.85, 1)
+    ramp.color_ramp.elements[0].position = 0.45
+    L.new(tc.outputs["Generated"], mp.inputs["Vector"]); L.new(mp.outputs["Vector"], grad.inputs["Vector"])
+    L.new(grad.outputs["Fac"], ramp.inputs["Fac"])
+    bg.inputs["Color"].default_value = (0.42, 0.6, 0.88, 1)   # plain light sky (the gradient rig was unused)
+    bg.inputs["Strength"].default_value = 1.0
+    L.new(bg.outputs["Background"], out.inputs["Surface"])
+    sun_d = bpy.data.lights.new("PREV_sun", "SUN"); sun_d.energy = 3.5; sun_d.angle = math.radians(2)
+    sun = bpy.data.objects.new("PREV_sun", sun_d); sc.collection.objects.link(sun)
+    sun.rotation_euler = (math.radians(50), math.radians(10), math.radians(140))
+    gm = bpy.data.meshes.new("PREV_ground2")
+    bmg = bmesh.new(); bmesh.ops.create_grid(bmg, x_segments=1, y_segments=1, size=60); bmg.to_mesh(gm); bmg.free()
+    g = bpy.data.objects.new("PREV_ground2", gm); sc.collection.objects.link(g)
+    g.location = S2B @ Vector((0, 0.15, 4))
+    gmat = bpy.data.materials.new("PREV_ground2"); gmat.use_nodes = True
+    gmat.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = (0.09, 0.09, 0.09, 1)
+    gmat.node_tree.nodes["Principled BSDF"].inputs["Roughness"].default_value = 0.6
+    gm.materials.append(gmat)
+    for ob in bpy.data.objects:
+        if ob.name.startswith(("K_", "REF_")):
+            ob.hide_render = True
+    cam = bpy.data.cameras.new("EvCam"); co = bpy.data.objects.new("EvCam", cam); sc.collection.objects.link(co); sc.camera = co
+    views = [("ev_cockpit", (-9.5, 7.2, -19.5), (-1.0, 5.0, -9.6), 38),
+             ("ev_cockpit_match", (-10, 7.1, -21), (-2.5, 4.6, -9), 16.5),   # same camera as out/heli/old_cockpit.jpg (Studio FOV 70)
+             ("ev_cabin_stbd", (13.5, 5.6, -4.5), (3.6, 4.9, -2.0), 30),
+             ("ev_door_port", (-14.0, 5.4, 1.0), (-3.6, 4.6, 3.0), 30),
+             ("ev_34front", (-24, 13, -28), (0, 4.5, 2), 30)]
+    done = []
+    for name, p, t, lens in views:
+        cam.type = "PERSP"; cam.lens = lens; look(co, p, t)
+        sc.render.filepath = OUT + name + ".png"
+        bpy.ops.render.render(write_still=True)
+        done.append(name)
+    for ob in (co, sun, g):
+        bpy.data.objects.remove(ob, do_unlink=True)
+    for ob in bpy.data.objects:
+        if ob.name.startswith("REF_"):
+            ob.hide_render = False
+    return done
+
 if __name__ == "__main__" or True:
     STATS, INFO = build()
     kitstats = [s for s in STATS if not s["piece"].startswith(("K_", "REF_"))]
@@ -798,7 +983,7 @@ if __name__ == "__main__" or True:
     bpy.ops.object.select_all(action="DESELECT")
     bpy.ops.wm.save_as_mainfile(filepath=KIT + "heli.blend")
     try:
-        pv = previews()
+        pv = previews() + eevee_views()
         bpy.ops.wm.save_mainfile()
     except Exception as ex:
         import traceback; traceback.print_exc(); pv = "preview failed: %s" % ex

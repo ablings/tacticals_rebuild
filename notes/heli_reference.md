@@ -35,7 +35,7 @@ standing R15 (feet ~1.2, head ~6.4), old footprint z -14..23, x 119..147, pad wa
 
 | Axis | Scale | Result |
 |---|---|---|
-| Length (z) | **2.29 studs/m** | fuselage 31.5 studs (nose z -12.95 .. tail pylon z 22.75) |
+| Length (z) | **2.29 studs/m** | fuselage 36.4 studs (nose z -13.62 .. tail pylon z 22.75; v2 nose) |
 | Height (y) | **2.74 studs/m** | rotor head at 10.3 above the pad (real 3.76 m), tail rotor top 12.9 (real 5.13 m) |
 | Width (x) | **3.05 studs/m** | fuselage 7.2 wide (real 2.36 m) |
 
@@ -51,3 +51,9 @@ Changes from true proportions, all forced by the player:
    (slid aft, z 3.15..8.35) still sits on full-width fuselage.
 6. Stabilator chord moved 0.8 forward of the pylon trailing edge (z 19.7..21.45) so its port tip clears the crate stack at the north
    wall (x 127.7-130.5, z >= 21.6).
+
+## Glazing layout (v2)
+Published / parts-catalogue facts: separate left and right windshield panels plus a centre window, main left/right cockpit (door)
+windows, chin windows (UH-60M notes chin-window visibility), two-piece sliding gunner windows behind each pilot seat (a pintle gun
+fires through them), and cabin doors that slide aft with two windows each; upper windshield panels tinted on some airframes.
+Sources: ppg.com H-60 transparencies, shephardmedia.com (gunner windows), airvectors.net, IPMS UH-60L review.

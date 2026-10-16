@@ -69,7 +69,10 @@ draw_side(os.path.join(D, "ref_side.png")); draw_top(os.path.join(D, "ref_top.pn
 
 TW, TH = 700, 450
 rows = [("side", ["ref_side", "bl_side"]), ("plan", ["ref_top", "bl_top"]), ("3/4", ["bl_34front", "bl_34rear"]),
-        ("cutscene / old", ["bl_cutscene", "old_34"]), ("front", ["bl_front"])]
+        ("cutscene / old", ["bl_cutscene", "old_34"]),
+        ("glazing\nold vs new", ["old_cockpit", "ev_cockpit_match"]),
+        ("glazing\n(Eevee)", ["ev_cockpit", "ev_cabin_stbd"]), ("door / 3/4\n(Eevee)", ["ev_door_port", "ev_34front"]),
+        ("front", ["bl_front"])]
 LW = 170
 sheet = Image.new("RGB", (LW + TW * 2, TH * len(rows) + 60), (16, 18, 16))
 d = ImageDraw.Draw(sheet)
@@ -77,15 +80,16 @@ d.text((12, 16), "Tacticals exfil helicopter kit (kit/heli.blend) vs UH-60-class
                  "white blocks = R15-size figures at CabinPoint and HatchPoint (not exported).", fill=(236, 232, 218), font=FS)
 for r, (label, names) in enumerate(rows):
     y = 60 + r * TH
-    d.text((12, y + TH // 2 - 12), label, fill=(236, 232, 218), font=F)
+    d.multiline_text((12, y + TH // 2 - 24), label, fill=(236, 232, 218), font=F)
     for c, n in enumerate(names):
-        p = os.path.join(D, n + (".jpg" if n == "old_34" else ".png"))
+        p = os.path.join(D, n + (".jpg" if n.startswith("old_") else ".png"))
         if not os.path.exists(p):
             continue
         im = Image.open(p).convert("RGB")
         im.thumbnail((TW, TH))
         sheet.paste(im, (LW + c * TW + (TW - im.width) // 2, y + (TH - im.height) // 2))
-        tag = {"old_34": "OLD model in Studio (before)", "bl_cutscene": "ExfilFX start camera (120,9,-18)"}.get(n, n)
+        tag = {"old_34": "OLD model in Studio (before)", "bl_cutscene": "ExfilFX start camera (120,9,-18)",
+               "old_cockpit": "OLD glazing in Studio, camera (123,7,-21)", "ev_cockpit_match": "NEW glazing, same camera (Eevee)"}.get(n, n)
         d.text((LW + c * TW + 8, y + 6), tag, fill=(255, 200, 80), font=FS)
 sheet.save(os.path.join(D, "heli_sheet.jpg"), quality=86)
 print("sheet", sheet.size)
