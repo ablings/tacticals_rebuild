@@ -431,3 +431,13 @@ Aligned to `notes/ui_match_hud.md`. **Its names are kept.** The match place's ex
 - Lead defaults for the open questions: casual only; rewards like a casual online match capped at once per opponent pair per 10 min;
   leaving counts as a loss; vote shows Warehouse + Random; 6 arenas max; spectate from the TV and a pad prompt, with the spectator's character
   staying in the lobby; restyle later; the collision shell is OK (Edward: "yes"); MatchCore in the match place later.
+
+## Spectating: PAUSED (Edward 2026-10-16 ~17:05)
+Paused before any code. Notes for when it resumes:
+- DuelHUD's spectate list (aliveList) only has real Players with Alive == true, so bots (negative ids, DuelBot_<id>_<n> models in
+  workspace.DuelArenas.<id>) can't be followed. MatchCore sets Alive on the bot model, not a Player.
+- Server: match.spectators, the Spectators count, playersOf(match, true) fan-out, endMatch clearing DuelSpectate and MatchState.Audience
+  already exist. Missing: the Spectate/StopSpectate handler (onFlow drops non-duelists), disconnect cleanup, the cap, the
+  lobby freeze, and the entry points (pad prompt, Duels TV).
+- Client: ArenaLoader already loads for DuelSpectate, but it sends Loaded for spectators too (harmless; should be skipped). The camera
+  restore isn't written.
