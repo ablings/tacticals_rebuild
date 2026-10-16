@@ -8,6 +8,7 @@ MCP = os.path.expanduser('~/Documents/rivals_practice/mcpcli.py')
 FILES = [
     ("StarterPlayer.StarterPlayerScripts", "PadUI", "LocalScript", "pads/PadUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyHudController", "ModuleScript", "hud/LobbyHudController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "NameplatesController", "ModuleScript", "hud/NameplatesController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyUIController", "ModuleScript", "lobby/LobbyUIController.lua"),
     ("ServerScriptService", "PublicStats", "Script", "hud/PublicStats.server.lua"),
     ("ReplicatedStorage.UIKit", "PlayScreen", "ModuleScript", "play/PlayScreen.lua"),
