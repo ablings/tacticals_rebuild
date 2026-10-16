@@ -116,7 +116,7 @@ function Nameplates.Start()
 		t += dt
 		if t < 0.25 then return end
 		t = 0
-		local hideAll = player:GetAttribute("InTraining") == true or player:GetAttribute("InCutscene") == true
+		local hideAll = player:GetAttribute("InTraining") == true or player:GetAttribute("InDuel") == true or player:GetAttribute("DuelSpectate") ~= nil or player:GetAttribute("InCutscene") == true
 			or player:GetAttribute("Setting_HideHUD") == true
 		for p, e in plates do
 			if e.gui and e.gui.Parent then

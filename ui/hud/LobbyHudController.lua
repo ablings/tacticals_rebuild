@@ -623,6 +623,8 @@ function LobbyHud.Start()
 		local dock = lobby:FindFirstChild("Dock", true)
 		if dock and not dock.Visible then return false end
 		if player:GetAttribute("InTraining") or player:GetAttribute("Deploying") then return false end
+		-- in-lobby duels: playing or spectating one hides the lobby HUD (DuelHUD takes over)
+		if player:GetAttribute("InDuel") or player:GetAttribute("DuelMatch") or player:GetAttribute("DuelSpectate") then return false end
 		return true
 	end
 	-- Padded HUD: everything pulled in from the screen edges (TV safe area), always or while a controller is in use

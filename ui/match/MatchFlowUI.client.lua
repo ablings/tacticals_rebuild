@@ -22,7 +22,7 @@ local STATE = { -- attribute names (agreed with the Tacticals session)
 -- Where the match state lives: the match place keeps it on ReplicatedStorage; the lobby runs several duels at once, each on
 -- ReplicatedStorage.LobbyDuels.<matchId> (the player's DuelMatch attribute). The MatchFlow remote then also carries matchId.
 local function stateObject()
-	local id = player:GetAttribute("DuelMatch")
+	local id = player:GetAttribute("DuelMatch") or player:GetAttribute("DuelSpectate")
 	if id then
 		local folder = ReplicatedStorage:FindFirstChild("LobbyDuels")
 		return folder and folder:FindFirstChild(tostring(id)), id
@@ -138,12 +138,22 @@ local function timerBox(parent)
 	return label(t, "10.0", FX, 42, 0, 0, 144, 76, WHITE)
 end
 local heads = {}
+local function teamList(key)
+	local ok, ids = pcall(function() return HttpService:JSONDecode(st(key) or "") end)
+	if not ok or type(ids) ~= "table" then return nil end
+	local out = {}
+	for _, uid in ids do table.insert(out, Players:GetPlayerByUserId(uid) or { UserId = uid, _gone = true }) end
+	return out
+end
 local function fillTeams(boxes)
 	local mine = player:GetAttribute(STATE.Team) or "A"
-	local teams = { A = {}, B = {} }
-	for _, p in Players:GetPlayers() do
-		local t = p:GetAttribute(STATE.Team) or "A"
-		table.insert(teams[t] or teams.A, p)
+	local teams = { A = teamList("TeamA"), B = teamList("TeamB") }
+	if not teams.A or not teams.B then -- before TeamA/TeamB exist: scan players
+		teams = { A = {}, B = {} }
+		for _, p in Players:GetPlayers() do
+			local t = p:GetAttribute(STATE.Team) or "A"
+			table.insert(teams[t] or teams.A, p)
+		end
 	end
 	local left = teams[mine] or teams.A
 	local right = mine == "A" and teams.B or teams.A
@@ -153,7 +163,11 @@ local function fillTeams(boxes)
 			local p = list[i]
 			s.h.Visible = p ~= nil; s.lv.Visible = p ~= nil
 			if p then
-				s.ll.Text = tostring(p:GetAttribute(STATE.Level) or 1)
+				local lv = (not p._gone) and p:GetAttribute(STATE.Level) or nil
+				local ready = (not p._gone) and p:GetAttribute("LoadoutReady") == true
+				s.ll.Text = ready and "✓" or tostring(lv or "-")
+				s.lv.BackgroundColor3 = ready and Color3.fromRGB(70, 180, 60) or Color3.fromRGB(20, 18, 24)
+				s.h.ImageTransparency = p._gone and 0.6 or 0
 				if heads[p.UserId] then s.h.Image = heads[p.UserId]
 				else task.spawn(function()
 					local ok, im = pcall(Players.GetUserThumbnailAsync, Players, p.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
@@ -483,6 +497,7 @@ for _, s in SLOTS do
 end
 
 local loadStart = os.clock()
+local teamTick
 RunService.RenderStepped:Connect(function()
 	setPhase(st(STATE.Phase))
 	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
@@ -492,7 +507,11 @@ RunService.RenderStepped:Connect(function()
 		if v ~= lastVotes then lastVotes = v; refreshVotes() end
 		if c ~= lastChosen then lastChosen = c; if c then onChosen() end end
 	end
-	if phase == "Loadout" then loTimer.Text = string.format("%.1f", left); refreshLoadout() end
+	if phase == "Loadout" then
+		loTimer.Text = string.format("%.1f", left); refreshLoadout()
+		teamTick = (teamTick or 0) + 1
+		if teamTick % 15 == 0 then fillTeams(loBoxes) end -- ready ticks
+	end
 	if phase == "Loading" then loadN.Text = tostring(math.min(99, math.floor((os.clock() - loadStart) * 25))) end
 end)
 
