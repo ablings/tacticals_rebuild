@@ -118,3 +118,11 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
 - 2026-10-16 polish_hub (notes/polish_hub.md): Hub1 envelope / lamps / skylight colours, `FX.Hologram` decal / beam / ring colours and its PointLight
   colour, `Features.Wayfinding.Stencil_SHOP` text OUTFITTERS and Size 8.4 wide (`PolishHub_Orig`); new `Polish.Hub` (banners, sign bars, sun-shaft
   Beams; nothing collides or is queryable, no lights). UNDO via `fix/polish_hub.lua UNDO` (before polish_olive UNDO).
+- 2026-10-16 polish_training (notes/polish_training.md): Range2 `Shell.WallBand` x5 hidden (rebuilt per quadrant in `Polish.Training.Bands`),
+  gallery bands / `Blocks.Band` / `Towers.Band` recoloured, grid Textures 34 / T 0.32, the 4 east-wall field `Signs.DistSign` lowered 1.6
+  (`PolishTraining_Orig`). New `Polish.Training` (letters, floor plates, bin marks: nothing collides / queries / touches, NotCover). No EnemySpots,
+  Arrivals, Extras or cover moved. UNDO via `fix/polish_training.lua UNDO`.
+- 2026-10-16 polish_showroom (notes/polish_showroom.md): `Showroom.KeyLight` SpotLight retuned (part untouched); `Showroom.Lights.Pendant1-4`
+  **moved** (rim + background light) and retuned, `Lights.Fill` retuned (tags / Room kept); `Rooms4.SR_Props` hidden, `SR_Stage` / `SR_Signs__label_cream`
+  recoloured (`PolishShowroom_Orig`). DisplayPoint / CameraPoint / BenchTop untouched. New `Polish.Showroom` (cyclorama, lamp cans). UNDO via
+  `fix/polish_showroom.lua UNDO`.
