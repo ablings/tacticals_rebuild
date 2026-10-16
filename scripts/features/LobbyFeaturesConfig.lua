@@ -31,6 +31,10 @@ local C = {
 	Beacons = { Enabled = true, Period = 2.6 }, -- slow amber/red aviation beacons (hangar mouth, pad masts, Duels roof)
 	InteractFX = { Enabled = true },          -- cream/olive hologram cones + a few sparkles on the Shop counter, gun wall, dais
 	VentPuffs = { Enabled = true, MinGap = 6, MaxGap = 12 }, -- small puffs from 4 real hub floor vents, now and then
+	-- [FEAT] 14: top-player reward stand in the hub (kit F_RewardStand, placed by fix/place_features_kit.lua in
+	-- LobbyMap.Features.RewardStand). The name plate shows #1 of ReplicatedStorage.LobbyTopWins (LobbyLeaderboard's list);
+	-- the reward model spins through LobbyFX's LobbySpin tag (attribute spin = deg/s on its SpinRoot part).
+	RewardStand = { Enabled = true, Title = "TOP OPERATOR", Empty = "CLAIM THE TOP SPOT" }, -- [FEAT]
 }
 
 -- Is this feature on? The LF_<name> attribute on ReplicatedStorage wins over the value above.
@@ -51,6 +55,6 @@ end
 
 -- Every feature name (the manager and the installer walk this list).
 C.Features = { "DropPits", "TrainingScreen", "Leaderboard", "DuelsTV", "LikesBoard", "AdBoard", "DuelsSign", "Wayfinding",
-	"Spotlights", "Beacons", "InteractFX", "VentPuffs" }
+	"Spotlights", "Beacons", "InteractFX", "VentPuffs", "RewardStand" } -- [FEAT] RewardStand
 
 return C

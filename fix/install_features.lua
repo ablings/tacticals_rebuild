@@ -321,6 +321,10 @@ local C = {
 	Beacons = { Enabled = true, Period = 2.6 }, -- slow amber/red aviation beacons (hangar mouth, pad masts, Duels roof)
 	InteractFX = { Enabled = true },          -- cream/olive hologram cones + a few sparkles on the Shop counter, gun wall, dais
 	VentPuffs = { Enabled = true, MinGap = 6, MaxGap = 12 }, -- small puffs from 4 real hub floor vents, now and then
+	-- [FEAT] 14: top-player reward stand in the hub (kit F_RewardStand, placed by fix/place_features_kit.lua in
+	-- LobbyMap.Features.RewardStand). The name plate shows #1 of ReplicatedStorage.LobbyTopWins (LobbyLeaderboard's list);
+	-- the reward model spins through LobbyFX's LobbySpin tag (attribute spin = deg/s on its SpinRoot part).
+	RewardStand = { Enabled = true, Title = "TOP OPERATOR", Empty = "CLAIM THE TOP SPOT" }, -- [FEAT]
 }
 
 -- Is this feature on? The LF_<name> attribute on ReplicatedStorage wins over the value above.
@@ -341,7 +345,7 @@ end
 
 -- Every feature name (the manager and the installer walk this list).
 C.Features = { "DropPits", "TrainingScreen", "Leaderboard", "DuelsTV", "LikesBoard", "AdBoard", "DuelsSign", "Wayfinding",
-	"Spotlights", "Beacons", "InteractFX", "VentPuffs" }
+	"Spotlights", "Beacons", "InteractFX", "VentPuffs", "RewardStand" } -- [FEAT] RewardStand
 
 return C
 ]]},
@@ -518,6 +522,32 @@ local function startDuels()
 	end
 end
 
+-------------------------------------------------------------------------------- [FEAT] 14: top-player reward stand
+-- LobbyMap.Features.RewardStand (fix/place_features_kit.lua): labels named TopName / TopWins (SurfaceGui on the kit name
+-- plate) and BoardName (BillboardGui over the halo) show #1 of ReplicatedStorage.LobbyTopWins ({u, n, w} JSON list that
+-- ServerScriptService.LobbyLeaderboard publishes every minute; the same data the leaderboard screen draws).
+local function startRewardStand(map) -- [FEAT]
+	local stand = map.Features:FindFirstChild("RewardStand") -- [FEAT]
+	local value = ReplicatedStorage:FindFirstChild("LobbyTopWins") or ReplicatedStorage:WaitForChild("LobbyTopWins", 30) -- [FEAT]
+	if not (stand and value) then return end -- [FEAT]
+	local cfg = LF.RewardStand -- [FEAT]
+	local function render() -- [FEAT]
+		local okJ, list = pcall(HttpService.JSONDecode, HttpService, value.Value) -- [FEAT]
+		local top = okJ and type(list) == "table" and list[1] or nil -- [FEAT]
+		local name = top and string.upper(tostring(top.n or "OPERATOR")) or cfg.Empty -- [FEAT]
+		local wins = top and (tostring(tonumber(top.w) or 0) .. " WINS") or "" -- [FEAT]
+		for _, d in stand:GetDescendants() do -- [FEAT]
+			if d:IsA("TextLabel") then -- [FEAT]
+				if d.Name == "TopName" or d.Name == "BoardName" then d.Text = name -- [FEAT]
+				elseif d.Name == "TopWins" or d.Name == "BoardWins" then d.Text = wins end -- [FEAT]
+			end -- [FEAT]
+		end -- [FEAT]
+		stand:SetAttribute("TopUserId", top and tonumber(top.u) or 0) -- [FEAT]
+	end -- [FEAT]
+	value.Changed:Connect(render) -- [FEAT]
+	render() -- [FEAT]
+end -- [FEAT]
+
 -------------------------------------------------------------------------------- 20: likes + rewarded ad
 local function startLikes()
 	for attr, v in { LF_LikesCurrent = LF.LikesBoard.Current, LF_LikesGoal = LF.LikesBoard.Goal, LF_LikesReward = LF.LikesBoard.Reward } do
@@ -564,6 +594,9 @@ function manager.Start()
 			if name == "DropPits" then   -- give the Duels floor meshes their own collision back before the proxies leave
 				for _, d in map:GetDescendants() do
 					if d:IsA("BasePart") and d:GetAttribute("LF_OrigCollide") ~= nil then d.CanCollide = d:GetAttribute("LF_OrigCollide") end
+					-- [FEAT] fix/place_features_kit.lua hides the Duels floor meshes (the kit slab floor with the pit holes lives
+					-- in DropPits): show them again when the pits are off
+					if d:IsA("BasePart") and d:GetAttribute("FK_FloorHidden") then d.Transparency = d:GetAttribute("FK_OrigT") or 0 end -- [FEAT]
 				end
 			end
 			g.Parent = offFolder()
@@ -574,6 +607,7 @@ function manager.Start()
 	if LF.On("LikesBoard") then startLikes() end
 	if LF.On("AdBoard") then startAds(map) end
 	if LF.On("DuelsTV") or LF.On("DuelsSign") then task.spawn(startDuels) end
+	if LF.On("RewardStand") then task.spawn(startRewardStand, map) end -- [FEAT]
 end
 
 return manager

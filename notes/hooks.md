@@ -78,3 +78,8 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   (two holes at x -117..-111, z +-12..22). Screens are found by tag `LobbyScreen` + attribute `Screen`. New remote (only with an ad product id):
   `Events.Lobby.LF_WatchAd`; attributes `ReplicatedStorage.LF_LiveDuels / LF_Likes* / LF_AdReady`, player `LF_PitReturn`.
   UNDO via `fix/install_features.lua UNDO`.
+- 2026-10-15 place_features_kit (notes/features_kit_place.md): the screen parts are now the kit `__screen` MeshParts (same names, tag
+  `LobbyScreen` + `Screen` kept; `Signs.Screen_Leaderboard` is a MeshPart with `LF_New`). Drop-pit holes 8 x 10 (x -118..-110); the Duels
+  floor meshes are hidden (`FK_FloorHidden`), look = `Features.DropPits.FloorSlabs`. Beacons: tag `LF_Beacon` on the kit lens. New
+  `Features.RewardStand` (LobbySpin on `RewardModel.SpinRoot`), `LobbyMap.IndustrialProps`. Swap bins: PrimaryPart = `F_SwapBin__crate_green`
+  (PromptAt moved onto it). Training crates: Parts hidden, kit `KitCrate` models carry the collision. UNDO via `fix/place_features_kit.lua UNDO`.
