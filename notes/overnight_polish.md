@@ -44,7 +44,7 @@ rooms differ by **light colour/temperature, key material, signature prop and acc
 |---|---|---|---|---|
 | Hub (command deck) | Heart of the base: open, bright, the spawn disc as the hero | warm sun from the skylights, warm-white ceiling strips | concrete panels, olive bands, flag/insignia banners, ops screens | olive dominant, cream lines |
 | N/S gate corridors | Airlock bulkheads: short, tight, transitional | cool white strips, door status lights | ribbed corrugated metal, hazard-stripe sills | near-black + cream hazard |
-| Shop (quartermaster) | Warm store: inviting, retail-like | warm 3000K pools over counters and shelves | wood shelving, cream counter, price boards, crates of stock | cream dominant, olive trim |
+| Shop (UGC / cosmetic shop) | Warm boutique for avatar cosmetics (the main game already has its own shop): presented like RIVALS' UGC shop stage and market hall | warm 3000K pools, spotlit featured stage | mannequins/avatar plinths with military camo outfits, helmets, patches, dog tags; featured-item stage; screens; wood + cream | cream dominant, olive trim |
 | Armory (weapons bay) | Darker gunmetal vault: cool and focused | cool 6500K rack lights, a hard spotlight on the featured weapon | dark metal, perforated rack panels, gun racks | olive racks, sage glow |
 | Duels (arena deck) | Dramatic: dark room, light pools per pad, the arena feel | low ambient, strong overhead cones per pad | dark floor, team lines olive vs cream (instead of RIVALS purple/gold) | high-contrast lines |
 | Exfil hangar + helipad | Outdoor sky edge: wind, runway lights | daylight, amber runway/beacon lights | hazard markings, windsock, tie-downs, fuel/cargo carts | amber + cream |
@@ -62,6 +62,9 @@ Check the room analogues in RIVALS before each room (lobby, shop counter, weapon
 4. Signs and screens face the way players arrive; wayfinding matches the real room.
 5. All hooks from `notes/hooks.md` still work; check_hub1 / check_rooms2 / check_rooms3 / check_training pass; no new console
    errors in Play.
+
+**Edward 22:55:** the Shop is a UGC/cosmetic shop, not a supply store. The rounds 1-2 supply dressing (ammo, rations, price boards)
+must be reworked into cosmetic displays (Shop round 3, after the Armory). Keep the warm light, ceiling and wood/cream materials.
 
 ## Order
 1. Shop  2. Armory  3. Duels  4. Exfil  5. Gate corridors  6. Hub  7. Training touch-up  8. Showroom  9. Final whole-lobby lap
