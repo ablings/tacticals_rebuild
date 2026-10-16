@@ -38,13 +38,23 @@ local function label(parent, text, font, size, x, y, w, h, color, align, z)
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 2, Parent = parent })
 end
 -- corner brackets (our signature instead of RIVALS' round outlines)
+-- (Edward 2026-10-16: no "4 corners box" look) panels get RIVALS' soft rounded corners and a faint edge; the edge keeps
+-- its colour only where colour means something (team A / B, ranked violet), otherwise it's a soft white line
+local NEUTRAL_EDGE = { [Color3.fromRGB(64, 70, 58):ToHex()] = true, [Color3.fromRGB(107, 122, 58):ToHex()] = true,
+	[Color3.fromRGB(236, 232, 218):ToHex()] = true }
 local function brackets(p, color, len, th, z)
-	for _, c in { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } } do
-		for _, sz in { Vector2.new(len, th), Vector2.new(th, len) } do
-			new("Frame", { BackgroundColor3 = color, BorderSizePixel = 0, AnchorPoint = Vector2.new(c[1], c[2]), Position = UDim2.fromScale(c[1], c[2]),
-				Size = UDim2.fromOffset(sz.X, sz.Y), ZIndex = z or 5, Parent = p })
-		end
+	if not p:FindFirstChildOfClass("UICorner") then
+		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0, math.clamp(math.floor(len * 0.6), 6, 14)); c.Parent = p
 	end
+	local st = p:FindFirstChild("_Edge") or Instance.new("UIStroke")
+	st.Name = "_Edge"
+	st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	local neutral = NEUTRAL_EDGE[color:ToHex()] == true
+	st.Color = neutral and Color3.new(1, 1, 1) or color
+	st.Transparency = neutral and 0.85 or 0.25
+	st.Thickness = neutral and 1.5 or math.max(2, math.floor(th * 0.75))
+	st.Parent = p
+	return st
 end
 local thumbs = {}
 local function headshot(uid, img)

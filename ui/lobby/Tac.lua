@@ -12,22 +12,41 @@ Tac.C = {
 }
 Tac.FONT = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local TS = game:GetService("TweenService")
+-- (Edward 2026-10-16: no "4 corners box" look, more like RIVALS) Tac.brackets now gives RIVALS' soft rounded corners and a
+-- faint edge (a UIStroke) instead of corner brackets. The edge keeps its colour only where colour means something (ranked
+-- violet, red); olive / line / bone become a soft white line. Returns { stroke } so Tac.hoverBrackets still lights it.
+local NEUTRAL = { [Tac.C.olive:ToHex()] = true, [Tac.C.line:ToHex()] = true, [Tac.C.bone:ToHex()] = true, [Tac.C.oliveHi:ToHex()] = true,
+	[Tac.C.field:ToHex()] = true }
 function Tac.brackets(p, color, len, th)
 	color, len, th = color or Tac.C.line, len or 14, th or 2
-	local list = {}
-	for _, c in { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } } do
-		local ax = Vector2.new(c[1], c[2])
-		for _, sz in { UDim2.fromOffset(len, th), UDim2.fromOffset(th, len) } do
-			local f = Instance.new("Frame"); f.Name = "_Bracket"; f.BackgroundColor3 = color; f.BorderSizePixel = 0; f.AnchorPoint = ax
-			f.Position = UDim2.fromScale(c[1], c[2]); f.Size = sz; f.ZIndex = (p:IsA("GuiObject") and p.ZIndex or 1) + 5; f:SetAttribute("NoStyle", true)
-			f:SetAttribute("Base", color); f.Parent = p; table.insert(list, f)
-		end
+	if p:IsA("GuiObject") and not p:FindFirstChildOfClass("UICorner") then
+		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0, math.clamp(math.floor(len * 0.6), 6, 14)); c.Parent = p
 	end
-	return list
+	local st = p:FindFirstChild("_Edge") or Instance.new("UIStroke")
+	st.Name = "_Edge"
+	st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	local neutral = NEUTRAL[color:ToHex()] == true
+	st.Color = neutral and Color3.new(1, 1, 1) or color
+	st.Transparency = neutral and 0.85 or 0.3
+	st.Thickness = neutral and 1.5 or math.max(2, th)
+	st:SetAttribute("BaseT", st.Transparency)
+	st:SetAttribute("NoStyle", true)
+	st.Parent = p
+	return { st }
 end
 function Tac.hoverBrackets(b, frames)
-	b.MouseEnter:Connect(function() for _, f in frames do TS:Create(f, TweenInfo.new(0.15), { BackgroundColor3 = Tac.C.bone }):Play() end end)
-	b.MouseLeave:Connect(function() for _, f in frames do TS:Create(f, TweenInfo.new(0.15), { BackgroundColor3 = f:GetAttribute("Base") }):Play() end end)
+	b.MouseEnter:Connect(function()
+		for _, f in frames do
+			if f:IsA("UIStroke") then TS:Create(f, TweenInfo.new(0.15), { Transparency = 0.2 }):Play()
+			else TS:Create(f, TweenInfo.new(0.15), { BackgroundColor3 = Tac.C.bone }):Play() end
+		end
+	end)
+	b.MouseLeave:Connect(function()
+		for _, f in frames do
+			if f:IsA("UIStroke") then TS:Create(f, TweenInfo.new(0.15), { Transparency = f:GetAttribute("BaseT") or 0.85 }):Play()
+			else TS:Create(f, TweenInfo.new(0.15), { BackgroundColor3 = f:GetAttribute("Base") }):Play() end
+		end
+	end)
 end
 function Tac.header(parent, title, sub, accent, size)
 	local h = Instance.new("Frame"); h.Name = "TacHeader"; h.BackgroundTransparency = 1; h.Size = UDim2.new(1, 0, 0, size or 40); h.Parent = parent

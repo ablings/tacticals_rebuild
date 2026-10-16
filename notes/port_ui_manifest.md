@@ -21,6 +21,7 @@ Easiest port: run `deploy_ui.py` against the main game's Studio window, plus the
 | `StarterPlayer.StarterPlayerScripts.Client.Controllers.LobbyUIController` | `ui/lobby/LobbyUIController.lua` | top-left card hidden (`PlayerCard`); `Open("Play")` opens `UIKit.PlayScreen`; one full-screen menu at a time (`LobbyUI.CloseScreens`); old top-centre queue pill retired; tooltips hidden when a menu opens; toasts obey Delivery Mode. Keeps the Tacticals session's `[NPC]` NPC_OpensPanel guard. |
 | `ReplicatedStorage.UIKit.SettingsData` | `ui/settings/SettingsData.lua` | rows translated to Tacticals (hotkeys = real actions; RIVALS-only rows dropped; storage keys unchanged so saved profiles load) |
 | `ReplicatedStorage.Modules.Shared.Config.SettingsConfig` | `ui/settings/SettingsConfig.lua` | dropped the Emotes volume group line |
+| `ReplicatedStorage.UIKit.Tac` | `ui/lobby/Tac.lua` | `Tac.brackets` now draws RIVALS' rounded corners + a faint edge instead of corner brackets (Edward: no "4 corners box" look); affects every menu that used it (close X, PLAY button, Shop, Missions) |
 
 ## [SET] gameplay scripts (Source replaced; handed over by the Tacticals session 2026-10-16)
 `deploy_ui.py` backs each original up once to `ServerStorage._RebuildRemoved.SET_<name>_Orig` (UNDO = copy its Source back).

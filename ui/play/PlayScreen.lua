@@ -136,19 +136,28 @@ end
 ---------------------------------------------------------------------------------------------------- building
 local tickNow -- set below (status refresh)
 
+-- (Edward 2026-10-16: no "4 corners box" look) RIVALS-style cards: rounded dark glass with a faint edge that lights on hover
+local function edge(f, accent, radius)
+	new("UICorner", { CornerRadius = UDim.new(0, radius or 12), Parent = f })
+	local st = new("UIStroke", { Color = accent or Color3.new(1, 1, 1), Transparency = accent and 0.35 or 0.85, Thickness = 2,
+		ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
+	local base = st.Transparency
+	f.MouseEnter:Connect(function() Kit.tween(st, 0.12, { Transparency = 0.2, Color = accent or Color3.new(1, 1, 1) }) end)
+	f.MouseLeave:Connect(function() Kit.tween(st, 0.12, { Transparency = base }) end)
+	return st
+end
 local function plate(parent, x, y, w, h, accent)
 	local f = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		BackgroundColor3 = T.gunDeep, BackgroundTransparency = 0.15, ClipsDescendants = true, Parent = parent })
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(38, 42, 34), Color3.fromRGB(10, 12, 9)), Parent = f })
-	local br = Tac.brackets(f, accent or T.line, 20, 3)
-	return f, br
+	return f, edge(f, accent)
 end
 
 local function modeCard(i, mode, ranked, x)
 	local q = ctx.Config.QueueFor(mode.Id, ranked)
 	local accent = ranked and T.violet or T.olive
 	local W, H = 424, 486
-	local card, br = plate(body, x, 0, W, H, ranked and T.violet or T.line)
+	local card = plate(body, x, 0, W, H, ranked and T.violet or nil)
 	-- the scene, with a floor glow under the squads
 	local stage = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 26), Size = UDim2.fromOffset(W, 300), ZIndex = 2, Parent = card })
 	-- a soft pool of the accent colour on the floor under the squads
@@ -174,7 +183,6 @@ local function modeCard(i, mode, ranked, x)
 	local left = label(strip, "", OSWALD, 24, 18, 0, W - 36, 52, T.bone, nil, 4)
 	local right = label(strip, "", OSWALD, 17, W - 218, 0, 200, 52, T.bone, Enum.TextXAlignment.Right, 4)
 	table.insert(strips, { q = q, left = left, right = right, strip = strip, card = card, ranked = ranked, mode = mode, accent = accent })
-	Tac.hoverBrackets(card, br)
 	Kit.bindButton(card, { hover = 1.02, press = 0.985 })
 	card.Activated:Connect(function()
 		local myQ, st = search()
@@ -209,7 +217,7 @@ local function render()
 		local locked = name == "Ranked" and not open
 		local b = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset((k - 1) * 214, 0), Size = UDim2.fromOffset(200, 50),
 			BackgroundColor3 = on and (name == "Ranked" and T.violet or T.olive) or T.gunDeep, BackgroundTransparency = on and 0.05 or 0.25, Parent = tabs })
-		Tac.hoverBrackets(b, Tac.brackets(b, on and T.bone or T.line, 12, 2))
+		edge(b, on and Color3.new(1, 1, 1) or nil, 8)
 		label(b, string.upper(name), OSWALD, 26, locked and 54 or 0, 0, locked and 140 or 200, 50, locked and T.field or T.bone, locked and Enum.TextXAlignment.Left or Enum.TextXAlignment.Center, 3)
 		if locked then
 			local lk = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 5), Size = UDim2.fromOffset(40, 40), ZIndex = 3, Parent = b })
@@ -234,12 +242,11 @@ local function render()
 		table.insert(stages, { stage, n })
 	end
 	-- row 2: training + lobby duels
-	local tb, tbr = plate(body, 0, 506, 868, 150, T.line)
+	local tb = plate(body, 0, 506, 868, 150)
 	label(tb, "TRAINING", OSWALD, 52, 26, 14, 400, 64, T.bone)
 	label(tb, "Practice room: cover, vaults, live targets. Swap your kit at the bins.", BODY, 17, 28, 78, 520, 24, T.field)
 	local tStatus = label(tb, "ENTER  >", OSWALD, 22, 28, 108, 400, 30, T.oliveHi)
 	local gunHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(580, 0), Size = UDim2.fromOffset(280, 150), ZIndex = 2, Parent = tb })
-	Tac.hoverBrackets(tb, tbr)
 	Kit.bindButton(tb, { hover = 1.01, press = 0.99 })
 	tb.Activated:Connect(function()
 		if search() or onPad() then return end
@@ -247,11 +254,10 @@ local function render()
 		if ctx.enterTraining then ctx.enterTraining() end
 	end)
 	table.insert(strips, { training = tStatus })
-	local db, dbr = plate(body, 888, 506, 424, 150, T.line)
+	local db = plate(body, 888, 506, 424, 150)
 	label(db, "LOBBY DUELS", OSWALD, 40, 24, 14, 400, 52, T.bone)
 	label(db, "Fight people in this server on the pads.", BODY, 17, 26, 66, 400, 24, T.field)
 	label(db, "TO PADS  >", OSWALD, 22, 26, 108, 300, 30, T.oliveHi)
-	Tac.hoverBrackets(db, dbr)
 	Kit.bindButton(db, { hover = 1.02, press = 0.98 })
 	db.Activated:Connect(function()
 		Screen.Close()
@@ -334,7 +340,7 @@ local function build()
 		Size = UDim2.fromOffset(600, 30), Parent = root })
 	-- operator level tag
 	local tag = new("Frame", { Position = UDim2.fromOffset(1194, 108), Size = UDim2.fromOffset(300, 44), BackgroundColor3 = T.gunDeep, BackgroundTransparency = 0.15, Parent = root })
-	Tac.brackets(tag, T.line, 10, 2)
+	new("UICorner", { CornerRadius = UDim.new(0, 8), Parent = tag })
 	levelText = label(tag, "OPERATOR  LV 0", OSWALD, 20, 14, 0, 150, 44, T.bone)
 	local xb = new("Frame", { Position = UDim2.fromOffset(168, 19), Size = UDim2.fromOffset(116, 6), BackgroundColor3 = T.line, BorderSizePixel = 0, Parent = tag })
 	xpFill = new("Frame", { Size = UDim2.fromScale(0.02, 1), BackgroundColor3 = T.oliveHi, BorderSizePixel = 0, Parent = xb })
