@@ -92,3 +92,7 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   scissors MeshParts are hidden and it now contains `WeaponSlot_Featured_1` (Anchor + Weapon). New `ServerStorage.ArmoryWeaponSlots`
   ModuleScript (edit-time only, nothing requires it at runtime). `NPCs.NPC_Supply.Tag` Size/StudsOffset changed (`PolishArmory2_Orig`).
   UNDO via `fix/polish_armory2.lua UNDO`.
+- 2026-10-16 polish_duels (notes/polish_duels.md): **`StarterPlayerScripts.PadBoards` source edited** (team colours: new `TEAM_A`/`TEAM_B`
+  cream/olive replace RED/BLUE in 3 team uses; original in `ServerStorage._RebuildRemoved.PolishDuels_PadBoards_Orig`). `Rooms3.D_Lines__neon_cream/olive`
+  hidden; `FX.SparkBridgeA/B/SparkGantry` lights disabled; `Lights.TargetTop` retuned; Duels `Holo.Display` CountA/CountB colours. Nothing under
+  `LobbyMap.Duels` moved or renamed; new parts in `Polish.Duels` collide with nothing. UNDO via `fix/polish_duels.lua UNDO`.
