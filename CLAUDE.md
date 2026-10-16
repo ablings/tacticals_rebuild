@@ -16,6 +16,9 @@ Started 2026-10-14 on the main PC.
 ## Hard rules
 - **Never edit, save or publish the live place** (it is Team Create: edits sync to the cloud). Edward ordered the port on
   2026-10-16: the result is `Tacticals_main_ported.rbxl`, built locally; Edward publishes it himself (notes/port_manifest.md).
+  **2026-10-16 ~14:15, Edward in the lead's chat:** "Once you're ready i give you full permission to port everything to the
+  tactical lobby and save what you need to save i am not at my pc so u have to be the one to do this". The lead does Save to Roblox
+  of Tacticals_main_ported.rbxl onto the tacticals place (version history keeps the old one); Publish only if Edward says so.
   Old rule: Work only in `Tacticals_rebuild.rbxl` (a local copy downloaded by Edward,
   2026-10-14). File > Save to File only; never Save to Roblox, never Publish.
 - **Own assets only.** Copy RIVALS' lighting *values* and *method*; never use RIVALS' asset ids, meshes, textures or images.
