@@ -1,8 +1,7 @@
 # Overnight polish: morning report for Edward (2026-10-16)
 
 All work is in the local copy `Tacticals_rebuild.rbxl`. Nothing was published. Every change is an idempotent fix script in `fix/`
-with an UNDO flag. **The final pass (`fix/polish_final.lua`) is applied in Studio but not saved yet**; everything before it was
-saved at 02:38. Studio is in Edit mode.
+with an UNDO flag. **Everything, including the final pass, is saved (03:03) and committed.** Studio is in Edit mode.
 
 **All rooms side by side:** `out/polish/lobby_rooms.jpg` (one capture per room from its main entrance, at player height, in Play).
 
@@ -53,8 +52,8 @@ eye-level olive band and the white floor lines. Light temperature and props are 
     against the ~45 in the RoomFX comment). Switching them off by area needs a small RoomFX code change.
 13. **The olive wall band dominates the Armory** (and the Shop): it is the loudest thing at eye level. A darker band in the Armory
     would let the weapons lead and separate it more from the Outfitters.
-14. **Lighting:** `Lighting.Technology` is still ShadowMap. Patch it to Future with `tools/set_technology.py` while the place is
-    closed. There are also two Sky objects (`Sky`, `Lobby_Sky`); pick one.
+14. **Lighting:** `Lighting.Technology` is Future (4) in the saved file (checked with `tools/read_technology.py`; scripts can't
+    read it, which is why the lap agent thought it was still ShadowMap). There are two Sky objects (`Sky`, `Lobby_Sky`); pick one.
 15. **Small gameplay notes from the lap:** the Outfitters featured stage is walkable (players can stand on the turntable). In
     Training, F is both the bin prompt and Quick Melee. At the Exfil pad edge, players can step onto the pad-wall trim (the clip
     wall still holds).
@@ -62,7 +61,7 @@ eye-level olive band and the white floor lines. Light temperature and props are 
     the gate status lights are small, the hazard sills are busy at the hub end, and the windsock is static.
 
 ## Re-run order if Studio crashes (all `python tools/run_luau.py fix/<script>`, from tacticals_rebuild)
-The place file already has everything up to `polish_showroom` (saved 02:38). After a crash, re-run only `polish_final.lua`.
+The place file has everything, including `polish_final` (saved 03:03).
 From a pre-polish file, run in this order:
 1. `polish_shop.lua`, then `polish_shop3.lua` (re-running polish_shop rebuilds Polish.Shop and drops Round3)
 2. `polish_armory.lua`, then `polish_armory2.lua`, then `polish_armory3.lua`
