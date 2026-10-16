@@ -102,3 +102,10 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
 - 2026-10-16 polish_exfil (notes/polish_exfil.md): Rooms3 `E_*__band_olive` / `E_*__neon_olive` recoloured amber and `Exfil.L_Hangar` light
   colour daylight (`PolishExfil_Orig`); new `Polish.Exfil` (8 collidable parts: cargo dolly at (133.2,-23.1), drum truck at (132.6,22.3)).
   ExfilBarrier / HatchPoint / CabinPoint / L_Pad / Heli / X_Clip untouched; ExfilFX camera path and lift sweep clear. UNDO via `fix/polish_exfil.lua UNDO`.
+- 2026-10-16 polish_duels2 (notes/polish_duels.md round 2): Polish.Duels lanes/frames recoloured, old mode plates hidden, new ones in
+  `Polish.Duels.Round2`; `Features.Wayfinding.Chevrons` (Duels bars) and `Rooms3.D_Pads__label_cream` recoloured (`PolishDuels2_Orig`).
+  Nothing under `LobbyMap.Duels` touched. UNDO via `fix/polish_duels2.lua UNDO` (before polish_duels UNDO).
+- 2026-10-16 polish_gates (notes/polish_gates.md): `Hub1.Overlays.SignText_SHOP` label text SHOP -> OUTFITTERS; `Rooms2.C_CorrN/C_CorrS`,
+  `S_Door__wall_light/trim_metal` and the corridor `F_PipeRun__band_olive` recoloured (`PolishGates_Orig`); new `Polish.Gates` (64 parts,
+  none collide). UNDO via `fix/polish_gates.lua UNDO`.
+
