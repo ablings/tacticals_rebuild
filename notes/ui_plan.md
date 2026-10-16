@@ -35,3 +35,14 @@ Placeholders (fake requests, fake queues) only appear when a real player is actu
 
 Each step: built in a sandbox Studio (a read-only copy of the file), playtested, then deployed into the working copy
 (8ef4e21a) in a window agreed with the Tacticals session. Sources live in `tacticals_rebuild/ui/`.
+
+## Progress
+- 2026-10-16 **Pads** (`ui/pads/PadUI.client.lua`): on-pad box (your slot + level, team slots, VS -> countdown, Invite),
+  deploy screen only when really deploying, JOIN boxes only for bays with a real player. Old PadQueueUI disabled.
+  Patch: LobbyConfig `StudioSoloStart = false` (it started a bay with one player in Studio = the "match found" screen).
+- 2026-10-16 **Lobby HUD** (`ui/hud/LobbyHudController.lua`, `ui/hud/PublicStats.server.lua`): scissors pill top centre
+  (ViewIcons scissors, count, + opens the Scissors shop), DAILY MISSIONS widget (real daily quests, progress, red flag
+  when claimable, click = Missions) with TO PADS (teleports to the duel hall facing pad A), OPERATORS board (level, wins,
+  you in olive; Tab toggles; replaces the Roblox player list). Old top-left card hidden. Hides with menus / Kit room /
+  pads / Training. Sheet: `notes/ui_phase3_hud.png`.
+- Deployed to the sandbox only; the working copy (8ef4e21a) waits for a window agreed with the Tacticals session.

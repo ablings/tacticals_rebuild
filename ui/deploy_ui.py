@@ -7,6 +7,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 MCP = os.path.expanduser('~/Documents/rivals_practice/mcpcli.py')
 FILES = [
     ("StarterPlayer.StarterPlayerScripts", "PadUI", "LocalScript", "pads/PadUI.client.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyHudController", "ModuleScript", "hud/LobbyHudController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyUIController", "ModuleScript", "lobby/LobbyUIController.lua"),
+    ("ServerScriptService", "PublicStats", "Script", "hud/PublicStats.server.lua"),
+]
+
+
+# small source patches to scripts the UI session doesn't own (idempotent)
+PATCHES = [
+    # pads wait for real players in Studio too (RIVALS); set true to test a full bay alone
+    "local m = game.ReplicatedStorage.Modules.Shared.Config.LobbyConfig; m.Source = m.Source:gsub('LobbyConfig%.StudioSoloStart = true', 'LobbyConfig.StudioSoloStart = false')",
 ]
 
 
@@ -26,6 +36,8 @@ def build():
     for parent, name, cls, path in FILES:
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
         parts.append(f"put(at('{parent}'), '{name}', '{cls}', {long_string(src)})")
+    for code in PATCHES:
+        parts.append("do " + code + " end")
     parts.append("if rec then CHS:FinishRecording(rec, Enum.FinishRecordingOperation.Commit) end")
     parts.append(f"return 'deployed {len(FILES)} files'")
     return "\n".join(parts)
