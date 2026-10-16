@@ -14,7 +14,9 @@ Started 2026-10-14 on the main PC.
 - **Theme:** a floating sky military base.
 
 ## Hard rules
-- **Never edit, save or publish the live place.** Work only in `Tacticals_rebuild.rbxl` (a local copy downloaded by Edward,
+- **Never edit, save or publish the live place** (it is Team Create: edits sync to the cloud). Edward ordered the port on
+  2026-10-16: the result is `Tacticals_main_ported.rbxl`, built locally; Edward publishes it himself (notes/port_manifest.md).
+  Old rule: Work only in `Tacticals_rebuild.rbxl` (a local copy downloaded by Edward,
   2026-10-14). File > Save to File only; never Save to Roblox, never Publish.
 - **Own assets only.** Copy RIVALS' lighting *values* and *method*; never use RIVALS' asset ids, meshes, textures or images.
   Our RIVALS-replica textures (rivals_practice/tex, hallway_tex) are own work and may be reused.

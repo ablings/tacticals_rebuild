@@ -55,3 +55,22 @@ himself; we never publish.
   ServerStorage, so it can be compared and restored.
 - Assets must be usable by the main game: all uploads are under the Gunsy Funsy group, which owns the game.
 - `StreamingEnabled` and Workspace settings in the main game may differ from the copy, so compare them.
+
+## What was actually done (2026-10-16 13:28-13:40, lead)
+- Opened the main game from Studio Home ("tacticals", gunsy funsy, place 126491009194165). It's a **Team Create** place: any edit
+  would sync to the cloud, so nothing was edited there. File > Download a Copy to `backup/main_before_port_2026-10-16.rbxl`,
+  then Close Place.
+- Diffed the main game against the rebuild (`tools/dump_scripts.lua`, service trees):
+  - **The main game was unchanged since the 2026-10-14 download.** LobbyMap had 7539 descendants. All 20 scripts that differ
+    match our saved originals (_RebuildRemoved *_Orig, _TX_Originals, _Pre43, ui/_survey baselines; the LobbyFX difference
+    is our own earlier overlap/lap edits). No instance exists only in the main game, apart from `Lighting.Atmosphere`, which
+    our lighting pass removed on purpose.
+  - So the rebuild is a strict superset of the main game, and no merging was needed.
+- Stored the main game inside the rebuild, as Edward asked: `ServerStorage._MainGame_2026-10-16` holds:
+  - its LobbyMap, copied by clipboard (7536 instances). Tags were moved to `_Tags` attributes, its 3 scripts are disabled
+    and its prompts are off.
+  - `Lighting.LightingJSON`: Soft style, Brightness 1, Exposure 0.6, ShadowMap, plus its 8 Lighting children.
+  - a README.
+- Saved the rebuild at 13:38 and copied it to **`Tacticals_main_ported.rbxl`**: the port result, with Technology Future.
+- **Edward publishes:** open `Tacticals_main_ported.rbxl`, then File > Publish to Roblox As > the existing "tacticals" place.
+  Because the place uses Team Create, check that no collaborator has unsaved work open before overwriting.
