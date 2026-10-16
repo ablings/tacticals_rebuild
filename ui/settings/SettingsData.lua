@@ -18,7 +18,6 @@ return {
 			{ title = "Performance", rows = {
 				{ kind = "toggle", name = "Optimized Lighting", icon = "lightbulb", value = false, desc = "Uses simpler lighting so the game runs faster on older devices" },
 				{ kind = "toggle", name = "Optimized Textures", icon = "texture", value = false, desc = "Swaps detailed surface images for plain colours to save memory" },
-				{ kind = "toggle", name = "Optimized Wraps", icon = "wraps", value = false, desc = "Hides other players' weapon wraps for better performance. You still see your own" },
 			} },
 			{ title = "Camera", rows = {
 				{ kind = "slider", name = "Sensitivity", icon = "camera", min = 5, max = 400, step = 5, arrow = 50, value = 100, fmt = pct, desc = "How fast the camera turns when you move the mouse or stick" },
@@ -37,7 +36,6 @@ return {
 				{ kind = "dropdown", name = "Lobby Data", icon = "window", options = { "Level", "Wins" }, value = "Level", desc = "Which stat the lobby shows for players: the player list and your nameplate" },
 			} },
 			{ title = "Graphics", rows = {
-				{ kind = "toggle", name = "Weapon Inking", icon = "inking", value = true, desc = "Draws a dark cartoon outline around weapons" },
 				{ kind = "toggle", name = "Hide Muzzle Flashes", icon = "muzzle", value = false, desc = "Removes the flash at the end of a gun when it fires" },
 			} },
 			{ title = "Accessibility", rows = {
@@ -52,9 +50,6 @@ return {
 		{ name = "Audio", glyph = "🔊", icon = "audio", sections = {
 			{ title = nil, rows = {
 				{ kind = "slider", name = "Master Volume", icon = "volume", level = 0, min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "Changes the volume of everything at once" },
-				{ kind = "slider", name = "Music Volume", icon = "music", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "Changes the volume of the lobby and match music" },
-				{ kind = "slider", name = "Finisher Volume", icon = "effects", min = 0, max = 100, step = 5, arrow = 10, value = 100, fmt = pct, desc = "Changes the volume of finishing moves" },
-				{ kind = "toggle", name = "Mute Other Finishers", icon = "mute", level = 2, value = false, desc = "Only your own finishers make a sound" },
 				{ kind = "slider", name = "SFX Volume", icon = "muzzle", min = 0, max = 100, step = 5, arrow = 10, value = 100, fmt = pct, desc = "Changes the volume of pretty much every other sound" },
 			} },
 		} },
@@ -78,15 +73,8 @@ return {
 				{ kind = "toggle", name = "Toggle Sprint", icon = "sprint", value = false, desc = "Tap to start and stop sprinting instead of holding" },
 				{ kind = "toggle", name = "Auto Sprint", icon = "sprint", value = false, desc = "Run by default without holding the sprint button" },
 				{ kind = "toggle", name = "Easy Slide", icon = "effects2", value = true, desc = "Slide by crouching while sprinting" },
-				{ kind = "toggle", name = "Easy Gun Bash", key = "Easy Quick Attack", icon = "effects2", value = true, desc = "Gun bash with a single press, even while aiming" },
-				{ kind = "toggle", name = "Bash Keeps Aim", key = "Quick Attack Keeping", icon = "inking", value = true, desc = "Go straight back to aiming after a gun bash" },
-				{ kind = "slider", name = "Keep Window", icon = "inking", level = 2, min = 0, max = 1, step = 0.05, arrow = 0.05, value = 0.25, fmt = function(v) return string.format("%.2f", v) end, desc = "[Advanced] How long, in seconds, after a bash you stay ready to aim again. At 0 you always do" },
 				{ kind = "toggle", name = "Scroll Equip", icon = "padding", value = true, desc = "Switch between your gun, melee and gadget with the mouse wheel" },
 				{ kind = "dropdown", name = "Gun Hand", icon = "crosshair", options = { "Right", "Left" }, value = "Right", desc = "Which hand holds your gun. Peeking from the other side of cover swaps hands while you're on it; leaving cover puts it back here" },
-			} },
-			{ title = "Accessibility", rows = {
-				{ kind = "slider", name = "Joystick Deadzone", icon = "padded", min = 0, max = 100, step = 5, arrow = 5, value = 25, fmt = pct, desc = "How far a stick must move before it counts" },
-				{ kind = "dropdown", name = "Control Scheme", icon = "keyboard", options = { "Automatic", "Keyboard", "Controller", "Touch" }, value = "Automatic", desc = "Which button prompts the game shows. Automatic follows what you last touched" },
 			} },
 		} },
 		-- Hotkeys: table layout (HotkeysPage). Four binds per action: PC, PC 2, controller, controller 2.
@@ -101,10 +89,6 @@ return {
 				{ kind = "bind", name = "Throw Gadget", key = "Quick Utility", icon = "particles", value = { "G", "", "ButtonL1", "" } },
 			} },
 			{ title = nil, rows = {
-				{ kind = "bind", name = "Walk Forward", icon = "tri_up", value = { "W", "Up", "", "" } },
-				{ kind = "bind", name = "Walk Backward", icon = "tri_down", value = { "S", "Down", "", "" } },
-				{ kind = "bind", name = "Strafe Left", icon = "tri_left", value = { "A", "", "", "" } },
-				{ kind = "bind", name = "Strafe Right", icon = "tri_right", value = { "D", "", "", "" } },
 				{ kind = "bind", name = "Jump / Vault", key = "Jump", icon = "jump", value = { "Space", "", "ButtonA", "" } },
 				{ kind = "bind", name = "Sprint", icon = "sprint", value = { "LeftShift", "", "ButtonL3", "" } },
 				{ kind = "bind", name = "Crouch", icon = "crouch", value = { "C", "LeftControl", "ButtonR3", "" } },
@@ -131,5 +115,24 @@ return {
 				{ kind = "dropdown", name = "Delivery Mode", icon = "inking", options = { "Instant", "Disabled" }, value = "Instant", desc = "Whether lobby messages (rewards, matches found) pop up at the top of the screen" },
 			} },
 		} },
+	},
+	-- Parked rows (UI session 2026-10-16): Tacticals has nothing behind them yet (no wraps, inking style, music, finishers
+	-- with sound, quick-attack variants, gamepad camera / prompts; walking is Roblox's own WASD). Not shown, not saved
+	-- (Sanitize only knows tabs). Move a row back into its tab when the system it controls exists.
+	parked = {
+		{ kind = "toggle", name = "Optimized Wraps", icon = "wraps", value = false, desc = "Hides other players' weapon wraps for better performance. You still see your own" },
+		{ kind = "toggle", name = "Weapon Inking", icon = "inking", value = true, desc = "Draws a dark cartoon outline around weapons" },
+		{ kind = "slider", name = "Music Volume", icon = "music", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "Changes the volume of the lobby and match music" },
+		{ kind = "slider", name = "Finisher Volume", icon = "effects", min = 0, max = 100, step = 5, arrow = 10, value = 100, fmt = pct, desc = "Changes the volume of finishing moves" },
+		{ kind = "toggle", name = "Mute Other Finishers", icon = "mute", level = 2, value = false, desc = "Only your own finishers make a sound" },
+		{ kind = "toggle", name = "Easy Gun Bash", key = "Easy Quick Attack", icon = "effects2", value = true, desc = "Gun bash with a single press, even while aiming" },
+		{ kind = "toggle", name = "Bash Keeps Aim", key = "Quick Attack Keeping", icon = "inking", value = true, desc = "Go straight back to aiming after a gun bash" },
+		{ kind = "slider", name = "Keep Window", icon = "inking", level = 2, min = 0, max = 1, step = 0.05, arrow = 0.05, value = 0.25, fmt = function(v) return string.format("%.2f", v) end, desc = "[Advanced] How long, in seconds, after a bash you stay ready to aim again. At 0 you always do" },
+		{ kind = "slider", name = "Joystick Deadzone", icon = "padded", min = 0, max = 100, step = 5, arrow = 5, value = 25, fmt = pct, desc = "How far a stick must move before it counts" },
+		{ kind = "dropdown", name = "Control Scheme", icon = "keyboard", options = { "Automatic", "Keyboard", "Controller", "Touch" }, value = "Automatic", desc = "Which button prompts the game shows. Automatic follows what you last touched" },
+		{ kind = "bind", name = "Walk Forward", icon = "tri_up", value = { "W", "Up", "", "" } },
+		{ kind = "bind", name = "Walk Backward", icon = "tri_down", value = { "S", "Down", "", "" } },
+		{ kind = "bind", name = "Strafe Left", icon = "tri_left", value = { "A", "", "", "" } },
+		{ kind = "bind", name = "Strafe Right", icon = "tri_right", value = { "D", "", "", "" } },
 	},
 }

@@ -109,6 +109,8 @@ local function update(dt: number)
 			local target = 0
 			if hasWeaponOut(character) then
 				target = (player == localPlayer) and myPitch or (character:GetAttribute("AimPitch") or 0)
+				-- [SET] Game > Aiming Animation off: your own body stays upright (others still see your aim pose)
+				if player == localPlayer and localPlayer:GetAttribute("Setting_AimingAnimation") == false then target = 0 end
 			end
 			local pitch = (currentPitch[character] or 0) + (target - (currentPitch[character] or 0)) * blend
 			if math.abs(pitch) < 0.05 then pitch = 0 end

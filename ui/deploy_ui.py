@@ -23,6 +23,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "SettingsKit", "ModuleScript", "settings/SettingsKit.lua"),
     ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
 ]
 
@@ -43,6 +44,7 @@ SET_FILES = [
     (C, "HealthBarController", "set/HealthBarController.lua"),
     (C, "TrainingBinsController", "set/TrainingBinsController.lua"),
     (C, "PropController", "set/PropController.lua"),
+    (C, "AimPoseController", "set/AimPoseController.lua"),
     (C + ".LobbyUIController", "Armory", "lobby/Armory.lua"),
 ]
 

@@ -665,6 +665,13 @@ local function buildUI()
 	for _, entry in HINTS do Binds.Changed(localPlayer, entry[2], buildHints) end
 	localPlayer:GetAttributeChangedSignal("InTraining"):Connect(buildHints)
 	hints.Parent = canvas
+	-- Settings > Game > Gameplay HUD "Minimal": in a match only the tiles (ammo) and health stay, so the key hints go
+	local function minimalHints()
+		local inMatch = localPlayer:GetAttribute("InDuel") == true or localPlayer:GetAttribute("InMatch") == true
+		hints.Visible = not (inMatch and localPlayer:GetAttribute("Setting_GameplayHUD") == "Minimal")
+	end
+	for _, a in { "InDuel", "InMatch", "Setting_GameplayHUD" } do localPlayer:GetAttributeChangedSignal(a):Connect(minimalHints) end
+	minimalHints()
 
 	column = Instance.new("Frame")
 	column.Name = "Tiles"

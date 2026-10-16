@@ -121,7 +121,7 @@ local function teamBox(x, cols, right)
 		slots[i] = { h = h, x1 = x1, x2 = x2 }
 	end
 	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, WHITE, nil, 4)
-	return { slots = slots, score = score }
+	return { slots = slots, score = score, frame = b }
 end
 local mineBox = teamBox(580, TEAM_A, false)
 local theirBox = teamBox(1040, TEAM_B, true)
@@ -360,7 +360,15 @@ RunService.RenderStepped:Connect(function()
 	local myTeam = player:GetAttribute("Team") or "A"
 	if spectator() then myTeam = "A" end
 	local ids = { A = teamIds("TeamA"), B = teamIds("TeamB") }
-	fillBox(mineBox, ids[myTeam] or ids.A)
+	-- Settings > Game: Hide Teammate Display keeps only you in your team's box; Gameplay HUD "Minimal" drops the score
+	-- bar and kill feed (banners and the results card stay)
+	local myIds = ids[myTeam] or ids.A
+	if player:GetAttribute("Setting_HideTeammateDisplay") == true and not spectator() then
+		myIds = table.find(myIds, player.UserId) and { player.UserId } or {}
+	end
+	local minimal = player:GetAttribute("Setting_GameplayHUD") == "Minimal"
+	mineBox.frame.Visible, theirBox.frame.Visible, timerBox.Visible, toWin.Visible, feed.Visible = not minimal, not minimal, not minimal, not minimal, not minimal
+	fillBox(mineBox, myIds)
 	fillBox(theirBox, myTeam == "A" and ids.B or ids.A)
 	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
 	local mine, theirs = myTeam == "A" and sa or sb, myTeam == "A" and sb or sa
