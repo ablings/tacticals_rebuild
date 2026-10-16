@@ -89,3 +89,13 @@ himself; we never publish.
   `backup/main_before_port_2026-10-16.rbxl` and save it over the place.
 - Whether that save also made it live depends on Roblox's Save vs Publish for Team Create places. To be sure, Edward opens the
   place and uses File > Publish to Roblox.
+
+## Live port 2 (2026-10-16 17:01-17:07, lead; Edward: "push these changes to the main game so me and my friend can test")
+- The copy was saved at 17:01 (in-lobby duels phases 1-2, UI deploys up to 17+, NoMap pads) and copied to Tacticals_main_ported.rbxl.
+- Killed the Team Create window left from port 1 (stuck on "Applying script changes"). Its pending drafts were the 15:08 content
+  and could have overwritten the new upload later.
+- Reopened the live place fresh: version 258, unchanged since port 1 (LobbyMap 16983, [MM], [EXFIL] leave). Closed it.
+- Save to Roblox As > gunsy funsy > tacticals > tacticals > Overwrite, then Grant Permissions and Publish. Version is now **260**.
+  Verified on the place: DuelMaps.Warehouse Modes=1v1, LobbyDuelManager, DuelHUD, DuelTestSolo not set.
+- Closing it hung again on "Applying script changes": a Team Create artefact after an overwrite. Killed it; it held no edits.
+- Rollback: Version History 258 (port 1) or 256 (pre-port).
