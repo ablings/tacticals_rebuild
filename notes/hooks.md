@@ -68,3 +68,7 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   collides, top 0.02). SignText_SHOP/ARMORY re-centred, SignText_Deck +0.04 x. `Workspace._UVTest` x3 -> `ServerStorage._RebuildRemoved`.
   Training: bridges -0.04, tile greys R lean dropped (place_training). TX_LastTargetShot trace removed from the Training scripts.
   UNDO via `fix/lap_fix.lua UNDO` (+ overlap_fix UNDO for the 3 lap mesh nudges: H_DuelsDoor__trim_metal y, D_Lines__neon_cream y, SR_Stage__dark_metal z).
+- 2026-10-15 particles_fix (notes/particles.md): 65 ambient effects under `LobbyMap.FX` (all but `FX.Hologram`) + `Duels.SkyBeam`
+  disabled (originals in `PFX_OrigEnabled`); `LobbySpark` removed from SparkBridgeA/B/Gantry (`PFX_Tags`). LobbyFX: floor pulses and
+  spark bursts gated by `[PFX]` flag `workspace.PFX_AmbientFX` (false); original source in `ServerStorage._RebuildRemoved.PFX_LobbyFX_Orig`.
+  UNDO via `fix/particles_fix.lua UNDO`.
