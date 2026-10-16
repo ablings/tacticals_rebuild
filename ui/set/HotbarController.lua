@@ -651,6 +651,7 @@ local function buildUI()
 	local function buildHints()
 		for _, c in hints:GetChildren() do if not c:IsA("UIListLayout") then c:Destroy() end end
 		for i, entry in HINTS do
+			if entry[2] == "LeaveTraining" and localPlayer:GetAttribute("InTraining") ~= true then continue end -- only in Training
 			local label = text(hints, FONT, 16, WHITE, 1)
 			label.LayoutOrder = i * 10
 			label.AutomaticSize = Enum.AutomaticSize.X
@@ -662,6 +663,7 @@ local function buildUI()
 	end
 	buildHints()
 	for _, entry in HINTS do Binds.Changed(localPlayer, entry[2], buildHints) end
+	localPlayer:GetAttributeChangedSignal("InTraining"):Connect(buildHints)
 	hints.Parent = canvas
 
 	column = Instance.new("Frame")
