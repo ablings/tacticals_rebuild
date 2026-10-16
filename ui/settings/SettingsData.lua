@@ -121,6 +121,7 @@ return {
 			{ title = nil, rows = {
 				{ kind = "bind", name = "Free Cursor", icon = "camera", value = { "LeftAlt", "", "", "" } },
 				{ kind = "bind", name = "Player List", key = "Open Scoreboard", icon = "leaderboard", value = { "Tab", "", "", "" } },
+				{ kind = "bind", name = "Leave Training", icon = "exit", value = { "M", "", "", "" } },
 				{ kind = "bind", name = "Hide HUD", icon = "eye", value = { "", "", "", "" } },
 			} },
 		} },

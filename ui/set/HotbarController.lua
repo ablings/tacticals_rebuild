@@ -638,7 +638,8 @@ local function buildUI()
 	hlist.Parent = hints
 	-- [SET] the quick-controls strip uses Tacticals' names and your binds (rebuilt when a bind changes)
 	local HINTS = {
-		{ "Take Cover", "TakeCover", "Q" }, { "Gun Bash", "GunBash", "F" }, { "Throw Gadget", "ThrowGadget", "G" }, { "Reload", "Reload", "R" },
+		{ "Leave", "LeaveTraining", "M" }, { "Take Cover", "TakeCover", "Q" }, { "Gun Bash", "GunBash", "F" }, { "Throw Gadget", "ThrowGadget", "G" },
+		{ "Reload", "Reload", "R" },
 	}
 	local function keyName(action, fallback)
 		local k = Binds.Key(localPlayer, action, nil)

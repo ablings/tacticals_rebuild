@@ -60,6 +60,7 @@ local ICON_X = "rbxasset://textures/ui/InspectMenu/x.png"
 local ICON_PLAYERS = "rbxasset://textures/ui/Settings/MenuBarIcons/PlayersTabIcon.png"
 local ICON_CODES = "rbxasset://textures/ui/Settings/MenuBarIcons/HelpTab.png"
 local ICON_HUD = "rbxasset://textures/ui/Settings/MenuBarIcons/CaptureTab.png"
+local ICON_LEAVE = "rbxasset://textures/ui/Settings/Help/LeaveIcon.png"
 local BAR_BG, BAR_T, BAR_ICON = Color3.fromRGB(18, 18, 21), 0.08, Color3.fromRGB(247, 247, 248)
 buildCorner = function(gui, cb)
 	local TweenService = game:GetService("TweenService")
@@ -103,6 +104,7 @@ buildCorner = function(gui, cb)
 	local codes = button("Codes", ICON_CODES, "Redeem a code")
 	local list = button("PlayerList", ICON_PLAYERS, "Open the player list")
 	local hud = button("HUD", ICON_HUD, "Enable your HUD")
+	local leave = button("Leave", ICON_LEAVE, "Leave the training room")
 
 	local BODYI = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Italic)
 	local function line(y)
@@ -146,6 +148,7 @@ buildCorner = function(gui, cb)
 		local ctxItems = {}
 		if not cb.listShown() then table.insert(ctxItems, list) else list.b.Visible = false end
 		if cb.hudHidden and cb.hudHidden() then table.insert(ctxItems, hud) else hud.b.Visible = false end
+		if cb.canLeave and cb.canLeave() then table.insert(ctxItems, leave) else leave.b.Visible = false end
 		if #ctxItems > 0 then
 			left = placeBar(ctxPill, left - GAP, ctxItems)
 		else
@@ -169,6 +172,7 @@ buildCorner = function(gui, cb)
 	codes.b.Activated:Connect(function() isOpen = false; ctl.layout(); if cb.openCodes then cb.openCodes() end end)
 	list.b.Activated:Connect(function() cb.openList() end)
 	hud.b.Activated:Connect(function() if cb.showHud then cb.showHud() end end)
+	leave.b.Activated:Connect(function() if cb.leave then cb.leave() end end)
 	ctl.layout()
 	return ctl
 end
@@ -395,6 +399,16 @@ function LobbyHud.Start()
 		listShown = function() return lbOn end,
 		hudHidden = function() return hudHidden and hudHidden() end,
 		showHud = function() hudFlip = not hudFlip; corner.layout() end,
+		-- in Training: leave through ExfilFX (its LeaveTraining hook), like RIVALS' "Leave Shooting Range"
+		canLeave = function()
+			local fade = player.PlayerGui:FindFirstChild("ExfilFade")
+			return player:GetAttribute("InTraining") == true and fade ~= nil and fade:FindFirstChild("LeaveTraining") ~= nil
+		end,
+		leave = function()
+			local fade = player.PlayerGui:FindFirstChild("ExfilFade")
+			local ev = fade and fade:FindFirstChild("LeaveTraining")
+			if ev then ev:Fire() end
+		end,
 	})
 	local function bound(action, fallback)
 		local name = player:GetAttribute("Bind_" .. action)
@@ -431,6 +445,7 @@ function LobbyHud.Start()
 	-- the rest of the lobby HUD (PLAY row, dock) hides with Hide HUD too; the dock's own state is put back after
 	local dockSaved
 	local cutShown = false
+	local wasTraining = false
 	local k = 0
 	RunService.Heartbeat:Connect(function(dt)
 		local on = lobbyShown()
@@ -438,7 +453,9 @@ function LobbyHud.Start()
 		local cut = player:GetAttribute("InCutscene") == true
 		local hide = hudHidden() or cut
 		root.Visible = on and not hide
-		if corner then corner.frame.Visible = not cut and (on or (hide and not player:GetAttribute("InTraining"))) end
+		local training = player:GetAttribute("InTraining") == true
+		if corner then corner.frame.Visible = not cut and (on or hide or training) end
+		if training ~= wasTraining then wasTraining = training; corner.layout() end
 		if cut ~= cutShown then
 			cutShown = cut
 			for _, name in { "Hotbar", "Vitals" } do

@@ -14,7 +14,7 @@ Binds.Keys = {
 	ThrowGadget = "Quick Utility", Jump = "Jump", Sprint = "Sprint", Crouch = "Crouch", Slide = "Slide",
 	TakeCover = "Take Cover", Dash = "Dash", EquipGun = "Equip Primary", EquipMelee = "Equip Melee",
 	EquipGadget = "Equip Utility", CycleWeapon = "Switch Weapons", FreeCursor = "Free Cursor",
-	PlayerList = "Open Scoreboard", HideHUD = "Hide HUD",
+	PlayerList = "Open Scoreboard", HideHUD = "Hide HUD", LeaveTraining = "Leave Training",
 }
 
 local function attrName(action)

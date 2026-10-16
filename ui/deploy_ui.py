@@ -32,6 +32,7 @@ SET_FILES = [
     (C, "HotbarController", "set/HotbarController.lua"),
     (C, "GadgetController", "set/GadgetController.lua"),
     (C, "HealthBarController", "set/HealthBarController.lua"),
+    (C, "TrainingBinsController", "set/TrainingBinsController.lua"),
 ]
 
 # small source patches to scripts the UI session doesn't own (idempotent)
