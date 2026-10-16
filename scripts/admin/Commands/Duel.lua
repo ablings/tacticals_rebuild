@@ -7,9 +7,17 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
 local function ldm(ctx)
-	local m = ctx.Data.Lobby("LobbyDuelManager")
+	local m = ctx.Core.Place == "lobby" and ctx.Data.Lobby("LobbyDuelManager") or nil
 	if not m or not m._matches then error("this place has no lobby duels (LobbyDuelManager)") end
 	return m
+end
+
+-- the match place: one match per server on ReplicatedStorage, run by RoundManager on MatchCore (MatchInfo / EndMatch)
+local function roundManager(ctx)
+	if ctx.Core.Place ~= "match" then return nil end
+	local m = ctx.Data.Lobby("RoundManager")
+	if m and m.MatchInfo then return m end
+	return nil
 end
 
 local function matchConfig(ctx)
@@ -28,7 +36,7 @@ end
 
 return {
 	{
-		name = "duelsolo", level = "Admin",
+		name = "duelsolo", level = "Admin", place = "lobby",
 		description = "on: a duel pad you stand on starts with just you; empty places get test bots; bot matches never pay. Only for matches that include you.",
 		args = { { name = "on", type = "boolean" }, { name = "player", type = "players", defaultToken = "me" } },
 		run = function(ctx, a)
@@ -52,8 +60,15 @@ return {
 		end,
 	},
 	{
-		name = "listmatches", aliases = { "matches", "duels" }, level = "Tester", description = "Running lobby duel matches.",
+		name = "listmatches", aliases = { "matches", "duels" }, level = "Tester", description = "Running matches (lobby duels, or this match server's match).",
 		run = function(ctx)
+			local rm = roundManager(ctx)
+			if rm then
+				local i = rm.MatchInfo()
+				ctx.reply(("%s  %s%s  %s  round %d  %d-%d  map %s  [%s]"):format(i.kind, tostring(i.mode or "-"), i.ranked and " ranked" or "",
+					tostring(i.state or "-"), i.round, i.scoreA, i.scoreB, tostring(i.map or "-"), table.concat(i.members, " ")))
+				return true, i.kind == "none" and "No match running on this server." or "1 match on this server."
+			end
 			local m = ldm(ctx)
 			local n = 0
 			for _, match in m._matches do n += 1; ctx.reply(describe(match)) end
@@ -63,10 +78,17 @@ return {
 	},
 	{
 		name = "endmatch", aliases = { "stopmatch" }, level = "Admin",
-		description = "End a lobby duel now (match id like D3, or a player in it). Everyone goes back to the pads; nobody is paid.",
-		args = { { name = "match", type = "string" } },
+		description = "End a match now: a lobby duel (match id like D3, or a player in it; back to the pads) or, in the match place, this server's match (back to the lobby). Nobody is paid.",
+		args = { { name = "match", type = "string", optional = true } },
 		run = function(ctx, a)
+			local rm = roundManager(ctx)
+			if rm then
+				local ok, why = rm.EndMatch("admin " .. (ctx.caller and ctx.caller.Name or "console"))
+				if not ok then return false, why end
+				return true, "Ending this server's match: no rewards, everyone goes back to the lobby."
+			end
 			local m = ldm(ctx)
+			if not a.match then return false, "give a match id (;listmatches) or a player in it" end
 			local id = string.upper(a.match)
 			if not m._matches[id] then
 				local list = ctx.Core.Args.Players(a.match, ctx)
@@ -82,7 +104,7 @@ return {
 		end,
 	},
 	{
-		name = "arenas", level = "Tester", description = "Arena slots and the duel maps (modes per map).",
+		name = "arenas", level = "Tester", place = "lobby", description = "Arena slots and the duel maps (modes per map).",
 		run = function(ctx)
 			local m = ldm(ctx)
 			local C = matchConfig(ctx)

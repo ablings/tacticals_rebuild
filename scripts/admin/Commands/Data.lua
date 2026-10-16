@@ -44,7 +44,7 @@ local function wipePart(D, p, part)
 	if part == "settings" or part == "all" then reset("Settings") end
 	if part == "all" then reset("RedeemedCodes") end
 	if part == "missions" or part == "all" then
-		local LM = D.Lobby("LobbyManager")
+		local LM = workspace:FindFirstChild("LobbyMap") and D.Lobby("LobbyManager") or nil
 		if LM and LM.EnsureQuests then pcall(LM.EnsureQuests, p) end -- new missions at once (the lobby also re-rolls every 30 s)
 	end
 end

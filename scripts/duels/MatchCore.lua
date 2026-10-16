@@ -1,5 +1,6 @@
 -- ServerScriptService/Shared/MatchCore (ModuleScript): the round rules of a team match, shared by the lobby's pad duels
--- (one MatchCore run per match, LobbyDuelManager) and, in phase 4, the match place's RoundManager (one per server).
+-- (one MatchCore run per match, LobbyDuelManager) and the match place's RoundManager (one per server; [MATCH] 2026-10-16,
+-- notes/match_place_flow.md: it also uses runPreMatch / castVote / ownedItems / ownedKit below).
 -- Ported from the match place RoundManager (pass 38): playRound / playMatch / win rules / forfeit / kill tally / award maths.
 -- Everything place-specific comes in through a context object, so the rules don't know where they run:
 --   ctx.state            Instance  the state object (lobby: ReplicatedStorage.LobbyDuels.<id>; match place: ReplicatedStorage)
@@ -12,6 +13,7 @@
 --   ctx.isPresent(member) -> bool               false once a player left / disconnected
 --   ctx.onRoundStart(roundNumber)               reset the arena (shootables, doors, smoke) of THIS match
 --   ctx.onKill(info)                            kill feed {killer, victim, weapon, headshot, kind}
+--   ctx.aborted          bool      set by an admin end: the closing announce says "MATCH ENDED"
 -- Published on ctx.state (names from notes/lobby_duels_design.md section 6; PhaseEndsAt == StateEndsAt always):
 --   MatchState, MatchPhase, StateEndsAt, PhaseEndsAt, CombatEnabled, RoundNumber, RoundsToWin, ScoreA, ScoreB
 -- Player (member) attributes: InMatch, Team, RoundWins, MatchKills, MatchDeaths, Alive
@@ -166,7 +168,12 @@ function MatchCore.playMatch(ctx)
 	while true do
 		roundNumber += 1
 		local w, left = MatchCore.playRound(ctx, roundNumber)
-		if left then winner, forfeit = w, true; ctx.announce("OPPONENTS LEFT", "TEAM " .. w .. " WINS"); break end
+		if left then
+			winner, forfeit = w, true
+			-- ctx.aborted (an admin ended the match): no "opponents left" line
+			if not ctx.aborted then ctx.announce("OPPONENTS LEFT", "TEAM " .. w .. " WINS") end
+			break
+		end
 		if w then
 			local key = "Score" .. w
 			s:SetAttribute(key, (s:GetAttribute(key) or 0) + 1)
@@ -184,7 +191,10 @@ function MatchCore.playMatch(ctx)
 			if f then winner, forfeit = f, true break end
 			task.wait(0.1)
 		end
-		if forfeit then ctx.announce("OPPONENTS LEFT", "TEAM " .. winner .. " WINS"); break end
+		if forfeit then
+			if not ctx.aborted then ctx.announce("OPPONENTS LEFT", "TEAM " .. winner .. " WINS") end
+			break
+		end
 		if roundNumber >= (C.MaxRounds or 9) then -- safety: endless draws
 			local a, b = score(ctx, "A"), score(ctx, "B")
 			winner = a > b and "A" or b > a and "B" or nil
@@ -193,7 +203,11 @@ function MatchCore.playMatch(ctx)
 	end
 	ctx.over = true
 	MatchCore.setState(ctx, "MatchEnd", C.ResultsTime or 12)
-	ctx.announce(winner and ("TEAM " .. winner .. " WINS THE MATCH") or "MATCH DRAWN", forfeit and "Forfeit" or "")
+	if ctx.aborted then
+		ctx.announce("MATCH ENDED", "Ended by an admin - no rewards")
+	else
+		ctx.announce(winner and ("TEAM " .. winner .. " WINS THE MATCH") or "MATCH DRAWN", forfeit and "Forfeit" or "")
+	end
 	return winner, forfeit
 end
 
@@ -239,6 +253,98 @@ function MatchCore.applyKit(m, kit)
 	MatchCore.setAttr(m, "KitMelee", kit.Melee)
 	MatchCore.setAttr(m, "KitGadget", kit.Gadget)
 	MatchCore.setAttr(m, "Loadout", kit.Weapon)
+end
+
+-- what a player may pick: every catalogue item that is a Default or owned (data.Owned[id] == true), sorted ids
+function MatchCore.ownedItems(items, data): { string }
+	local owned = {}
+	for id, it in items do
+		if it.Default == true or (data and type(data.Owned) == "table" and data.Owned[id] == true) then table.insert(owned, id) end
+	end
+	table.sort(owned)
+	return owned
+end
+-- the kit a player starts the Loadout phase with: wanted[slot] where it is a valid pick (owned + right slot), else the
+-- slot's default (defaults = { Weapon = "Pistol", Melee = "Fists", Gadget = "Smoke" })
+function MatchCore.ownedKit(items, ownsFn, wanted, defaults)
+	local kit = {}
+	for _, slot in { "Weapon", "Melee", "Gadget" } do
+		local id = type(wanted) == "table" and wanted[slot] or nil
+		kit[slot] = MatchCore.validPick(items, ownsFn, slot, id) and id or defaults[slot]
+	end
+	return kit
+end
+
+-- // Pre-match phases (Loading -> MapVote -> Loadout), used by the match place's RoundManager --------------------------------
+-- (LobbyDuelManager runs its own copy of these steps, with the arena loading and the Loaded gate in between.)
+-- MapList JSON entries for the UI ({id, name, image}); the UI adds "Random" itself
+function MatchCore.mapList(maps)
+	local list = {}
+	for _, m in maps do table.insert(list, { id = m.Id, name = m.DisplayName or m.Id, image = m.Image or "" }) end
+	return list
+end
+-- a vote: mapId must be one of maps or "Random"; one vote per user id, changeable. Publishes MapVotes {mapId: [userId]}.
+function MatchCore.castVote(ctx, userId: number, mapId: any, maps): boolean
+	if ctx.state:GetAttribute("MatchState") ~= "MapVote" then return false end
+	local ok = mapId == "Random"
+	for _, m in maps do if m.Id == mapId then ok = true end end
+	if not ok then return false end
+	ctx.votes = ctx.votes or {}
+	ctx.votes[userId] = mapId
+	ctx.lastVote = os.clock()
+	local out = {}
+	for uid, id in ctx.votes do out[id] = out[id] or {}; table.insert(out[id], uid) end
+	ctx.state:SetAttribute("MapVotes", game:GetService("HttpService"):JSONEncode(out))
+	return true
+end
+-- wait up to seconds; true as soon as done() is true, false on timeout or when a whole team is gone
+function MatchCore.waitPhase(ctx, seconds: number, done)
+	local t0 = os.clock()
+	while os.clock() - t0 < seconds do
+		if done and done() then return true end
+		if MatchCore.forfeitSide(ctx) then return false end
+		task.wait(0.1)
+	end
+	return false
+end
+-- Loading (C.LoadingTime) -> MapVote (C.MapVoteTime; skipped when C.DuelMapVote == false or no map is eligible)
+-- -> MapChosen -> Loadout (C.LoadoutTime, ends early when every present player member is Ready).
+-- opts.maps = the eligible maps (registry entries); opts.voters() -> number of members who can vote;
+-- opts.onMapChosen(id) is called before the Loadout phase starts. Returns the chosen map id (nil = no eligible map).
+function MatchCore.runPreMatch(ctx, opts)
+	local C, s = ctx.config, ctx.state
+	local HttpService = game:GetService("HttpService")
+	MatchCore.setState(ctx, "Loading", C.LoadingTime or 3)
+	MatchCore.waitPhase(ctx, C.LoadingTime or 3)
+	local maps = opts.maps or {}
+	s:SetAttribute("MapList", HttpService:JSONEncode(MatchCore.mapList(maps)))
+	s:SetAttribute("MapVotes", "{}")
+	ctx.votes, ctx.lastVote = ctx.votes or {}, 0
+	if C.DuelMapVote ~= false and #maps > 0 and not MatchCore.forfeitSide(ctx) then
+		MatchCore.setState(ctx, "MapVote", C.MapVoteTime or 10)
+		local voters = opts.voters and opts.voters() or 0
+		MatchCore.waitPhase(ctx, C.MapVoteTime or 10, function()
+			local n = 0
+			for _ in ctx.votes do n += 1 end
+			return voters > 0 and n >= voters and os.clock() - ctx.lastVote > 1.5
+		end)
+	end
+	local chosen = MatchCore.resolveVote(ctx.votes, maps)
+	s:SetAttribute("MapChosen", chosen)
+	if MatchCore.forfeitSide(ctx) then return chosen end
+	-- the winning tile flashes
+	task.wait(1.5)
+	if opts.onMapChosen then opts.onMapChosen(chosen) end
+	MatchCore.setState(ctx, "Loadout", C.LoadoutTime or 15)
+	MatchCore.waitPhase(ctx, C.LoadoutTime or 15, function()
+		for _, list in ctx.teams do
+			for _, m in list do
+				if m.player and ctx.isPresent(m) and not m.ready then return false end
+			end
+		end
+		return true
+	end)
+	return chosen
 end
 
 -- // Map vote: votes = { [userId] = mapId }; maps = registry entries; returns the chosen real map id -------------------------

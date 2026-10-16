@@ -66,6 +66,12 @@ local function placeTarget(token: string): (CFrame?, string?)
 		local any = workspace:FindFirstChildWhichIsA("SpawnLocation", true)
 		if any then return any.CFrame + Vector3.new(0, 4, 0), "the spawn" end
 		return CFrame.new(0, 10, 0), "the origin"
+	elseif t == "spawna" or t == "spawnb" then
+		-- the match place's team spawns (Workspace.MatchSpawns.SpawnA / SpawnB)
+		local ms = workspace:FindFirstChild("MatchSpawns")
+		local sp = ms and ms:FindFirstChild(string.sub(t, -1) == "a" and "SpawnA" or "SpawnB")
+		if sp then return sp.CFrame + Vector3.new(0, 4, 0), sp.Name end
+		return nil
 	elseif t == "hangar" or t == "exfil" then
 		return CFrame.new(112, 3.5, 0) * CFrame.Angles(0, -math.pi / 2, 0), "the hangar" -- LobbyFallCatch's HANGAR
 	end
@@ -101,7 +107,7 @@ return {
 	},
 	{
 		name = "tp", aliases = { "teleport", "goto" }, level = "Tester",
-		description = "Teleport players to a player, a duel pad (1v1a, pad_2v2_b), spawn, hangar, or x,y,z.",
+		description = "Teleport players to a player, a duel pad (1v1a, pad_2v2_b), spawn, hangar, spawna / spawnb (match place), or x,y,z.",
 		args = { P, { name = "target", type = "string" } },
 		run = function(ctx, a)
 			local cf, label = placeTarget(a.target)

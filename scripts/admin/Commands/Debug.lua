@@ -45,8 +45,14 @@ return {
 		run = function(ctx)
 			local D = ctx.Data
 			local duels = 0
-			local m = D.Lobby("LobbyDuelManager")
+			local m = ctx.Core.Place == "lobby" and D.Lobby("LobbyDuelManager") or nil
 			for _ in (m and m._matches or {}) do duels += 1 end
+			local rm = ctx.Core.Place == "match" and D.Lobby("RoundManager") or nil
+			if rm and rm.MatchInfo then
+				-- the match place: its one match
+				local i = rm.MatchInfo()
+				ctx.reply(("match server: %s %s, state %s"):format(i.kind, tostring(i.mode or "-"), tostring(i.state or "-")))
+			end
 			ctx.reply(("place %d v%d  job %s  %s"):format(game.PlaceId, game.PlaceVersion, game.JobId ~= "" and string.sub(game.JobId, 1, 8) or "studio",
 				RunService:IsStudio() and "STUDIO" or (game.PrivateServerId ~= "" and "private server" or "public server")))
 			return true, ("%d player(s), up %d min, profile store \"%s\", lobby duels %d, audit store %s"):format(#Players:GetPlayers(),

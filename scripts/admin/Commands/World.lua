@@ -12,7 +12,7 @@ return {
 		end,
 	},
 	{
-		name = "pads", level = "Tester", description = "Duel pads: mode, state, NoMap, who is on them.",
+		name = "pads", level = "Tester", place = "lobby", description = "Duel pads: mode, state, NoMap, who is on them.",
 		run = function(ctx)
 			local map = workspace:FindFirstChild("LobbyMap")
 			local duels = map and map:FindFirstChild("Duels")

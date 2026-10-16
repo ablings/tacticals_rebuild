@@ -7,6 +7,7 @@
 --     args = { { name = "player", type = "players", defaultToken = "me" }, { name = "level", type = "integer", min = 1 } },
 --     destructive = true?,        -- needs "<same command> confirm" within Config.ConfirmWindow s; on several players Owner only
 --     studioOnly = true?,         -- refused outside Studio
+--     place = "lobby" | "match"?,  -- only registered in that place (Core.Place: "lobby" when Workspace.LobbyMap exists)
 --     run = function(ctx, args) ... return true, "message" | false, "error" end }
 --   ctx = { caller, level (number), levelName, source, targets (players parsed), reply(line), Core, Data (DataAdapter) }
 -- Rules applied here, never by a command: level check, Testers may only target themselves, nobody targets a player
@@ -20,6 +21,8 @@ local DataAdapter = require(script.Parent.DataAdapter)
 
 local IS_STUDIO = RunService:IsStudio()
 local Core = { Commands = {}, ByName = {}, Groups = {} }
+-- which place this server is: the lobby (Workspace.LobbyMap) or the match / tutorial place (notes/match_place_flow.md)
+Core.Place = workspace:FindFirstChild("LobbyMap") and "lobby" or "match"
 Core.Permissions, Core.Args, Core.Audit, Core.Data, Core.Config = Permissions, Args, Audit, DataAdapter, Config
 
 -- Core.Notify(player, text, kind) shows a line in that player's chat; set by the AdminCommands script (kind: true/false/"info"/"announce")
@@ -34,6 +37,8 @@ function Core.Register(def)
 	assert(Permissions.Values[def.level], "bad level for " .. def.name)
 	def.args = def.args or {}
 	def.group = def.group or "Misc"
+	-- a command for the other place is left out here (help, the panel and chat never see it)
+	if def.place and def.place ~= Core.Place then return end
 	if Core.ByName[def.name] then warn("[Admin] duplicate command " .. def.name .. " (later one wins)") end
 	table.insert(Core.Commands, def)
 	Core.ByName[def.name] = def

@@ -654,6 +654,7 @@ SOURCES.Core = [=[-- ServerScriptService/AdminFramework/Core (ModuleScript): com
 --     args = { { name = "player", type = "players", defaultToken = "me" }, { name = "level", type = "integer", min = 1 } },
 --     destructive = true?,        -- needs "<same command> confirm" within Config.ConfirmWindow s; on several players Owner only
 --     studioOnly = true?,         -- refused outside Studio
+--     place = "lobby" | "match"?,  -- only registered in that place (Core.Place: "lobby" when Workspace.LobbyMap exists)
 --     run = function(ctx, args) ... return true, "message" | false, "error" end }
 --   ctx = { caller, level (number), levelName, source, targets (players parsed), reply(line), Core, Data (DataAdapter) }
 -- Rules applied here, never by a command: level check, Testers may only target themselves, nobody targets a player
@@ -667,6 +668,8 @@ local DataAdapter = require(script.Parent.DataAdapter)
 
 local IS_STUDIO = RunService:IsStudio()
 local Core = { Commands = {}, ByName = {}, Groups = {} }
+-- which place this server is: the lobby (Workspace.LobbyMap) or the match / tutorial place (notes/match_place_flow.md)
+Core.Place = workspace:FindFirstChild("LobbyMap") and "lobby" or "match"
 Core.Permissions, Core.Args, Core.Audit, Core.Data, Core.Config = Permissions, Args, Audit, DataAdapter, Config
 
 -- Core.Notify(player, text, kind) shows a line in that player's chat; set by the AdminCommands script (kind: true/false/"info"/"announce")
@@ -681,6 +684,8 @@ function Core.Register(def)
 	assert(Permissions.Values[def.level], "bad level for " .. def.name)
 	def.args = def.args or {}
 	def.group = def.group or "Misc"
+	-- a command for the other place is left out here (help, the panel and chat never see it)
+	if def.place and def.place ~= Core.Place then return end
 	if Core.ByName[def.name] then warn("[Admin] duplicate command " .. def.name .. " (later one wins)") end
 	table.insert(Core.Commands, def)
 	Core.ByName[def.name] = def
@@ -898,7 +903,7 @@ local function wipePart(D, p, part)
 	if part == "settings" or part == "all" then reset("Settings") end
 	if part == "all" then reset("RedeemedCodes") end
 	if part == "missions" or part == "all" then
-		local LM = D.Lobby("LobbyManager")
+		local LM = workspace:FindFirstChild("LobbyMap") and D.Lobby("LobbyManager") or nil
 		if LM and LM.EnsureQuests then pcall(LM.EnsureQuests, p) end -- new missions at once (the lobby also re-rolls every 30 s)
 	end
 end
@@ -1210,6 +1215,12 @@ local function placeTarget(token: string): (CFrame?, string?)
 		local any = workspace:FindFirstChildWhichIsA("SpawnLocation", true)
 		if any then return any.CFrame + Vector3.new(0, 4, 0), "the spawn" end
 		return CFrame.new(0, 10, 0), "the origin"
+	elseif t == "spawna" or t == "spawnb" then
+		-- the match place's team spawns (Workspace.MatchSpawns.SpawnA / SpawnB)
+		local ms = workspace:FindFirstChild("MatchSpawns")
+		local sp = ms and ms:FindFirstChild(string.sub(t, -1) == "a" and "SpawnA" or "SpawnB")
+		if sp then return sp.CFrame + Vector3.new(0, 4, 0), sp.Name end
+		return nil
 	elseif t == "hangar" or t == "exfil" then
 		return CFrame.new(112, 3.5, 0) * CFrame.Angles(0, -math.pi / 2, 0), "the hangar" -- LobbyFallCatch's HANGAR
 	end
@@ -1245,7 +1256,7 @@ return {
 	},
 	{
 		name = "tp", aliases = { "teleport", "goto" }, level = "Tester",
-		description = "Teleport players to a player, a duel pad (1v1a, pad_2v2_b), spawn, hangar, or x,y,z.",
+		description = "Teleport players to a player, a duel pad (1v1a, pad_2v2_b), spawn, hangar, spawna / spawnb (match place), or x,y,z.",
 		args = { P, { name = "target", type = "string" } },
 		run = function(ctx, a)
 			local cf, label = placeTarget(a.target)
@@ -1343,9 +1354,17 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
 local function ldm(ctx)
-	local m = ctx.Data.Lobby("LobbyDuelManager")
+	local m = ctx.Core.Place == "lobby" and ctx.Data.Lobby("LobbyDuelManager") or nil
 	if not m or not m._matches then error("this place has no lobby duels (LobbyDuelManager)") end
 	return m
+end
+
+-- the match place: one match per server on ReplicatedStorage, run by RoundManager on MatchCore (MatchInfo / EndMatch)
+local function roundManager(ctx)
+	if ctx.Core.Place ~= "match" then return nil end
+	local m = ctx.Data.Lobby("RoundManager")
+	if m and m.MatchInfo then return m end
+	return nil
 end
 
 local function matchConfig(ctx)
@@ -1364,7 +1383,7 @@ end
 
 return {
 	{
-		name = "duelsolo", level = "Admin",
+		name = "duelsolo", level = "Admin", place = "lobby",
 		description = "on: a duel pad you stand on starts with just you; empty places get test bots; bot matches never pay. Only for matches that include you.",
 		args = { { name = "on", type = "boolean" }, { name = "player", type = "players", defaultToken = "me" } },
 		run = function(ctx, a)
@@ -1388,8 +1407,15 @@ return {
 		end,
 	},
 	{
-		name = "listmatches", aliases = { "matches", "duels" }, level = "Tester", description = "Running lobby duel matches.",
+		name = "listmatches", aliases = { "matches", "duels" }, level = "Tester", description = "Running matches (lobby duels, or this match server's match).",
 		run = function(ctx)
+			local rm = roundManager(ctx)
+			if rm then
+				local i = rm.MatchInfo()
+				ctx.reply(("%s  %s%s  %s  round %d  %d-%d  map %s  [%s]"):format(i.kind, tostring(i.mode or "-"), i.ranked and " ranked" or "",
+					tostring(i.state or "-"), i.round, i.scoreA, i.scoreB, tostring(i.map or "-"), table.concat(i.members, " ")))
+				return true, i.kind == "none" and "No match running on this server." or "1 match on this server."
+			end
 			local m = ldm(ctx)
 			local n = 0
 			for _, match in m._matches do n += 1; ctx.reply(describe(match)) end
@@ -1399,10 +1425,17 @@ return {
 	},
 	{
 		name = "endmatch", aliases = { "stopmatch" }, level = "Admin",
-		description = "End a lobby duel now (match id like D3, or a player in it). Everyone goes back to the pads; nobody is paid.",
-		args = { { name = "match", type = "string" } },
+		description = "End a match now: a lobby duel (match id like D3, or a player in it; back to the pads) or, in the match place, this server's match (back to the lobby). Nobody is paid.",
+		args = { { name = "match", type = "string", optional = true } },
 		run = function(ctx, a)
+			local rm = roundManager(ctx)
+			if rm then
+				local ok, why = rm.EndMatch("admin " .. (ctx.caller and ctx.caller.Name or "console"))
+				if not ok then return false, why end
+				return true, "Ending this server's match: no rewards, everyone goes back to the lobby."
+			end
 			local m = ldm(ctx)
+			if not a.match then return false, "give a match id (;listmatches) or a player in it" end
 			local id = string.upper(a.match)
 			if not m._matches[id] then
 				local list = ctx.Core.Args.Players(a.match, ctx)
@@ -1418,7 +1451,7 @@ return {
 		end,
 	},
 	{
-		name = "arenas", level = "Tester", description = "Arena slots and the duel maps (modes per map).",
+		name = "arenas", level = "Tester", place = "lobby", description = "Arena slots and the duel maps (modes per map).",
 		run = function(ctx)
 			local m = ldm(ctx)
 			local C = matchConfig(ctx)
@@ -1451,7 +1484,7 @@ return {
 		end,
 	},
 	{
-		name = "pads", level = "Tester", description = "Duel pads: mode, state, NoMap, who is on them.",
+		name = "pads", level = "Tester", place = "lobby", description = "Duel pads: mode, state, NoMap, who is on them.",
 		run = function(ctx)
 			local map = workspace:FindFirstChild("LobbyMap")
 			local duels = map and map:FindFirstChild("Duels")
@@ -1517,8 +1550,14 @@ return {
 		run = function(ctx)
 			local D = ctx.Data
 			local duels = 0
-			local m = D.Lobby("LobbyDuelManager")
+			local m = ctx.Core.Place == "lobby" and D.Lobby("LobbyDuelManager") or nil
 			for _ in (m and m._matches or {}) do duels += 1 end
+			local rm = ctx.Core.Place == "match" and D.Lobby("RoundManager") or nil
+			if rm and rm.MatchInfo then
+				-- the match place: its one match
+				local i = rm.MatchInfo()
+				ctx.reply(("match server: %s %s, state %s"):format(i.kind, tostring(i.mode or "-"), tostring(i.state or "-")))
+			end
 			ctx.reply(("place %d v%d  job %s  %s"):format(game.PlaceId, game.PlaceVersion, game.JobId ~= "" and string.sub(game.JobId, 1, 8) or "studio",
 				RunService:IsStudio() and "STUDIO" or (game.PrivateServerId ~= "" and "private server" or "public server")))
 			return true, ("%d player(s), up %d min, profile store \"%s\", lobby duels %d, audit store %s"):format(#Players:GetPlayers(),

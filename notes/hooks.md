@@ -178,3 +178,15 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   `ServerStorage.AdminBindable`, a `ShouldDeliverCallback` on every TextChannel (holds back admins' mistyped `;commands`; nothing else sets it),
   player attributes `AdminDuelSolo`, `AdminGod`, `AdminSpeed`, character `AdminGodField` ForceField, Studio-only `ServerStorage` attributes
   `AdminSim_<userId>`, DataStore `AdminAudit_v1`. Profile writes only through PlayerStore. UNDO via `fix/admin_install.lua UNDO` (tested hash-exact).
+- 2026-10-16 match place on MatchCore (notes/match_place_flow.md; **match place** `match_place_ref.rbxl`, studio 331cb3a0, not the lobby):
+  **`Managers.RoundManager` and `Modules.Shared.Config.MatchConfig` sources replaced** ([MATCH]; backups `ServerStorage._RebuildRemoved.MATCH_RoundManager_Orig`
+  / `MATCH_MatchConfig_Orig`). New (attribute `MatchInstall`): `Modules.Shared.MapRegistry` / `MatchState`, `Modules.Shared.Config.LobbyConfig` (subset
+  port: keep in sync with the lobby's items / level curve), `ServerScriptService.Shared.MatchCore`, `ReplicatedStorage.DuelMaps.Warehouse` (+ MapInfo; the
+  map itself stays `Workspace.Warehouse` + `MatchSpawns`, names unchanged), `ServerScriptService.AdminFramework` / `AdminCommands`, `StarterPlayerScripts.AdminFeedback`.
+  Runtime: `ReplicatedStorage.MatchFlow`, Studio-only `ServerStorage.MatchTestHook`; new ReplicatedStorage attrs `MatchPhase`, `PhaseEndsAt`, `TeamA/B`,
+  `RoundsToWin`, `MapList/MapVotes/MapChosen`, `ArenaMap`, `MapFallback`; new MatchState values Loading / MapVote / Loadout / Cancelled; player attrs
+  `Level`, `OwnedItems`, `KitWeapon/KitMelee/KitGadget`, `LoadoutReady`, `Alive`, `MatchDeaths`. Studio switch `ReplicatedStorage.StudioTeleportData` (JSON).
+  Tutorial / test-server / FiringRange paths and TutorialManager / BotManager / RangeManager untouched; every script that looks up `workspace.Warehouse`
+  still finds it. Shared changes also re-installed in the lobby (MatchCore helpers + `ctx.aborted`; admin `Core.Place` + `place = "lobby"` on duelsolo /
+  arenas / pads). UNDO via `python tools/match_place_build.py --run UNDO` (tested hash-exact).
+
