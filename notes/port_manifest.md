@@ -74,3 +74,18 @@ himself; we never publish.
 - Saved the rebuild at 13:38 and copied it to **`Tacticals_main_ported.rbxl`**: the port result, with Technology Future.
 - **Edward publishes:** open `Tacticals_main_ported.rbxl`, then File > Publish to Roblox As > the existing "tacticals" place.
   Because the place uses Team Create, check that no collaborator has unsaved work open before overwriting.
+
+## Live port (2026-10-16 15:03-15:08, lead; Edward: "full permission to port everything to the tactical lobby and save")
+- Froze both sessions and saved the copy at 15:03 (it includes the Showroom armory nook and UI deploys up to 14). Copied it to
+  Tacticals_main_ported.rbxl.
+- The live place was found open in a Studio window (Team Create). Checked it read-only: scripts identical to the 13:31 baseline,
+  LobbyMap 7539, PlaceVersion 256. Closed it with no edits.
+- Opened Tacticals_main_ported.rbxl, then File > Save to Roblox As > gunsy funsy > tacticals > the place "tacticals" (not "tutorial
+  spot / matchmaking test") > Overwrite. Roblox asked "Some assets need permission to load": granted (Grant Permissions and
+  Publish).
+- Verified on the place: PlaceId 126491009194165, PlaceVersion 258, LobbyMap 16983, Polish (10 areas), Heli.HX,
+  `_MainGame_2026-10-16`, [MM] and [EXFIL] leave markers, UIKit.CodesScreen.
+- Rollback: Creator Hub > tacticals > place > Version History, restore version 256. Or open
+  `backup/main_before_port_2026-10-16.rbxl` and save it over the place.
+- Whether that save also made it live depends on Roblox's Save vs Publish for Team Create places. To be sure, Edward opens the
+  place and uses File > Publish to Roblox.
