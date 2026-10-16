@@ -126,6 +126,11 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   **moved** (rim + background light) and retuned, `Lights.Fill` retuned (tags / Room kept); `Rooms4.SR_Props` hidden, `SR_Stage` / `SR_Signs__label_cream`
   recoloured (`PolishShowroom_Orig`). DisplayPoint / CameraPoint / BenchTop untouched. New `Polish.Showroom` (cyclorama, lamp cans). UNDO via
   `fix/polish_showroom.lua UNDO`.
+- 2026-10-16 polish_showroom2 (notes/polish_showroom.md, round 2): Showroom as an armory nook. `Polish.Showroom` (round 1 cyc + lamp
+  cans) **hidden**; `Showroom.KeyLight` SpotLight and `Lights.Pendant1-4` / `Fill` **moved / retuned again** (tags, Room, names kept);
+  `Rooms4.SR_Stage` recoloured (`PolishShowroom2_Orig`). New `Polish.Showroom2` (wall at z 21, cheeks x +-15, pegboard, window, vent,
+  rack, crates, bench dressing) + **2 new RoomLight Room=Showroom parts** (`Showroom2.Lights.WorkLight`, `.BulkheadLamp`): 8 Showroom
+  RoomLights. DisplayPoint / CameraPoint / BenchTop / KeyLight part untouched. UNDO via `fix/polish_showroom2.lua UNDO`.
 - 2026-10-16 polish_final (notes/polish_final.md): colours of 39 olive Neon parts, `FX.Hologram.HoloRing1/2` Size + Transparency, 6 `Lights.PointLight`
   lights (y 6, |z| 51) and 9 `TimesSquare` SurfaceLights Enabled false, 2 Textures on `Hub1.H_DuelsDoor.H_DuelsDoor__trim_metal` Transparency 1
   (`PolishFinal_Orig`). No names, tags, positions or hooks changed; nothing created. Run after polish_olive. UNDO via `fix/polish_final.lua UNDO`.
