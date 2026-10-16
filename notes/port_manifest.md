@@ -99,3 +99,10 @@ himself; we never publish.
   Verified on the place: DuelMaps.Warehouse Modes=1v1, LobbyDuelManager, DuelHUD, DuelTestSolo not set.
 - Closing it hung again on "Applying script changes": a Team Create artefact after an overwrite. Killed it; it held no edits.
 - Rollback: Version History 258 (port 1) or 256 (pre-port).
+
+## Live port 3 (2026-10-16 18:02-18:06, lead; Edward: "go for it")
+- Copy saved 18:02 (admin framework, arena props + camera fixes, admin speed in Training) -> Tacticals_main_ported.rbxl.
+- Live check before overwrite: version 261 (= our 260 plus a Team Create autosave), LobbyMap 16983, DuelMaps present. No outside changes.
+- Save to Roblox As > gunsy funsy > tacticals > **tacticals** row (the row thumbnails had swapped; chose by name) > Overwrite >
+  Grant Permissions and Publish. Verified: PlaceId 126491009194165, **version 263**, AdminFramework + DuelMaps present.
+- Rollback: Version History 261/260 (port 2), 258 (port 1), 256 (pre-port).
