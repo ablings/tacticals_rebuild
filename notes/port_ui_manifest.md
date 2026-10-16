@@ -1,7 +1,7 @@
 # UI port manifest (UI session) - everything the UI work added or changed outside Workspace
 
 For the port of Tacticals_rebuild.rbxl to the main game (Edward's call, see notes/port_manifest.md for the map side).
-State as of commit `a332412` (2026-10-16), deployed to 8ef4e21a. Sources of truth: `tacticals_rebuild/ui/`, and
+State as of commit `0b33cd3` (2026-10-16), deployed to 8ef4e21a. Sources of truth: `tacticals_rebuild/ui/`, and
 `python ui/deploy_ui.py <studio_id>` writes exactly the list below (it replaces Source, or creates the instance).
 Easiest port: run `deploy_ui.py` against the main game's Studio window, plus the two runtime notes at the bottom.
 
@@ -12,6 +12,7 @@ Easiest port: run `deploy_ui.py` against the main game's Studio window, plus the
 | `StarterPlayer.StarterPlayerScripts.Client.Controllers.LobbyHudController` | ModuleScript | `ui/hud/LobbyHudController.lua` | scissors pill, daily missions + TO PADS, searching plate, RIVALS-style player list, top-right inset bars; Hide HUD / Hide Missions / Padded HUD / Lobby Data settings |
 | `StarterPlayer.StarterPlayerScripts.Client.Controllers.SettingsEffectsController` | ModuleScript | `ui/settings/SettingsEffectsController.lua` | Optimized Lighting / Textures; nests `SoundService.World` under `SoundService.Effects` (SFX volume) |
 | `ReplicatedStorage.UIKit.PlayScreen` | ModuleScript | `ui/play/PlayScreen.lua` | full-screen PLAY (3D squad cards, casual / ranked, search + cancel) |
+| `StarterPlayer.StarterPlayerScripts.Client.Controllers.NameplatesController` | ModuleScript | `ui/hud/NameplatesController.lua` | RIVALS-style lobby nameplates (stat badge, name, @username, VIP chip); disables the server VipTag billboard client-side |
 | `ServerScriptService.PublicStats` | Script | `ui/hud/PublicStats.server.lua` | `Level` / `Wins` player attributes from the profile (read-only) |
 | `ReplicatedStorage.Modules.Shared.Binds` | ModuleScript | `ui/settings/Binds.lua` | Settings > Hotkeys -> key per action (config key as fallback); used by the [SET] controllers |
 
@@ -21,6 +22,8 @@ Easiest port: run `deploy_ui.py` against the main game's Studio window, plus the
 | `StarterPlayer.StarterPlayerScripts.Client.Controllers.LobbyUIController` | `ui/lobby/LobbyUIController.lua` | top-left card hidden (`PlayerCard`); `Open("Play")` opens `UIKit.PlayScreen`; one full-screen menu at a time (`LobbyUI.CloseScreens`); old top-centre queue pill retired; tooltips hidden when a menu opens; toasts obey Delivery Mode. Keeps the Tacticals session's `[NPC]` NPC_OpensPanel guard. |
 | `ReplicatedStorage.UIKit.SettingsData` | `ui/settings/SettingsData.lua` | rows translated to Tacticals (hotkeys = real actions; RIVALS-only rows dropped; storage keys unchanged so saved profiles load) |
 | `ReplicatedStorage.Modules.Shared.Config.SettingsConfig` | `ui/settings/SettingsConfig.lua` | dropped the Emotes volume group line |
+| `ReplicatedStorage.UIKit.ShopScreen` | `ui/shop/ShopScreen.lua` | Shop Home rebuilt on RIVALS' Home (floating items, hero, paged offer + dot bar, rarity tiles), steel scissors prices, rounded tabs / wallet |
+| `ReplicatedStorage.UIKit.Kit` | `ui/lobby/Kit.lua` | `Kit.closeButton` is RIVALS' red X (rounded) |
 | `ReplicatedStorage.UIKit.Tac` | `ui/lobby/Tac.lua` | `Tac.brackets` now draws RIVALS' rounded corners + a faint edge instead of corner brackets (Edward: no "4 corners box" look); affects every menu that used it (close X, PLAY button, Shop, Missions) |
 
 ## [SET] gameplay scripts (Source replaced; handed over by the Tacticals session 2026-10-16)
