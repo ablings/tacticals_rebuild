@@ -16,6 +16,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "Kit", "ModuleScript", "lobby/Kit.lua"),
     ("ReplicatedStorage.UIKit", "ShopScreen", "ModuleScript", "shop/ShopScreen.lua"),
     ("ReplicatedStorage.UIKit", "SettingsData", "ModuleScript", "settings/SettingsData.lua"),
+    ("ReplicatedStorage.UIKit", "SettingsKit", "ModuleScript", "settings/SettingsKit.lua"),
     ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),

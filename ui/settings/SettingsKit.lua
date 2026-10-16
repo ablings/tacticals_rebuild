@@ -350,7 +350,9 @@ end
 
 -- Red close button with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
-	local btn = Kit.button("red", size, nil, { Name = "Close" })
+	-- not named "Close" + Nonapplicable: the old InterfaceController shrinks a "Close" button's parent to 0 x 0 (UI session 2026-10-16)
+	local btn = Kit.button("red", size, nil, { Name = "CloseX" })
+	btn:AddTag("Nonapplicable")
 	local h = math.floor(size.Y.Offset * 0.58)
 	for _, rot in ipairs({ 45, -45 }) do
 		new("Frame", {
