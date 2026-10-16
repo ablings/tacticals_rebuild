@@ -775,6 +775,32 @@ function Kit.tooltip(text, width, pointer, red)
 end
 
 -- Panel open/close motion (UIScale + fade of a CanvasGroup-free tree: we fade via GroupTransparency when available).
+-- RIVALS' loading dots (ported from the replica): three white dots pulsing in turn, centred on the canvas.
+-- Menus that load a lot open behind these until everything is in (standing rule).
+function Kit.loadingDots(parent)
+	local holder = new("Frame", { Name = "LoadingDots", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(950 / 1920, 569 / 1080), Size = UDim2.fromScale(230 / 1920, 70 / 1080),
+		BackgroundTransparency = 1, ZIndex = 50, Parent = parent })
+	local dots = {}
+	for d = 1, 3 do
+		local dot = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5 + (d - 2) * 0.3, 0.5), Size = UDim2.fromScale(1, 64 / 70),
+			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 50, Parent = holder },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIAspectRatioConstraint", { AspectRatio = 1, DominantAxis = Enum.DominantAxis.Height }) })
+		dots[d] = new("UIScale", { Scale = 0.7, Parent = dot })
+	end
+	local conn
+	conn = game:GetService("RunService").RenderStepped:Connect(function()
+		if not holder.Parent then conn:Disconnect(); return end
+		if not holder.Visible then return end
+		local PERIOD, STEP, PULSE = 1.15, 0.1, 0.3
+		local t = os.clock() % PERIOD
+		for i, sc in ipairs(dots) do
+			local u = (t - (i - 1) * STEP) / PULSE
+			sc.Scale = 0.7 + 0.3 * ((u > 0 and u < 1) and math.sin(u * math.pi) or 0)
+		end
+	end)
+	return holder
+end
+
 function Kit.open(frame)
 	Kit.centreAnchor(frame) -- scale from the centre
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })

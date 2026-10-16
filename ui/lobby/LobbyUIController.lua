@@ -800,7 +800,7 @@ local function applySettings()
 end
 
 local settingsReady = false
-local function openSettings()
+local function openSettings(initOnly)
 	if not settingsReady then
 		settingsReady = true
 		SettingsScreen.Init({
@@ -810,6 +810,7 @@ local function openSettings()
 			onClose = function() if gui then gui.Enabled = true end end,
 		})
 	end
+	if initOnly then return end
 	if SettingsScreen.IsOpen() then SettingsScreen.Close() else SettingsScreen.Open() end
 end
 LobbyUI.OpenSettings = openSettings
@@ -820,8 +821,8 @@ local MissionsScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForCh
 local PlayScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("PlayScreen"))
 local Tooltip = require(script:WaitForChild("Tooltip"))
 local missionsReady = false
-local function openMissions()
-	if PlayScreen.IsOpen() then PlayScreen.Close() end
+local function openMissions(initOnly)
+	if not initOnly and PlayScreen.IsOpen() then PlayScreen.Close() end
 	if not missionsReady then
 		missionsReady = true
 		MissionsScreen.Init({
@@ -831,12 +832,13 @@ local function openMissions()
 			onClose = function() if gui then gui.Enabled = true end end,
 		})
 	end
+	if initOnly then return end
 	if MissionsScreen.IsOpen() then MissionsScreen.Close() else MissionsScreen.Open() end
 end
 
 ---------------------------------------------------------------- PLAY (UI session 2026-10-16: full screen, 3D cards; renderPlay above is no longer used)
 local playReady = false
-local function openPlay()
+local function openPlay(initOnly)
 	if not playReady then
 		playReady = true
 		PlayScreen.Init({
@@ -856,6 +858,7 @@ local function openPlay()
 			onClose = function() if gui then gui.Enabled = true end end,
 		})
 	end
+	if initOnly then return end
 	if PlayScreen.IsOpen() then PlayScreen.Close() else PlayScreen.Open() end
 end
 
@@ -920,7 +923,7 @@ local function setRailSelection()
 end
 
 local shopReady = false
-local function openShop(startTab)
+local function openShop(startTab, initOnly)
 	if not shopReady then
 		shopReady = true
 		Shop.Init({
@@ -938,10 +941,59 @@ local function openShop(startTab)
 			end,
 		})
 	end
+	if initOnly then return end
 	if Shop.IsOpen() and not startTab then Shop.Close() return end
 	Shop.Open(startTab)
 end
-LobbyUI.OpenShop = openShop
+
+-- (UI session 2026-10-16, standing rule / RIVALS) the full-screen menus are built and preloaded from join: their images plus
+-- every mesh their 3D art uses. A menu opened before that's done shows the three loading dots (blur up) and opens when ready.
+local menusReady = false
+local loadingGui, loadingPending
+local function whenReady(fn)
+	if menusReady then fn() return end
+	if loadingPending then return end -- already waiting: a second click doesn't queue another open
+	loadingPending = true
+	if not loadingGui then
+		local UIKitF = ReplicatedStorage:WaitForChild("UIKit")
+		local K = require(UIKitF:WaitForChild("Kit"))
+		loadingGui = Instance.new("ScreenGui")
+		loadingGui.Name = "MenuLoading"; loadingGui.IgnoreGuiInset = true; loadingGui.ResetOnSpawn = false; loadingGui.DisplayOrder = 40
+		local scrim = Instance.new("Frame"); scrim.Size = UDim2.fromScale(1, 1); scrim.BackgroundColor3 = Color3.new(0, 0, 0); scrim.BackgroundTransparency = 0.55; scrim.Parent = loadingGui
+		K.loadingDots(K.canvas(loadingGui))
+		loadingGui.Parent = player:WaitForChild("PlayerGui")
+	end
+	loadingGui.Enabled = true
+	if gui then gui.Enabled = false end
+	task.spawn(function()
+		while not menusReady do task.wait() end
+		loadingGui.Enabled = false
+		loadingPending = false
+		fn()
+	end)
+end
+local function prewarmMenus()
+	pcall(openSettings, true)
+	pcall(openMissions, true)
+	pcall(openPlay, true)
+	pcall(openShop, nil, true)
+	local list = {}
+	local function add(root)
+		if not root then return end
+		for _, d in root:GetDescendants() do
+			if ((d:IsA("ImageLabel") or d:IsA("ImageButton")) and d.Image ~= "") or d:IsA("MeshPart") or d:IsA("SpecialMesh")
+				or d:IsA("SurfaceAppearance") or d:IsA("Decal") then
+				table.insert(list, d)
+			end
+		end
+	end
+	for _, name in { "ShopUI2", "MissionsUI", "PlayUI", "SettingsUI", "PracticeSettings" } do add(player.PlayerGui:FindFirstChild(name)) end
+	add(ReplicatedStorage:FindFirstChild("Repository"))
+	add(ReplicatedStorage:FindFirstChild("UIIcons"))
+	pcall(function() game:GetService("ContentProvider"):PreloadAsync(list) end)
+	menusReady = true
+end
+LobbyUI.OpenShop = function(startTab) whenReady(function() openShop(startTab) end) end
 
 -- one full-screen menu at a time (RIVALS): opening one closes the others (UI session 2026-10-16)
 local function closeScreens(keep)
@@ -963,25 +1015,25 @@ function LobbyUI.Open(id: string)
 	end
 	if id == "Shop" then -- the SHOP is full-screen, not a panel
 		LobbyUI.Close()
-		openShop()
+		whenReady(function() openShop() end)
 		return
 	end
 	if id == "Settings" then -- SETTINGS is full-screen too (UIKit.SettingsScreen)
 		LobbyUI.Close()
 		Shop.Close()
-		openSettings()
+		whenReady(openSettings)
 		return
 	end
 	if id == "Play" then -- PLAY is full-screen too (UIKit.PlayScreen)
 		LobbyUI.Close()
 		Shop.Close()
-		openPlay()
+		whenReady(openPlay)
 		return
 	end
 	if id == "Missions" or id == "Quests" then -- MISSIONS is full-screen too (UIKit.MissionsScreen)
 		LobbyUI.Close()
 		Shop.Close()
-		openMissions()
+		whenReady(openMissions)
 		return
 	end
 	Shop.Close()
@@ -1443,6 +1495,7 @@ function LobbyUI.Start()
 		applySettings()
 		replica:ListenToRaw(function() LobbyUI.Refresh() end)
 		LobbyUI.Refresh()
+		task.spawn(prewarmMenus) -- build + preload the menus in the background (loading dots until done)
 	end)
 
 	task.spawn(function()
