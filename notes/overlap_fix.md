@@ -77,6 +77,8 @@ past their room volumes. Crane/drone sweeps: no hits.
    crate faces (S_/A_/H_Props, Shelves; small).
 
 ## Capture note
+- **2026-10-15 lap1:** the viewport renders again; the 12 `after_o*` frames were retaken and `out/overlap/before_after.jpg` rebuilt with real
+  after frames (o1/o2 before vs after, then the other 10 after). Follow-ups from the Play lap (3 more nudges here, rest in `fix/lap_fix.lua`): notes/lap1.md.
 The **Studio viewport rendered pure white** for every screen_capture after the Training agent's playtest ended. Lighting, CC, Atmosphere
 and the GUIs checked normal, so it is the editor viewport itself, and that needs a click in Studio (no computer use here).
 - `before_o1_duels_eastwall` and `before_o2_duels_door` were taken before that and show the Duels-wall problem.

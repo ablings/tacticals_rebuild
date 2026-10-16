@@ -83,7 +83,6 @@ return manager
 local manager = {}
 
 function manager.OnShot(origin: Vector3, endPos: Vector3, shooter: Player?)
-	if game:GetService("RunService"):IsStudio() then workspace:SetAttribute("TX_LastTargetShot", "shim called") end   -- Studio-only test trace
 	local targets = shared.Get and shared.Get("TrainingTargetsManager")
 	if targets and targets.OnShot then targets.OnShot(origin, endPos, shooter) end
 end
@@ -101,8 +100,7 @@ return manager
 -- A pop hides the target (face off, CanQuery off) for Respawn seconds and tells clients (Events.Training.TargetPop).
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local WeaponUtil = require(ReplicatedStorage.Modules.Shared.WeaponUtil)
-local STUDIO = game:GetService("RunService"):IsStudio()
-local function why(reason) if STUDIO then workspace:SetAttribute("TX_LastTargetShot", reason) end end   -- Studio-only test trace
+local function why(_reason) end   -- reason of a non-pop (the Studio-only workspace trace attribute was removed in lap1)
 local manager = {}
 
 local ok, TX = pcall(require, ReplicatedStorage.Modules.Shared.Config.TrainingConfig)

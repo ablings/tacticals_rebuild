@@ -305,8 +305,10 @@ local OLIVE_BAND = rgb(111, 114, 57)
 -- Measured in Play (the room's PointLights on, out/training/play_*.png): rendered / input ~ R 1.03, G 1.00, B 0.98, so
 -- neutral(v) leans the input a hair cool to read as a neutral grey of value ~v. (Edit-time captures, lights off, read every
 -- grey teal: judge colours in Play, not in edit captures.)  k scales the lean (the ceiling, lit from below, warms more).
+-- lap1 (Play, all 19 lights on, out/lap/t*.png): the -3 % red lean rendered R/G 0.95, B/G 1.00-1.07 (a green-cyan cast; RIVALS'
+-- grey 151,153,163 is R/G 0.99, B/G 1.07). Red lean dropped (R = v), blue lean kept: renders a cool neutral like RIVALS.
 local function neutral(v, k) k = k or 1
-	return Color3.fromRGB(math.floor(v * (1 - 0.03 * k) + 0.5), v, math.min(255, math.floor(v * (1 + 0.02 * k) + 0.5))) end
+	return Color3.fromRGB(v, v, math.min(255, math.floor(v * (1 + 0.02 * k) + 0.5))) end
 local SP = M.SmoothPlastic
 local KIND = {
 	floor   = {neutral(214), SP, "", true, true, false, "Floor"},
@@ -480,6 +482,7 @@ for _, it in LAYOUT do
 	local sx, sz = it.x1 - it.x0, it.z1 - it.z0
 	local cx, cz = (it.x0 + it.x1) / 2, (it.z0 + it.z1) / 2
 	local yb = FLOOR + it.y0
+	if it.kind == "bridge" then yb -= 0.04 end   -- lap1: bridge tops were coplanar (624.00) with the block tops they rest on
 	local colour = k[1]
 	if it.kind == "gfloor" then colour = GFLOOR_TONE[it.tone or 0] end
 	if it.kind == "line" then colour = LINE_TONE[it.tone or "olive"] end

@@ -329,8 +329,8 @@ end
 
 ---------------------------------------------------------------- 3c. sign text on the new boards (SurfaceGui on carrier plates; one font, cream, caps)
 local SIGNS = {
-	{"SignText_SHOP",   CFrame.lookAt(Vector3.new(-3.75, 20.875, 43.0), Vector3.new(-3.75, 20.875, 0)),  Vector3.new(8.5, 3.75, 0.05), "SHOP"},
-	{"SignText_ARMORY", CFrame.lookAt(Vector3.new(-3.75, 20.875, -43.0), Vector3.new(-3.75, 20.875, 0)),   Vector3.new(8.5, 3.75, 0.05), "ARMORY"},
+	{"SignText_SHOP",   CFrame.lookAt(Vector3.new(0, 20.875, 43.0), Vector3.new(0, 20.875, 0)),  Vector3.new(14.5, 3.75, 0.05), "SHOP"},     -- lap1: board is x -8..8 (was the old sign's -3.75 / 8.5)
+	{"SignText_ARMORY", CFrame.lookAt(Vector3.new(0, 20.875, -43.0), Vector3.new(0, 20.875, 0)),   Vector3.new(14.5, 3.75, 0.05), "ARMORY"}, -- lap1: centred on the kit board
 	{"SignText_EXFIL",  CFrame.lookAt(Vector3.new(84.7, 27.375, 0.25), Vector3.new(0, 27.375, 0.25)),    Vector3.new(17.5, 3.75, 0.05), "EXFIL"},
 	{"SignText_DUELS",  CFrame.lookAt(Vector3.new(-83.1, 12.625, 0), Vector3.new(0, 12.625, 0)),         Vector3.new(13, 3.25, 0.05), "DUELS"},
 }

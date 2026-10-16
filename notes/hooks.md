@@ -63,3 +63,8 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
 - 2026-10-15 place_showroom: the kit is in `Showroom.Rooms4`. The old `U_Showroom__*` meshes and `Showroom.Sign` are hidden
   (Rooms4_* attributes). The hook parts are untouched; the kit table moved +0.2 to BenchTop's real top (404.4).
 - 2026-10-15 overlap_fix (notes/overlap_fix.md): 46 kit meshes nudged/scaled <= 0.07 (originals in Overlap_OrigCF/Overlap_OrigSize); openings ~0.14 narrower (decor proud). Props.Rotor hidden; 4 Duels FX3 beacons hidden + untagged LobbyBeacon (Overlap_Tags). UNDO via `fix/overlap_fix.lua UNDO`.
+- 2026-10-15 lap_fix (notes/lap1.md): `NPCs.NPC_DuelsOfficer` moved z 7.9 -> 7.1 (arm was in the stair rail; original in `Lap_OrigCF`).
+  New `Hub1.LapFix` folder: 18 non-colliding wall infill Parts (gate/tunnel bays y 52-68) + `TunnelThreshold` floor plate (x 104..105,
+  collides, top 0.02). SignText_SHOP/ARMORY re-centred, SignText_Deck +0.04 x. `Workspace._UVTest` x3 -> `ServerStorage._RebuildRemoved`.
+  Training: bridges -0.04, tile greys R lean dropped (place_training). TX_LastTargetShot trace removed from the Training scripts.
+  UNDO via `fix/lap_fix.lua UNDO` (+ overlap_fix UNDO for the 3 lap mesh nudges: H_DuelsDoor__trim_metal y, D_Lines__neon_cream y, SR_Stage__dark_metal z).

@@ -67,6 +67,10 @@ local FIX = {
 	{"E_Lines__neon_cream", 2, 0.0000, 1.0000000, 0.020}, -- coplanar face offset
 	{"H_DuelsDoor__trim_metal", 3, 0.0000, 0.9872727, 0.000}, -- doorway jamb z +-5.5: trim, hub wall band and wall body coplanar
 	{"H_WallW__band_olive", 3, 0.0000, 0.9945455, 0.000}, -- doorway jamb z +-5.5 (band 0.03 proud of the wall body)
+	-- lap1 (notes/lap1.md, Play-mode coplanar ray sweep tools/lap_zscan.lua):
+	{"H_DuelsDoor__trim_metal", 2, 0.0000, 1.0000000, -0.040}, -- lintel soffit y 24.000 coplanar with H_WallW__wall_body soffit (718 px)
+	{"D_Lines__neon_cream", 2, 0.0000, 1.0000000, 0.030}, -- 2nd +0.03: cream vs olive lines 0.001 apart, cream vs D_Pads plate tops
+	{"SR_Stage__dark_metal", 3, 0.0000, 1.0000000, 0.030}, -- stage front z 5.55 coplanar with the SR_Signs label plate (Kit-menu frame)
 }
 -- old geometry still visible: Props.Rotor (two old wall fans, now buried in the hub E wall face x 88) -> hidden;
 -- FX.FX3 Beacon x4 in the Duels hall (z +-43.2, 1.8 off the new wall face z +-45) -> float 1.8 off the new wall, piers stand there: hidden + untagged (LobbyFX drives their Transparency by tag)
