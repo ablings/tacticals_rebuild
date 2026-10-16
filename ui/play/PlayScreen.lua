@@ -153,49 +153,60 @@ local function plate(parent, x, y, w, h, accent)
 	return f, edge(f, accent)
 end
 
+-- (UI session 2026-10-16, remade on RIVALS' play screen, ref_04): a tight grid of big mode tiles (the mode name huge
+-- and centred over its 3D squad scene), a tall Ranked tile on the right (locked: padlock + "Unlocked at Level N"; open:
+-- click to switch the modes to ranked), Training and Lobby Duels under the modes, the red X top right. No header.
+local HEAVY = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+local SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local function big(parent, text, size, x, y, w, h, color, align, z)
+	local l = Kit.label({ Text = text, FontFace = HEAVY, TextSize = size, TextColor3 = color or Color3.new(1, 1, 1), TextXAlignment = align or Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 4, Parent = parent })
+	new("UIStroke", { Color = Color3.fromRGB(10, 10, 12), Thickness = math.max(2, math.floor(size / 28)), Transparency = 0.15, Parent = l })
+	return l
+end
+local function tile(x, y, w, h, top, bottom)
+	local f = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
+		BackgroundColor3 = Color3.new(1, 1, 1), ClipsDescendants = true, Parent = body })
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(top or Color3.fromRGB(58, 64, 54), bottom or Color3.fromRGB(14, 16, 13)), Parent = f })
+	new("UICorner", { CornerRadius = UDim.new(0, 8), Parent = f })
+	local st = new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 1, Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
+	f.MouseEnter:Connect(function() Kit.tween(st, 0.1, { Transparency = 0.15 }) end)
+	f.MouseLeave:Connect(function() Kit.tween(st, 0.1, { Transparency = 1 }) end)
+	return f
+end
+
+local MW, MH, GAP = 322, 272, 8
 local function modeCard(i, mode, ranked, x)
 	local q = ctx.Config.QueueFor(mode.Id, ranked)
-	local accent = ranked and T.violet or T.olive
-	local W, H = 424, 486
-	local card = plate(body, x, 0, W, H, ranked and T.violet or nil)
-	-- the scene, with a floor glow under the squads
-	local stage = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 26), Size = UDim2.fromOffset(W, 300), ZIndex = 2, Parent = card })
-	-- a soft pool of the accent colour on the floor under the squads
-	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(W / 2, 270), Size = UDim2.fromOffset(W, 120), BackgroundColor3 = accent,
-		BackgroundTransparency = 0.2, BorderSizePixel = 0, ZIndex = 1, Parent = card }, {
-		new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.75), NumberSequenceKeypoint.new(1, 1) }) }),
-	})
-	label(card, string.format("OP-%02d", i), OSWALD, 16, 16, 10, 80, 20, T.field)
-	if ranked then label(card, "RANKED", OSWALD, 16, W - 116, 10, 100, 20, T.violet, Enum.TextXAlignment.Right) end
-	-- name, line, pips
-	local title = label(card, mode.Name, OSWALD, 72, 18, 300, 260, 80, T.bone)
-	new("UIStroke", { Color = T.ink, Thickness = 2, Parent = title })
-	label(card, mode.Desc or "", BODY, 17, 20, 380, W - 40, 24, T.field)
-	for t = 1, mode.TeamSize do
-		new("Frame", { Position = UDim2.fromOffset(W - 26 - (mode.TeamSize * 2 + 1) * 18 + (t - 1) * 18, 330), Size = UDim2.fromOffset(12, 12), BackgroundColor3 = T.bone,
-			BorderSizePixel = 0, ZIndex = 3, Parent = card })
-		new("Frame", { Position = UDim2.fromOffset(W - 26 - mode.TeamSize * 18 + (t - 1) * 18, 330), Size = UDim2.fromOffset(12, 12), BackgroundColor3 = ranked and T.violet or T.line,
-			BorderSizePixel = 0, ZIndex = 3, Parent = card })
+	local accent = ranked and T.violet or Color3.fromRGB(236, 232, 218)
+	local card = ranked and tile(x, 0, MW, MH, Color3.fromRGB(78, 52, 112), Color3.fromRGB(20, 12, 34)) or tile(x, 0, MW, MH)
+	local stage = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(MW, 210), ZIndex = 2, Parent = card })
+	-- the mode name, huge and centred (RIVALS)
+	big(card, mode.Id, 96, 0, 70, MW, 110, Color3.new(1, 1, 1), nil, 4)
+	if ranked then
+		local chip = new("TextLabel", { Text = "RANKED", FontFace = HEAVY, TextSize = 18, TextColor3 = Color3.new(1, 1, 1), BackgroundColor3 = T.violet,
+			Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(94, 26), ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
 	end
-	-- status strip
-	local strip = new("Frame", { Position = UDim2.fromOffset(0, H - 52), Size = UDim2.fromOffset(W, 52), BackgroundColor3 = accent, BackgroundTransparency = 0.1,
+	-- status strip along the bottom
+	local strip = new("Frame", { Position = UDim2.fromOffset(0, MH - 44), Size = UDim2.fromOffset(MW, 44), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35,
 		BorderSizePixel = 0, ZIndex = 3, Parent = card })
-	local left = label(strip, "", OSWALD, 24, 18, 0, W - 36, 52, T.bone, nil, 4)
-	local right = label(strip, "", OSWALD, 17, W - 218, 0, 200, 52, T.bone, Enum.TextXAlignment.Right, 4)
+	local left = Kit.label({ Text = "", FontFace = HEAVY, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(14, 0), Size = UDim2.fromOffset(MW - 28, 44), ZIndex = 4, Parent = strip })
+	local right = Kit.label({ Text = "", FontFace = SEMI, TextSize = 16, TextColor3 = Color3.fromRGB(205, 205, 212), TextXAlignment = Enum.TextXAlignment.Right,
+		Position = UDim2.fromOffset(MW - 214, 0), Size = UDim2.fromOffset(200, 44), ZIndex = 4, Parent = strip })
 	table.insert(strips, { q = q, left = left, right = right, strip = strip, card = card, ranked = ranked, mode = mode, accent = accent })
-	Kit.bindButton(card, { hover = 1.02, press = 0.985 })
+	Kit.bindButton(card, { hover = 1.03, press = 0.985 })
 	card.Activated:Connect(function()
 		local myQ, st = search()
 		if myQ and q and myQ.Id == q.Id and st == "Searching" then ctx.ask("CancelMatch"); return end
 		if myQ or onPad() or not q then return end
 		local r = ctx.ask("FindMatch", q.Id)
 		if r and r.ok then Screen.Close(); return end
-		-- say why on the card itself (the lobby toasts sit under this menu)
+		-- say why on the tile itself (the lobby toasts sit under this menu)
 		local msg = r and r.msg or "No answer from the server"
 		if msg == "Unknown action" then msg = "Online matchmaking is offline here" end
 		local entry
 		for _, e in strips do if e.card == card then entry = e end end
-		if entry then entry.flash = { text = string.upper(msg), untilT = os.clock() + 5 } end
+		if entry then entry.flash = { text = msg, untilT = os.clock() + 5 } end
 		tickNow()
 	end)
 	return stage, mode.TeamSize
@@ -209,67 +220,74 @@ local function render()
 	if not open then tab = "Casual" end
 	local ranked = tab == "Ranked"
 	local stages = {}
-	-- tabs
-	-- in the header row, clear of the Roblox chat window (top left swallows clicks)
-	local tabs = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(470, -162), Size = UDim2.fromOffset(420, 50), Parent = body })
-	for k, name in { "Casual", "Ranked" } do
-		local on = tab == name
-		local locked = name == "Ranked" and not open
-		local b = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset((k - 1) * 214, 0), Size = UDim2.fromOffset(200, 50),
-			BackgroundColor3 = on and (name == "Ranked" and T.violet or T.olive) or T.gunDeep, BackgroundTransparency = on and 0.05 or 0.25, Parent = tabs })
-		edge(b, on and Color3.new(1, 1, 1) or nil, 8)
-		label(b, string.upper(name), OSWALD, 26, locked and 54 or 0, 0, locked and 140 or 200, 50, locked and T.field or T.bone, locked and Enum.TextXAlignment.Left or Enum.TextXAlignment.Center, 3)
-		if locked then
-			local lk = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 5), Size = UDim2.fromOffset(40, 40), ZIndex = 3, Parent = b })
-			local icons = ReplicatedStorage:FindFirstChild("UIIcons")
-			local mesh = icons and icons:FindFirstChild("Lock")
-			if mesh then ViewIcons.Viewport(lk, mesh:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.1, still = true }) end
-			label(b, "LV " .. Config.RankedLevel, OSWALD, 16, 136, 0, 56, 50, T.violet, Enum.TextXAlignment.Right, 3)
-		end
-		Kit.bindButton(b, { hover = 1.04 })
-		b.Activated:Connect(function()
-			if locked then
-				local lv = ctx.level and ctx.level() or 0
-				if ctx.toast then ctx.toast(`Ranked unlocks at level {Config.RankedLevel} (you are {lv})`, "bad") end
-				return
-			end
-			if tab ~= name then tab = name; render() end
-		end)
-	end
-	-- mode cards
 	for i, mode in Config.Modes do
-		local stage, n = modeCard(i, mode, ranked, (i - 1) * 444)
+		local stage, n = modeCard(i, mode, ranked, (i - 1) * (MW + GAP))
 		table.insert(stages, { stage, n })
 	end
-	-- row 2: training + lobby duels
-	local tb = plate(body, 0, 506, 868, 150)
-	label(tb, "TRAINING", OSWALD, 52, 26, 14, 400, 64, T.bone)
-	label(tb, "Practice room: cover, vaults, live targets. Swap your kit at the bins.", BODY, 17, 28, 78, 520, 24, T.field)
-	local tStatus = label(tb, "ENTER  >", OSWALD, 22, 28, 108, 400, 30, T.oliveHi)
-	local gunHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(580, 0), Size = UDim2.fromOffset(280, 150), ZIndex = 2, Parent = tb })
-	Kit.bindButton(tb, { hover = 1.01, press = 0.99 })
+	-- Ranked: the tall tile on the right
+	local RX = 3 * (MW + GAP)
+	local RW, RH = 1404 - RX, MH * 2 + GAP
+	local rt = tile(RX, 0, RW, RH, open and Color3.fromRGB(96, 62, 140) or Color3.fromRGB(40, 36, 48), open and Color3.fromRGB(24, 14, 40) or Color3.fromRGB(10, 9, 13))
+	big(rt, "Ranked", 72, 0, 36, RW, 84)
+	local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(RW / 2, 150), Size = UDim2.fromOffset(230, 230), ZIndex = 3, Parent = rt })
+	local rankedSub
+	if not open then
+		big(rt, "Unlocked at\nLevel " .. Config.RankedLevel, 40, 20, 392, RW - 40, 100, Color3.fromRGB(225, 225, 230))
+	else
+		rankedSub = big(rt, ranked and "Ranked queues: ON" or "Ranked queues: OFF", 34, 20, 392, RW - 40, 44, ranked and T.violet:Lerp(Color3.new(1, 1, 1), 0.4) or Color3.new(1, 1, 1))
+		Kit.label({ Text = ranked and "Click to go back to casual" or "Click to play rated duels", FontFace = SEMI, TextSize = 20, TextColor3 = Color3.fromRGB(205, 205, 212),
+			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(20, 440), Size = UDim2.fromOffset(RW - 40, 28), ZIndex = 4, Parent = rt })
+	end
+	Kit.bindButton(rt, { hover = 1.02, press = 0.985 })
+	rt.Activated:Connect(function()
+		if not open then
+			local lv = ctx.level and ctx.level() or 0
+			if ctx.toast then ctx.toast(`Ranked unlocks at level {Config.RankedLevel} (you are {lv})`, "bad") end
+			return
+		end
+		tab = ranked and "Casual" or "Ranked"
+		render()
+	end)
+	-- row 2: Training (wide) + Lobby Duels
+	local Y2 = MH + GAP
+	local TW = 2 * MW + GAP
+	local tb = tile(0, Y2, TW, MH)
+	big(tb, "Training", 64, 28, 26, 420, 76, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
+	Kit.label({ Text = "Practice room: cover, vaults, live targets.\nSwap your gun at the crates.", FontFace = SEMI, TextSize = 21, TextColor3 = Color3.fromRGB(215, 215, 220),
+		Position = UDim2.fromOffset(32, 104), Size = UDim2.fromOffset(330, 60), TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 4, Parent = tb })
+	local tStatus = big(tb, "Enter  >", 30, 30, MH - 66, 330, 40, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
+	local gunHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(330, 20), Size = UDim2.fromOffset(320, 232), ZIndex = 2, Parent = tb })
+	Kit.bindButton(tb, { hover = 1.02, press = 0.985 })
 	tb.Activated:Connect(function()
 		if search() or onPad() then return end
 		Screen.Close()
 		if ctx.enterTraining then ctx.enterTraining() end
 	end)
 	table.insert(strips, { training = tStatus })
-	local db = plate(body, 888, 506, 424, 150)
-	label(db, "LOBBY DUELS", OSWALD, 40, 24, 14, 400, 52, T.bone)
-	label(db, "Fight people in this server on the pads.", BODY, 17, 26, 66, 400, 24, T.field)
-	label(db, "TO PADS  >", OSWALD, 22, 26, 108, 300, 30, T.oliveHi)
-	Kit.bindButton(db, { hover = 1.02, press = 0.98 })
+	local db = tile(TW + GAP, Y2, MW, MH)
+	big(db, "Lobby\nDuels", 52, 0, 40, MW, 130)
+	Kit.label({ Text = "Fight people in this server", FontFace = SEMI, TextSize = 19, TextColor3 = Color3.fromRGB(215, 215, 220), TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(0, 172), Size = UDim2.fromOffset(MW, 26), ZIndex = 4, Parent = db })
+	big(db, "To Pads  >", 28, 0, MH - 64, MW, 40)
+	Kit.bindButton(db, { hover = 1.03, press = 0.985 })
 	db.Activated:Connect(function()
 		Screen.Close()
 		if ctx.toPads then ctx.toPads() end
 	end)
 	Kit.toScale(root)
 	-- 3D after the conversion (viewports fill their holders)
-	for _, s in stages do squadScene(s[1], s[2], ranked) end
+	for _, sc in stages do squadScene(sc[1], sc[2], ranked) end
 	local weapon = (ctx.getData() and ctx.getData().Loadout and ctx.getData().Loadout.Weapon) or Config.DefaultLoadout.Weapon
-	local gvp = ViewIcons.Viewport(gunHold, ViewIcons.Weapon(weapon), { view = ViewIcons.GunView, zoom = 0.8 })
+	local gvp = ViewIcons.Viewport(gunHold, ViewIcons.Weapon(weapon), { view = ViewIcons.GunView, zoom = 0.9 })
 	tb.MouseEnter:Connect(function() gvp.SetHover(true) end)
 	tb.MouseLeave:Connect(function() gvp.SetHover(false) end)
+	local icons = ReplicatedStorage:FindFirstChild("UIIcons")
+	if not open then
+		local mesh = icons and icons:FindFirstChild("Lock")
+		if mesh then ViewIcons.Viewport(art, mesh:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.05 }) end
+	else
+		ViewIcons.Icon(art, "Trophy", { hoverTarget = rt })
+	end
 end
 
 -- status lines only (every half second while open)
@@ -279,7 +297,7 @@ local function tick()
 	local pad = onPad()
 	for _, s in strips do
 		if s.training then
-			s.training.Text = (myQ or pad) and "UNAVAILABLE WHILE QUEUED" or "ENTER  >"
+			s.training.Text = (myQ or pad) and "Unavailable while queued" or "Enter  >"
 		else
 			local n = s.q and cnt[s.q.Id] or 0
 			local mine = myQ and s.q and myQ.Id == s.q.Id
@@ -287,28 +305,33 @@ local function tick()
 				s.left.Text = s.flash.text
 				s.right.Text = ""
 				s.strip.BackgroundColor3 = T.red
+				s.strip.BackgroundTransparency = 0.1
 			elseif mine and st == "Searching" then
-				s.left.Text = "SEARCHING  " .. clockText(workspace:GetServerTimeNow() - since)
-				s.right.Text = "CLICK TO CANCEL"
-				s.strip.BackgroundColor3 = T.gun
+				s.left.Text = "Searching  " .. clockText(workspace:GetServerTimeNow() - since)
+				s.right.Text = "Click to cancel"
+				s.strip.BackgroundColor3 = Color3.new(0, 0, 0)
+				s.strip.BackgroundTransparency = 0.1
 			elseif mine then
-				s.left.Text = "MATCH FOUND"
+				s.left.Text = "Match found!"
 				s.right.Text = ""
-				s.strip.BackgroundColor3 = T.oliveHi
+				s.strip.BackgroundColor3 = Color3.fromRGB(70, 180, 60)
+				s.strip.BackgroundTransparency = 0.1
 			elseif myQ or pad then
-				s.left.Text = myQ and ("SEARCHING " .. string.upper(myQ.Mode)) or "ON A LOBBY PAD"
+				s.left.Text = myQ and ("Searching " .. myQ.Mode) or "On a lobby pad"
 				s.right.Text = ""
-				s.strip.BackgroundColor3 = T.line
+				s.strip.BackgroundColor3 = Color3.new(0, 0, 0)
+				s.strip.BackgroundTransparency = 0.35
 			else
-				s.left.Text = "DEPLOY  >"
+				s.left.Text = "Play  >"
 				local extra = ""
 				if s.ranked then
 					local d = ctx.getData()
 					local r = d and d.Ranked and d.Ranked[s.mode.Id]
 					extra = "  ·  SR " .. tostring((r and r.Rating) or ctx.Config.StartingRating or 0)
 				end
-				s.right.Text = n .. " SEARCHING" .. extra
-				s.strip.BackgroundColor3 = s.accent
+				s.right.Text = n .. " searching" .. extra
+				s.strip.BackgroundColor3 = s.ranked and T.violet or Color3.new(0, 0, 0)
+				s.strip.BackgroundTransparency = s.ranked and 0.25 or 0.35
 			end
 		end
 	end
@@ -316,14 +339,7 @@ end
 
 tickNow = function() if isOpen then tick() end end
 
-local levelText, xpFill
-local function header()
-	local lv, into, need = 0, 0, 1
-	local d = ctx.getData()
-	if d then lv, into, need = ctx.Config.AccountLevel(d.XP or 0) end
-	levelText.Text = "OPERATOR  LV " .. lv
-	xpFill.Size = UDim2.fromScale(math.clamp(into / math.max(need, 1), 0.02, 1), 1)
-end
+local function header() end -- (no header row since the RIVALS remake)
 
 local function build()
 	gui = new("ScreenGui", { Name = "PlayUI", IgnoreGuiInset = true, ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
@@ -333,22 +349,11 @@ local function build()
 	scrim = new("Frame", { Name = "Scrim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.scrim, BackgroundTransparency = 1, Parent = gui })
 	local canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
-	local X0 = 294
-	new("Frame", { Name = "TacBar", BackgroundColor3 = T.olive, BorderSizePixel = 0, Position = UDim2.fromOffset(X0 - 4, 96), Size = UDim2.fromOffset(10, 64), Parent = root })
-	Kit.label({ Text = "DEPLOY", FontFace = OSWALD, TextSize = 70, Position = UDim2.fromOffset(X0 + 20, 86), Size = UDim2.fromOffset(400, 84), Parent = root })
-	Kit.label({ Text = "Online matches  ·  one gun, one life", FontFace = BODY, TextSize = 20, TextColor3 = T.field, Position = UDim2.fromOffset(X0 + 22, 176),
-		Size = UDim2.fromOffset(600, 30), Parent = root })
-	-- operator level tag
-	local tag = new("Frame", { Position = UDim2.fromOffset(1194, 108), Size = UDim2.fromOffset(300, 44), BackgroundColor3 = T.gunDeep, BackgroundTransparency = 0.15, Parent = root })
-	new("UICorner", { CornerRadius = UDim.new(0, 8), Parent = tag })
-	levelText = label(tag, "OPERATOR  LV 0", OSWALD, 20, 14, 0, 150, 44, T.bone)
-	local xb = new("Frame", { Position = UDim2.fromOffset(168, 19), Size = UDim2.fromOffset(116, 6), BackgroundColor3 = T.line, BorderSizePixel = 0, Parent = tag })
-	xpFill = new("Frame", { Size = UDim2.fromScale(0.02, 1), BackgroundColor3 = T.oliveHi, BorderSizePixel = 0, Parent = xb })
-	local close = Kit.closeButton(UDim2.fromOffset(94, 48))
-	close.Position = UDim2.fromOffset(1512, 106)
+	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
+	close.Position = UDim2.fromOffset(1704, 140)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
-	body = new("Frame", { Name = "Body", BackgroundTransparency = 1, Position = UDim2.fromOffset(X0, 268), Size = UDim2.fromOffset(1332, 660), Parent = root })
+	body = new("Frame", { Name = "Body", BackgroundTransparency = 1, Position = UDim2.fromOffset(258, 140), Size = UDim2.fromOffset(1404, 560), Parent = root })
 	root.Visible = false
 	GuiService.MenuOpened:Connect(function() if isOpen then root.Visible = false end end)
 	GuiService.MenuClosed:Connect(function() if isOpen then Kit.open(root) end end)
