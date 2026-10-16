@@ -88,3 +88,7 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   offset 2.55; prompt ObjectText OUTFITTER, cosmetic TalkLines (original in `PolishShop3_Orig_TalkLines`); OpenPanel unchanged (Kit).
   `Interact.Shop_Counter` prompt text "Browse outfits / CHECKOUT", OpenPanel=Shop unchanged. New Spin model
   `Polish.Shop.Round3.FeaturedStage.FeaturedOutfit` (Spin=12). `Rooms.Shop.L_Pedestals` light disabled. UNDO via `fix/polish_shop3.lua UNDO`.
+- 2026-10-15 polish_armory2 (notes/armory_weapon_slots.md): `Rooms.Armory.FeaturedScissors` keeps its name, pivot and `Spin`, but its
+  scissors MeshParts are hidden and it now contains `WeaponSlot_Featured_1` (Anchor + Weapon). New `ServerStorage.ArmoryWeaponSlots`
+  ModuleScript (edit-time only, nothing requires it at runtime). `NPCs.NPC_Supply.Tag` Size/StudsOffset changed (`PolishArmory2_Orig`).
+  UNDO via `fix/polish_armory2.lua UNDO`.

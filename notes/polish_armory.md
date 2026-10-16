@@ -61,3 +61,43 @@ bright cool tube lights, loose weapons on dark tables); our theme replaces its p
 - The weapon bays are high (10-15) because the eye-level wall is taken by the two rack units per side; RIVALS' niches are at
   eye level. A later pass could swap the rack units for eye-level pegboard niches.
 - Queued for import: nothing (no Blender kit was needed).
+
+## Round 2 (2026-10-15 night): swap-ready weapon slots, eye-level niches, navy -> gunmetal
+Script `fix/polish_armory2.lua` (run after `polish_armory.lua`; UNDO flag; originals in attribute `PolishArmory2_Orig`, typed JSON).
+New parts in `Polish.Armory.Round2` (455 parts, 400 of them the 20 placeholder rifles) + `FeaturedScissors.WeaponSlot_Featured_1`;
+config `ServerStorage.ArmoryWeaponSlots`. Swap guide: **`notes/armory_weapon_slots.md`**. Sheet: `python tools/polish_armory2_sheet.py`
+-> `out/polish/armory/sheet2.jpg` (round 1 | round 2 | close-ups, RIVALS row). Not saved.
+
+1. **Weapon slots (20).** Featured 1 (inside the FeaturedScissors hook, scissors hidden, Spin/pivot kept), GunWall 9 (on the three
+   existing rails), RackW/RackE 8 (eye-level niches), Bench 2. Each slot = Model + invisible Anchor (PrimaryPart, Attachment Mount)
+   + attributes, one weld-free `Weapon` clone of `Display_AutoRifle`. `ArmoryWeaponSlots.Apply()` fits any catalogue model
+   (scale to MaxLength, muzzle along the anchor, magazine down, rest on the anchor line).
+2. **Baked weapons hidden** (isolated per material mesh, checked by capture): `A_GunWall__case_dark / drum_olive / dark_metal` (the
+   12 rifles; rails, posts and backing stay), `A_Benches__case_dark` (bench guns), `A_Displays__dark_metal / drum_olive` (the two
+   guns in the glass case; the case keeps its ammo blocks, too shallow for a rifle slot), all of `A_Racks` (the two low rack units
+   per side with vertical rifles).
+3. **Eye level.** Pegboard niches (y 0.95-6.5, 7.5-8.3 wide) where the rack units stood: near-black backing, Plastic pegboard with
+   the own `TX_grate_alpha` at 0.6-stud tiles (light bars), olive top frame, side cheeks, a hood with a Neon strip, a ledge with a
+   sage glow lip and a stencil plate `RACK W-1 · SN 4471-TAC-211`, two rifles per niche on pegs (1.45x). The round-1 high bays keep
+   their slotted panels as **ammo lockers** (guns and pegs hidden, stencil `LOCKER W-01 / AMMO · SEALED`).
+4. **Navy -> gunmetal (measured).** Cause: every surface was blue, not just metal: cool lights (212,226,255), cool Neon
+   (206,222,240) and the blue sky diffuse (`EnvironmentDiffuseScale` 1) add blue that dominates dark colours (floor 30,32,34
+   rendered 33,49,66: ratio 1.10/1.54/1.95). Fix: lights and Neon to neutral (L_* 240,236,226, fill 196,186,170, dais key
+   255,250,240, strips 214,212,204), ceiling / ceiling trim / beams / light housings / upper wall / trims to **Plastic**, and the
+   envelope colours divided by the measured per-channel render ratio (60% of the full correction, then hand-tuned where lit faces
+   went brown). `tools/part_pixels.py` (camera rays per pixel -> part -> mean rendered colour) and `tools/neutralise.py` do the
+   measuring. Blue minus red, entry view: floor +33 -> +5, wall body +42 -> +9, upper wall +43 -> +7, kick +33 -> +4, ceiling trim
+   +39 -> 0, beams +29 -> +7, gun-wall backing +38 -> 0, light housings +35 -> +4.
+5. **Review leftovers.** Gun wall filled (9 slots). `NPC_Supply.Tag` 160 x 34 px -> Scale 3.6 x 0.72 (studs), offset 3.2 -> 2.0
+   (centre y ~7.9, well under the SUPPLY sign at 11.1-12.5; no more clipped letter). Kelly-green crates (`A_Props / A_Benches /
+   A_Supply__crate_green`, AmmoStock `F_Crate4A__crate_green`, 65,94,56) -> 78,82,46 (dark olive under neutral light). Bench,
+   display-case, dais and supply metal got the same blue correction.
+
+Logic checks: `check_polish_armory` (extended: slots, baked meshes) **0 clips** (186 probes; the first runs found niche ends in the
+pier plinth at z -88.4 and hoods in the band trim, and two gun-wall optics in the frame trim: fixed), 20 slots ok, 0 joints, 0 baked
+meshes visible, 0 new lights (67 enabled in Play, as before), 10 shadow casters. `check_rooms2` FAILS 0, `check_rooms3` routes
+clear, `check_hub1` hooks ok, `check_training` ALL OK. Play walk (x3-4): doorway (0,-74) -> west niches (-27,-85), (-27,-96) ->
+gun-wall front (-2,-104.5) -> east niches (27,-95), (27,-84) -> dais side (-4,-91): all reached. Hooks in Play: **E at the dais
+opened the Kit panel (ArmoryUI.Armory), E at the gun wall opened it too**; NPC_Supply prompt enabled (OpenPanel=Shop, unchanged);
+FeaturedScissors turned 25 deg in 1 s with the rifle on the axis. Console: baseline only. UNDO round trip: restored 452
+instances (colours, scissors, racks, tag, lights), 0 attributes left; re-applied twice, identical (455 parts).

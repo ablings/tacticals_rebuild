@@ -276,27 +276,41 @@ local CAMO = {
 	multi    = {C(150, 140, 104), {C(106, 112, 70), C(96, 74, 50), C(184, 172, 136)}},
 }
 
--- put camo blotches on the four vertical faces of a box part (deterministic)
-local function camo(m, p, key, rnd, perFace)
+-- put camo blotches on the faces of a box part that players see (deterministic). Round 3b (Armory round 2 job):
+-- one or two larger patches per seen face instead of 2-4 small ones on all four faces (616 -> ~100 parts);
+-- wall mannequins only show their front (-Z); the spinning featured figure gets all four faces.
+local function camo(m, p, key, rnd, perFace, allSides)
 	local pal = CAMO[key]; if not pal or #pal[2] == 0 then return end
 	local s = p.Size
-	local faces = {
-		{Vector3.new(0, 0, -1), s.X, s.Y, s.Z / 2}, {Vector3.new(0, 0, 1), s.X, s.Y, s.Z / 2},
-		{Vector3.new(-1, 0, 0), s.Z, s.Y, s.X / 2}, {Vector3.new(1, 0, 0), s.Z, s.Y, s.X / 2},
-	}
+	local faces = {{Vector3.new(0, 0, -1), s.X, s.Y, s.Z / 2}}
+	if allSides then
+		table.insert(faces, {Vector3.new(0, 0, 1), s.X, s.Y, s.Z / 2})
+		table.insert(faces, {Vector3.new(-1, 0, 0), s.Z, s.Y, s.X / 2})
+		table.insert(faces, {Vector3.new(1, 0, 0), s.Z, s.Y, s.X / 2})
+	end
+	if pal[3] then perFace = 2 end
 	for _, f in ipairs(faces) do
 		local n = f[1]
 		local right = (n.Z ~= 0) and Vector3.new(1, 0, 0) or Vector3.new(0, 0, 1)
 		for k = 1, perFace do
-			local bw = pal[3] and math.min(f[2] - 0.06, rnd:NextNumber(0.5, 0.9)) or rnd:NextNumber(0.28, 0.55) * math.min(1, f[2])
-			local bh = pal[3] and rnd:NextNumber(0.08, 0.14) or rnd:NextNumber(0.2, 0.42) * math.min(1, f[3])
+			-- tiger: long horizontal stripes; others: one big organic patch per face (two on the upper torso)
+			local bw = pal[3] and (f[2] - 0.06) * rnd:NextNumber(0.75, 1) or f[2] * rnd:NextNumber(0.45, 0.68)
+			local bh = pal[3] and rnd:NextNumber(0.1, 0.16) or f[3] * rnd:NextNumber(0.32, 0.5)
 			bw = math.min(bw, f[2] - 0.06); bh = math.min(bh, f[3] - 0.06)
 			local u = rnd:NextNumber(-(f[2] - bw) / 2 + 0.03, (f[2] - bw) / 2 - 0.03)
-			local v = rnd:NextNumber(-(f[3] - bh) / 2 + 0.03, (f[3] - bh) / 2 - 0.03)
+			local v
+			if perFace > 1 then
+				-- spread the patches over the face height (one per band) so two never stack
+				local band = (f[3] - 0.06) / perFace
+				v = -(f[3] - 0.06) / 2 + band * (k - 0.5) + rnd:NextNumber(-0.15, 0.15) * band
+				bh = math.min(bh, band * 0.9)
+			else
+				v = rnd:NextNumber(-(f[3] - bh) / 2 + 0.03, (f[3] - bh) / 2 - 0.03)
+			end
 			local localPos = right * u + Vector3.new(0, v, 0) + n * (f[4] + 0.015)
 			local size = (n.Z ~= 0) and Vector3.new(bw, bh, 0.03) or Vector3.new(0.03, bh, bw)
-			local rot = pal[3] and CFrame.identity or CFrame.fromAxisAngle(n, math.rad(rnd:NextNumber(-25, 25)))
-			part(m, "Camo", size, p.CFrame * CFrame.new(localPos) * rot, pal[2][rnd:NextInteger(1, #pal[2])], Enum.Material.Fabric)
+			local rot = pal[3] and CFrame.identity or CFrame.fromAxisAngle(n, math.rad(rnd:NextNumber(-14, 14)))
+			part(m, "Camo", size, p.CFrame * CFrame.new(localPos) * rot, pal[2][((k + rnd:NextInteger(0, 5)) % #pal[2]) + 1], Enum.Material.Fabric)
 		end
 	end
 end
@@ -360,7 +374,7 @@ local function mannequin(parent, name, base, outfit, seed)
 	P("Neck", Vector3.new(0.45, 0.5, 0.5), 0, 4.78, 0, DUMMY, Enum.Material.SmoothPlastic, {shape = Enum.PartType.Cylinder}).CFrame = base * CFrame.new(0, 4.78 * k, 0) * CFrame.Angles(0, 0, math.rad(90))
 	local head = P("Head", Vector3.new(1.2, 1.2, 1.2), 0, 5.55, 0, DUMMY, Enum.Material.SmoothPlastic, {shadow = true})
 	special(head, Enum.MeshType.Head, Vector3.new(1.18, 1.18, 1.18))
-	for _, e in ipairs(parts) do camo(m, e[1], e[2], rnd, e[1].Name == "UpperTorso" and 4 or 2) end
+	for _, e in ipairs(parts) do camo(m, e[1], e[2], rnd, e[1].Name == "UpperTorso" and 2 or 1, outfit.allSides) end
 	if outfit.carrier then
 		P("Carrier", Vector3.new(2.1, 1.28, 1.2), 0, 3.96, 0, outfit.carrier, Enum.Material.Fabric, {shadow = true})
 		for i = -1, 1 do P("Pouch", Vector3.new(0.52, 0.56, 0.24), i * 0.62, 3.66, -0.7, outfit.carrier:Lerp(NEAR_BLACK, 0.15), Enum.Material.Fabric) end
@@ -664,7 +678,7 @@ do
 	part(spin, "Turntable", Vector3.new(0.18, 4.2, 4.2), CFrame.new(STAGE.X, ttY + 0.09, STAGE.Z) * CFrame.Angles(0, 0, math.rad(90)), C(214, 206, 186), Enum.Material.SmoothPlastic, {shape = Enum.PartType.Cylinder})
 	part(spin, "TurntableEdge", Vector3.new(0.2, 4.26, 4.26), CFrame.new(STAGE.X, ttY + 0.08, STAGE.Z) * CFrame.Angles(0, 0, math.rad(90)), WOOD_D, Enum.Material.Wood, {shape = Enum.PartType.Cylinder})
 	local base = CFrame.lookAt(Vector3.new(STAGE.X, ttY + 0.18, STAGE.Z), Vector3.new(STAGE.X, ttY + 0.18, STAGE.Z - 1))
-	mannequin(spin, "Mannequin_SkyRangerElite", base, {camo = "multi", gear = "helmet", gearCol = C(106, 112, 70), goggles = true, carrier = C(120, 104, 72), gaiter = C(176, 160, 124), gloves = true}, 777)
+	mannequin(spin, "Mannequin_SkyRangerElite", base, {camo = "multi", allSides = true, gear = "helmet", gearCol = C(106, 112, 70), goggles = true, carrier = C(120, 104, 72), gaiter = C(176, 160, 124), gloves = true}, 777)
 	spin.WorldPivot = CFrame.new(STAGE.X, ttY, STAGE.Z)
 	spin:SetAttribute("Spin", 12)
 end
@@ -737,7 +751,8 @@ for _, n in ipairs({"WallShelfW", "WallShelfE"}) do
 						local pc = cf * CFrame.new(x, sz.Y / 2 + 0.09 + l * 0.17, 0.02) * CFrame.Angles(0, math.rad((l % 2) * 3 - 1.5), 0)
 						part(fold, "Shirt", Vector3.new(0.95, 0.16, sz.Z * 0.72), pc, CAMO[key2][1], Enum.Material.Fabric)
 						local bl = CAMO[key2][2]
-						if #bl > 0 then
+						-- one fold patch per stack (top shirt only) keeps the camo read at shelf distance with few parts
+						if #bl > 0 and l == layers - 1 then
 							part(fold, "ShirtFold", Vector3.new(0.5, 0.17, sz.Z * 0.3), pc * CFrame.new(0.12, 0.003, -sz.Z * 0.12), bl[1], Enum.Material.Fabric)
 						end
 					end

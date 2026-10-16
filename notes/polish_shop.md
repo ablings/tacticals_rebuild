@@ -170,3 +170,11 @@ stage / market hall / market refs). Blueprint: RIVALS presents cosmetics as **li
   replace them; the upload goes under the Gunsy Funsy group.
 - Mannequins read clean but blocky close up; a Blender mannequin kit (rounded limbs, own camo UVs) is the next quality step.
 - The outfitter NPC still opens Kit.
+
+### Round 3b (2026-10-15 night, with Armory round 2): camo part budget
+`polish_shop3.lua` re-run with a leaner `camo()`: one or two larger patches per **seen** face instead of 2-4 small blotches on
+all four faces (wall mannequins: front only; the spinning featured figure: all four faces; tiger: two stripes per face), and one
+fold patch per shirt stack (top shirt only). Camo parts **616 + 46 folds = 662 -> 119 + 20 = 139**; Round3 1,226 -> 703 parts.
+No camo texture exists in `tex/asset_ids.json` (grime/grid/lines overlays only), so this stays Parts. `check_polish_shop`: 0 clips,
+hooks unchanged (its OutfitWalls "bottom -14.18 -> NOTHING" line is the rotated model bounding box, not a floating part).
+Before/after: `out/polish/shop/camo_cmp_west.jpg`, `camo_cmp_east.jpg`.
