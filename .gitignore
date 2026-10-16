@@ -2,3 +2,5 @@ out/
 *.blend1
 *.rbxl.lock
 *.bak
+ui/_survey/
+ui/_deploy_payload.json
