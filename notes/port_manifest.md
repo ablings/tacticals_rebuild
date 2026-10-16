@@ -8,8 +8,14 @@ himself; we never publish.
 1. **Freeze the copy:** both sessions finish, run every check, save `Tacticals_rebuild.rbxl`, and commit.
 2. **Edward opens the main game in Studio** (File > Open from Roblox), in a separate window next to the copy. We then run
    `list_roblox_studios` for its id.
-3. **Back up the main game first:** File > Save to File as `Documents/tacticals_rebuild/backup/main_before_port_<date>.rbxl`.
-   This is local only and isn't published.
+3. **Back up the main game first** (Edward 2026-10-16: "store the main game in the rebuild file in case anything goes wrong"):
+   - Save a whole-file snapshot: File > Save to File as `Documents/tacticals_rebuild/backup/main_before_port_<date>.rbxl`.
+     This is local only and isn't published.
+   - Store a copy inside the rebuild file, so it travels with it: copy the main game's `Workspace.LobbyMap`, `Lighting`
+     children, and every script we will change (with their current sources) into `Tacticals_rebuild.rbxl` as
+     `ServerStorage._MainGame_<date>` (LobbyMap, Lighting, Scripts/<full path names>, plus a README StringValue listing
+     what came from where).
+   - Save the rebuild file and commit.
 4. **Diff before overwriting:** for every script we changed, compare the main game's current source with the copy's original.
    The originals are the backups in `ServerStorage._RebuildRemoved.*_Orig`, or the 2026-10-14 download.
    - Equal: safe to replace.
