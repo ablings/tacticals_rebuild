@@ -54,3 +54,9 @@ Each step: built in a sandbox Studio (a read-only copy of the file), playtested,
   (`LobbyUI.CloseScreens`). Chat window hides while PLAY is open (it ate clicks top-left). Sheet: `notes/ui_phase4_play.png`.
 - Server issue (not UI): MatchmakingManager fails to load in an unpublished Studio file (MemoryStoreService:GetHashMap at
   require time), so FindMatch answers "Unknown action" there. The card says "Online matchmaking is offline here".
+- 2026-10-16 **Player list + top-right corner** (Edward: keep RIVALS' Roblox-looking list; use RIVALS' corner):
+  the OPERATORS board is gone. A fake Roblox-style list (black panel, x hides, 3D icon switches Level / Wins, 40 px rows)
+  slides out with Tab. The corner copies RIVALS' InsetGui (read from its client code): dark pills (18,18,21 @ 0.08) in the
+  Roblox top-bar row, gear "See more" widens to Settings + Codes and turns into an X, the player list button appears in
+  a second pill while the list is closed, region + fps/ping text left of the bars. Icons are Roblox's own client
+  textures (rbxasset://textures/ui/...). Sheet: `notes/ui_corner_playerlist.png`.

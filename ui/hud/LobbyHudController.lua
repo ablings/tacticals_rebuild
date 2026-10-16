@@ -2,16 +2,18 @@
 -- RIVALS' layout in TACTICALS' look.
 --   * Top centre: the scissors pill (the 3D scissors, your count, + opens the scissors shop).
 --   * Left: DAILY MISSIONS (the real daily quests with progress, claimable ones flagged) and TO PADS under it.
---   * Right: the server list (Tab toggles): every player with level and wins, you highlighted.
+--   * Right: the player list, RIVALS's fake Roblox-style one: black panel, x to hide, a 3D icon that switches Level / Wins,
+--     40 px rows (name left, number right). Tab slides it out and back. Replaces the Roblox list.
 -- Follows the lobby: hidden while a menu is open (LobbyUI disabled), in the Kit room (dock hidden), on a pad and in Training.
 -- Built in 1920x1080 design px on a 16:9 canvas, then Kit.toScale (Scale only).
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local StarterGui = game:GetService("StarterGui")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local LobbyHud = {}
+local buildCorner
 
 local UIKit = ReplicatedStorage:WaitForChild("UIKit")
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -24,6 +26,8 @@ local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
 local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#6B7A3A"), hex("#8A9C4A")
+local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
+local LB_NAME, LB_NUM = Font.new(BUILDER, Enum.FontWeight.Medium), Font.new(BUILDER, Enum.FontWeight.Bold)
 local GUN, DEEP, LINE, RED = hex("#1A1D1A"), hex("#0C0E0B"), hex("#40463A"), hex("#D6403A")
 
 local function label(parent, text, font, size, x, y, w, h, color, align, z)
@@ -41,6 +45,127 @@ end
 local function commas(n)
 	local s = tostring(math.floor(n or 0))
 	return (s:reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))
+end
+
+-- the top-right corner, built the way RIVALS builds it (read from its client code, 2026-10-16): its own bars in the
+-- Roblox top-bar row, styled like Roblox's top bar (dark pills 18,18,21 @ 0.08, white icons, a speech bubble on hover).
+--   * Main bar: closed it shows one gear ("See more"); clicked, the pill widens (Quint 0.25) to show Settings and Codes
+--     and the gear turns into an X ("See less").
+--   * Context bar, left of it: the player list button, only while the list is closed.
+--   * Region and fps / ping lines left of the bars.
+-- Icons are Roblox's own client textures (rbxasset://), not uploads. Pinned to the real screen corner (Scale + aspect
+-- lock), built in a 560x80 design box.
+local ICON_GEAR = "rbxasset://textures/ui/Settings/MenuBarIcons/GameSettingsTab.png"
+local ICON_X = "rbxasset://textures/ui/InspectMenu/x.png"
+local ICON_PLAYERS = "rbxasset://textures/ui/Settings/MenuBarIcons/PlayersTabIcon.png"
+local ICON_CODES = "rbxasset://textures/ui/Settings/MenuBarIcons/HelpTab.png"
+local BAR_BG, BAR_T, BAR_ICON = Color3.fromRGB(18, 18, 21), 0.08, Color3.fromRGB(247, 247, 248)
+buildCorner = function(gui, cb)
+	local TweenService = game:GetService("TweenService")
+	local W, H = 560, 80
+	local CY, B, GAP = 33, 44, 8 -- row centre, button / pill height, gap between bars
+	local frame = new("Frame", { Name = "HudCorner", AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromScale(1, 0), Size = UDim2.fromScale(1, H / 1080),
+		BackgroundTransparency = 1, ZIndex = 20, Parent = gui }, { new("UIAspectRatioConstraint", { AspectRatio = W / H, DominantAxis = Enum.DominantAxis.Height }) })
+	local function sx(x) return x / W end
+	local function sy(y) return y / H end
+	local function pill(name)
+		return new("Frame", { Name = name, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.fromScale(sx(W - 12), sy(CY)), Size = UDim2.fromScale(sx(B), sy(B)),
+			BackgroundColor3 = BAR_BG, BackgroundTransparency = BAR_T, ZIndex = 20, Parent = frame }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+	end
+	local mainPill, ctxPill = pill("MainBar"), pill("ContextBar")
+	-- the hover bubble (one, moved under whichever button is hovered)
+	local bubble = new("Frame", { Name = "Bubble", AnchorPoint = Vector2.new(0.5, 0), Size = UDim2.fromScale(sx(190), sy(30)), BackgroundColor3 = BAR_BG,
+		BackgroundTransparency = BAR_T, Visible = false, ZIndex = 30, Parent = frame }, { new("UICorner", { CornerRadius = UDim.new(0.3, 0) }) })
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromScale(10 / 190, 10 / 30), Rotation = 45, BackgroundColor3 = BAR_BG,
+		BackgroundTransparency = BAR_T, BorderSizePixel = 0, ZIndex = 30, Parent = bubble })
+	local bubbleText = new("TextLabel", { BackgroundTransparency = 1, Position = UDim2.fromScale(0.06, 0.15), Size = UDim2.fromScale(0.88, 0.7), TextScaled = true,
+		FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium), TextColor3 = BAR_ICON, Text = "", ZIndex = 31, Parent = bubble })
+	local function button(name, icon, tip)
+		local b = new("ImageButton", { Name = name, AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromScale(sx(B), sy(B)), BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 1, AutoButtonColor = false, Image = "", ZIndex = 22, Visible = false, Parent = frame }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		local img = new("ImageLabel", { Name = "Icon", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.5, 0.5),
+			BackgroundTransparency = 1, Image = icon, ImageColor3 = BAR_ICON, ZIndex = 23, Parent = b })
+		local entry = { b = b, img = img, tip = tip }
+		b.MouseEnter:Connect(function()
+			b.BackgroundTransparency = 0.9 -- the soft hover circle
+			bubbleText.Text = entry.tip
+			-- keep the bubble on screen: it never sticks out past the right edge
+			local x = math.min(b.Position.X.Scale, sx(W - 4 - 95))
+			bubble.Position = UDim2.fromScale(x, sy(CY + B / 2 + 10))
+			bubble.Visible = entry.tip ~= ""
+		end)
+		b.MouseLeave:Connect(function() b.BackgroundTransparency = 1; bubble.Visible = false end)
+		return entry
+	end
+	local open = button("Open", ICON_GEAR, "See more")
+	local settings = button("Settings", ICON_GEAR, "Change your controls & graphics")
+	local codes = button("Codes", ICON_CODES, "Redeem a code")
+	local list = button("PlayerList", ICON_PLAYERS, "Open the player list")
+
+	local BODYI = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Italic)
+	local function line(y)
+		return new("TextLabel", { AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromScale(sx(W - 70), sy(y)), Size = UDim2.fromScale(sx(260), sy(16)), BackgroundTransparency = 1,
+			Text = "", TextScaled = true, TextColor3 = hex("#D9D9D9"), TextTransparency = 0.15, FontFace = BODYI, TextXAlignment = Enum.TextXAlignment.Right, ZIndex = 21, Parent = frame })
+	end
+	local region, stats = line(17), line(35)
+	task.spawn(function()
+		local NAMES = { US = "United States", GB = "United Kingdom", CA = "Canada", AU = "Australia", DE = "Germany", FR = "France", NL = "Netherlands", BR = "Brazil", JP = "Japan", SG = "Singapore", IN = "India", MX = "Mexico" }
+		local LS = game:GetService("LocalizationService")
+		local ok, code = pcall(LS.GetCountryRegionForPlayerAsync, LS, player)
+		region.Text = ok and (NAMES[code] or code) or ""
+	end)
+	local frames, t0 = 0, os.clock()
+	RunService.RenderStepped:Connect(function()
+		frames += 1
+		local dt = os.clock() - t0
+		if dt >= 0.5 then
+			stats.Text = math.floor(frames / dt + 0.5) .. "fps  " .. math.floor(player:GetNetworkPing() * 1000 + 0.5) .. "ms"
+			frames, t0 = 0, os.clock()
+		end
+	end)
+
+	local isOpen = false
+	local ctl = { frame = frame }
+	local TI = TweenInfo.new(0.25, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+	-- lay a bar out from its right edge: buttons right to left; returns the bar's left edge
+	local function placeBar(p, right, items)
+		local n = #items
+		p.Visible = true
+		TweenService:Create(p, TI, { Position = UDim2.fromScale(sx(right), sy(CY)), Size = UDim2.fromScale(sx(n * B), sy(B)) }):Play()
+		for i, e in items do
+			e.b.Position = UDim2.fromScale(sx(right - (i - 0.5) * B), sy(CY))
+			e.b.Visible = true
+		end
+		return right - n * B
+	end
+	function ctl.layout()
+		if not isOpen then settings.b.Visible = false; codes.b.Visible = false end
+		local left = placeBar(mainPill, W - 12, isOpen and { open, settings, codes } or { open })
+		if not cb.listShown() then
+			left = placeBar(ctxPill, left - GAP, { list })
+		else
+			list.b.Visible = false
+			ctxPill.Visible = false
+		end
+		for _, l in { region, stats } do
+			TweenService:Create(l, TI, { Position = UDim2.fromScale(sx(left - 10), l.Position.Y.Scale) }):Play()
+		end
+		-- the open button turns into an X ("See less") with a little pop, like RIVALS
+		local want = isOpen and ICON_X or ICON_GEAR
+		if open.img.Image ~= want then
+			open.img.Image = want
+			open.img.Size = UDim2.fromScale(0, 0)
+			TweenService:Create(open.img, TI, { Size = UDim2.fromScale(isOpen and 0.4 or 0.5, isOpen and 0.4 or 0.5) }):Play()
+		end
+		open.tip = isOpen and "See less" or "See more"
+		bubble.Visible = false
+	end
+	open.b.Activated:Connect(function() isOpen = not isOpen; ctl.layout() end)
+	settings.b.Activated:Connect(function() isOpen = false; ctl.layout(); cb.openSettings() end)
+	codes.b.Activated:Connect(function() isOpen = false; ctl.layout(); if cb.openCodes then cb.openCodes() end end)
+	list.b.Activated:Connect(function() cb.openList() end)
+	ctl.layout()
+	return ctl
 end
 
 function LobbyHud.Start()
@@ -123,11 +248,16 @@ function LobbyHud.Start()
 	local Request = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Lobby"):WaitForChild("Request")
 	seekX.Activated:Connect(function() pcall(Request.InvokeServer, Request, "CancelMatch") end)
 
-	---------------------------------------------------------------------------------------------- server list
+	---------------------------------------------------------------------------------------------- player list (RIVALS style)
 	pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false) end)
-	-- a fixed slot (design 330x420); the plate inside is rebuilt to fit the server and converted against the slot
-	local board = new("Frame", { Name = "Board", Position = UDim2.fromOffset(1574, 90), Size = UDim2.fromOffset(330, 420), BackgroundTransparency = 1, Parent = root })
-	local boardOn = true
+	local LB_W, LB_H = 320, 536
+	local lb = new("Frame", { Name = "PlayerList", Position = UDim2.fromOffset(1590, 96), Size = UDim2.fromOffset(LB_W, LB_H), BackgroundColor3 = Color3.new(0, 0, 0),
+		BackgroundTransparency = 0.25, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 4) }) })
+	local lbHide = new("TextButton", { Name = "Hide", Text = "×", TextColor3 = Color3.new(1, 1, 1), FontFace = LB_NAME, TextSize = 30, BackgroundTransparency = 1,
+		Position = UDim2.fromOffset(4, 0), Size = UDim2.fromOffset(28, 30), Parent = lb })
+	local lbMode = new("TextButton", { Name = "Mode", Text = "", BackgroundTransparency = 1, Position = UDim2.fromOffset(272, 1), Size = UDim2.fromOffset(34, 32), Parent = lb })
+	local lbList = new("ScrollingFrame", { Name = "Rows", Position = UDim2.fromOffset(0, 34), Size = UDim2.fromOffset(LB_W, LB_H - 34), BackgroundTransparency = 1, BorderSizePixel = 0,
+		ScrollBarThickness = 5, ScrollBarImageColor3 = hex("#8E8D94"), ScrollBarImageTransparency = 0.3, CanvasSize = UDim2.new(), Parent = lb })
 
 	Kit.toScale(root)
 
@@ -181,47 +311,79 @@ function LobbyHud.Start()
 		reset.Text = string.format("NEW IN %dH %dM", left // 3600, left % 3600 // 60)
 	end
 
-	local lastBoard
-	local function refreshBoard()
-		local ps = Players:GetPlayers()
-		table.sort(ps, function(a, b)
-			local la, lb = a:GetAttribute("Level") or 0, b:GetAttribute("Level") or 0
-			if la ~= lb then return la > lb end
-			return a.DisplayName < b.DisplayName
-		end)
-		local key = ""
-		for _, p in ps do key ..= p.UserId .. tostring(p:GetAttribute("Level")) .. tostring(p:GetAttribute("Wins")) end
-		if key == lastBoard then return end
-		lastBoard = key
-		for _, c in board:GetChildren() do c:Destroy() end
-		local MAX = 9
-		local shown = math.min(#ps, MAX)
-		local more = #ps - shown
-		local h = 36 + shown * 40 + (more > 0 and 26 or 0) + 6
-		local plate = new("Frame", { Size = UDim2.fromOffset(330, h), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25, Parent = board })
-		brackets(plate, LINE, 12, 2)
-		label(plate, "OPERATORS", OSWALD, 20, 14, 4, 200, 30, BONE, nil, 3)
-		label(plate, "LV", OSWALD, 15, 210, 8, 50, 22, FIELD, Enum.TextXAlignment.Center, 3)
-		label(plate, "WINS", OSWALD, 15, 262, 8, 60, 22, FIELD, Enum.TextXAlignment.Center, 3)
-		for i = 1, shown do
-			local p = ps[i]
-			local y = 36 + (i - 1) * 40
-			local me = p == player
-			local row = new("Frame", { Position = UDim2.fromOffset(6, y), Size = UDim2.fromOffset(318, 38), BackgroundColor3 = me and OLIVE or GUN, BackgroundTransparency = me and 0.45 or 0.6, BorderSizePixel = 0, ZIndex = 3, Parent = plate })
-			local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4, 3), Size = UDim2.fromOffset(32, 32), ZIndex = 4, Parent = row })
-			task.spawn(function()
-				local ok, im = pcall(Players.GetUserThumbnailAsync, Players, p.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
-				if ok and hs.Parent then hs.Image = im end
-			end)
-			label(row, p.DisplayName, BOLD, 16, 42, 0, 160, 38, BONE, nil, 4).TextTruncate = Enum.TextTruncate.AtEnd
-			label(row, tostring(p:GetAttribute("Level") or "-"), OSWALD, 18, 206, 0, 50, 38, BONE, Enum.TextXAlignment.Center, 4)
-			label(row, tostring(p:GetAttribute("Wins") or "-"), OSWALD, 18, 258, 0, 60, 38, FIELD, Enum.TextXAlignment.Center, 4)
+	-- list rows: everyone in the server, sorted by the shown stat
+	local ViewIconsLB = require(UIKit:WaitForChild("ViewIcons"))
+	local lbStat = "Level"
+	local function modeIcon()
+		for _, c in lbMode:GetChildren() do c:Destroy() end
+		local icons = ReplicatedStorage:FindFirstChild("UIIcons")
+		local lvl = icons and (icons:FindFirstChild("LevelUp") or icons:FindFirstChild("Badge"))
+		if lbStat == "Level" and lvl then
+			ViewIconsLB.Viewport(lbMode, lvl:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.1, still = true })
+		else
+			ViewIconsLB.Icon(lbMode, "Trophy", { still = true })
 		end
-		if more > 0 then label(plate, "+" .. more .. " MORE", OSWALD, 15, 14, 36 + shown * 40, 300, 24, FIELD, nil, 3) end
-		Kit.toScale(board, Vector2.new(330, 420))
 	end
+	local lastLB
+	local function buildList(force)
+		local ps = Players:GetPlayers()
+		local key = lbStat
+		for _, p in ps do key ..= p.UserId .. "/" .. tostring(p:GetAttribute(lbStat)) end
+		if key == lastLB and not force then return end
+		lastLB = key
+		table.sort(ps, function(a, b)
+			local va, vb = a:GetAttribute(lbStat) or 0, b:GetAttribute(lbStat) or 0
+			if va ~= vb then return va > vb end
+			return a.DisplayName:lower() < b.DisplayName:lower()
+		end)
+		for _, c in lbList:GetChildren() do c:Destroy() end
+		-- rows are 40 design px in a 502 px window, in Scale; CanvasSize Scale is relative to the list's parent (lb)
+		local winH = LB_H - 34
+		local canvasH = math.max(winH, #ps * 40)
+		lbList.CanvasSize = UDim2.fromScale(0, canvasH / LB_H)
+		for i, p in ps do
+			local row = new("TextButton", { Name = p.Name, Text = "", AutoButtonColor = false, Position = UDim2.fromScale(0, (i - 1) * 40 / canvasH), Size = UDim2.fromScale(1, 40 / canvasH),
+				BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = i % 2 == 0 and 0.97 or 1, Parent = lbList })
+			local baseT = row.BackgroundTransparency
+			row.MouseEnter:Connect(function() row.BackgroundTransparency = 0.94 end)
+			row.MouseLeave:Connect(function() row.BackgroundTransparency = baseT end)
+			new("Frame", { Name = "Divider", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 40), Size = UDim2.fromOffset(LB_W, 1), BackgroundColor3 = Color3.new(1, 1, 1),
+				BackgroundTransparency = 0.92, BorderSizePixel = 0, Parent = row })
+			if p.MembershipType == Enum.MembershipType.Premium then
+				Kit.label({ Text = utf8.char(0xE001), FontFace = LB_NUM, TextSize = 20, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
+			end
+			Kit.label({ Text = p.DisplayName, FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
+				Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(196, 40), Parent = row })
+			Kit.label({ Text = tostring(p:GetAttribute(lbStat) or 0), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
+				Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
+			Kit.toScale(row, Vector2.new(LB_W, 40))
+		end
+	end
+	modeIcon()
+	lbMode.Activated:Connect(function()
+		lbStat = lbStat == "Level" and "Wins" or "Level"
+		modeIcon()
+		buildList(true)
+	end)
+	-- Tab / x: the list slides off to the right and back, constant speed so spamming Tab reverses mid-way
+	local corner
+	local lbHome = lb.Position
+	local lbOn = true
+	local function setList(on)
+		if on == lbOn then return end
+		lbOn = on
+		if corner then corner.layout() end
+		Kit.tween(lb, 0.12, { Position = on and lbHome or UDim2.fromScale(lbHome.X.Scale + 0.25, lbHome.Y.Scale) }, Enum.EasingStyle.Linear)
+	end
+	lbHide.Activated:Connect(function() setList(false) end)
+	corner = buildCorner(gui, {
+		openSettings = function() if LobbyUI then LobbyUI.Open("Settings") end end,
+		openCodes = function() if LobbyUI then LobbyUI.Open("Codes") end end,
+		openList = function() setList(true) end,
+		listShown = function() return lbOn end,
+	})
 	UserInputService.InputBegan:Connect(function(i, gp)
-		if not gp and i.KeyCode == Enum.KeyCode.Tab then boardOn = not boardOn end
+		if not gp and i.KeyCode == Enum.KeyCode.Tab then setList(not lbOn) end
 	end)
 
 	---------------------------------------------------------------------------------------------- follow the lobby
@@ -238,7 +400,7 @@ function LobbyHud.Start()
 	RunService.Heartbeat:Connect(function(dt)
 		local on = lobbyShown()
 		root.Visible = on
-		board.Visible = boardOn
+		if corner then corner.frame.Visible = on end
 		local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
 		seek.Visible = q ~= nil and st == "Searching"
 		if seek.Visible then
@@ -262,7 +424,7 @@ function LobbyHud.Start()
 		while true do
 			resetText()
 			refresh()
-			refreshBoard()
+			buildList()
 			task.wait(1)
 		end
 	end)
