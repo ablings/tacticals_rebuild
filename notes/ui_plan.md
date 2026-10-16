@@ -45,4 +45,4 @@ Each step: built in a sandbox Studio (a read-only copy of the file), playtested,
   when claimable, click = Missions) with TO PADS (teleports to the duel hall facing pad A), OPERATORS board (level, wins,
   you in olive; Tab toggles; replaces the Roblox player list). Old top-left card hidden. Hides with menus / Kit room /
   pads / Training. Sheet: `notes/ui_phase3_hud.png`.
-- Deployed to the sandbox only; the working copy (8ef4e21a) waits for a window agreed with the Tacticals session.
+- Deployed to the working copy (8ef4e21a) 2026-10-16 after the Tacticals session cleared it; NPC_OpensPanel guard kept. Not saved yet.

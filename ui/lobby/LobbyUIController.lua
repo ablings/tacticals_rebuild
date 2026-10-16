@@ -1129,7 +1129,7 @@ local function build()
 	local DOCK_W = 660
 	local dock = new("Frame", { Name = "Dock", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -14),
 		Size = UDim2.new(0, DOCK_W, 0, 200), Parent = root })
-	-- no bar behind the dock: a soft shade rising from thebottom of the screen keeps the labels readable
+	-- no bar behind the dock: a soft shade rising from the bottom of the screen keeps the labels readable
 	local shade = new("Frame", { Name = "DockShade", BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.new(0.5, 0, 1, 0), Size = UDim2.new(1, 0, 0, 260), ZIndex = 0, Parent = root }, {
 		new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0.45) }) }),
