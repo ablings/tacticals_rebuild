@@ -55,6 +55,29 @@ PATCHES = [
 ]
 
 
+# ---- --match: the MATCH PLACE gets the same gameplay [SET] scripts + settings plumbing, so every lobby setting carries
+# over (2026-10-16, Edward: "do the recommended"). Its controllers were the lobby originals minus the Training gate (only
+# CoverController's tutorial EAutoRush differed, merged into set/CoverController.lua), so the gate is a pass-through shim there.
+# Missing parent folders (UIKit) are created. Run it only in the combined match-place pass with the Tacticals session.
+MATCH_FILES = [
+    ("ReplicatedStorage.Modules.Shared", "TrainingGate", "ModuleScript", "matchplace/TrainingGate.lua"),
+    ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
+    ("ReplicatedStorage.UIKit", "Theme", "ModuleScript", "matchplace/Theme.lua"),
+    ("ReplicatedStorage.UIKit", "Tac", "ModuleScript", "lobby/Tac.lua"),
+    ("ReplicatedStorage.UIKit", "Kit", "ModuleScript", "lobby/Kit.lua"),
+    ("ReplicatedStorage.UIKit", "SettingsData", "ModuleScript", "settings/SettingsData.lua"),
+    ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
+    ("ServerScriptService", "SettingsBridge", "Script", "matchplace/SettingsBridge.server.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
+    ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),
+    ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
+]
+MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory")]
+if '--match' in sys.argv:
+    FILES, SET_FILES, PATCHES = MATCH_FILES, MATCH_SET_FILES, []
+
+
 def long_string(s):
     n = 0
     while ("]" + "=" * n + "]") in s:
@@ -66,11 +89,12 @@ def build():
     parts = [
         "local CHS = game:GetService('ChangeHistoryService'); local rec = CHS:TryBeginRecording('Deploy lobby UI (UI session)')",
         "local function at(path) local o = game; for p in path:gmatch('[^%.]+') do o = o:FindFirstChild(p) or error('missing ' .. path) end; return o end",
+        "local function dir(path) local o = game; for p in path:gmatch('[^%.]+') do local c = o:FindFirstChild(p); if not c then c = Instance.new('Folder'); c.Name = p; c.Parent = o end; o = c end; return o end",
         "local function put(parent, name, class, src) local s = parent:FindFirstChild(name); if s and s.ClassName ~= class then s:Destroy(); s = nil end; if not s then s = Instance.new(class); s.Name = name; s.Parent = parent end; s.Source = src end",
     ]
     for parent, name, cls, path in FILES:
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
-        parts.append(f"put(at('{parent}'), '{name}', '{cls}', {long_string(src)})")
+        parts.append(f"put({'dir' if '--match' in sys.argv else 'at'}('{parent}'), '{name}', '{cls}', {long_string(src)})")
     parts.append("local SS = game:GetService('ServerStorage'); local bin = SS:FindFirstChild('_RebuildRemoved') or Instance.new('Folder'); bin.Name = '_RebuildRemoved'; bin.Parent = SS")
     for parent, name, path in SET_FILES:
         src = open(os.path.join(HERE, path), encoding='utf-8').read()

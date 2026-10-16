@@ -709,7 +709,8 @@ local function startMove(hit: RaycastResult?, stand: Vector3, route: { Vector3 }
 
 	-- E alone: SNEAK there (slow, crouched, silent). Shift + E: the quick reposition - the same low dash
 	-- whether you start in cover or out in the open (no roll).
-	local style = forceStyle or (sprintHeld() and "Dash" or "Sneak")
+	-- (pass 40, match place) the starter tutorial sets EAutoRush: plain [E] runs to cover (no Shift needed)
+	local style = forceStyle or ((sprintHeld() or localPlayer:GetAttribute("EAutoRush") == true) and "Dash" or "Sneak")
 	local _ = targetLow
 
 	exitCover(true)

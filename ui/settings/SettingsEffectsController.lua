@@ -4,6 +4,8 @@
 --   Optimized Textures  - surface images (SurfaceAppearance / Texture / Decal) under the lobby map hidden
 --   SFX Volume          - FlashController routes every world sound through SoundService.World; it is nested under
 --                         SoundService.Effects so the SFX slider (Effects.Volume) reaches them (volumes multiply)
+--   Master / SFX Volume - SoundService.Effects volume from the Setting_ attributes. The lobby's SettingsConfig.Apply
+--                         does the same; the match place only gets the attributes (its SettingsBridge is server-side)
 -- Everything is restored when the setting goes back off. (UI session 2026-10-16)
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
@@ -72,6 +74,14 @@ local function nestWorld()
 	if world and world:IsA("SoundGroup") and world.Parent ~= effects then world.Parent = effects end
 end
 
+-- Volume: per client, from the attributes ---------------------------------------------------------------------------
+local function applyVolume()
+	local master, sfx = setting("MasterVolume"), setting("SFXVolume")
+	if type(master) ~= "number" and type(sfx) ~= "number" then return end
+	local effects = SoundService:FindFirstChild("Effects")
+	if effects and effects:IsA("SoundGroup") then effects.Volume = (sfx or 100) / 100 * (master or 50) / 100 end
+end
+
 function SettingsEffects.Start()
 	for _, name in { "OptimizedLighting", "OptimizedTextures" } do
 		player:GetAttributeChangedSignal("Setting_" .. name):Connect(function()
@@ -83,6 +93,8 @@ function SettingsEffects.Start()
 	applyTextures()
 	SoundService.ChildAdded:Connect(function(c) if c.Name == "World" then task.defer(nestWorld) end end)
 	nestWorld()
+	for _, name in { "MasterVolume", "SFXVolume" } do player:GetAttributeChangedSignal("Setting_" .. name):Connect(applyVolume) end
+	applyVolume()
 end
 
 return SettingsEffects
