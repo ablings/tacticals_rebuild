@@ -23,6 +23,12 @@ the base read more military-sky (insignia, stencils, ops screens, cargo, hangar/
 - Builder and reviewer are different agents. After each room: captures, a ref-vs-ours sheet in `out/polish/<room>/`, a commit, the
   vault round log in `building-practice/tacticals/Tacticals Lobby Rebuild.md`, and lessons in the workflow pages.
 
+## Screen schedule with the UI session (Edward, 22:16)
+The UI session owns the screen by default. Tacticals gets windows of up to 15 minutes at **23:00, 00:30, 02:00, 03:30, 05:00 and
+06:30**. The UI session stops computer use about 2 minutes before each window. I take the screen (second monitor only) to save and
+Import 3D, then message "screen free", or "skip" if there's nothing to do. Edward had the UI session halt first so he could grant
+the overnight computer-use permissions (Roblox Studio, Blender 5.2).
+
 ## Room identities (same RIVALS language, a different mood per room)
 Shared language everywhere: near-black floors, mid-grey walls, Neon accent lines, the olive/cream palette as thin lines only. The
 rooms differ by **light colour/temperature, key material, signature prop and accent ratio**:
