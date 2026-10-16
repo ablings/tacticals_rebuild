@@ -77,7 +77,7 @@ local showcaseVpf
 local shadowParts = {} -- soft contact shadow under the item
 local LIT = { Ambient = Color3.fromRGB(95, 95, 102), LightColor = Color3.fromRGB(250, 248, 250) }
 local DARK = { Ambient = Color3.new(0, 0, 0), LightColor = Color3.new(0, 0, 0) } -- locked: pure silhouette
-local BACKGROUND_BLUR = 16 -- how blurry the armory room is behind the item (BlurEffect size)
+local BACKGROUND_BLUR = 0 -- (2026-10-16) the lit Showroom2 set is sharp now; depth comes from ArmoryDOF below
 local overlay = {}     -- transition overlay pieces
 
 -- UI refs
@@ -2242,7 +2242,16 @@ local function backgroundBlur(on: boolean)
 	b.Name = "ArmoryBackgroundBlur"
 	b.Parent = Lighting
 	b.Size = BACKGROUND_BLUR
-	b.Enabled = on
+	b.Enabled = on and BACKGROUND_BLUR > 0
+	-- soft depth of field instead (values from the Tacticals session's Showroom2 build). Not named "ArmoryBlur": that name is deleted above
+	local dof = Lighting:FindFirstChild("ArmoryDOF") or Instance.new("DepthOfFieldEffect")
+	dof.Name = "ArmoryDOF"
+	dof.FocusDistance = 13.05
+	dof.InFocusRadius = 6
+	dof.FarIntensity = 0.5
+	dof.NearIntensity = 0
+	dof.Parent = Lighting
+	dof.Enabled = on
 end
 
 local renderConn
@@ -2268,7 +2277,7 @@ function Armory.Enter(focusId: string?)
 	if not okCover then warn("[Armory] transition: " .. tostring(err)) end
 	-- swap scenes while the screen is covered
 	backgroundBlur(true)
-	UITheme.ShowBackdrop("Armory", 0.7) -- tint the blurred room in the menu colour (the item stays untinted on top)
+	UITheme.ShowBackdrop("Armory", 0.35) -- light tint over the sharp set (was 0.7 over a blurred room)
 	renderConn = RunService.RenderStepped:Connect(renderShowcase)
 	ui.Visible = true
 	local okSel, err2 = pcall(Armory.Select, focus or equippedIn(selectedSlot), 1)
