@@ -195,14 +195,18 @@ function LobbyHud.Start()
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
 	---------------------------------------------------------------------------------------------- scissors pill
-	local pill = new("Frame", { Name = "Scissors", Position = UDim2.fromOffset(840, 26), Size = UDim2.fromOffset(240, 58), BackgroundColor3 = DEEP, BackgroundTransparency = 0.08, Parent = root })
-	brackets(pill, LINE, 12, 2)
-	local iconHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-22, -12), Size = UDim2.fromOffset(84, 84), ZIndex = 3, Parent = pill })
-	local count = label(pill, "...", OSWALD, 36, 62, 0, 120, 58, BONE, Enum.TextXAlignment.Center, 3)
-	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(190, 9), Size = UDim2.fromOffset(40, 40), BackgroundColor3 = OLIVE, ZIndex = 3, Parent = pill },
-		{ new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A8BC62"), hex("#5B6E2C")) }) })
-	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(20, 6), BackgroundColor3 = BONE, BorderSizePixel = 0, ZIndex = 4, Parent = plus })
-	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 20), BackgroundColor3 = BONE, BorderSizePixel = 0, ZIndex = 4, Parent = plus })
+	-- RIVALS' key pill, with our scissors: a small dark glass pill, the 3D scissors overlapping its left end, a rounded plus
+	local PFONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	local pill = new("Frame", { Name = "Scissors", Position = UDim2.fromOffset(880, 40), Size = UDim2.fromOffset(168, 42), BackgroundColor3 = Color3.new(0, 0, 0),
+		BackgroundTransparency = 0.45, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 9) }) })
+	local iconHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-46, -14), Size = UDim2.fromOffset(70, 70), ZIndex = 3, Parent = pill })
+	local count = Kit.label({ Text = "...", FontFace = PFONT, TextSize = 31, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(130, 42), ZIndex = 3, Parent = pill })
+	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = count })
+	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(174, 4), Size = UDim2.fromOffset(34, 34), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 3, Parent = pill },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 7) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#B9CC70"), hex("#5B6E2C")) }) })
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(18, 6), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 18), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	Kit.bindButton(plus, { hover = 1.12 })
 	plus.Activated:Connect(function() if LobbyUI and LobbyUI.OpenShop then LobbyUI.Close(); LobbyUI.OpenShop("Scissors") end end)
 
@@ -617,6 +621,28 @@ function LobbyHud.Start()
 	-- the rest of the lobby HUD (PLAY row, dock) hides with Hide HUD too; the dock's own state is put back after
 	local dockSaved
 	local cutShown = false
+	-- push-aside groups (RIVALS replica): left group left, right group right, top up, bottom down
+	local GROUPS = {
+		{ dx = -0.32, dy = 0, names = { "Missions", "ToPads" } },
+		{ dx = 0.3, dy = 0, names = { "PlayerList" } },
+		{ dx = 0, dy = -0.32, names = { "Scissors" } },
+		{ dx = 0, dy = 0.3, fast = true, names = { "NavShade", "NavKit", "NavMissions", "NavShop", "NavCodes", "NavSettings", "Searching" } },
+	}
+	local homes = {}
+	for _, g in GROUPS do
+		for _, n in g.names do
+			local o = root:FindFirstChild(n)
+			if o then homes[o] = { home = o.Position, away = UDim2.fromScale(o.Position.X.Scale + g.dx, o.Position.Y.Scale + g.dy), t = g.fast and 0.08 or 0.18 } end
+		end
+	end
+	local pushedAway = false
+	local function pushAside(away)
+		for o, h in homes do
+			if o.Name == "PlayerList" and not lbOn then continue end -- hidden by Tab: leave it off screen
+			Kit.tween(o, away and h.t or 0.25, { Position = away and h.away or h.home }, away and Enum.EasingStyle.Quad or Enum.EasingStyle.Back,
+				away and Enum.EasingDirection.In or Enum.EasingDirection.Out)
+		end
+	end
 	local wasTraining = false
 	local k = 0
 	RunService.Heartbeat:Connect(function(dt)
@@ -624,7 +650,14 @@ function LobbyHud.Start()
 		-- a cutscene (exfil heli etc.; ExfilFX sets InCutscene) hides everything, the corner and the fight HUD too
 		local cut = player:GetAttribute("InCutscene") == true
 		local hide = hudHidden() or cut
-		root.Visible = on and not hide
+		-- RIVALS: a menu opening pushes the HUD out to the sides (and back when it closes); anything else hides it at once
+		local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
+		local menuAway = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
+		root.Visible = (on or menuAway) and not hide
+		if menuAway ~= pushedAway then
+			pushedAway = menuAway
+			pushAside(menuAway)
+		end
 		local training = player:GetAttribute("InTraining") == true
 		if corner then corner.frame.Visible = not cut and (on or hide or training) end
 		if training ~= wasTraining then wasTraining = training; corner.layout() end

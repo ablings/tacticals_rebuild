@@ -61,10 +61,12 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, key)
 	key = key or (kind .. tostring(amount))
 	local confirm = pending == key and os.clock() - pendingAt < 3
 	local owned = kind == "owned"
-	local grad = owned and Theme.gradient.grey or (kind == "robux" and Theme.gradient.robux or Theme.gradient.key)
+	local STEEL = { Theme.hex("#FBFCFD"), Theme.hex("#D5DAE0"), Theme.hex("#9AA3AD") } -- (UI session) scissors are steel
+	local steel = not owned and kind ~= "robux" and not confirm
+	local grad = owned and Theme.gradient.grey or (kind == "robux" and Theme.gradient.robux or STEEL)
 	local tag = new("TextButton", { Name = "Price", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cx, y),
 		Size = UDim2.fromOffset(w, h), BackgroundColor3 = C.white, ZIndex = 5, Parent = parent },
-		{ Kit.corner(2), Kit.vgrad(confirm and Theme.gradient.robux or grad), Kit.stroke(Color3.new(0, 0, 0), 1.5, 0.6) })
+		{ Kit.corner(7), Kit.vgrad(confirm and Theme.gradient.robux or grad), Kit.stroke(Color3.new(0, 0, 0), 1.5, 0.6) })
 	local row = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = tag },
 		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
@@ -72,7 +74,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, key)
 	local ts = math.floor(h * 0.62)
 	local num = Kit.label({ LayoutOrder = 2, Text = text, FontFace = F.display, TextSize = ts, TextColor3 = Color3.new(0, 0, 0), TextTransparency = 0.75,
 		AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, h), ZIndex = 6, Parent = row })
-	Kit.label({ Name = "Text", Text = text, FontFace = F.display, TextSize = ts, TextColor3 = owned and C.textDark or C.white,
+	Kit.label({ Name = "Text", Text = text, FontFace = F.display, TextSize = ts, TextColor3 = (owned or steel) and Theme.hex("#1C2026") or C.white,
 		Position = UDim2.fromOffset(0, -2), Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = num })
 	if not owned and not confirm then
 		local img = kind == "robux" and ROBUX_IMG or SCISSORS_IMG
@@ -284,169 +286,153 @@ end
 
 local RENDER = {}
 
+-- Home (UI session 2026-10-16, remade on RIVALS' Shop Home, ref_35 / the replica): floating items over their price
+-- buttons (no cards), a big hero card, an offer panel that pages with a dot bar under it, and a grid of gear tiles.
+-- Everything is a live 3D render.
 function RENDER.Featured()
 	local Config = ctx.Config
 	local pg, hover = newPage()
-	-- featured Robux bundle (big) + scissors call-out
+	local d = data()
+	local function float(x, y, w, h, onClick)
+		local hold = new("TextButton", { Text = "", AutoButtonColor = false, BackgroundTransparency = 1, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), Parent = pg })
+		Kit.bindButton(hold, { hover = 1.08 })
+		if onClick then hold.Activated:Connect(onClick) end
+		return hold
+	end
+	-- left, top: scissors packs for Robux (the 3D scissors grow with the pack)
+	local packs = {}
+	for _, pr in Config.RobuxProducts do if pr.Credits and not pr.Bundle then table.insert(packs, pr) end end
+	for i = 1, math.min(3, #packs) do
+		local pr = packs[i]
+		local hold = float(4 + (i - 1) * 166, 10, 158, 152, function() ctx.ask("BuyRobux", pr.Key) end)
+		local n = math.min(i + 1, 4)
+		for k = 1, n do
+			local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4 + (k - 1) * 10, (k - 1) * 4), Size = UDim2.fromOffset(150 - (n - 1) * 10, 100), Parent = hold })
+			ViewIcons.Viewport(art, ViewIcons.Scissors(), { view = CFrame.Angles(0, 0, math.rad((k - (n + 1) / 2) * 22)) * ViewIcons.Views.Scissors[1], zoom = 1, still = true })
+		end
+		outlined(Kit.label({ Text = "+" .. fmtN(pr.Credits), FontFace = F.display, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 74), Size = UDim2.fromOffset(158, 30), ZIndex = 3, Parent = hold }), 2)
+		priceTag(hold, "robux", pr.Robux, 79, 104, 116, 46, function() ctx.ask("BuyRobux", pr.Key) end)
+	end
+	-- left, bottom: gear you don't have, floating over its steel price
+	local gear = {}
+	for _, id in sortedGear() do if not ctx.owns(id) then table.insert(gear, id) end end
+	for i = 1, math.min(3, #gear) do
+		local id = gear[i]
+		local hold = float(4 + (i - 1) * 166, 176, 158, 152, function() ctx.openKit(id) end)
+		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-14, -16), Size = UDim2.fromOffset(186, 124), Parent = hold })
+		itemArt(art, id, hold)
+		priceTag(hold, "kit", Config.Items[id].Price, 79, 104, 154, 46, function() ctx.openKit(id) end, "kit:" .. id)
+	end
+
+	-- right: hero card (the Founder's Bundle): its items fanned out large, the title, a blue-steel view button
 	local featured
-	for _, p in Config.RobuxProducts do if p.Bundle then featured = p end end
-	local y = 6
-	-- (UI session 2026-10-16) RIVALS' home: the big featured slot is a carousel with clickable dots bottom left
-	local carousel = new("Frame", { Name = "Carousel", BackgroundTransparency = 1, Position = UDim2.fromOffset(4, y), Size = UDim2.fromOffset(820, 320), Parent = pg })
-	local slides = {}
+	for _, pr in Config.RobuxProducts do if pr.Bundle then featured = pr end end
 	if featured then
-		local w, h = 820, 320
-		local card = new("TextButton", { Name = "Featured", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(w, h),
-			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = carousel },
-			{ Kit.corner(2), Kit.stroke(C.amber, 2, 0.25), new("UIGradient", { Rotation = 0, Color = ColorSequence.new({
-				ColorSequenceKeypoint.new(0, C.olive:Lerp(C.panel, 0.3)), ColorSequenceKeypoint.new(0.6, C.panel), ColorSequenceKeypoint.new(1, C.amber:Lerp(C.panel, 0.6)) }) }) })
-		outlined(Kit.label({ Text = featured.Name, FontFace = F.display, TextSize = 52, Position = UDim2.fromOffset(24, 14), Size = UDim2.fromOffset(w - 48, 62), Parent = card }), 2.5)
+		local w, h = 750, 320
+		local card = new("TextButton", { Name = "Hero", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(520, 8), Size = UDim2.fromOffset(w, h),
+			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
+			{ Kit.corner(8), new("UIGradient", { Rotation = 35, Color = ColorSequence.new(Theme.hex("#AEB49C"), Theme.hex("#2E3328")) }) })
+		local items = featured.Items or {}
+		for j, id in items do
+			local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromOffset(w * 0.5 + (j - (#items + 1) / 2) * 170, h * 0.56), Size = UDim2.fromOffset(240, 220), Parent = card })
+			itemArt(art, id, card)
+		end
+		local sc = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(w - 250, 6), Size = UDim2.fromOffset(150, 110), Parent = card })
+		ViewIcons.Icon(sc, "Scissors", { hoverTarget = card })
+		outlined(Kit.label({ Text = featured.Name, FontFace = F.display, TextSize = 46, Position = UDim2.fromOffset(28, 16), Size = UDim2.fromOffset(500, 56), ZIndex = 5, Parent = card }), 2.5)
 		if featured.Tag then
-			new("TextLabel", { BackgroundColor3 = C.red, Text = featured.Tag, FontFace = F.display, TextSize = 20, TextColor3 = C.white,
-				Position = UDim2.fromOffset(26, 78), Size = UDim2.fromOffset(0, 30), AutomaticSize = Enum.AutomaticSize.X, Parent = card }, { Kit.corner(2), Kit.pad(10, 0, 10, 0) })
+			new("TextLabel", { BackgroundColor3 = C.red, Text = featured.Tag, FontFace = F.display, TextSize = 20, TextColor3 = C.white, ZIndex = 5,
+				Position = UDim2.fromOffset(30, 74), Size = UDim2.fromOffset(0, 30), AutomaticSize = Enum.AutomaticSize.X, Parent = card }, { Kit.corner(4), Kit.pad(10, 0, 10, 0) })
 		end
-		local x = 24
-		for j, id in featured.Items or {} do
-			local tile = new("Frame", { Name = "Tile" .. j, BackgroundColor3 = C.panel, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(x, 122), Size = UDim2.fromOffset(150, 150), Parent = card },
-				{ Kit.corner(2), Kit.stroke(C.olive, 1.5, 0.3) })
-			itemArt(tile, id, card)
-			x += 162
-		end
-		local sc = new("Frame", { Name = "Scissors", BackgroundColor3 = C.panel, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(x, 122), Size = UDim2.fromOffset(150, 150), Parent = card },
-			{ Kit.corner(2), Kit.stroke(C.amber, 1.5, 0.3) })
-		local art = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(150, 110), Parent = sc })
-		ViewIcons.Icon(art, "Scissors", { hoverTarget = card })
-		outlined(Kit.label({ Text = "+" .. fmtN(featured.Credits or 0), FontFace = F.display, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center,
-			Position = UDim2.fromOffset(0, 108), Size = UDim2.fromOffset(150, 38), Parent = sc }), 2)
+		outlined(Kit.label({ Text = "+" .. fmtN(featured.Credits or 0) .. " scissors", FontFace = F.display, TextSize = 24, Position = UDim2.fromOffset(30, 108), Size = UDim2.fromOffset(300, 28), ZIndex = 5, Parent = card }), 2)
 		local ownedAll = true
-		for _, id in featured.Items or {} do if not ctx.owns(id) then ownedAll = false end end
-		if ownedAll then priceTag(card, "owned", 0, w - 130, 22, 220, 58)
-		else priceTag(card, "robux", featured.Robux, w - 130, 22, 220, 58, function() ctx.ask("BuyRobux", featured.Key) end) end
+		for _, id in items do if not ctx.owns(id) then ownedAll = false end end
+		if ownedAll then priceTag(card, "owned", 0, w - 105, h - 76, 170, 58)
+		else priceTag(card, "robux", featured.Robux, w - 105, h - 76, 170, 58, function() ctx.ask("BuyRobux", featured.Key) end) end
 		hover(card)
-	Tac.hoverBrackets(card, Tac.brackets(card, Tac.C.line, 20, 3))
-		table.insert(slides, card)
+		Kit.bindButton(card, { hover = 1.03, press = 0.99 })
+		card.Activated:Connect(function() Screen.SetTab("Bundles") end)
 	end
-	-- slide: the best gear you don't own yet, big
-	do
-		local spot
-		for _, id in sortedGear() do if not ctx.owns(id) then spot = id break end end
-		if spot then
-			local item = Config.Items[spot]
-			local rar = Config.Rarities[item.Rarity] or Config.Rarities.Standard
-			local w, h = 820, 320
-			local card = new("TextButton", { Name = "Spotlight", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(w, h), BackgroundColor3 = C.white,
-				ClipsDescendants = true, Visible = false, Parent = carousel },
-				{ Kit.corner(2), new("UIGradient", { Rotation = 0, Color = ColorSequence.new({
-					ColorSequenceKeypoint.new(0, C.panel), ColorSequenceKeypoint.new(0.55, C.panel), ColorSequenceKeypoint.new(1, rar.Color:Lerp(C.panel, 0.55)) }) }) })
-			new("Frame", { BackgroundColor3 = rar.Color, BackgroundTransparency = 0.8, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromOffset(w * 0.68, h / 2), Size = UDim2.fromOffset(w * 0.22, h * 2), Rotation = 22, Parent = card })
-			Kit.label({ Text = "FEATURED GEAR", FontFace = F.display, TextSize = 22, TextColor3 = rar.Color, Position = UDim2.fromOffset(24, 18), Size = UDim2.fromOffset(400, 28), Parent = card })
-			outlined(Kit.label({ Text = item.Name, FontFace = F.display, TextSize = 56, Position = UDim2.fromOffset(24, 44), Size = UDim2.fromOffset(420, 66), Parent = card }), 2.5)
-			Kit.label({ Text = string.upper(item.Rarity .. " " .. (Config.SlotNames[item.Slot] or item.Slot)), FontFace = F.bold, TextSize = 20, TextColor3 = rar.Color,
-				Position = UDim2.fromOffset(26, 112), Size = UDim2.fromOffset(400, 24), Parent = card })
-			Kit.label({ Text = item.Desc or "", FontFace = F.medium, TextSize = 20, TextColor3 = C.textDim, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
-				Position = UDim2.fromOffset(26, 144), Size = UDim2.fromOffset(380, 80), Parent = card })
-			local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(400, 10), Size = UDim2.fromOffset(410, 250), Parent = card })
-			itemArt(art, spot, card)
-			priceTag(card, "kit", item.Price, 150, h - 64, 250, 56, function() ctx.openKit(spot) end, "kit:" .. spot)
-			hover(card)
-			Tac.hoverBrackets(card, Tac.brackets(card, rar.Color, 20, 3))
-			card.Activated:Connect(function() ctx.openKit(spot) end)
-			table.insert(slides, card)
-		end
-	end
-	-- slides: the passes you don't have
-	do
-		local d = data()
-		for _, gp in Config.GamePasses do
-			if not (d.Passes and d.Passes[gp.Key]) then
-				local w, h = 820, 320
-				local card = new("TextButton", { Name = "Pass_" .. gp.Key, Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(w, h), BackgroundColor3 = C.white,
-					ClipsDescendants = true, Visible = false, Parent = carousel },
-					{ Kit.corner(2), new("UIGradient", { Rotation = 0, Color = ColorSequence.new({
-						ColorSequenceKeypoint.new(0, C.amber:Lerp(C.panel, 0.55)), ColorSequenceKeypoint.new(0.5, C.panel), ColorSequenceKeypoint.new(1, C.panel) }) }) })
-				local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 20), Size = UDim2.fromOffset(300, 280), Parent = card })
-				ViewIcons.Icon(art, "Medal", { hoverTarget = card, zoom = 1.1 })
-				Kit.label({ Text = "GAME PASS", FontFace = F.display, TextSize = 22, TextColor3 = C.amber, Position = UDim2.fromOffset(330, 26), Size = UDim2.fromOffset(300, 28), Parent = card })
-				outlined(Kit.label({ Text = gp.Name, FontFace = F.display, TextSize = 60, Position = UDim2.fromOffset(330, 52), Size = UDim2.fromOffset(470, 70), Parent = card }), 2.5)
-				Kit.label({ Text = gp.Desc or "", FontFace = F.medium, TextSize = 22, TextColor3 = C.textDim, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
-					Position = UDim2.fromOffset(332, 130), Size = UDim2.fromOffset(460, 90), Parent = card })
-				priceTag(card, "robux", gp.Robux, 450, h - 64, 240, 56, function() ctx.ask("BuyPass", gp.Key) end)
-				hover(card)
-				Tac.hoverBrackets(card, Tac.brackets(card, C.amber, 20, 3))
-				table.insert(slides, card)
+
+	-- bottom left: the offer panel; its pages swap with the dot bar under it (RIVALS' Special Offer)
+	local offers = {}
+	for _, gp in Config.GamePasses do if not (d.Passes and d.Passes[gp.Key]) then table.insert(offers, { kind = "pass", p = gp }) end end
+	for _, bd in Config.Bundles or {} do table.insert(offers, { kind = "bundle", b = bd }) end
+	local so = new("Frame", { Name = "Offer", Position = UDim2.fromOffset(4, 352), Size = UDim2.fromOffset(746, 324), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.25, ClipsDescendants = true, Parent = pg }, { Kit.corner(10) })
+	local slides = {}
+	for i, of in offers do
+		local sl = new("Frame", { Name = "Slide" .. i, BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = i == 1, Parent = so })
+		if of.kind == "pass" then
+			local gp = of.p
+			outlined(Kit.label({ Text = gp.Name, FontFace = F.display, TextSize = 52, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 10), Size = UDim2.new(1, 0, 0, 58), Parent = sl }), 2)
+			Kit.label({ Text = gp.Desc or "", FontFace = F.medium, TextSize = 22, TextColor3 = Theme.hex("#CFCDD3"), TextXAlignment = Enum.TextXAlignment.Center, TextWrapped = true,
+				Position = UDim2.fromOffset(60, 66), Size = UDim2.new(1, -120, 0, 56), Parent = sl })
+			local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(373, 120), Size = UDim2.fromOffset(150, 120), Parent = sl })
+			ViewIcons.Icon(art, "Medal", { hoverTarget = so })
+			priceTag(sl, "robux", gp.Robux, 373, 246, 170, 56, function() ctx.ask("BuyPass", gp.Key) end)
+		else
+			local bd = of.b
+			local cost, missing = Config.BundleCost(bd, ctx.owns)
+			outlined(Kit.label({ Text = bd.Name, FontFace = F.display, TextSize = 46, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 12), Size = UDim2.new(1, 0, 0, 54), Parent = sl }), 2)
+			local n = #bd.Items
+			for j, id in bd.Items do
+				local tile = new("Frame", { BackgroundColor3 = C.panel, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(373 + (j - (n + 1) / 2) * 128 - 55, 84), Size = UDim2.fromOffset(110, 110), Parent = sl },
+					{ Kit.corner(8), Kit.stroke((Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard).Color, 2, 0.2) })
+				itemArt(tile, id, so)
 			end
+			if missing == 0 then priceTag(sl, "owned", 0, 373, 230, 190, 56)
+			else priceTag(sl, "scissors", cost, 373, 230, 190, 56, function() ctx.ask("BuyBundle", bd.Id) end, "bundle:" .. bd.Id) end
 		end
+		table.insert(slides, sl)
 	end
-	-- dots (bottom left, clickable) + auto-advance every 6 s (paused while the pointer is on the carousel)
 	if #slides > 1 then
-		local dots = new("Frame", { Name = "Dots", BackgroundTransparency = 1, Position = UDim2.fromOffset(24, 320 - 26), Size = UDim2.fromOffset(#slides * 34, 14), ZIndex = 20, Parent = carousel })
-		local dotList, current, paused = {}, 1, false
-		local bases = {}
-		local function show(i, instant)
-			if i == current and not instant then return end
-			current = i
-			for k, sl in slides do
-				sl.Visible = k == i
-				if k == i and not instant then
-					bases[k] = bases[k] or sl.Position
-					local b = bases[k]
-					sl.Position = b + UDim2.fromScale(0.04, 0)
-					Kit.tween(sl, 0.28, { Position = b }, Enum.EasingStyle.Quint)
-				end
-			end
-			for k, dt in dotList do
-				Kit.tween(dt, 0.18, { BackgroundTransparency = k == i and 0 or 0.6, Size = UDim2.fromScale(k == i and 26 / (#slides * 34) or 12 / (#slides * 34), 12 / 14) })
-			end
+		local DOT, GAP = 14, 26
+		local dotsW = #slides * GAP + 22
+		local dots = new("Frame", { Name = "Dots", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(377, 690), Size = UDim2.fromOffset(dotsW, 28),
+			BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, Parent = pg }, { Kit.corner(14) })
+		local dl, cur, paused = {}, 1, false
+		local function show(i)
+			if i == cur then return end
+			cur = i
+			for k, sl in slides do sl.Visible = k == i end
+			for k, dt in dl do Kit.tween(dt, 0.15, { BackgroundTransparency = k == i and 0 or 0.65 }) end
 		end
 		for k = 1, #slides do
-			local dt = new("TextButton", { Name = "Dot" .. k, Text = "", AutoButtonColor = false, BackgroundColor3 = C.white, BackgroundTransparency = k == 1 and 0 or 0.6,
-				AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset((k - 1) * 34, 7), Size = UDim2.fromOffset(k == 1 and 26 or 12, 12), ZIndex = 21, Parent = dots },
-				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			local dt = new("TextButton", { Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(11 + (k - 0.5) * GAP, 14), Size = UDim2.fromOffset(DOT, DOT),
+				BackgroundColor3 = C.white, BackgroundTransparency = k == 1 and 0 or 0.65, Parent = dots }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			Kit.bindButton(dt, { hover = 1.35 })
 			dt.Activated:Connect(function() show(k) end)
-			table.insert(dotList, dt)
+			table.insert(dl, dt)
 		end
-		for _, sl in slides do
-			sl.MouseEnter:Connect(function() paused = true end)
-			sl.MouseLeave:Connect(function() paused = false end)
-		end
+		so.MouseEnter:Connect(function() paused = true end)
+		so.MouseLeave:Connect(function() paused = false end)
 		task.spawn(function()
-			while carousel.Parent do
+			while so.Parent do
 				task.wait(6)
-				if not carousel.Parent then break end
-				if not paused and isOpen then show(current % #slides + 1) end
+				if so.Parent and isOpen and not paused then show(cur % #slides + 1) end
 			end
 		end)
 	end
-	do -- scissors call-out
-		local w, h = PAGE_W - 16 - 820 - 18, 320
-		local card = new("TextButton", { Name = "GetScissors", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(4 + 820 + 18, y), Size = UDim2.fromOffset(w, h),
-			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
-			{ Kit.corner(2), Kit.stroke(C.olive, 2, 0.3), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
-		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 6), Size = UDim2.fromOffset(w - 40, 170), Parent = card })
-		ViewIcons.Icon(art, "Scissors", { hoverTarget = card, zoom = 1.15 })
-		outlined(Kit.label({ Text = "Scissors", FontFace = F.display, TextSize = 44, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 172), Size = UDim2.fromOffset(w, 50), Parent = card }), 2)
-		Kit.label({ Text = "Cut the tape on new gear in the Kit room", FontFace = F.medium, TextSize = 20, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
-			Position = UDim2.fromOffset(10, 220), Size = UDim2.fromOffset(w - 20, 26), Parent = card })
-		local b = Kit.button("key", UDim2.fromOffset(w - 60, 52), "Get scissors")
-		b.Position = UDim2.fromOffset(30, h - 66)
-		b.Parent = card
-		b.Activated:Connect(function() Screen.SetTab("Scissors") end)
-		hover(card)
-	Tac.hoverBrackets(card, Tac.brackets(card, Tac.C.line, 20, 3))
-		card.Activated:Connect(function() Screen.SetTab("Scissors") end)
+
+	-- bottom right: gear tiles in their rarity colour, floating over steel prices (2 x 3)
+	local rest = {}
+	for i = 4, #gear do table.insert(rest, gear[i]) end
+	if #rest < 6 then for _, id in sortedGear() do if #rest >= 6 then break end; if not table.find(rest, id) and not table.find(gear, id, 1) then table.insert(rest, id) end end end
+	for i = 1, math.min(6, #rest) do
+		local id = rest[i]
+		local item = Config.Items[id]
+		local rar = Config.Rarities[item.Rarity] or Config.Rarities.Standard
+		local c, r = (i - 1) % 3, (i - 1) // 3
+		local hold = float(780 + c * 166, 352 + r * 168, 150, 160, function() ctx.openKit(id) end)
+		local tile = new("Frame", { BackgroundColor3 = C.white, Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(114, 114), Parent = hold },
+			{ Kit.corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(rar.Color:Lerp(Color3.new(0, 0, 0), 0.75), rar.Color:Lerp(Color3.new(0, 0, 0), 0.25)) }),
+				Kit.stroke(rar.Color, 2, 0.1) })
+		itemArt(tile, id, hold)
+		if ctx.owns(id) then priceTag(hold, "owned", 0, 75, 112, 110, 42)
+		else priceTag(hold, "kit", item.Price, 75, 112, 136, 42, function() ctx.openKit(id) end, "kit:" .. id) end
 	end
-	y += 320 + 30
-	local ids = sortedGear()
-	local top, more = {}, {}
-	for i, id in ids do if i <= 4 then table.insert(top, id) elseif i <= 8 then table.insert(more, id) end end
-	section(pg, "Top gear", y)
-	y = gearGrid(pg, hover, top, y + 60, 4) + 12
-	if #more > 0 then
-		section(pg, "More gear", y)
-		y = gearGrid(pg, hover, more, y + 60, 4)
-	end
-	new("Frame", { Name = "End", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, y), Size = UDim2.fromOffset(10, 40), Parent = pg })
+	new("Frame", { Name = "End", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 722), Size = UDim2.fromOffset(10, 30), Parent = pg })
 end
 
 function RENDER.Bundles()
@@ -547,7 +533,7 @@ local function build()
 	-- tab row: dark tabs, the selected one light; a 3D icon pops out over each tab (RIVALS)
 	for i, t in TABS do
 		local b = new("TextButton", { Name = t[1], Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(PAGE_X + (i - 1) * 176, 170), Size = UDim2.fromOffset(164, 56),
-			BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, Parent = root }, { Kit.corner(2) })
+			BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, Parent = root }, { Kit.corner(8) })
 		local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(82, 30), Size = UDim2.fromOffset(78, 64), ZIndex = 2, Parent = b })
 		if t[2] == "Weapon" then
 			local vp = ViewIcons.Viewport(hold, ViewIcons.Weapon("AutoRifle"), { view = ViewIcons.GunView, zoom = 0.95 })
@@ -571,10 +557,10 @@ local function build()
 	local wallet = new("Frame", { Name = "Wallet", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(960, 52), Size = UDim2.fromOffset(330, 70), Parent = root })
 	local wIcon = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, -6), Size = UDim2.fromOffset(84, 84), ZIndex = 3, Parent = wallet })
 	ViewIcons.Icon(wIcon, "Scissors", { zoom = 1.1 })
-	local pill = new("Frame", { Position = UDim2.fromOffset(70, 14), Size = UDim2.fromOffset(190, 46), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Parent = wallet }, { Kit.corner(2) })
+	local pill = new("Frame", { Position = UDim2.fromOffset(70, 14), Size = UDim2.fromOffset(190, 46), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Parent = wallet }, { Kit.corner(10) })
 	walletText = Kit.label({ Text = "0", FontFace = F.display, TextSize = 36, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(10, 0), Size = UDim2.fromOffset(170, 46), Parent = pill })
 	local plus = new("TextButton", { Name = "AddScissors", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(268, 17), Size = UDim2.fromOffset(40, 40), BackgroundColor3 = C.white, Parent = wallet },
-		{ Kit.corner(2), Kit.vgrad(Theme.gradient.key) })
+		{ Kit.corner(8), Kit.vgrad(Theme.gradient.key) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(22, 7), BackgroundColor3 = C.white, Parent = plus }, { Kit.corner(2) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(7, 22), BackgroundColor3 = C.white, Parent = plus }, { Kit.corner(2) })
 	Kit.bindButton(plus, { hover = 1.12 })

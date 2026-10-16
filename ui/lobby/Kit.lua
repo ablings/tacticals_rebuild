@@ -349,10 +349,11 @@ end
 
 -- Close button (pass 34: gunmetal + olive brackets, warms red on hover) with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
-	local btn = Kit.button("gun", size, nil, { Name = "Close" })
+	local btn = Kit.button("red", size, nil, { Name = "Close" }) -- RIVALS' red X (UI session 2026-10-16)
 	local Tac = require(script.Parent.Tac)
 	Tac.hoverBrackets(btn, Tac.brackets(btn, Tac.C.olive, math.floor(size.Y.Offset * 0.3), 2))
-	btn.MouseEnter:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(255, 150, 140) }) end)
+	local cc = btn:FindFirstChildOfClass("UICorner"); if cc then cc.CornerRadius = UDim.new(0, 8) end
+	btn.MouseEnter:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(255, 205, 200) }) end)
 	btn.MouseLeave:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = C.white }) end)
 	local h = math.floor(size.Y.Offset * 0.58)
 	for _, rot in ipairs({ 45, -45 }) do
