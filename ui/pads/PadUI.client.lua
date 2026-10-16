@@ -215,36 +215,47 @@ local deployCanvas = Kit.canvas(gui)
 deployCanvas.Name = "DeployCanvas"
 deployCanvas.ZIndex = 51
 local deploy = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = deployCanvas, Visible = false, ZIndex = 51 })
-local dTitle, dMode, dTip, dMarks
+local dTitle, dMode, dTip, dMarks, dCount
+-- (UI session 2026-10-16) RIVALS' teleport screen: the TACTICALS wordmark in the middle, the mode under it, a tip in a white
+-- speech bubble bottom left, "Loading" + a counter bottom right. The match place's MatchFlowUI opens on the same look.
 do
-	local frame = new("Frame", { Position = UDim2.fromOffset(560, 330), Size = UDim2.fromOffset(800, 330), BackgroundTransparency = 1, ZIndex = 52, Parent = deploy })
-	brackets(frame, OLIVE, 60, 6, 53)
-	dTitle = label(frame, "DEPLOYING", OSWALD, 110, 0, 40, 800, 130, BONE, Enum.TextXAlignment.Center, 53)
-	dMode = label(frame, "", OSWALD, 34, 0, 170, 800, 44, OLIVE_HI, Enum.TextXAlignment.Center, 53)
+	dTitle = label(deploy, "TACTICALS", OSWALD, 170, 360, 300, 1200, 200, BONE, Enum.TextXAlignment.Center, 53)
+	new("Frame", { Position = UDim2.fromOffset(760, 500), Size = UDim2.fromOffset(400, 8), BackgroundColor3 = OLIVE, BorderSizePixel = 0, ZIndex = 53, Parent = deploy },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 4) }) })
+	dMode = label(deploy, "", OSWALD, 40, 360, 520, 1200, 52, OLIVE_HI, Enum.TextXAlignment.Center, 53)
+	local bubble = new("Frame", { Position = UDim2.fromOffset(120, 950), Size = UDim2.fromOffset(640, 60), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 53, Parent = deploy },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(40, 60), Size = UDim2.fromOffset(20, 20), BackgroundColor3 = Color3.new(1, 1, 1),
+		BorderSizePixel = 0, ZIndex = 53, Parent = bubble })
+	dTip = label(bubble, "", BODY, 24, 0, 0, 640, 60, Color3.fromRGB(20, 20, 24), Enum.TextXAlignment.Center, 54)
+	label(deploy, "Loading", OSWALD, 46, 1440, 920, 380, 56, BONE, Enum.TextXAlignment.Right, 53)
+	dCount = label(deploy, "0", OSWALD, 40, 1440, 976, 380, 50, FIELD, Enum.TextXAlignment.Right, 53)
 	dMarks = {}
-	for i = 1, 5 do
-		local m = new("Frame", { Position = UDim2.fromOffset(310 + (i - 1) * 38, 244), Size = UDim2.fromOffset(24, 24), BackgroundColor3 = BONE, Rotation = 45, ZIndex = 53, Parent = frame })
-		table.insert(dMarks, m)
-	end
-	dTip = label(deploy, "", BODY, 22, 360, 880, 1200, 34, FIELD, Enum.TextXAlignment.Center, 53)
 	Kit.toScale(deploy)
 end
 local deploying = false
 local function showDeploy(on, mode, title)
-	if on and dTitle.Text ~= (title or "DEPLOYING") then dTitle.Text = title or "DEPLOYING" end
+	if on then dMode.Text = (title or "DEPLOYING") .. "  ·  " .. modeName(mode) end -- the wordmark stays (RIVALS)
 	if on == deploying then return end
 	deploying = on
 	deployBg.Visible, deploy.Visible = on, on
 	if on then
-		dMode.Text = modeName(mode) .. "  ·  STAND BY"
 		dTip.Text = TIPS[math.random(#TIPS)]
+		-- the counter climbs while we wait (RIVALS), and the same screen is handed to Roblox so it stays up through the teleport
 		task.spawn(function()
-			local k = 0
+			local t0 = os.clock()
 			while deploying do
-				k += 1
-				for i, m in dMarks do m.BackgroundTransparency = ((i - 1) == (k % #dMarks)) and 0 or 0.7 end
-				task.wait(0.16)
+				dCount.Text = tostring(math.min(99, math.floor((os.clock() - t0) * 14)))
+				task.wait(0.05)
 			end
+		end)
+		pcall(function()
+			local tg = gui:Clone()
+			for _, c in tg:GetChildren() do
+				if c.Name ~= "Deploy" and c.Name ~= "DeployCanvas" then c:Destroy() end
+			end
+			for _, d in tg:GetDescendants() do if d:IsA("LuaSourceContainer") then d:Destroy() end end
+			game:GetService("TeleportService"):SetTeleportGui(tg)
 		end)
 	end
 end
