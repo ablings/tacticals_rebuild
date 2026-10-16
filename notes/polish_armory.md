@@ -101,3 +101,24 @@ gun-wall front (-2,-104.5) -> east niches (27,-95), (27,-84) -> dais side (-4,-9
 opened the Kit panel (ArmoryUI.Armory), E at the gun wall opened it too**; NPC_Supply prompt enabled (OpenPanel=Shop, unchanged);
 FeaturedScissors turned 25 deg in 1 s with the rifle on the axis. Console: baseline only. UNDO round trip: restored 452
 instances (colours, scissors, racks, tag, lights), 0 attributes left; re-applied twice, identical (455 parts).
+
+## Round 3 (2026-10-16 night): three small fixes from review_armory2
+**Re-run order: `fix/polish_armory.lua` -> `fix/polish_armory2.lua` -> `fix/polish_armory3.lua`** (armory2 rebuilds the slots, so
+armory3 must follow it). UNDO: `python tools/run_luau.py fix/polish_armory3.lua UNDO` (restores the 9 gun-wall anchors and Gap, refits,
+removes `Polish.Armory.Round3`). Sheet: `out/polish/armory/sheet3.jpg` (before / after: gun wall, dais, entry).
+1. **Featured rifle lost on its dais:** the crate stack behind it is part of the room-wide merged `A_Props__crate_green` mesh, so it
+   can't move alone. A dark freestanding backdrop (`Round3.FeaturedBackdrop`: 6 x 5.8 warm near-black Plastic panel, dark-olive Neon
+   edges, plinth with a FEATURED · WPN 01 stencil) stands on the dais' far side (235 deg, r 9.4, at (-15.4,-103.7)), outside the rope
+   posts (r 6.4) and the floor ring lines (end r 8.6). Panel and plinth collide (2 parts). The spinning rifle now reads against it from
+   the entrance and the dais approach.
+2. **Gun-wall rifles seated:** each `WeaponSlot_GunWall_n` Anchor moved down by the placeholder's magazine drop (0.46: lowest body point
+   = butt pad, above the magazine foot) and `Gap` 0.1 -> 0.04; originals in `PolishArmory3_OrigY` / `PolishArmory3_OrigGap`. The stock
+   rests at rail-top height against the rail face, the magazine hangs in front of the rail, two pegs per slot (`Round3.GunWallPegs`,
+   fitted by ray to the body underside) carry the handguard and stock. `ArmoryWeaponSlots.Apply()` still works unchanged (tested: 20/20,
+   0 failures, GunWall_5 moved 0.000 after a re-Apply).
+3. **"Bolt heads":** the old baked guns left 8 support pins in `A_GunWall__trim_metal` (merged with the rails, 0.8 proud, tips z -110.98
+   at x -13.6/-9.2/-4.7/-0.3, y 4.2/7.7/11.2). Each tip has a 0.22 x 0.34 cap in the wall-plate material and colour (darkened 20%).
+   The two round dots at (-6.7,8.0) / (-5.7,8.0) are rivets of our own `TacConcretePanels` texture, not old hardware: left as they are.
+Checks: check_polish_armory 0 clips (188 probes; one first-run clip, the plinth on the floor ring lines at r 7.6, fixed by moving out),
+20 slots ok, 0 lights; Play walk to the backdrop front (-14,-98) and the gun-wall front behind it (-11.6,-106.2); Spin 25.1 deg/s.
+The lime band was left alone (lobby-wide decision for the final lap).

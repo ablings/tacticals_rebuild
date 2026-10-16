@@ -31,7 +31,7 @@ Tested: Featured -> Display_Sniper and GunWall_5 -> Display_Pistol applied and f
 | Area | Slots | Where | Fit |
 |---|---|---|---|
 | Featured | `WeaponSlot_Featured_1` | **inside `Rooms.Armory.FeaturedScissors`** (the hook: name, pivot (-10,3.4,-96) and `Spin = 25` unchanged; the scissors meshes are hidden inside it) | Centre on the dais axis at y 3.45, MaxLength 5.9; RoomFX spins and bobs the whole model |
-| GunWall | `WeaponSlot_GunWall_1..9` | 3 rows on the gun wall's rails (rail tops 9.72 / 6.22 / 2.72, front z -111.21) x columns x -11.75 / -6.25 / -0.75; 1-3 top row left to right | Bottom on the rail, MaxLength 4.7, gap 0.1 |
+| GunWall | `WeaponSlot_GunWall_1..9` | 3 rows on the gun wall's rails (rail tops 9.72 / 6.22 / 2.72, front z -111.21) x columns x -11.75 / -6.25 / -0.75; 1-3 top row left to right | Bottom, MaxLength 4.7. **Since polish_armory3:** the anchor is the magazine-foot line 0.46 below the rail top and gap 0.04, so the placeholder's stock sits at rail height with the mag hanging in front of the rail; two static pegs (`Polish.Armory.Round3.GunWallPegs`) carry it. A weapon with a different mag drop still fits; re-run polish_armory3 to refit the pegs. |
 | RackW / RackE | `WeaponSlot_RackW_1..4`, `WeaponSlot_RackE_1..4` | eye-level pegboard niches in the two former rack bays per side wall (z -80..-88.2 and -91..-100); odd = lower row (rest y 2.0), even = upper row (rest y 4.3) | Bottom on the rest line, MaxLength 6.4 (rifle at 1.45x), gap 0.06 |
 | Bench | `WeaponSlot_Bench_1..2` | standing on its magazine along each bench top (y 3.04) at (12.25,-83.55) and (20.25,-88.05), facing the entrance | Bottom, MaxLength 4.4 |
 

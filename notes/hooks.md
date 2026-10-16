@@ -96,3 +96,9 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   cream/olive replace RED/BLUE in 3 team uses; original in `ServerStorage._RebuildRemoved.PolishDuels_PadBoards_Orig`). `Rooms3.D_Lines__neon_cream/olive`
   hidden; `FX.SparkBridgeA/B/SparkGantry` lights disabled; `Lights.TargetTop` retuned; Duels `Holo.Display` CountA/CountB colours. Nothing under
   `LobbyMap.Duels` moved or renamed; new parts in `Polish.Duels` collide with nothing. UNDO via `fix/polish_duels.lua UNDO`.
+- 2026-10-16 polish_armory3 (notes/polish_armory.md round 3): the 9 `WeaponSlot_GunWall_n` Anchors moved down 0.46 and `Gap` 0.1 -> 0.04
+  (originals `PolishArmory3_OrigY/OrigGap`); new `Polish.Armory.Round3` (featured backdrop: 2 collidable parts at (-15.4,-103.7), pegs, pin caps).
+  Hooks untouched (FeaturedScissors, prompts). UNDO via `fix/polish_armory3.lua UNDO`.
+- 2026-10-16 polish_exfil (notes/polish_exfil.md): Rooms3 `E_*__band_olive` / `E_*__neon_olive` recoloured amber and `Exfil.L_Hangar` light
+  colour daylight (`PolishExfil_Orig`); new `Polish.Exfil` (8 collidable parts: cargo dolly at (133.2,-23.1), drum truck at (132.6,22.3)).
+  ExfilBarrier / HatchPoint / CabinPoint / L_Pad / Heli / X_Clip untouched; ExfilFX camera path and lift sweep clear. UNDO via `fix/polish_exfil.lua UNDO`.
