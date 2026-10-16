@@ -291,10 +291,13 @@ function RENDER.Featured()
 	local featured
 	for _, p in Config.RobuxProducts do if p.Bundle then featured = p end end
 	local y = 6
+	-- (UI session 2026-10-16) RIVALS' home: the big featured slot is a carousel with clickable dots bottom left
+	local carousel = new("Frame", { Name = "Carousel", BackgroundTransparency = 1, Position = UDim2.fromOffset(4, y), Size = UDim2.fromOffset(820, 320), Parent = pg })
+	local slides = {}
 	if featured then
 		local w, h = 820, 320
-		local card = new("TextButton", { Name = "Featured", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(4, y), Size = UDim2.fromOffset(w, h),
-			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
+		local card = new("TextButton", { Name = "Featured", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(w, h),
+			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = carousel },
 			{ Kit.corner(2), Kit.stroke(C.amber, 2, 0.25), new("UIGradient", { Rotation = 0, Color = ColorSequence.new({
 				ColorSequenceKeypoint.new(0, C.olive:Lerp(C.panel, 0.3)), ColorSequenceKeypoint.new(0.6, C.panel), ColorSequenceKeypoint.new(1, C.amber:Lerp(C.panel, 0.6)) }) }) })
 		outlined(Kit.label({ Text = featured.Name, FontFace = F.display, TextSize = 52, Position = UDim2.fromOffset(24, 14), Size = UDim2.fromOffset(w - 48, 62), Parent = card }), 2.5)
@@ -321,6 +324,99 @@ function RENDER.Featured()
 		else priceTag(card, "robux", featured.Robux, w - 130, 22, 220, 58, function() ctx.ask("BuyRobux", featured.Key) end) end
 		hover(card)
 	Tac.hoverBrackets(card, Tac.brackets(card, Tac.C.line, 20, 3))
+		table.insert(slides, card)
+	end
+	-- slide: the best gear you don't own yet, big
+	do
+		local spot
+		for _, id in sortedGear() do if not ctx.owns(id) then spot = id break end end
+		if spot then
+			local item = Config.Items[spot]
+			local rar = Config.Rarities[item.Rarity] or Config.Rarities.Standard
+			local w, h = 820, 320
+			local card = new("TextButton", { Name = "Spotlight", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(w, h), BackgroundColor3 = C.white,
+				ClipsDescendants = true, Visible = false, Parent = carousel },
+				{ Kit.corner(2), new("UIGradient", { Rotation = 0, Color = ColorSequence.new({
+					ColorSequenceKeypoint.new(0, C.panel), ColorSequenceKeypoint.new(0.55, C.panel), ColorSequenceKeypoint.new(1, rar.Color:Lerp(C.panel, 0.55)) }) }) })
+			new("Frame", { BackgroundColor3 = rar.Color, BackgroundTransparency = 0.8, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromOffset(w * 0.68, h / 2), Size = UDim2.fromOffset(w * 0.22, h * 2), Rotation = 22, Parent = card })
+			Kit.label({ Text = "FEATURED GEAR", FontFace = F.display, TextSize = 22, TextColor3 = rar.Color, Position = UDim2.fromOffset(24, 18), Size = UDim2.fromOffset(400, 28), Parent = card })
+			outlined(Kit.label({ Text = item.Name, FontFace = F.display, TextSize = 56, Position = UDim2.fromOffset(24, 44), Size = UDim2.fromOffset(420, 66), Parent = card }), 2.5)
+			Kit.label({ Text = string.upper(item.Rarity .. " " .. (Config.SlotNames[item.Slot] or item.Slot)), FontFace = F.bold, TextSize = 20, TextColor3 = rar.Color,
+				Position = UDim2.fromOffset(26, 112), Size = UDim2.fromOffset(400, 24), Parent = card })
+			Kit.label({ Text = item.Desc or "", FontFace = F.medium, TextSize = 20, TextColor3 = C.textDim, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
+				Position = UDim2.fromOffset(26, 144), Size = UDim2.fromOffset(380, 80), Parent = card })
+			local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(400, 10), Size = UDim2.fromOffset(410, 250), Parent = card })
+			itemArt(art, spot, card)
+			priceTag(card, "kit", item.Price, 150, h - 64, 250, 56, function() ctx.openKit(spot) end, "kit:" .. spot)
+			hover(card)
+			Tac.hoverBrackets(card, Tac.brackets(card, rar.Color, 20, 3))
+			card.Activated:Connect(function() ctx.openKit(spot) end)
+			table.insert(slides, card)
+		end
+	end
+	-- slides: the passes you don't have
+	do
+		local d = data()
+		for _, gp in Config.GamePasses do
+			if not (d.Passes and d.Passes[gp.Key]) then
+				local w, h = 820, 320
+				local card = new("TextButton", { Name = "Pass_" .. gp.Key, Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(w, h), BackgroundColor3 = C.white,
+					ClipsDescendants = true, Visible = false, Parent = carousel },
+					{ Kit.corner(2), new("UIGradient", { Rotation = 0, Color = ColorSequence.new({
+						ColorSequenceKeypoint.new(0, C.amber:Lerp(C.panel, 0.55)), ColorSequenceKeypoint.new(0.5, C.panel), ColorSequenceKeypoint.new(1, C.panel) }) }) })
+				local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 20), Size = UDim2.fromOffset(300, 280), Parent = card })
+				ViewIcons.Icon(art, "Medal", { hoverTarget = card, zoom = 1.1 })
+				Kit.label({ Text = "GAME PASS", FontFace = F.display, TextSize = 22, TextColor3 = C.amber, Position = UDim2.fromOffset(330, 26), Size = UDim2.fromOffset(300, 28), Parent = card })
+				outlined(Kit.label({ Text = gp.Name, FontFace = F.display, TextSize = 60, Position = UDim2.fromOffset(330, 52), Size = UDim2.fromOffset(470, 70), Parent = card }), 2.5)
+				Kit.label({ Text = gp.Desc or "", FontFace = F.medium, TextSize = 22, TextColor3 = C.textDim, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
+					Position = UDim2.fromOffset(332, 130), Size = UDim2.fromOffset(460, 90), Parent = card })
+				priceTag(card, "robux", gp.Robux, 450, h - 64, 240, 56, function() ctx.ask("BuyPass", gp.Key) end)
+				hover(card)
+				Tac.hoverBrackets(card, Tac.brackets(card, C.amber, 20, 3))
+				table.insert(slides, card)
+			end
+		end
+	end
+	-- dots (bottom left, clickable) + auto-advance every 6 s (paused while the pointer is on the carousel)
+	if #slides > 1 then
+		local dots = new("Frame", { Name = "Dots", BackgroundTransparency = 1, Position = UDim2.fromOffset(24, 320 - 26), Size = UDim2.fromOffset(#slides * 34, 14), ZIndex = 20, Parent = carousel })
+		local dotList, current, paused = {}, 1, false
+		local bases = {}
+		local function show(i, instant)
+			if i == current and not instant then return end
+			current = i
+			for k, sl in slides do
+				sl.Visible = k == i
+				if k == i and not instant then
+					bases[k] = bases[k] or sl.Position
+					local b = bases[k]
+					sl.Position = b + UDim2.fromScale(0.04, 0)
+					Kit.tween(sl, 0.28, { Position = b }, Enum.EasingStyle.Quint)
+				end
+			end
+			for k, dt in dotList do
+				Kit.tween(dt, 0.18, { BackgroundTransparency = k == i and 0 or 0.6, Size = UDim2.fromScale(k == i and 26 / (#slides * 34) or 12 / (#slides * 34), 12 / 14) })
+			end
+		end
+		for k = 1, #slides do
+			local dt = new("TextButton", { Name = "Dot" .. k, Text = "", AutoButtonColor = false, BackgroundColor3 = C.white, BackgroundTransparency = k == 1 and 0 or 0.6,
+				AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset((k - 1) * 34, 7), Size = UDim2.fromOffset(k == 1 and 26 or 12, 12), ZIndex = 21, Parent = dots },
+				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			dt.Activated:Connect(function() show(k) end)
+			table.insert(dotList, dt)
+		end
+		for _, sl in slides do
+			sl.MouseEnter:Connect(function() paused = true end)
+			sl.MouseLeave:Connect(function() paused = false end)
+		end
+		task.spawn(function()
+			while carousel.Parent do
+				task.wait(6)
+				if not carousel.Parent then break end
+				if not paused and isOpen then show(current % #slides + 1) end
+			end
+		end)
 	end
 	do -- scissors call-out
 		local w, h = PAGE_W - 16 - 820 - 18, 320

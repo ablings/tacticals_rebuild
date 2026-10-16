@@ -207,18 +207,24 @@ function LobbyHud.Start()
 	plus.Activated:Connect(function() if LobbyUI and LobbyUI.OpenShop then LobbyUI.Close(); LobbyUI.OpenShop("Scissors") end end)
 
 	---------------------------------------------------------------------------------------------- missions widget
-	local missions = new("TextButton", { Name = "Missions", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(16, 360), Size = UDim2.fromOffset(372, 260),
-		BackgroundColor3 = DEEP, BackgroundTransparency = 0.25, Parent = root })
-	brackets(missions, LINE, 14, 2)
-	new("Frame", { Position = UDim2.fromOffset(0, 12), Size = UDim2.fromOffset(5, 34), BackgroundColor3 = OLIVE, BorderSizePixel = 0, ZIndex = 3, Parent = missions })
-	label(missions, "DAILY MISSIONS", OSWALD, 28, 18, 8, 240, 40, BONE, nil, 3)
-	local reset = label(missions, "", OSWALD, 15, 200, 18, 160, 24, FIELD, Enum.TextXAlignment.Right, 3)
-	local rows = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 54), Size = UDim2.fromOffset(372, 200), ZIndex = 3, Parent = missions })
+	-- RIVALS' Daily Tasks widget (ported from the replica): dark glass, a 3D clipboard + bold title, then per mission a 3D icon,
+	-- the name, the count, a bright bar and the reward (3D scissors xN) or a green check when it's done
+	local WFONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	local missions = new("TextButton", { Name = "Missions", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(10, 405), Size = UDim2.fromOffset(372, 255),
+		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	local clipHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(6, 4), Size = UDim2.fromOffset(48, 48), ZIndex = 3, Parent = missions })
+	local mt = Kit.label({ Text = "Daily Missions", FontFace = WFONT, TextSize = 34, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(58, 8), Size = UDim2.fromOffset(290, 42), ZIndex = 3, Parent = missions })
+	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = mt })
+	local reset = Kit.label({ Text = "", FontFace = WFONT, TextSize = 1, TextTransparency = 1, Size = UDim2.fromOffset(1, 1), Parent = missions }) -- (timer lives in Missions)
+	local rows = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 58), Size = UDim2.fromOffset(372, 196), ZIndex = 3, Parent = missions })
 	missions.Activated:Connect(function() if LobbyUI then LobbyUI.Open("Missions") end end)
-	local toPads = new("TextButton", { Name = "ToPads", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(92, 634), Size = UDim2.fromOffset(220, 52), BackgroundColor3 = OLIVE, Parent = root },
-		{ new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A8BC62"), hex("#5B6E2C")) }) })
-	brackets(toPads, BONE, 10, 2, 4)
-	label(toPads, "TO PADS  >", OSWALD, 28, 0, 0, 220, 52, BONE, Enum.TextXAlignment.Center, 3)
+	Kit.bindButton(missions, { hover = 1.02, press = 0.99 })
+	-- To Pads: RIVALS' chunky "To Duels" button in our lobby colours
+	local toPads = new("TextButton", { Name = "ToPads", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(95, 686), Size = UDim2.fromOffset(204, 50), BackgroundColor3 = Color3.new(1, 1, 1), Parent = root },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#B9CC70"), hex("#5B6E2C")) }),
+			new("UIStroke", { Color = hex("#D6E6A0"), Thickness = 1.5, Transparency = 0.15, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	local tp = Kit.label({ Text = "»  To Pads  «", FontFace = WFONT, TextSize = 30, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(204, 50), ZIndex = 3, Parent = toPads })
+	new("UIStroke", { Color = hex("#3E4B1C"), Thickness = 2, Transparency = 0.1, Parent = tp })
 	Kit.bindButton(toPads, { hover = 1.06 })
 	function LobbyHud.ToPads()
 		-- straight to the duel hall, in front of the first pad (not on it)
@@ -278,7 +284,108 @@ function LobbyHud.Start()
 	local lbList = new("ScrollingFrame", { Name = "Rows", Position = UDim2.fromOffset(0, 34), Size = UDim2.fromOffset(LB_W, LB_H - 34), BackgroundTransparency = 1, BorderSizePixel = 0,
 		ScrollBarThickness = 5, ScrollBarImageColor3 = hex("#8E8D94"), ScrollBarImageTransparency = 0.3, CanvasSize = UDim2.new(), Parent = lb })
 
+
+	---------------------------------------------------------------------------------------------- bottom nav (RIVALS' HUD bar)
+	-- ported from the RIVALS replica (rivals_practice/ui/hud): a dark bar behind bold outlined labels, each item a big 3D icon
+	-- on a dark disc, a red count badge, and on hover the item grows and lifts and a white speech bubble bobs above it.
+	-- Replaces LobbyUI's old dock (its contents are hidden; the Dock frame stays as the "lobby is showing" signal).
+	local Icons = require(script.Parent:WaitForChild("LobbyUIController"):WaitForChild("Icons"))
+	local BAR = Color3.fromRGB(20, 18, 24)
+	local NAV_FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	local NAV = {
+		{ Id = "Kit", Label = "Kit", Tip = "Your gun, gadget, melee & cosmetics", Build = function()
+			local w = data and data.Loadout and data.Loadout.Weapon
+			return Icons.Weapon(w or "Pistol") end, View = Icons.GunView, Zoom = 0.95 },
+		{ Id = "Missions", Label = "Missions", Tip = "Complete missions to earn scissors", Build = Icons.Clipboard, View = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), Zoom = 1.05 },
+		{ Id = "Shop", Label = "Shop", Tip = "Unlock gear, bundles & scissors", Build = Icons.Crate, View = CFrame.Angles(math.rad(16), math.rad(28), 0), Zoom = 1.1 },
+		{ Id = "Codes", Label = "Codes", Tip = "Redeem codes for free rewards", Build = Icons.DogTags, View = CFrame.Angles(math.rad(6), math.rad(-15), 0), Zoom = 1.05 },
+		{ Id = "Settings", Label = "Settings", Tip = "Controls, graphics & hotkeys", Build = Icons.Gear, View = CFrame.Angles(math.rad(10), math.rad(25), 0), Zoom = 1.1 },
+	}
+	local STEP = 128
+	local navW = #NAV * STEP + 36
+	local navShade = new("Frame", { Name = "NavShade", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(960, 1006), Size = UDim2.fromOffset(navW, 54),
+		BackgroundColor3 = BAR, BackgroundTransparency = 0.25, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
+	local navButtons, navBadges, navIcons = {}, {}, {}
+	for i, it in NAV do
+		local cx = 960 + (i - (#NAV + 1) / 2) * STEP
+		local b = new("TextButton", { Name = "Nav" .. it.Id, Text = "", AutoButtonColor = false, BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1),
+			Position = UDim2.fromOffset(cx, 1062), Size = UDim2.fromOffset(124, 116), Parent = root })
+		new("Frame", { Name = "Disc", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(62, 46), Size = UDim2.fromOffset(92, 92), BackgroundColor3 = Color3.new(1, 1, 1), Parent = b },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.new(0, 0, 0)),
+				Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(0.6, 0.3), NumberSequenceKeypoint.new(1, 0.15) }) }) })
+		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(62, 42), Size = UDim2.fromOffset(100, 100), ZIndex = 2, Parent = b })
+		navIcons[it.Id] = { holder = holder, it = it }
+		local lbl = Kit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 28, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center,
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(62, 116), Size = UDim2.fromOffset(150, 32), ZIndex = 3, Parent = b })
+		new("UIStroke", { Thickness = 2.5, Transparency = 0.1, Parent = lbl })
+		local badge = new("Frame", { Name = "Badge", Visible = false, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(98, 12), Size = UDim2.fromOffset(30, 30),
+			BackgroundColor3 = Color3.fromRGB(235, 50, 50), ZIndex = 4, Parent = b }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 1.5, Transparency = 0.2 }) })
+		local bl = Kit.label({ Text = "", FontFace = NAV_FONT, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = badge })
+		navBadges[it.Id] = { f = badge, l = bl }
+		-- speech bubble (white, pointer down), shown on hover
+		local tip = new("Frame", { Name = "Bubble", Visible = false, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(62, -14), Size = UDim2.fromOffset(#it.Tip * 11 + 30, 40),
+			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 10, Parent = b }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+		new("Frame", { Name = "Pointer", AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromScale(0.5, 1), Size = UDim2.fromOffset(16, 16),
+			BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 9, Parent = tip })
+		Kit.label({ Text = it.Tip, FontFace = NAV_FONT, TextSize = 21, TextColor3 = Color3.fromRGB(24, 24, 28), TextXAlignment = Enum.TextXAlignment.Center,
+			Size = UDim2.fromScale(1, 1), ZIndex = 11, Parent = tip })
+		local sc = new("UIScale", { Parent = b })
+		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id })
+		b.Activated:Connect(function() if LobbyUI then LobbyUI.Open(it.Id) end end)
+	end
+
 	Kit.toScale(root)
+
+	-- nav: 3D icons (after the conversion, so the viewports fill their holders), hover grow + lift + bobbing bubble
+	for id, n in navIcons do
+		n.vp = Icons.Viewport(n.holder, n.it.Build(), { view = n.it.View, zoom = n.it.Zoom * 1.12 })
+	end
+	Icons.Viewport(clipHolder, Icons.Clipboard(), { view = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), zoom = 1.1 })
+	for _, n in navButtons do
+		local base = n.b.Position
+		local lift = UDim2.fromScale(base.X.Scale, base.Y.Scale - 14 / 1080)
+		local tipBase = n.tip.Position
+		local hovered, gen = false, 0
+		local function bob(myGen)
+			task.wait(2)
+			local up = UDim2.new(tipBase.X.Scale, 0, tipBase.Y.Scale - 18 / 116, 0)
+			while hovered and gen == myGen do
+				Kit.tween(n.tip, 0.4, { Position = up }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+				task.wait(0.4)
+				if not hovered or gen ~= myGen then return end
+				Kit.tween(n.tip, 0.6, { Position = tipBase }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+				task.wait(0.6)
+			end
+		end
+		n.b.MouseEnter:Connect(function()
+			n.tip.Visible = true; n.tip.Position = tipBase
+			hovered = true; gen += 1
+			task.spawn(bob, gen)
+			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(true) end
+			Kit.tween(n.s, 0.15, { Scale = 1.12 }, Enum.EasingStyle.Back)
+			Kit.tween(n.b, 0.15, { Position = lift }, Enum.EasingStyle.Back)
+		end)
+		n.b.MouseLeave:Connect(function()
+			hovered = false; gen += 1
+			n.tip.Visible = false; n.tip.Position = tipBase
+			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(false) end
+			Kit.tween(n.s, 0.15, { Scale = 1 })
+			Kit.tween(n.b, 0.15, { Position = base })
+		end)
+		n.b.MouseButton1Down:Connect(function() Kit.tween(n.s, 0.06, { Scale = 1.02 }) end)
+		n.b.MouseButton1Up:Connect(function() Kit.tween(n.s, 0.12, { Scale = 1.12 }, Enum.EasingStyle.Back) end)
+	end
+	-- hide the old dock's contents (the Dock frame keeps its Visible state for the Kit room / PlayRow)
+	task.spawn(function()
+		local lobby = player.PlayerGui:WaitForChild("LobbyUI", 30)
+		local dock = lobby and lobby:FindFirstChild("Dock", true)
+		if dock then
+			for _, c in dock:GetChildren() do if c:IsA("GuiObject") then c.Visible = false end end
+			dock.ChildAdded:Connect(function(c) if c:IsA("GuiObject") then c.Visible = false end end)
+		end
+		local shade = lobby and lobby:FindFirstChild("DockShade", true)
+		if shade then shade.Visible = false end
+	end)
 
 	-- the 3D scissors in the pill (the same view icon as the shop's balance pill)
 	local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
@@ -290,8 +397,25 @@ function LobbyHud.Start()
 		for _, q in Config.Quests[scope].Pool do if q.Id == id then return q end end
 	end
 	local lastRows
+	local shownKitWeapon
 	local function refresh()
 		if not data then return end
+		-- nav: Missions badge = missions ready to claim; the Kit icon follows your gun
+		local ready = 0
+		for _, scope in { "Daily", "Weekly" } do
+			local q = data.Quests and data.Quests[scope]
+			for _, e in (q and q.List) or {} do
+				local def = questDef(scope, e.Id)
+				if def and not e.Claimed and ((data.Stats and data.Stats[def.Stat]) or 0) - (e.Base or 0) >= def.Goal then ready += 1 end
+			end
+		end
+		local mb = navBadges and navBadges.Missions
+		if mb then mb.f.Visible = ready > 0; mb.l.Text = tostring(ready) end
+		local w = data.Loadout and data.Loadout.Weapon
+		if w and w ~= shownKitWeapon and navIcons and navIcons.Kit and navIcons.Kit.vp then
+			shownKitWeapon = w
+			navIcons.Kit.vp.SetModel(Icons.Weapon(w), Icons.GunView)
+		end
 		count.Text = commas(data.Credits or 0)
 		local q = data.Quests and data.Quests.Daily
 		local key = ""
@@ -307,23 +431,61 @@ function LobbyHud.Start()
 		if key == lastRows then return end
 		lastRows = key
 		for _, c in rows:GetChildren() do c:Destroy() end
-		local holder = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(372, 200), ZIndex = 3, Parent = rows })
+		local holder = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(372, 196), ZIndex = 3, Parent = rows })
+		local art = {}
 		for i, e in entries do
 			local y = (i - 1) * 64
 			local done = e.prog >= e.def.Goal
-			label(holder, e.def.Text, BOLD, 17, 18, y, 250, 24, e.claimed and FIELD or BONE, nil, 4).TextTruncate = Enum.TextTruncate.AtEnd
-			label(holder, e.claimed and "DONE" or (e.prog .. " / " .. e.def.Goal), OSWALD, 18, 250, y, 70, 24, done and OLIVE_HI or FIELD, Enum.TextXAlignment.Right, 4)
-			local track = new("Frame", { Position = UDim2.fromOffset(18, y + 30), Size = UDim2.fromOffset(302, 8), BackgroundColor3 = hex("#2A2E26"), BorderSizePixel = 0, ZIndex = 4, Parent = holder })
-			new("Frame", { Size = UDim2.fromScale(e.prog / e.def.Goal, 1), BackgroundColor3 = done and OLIVE_HI or BONE, BorderSizePixel = 0, ZIndex = 5, Parent = track })
-			label(holder, "+" .. e.def.Reward, OSWALD, 16, 324, y + 18, 44, 24, BONE, Enum.TextXAlignment.Center, 4)
-			if done and not e.claimed then
-				-- ready to claim: a red flag at the row start (claimed in Missions)
-				new("Frame", { Position = UDim2.fromOffset(6, y + 4), Size = UDim2.fromOffset(5, 34), BackgroundColor3 = RED, BorderSizePixel = 0, ZIndex = 5, Parent = holder })
+			local ic = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4, y + 2), Size = UDim2.fromOffset(42, 42), ZIndex = 4, Parent = holder })
+			table.insert(art, { ic, e.def.Stat })
+			local t = Kit.label({ Text = e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = (e.claimed or done) and hex("#D9D6DA") or Color3.new(1, 1, 1),
+				Position = UDim2.fromOffset(50, y), Size = UDim2.fromOffset(210, 30), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = holder })
+			new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = t })
+			local back = new("Frame", { Position = UDim2.fromOffset(50, y + 34), Size = UDim2.fromOffset(262, 7), BackgroundColor3 = Color3.new(0, 0, 0),
+				BackgroundTransparency = 0.45, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			new("Frame", { Size = UDim2.fromScale(math.clamp(e.prog / e.def.Goal, 0, 1), 1), BackgroundColor3 = done and hex("#5BE04A") or hex("#ECE8DA"), ZIndex = 5, Parent = back },
+				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			if done or e.claimed then
+				-- done: a big green check instead of the count and reward (RIVALS)
+				local ck = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(318, y + 2), Size = UDim2.fromOffset(44, 44), ZIndex = 4, Parent = holder })
+				table.insert(art, { ck, "_Check" })
+			else
+				local cnt = Kit.label({ RichText = true, Text = e.prog .. ' <font size="16">/ ' .. e.def.Goal .. '</font>', FontFace = WFONT, TextSize = 25, TextColor3 = Color3.new(1, 1, 1),
+					TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromOffset(196, y - 2), Size = UDim2.fromOffset(116, 32), ZIndex = 4, Parent = holder })
+				new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = cnt })
+				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(318, y - 4), Size = UDim2.fromOffset(46, 34), ZIndex = 4, Parent = holder })
+				table.insert(art, { rw, "_Scissors" })
+				local rl = Kit.label({ Text = "×" .. e.def.Reward, FontFace = WFONT, TextSize = 17, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center,
+					Position = UDim2.fromOffset(312, y + 24), Size = UDim2.fromOffset(58, 20), ZIndex = 5, Parent = holder })
+				new("UIStroke", { Thickness = 1.5, Transparency = 0.2, Parent = rl })
 			end
 		end
-		if #entries == 0 then label(holder, "Loading missions...", BODY, 16, 18, 0, 330, 24, FIELD, nil, 4) end
-		Kit.toScale(holder, Vector2.new(372, 200))
+		if #entries == 0 then label(holder, "Loading missions...", BODY, 18, 18, 0, 330, 24, FIELD, nil, 4) end
+		Kit.toScale(holder, Vector2.new(372, 196))
 		holder.Size = UDim2.fromScale(1, 1)
+		-- 3D art after the conversion: mission icons (same mapping as the Missions screen), scissors, check
+		local VI = require(UIKit:WaitForChild("ViewIcons"))
+		local STAT = { Wins = { "Trophy" }, MatchesPlayed = { "DogTags" }, Kills = { "Weapon", "AutoRifle" }, Headshots = { "Weapon", "Sniper" },
+			CoverKills = { "Sandbags" }, MeleeKills = { "Melee", "Knife" }, GadgetsThrown = { "Grenade" } }
+		for _, a2 in art do
+			local h2, what = a2[1], a2[2]
+			if what == "_Scissors" then
+				VI.Icon(h2, "Scissors", { still = true })
+			elseif what == "_Check" then
+				local icons = ReplicatedStorage:FindFirstChild("UIIcons")
+				local mesh = icons and icons:FindFirstChild("Check")
+				if mesh then
+					local m = mesh:Clone()
+					for _, d in (m:IsA("BasePart") and { m } or m:GetDescendants()) do if d:IsA("BasePart") then d.Color = hex("#5BE04A") end end
+					VI.Viewport(h2, m, { zoom = 1.05, still = true })
+				end
+			else
+				local spec = STAT[what] or { "Medal" }
+				if spec[1] == "Weapon" then VI.Viewport(h2, VI.Weapon(spec[2]), { view = VI.GunView, zoom = 0.95, still = true })
+				elseif spec[1] == "Melee" then VI.Viewport(h2, VI.Melee(spec[2]), { view = CFrame.Angles(0, math.rad(-90), 0) * CFrame.Angles(math.rad(38), 0, 0), zoom = 1, still = true })
+				else VI.Icon(h2, spec[1], { still = true }) end
+			end
+		end
 	end
 	local function resetText()
 		local left = 86400 - os.time() % 86400
