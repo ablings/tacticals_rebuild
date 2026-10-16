@@ -14,6 +14,9 @@ the base read more military-sky (insignia, stencils, ops screens, cargo, hangar/
   session: don't touch it.
 - **No computer use** while the UI session is driving the primary monitor (UG25I) for RIVALS UI capture all night. Everything goes
   through the Studio MCP (execute_luau, screen_capture, start_stop_play, character_navigation) and the Blender MCP.
+- **Captures:** Studio MCP screen_capture of a minimised or covered window returns blank white. Run
+  `pwsh -NoProfile -File tools/show_studio.ps1 tacticals` (or `rivals`) first. It shows that window on the second monitor with
+  SWP_NOACTIVATE, so it never takes focus from the UI session.
 - Saves and Import 3D need the screen. Batch them: at the end of each room, message the UI session
   (`local_f4630eda-86ab-4003-89fd-fb92f76724bc`) asking it to pause. Wait for its OK, then save, and Import 3D any queued kit FBX
   (Creator = Gunsy Funsy). Message it again when done. If there is no OK, keep working: every change is a committed, idempotent
