@@ -1,4 +1,4 @@
--- MatchFlowUI (match place, StarterPlayerScripts, LocalScript): RIVALS' match hand-off in TACTICALS (UI session 2026-10-16).
+-- MatchFlowUI (match place AND lobby, StarterPlayerScripts, LocalScript): RIVALS' match hand-off in TACTICALS (UI session 2026-10-16).
 --   Loading  : dark screen, TACTICALS wordmark, a tip in a white bubble, "Loading" + a counter.
 --   MapVote  : the two team boxes up top (headshots, level badges), a timer between them; map tiles below (big, coloured
 --              edge, striped name bar). Click to vote: your headshot sits on the tile, white edge; everyone's votes show.
@@ -19,6 +19,26 @@ local STATE = { -- attribute names (agreed with the Tacticals session)
 	Phase = "MatchPhase", EndsAt = "PhaseEndsAt", Maps = "MapList", Votes = "MapVotes", Chosen = "MapChosen",
 	Team = "Team", Level = "Level", Owned = "OwnedItems", Kit = { Weapon = "KitWeapon", Melee = "KitMelee", Gadget = "KitGadget" },
 }
+-- Where the match state lives: the match place keeps it on ReplicatedStorage; the lobby runs several duels at once, each on
+-- ReplicatedStorage.LobbyDuels.<matchId> (the player's DuelMatch attribute). The MatchFlow remote then also carries matchId.
+local function stateObject()
+	local id = player:GetAttribute("DuelMatch")
+	if id then
+		local folder = ReplicatedStorage:FindFirstChild("LobbyDuels")
+		return folder and folder:FindFirstChild(tostring(id)), id
+	end
+	return ReplicatedStorage, nil
+end
+local function st(name)
+	local o = stateObject()
+	return o and o:GetAttribute(name)
+end
+local function send(...)
+	local ev = ReplicatedStorage:FindFirstChild("MatchFlow")
+	if not ev then return end
+	local _, id = stateObject()
+	if id then ev:FireServer(id, ...) else ev:FireServer(...) end
+end
 local SLOTS = { { id = "Weapon", label = "Gun" }, { id = "Melee", label = "Melee" }, { id = "Gadget", label = "Gadget" } }
 local TIPS = { "Peek from cover: you're only exposed while you aim", "Throw a smoke to cross open ground", "Gun bash is lethal from behind",
 	"Headshots end duels fast", "Scissors unlock new gear in the Kit room" }
@@ -189,8 +209,7 @@ local function buildMaps(list)
 		t.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1.03 }):Play() end)
 		t.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
 		t.Activated:Connect(function()
-			local ev = ReplicatedStorage:FindFirstChild("MatchFlow")
-			if ev then ev:FireServer("Vote", m.id) end
+			send("Vote", m.id)
 			player:SetAttribute("_MyVote", m.id) -- instant feedback before the server echoes MapVotes
 			refreshVotes()
 		end)
@@ -199,7 +218,7 @@ local function buildMaps(list)
 end
 
 refreshVotes = function()
-	local ok, votes = pcall(function() return HttpService:JSONDecode(ReplicatedStorage:GetAttribute(STATE.Votes) or "{}") end)
+	local ok, votes = pcall(function() return HttpService:JSONDecode(st(STATE.Votes) or "{}") end)
 	votes = ok and votes or {}
 	local mine = player:GetAttribute("_MyVote")
 	for id, tile in mapTiles do
@@ -358,8 +377,7 @@ local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = f
 	BackgroundColor3 = WHITE, Parent = lo }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
 local readyL = label(ready, "READY", FX, 44, 0, 0, 300, 80, WHITE)
 ready.Activated:Connect(function()
-	local ev = ReplicatedStorage:FindFirstChild("MatchFlow")
-	if ev then ev:FireServer("Ready") end
+	send("Ready")
 	player:SetAttribute("_Ready", true)
 	readyL.Text = "READY ✓"
 end)
@@ -391,8 +409,7 @@ local function openPicker(slot)
 		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(6, 4), Size = UDim2.fromOffset(152, 100), ZIndex = 3, Parent = b })
 		label(b, itemName(id), FB, 20, 0, 108, 164, 34, WHITE)
 		b.Activated:Connect(function()
-			local ev = ReplicatedStorage:FindFirstChild("MatchFlow")
-			if ev then ev:FireServer("Pick", slot, id) end
+			send("Pick", slot, id)
 			player:SetAttribute(STATE.Kit[slot] .. "_Pending", id)
 		end)
 		task.defer(viewport, art, id)
@@ -432,14 +449,14 @@ local function setPhase(p)
 	if p == "Loading" then tipL.Text = TIPS[math.random(#TIPS)] end
 	if p == "MapVote" then
 		player:SetAttribute("_MyVote", nil)
-		local ok, list = pcall(function() return HttpService:JSONDecode(ReplicatedStorage:GetAttribute(STATE.Maps) or "[]") end)
+		local ok, list = pcall(function() return HttpService:JSONDecode(st(STATE.Maps) or "[]") end)
 		buildMaps(ok and list or {})
 		convertLater(mapHolder, Vector2.new(1420, 760))
 		fillTeams(voteBoxes); refreshVotes()
 	end
 	if p == "Loadout" then
 		player:SetAttribute("_Ready", nil); readyL.Text = "READY"
-		local chosen = ReplicatedStorage:GetAttribute(STATE.Chosen)
+		local chosen = st(STATE.Chosen)
 		mapChip.Text = chosen and ("Map: " .. chosen) or ""
 		fillTeams(loBoxes)
 		for _, s in SLOTS do slotCards[s.id].shown = false; player:SetAttribute(STATE.Kit[s.id] .. "_Pending", nil) end
@@ -448,16 +465,16 @@ local function setPhase(p)
 	end
 end
 -- map vote ends: the winner flashes (RIVALS) before the next phase shows
-ReplicatedStorage:GetAttributeChangedSignal(STATE.Chosen):Connect(function()
-	local tile = mapTiles[ReplicatedStorage:GetAttribute(STATE.Chosen) or ""]
+local lastChosen, lastVotes
+local function onChosen()
+	local tile = mapTiles[st(STATE.Chosen) or ""]
 	if tile and phase == "MapVote" then
 		task.spawn(function()
 			for _ = 1, 3 do tile.edge.Color = WHITE; tile.edge.Thickness = 8; task.wait(0.15); tile.edge.Color = tile.col; task.wait(0.15) end
 			tile.edge.Color = WHITE
 		end)
 	end
-end)
-ReplicatedStorage:GetAttributeChangedSignal(STATE.Votes):Connect(function() if phase == "MapVote" then refreshVotes() end end)
+end
 for _, s in SLOTS do
 	player:GetAttributeChangedSignal(STATE.Kit[s.id]):Connect(function()
 		player:SetAttribute(STATE.Kit[s.id] .. "_Pending", nil)
@@ -467,9 +484,14 @@ end
 
 local loadStart = os.clock()
 RunService.RenderStepped:Connect(function()
-	setPhase(ReplicatedStorage:GetAttribute(STATE.Phase))
-	local left = math.max(0, (ReplicatedStorage:GetAttribute(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
-	if phase == "MapVote" then voteTimer.Text = string.format("%.1f", left) end
+	setPhase(st(STATE.Phase))
+	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
+	if phase == "MapVote" then
+		voteTimer.Text = string.format("%.1f", left)
+		local v, c = st(STATE.Votes), st(STATE.Chosen)
+		if v ~= lastVotes then lastVotes = v; refreshVotes() end
+		if c ~= lastChosen then lastChosen = c; if c then onChosen() end end
+	end
 	if phase == "Loadout" then loTimer.Text = string.format("%.1f", left); refreshLoadout() end
 	if phase == "Loading" then loadN.Text = tostring(math.min(99, math.floor((os.clock() - loadStart) * 25))) end
 end)
@@ -479,8 +501,9 @@ if RunService:IsStudio() then
 	local hook = Instance.new("BindableFunction")
 	hook.Name = "MatchFlowTest"
 	hook.OnInvoke = function(p, extra)
-		if p == "MapVote" and not ReplicatedStorage:GetAttribute(STATE.Maps) then
-			ReplicatedStorage:SetAttribute(STATE.Maps, HttpService:JSONEncode({ { id = "Warehouse", name = "Warehouse", image = extra or "" } }))
+		local o = stateObject() or ReplicatedStorage
+		if p == "MapVote" and not o:GetAttribute(STATE.Maps) then
+			o:SetAttribute(STATE.Maps, HttpService:JSONEncode({ { id = "Warehouse", name = "Warehouse", image = extra or "" } }))
 		end
 		if p == "Loadout" then
 			player:SetAttribute(STATE.Owned, player:GetAttribute(STATE.Owned) or HttpService:JSONEncode({ "Pistol", "Revolver", "Sniper", "Fists", "Knife", "Smoke", "Flash" }))
@@ -488,8 +511,8 @@ if RunService:IsStudio() then
 				if not player:GetAttribute(STATE.Kit[slot]) then player:SetAttribute(STATE.Kit[slot], def) end
 			end
 		end
-		ReplicatedStorage:SetAttribute(STATE.EndsAt, workspace:GetServerTimeNow() + (p == "MapVote" and 10 or 15))
-		ReplicatedStorage:SetAttribute(STATE.Phase, p)
+		o:SetAttribute(STATE.EndsAt, workspace:GetServerTimeNow() + (p == "MapVote" and 10 or 15))
+		o:SetAttribute(STATE.Phase, p)
 		return true
 	end
 	hook.Parent = player:WaitForChild("PlayerScripts")
