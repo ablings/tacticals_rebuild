@@ -51,7 +51,7 @@ function LobbyHud.Start()
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
 	---------------------------------------------------------------------------------------------- scissors pill
-	local pill = new("Frame", { Name = "Scissors", Position = UDim2.fromOffset(840, 26), Size = UDim2.fromOffset(240, 58), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25, Parent = root })
+	local pill = new("Frame", { Name = "Scissors", Position = UDim2.fromOffset(840, 26), Size = UDim2.fromOffset(240, 58), BackgroundColor3 = DEEP, BackgroundTransparency = 0.08, Parent = root })
 	brackets(pill, LINE, 12, 2)
 	local iconHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-22, -12), Size = UDim2.fromOffset(84, 84), ZIndex = 3, Parent = pill })
 	local count = label(pill, "...", OSWALD, 36, 62, 0, 120, 58, BONE, Enum.TextXAlignment.Center, 3)
@@ -76,7 +76,7 @@ function LobbyHud.Start()
 	brackets(toPads, BONE, 10, 2, 4)
 	label(toPads, "TO PADS  >", OSWALD, 28, 0, 0, 220, 52, BONE, Enum.TextXAlignment.Center, 3)
 	Kit.bindButton(toPads, { hover = 1.06 })
-	toPads.Activated:Connect(function()
+	function LobbyHud.ToPads()
 		-- straight to the duel hall, in front of the first pad (not on it)
 		local duels = workspace:FindFirstChild("LobbyMap") and workspace.LobbyMap:FindFirstChild("Duels")
 		local pad = duels and (duels:FindFirstChild("Pad_1v1_A") or duels:FindFirstChildWhichIsA("Model"))
@@ -102,7 +102,26 @@ function LobbyHud.Start()
 			local cam = workspace.CurrentCamera
 			cam.CFrame = CFrame.lookAt(ground + away * 12 + Vector3.new(0, 5, 0), Vector3.new(padPos.X, ground.Y, padPos.Z))
 		end
-	end)
+	end
+	toPads.Activated:Connect(function() LobbyHud.ToPads() end)
+
+	---------------------------------------------------------------------------------------------- searching (online)
+	local seek = new("Frame", { Name = "Searching", Position = UDim2.fromOffset(790, 770), Size = UDim2.fromOffset(340, 58), BackgroundColor3 = DEEP,
+		BackgroundTransparency = 0.15, Visible = false, Parent = root })
+	brackets(seek, OLIVE, 12, 2)
+	local seekMarks = {}
+	for i = 1, 3 do
+		table.insert(seekMarks, new("Frame", { Position = UDim2.fromOffset(18 + (i - 1) * 16, 24), Size = UDim2.fromOffset(10, 10), Rotation = 45, BackgroundColor3 = BONE,
+			BorderSizePixel = 0, ZIndex = 3, Parent = seek }))
+	end
+	local seekMode = label(seek, "", OSWALD, 24, 76, 0, 200, 58, BONE, nil, 3)
+	local seekX = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(284, 9), Size = UDim2.fromOffset(40, 40), BackgroundColor3 = hex("#3A1E1C"), ZIndex = 3, Parent = seek })
+	for _, r in { 45, -45 } do
+		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(22, 5), Rotation = r, BackgroundColor3 = BONE, BorderSizePixel = 0, ZIndex = 4, Parent = seekX })
+	end
+	Kit.bindButton(seekX, { hover = 1.1 })
+	local Request = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Lobby"):WaitForChild("Request")
+	seekX.Activated:Connect(function() pcall(Request.InvokeServer, Request, "CancelMatch") end)
 
 	---------------------------------------------------------------------------------------------- server list
 	pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, false) end)
@@ -215,10 +234,21 @@ function LobbyHud.Start()
 		if player:GetAttribute("InTraining") or player:GetAttribute("Deploying") then return false end
 		return true
 	end
-	RunService.Heartbeat:Connect(function()
+	local k = 0
+	RunService.Heartbeat:Connect(function(dt)
 		local on = lobbyShown()
 		root.Visible = on
 		board.Visible = boardOn
+		local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
+		seek.Visible = q ~= nil and st == "Searching"
+		if seek.Visible then
+			local def = Config.QueueById and Config.QueueById(q)
+			seekMode.Text = "SEARCHING  " .. (def and (string.upper(def.Mode) .. (def.Ranked and " RANKED" or "")) or "")
+			seekMode.TextColor3 = (def and def.Ranked) and hex("#B078FF") or BONE
+			k += dt
+			local step = math.floor(k / 0.25) % 3
+			for i, m in seekMarks do m.BackgroundTransparency = (i - 1) == step and 0 or 0.65 end
+		end
 	end)
 
 	task.spawn(function()

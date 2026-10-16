@@ -815,9 +815,11 @@ LobbyUI.OpenSettings = openSettings
 ---------------------------------------------------------------- MISSIONS
 -- Full-screen RIVALS-style Tasks layout (ReplicatedStorage.UIKit.MissionsScreen) over the real quests.
 local MissionsScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("MissionsScreen"))
+local PlayScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("PlayScreen"))
 local Tooltip = require(script:WaitForChild("Tooltip"))
 local missionsReady = false
 local function openMissions()
+	if PlayScreen.IsOpen() then PlayScreen.Close() end
 	if not missionsReady then
 		missionsReady = true
 		MissionsScreen.Init({
@@ -828,6 +830,31 @@ local function openMissions()
 		})
 	end
 	if MissionsScreen.IsOpen() then MissionsScreen.Close() else MissionsScreen.Open() end
+end
+
+---------------------------------------------------------------- PLAY (UI session 2026-10-16: full screen, 3D cards; renderPlay above is no longer used)
+local playReady = false
+local function openPlay()
+	if not playReady then
+		playReady = true
+		PlayScreen.Init({
+			Config = Config, ask = ask, getData = function() return data end, toast = toast,
+			rankedOpen = function() return rankedOpen() end,
+			level = function() return (accountLevel()) end,
+			enterTraining = function()
+				local fade = player.PlayerGui:FindFirstChild("ExfilFade")
+				local quick = fade and fade:FindFirstChild("QuickEnter")
+				if quick then quick:Fire() end
+			end,
+			toPads = function()
+				local hud = shared.Get and shared.Get("LobbyHudController")
+				if hud and hud.ToPads then hud.ToPads() end
+			end,
+			onOpen = function() if gui then gui.Enabled = false end end,
+			onClose = function() if gui then gui.Enabled = true end end,
+		})
+	end
+	if PlayScreen.IsOpen() then PlayScreen.Close() else PlayScreen.Open() end
 end
 
 ---------------------------------------------------------------- CODES
@@ -914,7 +941,18 @@ local function openShop(startTab)
 end
 LobbyUI.OpenShop = openShop
 
+-- one full-screen menu at a time (RIVALS): opening one closes the others (UI session 2026-10-16)
+local function closeScreens(keep)
+	if keep ~= "Play" and PlayScreen.IsOpen() then PlayScreen.Close() end
+	if keep ~= "Missions" and MissionsScreen.IsOpen() then MissionsScreen.Close() end
+	if keep ~= "Settings" and SettingsScreen.IsOpen and SettingsScreen.IsOpen() then SettingsScreen.Close() end
+	if keep ~= "Shop" and Shop.IsOpen and Shop.IsOpen() then Shop.Close() end
+end
+LobbyUI.CloseScreens = closeScreens
+
 function LobbyUI.Open(id: string)
+	closeScreens(id == "Quests" and "Missions" or id)
+	Tooltip.Hide() -- the hovered button's tooltip would stay over the menu
 	if id == "Kit" then -- KIT is its own room, not a panel
 		LobbyUI.Close()
 		Shop.Close()
@@ -930,6 +968,12 @@ function LobbyUI.Open(id: string)
 		LobbyUI.Close()
 		Shop.Close()
 		openSettings()
+		return
+	end
+	if id == "Play" then -- PLAY is full-screen too (UIKit.PlayScreen)
+		LobbyUI.Close()
+		Shop.Close()
+		openPlay()
 		return
 	end
 	if id == "Missions" or id == "Quests" then -- MISSIONS is full-screen too (UIKit.MissionsScreen)
@@ -1041,6 +1085,9 @@ end
 local function updateQueuePill()
 	updatePlayButton()
 	if not queuePill then return end
+	-- (UI session 2026-10-16) retired: PadUI shows pads, the HUD's searching plate shows online searches
+	queuePill.Visible = false
+	do return end
 	local oq, ostatus, osince = onlineSearch()
 	local st0 = queuePill:FindFirstChildOfClass("UIStroke")
 	if oq then -- searching online

@@ -220,7 +220,8 @@ do
 	Kit.toScale(deploy)
 end
 local deploying = false
-local function showDeploy(on, mode)
+local function showDeploy(on, mode, title)
+	if on and dTitle.Text ~= (title or "DEPLOYING") then dTitle.Text = title or "DEPLOYING" end
 	if on == deploying then return end
 	deploying = on
 	deployBg.Visible, deploy.Visible = on, on
@@ -293,7 +294,12 @@ end
 local function refresh()
 	local me, b = mine()
 	local dep = player:GetAttribute("Deploying") == true or (b and b.state == "Deploying")
-	showDeploy(dep and true or false, me and me.mode)
+	-- an online match (PLAY) that was found: the same screen while the server teleports you
+	local mm = player:GetAttribute("MM_Status")
+	local online = not dep and (mm == "Found" or mm == "Teleporting")
+	local oq = online and Config.QueueById and Config.QueueById(player:GetAttribute("MM_Queue"))
+	dep = dep or online
+	showDeploy(dep and true or false, (me and me.mode) or (oq and oq.Mode), online and mm == "Found" and "MATCH FOUND" or "DEPLOYING")
 	-- on a pad
 	if me and b and not dep then
 		local key = b.mode .. b.id .. b.state .. b.count .. tostring(b.ranked)
@@ -340,6 +346,7 @@ if RunService:IsStudio() then
 	hook.Parent = player:WaitForChild("PlayerScripts")
 end
 player:GetAttributeChangedSignal("Deploying"):Connect(refresh)
+player:GetAttributeChangedSignal("MM_Status"):Connect(refresh)
 player:GetAttributeChangedSignal("InTraining"):Connect(refresh)
 task.spawn(function()
 	local r = busyAsk("GetQueue")

@@ -46,3 +46,11 @@ Each step: built in a sandbox Studio (a read-only copy of the file), playtested,
   you in olive; Tab toggles; replaces the Roblox player list). Old top-left card hidden. Hides with menus / Kit room /
   pads / Training. Sheet: `notes/ui_phase3_hud.png`.
 - Deployed to the working copy (8ef4e21a) 2026-10-16 after the Tacticals session cleared it; NPC_OpensPanel guard kept. Not saved yet.
+- 2026-10-16 **PLAY** (`ui/play/PlayScreen.lua` -> UIKit.PlayScreen): full-screen DEPLOY menu. CASUAL / RANKED tabs
+  (3D lock until RankedLevel), 1V1 / 2V2 / 3V3 cards as 3D scenes (your avatar holding your one gun, grey mates, dark
+  or violet opponents), SEARCHING m:ss + click to cancel, refusals flash red on the card, TRAINING (your gun) and LOBBY
+  DUELS (TO PADS). HUD searching plate with cancel X above PLAY; the old top-centre queue pill is retired. Online
+  Found / Teleporting uses the PadUI deploy screen ("MATCH FOUND" -> "DEPLOYING"). One full-screen menu at a time
+  (`LobbyUI.CloseScreens`). Chat window hides while PLAY is open (it ate clicks top-left). Sheet: `notes/ui_phase4_play.png`.
+- Server issue (not UI): MatchmakingManager fails to load in an unpublished Studio file (MemoryStoreService:GetHashMap at
+  require time), so FindMatch answers "Unknown action" there. The card says "Online matchmaking is offline here".
