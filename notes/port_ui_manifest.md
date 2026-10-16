@@ -13,6 +13,8 @@ Easiest port: run `deploy_ui.py` against the main game's Studio window, plus the
 | `StarterPlayer.StarterPlayerScripts.Client.Controllers.SettingsEffectsController` | ModuleScript | `ui/settings/SettingsEffectsController.lua` | Optimized Lighting / Textures; nests `SoundService.World` under `SoundService.Effects` (SFX volume) |
 | `ReplicatedStorage.UIKit.PlayScreen` | ModuleScript | `ui/play/PlayScreen.lua` | full-screen PLAY (3D squad cards, casual / ranked, search + cancel) |
 | `StarterPlayer.StarterPlayerScripts.Client.Controllers.NameplatesController` | ModuleScript | `ui/hud/NameplatesController.lua` | RIVALS-style lobby nameplates (stat badge, name, @username, VIP chip); disables the server VipTag billboard client-side |
+| `StarterPlayer.StarterPlayerScripts.MatchFlowUI` | LocalScript | `ui/match/MatchFlowUI.client.lua` | lobby duels + match place: Loading / MapVote / Loadout screens (contract: notes/lobby_duels_design.md section 6) |
+| `StarterPlayer.StarterPlayerScripts.DuelHUD` | LocalScript | `ui/match/DuelHUD.client.lua` | in-duel HUD: score bar, banners, kill feed, spectate, results (same contract) |
 | `ServerScriptService.PublicStats` | Script | `ui/hud/PublicStats.server.lua` | `Level` / `Wins` player attributes from the profile (read-only) |
 | `ReplicatedStorage.Modules.Shared.Binds` | ModuleScript | `ui/settings/Binds.lua` | Settings > Hotkeys -> key per action (config key as fallback); used by the [SET] controllers |
 
