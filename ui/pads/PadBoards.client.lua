@@ -52,6 +52,9 @@ local function bayOf(mode, id)
 end
 local function statusText(b)
 	if not b then return "OPEN", FIELD end
+	-- [UI] (UI session 2026-10-16) maps are per mode, and arenas can all be busy (lobby duels)
+	if b.noMap then return type(b.noMap) == "string" and string.upper(b.noMap) or ("NO MAPS YET FOR " .. string.upper(b.mode)), FIELD end
+	if b.duelWait then return tostring(b.duelWait), BONE end
 	if b.state == "Countdown" then return "MATCH FOUND  ·  DEPLOYING IN " .. tostring(b.countdown or ""), BONE end
 	if b.state == "Deploying" then return "DEPLOYING...", BONE end
 	if b.count == 0 then return "OPEN  ·  STEP ON A PLATE", FIELD end
@@ -135,7 +138,7 @@ local function drawSide(nearPad)
 	local me = snap.players[tostring(player.UserId)]
 	local key = me and ("Q" .. me.mode .. me.bay) or (nearPad and ("N" .. nearPad:GetAttribute("Mode") .. tostring(nearPad:GetAttribute("BayId"))) or "")
 	local b = me and bayOf(me.mode, me.bay) or (nearPad and bayOf(nearPad:GetAttribute("Mode"), nearPad:GetAttribute("BayId")))
-	key ..= b and (b.state .. b.count .. tostring(b.countdown) .. #b.occupants) or ""
+	key ..= b and (b.state .. b.count .. tostring(b.countdown) .. #b.occupants .. tostring(b.noMap) .. tostring(b.duelWait)) or "" -- [UI] noMap / duelWait
 	if key == lastKey then return end
 	lastKey = key
 	holder:ClearAllChildren()
