@@ -63,3 +63,9 @@ Started 2026-10-14 on the main PC.
 - After the lap and the particle cleanup, once everything is sound: **RIVALS vs Tacticals diff**. Go through the RIVALS place, then the
   rebuild, and list everything RIVALS has that ours doesn't (rooms/areas, interactive features, displays, signage, props, lighting,
   effects), with captures. Edward picks which to implement; build nothing from the list until he does (Edward, 2026-10-15).
+
+## Overnight polish (Edward, 2026-10-15 night)
+- Plan and progress: `notes/overnight_polish.md`. RIVALS = aesthetics blueprint (craft); theme = ours (sky military base, olive/cream).
+  Every room must look different. Everything logically sound (checklist in the plan).
+- The UI session (`local_f4630eda-86ab-4003-89fd-fb92f76724bc`) drives the primary monitor all night: no computer use without its
+  OK. Studio MCP / Blender MCP only; saves and Import 3D are batched into pauses it agrees to.
