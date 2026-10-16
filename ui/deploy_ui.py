@@ -81,10 +81,49 @@ def build():
     return "\n".join(parts)
 
 
+# ---- guard: never overwrite a script someone else edited since our last deploy (2026-10-16)
+# After each deploy the live Source hash of every file we write is stored per studio in _deployed_hashes.json; before the next
+# deploy the live hashes are read again and any mismatch aborts (pull it, merge the edit into our source, deploy). --force skips.
+HASHES = os.path.join(HERE, '_deployed_hashes.json')
+
+def targets():
+    out = [(parent + '.' + name) for parent, name, cls, path in FILES]
+    out += [(parent + '.' + name) for parent, name, path in SET_FILES]
+    return out
+
+def live_hashes(sid):
+    # a fingerprint per script, computed in Studio (full sources would overflow the bridge's 100 KB output)
+    paths = targets()
+    lua = ("local HS = game:GetService('HttpService') local out = {} "
+           "local function at(path) local o = game; for p in path:gmatch('[^%.]+') do o = o and o:FindFirstChild(p) end; return o end "
+           "local function fp(src) src = src:gsub(string.char(13), '') local h = 5381 "
+           "for i = 1, #src do h = (h * 33 + string.byte(src, i)) % 4294967296 end return #src .. ':' .. h end "
+           "for _, p in ipairs(HS:JSONDecode([==[" + json.dumps(paths) + "]==])) do local s = at(p); out[p] = s and fp(s.Source) or 'missing' end "
+           "return HS:JSONEncode(out)")
+    tmp = os.path.join(HERE, '_hash_payload.json')
+    json.dump({"studio_id": sid, "datamodel_type": "Edit", "code": lua}, open(tmp, 'w', encoding='utf-8'))
+    env = dict(os.environ, PYTHONIOENCODING='utf-8', MCP_TIMEOUT='180')
+    r = subprocess.run([sys.executable, MCP, 'call', 'execute_luau', tmp], capture_output=True, text=True, env=env, encoding='utf-8', cwd=os.path.dirname(MCP))
+    txt = (r.stdout or '').strip()
+    return json.loads(txt[txt.find('{'):txt.rfind('}') + 1])
+
+
 if __name__ == '__main__':
     sid = sys.argv[1]
+    force = '--force' in sys.argv
+    saved = json.load(open(HASHES, encoding='utf-8')) if os.path.exists(HASHES) else {}
+    if sid in saved and not force:
+        now = live_hashes(sid)
+        changed = [k for k, h in saved[sid].items() if k in now and now[k] != h]
+        if changed:
+            print('ABORT: edited live since our last deploy (pull + merge first, or --force):')
+            for c in changed: print('  ' + c)
+            sys.exit(2)
     payload = os.path.join(HERE, '_deploy_payload.json')
     json.dump({"studio_id": sid, "datamodel_type": "Edit", "code": build()}, open(payload, 'w', encoding='utf-8'))
     env = dict(os.environ, PYTHONIOENCODING='utf-8', MCP_TIMEOUT='300')
     r = subprocess.run([sys.executable, MCP, 'call', 'execute_luau', payload], capture_output=True, text=True, env=env, encoding='utf-8', cwd=os.path.dirname(MCP))
     print((r.stdout or r.stderr).strip()[-400:])
+    if 'deployed' in (r.stdout or ''):
+        saved[sid] = live_hashes(sid)
+        json.dump(saved, open(HASHES, 'w', encoding='utf-8'), indent=1)

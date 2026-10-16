@@ -4,3 +4,5 @@ out/
 *.bak
 ui/_survey/
 ui/_deploy_payload.json
+ui/_deployed_hashes.json
+ui/_hash_payload.json
