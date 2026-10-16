@@ -1,7 +1,7 @@
 # UI port manifest (UI session) - everything the UI work added or changed outside Workspace
 
 For the port of Tacticals_rebuild.rbxl to the main game (Edward's call, see notes/port_manifest.md for the map side).
-State as of commit `637704b` (2026-10-16), deployed to 8ef4e21a. Sources of truth: `tacticals_rebuild/ui/`, and
+State as of commit `a332412` (2026-10-16), deployed to 8ef4e21a. Sources of truth: `tacticals_rebuild/ui/`, and
 `python ui/deploy_ui.py <studio_id>` writes exactly the list below (it replaces Source, or creates the instance).
 Easiest port: run `deploy_ui.py` against the main game's Studio window, plus the two runtime notes at the bottom.
 
@@ -36,11 +36,15 @@ All under `StarterPlayer.StarterPlayerScripts.Client.Controllers`; sources in `u
 | HotbarController | Gun Bash / Equip Gun / Melee / Gadget binds, Scroll Equip; hint strip shows your binds; **restyled** (RIVALS-like row, Scale) |
 | GadgetController | Throw Gadget bind |
 | HealthBarController | **restyled** (RIVALS-like, Scale) |
+| TrainingBinsController | **restyled** weapon crate picker (3D guns, dark glass, no olive) |
 
 ## Match place (separate place: not ported by this script)
 It calls `SettingsConfig.Apply`, so the attributes are there; its copies of the scripts above need the same [SET] reads,
 plus the `Binds` module. Rows that only matter there: Hide Teammate Display, Gameplay HUD (Default / Minimal), Damage
 Numbers (+ colours), Damage Flashing (+ colours). Raise with Edward.
+
+Training leave: the corner's Leave button needs `PlayerGui.ExfilFade.LeaveTraining` (BindableEvent) from ExfilFX ([EXFIL], Tacticals session);
+without it the button stays hidden and ExfilFX's own LEAVE [M] button is used.
 
 ## Patched (one line, by `deploy_ui.py` PATCHES)
 | Path | Patch |
