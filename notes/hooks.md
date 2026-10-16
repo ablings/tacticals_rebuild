@@ -168,3 +168,13 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   SpotLights). Runtime: `DuelArenas.<id>.FX`, `PanelPrompt` parts on Solid doors, Solid model attrs (DoorOpen / Exploded / SteamUntil...),
   profile key `DuelPairs`, Studio-only `ServerStorage.DuelTestHook`. Arena slot x 4000..9000, y 100, holds y 40: still nothing of the lobby there.
   UNDO via `fix/lobby_duels_install.lua UNDO` (41 edits), then `fix/duel_split_map.lua UNDO`.
+- 2026-10-16 admin framework (notes/admin_framework.md, survey notes/admin_survey.md): **`ServerScriptService.AdminCommands` source replaced**
+  by the framework entry point and **`StarterPlayerScripts.AdminFeedback` source replaced** (backups `ServerStorage._RebuildRemoved.ADMIN_AdminCommands_Orig`
+  / `ADMIN_AdminFeedback_Orig`, Disabled). New `ServerScriptService.AdminFramework` (Config, Permissions, Args, DataAdapter, Audit, Core, Commands/*).
+  **[ADMIN] edits**: `QueueManager.bayIsFull` (a pad with an `AdminDuelSolo` player counts down alone; line after the [DUEL] DuelTestSolo line),
+  `LobbyDuelManager.StartMatch` (test bots also fill a match that includes an `AdminDuelSolo` player; live too, never pays); backups
+  `ADMIN_QueueManager_Orig` / `ADMIN_LobbyDuelManager_Orig`. **`fix/lobby_duels_install.lua` rewrites LobbyDuelManager: re-run `fix/admin_install.lua` after it.**
+  Runtime: `ReplicatedStorage.AdminFeedback / AdminRequest / AdminRemote`, `TextChatService.AdminCommands` (TextChatCommands `;name`, legacy `/name`),
+  `ServerStorage.AdminBindable`, a `ShouldDeliverCallback` on every TextChannel (holds back admins' mistyped `;commands`; nothing else sets it),
+  player attributes `AdminDuelSolo`, `AdminGod`, `AdminSpeed`, character `AdminGodField` ForceField, Studio-only `ServerStorage` attributes
+  `AdminSim_<userId>`, DataStore `AdminAudit_v1`. Profile writes only through PlayerStore. UNDO via `fix/admin_install.lua UNDO` (tested hash-exact).
