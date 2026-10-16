@@ -26,6 +26,10 @@ local MAPS = {
 		SpawnSpacing = 4,
 		-- dynamic pieces: phase 2 (ArenaDoors / ArenaShootables); listed so the loader can follow their Solid twins
 		Dynamic = { "Interactive" },
+		-- phase 2 performance (notes/lobby_duels_phase2.md): 8 shadowed PointLights cost ~3.8 M shadow triangles a frame
+		-- once anything moves (each = a 6-face cube map of the whole batched mesh set). Keep 2 shadow sources, as 120-degree
+		-- downward SpotLights (one shadow frustum each); the original PointLights stay as unshadowed fill.
+		LightBudget = { Shadows = 2, SpotAngle = 120, SpotShare = 0.75, PointShare = 0.4, NoShadowBelow = 1.5, NoShadowSheets = true },
 		Lighting = {
 			props = { Brightness = 2, ClockTime = 13, Ambient = Color3.fromRGB(72, 76, 84), OutdoorAmbient = Color3.fromRGB(78, 82, 90),
 				ExposureCompensation = -0.1, EnvironmentDiffuseScale = 0.5, EnvironmentSpecularScale = 0.08, ShadowSoftness = 0.12,
@@ -109,6 +113,58 @@ for id, cfg in MAPS do
 	end
 	work:PivotTo(shift * work:GetPivot())
 
+	-- light budget (per map, MAPS.<Id>.LightBudget): which lights cast shadows and which parts cast them
+	local function applyLightBudget(root, budget)
+		if not budget then return "no budget" end
+		local lights = {}
+		for _, d in root:GetDescendants() do
+			if d:IsA("PointLight") and d.Shadows and d.Parent:IsA("BasePart") then table.insert(lights, d) end
+		end
+		local centre = root:GetBoundingBox().Position
+		local picks = {}
+		local function pos(l) return l.Parent.Position end
+		-- the most central lights, spread apart (among equally central ones: the farthest from the picks so far)
+		while #picks < math.min(budget.Shadows or 2, #lights) do
+			local best, bestKey
+			for _, l in lights do
+				if not table.find(picks, l) then
+					local spread = 0
+					if #picks > 0 then
+						spread = math.huge
+						for _, p in picks do spread = math.min(spread, (pos(l) - pos(p)).Magnitude) end
+					end
+					local key = math.floor(((pos(l) - centre) * Vector3.new(1, 0, 1)).Magnitude / 2) * 100000 - math.min(spread, 99999)
+					if not bestKey or key < bestKey then best, bestKey = l, key end
+				end
+			end
+			table.insert(picks, best)
+		end
+		for _, l in lights do
+			if table.find(picks, l) and budget.SpotAngle then
+				local sp = Instance.new("SpotLight")
+				sp.Name = "ShadowSpot"; sp.Face = Enum.NormalId.Bottom; sp.Angle = budget.SpotAngle
+				sp.Brightness = l.Brightness * (budget.SpotShare or 1); sp.Range = l.Range; sp.Color = l.Color; sp.Shadows = true
+				sp.Parent = l.Parent
+				l.Brightness = l.Brightness * (budget.PointShare or 1)
+				l.Shadows = false
+			elseif not table.find(picks, l) then
+				l.Shadows = false
+			end
+		end
+		local small, sheets = 0, 0
+		for _, d in root:GetDescendants() do
+			if d:IsA("BasePart") and d.CastShadow then
+				local sz = d.Size
+				local mn, mx = math.min(sz.X, sz.Y, sz.Z), math.max(sz.X, sz.Y, sz.Z)
+				local md = sz.X + sz.Y + sz.Z - mn - mx
+				if mx < (budget.NoShadowBelow or 0) then d.CastShadow = false; small += 1
+				-- floors / ceilings / wall skins: big thin sheets (they only shade the outside)
+				elseif budget.NoShadowSheets and mn <= 1.2 and md >= 20 then d.CastShadow = false; sheets += 1 end
+			end
+		end
+		return string.format("%d shadow sources of %d lights, %d small + %d sheet parts stop casting", #picks, #lights, small, sheets)
+	end
+
 	-- Visual layer
 	local visual = work:Clone()
 	visual.Name = "Visual"
@@ -116,6 +172,7 @@ for id, cfg in MAPS do
 		if d:IsA("BasePart") then d.CanCollide = false; d.CanQuery = false; d.CanTouch = false; d.Anchored = true
 		elseif d:IsA("ProximityPrompt") then d:Destroy() end
 	end
+	say(id, "light budget:", applyLightBudget(visual, cfg.LightBudget))
 
 	-- Solid layer
 	local solid = work:Clone()

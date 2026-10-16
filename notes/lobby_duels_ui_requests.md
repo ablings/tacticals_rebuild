@@ -3,7 +3,9 @@
 The duels session doesn't edit UI scripts (StarterGui, ReplicatedStorage.UIKit, the UI session's controllers). What the UI side
 needs to show for lobby pad duels is listed here. Contract: `notes/lobby_duels_design.md` section 6 + `notes/ui_match_hud.md`.
 
-## 1. Bugs seen in the phase 1 Play test (MatchFlowUI + DuelHUD as deployed at 16:05)
+## 1. Bugs seen in the phase 1 Play test (MatchFlowUI + DuelHUD as deployed at 16:05) - DONE by the UI session (commit 18a86d0)
+Phase 2 check (2026-10-16): after a match returned, no score bar / VICTORY card in the lobby, and the next match opened clean at 0-0
+ROUND 1 (`out/duels/phase2/03_*`, `05_*`).
 - **MatchFlowUI `fillTeams` (line ~166) errors 93 times per match**: `_gone is not a valid member of Player`. `p._gone` on a real
   Player instance throws (only the stand-in tables have `_gone`). Use `type(p) == "table"` (or `typeof(p) ~= "Instance"`) instead.
 - **DuelHUD stays up after the return to the pads**: the score bar (0 - 0, 0:00, ROUND 1) and the VICTORY card were still on screen
@@ -20,7 +22,7 @@ needs to show for lobby pad duels is listed here. Contract: `notes/lobby_duels_d
 - The `QueueState` snapshot rows carry the same text: `bays[i].noMap` (string or nil).
 - PadUI shows "NO 2V2 MAPS YET" from `NoMap` on the pad model (seen in Play, `out/duels/phase1/12_nomap_2v2.jpg`).
 
-## 3. "ARENAS FULL - WAITING"
+## 3. "ARENAS FULL - WAITING" - DONE (PadUI + board show it; verified in phase 2, `out/duels/phase2/04_*`)
 - When a full bay finishes its countdown and all `MaxArenas` (6) slots are busy, the bay stays in `Countdown` and re-checks every
   second. `QueueState` rows carry **`duelWait = "ARENAS FULL - WAITING"`** (nil otherwise); QueueManager also writes it on the
   old `Holo.Screen` and toasts it once. Request: PadBoards shows `duelWait` instead of the countdown number when set.
@@ -50,3 +52,23 @@ needs to show for lobby pad duels is listed here. Contract: `notes/lobby_duels_d
 
 ## 6. Buttons to hide while `InDuel` (design section 4)
 - PLAY / Training / Exfil entry points and pad side buttons while `InDuel == true` (the server refuses them anyway).
+
+## 7. Phase 2 (2026-10-16): props don't break in arenas
+- `PropController.Start` binds `workspace:WaitForChild("Warehouse", 30).Props` once at join. In the lobby the arena clone appears
+  minutes later (and is re-made per match), so props never break there. Request: (re)bind when a Workspace child with attribute
+  `DuelArena` appears (Props folder inside it), and drop the entries when it is destroyed. Server side nothing is needed (props are
+  client-only visuals; the shots arrive as `WeaponFired`, now sent only to the match's players + spectators).
+
+## 8. Phase 2: the camera clips into arena walls
+- At the edge spawns the third-person camera goes inside the wall (`out/duels/phase2/05_*`, `06_*`: half the screen black). In an arena the
+  Visual layer is CanCollide / CanQuery false (client clone) and the collision is the Solid layer under `workspace.DuelArenas.<id>`, all
+  Transparency 1, which the camera's occlusion test most likely skips (not verified in its source). Request (CameraController): while `InDuel` / `DuelSpectate`, include the match's Solid
+  layer (`workspace.DuelArenas[MatchState.MatchId(player)]`) in the occlusion ray even though it is transparent (ignore `Hold`, `FX`).
+
+## 9. Phase 2 contract additions (no UI work required)
+- Combat FX remotes (`WeaponFired`, `MeleeHit`, `FlashDetonated`, `Explosion`) now reach only the players + spectators of the match the
+  effect belongs to (and lobby / Training effects only players in no duel). Nothing changes in their payloads.
+- Arena state for anything that wants to show it: Solid models under `workspace.DuelArenas.<id>.<WorkspaceName>` carry
+  `DoorOpen / DoorMoving / DoorAt` (Interactive), `Exploded / FireUntil` (barrels), `SteamUntil` (valves). ArenaLoader already draws them.
+- Door prompt: ProximityPrompt "Open" / "Close", object text "Shutter", key F, 0.25 s hold, on an invisible `PanelPrompt` part.
+  Restyle through the prompt UI if wanted.

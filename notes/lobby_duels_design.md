@@ -1,9 +1,19 @@
 # Lobby duels: design (in-lobby pad matches on the Warehouse)
 
-Status: **phase 1 built 2026-10-16** (see `notes/lobby_duels_phase1.md`; what differs from this design is in §0 below). The facts behind it
+Status: **phase 1 built 2026-10-16, phase 2 built 2026-10-16** (see `notes/lobby_duels_phase1.md`; what differs from this design is in §0 below). The facts behind it
 are in `notes/lobby_duels_survey.md`. The UI side is in `notes/ui_match_hud.md` (UI session); UI asks in `notes/lobby_duels_ui_requests.md`.
 
 ## 0. Changes since the design (2026-10-16)
+
+### Phase 2 (2026-10-16, notes/lobby_duels_phase2.md)
+- Doors / barrels / valves per arena (`ArenaShootables`); state on the Solid models, drawn by ArenaLoader. Not `ArenaDoors` +
+  `ArenaShootables` as in §7: one module, and no `SolidId` follow loop (the client tweens from attributes).
+- Effects scoped with `MatchState.FireScoped` (§3 "FireMatch"); gadget rays / FX per arena via `LobbyDuelManager.RayFilter / FXFolder`.
+- §4 "Death in a round" / §8 respawn risk: solved by a pre-yield pivot in CharacterAdded + a server re-load into the Hold before the
+  auto respawn (Player.RespawnLocation doesn't work for a hidden spawn). The Bench is the slot's `Hold`.
+- Reward cooldown in the profile (`DuelPairs`), not per server.
+- Map folders: name = id, `Modes` attribute authoritative; maps can be added / removed at runtime (`MapRegistry.Changed`).
+- Arena lights: per-map `LightBudget` in the split (2 shadowed 120-degree spots instead of 8 shadowed point lights).
 
 ### Map registry (Edward via the lead: the Warehouse is a blueprint for MECHANICS, not for layout)
 Every future map has its own layout and size, so **no duel code assumes Warehouse geometry, names or dimensions**.

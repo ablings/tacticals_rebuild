@@ -7,6 +7,9 @@
 --   MatchState.Get(player, attr) -> any        attribute on the player's state object, else on ReplicatedStorage
 --   MatchState.SameMatch(a, b) -> bool         a, b = Player or character Model (bots carry DuelMatch on the model)
 --   MatchState.ArenaOf(position) -> state?     the lobby match whose arena box contains position
+--   MatchState.Audience(matchId) -> {Player}    players of that match + its spectators (matchId nil = everyone NOT in a duel)
+--   MatchState.FireScoped(remote, anchor, ...)  server: fire a combat FX remote only to the audience of anchor's match
+--                                               (anchor = Player / character / bot Model / Vector3 / matchId string)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
@@ -67,6 +70,42 @@ function MatchState.ArenaOf(position: Vector3): Instance?
 		end
 	end
 	return nil
+end
+
+-- the match an effect belongs to: a Player / character / bot Model (DuelMatch), a position (the arena it is in) or an id
+function MatchState.ScopeOf(anchor): string?
+	local t = typeof(anchor)
+	if t == "string" then return anchor end
+	if t == "Vector3" then
+		local s = MatchState.ArenaOf(anchor)
+		return s and s.Name or nil
+	end
+	if t == "Instance" then
+		local id = matchOf(anchor)
+		if id then return tostring(id) end
+		if anchor:IsA("BasePart") or anchor:IsA("Model") then
+			local ok, pos = pcall(function() return anchor:IsA("Model") and anchor:GetPivot().Position or anchor.Position end)
+			if ok then return MatchState.ScopeOf(pos) end
+		end
+	end
+	return nil
+end
+
+-- who sees a match's effects: its players and spectators. nil = the lobby / Training: everyone not in a lobby duel.
+-- (In the match place there is no LobbyDuels folder and nobody has DuelMatch, so this is every player, as before.)
+function MatchState.Audience(matchId: string?): { Player }
+	local out = {}
+	for _, p in Players:GetPlayers() do
+		if MatchState.MatchId(p) == matchId then table.insert(out, p) end
+	end
+	return out
+end
+
+-- RemoteEvent:FireAllClients, narrowed to the audience of anchor's match (lobby duels phase 2: no combat traffic or
+-- effects cross between the lobby and an arena, or between two arenas)
+function MatchState.FireScoped(remote: RemoteEvent, anchor, ...)
+	if not lobbyFolder() then remote:FireAllClients(...) return end
+	for _, p in MatchState.Audience(MatchState.ScopeOf(anchor)) do remote:FireClient(p, ...) end
 end
 
 return MatchState

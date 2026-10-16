@@ -11,6 +11,7 @@ FILES = {  # SOURCES key -> file
     "MapRegistry": "MapRegistry.lua",
     "MatchState": "MatchState.lua",
     "MatchCore": "MatchCore.lua",
+    "ArenaShootables": "ArenaShootables.lua",
     "LobbyDuelManager": "LobbyDuelManager.lua",
     "ArenaLoader": "ArenaLoader.client.lua",
     "MatchConfig": "MatchConfig.lua",

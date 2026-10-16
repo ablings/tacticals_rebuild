@@ -159,3 +159,12 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   down, duelists never hold a pad, JoinPad/QuickJoin refuse duelists, snapshot `duelWait` / `noMap`, Studio `DuelTestSolo`). Player attrs used:
   DuelMatch, InDuel, Alive, LoadoutReady, OwnedItems, MatchDeaths. Arenas live at x >= 4000, y 100 (holds at y 40): nothing of the lobby may be
   built there. UNDO via `fix/lobby_duels_install.lua UNDO`, then `fix/duel_split_map.lua UNDO`.
+- 2026-10-16 lobby_duels phase 2 (notes/lobby_duels_phase2.md): new `ServerScriptService.Shared.ArenaShootables`; **17 more [DUEL] edits**:
+  CombatManager / MeleeManager (`WeaponFired`, `MeleeHit` via `MatchState.FireScoped`), GadgetManager (`mapRay` uses
+  `LobbyDuelManager.RayFilter`, effects parented by `fxParent` into `DuelArenas.<id>.FX`, `FlashDetonated` scoped, charges spent when
+  `LiveMatch`, new `ClearIn(folder)`), **`Managers.ShootableManager` stub** (OnShot routes arena shots to `LobbyDuelManager.OnShot`; new
+  `Explode` for frags in arenas; backup `DUEL_ShootableManager_Orig`). `MapRegistry`: folder name = map id, folder attr `Modes` overrides
+  MapInfo. `fix/duel_split_map.lua` re-run with `LightBudget` (Visual: `ArenaLights` keep their PointLights unshadowed + 2 `ShadowSpot`
+  SpotLights). Runtime: `DuelArenas.<id>.FX`, `PanelPrompt` parts on Solid doors, Solid model attrs (DoorOpen / Exploded / SteamUntil...),
+  profile key `DuelPairs`, Studio-only `ServerStorage.DuelTestHook`. Arena slot x 4000..9000, y 100, holds y 40: still nothing of the lobby there.
+  UNDO via `fix/lobby_duels_install.lua UNDO` (41 edits), then `fix/duel_split_map.lua UNDO`.

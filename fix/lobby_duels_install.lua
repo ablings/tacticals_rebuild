@@ -10,6 +10,11 @@
 --   LobbyFallCatch (skip InDuel), CombatManager / MeleeManager / GadgetManager (per-match CombatEnabled / InfiniteAmmo,
 --   same-match damage guard, no friendly fire, kill-credit attributes, weapons for InDuel), QueueManager (pad hand-off,
 --   NoMap pads, duelists never hold a pad, Studio DuelTestSolo).
+-- Phase 2 (2026-10-16, notes/lobby_duels_phase2.md): new ServerScriptService.Shared.ArenaShootables (per-arena doors / barrels /
+--   valves / blasts); [DUEL] edits: CombatManager / MeleeManager WeaponFired + MeleeHit only to the match's audience
+--   (MatchState.FireScoped), GadgetManager (smoke / blast rays against the arena's Solid layer, effects in the arena's FX folder,
+--   FlashDetonated scoped, charges spent in real matches, ClearIn per arena), ShootableManager stub (shots / frags routed to
+--   the arena: LobbyDuelManager.OnShot / Explode).
 -- The maps themselves: fix/duel_split_map.lua (registry + layers). Runtime objects (LobbyDuels, MatchFlow, DuelArenas,
 -- Events.Match) are created by LobbyDuelManager at server start, not here.
 -- UNDO: python tools/run_luau.py fix/lobby_duels_install.lua UNDO
@@ -50,15 +55,30 @@ SOURCES.MapRegistry = [=[-- ReplicatedStorage/Modules/Shared/MapRegistry (Module
 --   MapRegistry.ForMode(mode) -> { info }     maps whose Modes include mode (the vote list; "Random" picks among these)
 --   MapRegistry.HasMode(mode) -> bool         false = pads of that mode can't start an in-lobby match (NoMap)
 --   MapRegistry.SlotSpacing() -> number       distance between arena slots: the biggest footprint + the longest weapon range
+--   MapRegistry.Changed  (RBXScriptSignal-like :Connect) fires when a map folder is added or removed (cache dropped)
+-- Optional MapInfo keys read by the duel code (phase 2): RayFolders = { "<Solid child>" } (what smoke / blast rays hit;
+-- default: CollisionProxies if the map has it, else the whole Solid layer), LightBudget (see fix/duel_split_map.lua).
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local MapRegistry = {}
 local WEAPON_RANGE = 600 -- longest gun range (Sniper); arenas must be further apart than this
 local cache
+local changed = Instance.new("BindableEvent")
+MapRegistry.Changed = changed.Event
+local watching = false
+local function watch(root)
+	if watching or not root then return end
+	watching = true
+	-- a map added or removed at runtime (e.g. a Studio test map) is picked up on the next call
+	local function drop() cache = nil; changed:Fire() end
+	root.ChildAdded:Connect(drop)
+	root.ChildRemoved:Connect(drop)
+end
 
 local function load()
 	if cache then return cache end
 	local root = ReplicatedStorage:FindFirstChild("DuelMaps")
+	watch(root)
 	local list = {}
 	for _, f in (root and root:GetChildren() or {}) do
 		local mod = f:FindFirstChild("MapInfo")
@@ -66,7 +86,14 @@ local function load()
 			local ok, info = pcall(require, mod)
 			if ok and type(info) == "table" then
 				local entry = table.clone(info)
-				entry.Id = entry.Id or f.Name
+				-- the folder is authoritative: its name is the map id, its Modes attribute ("1v1,2v2") overrides MapInfo.Modes
+				-- (so a map's modes can change without regenerating MapInfo, and a copied folder is its own map)
+				entry.Id = f.Name
+				local modes = f:GetAttribute("Modes")
+				if type(modes) == "string" and modes ~= "" then
+					entry.Modes = {}
+					for m in modes:gmatch("[^,%s]+") do table.insert(entry.Modes, m) end
+				end
 				entry.Folder = f
 				table.insert(list, entry)
 			else
@@ -118,6 +145,9 @@ SOURCES.MatchState = [=[-- ReplicatedStorage/Modules/Shared/MatchState (ModuleSc
 --   MatchState.Get(player, attr) -> any        attribute on the player's state object, else on ReplicatedStorage
 --   MatchState.SameMatch(a, b) -> bool         a, b = Player or character Model (bots carry DuelMatch on the model)
 --   MatchState.ArenaOf(position) -> state?     the lobby match whose arena box contains position
+--   MatchState.Audience(matchId) -> {Player}    players of that match + its spectators (matchId nil = everyone NOT in a duel)
+--   MatchState.FireScoped(remote, anchor, ...)  server: fire a combat FX remote only to the audience of anchor's match
+--                                               (anchor = Player / character / bot Model / Vector3 / matchId string)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 
@@ -178,6 +208,42 @@ function MatchState.ArenaOf(position: Vector3): Instance?
 		end
 	end
 	return nil
+end
+
+-- the match an effect belongs to: a Player / character / bot Model (DuelMatch), a position (the arena it is in) or an id
+function MatchState.ScopeOf(anchor): string?
+	local t = typeof(anchor)
+	if t == "string" then return anchor end
+	if t == "Vector3" then
+		local s = MatchState.ArenaOf(anchor)
+		return s and s.Name or nil
+	end
+	if t == "Instance" then
+		local id = matchOf(anchor)
+		if id then return tostring(id) end
+		if anchor:IsA("BasePart") or anchor:IsA("Model") then
+			local ok, pos = pcall(function() return anchor:IsA("Model") and anchor:GetPivot().Position or anchor.Position end)
+			if ok then return MatchState.ScopeOf(pos) end
+		end
+	end
+	return nil
+end
+
+-- who sees a match's effects: its players and spectators. nil = the lobby / Training: everyone not in a lobby duel.
+-- (In the match place there is no LobbyDuels folder and nobody has DuelMatch, so this is every player, as before.)
+function MatchState.Audience(matchId: string?): { Player }
+	local out = {}
+	for _, p in Players:GetPlayers() do
+		if MatchState.MatchId(p) == matchId then table.insert(out, p) end
+	end
+	return out
+end
+
+-- RemoteEvent:FireAllClients, narrowed to the audience of anchor's match (lobby duels phase 2: no combat traffic or
+-- effects cross between the lobby and an arena, or between two arenas)
+function MatchState.FireScoped(remote: RemoteEvent, anchor, ...)
+	if not lobbyFolder() then remote:FireAllClients(...) return end
+	for _, p in MatchState.Audience(MatchState.ScopeOf(anchor)) do remote:FireClient(p, ...) end
 end
 
 return MatchState
@@ -443,6 +509,402 @@ end
 
 return MatchCore
 ]=]
+SOURCES.ArenaShootables = [=[-- ServerScriptService/Shared/ArenaShootables (ModuleScript): doors, fire barrels, steam valves and explosions of ONE
+-- lobby duel arena (lobby duels phase 2, 2026-10-16). Per-arena port of the match place's ShootableManager + DoorManager.
+-- LobbyDuelManager makes one per match (ArenaShootables.new(arena)) once the Solid layer is in Workspace; the lobby's
+-- ShootableManager stub routes shots / frag blasts to the arena that contains them.
+--
+-- Server state lives on the arena's Solid models (they replicate, and only this match's clients have the Visual twin):
+--   Interactive.<Door>   (child "Shutter")              DoorOpen (bool), DoorMoving (bool), DoorAt (server time the roll started),
+--                                                       DoorHeight. The Solid shutter is tweened here (collision); the
+--                                                       client tweens its Visual shutter from the same attributes.
+--   Shootables.<Barrel>  (attr Shootable = "FireBarrel") Exploded (bool), FireUntil (server time, burning ground)
+--   Shootables.<Valve>   (attr Shootable = "SteamValve") SteamUntil (server time; SteamMask reads it on server and client)
+-- Effects: Events.Combat.Explosion goes only to this match's players + spectators (MatchState.FireScoped); burning ground,
+-- steam jets and door motion are drawn by the clients' ArenaLoader. Burning players carry the match place's BurnFX.
+-- Nothing here names a map: doors / shootables are found by the conventions above (the Warehouse blueprint).
+--
+-- arena = { id, solid (Model in Workspace), origin (Vector3), info (MapInfo), visual (template Model), state (Configuration),
+--           characters () -> {Model}, isMember (Player) -> bool, rayFilter {Instance} }
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
+
+local Shared = ReplicatedStorage.Modules.Shared
+local Config = require(Shared.Config.ShootableConfig)
+local SoundTrim = require(Shared.SoundTrim)
+local MatchState = require(Shared.MatchState)
+local Combat = ReplicatedStorage.Events.Combat
+
+local FLAT = Vector3.new(1, 0, 1)
+local FIRE_TEX = "rbxasset://textures/particles/fire_main.dds"
+local HISS = "rbxassetid://4772620521"
+local ROLL_TIME = 1.6
+
+local ArenaShootables = {}
+ArenaShootables.__index = ArenaShootables
+ArenaShootables.ROLL_TIME = ROLL_TIME
+
+local function now() return workspace:GetServerTimeNow() end
+
+-- Does segment a->b pass through the box? (match place ShootableManager)
+local function segmentHitsBox(a: Vector3, b: Vector3, cf: CFrame, size: Vector3, pad: number): (boolean, number)
+	local la, lb = cf:PointToObjectSpace(a), cf:PointToObjectSpace(b)
+	local d = lb - la
+	local tmin, tmax = 0, 1
+	local half = size / 2 + Vector3.one * pad
+	for _, axis in { "X", "Y", "Z" } do
+		local o, v, h = la[axis], d[axis], half[axis]
+		if math.abs(v) < 1e-6 then
+			if o < -h or o > h then return false, 0 end
+		else
+			local t1, t2 = (-h - o) / v, (h - o) / v
+			if t1 > t2 then t1, t2 = t2, t1 end
+			tmin, tmax = math.max(tmin, t1), math.min(tmax, t2)
+			if tmin > tmax then return false, 0 end
+		end
+	end
+	return true, tmin
+end
+
+local function flameEmitter(parent: Instance, size: number, rate: number): ParticleEmitter
+	local e = Instance.new("ParticleEmitter")
+	e.Texture = FIRE_TEX
+	e.LightEmission = 1
+	e.LightInfluence = 0
+	e.Color = ColorSequence.new({
+		ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 236, 170)),
+		ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 140, 40)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 30, 10)),
+	})
+	e.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, size * 0.6), NumberSequenceKeypoint.new(0.4, size), NumberSequenceKeypoint.new(1, size * 0.2) })
+	e.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.25), NumberSequenceKeypoint.new(0.7, 0.45), NumberSequenceKeypoint.new(1, 1) })
+	e.Lifetime = NumberRange.new(0.35, 0.7)
+	e.Speed = NumberRange.new(2, 5)
+	e.SpreadAngle = Vector2.new(15, 15)
+	e.Acceleration = Vector3.new(0, 7, 0)
+	e.RotSpeed = NumberRange.new(-90, 90)
+	e.Rotation = NumberRange.new(0, 360)
+	e.EmissionDirection = Enum.NormalId.Top
+	e.Rate = rate
+	e.Parent = parent
+	return e
+end
+
+-- // Construction ----------------------------------------------------------------------------------------------------------
+function ArenaShootables.new(arena)
+	local self = setmetatable({ arena = arena, doors = {}, barrels = {}, valves = {}, fires = {}, burning = {}, conns = {} }, ArenaShootables)
+	local solid = arena.solid
+	self.rayParams = RaycastParams.new()
+	self.rayParams.FilterType = Enum.RaycastFilterType.Include
+	self.rayParams.FilterDescendantsInstances = arena.rayFilter or { solid }
+
+	-- doors: Interactive.<Door> with a Shutter; the prompt sits where the Visual layer has the door's Panel
+	local inter = solid:FindFirstChild("Interactive")
+	local vInter = arena.visual and arena.visual:FindFirstChild("Interactive")
+	for _, model in (inter and inter:GetChildren() or {}) do
+		local shutter = model:FindFirstChild("Shutter")
+		if shutter and shutter:IsA("BasePart") then
+			local vPanel = vInter and vInter:FindFirstChild(model.Name) and vInter[model.Name]:FindFirstChild("Panel")
+			local panel = Instance.new("Part")
+			panel.Name = "PanelPrompt"
+			panel.Anchored, panel.CanCollide, panel.CanQuery, panel.CanTouch, panel.CastShadow = true, false, false, false, false
+			panel.Transparency = 1
+			panel.Size = vPanel and vPanel.Size or Vector3.new(1, 1, 0.3)
+			panel.CFrame = vPanel and (CFrame.new(arena.origin) * vPanel.CFrame) or shutter.CFrame
+			panel.Parent = model
+			local prompt = Instance.new("ProximityPrompt")
+			prompt.ActionText = "Open"
+			prompt.ObjectText = "Shutter"
+			prompt.KeyboardKeyCode = Enum.KeyCode.F
+			prompt.HoldDuration = 0.25
+			prompt.MaxActivationDistance = 8
+			prompt.RequiresLineOfSight = false
+			prompt.Parent = panel
+			local door = { model = model, shutter = shutter, closedCF = shutter.CFrame, height = model:GetAttribute("OpenHeight") or 10,
+				prompt = prompt, open = false, busy = false }
+			model:SetAttribute("DoorHeight", door.height)
+			model:SetAttribute("DoorOpen", false)
+			model:SetAttribute("DoorMoving", false)
+			table.insert(self.conns, prompt.Triggered:Connect(function(player)
+				-- only this match's live players can work its doors
+				if arena.isMember(player) and player:GetAttribute("Alive") ~= false then self:SetDoor(door, not door.open) end
+			end))
+			table.insert(self.doors, door)
+		end
+	end
+
+	-- shootables: Shootables.<Model> with attribute Shootable (FireBarrel / SteamValve); the name is the fallback
+	local shoot = solid:FindFirstChild("Shootables")
+	for _, model in (shoot and shoot:GetChildren() or {}) do
+		local kind = model:GetAttribute("Shootable") or (model.Name:find("FireBarrel") and "FireBarrel") or (model.Name:find("SteamValve") and "SteamValve")
+		if kind == "FireBarrel" and model:FindFirstChild("Body") then
+			table.insert(self.barrels, { model = model, exploded = false, saved = {} })
+		elseif kind == "SteamValve" then
+			local parts = {}
+			for _, p in model:GetDescendants() do if p:IsA("BasePart") then table.insert(parts, p) end end
+			if #parts > 0 then table.insert(self.valves, { model = model, parts = parts, used = false }) end
+		end
+	end
+	return self
+end
+
+function ArenaShootables:Counts()
+	return #self.doors, #self.barrels, #self.valves
+end
+
+-- // Doors ------------------------------------------------------------------------------------------------------------------
+function ArenaShootables:SetDoor(door, open: boolean)
+	if door.open == open or door.busy or self.dead then return end
+	door.busy = true
+	door.open = open
+	door.prompt.Enabled = false
+	door.model:SetAttribute("DoorAt", now())
+	door.model:SetAttribute("DoorMoving", true)
+	door.model:SetAttribute("DoorOpen", open)
+	local goal = open and door.closedCF + Vector3.new(0, door.height, 0) or door.closedCF
+	local tween = TweenService:Create(door.shutter, TweenInfo.new(ROLL_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), { CFrame = goal })
+	tween:Play()
+	task.spawn(function()
+		tween.Completed:Wait()
+		if self.dead then return end
+		door.model:SetAttribute("DoorMoving", false)
+		door.prompt.ActionText = open and "Close" or "Open"
+		door.prompt.Enabled = true
+		door.busy = false
+	end)
+end
+
+-- // Burning --------------------------------------------------------------------------------------------------------------------
+function ArenaShootables:hurt(character: Model, amount: number, attacker: Player?, from: Vector3?, kind: string?)
+	local hum = character:FindFirstChildOfClass("Humanoid")
+	if not hum or hum.Health <= 0 or amount <= 0 then return end
+	-- no friendly fire in a live match (your own blast still hurts you); only this match's bodies are ever passed in
+	local owner = Players:GetPlayerFromCharacter(character) or character
+	if attacker and owner ~= attacker and self.arena.state:GetAttribute("LiveMatch") and owner:GetAttribute("Team") ~= nil
+		and owner:GetAttribute("Team") == attacker:GetAttribute("Team") then return end
+	hum:SetAttribute("LastAttacker", attacker and attacker.UserId or 0)
+	hum:SetAttribute("LastAttackKind", kind or "Blast")
+	hum:SetAttribute("LastHitZone", nil)
+	hum:TakeDamage(amount)
+	local victim = Players:GetPlayerFromCharacter(character)
+	if victim and from then Combat.DamageTaken:FireClient(victim, from, amount) end
+	if kind ~= "Burn" and attacker and Combat:FindFirstChild("HitConfirm") and victim ~= attacker then
+		Combat.HitConfirm:FireClient(attacker, "Body", amount, hum.Health <= 0)
+	end
+end
+
+function ArenaShootables:ignite(character: Model, attacker: Player?, seconds: number?)
+	local hum = character:FindFirstChildOfClass("Humanoid")
+	if not hum or hum.Health <= 0 or self.dead then return end
+	local untilT = os.clock() + (seconds or Config.Burn.Time)
+	local entry = self.burning[character]
+	if entry then entry.untilT = math.max(entry.untilT, untilT) return end
+	local torso = character:FindFirstChild("UpperTorso") or character:FindFirstChild("HumanoidRootPart")
+	if not torso then return end
+	local holder = Instance.new("Attachment")
+	holder.Name = "BurnFX"
+	holder.Parent = torso
+	flameEmitter(holder, 2.2, 45)
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(255, 140, 50); light.Brightness = 2.5; light.Range = 12
+	light.Parent = holder
+	local roar = Instance.new("Sound")
+	roar.SoundId = HISS; roar.PlaybackSpeed = 0.45; roar.Volume = 0.5; roar.Looped = true; roar.RollOffMaxDistance = 70
+	roar.Parent = holder
+	SoundTrim.Play(roar)
+	character:SetAttribute("Burning", true)
+	self.burning[character] = { untilT = untilT, attacker = attacker }
+end
+
+function ArenaShootables:extinguish(character: Model)
+	self.burning[character] = nil
+	if character.Parent then character:SetAttribute("Burning", nil) end
+	for _, d in character:GetDescendants() do
+		if d.Name == "BurnFX" then
+			for _, e in d:GetChildren() do if e:IsA("ParticleEmitter") then e.Enabled = false end end
+			Debris:AddItem(d, 1)
+			d.Name = "BurnFXOff"
+		end
+	end
+end
+
+-- // Explosions -----------------------------------------------------------------------------------------------------------------
+function ArenaShootables:wallBetween(a: Vector3, b: Vector3): boolean
+	local hit = workspace:Raycast(a, b - a, self.rayParams)
+	return hit ~= nil and hit.Instance.Name ~= "COLP_Floor" and math.abs(hit.Normal.Y) < 0.9
+end
+
+function ArenaShootables:Explode(position: Vector3, kind: string, attacker: Player?, source)
+	local cfg = Config.Explosions[kind]
+	if not cfg or self.dead then return end
+	MatchState.FireScoped(Combat.Explosion, self.arena.id, position, kind)
+	local gadgets = shared.Get and shared.Get("GadgetManager")
+	if gadgets and gadgets.PushSmoke then gadgets.PushSmoke(position, cfg.Radius * 1.5) end
+	local from = position + Vector3.new(0, 1, 0)
+	for _, character in self.arena.characters() do
+		local root = character:FindFirstChild("HumanoidRootPart")
+		local hum = character:FindFirstChildOfClass("Humanoid")
+		if root and hum and hum.Health > 0 then
+			local d = (root.Position - position).Magnitude
+			local head = character:FindFirstChild("Head")
+			local exposed = not self:wallBetween(from, root.Position) or (head and not self:wallBetween(from, head.Position))
+			if d <= cfg.Radius and exposed then
+				local amount
+				if d <= cfg.KillRadius then
+					amount = hum.MaxHealth * 3
+				else
+					local t = (d - cfg.KillRadius) / (cfg.Radius - cfg.KillRadius)
+					amount = cfg.MaxDamage + (cfg.MinDamage - cfg.MaxDamage) * t
+				end
+				self:hurt(character, amount, attacker, position, kind)
+				if cfg.Ignite and hum.Health > 0 then self:ignite(character, attacker) end
+			end
+		end
+	end
+	if cfg.FireRadius then
+		-- burning ground: logic here, the flames are drawn by the match's clients from FireUntil / FireAt
+		local untilT = os.clock() + cfg.FireTime
+		table.insert(self.fires, { position = position - Vector3.new(0, 1, 0), radius = cfg.FireRadius, untilT = untilT, attacker = attacker })
+		if source then
+			source:SetAttribute("FireAt", position)
+			source:SetAttribute("FireRadius", cfg.FireRadius)
+			source:SetAttribute("FireUntil", now() + cfg.FireTime)
+		end
+	end
+	if cfg.Chain then
+		for _, b in self.barrels do
+			if not b.exploded and (b.model.Body.Position - position).Magnitude <= cfg.Radius then
+				task.delay(0.12 + math.random() * 0.12, function() self:ExplodeBarrel(b, attacker) end)
+			end
+		end
+	end
+end
+
+function ArenaShootables:ExplodeBarrel(b, attacker: Player?)
+	if b.exploded or self.dead then return end
+	b.exploded = true
+	local position = b.model.Body.Position
+	for _, p in b.model:GetDescendants() do
+		if p:IsA("BasePart") then
+			b.saved[p] = b.saved[p] or { p.CanCollide, p.CanQuery }
+			p.CanCollide, p.CanQuery = false, false
+		end
+	end
+	b.model:SetAttribute("Exploded", true)
+	self:Explode(position, "Barrel", attacker, b.model)
+end
+
+function ArenaShootables:ActivateValve(v, shooter: Player?)
+	if v.used or self.dead then return end
+	v.used = true
+	v.model:SetAttribute("SteamUntil", now() + Config.Steam.Duration)
+end
+
+-- // Shots: the first shootable along the bullet's path reacts --------------------------------------------------------------------
+function ArenaShootables:OnShot(origin: Vector3, endPos: Vector3, shooter: Player?)
+	if self.dead then return end
+	-- the bullet stops at the first solid thing (walls, cover): nothing behind it reacts
+	local dir = endPos - origin
+	if dir.Magnitude > 0.05 then
+		local hit = workspace:Raycast(origin, dir, self.rayParams)
+		if hit then endPos = hit.Position + dir.Unit * 0.3 end
+	end
+	local best, bestT, bestKind = nil, math.huge, nil
+	for _, v in self.valves do
+		if not v.used then
+			for _, p in v.parts do
+				local hit, t = segmentHitsBox(origin, endPos, p.CFrame, p.Size, Config.Steam.HitPadding)
+				if hit and t < bestT then best, bestT, bestKind = v, t, "Valve" end
+			end
+		end
+	end
+	for _, b in self.barrels do
+		if not b.exploded then
+			local body = b.model.Body
+			local hit, t = segmentHitsBox(origin, endPos, body.CFrame, body.Size, 0.15)
+			if hit and t < bestT then best, bestT, bestKind = b, t, "Barrel" end
+		end
+	end
+	if bestKind == "Valve" then self:ActivateValve(best, shooter)
+	elseif bestKind == "Barrel" then self:ExplodeBarrel(best, shooter) end
+	return bestKind
+end
+
+-- // Per frame: burning players and standing in fire ----------------------------------------------------------------------------
+function ArenaShootables:Step(dt: number)
+	if self.dead then return end
+	local clock = os.clock()
+	for character, entry in self.burning do
+		local hum = character:FindFirstChildOfClass("Humanoid")
+		if not character.Parent or not hum or hum.Health <= 0 or clock > entry.untilT then
+			self:extinguish(character)
+		else
+			self:hurt(character, Config.Burn.Dps * dt, entry.attacker, nil, "Burn")
+		end
+	end
+	self.acc = (self.acc or 0) + dt
+	if self.acc >= 0.2 and #self.fires > 0 then
+		self.acc = 0
+		for i = #self.fires, 1, -1 do
+			local fire = self.fires[i]
+			if clock > fire.untilT then
+				table.remove(self.fires, i)
+			else
+				for _, character in self.arena.characters() do
+					local root = character:FindFirstChild("HumanoidRootPart")
+					if root then
+						local off = root.Position - fire.position
+						if (off * FLAT).Magnitude <= fire.radius * 0.85 and math.abs(off.Y) < 5 then self:ignite(character, fire.attacker, 1.5) end
+					end
+				end
+			end
+		end
+	end
+end
+
+-- // New round: everything back (barrels whole, valves ready, doors shut, no fire) --------------------------------------------------
+function ArenaShootables:ResetAll()
+	for _, b in self.barrels do
+		for p, s in b.saved do if p.Parent then p.CanCollide, p.CanQuery = s[1], s[2] end end
+		b.saved = {}
+		b.exploded = false
+		b.model:SetAttribute("Exploded", nil)
+		b.model:SetAttribute("FireUntil", nil)
+	end
+	for _, v in self.valves do
+		v.used = false
+		v.model:SetAttribute("SteamUntil", nil)
+	end
+	self.fires = {}
+	for character in self.burning do self:extinguish(character) end
+	for _, door in self.doors do
+		door.open, door.busy = false, false
+		door.shutter.CFrame = door.closedCF
+		door.prompt.ActionText = "Open"
+		door.prompt.Enabled = true
+		door.model:SetAttribute("DoorOpen", false)
+		door.model:SetAttribute("DoorMoving", false)
+		door.model:SetAttribute("DoorAt", now())
+	end
+end
+
+function ArenaShootables:Destroy()
+	self.dead = true
+	for character in self.burning do self:extinguish(character) end
+	for _, c in self.conns do c:Disconnect() end
+end
+
+-- // Light helpers for LobbyDuelManager ---------------------------------------------------------------------------------------------
+function ArenaShootables:Contains(position: Vector3): boolean
+	local size = self.arena.info and self.arena.info.Size or Vector3.new(200, 60, 200)
+	local d = position - self.arena.origin
+	return math.abs(d.X) <= size.X / 2 + 20 and math.abs(d.Z) <= size.Z / 2 + 20 and d.Y > -40 and d.Y < size.Y + 60
+end
+
+return ArenaShootables
+]=]
 SOURCES.LobbyDuelManager = [=[-- ServerScripts/[Server] Init/GameManager/Managers/LobbyDuelManager (ModuleScript)
 -- Lobby pad duels (notes/lobby_duels_design.md, phase 1 2026-10-16): a full pad bay plays its match HERE, in the lobby
 -- server, on an arena slot far outside the lobby, instead of teleporting to the match place.
@@ -455,8 +917,13 @@ SOURCES.LobbyDuelManager = [=[-- ServerScripts/[Server] Init/GameManager/Manager
 --   State: ReplicatedStorage.LobbyDuels.<matchId> (Configuration) with the contract attributes; remote ReplicatedStorage.MatchFlow.
 -- Lead defaults (Edward may change): casual only (never ranked); rewards = a casual match's, at most one per opponent pair per
 -- 10 minutes; leaving = loss for the leaver (no rewards) and a win for the other side; vote = eligible maps + Random; 6 arenas.
--- Studio test: ReplicatedStorage attribute DuelTestSolo = true lets one player start a pad alone; the empty team gets a
--- server test bot (an R15 rig, tag Bot, DuelMatch on the model) - LobbyDuelManager._TestSolo. Never in a live server.
+-- Studio test: ReplicatedStorage attribute DuelTestSolo = true lets one player start a pad alone; empty places on both teams
+-- get server test bots (R15 rigs, tag Bot, DuelMatch on the model) - LobbyDuelManager._TestSolo / _TestBots. Never live.
+-- Phase 2 (2026-10-16): per-arena doors / barrels / valves (ArenaShootables), gadget rays + FX per arena (RayFilter / FXFolder,
+-- read by the [DUEL] GadgetManager / ShootableManager edits), effects only to the match's audience (MatchState.FireScoped),
+-- no duelist character is ever seen at the lobby spawn (every new character is pivoted to the Hold before it can replicate,
+-- and a dead duelist is re-spawned into the Hold by the server before Roblox's own auto respawn), the reward cooldown
+-- per opponent pair is saved in the profile (DuelPairs), test maps can be added at runtime (MapRegistry.Changed).
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerStorage = game:GetService("ServerStorage")
@@ -470,6 +937,7 @@ local MatchConfig = require(Shared.Config.MatchConfig)
 local LobbyConfig = require(Shared.Config.LobbyConfig)
 local MapRegistry = require(Shared.MapRegistry)
 local MatchCore = require(ServerScriptService.Shared.MatchCore)
+local ArenaShootables = require(ServerScriptService.Shared.ArenaShootables)
 local PlayerStore = require(ServerScriptService.Data.PlayerStore)
 
 local IS_STUDIO = RunService:IsStudio()
@@ -480,7 +948,6 @@ local stateFolder, arenaFolder, flow, announceEv, resultsEv
 local slots = {}      -- [n] = matchId or nil
 local matches = {}    -- [matchId] = match record
 local byPlayer = {}   -- [Player] = { match, member }
-local lastReward = {} -- [pair key] = os.clock() (anti-farming)
 local counter = 0
 
 -- // Helpers ------------------------------------------------------------------------------------------------------------
@@ -492,8 +959,9 @@ end
 local function slotOrigin(n: number): Vector3
 	return Vector3.new((C.ArenaBaseX or 4000) + MapRegistry.SlotSpacing() * (n - 1), C.ArenaY or 100, 0)
 end
+local HOLD_DEPTH = 60
 local function holdFrame(match, i: number): CFrame
-	return CFrame.new(match.origin + Vector3.new((i - 1) * 4, -60 + 3, 0))
+	return CFrame.new(match.origin + Vector3.new((i - 1) * 4, -HOLD_DEPTH + 3, 0))
 end
 local function playersOf(match, withSpectators: boolean?)
 	local out = {}
@@ -528,7 +996,7 @@ local function makeBot(match, m)
 		warn("[LobbyDuelManager] test bot rig failed: " .. tostring(rig))
 		return nil
 	end
-	rig.Name = "DuelBot_" .. match.id
+	rig.Name = "DuelBot_" .. match.id .. "_" .. m.index
 	rig:SetAttribute("DuelMatch", match.id)
 	rig:SetAttribute("Team", m.team)
 	rig:SetAttribute("Loadout", "Pistol")
@@ -564,6 +1032,30 @@ local function loadSolid(match)
 	clone:PivotTo(CFrame.new(match.origin))
 	clone.Parent = match.arena
 	match.solid = clone
+	-- what smoke floods and blasts treat as walls: MapInfo.RayFolders, else CollisionProxies, else the whole Solid layer
+	local filter = {}
+	for _, name in (match.map.RayFolders or { "CollisionProxies" }) do
+		local f = clone:FindFirstChild(name)
+		if f then table.insert(filter, f) end
+	end
+	match.rayFilter = #filter > 0 and filter or { clone }
+	match.shoot = ArenaShootables.new({
+		id = match.id, solid = clone, origin = match.origin, info = match.map, state = match.state,
+		visual = match.map.Folder and match.map.Folder:FindFirstChild("Visual"), rayFilter = match.rayFilter,
+		characters = function()
+			local out = {}
+			for _, list in match.teams do
+				for _, m in list do
+					local c = not m.left and MatchCore.character(m)
+					if c and c.Parent then table.insert(out, c) end
+				end
+			end
+			return out
+		end,
+		isMember = function(p) local r = byPlayer[p]; return r ~= nil and r.match == match end,
+	})
+	local d, b, v = match.shoot:Counts()
+	print(`[LobbyDuelManager] {match.id} arena {match.map.Id}: {d} doors, {b} barrels, {v} valves`)
 end
 
 -- // Players in and out of a match ---------------------------------------------------------------------------------------
@@ -639,6 +1131,8 @@ local function spawnMember(match, m, side: string, slot: number)
 	if not character then m.spawning = false; return nil end
 	local waited = 0
 	while character:GetAttribute("Ready") ~= true and waited < 10 and character.Parent do waited += task.wait(0.1) end
+	-- if anything replaced the character meanwhile, place the current one
+	if p.Character and p.Character ~= character then character = p.Character end
 	local hum = character:FindFirstChildOfClass("Humanoid")
 	if hum then hum.MaxHealth = C.PlayerHealth or 150; hum.Health = hum.MaxHealth end
 	if character.Parent then character:PivotTo(cf) end
@@ -657,23 +1151,45 @@ local function memberList(match, side)
 	return json(ids)
 end
 
+-- one reward per opponent pair per DuelRewardCooldown, kept in the profile so it holds across lobby servers:
+-- data.DuelPairs = { ["<opponent ids sorted, comma separated>"] = os.time() of the last paid match }. Entries older than the
+-- cooldown are dropped on every write, so the table stays a handful of keys.
+local function pairKey(match, side: string): string
+	local others = {}
+	for s, list in match.teams do if s ~= side then for _, o in list do table.insert(others, o.userId) end end end
+	table.sort(others)
+	return table.concat(others, ",")
+end
+local function rewardCooling(data, key: string): boolean
+	local pairs_ = data and type(data.DuelPairs) == "table" and data.DuelPairs
+	local last = pairs_ and pairs_[key]
+	return type(last) == "number" and os.time() - last < (C.DuelRewardCooldown or 600)
+end
+local function rewardMark(p: Player, data, key: string)
+	local keep = {}
+	local cd = C.DuelRewardCooldown or 600
+	for k, t in (type(data.DuelPairs) == "table" and data.DuelPairs or {}) do
+		if type(t) == "number" and os.time() - t < cd then keep[k] = t end
+	end
+	keep[key] = os.time()
+	PlayerStore.Set(p, { "DuelPairs" }, keep)
+end
+manager._rewardCooling, manager._rewardMark, manager._pairKey = rewardCooling, rewardMark, pairKey
+
 local function award(match, m, side: string, winner: string?, forfeit: boolean)
 	local p = m.player
 	local data = PlayerStore.Get(p)
 	local summary = MatchCore.summary(match.ctx, m, side, winner, forfeit, data and data.Passes)
 	summary.MatchId = match.id
 	-- one reward per opponent pair per DuelRewardCooldown (anti-farming); a match with a test bot never pays
-	local others = {}
-	for s, list in match.teams do if s ~= side then for _, o in list do table.insert(others, o.userId) end end end
-	table.sort(others)
-	local key = p.UserId .. ">" .. table.concat(others, ",")
-	local cooling = lastReward[key] and os.clock() - lastReward[key] < (C.DuelRewardCooldown or 600)
+	local key = pairKey(match, side)
+	local cooling = rewardCooling(data, key)
 	if match.hasBot or cooling or not data then
 		summary.XP, summary.Scissors, summary.GunXP = 0, 0, 0
 		summary.RewardCooldown = cooling or nil
 		summary.TestMatch = match.hasBot or nil
 	else
-		lastReward[key] = os.clock()
+		rewardMark(p, data, key)
 		PlayerStore.Increment(p, { "XP" }, summary.XP)
 		PlayerStore.Increment(p, { "Credits" }, summary.Scissors)
 		if type(data.ItemXP) == "table" then PlayerStore.Increment(p, { "ItemXP", summary.Weapon }, summary.GunXP) end
@@ -699,6 +1215,9 @@ local function endMatch(match)
 	end
 	for p in match.spectators do if p.Parent then p:SetAttribute("DuelSpectate", nil) end end
 	task.wait(0.5)
+	if match.shoot then match.shoot:Destroy() end
+	local gadgets = shared.Get and shared.Get("GadgetManager")
+	if gadgets and gadgets.ClearIn and match.fx then pcall(gadgets.ClearIn, match.fx) end
 	if match.arena then match.arena:Destroy() end
 	if match.state then match.state:Destroy() end
 	slots[match.slot] = nil
@@ -810,10 +1329,11 @@ function manager.StartMatch(padModel: Instance?, mode: string, teams)
 		spectators = {}, pad = padModel }
 	matches[id] = match
 
-	-- test bot for an empty team (Studio + DuelTestSolo only)
+	-- test bots fill every empty place up to the mode's team size (Studio + DuelTestSolo only)
+	local size = tonumber(string.match(mode, "^(%d+)v")) or 1
 	for _, side in { "A", "B" } do
-		if #teams[side] == 0 and IS_STUDIO and ReplicatedStorage:GetAttribute("DuelTestSolo") == true then
-			teams[side] = { { bot = true } }
+		while #teams[side] < size and IS_STUDIO and ReplicatedStorage:GetAttribute("DuelTestSolo") == true do
+			table.insert(teams[side], { bot = true })
 			match.hasBot = true
 		end
 	end
@@ -832,8 +1352,11 @@ function manager.StartMatch(padModel: Instance?, mode: string, teams)
 	-- the slot's hold: an invisible floor 60 under the arena where waiting / dead players stand (anchored)
 	local hold = Instance.new("Part")
 	hold.Name = "Hold"; hold.Anchored = true; hold.Transparency = 1; hold.CastShadow = false; hold.CanQuery = false; hold.CanTouch = false
-	hold.Size = Vector3.new(40, 1, 12); hold.CFrame = CFrame.new(match.origin + Vector3.new(6, -60, 0))
+	hold.Size = Vector3.new(40, 1, 12); hold.CFrame = CFrame.new(match.origin + Vector3.new(6, -HOLD_DEPTH, 0))
 	hold.Parent = arena
+	-- server effects of this arena (smoke cells, grenades, flash pops) live here and are cleared per round
+	local fx = Instance.new("Folder"); fx.Name = "FX"; fx.Parent = arena
+	match.fx = fx
 
 	local idx = 0
 	for side, list in teams do
@@ -860,7 +1383,10 @@ function manager.StartMatch(padModel: Instance?, mode: string, teams)
 		setFrozen = setFrozen,
 		isPresent = isPresent,
 		onRoundStart = function()
-			-- this arena only: smoke / grenades / shootables per arena are phase 2 (ArenaShootables / ArenaDoors)
+			-- this arena only: barrels whole, valves ready, doors shut, no fire, no smoke / grenades left
+			if match.shoot then match.shoot:ResetAll() end
+			local gadgets = shared.Get and shared.Get("GadgetManager")
+			if gadgets and gadgets.ClearIn then pcall(gadgets.ClearIn, match.fx) end
 		end,
 		onKill = function(info) fireFlow(match, "Kill", info) end,
 	}
@@ -873,6 +1399,15 @@ function manager.StartMatch(padModel: Instance?, mode: string, teams)
 	end)
 	print(`[LobbyDuelManager] {id} started: {mode} slot {slot} at {match.origin}`)
 	return true
+end
+
+-- a player disconnects: not present any more (their side forfeits if nobody is left on it); nothing to send back
+function manager._OnRemoving(p: Player)
+	local rec = byPlayer[p]
+	if rec then
+		rec.member.left = true; rec.member.returned = true; byPlayer[p] = nil
+		print(`[LobbyDuelManager] {p.Name} left {rec.match.id} (disconnect)`)
+	end
 end
 
 -- a player leaves their match (HUD LEAVE / disconnect): forfeit for their side if nobody is left on it
@@ -916,16 +1451,83 @@ local function onFlow(player: Player, matchId: any, kind: any, a: any, b: any)
 end
 
 -- // Characters: dead / respawned duelists go to the hold, never into the lobby ------------------------------------------------
+manager._spawnLog = {} -- Studio test evidence: where each duelist character first appeared (respawn flash check)
+-- Roblox's own respawn (CharacterAutoLoads, RespawnTime 3) would load a dead duelist at the lobby spawn and could replace the
+-- next round's character. Player.RespawnLocation is no help (tested: a disabled or team-only SpawnLocation is ignored, an
+-- enabled neutral one would catch lobby joiners). So: (1) every new character of a duelist is pivoted into the Hold inside
+-- CharacterAdded, before any yield (often before it is even parented), so its first replicated frame is already there;
+-- (2) BENCH_DELAY after a death the server loads the dead duelist itself (into the Hold), well before RespawnTime, so the
+-- auto respawn never fires for that death (the dead character is gone).
+local BENCH_DELAY = 1.6
 local function onCharacterAdded(player: Player, character: Model)
 	local rec = byPlayer[player]
-	if not rec or rec.member.spawning or rec.member.returned then return end
-	local match = rec.match
-	local root = character:WaitForChild("HumanoidRootPart", 5)
-	if not root or byPlayer[player] ~= rec then return end
+	if not rec or rec.member.returned then return end
+	local match, m = rec.match, rec.member
+	local first = character:GetPivot().Position
+	local parented = character.Parent ~= nil
+	-- no yield before the pivot
+	local root = character:FindFirstChild("HumanoidRootPart")
+	if root then root.Anchored = true end
+	character:PivotTo(holdFrame(match, m.index))
+	if IS_STUDIO then
+		table.insert(manager._spawnLog, { name = player.Name, match = match.id, at = first, round = m.spawning == true,
+			parented = parented, holdY = match.origin.Y - HOLD_DEPTH, auto = m.benching ~= true and m.spawning ~= true })
+	end
+	m.benching = nil
+	local hum = character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid", 5)
+	if hum then
+		hum.Died:Once(function()
+			task.delay(BENCH_DELAY, function()
+				if byPlayer[player] ~= rec or m.returned or m.spawning or player.Character ~= character then return end
+				-- cleared by onCharacterAdded (it runs deferred, after LoadCharacter returns)
+				m.benching = true
+				pcall(player.LoadCharacter, player)
+			end)
+		end)
+	end
+	if m.spawning then return end -- a round spawn: spawnMember places it
+	if not root then
+		root = character:WaitForChild("HumanoidRootPart", 5)
+		if not root or byPlayer[player] ~= rec then return end
+		root.Anchored = true
+		character:PivotTo(holdFrame(match, m.index))
+	end
 	player:SetAttribute("Alive", false)
-	root.Anchored = true
-	character:PivotTo(holdFrame(match, rec.member.index))
-	task.delay(0.6, function() if byPlayer[player] == rec and not rec.member.spawning then stripTools(player) end end)
+	task.delay(0.6, function() if byPlayer[player] == rec and not m.spawning then stripTools(player) end end)
+end
+
+-- // Arena lookups for the [DUEL] edits in GadgetManager / ShootableManager --------------------------------------------------------
+local function matchAt(position: Vector3)
+	if typeof(position) ~= "Vector3" then return nil end
+	for _, match in matches do
+		if match.shoot and match.shoot:Contains(position) then return match end
+	end
+	return nil
+end
+manager.MatchAt = matchAt
+-- the instances a smoke flood / blast ray should hit at this position (nil = not in an arena: the caller's own map)
+function manager.RayFilter(position: Vector3)
+	local m = matchAt(position)
+	return m and m.rayFilter or nil
+end
+-- where a server effect created at this position goes (nil = Workspace as before)
+function manager.FXFolder(position: Vector3)
+	local m = matchAt(position)
+	return m and m.fx or nil
+end
+-- a shot fired inside an arena: that arena's barrels / valves react. Returns true when it was an arena shot.
+function manager.OnShot(origin: Vector3, endPos: Vector3, shooter: Player?): boolean
+	local m = matchAt(origin)
+	if not m then return false end
+	if m.shoot then m.shoot:OnShot(origin, endPos, shooter) end
+	return true
+end
+-- a blast (frag grenade) inside an arena; outside every arena nothing happens (the lobby has no explosions)
+function manager.Explode(position: Vector3, kind: string, attacker: Player?): boolean
+	local m = matchAt(position)
+	if not (m and m.shoot) then return false end
+	m.shoot:Explode(position, kind, attacker)
+	return true
 end
 
 -- fell out of the arena: counts as a death
@@ -958,19 +1560,21 @@ function manager.Start()
 	resultsEv = mf:FindFirstChild("MatchResults") or Instance.new("RemoteEvent")
 	resultsEv.Name = "MatchResults"; resultsEv.Parent = mf
 
+	local combat = events:FindFirstChild("Combat")
+	if combat and not combat:FindFirstChild("Explosion") then
+		local r = Instance.new("RemoteEvent"); r.Name = "Explosion"; r.Parent = combat
+	end
 	flow.OnServerEvent:Connect(onFlow)
 	local function hook(p: Player)
 		p.CharacterAdded:Connect(function(c) onCharacterAdded(p, c) end)
 	end
 	Players.PlayerAdded:Connect(hook)
 	for _, p in Players:GetPlayers() do hook(p) end
-	Players.PlayerRemoving:Connect(function(p)
-		local rec = byPlayer[p]
-		if rec then rec.member.left = true; rec.member.returned = true; byPlayer[p] = nil end
-	end)
+	Players.PlayerRemoving:Connect(function(p) manager._OnRemoving(p) end)
 
-	-- pads whose mode has no map can't start an in-lobby match (NoMap; PadBoards shows "No maps yet for <mode>")
-	task.spawn(function()
+	-- pads whose mode has no map can't start an in-lobby match (NoMap; PadBoards shows "No maps yet for <mode>").
+	-- Re-checked whenever the registry changes (a map added or removed at runtime).
+	local function refreshPads()
 		local map = workspace:WaitForChild("LobbyMap", 30)
 		local duels = map and map:FindFirstChild("Duels")
 		for _, pad in (duels and duels:GetChildren() or {}) do
@@ -981,10 +1585,13 @@ function manager.Start()
 				pad:SetAttribute("NoMapText", blocked)
 			end
 		end
-	end)
+	end
+	task.spawn(refreshPads)
+	MapRegistry.Changed:Connect(function() task.defer(refreshPads) end)
 
 	local acc = 0
 	RunService.Heartbeat:Connect(function(dt)
+		for _, match in matches do if match.shoot then match.shoot:Step(dt) end end
 		acc += dt
 		if acc < 0.2 then return end
 		acc = 0
@@ -1000,7 +1607,90 @@ function manager._TestSolo(player: Player, mode: string?)
 	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
 	return manager.StartMatch(nil, mode or "1v1", { A = { { player = player, stepOff = root and root.CFrame or CFrame.new(0, 4, 0) } }, B = {} })
 end
+-- Studio only: a bot-vs-bot match on the next free slot (concurrency / ARENAS FULL / team-size tests)
+function manager._TestBots(mode: string?)
+	if not IS_STUDIO then return false, "Studio only" end
+	ReplicatedStorage:SetAttribute("DuelTestSolo", true)
+	return manager.StartMatch(nil, mode or "1v1", { A = {}, B = {} })
+end
+-- Studio only: kill a member as if `killerUserId` shot them (sets the same Humanoid attributes the combat managers set)
+function manager._TestKill(matchId: string, victimUserId: number, killerUserId: number?, headshot: boolean?)
+	local match = matches[matchId]
+	if not match then return false, "no match" end
+	for _, list in match.teams do
+		for _, m in list do
+			if m.userId == victimUserId then
+				local hum = MatchCore.humanoid(m)
+				if not hum then return false, "no humanoid" end
+				hum:SetAttribute("LastAttacker", killerUserId or 0)
+				hum:SetAttribute("LastAttackKind", "Gun")
+				hum:SetAttribute("LastHitZone", headshot and "Head" or "Body")
+				hum.Health = 0
+				return true
+			end
+		end
+	end
+	return false, "no member " .. tostring(victimUserId)
+end
+-- Studio only: every member of one side leaves (forfeit)
+function manager._TestForfeit(matchId: string, side: string)
+	local match = matches[matchId]
+	if not match then return false end
+	for _, m in match.teams[side] do m.left = true; if m.player then returnToLobby(match, m) end end
+	return true
+end
 manager._matches = matches
+manager._slots = slots
+
+-- Studio only: test commands from the MCP / command bar, which run in another Lua VM (no shared.Get, a different require
+-- cache). ServerStorage.DuelTestHook:Invoke(cmd, ...) runs them in the game's VM. Never created in a live server.
+local function testHook(cmd: string, a, b, c, d)
+	if cmd == "bots" then return manager._TestBots(a)
+	elseif cmd == "kill" then return manager._TestKill(a, b, c, d)
+	elseif cmd == "forfeit" then return manager._TestForfeit(a, b)
+	elseif cmd == "config" then local old = C[a]; C[a] = b; return old
+	elseif cmd == "removing" then local p = Players:GetPlayerByUserId(a); if p then manager._OnRemoving(p) end; return p ~= nil
+	elseif cmd == "shot" then return manager.OnShot(a, b, c and Players:GetPlayerByUserId(c) or nil)
+	elseif cmd == "explode" then return manager.Explode(a, b, c and Players:GetPlayerByUserId(c) or nil)
+	elseif cmd == "door" then
+		local m = matches[a]
+		for _, door in (m and m.shoot and m.shoot.doors or {}) do if door.model.Name == b then m.shoot:SetDoor(door, c == true); return true end end
+		return false
+	elseif cmd == "spawnlog" then
+		local out = {}
+		for _, e in manager._spawnLog do table.insert(out, string.format("%s %s %s first y=%.1f x=%.0f parented=%s", e.name, e.match, e.round and "round" or (e.auto and "AUTO" or "bench"), e.at.Y, e.at.X, tostring(e.parented))) end
+		return table.concat(out, " | ")
+	elseif cmd == "reward" then
+		local p = Players:GetPlayerByUserId(a)
+		local data = p and PlayerStore.Get(p)
+		if not data then return "no profile" end
+		local before = rewardCooling(data, b)
+		if c then rewardMark(p, data, b) end
+		return { coolingBefore = before, coolingAfter = rewardCooling(PlayerStore.Get(p), b), pairs = PlayerStore.Get(p).DuelPairs }
+	elseif cmd == "matches" then
+		local out = {}
+		for id, m in matches do
+			local mem = {}
+			for side, list in m.teams do for _, x in list do table.insert(mem, side .. ":" .. x.name .. "(" .. x.userId .. ")" .. (x.left and "L" or "")) end end
+			table.insert(out, string.format("%s slot %d %s origin %s state %s score %s-%s [%s]", id, m.slot, m.mode, tostring(m.origin),
+				tostring(m.state and m.state:GetAttribute("MatchState")), tostring(m.state and m.state:GetAttribute("ScoreA")),
+				tostring(m.state and m.state:GetAttribute("ScoreB")), table.concat(mem, " ")))
+		end
+		local sl = {}
+		for n = 1, C.MaxArenas or 6 do sl[n] = slots[n] or "-" end
+		table.insert(out, "slots: " .. table.concat(sl, " "))
+		return table.concat(out, " | ")
+	end
+	return "unknown " .. tostring(cmd)
+end
+if IS_STUDIO then
+	task.defer(function()
+		local hook = ServerStorage:FindFirstChild("DuelTestHook") or Instance.new("BindableFunction")
+		hook.Name = "DuelTestHook"
+		hook.OnInvoke = testHook
+		hook.Parent = ServerStorage
+	end)
+end
 
 return manager
 ]=]
@@ -1012,11 +1702,20 @@ SOURCES.ArenaLoader = [=[-- StarterPlayerScripts/ArenaLoader (LocalScript): lobb
 -- Unloads (destroy the clone, restore the lobby's Lighting) when the attribute clears or the state object goes away.
 -- Fades: black on MatchFlow "Return" (the trip back to the pads) and a fade-in when the first round starts.
 -- Nothing here names a map: everything comes from MapRegistry. Lobby players never get a clone, so they never draw an arena.
+-- Phase 2: the arena's moving / reacting pieces follow the server state on the Solid layer (ArenaShootables):
+--   doors (DoorOpen / DoorMoving / DoorAt: the Visual shutter tweens like the server's, the Led turns amber / green / red),
+--   fire barrels (Exploded hides the Visual barrel; FireAt / FireRadius / FireUntil draw the burning ground here),
+--   steam valves (SteamUntil: the jet + hiss play on the Visual valve). All local: only this match's clients see them.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Lighting = game:GetService("Lighting")
 local ContentProvider = game:GetService("ContentProvider")
 local TweenService = game:GetService("TweenService")
+local Debris = game:GetService("Debris")
+local ROLL_TIME = 1.6 -- = ArenaShootables.ROLL_TIME (server shutter tween)
+local SMOKE_TEX = "rbxasset://textures/particles/smoke_main.dds"
+local FIRE_TEX = "rbxasset://textures/particles/fire_main.dds"
+local HISS = "rbxassetid://4772620521"
 
 local player = Players.LocalPlayer
 local Shared = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared")
@@ -1077,8 +1776,175 @@ local function stateOf(id: string?)
 	return id and f and f:FindFirstChild(id) or nil
 end
 
+-- // Dynamic pieces: follow the Solid layer's state attributes -------------------------------------------------------------------
+local function seq(...)
+	local pts = {}
+	for _, p in { ... } do table.insert(pts, NumberSequenceKeypoint.new(p[1], p[2])) end
+	return NumberSequence.new(pts)
+end
+local function emitter(parent, props)
+	local e = Instance.new("ParticleEmitter")
+	for k, v in props do (e :: any)[k] = v end
+	e.Parent = parent
+	return e
+end
+
+local function bindDoor(solidModel: Model, visModel: Model, conns)
+	local shutter = visModel:FindFirstChild("Shutter")
+	if not (shutter and shutter:IsA("BasePart")) then return end
+	local closed = shutter.CFrame
+	local led = visModel:FindFirstChild("Led")
+	local tween
+	local function apply()
+		local open = solidModel:GetAttribute("DoorOpen") == true
+		local moving = solidModel:GetAttribute("DoorMoving") == true
+		local h = solidModel:GetAttribute("DoorHeight") or 10
+		local goal = open and closed + Vector3.new(0, h, 0) or closed
+		if tween then tween:Cancel(); tween = nil end
+		local left = ROLL_TIME - (workspace:GetServerTimeNow() - (solidModel:GetAttribute("DoorAt") or 0))
+		if moving and left > 0.03 then
+			tween = TweenService:Create(shutter, TweenInfo.new(left, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), { CFrame = goal })
+			tween:Play()
+		else
+			shutter.CFrame = goal
+		end
+		if led and led:IsA("BasePart") then
+			led.Color = moving and Color3.fromRGB(255, 170, 30) or open and Color3.fromRGB(60, 230, 90) or Color3.fromRGB(255, 60, 40)
+			led.Material = Enum.Material.Neon
+		end
+	end
+	for _, a in { "DoorOpen", "DoorMoving", "DoorAt" } do table.insert(conns, solidModel:GetAttributeChangedSignal(a):Connect(apply)) end
+	apply()
+end
+
+local function firePatch(at: Vector3, r: number): Part
+	-- burning ground (the match place's ShootableManager.spawnFire, drawn locally)
+	local fire = Instance.new("Part")
+	fire.Name = "FirePatch"; fire.Anchored = true; fire.CanCollide = false; fire.CanQuery = false; fire.CanTouch = false
+	fire.Transparency = 1; fire.Size = Vector3.new(r * 2, 0.2, r * 2); fire.Position = at - Vector3.new(0, 1.3, 0)
+	for i = 1, 11 do
+		local ang = (i / 11) * math.pi * 2 + math.random() * 0.5
+		local dist = i == 1 and 0 or r * (0.25 + math.random() * 0.65)
+		local a = Instance.new("Attachment")
+		a.Position = Vector3.new(math.cos(ang) * dist, 0.15, math.sin(ang) * dist)
+		a.Parent = fire
+		local sz = 2.4 + math.random() * 1.6
+		emitter(a, { Texture = FIRE_TEX, LightEmission = 1, LightInfluence = 0, Rate = 22,
+			Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 236, 170)), ColorSequenceKeypoint.new(0.35, Color3.fromRGB(255, 140, 40)), ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 30, 10)) }),
+			Size = seq({ 0, sz * 0.6 }, { 0.4, sz }, { 1, sz * 0.2 }), Transparency = seq({ 0, 0.25 }, { 0.7, 0.45 }, { 1, 1 }),
+			Lifetime = NumberRange.new(0.35, 0.7), Speed = NumberRange.new(2, 5), SpreadAngle = Vector2.new(15, 15),
+			Acceleration = Vector3.new(0, 7, 0), RotSpeed = NumberRange.new(-90, 90), Rotation = NumberRange.new(0, 360),
+			EmissionDirection = Enum.NormalId.Top })
+	end
+	emitter(fire, { Texture = SMOKE_TEX, Color = ColorSequence.new(Color3.fromRGB(35, 32, 30)), Size = seq({ 0, 2 }, { 1, 9 }),
+		Transparency = seq({ 0, 0.55 }, { 1, 1 }), Lifetime = NumberRange.new(2.5, 4), Speed = NumberRange.new(3, 6),
+		Acceleration = Vector3.new(0.4, 2, 0), SpreadAngle = Vector2.new(25, 25), EmissionDirection = Enum.NormalId.Top, Rate = 7, LightInfluence = 1 })
+	local light = Instance.new("PointLight")
+	light.Color = Color3.fromRGB(255, 130, 45); light.Brightness = 4; light.Range = r * 3; light.Shadows = false
+	light.Parent = fire
+	local roar = Instance.new("Sound")
+	roar.SoundId = HISS; roar.PlaybackSpeed = 0.38; roar.Volume = 0.8; roar.Looped = true
+	roar.RollOffMinDistance = 8; roar.RollOffMaxDistance = 140; roar.Parent = fire
+	roar.TimePosition = 0.08
+	roar:Play()
+	return fire
+end
+
+local function bindBarrel(solidModel: Model, visModel: Model, conns)
+	local saved = {}
+	for _, p in visModel:GetDescendants() do if p:IsA("BasePart") then saved[p] = p.Transparency end end
+	local fire
+	local function apply()
+		local gone = solidModel:GetAttribute("Exploded") == true
+		for p, t in saved do p.Transparency = gone and 1 or t end
+		for _, g in visModel:GetDescendants() do if g:IsA("SurfaceGui") then g.Enabled = not gone end end
+		local untilT = solidModel:GetAttribute("FireUntil")
+		local at = solidModel:GetAttribute("FireAt")
+		local left = untilT and (untilT - workspace:GetServerTimeNow()) or 0
+		if fire and (left <= 0 or not gone) then
+			for _, e in fire:GetDescendants() do if e:IsA("ParticleEmitter") then e.Rate = 0 end end
+			local snd = fire:FindFirstChildOfClass("Sound")
+			if snd then TweenService:Create(snd, TweenInfo.new(1.2), { Volume = 0 }):Play() end
+			Debris:AddItem(fire, 2)
+			fire = nil
+		end
+		if not fire and gone and left > 0 and typeof(at) == "Vector3" then
+			fire = firePatch(at, solidModel:GetAttribute("FireRadius") or 6)
+			fire.Parent = visModel
+			local mine = fire
+			task.delay(left, function() if fire == mine then apply() end end)
+		end
+	end
+	for _, a in { "Exploded", "FireUntil" } do table.insert(conns, solidModel:GetAttributeChangedSignal(a):Connect(apply)) end
+	apply()
+end
+
+local function bindValve(solidModel: Model, visModel: Model, conns)
+	local body = visModel:FindFirstChild("ValveBody")
+	local wheel = visModel:FindFirstChild("Wheel")
+	if not (body and body:IsA("BasePart")) then return end
+	local out = wheel and (wheel.Position - body.Position) * Vector3.new(1, 0, 1) or Vector3.new(1, 0, 0)
+	out = out.Magnitude > 0.01 and out.Unit or Vector3.new(1, 0, 0)
+	local att = Instance.new("Attachment")
+	att.Name = "SteamJet"
+	att.WorldCFrame = CFrame.lookAt(body.Position + out * 0.7, body.Position + out * 2)
+	att.Parent = body
+	local jet = emitter(att, { Texture = SMOKE_TEX, Color = ColorSequence.new(Color3.fromRGB(240, 242, 245)), LightInfluence = 1,
+		Size = seq({ 0, 0.35 }, { 0.5, 1.6 }, { 1, 2.6 }), Transparency = seq({ 0, 0.25 }, { 0.6, 0.6 }, { 1, 1 }),
+		Lifetime = NumberRange.new(0.35, 0.6), Speed = NumberRange.new(22, 30), Drag = 3, SpreadAngle = Vector2.new(6, 6),
+		EmissionDirection = Enum.NormalId.Front, Rate = 110, RotSpeed = NumberRange.new(-60, 60), Rotation = NumberRange.new(0, 360), Enabled = false })
+	local wisp = emitter(att, { Texture = SMOKE_TEX, Color = ColorSequence.new(Color3.fromRGB(225, 228, 232)), LightInfluence = 1,
+		Size = seq({ 0, 0.5 }, { 1, 2 }), Transparency = seq({ 0, 0.6 }, { 1, 1 }), Lifetime = NumberRange.new(0.8, 1.3),
+		Speed = NumberRange.new(1, 3), SpreadAngle = Vector2.new(40, 40), Acceleration = Vector3.new(0, 3, 0),
+		EmissionDirection = Enum.NormalId.Front, Rate = 18, Enabled = false })
+	local hiss = Instance.new("Sound")
+	hiss.SoundId = HISS; hiss.PlaybackSpeed = 1.35; hiss.Looped = true; hiss.Volume = 0.9
+	hiss.RollOffMinDistance = 10; hiss.RollOffMaxDistance = 160; hiss.Parent = att
+	local token
+	local function apply()
+		local untilT = solidModel:GetAttribute("SteamUntil")
+		local left = untilT and (untilT - workspace:GetServerTimeNow()) or 0
+		local on = left > 0
+		jet.Enabled, wisp.Enabled = on, on
+		if on and not hiss.IsPlaying then hiss.TimePosition = 0.08; hiss:Play() elseif not on then hiss:Stop() end
+		local t = {}
+		token = t
+		if on then task.delay(left, function() if token == t then apply() end end) end
+	end
+	table.insert(conns, solidModel:GetAttributeChangedSignal("SteamUntil"):Connect(apply))
+	apply()
+end
+
+-- the server's Solid layer of this match (Workspace.DuelArenas.<id>.<WorkspaceName>); doors / barrels / valves follow it
+local function bindDynamic(id: string, info, clone: Model)
+	local conns = {}
+	task.spawn(function()
+		local arenas = workspace:WaitForChild("DuelArenas", 10)
+		local folder = arenas and arenas:WaitForChild(id, 10)
+		local solid = folder and folder:WaitForChild(info.WorkspaceName or info.Id, 10)
+		if not solid or not loaded or loaded.clone ~= clone then return end
+		local n = 0
+		for _, f in { "Interactive", "Shootables" } do
+			local sf, vf = solid:FindFirstChild(f), clone:FindFirstChild(f)
+			for _, sm in (sf and vf and sf:GetChildren() or {}) do
+				local vm = vf:FindFirstChild(sm.Name)
+				if vm then
+					local kind = sm:GetAttribute("Shootable")
+					if sm:FindFirstChild("Shutter") then bindDoor(sm, vm, conns); n += 1
+					elseif kind == "FireBarrel" then bindBarrel(sm, vm, conns); n += 1
+					elseif kind == "SteamValve" then bindValve(sm, vm, conns); n += 1 end
+				end
+			end
+		end
+		clone:SetAttribute("DynamicBound", n)
+		print(`[ArenaLoader] {id}: {n} dynamic pieces follow the server`)
+	end)
+	return conns
+end
+
 local function unload()
 	if not loaded then return end
+	for _, c in loaded.conns or {} do c:Disconnect() end
 	if loaded.clone then loaded.clone:Destroy() end
 	restoreLighting(loaded.saved)
 	loaded = nil
@@ -1107,6 +1973,7 @@ local function load(id: string, state: Instance)
 	clone:SetAttribute("DuelArena", id)
 	clone.Parent = workspace
 	loaded = { id = id, map = mapId, clone = clone, saved = swapLighting(info.Folder:FindFirstChild("Lighting")) }
+	loaded.conns = bindDynamic(id, info, clone)
 	busy = false
 	local flow = ReplicatedStorage:FindFirstChild("MatchFlow")
 	if flow then flow:FireServer(id, "Loaded") end
@@ -1190,6 +2057,7 @@ local NEW = {
 	{ "ReplicatedStorage.Modules.Shared", "MapRegistry", "ModuleScript", "MapRegistry" },
 	{ "ReplicatedStorage.Modules.Shared", "MatchState", "ModuleScript", "MatchState" },
 	{ "ServerScriptService.Shared", "MatchCore", "ModuleScript", "MatchCore" },
+	{ "ServerScriptService.Shared", "ArenaShootables", "ModuleScript", "ArenaShootables" },
 	{ MGR, "LobbyDuelManager", "ModuleScript", "LobbyDuelManager" },
 	{ "StarterPlayer.StarterPlayerScripts", "ArenaLoader", "LocalScript", "ArenaLoader" },
 }
@@ -1318,6 +2186,58 @@ local EDITS = {
 	{ MGR .. ".QueueManager",
 		'\tif playerSlot[player] then\n\t\treturn { ok = false, msg = "You\'re already queued. Leave first to switch." }\n\tend\n',
 		'\tif playerSlot[player] then\n\t\treturn { ok = false, msg = "You\'re already queued. Leave first to switch." }\n\tend\n\t-- [DUEL] not while in a lobby duel\n\tif player:GetAttribute("DuelMatch") then return { ok = false, msg = "You\'re in a duel" } end\n' },
+	-- phase 2 (2026-10-16)
+	{ MGR .. ".CombatManager",
+		'\tCombat.WeaponFired:FireAllClients(bot, origin, endPos, victimCharacter ~= nil)\n',
+		'\t-- [DUEL] effects only to the audience of this match (lobby players and other arenas never get them)\n\tMatchState.FireScoped(Combat.WeaponFired, bot, bot, origin, endPos, victimCharacter ~= nil)\n' },
+	{ MGR .. ".CombatManager",
+		'\t\tCombat.WeaponFired:FireAllClients(player, origin, (wallResult :: RaycastResult).Position, false)\n',
+		'\t\t-- [DUEL] effects only to the audience of this match (lobby players and other arenas never get them)\n\t\tMatchState.FireScoped(Combat.WeaponFired, player, player, origin, (wallResult :: RaycastResult).Position, false)\n' },
+	{ MGR .. ".CombatManager",
+		'\tCombat.WeaponFired:FireAllClients(player, origin, endPos, victimCharacter ~= nil)\n',
+		'\t-- [DUEL] effects only to the audience of this match (lobby players and other arenas never get them)\n\tMatchState.FireScoped(Combat.WeaponFired, player, player, origin, endPos, victimCharacter ~= nil)\n' },
+	{ MGR .. ".MeleeManager",
+		'\tif melee then melee:FireAllClients(character, victimRoot.Position, quick and "Quick" or tool:GetAttribute("MeleeId"), backstab) end\n',
+		'\t-- [DUEL] effects only to the audience of this match (lobby players and other arenas never get them)\n\tif melee then MatchState.FireScoped(melee, character, character, victimRoot.Position, quick and "Quick" or tool:GetAttribute("MeleeId"), backstab) end\n' },
+	{ MGR .. ".GadgetManager",
+		'local function mapRay(a: Vector3, b: Vector3): RaycastResult?\n\tlocal folder = mapFolder()\n\tif folder then\n\t\tmapParams.FilterType = Enum.RaycastFilterType.Include\n\t\tmapParams.FilterDescendantsInstances = { folder }\n',
+		'local function mapRay(a: Vector3, b: Vector3): RaycastResult?\n\t-- [DUEL] inside a lobby duel arena: that arena\'s Solid walls (LobbyDuelManager.RayFilter), else the map as before\n\tlocal LDM = shared.Get and shared.Get("LobbyDuelManager")\n\tlocal arenaFilter = LDM and LDM.RayFilter and LDM.RayFilter(a)\n\tlocal folder = arenaFilter or mapFolder()\n\tif folder then\n\t\tmapParams.FilterType = Enum.RaycastFilterType.Include\n\t\tmapParams.FilterDescendantsInstances = arenaFilter or { folder }\n' },
+	{ MGR .. ".GadgetManager",
+		'local function smokeEmitter(name: string, parent: Instance): ParticleEmitter\n',
+		'-- [DUEL] server effects inside a lobby duel arena go into that arena\'s FX folder (cleared per round), else Workspace\nlocal function fxParent(position: Vector3): Instance\n\tlocal LDM = shared.Get and shared.Get("LobbyDuelManager")\n\treturn LDM and LDM.FXFolder and LDM.FXFolder(position) or workspace\nend\n\nlocal function smokeEmitter(name: string, parent: Instance): ParticleEmitter\n' },
+	{ MGR .. ".GadgetManager",
+		'\tpart:SetAttribute("Radius", 0)\n\tpart.Parent = workspace\n',
+		'\tpart:SetAttribute("Radius", 0)\n\t-- [DUEL] the arena\'s FX folder in a lobby duel\n\tpart.Parent = fxParent(position)\n' },
+	{ MGR .. ".GadgetManager",
+		'\tsource.Position = position + Vector3.new(0, 0.4, 0)\n\tsource.Parent = workspace\n',
+		'\tsource.Position = position + Vector3.new(0, 0.4, 0)\n\t-- [DUEL] the arena\'s FX folder in a lobby duel\n\tsource.Parent = fxParent(position)\n' },
+	{ MGR .. ".GadgetManager",
+		'\tholder.Position = position\n\tholder.Parent = workspace\n',
+		'\tholder.Position = position\n\t-- [DUEL] the arena\'s FX folder in a lobby duel\n\tholder.Parent = fxParent(position)\n' },
+	{ MGR .. ".GadgetManager",
+		'\tring.Position = position\n\tring.Parent = workspace\n',
+		'\tring.Position = position\n\t-- [DUEL] the arena\'s FX folder in a lobby duel\n\tring.Parent = fxParent(position)\n' },
+	{ MGR .. ".GadgetManager",
+		'\t\tgrenade.CustomPhysicalProperties = PhysicalProperties.new(2, 0.6, 0.2, 1, 1)\n\t\tgrenade.Parent = workspace\n',
+		'\t\tgrenade.CustomPhysicalProperties = PhysicalProperties.new(2, 0.6, 0.2, 1, 1)\n\t\t-- [DUEL] the arena\'s FX folder in a lobby duel\n\t\tgrenade.Parent = fxParent(start)\n' },
+	{ MGR .. ".GadgetManager",
+		'\t\tgrenade.CFrame = CFrame.new(origin + direction * 1.5)\n\t\tgrenade.Parent = workspace\n',
+		'\t\tgrenade.CFrame = CFrame.new(origin + direction * 1.5)\n\t\t-- [DUEL] the arena\'s FX folder in a lobby duel\n\t\tgrenade.Parent = fxParent(origin)\n' },
+	{ MGR .. ".GadgetManager",
+		'\tCombat.FlashDetonated:FireAllClients(position)\n',
+		'\t-- [DUEL] effects only to the audience of this match (lobby players and other arenas never get them)\n\tMatchState.FireScoped(Combat.FlashDetonated, position, position)\n' },
+	{ MGR .. ".GadgetManager",
+		'\tif not GadgetConfig.InfiniteCharges then player:SetAttribute(cfg.ChargesAttribute, charges - 1) end\n',
+		'\t-- [DUEL] a real match (LiveMatch on the player\'s match state) always spends charges\n\tif not GadgetConfig.InfiniteCharges or MatchState.Get(player, "LiveMatch") == true then player:SetAttribute(cfg.ChargesAttribute, charges - 1) end\n' },
+	{ MGR .. ".GadgetManager",
+		'-- Refill the kit\'s gadget; the other gadget types are empty\n',
+		'-- [DUEL] clear one lobby duel arena (new round / match end): its smoke cells and live grenades only\nfunction manager.ClearIn(folder: Instance)\n\tfor i = #cells, 1, -1 do if cells[i].part:IsDescendantOf(folder) then removeCell(cells[i]) end end\n\tfor _, inst in folder:GetChildren() do inst:Destroy() end\nend\n\n-- Refill the kit\'s gadget; the other gadget types are empty\n' },
+	{ MGR .. ".ShootableManager",
+		'function manager.OnShot(origin: Vector3, endPos: Vector3, shooter: Player?)\n\tlocal targets = shared.Get and shared.Get("TrainingTargetsManager")\n',
+		'function manager.OnShot(origin: Vector3, endPos: Vector3, shooter: Player?)\n\t-- [DUEL] a shot inside a lobby duel arena: that arena\'s barrels / valves react (LobbyDuelManager -> ArenaShootables)\n\tlocal LDM = shared.Get and shared.Get("LobbyDuelManager")\n\tif LDM and LDM.OnShot and LDM.OnShot(origin, endPos, shooter) then return end\n\tlocal targets = shared.Get and shared.Get("TrainingTargetsManager")\n' },
+	{ MGR .. ".ShootableManager",
+		'\nreturn manager',
+		'\n-- [DUEL] frag grenades (GadgetManager) and blasts: only inside a lobby duel arena (the lobby itself has no explosions)\nfunction manager.Explode(position: Vector3, kind: string, attacker: Player?)\n\tlocal LDM = shared.Get and shared.Get("LobbyDuelManager")\n\tif LDM and LDM.Explode then LDM.Explode(position, kind, attacker) end\nend\n\nreturn manager' },
 }
 
 local function backup(s)
