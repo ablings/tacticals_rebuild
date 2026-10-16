@@ -58,3 +58,19 @@ bright sky, a landmark mast with a red light, very few props, the view is the fe
   `fix/polish_exfil.lua` and re-run to hide them UNDO-ably (only CityBillboard FX use them). Not done: Edward's call.
 - The windsock is static (no script). A slow sway could be added to LobbyFX later; it is purpose-bound, not an ambient particle.
 - Queued for import: nothing.
+
+## Round 2 (small fixes from notes/review_exfil.md, 2026-10-16 night): `fix/polish_exfil2.lua`
+Re-run order: polish_exfil.lua -> polish_exfil2.lua (polish_exfil rebuilds Polish.Exfil, Round2 lives inside it).
+- **Windsock**: the round-1 sock (10-stud mast, 1.3-stud sock on the open-edge walk at (149.4, 18.5)) is hidden (`PolishExfil2_Orig`)
+  and rebuilt in `Polish.Exfil.Round2.Windsock` on the kerb behind the edge rail and the clip wall (152.25, 1.4, 24.8): 7-stud mast,
+  sock 0.75 tapering to 0.38 in five 0.62 segments, streaming south over the kerb. Out of reach (players stop at x 151.4) and out of
+  the edge view; still reads as the corner landmark next to the red beacon post. Captures `out/polish/exfil/x2_edge.png`, `x2_padview.png`.
+- **Container labels**: the label MeshPart's query hull is its bounding box (rays "hit" a 10 x 1.6 plate that isn't there), so the two
+  visible plates were measured from captures: north 3.8 x 0.7 (x 115..119, y 5.62..6.32), west end 0.8 x 0.8 (z 14.8..15.63,
+  y 4.73..5.51). Near-black text on the plates (TCU 204117 22G1; 22G1 / C20) and warm-grey painted markings on the skin (SKY BASE
+  LOGISTICS, MAX GROSS / TARE / NET, TCU 204117 on the doors). Captures `x2_north.png`, `x2_west.png`.
+- `check_polish_exfil` after: 0 clips (160 parts), support 0, hooks unchanged, ExfilFX camera path 0 hits, lift sweep 0, 6 routes clear,
+  new collidable 8 (the old mast's 2 off, the new mast's 2 on). UNDO round trip: 15 restored, Round2 removed; re-applied identically.
+- **Left for Edward: the barrier fires from both sides.** Walking back from the pad to the hangar through `ExfilBarrier` (x 127.5,
+  z -12..12) launches the cutscene. Options: ExfilFX fires only when the character moves +X (`root.AssemblyLinearVelocity.X > 0`)
+  or was west of the barrier on touch; or an "EXFIL ZONE" floor cue facing the pad. Not changed (it is game code / design).

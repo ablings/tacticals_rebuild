@@ -109,3 +109,12 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   `S_Door__wall_light/trim_metal` and the corridor `F_PipeRun__band_olive` recoloured (`PolishGates_Orig`); new `Polish.Gates` (64 parts,
   none collide). UNDO via `fix/polish_gates.lua UNDO`.
 
+- 2026-10-16 polish_gates2 (notes/review_gates.md): `IndustrialProps.F_JunctionBox` (N corridor) `__dark_metal` / `__trim_light` now CanCollide +
+  CanQuery, Box fidelity, NotCover (`PolishGates2_Orig`). UNDO via `fix/polish_gates2.lua UNDO`.
+- 2026-10-16 polish_exfil2 (notes/polish_exfil.md round 2): the round-1 `Polish.Exfil.Windsock` hidden (`PolishExfil2_Orig`); new `Polish.Exfil.Round2`
+  (windsock on the kerb at (152.25, 1.4, 24.8), base + pole collide, behind the clip wall; container stencil carriers). Hooks untouched.
+- 2026-10-16 polish_olive (notes/polish_hub.md): 152 olive-painted parts recoloured lobby-wide (`PolishOlive_Orig`), incl. `Features.Wayfinding`
+  label edge and the features-kit screens' bands. No names, tags or positions changed. UNDO via `fix/polish_olive.lua UNDO`.
+- 2026-10-16 polish_hub (notes/polish_hub.md): Hub1 envelope / lamps / skylight colours, `FX.Hologram` decal / beam / ring colours and its PointLight
+  colour, `Features.Wayfinding.Stencil_SHOP` text OUTFITTERS and Size 8.4 wide (`PolishHub_Orig`); new `Polish.Hub` (banners, sign bars, sun-shaft
+  Beams; nothing collides or is queryable, no lights). UNDO via `fix/polish_hub.lua UNDO` (before polish_olive UNDO).
