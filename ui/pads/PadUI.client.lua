@@ -268,6 +268,18 @@ local function busyAsk(action, ...)
 	local ok, r = pcall(Request.InvokeServer, Request, action, ...)
 	return ok and r
 end
+-- (UI session 2026-10-16) maps are per mode: a pad whose mode has no map yet carries NoMap = true (on the pad model, or on the
+-- snapshot bay) and never counts down. Its UI says so instead of offering a countdown / JOIN.
+local function noMap(b)
+	if b.noMap or b.NoMap then return true end
+	local duels = workspace:FindFirstChild("LobbyMap") and workspace.LobbyMap:FindFirstChild("Duels")
+	for _, m in (duels and duels:GetChildren() or {}) do
+		if m:GetAttribute("BayId") == b.id and (m:GetAttribute("Mode") == b.mode or m:GetAttribute("QueueName") == b.mode) then
+			return m:GetAttribute("NoMap") == true
+		end
+	end
+	return false
+end
 local function buildJoin(list)
 	for _, c in joinHolder:GetChildren() do c:Destroy() end
 	local y = 470
@@ -294,6 +306,11 @@ local function buildJoin(list)
 			end
 		end
 		label(f, "VS", OSWALD, 26, W / 2 - 30, 26 + SZ / 2 - 16, 60, 32, BONE, Enum.TextXAlignment.Center, 3)
+		if noMap(b) then
+			label(f, "NO MAPS YET", OSWALD, 20, 0, 82, W, 28, FIELD, Enum.TextXAlignment.Center, 3)
+			y += 128
+			continue
+		end
 		local join = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset((W - 140) / 2, 78), Size = UDim2.fromOffset(140, 32), BackgroundColor3 = OLIVE, ZIndex = 3, Parent = f })
 		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A8BC62"), hex("#5B6E2C")), Parent = join })
 		label(join, "JOIN  >", OSWALD, 20, 0, 0, 140, 32, BONE, Enum.TextXAlignment.Center, 4)
@@ -329,7 +346,10 @@ local function refresh()
 		local sub
 		if key ~= lastBoxKey then lastBoxKey = key; sub = buildPadBox(b, me) end
 		sub = sub or padBox:FindFirstChild("Sub", true)
-		if b.state == "Countdown" then
+		if noMap(b) then
+			countLabel.Text = "VS"
+			if sub then sub.Text = "NO " .. modeName(b.mode) .. " MAPS YET" end
+		elseif b.state == "Countdown" then
 			countLabel.Text = tostring(b.countdown or "")
 			if sub then sub.Text = "DEPLOYING IN" end
 		else
