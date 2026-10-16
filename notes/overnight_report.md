@@ -34,13 +34,13 @@ eye-level olive band and the white floor lines. Light temperature and props are 
    (`notes/features_done.md`).
 2. **Crate colour:** crates are now dark olive (78,82,46 in the Armory, 104,88,40 elsewhere). The other option is RIVALS' crate
    green (65,94,56).
-3. **TimesSquare towers:** from the Exfil pad they fill the whole east sky. Set `HIDE_TIMESSQUARE = true` in `fix/polish_exfil.lua`
+3. **(Done 2026-10-16: replaced by a sky-base backdrop, `notes/backdrop_sky.md`.)** TimesSquare towers: from the Exfil pad they fill the whole east sky. Set `HIDE_TIMESSQUARE = true` in `fix/polish_exfil.lua`
    and re-run to hide them (UNDO-able). The sheet shows the pad both ways.
 4. **Queue-pad Holo beam bug** (from before the polish): the 6 pad Holo beams render outside the Duels hall, because their
    Attachments hold world coordinates as local offsets. The fix is in `notes/particles.md`. Not done because it is your FX.
 5. **Exfil barrier fires from both sides:** walking back from the pad to the hangar through it also starts the cutscene.
    Options: fire only when moving +X, or add an EXFIL ZONE floor cue.
-6. **Outfitter NPC opens Kit, not Shop.** `NPC_Quartermaster` (in the Shop) opens Kit and `NPC_Supply` (in the Armory) opens Shop.
+6. **(Done 2026-10-16: no NPC or world prompt opens a panel now, `notes/npc_dialogue_only.md`.)** Outfitter NPC opens Kit, not Shop. `NPC_Quartermaster` (in the Shop) opens Kit and `NPC_Supply` (in the Armory) opens Shop.
    They look swapped. Their names and dialogue were updated, but the panel each one opens was not changed.
 7. **Rename "SUPPLY CLERK"?** The Armory NPC's tag repeats the SUPPLY sign above it. ARMORER would name the role.
 8. **Pistol slot in the Armory glass case:** the case is too shallow for a rifle. Should a 21st slot (a pistol) go there?
@@ -72,5 +72,7 @@ From a pre-polish file, run in this order:
 7. `polish_training.lua`
 8. `polish_showroom.lua`
 9. `polish_final.lua` (**always last**: re-running polish_olive resets the olive Neon)
+10. `no_panel_prompts.lua` (2026-10-16: dialogue-only NPCs, counter / gun-wall / dais prompts hidden; independent of the polish scripts)
+11. `backdrop_sky.lua` (2026-10-16: TimesSquare hidden + sky-base backdrop; leave `HIDE_TIMESSQUARE = false` in polish_exfil)
 
 To undo, run the same scripts with `UNDO` in reverse order.

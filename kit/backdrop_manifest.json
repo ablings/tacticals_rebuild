@@ -1,0 +1,1494 @@
+{
+ "_note": "backdrop kit (2026-10-16, backdrop_sky). Studio coords; each piece authored at its pivot (deck top centre) and slid along +X (pivot_fbx_studio). Import 3D (group Gunsy Funsy) with Insert Using Scene Position; per piece: a Model from its meshes, mesh CFrame = place_world + center_rel_pivot. Backdrop only: CanCollide/CanQuery/CanTouch false, CastShadow false, NotCover; neon_* meshes Material Neon. Replace the matching Polish.Backdrop Parts groups (cables + clouds stay Parts). K_Scale6 10-stud cube at (0,150,0), K_Marker6 long arm +X, upright +Y, short arm +Z.",
+ "pieces": {
+  "B_HangarDeck": {
+   "pivot_fbx_studio": [
+    0.0,
+    0,
+    0
+   ],
+   "place_world": [
+    300,
+    12,
+    -120
+   ],
+   "note": "Hangar deck, south-east, mid distance; hangar door + H-07 plate face the Exfil pad (-X).",
+   "meshes": [
+    "B_HangarDeck__deck_side",
+    "B_HangarDeck__deck_top",
+    "B_HangarDeck__band_olive",
+    "B_HangarDeck__hull",
+    "B_HangarDeck__hull_dark",
+    "B_HangarDeck__neon_sage",
+    "B_HangarDeck__neon_cream",
+    "B_HangarDeck__shed_wall",
+    "B_HangarDeck__roof_metal",
+    "B_HangarDeck__door_dark",
+    "B_HangarDeck__line_cream",
+    "B_HangarDeck__olive_dark",
+    "B_HangarDeck__tank_sage",
+    "B_HangarDeck__mast_metal"
+   ],
+   "tris": 3408,
+   "max_mesh_tris": 1072
+  },
+  "B_CommsIsland": {
+   "pivot_fbx_studio": [
+    190.0,
+    0,
+    0
+   ],
+   "place_world": [
+    470,
+    50,
+    55
+   ],
+   "note": "Comms / radar island, far east and high: radome, lattice mast with dishes, ground dish, hut.",
+   "meshes": [
+    "B_CommsIsland__deck_side",
+    "B_CommsIsland__deck_top",
+    "B_CommsIsland__line_cream",
+    "B_CommsIsland__hull",
+    "B_CommsIsland__hull_dark",
+    "B_CommsIsland__neon_cream",
+    "B_CommsIsland__tank_cream",
+    "B_CommsIsland__mast_metal",
+    "B_CommsIsland__band_olive",
+    "B_CommsIsland__shed_wall",
+    "B_CommsIsland__door_dark"
+   ],
+   "tris": 4636,
+   "max_mesh_tris": 1200
+  },
+  "B_LandingPad": {
+   "pivot_fbx_studio": [
+    300.0,
+    0,
+    0
+   ],
+   "place_world": [
+    245,
+    2,
+    120
+   ],
+   "note": "Landing pad, north-east, low: background of the ExfilFX lift shot. H faces the base.",
+   "meshes": [
+    "B_LandingPad__deck_side",
+    "B_LandingPad__hull",
+    "B_LandingPad__line_cream",
+    "B_LandingPad__band_olive",
+    "B_LandingPad__neon_cream",
+    "B_LandingPad__neon_sage",
+    "B_LandingPad__hull_dark",
+    "B_LandingPad__shed_wall",
+    "B_LandingPad__glass_dark",
+    "B_LandingPad__mast_metal"
+   ],
+   "tris": 3888,
+   "max_mesh_tris": 796
+  },
+  "B_FuelDepot": {
+   "pivot_fbx_studio": [
+    430.0,
+    0,
+    0
+   ],
+   "place_world": [
+    360,
+    -6,
+    -290
+   ],
+   "note": "Fuel / depot module, far south-east, low: three tanks on saddles, a sphere tank, a pipe run.",
+   "meshes": [
+    "B_FuelDepot__deck_side",
+    "B_FuelDepot__deck_top",
+    "B_FuelDepot__band_olive",
+    "B_FuelDepot__hull",
+    "B_FuelDepot__hull_dark",
+    "B_FuelDepot__neon_sage",
+    "B_FuelDepot__neon_cream",
+    "B_FuelDepot__tank_cream",
+    "B_FuelDepot__olive_dark",
+    "B_FuelDepot__tank_sage",
+    "B_FuelDepot__shed_wall",
+    "B_FuelDepot__mast_metal"
+   ],
+   "tris": 5012,
+   "max_mesh_tris": 1152
+  }
+ },
+ "meshes": [
+  {
+   "name": "B_HangarDeck__deck_side",
+   "piece": "B_HangarDeck",
+   "material": "deck_side",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Concrete + TacConcrete",
+   "tris": 60,
+   "size_studio": [
+    130.0,
+    7.6,
+    80.0
+   ],
+   "center_studio": [
+    -0.0,
+    -4.2,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -0.0,
+    -4.2,
+    0.0
+   ],
+   "material_studio": "Concrete + TacConcrete"
+  },
+  {
+   "name": "B_HangarDeck__deck_top",
+   "piece": "B_HangarDeck",
+   "material": "deck_top",
+   "rgb": [
+    163,
+    162,
+    165
+   ],
+   "studio": "Concrete + TacConcretePanels",
+   "tris": 60,
+   "size_studio": [
+    130.2,
+    0.4,
+    80.2
+   ],
+   "center_studio": [
+    -0.0,
+    -0.2,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -0.0,
+    -0.2,
+    0.0
+   ],
+   "material_studio": "Concrete + TacConcretePanels"
+  },
+  {
+   "name": "B_HangarDeck__band_olive",
+   "piece": "B_HangarDeck",
+   "material": "band_olive",
+   "rgb": [
+    138,
+    130,
+    60
+   ],
+   "studio": "SmoothPlastic (olive paint 138,130,60)",
+   "tris": 236,
+   "size_studio": [
+    130.4,
+    22.8,
+    80.4
+   ],
+   "center_studio": [
+    -0.0,
+    8.7,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -0.0,
+    8.7,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (olive paint 138,130,60)"
+  },
+  {
+   "name": "B_HangarDeck__hull",
+   "piece": "B_HangarDeck",
+   "material": "hull",
+   "rgb": [
+    84,
+    84,
+    88
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 120,
+   "size_studio": [
+    111.6,
+    6.0,
+    54.6
+   ],
+   "center_studio": [
+    -0.4,
+    -11.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -0.4,
+    -11.0,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_HangarDeck__hull_dark",
+   "piece": "B_HangarDeck",
+   "material": "hull_dark",
+   "rgb": [
+    58,
+    58,
+    62
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 1072,
+   "size_studio": [
+    93.4,
+    8.2,
+    36.4
+   ],
+   "center_studio": [
+    0.9,
+    -18.1,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.9,
+    -18.1,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_HangarDeck__neon_sage",
+   "piece": "B_HangarDeck",
+   "material": "neon_sage",
+   "rgb": [
+    150,
+    166,
+    120
+   ],
+   "studio": "Neon 150,166,120",
+   "tris": 768,
+   "size_studio": [
+    84.0,
+    1.2,
+    30.0
+   ],
+   "center_studio": [
+    2.0,
+    -18.6,
+    0.0
+   ],
+   "center_rel_pivot": [
+    2.0,
+    -18.6,
+    0.0
+   ],
+   "material_studio": "Neon"
+  },
+  {
+   "name": "B_HangarDeck__neon_cream",
+   "piece": "B_HangarDeck",
+   "material": "neon_cream",
+   "rgb": [
+    226,
+    220,
+    196
+   ],
+   "studio": "Neon 226,220,196",
+   "tris": 508,
+   "size_studio": [
+    117.8,
+    46.1,
+    67.8
+   ],
+   "center_studio": [
+    -0.0,
+    0.75,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -0.0,
+    0.75,
+    0.0
+   ],
+   "material_studio": "Neon"
+  },
+  {
+   "name": "B_HangarDeck__shed_wall",
+   "piece": "B_HangarDeck",
+   "material": "shed_wall",
+   "rgb": [
+    200,
+    196,
+    186
+   ],
+   "studio": "Concrete + TacConcretePanels (warm grey)",
+   "tris": 44,
+   "size_studio": [
+    66.0,
+    22.0,
+    48.0
+   ],
+   "center_studio": [
+    18.0,
+    11.0,
+    -6.0
+   ],
+   "center_rel_pivot": [
+    18.0,
+    11.0,
+    -6.0
+   ],
+   "material_studio": "Concrete + TacConcretePanels (warm grey)"
+  },
+  {
+   "name": "B_HangarDeck__roof_metal",
+   "piece": "B_HangarDeck",
+   "material": "roof_metal",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Metal + TacCorrugatedMetal",
+   "tris": 20,
+   "size_studio": [
+    66.4,
+    6.0,
+    48.4
+   ],
+   "center_studio": [
+    18.0,
+    25.0,
+    -6.0
+   ],
+   "center_rel_pivot": [
+    18.0,
+    25.0,
+    -6.0
+   ],
+   "material_studio": "Metal + TacCorrugatedMetal"
+  },
+  {
+   "name": "B_HangarDeck__door_dark",
+   "piece": "B_HangarDeck",
+   "material": "door_dark",
+   "rgb": [
+    34,
+    35,
+    36
+   ],
+   "studio": "Concrete (matte near-black)",
+   "tris": 88,
+   "size_studio": [
+    0.65,
+    18.6,
+    34.0
+   ],
+   "center_studio": [
+    -15.12,
+    9.3,
+    -6.0
+   ],
+   "center_rel_pivot": [
+    -15.12,
+    9.3,
+    -6.0
+   ],
+   "material_studio": "Concrete (matte near-black)"
+  },
+  {
+   "name": "B_HangarDeck__line_cream",
+   "piece": "B_HangarDeck",
+   "material": "line_cream",
+   "rgb": [
+    236,
+    232,
+    218
+   ],
+   "studio": "SmoothPlastic (cream paint)",
+   "tris": 168,
+   "size_studio": [
+    45.1,
+    14.0,
+    36.0
+   ],
+   "center_studio": [
+    -37.45,
+    7.0,
+    -6.0
+   ],
+   "center_rel_pivot": [
+    -37.45,
+    7.0,
+    -6.0
+   ],
+   "material_studio": "SmoothPlastic (cream paint)"
+  },
+  {
+   "name": "B_HangarDeck__olive_dark",
+   "piece": "B_HangarDeck",
+   "material": "olive_dark",
+   "rgb": [
+    107,
+    122,
+    58
+   ],
+   "studio": "SmoothPlastic (dark olive)",
+   "tris": 88,
+   "size_studio": [
+    17.0,
+    5.0,
+    6.0
+   ],
+   "center_studio": [
+    -45.5,
+    2.5,
+    28.0
+   ],
+   "center_rel_pivot": [
+    -45.5,
+    2.5,
+    28.0
+   ],
+   "material_studio": "SmoothPlastic (dark olive)"
+  },
+  {
+   "name": "B_HangarDeck__tank_sage",
+   "piece": "B_HangarDeck",
+   "material": "tank_sage",
+   "rgb": [
+    167,
+    173,
+    152
+   ],
+   "studio": "SmoothPlastic (sage)",
+   "tris": 44,
+   "size_studio": [
+    8.0,
+    5.0,
+    6.0
+   ],
+   "center_studio": [
+    -45.5,
+    7.5,
+    28.0
+   ],
+   "center_rel_pivot": [
+    -45.5,
+    7.5,
+    28.0
+   ],
+   "material_studio": "SmoothPlastic (sage)"
+  },
+  {
+   "name": "B_HangarDeck__mast_metal",
+   "piece": "B_HangarDeck",
+   "material": "mast_metal",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 132,
+   "size_studio": [
+    117.2,
+    22.0,
+    67.2
+   ],
+   "center_studio": [
+    -0.0,
+    11.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -0.0,
+    11.0,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_CommsIsland__deck_side",
+   "piece": "B_CommsIsland",
+   "material": "deck_side",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Concrete + TacConcrete",
+   "tris": 440,
+   "size_studio": [
+    52.0,
+    10.0,
+    52.0
+   ],
+   "center_studio": [
+    190.0,
+    0.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "material_studio": "Concrete + TacConcrete"
+  },
+  {
+   "name": "B_CommsIsland__deck_top",
+   "piece": "B_CommsIsland",
+   "material": "deck_top",
+   "rgb": [
+    163,
+    162,
+    165
+   ],
+   "studio": "Concrete + TacConcretePanels",
+   "tris": 60,
+   "size_studio": [
+    52.2,
+    0.4,
+    52.2
+   ],
+   "center_studio": [
+    190.0,
+    -0.2,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -0.2,
+    0.0
+   ],
+   "material_studio": "Concrete + TacConcretePanels"
+  },
+  {
+   "name": "B_CommsIsland__line_cream",
+   "piece": "B_CommsIsland",
+   "material": "line_cream",
+   "rgb": [
+    236,
+    232,
+    218
+   ],
+   "studio": "SmoothPlastic (cream paint)",
+   "tris": 1152,
+   "size_studio": [
+    52.4,
+    66.4,
+    52.4
+   ],
+   "center_studio": [
+    190.0,
+    31.2,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    31.2,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (cream paint)"
+  },
+  {
+   "name": "B_CommsIsland__hull",
+   "piece": "B_CommsIsland",
+   "material": "hull",
+   "rgb": [
+    84,
+    84,
+    88
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 60,
+   "size_studio": [
+    31.2,
+    6.0,
+    31.2
+   ],
+   "center_studio": [
+    190.0,
+    -8.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -8.0,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_CommsIsland__hull_dark",
+   "piece": "B_CommsIsland",
+   "material": "hull_dark",
+   "rgb": [
+    58,
+    58,
+    62
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 536,
+   "size_studio": [
+    20.8,
+    8.2,
+    20.8
+   ],
+   "center_studio": [
+    190.0,
+    -15.1,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -15.1,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_CommsIsland__neon_cream",
+   "piece": "B_CommsIsland",
+   "material": "neon_cream",
+   "rgb": [
+    226,
+    220,
+    196
+   ],
+   "studio": "Neon 226,220,196",
+   "tris": 616,
+   "size_studio": [
+    24.0,
+    99.0,
+    24.0
+   ],
+   "center_studio": [
+    190.0,
+    30.2,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    30.2,
+    0.0
+   ],
+   "material_studio": "Neon"
+  },
+  {
+   "name": "B_CommsIsland__tank_cream",
+   "piece": "B_CommsIsland",
+   "material": "tank_cream",
+   "rgb": [
+    236,
+    232,
+    218
+   ],
+   "studio": "SmoothPlastic (cream)",
+   "tris": 1200,
+   "size_studio": [
+    18.0,
+    18.0,
+    18.0
+   ],
+   "center_studio": [
+    200.0,
+    12.0,
+    10.0
+   ],
+   "center_rel_pivot": [
+    10.0,
+    12.0,
+    10.0
+   ],
+   "material_studio": "SmoothPlastic (cream)"
+  },
+  {
+   "name": "B_CommsIsland__mast_metal",
+   "piece": "B_CommsIsland",
+   "material": "mast_metal",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 352,
+   "size_studio": [
+    8.2,
+    78.0,
+    25.2
+   ],
+   "center_studio": [
+    180.6,
+    39.0,
+    1.9
+   ],
+   "center_rel_pivot": [
+    -9.4,
+    39.0,
+    1.9
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_CommsIsland__band_olive",
+   "piece": "B_CommsIsland",
+   "material": "band_olive",
+   "rgb": [
+    138,
+    130,
+    60
+   ],
+   "studio": "SmoothPlastic (olive paint 138,130,60)",
+   "tris": 132,
+   "size_studio": [
+    28.85,
+    45.7,
+    11.85
+   ],
+   "center_studio": [
+    193.73,
+    28.75,
+    -11.23
+   ],
+   "center_rel_pivot": [
+    3.73,
+    28.75,
+    -11.23
+   ],
+   "material_studio": "SmoothPlastic (olive paint 138,130,60)"
+  },
+  {
+   "name": "B_CommsIsland__shed_wall",
+   "piece": "B_CommsIsland",
+   "material": "shed_wall",
+   "rgb": [
+    200,
+    196,
+    186
+   ],
+   "studio": "Concrete + TacConcretePanels (warm grey)",
+   "tris": 44,
+   "size_studio": [
+    12.0,
+    8.0,
+    10.0
+   ],
+   "center_studio": [
+    202.0,
+    4.0,
+    -12.0
+   ],
+   "center_rel_pivot": [
+    12.0,
+    4.0,
+    -12.0
+   ],
+   "material_studio": "Concrete + TacConcretePanels (warm grey)"
+  },
+  {
+   "name": "B_CommsIsland__door_dark",
+   "piece": "B_CommsIsland",
+   "material": "door_dark",
+   "rgb": [
+    34,
+    35,
+    36
+   ],
+   "studio": "Concrete (matte near-black)",
+   "tris": 44,
+   "size_studio": [
+    0.4,
+    5.0,
+    3.0
+   ],
+   "center_studio": [
+    195.9,
+    2.5,
+    -12.0
+   ],
+   "center_rel_pivot": [
+    5.9,
+    2.5,
+    -12.0
+   ],
+   "material_studio": "Concrete (matte near-black)"
+  },
+  {
+   "name": "B_LandingPad__deck_side",
+   "piece": "B_LandingPad",
+   "material": "deck_side",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Concrete + TacConcrete",
+   "tris": 556,
+   "size_studio": [
+    75.0,
+    4.0,
+    66.0
+   ],
+   "center_studio": [
+    304.5,
+    -2.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    4.5,
+    -2.0,
+    0.0
+   ],
+   "material_studio": "Concrete + TacConcrete"
+  },
+  {
+   "name": "B_LandingPad__hull",
+   "piece": "B_LandingPad",
+   "material": "hull",
+   "rgb": [
+    84,
+    84,
+    88
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 796,
+   "size_studio": [
+    66.2,
+    10.0,
+    66.2
+   ],
+   "center_studio": [
+    300.0,
+    -5.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -5.0,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_LandingPad__line_cream",
+   "piece": "B_LandingPad",
+   "material": "line_cream",
+   "rgb": [
+    236,
+    232,
+    218
+   ],
+   "studio": "SmoothPlastic (cream paint)",
+   "tris": 548,
+   "size_studio": [
+    58.0,
+    0.1,
+    58.0
+   ],
+   "center_studio": [
+    300.0,
+    0.05,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    0.05,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (cream paint)"
+  },
+  {
+   "name": "B_LandingPad__band_olive",
+   "piece": "B_LandingPad",
+   "material": "band_olive",
+   "rgb": [
+    138,
+    130,
+    60
+   ],
+   "studio": "SmoothPlastic (olive paint 138,130,60)",
+   "tris": 600,
+   "size_studio": [
+    75.95,
+    18.4,
+    66.6
+   ],
+   "center_studio": [
+    304.67,
+    7.5,
+    0.0
+   ],
+   "center_rel_pivot": [
+    4.67,
+    7.5,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (olive paint 138,130,60)"
+  },
+  {
+   "name": "B_LandingPad__neon_cream",
+   "piece": "B_LandingPad",
+   "material": "neon_cream",
+   "rgb": [
+    226,
+    220,
+    196
+   ],
+   "studio": "Neon 226,220,196",
+   "tris": 408,
+   "size_studio": [
+    72.7,
+    34.9,
+    63.6
+   ],
+   "center_studio": [
+    304.55,
+    4.35,
+    0.0
+   ],
+   "center_rel_pivot": [
+    4.55,
+    4.35,
+    0.0
+   ],
+   "material_studio": "Neon"
+  },
+  {
+   "name": "B_LandingPad__neon_sage",
+   "piece": "B_LandingPad",
+   "material": "neon_sage",
+   "rgb": [
+    150,
+    166,
+    120
+   ],
+   "studio": "Neon 150,166,120",
+   "tris": 560,
+   "size_studio": [
+    45.44,
+    12.2,
+    45.44
+   ],
+   "center_studio": [
+    300.0,
+    -5.1,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -5.1,
+    0.0
+   ],
+   "material_studio": "Neon"
+  },
+  {
+   "name": "B_LandingPad__hull_dark",
+   "piece": "B_LandingPad",
+   "material": "hull_dark",
+   "rgb": [
+    58,
+    58,
+    62
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 288,
+   "size_studio": [
+    25.6,
+    3.0,
+    25.6
+   ],
+   "center_studio": [
+    300.0,
+    -11.5,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -11.5,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_LandingPad__shed_wall",
+   "piece": "B_LandingPad",
+   "material": "shed_wall",
+   "rgb": [
+    200,
+    196,
+    186
+   ],
+   "studio": "Concrete + TacConcretePanels (warm grey)",
+   "tris": 44,
+   "size_studio": [
+    9.0,
+    10.0,
+    8.0
+   ],
+   "center_studio": [
+    338.0,
+    5.0,
+    6.0
+   ],
+   "center_rel_pivot": [
+    38.0,
+    5.0,
+    6.0
+   ],
+   "material_studio": "Concrete + TacConcretePanels (warm grey)"
+  },
+  {
+   "name": "B_LandingPad__glass_dark",
+   "piece": "B_LandingPad",
+   "material": "glass_dark",
+   "rgb": [
+    10,
+    12,
+    10
+   ],
+   "studio": "Glass (near-black)",
+   "tris": 44,
+   "size_studio": [
+    9.2,
+    2.4,
+    8.2
+   ],
+   "center_studio": [
+    338.0,
+    7.6,
+    6.0
+   ],
+   "center_rel_pivot": [
+    38.0,
+    7.6,
+    6.0
+   ],
+   "material_studio": "Glass (near-black)"
+  },
+  {
+   "name": "B_LandingPad__mast_metal",
+   "piece": "B_LandingPad",
+   "material": "mast_metal",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 44,
+   "size_studio": [
+    1.2,
+    10.0,
+    1.2
+   ],
+   "center_studio": [
+    340.0,
+    15.0,
+    9.0
+   ],
+   "center_rel_pivot": [
+    40.0,
+    15.0,
+    9.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_FuelDepot__deck_side",
+   "piece": "B_FuelDepot",
+   "material": "deck_side",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Concrete + TacConcrete",
+   "tris": 60,
+   "size_studio": [
+    74.0,
+    5.6,
+    46.0
+   ],
+   "center_studio": [
+    430.0,
+    -3.2,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -3.2,
+    0.0
+   ],
+   "material_studio": "Concrete + TacConcrete"
+  },
+  {
+   "name": "B_FuelDepot__deck_top",
+   "piece": "B_FuelDepot",
+   "material": "deck_top",
+   "rgb": [
+    163,
+    162,
+    165
+   ],
+   "studio": "Concrete + TacConcretePanels",
+   "tris": 60,
+   "size_studio": [
+    74.2,
+    0.4,
+    46.2
+   ],
+   "center_studio": [
+    430.0,
+    -0.2,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -0.2,
+    0.0
+   ],
+   "material_studio": "Concrete + TacConcretePanels"
+  },
+  {
+   "name": "B_FuelDepot__band_olive",
+   "piece": "B_FuelDepot",
+   "material": "band_olive",
+   "rgb": [
+    138,
+    130,
+    60
+   ],
+   "studio": "SmoothPlastic (olive paint 138,130,60)",
+   "tris": 104,
+   "size_studio": [
+    74.4,
+    13.9,
+    46.4
+   ],
+   "center_studio": [
+    430.0,
+    4.55,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    4.55,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (olive paint 138,130,60)"
+  },
+  {
+   "name": "B_FuelDepot__hull",
+   "piece": "B_FuelDepot",
+   "material": "hull",
+   "rgb": [
+    84,
+    84,
+    88
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 368,
+   "size_studio": [
+    51.54,
+    16.0,
+    32.0
+   ],
+   "center_studio": [
+    432.73,
+    -4.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    2.73,
+    -4.0,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_FuelDepot__hull_dark",
+   "piece": "B_FuelDepot",
+   "material": "hull_dark",
+   "rgb": [
+    58,
+    58,
+    62
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 536,
+   "size_studio": [
+    29.12,
+    8.2,
+    20.0
+   ],
+   "center_studio": [
+    430.0,
+    -16.1,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -16.1,
+    0.0
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "B_FuelDepot__neon_sage",
+   "piece": "B_FuelDepot",
+   "material": "neon_sage",
+   "rgb": [
+    150,
+    166,
+    120
+   ],
+   "studio": "Neon 150,166,120",
+   "tris": 384,
+   "size_studio": [
+    24.0,
+    1.2,
+    24.0
+   ],
+   "center_studio": [
+    430.0,
+    -16.6,
+    0.0
+   ],
+   "center_rel_pivot": [
+    0.0,
+    -16.6,
+    0.0
+   ],
+   "material_studio": "Neon"
+  },
+  {
+   "name": "B_FuelDepot__neon_cream",
+   "piece": "B_FuelDepot",
+   "material": "neon_cream",
+   "rgb": [
+    226,
+    220,
+    196
+   ],
+   "studio": "Neon 226,220,196",
+   "tris": 232,
+   "size_studio": [
+    37.46,
+    40.1,
+    23.46
+   ],
+   "center_studio": [
+    415.83,
+    -0.25,
+    7.17
+   ],
+   "center_rel_pivot": [
+    -14.17,
+    -0.25,
+    7.17
+   ],
+   "material_studio": "Neon"
+  },
+  {
+   "name": "B_FuelDepot__tank_cream",
+   "piece": "B_FuelDepot",
+   "material": "tank_cream",
+   "rgb": [
+    236,
+    232,
+    218
+   ],
+   "studio": "SmoothPlastic (cream)",
+   "tris": 768,
+   "size_studio": [
+    41.0,
+    10.0,
+    34.0
+   ],
+   "center_studio": [
+    422.0,
+    7.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -8.0,
+    7.0,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (cream)"
+  },
+  {
+   "name": "B_FuelDepot__olive_dark",
+   "piece": "B_FuelDepot",
+   "material": "olive_dark",
+   "rgb": [
+    107,
+    122,
+    58
+   ],
+   "studio": "SmoothPlastic (dark olive)",
+   "tris": 1152,
+   "size_studio": [
+    25.6,
+    10.4,
+    34.4
+   ],
+   "center_studio": [
+    422.0,
+    7.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -8.0,
+    7.0,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (dark olive)"
+  },
+  {
+   "name": "B_FuelDepot__tank_sage",
+   "piece": "B_FuelDepot",
+   "material": "tank_sage",
+   "rgb": [
+    167,
+    173,
+    152
+   ],
+   "studio": "SmoothPlastic (sage)",
+   "tris": 384,
+   "size_studio": [
+    41.0,
+    10.0,
+    10.0
+   ],
+   "center_studio": [
+    422.0,
+    7.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -8.0,
+    7.0,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (sage)"
+  },
+  {
+   "name": "B_FuelDepot__shed_wall",
+   "piece": "B_FuelDepot",
+   "material": "shed_wall",
+   "rgb": [
+    200,
+    196,
+    186
+   ],
+   "studio": "Concrete + TacConcretePanels (warm grey)",
+   "tris": 832,
+   "size_studio": [
+    15.0,
+    15.0,
+    15.0
+   ],
+   "center_studio": [
+    454.0,
+    9.5,
+    8.0
+   ],
+   "center_rel_pivot": [
+    24.0,
+    9.5,
+    8.0
+   ],
+   "material_studio": "Concrete + TacConcretePanels (warm grey)"
+  },
+  {
+   "name": "B_FuelDepot__mast_metal",
+   "piece": "B_FuelDepot",
+   "material": "mast_metal",
+   "rgb": [
+    124,
+    123,
+    126
+   ],
+   "studio": "Metal + TacMetal",
+   "tris": 132,
+   "size_studio": [
+    60.6,
+    18.0,
+    38.6
+   ],
+   "center_studio": [
+    427.7,
+    9.0,
+    -0.7
+   ],
+   "center_rel_pivot": [
+    -2.3,
+    9.0,
+    -0.7
+   ],
+   "material_studio": "Metal + TacMetal"
+  },
+  {
+   "name": "K_Scale6",
+   "piece": "K_Scale6",
+   "material": "label_cream",
+   "rgb": [
+    236,
+    232,
+    218
+   ],
+   "studio": "SmoothPlastic (SurfaceGui text later)",
+   "tris": 12,
+   "size_studio": [
+    10.0,
+    10.0,
+    10.0
+   ],
+   "center_studio": [
+    -0.0,
+    150.0,
+    0.0
+   ],
+   "center_rel_pivot": [
+    -0.0,
+    150.0,
+    0.0
+   ],
+   "material_studio": "SmoothPlastic (SurfaceGui text later)"
+  },
+  {
+   "name": "K_Marker6",
+   "piece": "K_Marker6",
+   "material": "neon_olive",
+   "rgb": [
+    107,
+    122,
+    58
+   ],
+   "studio": "Neon",
+   "tris": 36,
+   "size_studio": [
+    10.0,
+    8.0,
+    6.0
+   ],
+   "center_studio": [
+    20.0,
+    149.0,
+    2.0
+   ],
+   "center_rel_pivot": [
+    20.0,
+    149.0,
+    2.0
+   ],
+   "material_studio": "Neon"
+  }
+ ]
+}
