@@ -113,3 +113,15 @@ UNDO: `python tools/run_luau.py fix/place_heli.lua UNDO`.
 - The heli only has one collider (body Hull, the door leaf Hull); the cabin is filled for physics, which is fine: ExfilFX anchors and
   CFrames the player.
 - If the open-door look should change (door closed until the cutscene), the leaf is its own mesh pair (`HX_Door__*`).
+
+## Imported and placed (2026-10-16 12:47, lead)
+- Imported under gunsy funsy (import scale 56.3166). The stabilator span was cut from ±4.6 to ±3.6 because the starboard tip
+  reached the north crate stack. The first import is parked as `ServerStorage._RebuildRemoved.heli_import_v2a_stabwide`, with
+  its children renamed `OLD_*` so place_heli doesn't find a second K_Scale7.
+- `place_heli.lua` placed 21 meshes; the old Huey meshes are in `ServerStorage._RebuildRemoved.Heli_Old`.
+- The Exfil drum truck moved to (118, 20) (`polish_exfil.lua` source updated), because the new tail covers its old spot.
+- check_heli: 2 remaining flags, both judged minor:
+  - trim_dark vs the merged E_Gear crate mesh (proxy level). Visually the stabilator tip sits beside the crates.
+  - A metal-proxy touch on the jump arc. The cutscene moves the character by CFrame, so it doesn't collide.
+- Play: jump into the open door, lift-off, then the player lands in Training (InTraining = true). Console is baseline only.
+- Saved 12:50.

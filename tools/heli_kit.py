@@ -619,7 +619,7 @@ TAIL_U = Vector((0, 0, 1))
 def tail():
     pyl = [(15.9, 6.0), (19.2, 4.95), (22.35, 4.95), (22.75, 5.6), (22.55, 11.35), (21.95, 11.85), (20.9, 11.85), (15.9, 7.15)]
     plate("HX_Body", "olive", pyl, "x", -0.34, 0.34, bev=0.12)
-    stab = [(-4.6, 20.25), (-4.6, 21.45), (4.6, 21.45), (4.6, 20.25), (1.0, 19.7), (-1.0, 19.7)]
+    stab = [(-3.6, 20.25), (-3.6, 21.45), (3.6, 21.45), (3.6, 20.25), (1.0, 19.7), (-1.0, 19.7)]
     plate("HX_Body", "olive", stab, "y", 5.0, 5.28, bev=0.08)
     # tail rotor gearbox stub (static) from the fin out to the hub along the canted axis
     rod("HX_Body", "metal", TAIL_HUB - TAIL_N * 1.45, TAIL_HUB - TAIL_N * 0.25, 0.3, seg=12)
@@ -654,7 +654,7 @@ def main_gear():
 
 def nav_lights():
     for s, mat in ((-1, "nav_red"), (1, "nav_green")):
-        dome("HX_Body", mat, (4.6 * s, 5.14, 20.85), 0.2, (s, 0, 0), seg=10)                   # stabilator tips
+        dome("HX_Body", mat, (3.6 * s, 5.14, 20.85), 0.2, (s, 0, 0), seg=10)                   # stabilator tips
         p = surf(-6.6, math.pi / 2 + s * -0.95)
         n = normal_at(-6.6, math.pi / 2 + s * -0.95)
         dome("HX_Body", mat, p + n * 0.02, 0.2, n, seg=10)                                  # upper cabin shoulders

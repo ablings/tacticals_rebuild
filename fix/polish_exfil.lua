@@ -322,7 +322,8 @@ do
 end
 -- fuel-drum hand truck against the north pad wall (keeps the walk under the tail at z ~16 open)
 do
-	local cx, cz = 132.6, 22.3
+	-- moved to (118, 20) on 2026-10-16: the new UH-60 tail and stabilator now cover x ~133, z ~20 (a probe found this spot clear)
+	local cx, cz = 118, 20
 	local top = floorTop(cx, cz, 1.2, 1.0) or 0.02
 	local ok, hit = areaFree(cx, cz, 1.4, 1.2, 6)
 	if not ok then say("WARN drum truck box hits " .. hit:GetFullName()) end
