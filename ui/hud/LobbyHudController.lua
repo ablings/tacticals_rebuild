@@ -347,6 +347,7 @@ function LobbyHud.Start()
 	Icons.Viewport(clipHolder, Icons.Clipboard(), { view = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), zoom = 1.1 })
 	for _, n in navButtons do
 		local base = n.b.Position
+		local function away() return root:GetAttribute("PushedAway") == true end -- a menu is open: no hover (RIVALS)
 		local lift = UDim2.fromScale(base.X.Scale, base.Y.Scale - 14 / 1080)
 		local tipBase = n.tip.Position
 		local hovered, gen = false, 0
@@ -362,6 +363,7 @@ function LobbyHud.Start()
 			end
 		end
 		n.b.MouseEnter:Connect(function()
+			if away() then return end
 			n.tip.Visible = true; n.tip.Position = tipBase
 			hovered = true; gen += 1
 			task.spawn(bob, gen)
@@ -372,12 +374,13 @@ function LobbyHud.Start()
 		n.b.MouseLeave:Connect(function()
 			hovered = false; gen += 1
 			n.tip.Visible = false; n.tip.Position = tipBase
+			if away() then Kit.tween(n.s, 0.15, { Scale = 1 }); return end
 			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(false) end
 			Kit.tween(n.s, 0.15, { Scale = 1 })
 			Kit.tween(n.b, 0.15, { Position = base })
 		end)
-		n.b.MouseButton1Down:Connect(function() Kit.tween(n.s, 0.06, { Scale = 1.02 }) end)
-		n.b.MouseButton1Up:Connect(function() Kit.tween(n.s, 0.12, { Scale = 1.12 }, Enum.EasingStyle.Back) end)
+		n.b.MouseButton1Down:Connect(function() if not away() then Kit.tween(n.s, 0.06, { Scale = 1.02 }) end end)
+		n.b.MouseButton1Up:Connect(function() if not away() then Kit.tween(n.s, 0.12, { Scale = 1.12 }, Enum.EasingStyle.Back) end end)
 	end
 	-- hide the old dock's contents (the Dock frame keeps its Visible state for the Kit room / PlayRow)
 	task.spawn(function()
@@ -629,15 +632,20 @@ function LobbyHud.Start()
 		{ dx = 0, dy = 0.3, fast = true, names = { "NavShade", "NavKit", "NavMissions", "NavShop", "NavCodes", "NavSettings", "Searching" } },
 	}
 	local homes = {}
-	for _, g in GROUPS do
-		for _, n in g.names do
-			local o = root:FindFirstChild(n)
-			if o then homes[o] = { home = o.Position, away = UDim2.fromScale(o.Position.X.Scale + g.dx, o.Position.Y.Scale + g.dy), t = g.fast and 0.08 or 0.18 } end
+	-- recorded a moment later: Kit.bindButton re-anchors buttons to their centre on the next frame, which moves their Position
+	-- (recording first sent Missions / To Pads back to the wrong spot after a menu closed)
+	task.delay(0.2, function()
+		for _, g in GROUPS do
+			for _, n in g.names do
+				local o = root:FindFirstChild(n)
+				if o then homes[o] = { home = o.Position, away = UDim2.fromScale(o.Position.X.Scale + g.dx, o.Position.Y.Scale + g.dy), t = g.fast and 0.08 or 0.18 } end
+			end
 		end
-	end
+	end)
 	local pushedAway = false
 	local kitShown = false
 	local function pushAside(away)
+		root:SetAttribute("PushedAway", away)
 		for o, h in homes do
 			if o.Name == "PlayerList" and not lbOn then continue end -- hidden by Tab: leave it off screen
 			Kit.tween(o, away and h.t or 0.25, { Position = away and h.away or h.home }, away and Enum.EasingStyle.Quad or Enum.EasingStyle.Back,

@@ -349,7 +349,10 @@ end
 
 -- Close button (pass 34: gunmetal + olive brackets, warms red on hover) with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
-	local btn = Kit.button("red", size, nil, { Name = "Close" }) -- RIVALS' red X (UI session 2026-10-16)
+	-- RIVALS' red X (UI session 2026-10-16). Not named "Close" and tagged Nonapplicable: the old InterfaceController hooks any
+	-- "Close" button in a new ScreenGui and shrinks its parent frame to 0 x 0, so a menu came back empty on its second open.
+	local btn = Kit.button("red", size, nil, { Name = "CloseX" })
+	btn:AddTag("Nonapplicable")
 	local Tac = require(script.Parent.Tac)
 	Tac.hoverBrackets(btn, Tac.brackets(btn, Tac.C.olive, math.floor(size.Y.Offset * 0.3), 2))
 	local cc = btn:FindFirstChildOfClass("UICorner"); if cc then cc.CornerRadius = UDim.new(0, 8) end
