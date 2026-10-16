@@ -194,19 +194,43 @@ function controller.OnLocalShot(origin: Vector3, endPos: Vector3)
 end
 
 function controller.Start()
-	task.spawn(function()
-		local map = workspace:WaitForChild("Warehouse", 30)
-		local folder = map and map:WaitForChild("Props", 10)
-		if not folder then return end
+	-- bind a map's Props folder; `owner` tags the entries so an arena's props can be dropped when its clone goes
+	local function bindProps(folder, owner)
 		for _, model in folder:GetChildren() do
 			if model:IsA("Model") and model:GetAttribute("Breakable") then
-				local entry = { model = model, cframes = {}, collide = {}, broken = false }
+				local entry = { model = model, cframes = {}, collide = {}, broken = false, owner = owner }
 				for _, p in model:GetDescendants() do
 					if p:IsA("BasePart") then entry.cframes[p] = p.CFrame entry.collide[p] = p.CanCollide end
 				end
 				table.insert(props, entry)
 			end
 		end
+	end
+	local function dropProps(owner)
+		for i = #props, 1, -1 do
+			if props[i].owner == owner then table.remove(props, i) end
+		end
+	end
+	task.spawn(function()
+		local map = workspace:WaitForChild("Warehouse", 30)
+		local folder = map and map:WaitForChild("Props", 10)
+		if folder then bindProps(folder, map) end
+	end)
+	-- lobby duels: each match's arena is a Workspace child with the DuelArena attribute, cloned in (and re-made) per match
+	local function watchArena(child)
+		if child:GetAttribute("DuelArena") == nil then return end
+		task.spawn(function()
+			local folder = child:WaitForChild("Props", 10)
+			if folder and child.Parent then
+				dropProps(child)
+				bindProps(folder, child)
+			end
+		end)
+	end
+	for _, child in workspace:GetChildren() do watchArena(child) end
+	workspace.ChildAdded:Connect(watchArena)
+	workspace.ChildRemoved:Connect(function(child)
+		if child:GetAttribute("DuelArena") ~= nil then dropProps(child) end
 	end)
 	local fired = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Combat"):WaitForChild("WeaponFired")
 	fired.OnClientEvent:Connect(onShot)

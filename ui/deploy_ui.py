@@ -42,6 +42,7 @@ SET_FILES = [
     (C, "GadgetController", "set/GadgetController.lua"),
     (C, "HealthBarController", "set/HealthBarController.lua"),
     (C, "TrainingBinsController", "set/TrainingBinsController.lua"),
+    (C, "PropController", "set/PropController.lua"),
     (C + ".LobbyUIController", "Armory", "lobby/Armory.lua"),
 ]
 

@@ -119,14 +119,64 @@ local function allCharacters(): {Instance}
 	return list
 end
 
+-- [SET] lobby duels: the arena's collision shell (workspace.DuelArenas.<matchId>) has big CanCollide blockers that raycasts
+-- can't see (CanQuery false, e.g. OutOfBounds at the doors), so the camera tests those boxes itself. Hold / FX are skipped.
+local arenaBlockers, arenaBlockersFor = {}, nil
+local function duelArena(): Instance?
+	local id = Players.LocalPlayer:GetAttribute("DuelMatch") or Players.LocalPlayer:GetAttribute("DuelSpectate")
+	if not id or not (Players.LocalPlayer:GetAttribute("InDuel") or Players.LocalPlayer:GetAttribute("DuelSpectate")) then return nil end
+	local arenas = workspace:FindFirstChild("DuelArenas")
+	return arenas and arenas:FindFirstChild(tostring(id))
+end
+local function refreshArenaBlockers()
+	local arena = duelArena()
+	if arena == arenaBlockersFor and (arena == nil or #arenaBlockers > 0) then return end
+	arenaBlockersFor, arenaBlockers = arena, {}
+	if not arena then return end
+	for _, p in arena:GetDescendants() do
+		if p:IsA("BasePart") and p.CanCollide and not p.CanQuery and not p:FindFirstAncestor("Hold") and not p:FindFirstAncestor("FX") then
+			local sz = p.Size
+			local big = math.max(sz.X, sz.Y, sz.Z)
+			local mid = sz.X + sz.Y + sz.Z - big - math.min(sz.X, sz.Y, sz.Z)
+			if big >= 6 and mid >= 6 then table.insert(arenaBlockers, p) end -- walls / shutters, not bottles
+		end
+	end
+end
+-- distance along the unit ray to an (inflated) box, nil if it misses or starts inside
+local function rayBox(from: Vector3, dir: Vector3, maxDist: number, part: BasePart, pad: number): number?
+	local cf = part.CFrame
+	local o, d = cf:PointToObjectSpace(from), cf:VectorToObjectSpace(dir)
+	local h = part.Size / 2 + Vector3.new(pad, pad, pad)
+	local tmin, tmax = -math.huge, math.huge
+	for _, axis in { "X", "Y", "Z" } do
+		local oa, da, ha = o[axis], d[axis], h[axis]
+		if math.abs(da) < 1e-6 then
+			if oa < -ha or oa > ha then return nil end
+		else
+			local t1, t2 = (-ha - oa) / da, (ha - oa) / da
+			if t1 > t2 then t1, t2 = t2, t1 end
+			tmin, tmax = math.max(tmin, t1), math.min(tmax, t2)
+			if tmin > tmax then return nil end
+		end
+	end
+	if tmin < 0 or tmin > maxDist then return nil end
+	return tmin
+end
+
 -- Move from `from` toward `to`, stopping short of anything solid in between
 local function castTo(from: Vector3, to: Vector3, radius: number?): Vector3
 	local offset = to - from
 	if offset.Magnitude < 1e-3 then return to end
 
+	local dist = offset.Magnitude
 	local result = workspace:Spherecast(from, radius or Config.CollisionRadius, offset, collisionParams)
+	if result then dist = result.Distance end
+	for _, part in arenaBlockers do
+		local t = part.Parent and rayBox(from, offset.Unit, dist, part, radius or Config.CollisionRadius)
+		if t then dist = t; result = true end
+	end
 	if result then
-		return from + offset.Unit * math.max(result.Distance - Config.CollisionPadding, 0)
+		return from + offset.Unit * math.max(dist - Config.CollisionPadding, 0)
 	end
 	return to
 end
@@ -344,6 +394,7 @@ local function update(dt: number)
 
 	-- Two-stage collision: pivot -> shoulder (sideways), then shoulder -> camera (backwards)
 	collisionParams.FilterDescendantsInstances = allCharacters()
+	refreshArenaBlockers()
 	-- Walls push the camera in instantly (never see through them) but it eases back out, so brushing
 	-- past a corner or peeking from cover doesn't make the view pump in and out.
 	local sideTarget = pivot + flat:VectorToWorldSpace(Vector3.new(side, height, 0))
