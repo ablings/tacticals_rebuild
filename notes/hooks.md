@@ -83,3 +83,8 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   floor meshes are hidden (`FK_FloorHidden`), look = `Features.DropPits.FloorSlabs`. Beacons: tag `LF_Beacon` on the kit lens. New
   `Features.RewardStand` (LobbySpin on `RewardModel.SpinRoot`), `LobbyMap.IndustrialProps`. Swap bins: PrimaryPart = `F_SwapBin__crate_green`
   (PromptAt moved onto it). Training crates: Parts hidden, kit `KitCrate` models carry the collision. UNDO via `fix/place_features_kit.lua UNDO`.
+- 2026-10-15 polish_shop3 (notes/polish_shop.md round 3): `Features.Spotlights.Spot_ShopCounter` moved to (7.5,11.6,95.0) and re-aimed at the
+  Shop stage (original pivot in `PolishShop3_Orig`). `NPCs.NPC_Quartermaster` (not renamed or moved): Tag text OUTFITTER, Tag size Scale 4.2 x 0.9,
+  offset 2.55; prompt ObjectText OUTFITTER, cosmetic TalkLines (original in `PolishShop3_Orig_TalkLines`); OpenPanel unchanged (Kit).
+  `Interact.Shop_Counter` prompt text "Browse outfits / CHECKOUT", OpenPanel=Shop unchanged. New Spin model
+  `Polish.Shop.Round3.FeaturedStage.FeaturedOutfit` (Spin=12). `Rooms.Shop.L_Pedestals` light disabled. UNDO via `fix/polish_shop3.lua UNDO`.

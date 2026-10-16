@@ -2,7 +2,7 @@
 -- 1. clip: rays from each new part's centre to its 6 face centres and 8 corners (shrunk 0.05); any hit on an old part
 --    inside that span means the new part intersects old geometry.
 -- 2. float: every collidable Polish model must have floor or another Polish part under its lowest point (ray down 0.3).
--- 3. hooks: Interact.Shop_Counter, NPC_Quartermaster, KitEmitter/Spot_ShopCounter, RoomLight tags.
+-- 3. hooks: Interact.Shop_Counter, NPC_Quartermaster, KitEmitter/Spot_ShopCounter, RoomLight tags; round 3 (Round3 folder).
 local LM = workspace.LobbyMap
 local root = LM.Polish.Shop
 local q = {}
@@ -56,6 +56,22 @@ local npc = LM.NPCs:FindFirstChild("NPC_Quartermaster"); table.insert(hooks, "NP
 local np = npc and npc:FindFirstChildWhichIsA("ProximityPrompt", true); table.insert(hooks, "  prompt OpenPanel=" .. tostring(np and np:GetAttribute("OpenPanel")))
 local n = 0; for _, h in ipairs(CS:GetTagged("RoomLight")) do if h:GetAttribute("Room") == "Shop" then n += 1 end end
 table.insert(hooks, "RoomLight Shop hosts: " .. n .. " (all RoomLight: " .. #CS:GetTagged("RoomLight") .. ")")
+-- round 3 (polish_shop3.lua): featured Spin model, renamed sign/tag, light balance
+local r3 = root:FindFirstChild("Round3")
+if r3 then
+	local spin = r3:FindFirstChild("FeaturedOutfit", true)
+	table.insert(hooks, "Round3 FeaturedOutfit Spin=" .. tostring(spin and spin:GetAttribute("Spin")) .. " pivot " .. tostring(spin and spin:GetPivot().Position))
+	local lbl = LM.Rooms2.Overlays.SignText_ShopCounter:FindFirstChild("Label", true)
+	table.insert(hooks, "  back sign: " .. tostring(lbl and lbl.Text))
+	local tag = npc and npc:FindFirstChild("Tag")
+	table.insert(hooks, "  NPC tag: " .. tostring(tag and tag:FindFirstChildWhichIsA("TextLabel").Text) .. " size " .. tostring(tag and tag.Size))
+	local newL, offL = 0, 0
+	for _, d in ipairs(r3:GetDescendants()) do if d:IsA("Light") and d.Enabled then newL += 1 end end
+	for _, d in ipairs(LM:GetDescendants()) do if d:IsA("Light") and not d.Enabled and d:GetAttribute("PolishShop3_Orig") then offL += 1 end end
+	table.insert(hooks, ("  lights: %d new in Round3, %d old switched off by round 3 (net %+d)"):format(newL, offL, newL - offL))
+	local parts = 0; for _, d in ipairs(r3:GetDescendants()) do if d:IsA("BasePart") then parts += 1 end end
+	table.insert(hooks, "  Round3 parts: " .. parts)
+end
 local sh = 0; for _, d in ipairs(LM:GetDescendants()) do if d:IsA("Light") and d.Shadows and d.Enabled then sh += 1 end end
 table.insert(hooks, "shadow-casting lights in LobbyMap: " .. sh)
 return "CLIPS (" .. #clips .. "):\n" .. table.concat(clips, "\n") .. "\n\nSUPPORT:\n" .. table.concat(floats, "\n") .. "\n\nHOOKS:\n" .. table.concat(hooks, "\n")

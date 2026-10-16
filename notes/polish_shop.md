@@ -95,3 +95,78 @@ Captures work after `tools/show_studio.ps1`; the sheet now has real BEFORE (poli
   round 2 only moved things above head height and recoloured.)
 - Lesson: twice a sed edit that appended a comment to a Luau line (`... then  -- note`, `... do -- note`, `...; -- note s.Parent = host`)
   commented out the rest of the line: once a parse error, once silently unparented lights. Put comments on their own line.
+
+## Round 3 (2026-10-15 night): UGC / COSMETIC shop (Edward 22:55)
+Script `fix/polish_shop3.lua` (run AFTER `fix/polish_shop.lua`; a re-run of polish_shop.lua rebuilds Polish.Shop and drops Round3,
+so re-run polish_shop3 afterwards). Idempotent; every touched property of an existing instance is stored once in attribute
+`PolishShop3_Orig` (typed JSON; the NPC talk lines in `PolishShop3_Orig_TalkLines`). New pieces in `Workspace.LobbyMap.Polish.Shop.Round3`
+(1,226 Parts, most of them camo blotches). UNDO: `python tools/run_luau.py fix/polish_shop3.lua UNDO` (run before polish_shop UNDO).
+Sheet: `python tools/polish_shop3_sheet.py` -> `out/polish/shop/sheet3.jpg` (round 2 | round 3 per view, detail views, RIVALS UGC
+stage / market hall / market refs). Blueprint: RIVALS presents cosmetics as **lit exhibits, not stock**.
+
+### Hidden (Transparency 1, no collide/query/touch/shadow; lights/guis disabled), never deleted
+- Polish.Shop: counter goods (uniforms, ammo can, ledger, RATIONS box) and the four separate top edges; the shelf goods (ammo,
+  rations, canteens, uniforms, med kits); `Boards` (FIELD STOCK / REQUISITION + their 2 picture lights); `StockClusters`; `EntryBins`;
+  the A-frame's old QUARTERMASTER / RATIONS gui.
+- Rooms2: `S_Displays` (cream pedestals with rifles, crates), `S_Racks` (gun rack), `S_Props` (crates/drums), the back-shelf stock
+  (`S_Shelves__crate_green/drum_olive/case_dark/label_cream`), the plinth's upper drum, gun and column (`S_Plinth__dark_metal,
+  trim_metal, trim_light, neon_cream, case_dark, drum_olive`; the low base ring stays). `Rooms.Shop.K_*` kit props.
+  **No guns remain in the Shop.** 262 parts hidden.
+
+### Built (Round3)
+- `OutfitWalls`: 2 bays per side wall between the piers (z 81.6-87.6, 92.2-98.2; wall face 29.7, backdrop 0.43 off for the trims),
+  dark-olive fabric backdrop in a wood frame, 4 mannequins per side on wood plinths with cream name plates (name + R$ price):
+  W WOODLAND RECON / DESERT RAIDER / URBAN OPS / OLIVE DRAB, E ALPINE / NIGHT OPS / TIGER STRIPE / SKY PILOT. Mannequins are R15-
+  proportioned Parts (feet, boots, lower/upper legs, lower/upper torso, belt, arms angled 7 degrees, hands, neck, faceless head via
+  SpecialMesh Head); camo from deterministic blotch parts on the four faces of each limb (tiger = horizontal stripes); gear from Parts
+  + SpecialMesh Sphere (helmet with rim, beret with badge, boonie, cap, goggles, plate carrier with pouches, gaiter, sleeve patch).
+  One wash bar per side (Neon strip + SurfaceLight) over both bays.
+- `HeadgearWalls`: the entrance bays (wall face 29.4) carry a HEADGEAR wall: two wood shelves, six head forms per side with helmets,
+  berets, boonies and caps (gear built at mannequin size, then ScaleTo(0.8) about the head top).
+- `GlassCases` (where the supply bins stood, x +-11.8 z 76): wood cabinet, felt bed, warm Neon glow strip, glass hood with metal posts;
+  W "DOG TAGS" (3 tag pairs with ball chains, a beret), E "PATCHES & INSIGNIA" (SKY / TAC / AIR patches, sergeant chevrons, pilot wings).
+- `Screens`: FEATURED (west, x -14.6) and NEW DROPS (east, x 15.2) on the back wall where the boards were, raised to y 8.95-12.0 so
+  the outfitter's tag no longer sits over them; near-black bezel, self-lit SurfaceGui (LightInfluence 0), Scale only.
+- `FeaturedStage`: a low dais (r 3.0, top 1.63) on the plinth's base ring, olive Neon ring, a turntable 0.16 over it with the featured
+  mannequin SKY RANGER ELITE (multi-camo, helmet, goggles, plate carrier, gaiter, gloves); the model `FeaturedOutfit` has `Spin = 12`
+  (RoomFX turns it about its pivot on the stage axis; the 0.15 bob never touches the dais). Rope line on 6 posts (near-black, olive
+  rope), open toward the entrance. Key: a truss can hung from the z 79-80 ceiling beam, SpotLight angle 26, b4.5, shadows on.
+- `Checkout`: one continuous olive fascia + cream line under the four wood runs (now one walnut tone); a CHECKOUT screen on the counter.
+- `ShelfGoods`: folded camo shirts (stacks of 2-3) on the wood wall-shelf units instead of supply goods.
+- `AFrameText`: OUTFITTERS / NEW / DROPS DAILY / UNIFORMS · CAMO / TAGS · PATCHES (adorned to the old slate).
+
+### Taste fixes from review_shop.md
+1. Tag over a board: `NPC_Quartermaster.Tag` text OUTFITTER, size in Scale (= studs on a BillboardGui) 4.2 x 0.9 instead of 160 x 34 px
+   (a pixel-sized tag covered ~10 studs of back wall seen from the entrance), offset 3.2 -> 2.55; the screens sit above it.
+2. Spotlight blocking the sign: `Features.Spotlights.Spot_ShopCounter` moved (3,11.1,97.6) -> (7.5,11.6,95.0), out of the entrance ->
+   sign sightline, re-aimed as the stage rim light (angle 34, b2.2). Sign text SUPPLY -> OUTFITTERS.
+3. Walls reading white: wall body 206,182,146, plate 200,176,140, kick 172,148,116, fascia/piers 212,194,160.
+4. Cool ceiling: the faces seen between the strips are `S_Ceiling__trim_metal` (found by a camera ray through the pixel); it rendered
+   77,77,72 at 92,78,62 (render/colour ~0.84 / 0.99 / 1.16 under the sky ambient); now 132,100,68 -> renders 118,103,79 (tan).
+5. Lime pendant shades: shade near-black SmoothPlastic, top/cap dark olive 78,88,48; pendant spots 4 -> 2.6 (light moves to the products).
+6. Plank-like countertop: one walnut tone + one continuous fascia across all runs.
+- NPC prompt ObjectText OUTFITTER, cosmetic TalkLines; Shop_Counter prompt "Browse outfits / CHECKOUT". OpenPanel values unchanged
+  (counter = Shop; NPC = Kit: Edward to confirm whether the outfitter should open Shop).
+
+### Logic checks
+- Play walk (character_navigation x3): hub -> door (0,72) -> counter front (2.4,96.9) -> west outfit wall (-23,90) -> west staff side
+  (-12.5,104.7) -> east staff side (18.4,104.5) -> east outfit wall (23,84) -> east glass case (11.8,73) -> hub (0.1,31.7): all reached.
+- Hooks: Shop_Counter prompt in range (5.0 of 9) and **E opened ShopUI2** (Scrim + Canvas visible); NPC_Quartermaster OpenPanel=Kit,
+  prompt enabled; FeaturedOutfit turns in Play (pivot rotates). check_rooms2 **FAILS 0** (Shop_Counter reach 3.00, NPC 7.62);
+  check_rooms3 routes clear (its old-Holo note on Pad_1v1 Team2 predates this pass); check_hub1 all ok; check_training ALL OK.
+- `check_polish_shop` (extended for Round3): **0 clips** after fixes (first run 13: backdrops/frames in the wall trims, wash arms in
+  the band, plinth kicks and post bases touching the floor trim, the dais in the plinth rim, the key rod in a beam). Every Round3 floor
+  group's lowest point is 0.02-0.03 over the floor (glass-case kick raised to clear the entrance insert at 0.03).
+- Lights: 3 new (2 wash SurfaceLights, 1 key SpotLight) and 3 switched off (the 2 board picture lights, L_Pedestals' invisible
+  PointLight) = **net 0**; shadow casters 10 in LobbyMap (+1, the stage key). Enabled in Play at the counter: 73 (lobby-wide issue).
+- Console in Play: baseline only (MatchmakingManager MemoryStore, AssetCheck 1/1154, UIBlox warnings).
+- UNDO round trip: UNDO restored 314 instances (0 attributes left; sign SUPPLY, tag 160x34 QUARTERMASTER, displays visible, spot back
+  at (3,11.1,97.6), talk lines restored), then applied twice: identical (1,226 parts, 313 originals tagged). The first UNDO run missed
+  the TalkLines attribute (stored apart from the property JSON); fixed in the script and restored by hand.
+- Queued for import: nothing (Parts, SpecialMesh primitives and SurfaceGuis only; no Blender kit needed).
+
+### Open / for the lead
+- 1,226 parts in Round3, ~900 of them camo blotches. If the part count matters, an own camo texture (one Texture per limb) would
+  replace them; the upload goes under the Gunsy Funsy group.
+- Mannequins read clean but blocky close up; a Blender mannequin kit (rounded limbs, own camo UVs) is the next quality step.
+- The outfitter NPC still opens Kit.
