@@ -36,6 +36,10 @@ Saving when the computer-use lock is still held by the paused UI session: front 
 foreground title is `...Tacticals_rebuild.rbxl - Roblox Studio`, send Ctrl+S with SendKeys (that is Save to File for a place
 opened from file), then check the .rbxl modified time and that the foreground title didn't change, meaning no dialog opened.
 
+**00:10:** the UI session finished for the night and both monitors are ours. Schedule windows are no longer needed: the lead
+saves (Ctrl+S, checking Edit mode first) after each finished room. Don't touch RIVALS in the Player on the primary monitor or the
+replica Studio 82b89850.
+
 ## Room identities (same RIVALS language, a different mood per room)
 Shared language everywhere: near-black floors, mid-grey walls, Neon accent lines, the olive/cream palette as thin lines only. The
 rooms differ by **light colour/temperature, key material, signature prop and accent ratio**:
