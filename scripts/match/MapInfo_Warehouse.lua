@@ -5,7 +5,7 @@
 return {
 	Id = "Warehouse",
 	DisplayName = "Warehouse",
-	Image = "",
+	Image = "rbxassetid://123421617826154", -- map-vote tile (Edward upload 2026-10-17)
 	Modes = { "1v1" },
 	Size = Vector3.new(84.000, 22.000, 120.400),
 	SpawnSpacing = 4,

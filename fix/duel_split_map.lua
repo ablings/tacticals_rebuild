@@ -19,7 +19,7 @@ local UNDO = false --@UNDO
 local MAPS = {
 	Warehouse = {
 		DisplayName = "Warehouse",
-		Image = "", -- ui/art/map_warehouse.png once uploaded (needs Edward's OK)
+		Image = "rbxassetid://123421617826154", -- map-vote tile (Edward upload 2026-10-17) -- ui/art/map_warehouse.png once uploaded (needs Edward's OK)
 		Modes = { "1v1" },
 		Model = "Warehouse",
 		Spawns = { A = { "MatchSpawns.SpawnA" }, B = { "MatchSpawns.SpawnB" } },

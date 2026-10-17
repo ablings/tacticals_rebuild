@@ -1504,7 +1504,7 @@ SOURCES.MapInfo_Warehouse = [=[-- MapInfo: map registry entry for the match plac
 return {
 	Id = "Warehouse",
 	DisplayName = "Warehouse",
-	Image = "",
+	Image = "rbxassetid://123421617826154", -- map-vote tile (Edward upload 2026-10-17)
 	Modes = { "1v1" },
 	Size = Vector3.new(84.000, 22.000, 120.400),
 	SpawnSpacing = 4,
@@ -3520,7 +3520,7 @@ else
 	local sssShared = ensureFolder(SSS, "Shared")
 	ensureScript(sssShared, "MatchCore", "ModuleScript", SOURCES.MatchCore)
 	local maps = ensureFolder(RS, "DuelMaps")
-	local wh = ensureFolder(maps, "Warehouse", { DisplayName = "Warehouse", Image = "", Modes = "1v1" })
+	local wh = ensureFolder(maps, "Warehouse", { DisplayName = "Warehouse", Image = "rbxassetid://123421617826154", -- map-vote tile (Edward upload 2026-10-17) Modes = "1v1" })
 	ensureScript(wh, "MapInfo", "ModuleScript", SOURCES.MapInfo_Warehouse)
 	-- the admin framework
 	local fw = ensureFolder(SSS, "AdminFramework")
