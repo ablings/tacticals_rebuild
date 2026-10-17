@@ -16,7 +16,8 @@ Status legend: FIXED (installed in the working copies, ships with the next publi
    Ranked place (casual still plays). After publishing, shut down / migrate old servers (Creator Hub > the experience >
    ... > Restart servers) so every lobby runs the new code.
    The old combined place 81861384114744 (v113) still accepts forged TeleportData: it isn't routed to any more, but anyone
-   can teleport into it. It has no ranked ladder writes of the v3 kind, but it should get the same fix or be made private.
+   can teleport into it and farm casual rewards (XP / scissors) off an alt. PLAN: at the next publish, overwrite it with the
+   secured Matchmaking build (reserved servers + spec only, casual), so it is as safe as the new places.
 
 ## High
 3. **Free headshots / bigger hitbox through the claimed hit check.** FIXED [SECURE] (`scripts/secure/HitRewind.lua`).
