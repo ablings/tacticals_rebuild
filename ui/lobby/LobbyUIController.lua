@@ -996,6 +996,7 @@ end
 local prewarmStart = os.clock()
 local function stepLog(name, t0) print(string.format("[MenuPrewarm] %s %.2fs (since join %.1fs)", name, os.clock() - t0, os.clock() - prewarmStart)) end
 local function prewarmMenus()
+	print(string.format("[MenuPrewarm] start (%.1fs)", os.clock() - prewarmStart))
 	for _, step in { { "Settings", openSettings, true }, { "Missions", openMissions, true }, { "Play", openPlay, true },
 		{ "Shop", function() return openShop(nil, true) end }, { "Codes", openCodes, true } } do
 		local t0 = os.clock()
@@ -1542,12 +1543,15 @@ function LobbyUI.Start()
 	-- player data replica
 	local PlayerData = require(script.Parent.Parent:WaitForChild("Registry"):WaitForChild("PlayerData"))
 	task.spawn(function()
+		print(string.format("[MenuPrewarm] waiting for the data replica (%.1fs)", os.clock() - prewarmStart))
 		replica = PlayerData:GetMyReplica()
+		print(string.format("[MenuPrewarm] replica arrived (%.1fs)", os.clock() - prewarmStart))
 		data = replica.Data
-		applySettings()
+		task.spawn(prewarmMenus) -- build + preload the menus in the background (loading dots until done)
+		local ok, err = pcall(applySettings)
+		if not ok then warn("[LobbyUI] applySettings: " .. tostring(err)) end
 		replica:ListenToRaw(function() LobbyUI.Refresh() end)
 		LobbyUI.Refresh()
-		task.spawn(prewarmMenus) -- build + preload the menus in the background (loading dots until done)
 	end)
 
 	task.spawn(function()
