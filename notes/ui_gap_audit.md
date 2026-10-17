@@ -21,7 +21,7 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 | 9 | Backpack (backpack/BackpackController) | Armory | covered |
 | 10 | Shooting Range HUD (range/RangeController) | Training (ExfilFX leave, crate picker) | covered |
 | 11 | Free Rewards gift + panel, Market, Limited Time stand, lobby TV boards (world/WorldController) | Tacticals has its own boards (BillboardController) | N/A / map side |
-| 12 | Proximity prompt billboards in RIVALS style (world/WorldController) | `PromptsController`: all 16 lobby prompts (crates, Kit, shop, NPCs, supply drop) drawn as Tacticals cards | BUILT, Play test pending (lock) |
+| 12 | Proximity prompt billboards in RIVALS style (world/WorldController) | `PromptsController`: all 16 lobby prompts (crates, Kit, shop, NPCs, supply drop) drawn as Tacticals cards | DONE (simulator: card shows TAP, tapping it triggers) |
 | 13 | Toast pills (kit/Toast) | the lobby's own `LobbyUI.Toast` (PlayerCards uses it) | DONE |
 
 ## Log
@@ -31,3 +31,7 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 - 2026-10-17 night: touch emulator pass (Device Simulator, match place): stick, stick zone move, drag-look, double tap fire,
   Fire button OK. Fixed: stick drags turned the camera in the simulator (GetMouseDelta from the locked desktop mouse; camera
   now ignores mouse delta on touch-only devices). Multi-touch needs a real phone. Open: tutorial banner says "Press [Q]" on touch.
+- 2026-10-17 night: simulator pass in the lobby: prompt cards (tap triggers), challenge popup look, Layout Editor through
+  Settings > Touch (drag a button + the joystick, save writes Joystick/Jump to Touch Layout 1 and the stick attributes; Reset clears).
+  Fixed: touch buttons stayed over Settings / menus; now hidden while LobbyUI is down or the profile card is up.
+  Note for the lead: teleporting the character from the command bar trips the server speed audit ("studs/s over 2 s").
