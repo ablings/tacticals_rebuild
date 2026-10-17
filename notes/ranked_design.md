@@ -76,3 +76,17 @@ lead session's ELO maths is agreed.
   2v2 Commander+Bronze vs Plat+Plat: Commander +8 / -50, Bronze +45 / -8. Even teams = the solo numbers.
 - **Built (2026-10-17, ranked v3):** `notes/ranked_server.md` section 0 (all of the above in both working copies; 168/168 unit tests
   incl. this 2v2 check; Play-tested placements, shield, leave, decay, disconnect, shared ladder).
+
+## Emblem + map image ids (uploaded by Edward 2026-10-17 under Gunsy Funsy; the 512 px "small_" uploads)
+| Art | Decal id | Image id (use this) |
+|---|---|---|
+| Bronze | 138889723915036 | rbxassetid://127275551172420 |
+| Silver | 117436589444439 | rbxassetid://85182973115869 |
+| Gold | 102021824256905 | rbxassetid://112298763732792 |
+| Platinum | 116941010115376 | rbxassetid://124376885255343 |
+| Diamond | 133782486999414 | rbxassetid://80103384303847 |
+| Elite | 120679541726719 | rbxassetid://120281929548886 |
+| Commander | 79006983530602 | rbxassetid://136618251030474 |
+| Warlord | 90749580044822 | rbxassetid://128657545561698 |
+| Warehouse map shot | 123260993579952 | rbxassetid://123421617826154 |
+(Full-size duplicates rank_* / map_warehouse were also uploaded; unused.)
