@@ -438,6 +438,9 @@ RunService.RenderStepped:Connect(function()
 	end
 	if not inMatch() then results.Visible = false end
 	gui.Enabled = playing or results.Visible
+	-- the victory screen owns the screen while it's up (its round banner and the feed drew over VICTORY / DEFEAT)
+	local vs = player.PlayerGui:FindFirstChild("VictoryScreen")
+	if vs and vs.Enabled and not results.Visible then gui.Enabled = false end
 	if not gui.Enabled then
 		lastState = nil; resultsShown = false
 		return

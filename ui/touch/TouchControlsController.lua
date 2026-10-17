@@ -203,6 +203,12 @@ local function refresh()
 	local menuUp = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
 	local cards = player.PlayerGui:FindFirstChild("PlayerCards")
 	if cards and cards:FindFirstChild("ProfileTint") then menuUp = true end
+	-- match screens: the results card, and the map vote / loadout (MatchFlow) cover the screen too
+	local duel = player.PlayerGui:FindFirstChild("DuelHUD")
+	local res = duel and duel:FindFirstChild("Results", true)
+	if res and res.Visible and duel.Enabled then menuUp = true end
+	local flow = player.PlayerGui:FindFirstChild("MatchFlow")
+	if flow and flow:IsA("ScreenGui") and flow.Enabled then menuUp = true end
 	local on = touchOn() and not menuUp and player:GetAttribute("Setting_HideHUD") ~= true and player:GetAttribute("InCutscene") ~= true
 	gui.Enabled = on or editing
 	local ia = actions()
