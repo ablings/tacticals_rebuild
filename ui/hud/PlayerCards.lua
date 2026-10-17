@@ -67,7 +67,10 @@ local function ensureGui()
 end
 
 ---------------------------------------------------------------------------------------------------- actions
-local function toast(text)
+-- the lobby's own toast (bottom centre); Roblox's notification only if the lobby controller isn't there
+local function toast(text, kind)
+	local LobbyUI = shared.Get and shared.Get("LobbyUIController")
+	if LobbyUI and LobbyUI.Toast then LobbyUI.Toast(text, kind or "bad"); return end
 	pcall(StarterGui.SetCore, StarterGui, "SendNotification", { Title = "TACTICALS", Text = text, Duration = 3 })
 end
 local spectating = nil
@@ -80,12 +83,14 @@ local function run(action, p)
 		pcall(StarterGui.SetCore, StarterGui, "PromptBlockPlayer", p)
 	elseif action == "Invite" then
 		local SocialService = game:GetService("SocialService")
-		local ok = pcall(function()
+		local okCan, can = pcall(SocialService.CanSendGameInviteAsync, SocialService, player)
+		local ok = okCan and can and pcall(function()
 			local opts = Instance.new("ExperienceInviteOptions")
-			opts.InviteUser = p.UserId
+			opts.InviteUser = p.UserId -- the invite sheet opens on this player
 			SocialService:PromptGameInvite(player, opts)
 		end)
-		if not ok then toast("Invites aren't available here") end
+		if not ok then toast("Invites aren't available here (they work in the published game)") end
+		return ok
 	elseif action == "Challenge" then
 		local r = social()
 		if r then r:FireServer("Challenge", p) end
@@ -269,9 +274,17 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 			Kit.tween(pop, 0.07, { Scale = 1.06 })
 			task.delay(0.07, function() Kit.tween(pop, 0.16, { Scale = 1 }, Enum.EasingStyle.Back) end)
 			if a == "View Profile" then PlayerCards.Profile(p, false); return end
-			run(a, p)
+			local opened = run(a, p)
 			-- sent once: the glyph turns into a grey tick (Invite / Challenge), RIVALS-style
-			if a == "Invite" or a == "Challenge" then sent = true; g.Text = "✓"; g.TextColor3 = FIELD end
+			if not sent and ((a == "Invite" and opened) or a == "Challenge") then
+				sent = true
+				g.Text = ""
+				-- a grey tick drawn from two bars (BuilderSans has no check mark glyph)
+				for _, bar in { { 0.36, 0.6, 0.32, 45 }, { 0.58, 0.48, 0.62, -50 } } do
+					new("Frame", { BorderSizePixel = 0, BackgroundColor3 = FIELD, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(bar[1], bar[2]),
+						Size = UDim2.fromScale(bar[3], 0.1), Rotation = bar[4], ZIndex = 24, Parent = g }, { Kit.corner(2) })
+				end
+			end
 			if a == "Spectate" then t.Text = spectating == p and "Stop Spectating" or "Spectate" end
 		end)
 	end
