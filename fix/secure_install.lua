@@ -8,7 +8,7 @@
 -- [SECURE] edits (string swap; UNDO swaps back; backups ServerStorage._RebuildRemoved.SECURE_<name>_Orig):
 --   lobby: Managers.QueueManager (pad deploy writes the spec), Managers.MatchmakingManager (PLAY matchmaker writes the spec),
 --          Managers.LobbyManager (a game pass is granted only after UserOwnsGamePassAsync confirms it)
---   match: Managers.RoundManager (joinMatchData plays only MatchSpec.Secure's answer)
+--   match: Managers.RoundManager (joinMatchData plays only MatchSpec.Secure's answer; ranked dodge guard in Loading)
 --   both:  Managers.CombatManager (claimed hits checked by HitRewind: lag-compensated, 1.25 studs instead of ~7)
 -- ORDER: any time after match_place_build / ranked (independent of split: split works on the copies made from match_place_ref,
 -- which already carry this). Re-run after tools/match_place_build.py rewrites RoundManager.
@@ -353,6 +353,27 @@ local EDITS = IS_LOBBY and {
 			.. "\tlocal okOwn, owns = pcall(MarketplaceService.UserOwnsGamePassAsync, MarketplaceService, player.UserId, passId)\n"
 			.. "\tif not (okOwn and owns) then warn(\"[LobbyManager] pass \" .. tostring(passId) .. \" not confirmed for \" .. player.Name) return end\n" },
 } or {
+	-- RoundManager.runMatchServer: dodge guard. A ranked arrival is marked pending at once, so leaving during Loading (after
+	-- seeing the opponent on the loading screen) pays the normal leave at the next join; the real tiers overwrite the mark
+	-- after Loading; a cancelled match (the other team never came) clears it for everyone here.
+	-- RankedCore.Config.DodgePenalty = false turns it off.
+	{ "RoundManager",
+		"\t\tp:SetAttribute(\"Team\", side)\n",
+		"\t\tp:SetAttribute(\"Team\", side)\n"
+			.. "\t\t-- [SECURE] dodge guard: marked pending on arrival (a leave during Loading pays at the next join)\n"
+			.. "\t\tif first.Ranked == true and not IS_STUDIO and RankedCore.Config.DodgePenalty ~= false then\n"
+			.. "\t\t\ttask.spawn(function()\n"
+			.. "\t\t\t\tlocal t = RankedCore.TierOf(RankedServer.EloOf(p, first.Mode))\n"
+			.. "\t\t\t\tRankedServer.MarkPending(p, first.Mode, t, t)\n"
+			.. "\t\t\tend)\n"
+			.. "\t\tend\n" },
+	{ "RoundManager",
+		"\tif cancel then\n\t\tsetState(\"Cancelled\", 5)\n",
+		"\tif cancel then\n\t\tsetState(\"Cancelled\", 5)\n"
+			.. "\t\t-- [SECURE] dodge guard: a cancelled match costs nobody here anything\n"
+			.. "\t\tif first.Ranked == true and not IS_STUDIO then\n"
+			.. "\t\t\tfor _, p in Players:GetPlayers() do task.spawn(RankedServer.ClearPending, p, first.Mode) end\n"
+			.. "\t\tend\n" },
 	-- RoundManager.joinMatchData: a live server plays only what MatchSpec.Secure returns
 	{ "RoundManager",
 		"\tlocal ok, data = pcall(function() return player:GetJoinData().TeleportData end)\n"

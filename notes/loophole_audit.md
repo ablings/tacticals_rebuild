@@ -49,17 +49,12 @@ Status legend: FIXED (installed in the working copies, ships with the next publi
    (or require the online queue) - otherwise two friends can farm Elo off each other.
 6. **Reaction range best time is client-reported** (`ServerScriptService.LobbyRange`): anyone can post 1.2 s. Cosmetic
    (one server attribute, not saved). OPEN, low priority.
-7. **Ranked dodge during Loading**: a player who sees the opponent on the loading screen and leaves before the match is
-   marked (MarkPending happens after Loading) cancels the match with no penalty for anyone. OPEN, Edward to decide
-   (a small dodge penalty for leaving a ranked match during Loading after arriving?).
-
-## Tests (match place Play, 2026-10-17)
-- HitRewind with a dummy running 20 studs/s: a point on the head now -> ok (0.00); 3 studs behind (a lagging shooter's
-  view) -> ok via rewind (0.00); the torso centre claimed as Head -> refused (1.90); 5 studs to the side -> refused (4.40).
-- MoveGuard: 90 studs/s for 3.2 s -> 1 flag; a 12 studs/s walk -> no flag. Console clean.
-- All edited scripts parse (loadstring) in both copies. MatchSpec's live path (MemoryStore, reserved servers) can only be
-  tested after publishing: start a ranked and a casual match from the lobby and check the match server log for
-  "[MatchSpec]" warnings (there should be none).
+7. **Ranked dodge during Loading.** FIXED [SECURE] (RoundManager, match places), with a switch: a player who saw the opponent
+   on the loading screen and left before the match was marked (MarkPending ran after Loading) cancelled the match with no
+   penalty. Now a ranked arrival is marked pending at once (own tier vs own tier, overwritten by the real tiers after
+   Loading), so a leave during Loading pays the normal leave (loss + LeavePenalty 25) at the next join. A cancelled match
+   (the other team never arrived) clears the mark for everyone still there. Live servers only (Studio skips it).
+   Turn off with `RankedCore.Config.DodgePenalty = false` if Edward prefers free dodges.
 
 ## Checked, fine
 - CombatManager: rate limit, increasing shot ids, fire interval, ammo / reload on the server, origin within 8 studs of the
