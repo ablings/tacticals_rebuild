@@ -981,18 +981,27 @@ local function whenReady(fn)
 	loadingGui.Enabled = true
 	if gui then gui.Enabled = false end
 	task.spawn(function()
-		while not menusReady do task.wait() end
+		-- (live fix 2026-10-16) never wait forever: after 6 s the menu opens anyway (its art keeps streaming in)
+		local t0 = os.clock()
+		while not menusReady and os.clock() - t0 < 6 do task.wait() end
 		loadingGui.Enabled = false
 		loadingPending = false
-		fn()
+		local ok, err = pcall(fn)
+		if not ok then warn("[MenuOpen] " .. tostring(err)); if gui then gui.Enabled = true end end
 	end)
 end
+-- (live fix 2026-10-16) live, the preload has to really download the whole Repository + every image (Studio has them cached)
+-- and assets that fail take long to give up, so it's capped: ready when it finishes or 8 s after it started, whichever is
+-- first; the rest keeps loading in the background. Each step's time goes to the console as [MenuPrewarm] (F9 live).
+local prewarmStart = os.clock()
+local function stepLog(name, t0) print(string.format("[MenuPrewarm] %s %.2fs (since join %.1fs)", name, os.clock() - t0, os.clock() - prewarmStart)) end
 local function prewarmMenus()
-	pcall(openSettings, true)
-	pcall(openMissions, true)
-	pcall(openPlay, true)
-	pcall(openShop, nil, true)
-	pcall(openCodes, true)
+	for _, step in { { "Settings", openSettings, true }, { "Missions", openMissions, true }, { "Play", openPlay, true },
+		{ "Shop", function() return openShop(nil, true) end }, { "Codes", openCodes, true } } do
+		local t0 = os.clock()
+		local ok, err = pcall(step[2], step[3])
+		stepLog(step[1] .. (ok and "" or (" FAILED " .. tostring(err))), t0)
+	end
 	local list = {}
 	local function add(root)
 		if not root then return end
@@ -1006,7 +1015,22 @@ local function prewarmMenus()
 	for _, name in { "ShopUI2", "MissionsUI", "PlayUI", "SettingsUI", "CodesUI" } do add(player.PlayerGui:FindFirstChild(name)) end
 	add(ReplicatedStorage:FindFirstChild("Repository"))
 	add(ReplicatedStorage:FindFirstChild("UIIcons"))
-	pcall(function() game:GetService("ContentProvider"):PreloadAsync(list) end)
+	local t0 = os.clock()
+	local failed, done = 0, false
+	task.spawn(function()
+		pcall(function()
+			game:GetService("ContentProvider"):PreloadAsync(list, function(id, status)
+				if status ~= Enum.AssetFetchStatus.Success then
+					failed += 1
+					if failed <= 10 then print("[MenuPrewarm] asset " .. tostring(status) .. " " .. tostring(id)) end
+				end
+			end)
+		end)
+		done = true
+		stepLog(string.format("preload %d items, %d failed", #list, failed), t0)
+	end)
+	while not done and os.clock() - t0 < 8 do task.wait(0.1) end
+	if not done then stepLog(string.format("preload still running (%d items): menus open anyway", #list), t0) end
 	menusReady = true
 end
 LobbyUI.OpenShop = function(startTab) whenReady(function() openShop(startTab) end) end
@@ -1510,6 +1534,11 @@ function LobbyUI.Start()
 		hookFn.Parent = player:WaitForChild("PlayerScripts")
 	end
 
+	-- (live fix) whatever happens to the replica / prewarm, the menus stop waiting 15 s after join
+	task.delay(15, function()
+		if not menusReady then print("[MenuPrewarm] watchdog: menus ready after 15 s (replica / prewarm still busy)") end
+		menusReady = true
+	end)
 	-- player data replica
 	local PlayerData = require(script.Parent.Parent:WaitForChild("Registry"):WaitForChild("PlayerData"))
 	task.spawn(function()
