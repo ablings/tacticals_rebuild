@@ -42,6 +42,15 @@ local BUTTONS = {
 }
 local BY_ID = {}
 for _, b in BUTTONS do BY_ID[b.id] = b end
+-- (2026-10-17) Codex silhouette icons, uploaded by Edward under Gunsy Funsy (ui/art/touch; decal -> image ids). A button
+-- with an icon draws it instead of its glyph; Equip Melee / Gadget reuse the fist / grenade, Equip Gun shows the gun in 3D.
+local ICON = {
+	["Fire"] = "rbxassetid://81909483490250", ["Aim"] = "rbxassetid://134198129338690", ["Reload"] = "rbxassetid://100573206538316",
+	["Gun Bash"] = "rbxassetid://136244634400340", ["Throw Gadget"] = "rbxassetid://128775020926516", ["Jump"] = "rbxassetid://95980290317525",
+	["Crouch"] = "rbxassetid://83130114120097", ["Slide"] = "rbxassetid://87783001534280", ["Take Cover"] = "rbxassetid://74308443713215",
+	["Dash"] = "rbxassetid://73177336441528", ["Shoulder Swap"] = "rbxassetid://98639300079463", ["Open Scoreboard"] = "rbxassetid://79522862397381",
+	["Equip Melee"] = "rbxassetid://136244634400340", ["Equip Gadget"] = "rbxassetid://128775020926516",
+}
 -- the joystick (the lead's TouchStick): where it sits when the layout moves it. Unset = its own default half-screen zone.
 -- Stored like the buttons, in right-handed space (x mirrored for Left Handed Mode); s = ring diameter / screen height.
 local STICK_DEFAULT = { x = 0.2, y = 0.72, s = 0.22 }
@@ -88,12 +97,21 @@ local gui, holder
 local made = {} -- id -> { btn, glyph, ammo, stroke }
 local editing = false
 
+-- (2026-10-17, Edward: "make the buttons like rivals", refs notes/ref_mobile) flat translucent dark-grey discs, no
+-- outline, big light-grey icons; held = filled with the accent and the icon goes white. Tacticals olive is the accent.
+-- (Edward: "the icons are transparent and when the button is pressed the button turns blue and then the icon turns full white")
+local DISC, ICONC, ACCENT, ICON_ON = Color3.fromRGB(40, 42, 40), Color3.fromRGB(235, 235, 235), Color3.fromRGB(30, 180, 255), Color3.new(1, 1, 1)
+local ICON_REST = 0.35 -- the icon's own see-through at rest (plus the button transparency setting)
 local function styleButton(id, m)
 	local opaque = setting("Opaque Buttons", true)
 	local t = (setting(id .. " Custom", false) and setting(id .. " Transparency", 50) or setting("Buttons Transparency", 50)) / 100
-	m.btn.BackgroundTransparency = opaque and (0.15 + 0.7 * t) or 1
-	m.stroke.Transparency = 0.2 + 0.6 * t
+	-- opaque: the disc (RIVALS ~0.35 at the default 50%); see-through: just a faint ring
+	m.btn.BackgroundTransparency = m.held and 0.05 or (opaque and (0.1 + 0.5 * t) or 1)
+	m.stroke.Transparency = opaque and 1 or (0.3 + 0.6 * t)
 	m.glyph.TextTransparency = 0.05 + 0.6 * t
+	if m.icon then m.icon.ImageTransparency = m.held and 0 or math.min(0.9, ICON_REST + 0.4 * t) end
+	m.glyph.TextTransparency = m.held and 0 or math.min(0.9, ICON_REST + 0.4 * t)
+	if m.gunView and m.gunView:IsA("ViewportFrame") then m.gunView.ImageTransparency = 0.05 + 0.6 * t end
 	-- for the input layer's touch camera: may a drag that starts on this button also turn the camera?
 	local sink
 	if setting(id .. " Custom", false) then sink = setting(id .. " Camera Sinking", true) else sink = setting("Buttons Camera Sinking", true) end
@@ -125,10 +143,10 @@ local function build()
 		btn.AutoButtonColor = false
 		btn.AnchorPoint = Vector2.new(0.5, 0.5)
 		btn.SizeConstraint = Enum.SizeConstraint.RelativeYY -- size = share of the screen height, always round
-		btn.BackgroundColor3 = Color3.fromRGB(14, 15, 13)
+		btn.BackgroundColor3 = DISC
 		btn.Parent = holder
 		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = btn
-		local st = Instance.new("UIStroke"); st.Color = Color3.fromRGB(236, 232, 218); st.Thickness = 2; st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; st.Parent = btn
+		local st = Instance.new("UIStroke"); st.Color = ICONC; st.Thickness = 2; st.Transparency = 1; st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; st.Parent = btn
 		local g = Instance.new("TextLabel")
 		g.BackgroundTransparency = 1
 		g.Size = UDim2.fromScale(0.62, 0.62)
@@ -137,8 +155,22 @@ local function build()
 		g.Text = b.glyph
 		g.TextScaled = true
 		g.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-		g.TextColor3 = Color3.fromRGB(236, 232, 218)
+		g.TextColor3 = ICONC
 		g.Parent = btn
+		local img
+		if ICON[b.id] then
+			g.Text = ""
+			img = Instance.new("ImageLabel")
+			img.Name = "Icon"
+			img.BackgroundTransparency = 1
+			img.Image = ICON[b.id]
+			img.ImageColor3 = ICONC
+			img.ScaleType = Enum.ScaleType.Fit
+			img.AnchorPoint = Vector2.new(0.5, 0.5)
+			img.Position = UDim2.fromScale(0.5, 0.5)
+			img.Size = UDim2.fromScale(0.68, 0.68) -- RIVALS' icons nearly fill the disc
+			img.Parent = btn
+		end
 		local ammo
 		if b.id == "Equip Gun" then
 			ammo = Instance.new("TextLabel")
@@ -153,7 +185,7 @@ local function build()
 			ammo.Parent = btn
 			local as = Instance.new("UIStroke"); as.Thickness = 1.5; as.Parent = ammo
 		end
-		made[b.id] = { btn = btn, glyph = g, ammo = ammo, stroke = st }
+		made[b.id] = { btn = btn, glyph = g, icon = img, ammo = ammo, stroke = st }
 		-- press / release -> the input layer (each touch on its own button: multi-touch works)
 		btn.InputBegan:Connect(function(input)
 			if editing then return end
@@ -164,14 +196,26 @@ local function build()
 				if ia.Consume then ia.Consume(input, btn:GetAttribute("SinkCamera") == true) end
 				ia.Press(b.action)
 			end
-			btn.BackgroundColor3 = Color3.fromRGB(70, 74, 60)
+			local m = made[b.id]
+			if m then m.held = true end
+			btn.BackgroundColor3 = ACCENT
+			btn.BackgroundTransparency = 0.05
+			if m and m.icon then m.icon.ImageColor3 = ICON_ON; m.icon.ImageTransparency = 0 end
+			if m then m.glyph.TextColor3 = ICON_ON end
 		end)
 		btn.InputEnded:Connect(function(input)
 			if editing then return end
 			if input.UserInputType ~= Enum.UserInputType.Touch and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 			local ia = actions()
 			if ia then ia.Release(b.action) end
-			btn.BackgroundColor3 = Color3.fromRGB(14, 15, 13)
+			local m = made[b.id]
+			if m then
+				m.held = false
+				btn.BackgroundColor3 = DISC
+				if m.icon then m.icon.ImageColor3 = ICONC end
+				m.glyph.TextColor3 = ICONC
+				styleButton(b.id, m)
+			end
 		end)
 	end
 end
@@ -249,6 +293,77 @@ local function refresh()
 		local a = tool and tool:GetAttribute("Ammo")
 		gun.ammo.Visible = setting("Show Weapon Ammo", true) and a ~= nil
 		gun.ammo.Text = a and tostring(a) or ""
+		-- the gun itself, in 3D (UIKit.ViewIcons where it exists; else the "1" stays)
+		local wid = tool and tool:GetAttribute("WeaponId") or player:GetAttribute("Loadout")
+		if wid ~= gun.gunId then
+			gun.gunId = wid
+			if gun.gunHolder then gun.gunHolder:Destroy(); gun.gunHolder, gun.gunView = nil, nil end
+			local function ownView()
+				-- a clone of the gun tool's parts in a ViewportFrame, framed on its bounding box
+				if not tool then return false end
+				local vf = Instance.new("ViewportFrame")
+				vf.Name = "GunView"
+				vf.BackgroundTransparency = 1
+				vf.AnchorPoint = Vector2.new(0.5, 0.5)
+				vf.Position = UDim2.fromScale(0.5, 0.42)
+				vf.Size = UDim2.fromScale(0.86, 0.6)
+				vf.Ambient = Color3.fromRGB(235, 235, 235)
+				vf.LightDirection = Vector3.new(-1, -1, -1)
+				vf.LightColor = Color3.new(1, 1, 1)
+				local model = Instance.new("Model")
+				for _, d in tool:GetDescendants() do
+					if d:IsA("BasePart") and d.Transparency < 1 then
+						local c = d:Clone()
+						for _, k in c:GetChildren() do if not (k:IsA("SpecialMesh") or k:IsA("Decal") or k:IsA("Texture") or k:IsA("SurfaceAppearance")) then k:Destroy() end end
+						c.Anchored = true
+						-- a light silhouette like the button icons (the guns are near-black and vanished on the dark disc)
+						c.Color = ICONC
+						c.Material = Enum.Material.SmoothPlastic
+						if c:IsA("MeshPart") then c.TextureID = "" end
+						for _, k in c:GetChildren() do if k:IsA("SpecialMesh") then k.TextureId = "" end if k:IsA("Decal") or k:IsA("Texture") or k:IsA("SurfaceAppearance") then k:Destroy() end end
+						c.Parent = model
+					end
+				end
+				if #model:GetChildren() == 0 then return false end
+				model.Parent = vf
+				local cf, size = model:GetBoundingBox()
+				local cam = Instance.new("Camera")
+				cam.FieldOfView = 30
+				local dist = math.max(size.X, size.Y, size.Z) * 2.2
+				-- side view: look along the gun's thinnest axis (its width), so the profile fills the circle
+				local axes = { { size.X, cf.RightVector }, { size.Y, cf.UpVector }, { size.Z, cf.LookVector } }
+				table.sort(axes, function(a, b) return a[1] < b[1] end)
+				local side = axes[1][2]
+				local up = math.abs(side:Dot(Vector3.yAxis)) > 0.9 and cf.LookVector or Vector3.yAxis
+				cam.CFrame = CFrame.lookAt(cf.Position + side * dist, cf.Position, up)
+				dist = math.max(axes[2][1], axes[3][1]) * 2.4
+				cam.CFrame = CFrame.lookAt(cf.Position + side * dist, cf.Position, up)
+				cam.Parent = vf
+				vf.CurrentCamera = cam
+				vf.Parent = gun.btn
+				gun.gunHolder, gun.gunView = vf, vf
+				return true
+			end
+			local ok = pcall(function()
+				local VI = require(ReplicatedStorage:FindFirstChild("UIKit"):FindFirstChild("ViewIcons"))
+				local model = wid and VI.Weapon(wid)
+				if model then
+					local holder = Instance.new("Frame")
+					holder.Name = "GunView"
+					holder.BackgroundTransparency = 1
+					holder.AnchorPoint = Vector2.new(0.5, 0.5)
+					holder.Position = UDim2.fromScale(0.5, 0.42)
+					holder.Size = UDim2.fromScale(0.86, 0.6)
+					holder.Parent = gun.btn
+					VI.Viewport(holder, model, { view = VI.GunView, zoom = 0.95, still = true })
+					gun.gunHolder = holder
+					gun.gunView = holder:FindFirstChildWhichIsA("ViewportFrame", true) or holder
+				end
+			end)
+			if not (ok and gun.gunView) then pcall(ownView) end
+			gun.glyph.Text = gun.gunView and "" or "1"
+			if not gun.gunView then gun.gunId = nil end -- no gun in hand yet: try again next refresh
+		end
 	end
 	hideRobloxJump()
 end
@@ -351,19 +466,130 @@ function controller.OpenEditor()
 	local editables = {}
 	for id, m in made do editables[id] = m end
 	editables.Joystick = { btn = stick }
+	-- (Edward, RIVALS: "they allow you to tap on each of these individually and change their size") a tap selects a button:
+	-- a blue ring on it and the size bar at the bottom (its name, - / slider / +); dragging still moves it
+	local selected
+	local sizeBar = Instance.new("Frame")
+	sizeBar.Name = "SizeBar"
+	sizeBar.AnchorPoint = Vector2.new(0.5, 1)
+	sizeBar.Position = UDim2.fromScale(0.5, 0.97)
+	sizeBar.Size = UDim2.fromScale(0.46, 0.11)
+	sizeBar.BackgroundColor3 = Color3.fromRGB(14, 15, 13)
+	sizeBar.BackgroundTransparency = 0.1
+	sizeBar.Visible = false
+	sizeBar.ZIndex = 10
+	sizeBar.Parent = overlay
+	do local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.3, 0); c.Parent = sizeBar end
+	local sizeName = Instance.new("TextLabel")
+	sizeName.BackgroundTransparency = 1
+	sizeName.TextScaled = true
+	sizeName.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	sizeName.TextColor3 = Color3.new(1, 1, 1)
+	sizeName.TextXAlignment = Enum.TextXAlignment.Left
+	sizeName.Position = UDim2.fromScale(0.04, 0.22)
+	sizeName.Size = UDim2.fromScale(0.26, 0.56)
+	sizeName.ZIndex = 11
+	sizeName.Parent = sizeBar
+	local track = Instance.new("Frame")
+	track.BorderSizePixel = 0
+	track.BackgroundColor3 = Color3.fromRGB(70, 72, 68)
+	track.Position = UDim2.fromScale(0.42, 0.44)
+	track.Size = UDim2.fromScale(0.42, 0.12)
+	track.ZIndex = 11
+	track.Parent = sizeBar
+	do local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(1, 0); c.Parent = track end
+	local fill = Instance.new("Frame")
+	fill.BorderSizePixel = 0
+	fill.BackgroundColor3 = ACCENT
+	fill.Size = UDim2.fromScale(0.5, 1)
+	fill.ZIndex = 12
+	fill.Parent = track
+	do local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(1, 0); c.Parent = fill end
+	local knob = Instance.new("Frame")
+	knob.BackgroundColor3 = Color3.new(1, 1, 1)
+	knob.AnchorPoint = Vector2.new(0.5, 0.5)
+	knob.Position = UDim2.fromScale(0.5, 0.5)
+	knob.Size = UDim2.fromScale(0.7, 0.7)
+	knob.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	knob.ZIndex = 13
+	knob.Parent = sizeBar
+	do local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = knob end
+	local function limits(id) if id == "Joystick" then return 0.1, 0.5 end return 0.05, 0.3 end
+	local function showSize()
+		if not selected then sizeBar.Visible = false return end
+		sizeBar.Visible = true
+		sizeName.Text = selected
+		local lo, hi = limits(selected)
+		local v = (work[selected] or STICK_DEFAULT).s
+		local f = math.clamp((v - lo) / (hi - lo), 0, 1)
+		fill.Size = UDim2.fromScale(f, 1)
+		knob.Position = UDim2.fromScale(0.42 + 0.42 * f, 0.5)
+	end
+	local function setSize(id, v)
+		if not work[id] then work[id] = table.clone(STICK_DEFAULT) end
+		local lo, hi = limits(id)
+		work[id].s = math.clamp(v, lo, hi)
+		if id == "Joystick" then placeStick() else place(id, made[id], work) end
+		showSize()
+	end
+	local function pmButton(text, x, step)
+		local b = Instance.new("TextButton")
+		b.Name = step > 0 and "SizePlus" or "SizeMinus"
+		b.Text = text
+		b.TextScaled = true
+		b.FontFace = sizeName.FontFace
+		b.TextColor3 = Color3.new(1, 1, 1)
+		b.BackgroundColor3 = Color3.fromRGB(40, 42, 40)
+		b.AnchorPoint = Vector2.new(0.5, 0.5)
+		b.Position = UDim2.fromScale(x, 0.5)
+		b.Size = UDim2.fromScale(0.7, 0.7)
+		b.SizeConstraint = Enum.SizeConstraint.RelativeYY
+		b.ZIndex = 12
+		b.Parent = sizeBar
+		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = b
+		b.Activated:Connect(function() if selected then setSize(selected, (work[selected] or STICK_DEFAULT).s + step) end end)
+	end
+	pmButton("-", 0.35, -0.01)
+	pmButton("+", 0.92, 0.01)
+	-- dragging along the track sets the size
+	table.insert(conns, track.InputBegan:Connect(function(input)
+		if input.UserInputType ~= Enum.UserInputType.Touch and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
+		local function at(pos)
+			if not selected then return end
+			local f = math.clamp((pos.X - track.AbsolutePosition.X) / math.max(track.AbsoluteSize.X, 1), 0, 1)
+			local lo, hi = limits(selected)
+			setSize(selected, lo + (hi - lo) * f)
+		end
+		at(input.Position)
+		local mv, en
+		mv = UserInputService.InputChanged:Connect(function(i2)
+			if i2.UserInputType == Enum.UserInputType.Touch or i2.UserInputType == Enum.UserInputType.MouseMovement then at(i2.Position) end
+		end)
+		en = UserInputService.InputEnded:Connect(function(i3) if i3.UserInputType == input.UserInputType then mv:Disconnect(); en:Disconnect() end end)
+	end))
+	local rings = {}
+	local function selectBtn(id)
+		selected = id
+		for rid, ring in rings do ring.Visible = rid == id end
+		showSize()
+	end
 	for id, m in editables do
 		m.btn.Visible = true
-		local handle = Instance.new("TextButton")
-		handle.Name = "Resize"
-		handle.Text = "↘"
-		handle.TextScaled = true
-		handle.BackgroundTransparency = 1
-		handle.TextColor3 = Color3.new(1, 1, 1)
-		handle.AnchorPoint = Vector2.new(0.5, 0.5)
-		handle.Position = UDim2.fromScale(0.08, 0.08)
-		handle.Size = UDim2.fromScale(0.42, 0.42)
-		handle.ZIndex = 5
-		handle.Parent = m.btn
+		-- the selection ring (blue)
+		local ring = Instance.new("Frame")
+		ring.Name = "SelectRing"
+		ring.BackgroundTransparency = 1
+		ring.AnchorPoint = Vector2.new(0.5, 0.5)
+		ring.Position = UDim2.fromScale(0.5, 0.5)
+		ring.Size = UDim2.fromScale(1.14, 1.14)
+		ring.Visible = false
+		ring.ZIndex = 6
+		do
+			local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = ring
+			local st2 = Instance.new("UIStroke"); st2.Color = ACCENT; st2.Thickness = 3; st2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; st2.Parent = ring
+		end
+		ring.Parent = m.btn
+		rings[id] = ring
 		local function bindDrag(target, mode)
 			table.insert(conns, target.InputBegan:Connect(function(input)
 				if input.UserInputType ~= Enum.UserInputType.Touch and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
@@ -386,12 +612,15 @@ function controller.OpenEditor()
 					if isStick then placeStick() else place(id, m, work) end
 				end)
 				endConn = UserInputService.InputEnded:Connect(function(i3)
-					if i3.UserInputType == input.UserInputType then moveConn:Disconnect(); endConn:Disconnect() end
+					if i3.UserInputType == input.UserInputType then
+						moveConn:Disconnect(); endConn:Disconnect()
+						-- a tap (barely moved) selects the button for the size bar; a drag also selects what you moved
+						selectBtn(id)
+					end
 				end)
 			end))
 		end
 		bindDrag(m.btn, "move")
-		bindDrag(handle, "resize")
 		if id ~= "Joystick" then place(id, m, work) end
 	end
 
@@ -430,7 +659,7 @@ function controller.OpenEditor()
 	local function close()
 		if controller.OnSave then controller.OnSave(slot, json()) end
 		for _, c in conns do c:Disconnect() end
-		for _, m in made do local h = m.btn:FindFirstChild("Resize") if h then h:Destroy() end end
+		for _, m in made do local h = m.btn:FindFirstChild("SelectRing") if h then h:Destroy() end end
 		stick:Destroy(); stickZone:Destroy()
 		editing = false
 		overlay:Destroy(); overlay = nil
@@ -442,6 +671,7 @@ function controller.OpenEditor()
 		work.Joystick = nil -- back to TouchStick's own default zone
 		for id, m in made do place(id, m, work) end
 		placeStick()
+		showSize()
 	end)
 	for n = 1, 3 do
 		slotBtns[n] = pillButton(tostring(n), 2 + n, function()
