@@ -115,7 +115,8 @@ player.CharacterAdded:Connect(function() if stickInput then release() end end)
 
 -- after the ControlModule (it binds at Input priority), so a keyboard controller's zero vector can't overwrite the stick
 RunService:BindToRenderStep("TouchStickMove", Enum.RenderPriority.Input.Value + 1, function()
-	if stickInput then
+	-- the match opening run (MatchCore RunIn: RunInClient drives the character) ignores the stick
+	if stickInput and player:GetAttribute("RunInRoute") == nil then
 		player:Move(Vector3.new(move.X, 0, move.Y), true)
 	end
 end)
