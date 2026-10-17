@@ -1,0 +1,13 @@
+Generated using the built-in image generation tool, one call per asset.
+Use case: stylized-concept. Create ONE Roblox shooter rank emblem PNG, square 1024x1024, genuine transparent background. Centered front view, symmetric silhouette spanning 75% of canvas. Handmade clean game UI asset: bold flat shapes, smooth subtle gradients, 2-4 tones per surface, single simple bevel, soft upper-left highlights, crisp edges. Extremely simple low-poly cel-shaded icon readable at 48px. Few large pieces, restrained depth. NO realism, textures, scratches, rivets, engraving, filigree, noise, grain, extra spikes, tiny gems, text, numbers, watermark, ground shadow or background. 
+
+bronze: copper/bronze rounded square plate with ONE simple square gem in the middle.
+silver: silver rhombus (square turned 45 degrees), single light-grey faceted gem face. No extra decoration.
+gold: gold FOUR-pointed star, smooth broad faces, exactly one soft highlight per arm. No central gem.
+platinum: teal-cyan crystal chevron, a broad V / shield point down, in a simple white-metal frame.
+diamond: blue cut diamond with only a few large simple facets and two small silver side wings, each wing one broad shape.
+elite: dark gunmetal shield with exactly three broad olive-green chevrons stacked vertically, bone-white simple rim.
+commander: ivory five-pointed star on a round gunmetal badge, simple olive half-ring around lower half with only three smooth broad leaf shapes on each side suggesting laurel.
+warlord: dark shield with a simple gold three-point crown on top, two crossed swords behind as plain broad silhouettes, ONE small olive gem in centre. Minimal premium emblem.
+
+All prompts additionally require consistent restrained bevel width, upper-left lighting and clean flat game-icon finish.
