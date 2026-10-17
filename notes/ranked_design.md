@@ -61,3 +61,16 @@ lead session's ELO maths is agreed.
 
 - **Final (Edward 2026-10-16: "perfect rank emblems"): `ui/art/ranks/v2/rank_<name>.png`** (simpler v2; v1 kept for reference).
   Next: upload under the Gunsy Funsy group, then the asset ids go into the ranked UI.
+
+## Edward's answers (2026-10-17)
+- **One shared rank across 1v1 / 2v2 / 3v3** ("bronze is the same rank for every mode"): one ELO, one Warlord top 200.
+- **Reset**: everyone starts Season 1 at Bronze 1 (100).
+- **10 placement matches**, rank hidden; placement matches use the ELO table at **2x**, starting from Bronze 1, revealed after match 10.
+- **Daily ELO shield** (first loss each day costs 0; below Elite only; never covers a leave).
+- **Decay**: Elite and up, after 7 idle days lose 25 ELO per idle day, never below Elite 1 (1600).
+- **Leaving** a ranked match = a normal loss + 25 ELO.
+- **Team modes**: the queue window widens faster: full spread (±6 ranks) at 60 min in 1v1, **30 min in 2v2, 15 min in 3v3**
+  (the ±2-rank point at 5 / 2.5 / 1.25 min). A team queues at its average tier.
+- **Team ELO**: each player uses an effective tier = (own tier + own team's average tier) / 2, against the opposing team's
+  average tier, through the normal table. So a carry earns little and a carried player earns a fair amount:
+  2v2 Commander+Bronze vs Plat+Plat: Commander +8 / -50, Bronze +45 / -8. Even teams = the solo numbers.
