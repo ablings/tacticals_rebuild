@@ -5,6 +5,8 @@
 -- A finger that starts in InputActions.InJoystickZone (left half, or right half when LeftHanded) on free screen
 -- (not a button) becomes the stick: ring at the touch-down point, knob follows the finger, Move() camera-relative.
 -- Visual: ScreenGui "TouchStick", all Scale (the UI session may restyle Ring / Knob; keep the names).
+-- Layout Editor placement: ScreenGui attributes StickX, StickY (zone centre, Scale 0-1) and StickSize (ring diameter, fraction
+-- of screen height), copied into InputActions.Config so the camera rule and TouchFire use the same zone. Unset = defaults.
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -13,7 +15,7 @@ local InputActions = require(RS:WaitForChild("Modules"):WaitForChild("Shared"):W
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local RADIUS = 0.11   -- stick travel, as a fraction of the screen height
+local RADIUS = 0.11   -- stick travel, as a fraction of the screen height (StickSize / 2 when the editor sets it)
 local DEAD = 0.12     -- inner dead zone, as a fraction of the travel
 
 local gui = Instance.new("ScreenGui")
@@ -47,6 +49,18 @@ knob.BackgroundColor3 = Color3.new(1, 1, 1)
 knob.BackgroundTransparency = 0.25
 knob.Parent = ring
 Instance.new("UICorner", knob).CornerRadius = UDim.new(0.5, 0)
+
+local function placement()
+	local cfg = InputActions.Config
+	local x, y, size = gui:GetAttribute("StickX"), gui:GetAttribute("StickY"), gui:GetAttribute("StickSize")
+	cfg.StickX = type(x) == "number" and math.clamp(x, 0, 1) or nil
+	cfg.StickY = type(y) == "number" and math.clamp(y, 0, 1) or nil
+	cfg.StickSize = type(size) == "number" and math.clamp(size, 0.1, 0.5) or 0.22
+	RADIUS = cfg.StickSize / 2
+	ring.Size = UDim2.fromScale(cfg.StickSize, cfg.StickSize)
+end
+placement()
+gui.AttributeChanged:Connect(placement)
 
 local stickInput = nil -- the InputObject driving the stick
 local center = Vector2.zero

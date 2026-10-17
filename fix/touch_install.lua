@@ -146,16 +146,26 @@ InputActions.Config = {
 	DoubleTapAttack = true,    -- double tap on free screen fires
 	DoubleTapWindow = 0.25,    -- seconds between the two taps
 	JoystickZone = 0.5,        -- fraction of the screen width (from the joystick side) that belongs to the thumbstick
+	-- Layout Editor placement (TouchStick copies them from its ScreenGui attributes). When StickX/StickY are set the zone is a
+	-- square around that centre, 3 x StickSize screen heights wide, instead of the half screen. StickX is absolute (the editor
+	-- mirrors it itself for left-handed layouts).
+	StickX = nil,              -- zone centre, Scale 0-1 of the screen width
+	StickY = nil,              -- zone centre, Scale 0-1 of the screen height
+	StickSize = 0.22,          -- ring diameter, fraction of the screen height
 }
 
 local function inJoystickZone(pos)
 	local cam = workspace.CurrentCamera
 	if not cam then return false end
-	local w = cam.ViewportSize.X
-	local x = pos.X
-	local zone = InputActions.Config.JoystickZone * w
-	if InputActions.Config.LeftHanded then return x > w - zone end
-	return x < zone
+	local cfg = InputActions.Config
+	local vp = cam.ViewportSize
+	if cfg.StickX and cfg.StickY then
+		local half = 1.5 * cfg.StickSize * vp.Y
+		return math.abs(pos.X - cfg.StickX * vp.X) <= half and math.abs(pos.Y - cfg.StickY * vp.Y) <= half
+	end
+	local zone = cfg.JoystickZone * vp.X
+	if cfg.LeftHanded then return pos.X > vp.X - zone end
+	return pos.X < zone
 end
 InputActions.InJoystickZone = inJoystickZone
 
@@ -262,6 +272,8 @@ SOURCES.TouchStick = [=[-- StarterPlayer.StarterPlayerScripts.TouchStick [TOUCH]
 -- A finger that starts in InputActions.InJoystickZone (left half, or right half when LeftHanded) on free screen
 -- (not a button) becomes the stick: ring at the touch-down point, knob follows the finger, Move() camera-relative.
 -- Visual: ScreenGui "TouchStick", all Scale (the UI session may restyle Ring / Knob; keep the names).
+-- Layout Editor placement: ScreenGui attributes StickX, StickY (zone centre, Scale 0-1) and StickSize (ring diameter, fraction
+-- of screen height), copied into InputActions.Config so the camera rule and TouchFire use the same zone. Unset = defaults.
 local Players = game:GetService("Players")
 local UIS = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -270,7 +282,7 @@ local InputActions = require(RS:WaitForChild("Modules"):WaitForChild("Shared"):W
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local RADIUS = 0.11   -- stick travel, as a fraction of the screen height
+local RADIUS = 0.11   -- stick travel, as a fraction of the screen height (StickSize / 2 when the editor sets it)
 local DEAD = 0.12     -- inner dead zone, as a fraction of the travel
 
 local gui = Instance.new("ScreenGui")
@@ -304,6 +316,18 @@ knob.BackgroundColor3 = Color3.new(1, 1, 1)
 knob.BackgroundTransparency = 0.25
 knob.Parent = ring
 Instance.new("UICorner", knob).CornerRadius = UDim.new(0.5, 0)
+
+local function placement()
+	local cfg = InputActions.Config
+	local x, y, size = gui:GetAttribute("StickX"), gui:GetAttribute("StickY"), gui:GetAttribute("StickSize")
+	cfg.StickX = type(x) == "number" and math.clamp(x, 0, 1) or nil
+	cfg.StickY = type(y) == "number" and math.clamp(y, 0, 1) or nil
+	cfg.StickSize = type(size) == "number" and math.clamp(size, 0.1, 0.5) or 0.22
+	RADIUS = cfg.StickSize / 2
+	ring.Size = UDim2.fromScale(cfg.StickSize, cfg.StickSize)
+end
+placement()
+gui.AttributeChanged:Connect(placement)
 
 local stickInput = nil -- the InputObject driving the stick
 local center = Vector2.zero

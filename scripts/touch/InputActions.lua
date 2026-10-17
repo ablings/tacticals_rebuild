@@ -131,16 +131,26 @@ InputActions.Config = {
 	DoubleTapAttack = true,    -- double tap on free screen fires
 	DoubleTapWindow = 0.25,    -- seconds between the two taps
 	JoystickZone = 0.5,        -- fraction of the screen width (from the joystick side) that belongs to the thumbstick
+	-- Layout Editor placement (TouchStick copies them from its ScreenGui attributes). When StickX/StickY are set the zone is a
+	-- square around that centre, 3 x StickSize screen heights wide, instead of the half screen. StickX is absolute (the editor
+	-- mirrors it itself for left-handed layouts).
+	StickX = nil,              -- zone centre, Scale 0-1 of the screen width
+	StickY = nil,              -- zone centre, Scale 0-1 of the screen height
+	StickSize = 0.22,          -- ring diameter, fraction of the screen height
 }
 
 local function inJoystickZone(pos)
 	local cam = workspace.CurrentCamera
 	if not cam then return false end
-	local w = cam.ViewportSize.X
-	local x = pos.X
-	local zone = InputActions.Config.JoystickZone * w
-	if InputActions.Config.LeftHanded then return x > w - zone end
-	return x < zone
+	local cfg = InputActions.Config
+	local vp = cam.ViewportSize
+	if cfg.StickX and cfg.StickY then
+		local half = 1.5 * cfg.StickSize * vp.Y
+		return math.abs(pos.X - cfg.StickX * vp.X) <= half and math.abs(pos.Y - cfg.StickY * vp.Y) <= half
+	end
+	local zone = cfg.JoystickZone * vp.X
+	if cfg.LeftHanded then return pos.X > vp.X - zone end
+	return pos.X < zone
 end
 InputActions.InJoystickZone = inJoystickZone
 
