@@ -869,6 +869,8 @@ local function openCodes(initOnly)
 end
 -- RANKED (2026-10-17): its own full-screen page (UIKit.RankedScreen), opened from PLAY's Ranked tile
 local RankedScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("RankedScreen"))
+local PartyScreen
+pcall(function() PartyScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("PartyScreen", 10)) end)
 local rankedReady = false
 local function openRanked(initOnly)
 	if not rankedReady then
@@ -1444,8 +1446,14 @@ local function build()
 	playRow.Visible = false
 	PlayRow.Init({
 		lobbyGui = gui, dock = dock,
-		onPlay = function() LobbyUI.Open("Play") end,
+		onPlay = function()
+			-- in a party only the leader queues (the party follows them; RIVALS)
+			if PartyScreen and not PartyScreen.IsLeader() then toast("Only the party leader can queue", "bad") return end
+			LobbyUI.Open("Play")
+		end,
+		-- the + (and party heads) open "Your Party" (RIVALS); Roblox's invite sheet is its Invite for people elsewhere
 		onInvite = function()
+			if PartyScreen then LobbyUI.Close(); PartyScreen.Open() return end
 			local SocialService = game:GetService("SocialService")
 			local ok, can = pcall(SocialService.CanSendGameInviteAsync, SocialService, player)
 			if ok and can then

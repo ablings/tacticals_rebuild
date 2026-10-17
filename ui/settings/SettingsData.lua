@@ -37,6 +37,7 @@ return {
 			} },
 			{ title = "Social", rows = {
 				{ kind = "dropdown", name = "Challenge Requests", icon = "inking", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can challenge you to a 1v1 from the lobby (player list or double click)" },
+				{ kind = "dropdown", name = "Party Invites", icon = "inking", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can invite you to their party" },
 			} },
 			{ title = "Graphics", rows = {
 				{ kind = "toggle", name = "Hide Muzzle Flashes", icon = "muzzle", value = false, desc = "Removes the flash at the end of a gun when it fires" },

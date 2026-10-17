@@ -207,6 +207,8 @@ local function refresh()
 		and not player:GetAttribute("InDuel") and player:GetAttribute("DuelMatch") == nil and player:GetAttribute("InCutscene") ~= true then menuUp = true end -- (lobby duels hide the dock too)
 	local cards = player.PlayerGui:FindFirstChild("PlayerCards")
 	if cards and cards:FindFirstChild("ProfileTint") then menuUp = true end
+	local partyUI = player.PlayerGui:FindFirstChild("PartyUI")
+	if partyUI and partyUI.Enabled then menuUp = true end
 	-- match screens: the results card, and the map vote / loadout (MatchFlow) cover the screen too
 	local duel = player.PlayerGui:FindFirstChild("DuelHUD")
 	local res = duel and duel:FindFirstChild("Results", true)

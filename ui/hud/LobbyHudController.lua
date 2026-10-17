@@ -719,6 +719,7 @@ function LobbyHud.Start()
 		local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
 		local menuAway = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
 			or (PlayerCards ~= nil and PlayerCards.ProfileOpen()) -- the profile card pushes the HUD aside like a menu
+			or (player.PlayerGui:FindFirstChild("PartyUI") ~= nil and player.PlayerGui.PartyUI.Enabled) -- and Your Party
 		-- Kit room (LobbyUI on, its dock hidden by the Armory): RIVALS keeps the currency pill up there, nothing else
 		local kitDock = lobbyGui and lobbyGui:FindFirstChild("Dock", true)
 		local kitRoom = lobbyGui ~= nil and lobbyGui.Enabled and kitDock ~= nil and not kitDock.Visible
@@ -756,7 +757,8 @@ function LobbyHud.Start()
 		local row = player.PlayerGui:FindFirstChild("PlayRowUI")
 		-- in a duel (playing or watching) the PLAY row and the dock go too, like Hide HUD (the hotbar stays)
 		local inDuel = player:GetAttribute("InDuel") == true or player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("DuelSpectate") ~= nil
-		local cardUp = PlayerCards ~= nil and PlayerCards.ProfileOpen() -- the profile card: PLAY row + dock go too (RIVALS)
+		local partyUp = player.PlayerGui:FindFirstChild("PartyUI") ~= nil and player.PlayerGui.PartyUI.Enabled
+		local cardUp = (PlayerCards ~= nil and PlayerCards.ProfileOpen()) or partyUp -- the profile card / Your Party: PLAY row + dock go too (RIVALS)
 		if hide or inDuel or cardUp then
 			if dock and dockSaved == nil then dockSaved = dock.Visible end
 			if dock then dock.Visible = false end
