@@ -62,6 +62,13 @@ Status legend: FIXED (installed in the working copies, ships with the next publi
   friendly-fire guards. SelectWeapon checks ownership.
 - MeleeManager: the server picks the target (range, angle, line of sight), cooldown, same-match guard.
 - GadgetManager: kit gadget only, charges, cooldown, direction validated, thrown from the server's character.
+- Match place only: RangeManager SetKit / Teleport (test servers only, TestMode; never in real matches, no rewards there),
+  TutorialManager Start / Progress (no rewards, only TutorialDone), BotManager RequestPractice (one bot, solo player on a
+  Waiting server), RoundManager MatchFlow (Vote checked against the map list, Pick through validPick + ownership, Leave =
+  forfeit + ranked leave), SyncTween getTween (read-only).
+- Lobby: LobbyCodes (two small launch codes), AutoLevel (Edward's account only), TrainingBins swap (InTraining, near a bin,
+  trial guns end on leaving Training), LobbyFeatures ad reward (cooldown; paid through ProcessReceipt), AssetCheckReport
+  (once per player, log only), LobbyDuelManager flow (map id / ownership checks; one reward per opponent pair per 10 min).
 - Admin framework: every entry point resolves the real player on the server; levels from the user list / group rank; rate
   limit; audit log; Studio-only simulated levels.
 - LobbyManager handlers: Equip (ownership + slot), Favorite (item id), BuyItem / BuyBundle (server prices, Spend checks),
