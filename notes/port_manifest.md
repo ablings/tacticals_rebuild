@@ -132,3 +132,8 @@ himself; we never publish.
 - Used File → **Publish As** (not Save As), which publishes directly. The local-file "Publish" opens a new-experience form; use
   "Update existing experience..." there.
 - Activity History: tacticals **published to version 271** (8:16 PM); tutorial spot / matchmaking test **published to version 109** (8:18 PM).
+
+## Live port 7: published (2026-10-16 20:28-20:32, lead)
+- Headshot hit marker and crit numbers only when `headshot == true`, so backstabs no longer count (UI session follow-up).
+- Published: tacticals **v273** (8:30 PM), tutorial spot / matchmaking test **v111** (8:31 PM), both seen in Activity History.
+- The lobby Studio had closed itself earlier; it was reopened as **829eb64d** (tools/*.py updated).
