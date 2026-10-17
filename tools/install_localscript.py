@@ -1,5 +1,5 @@
 """Create or update a LocalScript in StarterPlayer.StarterPlayerScripts from a repo file (attribute RepoSource = the file).
-Usage: python tools/install_localscript.py <lobby|match|studio_id> <Name> <repo file> [UNDO]"""
+Usage: python tools/install_localscript.py <lobby|match|studio_id> <Name> <repo file> [UNDO] [--server: a Script in ServerScriptService]"""
 import json, os, subprocess, sys, tempfile
 SIDS = {"lobby": "829eb64d-c313-4a64-bfb2-2bd3c42eb18e", "match": "331cb3a0-87e8-4413-ac74-1ffd00454ce2"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
@@ -10,7 +10,10 @@ n = 1
 while ("]" + "=" * n + "]") in src: n += 1
 lit = "[" + "=" * n + "[" + src + "]" + "=" * n + "]"
 undo = "UNDO" in sys.argv
-code = f'''local sps = game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")
+server = "--server" in sys.argv
+parent = 'game:GetService("ServerScriptService")' if server else 'game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")'
+cls = "Script" if server else "LocalScript"
+code = f'''local sps = {parent}
 local s = sps:FindFirstChild({json.dumps(name)})
 if {str(undo).lower()} then
 	if s and s:GetAttribute("RepoSource") then s:Destroy() return "removed" end
@@ -20,7 +23,7 @@ if s and not s:GetAttribute("RepoSource") then return "EXISTS and is not ours" e
 local src = {lit}
 local fn, err = loadstring(src)
 if not fn then return "SYNTAX " .. tostring(err) end
-if not s then s = Instance.new("LocalScript"); s.Name = {json.dumps(name)}; s.Parent = sps end
+if not s then s = Instance.new("{cls}"); s.Name = {json.dumps(name)}; s.Parent = sps end
 s:SetAttribute("RepoSource", {json.dumps(f)})
 s.Source = src
 return "installed " .. s:GetFullName()'''
