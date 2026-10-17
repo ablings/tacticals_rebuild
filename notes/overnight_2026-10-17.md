@@ -48,3 +48,10 @@ Gun / melee / gadget servers, admin framework, shop / codes / quests / receipts,
 - Lobby pad duel (DuelTestSolo, arena slot 1): RunIn ~2.1 s round the pillar; kill-cam holds while benched in the Hold and clears
   at the next round; Victory (WinnerTeam B, Winner = bot) then MatchEnd. Console clean.
 - Challenge: one-client check only (self-challenge refused with the right message); needs Edward + a friend.
+
+## Parties (after port 11; working copy only, goes live with the next publish)
+- RIVALS-style party: invite (15 s, Everyone / Friends / Nobody setting), up to 5, leader can kick / promote, leaving passes the lead.
+- Only the leader presses PLAY; the whole party queues together and always lands on the same team; members see the search too;
+  anyone joining / leaving cancels the search; the party teleports into the match together.
+- Tested: team packing on sample queues (parties stay whole, 2+2+2 can't make a 3v3, ranked keeps the tier window), and a lobby
+  Play smoke test (self-invite refused, no errors). Invites / a real party queue need two players.
