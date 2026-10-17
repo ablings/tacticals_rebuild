@@ -125,7 +125,7 @@ end
 function hud.ShowHitmarker(zone: string, killed: boolean, headshot: boolean?)
 	local root = getGui()
 	local marker = root.Hitmarker
-	local head = if headshot ~= nil then headshot == true else zone == "Head"
+	local head = headshot == true -- the server's flag: gun hits on the head only (backstabs send none)
 	local color = head and criticalColor() or killed and KILL_COLOR or HIT_COLORS[zone] or HIT_COLORS.Body
 
 	hitToken += 1

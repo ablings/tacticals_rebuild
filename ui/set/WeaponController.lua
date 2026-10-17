@@ -549,7 +549,7 @@ function controller.Start()
 	Binds.Changed(localPlayer, "EquipGun", bindHolster)
 
 	HitConfirm.OnClientEvent:Connect(function(zone: string, _damage: number, killed: boolean, headshot: boolean?)
-		-- [SET] 4th arg (when the server sends it): a real gun headshot; backstabs also report zone "Head" but aren't one
+		-- [SET] 4th arg: true only for gun hits on the head (backstabs report zone "Head" but send no flag)
 		HUD.ShowHitmarker(zone, killed, headshot)
 	end)
 

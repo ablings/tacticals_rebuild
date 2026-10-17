@@ -175,7 +175,7 @@ function controller.Start()
 		if not at then return end
 		local onHit = target and target:FindFirstChild("OnHit")
 		if onHit and onHit:IsA("BindableEvent") then return end -- firing-range dummies show their own numbers
-		local crit = if headshot ~= nil then headshot == true else zone == "Head"
+		local crit = headshot == true -- gun headshots only (backstabs send no flag)
 		popNumber(target, at, damage, crit, killed == true)
 	end)
 end
