@@ -73,3 +73,14 @@ Workspace (all map work is the Tacticals session's), PadBoards, QueueManager, Ma
   `UIKit.{Theme, Tac, Kit, SettingsData}`, `ServerScriptService.SettingsBridge` (every row), `SettingsEffectsController`,
   `CombatFeedbackController`, the 12 gameplay [SET] controllers, `MatchFlowUI`, `DuelHUD`, LoadingScreen with `QuickIntro = true`,
   and `matchplace/match_patches.lua` (old MatchHUD / MatchResults yield to DuelHUD).
+
+## 2026-10-17: the place split (live; universe 10769593848)
+| Place | Place id | Local file | UI deploy |
+|---|---|---|---|
+| Lobby | (Tacticals main) v277 | Tacticals_rebuild.rbxl (Studio 829eb64d at the time) | `deploy_ui.py <id>` |
+| Tutorial | 118492914954668 | Tutorial_place.rbxl | `deploy_ui.py <id> --tutorial` |
+| Matchmaking | 97339328188402 | Matchmaking_place.rbxl | `deploy_ui.py <id> --matchmaking` |
+| Ranked | 122908502889013 | Ranked_place.rbxl | `deploy_ui.py <id> --ranked` |
+- Source copy for all three: match_place_ref.rbxl (Studio 331cb3a0 at the time); the lead session re-copies + converts
+  (`tools/split_build.py`) for publishing, so deploying to 331cb3a0 is enough unless a place needs a quick direct fix.
+- The old "tutorial spot / matchmaking test" place (81861384114744) stays as it was.
