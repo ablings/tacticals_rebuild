@@ -327,9 +327,12 @@ local function tick()
 				s.left.Text = "Play  >"
 				local extra = ""
 				if s.ranked then
-					local d = ctx.getData()
-					local r = d and d.Ranked and d.Ranked[s.mode.Id]
-					extra = "  ·  SR " .. tostring((r and r.Rating) or ctx.Config.StartingRating or 0)
+					local player = game:GetService("Players").LocalPlayer
+					extra = "  ·  " .. (function()
+				local placed, need = player:GetAttribute("RankPlaced") or 0, player:GetAttribute("RankPlacements") or 0
+				if need > 0 and placed < need then return "Placements " .. placed .. "/" .. need end
+				return (player:GetAttribute("RankName") or "Bronze 1") .. "  " .. tostring(player:GetAttribute("RankElo") or 100) .. " ELO"
+			end)()
 				end
 				s.right.Text = n .. " searching" .. extra
 				s.strip.BackgroundColor3 = s.ranked and T.violet or Color3.new(0, 0, 0)

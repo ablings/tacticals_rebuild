@@ -380,8 +380,11 @@ local function renderPlay(body)
 		local right = label({ Text = `{n} SEARCHING`, Font = THEME.Bold, TextSize = 11, TextColor3 = BONE, TextXAlignment = Enum.TextXAlignment.Right,
 			Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), ZIndex = 5, Parent = strip })
 		if ranked then
-			local r = data and data.Ranked and data.Ranked[mode.Id]
-			right.Text = `{n} SEARCHING  ·  SR {(r and r.Rating) or Config.StartingRating}`
+			right.Text = `{n} SEARCHING  ·  ` .. (function()
+				local placed, need = player:GetAttribute("RankPlaced") or 0, player:GetAttribute("RankPlacements") or 0
+				if need > 0 and placed < need then return "Placements " .. placed .. "/" .. need end
+				return (player:GetAttribute("RankName") or "Bronze 1") .. "  " .. tostring(player:GetAttribute("RankElo") or 100) .. " ELO"
+			end)()
 		end
 		brackets(b, mine and BONE or (ranked and VIOLET or PC.Line), 18); tagBase(b, mine and BONE or (ranked and VIOLET or PC.Line))
 		if mine and myStatus == "Searching" then

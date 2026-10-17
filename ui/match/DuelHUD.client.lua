@@ -246,6 +246,12 @@ leaveDuel.Activated:Connect(function()
 	-- forfeit asks twice (RIVALS-style confirm: the button turns red for 3 s)
 	if os.clock() - leaveArmed < 3 then send("Leave"); leaveDuel.Visible = false; return end
 	leaveArmed = os.clock()
+	-- ranked: say what leaving costs before the second click (RankedCore.Config.LeavePenalty)
+	if ReplicatedStorage:GetAttribute("PlaceKind") == "Ranked" or st("Ranked") == true then
+		local pen = 25
+		pcall(function() pen = require(ReplicatedStorage.Modules.Shared.RankedCore).Config.LeavePenalty or 25 end)
+		showBanner("LEAVE RANKED?", "Click again: your normal loss + " .. pen .. " ELO", BAD, 3)
+	end
 	leaveDuel.BackgroundColor3 = BAD; leaveDuel.BackgroundTransparency = 0.1
 	task.delay(3, function() leaveDuel.BackgroundColor3 = BLACK; leaveDuel.BackgroundTransparency = 0.35 end)
 end)
@@ -262,7 +268,9 @@ for i, k in { "Kills", "Deaths", "Headshots" } do
 	stats[k] = label(results, "0", FX, 56, x, 280, 200, 66, WHITE, nil, 4)
 	label(results, k, FB, 22, x, 344, 200, 28, Color3.fromRGB(205, 205, 212), nil, 4)
 end
-local resRewards = label(results, "", FX, 32, 0, 400, 800, 44, OLIVE_HI, nil, 4)
+local resRewards = label(results, "", FX, 32, 0, 392, 800, 44, OLIVE_HI, nil, 4)
+-- ranked: the rank line (promotion / demotion / shield / placements / reveal)
+local resRank = label(results, "", FX, 30, 0, 436, 800, 40, WHITE, nil, 4)
 local leave = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(275, 490), Size = UDim2.fromOffset(250, 76),
 	BackgroundColor3 = WHITE, Parent = results }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
 label(leave, "Continue", FX, 40, 0, 0, 250, 76, WHITE, nil, 5)
@@ -282,8 +290,26 @@ local function showResults(sum)
 	local bits = {}
 	if sum.XP then table.insert(bits, "+" .. sum.XP .. " XP") end
 	if sum.Scissors then table.insert(bits, "+" .. sum.Scissors .. " scissors") end
-	if sum.RatingChange then table.insert(bits, (sum.RatingChange >= 0 and "+" or "") .. sum.RatingChange .. " SR") end
+	if sum.RatingChange and sum.delta == nil then table.insert(bits, (sum.RatingChange >= 0 and "+" or "") .. sum.RatingChange .. " ELO") end
 	resRewards.Text = table.concat(bits, "   ")
+	-- ranked (notes/ranked_server.md §4): placements hide the rank until the 10th; promotions / demotions / shield get a line
+	resRank.Text, resRank.TextColor3 = "", WHITE
+	if sum.delta ~= nil then
+		local d = (sum.delta >= 0 and "+" or "") .. sum.delta .. " ELO"
+		if sum.revealed then
+			resRank.Text, resRank.TextColor3 = "RANK REVEALED:  " .. tostring(sum.rankAfter) .. "  (" .. tostring(sum.eloAfter) .. " ELO)", OLIVE_HI
+		elseif sum.placement then
+			resRank.Text = string.format("Placement match %d / %d: your rank shows after the last one", sum.placed or 0, sum.placements or 10)
+		elseif sum.shieldUsed then
+			resRank.Text, resRank.TextColor3 = "ELO Shield used: no ELO lost", Color3.fromRGB(205, 205, 212)
+		elseif sum.promoted then
+			resRank.Text, resRank.TextColor3 = "PROMOTED   " .. tostring(sum.rankBefore) .. "  >  " .. tostring(sum.rankAfter) .. "   " .. d, GOOD
+		elseif sum.demoted then
+			resRank.Text, resRank.TextColor3 = "DEMOTED   " .. tostring(sum.rankBefore) .. "  >  " .. tostring(sum.rankAfter) .. "   " .. d, BAD
+		else
+			resRank.Text = tostring(sum.rankAfter or "") .. "   " .. d
+		end
+	end
 	if sum.TestMatch or sum.Aborted then resRewards.Text = sum.Aborted and "Match ended early: no rewards" or "Test match: no rewards" end
 	results.Visible = true
 end
