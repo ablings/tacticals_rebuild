@@ -155,3 +155,16 @@ himself; we never publish.
   was published as **v277**. Live check: PlaceIdFor gives the three ids, and RoundsToWin = 5.
 - The lobby v277 also carries: ranked v3, first to 5, the dive fix, the faster lobby load, the free cursor, the camera fix and the ranked UI.
 - The old combined place "tutorial spot / matchmaking test" (81861384114744) is no longer routed to; it's kept as a fallback.
+
+## Live port 10: overnight security + touch (2026-10-17 04:08-04:18, lead; Edward: "go go go u have full screen access")
+- UI session FREEZE + "touch emulator OK" (Device Simulator) first; both copies saved 04:08 with `tools/save_studio.ps1` (foreground check).
+- Copies: Tacticals_main_ported.rbxl (lobby); Tutorial / Matchmaking / Ranked / OldCombined_place.rbxl from match_place_ref, converted
+  with `tools/split_build.py place <id> <Kind>` (OldCombined = Matchmaking kind).
+- Published (Publish As > gunsy funsy > tacticals > Overwrite > Grant Permissions and Publish), each seen in Activity History and the
+  place id checked through the MCP studio list:
+  - tacticals (lobby) **v279** (prev v277, mine)
+  - Tutorial 118492914954668 ("_1") **v4**, Matchmaking 97339328188402 ("_2") **v4**, Ranked 122908502889013 ("_3") **v4**
+  - tutorial spot / matchmaking test 81861384114744 **v115** (prev v113, mine): now the secured Matchmaking build (no forged matches).
+- Carries: [SECURE] (MatchSpec, HitRewind, MoveGuard, dodge guard, pass confirm), leaderboard decay, touch controls (InputActions,
+  TouchFire, TouchStick, UI session's touch HUD / Layout Editor / Touch tab), Exfil one-way, holo beams, dais clip, UI deploys to 2c8a186.
+- Old servers were not force-shut (none expected at 04:00). If anyone reports "WRONG SERVER" on ranked, restart servers in Creator Hub.
