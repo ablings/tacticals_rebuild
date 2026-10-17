@@ -57,6 +57,19 @@ Status legend: FIXED (installed in the working copies, ships with the next publi
    (the other team never arrived) clears the mark for everyone still there. Live servers only (Studio skips it).
    Turn off with `RankedCore.Config.DodgePenalty = false` if Edward prefers free dodges.
 
+## Tests (2026-10-17)
+- HitRewind with a dummy running 20 studs/s (match place Play): a point on the head now -> ok (0.00); 3 studs behind (a lagging
+  shooter's view) -> ok via rewind (0.00); the torso centre claimed as Head -> refused (1.90); 5 studs to the side -> refused (4.40).
+- Live remote test (practice bot, 10 studs away, the real FireWeapon remote, Pistol): legit head shot 90 -> 30 (60 damage);
+  forged head (point 2.6 studs below the head) refused, log "hit too far from target (2.0 studs)"; legit torso 30 -> 0.
+- MoveGuard: 90 studs/s for 3.2 s -> 1 flag; a 12 studs/s walk -> no flag. Console clean.
+- Exfil one-way (lobby Play): walking pad -> hangar through the barrier (16 touches) no cutscene; hangar -> pad starts it.
+- Leaderboard decay encode/decode (match place, required clone): active 2500 -> 2500; 10 idle days -> 2425; 3 days already
+  charged -> 2425 (no double charge); 100 idle days at 1700 -> 1600 floor; legacy plain 2300 -> 2300; sort order kept.
+- All edited scripts parse (loadstring) in both copies. Live-only paths (MatchSpec with MemoryStore + reserved servers, the
+  dodge guard) can only be tested after publishing: start a ranked and a casual match from the lobby and check the match
+  server log for "[MatchSpec]" warnings (there should be none).
+
 ## Checked, fine
 - CombatManager: rate limit, increasing shot ids, fire interval, ammo / reload on the server, origin within 8 studs of the
   head, muzzle-through-wall check, hit point on the ray (1 stud), range, wall check, server-side damage, same-match /
