@@ -17,10 +17,18 @@
 -- Published on ctx.state (names from notes/lobby_duels_design.md section 6; PhaseEndsAt == StateEndsAt always):
 --   MatchState, MatchPhase, StateEndsAt, PhaseEndsAt, CombatEnabled, RoundNumber, RoundsToWin, ScoreA, ScoreB
 -- Player (member) attributes: InMatch, Team, RoundWins, MatchKills, MatchDeaths, Alive
+-- 2026-10-17 (Edward: kill-cam, opening run, final-round victory; the UI session draws them):
+--   member SpectateTarget = UserId to watch while dead (the killer first; bots have negative ids: their model carries
+--     attribute SpectateId = the same id), SpectateReason = "Killer" | "Teammate" | "Enemy"; both nil when the next round starts.
+--   state MatchState "RunIn" (MatchPhase "RunIn"): round 1 opening, both sides start close in the middle, freeze for a
+--     standoff beat, then run back to their own spawn / pillar (C.RunIn = false turns it off; C.RunInEveryRound for every round).
+--   state MatchState "Victory" (MatchPhase "Victory") between the deciding round and MatchEnd (C.VictoryTime, default 4 s):
+--     WinnerTeam = "A" | "B", Winner = UserId of the player who got the final kill (nil if none / draw); cleared at match start.
+--     The default screen until Edward makes per-player finishers / victory cutscenes.
 local MatchCore = {}
 
 local PHASE_OF = { Loading = "Loading", MapVote = "MapVote", Loadout = "Loadout", Countdown = "Playing", Live = "Playing",
-	RoundEnd = "Playing", MatchEnd = "Ended", Cancelled = "Ended" }
+	RoundEnd = "Playing", MatchEnd = "Ended", Cancelled = "Ended", RunIn = "RunIn", Victory = "Victory" }
 
 -- // Members (a Player, or a server test bot = an R15 Model) ---------------------------------------------------------
 function MatchCore.attrHolder(m) return m.player or m.bot end
@@ -58,6 +66,34 @@ local function memberById(ctx, uid)
 	return nil
 end
 
+-- // Kill-cam: who a dead member watches -----------------------------------------------------------------------------
+local function aliveMembers(ctx, side)
+	local out = {}
+	for s, list in ctx.teams do
+		if side == nil or s == side then
+			for _, x in list do if ctx.isPresent(x) and MatchCore.isAlive(x) then table.insert(out, x) end end
+		end
+	end
+	return out
+end
+local function spectateOn(m, target, reason)
+	if target and target.bot then target.bot:SetAttribute("SpectateId", target.userId) end
+	MatchCore.setAttr(m, "SpectateTarget", target and target.userId or nil)
+	MatchCore.setAttr(m, "SpectateReason", target and reason or nil)
+end
+-- pick for a dead member: the killer if alive, else a living teammate, else any living enemy
+local function pickSpectate(ctx, m, killer)
+	if killer and killer ~= m and ctx.isPresent(killer) and MatchCore.isAlive(killer) then return killer, "Killer" end
+	local mates = aliveMembers(ctx, MatchCore.getAttr(m, "Team"))
+	if #mates > 0 then return mates[1], "Teammate" end
+	local any = aliveMembers(ctx, nil)
+	if #any > 0 then return any[1], "Enemy" end
+	return nil, nil
+end
+function MatchCore.clearSpectate(ctx)
+	for _, list in ctx.teams do for _, x in list do spectateOn(x, nil) end end
+end
+
 -- call once per spawned character of a member (round spawns)
 function MatchCore.watchCharacter(ctx, m, character: Model)
 	local humanoid = character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid", 10)
@@ -83,6 +119,20 @@ function MatchCore.watchCharacter(ctx, m, character: Model)
 			ctx.onKill({ killer = killer and killer.userId or 0, victim = m.userId, headshot = headshot, kind = kind,
 				weapon = killer and MatchCore.getAttr(killer, "Loadout") or nil })
 		end
+		-- the final kill decides the Victory screen's Winner; the dead watch their killer (kill-cam)
+		local realKiller = (killer and killer ~= m) and killer or nil
+		ctx.lastKill = { killer = realKiller and realKiller.userId or nil, victim = m.userId }
+		local target, reason = pickSpectate(ctx, m, realKiller)
+		spectateOn(m, target, reason)
+		-- anyone who was watching the one who just died moves on to someone alive
+		for _, list in ctx.teams do
+			for _, x in list do
+				if x ~= m and MatchCore.getAttr(x, "SpectateTarget") == m.userId then
+					local t2, r2 = pickSpectate(ctx, x, nil)
+					spectateOn(x, t2, r2)
+				end
+			end
+		end
 	end)
 end
 
@@ -100,9 +150,76 @@ function MatchCore.forfeitSide(ctx)
 	return nil
 end
 
+-- // Opening run (default cutscene): each side starts 35% of the way toward the middle, a standoff beat, then everyone
+-- runs back to the spawn they were placed on (behind their pillar). Ends frozen exactly on the spawn, ready for the countdown.
+local function flatDist(a: Vector3, b: Vector3): number
+	return Vector3.new(a.X - b.X, 0, a.Z - b.Z).Magnitude
+end
+function MatchCore.runIn(ctx)
+	local C = ctx.config
+	local standoff, runTime = C.RunInStandoff or 0.8, C.RunInTime or 2.2
+	local homes, sum, n = {}, { A = Vector3.zero, B = Vector3.zero }, { A = 0, B = 0 }
+	for side, list in ctx.teams do
+		for _, m in list do
+			local ch = ctx.isPresent(m) and MatchCore.character(m)
+			if ch and ch.PrimaryPart then
+				homes[m] = { cf = ch:GetPivot() }
+				sum[side] += homes[m].cf.Position
+				n[side] += 1
+			end
+		end
+	end
+	if n.A == 0 or n.B == 0 then return end
+	local centre = (sum.A / n.A + sum.B / n.B) / 2
+	MatchCore.setState(ctx, "RunIn", standoff + runTime + 0.3)
+	-- start close in the middle, facing the other side
+	for m, h in homes do
+		local p = h.cf.Position
+		local flat = Vector3.new(centre.X - p.X, 0, centre.Z - p.Z)
+		local from = flat.Magnitude > 1 and (p + flat * 0.35) or p
+		local ch = MatchCore.character(m)
+		if ch then
+			ctx.setFrozen(m, true)
+			ch:PivotTo(CFrame.lookAt(from, Vector3.new(centre.X, from.Y, centre.Z)))
+			h.from = from
+		end
+	end
+	task.wait(standoff)
+	-- break for cover: everyone runs back home at a pace that arrives together
+	for m, h in homes do
+		local hum = MatchCore.humanoid(m)
+		if hum and h.from then
+			ctx.setFrozen(m, false)
+			h.speed = hum.WalkSpeed
+			hum.WalkSpeed = math.clamp(flatDist(h.from, h.cf.Position) / math.max(runTime - 0.2, 0.5), 10, 30)
+			hum:MoveTo(h.cf.Position)
+		end
+	end
+	local t0 = os.clock()
+	while os.clock() - t0 < runTime do
+		local all = true
+		for m, h in homes do
+			local ch = MatchCore.character(m)
+			if ch and h.from and flatDist(ch:GetPivot().Position, h.cf.Position) > 2 then all = false end
+		end
+		if all then break end
+		task.wait(0.05)
+	end
+	-- snap exactly onto the spawn, facing as spawned, frozen for the countdown
+	for m, h in homes do
+		local ch, hum = MatchCore.character(m), MatchCore.humanoid(m)
+		if hum and h.speed then hum.WalkSpeed = h.speed end
+		if ch and ch.Parent then ch:PivotTo(h.cf) end
+		ctx.setFrozen(m, true)
+	end
+	task.wait(0.3)
+end
+
 function MatchCore.playRound(ctx, roundNumber: number)
 	local C = ctx.config
 	ctx.state:SetAttribute("RoundNumber", roundNumber)
+	MatchCore.clearSpectate(ctx)
+	ctx.lastKill = nil
 	if ctx.onRoundStart then ctx.onRoundStart(roundNumber) end
 
 	MatchCore.setState(ctx, "Countdown", C.CountdownTime + 2)
@@ -123,6 +240,12 @@ function MatchCore.playRound(ctx, roundNumber: number)
 	local waited = 0
 	while done < total and waited < 12 do waited += task.wait(0.1) end
 	local f = MatchCore.forfeitSide(ctx); if f then return f, true end
+
+	-- opening run (round 1 unless C.RunInEveryRound): the default "run to your pillar" until per-map cutscenes exist
+	if C.RunIn ~= false and (roundNumber == 1 or C.RunInEveryRound) then
+		MatchCore.runIn(ctx)
+		f = MatchCore.forfeitSide(ctx); if f then return f, true end
+	end
 
 	MatchCore.setState(ctx, "Countdown", C.CountdownTime)
 	ctx.announce("ROUND " .. roundNumber, scoreLine(ctx))
@@ -157,6 +280,7 @@ function MatchCore.playMatch(ctx)
 	local s = ctx.state
 	s:SetAttribute("ScoreA", 0); s:SetAttribute("ScoreB", 0)
 	s:SetAttribute("RoundsToWin", C.RoundsToWin)
+	s:SetAttribute("WinnerTeam", nil); s:SetAttribute("Winner", nil)
 	for side, list in ctx.teams do
 		for _, m in list do
 			MatchCore.setAttr(m, "InMatch", true); MatchCore.setAttr(m, "RoundWins", 0); MatchCore.setAttr(m, "Team", side)
@@ -202,6 +326,27 @@ function MatchCore.playMatch(ctx)
 		end
 	end
 	ctx.over = true
+	-- final-round Victory beat (default screen; finisher / victory cutscenes come later). Not after a forfeit or an admin end.
+	if winner and not forfeit and not ctx.aborted and (C.VictoryTime or 4) > 0 then
+		s:SetAttribute("WinnerTeam", winner)
+		local lk = ctx.lastKill
+		local winnerId = lk and lk.killer
+		if winnerId then
+			local wm = memberById(ctx, winnerId)
+			if not (wm and MatchCore.getAttr(wm, "Team") == winner) then winnerId = nil end
+		end
+		if not winnerId then
+			for _, wm in ctx.teams[winner] do
+				if ctx.isPresent(wm) then winnerId = wm.userId break end
+			end
+		end
+		s:SetAttribute("Winner", winnerId)
+		MatchCore.setState(ctx, "Victory", C.VictoryTime or 4)
+		task.wait(C.VictoryTime or 4)
+	elseif winner then
+		s:SetAttribute("WinnerTeam", winner)
+	end
+	MatchCore.clearSpectate(ctx)
 	MatchCore.setState(ctx, "MatchEnd", C.ResultsTime or 12)
 	if ctx.aborted then
 		ctx.announce("MATCH ENDED", "Ended by an admin - no rewards")
