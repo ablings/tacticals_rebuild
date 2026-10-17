@@ -13,7 +13,7 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 | 1 | Player menu on a player-list row: header + Party Invite / Add Friend / Challenge / View Profile / View Avatar / Send Gift / Block; Spectate for players in a duel (hud/HudController) | `UIKit.PlayerCards.Menu`, list rows clickable | DONE (Challenge / Spectate: MECH, LobbySocial) |
 | 2 | Profile card "View Profile": blurred lobby, card, stats, X under it (hud/HudController) | `PlayerCards.Profile`: rank emblem + ELO, Level / Wins / Win Rate / Matches / Kills / Headshot % from PublicStats | DONE |
 | 3 | World: hover a character = "Double tap to view profile", double click = card with Invite to PARTY / Challenge 1v1 (hud/HudController) | `PlayerCards.StartWorld` (raycast: your own character too) | DONE (touch tap: to verify in emulator) |
-| 4 | Duel / party request popup: headshot, draining timer, X + check (hud/HudController) | none | MECH (LobbySocial "Request") then TODO |
+| 4 | Duel / party request popup: headshot, draining timer, X + check (hud/HudController) | `PlayerCards` request stack under the list + Settings > Game > Social > Challenge Requests | BUILT, dormant until LobbySocial (MECH) |
 | 5 | Party screen (+ next to your avatar): your card + 4 slots, search, All / Friends / Lobby tabs (party/PartyController) | the + by the avatar exists; no party system | MECH (parties) |
 | 6 | Custom name titles (glitch / legend effects) on list, menu, card | none | TODO (cosmetic; needs a title source: shop item or admin) |
 | 7 | Weapons screen: Overview / Statistics / Contracts / Career (Duel History, Map Catalog, Collection) (weapons/WeaponsController) | Armory (Kit) shows loadout only | TODO: Statistics + Duel History need per-weapon stats (MECH) |
@@ -21,8 +21,8 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 | 9 | Backpack (backpack/BackpackController) | Armory | covered |
 | 10 | Shooting Range HUD (range/RangeController) | Training (ExfilFX leave, crate picker) | covered |
 | 11 | Free Rewards gift + panel, Market, Limited Time stand, lobby TV boards (world/WorldController) | Tacticals has its own boards (BillboardController) | N/A / map side |
-| 12 | Proximity prompt billboards in RIVALS style (world/WorldController) | Roblox default prompts on pads/NPCs | TODO: check which prompts the lobby uses |
-| 13 | Toast pills (kit/Toast) | Roblox SendNotification used by PlayerCards | TODO: a Kit toast in Tacticals style |
+| 12 | Proximity prompt billboards in RIVALS style (world/WorldController) | `PromptsController`: all 16 lobby prompts (crates, Kit, shop, NPCs, supply drop) drawn as Tacticals cards | BUILT, Play test pending (lock) |
+| 13 | Toast pills (kit/Toast) | the lobby's own `LobbyUI.Toast` (PlayerCards uses it) | DONE |
 
 ## Log
 - 2026-10-17 night: 1-3 built (`ui/hud/PlayerCards.lua`, LobbyHud rows + world hook, PublicStats StatMatches/StatKills/StatHeadshots).
