@@ -26,6 +26,7 @@ FILES = [
     ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
+    ("ReplicatedStorage.UIKit", "PlayerCards", "ModuleScript", "hud/PlayerCards.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),  # same file in both places; QuickIntro only in the match place

@@ -1,5 +1,6 @@
 -- PublicStats (ServerScriptService, Script): copies the few profile numbers other players may see onto attributes, so
--- the lobby UI can show them for everyone (nameplates, pad slots, the scoreboard): Level (account level) and Wins.
+-- the lobby UI can show them for everyone (nameplates, pad slots, the scoreboard, the profile card): Level (account level),
+-- Wins, StatMatches, StatKills, StatHeadshots.
 -- Read-only: it never changes the profile.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -14,6 +15,12 @@ local function sync(player)
 	if player:GetAttribute("Level") ~= level then player:SetAttribute("Level", level) end
 	local wins = data.Stats and data.Stats.Wins or 0
 	if player:GetAttribute("Wins") ~= wins then player:SetAttribute("Wins", wins) end
+	-- the profile card (UIKit.PlayerCards): matches / kills / headshots, for the win rate and headshot %
+	local st = type(data.Stats) == "table" and data.Stats or {}
+	for attr, key in { StatMatches = "MatchesPlayed", StatKills = "Kills", StatHeadshots = "Headshots" } do
+		local v = tonumber(st[key]) or 0
+		if player:GetAttribute(attr) ~= v then player:SetAttribute(attr, v) end
+	end
 end
 
 while true do

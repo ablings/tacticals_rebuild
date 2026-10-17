@@ -513,6 +513,8 @@ function LobbyHud.Start()
 	-- list rows: everyone in the server, sorted by the shown stat
 	local ViewIconsLB = require(UIKit:WaitForChild("ViewIcons"))
 	local lbStat = "Level"
+	local PlayerCards
+	pcall(function() PlayerCards = require(UIKit:WaitForChild("PlayerCards", 10)) end)
 	local RankArtLB
 	pcall(function() RankArtLB = require(UIKit:WaitForChild("RankArt", 10)) end)
 	local function statValue(p) -- the number the list sorts by
@@ -557,6 +559,8 @@ function LobbyHud.Start()
 			local row = new("TextButton", { Name = p.Name, Text = "", AutoButtonColor = false, Position = UDim2.fromScale(0, (i - 1) * 40 / canvasH), Size = UDim2.fromScale(1, 40 / canvasH),
 				BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = i % 2 == 0 and 0.97 or 1, Parent = lbList })
 			local baseT = row.BackgroundTransparency
+			-- click a row: RIVALS' player menu slides out to the left of the list (UIKit.PlayerCards)
+			row.Activated:Connect(function() if PlayerCards then PlayerCards.Menu(p, row, 1590) end end)
 			row.MouseEnter:Connect(function() row.BackgroundTransparency = 0.94 end)
 			row.MouseLeave:Connect(function() row.BackgroundTransparency = baseT end)
 			new("Frame", { Name = "Divider", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 40), Size = UDim2.fromOffset(LB_W, 1), BackgroundColor3 = Color3.new(1, 1, 1),
@@ -602,6 +606,7 @@ function LobbyHud.Start()
 	local function setList(on)
 		if on == lbOn then return end
 		lbOn = on
+		if not on and PlayerCards then PlayerCards.CloseMenu() end
 		if corner then corner.layout() end
 		Kit.tween(lb, 0.12, { Position = on and lbHome or UDim2.fromScale(lbHome.X.Scale + 0.25, lbHome.Y.Scale) }, Enum.EasingStyle.Linear)
 	end
@@ -657,6 +662,13 @@ function LobbyHud.Start()
 		if player:GetAttribute("InDuel") or player:GetAttribute("DuelMatch") or player:GetAttribute("DuelSpectate") then return false end
 		return true
 	end
+	-- the world: hover a character for "Double click to view profile", double click opens their card (RIVALS)
+	if PlayerCards then
+		PlayerCards.StartWorld(function()
+			local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
+			return lobbyShown() and not hudHidden() and lobbyGui ~= nil and lobbyGui.Enabled
+		end)
+	end
 	-- Padded HUD: everything pulled in from the screen edges (TV safe area), always or while a controller is in use
 	local lastPad = false
 	UserInputService.LastInputTypeChanged:Connect(function(t) lastPad = t.Name:find("Gamepad") ~= nil end)
@@ -706,6 +718,7 @@ function LobbyHud.Start()
 		-- RIVALS: a menu opening pushes the HUD out to the sides (and back when it closes); anything else hides it at once
 		local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
 		local menuAway = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
+			or (PlayerCards ~= nil and PlayerCards.ProfileOpen()) -- the profile card pushes the HUD aside like a menu
 		-- Kit room (LobbyUI on, its dock hidden by the Armory): RIVALS keeps the currency pill up there, nothing else
 		local kitDock = lobbyGui and lobbyGui:FindFirstChild("Dock", true)
 		local kitRoom = lobbyGui ~= nil and lobbyGui.Enabled and kitDock ~= nil and not kitDock.Visible
@@ -743,7 +756,8 @@ function LobbyHud.Start()
 		local row = player.PlayerGui:FindFirstChild("PlayRowUI")
 		-- in a duel (playing or watching) the PLAY row and the dock go too, like Hide HUD (the hotbar stays)
 		local inDuel = player:GetAttribute("InDuel") == true or player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("DuelSpectate") ~= nil
-		if hide or inDuel then
+		local cardUp = PlayerCards ~= nil and PlayerCards.ProfileOpen() -- the profile card: PLAY row + dock go too (RIVALS)
+		if hide or inDuel or cardUp then
 			if dock and dockSaved == nil then dockSaved = dock.Visible end
 			if dock then dock.Visible = false end
 			if row then row.Enabled = false end

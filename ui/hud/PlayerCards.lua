@@ -1,0 +1,344 @@
+-- UIKit/PlayerCards (ModuleScript): RIVALS' "click a player" UI in TACTICALS' look (UI session 2026-10-17, overnight gap audit).
+--   * PlayerCards.Menu(p, row): the player menu that slides out to the left of the player list (click a row). Header = headshot,
+--     display name, @username; one row per action, each fading from the panel colour into its own colour, white on hover.
+--     Lobby players: Invite / Add Friend / Challenge / View Profile / View Avatar / Block. In a duel: Spectate instead of
+--     Invite / Challenge. Yourself: View Profile / View Avatar. Challenge + Spectate only show once the Tacticals session's
+--     ReplicatedStorage.LobbySocial remote exists (contract in notes/lobby_social.md).
+--   * PlayerCards.Profile(p, world): the profile card over a blurred lobby: headshot, names, rank emblem + ELO, six stat tiles
+--     (Level, Wins, Win Rate, Matches, Kills, Headshot %), red X under it; opened from the world (double click on someone
+--     else) it adds INVITE and CHALLENGE beside the X, like RIVALS.
+--   * PlayerCards.StartWorld(allowed): hovering a character shows "Double click to view profile" (touch: tap), a double
+--     click / tap opens the card. allowed() says when the lobby is up (no menu, no duel, no training).
+-- Stats come from attributes the server publishes (PublicStats: Level, Wins, StatMatches, StatKills, StatHeadshots; RankedCore:
+-- Rank*). Built in 1920x1080 design px on a 16:9 canvas, then Kit.toScale (Scale only).
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local GuiService = game:GetService("GuiService")
+local Lighting = game:GetService("Lighting")
+
+local UIKit = script.Parent
+local Theme = require(UIKit:WaitForChild("Theme"))
+local Kit = require(UIKit:WaitForChild("Kit"))
+local RankArt
+pcall(function() RankArt = require(UIKit:WaitForChild("RankArt", 10)) end)
+local new, hex = Kit.new, Theme.hex
+local player = Players.LocalPlayer
+
+local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
+local F_NAME = Font.new(BUILDER, Enum.FontWeight.Bold)
+local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
+local F_NUM = Font.new(BUILDER, Enum.FontWeight.ExtraBold)
+local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
+local OLIVE_HI = hex("#9DB05A")
+
+local PlayerCards = {}
+
+local function label(parent, text, font, size, x, y, w, h, color, align, z)
+	return Kit.label({ Text = text, FontFace = font, TextSize = size, TextColor3 = color or BONE, TextXAlignment = align or Enum.TextXAlignment.Left,
+		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 2, TextTruncate = Enum.TextTruncate.AtEnd, Parent = parent })
+end
+local function headshot(img, p)
+	task.spawn(function()
+		local ok, id = pcall(Players.GetUserThumbnailAsync, Players, p.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+		if ok and img.Parent then img.Image = id end
+	end)
+end
+local function social() return ReplicatedStorage:FindFirstChild("LobbySocial") end
+local function inDuel(p)
+	return p:GetAttribute("InDuel") == true or p:GetAttribute("DuelMatch") ~= nil
+end
+local function commas(n)
+	local s = tostring(math.floor(n or 0))
+	return (s:reverse():gsub("(%d%d%d)", "%1,"):reverse():gsub("^,", ""))
+end
+
+-- one ScreenGui above the lobby HUD (5) and below full menus' popups
+local gui, canvas
+local function ensureGui()
+	if gui and gui.Parent then return end
+	gui = new("ScreenGui", { Name = "PlayerCards", ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 12,
+		Parent = player:WaitForChild("PlayerGui") })
+	canvas = Kit.canvas(gui)
+	canvas.ZIndex = 5 -- above the full-screen tint (1) and the menu's click catcher (4)
+end
+
+---------------------------------------------------------------------------------------------------- actions
+local function toast(text)
+	pcall(StarterGui.SetCore, StarterGui, "SendNotification", { Title = "TACTICALS", Text = text, Duration = 3 })
+end
+local spectating = nil
+local function run(action, p)
+	if action == "View Avatar" then
+		pcall(GuiService.InspectPlayerFromUserId, GuiService, p.UserId) -- Roblox's own avatar inspect
+	elseif action == "Add Friend" then
+		pcall(StarterGui.SetCore, StarterGui, "PromptSendFriendRequest", p)
+	elseif action == "Block" then
+		pcall(StarterGui.SetCore, StarterGui, "PromptBlockPlayer", p)
+	elseif action == "Invite" then
+		local SocialService = game:GetService("SocialService")
+		local ok = pcall(function()
+			local opts = Instance.new("ExperienceInviteOptions")
+			opts.InviteUser = p.UserId
+			SocialService:PromptGameInvite(player, opts)
+		end)
+		if not ok then toast("Invites aren't available here") end
+	elseif action == "Challenge" then
+		local r = social()
+		if r then r:FireServer("Challenge", p) end
+	elseif action == "Spectate" then
+		local r = social()
+		if r then
+			spectating = spectating ~= p and p or nil
+			r:FireServer("Spectate", spectating)
+		end
+	end
+end
+
+---------------------------------------------------------------------------------------------------- profile card
+local profile
+local blur
+local function closeProfile()
+	if not profile then return end
+	local p = profile
+	profile = nil
+	if blur then Kit.tween(blur, 0.2, { Size = 0 }) end
+	Kit.tween(p.tint, 0.15, { BackgroundTransparency = 1 })
+	Kit.close(p.card, function() p.root:Destroy(); p.tint:Destroy() end)
+	for _, b in p.buttons do b.Visible = false end
+end
+PlayerCards.CloseProfile = closeProfile
+function PlayerCards.ProfileOpen() return profile ~= nil end
+
+local function statTile(parent, x, y, value, name, accent)
+	local t = new("Frame", { Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(176, 84), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 3, Parent = parent },
+		{ Kit.corner(8), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.88, Thickness = 1.5 }) })
+	local v = label(t, value, F_NUM, 34, 0, 8, 176, 42, accent or BONE, Enum.TextXAlignment.Center, 4)
+	v.TextTruncate = Enum.TextTruncate.None
+	label(t, name, F_SUB, 17, 0, 52, 176, 22, FIELD, Enum.TextXAlignment.Center, 4)
+	return t
+end
+
+function PlayerCards.Profile(p: Player, world: boolean?)
+	ensureGui()
+	PlayerCards.CloseMenu()
+	if profile then profile.root:Destroy(); profile.tint:Destroy(); profile = nil end
+	blur = Lighting:FindFirstChild("PlayerCardBlur") or new("BlurEffect", { Name = "PlayerCardBlur", Size = 0, Parent = Lighting })
+	-- the tint covers the whole screen (outside the 16:9 canvas too); a click on it closes
+	local tint = new("TextButton", { Name = "ProfileTint", Text = "", AutoButtonColor = false, Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.color.scrim,
+		BackgroundTransparency = 1, ZIndex = 1, Parent = gui })
+	local root = new("Frame", { Name = "Profile", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), ZIndex = 2, Parent = canvas })
+	local W, H = 620, 400
+	local card = new("Frame", { Name = "Card", Position = UDim2.fromOffset((1920 - W) / 2, 300), Size = UDim2.fromOffset(W, H), BackgroundColor3 = GUN,
+		ClipsDescendants = true, ZIndex = 2, Parent = root }, { Kit.corner(12), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.82, Thickness = 2 }) })
+	-- olive wash fading down from the top, faint diagonal stripes (the Tacticals panel look)
+	new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = hex("#4A5A22"), ZIndex = 2, Parent = card },
+		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(0.55, 0.92), NumberSequenceKeypoint.new(1, 1) }) }) })
+	for i = 0, 14 do
+		new("Frame", { BorderSizePixel = 0, BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.965, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
+			Position = UDim2.fromOffset(-60 + i * 56, 60), Size = UDim2.fromOffset(14, 320), ZIndex = 2, Parent = card })
+	end
+	-- header: headshot, name, @username, rank on the right
+	local hs = new("ImageLabel", { BackgroundColor3 = DEEP, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(28, 26), Size = UDim2.fromOffset(96, 96), ZIndex = 3, Parent = card },
+		{ Kit.corner(48), new("UIStroke", { Color = OLIVE_HI, Thickness = 2.5, Transparency = 0.2 }) })
+	headshot(hs, p)
+	local nm = label(card, p.DisplayName, F_NAME, 36, 142, 34, 300, 44, BONE, nil, 3)
+	nm.TextScaled = false
+	label(card, "@" .. p.Name, F_SUB, 20, 142, 78, 300, 24, FIELD, nil, 3)
+	local r = RankArt and RankArt.Of(p) or { placed = false, name = "Unranked", elo = 0 }
+	-- unranked (placements to play): a faded, greyed Bronze emblem
+	local fallback = RankArt and RankArt.EMBLEM.Bronze or ""
+	new("ImageLabel", { BackgroundTransparency = 1, Image = r.image or fallback, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(476, 18), Size = UDim2.fromOffset(112, 86),
+		ImageTransparency = r.image and 0 or 0.7, ImageColor3 = r.image and Color3.new(1, 1, 1) or Color3.fromRGB(150, 150, 150), ZIndex = 3, Parent = card })
+	label(card, r.placed and r.name or "Unranked", F_HEAD, 22, 440, 104, 184, 26, r.placed and BONE or FIELD, Enum.TextXAlignment.Center, 3)
+	local placedN, needN = p:GetAttribute("RankPlaced") or 0, p:GetAttribute("RankPlacements") or 0
+	label(card, r.placed and (commas(r.elo) .. " ELO") or (needN > 0 and string.format("Placements %d/%d", placedN, needN) or ""), F_SUB, 17, 440, 128, 184, 20, FIELD, Enum.TextXAlignment.Center, 3)
+	-- divider + stats (2 rows x 3)
+	new("Frame", { BorderSizePixel = 0, Position = UDim2.fromOffset(28, 160), Size = UDim2.fromOffset(W - 56, 2), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.88, ZIndex = 3, Parent = card })
+	local matches, wins = p:GetAttribute("StatMatches") or 0, p:GetAttribute("Wins") or 0
+	local kills, heads = p:GetAttribute("StatKills") or 0, p:GetAttribute("StatHeadshots") or 0
+	local rate = matches > 0 and string.format("%.1f%%", 100 * wins / matches) or "-"
+	local hsr = kills > 0 and string.format("%.0f%%", 100 * heads / kills) or "-"
+	local gold = hex("#E9C46A")
+	statTile(card, 28, 182, tostring(p:GetAttribute("Level") or 1), "Level", OLIVE_HI)
+	statTile(card, 222, 182, commas(wins), "Wins", gold)
+	statTile(card, 416, 182, rate, "Win Rate", gold)
+	statTile(card, 28, 284, commas(matches), "Matches")
+	statTile(card, 222, 284, commas(kills), "Kills")
+	statTile(card, 416, 284, hsr, "Headshots")
+	-- buttons under the card: the X; from the world (someone else) INVITE / CHALLENGE beside it (RIVALS)
+	local buttons = {}
+	local by = 300 + H + 18
+	local close = Kit.closeButton(UDim2.fromOffset(150, 66))
+	close.ZIndex = 3
+	close.Parent = root
+	table.insert(buttons, close)
+	local acts = {}
+	if world and p ~= player then
+		table.insert(acts, { "INVITE", "Invite to", "key", function() run("Invite", p) end })
+		if social() and not inDuel(p) then table.insert(acts, { "1V1", "Challenge", "red", function() run("Challenge", p); closeProfile() end }) end
+	end
+	local total = 150 + #acts * 168
+	local x0 = (1920 - total) / 2
+	close.Position = UDim2.fromOffset(x0, by)
+	for i, a in acts do
+		local b = Kit.button(a[3], UDim2.fromOffset(150, 66), nil, { Position = UDim2.fromOffset(x0 + i * 168, by), ZIndex = 3, Parent = root })
+		local cc = b:FindFirstChildOfClass("UICorner"); if cc then cc.CornerRadius = UDim.new(0, 8) end
+		label(b, a[2], F_SUB, 15, 0, 5, 150, 18, Color3.new(0, 0, 0), Enum.TextXAlignment.Center, 4).TextTransparency = 0.35
+		local big = label(b, a[1], F_HEAD, 32, 0, 20, 150, 40, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 4)
+		new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.5, Transparency = 0.5, Parent = big })
+		b.Activated:Connect(a[4])
+		table.insert(buttons, b)
+	end
+	close.Activated:Connect(closeProfile)
+	tint.Activated:Connect(closeProfile)
+	Kit.toScale(root)
+	profile = { root = root, tint = tint, card = card, buttons = buttons, player = p }
+	Kit.tween(blur, 0.25, { Size = Theme.blur })
+	Kit.tween(tint, 0.25, { BackgroundTransparency = Theme.alpha.scrim })
+	Kit.open(card)
+end
+
+---------------------------------------------------------------------------------------------------- player menu
+local menu
+function PlayerCards.CloseMenu()
+	if not menu then return end
+	local m = menu
+	menu = nil
+	m.catcher.Visible = false
+	Kit.tween(m.panel, 0.14, { Position = UDim2.fromScale(m.home.X.Scale + 0.1, m.home.Y.Scale) }, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
+	Kit.tween(m.group, 0.14, { GroupTransparency = 1 })
+	task.delay(0.15, function() m.root:Destroy(); m.catcher:Destroy() end)
+end
+function PlayerCards.MenuOpen() return menu ~= nil end
+
+-- RIVALS' colours, pulled toward the Tacticals palette (olive for the friendly ones)
+local ACTION_COLOR = {
+	["Invite"] = hex("#4F6B23"), ["Add Friend"] = hex("#4F6B23"), ["Challenge"] = hex("#9A6A1E"), ["Spectate"] = hex("#9A6A1E"),
+	["View Profile"] = hex("#2F5170"), ["View Avatar"] = hex("#2F5170"), ["Block"] = hex("#8E2A24"),
+}
+local ACTION_GLYPH = { ["Invite"] = "+", ["Add Friend"] = "+", ["Challenge"] = "»", ["Spectate"] = "◎", ["View Profile"] = "→", ["View Avatar"] = "→", ["Block"] = "×" }
+
+function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
+	ensureGui()
+	PlayerCards.CloseMenu()
+	local actions
+	if p == player then
+		actions = { "View Profile", "View Avatar" }
+	elseif inDuel(p) then
+		actions = { "Add Friend", "View Profile", "View Avatar", "Block" }
+		if social() then table.insert(actions, 2, "Spectate") end
+	else
+		actions = { "Invite", "Add Friend", "View Profile", "View Avatar", "Block" }
+		if social() then table.insert(actions, 3, "Challenge") end
+	end
+	-- top level with the row (design px on the canvas)
+	local cs, ca = canvas.AbsoluteSize, canvas.AbsolutePosition
+	local f = 1080 / math.max(cs.Y, 1)
+	local rowY = (row.AbsolutePosition.Y - ca.Y) * f
+	local rightX = listLeft or ((row.AbsolutePosition.X - ca.X) * f)
+	local ROW, HEAD = 56, 84
+	local H = HEAD + #actions * ROW + 6
+	local top = math.clamp(rowY, 10, 1080 - H - 10)
+	local root = new("Frame", { Name = "PlayerMenu", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), ZIndex = 20, Parent = canvas })
+	-- a click anywhere else closes it (the catcher covers the whole screen, under the panel)
+	local catcher = new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 4, Parent = gui })
+	catcher.Activated:Connect(PlayerCards.CloseMenu)
+	local panel = new("CanvasGroup", { Name = "Panel", Position = UDim2.fromOffset(rightX - 8 - 310, top), Size = UDim2.fromOffset(310, H),
+		BackgroundColor3 = GUN, BackgroundTransparency = 0.04, ZIndex = 21, Parent = root }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.85, Thickness = 1.5 }) })
+	local hs = new("ImageLabel", { BackgroundColor3 = DEEP, Position = UDim2.fromOffset(14, 10), Size = UDim2.fromOffset(64, 64), ZIndex = 22, Parent = panel }, { Kit.corner(32) })
+	headshot(hs, p)
+	label(panel, p.DisplayName, F_NAME, 23, 92, 14, 206, 30, BONE, nil, 22)
+	label(panel, "@" .. p.Name, F_SUB, 16, 92, 44, 206, 20, FIELD, nil, 22)
+	for i, a in actions do
+		local col = ACTION_COLOR[a]
+		local b = new("TextButton", { Name = a, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(4, HEAD + (i - 1) * ROW), Size = UDim2.fromOffset(302, ROW - 4),
+			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 22, Parent = panel }, { Kit.corner(6) })
+		local grad = new("UIGradient", { Color = ColorSequence.new(GUN, col), Parent = b })
+		local t = label(b, a, F_NAME, 19, 18, 0, 200, ROW - 4, BONE, nil, 23)
+		local g = label(b, ACTION_GLYPH[a], F_NUM, 30, 240, 0, 48, ROW - 4, BONE, Enum.TextXAlignment.Center, 23)
+		local sent = false
+		b.MouseEnter:Connect(function() grad.Enabled = false; t.TextColor3 = DEEP; g.TextColor3 = DEEP end)
+		b.MouseLeave:Connect(function() grad.Enabled = true; t.TextColor3 = BONE; g.TextColor3 = sent and FIELD or BONE end)
+		local pop = new("UIScale", { Parent = b })
+		b.Activated:Connect(function()
+			pop.Scale = 1
+			Kit.tween(pop, 0.07, { Scale = 1.06 })
+			task.delay(0.07, function() Kit.tween(pop, 0.16, { Scale = 1 }, Enum.EasingStyle.Back) end)
+			if a == "View Profile" then PlayerCards.Profile(p, false); return end
+			run(a, p)
+			-- sent once: the glyph turns into a grey tick (Invite / Challenge), RIVALS-style
+			if a == "Invite" or a == "Challenge" then sent = true; g.Text = "✓"; g.TextColor3 = FIELD end
+			if a == "Spectate" then t.Text = spectating == p and "Stop Spectating" or "Spectate" end
+		end)
+	end
+	Kit.toScale(root)
+	for _, c in panel:GetChildren() do if c:IsA("TextButton") then Kit.centreAnchor(c) end end
+	-- slides out from under the list (from the right)
+	local home = panel.Position
+	panel.Position = UDim2.fromScale(home.X.Scale + 0.1, home.Y.Scale)
+	panel.GroupTransparency = 1
+	Kit.tween(panel, 0.18, { Position = home }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+	Kit.tween(panel, 0.14, { GroupTransparency = 0 })
+	menu = { root = root, panel = panel, group = panel, catcher = catcher, home = home, player = p }
+end
+
+-- a player leaving closes whatever is open about them
+Players.PlayerRemoving:Connect(function(p)
+	if menu and menu.player == p then PlayerCards.CloseMenu() end
+	if profile and profile.player == p then closeProfile() end
+end)
+
+---------------------------------------------------------------------------------------------------- world: hover + double click
+function PlayerCards.StartWorld(allowed: () -> boolean)
+	ensureGui()
+	local mouse = player:GetMouse()
+	local hint = new("Frame", { Name = "ProfileHint", AnchorPoint = Vector2.new(0.5, 1), Size = UDim2.fromOffset(360, 46), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
+		Visible = false, ZIndex = 30, Parent = canvas }, { Kit.corner(21), new("UIStroke", { Color = BONE, Thickness = 1.5, Transparency = 0.35 }) })
+	local hintText = label(hint, "Double click to view profile", F_NAME, 24, 0, 0, 360, 46, BONE, Enum.TextXAlignment.Center, 31)
+	Kit.toScale(hint, Vector2.new(360, 46))
+	hint.Size = UDim2.fromScale(360 / 1920, 46 / 1080)
+	-- a ray from the pointer (Mouse.Target skips your own character; RIVALS opens your own card too)
+	local function playerUnder()
+		local cam = workspace.CurrentCamera
+		local at = UserInputService:GetMouseLocation()
+		local ray = cam:ViewportPointToRay(at.X, at.Y)
+		local hit = workspace:Raycast(ray.Origin, ray.Direction * 300)
+		local t = hit and hit.Instance
+		while t and t ~= workspace do
+			local p = Players:GetPlayerFromCharacter(t)
+			if p then return p end
+			t = t.Parent
+		end
+		return nil
+	end
+	local function ok() return not profile and not menu and allowed() end
+	RunService.RenderStepped:Connect(function()
+		-- touch has no hover: the hint only follows a mouse
+		local p = (not UserInputService.TouchEnabled or UserInputService.MouseEnabled) and ok() and playerUnder() or nil
+		hint.Visible = p ~= nil
+		if p then
+			-- GetMouseLocation counts the top bar; AbsolutePosition on an IgnoreGuiInset gui doesn't (its origin sits at -inset)
+			local at = UserInputService:GetMouseLocation() - GuiService:GetGuiInset()
+			local ca, cs = canvas.AbsolutePosition, canvas.AbsoluteSize
+			hint.Position = UDim2.fromScale((at.X - ca.X) / cs.X, (at.Y - 14 - ca.Y) / cs.Y)
+		end
+	end)
+	hintText.Text = UserInputService.TouchEnabled and not UserInputService.MouseEnabled and "Double tap to view profile" or "Double click to view profile"
+	local lastClick, lastWho = 0, nil
+	mouse.Button1Down:Connect(function()
+		local p = ok() and playerUnder() or nil
+		if not p then return end
+		if p == lastWho and os.clock() - lastClick < 0.4 then
+			lastWho = nil
+			PlayerCards.Profile(p, true)
+		else
+			lastWho, lastClick = p, os.clock()
+		end
+	end)
+end
+
+return PlayerCards
