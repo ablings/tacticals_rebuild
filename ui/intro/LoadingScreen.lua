@@ -932,8 +932,13 @@ if script:GetAttribute("QuickIntro") == true then
 	local t0 = os.clock()
 	while phase() == nil and os.clock() - t0 < 3 do task.wait(0.1) end -- the server sets the phase right after the teleport
 	if phase() == "Loading" then
-		statusLine = "WAITING FOR OPPONENT"
-		while phase() == "Loading" and os.clock() - t0 < 90 do task.wait(0.05) end
+		-- the server counts who has loaded (LoadedCount / LoadedTotal; bots count as loaded)
+		while phase() == "Loading" and os.clock() - t0 < 90 do
+			local n, total = RS:GetAttribute("LoadedCount"), RS:GetAttribute("LoadedTotal")
+			statusLine = (type(n) == "number" and type(total) == "number" and total > 0)
+				and string.format("WAITING FOR PLAYERS  %d/%d READY", n, total) or "WAITING FOR OPPONENT"
+			task.wait(0.05)
+		end
 	end
 	statusLine = "READY"
 	task.wait(0.25)
