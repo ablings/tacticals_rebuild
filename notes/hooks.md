@@ -204,3 +204,8 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   TutorialManager. `CombatManager`: **`HitConfirm(zone, damage, killed, headshot)`**, the new 4th client argument is true for a critical
   (gun Head-zone) headshot. Any code that teleports a player must call `DataManager.ReleaseForTeleport` first. UNDO via
   `fix/data_release_install.lua UNDO` (each place). Re-run the install after `tools/match_place_build.py` (it rewrites RoundManager).
+- 2026-10-16 mech_dive (**both places**): **`Client.Controllers.CoverController` source edited** (UI session's [SET] file; 3 edits marked
+  `-- [MECH] dive only from jump (Edward 2026-10-16)`, diff in `fix/mech_dive.diff`): the double-tap-Space jump dive now needs a real hop
+  started by onJumpKey within `Config.DiveDoubleTap`, no vault in progress and `IsHopping()` (new local `lastHopAt`). Before, any two
+  Space taps dived: out of a vault (JumpDive even cut the vault short), from cover, or after a refused hop. Backup
+  `ServerStorage._RebuildRemoved.MECH_CoverController_Orig`. UNDO via `fix/mech_dive_install.lua UNDO` (tested hash-exact, both places).
