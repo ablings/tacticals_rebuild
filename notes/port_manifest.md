@@ -116,3 +116,12 @@ himself; we never publish.
   - Overwrote it. Now **version 103**: ServerScriptService.Shared.MatchCore, RoundManager [MATCH], MatchState, MatchFlowUI, DuelHUD,
     AdminFramework, Warehouse.CamSkin, and StudioTeleportData not set.
 - Rollback: lobby Version History 264/263; match place version 102 (or the local backup/match_place_2026-10-16.rbxl).
+
+## Live port 5: published (2026-10-16 19:57-20:03, lead; Edward: "you can edit the official files now")
+- Root cause of the stuck Shop/Missions menus (found by the UI session): a stale saved `ReplicatedStorage.ReplicaRemoteEvents` folder
+  in both places, which sometimes made ReplicaController bind to dead remotes. Removed in both; the menu fail-safe is also in.
+- The data-release-on-teleport edits (fix/data_release_install.lua) were UNDONE in both places before saving: still untested.
+- Lobby: Save to Roblox As → tacticals → Publish → **version 269** (stale folder gone, verified).
+- Match place: Save to Roblox As → tutorial spot / matchmaking test → Publish → Activity History "published to version **108**" 8:02 PM.
+- **Lesson:** "Save to Roblox As" only SAVES (the versions are stored, but servers keep running the last published one). Always follow it
+  with File → Publish in the opened place, and confirm in Activity History ("published to version N").
