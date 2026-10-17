@@ -47,6 +47,7 @@ SET_FILES = [
     (C, "PropController", "set/PropController.lua"),
     (C, "AimPoseController", "set/AimPoseController.lua"),
     (C, "CinematicCamera", "set/CinematicCamera.lua"),
+    ("ReplicatedStorage.UIKit", "SettingsScreen", "set/SettingsScreen.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.GUIs", "HUD", "set/HUD.lua"),
     (C + ".LobbyUIController", "Armory", "lobby/Armory.lua"),
 ]
@@ -77,7 +78,7 @@ MATCH_FILES = [
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),
 ]
-MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory")]
+MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory", "SettingsScreen")]
 # old pass-38 match HUD pieces that DuelHUD / MatchFlowUI replace (see the file)
 MATCH_PATCHES = [open(os.path.join(HERE, 'matchplace', 'match_patches.lua'), encoding='utf-8').read()]
 if '--match' in sys.argv:

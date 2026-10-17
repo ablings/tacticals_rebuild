@@ -1553,7 +1553,16 @@ function LobbyUI.Start()
 		task.spawn(prewarmMenus) -- build + preload the menus in the background (loading dots until done)
 		local ok, err = pcall(applySettings)
 		if not ok then warn("[LobbyUI] applySettings: " .. tostring(err)) end
-		replica:ListenToRaw(function() LobbyUI.Refresh() end)
+		replica:ListenToRaw(function(_, path)
+			-- (2026-10-16) Settings changed on the server (a save, an admin ;wipe): put them into effect and let the open
+			-- screen re-read them, instead of keeping stale binds until a rejoin
+			if type(path) == "table" and (path[1] == "Settings" or #path == 0) then
+				local ok, err = pcall(applySettings)
+				if not ok then warn("[LobbyUI] applySettings: " .. tostring(err)) end
+				if SettingsScreen.Reload then pcall(SettingsScreen.Reload) end
+			end
+			LobbyUI.Refresh()
+		end)
 		LobbyUI.Refresh()
 	end)
 
