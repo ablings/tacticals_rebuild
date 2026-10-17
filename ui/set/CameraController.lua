@@ -224,6 +224,28 @@ end
 
 -- [TOUCH] camera look from touch drags (InputActions.CameraShouldUse: not the joystick zone, not a non-sinking button)
 local touchDelta = Vector2.zero
+-- [PAD] right-stick look (controllers had no camera look): deadzone, a curve for fine aim, in "mouse px per second"
+local padStick = Vector2.zero
+local PAD_DEADZONE, PAD_CURVE, PAD_RATE = 0.14, 1.7, 640
+UserInputService.InputChanged:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.Thumbstick2 then padStick = Vector2.new(input.Position.X, input.Position.Y) end
+end)
+UserInputService.InputEnded:Connect(function(input)
+	if input.KeyCode == Enum.KeyCode.Thumbstick2 then padStick = Vector2.zero end
+end)
+-- [AIM] aim assist (the Tacticals session's Modules.Shared.AimAssist): touch / controller only, the module decides
+local AimAssist
+task.spawn(function()
+	pcall(function() AimAssist = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("AimAssist", 20)) end)
+end)
+local lastFire = 0
+UserInputService.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.KeyCode == Enum.KeyCode.ButtonR2 then lastFire = os.clock() end
+end)
+task.spawn(function()
+	local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+	if ok and IA then IA.Bind("Fire", function(state) if state == Enum.UserInputState.Begin then lastFire = os.clock() end end) end
+end)
 
 -- [SET] kill-cam: the model to watch while dead. DuelHUD's spectate target (Q / E cycle) or MatchCore's SpectateTarget;
 -- a bot (negative id) is the workspace Model whose SpectateId attribute matches.
@@ -269,6 +291,12 @@ local function update(dt: number)
 		local mouseDelta = (UserInputService.TouchEnabled and not UserInputService.MouseEnabled) and Vector2.zero or UserInputService:GetMouseDelta()
 		local delta = mouseDelta + touchDelta
 		touchDelta = Vector2.zero
+		-- [PAD] the right stick adds a mouse-like delta (Y up on the stick = look up)
+		local mag = padStick.Magnitude
+		if mag > PAD_DEADZONE then
+			local k = ((math.min(mag, 1) - PAD_DEADZONE) / (1 - PAD_DEADZONE)) ^ PAD_CURVE
+			delta += Vector2.new(padStick.X, -padStick.Y).Unit * k * PAD_RATE * dt
+		end
 		-- [SET] Video > Camera: Sensitivity, While Aiming, While Scoped (50% = the tuned default)
 		local sensitivity = math.rad(Config.Sensitivity) * setting("Sensitivity", 100) / 100
 			* (state.aimHeld and Config.AimSensitivityMultiplier * setting("WhileAiming", 50) / 50 or 1)
@@ -283,6 +311,12 @@ local function update(dt: number)
 		local invert = (Config.InvertY ~= (setting("InvertedY", false) == true)) and -1 or 1 -- [SET] Inverted Y
 		local invertX = setting("InvertedX", false) == true and -1 or 1 -- [SET] Inverted X
 		local sensX, sensY = setting("Horizontal", 100) / 100, setting("Vertical", 100) / 100 -- [SET] Horizontal / Vertical
+		-- [AIM] friction near a target + a small pull toward it (the module returns 1 / 0 / 0 when it doesn't apply)
+		local aa
+		if AimAssist and isAlive() then
+			local ok, r = pcall(AimAssist.Step, dt, camera.CFrame, { aiming = state.aimHeld == true, firing = os.clock() - lastFire < 0.3, looking = delta.Magnitude > 0.01 })
+			if ok and type(r) == "table" then aa = r; sensitivity *= (tonumber(r.sensitivity) or 1) end
+		end
 
 		local guide = state.guide
 		if guide and guide.getTarget then
@@ -325,6 +359,10 @@ local function update(dt: number)
 					math.rad(Config.PitchMin),
 					math.rad(Config.PitchMax)
 				)
+				if aa then -- [AIM] the pull (radians; + yaw = left, + pitch = up)
+					state.yaw += tonumber(aa.yaw) or 0
+					state.pitch = math.clamp(state.pitch + (tonumber(aa.pitch) or 0), math.rad(Config.PitchMin), math.rad(Config.PitchMax))
+				end
 			end
 		end
 	end

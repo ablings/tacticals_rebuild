@@ -35,6 +35,9 @@ return {
 				{ kind = "dropdown", name = "Padded HUD", icon = "padded", options = { "Always On", "Using Controller", "Disabled" }, value = "Using Controller", desc = "Adds space around the screen edges so nothing sits under a TV's border" },
 				{ kind = "dropdown", name = "Lobby Data", icon = "window", options = { "Level", "Wins", "Rank" }, value = "Level", desc = "Which stat the lobby shows for players: the player list and your nameplate (Rank: their ranked emblem)" },
 			} },
+			{ title = "Aiming", rows = {
+				{ kind = "dropdown", name = "Aim Assist", icon = "inking", options = { "50%", "25%", "Off" }, value = "50%", desc = "Helps touch and controller players track targets. Max 25% in ranked." },
+			} },
 			{ title = "Social", rows = {
 				{ kind = "dropdown", name = "Challenge Requests", icon = "inking", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can challenge you to a 1v1 from the lobby (player list or double click)" },
 				{ kind = "dropdown", name = "Party Invites", icon = "inking", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can invite you to their party" },
