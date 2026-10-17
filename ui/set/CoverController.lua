@@ -61,6 +61,7 @@ local doubleVaultUntil = 0 -- (old double-tap vault back: no longer used - Q mid
 local pendingDash: number? = nil -- E pressed mid-vault: sneak to the cover under the crosshair once you land
 local diveArmUntil = 0 -- (unused: the old Shift+Space+E dive)
 local lastSpaceAt = 0 -- double-tap Space = jump dive
+local lastHopAt = 0 -- [MECH] dive only from jump (Edward 2026-10-16): when onJumpKey last started a real hop
 local shoulderNow = 1 -- last camera shoulder chosen in cover
 local suppressUntil = 0 -- near miss: no peeking/aiming until then
 local blindUntil = 0 -- os.clock() until which the blind-fire pose is held
@@ -1913,7 +1914,10 @@ local function onJumpKey(_, inputState: Enum.UserInputState)
 	local now = os.clock()
 	local doubleTap = now - lastSpaceAt < (Config.DiveDoubleTap or 0.35)
 	lastSpaceAt = now
-	if doubleTap and isAlive() and not dive and not move and controller.JumpDive() then
+	-- [MECH] dive only from jump (Edward 2026-10-16): the first tap must have been a real hop and you're still in the air from it
+	-- (never out of a vault, from cover or off the ground)
+	local fromJump = now - lastHopAt < (Config.DiveDoubleTap or 0.35) and not vault and controller.IsHopping()
+	if doubleTap and fromJump and isAlive() and not dive and not move and controller.JumpDive() then
 		lastSpaceAt = 0
 		return Enum.ContextActionResult.Sink
 	end
@@ -1969,6 +1973,7 @@ local function onJumpKey(_, inputState: Enum.UserInputState)
 	if os.clock() - lastShotAt < Config.ShotHopLock then return Enum.ContextActionResult.Sink end
 	if cover then exitCover() end
 	hopLockUntil = os.clock() + 0.2
+	lastHopAt = os.clock() -- [MECH] dive only from jump (Edward 2026-10-16)
 	local hum = humanoid :: Humanoid
 	hum.JumpHeight = Config.HopHeight
 	-- (Not hum.Jump = true: Roblox's control script overwrites that flag every frame)
