@@ -142,3 +142,16 @@ himself; we never publish.
 - Settings v2 migration (old RIVALS Equip Melee "Three" → Two, Utility "Four" → Three), live re-apply of settings, SettingsScreen
   reload, and the CinematicCamera bob/breathing fix (UI session).
 - Published: tacticals **v275** (9:12 PM), tutorial spot / matchmaking test **v113** (9:13 PM), both seen in Activity History.
+
+## Live port 9: place split + lobby (2026-10-17 00:36-00:49, lead; Edward: "go")
+- Saved both working copies at 00:36. Tutorial_place, Matchmaking_place and Ranked_place.rbxl are copies of match_place_ref,
+  converted with `tools/split_build.py place <id> <Kind>`.
+- Each was published with Publish As → gunsy funsy → tacticals → **Add as a new place**, then File → Publish (Activity History v3 each):
+  - **Tutorial: 118492914954668** (default name "ocxa's Place: 10172026_1")
+  - **Matchmaking: 97339328188402** ("…_2")
+  - **Ranked: 122908502889013** ("…_3")
+  - Rename them in Creator Hub → Places (Edward).
+- Lobby `LobbyConfig.TutorialPlaceId` / `MatchmakingPlaceId` / `RankedPlaceId` are set (also in fix/split_lobby_install.lua). The lobby
+  was published as **v277**. Live check: PlaceIdFor gives the three ids, and RoundsToWin = 5.
+- The lobby v277 also carries: ranked v3, first to 5, the dive fix, the faster lobby load, the free cursor, the camera fix and the ranked UI.
+- The old combined place "tutorial spot / matchmaking test" (81861384114744) is no longer routed to; it's kept as a fallback.
