@@ -81,7 +81,10 @@ MATCH_FILES = [
 MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory", "SettingsScreen")]
 # old pass-38 match HUD pieces that DuelHUD / MatchFlowUI replace (see the file)
 MATCH_PATCHES = [open(os.path.join(HERE, 'matchplace', 'match_patches.lua'), encoding='utf-8').read()]
-if '--match' in sys.argv:
+# (2026-10-16) the split places: Tutorial / Matchmaking / Ranked are one codebase (ReplicatedStorage.PlaceKind, set by the lead
+# session's installer), so they take the match-place UI set. Per-kind differences: notes/place_split.md.
+PLACE_KIND = next((k for k in ('tutorial', 'matchmaking', 'ranked') if '--' + k in sys.argv), None)
+if '--match' in sys.argv or PLACE_KIND:
     FILES, SET_FILES, PATCHES = MATCH_FILES, MATCH_SET_FILES, MATCH_PATCHES
 
 
