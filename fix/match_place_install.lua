@@ -615,7 +615,7 @@ SOURCES.MatchConfig = [=[-- ReplicatedStorage/Modules/Shared/Config/MatchConfig 
 return {
 	TestMode = true,        -- match place test servers only; ignored by lobby duels.
 	PlayerHealth = 150,     -- everyone's max health in a match (lobby duels set it on every round spawn)
-	RoundsToWin = 3,        -- best of 5
+	RoundsToWin = 5,        -- first to 5 (Edward 2026-10-17; was 3)
 	CountdownTime = 3,      -- frozen at spawn before each round
 	RoundTime = 90,         -- round timer; on timeout the player with more health wins (tie = draw)
 	RoundEndDelay = 3,      -- pause after a round before the next countdown
