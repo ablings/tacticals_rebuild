@@ -137,3 +137,8 @@ himself; we never publish.
 - Headshot hit marker and crit numbers only when `headshot == true`, so backstabs no longer count (UI session follow-up).
 - Published: tacticals **v273** (8:30 PM), tutorial spot / matchmaking test **v111** (8:31 PM), both seen in Activity History.
 - The lobby Studio had closed itself earlier; it was reopened as **829eb64d** (tools/*.py updated).
+
+## Live port 8: published (2026-10-16 21:09-21:14, lead; Edward: "you can use my screen now")
+- Settings v2 migration (old RIVALS Equip Melee "Three" → Two, Utility "Four" → Three), live re-apply of settings, SettingsScreen
+  reload, and the CinematicCamera bob/breathing fix (UI session).
+- Published: tacticals **v275** (9:12 PM), tutorial spot / matchmaking test **v113** (9:13 PM), both seen in Activity History.
