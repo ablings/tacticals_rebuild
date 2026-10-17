@@ -32,11 +32,9 @@ All tested in Studio against a test bot except Challenge (needs two real players
 | 9 | Players could stand on the Outfitters featured turntable | glitch | invisible clip box (shots/clicks pass through) |
 
 ## Needs Edward
-- **Publish**: everything above is in the working copies only. After publishing, **restart the old servers** (old lobby servers
-  send ranked matches without the server-side spec, which the new Ranked place refuses). Then start one ranked + one casual
-  match and check there are no "[MatchSpec]" warnings.
-- **Old combined place 81861384114744**: still accepts forged matches (casual rewards). Plan: overwrite it with the secured
-  Matchmaking build at the publish (or make it unreachable).
+- **Live check** (published at 04:10): start one ranked + one casual match; there should be no "WRONG SERVER". If there is,
+  restart servers in Creator Hub (an old lobby server was still running).
+- **Old combined place 81861384114744**: done, it now runs the secured casual build (v115).
 - **Dodge penalty**: on by default; say if you'd rather have free dodges.
 - **Ranked pads**: none exist; if you ever add them, friends could win-trade there (keep ranked to the online queue).
 - Low: the reaction-range best time is client-reported (cosmetic).
