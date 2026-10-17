@@ -244,6 +244,7 @@ local function styleTabs()
 		t.b.BackgroundColor3 = on and BONE or DEEP
 		t.b.BackgroundTransparency = on and 0 or 0.35
 		t.l.TextColor3 = on and DEEP or BONE
+		t.b:SetAttribute("NavTabOn", on)
 	end
 end
 function PartyScreen.SetTab(name)
@@ -281,6 +282,8 @@ local function build()
 		local l = label(b, t[1], F_NAME, 24, 0, 0, t[2], 54, DEEP, Enum.TextXAlignment.Center, 3)
 		tabBtns[t[1]] = { b = b, l = l }
 		b.Activated:Connect(function() PartyScreen.SetTab(t[1]) end)
+		b:SetAttribute("NavTab", i) -- [PAD] LB / RB
+		b:GetAttributeChangedSignal("NavPressed"):Connect(function() PartyScreen.SetTab(t[1]) end)
 	end
 	local close = Kit.closeButton(UDim2.fromOffset(80, 54))
 	close.Position = UDim2.fromOffset(1520, 156)

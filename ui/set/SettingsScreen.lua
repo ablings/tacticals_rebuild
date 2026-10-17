@@ -393,6 +393,7 @@ local function buildRow(tab, row, order)
 end
 
 local tabApis = {}
+local tabButtons = {} -- [PAD] name -> tab button (NavTabOn for LB / RB)
 function openTab(tab)
 	currentTab = tab
 	rowApis = {}
@@ -405,7 +406,7 @@ function openTab(tab)
 	list.Visible = not tab.hotkeys
 	detail.Visible = not tab.hotkeys
 	if tab.hotkeys then
-		for name, api in pairs(tabApis) do api.setSelected(name == tab.name) end
+		for name, api in pairs(tabApis) do api.setSelected(name == tab.name); if tabButtons[name] then tabButtons[name]:SetAttribute("NavTabOn", name == tab.name) end end
 		values[tab.name] = values[tab.name] or defaults(tab)
 		HotkeysPage.build({
 			Kit = Kit, Theme = Theme, Assets = Assets, parent = root, tab = tab, values = values[tab.name],
@@ -415,7 +416,7 @@ function openTab(tab)
 		Kit.toScale(root)
 		return
 	end
-	for name, api in pairs(tabApis) do api.setSelected(name == tab.name) end
+	for name, api in pairs(tabApis) do api.setSelected(name == tab.name); if tabButtons[name] then tabButtons[name]:SetAttribute("NavTabOn", name == tab.name) end end
 	values[tab.name] = values[tab.name] or defaults(tab)
 	for _, ch in ipairs(list:GetChildren()) do
 		if ch:IsA("GuiObject") then ch:Destroy() end
@@ -486,7 +487,11 @@ for i, tab in ipairs(Data.tabs) do
 	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 11)
 	t.Parent = tabBar
 	tabApis[tab.name] = api
+	tabButtons[tab.name] = t
 	t.Activated:Connect(function() if currentTab ~= tab then openTab(tab) end end)
+	-- [PAD] LB / RB (GamepadNavController): tab order + "press" via the NavPressed attribute
+	t:SetAttribute("NavTab", i)
+	t:GetAttributeChangedSignal("NavPressed"):Connect(function() if currentTab ~= tab then openTab(tab) end end)
 	if tab.name == "Account" then
 		-- RIVALS: the Account tab icon is the player's own avatar headshot, not a drawn icon
 		task.spawn(function()

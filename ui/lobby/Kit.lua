@@ -327,6 +327,9 @@ function Kit.bindButton(btn, opts)
 	btn.MouseLeave:Connect(function() hovering = false; Kit.tween(s, 0.1, { Scale = 1 }) end)
 	btn.MouseButton1Down:Connect(function() Kit.tween(s, 0.06, { Scale = opts.press or 0.93 }) end)
 	btn.MouseButton1Up:Connect(function() Kit.tween(s, 0.1, { Scale = hovering and (opts.hover or 1.05) or 1 }, Enum.EasingStyle.Back) end)
+	-- a controller's selection (GamepadNavController) grows it like a hover
+	btn.SelectionGained:Connect(function() Kit.tween(s, 0.1, { Scale = opts.hover or 1.05 }) end)
+	btn.SelectionLost:Connect(function() if not hovering then Kit.tween(s, 0.1, { Scale = 1 }) end end)
 	return btn
 end
 
@@ -402,6 +405,7 @@ function Kit.imageTab(size, text, image, glyph)
 		Position = UDim2.new(0.5, 0, 1, 10), Size = UDim2.new(0, 0, 0, 4), ZIndex = 4, Parent = tab })
 	local api = {}
 	function api.setSelected(on)
+		tab:SetAttribute("NavTabOn", on == true) -- [PAD] GamepadNavController: the current tab for LB / RB
 		Kit.tween(tab, 0.12, { BackgroundTransparency = on and 0 or 1 })
 		Kit.tween(bar, 0.15, { Size = UDim2.new(on and 0.7 or 0, 0, 0, 4) })
 	end

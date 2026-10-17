@@ -31,6 +31,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "PlayRow", "ModuleScript", "lobby/PlayRow.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "PromptsController", "ModuleScript", "hud/PromptsController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "GamepadNavController", "ModuleScript", "hud/GamepadNavController.lua"),
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),  # same file in both places; QuickIntro only in the match place
 ]
@@ -83,6 +84,7 @@ MATCH_FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "PromptsController", "ModuleScript", "hud/PromptsController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "GamepadNavController", "ModuleScript", "hud/GamepadNavController.lua"),
     ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),
