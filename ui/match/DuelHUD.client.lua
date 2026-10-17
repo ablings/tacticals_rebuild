@@ -151,8 +151,14 @@ end
 local feed = new("Frame", { Name = "KillFeed", BackgroundTransparency = 1, Position = UDim2.fromOffset(1420, 130), Size = UDim2.fromOffset(480, 300), Parent = root },
 	{ new("UIListLayout", { Padding = UDim.new(0.02, 0), SortOrder = Enum.SortOrder.LayoutOrder, HorizontalAlignment = Enum.HorizontalAlignment.Right }) })
 local feedN = 0
+local function botModel(uid)
+	for _, m in workspace:GetDescendants() do
+		if m:IsA("Model") and m:GetAttribute("SpectateId") == uid then return m end
+	end
+	return nil
+end
 local function nameOf(uid)
-	if (uid or 0) < 0 then return "Test bot" end
+	if (uid or 0) < 0 then local m = botModel(uid); return m and m.Name or "Bot" end
 	local p = Players:GetPlayerByUserId(uid or 0)
 	return p and p.DisplayName or "?"
 end
@@ -214,7 +220,7 @@ label(specStop, "Stop", FX, 30, 0, 0, 150, 52, WHITE)
 specStop.Activated:Connect(function() send("StopSpectate") end)
 
 local target
-local killcamPicked = false -- jumped to the killer once this death (Q / E may move off them after)
+local killcamPicked = nil -- the SpectateTarget we last jumped to (Q / E may move off it)
 local function aliveList()
 	local myTeam = player:GetAttribute("Team")
 	local own, other = {}, {}
@@ -245,9 +251,15 @@ local function setTarget(uid)
 	end
 end
 -- the card's live part: who it is, their health, and "KILLED BY" when it's your killer
+local function targetModel(uid)
+	if not uid then return nil end
+	local p = Players:GetPlayerByUserId(uid)
+	if p then return p.Character end
+	return botModel(uid)
+end
 local function refreshSpecCard()
 	local killer = player:GetAttribute("SpectateTarget")
-	local isKiller = killer ~= nil and target == killer and not spectator()
+	local isKiller = killer ~= nil and target == killer and player:GetAttribute("SpectateReason") == "Killer" and not spectator()
 	specTitle.Text = isKiller and "KILLED BY" or "SPECTATING"
 	specTitle.TextColor3 = isKiller and BAD or Color3.fromRGB(205, 205, 212)
 	local how = ""
@@ -256,8 +268,8 @@ local function refreshSpecCard()
 		how = (lastDeath.weapon and ("with " .. tostring(lastDeath.weapon)) or (kind and ("with " .. kind) or "")) .. (lastDeath.headshot and "  ·  HEADSHOT" or "")
 	end
 	specHow.Text = how
-	local p = target and Players:GetPlayerByUserId(target)
-	local hum = p and p.Character and p.Character:FindFirstChildOfClass("Humanoid")
+	local m = targetModel(target)
+	local hum = m and m:FindFirstChildOfClass("Humanoid")
 	local frac = hum and hum.MaxHealth > 0 and math.clamp(hum.Health / hum.MaxHealth, 0, 1) or 0
 	hpFill.Size = UDim2.fromScale(frac, 1)
 	hpFill.BackgroundColor3 = frac > 0.5 and GOOD or (frac > 0.25 and Color3.fromRGB(235, 190, 60) or BAD)
@@ -415,7 +427,7 @@ task.spawn(hookEvents)
 RunService.RenderStepped:Connect(function()
 	local o = stateObject()
 	local state = o and o:GetAttribute("MatchState")
-	local playing = inMatch() and (state == "Countdown" or state == "Live" or state == "RoundEnd" or state == "MatchEnd")
+	local playing = inMatch() and (state == "RunIn" or state == "Countdown" or state == "Live" or state == "RoundEnd" or state == "Victory" or state == "MatchEnd")
 	-- a new match (or none): the old card / banner never carries over
 	local _, mid = stateObject()
 	if mid ~= lastMatchId then
@@ -468,21 +480,24 @@ RunService.RenderStepped:Connect(function()
 	end
 	if state == "Countdown" and banner.Visible then bannerSub.Text = tostring(math.ceil(left)) end
 	-- spectate: spectators, and duelists while dead
-	local spec = spectator() or (player:GetAttribute("Alive") == false and (state == "Live" or state == "RoundEnd"))
+	local spec = spectator() or (player:GetAttribute("Alive") == false and (state == "Live" or state == "RoundEnd" or state == "Victory"))
 	specBar.Visible = spec
 	specStop.Visible = spectator()
 	if spec then
 		-- your killer first (SpectateTarget), then anyone alive
 		local killer = player:GetAttribute("SpectateTarget")
-		if killer and target ~= killer and not spectator() and not killcamPicked then
-			killcamPicked = true
+		if killer and killer ~= killcamPicked and not spectator() then
+			killcamPicked = killer -- the server moved it (or a new death): follow; Q / E may still move off
 			setTarget(killer)
 		end
+		local m = targetModel(target)
+		local hum = m and m:FindFirstChildOfClass("Humanoid")
 		local p = target and Players:GetPlayerByUserId(target)
-		if not p or p:GetAttribute("Alive") ~= true then cycle(1) end
+		local alive = hum ~= nil and hum.Health > 0 and (not p or p:GetAttribute("Alive") ~= false)
+		if not alive and target ~= killer then cycle(1) end
 		refreshSpecCard()
 	else
-		killcamPicked = false
+		killcamPicked = nil
 	end
 end)
 
@@ -563,7 +578,8 @@ local function showVictory(phase)
 	end
 	TweenService:Create(vFinisher, TweenInfo.new(0.2), { TextTransparency = 1 }):Play()
 	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
-	local winner = st("Winner") or (sa > sb and "A" or (sb > sa and "B" or nil))
+	local winner = st("WinnerTeam") or (sa > sb and "A" or (sb > sa and "B" or nil))
+	local finalKiller = st("Winner") -- UserId: the final kill on the winning team (else its first member)
 	local myTeam = player:GetAttribute("Team")
 	local title, top, bottom
 	if spectator() or not myTeam then
@@ -579,7 +595,9 @@ local function showVictory(phase)
 	vGrad.Color = ColorSequence.new(top, bottom)
 	local mine = (myTeam == "B") and sb or sa
 	local theirs = (myTeam == "B") and sa or sb
-	vScore.Text = (spectator() or not myTeam) and (sa .. " - " .. sb) or (mine .. " - " .. theirs)
+	vScore.Text = ((spectator() or not myTeam) and (sa .. " - " .. sb) or (mine .. " - " .. theirs))
+		.. (finalKiller and ("   ·   final kill: " .. nameOf(finalKiller)) or "")
+	vScore.Size = UDim2.fromScale(finalKiller and 0.6 or 0.3, 0.07)
 	for _, c in vRow:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
 	if winner then for _, uid in teamIds("Team" .. winner) do winnerCard(uid) end end
 	vTitle.Visible, vScore.Visible, vRow.Visible, sweepClip.Visible = true, true, true, true
@@ -606,6 +624,22 @@ RunService.Heartbeat:Connect(function()
 		if phase then showVictory(phase) else hideVictory() end
 	end
 end)
+
+-- RunIn (MatchCore, round 1): the server walks you from the middle back to your spawn; your input would fight it, so
+-- the PlayerModule controls are off until the Countdown
+do
+	local controls
+	local frozen = false
+	RunService.Heartbeat:Connect(function()
+		local want = inMatch() and st("MatchState") == "RunIn"
+		if want == frozen then return end
+		frozen = want
+		if not controls then
+			pcall(function() controls = require(player:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule")):GetControls() end)
+		end
+		if controls then if want then controls:Disable() else controls:Enable() end end
+	end)
+end
 
 -- Studio only: DuelHUDTest:Invoke(state, extra) fakes a match on the current state object
 if RunService:IsStudio() then

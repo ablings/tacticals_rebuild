@@ -225,6 +225,26 @@ end
 -- [TOUCH] camera look from touch drags (InputActions.CameraShouldUse: not the joystick zone, not a non-sinking button)
 local touchDelta = Vector2.zero
 
+-- [SET] kill-cam: the model to watch while dead. DuelHUD's spectate target (Q / E cycle) or MatchCore's SpectateTarget;
+-- a bot (negative id) is the workspace Model whose SpectateId attribute matches.
+local specHook
+local function spectateModel(): Model?
+	local lp = Players.LocalPlayer
+	local uid = lp:GetAttribute("SpectateTarget")
+	if not uid then return nil end
+	specHook = specHook or lp:FindFirstChild("PlayerScripts") and lp.PlayerScripts:FindFirstChild("DuelSpectate")
+	if specHook then
+		local ok, picked = pcall(specHook.Invoke, specHook, "Get")
+		if ok and picked then uid = picked end
+	end
+	local p = Players:GetPlayerByUserId(uid)
+	if p then return p.Character end
+	for _, m in workspace:GetDescendants() do
+		if m:IsA("Model") and m:GetAttribute("SpectateId") == uid then return m end
+	end
+	return nil
+end
+
 -- // Per-frame update
 local function update(dt: number)
 	local camera = workspace.CurrentCamera
@@ -318,6 +338,28 @@ local function update(dt: number)
 		local ty = localPlayer:GetAttribute("TestYaw")
 		if typeof(ty) == "number" then state.yaw = math.rad(ty) end
 	end
+
+	-- [SET] kill-cam (2026-10-17): dead in a duel with a spectate target (MatchCore sets SpectateTarget; DuelHUD's Q / E
+	-- may pick another) -> after a short look at your body, follow them from behind their shoulder
+	if not isAlive() and state.deathStart and os.clock() - state.deathStart > (Config.KillCamDelay or 1.1) then
+		local model = spectateModel()
+		local root = model and model:FindFirstChild("HumanoidRootPart")
+		if root and root:IsA("BasePart") then
+			local focus = root.Position + Vector3.new(0, 2.2, 0)
+			local look = root.CFrame.LookVector * Vector3.new(1, 0, 1)
+			if look.Magnitude < 1e-3 then look = Vector3.new(0, 0, -1) end
+			local wanted = focus - look.Unit * 9 + Vector3.new(0, 2.4, 0) + root.CFrame.RightVector * 2
+			collisionParams.FilterDescendantsInstances = allCharacters()
+			local cameraPosition = castTo(focus, wanted)
+			local cut = state.killCamFor ~= model
+			state.killCamFor = model
+			local goal = CFrame.lookAt(cameraPosition, focus + look.Unit * 6)
+			camera.CFrame = cut and goal or camera.CFrame:Lerp(goal, smoothing(6, dt))
+			camera.FieldOfView = lerp(camera.FieldOfView, Config.Hip.FOV, smoothing(5, dt))
+			return
+		end
+	end
+	state.killCamFor = nil
 
 	-- Death camera: ease back and up over the body, slowly circling it
 	if not isAlive() and character and character.Parent then
