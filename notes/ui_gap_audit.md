@@ -35,3 +35,4 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
   Settings > Touch (drag a button + the joystick, save writes Joystick/Jump to Touch Layout 1 and the stick attributes; Reset clears).
   Fixed: touch buttons stayed over Settings / menus; now hidden while LobbyUI is down or the profile card is up.
   Note for the lead: teleporting the character from the command bar trips the server speed audit ("studs/s over 2 s").
+- 2026-10-17 04:48: all of the above live in port 11 (lobby v281, Tutorial/Matchmaking/Ranked v6).
