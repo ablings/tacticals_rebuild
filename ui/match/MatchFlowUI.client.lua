@@ -266,10 +266,8 @@ end
 local lo = new("Frame", { Name = "Loadout", BackgroundTransparency = 1, Size = UDim2.fromOffset(W, H), Visible = false, Parent = canvas })
 local loBoxes = { teamBox(lo, 588, TEAM_A, false), teamBox(lo, 1042, TEAM_B, true) }
 local loTimer = timerBox(lo)
-label(lo, "CHOOSE YOUR LOADOUT", STENCIL, 40, 560, 136, 800, 50, WHITE)
+local titleL = label(lo, "CHOOSE YOUR GUN", STENCIL, 44, 560, 136, 800, 54, WHITE)
 local mapChip = label(lo, "", FB, 24, 560, 184, 800, 30, Color3.fromRGB(205, 205, 212))
-local slotCards, picker = {}, nil
-local openSlot
 
 -- drawn stand-ins for items with no model in the Repository (same as the in-match hotbar)
 local function p(model, size, cf, color, shape, material)
@@ -378,22 +376,65 @@ local function viewport(holder, id)
 end
 local function itemName(id) return (id or "?"):gsub("(%l)(%u)", "%1 %2") end
 
-for i, s in SLOTS do
-	local x = 300 + (i - 1) * 450
-	local card = new("TextButton", { Name = s.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, 250), Size = UDim2.fromOffset(420, 340),
-		BackgroundColor3 = Color3.fromRGB(0, 0, 0), BackgroundTransparency = 0.45, Parent = lo }, { corner(12) })
-	local edge = new("UIStroke", { Color = WHITE, Transparency = 1, Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = card })
-	label(card, s.label, STENCIL, 30, 20, 12, 380, 40, Color3.fromRGB(205, 205, 212), Enum.TextXAlignment.Left)
-	local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 50), Size = UDim2.fromOffset(380, 210), ZIndex = 3, Parent = card })
-	local name = label(card, "", FX, 40, 0, 270, 420, 50, WHITE)
-	local sc = new("UIScale", { Parent = card })
-	card.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1.03 }):Play(); edge.Transparency = 0.5 end)
-	card.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1 }):Play(); edge.Transparency = openSlot == s.id and 0.1 or 1 end)
-	slotCards[s.id] = { card = card, art = art, name = name, edge = edge, shown = nil }
+-- (2026-10-16, Edward: "it should tell you which one to pick in order, not preselect them", RIVALS) a guided pick:
+-- GUN -> MELEE -> GADGET. Each step lists that slot like RIVALS' weapon list (owned bright with its render, the rest dim
+-- between padlocks); a click locks the slot and moves on. Picks collect in the chips at the bottom (click one to re-pick);
+-- READY shows once all three are chosen. Nothing is preselected (if time runs out the server keeps your current kit).
+local GREY = Color3.fromRGB(205, 205, 212)
+local convertLater -- defined with the phases below
+local function owned()
+	local ok, list = pcall(function() return HttpService:JSONDecode(player:GetAttribute(STATE.Owned) or "[]") end)
+	return ok and list or {}
 end
-picker = new("Frame", { Name = "Picker", BackgroundTransparency = 1, Position = UDim2.fromOffset(300, 620), Size = UDim2.fromOffset(1320, 160), Visible = false, Parent = lo })
-local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(810, 900), Size = UDim2.fromOffset(300, 80),
-	BackgroundColor3 = WHITE, Parent = lo }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
+local ITEMS -- LobbyConfig.Items (id -> { Name, Slot, Default, Price, Rarity }) when the place has it
+pcall(function() ITEMS = require(ReplicatedStorage.Modules.Shared.Config.LobbyConfig).Items end)
+local function nameOf(id) return (ITEMS and ITEMS[id] and ITEMS[id].Name) or itemName(id) end
+local function slotItems(slot)
+	-- every item of this slot: owned first (cheapest first), then the locked ones
+	local mine, out = {}, {}
+	for _, id in owned() do mine[id] = true end
+	local kit = player:GetAttribute(STATE.Kit[slot])
+	if kit then mine[kit] = true end
+	if ITEMS then
+		for id, it in ITEMS do
+			if it.Slot == slot then table.insert(out, { id = id, owned = mine[id] == true or it.Default == true, price = it.Price or 0 }) end
+		end
+	else
+		for id in mine do table.insert(out, { id = id, owned = true, price = 0 }) end
+	end
+	table.sort(out, function(a, b)
+		if a.owned ~= b.owned then return a.owned end
+		if a.price ~= b.price then return a.price < b.price end
+		return a.id < b.id
+	end)
+	return out
+end
+
+-- step pills under the title: 1 GUN · 2 MELEE · 3 GADGET
+local pills = {}
+for i, s in SLOTS do
+	local pill = new("Frame", { Name = "Step" .. i, Position = UDim2.fromOffset(620 + (i - 1) * 230, 232), Size = UDim2.fromOffset(220, 44),
+		BackgroundColor3 = BLACK, BackgroundTransparency = 0.5, Parent = lo }, { corner(22) })
+	local t = label(pill, i .. "  " .. string.upper(s.label), FB, 24, 0, 0, 220, 44, GREY)
+	pills[i] = { frame = pill, text = t }
+end
+-- the list for the current step
+local list = new("Frame", { Name = "List", Position = UDim2.fromOffset(700, 300), Size = UDim2.fromOffset(520, 520), BackgroundColor3 = BLACK,
+	BackgroundTransparency = 0.45, Parent = lo }, { corner(12) })
+-- picked chips along the bottom
+local chips = {}
+for i, s in SLOTS do
+	local chip = new("TextButton", { Name = "Chip" .. s.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(600 + (i - 1) * 250, 846),
+		Size = UDim2.fromOffset(230, 150), BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Parent = lo }, { corner(12) })
+	local edge = new("UIStroke", { Color = WHITE, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
+	label(chip, string.upper(s.label), STENCIL, 22, 14, 8, 200, 28, GREY, Enum.TextXAlignment.Left)
+	local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(40, 34), Size = UDim2.fromOffset(150, 78), ZIndex = 3, Parent = chip })
+	local q = label(chip, "?", FX, 56, 0, 34, 230, 78, Color3.fromRGB(90, 90, 96))
+	local name = label(chip, "", FB, 22, 0, 112, 230, 30, WHITE)
+	chips[s.id] = { chip = chip, edge = edge, art = art, q = q, name = name, index = i }
+end
+local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1400, 880), Size = UDim2.fromOffset(300, 80),
+	BackgroundColor3 = WHITE, Visible = false, Parent = lo }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
 local readyL = label(ready, "READY", FX, 44, 0, 0, 300, 80, WHITE)
 ready.Activated:Connect(function()
 	send("Ready")
@@ -401,59 +442,81 @@ ready.Activated:Connect(function()
 	readyL.Text = "READY ✓"
 end)
 
-local function owned()
-	local ok, list = pcall(function() return HttpService:JSONDecode(player:GetAttribute(STATE.Owned) or "[]") end)
-	return ok and list or {}
-end
-local ITEM_SLOT -- id -> slot, from the shared config if the match place has it
-pcall(function()
-	local cfg = require(ReplicatedStorage.Modules.Shared.Config.LobbyConfig)
-	ITEM_SLOT = {}
-	for id, it in cfg.Items do ITEM_SLOT[id] = it.Slot end
-end)
-local function openPicker(slot)
-	for _, c in picker:GetChildren() do c:Destroy() end
-	openSlot = slot
-	for id, sc in slotCards do sc.edge.Transparency = id == slot and 0.1 or 1 end
-	local list = {}
-	for _, id in owned() do
-		if not ITEM_SLOT or ITEM_SLOT[id] == slot then table.insert(list, id) end
-	end
-	local cur = player:GetAttribute(STATE.Kit[slot])
-	if cur and not table.find(list, cur) then table.insert(list, 1, cur) end
-	for i, id in list do
-		local b = new("TextButton", { Name = id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset((i - 1) * 176, 0), Size = UDim2.fromOffset(164, 150),
-			BackgroundColor3 = id == cur and Color3.fromRGB(120, 120, 126) or BLACK, BackgroundTransparency = 0.45, Parent = picker }, { corner(10) })
-		if id == cur then new("UIStroke", { Color = WHITE, Thickness = 2, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = b }) end
-		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(6, 4), Size = UDim2.fromOffset(152, 100), ZIndex = 3, Parent = b })
-		label(b, itemName(id), FB, 20, 0, 108, 164, 34, WHITE)
-		b.Activated:Connect(function()
-			send("Pick", slot, id)
-			player:SetAttribute(STATE.Kit[slot] .. "_Pending", id)
-		end)
-		task.defer(viewport, art, id)
-	end
-	picker.Visible = #list > 0
-end
-for id, sc in slotCards do sc.card.Activated:Connect(function() if openSlot == id then picker.Visible = false; openSlot = nil else openPicker(id) end end) end
-
-local function refreshLoadout()
+local picks, step = {}, 1
+local showStep
+local function refreshChips()
 	for _, s in SLOTS do
-		local sc = slotCards[s.id]
-		local cur = player:GetAttribute(STATE.Kit[s.id] .. "_Pending") or player:GetAttribute(STATE.Kit[s.id])
-		if cur ~= sc.shown then
-			sc.shown = cur
-			sc.name.Text = cur and itemName(cur) or "—"
-			viewport(sc.art, cur)
-			if openSlot == s.id then openPicker(s.id) end
+		local c = chips[s.id]
+		local id = picks[s.id]
+		c.q.Visible = id == nil
+		c.name.Text = id and nameOf(id) or ""
+		if c.shown ~= id then c.shown = id; viewport(c.art, id) end
+		c.edge.Transparency = (step == c.index and list.Visible) and 0.1 or 1
+	end
+	for i, s in SLOTS do
+		local done, cur = picks[s.id] ~= nil, i == step and list.Visible
+		pills[i].frame.BackgroundColor3 = cur and WHITE or (done and OLIVE or BLACK)
+		pills[i].frame.BackgroundTransparency = cur and 0 or (done and 0.1 or 0.5)
+		pills[i].text.TextColor3 = cur and BLACK or (done and WHITE or GREY)
+		pills[i].text.Text = i .. "  " .. string.upper(s.label) .. ((done and not cur) and "  ✓" or "")
+	end
+	ready.Visible = picks.Weapon ~= nil and picks.Melee ~= nil and picks.Gadget ~= nil
+end
+local function allPicked()
+	list.Visible = false
+	titleL.Text = "READY UP"
+	refreshChips()
+end
+function showStep(i)
+	step = i
+	local slot = SLOTS[i].id
+	titleL.Text = "CHOOSE YOUR " .. string.upper(SLOTS[i].label)
+	for _, c in list:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
+	-- header: the slot name with a dotted rule (RIVALS weapon list)
+	label(list, string.upper(SLOTS[i].label), STENCIL, 30, 0, 10, 520, 40, GREY)
+	for d = 0, 24 do
+		new("Frame", { Position = UDim2.fromOffset(40 + d * 18, 56), Size = UDim2.fromOffset(6, 3), BackgroundColor3 = GREY, BackgroundTransparency = 0.4,
+			BorderSizePixel = 0, Parent = list })
+	end
+	for n, it in slotItems(slot) do
+		local y = 66 + (n - 1) * 74
+		if y > 520 - 70 then break end
+		local row = new("TextButton", { Name = it.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(10, y), Size = UDim2.fromOffset(500, 68),
+			BackgroundColor3 = BLACK, BackgroundTransparency = picks[slot] == it.id and 0.2 or 1, Parent = list }, { corner(8) })
+		if it.owned then
+			local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-6, -10), Size = UDim2.fromOffset(150, 88), ZIndex = 3, Parent = row })
+			task.defer(viewport, art, it.id)
+			label(row, nameOf(it.id), FX, 32, 120, 0, 380, 68, picks[slot] == it.id and WHITE or GREY)
+			row.MouseEnter:Connect(function() row.BackgroundTransparency = 0.35 end)
+			row.MouseLeave:Connect(function() row.BackgroundTransparency = picks[slot] == it.id and 0.2 or 1 end)
+			row.Activated:Connect(function()
+				picks[slot] = it.id
+				send("Pick", slot, it.id)
+				local nextStep
+				for k, s2 in SLOTS do if not picks[s2.id] then nextStep = k break end end
+				if nextStep then showStep(nextStep) else allPicked() end
+			end)
+		else
+			label(row, "🔒  " .. nameOf(it.id) .. "  🔒", FB, 28, 0, 0, 500, 68, Color3.fromRGB(70, 70, 76))
 		end
 	end
+	list.Visible = true
+	convertLater(list, Vector2.new(520, 520))
+	refreshChips()
 end
+for _, s in SLOTS do chips[s.id].chip.Activated:Connect(function() showStep(chips[s.id].index) end) end
+local function startLoadout()
+	picks, step = {}, 1
+	for _, c in chips do c.shown = false end
+	player:SetAttribute("_Ready", nil); readyL.Text = "READY"
+	showStep(1)
+end
+local function refreshLoadout() refreshChips() end
 
 ---------------------------------------------------------------------------------------------------- convert + phases
 toScale(canvas, Vector2.new(W, H))
 -- children of converted frames keep Scale; holders built later are converted against their own design size
-local function convertLater(holder, size) toScale(holder, size); rescale() end
+function convertLater(holder, size) toScale(holder, size); rescale() end
 rescale()
 
 local phase
@@ -474,13 +537,10 @@ local function setPhase(p)
 		fillTeams(voteBoxes); refreshVotes()
 	end
 	if p == "Loadout" then
-		player:SetAttribute("_Ready", nil); readyL.Text = "READY"
 		local chosen = st(STATE.Chosen)
 		mapChip.Text = chosen and ("Map: " .. chosen) or ""
 		fillTeams(loBoxes)
-		for _, s in SLOTS do slotCards[s.id].shown = false; player:SetAttribute(STATE.Kit[s.id] .. "_Pending", nil) end
-		picker.Visible = false; openSlot = nil
-		refreshLoadout()
+		startLoadout()
 	end
 end
 -- map vote ends: the winner flashes (RIVALS) before the next phase shows
@@ -496,7 +556,6 @@ local function onChosen()
 end
 for _, s in SLOTS do
 	player:GetAttributeChangedSignal(STATE.Kit[s.id]):Connect(function()
-		player:SetAttribute(STATE.Kit[s.id] .. "_Pending", nil)
 		if phase == "Loadout" then refreshLoadout() end
 	end)
 end
