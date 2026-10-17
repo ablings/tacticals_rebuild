@@ -3,7 +3,22 @@
 Edward: "work on stuff until i tell you im awake ... glitches ranked loopholes check for loopholes". The UI session took UI
 polish, the missing RIVALS elements (profile card etc.) and the touch tests. Full details: `notes/loophole_audit.md`.
 
-## Fixed tonight (in both working copies; NOT live until the next publish)
+## PUBLISHED 04:10-04:18 (port 10, notes/port_manifest.md)
+lobby **v279**, Tutorial / Matchmaking / Ranked **v4**, old combined place **v115** (now the secured casual build). Everything in the
+table below went live with it, plus the touch controls (the UI session tested them in Studio's Device Simulator; real multi-touch
+still needs a phone).
+
+## After the publish (in the working copies, goes live with the next publish)
+- **Kill-cam**: when you die you watch your killer (then a living teammate / anyone alive if they die). UI shows "KILLED BY".
+- **Opening run**: round 1 of every match starts with both sides near the middle, a standoff beat, then everyone runs round
+  their pillar to their spawn (the tutorial's opening, now default for every match until you make per-map ones).
+- **Victory beat**: after the deciding kill, 4 s "Victory" phase (default VICTORY / DEFEAT screen by the UI session) before results.
+- **Critical hit marker** (UI session): crits are a big red X with their own sound; body hits stay white.
+- **Challenge a player** from the player menu / profile card (server done, UI wired): a 1v1 lobby duel. Needs a 2-player test.
+- Tutorial lines say the touch button names on phones ("Tap Take Cover" instead of "Press [Q]").
+All tested in Studio against a test bot except Challenge (needs two real players).
+
+## Fixed tonight (published in port 10)
 | # | What | Severity | Where |
 |---|---|---|---|
 | 1 | Fake ranked matches: anyone could teleport into a public Ranked server with made-up teams (themselves + an alt) and farm Elo | critical | MatchSpec: the lobby writes each match server-side; match servers only play reserved servers + that spec |
