@@ -341,7 +341,9 @@ local function update(dt: number)
 
 	-- [SET] kill-cam (2026-10-17): dead in a duel with a spectate target (MatchCore sets SpectateTarget; DuelHUD's Q / E
 	-- may pick another) -> after a short look at your body, follow them from behind their shoulder
-	if not isAlive() and state.deathStart and os.clock() - state.deathStart > (Config.KillCamDelay or 1.1) then
+	-- (lobby duels bench a dead duelist into the Hold with a fresh body: Alive = false while alive, so watch the target then too)
+	local benched = isAlive() and localPlayer:GetAttribute("Alive") == false and localPlayer:GetAttribute("SpectateTarget") ~= nil
+	if benched or (not isAlive() and state.deathStart and os.clock() - state.deathStart > (Config.KillCamDelay or 1.1)) then
 		local model = spectateModel()
 		local root = model and model:FindFirstChild("HumanoidRootPart")
 		if root and root:IsA("BasePart") then

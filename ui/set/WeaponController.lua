@@ -267,7 +267,7 @@ local function fire()
 
 	-- No shooting mid-hop (and the hop itself waits for the shot to finish, see CoverController)
 	-- [TX] Training jump pads (notes/training_extras_done.md): airborne from a pad you may shoot; normal rule again on landing
-	local TXpads = Get("TrainingPadsController")
+	local TXpads = script.Parent:FindFirstChild("TrainingPadsController") and Get("TrainingPadsController") -- lobby only (no warning in matches)
 	if CoverController and CoverController.IsHopping() and not (TXpads and TXpads.IsPadFlight and TXpads.IsPadFlight()) then return end
 
 	-- Mid vault: fire straight away, but very inaccurately. Mid cover dash: as inaccurate as blind fire.
