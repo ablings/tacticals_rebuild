@@ -89,7 +89,7 @@ end
 function SettingsConfig.Defaults()
 	local profiles = {}
 	for i = 1, SettingsConfig.Profiles do profiles[i] = defaultProfile() end
-	return { Active = 1, Profiles = profiles }
+	return { Active = 1, Profiles = profiles, Version = 2 } -- Version 2: Tacticals hotkey layout (see Sanitize)
 end
 
 -- Whatever came in (a client save, or old/partial profile data) -> a complete, valid settings table.
@@ -111,6 +111,15 @@ function SettingsConfig.Sanitize(raw)
 						if v ~= nil then out.Profiles[i][tabName][key] = v end
 					end
 				end
+			end
+			-- (v2, 2026-10-16) saves from before the Tacticals hotkeys still hold RIVALS' slot defaults (Melee = 3,
+			-- Utility = 4), so key 2 did nothing and 3 drew the melee. Those exact old defaults move to Tacticals' layout
+			-- (1 gun / 2 melee / 3 gadget); a key the player picked themselves is left alone.
+			if (tonumber(raw.Version) or 1) < 2 then
+				local hk = out.Profiles[i].Hotkeys
+				local function first(k) local v = hk and hk[k] return type(v) == "table" and v[1] or nil end
+				if hk and first("Equip Melee") == "Three" then hk["Equip Melee"] = SettingsConfig.DefaultOf(rows.Hotkeys["Equip Melee"]) end
+				if hk and first("Equip Utility") == "Four" then hk["Equip Utility"] = SettingsConfig.DefaultOf(rows.Hotkeys["Equip Utility"]) end
 			end
 		end
 	end

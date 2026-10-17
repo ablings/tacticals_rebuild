@@ -805,7 +805,10 @@ local function openSettings(initOnly)
 		settingsReady = true
 		SettingsScreen.Init({
 			getSettings = function() return data and data.Settings end,
-			save = function(s) pcall(Request.InvokeServer, Request, "SaveSettings", s) end,
+			save = function(s)
+				if type(s) == "table" then s.Version = 2 end -- already in Tacticals' hotkey layout (SettingsConfig.Sanitize)
+				pcall(Request.InvokeServer, Request, "SaveSettings", s)
+			end,
 			onOpen = function() if gui then gui.Enabled = false end end,
 			onClose = function() if gui then gui.Enabled = true end end,
 		})

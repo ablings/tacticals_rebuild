@@ -46,6 +46,7 @@ SET_FILES = [
     (C, "TrainingBinsController", "set/TrainingBinsController.lua"),
     (C, "PropController", "set/PropController.lua"),
     (C, "AimPoseController", "set/AimPoseController.lua"),
+    (C, "CinematicCamera", "set/CinematicCamera.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.GUIs", "HUD", "set/HUD.lua"),
     (C + ".LobbyUIController", "Armory", "lobby/Armory.lua"),
 ]
