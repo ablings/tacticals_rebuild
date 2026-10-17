@@ -125,3 +125,10 @@ himself; we never publish.
 - Match place: Save to Roblox As → tutorial spot / matchmaking test → Publish → Activity History "published to version **108**" 8:02 PM.
 - **Lesson:** "Save to Roblox As" only SAVES (the versions are stored, but servers keep running the last published one). Always follow it
   with File → Publish in the opened place, and confirm in Activity History ("published to version N").
+
+## Live port 6: published (2026-10-16 20:15-20:18, lead)
+- Saved both working copies at 20:15: headshot crosshair (UI), DataManager.ReleaseForTeleport plus the reload-on-failure (`[DATA]`),
+  and the HitConfirm headshot 4th argument.
+- Used File → **Publish As** (not Save As), which publishes directly. The local-file "Publish" opens a new-experience form; use
+  "Update existing experience..." there.
+- Activity History: tacticals **published to version 271** (8:16 PM); tutorial spot / matchmaking test **published to version 109** (8:18 PM).
