@@ -244,7 +244,10 @@ local function update(dt: number)
 		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
 		UserInputService.MouseIconEnabled = false
 
-		local delta = UserInputService:GetMouseDelta() + touchDelta -- [TOUCH] drags on free screen / sinking buttons
+		-- [TOUCH] drags on free screen / sinking buttons; a touch-only device takes no mouse delta (Studio's device
+		-- simulator still reports the locked desktop mouse moving, which turned the camera on every stick drag)
+		local mouseDelta = (UserInputService.TouchEnabled and not UserInputService.MouseEnabled) and Vector2.zero or UserInputService:GetMouseDelta()
+		local delta = mouseDelta + touchDelta
 		touchDelta = Vector2.zero
 		-- [SET] Video > Camera: Sensitivity, While Aiming, While Scoped (50% = the tuned default)
 		local sensitivity = math.rad(Config.Sensitivity) * setting("Sensitivity", 100) / 100
