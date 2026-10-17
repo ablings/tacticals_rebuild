@@ -34,7 +34,7 @@ if __name__ == "__main__":
               ("Commander loses to Diamond (max 60)", loss(T(6), T(4)), 60)]
     for n, g, w in checks:
         print(f"{n:38s} {g:4d}  (Edward: {w})  {'OK' if g == w else 'DIFF'}")
-    hdr = "| You \ vs | " + " | ".join(r[:4] for r in R) + " |"
+    hdr = r"| You \ vs | " +" | ".join(r[:4] for r in R) + " |"
     sep = "|---|" + "---|" * len(R)
     out = ["## Win: ELO you GAIN for beating each rank (tier 1 vs tier 1)", hdr, sep]
     out += [f"| **{R[m]}** | " + " | ".join(f"+{gain(T(m), T(o))}" for o in range(7)) + " |" for m in range(7)]
