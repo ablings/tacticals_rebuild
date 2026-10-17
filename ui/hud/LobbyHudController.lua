@@ -639,6 +639,12 @@ function LobbyHud.Start()
 	end)
 	player:GetAttributeChangedSignal("Setting_HideHUD"):Connect(function() hudFlip = false; corner.layout() end)
 
+	-- [TOUCH] mobile: the Scoreboard button toggles the player list like Tab
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if ok and IA then IA.Bind("Scoreboard", function(state) if state == Enum.UserInputState.Begin then setList(not lbOn) end end) end
+	end)
+
 	---------------------------------------------------------------------------------------------- follow the lobby
 	local function lobbyShown()
 		local pg = player.PlayerGui

@@ -452,6 +452,26 @@ function controller.Start()
 	if localPlayer.Character and __TG.On() then task.spawn(bindCharacter, localPlayer.Character) end
 	__TG.CharacterAdded:Connect(bindCharacter)
 	UserInputService.InputBegan:Connect(onInputBegan)
+	-- [TOUCH] mobile: the Crouch button = your crouch key (same rules: slide when sprinting, toggle / hold);
+	-- the Slide button slides while you're running
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if not ok or not IA then return end
+		local function crouchInput(state)
+			local k = Binds.Key(localPlayer, "Crouch", Config.Keybinds.Crouch)
+			return { KeyCode = (typeof(k) == "EnumItem" and k.EnumType == Enum.KeyCode) and k or Enum.KeyCode.C, UserInputType = Enum.UserInputType.Keyboard, UserInputState = state }
+		end
+		IA.Bind("Crouch", function(state)
+			if state == Enum.UserInputState.Begin then onInputBegan(crouchInput(state), false) else onInputEnded(crouchInput(state)) end
+		end)
+		IA.Bind("Slide", function(state)
+			if state ~= Enum.UserInputState.Begin or not isAlive() or crouched or sliding or os.clock() - lastSlide <= Config.Slide.Cooldown then return end
+			if CoverController and (CoverController.IsInCover() or CoverController.IsMoving()) then return end
+			local root = humanoid and humanoid.RootPart
+			local speed = root and (root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)).Magnitude or 0
+			if sprinting or speed > 12 then startSlide() end
+		end)
+	end)
 	UserInputService.InputEnded:Connect(onInputEnded) -- [SET] hold-to-crouch
 	RunService.Heartbeat:Connect(update)
 end

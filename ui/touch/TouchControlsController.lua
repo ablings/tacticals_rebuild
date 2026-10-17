@@ -149,7 +149,11 @@ local function build()
 			if editing then return end
 			if input.UserInputType ~= Enum.UserInputType.Touch and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 			local ia = actions()
-			if ia then ia.Press(b.action) end
+			if ia then
+				-- this touch belongs to the button; with camera sinking a drag from it may still turn the camera
+				if ia.Consume then ia.Consume(input, btn:GetAttribute("SinkCamera") == true) end
+				ia.Press(b.action)
+			end
 			btn.BackgroundColor3 = Color3.fromRGB(70, 74, 60)
 		end)
 		btn.InputEnded:Connect(function(input)
@@ -169,10 +173,22 @@ local function hideRobloxJump()
 	if jb and jb.Visible then jb.Visible = false end
 end
 
+local wasShown = false
 local function refresh()
 	if not gui then return end
 	local on = touchOn() and player:GetAttribute("Setting_HideHUD") ~= true and player:GetAttribute("InCutscene") ~= true
 	gui.Enabled = on or editing
+	local ia = actions()
+	if ia and ia.Config then
+		-- the input layer's touch rules follow Settings > Touch
+		ia.Config.LeftHanded = setting("Left Handed Mode", false)
+		ia.Config.DoubleTapAttack = setting("Double Tap To Attack", true) and setting("Fire Enabled", true)
+		ia.Config.DoubleTapWindow = setting("Double Tap Window", 0.25)
+	end
+	-- hidden (HUD off, cutscene, editor): nothing may stay held
+	local shown = gui.Enabled and not editing
+	if wasShown and not shown and ia and ia.ReleaseAll then ia.ReleaseAll() end
+	wasShown = shown
 	if not gui.Enabled then return end
 	local l = layout()
 	local inCombat = combat()
@@ -218,6 +234,8 @@ end
 
 function controller.OpenEditor()
 	if not gui then build() end
+	local ia = actions()
+	if ia and ia.ReleaseAll then ia.ReleaseAll() end
 	if overlay then overlay:Destroy() end
 	editing = true
 	local work, slot = layout()
@@ -360,6 +378,9 @@ function controller.IsEditing() return editing end
 
 function controller.Start()
 	build()
+	-- respawn / focus lost: let go of everything
+	player.CharacterAdded:Connect(function() local ia = actions() if ia and ia.ReleaseAll then ia.ReleaseAll() end end)
+	UserInputService.WindowFocusReleased:Connect(function() local ia = actions() if ia and ia.ReleaseAll then ia.ReleaseAll() end end)
 	-- refresh a few times a second (settings, combat state, ammo, Roblox's touch gui appearing late)
 	local t = 0
 	RunService.Heartbeat:Connect(function(dt)
@@ -369,6 +390,20 @@ function controller.Start()
 		if not editing then refresh() end
 	end)
 	refresh()
+	-- Studio only: PlayerScripts.TouchTest:Invoke(action, seconds) presses an action through the real input layer
+	if RunService:IsStudio() then
+		local hook = Instance.new("BindableFunction")
+		hook.Name = "TouchTest"
+		hook.OnInvoke = function(action, seconds)
+			local ia = actions()
+			if not ia then return "no InputActions" end
+			ia.Press(action)
+			task.wait(seconds or 0.1)
+			ia.Release(action)
+			return "pressed " .. tostring(action)
+		end
+		hook.Parent = player:WaitForChild("PlayerScripts")
+	end
 end
 
 return controller

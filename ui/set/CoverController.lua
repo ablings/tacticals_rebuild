@@ -2352,6 +2352,22 @@ function controller.Start()
 	end
 	bindCover()
 	for _, a in { "TakeCover", "Crouch", "Dash", "Jump" } do Binds.Changed(localPlayer, a, bindCover) end
+	-- [TOUCH] mobile: Take Cover / Dash / Crouch / Jump buttons. Jump: a vault / cover hop when there is one, else a jump
+	-- (Roblox's own touch jump button is hidden by the touch HUD)
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if not ok or not IA then return end
+		IA.BindCAS("Cover", onCoverKey, "Cover")
+		IA.BindCAS("Dash", onDashKey, "CoverDash")
+		IA.BindCAS("Crouch", onCrouchKey, "CoverCrouch")
+		IA.Bind("Jump", function(state)
+			local fake = { UserInputType = Enum.UserInputType.Touch, KeyCode = Enum.KeyCode.Unknown, UserInputState = state, Position = Vector3.zero, Delta = Vector3.zero }
+			local r = onJumpKey("CoverVault", state, fake)
+			if state == Enum.UserInputState.Begin and r ~= Enum.ContextActionResult.Sink and humanoid and humanoid.Health > 0 then
+				humanoid.Jump = true
+			end
+		end)
+	end)
 	RunService:BindToRenderStep(RENDER_NAME, RENDER_PRIORITY, update)
 
 	-- Studio-only test hook: lets automated playtests press Q/E with a chosen crosshair ray.

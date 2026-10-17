@@ -827,6 +827,20 @@ function controller.Start()
 	end
 	bindQuickMelee()
 	Binds.Changed(localPlayer, "GunBash", bindQuickMelee)
+	-- [TOUCH] mobile: Gun Bash + the three equip circles (gun / melee / gadget)
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if not ok or not IA then return end
+		IA.Bind("QuickMelee", function(state) if state == Enum.UserInputState.Begin then quickMelee() end end)
+		for slot, action in { [GUN] = "Equip1", [MELEE] = "Equip2", [GADGET] = "Equip3" } do
+			IA.Bind(action, function(state)
+				if state ~= Enum.UserInputState.Begin then return end
+				-- the gun itself is drawn by WeaponController's Equip1 hook (its holster toggle); here only leave gadget mode
+				if slot == GUN then smokeMode = false return end
+				select(slot)
+			end)
+		end
+	end)
 	-- the kit can change mid-session (tutorial 2 swaps smoke for flash): keep the gadget slot current
 	for _, attribute in { "KitGadget", "SmokeCharges", "FlashCharges", "Loadout", "KitMelee" } do
 		localPlayer:GetAttributeChangedSignal(attribute):Connect(function() task.defer(refreshUI) end)

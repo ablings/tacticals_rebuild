@@ -641,7 +641,7 @@ function controller.GetGadgetName(): string
 end
 
 function controller.Start()
-	ContextActionService:BindAction("ThrowSmoke", function(_, inputState)
+	local function throwHandler(_, inputState)
 		if inputState == Enum.UserInputState.Begin then
 			return controller.Press() and Enum.ContextActionResult.Sink or Enum.ContextActionResult.Pass
 		elseif inputState == Enum.UserInputState.End then
@@ -649,7 +649,15 @@ function controller.Start()
 			return Enum.ContextActionResult.Sink
 		end
 		return Enum.ContextActionResult.Pass
-	end, false, Binds.Key(localPlayer, "ThrowGadget", GadgetConfig.Keybinds.Smoke), Enum.KeyCode.ButtonL1) -- [SET] Throw Gadget bind
+	end
+	ContextActionService:BindAction("ThrowSmoke", throwHandler, false, Binds.Key(localPlayer, "ThrowGadget", GadgetConfig.Keybinds.Smoke), Enum.KeyCode.ButtonL1) -- [SET] Throw Gadget bind
+	-- [TOUCH] mobile: the Throw Gadget button (Quick Utility) holds to aim and throws on release, like the key
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if not ok or not IA then return end
+		IA.BindCAS("QuickUtility", throwHandler, "ThrowSmoke")
+		IA.BindCAS("ThrowGadget", throwHandler, "ThrowSmoke")
+	end)
 
 	RunService.RenderStepped:Connect(updateArc)
 	RunService.Heartbeat:Connect(function()

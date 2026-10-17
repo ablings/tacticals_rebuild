@@ -222,6 +222,9 @@ local function matchMenuUp(): boolean
 	return pg:FindFirstChild("LoadingScreen") ~= nil
 end
 
+-- [TOUCH] camera look from touch drags (InputActions.CameraShouldUse: not the joystick zone, not a non-sinking button)
+local touchDelta = Vector2.zero
+
 -- // Per-frame update
 local function update(dt: number)
 	local camera = workspace.CurrentCamera
@@ -241,7 +244,8 @@ local function update(dt: number)
 		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCenter
 		UserInputService.MouseIconEnabled = false
 
-		local delta = UserInputService:GetMouseDelta()
+		local delta = UserInputService:GetMouseDelta() + touchDelta -- [TOUCH] drags on free screen / sinking buttons
+		touchDelta = Vector2.zero
 		-- [SET] Video > Camera: Sensitivity, While Aiming, While Scoped (50% = the tuned default)
 		local sensitivity = math.rad(Config.Sensitivity) * setting("Sensitivity", 100) / 100
 			* (state.aimHeld and Config.AimSensitivityMultiplier * setting("WhileAiming", 50) / 50 or 1)
@@ -727,6 +731,19 @@ function controller.Start()
 	end)
 
 	RunService:BindToRenderStep(RENDER_NAME, RENDER_PRIORITY, update)
+
+	-- [TOUCH] mobile: Aim / Shoulder Swap buttons, and drag-to-look
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if not ok or not IA then return end
+		IA.BindCAS("Aim", onAim, "CameraAim")
+		IA.BindCAS("CameraSwap", onShoulderSwap, "CameraShoulderSwap")
+		UserInputService.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.Touch and IA.CameraShouldUse(input) then
+				touchDelta += Vector2.new(input.Delta.X, input.Delta.Y)
+			end
+		end)
+	end)
 
 	-- [SET] (live bug) the update only runs while Training / a duel is on. When that ends (a win by forfeit, the opponent
 	-- leaving, any return path) hand the camera straight back to Roblox's lobby camera; it used to stay Scriptable

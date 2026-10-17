@@ -529,6 +529,14 @@ end
 -- // Start
 function controller.Start()
 	CameraController = Get("CameraController")
+
+	-- [TOUCH] mobile: the Fire / Reload buttons (and the double-tap fire) run the key handler
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if not ok or not IA then return end
+		IA.BindCAS("Fire", function(_, state, input) if equipped then return onInput("WeaponFire", state, input) end end, "WeaponFire")
+		IA.BindCAS("Reload", function(_, state, input) if equipped then return onInput("WeaponReload", state, input) end end, "WeaponReload")
+	end)
 	HUD = Get("HUD")
 
 	pcall(function()
@@ -547,6 +555,12 @@ function controller.Start()
 	end
 	bindHolster()
 	Binds.Changed(localPlayer, "EquipGun", bindHolster)
+	-- [TOUCH] mobile: the gun circle draws the gun (the key toggles; a tap only ever draws)
+	task.spawn(function()
+		local ok, IA = pcall(function() return require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+		if not ok or not IA then return end
+		IA.Bind("Equip1", function(state) if state == Enum.UserInputState.Begin and not equipped then toggleHolster() end end)
+	end)
 
 	HitConfirm.OnClientEvent:Connect(function(zone: string, _damage: number, killed: boolean, headshot: boolean?)
 		-- [SET] 4th arg: true only for gun hits on the head (backstabs report zone "Head" but send no flag)
