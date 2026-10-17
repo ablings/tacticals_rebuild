@@ -209,3 +209,12 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   started by onJumpKey within `Config.DiveDoubleTap`, no vault in progress and `IsHopping()` (new local `lastHopAt`). Before, any two
   Space taps dived: out of a vault (JumpDive even cut the vault short), from cover, or after a refused hop. Backup
   `ServerStorage._RebuildRemoved.MECH_CoverController_Orig`. UNDO via `fix/mech_dive_install.lua UNDO` (tested hash-exact, both places).
+- 2026-10-16 ranked (notes/ranked_server.md; **both places**): new (attribute `RankedInstall`) `ReplicatedStorage.Modules.Shared.RankedCore`,
+  `ServerScriptService.Shared.RankedServer`, `ServerScriptService.RankedService` (Script), `AdminFramework.Commands.Ranked`. **[RANKED] edits**
+  (backups `ServerStorage._RebuildRemoved.RANKED_<name>_Orig`): match `RoundManager` (RankedCore ELO instead of K32, payload in MatchResults),
+  lobby `MatchmakingManager` (ranked window / pair rule, tier `k` in queue entries), lobby `DataManager.Template` (comment), `PlayerStore.Ranked`.
+  Profile `Ranked[<mode>]` is now `{V, Elo, Peak, Placed, Wins, Losses, Streak, ShieldDay, LastPlayed, Decayed, Rating (= Elo mirror)}`, migrated
+  lazily from both old shapes. Player attrs `RankMode, RankElo, RankPeak, RankTier, RankTierIndex, RankDivision, RankName, RankFloor, RankNextFloor,
+  RankNextName, RankWarlord, RankPlace, RankPlaced, RankPlacements, RankShield, RankedAll`; ReplicatedStorage `RankedTop_<key>`, `RankedCutoff_<key>`,
+  `RankedLadders`, `RankedRefreshedAt`, `RankedMock`; OrderedDataStores `Ranked_<key>_v1`; Studio-only `ServerStorage.RankedTestHook`.
+  Re-run `python tools/ranked_build.py --run match` after `match_place_build` + `data_release`. UNDO `python tools/ranked_build.py --run <place> UNDO` (tested hash-exact).

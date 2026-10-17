@@ -21,6 +21,7 @@ FILES = {  # SOURCES key -> file
     "Cmd_World": "Commands/World.lua",
     "Cmd_Debug": "Commands/Debug.lua",
     "Cmd_Legacy": "Commands/Legacy.lua",
+    "Cmd_Ranked": "Commands/Ranked.lua",  # [RANKED] also installed by fix/ranked_install.lua
     "AdminCommands": "AdminCommands.server.lua",
     "AdminFeedback": "AdminFeedback.client.lua",
 }

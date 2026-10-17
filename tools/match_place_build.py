@@ -30,6 +30,7 @@ FILES = {  # SOURCES key -> file (relative to scripts/)
     "Cmd_World": "admin/Commands/World.lua",
     "Cmd_Debug": "admin/Commands/Debug.lua",
     "Cmd_Legacy": "admin/Commands/Legacy.lua",
+    "Cmd_Ranked": "admin/Commands/Ranked.lua",  # [RANKED] also installed by fix/ranked_install.lua
     "AdminCommands": "admin/AdminCommands.server.lua",
     "AdminFeedback": "admin/AdminFeedback.client.lua",
 }
