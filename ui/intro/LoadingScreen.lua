@@ -81,7 +81,7 @@ local GLOW_L, GLOW_R = AMBER, OLIVE
 local FONT = "rbxasset://fonts/families/GothamSSm.json"
 local UI_READY = { "LobbyUI", "HUD" }
 local MAX_LOAD_TIME = 40
-local ASSET_TIMEOUT = 30
+local ASSET_TIMEOUT = 12 -- (2026-10-16) essentials only now; whatever isn't in by then streams in during play
 local STAGE_Y = 0.42
 
 -------------------------------------------------------------------------------
@@ -301,10 +301,28 @@ local function collectAssets(): { string }
 			table.insert(ids, id)
 		end
 	end
-	local roots = { workspace, game:GetService("ReplicatedStorage"), Lighting, game:GetService("SoundService"), playerGui }
+	-- (2026-10-16, Edward: "load only the necessary things to start", like RIVALS) only what the first view needs: the UI,
+	-- sky and sounds, plus the meshes / textures within 150 studs of where you spawn. The rest streams in while you play.
+	local list = {}
+	for _, root in { Lighting, game:GetService("SoundService"), playerGui } do
+		for _, d in root:GetDescendants() do table.insert(list, d) end
+	end
+	local spawnAt = (function()
+		local c = player.Character
+		local r = c and c:FindFirstChild("HumanoidRootPart")
+		if r then return r.Position end
+		local sp = workspace:FindFirstChildWhichIsA("SpawnLocation", true)
+		return sp and sp.Position
+	end)()
+	if spawnAt then
+		for _, part in workspace:GetPartBoundsInRadius(spawnAt, 150) do
+			table.insert(list, part)
+			for _, d in part:GetChildren() do table.insert(list, d) end
+		end
+	end
 	local n = 0
-	for _, root in roots do
-		for _, d in root:GetDescendants() do
+	do
+		for _, d in list do
 			n += 1
 			if n % 3000 == 0 then task.wait() end
 			pcall(function()
@@ -967,6 +985,20 @@ end
 -- 2. fully loaded: the bar goes and GF comes in to clear the letters (click to skip)
 tween(barGroup, 0.2, { GroupTransparency = 1 })
 canSkip = true
+-- (2026-10-16, Edward) the game is ready: say so, any key / click skips the rest of the intro
+do
+	local prompt = new("TextLabel", { Name = "SkipPrompt", BackgroundTransparency = 1, Text = "PRESS ANY KEY TO CONTINUE",
+		FontFace = Font.new(FONT, Enum.FontWeight.Bold), TextScaled = true, TextColor3 = Color3.fromRGB(236, 232, 218),
+		TextTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromScale(0.5, 0.94), Size = UDim2.fromScale(0.4, 0.03),
+		ZIndex = 50, Parent = gui })
+	task.spawn(function()
+		while prompt.Parent and not skip do
+			tween(prompt, 0.6, { TextTransparency = 0.05 }) task.wait(0.7)
+			tween(prompt, 0.6, { TextTransparency = 0.6 }) task.wait(0.7)
+		end
+		if prompt.Parent then tween(prompt, 0.2, { TextTransparency = 1 }) end
+	end)
+end
 fight()
 pause(0.9)
 reveal()

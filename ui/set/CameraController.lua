@@ -210,6 +210,18 @@ local function ScopeRef()
 	return scopeController
 end
 
+-- [SET] a match screen that needs the mouse: MatchFlowUI (vote / loadout), DuelHUD's results card, the loading intro
+local function matchMenuUp(): boolean
+	local pg = localPlayer:FindFirstChild("PlayerGui")
+	if not pg then return false end
+	local flow = pg:FindFirstChild("MatchFlow")
+	if flow and flow:IsA("ScreenGui") and flow.Enabled then return true end
+	local hud = pg:FindFirstChild("DuelHUD")
+	local results = hud and hud.Enabled and hud:FindFirstChild("Results", true)
+	if results and results.Visible then return true end
+	return pg:FindFirstChild("LoadingScreen") ~= nil
+end
+
 -- // Per-frame update
 local function update(dt: number)
 	local camera = workspace.CurrentCamera
@@ -220,7 +232,9 @@ local function update(dt: number)
 	end
 
 	-- Mouse look
-	if state.mouseFree or state.altFree then -- (pass 45) altFree: Free Cursor key held
+	-- [SET] (Edward) the cursor stays free while a match menu is up (map vote / loadout / results / the intro): you click
+	-- those, you don't aim at them
+	if state.mouseFree or state.altFree or matchMenuUp() then -- (pass 45) altFree: Free Cursor key held
 		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
 		UserInputService.MouseIconEnabled = true
 	else
@@ -713,6 +727,27 @@ function controller.Start()
 	end)
 
 	RunService:BindToRenderStep(RENDER_NAME, RENDER_PRIORITY, update)
+
+	-- [SET] (live bug) the update only runs while Training / a duel is on. When that ends (a win by forfeit, the opponent
+	-- leaving, any return path) hand the camera straight back to Roblox's lobby camera; it used to stay Scriptable
+	-- wherever the arena was, staring at the sky.
+	local wasOn = __TG.On()
+	game:GetService("RunService").Heartbeat:Connect(function()
+		local on = __TG.On()
+		if wasOn and not on then
+			local cam = workspace.CurrentCamera
+			local hum = localPlayer.Character and localPlayer.Character:FindFirstChildOfClass("Humanoid")
+			if cam then
+				cam.CameraType = Enum.CameraType.Custom
+				if hum then cam.CameraSubject = hum end
+				cam.FieldOfView = 70
+			end
+			UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+			UserInputService.MouseIconEnabled = true
+			state.aimHeld, state.altFree = false, false
+		end
+		wasOn = on
+	end)
 end
 
 return controller
