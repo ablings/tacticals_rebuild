@@ -343,6 +343,16 @@ local function buildRow(tab, row, order)
 	local function changed(val)
 		values[tab.name][row.key] = val
 		queueSave()
+		-- [SET] a toggle other rows depend on (showIf): redraw this tab where it is
+		for _, sec in ipairs(tab.sections) do
+			for _, r in ipairs(sec.rows) do
+				if r.showIf == row.key then
+					local at = list.CanvasPosition
+					task.defer(function() openTab(tab); task.defer(function() list.CanvasPosition = at end) end)
+					return
+				end
+			end
+		end
 		if tab.preview then drawCrosshair(values[tab.name]) end
 		refreshReset()
 	end
@@ -359,6 +369,10 @@ local function buildRow(tab, row, order)
 		local holder
 		holder, api = Kit.stepperSlider(h, { min = row.min, max = row.max, step = row.step, arrowStep = row.arrow, value = v[row.key], fmt = row.fmt }, changed)
 		holder.Parent = frame
+	elseif row.kind == "action" then
+		-- [SET] an action row (e.g. Touch > Layout Editor): the blue arrow button runs ctx.onAction(key)
+		control = Kit.button("robux", UDim2.fromOffset(112, 60), "→")
+		control.Activated:Connect(function() if ctx.onAction then ctx.onAction(row.key) end end)
 	end
 	if control then
 		-- centre anchor so hover scaling grows the control in place (not from its corner)
@@ -425,7 +439,8 @@ function openTab(tab)
 		end
 		for _, row in ipairs(sec.rows) do
 			order += 1
-			buildRow(tab, row, order).Parent = list
+			-- [SET] data rows are hidden storage; showIf rows only while their toggle is on (Touch > Custom)
+			if row.kind ~= "data" and (not row.showIf or values[tab.name][row.showIf] == true) then buildRow(tab, row, order).Parent = list end
 		end
 	end
 	-- reset card

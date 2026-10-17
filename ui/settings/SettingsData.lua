@@ -109,6 +109,115 @@ return {
 				{ kind = "bind", name = "Hide HUD", icon = "eye", value = { "", "", "", "" } },
 			} },
 		} },
+		-- Touch (2026-10-17, Edward: mobile UI the RIVALS way; ref: notes/ref_mobile 8-16). Layout Editor opens the drag/resize editor;
+		-- the layouts themselves are hidden "data" rows (JSON per slot). The joystick is Roblox's own thumbstick.
+		{ name = "Touch", glyph = "📱", icon = "touch", sections = {
+			{ title = nil, rows = {
+				{ kind = "action", name = "Layout Editor", glyph = "▣", level = 0, desc = "Move & resize your touch buttons" },
+			} },
+			{ title = nil, rows = {
+				{ kind = "toggle", name = "Left Handed Mode", glyph = "✋", value = false, desc = "Mirrors the buttons: fire on the left, the joystick on the right" },
+				{ kind = "toggle", name = "Opaque Buttons", glyph = "◉", value = true, desc = "Solid dark buttons instead of see-through outlines" },
+				{ kind = "slider", name = "Buttons Transparency", glyph = "◐", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "How see-through the touch buttons are" },
+				{ kind = "toggle", name = "Buttons Camera Sinking", glyph = "⇩", value = true, desc = "Dragging from a button also turns the camera, so you can aim while you hold it" },
+				{ kind = "toggle", name = "Show Weapon Ammo", glyph = "⁞", value = true, desc = "Shows your ammo on the gun button" },
+				{ kind = "data", name = "Touch Layout 1" }, { kind = "data", name = "Touch Layout 2" }, { kind = "data", name = "Touch Layout 3" },
+				{ kind = "dropdown", name = "Touch Layout Slot", glyph = "▦", options = { "1", "2", "3" }, value = "1", desc = "Which saved button layout you use" },
+			} },
+			{ title = "Fire", rows = {
+				{ kind = "toggle", name = "Double Tap To Attack", glyph = "»", value = true, desc = "Double tap anywhere on the right side of the screen to fire" },
+				{ kind = "slider", name = "Double Tap Window", glyph = "»", level = 2, min = 0.1, max = 0.6, step = 0.05, arrow = 0.05, value = 0.25, fmt = function(v) return string.format("%.2f", v) end, desc = "How quick the two taps must be, in seconds" },
+				{ kind = "toggle", name = "Enabled", key = "Fire Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Fire Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Fire Transparency", glyph = "◐", level = 2, showIf = "Fire Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Fire Camera Sinking", glyph = "⇩", level = 2, showIf = "Fire Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Aim", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Aim Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Aim Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Aim Transparency", glyph = "◐", level = 2, showIf = "Aim Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Aim Camera Sinking", glyph = "⇩", level = 2, showIf = "Aim Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Reload", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Reload Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Reload Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Reload Transparency", glyph = "◐", level = 2, showIf = "Reload Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Reload Camera Sinking", glyph = "⇩", level = 2, showIf = "Reload Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Gun Bash", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Gun Bash Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Gun Bash Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Gun Bash Transparency", glyph = "◐", level = 2, showIf = "Gun Bash Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Gun Bash Camera Sinking", glyph = "⇩", level = 2, showIf = "Gun Bash Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Throw Gadget", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Throw Gadget Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Throw Gadget Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Throw Gadget Transparency", glyph = "◐", level = 2, showIf = "Throw Gadget Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Throw Gadget Camera Sinking", glyph = "⇩", level = 2, showIf = "Throw Gadget Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Jump", rows = {
+				{ kind = "toggle", name = "Auto Jump", glyph = "⬆", value = false, desc = "Jump over small ledges automatically while you walk into them" },
+				{ kind = "toggle", name = "Enabled", key = "Jump Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Jump Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Jump Transparency", glyph = "◐", level = 2, showIf = "Jump Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Jump Camera Sinking", glyph = "⇩", level = 2, showIf = "Jump Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Crouch", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Crouch Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Crouch Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Crouch Transparency", glyph = "◐", level = 2, showIf = "Crouch Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Crouch Camera Sinking", glyph = "⇩", level = 2, showIf = "Crouch Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Slide", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Slide Enabled", glyph = "👁", value = false, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Slide Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Slide Transparency", glyph = "◐", level = 2, showIf = "Slide Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Slide Camera Sinking", glyph = "⇩", level = 2, showIf = "Slide Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Take Cover", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Take Cover Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Take Cover Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Take Cover Transparency", glyph = "◐", level = 2, showIf = "Take Cover Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Take Cover Camera Sinking", glyph = "⇩", level = 2, showIf = "Take Cover Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Dash", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Dash Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Dash Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Dash Transparency", glyph = "◐", level = 2, showIf = "Dash Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Dash Camera Sinking", glyph = "⇩", level = 2, showIf = "Dash Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Equip Gun", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Equip Gun Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Equip Gun Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Equip Gun Transparency", glyph = "◐", level = 2, showIf = "Equip Gun Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Equip Gun Camera Sinking", glyph = "⇩", level = 2, showIf = "Equip Gun Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Equip Melee", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Equip Melee Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Equip Melee Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Equip Melee Transparency", glyph = "◐", level = 2, showIf = "Equip Melee Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Equip Melee Camera Sinking", glyph = "⇩", level = 2, showIf = "Equip Melee Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Equip Gadget", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Equip Gadget Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Equip Gadget Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Equip Gadget Transparency", glyph = "◐", level = 2, showIf = "Equip Gadget Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Equip Gadget Camera Sinking", glyph = "⇩", level = 2, showIf = "Equip Gadget Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Shoulder Swap", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Shoulder Swap Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Shoulder Swap Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Shoulder Swap Transparency", glyph = "◐", level = 2, showIf = "Shoulder Swap Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Shoulder Swap Camera Sinking", glyph = "⇩", level = 2, showIf = "Shoulder Swap Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+			{ title = "Open Scoreboard", rows = {
+				{ kind = "toggle", name = "Enabled", key = "Open Scoreboard Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
+				{ kind = "toggle", name = "Custom", key = "Open Scoreboard Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },
+				{ kind = "slider", name = "Transparency", key = "Open Scoreboard Transparency", glyph = "◐", level = 2, showIf = "Open Scoreboard Custom", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "This button's own transparency" },
+				{ kind = "toggle", name = "Camera Sinking", key = "Open Scoreboard Camera Sinking", glyph = "⇩", level = 2, showIf = "Open Scoreboard Custom", value = true, desc = "Dragging from this button also turns the camera" },
+			} },
+		} },
 		-- Account: from ref_59. Dropdown option lists other than the shown value are a guess.
 		{ name = "Account", glyph = "☻", icon = "account", sections = {
 			{ title = "Notifications", rows = {

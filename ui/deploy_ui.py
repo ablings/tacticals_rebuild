@@ -26,6 +26,7 @@ FILES = [
     ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),  # same file in both places; QuickIntro only in the match place
 ]
@@ -76,6 +77,7 @@ MATCH_FILES = [
     ("ServerScriptService", "SettingsBridge", "Script", "matchplace/SettingsBridge.server.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),

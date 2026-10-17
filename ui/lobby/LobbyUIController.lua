@@ -802,6 +802,26 @@ local function applySettings()
 	SettingsConfig.Apply(data and data.Settings, player)
 end
 
+-- (2026-10-17) the touch controls' Layout Editor saves into Settings > Touch (Touch Layout <slot> / Touch Layout Slot)
+local touchControlsMod
+local function touchControls()
+	if touchControlsMod == nil then
+		touchControlsMod = false
+		pcall(function() touchControlsMod = require(script.Parent:WaitForChild("TouchControlsController", 5)) end)
+		if touchControlsMod then
+			local function write(key, value)
+				local s = SettingsConfig.Sanitize(data and data.Settings)
+				s.Profiles[s.Active].Touch = s.Profiles[s.Active].Touch or {}
+				s.Profiles[s.Active].Touch[key] = value
+				s.Version = 2
+				pcall(Request.InvokeServer, Request, "SaveSettings", s)
+			end
+			touchControlsMod.OnSave = function(slot, json) write("Touch Layout " .. slot, json) end
+			touchControlsMod.OnSlot = function(slot) write("Touch Layout Slot", slot) end
+		end
+	end
+	return touchControlsMod or nil
+end
 local settingsReady = false
 local function openSettings(initOnly)
 	if not settingsReady then
@@ -811,6 +831,13 @@ local function openSettings(initOnly)
 			save = function(s)
 				if type(s) == "table" then s.Version = 2 end -- already in Tacticals' hotkey layout (SettingsConfig.Sanitize)
 				pcall(Request.InvokeServer, Request, "SaveSettings", s)
+			end,
+			-- (2026-10-17) Touch > Layout Editor: close Settings, open the drag/resize editor over the touch buttons
+			onAction = function(key)
+				if key == "Layout Editor" then
+					local tc = touchControls()
+					if tc and tc.OpenEditor then SettingsScreen.Close(); tc.OpenEditor() end
+				end
 			end,
 			onOpen = function() if gui then gui.Enabled = false end end,
 			onClose = function() if gui then gui.Enabled = true end end,

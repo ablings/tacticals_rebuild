@@ -64,6 +64,8 @@ local function clean(row, v)
 		return (type(v) == "string" and table.find(row.options, v)) and v or nil
 	elseif row.kind == "swatch" then
 		return (type(v) == "string" and v:match("^#%x%x%x%x%x%x$")) and v:lower() or nil
+	elseif row.kind == "data" then
+		return (type(v) == "string" and #v <= 6000) and v or nil
 	elseif row.kind == "bind" then
 		if type(v) ~= "table" then return nil end
 		local out = {}
