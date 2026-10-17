@@ -486,6 +486,127 @@ RunService.RenderStepped:Connect(function()
 	end
 end)
 
+---------------------------------------------------------------------------------------------------- victory screen
+-- (2026-10-17, Edward: a final-round cutscene) the Tacticals session runs the flow on the state object: MatchPhase
+-- "Finisher" (the last kill, a placeholder slow beat) then "Victory"; Winner = "A" / "B". This draws the default screen
+-- over whatever camera shot it plays: letterbox bars, a huge VICTORY / DEFEAT (spectators: "TEAM A WINS"), a light sweep
+-- across it, the winners' headshots and names, and the final score. The results card follows when the phase ends.
+local vgui = new("ScreenGui", { Name = "VictoryScreen", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 13, Enabled = false,
+	Parent = player:WaitForChild("PlayerGui") })
+local barTop = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = BLACK, AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 0), Size = UDim2.fromScale(1, 0.12), Parent = vgui })
+local barBot = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = BLACK, Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.12), Parent = vgui })
+local vcanvas = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), Parent = vgui },
+	{ new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
+local vTitle = new("TextLabel", { BackgroundTransparency = 1, Text = "VICTORY", FontFace = STENCIL, TextScaled = true, TextColor3 = WHITE, AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.36), Size = UDim2.fromScale(0.8, 0.2), Parent = vcanvas })
+local vGrad = new("UIGradient", { Rotation = 90, Parent = vTitle })
+new("UIStroke", { Thickness = 3, Transparency = 0.3, Parent = vTitle })
+local vScale = new("UIScale", { Parent = vTitle })
+-- the light sweep: a soft white band that crosses the title once
+local sweepClip = new("Frame", { BackgroundTransparency = 1, ClipsDescendants = true, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.36),
+	Size = UDim2.fromScale(0.8, 0.2), Parent = vcanvas })
+local sweep = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = WHITE, Rotation = 18, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(-0.2, 0.5),
+	Size = UDim2.fromScale(0.06, 2.2), Parent = sweepClip }, { new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.55), NumberSequenceKeypoint.new(1, 1) }) }) })
+local vScore = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FX, TextScaled = true, TextColor3 = WHITE, AnchorPoint = Vector2.new(0.5, 0.5),
+	Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.3, 0.07), Parent = vcanvas }, { new("UIStroke", { Thickness = 2, Transparency = 0.4 }) })
+local vRow = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0.57), Size = UDim2.fromScale(0.7, 0.2), Parent = vcanvas },
+	{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center, Padding = UDim.new(0.02, 0) }) })
+local vFinisher = new("TextLabel", { BackgroundTransparency = 1, Text = "FINAL KILL", FontFace = STENCIL, TextScaled = true, TextColor3 = Color3.fromRGB(235, 232, 218),
+	AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.82), Size = UDim2.fromScale(0.3, 0.06), TextTransparency = 1, Parent = vcanvas },
+	{ new("UIStroke", { Thickness = 2, Transparency = 0.5 }) })
+
+local vPhase
+-- the gameplay HUD steps aside for the cutscene (put back as it was after)
+local HUD_GUIS = { "Hotbar", "Vitals", "HUD", "TouchControls", "TouchStick", "TouchGui", "DuelHUD", "MatchHUD", "TutorialUI", "MainUI",
+	"StealthUI", "RangeKitUI", "LobbyHud" }
+local hidden = {}
+local setCutscene = false
+local function hudAside(on)
+	local pg = player.PlayerGui
+	if on then
+		for _, n in HUD_GUIS do
+			local g = pg:FindFirstChild(n)
+			if g and g:IsA("ScreenGui") and g.Enabled and hidden[g] == nil then hidden[g] = true; g.Enabled = false end
+		end
+		if player:GetAttribute("InCutscene") ~= true then setCutscene = true; player:SetAttribute("InCutscene", true) end -- touch + lobby HUD follow it
+	else
+		for g in hidden do if g.Parent then g.Enabled = true end end
+		hidden = {}
+		if setCutscene then setCutscene = false; player:SetAttribute("InCutscene", nil) end -- only if we set it
+	end
+end
+local function winnerCard(uid)
+	local card = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromScale(0.16, 1), Parent = vRow })
+	local head = new("ImageLabel", { BackgroundColor3 = Color3.fromRGB(30, 34, 28), BackgroundTransparency = 0.2, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0),
+		Size = UDim2.fromScale(0.7, 0.7), SizeConstraint = Enum.SizeConstraint.RelativeYY, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }),
+		new("UIStroke", { Color = Color3.fromRGB(233, 196, 106), Thickness = 3 }) })
+	if uid and uid > 0 then
+		task.spawn(function()
+			local ok, img = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+			if ok then head.Image = img end
+		end)
+	end
+	new("TextLabel", { BackgroundTransparency = 1, Text = nameOf(uid), FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0, 0.74),
+		Size = UDim2.fromScale(1, 0.22), Parent = card }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
+end
+local function showVictory(phase)
+	vgui.Enabled = true
+	hudAside(true)
+	TweenService:Create(barTop, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Position = UDim2.fromScale(0, 0.12) }):Play()
+	TweenService:Create(barBot, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Position = UDim2.fromScale(0, 0.88) }):Play()
+	local finisher = phase == "Finisher"
+	vFinisher.Visible = finisher -- (its outline stayed on screen after the text faded)
+	if finisher then
+		vTitle.Visible, vScore.Visible, vRow.Visible, sweepClip.Visible = false, false, false, false
+		TweenService:Create(vFinisher, TweenInfo.new(0.4), { TextTransparency = 0 }):Play()
+		return
+	end
+	TweenService:Create(vFinisher, TweenInfo.new(0.2), { TextTransparency = 1 }):Play()
+	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
+	local winner = st("Winner") or (sa > sb and "A" or (sb > sa and "B" or nil))
+	local myTeam = player:GetAttribute("Team")
+	local title, top, bottom
+	if spectator() or not myTeam then
+		title, top, bottom = winner and ("TEAM " .. winner .. " WINS") or "DRAW", Color3.fromRGB(255, 255, 255), Color3.fromRGB(190, 190, 180)
+	elseif winner == myTeam then
+		title, top, bottom = "VICTORY", Color3.fromRGB(255, 230, 150), Color3.fromRGB(214, 160, 40)
+	elseif winner then
+		title, top, bottom = "DEFEAT", Color3.fromRGB(255, 140, 120), Color3.fromRGB(170, 40, 30)
+	else
+		title, top, bottom = "DRAW", Color3.fromRGB(235, 235, 235), Color3.fromRGB(150, 150, 150)
+	end
+	vTitle.Text = title
+	vGrad.Color = ColorSequence.new(top, bottom)
+	local mine = (myTeam == "B") and sb or sa
+	local theirs = (myTeam == "B") and sa or sb
+	vScore.Text = (spectator() or not myTeam) and (sa .. " - " .. sb) or (mine .. " - " .. theirs)
+	for _, c in vRow:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
+	if winner then for _, uid in teamIds("Team" .. winner) do winnerCard(uid) end end
+	vTitle.Visible, vScore.Visible, vRow.Visible, sweepClip.Visible = true, true, true, true
+	-- slam in, then the light sweep
+	vScale.Scale = 1.6
+	vTitle.TextTransparency = 1
+	TweenService:Create(vScale, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	TweenService:Create(vTitle, TweenInfo.new(0.2), { TextTransparency = 0 }):Play()
+	sweep.Position = UDim2.fromScale(-0.2, 0.5)
+	task.delay(0.35, function() TweenService:Create(sweep, TweenInfo.new(0.7, Enum.EasingStyle.Quad), { Position = UDim2.fromScale(1.2, 0.5) }):Play() end)
+end
+local function hideVictory()
+	hudAside(false)
+	TweenService:Create(barTop, TweenInfo.new(0.3), { Position = UDim2.fromScale(0, 0) }):Play()
+	TweenService:Create(barBot, TweenInfo.new(0.3), { Position = UDim2.fromScale(0, 1) }):Play()
+	TweenService:Create(vTitle, TweenInfo.new(0.25), { TextTransparency = 1 }):Play()
+	task.delay(0.32, function() if not vPhase then vgui.Enabled = false end end)
+end
+RunService.Heartbeat:Connect(function()
+	local phase = inMatch() and st("MatchPhase") or nil
+	if phase ~= "Finisher" and phase ~= "Victory" then phase = nil end
+	if phase ~= vPhase then
+		vPhase = phase
+		if phase then showVictory(phase) else hideVictory() end
+	end
+end)
+
 -- Studio only: DuelHUDTest:Invoke(state, extra) fakes a match on the current state object
 if RunService:IsStudio() then
 	local hook = Instance.new("BindableFunction")
@@ -494,6 +615,10 @@ if RunService:IsStudio() then
 		local o = stateObject() or ReplicatedStorage
 		if stateName == "Kill" then addKill(extra) return true end
 		if stateName == "Results" then showResults(extra) return true end
+		if stateName == "Finisher" or stateName == "Victory" or stateName == "NoPhase" then
+			o:SetAttribute("MatchPhase", stateName ~= "NoPhase" and stateName or nil)
+			return true
+		end
 		o:SetAttribute("LiveMatch", true)
 		player:SetAttribute("InMatch", true)
 		player:SetAttribute("Team", player:GetAttribute("Team") or "A")
