@@ -247,7 +247,7 @@ leaveDuel.Activated:Connect(function()
 	if os.clock() - leaveArmed < 3 then send("Leave"); leaveDuel.Visible = false; return end
 	leaveArmed = os.clock()
 	-- ranked: say what leaving costs before the second click (RankedCore.Config.LeavePenalty)
-	if ReplicatedStorage:GetAttribute("PlaceKind") == "Ranked" or st("Ranked") == true then
+	if st("MatchRanked") == true or ReplicatedStorage:GetAttribute("PlaceKind") == "Ranked" then
 		local pen = 25
 		pcall(function() pen = require(ReplicatedStorage.Modules.Shared.RankedCore).Config.LeavePenalty or 25 end)
 		showBanner("LEAVE RANKED?", "Click again: your normal loss + " .. pen .. " ELO", BAD, 3)
