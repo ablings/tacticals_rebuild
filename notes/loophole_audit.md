@@ -32,7 +32,28 @@ Status legend: FIXED (installed in the working copies, ships with the next publi
    `PromptGamePassPurchaseFinished` is now confirmed with `UserOwnsGamePassAsync` before granting (Roblox's own advice; the
    join-time `checkPasses` already used it).
 
+## Low / latent
+4. **Speed / teleport hacks are invisible to the server** (Roblox movement is client-driven). ADDED a flag-only detector:
+   `ServerScriptService.MoveGuard` flags a 2 s average horizontal speed above 42 studs/s (legit tops: cover sprint 31,
+   dive 34 bursts) to the server log, the admin audit (command "moveguard") and player attribute `MoveFlags`. It never
+   moves or kicks anyone. Single steps over 40 studs (server teleports) reset the window, so a blink teleport isn't caught.
+5. **Ranked pads would allow win-trading** (friends in one server pick each other). LATENT: there are no ranked pads today
+   (`LobbyConfig.RankedBays` empty, no pad has `Ranked`). If ranked pads are ever added, keep them out of the Ranked place
+   (or require the online queue) - otherwise two friends can farm Elo off each other.
+6. **Reaction range best time is client-reported** (`ServerScriptService.LobbyRange`): anyone can post 1.2 s. Cosmetic
+   (one server attribute, not saved). OPEN, low priority.
+7. **Ranked dodge during Loading**: a player who sees the opponent on the loading screen and leaves before the match is
+   marked (MarkPending happens after Loading) cancels the match with no penalty for anyone. OPEN, Edward to decide
+   (a small dodge penalty for leaving a ranked match during Loading after arriving?).
+
 ## Checked, fine
+- CombatManager: rate limit, increasing shot ids, fire interval, ammo / reload on the server, origin within 8 studs of the
+  head, muzzle-through-wall check, hit point on the ray (1 stud), range, wall check, server-side damage, same-match /
+  friendly-fire guards. SelectWeapon checks ownership.
+- MeleeManager: the server picks the target (range, angle, line of sight), cooldown, same-match guard.
+- GadgetManager: kit gadget only, charges, cooldown, direction validated, thrown from the server's character.
+- Admin framework: every entry point resolves the real player on the server; levels from the user list / group rank; rate
+  limit; audit log; Studio-only simulated levels.
 - LobbyManager handlers: Equip (ownership + slot), Favorite (item id), BuyItem / BuyBundle (server prices, Spend checks),
   ClaimQuest (server-side progress, Claimed flag before paying), RedeemCode (per-profile RedeemedCodes, 40-char cap),
   BuyRobux / BuyPass (prompts only; Studio-only test grants), ProcessReceipt (PurchaseId dedupe), DevAddStat (Studio only).
