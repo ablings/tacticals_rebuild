@@ -18,3 +18,8 @@ Action names: Fire Aim Reload Inspect Jump Crouch Slide Dash Cover QuickMelee Qu
 (Tacticals has 3 slots, no Ability/Emote).
 Was open: who adds the [TOUCH] hooks in CameraController / CoverController / HotbarController (UI-owned); the touch camera
 (aim follows the swipe, button camera-sinking) and the double-tap-to-fire detector.
+
+TouchStick (2026-10-17): our own dynamic thumbstick (StarterPlayerScripts.TouchStick), because Roblox's DynamicThumbstick can't
+leave the left half, and Left Handed Mode must move it. The installer sets StarterPlayer.DevTouchMovementMode = Scriptable (old value
+in attribute TouchOrigMoveMode, UNDO restores it). Moves via player:Move(v, true) bound at RenderPriority.Input+1.
+Smoke test (match place Play): loads, ScreenGui TouchStick present, mode Scriptable, no errors. Real finger drag untested (emulator).
