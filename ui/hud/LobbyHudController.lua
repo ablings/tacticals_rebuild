@@ -513,11 +513,24 @@ function LobbyHud.Start()
 	-- list rows: everyone in the server, sorted by the shown stat
 	local ViewIconsLB = require(UIKit:WaitForChild("ViewIcons"))
 	local lbStat = "Level"
+	local RankArtLB
+	pcall(function() RankArtLB = require(UIKit:WaitForChild("RankArt", 10)) end)
+	local function statValue(p) -- the number the list sorts by
+		if lbStat == "Rank" and RankArtLB then
+			local r = RankArtLB.Of(p)
+			return r.placed and r.elo or -1
+		end
+		return p:GetAttribute(lbStat) or 0
+	end
 	local function modeIcon()
 		for _, c in lbMode:GetChildren() do c:Destroy() end
 		local icons = ReplicatedStorage:FindFirstChild("UIIcons")
 		local lvl = icons and (icons:FindFirstChild("LevelUp") or icons:FindFirstChild("Badge"))
-		if lbStat == "Level" and lvl then
+		if lbStat == "Rank" and RankArtLB then
+			local mine = RankArtLB.Of(player)
+			Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = mine.image or RankArtLB.EMBLEM.Bronze, ScaleType = Enum.ScaleType.Fit,
+				Size = UDim2.fromScale(1, 1), Parent = lbMode })
+		elseif lbStat == "Level" and lvl then
 			ViewIconsLB.Viewport(lbMode, lvl:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.1, still = true })
 		else
 			ViewIconsLB.Icon(lbMode, "Trophy", { still = true })
@@ -527,11 +540,11 @@ function LobbyHud.Start()
 	local function buildList(force)
 		local ps = Players:GetPlayers()
 		local key = lbStat
-		for _, p in ps do key ..= p.UserId .. "/" .. tostring(p:GetAttribute(lbStat)) end
+		for _, p in ps do key ..= p.UserId .. "/" .. tostring(statValue(p)) .. tostring(p:GetAttribute("RankTier")) end
 		if key == lastLB and not force then return end
 		lastLB = key
 		table.sort(ps, function(a, b)
-			local va, vb = a:GetAttribute(lbStat) or 0, b:GetAttribute(lbStat) or 0
+			local va, vb = statValue(a), statValue(b)
 			if va ~= vb then return va > vb end
 			return a.DisplayName:lower() < b.DisplayName:lower()
 		end)
@@ -553,20 +566,31 @@ function LobbyHud.Start()
 			end
 			Kit.label({ Text = p.DisplayName, FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
 				Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(196, 40), Parent = row })
-			Kit.label({ Text = tostring(p:GetAttribute(lbStat) or 0), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
-				Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
+			if lbStat == "Rank" and RankArtLB then
+				local r = RankArtLB.Of(p)
+				if r.image then
+					Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = r.image, ScaleType = Enum.ScaleType.Fit,
+						Position = UDim2.fromOffset(266, 3), Size = UDim2.fromOffset(34, 34), Parent = row })
+				else
+					Kit.label({ Text = "-", FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.fromRGB(150, 150, 156), TextXAlignment = Enum.TextXAlignment.Right,
+						Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
+				end
+			else
+				Kit.label({ Text = tostring(p:GetAttribute(lbStat) or 0), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
+					Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
+			end
 			Kit.toScale(row, Vector2.new(LB_W, 40))
 		end
 	end
 	local function lobbyData()
 		local v = player:GetAttribute("Setting_LobbyData")
-		if v == "Level" or v == "Wins" then lbStat = v; modeIcon(); buildList(true) end
+		if v == "Level" or v == "Wins" or v == "Rank" then lbStat = v; modeIcon(); buildList(true) end
 	end
 	player:GetAttributeChangedSignal("Setting_LobbyData"):Connect(lobbyData)
 	modeIcon()
 	lobbyData()
 	lbMode.Activated:Connect(function()
-		lbStat = lbStat == "Level" and "Wins" or "Level"
+		lbStat = lbStat == "Level" and "Wins" or (lbStat == "Wins" and RankArtLB and "Rank" or "Level")
 		modeIcon()
 		buildList(true)
 	end)

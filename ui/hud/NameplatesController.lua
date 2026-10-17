@@ -13,8 +13,12 @@ local MED = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeig
 
 local plates = {} -- [Player] = { gui, badgeText, nameText, vip }
 
+local RankArt
+pcall(function() RankArt = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("RankArt", 10)) end)
 local function statOf(p)
-	local which = player:GetAttribute("Setting_LobbyData") == "Wins" and "Wins" or "Level"
+	local mode = player:GetAttribute("Setting_LobbyData")
+	if mode == "Rank" and RankArt then return "Rank", RankArt.Of(p) end
+	local which = mode == "Wins" and "Wins" or "Level"
 	return which, p:GetAttribute(which) or 0
 end
 
@@ -60,6 +64,16 @@ local function build(p, character)
 	bt.TextColor3 = Color3.new(1, 1, 1)
 	bt.Parent = badge
 	local bp = Instance.new("UIPadding"); bp.PaddingTop = UDim.new(0.12, 0); bp.PaddingBottom = UDim.new(0.12, 0); bp.Parent = bt
+	-- Lobby Data = Rank: the ranked emblem, a little bigger than the badge
+	local bi = Instance.new("ImageLabel")
+	bi.Name = "RankEmblem"
+	bi.BackgroundTransparency = 1
+	bi.AnchorPoint = Vector2.new(0.5, 0.5)
+	bi.Position = UDim2.fromScale(0.5, 0.5)
+	bi.Size = UDim2.fromScale(1.35, 1.35)
+	bi.ScaleType = Enum.ScaleType.Fit
+	bi.Visible = false
+	bi.Parent = badge
 	local name = Instance.new("TextLabel")
 	name.LayoutOrder = 2
 	name.BackgroundTransparency = 1
@@ -95,7 +109,7 @@ local function build(p, character)
 	local oldVip = head:FindFirstChild("VipTag")
 	if oldVip and oldVip:IsA("BillboardGui") then oldVip.Enabled = false end
 	head.ChildAdded:Connect(function(c) if c.Name == "VipTag" and c:IsA("BillboardGui") then c.Enabled = false end end)
-	plates[p] = { gui = g, badgeText = bt, vip = vip }
+	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip }
 end
 
 local function hook(p)
@@ -127,7 +141,16 @@ function Nameplates.Start()
 				local sameSpace = (p:GetAttribute("DuelMatch") or false) == (player:GetAttribute("DuelMatch") or false)
 				e.gui.Enabled = not hideAll and not near and sameSpace and p:GetAttribute("InTraining") ~= true
 				local which, v = statOf(p)
-				e.badgeText.Text = tostring(v)
+				if which == "Rank" then
+					local hasImg = v.image ~= nil
+					e.badgeImage.Visible, e.badgeImage.Image = hasImg, v.image or ""
+					e.badgeText.Text = hasImg and "" or "?"
+					e.badge.BackgroundTransparency = hasImg and 1 or 0.25
+				else
+					e.badgeImage.Visible = false
+					e.badge.BackgroundTransparency = 0.25
+					e.badgeText.Text = tostring(v)
+				end
 				e.vip.Visible = p:GetAttribute("VIP") == true
 			end
 		end

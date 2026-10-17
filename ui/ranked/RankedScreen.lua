@@ -30,11 +30,7 @@ local GREY = Theme.hex("#CFCDD3")
 
 -- emblem art (Gunsy Funsy uploads of ui/art/ranks/v2/rank_<name>.png); "" = not uploaded yet -> drawn badge
 -- (uploaded 2026-10-17 under Gunsy Funsy; decal ids 138889723915036 ... resolved to these image ids)
-local EMBLEM = {
-	Bronze = "rbxassetid://127275551172420", Silver = "rbxassetid://85182973115869", Gold = "rbxassetid://112298763732792",
-	Platinum = "rbxassetid://124376885255343", Diamond = "rbxassetid://80103384303847", Elite = "rbxassetid://120281929548886",
-	Commander = "rbxassetid://136618251030474", Warlord = "rbxassetid://128657545561698",
-}
+local EMBLEM = require(UIKit:WaitForChild("RankArt")).EMBLEM
 local RANK_COLOR = {
 	Bronze = Theme.hex("#C07A45"), Silver = Theme.hex("#C3C9D3"), Gold = Theme.hex("#F2C14E"), Platinum = Theme.hex("#3FD0D4"),
 	Diamond = Theme.hex("#3C8CFF"), Elite = Theme.hex("#7D8F45"), Commander = Theme.hex("#ECE8DA"), Warlord = Theme.hex("#D9AE3F"),

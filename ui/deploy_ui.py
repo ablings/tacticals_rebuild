@@ -16,6 +16,7 @@ FILES = [
     ("ServerScriptService", "PublicStats", "Script", "hud/PublicStats.server.lua"),
     ("ReplicatedStorage.UIKit", "PlayScreen", "ModuleScript", "play/PlayScreen.lua"),
     ("ReplicatedStorage.UIKit", "CodesScreen", "ModuleScript", "lobby/CodesScreen.lua"),
+    ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
     ("ReplicatedStorage.UIKit", "RankedScreen", "ModuleScript", "ranked/RankedScreen.lua"),
     ("ReplicatedStorage.UIKit", "Tac", "ModuleScript", "lobby/Tac.lua"),
     ("ReplicatedStorage.UIKit", "Kit", "ModuleScript", "lobby/Kit.lua"),
