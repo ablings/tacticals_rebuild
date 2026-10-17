@@ -6,7 +6,7 @@ import json, os, subprocess, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..")
-SIDS = {"lobby": "829eb64d-c313-4a64-bfb2-2bd3c42eb18e", "match": "331cb3a0-87e8-4413-ac74-1ffd00454ce2"}
+SIDS = {"lobby": "829eb64d-c313-4a64-bfb2-2bd3c42eb18e", "match": "7184a91e-fa9c-47ec-8b99-0bf45b48d570"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 T = os.path.join(ROOT, "scripts", "ranked", "tests")
 
