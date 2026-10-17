@@ -307,15 +307,23 @@ function MatchCore.waitPhase(ctx, seconds: number, done)
 	end
 	return false
 end
--- Loading (C.LoadingTime) -> MapVote (C.MapVoteTime; skipped when C.DuelMapVote == false or no map is eligible)
+-- Loading (C.LoadingTime; opts.skipLoading) -> Intro (opts.introTime, optional) -> MapVote (C.MapVoteTime; skipped when C.DuelMapVote == false or no map is eligible)
 -- -> MapChosen -> Loadout (C.LoadoutTime, ends early when every present player member is Ready).
 -- opts.maps = the eligible maps (registry entries); opts.voters() -> number of members who can vote;
 -- opts.onMapChosen(id) is called before the Loadout phase starts. Returns the chosen map id (nil = no eligible map).
 function MatchCore.runPreMatch(ctx, opts)
 	local C, s = ctx.config, ctx.state
 	local HttpService = game:GetService("HttpService")
-	MatchCore.setState(ctx, "Loading", C.LoadingTime or 3)
-	MatchCore.waitPhase(ctx, C.LoadingTime or 3)
+	-- opts.skipLoading: the caller ran its own Loading (the match place: arrival + every client's "Loaded")
+	if not opts.skipLoading then
+		MatchCore.setState(ctx, "Loading", C.LoadingTime or 3)
+		MatchCore.waitPhase(ctx, C.LoadingTime or 3)
+	end
+	-- opts.introTime: a short "Intro" phase (the match place's logo crumble) before the vote; the UI ignores the name
+	if opts.introTime and opts.introTime > 0 and not MatchCore.forfeitSide(ctx) then
+		MatchCore.setState(ctx, "Intro", opts.introTime)
+		MatchCore.waitPhase(ctx, opts.introTime)
+	end
 	local maps = opts.maps or {}
 	s:SetAttribute("MapList", HttpService:JSONEncode(MatchCore.mapList(maps)))
 	s:SetAttribute("MapVotes", "{}")

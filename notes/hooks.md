@@ -189,4 +189,10 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   Tutorial / test-server / FiringRange paths and TutorialManager / BotManager / RangeManager untouched; every script that looks up `workspace.Warehouse`
   still finds it. Shared changes also re-installed in the lobby (MatchCore helpers + `ctx.aborted`; admin `Core.Place` + `place = "lobby"` on duelsolo /
   arenas / pads). UNDO via `python tools/match_place_build.py --run UNDO` (tested hash-exact).
+- 2026-10-16 match place follow-up (notes/match_place_flow.md "Follow-up"): **new map folder `Warehouse.CamSkin`** (36 invisible collide /
+  query / touch Parts flush with the visual walls) in the match place's `Workspace.Warehouse` and the lobby's `ServerStorage._DuelSource.Warehouse.Warehouse`
+  (so the lobby arena's Solid layer has them after `fix/duel_split_map.lua`); anything that enumerates the map's colliders by folder still sees only
+  `CollisionProxies`. UNDO `python tools/camskin_build.py <id> UNDO` (+ re-split in the lobby). Match place: MatchFlow "Loaded", new MatchState values
+  Intro / Cancelled, ReplicatedStorage `LoadedCount / LoadedTotal`; MatchConfig `MatchLoadTimeout`, `IntroTime`. Lobby: duelist bodies wait in the Hold
+  facing their round spawn (LobbyDuelManager `facingHold`).
 

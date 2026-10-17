@@ -13,6 +13,9 @@ CAP = {
     "06_kill_round_won": "4b kill feed + TEAM A WINS THE ROUND",
     "07_tutorial": "tutorial server (StudioTutorialServer): unchanged",
     "08_results": "5 MatchEnd: results 3-1 (test bot match: no rewards)",
+    "09_intro_logo": "follow-up: quick intro logo held until Loaded",
+    "10_round3_before_fix": "before: round 3 respawn, camera looking backwards",
+    "11_round3_after_fix": "after: round 3 respawn, camera behind the player",
 }
 files = [f for f in sorted(os.listdir(D)) if f.endswith(".jpg")]
 W, H, cols = 634, 392, 3

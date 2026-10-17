@@ -116,6 +116,16 @@ local function spawnFrame(match, side: string, slot: number): CFrame
 	return cf * CFrame.new(s * step, 3, 0)
 end
 
+-- the hold, but facing the member's round spawn: the client camera takes its starting yaw from a new body's first frame,
+-- so a body first seen facing -Z (CFrame.new) started every round looking backwards ([MATCH] spawn camera, 2026-10-16)
+local function facingHold(match, m): CFrame
+	local cf = holdFrame(match, m.index)
+	if match.solid and m.team then
+		cf = CFrame.new(cf.Position) * spawnFrame(match, m.team, table.find(match.teams[m.team], m) or 1).Rotation
+	end
+	return cf
+end
+
 local function loadSolid(match)
 	local src = ServerStorage:FindFirstChild("DuelMaps") and ServerStorage.DuelMaps:FindFirstChild(match.map.Id)
 	local solid = src and src:FindFirstChild("Solid")
@@ -561,7 +571,7 @@ local function onCharacterAdded(player: Player, character: Model)
 	-- no yield before the pivot
 	local root = character:FindFirstChild("HumanoidRootPart")
 	if root then root.Anchored = true end
-	character:PivotTo(holdFrame(match, m.index))
+	character:PivotTo(facingHold(match, m))
 	if IS_STUDIO then
 		table.insert(manager._spawnLog, { name = player.Name, match = match.id, at = first, round = m.spawning == true,
 			parented = parented, holdY = match.origin.Y - HOLD_DEPTH, auto = m.benching ~= true and m.spawning ~= true })
@@ -583,7 +593,7 @@ local function onCharacterAdded(player: Player, character: Model)
 		root = character:WaitForChild("HumanoidRootPart", 5)
 		if not root or byPlayer[player] ~= rec then return end
 		root.Anchored = true
-		character:PivotTo(holdFrame(match, m.index))
+		character:PivotTo(facingHold(match, m))
 	end
 	player:SetAttribute("Alive", false)
 	task.delay(0.6, function() if byPlayer[player] == rec and not m.spawning then stripTools(player) end end)

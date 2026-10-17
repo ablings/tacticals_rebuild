@@ -36,4 +36,8 @@ return {
 	DuelRanked = false,     -- pad duels are casual only (lead default, Edward may change)
 	DuelRewardCooldown = 600, -- one reward per opponent pair per 10 minutes (anti-farming; lead default)
 	ReturnFade = 1,
+
+	-- [MATCH] the match place (notes/match_place_flow.md): Loading waits for every client's "Loaded", then a short Intro
+	MatchLoadTimeout = 60,  -- safety: start with whoever is present (a team with nobody = cancelled, no rewards)
+	IntroTime = 2.5,        -- the logo crumble between Loading and MapVote
 }

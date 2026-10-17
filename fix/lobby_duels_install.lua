@@ -557,15 +557,23 @@ function MatchCore.waitPhase(ctx, seconds: number, done)
 	end
 	return false
 end
--- Loading (C.LoadingTime) -> MapVote (C.MapVoteTime; skipped when C.DuelMapVote == false or no map is eligible)
+-- Loading (C.LoadingTime; opts.skipLoading) -> Intro (opts.introTime, optional) -> MapVote (C.MapVoteTime; skipped when C.DuelMapVote == false or no map is eligible)
 -- -> MapChosen -> Loadout (C.LoadoutTime, ends early when every present player member is Ready).
 -- opts.maps = the eligible maps (registry entries); opts.voters() -> number of members who can vote;
 -- opts.onMapChosen(id) is called before the Loadout phase starts. Returns the chosen map id (nil = no eligible map).
 function MatchCore.runPreMatch(ctx, opts)
 	local C, s = ctx.config, ctx.state
 	local HttpService = game:GetService("HttpService")
-	MatchCore.setState(ctx, "Loading", C.LoadingTime or 3)
-	MatchCore.waitPhase(ctx, C.LoadingTime or 3)
+	-- opts.skipLoading: the caller ran its own Loading (the match place: arrival + every client's "Loaded")
+	if not opts.skipLoading then
+		MatchCore.setState(ctx, "Loading", C.LoadingTime or 3)
+		MatchCore.waitPhase(ctx, C.LoadingTime or 3)
+	end
+	-- opts.introTime: a short "Intro" phase (the match place's logo crumble) before the vote; the UI ignores the name
+	if opts.introTime and opts.introTime > 0 and not MatchCore.forfeitSide(ctx) then
+		MatchCore.setState(ctx, "Intro", opts.introTime)
+		MatchCore.waitPhase(ctx, opts.introTime)
+	end
 	local maps = opts.maps or {}
 	s:SetAttribute("MapList", HttpService:JSONEncode(MatchCore.mapList(maps)))
 	s:SetAttribute("MapVotes", "{}")
@@ -1129,6 +1137,16 @@ local function spawnFrame(match, side: string, slot: number): CFrame
 	return cf * CFrame.new(s * step, 3, 0)
 end
 
+-- the hold, but facing the member's round spawn: the client camera takes its starting yaw from a new body's first frame,
+-- so a body first seen facing -Z (CFrame.new) started every round looking backwards ([MATCH] spawn camera, 2026-10-16)
+local function facingHold(match, m): CFrame
+	local cf = holdFrame(match, m.index)
+	if match.solid and m.team then
+		cf = CFrame.new(cf.Position) * spawnFrame(match, m.team, table.find(match.teams[m.team], m) or 1).Rotation
+	end
+	return cf
+end
+
 local function loadSolid(match)
 	local src = ServerStorage:FindFirstChild("DuelMaps") and ServerStorage.DuelMaps:FindFirstChild(match.map.Id)
 	local solid = src and src:FindFirstChild("Solid")
@@ -1574,7 +1592,7 @@ local function onCharacterAdded(player: Player, character: Model)
 	-- no yield before the pivot
 	local root = character:FindFirstChild("HumanoidRootPart")
 	if root then root.Anchored = true end
-	character:PivotTo(holdFrame(match, m.index))
+	character:PivotTo(facingHold(match, m))
 	if IS_STUDIO then
 		table.insert(manager._spawnLog, { name = player.Name, match = match.id, at = first, round = m.spawning == true,
 			parented = parented, holdY = match.origin.Y - HOLD_DEPTH, auto = m.benching ~= true and m.spawning ~= true })
@@ -1596,7 +1614,7 @@ local function onCharacterAdded(player: Player, character: Model)
 		root = character:WaitForChild("HumanoidRootPart", 5)
 		if not root or byPlayer[player] ~= rec then return end
 		root.Anchored = true
-		character:PivotTo(holdFrame(match, m.index))
+		character:PivotTo(facingHold(match, m))
 	end
 	player:SetAttribute("Alive", false)
 	task.delay(0.6, function() if byPlayer[player] == rec and not m.spawning then stripTools(player) end end)
@@ -2154,6 +2172,10 @@ return {
 	DuelRanked = false,     -- pad duels are casual only (lead default, Edward may change)
 	DuelRewardCooldown = 600, -- one reward per opponent pair per 10 minutes (anti-farming; lead default)
 	ReturnFade = 1,
+
+	-- [MATCH] the match place (notes/match_place_flow.md): Loading waits for every client's "Loaded", then a short Intro
+	MatchLoadTimeout = 60,  -- safety: start with whoever is present (a team with nobody = cancelled, no rewards)
+	IntroTime = 2.5,        -- the logo crumble between Loading and MapVote
 }
 ]=]
 --@@END SOURCES

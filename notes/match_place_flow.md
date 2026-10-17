@@ -112,3 +112,52 @@ real `joinMatchData` -> `runMatchServer` path ran. Client calls were real `Match
   with the old RoundManager too; harmless.
 - The old client `MatchHUD` shows no status text for the new states (it only knows the old ones); the UI session's DuelHUD / MatchFlowUI
   cover them.
+
+## Follow-up 2026-10-16 (Edward): fair loading, short intro, spawn camera
+
+### Loading gate + Intro (match place only; the lobby duel path is unchanged)
+- **Loading** now covers arrival and assets: every client's quick intro sends `MatchFlow:FireServer("Loaded")` (no matchId) once its
+  assets are in; the server records it in any phase. Loading lasts until every expected real player of TeamA / TeamB has sent it, or
+  arrived and then left; Studio test bots count as loaded. `ReplicatedStorage.LoadedCount / LoadedTotal` update live (5 Hz; a player who
+  arrived and left drops out of the total). TeamA / TeamB are published from the TeleportData lists at the start, and each arriving
+  player gets `Team` and a body parked frozen at the team spawn, so the UI's WAITING FOR OPPONENT has both sides.
+- **Choice on the safety net:** `MatchConfig.MatchLoadTimeout = 60` s, then the match starts with whoever is present. If a whole team
+  never arrived it is cancelled instead (`MatchState = "Cancelled"`, "MATCH CANCELLED", no match, no rewards, everyone teleported back) -
+  checked at `ArrivalTimeout` (30 s; nothing can start without a team) and at the 60 s timeout. This replaces the old separate 30 s
+  "Waiting" arrival phase (Waiting is still the test server's free-practice state).
+- Then **Intro** (`MatchState / MatchPhase = "Intro"`, `PhaseEndsAt = now + MatchConfig.IntroTime` 2.5 s; MatchFlowUI crumbles the logo
+  when the phase leaves Loading), then **MapVote with its full 10 s**. Shared MatchCore: `runPreMatch` got `opts.skipLoading` and
+  `opts.introTime` (the lobby doesn't pass them); MatchConfig got `MatchLoadTimeout`, `IntroTime`.
+- Tests (Play, 331cb3a0, StudioTeleportData):
+  - normal (me + bot): `0.6 Loading | 4.4 Intro | 7.0 MapVote | 18.6 Loadout`: Loading ended when the client's quick intro sent Loaded
+    (`LoadedCount/Total` 2/2), Intro 2.6 s, MapVote 10 s + the 1.5 s winner flash (09);
+  - a teammate who never comes (`A = [me, 99999]`, `MatchLoadTimeout` 12 for the test): `1.2 Loading | 13.3 Intro | ...`, `LoadedCount
+    2/3` until the timeout, then the match ran with the players present;
+  - a team that never comes (`B = [99998]`, `ArrivalTimeout` 6): `1.1 Loading | 7.3 Cancelled/Ended`, teleport back attempted, no match.
+
+### Spawn camera (both places)
+- **Cause** (reproduced in Play: round 3 after dying in round 2, camera exactly at the reported (-50.75, 5.47, -34.5)): the client
+  CameraController takes its starting yaw from the new body's first frame (`bindCharacter`: `yaw = atan2(-look.X, -look.Z)`). The new body
+  was first seen at the default spawn (CFrame facing -Z) and pivoted to SpawnA only after `Ready`, so the camera started looking
+  **backwards** (yaw 0 = -Z) while the character faced B: the view showed the wall behind SpawnA and, 2 studs to the left, the pillar
+  P01's unlit (near-black) east face (10). Nothing was clipping there: `COLP_P01` matches the visual pillar exactly (5 x 10 x 5,
+  0.02 apart) and the exact-triangle check below found no cut at slot 1.
+- **Fix:** match place `RoundManager.spawnPlayer` pivots the new body to its spawn inside CharacterAdded, before any yield, and again
+  right after `LoadCharacter` (then once more after Ready, as before). Lobby `LobbyDuelManager.onCharacterAdded` puts a duelist's new body
+  in the Hold **facing its team's round spawn** (`facingHold`) instead of a bare `CFrame.new(position)`. After: round 3 camera behind the
+  player looking along the spawn's facing (11); lobby duel, round after a death: camera look (-0.53, 0, 0.85) = SpawnA's facing.
+- **Real visual-wall gaps (all spawns checked):** `tools/camskin_gen.lua` reads the Warehouse visual meshes' real triangles
+  (`EditableMesh:RaycastLocal`; the meshes' collision hulls are far too coarse for this) and compares them with what the camera probe
+  stops on. The visual walls stand 0.15-1.6 studs proud of `COLP_Wall_*` (east / west long walls 0.7, a few wall features 1.6, north /
+  south 0.15-0.8); the probe stops 0.45 before a collision wall, so the camera could end up behind the drawn wall. A sweep of every
+  spawn (A/B x team slots 1-3 x 24 yaws x both shoulders, hip distance 8, 0.12 near plane) found **28 / 288** such poses (all at the 2v2 /
+  3v3 teammate slots by the long walls; slot 1 = 1v1 had none). **Fix:** 36 invisible skin Parts flush with the visual faces
+  (CanCollide / CanQuery / CanTouch, cloned from COLP_Wall_W: Transparency 1, no shadow) in the map's own folder `Warehouse.CamSkin`
+  (not CollisionProxies, so smoke / blast rays and bot cover spots are unchanged), data `fix/data/warehouse_camskin.json`, applied by
+  `fix/warehouse_camskin.lua` (`python tools/camskin_build.py <studio_id> [UNDO]`): match place `Workspace.Warehouse.CamSkin`; lobby
+  `ServerStorage._DuelSource.Warehouse.Warehouse.CamSkin` + `fix/duel_split_map.lua` re-run (Solid 109 -> 145 parts; the Visual layer
+  also carries the 36 as invisible non-colliding parts). After: **0 / 288**. Skins touching a valve / extinguisher stay behind their
+  front faces (valve fronts 0.5 proud of the skin), so the valves can still be shot.
+- Lobby re-run: `lobby_duels_build.py --run` (MatchCore, LobbyDuelManager, MatchConfig) then `admin_build.py --run`; a solo pad duel
+  (`;duelsolo on`, `;tp me 1v1a`) played to 3-1 MatchEnd and returned (state object gone, DuelMatch cleared); no errors.
+- Test setup undone in 331cb3a0 (StudioTeleportData cleared, TutorialConfig.AutoStartInStudio back to true, length 11646).

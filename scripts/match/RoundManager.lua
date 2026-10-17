@@ -1,8 +1,9 @@
 -- ServerScriptService/ServerScripts/[Server] Init/GameManager/Managers/RoundManager (ModuleScript)
 -- [MATCH] 2026-10-16 (notes/match_place_flow.md): the round rules now come from the shared MatchCore module (the same file the
 -- lobby's pad duels run), and a real match plays the RIVALS flow:
---   Waiting (arrival; MatchPhase "Loading") -> Loading -> MapVote (maps of the match's mode + Random) -> Loadout (pick from
---   what you own; ends early when everyone is Ready) -> rounds (MatchCore.playMatch) -> MatchEnd (results) -> back to the lobby.
+--   Loading (arrival + every client's MatchFlow "Loaded"; LoadedCount / LoadedTotal) -> Intro (2.5 s, the logo crumbles) ->
+--   MapVote (maps of the match's mode + Random) -> Loadout (pick from what you own; ends early when everyone is Ready) ->
+--   rounds (MatchCore.playMatch) -> MatchEnd (results) -> back to the lobby.
 -- Original source (pass 38): ServerStorage._RebuildRemoved.MATCH_RoundManager_Orig. UNDO: fix/match_place_install.lua UNDO.
 -- Server kinds (unchanged):
 --   * MATCH server: the first player's TeleportData { Mode, Ranked, Teams = {A = {ids}, B = {ids}}, Loadouts } and Tutorial ~= true.
@@ -15,11 +16,11 @@
 -- Published state (old names kept; new ones from notes/lobby_duels_design.md section 6):
 --   ReplicatedStorage: MatchState, StateEndsAt, PhaseEndsAt, MatchPhase, RoundNumber, RoundsToWin, CombatEnabled, LiveMatch,
 --                      MatchMode, MatchRanked, ScoreA, ScoreB, TestMode, InfiniteAmmo, TeamA, TeamB, MapList, MapVotes,
---                      MapChosen, ArenaMap
+--                      MapChosen, ArenaMap, LoadedCount, LoadedTotal
 --   Player:            InMatch, RoundWins, Team, MatchKills, MatchDeaths, GadgetThrows, Alive, Level, OwnedItems,
 --                      KitWeapon, KitMelee, KitGadget, Loadout (= KitWeapon), LoadoutReady
 --   Events.Match.MatchAnnounce (title, subtitle), Events.Match.MatchResults (summary per player)
---   ReplicatedStorage.MatchFlow (RemoteEvent): client ("Vote", mapId) / ("Pick", slot, itemId) / ("Ready") / ("Leave");
+--   ReplicatedStorage.MatchFlow (RemoteEvent): client ("Loaded") / ("Vote", mapId) / ("Pick", slot, itemId) / ("Ready") / ("Leave");
 --                      server FireClient(player, nil, "Kill", {killer, victim, weapon, headshot, kind})
 -- Admin (AdminFramework Duel commands): manager.MatchInfo(), manager.EndMatch(reason).
 
@@ -60,6 +61,8 @@ local current = nil
 -- Studio evidence for the tests: return-to-lobby attempts
 manager._returns = {}
 manager._phaseLog = {}
+-- [userId] = true once that client sent MatchFlow "Loaded"
+local loadedBy = {}
 
 -- // State ----------------------------------------------------------------------------------------
 local BASE = { state = ReplicatedStorage }
@@ -91,9 +94,15 @@ local function spawnFrame(team: string, slot: number, info): CFrame
 end
 
 local function spawnPlayer(player: Player, cframe: CFrame?)
+	-- the new body is placed at its spawn, facing the spawn's way, before any yield (inside CharacterAdded), so its first
+	-- replicated frame is already there: the client camera takes its starting yaw from that first frame (a body first seen
+	-- at the default spawn faces -Z, and the camera then looked backwards at the wall behind SpawnA in later rounds)
+	local early = cframe and player.CharacterAdded:Connect(function(c) c:PivotTo(cframe) end)
 	player:LoadCharacter()
+	if early then early:Disconnect() end
 	local character = player.Character
 	if not character then return nil end
+	if cframe then character:PivotTo(cframe) end
 	local waited = 0
 	while character:GetAttribute("Ready") ~= true and waited < 10 and character.Parent do waited += task.wait(0.1) end
 	if cframe and character.Parent then character:PivotTo(cframe) end
@@ -350,11 +359,11 @@ local function runMatchServer(first)
 			end
 		end
 	end
-	setState("Waiting", first.StudioSolo and 2 or (C.ArrivalTimeout or 30))
-	-- the arrival wait shows the UI's loading card
-	ReplicatedStorage:SetAttribute("MatchPhase", "Loading")
-	announce("MATCH FOUND", "Waiting for everyone to load in...")
-	local deadline = os.clock() + ((first.StudioSolo or first.StudioTest) and 2 or (C.ArrivalTimeout or 30))
+	-- Loading (Edward 2026-10-16: "the intro should end only when both clients have loaded in the game with the necessary
+	-- assets so it's fair on both ends"): arrival + every client's assets. A client sends MatchFlow "Loaded" when its logo
+	-- intro has loaded; Loading lasts until every expected real player has sent it (or arrived and left), bots count as
+	-- loaded. Safety: C.MatchLoadTimeout (60 s), then the match starts with whoever is present. A team with nobody after
+	-- ArrivalTimeout (30 s) or at the timeout = MATCH CANCELLED: no match, no rewards, everyone back to the lobby.
 	local function present()
 		local teams = { A = {}, B = {} }
 		for _, p in Players:GetPlayers() do
@@ -363,14 +372,67 @@ local function runMatchServer(first)
 		end
 		return teams
 	end
-	local total = 0; for _ in expected do total += 1 end
-	while os.clock() < deadline do
-		local t = present()
-		if #t.A + #t.B >= total then break end
-		task.wait(0.5)
+	local order = { A = {}, B = {} }
+	local botIds = {}
+	local botN0 = 0
+	for _, side in { "A", "B" } do
+		for uid, sd in expected do if sd == side then table.insert(order[side], uid) end end
+		table.sort(order[side])
+		for _ = 1, bots[side] do botN0 += 1; table.insert(order[side], -botN0); botIds[-botN0] = true end
 	end
+	ReplicatedStorage:SetAttribute("TeamA", json(order.A))
+	ReplicatedStorage:SetAttribute("TeamB", json(order.B))
+	local timeout = C.MatchLoadTimeout or 60
+	setState("Loading", timeout)
+	announce("MATCH FOUND", "Waiting for everyone to load in...")
+	-- an arriving player gets their Team at once (the loading screen's team boxes) and a body parked frozen at the team
+	-- spawn (CharacterAutoLoads is off: without a character the client's PlayerGui.HUD never appears)
+	local parked = {}
+	local function park(p: Player)
+		local side = expected[p.UserId]
+		if not side or parked[p] then return end
+		parked[p] = true
+		p:SetAttribute("Team", side)
+		task.spawn(function()
+			spawnPlayer(p, spawnFrame(side, table.find(order[side], p.UserId) or 1, nil))
+			local root = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
+			if root then root.Anchored = true end
+		end)
+	end
+	local joinConn = Players.PlayerAdded:Connect(park)
+	local seen = {}
+	local t0 = os.clock()
+	local cancel = false
+	while true do
+		local count, total = 0, 0
+		local done = true
+		local arrivedA, arrivedB = bots.A, bots.B
+		for _ in botIds do count += 1; total += 1 end
+		for uid, side in expected do
+			local p = Players:GetPlayerByUserId(uid)
+			if p then
+				seen[uid] = true
+				park(p)
+				if side == "A" then arrivedA += 1 else arrivedB += 1 end
+			end
+			if p or not seen[uid] then
+				-- still expected (a player who arrived and left drops out)
+				total += 1
+				if p and loadedBy[uid] then count += 1 else done = false end
+			end
+		end
+		ReplicatedStorage:SetAttribute("LoadedCount", count)
+		ReplicatedStorage:SetAttribute("LoadedTotal", total)
+		local elapsed = os.clock() - t0
+		local teamMissing = (arrivedA == 0 or arrivedB == 0) and not first.StudioSolo
+		if done and not teamMissing then break end
+		if teamMissing and elapsed >= math.min(C.ArrivalTimeout or 30, timeout) then cancel = true break end
+		if elapsed >= timeout then cancel = teamMissing break end
+		task.wait(0.2)
+	end
+	joinConn:Disconnect()
 	local arrived = present()
-	if (#arrived.A + bots.A == 0 or #arrived.B + bots.B == 0) and not first.StudioSolo then
+	if cancel then
 		setState("Cancelled", 5)
 		announce("MATCH CANCELLED", "The other team didn't make it. Back to the lobby - no penalty.")
 		task.wait(5)
@@ -398,12 +460,13 @@ local function runMatchServer(first)
 			if m.player then
 				local d = profileData(m.player)
 				setupMember(m, d, loadoutFromTeleport(first, m.userId))
-				-- CharacterAutoLoads is off: a body parked (frozen) at the team spawn behind the vote / loadout screens, so the
-				-- client's PlayerGui (HUD) exists from the start; round 1 loads a fresh one
-				task.spawn(function()
-					spawnPlayer(m.player, spawnFrame(m.team, table.find(match.teams[m.team], m) or 1, nil))
-					setFrozen(m, true)
-				end)
+				-- the body parked at arrival (Loading) stays frozen behind the vote / loadout screens; round 1 loads a fresh one
+				if not m.player.Character then
+					task.spawn(function()
+						spawnPlayer(m.player, spawnFrame(m.team, table.find(match.teams[m.team], m) or 1, nil))
+						setFrozen(m, true)
+					end)
+				end
 				local r = d and d.Ranked and d.Ranked[first.Mode]
 				sum += (r and r.Rating) or (C.StartingRating or 1000); n += 1
 			end
@@ -414,6 +477,9 @@ local function runMatchServer(first)
 	match.maps = maps
 	ReplicatedStorage:SetAttribute("MapFallback", fallback or nil)
 	MatchCore.runPreMatch(match.ctx, {
+		-- Loading happened above (arrival + assets); then the short logo intro, then the full MapVote
+		skipLoading = true,
+		introTime = C.IntroTime or 2.5,
 		maps = maps,
 		voters = function()
 			local n = 0
@@ -499,10 +565,15 @@ local function hookWaitingDeaths(player: Player)
 end
 
 -- // MatchFlow remote (no matchId in the match place; a leading matchId is tolerated and ignored) -------------
-local KINDS = { Vote = true, Pick = true, Ready = true, Leave = true }
+local KINDS = { Vote = true, Pick = true, Ready = true, Leave = true, Loaded = true }
 local SLOTS = { Weapon = true, Melee = true, Gadget = true }
 local function onFlow(player: Player, kind: any, a: any, b: any, c: any)
 	if not KINDS[kind] and KINDS[a] then kind, a, b = a, b, c end
+	if kind == "Loaded" then
+		-- the client's intro has loaded its assets (accepted in any phase: it can come before the server knows its kind)
+		loadedBy[player.UserId] = true
+		return
+	end
 	local match = current
 	local m = match and match.byUser[player.UserId]
 	if kind == "Leave" then
@@ -592,6 +663,7 @@ function manager.Start()
 		player:SetAttribute("InMatch", false); player:SetAttribute("RoundWins", 0)
 	end
 	Players.PlayerAdded:Connect(onJoin)
+	Players.PlayerRemoving:Connect(function(p) loadedBy[p.UserId] = nil end)
 	for _, p in Players:GetPlayers() do onJoin(p) end
 	if IS_STUDIO then
 		-- test evidence: every MatchState / MatchPhase change with its time since the server started
