@@ -41,3 +41,10 @@ All tested in Studio against a test bot except Challenge (needs two real players
 
 ## Checked and fine
 Gun / melee / gadget servers, admin framework, shop / codes / quests / receipts, duels, tutorial, range, bots, settings save.
+
+## Tests after the publish (Studio, test bots)
+- Match place (1v1 vs bot): RunIn from the middle round the pillar to the spawn (client-driven route, ~2.3 s), Countdown, Live;
+  kill-cam SpectateTarget = bot / Killer; Victory WinnerTeam + Winner for 4 s, then MatchEnd.
+- Lobby pad duel (DuelTestSolo, arena slot 1): RunIn ~2.1 s round the pillar; kill-cam holds while benched in the Hold and clears
+  at the next round; Victory (WinnerTeam B, Winner = bot) then MatchEnd. Console clean.
+- Challenge: one-client check only (self-challenge refused with the right message); needs Edward + a friend.
