@@ -201,6 +201,10 @@ local function refresh()
 	-- a lobby menu (Settings, Shop, Play...) or the profile card covers the screen: the buttons go, like RIVALS
 	local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
 	local menuUp = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
+	-- the Kit room (Armory): LobbyUI stays on with its dock hidden; its panels sit where Jump / Crouch are
+	local dock = lobbyGui and lobbyGui:FindFirstChild("Dock", true)
+	if lobbyGui and lobbyGui.Enabled and dock and not dock.Visible and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
+		and not player:GetAttribute("InDuel") and player:GetAttribute("DuelMatch") == nil and player:GetAttribute("InCutscene") ~= true then menuUp = true end -- (lobby duels hide the dock too)
 	local cards = player.PlayerGui:FindFirstChild("PlayerCards")
 	if cards and cards:FindFirstChild("ProfileTint") then menuUp = true end
 	-- match screens: the results card, and the map vote / loadout (MatchFlow) cover the screen too
