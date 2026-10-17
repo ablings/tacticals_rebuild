@@ -196,3 +196,11 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   Intro / Cancelled, ReplicatedStorage `LoadedCount / LoadedTotal`; MatchConfig `MatchLoadTimeout`, `IntroTime`. Lobby: duelist bodies wait in the Hold
   facing their round spawn (LobbyDuelManager `facingHold`).
 
+- 2026-10-16 data_release (notes/data_release.md; **both places**): **[DATA] source edits** (backups `ServerStorage._RebuildRemoved.DATA_<name>_Orig`):
+  `Data.DataManager` (LoadProfileAsync "ForceLoad" + `[DATA] profile loaded ... in X s` log, player attr `DataLoadTime`; new
+  `DataManager.ReleaseForTeleport(players)` / `RestoreAfterTeleportFail(player, why)` / `IsReleased(player)`, `DataManager.Released`;
+  a teleport release no longer kicks; TeleportInitFailed / 30 s auto-reload; kick with a message only if the reload isn't safe).
+  Release before every TeleportAsync: lobby QueueManager.deploy, MatchmakingManager.deliver, NewPlayerTutorial; match RoundManager.backToLobby,
+  TutorialManager. `CombatManager`: **`HitConfirm(zone, damage, killed, headshot)`**, the new 4th client argument is true for a critical
+  (gun Head-zone) headshot. Any code that teleports a player must call `DataManager.ReleaseForTeleport` first. UNDO via
+  `fix/data_release_install.lua UNDO` (each place). Re-run the install after `tools/match_place_build.py` (it rewrites RoundManager).
