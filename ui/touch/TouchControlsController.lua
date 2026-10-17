@@ -198,7 +198,12 @@ end
 local wasShown = false
 local function refresh()
 	if not gui then return end
-	local on = touchOn() and player:GetAttribute("Setting_HideHUD") ~= true and player:GetAttribute("InCutscene") ~= true
+	-- a lobby menu (Settings, Shop, Play...) or the profile card covers the screen: the buttons go, like RIVALS
+	local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
+	local menuUp = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
+	local cards = player.PlayerGui:FindFirstChild("PlayerCards")
+	if cards and cards:FindFirstChild("ProfileTint") then menuUp = true end
+	local on = touchOn() and not menuUp and player:GetAttribute("Setting_HideHUD") ~= true and player:GetAttribute("InCutscene") ~= true
 	gui.Enabled = on or editing
 	local ia = actions()
 	if ia and ia.Config then
