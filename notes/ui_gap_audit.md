@@ -28,3 +28,6 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 - 2026-10-17 night: 1-3 built (`ui/hud/PlayerCards.lua`, LobbyHud rows + world hook, PublicStats StatMatches/StatKills/StatHeadshots).
   Play-tested in 829eb64d: own row -> menu (View Profile / View Avatar) -> card; hover hint over your character; double click -> card;
   HUD + PLAY row + dock push away under the card and return on X. LobbySocial contract sent to the Tacticals session.
+- 2026-10-17 night: touch emulator pass (Device Simulator, match place): stick, stick zone move, drag-look, double tap fire,
+  Fire button OK. Fixed: stick drags turned the camera in the simulator (GetMouseDelta from the locked desktop mouse; camera
+  now ignores mouse delta on touch-only devices). Multi-touch needs a real phone. Open: tutorial banner says "Press [Q]" on touch.
