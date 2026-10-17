@@ -162,8 +162,10 @@ local function teamOf(uid)
 	local p = Players:GetPlayerByUserId(uid or 0)
 	return p and p:GetAttribute("Team")
 end
+local lastDeath -- the kill event that killed you (the kill-cam card shows how)
 local function addKill(d)
 	feedN += 1
+	if d.victim == player.UserId then lastDeath = d end
 	local myTeam = player:GetAttribute("Team")
 	local function col(uid) if uid == player.UserId then return WHITE end; return teamOf(uid) == myTeam and TEAM_A[1] or Color3.fromRGB(255, 140, 120) end
 	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Parent = feed }, { new("UICorner", { CornerRadius = UDim.new(0.25, 0) }) })
@@ -171,7 +173,7 @@ local function addKill(d)
 	if mine then new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = row }) end
 	local verb = d.kind == "Melee" and "bashed" or (d.kind == "Explosion" and "blew up" or (d.kind == "Burn" and "burned" or ">"))
 	local txt = string.format('<font color="#%s">%s</font>  %s%s  <font color="#%s">%s</font>', col(d.killer):ToHex(), nameOf(d.killer),
-		verb, d.headshot and "  ✦" or "", col(d.victim):ToHex(), nameOf(d.victim))
+		verb, d.headshot and "  ◉" or "", col(d.victim):ToHex(), nameOf(d.victim)) -- (◉: BuilderSans has no ✦)
 	local l = new("TextLabel", { BackgroundTransparency = 1, RichText = true, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE,
 		TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.94, 0.7), Parent = row })
 	new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l })
@@ -188,18 +190,31 @@ local function addKill(d)
 end
 
 ---------------------------------------------------------------------------------------------------- spectate
-local specBar = new("Frame", { Name = "Spectate", Position = UDim2.fromOffset(660, 930), Size = UDim2.fromOffset(600, 86), BackgroundColor3 = BLACK,
-	BackgroundTransparency = 0.35, Visible = false, Parent = root }, { corner(12) })
-label(specBar, "SPECTATING", STENCIL, 22, 0, 6, 600, 28, Color3.fromRGB(205, 205, 212))
-local specName = label(specBar, "", FX, 36, 70, 30, 460, 48, WHITE)
-local specPrev = label(specBar, "Q  <", FX, 28, 10, 30, 80, 48, Color3.fromRGB(205, 205, 212))
-local specNext = label(specBar, ">  E", FX, 28, 510, 30, 80, 48, Color3.fromRGB(205, 205, 212))
+-- (2026-10-17, Edward: kill-cam) dead in a round = you watch your killer: the Tacticals session sets the player attribute
+-- SpectateTarget = killer UserId (SpectateReason "Killer") until the next round. The card: "KILLED BY" in red (or
+-- "SPECTATING"), the killer's headshot, name, live health bar and how they got you; Q / E (or the arrows) still cycle.
+local specBar = new("Frame", { Name = "Spectate", Position = UDim2.fromOffset(620, 900), Size = UDim2.fromOffset(680, 120), BackgroundColor3 = BLACK,
+	BackgroundTransparency = 0.3, Visible = false, Parent = root }, { corner(14), new("UIStroke", { Color = WHITE, Transparency = 0.85, Thickness = 1.5 }) })
+local specHead = new("ImageLabel", { BackgroundColor3 = Color3.fromRGB(30, 34, 28), Position = UDim2.fromOffset(96, 14), Size = UDim2.fromOffset(92, 92), Parent = specBar }, { corner(10) })
+local specTitle = label(specBar, "SPECTATING", STENCIL, 24, 206, 8, 380, 30, Color3.fromRGB(205, 205, 212))
+specTitle.TextXAlignment = Enum.TextXAlignment.Left
+local specName = label(specBar, "", FX, 36, 206, 34, 380, 44, WHITE)
+specName.TextXAlignment = Enum.TextXAlignment.Left
+local hpBack = new("Frame", { Position = UDim2.fromOffset(206, 82), Size = UDim2.fromOffset(300, 14), BackgroundColor3 = Color3.fromRGB(40, 44, 38), Parent = specBar }, { corner(7) })
+local hpFill = new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = GOOD, Parent = hpBack }, { corner(7) })
+local hpText = label(specBar, "", FB, 20, 514, 76, 80, 26, WHITE)
+hpText.TextXAlignment = Enum.TextXAlignment.Left
+local specHow = label(specBar, "", FB, 20, 206, 98, 380, 22, Color3.fromRGB(180, 182, 172))
+specHow.TextXAlignment = Enum.TextXAlignment.Left
+local specPrev = label(specBar, "Q  <", FX, 28, 10, 36, 80, 48, Color3.fromRGB(205, 205, 212))
+local specNext = label(specBar, ">  E", FX, 28, 596, 36, 80, 48, Color3.fromRGB(205, 205, 212))
 local specStop = new("TextButton", { Name = "StopSpectate", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1280, 950), Size = UDim2.fromOffset(150, 52),
 	BackgroundColor3 = WHITE, Visible = false, Parent = root }, { corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(240, 110, 100), Color3.fromRGB(170, 40, 30)) }) })
 label(specStop, "Stop", FX, 30, 0, 0, 150, 52, WHITE)
 specStop.Activated:Connect(function() send("StopSpectate") end)
 
 local target
+local killcamPicked = false -- jumped to the killer once this death (Q / E may move off them after)
 local function aliveList()
 	local myTeam = player:GetAttribute("Team")
 	local own, other = {}, {}
@@ -214,9 +229,41 @@ local function aliveList()
 	for _, u in other do table.insert(own, u) end
 	return own
 end
+local headFor -- the uid whose headshot is loaded
 local function setTarget(uid)
 	target = uid
 	specName.Text = uid and nameOf(uid) or "..."
+	if uid ~= headFor then
+		headFor = uid
+		specHead.Image = ""
+		if uid and uid > 0 then
+			task.spawn(function()
+				local ok, img = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+				if ok and headFor == uid then specHead.Image = img end
+			end)
+		end
+	end
+end
+-- the card's live part: who it is, their health, and "KILLED BY" when it's your killer
+local function refreshSpecCard()
+	local killer = player:GetAttribute("SpectateTarget")
+	local isKiller = killer ~= nil and target == killer and not spectator()
+	specTitle.Text = isKiller and "KILLED BY" or "SPECTATING"
+	specTitle.TextColor3 = isKiller and BAD or Color3.fromRGB(205, 205, 212)
+	local how = ""
+	if isKiller and lastDeath and lastDeath.killer == killer then
+		local kind = lastDeath.kind == "Melee" and "a melee hit" or (lastDeath.kind == "Explosion" and "an explosion" or (lastDeath.kind == "Burn" and "fire" or nil))
+		how = (lastDeath.weapon and ("with " .. tostring(lastDeath.weapon)) or (kind and ("with " .. kind) or "")) .. (lastDeath.headshot and "  ·  HEADSHOT" or "")
+	end
+	specHow.Text = how
+	local p = target and Players:GetPlayerByUserId(target)
+	local hum = p and p.Character and p.Character:FindFirstChildOfClass("Humanoid")
+	local frac = hum and hum.MaxHealth > 0 and math.clamp(hum.Health / hum.MaxHealth, 0, 1) or 0
+	hpFill.Size = UDim2.fromScale(frac, 1)
+	hpFill.BackgroundColor3 = frac > 0.5 and GOOD or (frac > 0.25 and Color3.fromRGB(235, 190, 60) or BAD)
+	hpText.Text = hum and tostring(math.ceil(hum.Health)) or ""
+	local many = #aliveList() > 1
+	specPrev.Visible, specNext.Visible = many, many
 end
 local function cycle(step)
 	local list = aliveList()
@@ -425,8 +472,17 @@ RunService.RenderStepped:Connect(function()
 	specBar.Visible = spec
 	specStop.Visible = spectator()
 	if spec then
+		-- your killer first (SpectateTarget), then anyone alive
+		local killer = player:GetAttribute("SpectateTarget")
+		if killer and target ~= killer and not spectator() and not killcamPicked then
+			killcamPicked = true
+			setTarget(killer)
+		end
 		local p = target and Players:GetPlayerByUserId(target)
 		if not p or p:GetAttribute("Alive") ~= true then cycle(1) end
+		refreshSpecCard()
+	else
+		killcamPicked = false
 	end
 end)
 
