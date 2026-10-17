@@ -36,7 +36,7 @@ eye-level olive band and the white floor lines. Light temperature and props are 
    green (65,94,56).
 3. **(Done 2026-10-16: replaced by a sky-base backdrop, `notes/backdrop_sky.md`.)** TimesSquare towers: from the Exfil pad they fill the whole east sky. Set `HIDE_TIMESSQUARE = true` in `fix/polish_exfil.lua`
    and re-run to hide them (UNDO-able). The sheet shows the pad both ways.
-4. **Queue-pad Holo beam bug** (from before the polish): the 6 pad Holo beams render outside the Duels hall, because their
+4. **(Done 2026-10-17: `fix/holo_beams.lua`, beams under each pad hologram, UNDO-able.)** **Queue-pad Holo beam bug** (from before the polish): the 6 pad Holo beams render outside the Duels hall, because their
    Attachments hold world coordinates as local offsets. The fix is in `notes/particles.md`. Not done because it is your FX.
 5. **(Done 2026-10-17: `fix/exfil_oneway.lua`, fires only while heading for the pad; tested both ways.)** **Exfil barrier fires from both sides:** walking back from the pad to the hangar through it also starts the cutscene.
    Options: fire only when moving +X, or add an EXFIL ZONE floor cue.
