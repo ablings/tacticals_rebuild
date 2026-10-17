@@ -366,10 +366,12 @@ local EDITS = IS_LOBBY and {
 }
 
 -- both places: CombatManager's claimed-hit check goes through HitRewind
+-- (the lobby's CombatManager has the [DUEL] MatchState require; the match place's doesn't)
+local COMBAT_ANCHOR = IS_LOBBY and "local MatchState = require(Shared.MatchState)\n" or "local RateLimiter = require(Shared.Madwork.RateLimiter)\n"
 local COMMON = {
 	{ "CombatManager",
-		"local MatchState = require(Shared.MatchState)\n",
-		"local MatchState = require(Shared.MatchState)\n"
+		COMBAT_ANCHOR,
+		COMBAT_ANCHOR
 			.. "-- [SECURE] lag-compensated hit check (HitRewind keeps ~1 s of every character's root CFrame)\n"
 			.. "local HitRewind = require(game:GetService(\"ServerScriptService\").Shared.HitRewind)\n"
 			.. "HitRewind.Start()\n" },
