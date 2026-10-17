@@ -2,7 +2,7 @@
 Usage (from tacticals_rebuild): python tools/run_luau.py fix/place_hub1.lua [UNDO]
 UNDO replaces the line tagged --@UNDO with 'local UNDO = true'."""
 import json, os, subprocess, sys, re, tempfile
-SID = "829eb64d-c313-4a64-bfb2-2bd3c42eb18e"   # Tacticals_rebuild.rbxl; ids change on reload (list_roblox_studios)
+SID = "018a7af6-6613-4d98-b9b4-c31491a28f2b"   # Tacticals_rebuild.rbxl; ids change on reload (list_roblox_studios)
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 code = open(sys.argv[1], encoding="utf-8").read()
 if "UNDO" in sys.argv[2:]:

@@ -12,7 +12,7 @@
 --   so headshots stay the player's own skill.
 -- Two effects, both scaled by strength:
 --   friction: the camera turns slower while the crosshair is near a target (sensitivity multiplier)
---   pull:     while the player is actively aiming (moving, turning the camera, aiming down sights or firing), the camera
+--   pull:     only while the player is actively turning the camera (input.looking), the camera
 --             eases toward the neck point of the target nearest the crosshair inside the assist cone
 -- Targets: alive (never dead players / NPCs), in line of sight, within Range; in a match only the other team; in the
 --   practice range (InTraining) the Training dummies + enemy; anywhere the ;aimnpc test dummy (tag "AimAssistTarget").
@@ -199,12 +199,9 @@ function AimAssist.Step(dt: number, cam: CFrame, input)
 	local close = 1 - math.clamp(ang / cone, 0, 1) -- 1 on the neck, 0 at the cone edge
 	local out = { yaw = 0, pitch = 0, sensitivity = 1 - C.Friction * s * close, target = model, point = point }
 	input = input or {}
-	local active = input.aiming or input.firing or input.looking
-	if not active then
-		local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-		active = hum ~= nil and hum.MoveDirection.Magnitude > 0.1
-	end
-	if active then
+	-- Edward: "aim assist should also only work when the player is actively moving their camera" - the pull only runs while
+	-- the camera is being turned (input.looking); standing still, moving, aiming or firing alone never pull
+	if input.looking then
 		local k = math.clamp(C.PullRate * s * dt, 0, 1)
 		local cap = math.rad(C.MaxPullDegPerSec) * dt
 		out.yaw = math.clamp(yawErr * k, -cap, cap)
