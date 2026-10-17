@@ -10,7 +10,8 @@
 --          Managers.LobbyManager (a game pass is granted only after UserOwnsGamePassAsync confirms it)
 --   match: Managers.RoundManager (joinMatchData plays only MatchSpec.Secure's answer)
 --   both:  Managers.CombatManager (claimed hits checked by HitRewind: lag-compensated, 1.25 studs instead of ~7)
--- ORDER: after split (place copies get split + this via tools/split_build.py, then this installer).
+-- ORDER: any time after match_place_build / ranked (independent of split: split works on the copies made from match_place_ref,
+-- which already carry this). Re-run after tools/match_place_build.py rewrites RoundManager.
 local UNDO = false --@UNDO
 
 local SS = game:GetService("ServerStorage")

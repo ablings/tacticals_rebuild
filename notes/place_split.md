@@ -131,3 +131,10 @@ Baseline hash before the install `93898d88` (RoundManager 99976a00, TutorialMana
   MatchmakingManager require fine, no errors; `PlaceIdFor` with ids 0 -> 81861384114744 for all three; with 111 / 222 / 333 -> 111 / 222 / 333.
 - Not testable in Studio: the real teleports (lobby -> each place, each place -> lobby, reserved codes across lobby servers), a direct
   join to a new place, two real players, the MemoryStore queues.
+
+## 2026-10-17: [SECURE] before publishing
+`fix/secure_install.lua` (notes/loophole_audit.md) is installed in `match_place_ref.rbxl` and the lobby working copy, so the place
+copies made from match_place_ref carry it. After publishing the lobby + the three places: restart the old servers
+(Creator Hub > Tacticals > ... > Restart servers / migrate), because an old lobby server sends ranked matches with no
+server-side spec, which the new Ranked place refuses. Check one ranked and one casual match: no "[MatchSpec]" warnings in the
+match server log.
