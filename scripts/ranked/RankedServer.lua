@@ -154,21 +154,43 @@ function Leaderboard.Store(key: string)
 	return s
 end
 
--- one write per ranked result / admin change
-function Leaderboard.Write(key: string, userId: number, elo: number, name: string?)
+-- [SECURE] 2026-10-17: the stored value also carries the last-played day and the idle days already charged, so the board
+-- can show decay for players who stopped playing (decay is otherwise only applied when they join: a top player could sit
+-- on #1 / Warlord forever). value = ELO * 1e6 + (LastPlayed day % 1000) * 1000 + min(Decayed, 999); it still sorts by ELO.
+-- Values below 1e6 are the old plain ELO (no day: no display decay).
+function Leaderboard.Encode(elo: number, lastPlayed: number?, decayed: number?): number
+	local day = RankedCore.Day(lastPlayed or os.time()) % 1000
+	return math.floor(math.max(elo, 0)) * 1000000 + day * 1000 + math.clamp(math.floor(decayed or 0), 0, 999)
+end
+function Leaderboard.Decode(v: number): (number, number?, number)
+	if v < 1000000 then return v, nil, 0 end
+	local elo, d, k = v // 1000000, (v // 1000) % 1000, v % 1000
+	local today = RankedCore.Day()
+	return elo, today - ((today - d) % 1000), k
+end
+-- the ELO the board shows: stored ELO minus the decay due since the last ranked match (nothing for old plain values)
+function Leaderboard.Shown(v: number): number
+	local elo, day, k = Leaderboard.Decode(v)
+	if not day then return elo end
+	local loss = RankedCore.DecayDue({ Elo = elo, LastPlayed = day * 86400, Decayed = k })
+	return elo - loss
+end
+
+-- one write per ranked result / admin change (lastPlayed / decayed: the record's, for the display decay)
+function Leaderboard.Write(key: string, userId: number, elo: number, name: string?, lastPlayed: number?, decayed: number?)
 	if userId <= 0 then return end
 	if elo < (C.LeaderboardWriteMin or 0) then
 		if C.LeaderboardWriteMin > 0 then pcall(function() Leaderboard.Store(key):RemoveAsync(tostring(userId)) end) end
 		return
 	end
 	if name then Leaderboard.nameCache[userId] = name end
-	local ok, err = pcall(function() Leaderboard.Store(key):SetAsync(tostring(userId), math.floor(elo)) end)
+	local ok, err = pcall(function() Leaderboard.Store(key):SetAsync(tostring(userId), Leaderboard.Encode(elo, lastPlayed, decayed)) end)
 	if not ok then
 		warn("[Ranked] leaderboard write failed: " .. tostring(err))
 		if not Leaderboard.mock and tostring(err):find("publish", 1, true) then
 			Leaderboard.mock = true
 			Leaderboard.stores = {}
-			Leaderboard.Write(key, userId, elo, name)
+			Leaderboard.Write(key, userId, elo, name, lastPlayed, decayed)
 		end
 	end
 end
@@ -194,14 +216,21 @@ function Leaderboard.Refresh(key: string)
 	local ok, list = pcall(function()
 		local pages = Leaderboard.Store(key):GetSortedAsync(false, math.min(100, n), C.WarlordFrom)
 		local out = {}
+		-- [SECURE] read a margin past n (display decay can reorder the top), keep ELO >= WarlordFrom after decay, re-sort
+		local want = n + math.max(25, n // 4)
+		local seen = 0
 		while true do
 			for _, e in pages:GetCurrentPage() do
-				if #out >= n then break end
-				table.insert(out, { userId = tonumber(e.key), elo = e.value })
+				if seen >= want then break end
+				seen += 1
+				local shown = Leaderboard.Shown(e.value)
+				if shown >= C.WarlordFrom then table.insert(out, { userId = tonumber(e.key), elo = shown }) end
 			end
-			if #out >= n or pages.IsFinished then break end
+			if seen >= want or pages.IsFinished then break end
 			pages:AdvanceToNextPageAsync()
 		end
+		table.sort(out, function(a, b) return a.elo > b.elo end)
+		while #out > n do table.remove(out) end
 		return out
 	end)
 	if not ok then
@@ -425,7 +454,7 @@ function RankedServer.ApplyDecay(player: Player)
 				rec.Rating = rec.Elo
 				rec.Decayed = (rec.Decayed or 0) + days
 				writeRecord(player, key, rec)
-				Leaderboard.Write(key, player.UserId, rec.Elo, player.Name)
+				Leaderboard.Write(key, player.UserId, rec.Elo, player.Name, rec.LastPlayed, rec.Decayed)
 				print(("[Ranked] decay %s %s: -%d (%d idle days)"):format(player.Name, key, loss, days))
 			end
 		end
@@ -442,7 +471,7 @@ function RankedServer.SetElo(player: Player, elo: number, mode: string?)
 	rec.Rating = rec.Elo
 	rec.Peak = math.max(rec.Peak or 0, rec.Elo)
 	writeRecord(player, key, rec)
-	Leaderboard.Write(key, player.UserId, rec.Elo, player.Name)
+	Leaderboard.Write(key, player.UserId, rec.Elo, player.Name, rec.LastPlayed, rec.Decayed)
 	RankedServer.ApplyAttributes(player)
 	return rec, key
 end
@@ -453,7 +482,7 @@ function RankedServer.Reset(player: Player, mode: string?)
 	for _, key in keys do
 		local rec = RankedCore.Migrate(nil)
 		writeRecord(player, key, rec)
-		Leaderboard.Write(key, player.UserId, rec.Elo, player.Name)
+		Leaderboard.Write(key, player.UserId, rec.Elo, player.Name, rec.LastPlayed, rec.Decayed)
 		table.insert(done, key)
 	end
 	RankedServer.ApplyAttributes(player)

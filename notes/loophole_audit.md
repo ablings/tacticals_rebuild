@@ -28,6 +28,13 @@ Status legend: FIXED (installed in the working copies, ships with the next publi
    Tune `HitRewind.Tolerance` if legit hits get refused (Studio prints "hit too far from target (x studs)").
 
 ## Medium
+8. **Sitting on the leaderboard.** FIXED [SECURE] in `scripts/ranked/RankedServer.lua` (installed via tools/ranked_build.py).
+   Decay was only applied when a player joined, so a top player who stopped playing kept #1 / Warlord forever (and kept
+   a Warlord seat from someone active). The leaderboard value now carries the last-played day and the idle days already
+   charged (ELO x 1e6 + day % 1000 x 1000 + decayed); the refresh shows ELO minus the decay due, drops entries that fall
+   under WarlordFrom, re-sorts, and computes the cutoff from the shown values. Old plain-ELO values still read (no decay
+   shown until their next ranked match). Tested: active 2500 -> 2500; 10 idle days -> 2425; 3 days already charged at join ->
+   no double charge; 100 idle days at 1700 -> 1600 floor; legacy 2300 -> 2300; sort order kept.
 2. **Game passes granted on the purchase-finished event alone.** FIXED [SECURE] in LobbyManager:
    `PromptGamePassPurchaseFinished` is now confirmed with `UserOwnsGamePassAsync` before granting (Roblox's own advice; the
    join-time `checkPasses` already used it).
