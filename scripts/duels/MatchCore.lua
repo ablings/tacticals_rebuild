@@ -172,27 +172,93 @@ function MatchCore.runIn(ctx)
 	if n.A == 0 or n.B == 0 then return end
 	local centre = (sum.A / n.A + sum.B / n.B) / 2
 	MatchCore.setState(ctx, "RunIn", standoff + runTime + 0.3)
-	-- start close in the middle, facing the other side
+	-- start close in the middle, facing the other side: the first spot toward the middle (35% first, then nearer / further,
+	-- then sideways) that is free of collision and has a path back home; the route is kept for the run
+	local PFS = game:GetService("PathfindingService")
+	local chars = {}
+	for m2 in homes do local c2 = MatchCore.character(m2); if c2 then table.insert(chars, c2) end end
+	local overlap = OverlapParams.new()
+	overlap.FilterType = Enum.RaycastFilterType.Exclude
+	overlap.FilterDescendantsInstances = chars
+	local function clear(pos)
+		for _, part in workspace:GetPartBoundsInBox(CFrame.new(pos + Vector3.new(0, 0.5, 0)), Vector3.new(3, 4.5, 3), overlap) do
+			if part.CanCollide then return false end
+		end
+		return true
+	end
+	local function routeFrom(from, home)
+		local path = PFS:CreatePath({ AgentRadius = 1.5, AgentHeight = 5, AgentCanJump = true, WaypointSpacing = 4 })
+		local okP = pcall(function() path:ComputeAsync(from, home) end)
+		if not (okP and path.Status == Enum.PathStatus.Success) then return nil end
+		local route, len, prev = {}, 0, from
+		for k, w in path:GetWaypoints() do
+			if k > 1 then
+				table.insert(route, { pos = w.Position, jump = w.Action == Enum.PathWaypointAction.Jump })
+				len += flatDist(prev, w.Position)
+				prev = w.Position
+			end
+		end
+		return route, len
+	end
 	for m, h in homes do
 		local p = h.cf.Position
 		local flat = Vector3.new(centre.X - p.X, 0, centre.Z - p.Z)
-		local from = flat.Magnitude > 1 and (p + flat * 0.35) or p
+		local side = flat.Magnitude > 0.1 and Vector3.new(-flat.Z, 0, flat.X).Unit or Vector3.xAxis
+		local from, route, len = p, nil, 0
+		if flat.Magnitude > 1 then
+			for _, frac in { 0.35, 0.3, 0.4, 0.25, 0.45, 0.2 } do
+				for _, off in { 0, 3, -3, 6, -6 } do
+					local c = p + flat * frac + side * off
+					if clear(c) then
+						local r, l = routeFrom(c, p)
+						if r then from, route, len = c, r, l break end
+					end
+				end
+				if route then break end
+			end
+		end
 		local ch = MatchCore.character(m)
-		if ch then
+		if ch and route then
 			ctx.setFrozen(m, true)
 			ch:PivotTo(CFrame.lookAt(from, Vector3.new(centre.X, from.Y, centre.Z)))
-			h.from = from
+			h.from, h.route, h.len = from, route, len
 		end
 	end
 	task.wait(standoff)
-	-- break for cover: everyone runs back home at a pace that arrives together
+	-- break for cover: everyone runs back home round the pillar, at a pace that arrives together.
+	-- Players run on their own client (StarterPlayerScripts.RunInClient: player attributes RunInRoute = JSON {x,y,z,jump},
+	-- RunInSpeed, RunInGo = a counter), because the client owns its character's physics; bots run here on the server.
+	local HS = game:GetService("HttpService")
 	for m, h in homes do
 		local hum = MatchCore.humanoid(m)
 		if hum and h.from then
-			ctx.setFrozen(m, false)
-			h.speed = hum.WalkSpeed
-			hum.WalkSpeed = math.clamp(flatDist(h.from, h.cf.Position) / math.max(runTime - 0.2, 0.5), 10, 30)
-			hum:MoveTo(h.cf.Position)
+			local speed = math.clamp(h.len / math.max(runTime - 0.2, 0.5), 10, 30)
+			if m.player then
+				local pts = {}
+				for _, wp in h.route do
+					table.insert(pts, { math.floor(wp.pos.X * 10) / 10, math.floor(wp.pos.Y * 10) / 10, math.floor(wp.pos.Z * 10) / 10, wp.jump and 1 or 0 })
+				end
+				m.player:SetAttribute("RunInRoute", HS:JSONEncode(pts))
+				m.player:SetAttribute("RunInSpeed", speed)
+				ctx.setFrozen(m, false)
+				m.player:SetAttribute("RunInGo", (m.player:GetAttribute("RunInGo") or 0) + 1)
+			else
+				ctx.setFrozen(m, false)
+				h.speed = hum.WalkSpeed
+				hum.WalkSpeed = speed
+				task.spawn(function()
+					for _, wp in h.route do
+						if not (hum.Parent and hum.Health > 0) or ctx.over then break end
+						if wp.jump then hum.Jump = true end
+						local reached = false
+						local conn = hum.MoveToFinished:Once(function() reached = true end)
+						hum:MoveTo(wp.pos)
+						local t1 = os.clock()
+						while not reached and os.clock() - t1 < 1 do task.wait() end
+						conn:Disconnect()
+					end
+				end)
+			end
 		end
 	end
 	local t0 = os.clock()
@@ -211,6 +277,7 @@ function MatchCore.runIn(ctx)
 		if hum and h.speed then hum.WalkSpeed = h.speed end
 		if ch and ch.Parent then ch:PivotTo(h.cf) end
 		ctx.setFrozen(m, true)
+		if m.player then m.player:SetAttribute("RunInRoute", nil) end
 	end
 	task.wait(0.3)
 end
