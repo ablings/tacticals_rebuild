@@ -12,6 +12,7 @@ FIX = os.path.join(ROOT, "fix", "secure_install.lua")
 FILES = {
     "MatchSpec": "secure/MatchSpec.lua",
     "HitRewind": "secure/HitRewind.lua",
+    "MoveGuard": "secure/MoveGuard.server.lua",
 }
 
 
