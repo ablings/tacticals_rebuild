@@ -2,7 +2,7 @@
 (installed by tools/lap_client.lua). Usage: python tools/lap_capture.py <stops.json> [names...]
 stops.json: {"name": [[cam x,y,z],[look x,y,z], fov?], ...}  -> out/lap/<name>.png"""
 import json, os, subprocess, sys, shutil, time
-SID = "8ef4e21a-3525-484b-91af-79d7677aa213"
+SID = "829eb64d-c313-4a64-bfb2-2bd3c42eb18e"
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 ENV = dict(os.environ, PYTHONIOENCODING="utf-8")
 def call(tool, args):

@@ -2,7 +2,7 @@
 Usage (from tacticals_rebuild): python tools/polish_shop_capture.py <prefix: before|after|tN> [names...]
        python tools/polish_shop_capture.py ref name x,y,z lx,ly,lz   (RIVALS reference, read-only)"""
 import json, os, subprocess, sys, shutil
-SID = "8ef4e21a-3525-484b-91af-79d7677aa213"   # Tacticals_rebuild.rbxl
+SID = "829eb64d-c313-4a64-bfb2-2bd3c42eb18e"   # Tacticals_rebuild.rbxl
 REF = "2e616d06-6bfd-4b39-a751-ddccf8eb9187"   # RIVALS reference (read-only)
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
