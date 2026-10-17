@@ -3,7 +3,7 @@
 --   lobby       python tools/touch_build.py --run lobby        (studio 829eb64d)
 --   match place python tools/touch_build.py --run match        (studio 331cb3a0)
 --   UNDO        add UNDO to either line
--- New (attribute TouchInstall = true): ReplicatedStorage.Modules.Shared.InputActions
+-- New (attribute TouchInstall = true): ReplicatedStorage.Modules.Shared.InputActions, StarterPlayerScripts.TouchFire (LocalScript)
 local UNDO = false --@UNDO
 
 local RS = game:GetService("ReplicatedStorage")
@@ -19,10 +19,10 @@ SOURCES.InputActions = [=[-- ReplicatedStorage.Modules.Shared.InputActions [TOUC
 --   InputActions.Press("Reload")             -- a touch button went down
 --   InputActions.Release("Reload")           -- and up (Press/Release pairs are counted, so two fingers are safe)
 --   InputActions.Tap("Equip1")               -- Press + Release in one call
---   local c = InputActions.Bind("Reload", function(down) ... end)   -- down = true on press, false on release
+--   local c = InputActions.Bind("Reload", function(state, action) ... end)   -- state = Enum.UserInputState.Begin / End
 --   c:Disconnect()
 --   InputActions.IsHeld("Fire")
---   InputActions.Touching()                  -- true while any action is held by touch (the camera uses it for sinking)
+--   InputActions.Touching()                  -- true while any action is held by touch
 --
 -- The handler gets the same arguments a ContextActionService callback gets: (actionName, Enum.UserInputState, fakeInput),
 -- so a controller can pass its existing CAS handler straight to BindCAS.
@@ -30,9 +30,9 @@ SOURCES.InputActions = [=[-- ReplicatedStorage.Modules.Shared.InputActions [TOUC
 local InputActions = {}
 
 InputActions.Names = {
-	"Fire", "Aim", "Reload", "Inspect", "Jump", "Crouch", "Slide", "Dash", "Cover", "Ability",
-	"QuickMelee", "QuickUtility", "Equip1", "Equip2", "Equip3", "Equip4",
-	"Emote", "Scoreboard", "CameraSwap",
+	"Fire", "Aim", "Reload", "Inspect", "Jump", "Crouch", "Slide", "Dash", "Cover",
+	"QuickMelee", "QuickUtility", "ThrowGadget", "Equip1", "Equip2", "Equip3",
+	"Scoreboard", "CameraSwap",
 }
 local known = {}
 for _, n in InputActions.Names do known[n] = true end
@@ -44,8 +44,9 @@ local anyHeld = 0
 local function fire(action, down)
 	local list = handlers[action]
 	if not list then return end
+	local state = down and Enum.UserInputState.Begin or Enum.UserInputState.End
 	for fn in list do
-		task.spawn(fn, down)
+		task.spawn(fn, state, action)
 	end
 end
 
@@ -106,24 +107,124 @@ end
 -- Adapter for existing ContextActionService handlers: fn(actionName, state, inputObject).
 -- The fake input carries UserInputType Touch and KeyCode Unknown, so handlers that check the key still run their default.
 function InputActions.BindCAS(action, fn, casName)
-	return InputActions.Bind(action, function(down)
-		local state = down and Enum.UserInputState.Begin or Enum.UserInputState.End
+	return InputActions.Bind(action, function(state)
 		fn(casName or action, state, { UserInputType = Enum.UserInputType.Touch, KeyCode = Enum.KeyCode.Unknown, UserInputState = state, Position = Vector3.zero, Delta = Vector3.zero })
 	end)
 end
 
+-- Touch ownership: which screen touches belong to the camera.
+-- A button that takes a touch calls Consume(input) with the InputObject from its InputBegan. If the button allows camera
+-- sinking (the global Buttons Camera Sinking setting, or its Custom override) it passes sink = true and the camera may still
+-- turn with that finger. The touch is forgotten automatically when it ends.
+--   InputActions.Consume(input, sink)
+--   InputActions.CameraShouldUse(input)  -- CameraController asks this for every touch it would turn the camera with
+local consumed = {} -- InputObject -> "sink" | "block"
+function InputActions.Consume(input, sink)
+	if consumed[input] then
+		if sink == false then consumed[input] = "block" end
+		return
+	end
+	consumed[input] = sink and "sink" or "block"
+	local conn
+	conn = input:GetPropertyChangedSignal("UserInputState"):Connect(function()
+		if input.UserInputState == Enum.UserInputState.End or input.UserInputState == Enum.UserInputState.Cancel then
+			consumed[input] = nil
+			conn:Disconnect()
+		end
+	end)
+end
+
+function InputActions.IsConsumed(input)
+	return consumed[input] ~= nil
+end
+
+-- Settings the touch HUD writes, so the camera rules and the double-tap detector follow them (UI session keeps them in sync).
+InputActions.Config = {
+	LeftHanded = false,        -- the joystick zone moves to the right half
+	DoubleTapAttack = true,    -- double tap on free screen fires
+	DoubleTapWindow = 0.25,    -- seconds between the two taps
+	JoystickZone = 0.5,        -- fraction of the screen width (from the joystick side) that belongs to the thumbstick
+}
+
+local function inJoystickZone(pos)
+	local cam = workspace.CurrentCamera
+	if not cam then return false end
+	local w = cam.ViewportSize.X
+	local x = pos.X
+	local zone = InputActions.Config.JoystickZone * w
+	if InputActions.Config.LeftHanded then return x > w - zone end
+	return x < zone
+end
+InputActions.InJoystickZone = inJoystickZone
+
+-- Touches that started in the joystick zone, or on a button without sinking, never turn the camera.
+local startPos = {} -- InputObject -> where the touch began
+function InputActions.CameraShouldUse(input)
+	if input.UserInputType ~= Enum.UserInputType.Touch then return true end
+	local c = consumed[input]
+	if c == "block" then return false end
+	if c == "sink" then return true end
+	local p = startPos[input]
+	if p == nil then
+		p = input.Position
+		startPos[input] = p
+		input:GetPropertyChangedSignal("UserInputState"):Connect(function()
+			if input.UserInputState == Enum.UserInputState.End or input.UserInputState == Enum.UserInputState.Cancel then
+				startPos[input] = nil
+			end
+		end)
+	end
+	return not inJoystickZone(p)
+end
+
 return InputActions
+]=]
+SOURCES.TouchFire = [=[-- StarterPlayer.StarterPlayerScripts.TouchFire [TOUCH] (2026-10-17): RIVALS "Double Tap To Attack".
+-- A second tap on free screen (not a button, not the joystick zone) within Config.DoubleTapWindow presses Fire, and holding
+-- that second finger keeps firing until it lifts. Settings come from InputActions.Config (the Touch tab writes them).
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("ReplicatedStorage")
+local InputActions = require(RS:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions"))
+
+local lastTapAt = -math.huge
+local lastTapPos = nil
+local firing = nil -- the InputObject holding Fire
+local MAX_GAP_PX = 120 -- the two taps must land near each other (a scale of the shorter screen side would be nicer; px is fine for a distance)
+
+UIS.TouchStarted:Connect(function(input, gameProcessed)
+	local cfg = InputActions.Config
+	if gameProcessed or not cfg.DoubleTapAttack or firing then return end
+	if InputActions.IsConsumed(input) or InputActions.InJoystickZone(input.Position) then return end
+	local now = os.clock()
+	local near = lastTapPos and (Vector2.new(input.Position.X, input.Position.Y) - lastTapPos).Magnitude <= MAX_GAP_PX
+	if now - lastTapAt <= cfg.DoubleTapWindow and near then
+		lastTapAt = -math.huge
+		firing = input
+		InputActions.Press("Fire")
+	else
+		lastTapAt = now
+		lastTapPos = Vector2.new(input.Position.X, input.Position.Y)
+	end
+end)
+
+UIS.TouchEnded:Connect(function(input)
+	if input == firing then
+		firing = nil
+		InputActions.Release("Fire")
+	end
+end)
 ]=]
 --@@END SOURCES
 local rec = CHS:TryBeginRecording("TOUCH install" .. (UNDO and " UNDO" or ""))
 local log = {}
 local shared = RS:WaitForChild("Modules"):WaitForChild("Shared")
 
-local function module(parent, name, src)
+local sps = game:GetService("StarterPlayer"):WaitForChild("StarterPlayerScripts")
+local function module(parent, name, src, class)
 	local m = parent:FindFirstChild(name)
 	if m and not m:GetAttribute(TAG) then error(name .. " exists and is not ours") end
 	if not m then
-		m = Instance.new("ModuleScript")
+		m = Instance.new(class or "ModuleScript")
 		m.Name = name
 		m:SetAttribute(TAG, true)
 		m.Parent = parent
@@ -137,8 +238,13 @@ end
 if UNDO then
 	local m = shared:FindFirstChild("InputActions")
 	if m and m:GetAttribute(TAG) then m:Destroy() table.insert(log, "removed InputActions") end
+	local f = sps:FindFirstChild("TouchFire")
+	if f and f:GetAttribute(TAG) then f:Destroy() table.insert(log, "removed TouchFire") end
 else
 	module(shared, "InputActions", SOURCES.InputActions)
+	local f = sps:FindFirstChild("TouchFire")
+	if f and not f:IsA("LocalScript") then f:Destroy() end
+	module(sps, "TouchFire", SOURCES.TouchFire, "LocalScript")
 end
 if rec then CHS:FinishRecording(rec, Enum.FinishRecordingOperation.Commit) end
 return table.concat(log, "\n")

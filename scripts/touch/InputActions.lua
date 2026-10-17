@@ -6,10 +6,10 @@
 --   InputActions.Press("Reload")             -- a touch button went down
 --   InputActions.Release("Reload")           -- and up (Press/Release pairs are counted, so two fingers are safe)
 --   InputActions.Tap("Equip1")               -- Press + Release in one call
---   local c = InputActions.Bind("Reload", function(down) ... end)   -- down = true on press, false on release
+--   local c = InputActions.Bind("Reload", function(state, action) ... end)   -- state = Enum.UserInputState.Begin / End
 --   c:Disconnect()
 --   InputActions.IsHeld("Fire")
---   InputActions.Touching()                  -- true while any action is held by touch (the camera uses it for sinking)
+--   InputActions.Touching()                  -- true while any action is held by touch
 --
 -- The handler gets the same arguments a ContextActionService callback gets: (actionName, Enum.UserInputState, fakeInput),
 -- so a controller can pass its existing CAS handler straight to BindCAS.
@@ -17,9 +17,9 @@
 local InputActions = {}
 
 InputActions.Names = {
-	"Fire", "Aim", "Reload", "Inspect", "Jump", "Crouch", "Slide", "Dash", "Cover", "Ability",
-	"QuickMelee", "QuickUtility", "Equip1", "Equip2", "Equip3", "Equip4",
-	"Emote", "Scoreboard", "CameraSwap",
+	"Fire", "Aim", "Reload", "Inspect", "Jump", "Crouch", "Slide", "Dash", "Cover",
+	"QuickMelee", "QuickUtility", "ThrowGadget", "Equip1", "Equip2", "Equip3",
+	"Scoreboard", "CameraSwap",
 }
 local known = {}
 for _, n in InputActions.Names do known[n] = true end
@@ -31,8 +31,9 @@ local anyHeld = 0
 local function fire(action, down)
 	local list = handlers[action]
 	if not list then return end
+	local state = down and Enum.UserInputState.Begin or Enum.UserInputState.End
 	for fn in list do
-		task.spawn(fn, down)
+		task.spawn(fn, state, action)
 	end
 end
 
@@ -93,10 +94,74 @@ end
 -- Adapter for existing ContextActionService handlers: fn(actionName, state, inputObject).
 -- The fake input carries UserInputType Touch and KeyCode Unknown, so handlers that check the key still run their default.
 function InputActions.BindCAS(action, fn, casName)
-	return InputActions.Bind(action, function(down)
-		local state = down and Enum.UserInputState.Begin or Enum.UserInputState.End
+	return InputActions.Bind(action, function(state)
 		fn(casName or action, state, { UserInputType = Enum.UserInputType.Touch, KeyCode = Enum.KeyCode.Unknown, UserInputState = state, Position = Vector3.zero, Delta = Vector3.zero })
 	end)
+end
+
+-- Touch ownership: which screen touches belong to the camera.
+-- A button that takes a touch calls Consume(input) with the InputObject from its InputBegan. If the button allows camera
+-- sinking (the global Buttons Camera Sinking setting, or its Custom override) it passes sink = true and the camera may still
+-- turn with that finger. The touch is forgotten automatically when it ends.
+--   InputActions.Consume(input, sink)
+--   InputActions.CameraShouldUse(input)  -- CameraController asks this for every touch it would turn the camera with
+local consumed = {} -- InputObject -> "sink" | "block"
+function InputActions.Consume(input, sink)
+	if consumed[input] then
+		if sink == false then consumed[input] = "block" end
+		return
+	end
+	consumed[input] = sink and "sink" or "block"
+	local conn
+	conn = input:GetPropertyChangedSignal("UserInputState"):Connect(function()
+		if input.UserInputState == Enum.UserInputState.End or input.UserInputState == Enum.UserInputState.Cancel then
+			consumed[input] = nil
+			conn:Disconnect()
+		end
+	end)
+end
+
+function InputActions.IsConsumed(input)
+	return consumed[input] ~= nil
+end
+
+-- Settings the touch HUD writes, so the camera rules and the double-tap detector follow them (UI session keeps them in sync).
+InputActions.Config = {
+	LeftHanded = false,        -- the joystick zone moves to the right half
+	DoubleTapAttack = true,    -- double tap on free screen fires
+	DoubleTapWindow = 0.25,    -- seconds between the two taps
+	JoystickZone = 0.5,        -- fraction of the screen width (from the joystick side) that belongs to the thumbstick
+}
+
+local function inJoystickZone(pos)
+	local cam = workspace.CurrentCamera
+	if not cam then return false end
+	local w = cam.ViewportSize.X
+	local x = pos.X
+	local zone = InputActions.Config.JoystickZone * w
+	if InputActions.Config.LeftHanded then return x > w - zone end
+	return x < zone
+end
+InputActions.InJoystickZone = inJoystickZone
+
+-- Touches that started in the joystick zone, or on a button without sinking, never turn the camera.
+local startPos = {} -- InputObject -> where the touch began
+function InputActions.CameraShouldUse(input)
+	if input.UserInputType ~= Enum.UserInputType.Touch then return true end
+	local c = consumed[input]
+	if c == "block" then return false end
+	if c == "sink" then return true end
+	local p = startPos[input]
+	if p == nil then
+		p = input.Position
+		startPos[input] = p
+		input:GetPropertyChangedSignal("UserInputState"):Connect(function()
+			if input.UserInputState == Enum.UserInputState.End or input.UserInputState == Enum.UserInputState.Cancel then
+				startPos[input] = nil
+			end
+		end)
+	end
+	return not inJoystickZone(p)
 end
 
 return InputActions

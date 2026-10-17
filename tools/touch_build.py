@@ -11,6 +11,7 @@ ROOT = os.path.join(HERE, "..")
 FIX = os.path.join(ROOT, "fix", "touch_install.lua")
 FILES = {
     "InputActions": "touch/InputActions.lua",
+    "TouchFire": "touch/TouchFire.client.lua",
 }
 
 

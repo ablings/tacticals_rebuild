@@ -11,5 +11,10 @@ Split (Edward: "send all of that to ui"):
   Buttons call Press/Release/Tap; controllers listen with Bind / BindCAS next to their ContextActionService binds.
 
 State before this: no touch support anywhere (only Icon checks TouchEnabled).
-Open: who adds the [TOUCH] hooks in CameraController / CoverController / HotbarController (UI-owned); the touch camera
+Hooks: the UI session adds the [TOUCH] hooks itself in all its [SET] controllers.
+Also mine: `StarterPlayerScripts.TouchFire` (double tap on free screen within Config.DoubleTapWindow, second finger held = Fire held)
+and `InputActions.CameraShouldUse(input)` (joystick-zone touches and non-sinking button touches never turn the camera).
+Action names: Fire Aim Reload Inspect Jump Crouch Slide Dash Cover QuickMelee QuickUtility ThrowGadget Equip1-3 Scoreboard CameraSwap
+(Tacticals has 3 slots, no Ability/Emote).
+Was open: who adds the [TOUCH] hooks in CameraController / CoverController / HotbarController (UI-owned); the touch camera
 (aim follows the swipe, button camera-sinking) and the double-tap-to-fire detector.
