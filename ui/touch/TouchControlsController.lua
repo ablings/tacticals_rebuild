@@ -30,7 +30,7 @@ local BUTTONS = {
 	{ id = "Slide", action = "Slide", glyph = "↘", x = 0.715, y = 0.85, s = 0.13 },
 	{ id = "Take Cover", action = "Cover", glyph = "▣", x = 0.735, y = 0.71, s = 0.11 },
 	{ id = "Dash", action = "Dash", glyph = "»", x = 0.70, y = 0.58, s = 0.10 },
-	{ id = "Reload", action = "Reload", glyph = "↻", x = 0.765, y = 0.535, s = 0.09 },
+	{ id = "Reload", action = "Reload", glyph = "R", x = 0.765, y = 0.535, s = 0.09 },
 	{ id = "Gun Bash", action = "QuickMelee", glyph = "✊", x = 0.905, y = 0.235, s = 0.075 },
 	{ id = "Throw Gadget", action = "QuickUtility", glyph = "●", x = 0.955, y = 0.235, s = 0.075 },
 	{ id = "Equip Gun", action = "Equip1", glyph = "1", x = 0.855, y = 0.115, s = 0.095 },
@@ -351,7 +351,7 @@ function controller.OpenEditor()
 		refresh()
 	end
 	pillButton("×", 1, close)
-	pillButton("↺", 2, function()
+	pillButton("Reset", 2, function()
 		for _, b in BUTTONS do work[b.id] = { x = b.x, y = b.y, s = b.s } end
 		for id, m in made do place(id, m, work) end
 	end)

@@ -668,10 +668,14 @@ local function buildUI()
 	-- Settings > Game > Gameplay HUD "Minimal": in a match only the tiles (ammo) and health stay, so the key hints go
 	local function minimalHints()
 		local inMatch = localPlayer:GetAttribute("InDuel") == true or localPlayer:GetAttribute("InMatch") == true
-		hints.Visible = not (inMatch and localPlayer:GetAttribute("Setting_GameplayHUD") == "Minimal")
+		-- [TOUCH] on a touch screen the touch buttons take over: no key hints, no PC hotbar row (the equip circles replace it)
+		local touch = UserInputService.TouchEnabled or localPlayer:GetAttribute("_ForceTouch") == true
+		hints.Visible = not touch and not (inMatch and localPlayer:GetAttribute("Setting_GameplayHUD") == "Minimal")
+		if column then column.Visible = not touch end
 	end
-	for _, a in { "InDuel", "InMatch", "Setting_GameplayHUD" } do localPlayer:GetAttributeChangedSignal(a):Connect(minimalHints) end
+	for _, a in { "InDuel", "InMatch", "Setting_GameplayHUD", "_ForceTouch" } do localPlayer:GetAttributeChangedSignal(a):Connect(minimalHints) end
 	minimalHints()
+	task.defer(minimalHints) -- the tile row is built just below
 
 	column = Instance.new("Frame")
 	column.Name = "Tiles"
