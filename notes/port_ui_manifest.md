@@ -65,3 +65,11 @@ without it the button stays hidden and ExfilFX's own LEAVE [M] button is used.
 
 ## Not touched by the UI session
 Workspace (all map work is the Tacticals session's), PadBoards, QueueManager, MatchmakingManager (Tacticals session's [MM]), ExfilFX ([EXFIL]).
+
+## 2026-10-16 evening (live: lobby v266, match place "tutorial spot / matchmaking test" v103)
+- Lobby adds: `Client.Controllers.CombatFeedbackController` (hud/), `[SET] AimPoseController`, `[SET] PropController`,
+  `ReplicatedFirst.LoadingScreen` (intro/, same file in both places).
+- Match place (`deploy_ui.py <id> --match`): `Modules.Shared.TrainingGate` (pass-through shim), `Binds`, `Config.SettingsConfig`,
+  `UIKit.{Theme, Tac, Kit, SettingsData}`, `ServerScriptService.SettingsBridge` (every row), `SettingsEffectsController`,
+  `CombatFeedbackController`, the 12 gameplay [SET] controllers, `MatchFlowUI`, `DuelHUD`, LoadingScreen with `QuickIntro = true`,
+  and `matchplace/match_patches.lua` (old MatchHUD / MatchResults yield to DuelHUD).
