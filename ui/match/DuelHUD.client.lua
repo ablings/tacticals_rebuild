@@ -625,21 +625,7 @@ RunService.Heartbeat:Connect(function()
 	end
 end)
 
--- RunIn (MatchCore, round 1): the server walks you from the middle back to your spawn; your input would fight it, so
--- the PlayerModule controls are off until the Countdown
-do
-	local controls
-	local frozen = false
-	RunService.Heartbeat:Connect(function()
-		local want = inMatch() and st("MatchState") == "RunIn"
-		if want == frozen then return end
-		frozen = want
-		if not controls then
-			pcall(function() controls = require(player:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule")):GetControls() end)
-		end
-		if controls then if want then controls:Disable() else controls:Enable() end end
-	end)
-end
+-- (RunIn controls: the Tacticals session's RunInClient owns them; nothing here)
 
 -- Studio only: DuelHUDTest:Invoke(state, extra) fakes a match on the current state object
 if RunService:IsStudio() then
