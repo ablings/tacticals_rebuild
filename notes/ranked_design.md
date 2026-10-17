@@ -50,3 +50,11 @@ lead session's ELO maths is agreed.
 - 5-60 min: widens very slowly to ±6 ranks (±18 tiers), so a Bronze 1 can meet a Commander after about an hour.
 - A pair matches when each is inside the other's window (so mid ranks fill from both sides).
 - Open: one queue/ELO per mode (1v1/2v2/3v3) or shared — Edward is checking RIVALS.
+
+## Emblems (2026-10-16)
+- Art: Codex image gen (Edward OK'd), prompt `ui/art/ranks/PROMPT.md`, output `ui/art/ranks/rank_<name>.png` (1024, transparent).
+- Bronze-Diamond: RIVALS-like feel (chunky glossy gem in a metal frame, a new shape per rank) but our own shapes:
+  Bronze rounded square · Silver rhombus · Gold four-point star · Platinum chevron crystal · Diamond brilliant cut with flares.
+- Elite / Commander / Warlord: military insignia in the same glossy style (gunmetal, olive, bone): triple chevron ·
+  five-point star with a half laurel · crowned shield with crossed swords and a full laurel (top 200).
+- Tiers 1-3 are shown beside the emblem (pips / roman numerals in the UI), not baked into the art.
