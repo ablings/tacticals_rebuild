@@ -610,6 +610,19 @@ local function showVictory(phase)
 	for _, c in vRow:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
 	if winner then for _, uid in teamIds("Team" .. winner) do winnerCard(uid) end end
 	vTitle.Visible, vScore.Visible, vRow.Visible, sweepClip.Visible = true, true, true, true
+	-- the stinger: a bass hit on the slam, the victory fanfare for winners (Roblox client sounds, SFX group)
+	local SoundService = game:GetService("SoundService")
+	for _, spec in { { "bass.wav", 0.7, title == "DEFEAT" and 0.8 or 1 }, title == "VICTORY" and { "victory.wav", 0.5, 1 } or nil } do
+		if spec then
+			local snd = Instance.new("Sound")
+			snd.SoundId = "rbxasset://sounds/" .. spec[1]
+			snd.Volume, snd.PlaybackSpeed = spec[2], spec[3]
+			snd.SoundGroup = SoundService:FindFirstChild("Effects")
+			snd.Parent = SoundService
+			snd:Play()
+			task.delay(4, function() snd:Destroy() end)
+		end
+	end
 	-- slam in, then the light sweep
 	vScale.Scale = 1.6
 	vTitle.TextTransparency = 1

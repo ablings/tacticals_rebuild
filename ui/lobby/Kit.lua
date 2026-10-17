@@ -25,6 +25,38 @@ function Kit.tween(obj, t, goal, style, dir)
 	return tw
 end
 
+-- UI sounds (2026-10-17, Edward: richer, more immersive): Roblox's own client sounds (no uploads) in SoundService.Effects,
+-- so Settings > Audio > SFX / Master reach them. hover / click on every Kit button, open / close on menus.
+local SFX = {
+	hover = { id = "rbxasset://sounds/switch.wav", vol = 0.18, speed = 1.5 },
+	click = { id = "rbxasset://sounds/clickfast.wav", vol = 0.45, speed = 1.1 },
+	open = { id = "rbxasset://sounds/swordlunge.wav", vol = 0.16, speed = 1.6 },
+	close = { id = "rbxasset://sounds/snap.wav", vol = 0.22, speed = 1.3 },
+	reward = { id = "rbxasset://sounds/electronicpingshort.wav", vol = 0.4, speed = 1 },
+}
+local sfxPool, sfxLast = {}, {}
+function Kit.sfx(name)
+	local spec = SFX[name]
+	if not spec then return end
+	local now = os.clock()
+	if sfxLast[name] and now - sfxLast[name] < 0.04 then return end -- a sweep across buttons doesn't machine-gun
+	sfxLast[name] = now
+	local s = sfxPool[name]
+	if not s or not s.Parent then
+		local SoundService = game:GetService("SoundService")
+		s = Instance.new("Sound")
+		s.Name = "UI_" .. name
+		s.SoundId = spec.id
+		s.Volume = spec.vol
+		s.PlaybackSpeed = spec.speed
+		s.SoundGroup = SoundService:FindFirstChild("Effects")
+		s.Parent = SoundService
+		sfxPool[name] = s
+	end
+	s.TimePosition = 0
+	s:Play()
+end
+
 function Kit.corner(r) return new("UICorner", { CornerRadius = UDim.new(0, r or Theme.corner) }) end
 function Kit.stroke(color, thick, t)
 	return new("UIStroke", { Color = color or C.textDark, Thickness = thick or 2, Transparency = t or 0 })
@@ -323,12 +355,13 @@ function Kit.bindButton(btn, opts)
 	end)
 	local s = btn:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = btn })
 	local hovering = false
-	btn.MouseEnter:Connect(function() hovering = true; Kit.tween(s, 0.1, { Scale = opts.hover or 1.05 }) end)
+	btn.MouseEnter:Connect(function() hovering = true; Kit.tween(s, 0.1, { Scale = opts.hover or 1.05 }); if not opts.silent then Kit.sfx("hover") end end)
 	btn.MouseLeave:Connect(function() hovering = false; Kit.tween(s, 0.1, { Scale = 1 }) end)
 	btn.MouseButton1Down:Connect(function() Kit.tween(s, 0.06, { Scale = opts.press or 0.93 }) end)
+	btn.Activated:Connect(function() if not opts.silent then Kit.sfx("click") end end)
 	btn.MouseButton1Up:Connect(function() Kit.tween(s, 0.1, { Scale = hovering and (opts.hover or 1.05) or 1 }, Enum.EasingStyle.Back) end)
 	-- a controller's selection (GamepadNavController) grows it like a hover
-	btn.SelectionGained:Connect(function() Kit.tween(s, 0.1, { Scale = opts.hover or 1.05 }) end)
+	btn.SelectionGained:Connect(function() Kit.tween(s, 0.1, { Scale = opts.hover or 1.05 }); if not opts.silent then Kit.sfx("hover") end end)
 	btn.SelectionLost:Connect(function() if not hovering then Kit.tween(s, 0.1, { Scale = 1 }) end end)
 	return btn
 end
@@ -806,6 +839,7 @@ function Kit.loadingDots(parent)
 end
 
 function Kit.open(frame)
+	Kit.sfx("open")
 	Kit.centreAnchor(frame) -- scale from the centre
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
 	frame.Visible = true
@@ -814,6 +848,7 @@ function Kit.open(frame)
 	if frame:IsA("CanvasGroup") then frame.GroupTransparency = 1; Kit.tween(frame, 0.18, { GroupTransparency = 0 }) end
 end
 function Kit.close(frame, done)
+	Kit.sfx("close")
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
 	Kit.tween(s, 0.12, { Scale = 0.92 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	local tw = frame:IsA("CanvasGroup") and Kit.tween(frame, 0.12, { GroupTransparency = 1 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
