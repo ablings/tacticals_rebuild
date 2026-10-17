@@ -595,6 +595,8 @@ local function addBullets(holder: Frame)
 	end
 end
 
+local padState = { on = false, codes = {}, chips = {}, rebuild = nil } -- [PAD] controller HUD state
+
 -- // Build -------------------------------------------------------------------------------------------
 local function keycap(parent: Instance, key: string, order: number)
 	local cap = Instance.new("TextLabel")
@@ -641,6 +643,39 @@ local function buildUI()
 		{ "Leave", "LeaveTraining", "M" }, { "Take Cover", "TakeCover", "Q" }, { "Gun Bash", "GunBash", "F" }, { "Throw Gadget", "ThrowGadget", "G" },
 		{ "Reload", "Reload", "R" },
 	}
+	-- [PAD] controller HUD (Edward's RIVALS Xbox / PlayStation refs, 2026-10-17): with a gamepad as the last input the strip
+	-- shows the controller's own button glyphs (UserInputService:GetImageForKeyCode picks Xbox or PlayStation art), the
+	-- 1 / 2 / 3 tile keys go and LB / RB chips sit beside the row when equip cycling is bound.
+	-- The buttons are the gameplay scripts' binds (CameraController / CoverController / GadgetController / WeaponController /
+	-- this file); Modules.Shared.Config.GamepadConfig, if the Tacticals session adds it, overrides them by action name.
+	local PAD = { TakeCover = Enum.KeyCode.ButtonB, GunBash = Enum.KeyCode.ButtonR1, ThrowGadget = Enum.KeyCode.ButtonL1, Reload = Enum.KeyCode.ButtonX }
+	pcall(function()
+		local cfg = require(game:GetService("ReplicatedStorage").Modules.Shared.Config:FindFirstChild("GamepadConfig"))
+		for k, v in cfg do if typeof(v) == "EnumItem" then PAD[k] = v end end
+	end)
+	padState.codes = PAD
+	local function padCap(parent, code, order)
+		local img = ""
+		pcall(function() img = UserInputService:GetImageForKeyCode(code) end)
+		if img == "" then
+			-- no art: name it the way this controller does (GetStringForKeyCode gives ButtonCross etc. on a PlayStation pad)
+			local name = code.Name
+			pcall(function() name = UserInputService:GetStringForKeyCode(code) end)
+			local short = { ButtonR1 = "RB", ButtonL1 = "LB", ButtonR2 = "RT", ButtonL2 = "LT", ButtonA = "A", ButtonB = "B", ButtonX = "X", ButtonY = "Y",
+				ButtonCross = "×", ButtonCircle = "○", ButtonSquare = "□", ButtonTriangle = "△" }
+			if name:find("^Button[LR][12]$") and (name == "ButtonL1" or name == "ButtonR1" or name == "ButtonL2" or name == "ButtonR2") and UserInputService:GetStringForKeyCode(Enum.KeyCode.ButtonA) == "ButtonCross" then
+				return keycap(parent, name:sub(7), order) -- PlayStation: L1 / R1 / L2 / R2
+			end
+			return keycap(parent, short[name] or name, order)
+		end
+		local icon = Instance.new("ImageLabel")
+		icon.LayoutOrder = order
+		icon.BackgroundTransparency = 1
+		icon.Size = UDim2.fromOffset(26, 26)
+		icon.Image = img
+		icon.Parent = parent
+		return icon
+	end
 	local function keyName(action, fallback)
 		local k = Binds.Key(localPlayer, action, nil)
 		if not k then return fallback end
@@ -652,15 +687,18 @@ local function buildUI()
 		for _, c in hints:GetChildren() do if not c:IsA("UIListLayout") then c:Destroy() end end
 		for i, entry in HINTS do
 			if entry[2] == "LeaveTraining" and localPlayer:GetAttribute("InTraining") ~= true then continue end -- only in Training
+			local padCode = padState.on and PAD[entry[2]]
+			if padState.on and not padCode then continue end -- no controller button for it: keep the strip honest
 			local label = text(hints, FONT, 16, WHITE, 1)
 			label.LayoutOrder = i * 10
 			label.AutomaticSize = Enum.AutomaticSize.X
 			label.Size = UDim2.fromOffset(0, 22)
 			label.Text = (i > 1 and "    " or "") .. entry[1]
 			shade(label, 1)
-			keycap(hints, keyName(entry[2], entry[3]), i * 10 + 1)
+			if padCode then padCap(hints, padCode, i * 10 + 1) else keycap(hints, keyName(entry[2], entry[3]), i * 10 + 1) end
 		end
 	end
+	padState.rebuild = buildHints
 	buildHints()
 	for _, entry in HINTS do Binds.Changed(localPlayer, entry[2], buildHints) end
 	localPlayer:GetAttributeChangedSignal("InTraining"):Connect(buildHints)
@@ -700,10 +738,46 @@ local function buildUI()
 		slots[i] = makeTile(i)
 	end
 	addBullets(slots[GUN].bullets)
+	-- [PAD] LB / RB chips either side of the row (RIVALS), shown with a controller when cycling is bound
+	padState.chips = {}
+	for side, key in { Left = "CycleLeft", Right = "CycleRight" } do
+		local chip = Instance.new("ImageLabel")
+		chip.Name = "Pad" .. side
+		chip.BackgroundTransparency = 1
+		chip.AnchorPoint = Vector2.new(side == "Left" and 1 or 0, 0.5)
+		chip.Position = side == "Left" and UDim2.new(0, -8, 0.5, 0) or UDim2.new(1, 8, 0.5, 0)
+		chip.Size = UDim2.fromOffset(34, 34)
+		chip.ImageTransparency = 0.15
+		chip.Visible = false
+		chip.ZIndex = 9
+		chip.Parent = column
+		padState.chips[key] = chip
+	end
 	Kit.toScale(column, Vector2.new(3 * TILE.X + 2 * GAP, TILE.Y)) -- [UI] Scale only
 	column.Position = UDim2.fromScale((1920 - 30) / 1920, (1080 - 64) / 1080)
 	column.Size = UDim2.fromScale((3 * TILE.X + 2 * GAP) / 1920, TILE.Y / 1080)
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
+	-- [PAD] follow the last input: controller glyphs / chips on, the slot numbers off (and back for keyboard + mouse)
+	local function applyPad()
+		for key, chip in padState.chips do
+			local code = padState.codes[key]
+			local img = ""
+			if code then pcall(function() img = UserInputService:GetImageForKeyCode(code) end) end
+			chip.Image = img
+			chip.Visible = padState.on and img ~= ""
+		end
+		for _, sl in slots do sl.keyBox.Visible = not padState.on end
+		if padState.rebuild then padState.rebuild() end
+	end
+	local function onInputType(t)
+		local pad = t.Name:find("Gamepad") ~= nil
+		local kbm = t == Enum.UserInputType.Keyboard or t.Name:find("Mouse") ~= nil
+		if not pad and not kbm then return end -- touch etc. don't flip it
+		if pad ~= padState.on then padState.on = pad; applyPad() end
+	end
+	UserInputService.LastInputTypeChanged:Connect(onInputType)
+	onInputType(UserInputService:GetLastInputType())
+	applyPad()
 end
 
 local function setArt(slot, kind: string, id: string)
