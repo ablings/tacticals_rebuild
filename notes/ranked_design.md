@@ -58,3 +58,6 @@ lead session's ELO maths is agreed.
 - Elite / Commander / Warlord: military insignia in the same glossy style (gunmetal, olive, bone): triple chevron ·
   five-point star with a half laurel · crowned shield with crossed swords and a full laurel (top 200).
 - Tiers 1-3 are shown beside the emblem (pips / roman numerals in the UI), not baked into the art.
+
+- **Final (Edward 2026-10-16: "perfect rank emblems"): `ui/art/ranks/v2/rank_<name>.png`** (simpler v2; v1 kept for reference).
+  Next: upload under the Gunsy Funsy group, then the asset ids go into the ranked UI.
