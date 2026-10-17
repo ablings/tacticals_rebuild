@@ -837,6 +837,27 @@ local function openCodes(initOnly)
 	if initOnly then return end
 	if CodesScreen.IsOpen() then CodesScreen.Close() else CodesScreen.Open() end
 end
+-- RANKED (2026-10-17): its own full-screen page (UIKit.RankedScreen), opened from PLAY's Ranked tile
+local RankedScreen = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("RankedScreen"))
+local rankedReady = false
+local function openRanked(initOnly)
+	if not rankedReady then
+		rankedReady = true
+		RankedScreen.Init({
+			Config = Config,
+			ask = function(action, ...) local ok, r = pcall(Request.InvokeServer, Request, action, ...) return ok and r end,
+			toast = function(...) if toast then toast(...) end end,
+			onOpen = function() if gui then gui.Enabled = false end end,
+			onClose = function() if gui then gui.Enabled = true end end,
+		})
+	end
+	if initOnly then return end
+	if RankedScreen.IsOpen() then RankedScreen.Close() else
+		if PlayScreen.IsOpen() then PlayScreen.Close() end
+		RankedScreen.Open()
+	end
+end
+LobbyUI.OpenRanked = openRanked
 local Tooltip = require(script:WaitForChild("Tooltip"))
 local missionsReady = false
 local function openMissions(initOnly)
@@ -862,6 +883,7 @@ local function openPlay(initOnly)
 		PlayScreen.Init({
 			Config = Config, ask = ask, getData = function() return data end, toast = toast,
 			rankedOpen = function() return rankedOpen() end,
+			openRanked = function() openRanked() end,
 			level = function() return (accountLevel()) end,
 			enterTraining = function()
 				local fade = player.PlayerGui:FindFirstChild("ExfilFade")
@@ -1001,7 +1023,7 @@ local function stepLog(name, t0) print(string.format("[MenuPrewarm] %s %.2fs (si
 local function prewarmMenus()
 	print(string.format("[MenuPrewarm] start (%.1fs)", os.clock() - prewarmStart))
 	for _, step in { { "Settings", openSettings, true }, { "Missions", openMissions, true }, { "Play", openPlay, true },
-		{ "Shop", function() return openShop(nil, true) end }, { "Codes", openCodes, true } } do
+		{ "Shop", function() return openShop(nil, true) end }, { "Codes", openCodes, true }, { "Ranked", openRanked, true } } do
 		local t0 = os.clock()
 		local ok, err = pcall(step[2], step[3])
 		stepLog(step[1] .. (ok and "" or (" FAILED " .. tostring(err))), t0)
@@ -1046,6 +1068,7 @@ local function closeScreens(keep)
 	if keep ~= "Settings" and SettingsScreen.IsOpen and SettingsScreen.IsOpen() then SettingsScreen.Close() end
 	if keep ~= "Shop" and Shop.IsOpen and Shop.IsOpen() then Shop.Close() end
 	if keep ~= "Codes" and CodesScreen.IsOpen() then CodesScreen.Close() end
+	if keep ~= "Ranked" and RankedScreen.IsOpen() then RankedScreen.Close() end
 end
 LobbyUI.CloseScreens = closeScreens
 

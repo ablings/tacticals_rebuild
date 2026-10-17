@@ -245,6 +245,8 @@ local function render()
 			if ctx.toast then ctx.toast(`Ranked unlocks at level {Config.RankedLevel} (you are {lv})`, "bad") end
 			return
 		end
+		-- (2026-10-17) ranked has its own page now (UIKit.RankedScreen); the old in-place switch stays as the fallback
+		if ctx.openRanked then ctx.openRanked() return end
 		tab = ranked and "Casual" or "Ranked"
 		render()
 	end)
