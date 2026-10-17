@@ -6,7 +6,9 @@
 --   HUD.SetWeapon(displayName?)              -- nil hides the ammo display
 --   HUD.SetAmmo(current, max, reloading)
 --   HUD.SetBlocked(screenPosition?)          -- Vector2 where cover blocks the shot, nil to hide
---   HUD.ShowHitmarker(zone, killed)
+--   HUD.ShowHitmarker(zone, killed)        -- [SET] headshots: critical colour (Settings > Damage Numbers > Critical
+--                                            Color), a bigger pop, a ring that snaps out and a two-layer "tink" (Edward:
+--                                            "the crosshair should be different on critical headshots")
 --   HUD.SetCrosshair(visible, aimed)        -- the centre dot: solid while aimed in, 75% see-through otherwise
 --   HUD.SetCrosshairVisible(visible)        -- (old name: same as SetCrosshair(visible, true))
 --   HUD.ShowDamageFrom(worldPosition)       -- red marker around the screen centre pointing at the shooter
@@ -95,17 +97,44 @@ function hud.SetBlocked(screenPosition: Vector2?)
 	end
 end
 
-function hud.ShowHitmarker(zone: string, killed: boolean)
+local function criticalColor(): Color3
+	local v = Players.LocalPlayer:GetAttribute("Setting_CriticalColor")
+	if typeof(v) == "Color3" then return v end
+	local ok, c = pcall(Color3.fromHex, tostring(v or "#ff3232"))
+	return ok and c or Color3.fromRGB(255, 50, 50)
+end
+
+-- the ring around a headshot hitmarker: snaps out from the marker and fades (Scale of the marker, so it follows its size)
+local function headRing(marker: GuiObject, color: Color3)
+	local ring = Instance.new("Frame")
+	ring.Name = "HeadRing"
+	ring.AnchorPoint = Vector2.new(0.5, 0.5)
+	ring.Position = UDim2.fromScale(0.5, 0.5)
+	ring.Size = UDim2.fromScale(0.9, 0.9)
+	ring.BackgroundTransparency = 1
+	ring.ZIndex = marker.ZIndex + 1
+	local corner = Instance.new("UICorner") corner.CornerRadius = UDim.new(0.5, 0) corner.Parent = ring
+	local stroke = Instance.new("UIStroke") stroke.Color = color stroke.Thickness = 2.5 stroke.Parent = ring
+	ring.Parent = marker
+	local info = TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	TweenService:Create(ring, info, { Size = UDim2.fromScale(2.1, 2.1) }):Play()
+	TweenService:Create(stroke, info, { Transparency = 1, Thickness = 1 }):Play()
+	task.delay(0.35, function() ring:Destroy() end)
+end
+
+function hud.ShowHitmarker(zone: string, killed: boolean, headshot: boolean?)
 	local root = getGui()
 	local marker = root.Hitmarker
-	local color = killed and KILL_COLOR or HIT_COLORS[zone] or HIT_COLORS.Body
+	local head = if headshot ~= nil then headshot == true else zone == "Head"
+	local color = head and criticalColor() or killed and KILL_COLOR or HIT_COLORS[zone] or HIT_COLORS.Body
 
 	hitToken += 1
 	local token = hitToken
 
 	marker.Visible = true
-	marker.Size = UDim2.fromOffset(34, 34)
-	TweenService:Create(marker, TweenInfo.new(0.08), { Size = UDim2.fromOffset(26, 26) }):Play()
+	marker.Size = UDim2.fromOffset(head and 46 or 34, head and 46 or 34)
+	TweenService:Create(marker, TweenInfo.new(head and 0.12 or 0.08), { Size = UDim2.fromOffset(head and 30 or 26, head and 30 or 26) }):Play()
+	if head then headRing(marker, color) end
 
 	for _, line in marker:GetChildren() do
 		if line:IsA("Frame") then
@@ -119,8 +148,17 @@ function hud.ShowHitmarker(zone: string, killed: boolean)
 
 	local sound = root:FindFirstChild("HitSound")
 	if sound and sound:IsA("Sound") then
-		sound.PlaybackSpeed = zone == "Head" and 1.25 or 1
+		sound.PlaybackSpeed = head and 1.15 or 1
 		sound:Play()
+		if head then
+			-- the headshot "tink": a second, much higher copy just after the hit
+			local tink = sound:Clone()
+			tink.PlaybackSpeed = 2.2
+			tink.Volume = sound.Volume * 0.8
+			tink.Parent = root
+			task.delay(0.035, function() tink:Play() end)
+			task.delay(1, function() tink:Destroy() end)
+		end
 	end
 
 	task.delay(HITMARKER_TIME, function()

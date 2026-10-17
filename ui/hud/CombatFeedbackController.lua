@@ -163,7 +163,7 @@ function controller.Start()
 		end
 		lastShot = { t = os.clock(), pos = endPos, char = char }
 	end)
-	Combat:WaitForChild("HitConfirm").OnClientEvent:Connect(function(zone, damage, killed)
+	Combat:WaitForChild("HitConfirm").OnClientEvent:Connect(function(zone, damage, killed, headshot)
 		if type(damage) ~= "number" or damage <= 0 then return end
 		local target, at
 		if lastShot and os.clock() - lastShot.t < 0.75 then
@@ -175,7 +175,8 @@ function controller.Start()
 		if not at then return end
 		local onHit = target and target:FindFirstChild("OnHit")
 		if onHit and onHit:IsA("BindableEvent") then return end -- firing-range dummies show their own numbers
-		popNumber(target, at, damage, zone == "Head", killed == true)
+		local crit = if headshot ~= nil then headshot == true else zone == "Head"
+		popNumber(target, at, damage, crit, killed == true)
 	end)
 end
 

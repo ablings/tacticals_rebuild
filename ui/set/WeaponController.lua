@@ -548,8 +548,9 @@ function controller.Start()
 	bindHolster()
 	Binds.Changed(localPlayer, "EquipGun", bindHolster)
 
-	HitConfirm.OnClientEvent:Connect(function(zone: string, _damage: number, killed: boolean)
-		HUD.ShowHitmarker(zone, killed)
+	HitConfirm.OnClientEvent:Connect(function(zone: string, _damage: number, killed: boolean, headshot: boolean?)
+		-- [SET] 4th arg (when the server sends it): a real gun headshot; backstabs also report zone "Head" but aren't one
+		HUD.ShowHitmarker(zone, killed, headshot)
 	end)
 
 	Combat:WaitForChild("DamageTaken").OnClientEvent:Connect(function(source: Vector3)
