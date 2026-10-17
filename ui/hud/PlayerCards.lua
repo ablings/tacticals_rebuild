@@ -4,9 +4,10 @@
 --     Lobby players: Invite / Add Friend / Challenge / View Profile / View Avatar / Block. In a duel: Spectate instead of
 --     Invite / Challenge. Yourself: View Profile / View Avatar. Challenge + Spectate only show once the Tacticals session's
 --     ReplicatedStorage.LobbySocial remote exists (contract in notes/lobby_social.md).
---   * PlayerCards.Profile(p, world): the profile card over a blurred lobby: headshot, names, rank emblem + ELO, six stat tiles
---     (Level, Wins, Win Rate, Matches, Kills, Headshot %), red X under it; opened from the world (double click on someone
---     else) it adds INVITE and CHALLENGE beside the X, like RIVALS.
+--   * PlayerCards.Profile(p, world): the profile card over a blurred lobby, laid out like live RIVALS (checked 2026-10-17):
+--     headshot + wins + win rate on the left, name, then Level / ELO / Rank badges, then a Career row (Matches, Kills,
+--     Headshots, HS %) where RIVALS has Most Played Weapons. Red X under it, plus Invite to PARTY / Challenge 1v1 for
+--     anyone else (from the list or the world).
 --   * PlayerCards.StartWorld(allowed): hovering a character shows "Double click to view profile" (touch: tap), a double
 --     click / tap opens the card. allowed() says when the lobby is up (no menu, no duel, no training).
 -- Stats come from attributes the server publishes (PublicStats: Level, Wins, StatMatches, StatKills, StatHeadshots; RankedCore:
@@ -136,8 +137,11 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	local tint = new("TextButton", { Name = "ProfileTint", Text = "", AutoButtonColor = false, Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.color.scrim,
 		BackgroundTransparency = 1, ZIndex = 1, Parent = gui })
 	local root = new("Frame", { Name = "Profile", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), ZIndex = 2, Parent = canvas })
-	local W, H = 620, 400
-	local card = new("Frame", { Name = "Card", Position = UDim2.fromOffset((1920 - W) / 2, 300), Size = UDim2.fromOffset(W, H), BackgroundColor3 = GUN,
+	-- live RIVALS layout (2026-10-17 check): left column = headshot, wins, win rate; right = name, then three badges
+	-- (RIVALS: Level / Streak / Rank; ours: Level / ELO / Rank), then a row of four tiles (RIVALS: Most Played Weapons;
+	-- ours: career numbers until per-weapon stats exist)
+	local W, H = 640, 352
+	local card = new("Frame", { Name = "Card", Position = UDim2.fromOffset((1920 - W) / 2, 320), Size = UDim2.fromOffset(W, H), BackgroundColor3 = GUN,
 		ClipsDescendants = true, ZIndex = 2, Parent = root }, { Kit.corner(12), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.82, Thickness = 2 }) })
 	-- olive wash fading down from the top, faint diagonal stripes (the Tacticals panel look)
 	new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = hex("#4A5A22"), ZIndex = 2, Parent = card },
@@ -146,44 +150,65 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 		new("Frame", { BorderSizePixel = 0, BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.965, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
 			Position = UDim2.fromOffset(-60 + i * 56, 60), Size = UDim2.fromOffset(14, 320), ZIndex = 2, Parent = card })
 	end
-	-- header: headshot, name, @username, rank on the right
-	local hs = new("ImageLabel", { BackgroundColor3 = DEEP, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(28, 26), Size = UDim2.fromOffset(96, 96), ZIndex = 3, Parent = card },
-		{ Kit.corner(48), new("UIStroke", { Color = OLIVE_HI, Thickness = 2.5, Transparency = 0.2 }) })
-	headshot(hs, p)
-	local nm = label(card, p.DisplayName, F_NAME, 36, 142, 34, 300, 44, BONE, nil, 3)
-	nm.TextScaled = false
-	label(card, "@" .. p.Name, F_SUB, 20, 142, 78, 300, 24, FIELD, nil, 3)
-	local r = RankArt and RankArt.Of(p) or { placed = false, name = "Unranked", elo = 0 }
-	-- unranked (placements to play): a faded, greyed Bronze emblem
-	local fallback = RankArt and RankArt.EMBLEM.Bronze or ""
-	new("ImageLabel", { BackgroundTransparency = 1, Image = r.image or fallback, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(476, 18), Size = UDim2.fromOffset(112, 86),
-		ImageTransparency = r.image and 0 or 0.7, ImageColor3 = r.image and Color3.new(1, 1, 1) or Color3.fromRGB(150, 150, 150), ZIndex = 3, Parent = card })
-	label(card, r.placed and r.name or "Unranked", F_HEAD, 22, 440, 104, 184, 26, r.placed and BONE or FIELD, Enum.TextXAlignment.Center, 3)
-	local placedN, needN = p:GetAttribute("RankPlaced") or 0, p:GetAttribute("RankPlacements") or 0
-	label(card, r.placed and (commas(r.elo) .. " ELO") or (needN > 0 and string.format("Placements %d/%d", placedN, needN) or ""), F_SUB, 17, 440, 128, 184, 20, FIELD, Enum.TextXAlignment.Center, 3)
-	-- divider + stats (2 rows x 3)
-	new("Frame", { BorderSizePixel = 0, Position = UDim2.fromOffset(28, 160), Size = UDim2.fromOffset(W - 56, 2), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.88, ZIndex = 3, Parent = card })
 	local matches, wins = p:GetAttribute("StatMatches") or 0, p:GetAttribute("Wins") or 0
 	local kills, heads = p:GetAttribute("StatKills") or 0, p:GetAttribute("StatHeadshots") or 0
 	local rate = matches > 0 and string.format("%.1f%%", 100 * wins / matches) or "-"
 	local hsr = kills > 0 and string.format("%.0f%%", 100 * heads / kills) or "-"
 	local gold = hex("#E9C46A")
-	statTile(card, 28, 182, tostring(p:GetAttribute("Level") or 1), "Level", OLIVE_HI)
-	statTile(card, 222, 182, commas(wins), "Wins", gold)
-	statTile(card, 416, 182, rate, "Win Rate", gold)
-	statTile(card, 28, 284, commas(matches), "Matches")
-	statTile(card, 222, 284, commas(kills), "Kills")
-	statTile(card, 416, 284, hsr, "Headshots")
-	-- buttons under the card: the X; from the world (someone else) INVITE / CHALLENGE beside it (RIVALS)
+	-- left column
+	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(22, 14), Size = UDim2.fromOffset(120, 120), ZIndex = 3, Parent = card })
+	headshot(hs, p)
+	local function goldNum(text, y, size)
+		local l = label(card, text, F_NUM, size, 10, y, 144, size + 6, gold, Enum.TextXAlignment.Center, 3)
+		l.TextTruncate = Enum.TextTruncate.None
+		new("UIStroke", { Color = hex("#4A3400"), Thickness = 2, Transparency = 0.2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+	end
+	goldNum(commas(wins), 152, 38)
+	label(card, "wins", F_SUB, 17, 10, 194, 144, 20, gold, Enum.TextXAlignment.Center, 3)
+	goldNum(rate, 222, 34)
+	label(card, "win rate", F_SUB, 17, 10, 260, 144, 20, gold, Enum.TextXAlignment.Center, 3)
+	-- right: name + @username
+	local nm = label(card, p.DisplayName, F_NAME, 36, 172, 14, 440, 44, BONE, nil, 3)
+	nm.TextScaled = false
+	label(card, "@" .. p.Name, F_SUB, 19, 172, 54, 440, 22, FIELD, nil, 3)
+	-- three badges: Level, ELO, Rank
+	local r = RankArt and RankArt.Of(p) or { placed = false, name = "Unranked", elo = 0 }
+	local placedN, needN = p:GetAttribute("RankPlaced") or 0, p:GetAttribute("RankPlacements") or 0
+	local cols = { 248, 392, 536 } -- centres
+	local lvl = new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cols[1], 88), Size = UDim2.fromOffset(64, 56), BackgroundColor3 = hex("#5B6E2C"), ZIndex = 3, Parent = card },
+		{ Kit.corner(12), new("UIStroke", { Color = OLIVE_HI, Thickness = 2 }) })
+	local ln = label(lvl, tostring(p:GetAttribute("Level") or 1), F_NUM, 30, 0, 0, 64, 56, BONE, Enum.TextXAlignment.Center, 4)
+	ln.TextTruncate = Enum.TextTruncate.None
+	label(card, "Level", F_SUB, 21, cols[1] - 70, 148, 140, 26, FIELD, Enum.TextXAlignment.Center, 3)
+	local elo = label(card, r.placed and commas(r.elo) or (needN > 0 and string.format("%d/%d", placedN, needN) or "-"), F_NUM, 34, cols[2] - 70, 92, 140, 50, BONE, Enum.TextXAlignment.Center, 3)
+	elo.TextTruncate = Enum.TextTruncate.None
+	label(card, r.placed and "ELO" or "Placements", F_SUB, 21, cols[2] - 70, 148, 140, 26, FIELD, Enum.TextXAlignment.Center, 3)
+	-- unranked (placements to play): a faded, greyed Bronze emblem
+	local fallback = RankArt and RankArt.EMBLEM.Bronze or ""
+	new("ImageLabel", { BackgroundTransparency = 1, Image = r.image or fallback, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cols[3], 82),
+		Size = UDim2.fromOffset(90, 66), ImageTransparency = r.image and 0 or 0.7, ImageColor3 = r.image and Color3.new(1, 1, 1) or Color3.fromRGB(150, 150, 150), ZIndex = 3, Parent = card })
+	label(card, r.placed and r.name or "Unranked", F_SUB, 21, cols[3] - 80, 148, 160, 26, FIELD, Enum.TextXAlignment.Center, 3)
+	-- career row
+	label(card, "Career", F_NAME, 19, 172, 186, 440, 22, hex("#C9C9C0"), Enum.TextXAlignment.Center, 3)
+	local tiles = { { commas(matches), "Matches" }, { commas(kills), "Kills" }, { commas(heads), "Headshots" }, { hsr, "HS %" } }
+	for i, t in tiles do
+		local x = 172 + (i - 1) * 112
+		local f = new("Frame", { Position = UDim2.fromOffset(x, 216), Size = UDim2.fromOffset(100, 100), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 3, Parent = card },
+			{ Kit.corner(8), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.8, Thickness = 1.5 }) })
+		local v = label(f, t[1], F_NUM, 30, 0, 16, 100, 40, BONE, Enum.TextXAlignment.Center, 4)
+		v.TextTruncate = Enum.TextTruncate.None
+		label(f, t[2], F_SUB, 16, 0, 62, 100, 22, FIELD, Enum.TextXAlignment.Center, 4)
+	end
+	-- buttons under the card: the X, and for anyone else INVITE / CHALLENGE beside it (live RIVALS: from the list too)
 	local buttons = {}
-	local by = 300 + H + 18
+	local by = 320 + H + 18
 	local close = Kit.closeButton(UDim2.fromOffset(150, 66))
 	close.ZIndex = 3
 	close.Parent = root
 	table.insert(buttons, close)
 	local acts = {}
-	if world and p ~= player then
-		table.insert(acts, { "INVITE", "Invite to", "key", function() run("Invite", p) end })
+	if p ~= player then
+		table.insert(acts, { "PARTY", "Invite to", "key", function() run("Invite", p) end })
 		if social() and not inDuel(p) then table.insert(acts, { "1V1", "Challenge", "red", function() run("Challenge", p); closeProfile() end }) end
 	end
 	local total = 150 + #acts * 168
@@ -254,7 +279,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	catcher.Activated:Connect(PlayerCards.CloseMenu)
 	local panel = new("CanvasGroup", { Name = "Panel", Position = UDim2.fromOffset(rightX - 8 - 310, top), Size = UDim2.fromOffset(310, H),
 		BackgroundColor3 = GUN, BackgroundTransparency = 0.04, ZIndex = 21, Parent = root }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.85, Thickness = 1.5 }) })
-	local hs = new("ImageLabel", { BackgroundColor3 = DEEP, Position = UDim2.fromOffset(14, 10), Size = UDim2.fromOffset(64, 64), ZIndex = 22, Parent = panel }, { Kit.corner(32) })
+	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 2), Size = UDim2.fromOffset(78, 78), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle
 	headshot(hs, p)
 	label(panel, p.DisplayName, F_NAME, 23, 92, 14, 206, 30, BONE, nil, 22)
 	label(panel, "@" .. p.Name, F_SUB, 16, 92, 44, 206, 20, FIELD, nil, 22)
@@ -400,11 +425,12 @@ Players.PlayerRemoving:Connect(function(p) if requests[p] then closeRequest(p) e
 function PlayerCards.StartWorld(allowed: () -> boolean)
 	ensureGui()
 	local mouse = player:GetMouse()
-	local hint = new("Frame", { Name = "ProfileHint", AnchorPoint = Vector2.new(0.5, 1), Size = UDim2.fromOffset(360, 46), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
+	local hint = new("Frame", { Name = "ProfileHint", AnchorPoint = Vector2.new(0.5, 1), Size = UDim2.fromOffset(310, 38), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
 		Visible = false, ZIndex = 30, Parent = canvas }, { Kit.corner(21), new("UIStroke", { Color = BONE, Thickness = 1.5, Transparency = 0.35 }) })
-	local hintText = label(hint, "Double click to view profile", F_NAME, 24, 0, 0, 360, 46, BONE, Enum.TextXAlignment.Center, 31)
-	Kit.toScale(hint, Vector2.new(360, 46))
-	hint.Size = UDim2.fromScale(360 / 1920, 46 / 1080)
+	-- live RIVALS says "Double tap" on PC too
+	label(hint, "Double tap to view profile", F_NAME, 21, 0, 0, 310, 38, BONE, Enum.TextXAlignment.Center, 31)
+	Kit.toScale(hint, Vector2.new(310, 38))
+	hint.Size = UDim2.fromScale(310 / 1920, 38 / 1080)
 	-- a ray from the pointer (Mouse.Target skips your own character; RIVALS opens your own card too)
 	local function playerUnder()
 		local cam = workspace.CurrentCamera
@@ -431,7 +457,6 @@ function PlayerCards.StartWorld(allowed: () -> boolean)
 			hint.Position = UDim2.fromScale((at.X - ca.X) / cs.X, (at.Y - 14 - ca.Y) / cs.Y)
 		end
 	end)
-	hintText.Text = UserInputService.TouchEnabled and not UserInputService.MouseEnabled and "Double tap to view profile" or "Double click to view profile"
 	local lastClick, lastWho = 0, nil
 	mouse.Button1Down:Connect(function()
 		local p = ok() and playerUnder() or nil
