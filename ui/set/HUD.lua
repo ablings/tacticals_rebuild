@@ -24,8 +24,12 @@ local HIT_COLORS = {
 	Head = Color3.fromRGB(255, 92, 124),
 	Extremity = Color3.fromRGB(190, 196, 214),
 }
-local KILL_COLOR = Color3.fromRGB(255, 60, 60)
+-- (2026-10-17, Edward: head and body markers still looked the same) red belongs to crits only: a body kill is bone
+-- white and a little bigger, a headshot is a big red X with a ring, a longer hold and its own sound
+local KILL_COLOR = Color3.fromRGB(236, 232, 218)
 local HITMARKER_TIME = 0.25
+local CRIT_TIME = 0.45
+local CRIT_SOUND = "rbxasset://sounds/electronicpingshort.wav" -- Roblox client sound, no upload
 
 -- // Root
 local hud = {}
@@ -132,18 +136,29 @@ function hud.ShowHitmarker(zone: string, killed: boolean, headshot: boolean?)
 	local token = hitToken
 
 	marker.Visible = true
-	marker.Size = UDim2.fromOffset(head and 46 or 34, head and 46 or 34)
-	TweenService:Create(marker, TweenInfo.new(head and 0.12 or 0.08), { Size = UDim2.fromOffset(head and 30 or 26, head and 30 or 26) }):Play()
-	if head then headRing(marker, color) end
+	-- crit: starts at 2.5x and settles at 1.7x a body hit (a body kill sits between the two)
+	-- sizes are 1080p px, scaled to the screen height (a phone got the PC size before)
+	local f = math.clamp(workspace.CurrentCamera.ViewportSize.Y / 1080, 0.35, 2)
+	local from, to = head and 66 or (killed and 40 or 34), head and 44 or (killed and 30 or 26)
+	marker.Size = UDim2.fromOffset(from * f, from * f)
+	TweenService:Create(marker, TweenInfo.new(head and 0.16 or 0.08, Enum.EasingStyle.Back), { Size = UDim2.fromOffset(to * f, to * f) }):Play()
+	marker.Rotation = head and 12 or 0
+	if head then TweenService:Create(marker, TweenInfo.new(0.16, Enum.EasingStyle.Back), { Rotation = 0 }):Play() end
+	local life = head and CRIT_TIME or HITMARKER_TIME
 
 	for _, line in marker:GetChildren() do
-		if line:IsA("Frame") then
+		if line:IsA("Frame") and line.Name ~= "HeadRing" then -- (the ring got filled in here: a solid red disc)
 			line.BackgroundColor3 = color
 			line.BackgroundTransparency = 0
-			TweenService:Create(line, TweenInfo.new(HITMARKER_TIME, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+			TweenService:Create(line, TweenInfo.new(life, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
 				BackgroundTransparency = 1,
 			}):Play()
 		end
+	end
+
+	if head then
+		for _, old in marker:GetChildren() do if old.Name == "HeadRing" then old:Destroy() end end
+		headRing(marker, color) -- after the line colouring, so it stays a ring
 	end
 
 	local sound = root:FindFirstChild("HitSound")
@@ -151,17 +166,18 @@ function hud.ShowHitmarker(zone: string, killed: boolean, headshot: boolean?)
 		sound.PlaybackSpeed = head and 1.15 or 1
 		sound:Play()
 		if head then
-			-- the headshot "tink": a second, much higher copy just after the hit
-			local tink = sound:Clone()
-			tink.PlaybackSpeed = 2.2
-			tink.Volume = sound.Volume * 0.8
-			tink.Parent = root
-			task.delay(0.035, function() tink:Play() end)
-			task.delay(1, function() tink:Destroy() end)
+			-- the crit has its own sound on top: a bright ping (not a re-pitched hit)
+			local ping = Instance.new("Sound")
+			ping.SoundId = CRIT_SOUND
+			ping.Volume = math.max(0.6, sound.Volume)
+			ping.PlaybackSpeed = 1.1
+			ping.Parent = root
+			ping:Play()
+			task.delay(1.5, function() ping:Destroy() end)
 		end
 	end
 
-	task.delay(HITMARKER_TIME, function()
+	task.delay(life, function()
 		if hitToken == token then
 			marker.Visible = false
 		end
