@@ -135,10 +135,30 @@ end
 local rayParams = RaycastParams.new()
 rayParams.FilterType = Enum.RaycastFilterType.Exclude
 
+-- smoke (Edward: "shouldnt work behind smokes and walls"): GadgetManager's smoke cells are parts tagged "SmokeCloud" with a live
+-- Radius attribute (CanQuery off, so raycasts pass through them). The line of sight is blocked when it passes within a cell's
+-- radius (bullet holes shrink a cell's Radius, so a tunnel shot through the smoke opens it again).
+local function smokeBlocks(from: Vector3, to: Vector3): boolean
+	local ab = to - from
+	local lenSq = ab:Dot(ab)
+	if lenSq < 1e-4 then return false end
+	for _, cell in CollectionService:GetTagged("SmokeCloud") do
+		local r = tonumber(cell:GetAttribute("Radius")) or 0
+		if r > 0.5 and cell:IsA("BasePart") then
+			local c = cell.Position
+			local t = math.clamp((c - from):Dot(ab) / lenSq, 0, 1)
+			if (from + ab * t - c).Magnitude < r then return true end
+		end
+	end
+	return false
+end
+
+-- walls (any solid / queryable part, characters excluded) and smoke both block
 local function visible(from: Vector3, to: Vector3, model): boolean
 	rayParams.FilterDescendantsInstances = { player.Character, model, workspace.CurrentCamera }
 	local hit = workspace:Raycast(from, to - from, rayParams)
-	return hit == nil
+	if hit then return false end
+	return not smokeBlocks(from, to)
 end
 
 -- angle errors from the camera's look to a world point: yaw (+ = point is to the left), pitch (+ = point is above)
