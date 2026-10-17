@@ -2,11 +2,15 @@
 -- The server side of ranked, the same file in the lobby and the match place. The maths is ReplicatedStorage.Modules.Shared.RankedCore.
 --   RankedServer.Record(player, mode)        the unified Ranked[key] record (lazy migration from the old shapes, written back)
 --   RankedServer.EloOf(player, mode)         its Elo (StartElo if the profile isn't loaded)
---   RankedServer.ApplyResult(player, mode, oppTier, won, draw)   one ranked result -> the MatchResults payload fields
+--   RankedServer.ApplyResult(player, mode, oppTier, won, draw, ownTier?)   one ranked result -> the MatchResults payload fields
+--   RankedServer.ApplyLeave(player, mode, oppTier, ownTier?, why?)        a leave: normal loss (x2 in placements) + LeavePenalty, no shield
+--   RankedServer.MarkPending / ClearPending / SettlePending   a ranked match in progress is stored in the record (rec.Pending); a
+--                                            player who disconnects keeps it and pays the leave at their next join (either place)
 --   RankedServer.SetElo / Reset / Lines      admin helpers (Commands/Ranked)
 --   RankedServer.ApplyAttributes(player)     RankElo, RankTier, RankDivision, RankName, RankPlaced, RankShield, ... + RankedAll
---   RankedServer.Leaderboard                 OrderedDataStore Ranked_<key>_v1 (a memory mock in Studio / when DataStores fail)
---   RankedServer.RefreshLeaderboards()       top WarlordCount -> ReplicatedStorage RankedTop_<key> (JSON) / RankedCutoff_<key>
+--   RankedServer.Leaderboard                 OrderedDataStore Ranked_<key>_s1 (a memory mock in Studio / when DataStores fail)
+--   RankedServer.RefreshLeaderboards()       top WarlordCount -> ReplicatedStorage RankedTop / RankedCutoff (shared ladder; mirrored as
+--                                            RankedTop_All / RankedCutoff_All) or RankedTop_<mode> / RankedCutoff_<mode> (per-mode ladders)
 --   RankedServer.Start()                     join hooks + the refresh loop (called by ServerScriptService.RankedService)
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -58,6 +62,17 @@ local function writeRecord(player: Player, key: string, rec)
 		if type(data.Ranked) ~= "table" then data.Ranked = {} end
 		data.Ranked[key] = rec
 	end
+	-- shared ladder: the old per-mode entries become mirrors of it (LobbyUIController / PlayScreen "SR", admin ;stats read
+	-- Ranked[mode].Rating). A mirror is never read back as a record.
+	if key == C.SharedKey and C.MirrorModes then
+		for _, m in C.Modes do
+			local mirror = { Mirror = key, Rating = rec.Elo, Wins = rec.Wins or 0, Losses = rec.Losses or 0 }
+			local curM = data.Ranked[m]
+			if type(curM) ~= "table" or curM.Mirror ~= key or curM.Rating ~= mirror.Rating or curM.Wins ~= mirror.Wins or curM.Losses ~= mirror.Losses then
+				if replica then replica:SetValue({ "Ranked", m }, mirror) else data.Ranked[m] = mirror end
+			end
+		end
+	end
 	return true
 end
 RankedServer.WriteRecord = writeRecord
@@ -74,7 +89,7 @@ function RankedServer.Record(player: Player, mode: string?, wait: boolean?)
 	if cur == nil and not C.PerModeLadders and type(data.Ranked) == "table" then
 		for _, m in C.Modes do
 			local e = data.Ranked[m]
-			if type(e) == "table" and (tonumber(e.Elo) or tonumber(e.Rating) or 0) > (cur and (tonumber(cur.Elo) or tonumber(cur.Rating) or 0) or -1) then cur = e end
+			if type(e) == "table" and not e.Mirror and (tonumber(e.Elo) or tonumber(e.Rating) or 0) > (cur and (tonumber(cur.Elo) or tonumber(cur.Rating) or 0) or -1) then cur = e end
 		end
 	end
 	local rec, changed = RankedCore.Migrate(cur and copy(cur) or nil)
@@ -206,8 +221,14 @@ function Leaderboard.Refresh(key: string)
 	-- the Warlord threshold: the 200th ELO when 200+ players are at 2200+; nil = every 2200+ player is Warlord
 	Leaderboard.cutoff[key] = (#list >= n) and list[n].elo or nil
 	Leaderboard.known[key] = true
-	ReplicatedStorage:SetAttribute("RankedTop_" .. key, HttpService:JSONEncode(list))
+	local json = HttpService:JSONEncode(list)
+	ReplicatedStorage:SetAttribute("RankedTop_" .. key, json)
 	ReplicatedStorage:SetAttribute("RankedCutoff_" .. key, Leaderboard.cutoff[key])
+	if key == C.SharedKey then
+		-- the shared ladder's plain names (RankedTop_All / RankedCutoff_All above stay as mirrors: RankedScreen reads "RankedTop_" .. key)
+		ReplicatedStorage:SetAttribute("RankedTop", json)
+		ReplicatedStorage:SetAttribute("RankedCutoff", Leaderboard.cutoff[key])
+	end
 	return true
 end
 
@@ -284,31 +305,14 @@ end
 -------------------------------------------------------------------------------
 -- Results
 -------------------------------------------------------------------------------
--- One ranked result. oppTier = the opposing team's average tier (RankedCore.AverageTier). Returns the payload fields
--- { eloBefore, eloAfter, delta, shieldUsed, promoted, demoted, rankBefore, rankAfter, ladder, placed, placements }.
-function RankedServer.ApplyResult(player: Player, mode: string, oppTier: number, won: boolean, draw: boolean?)
-	local rec, key = RankedServer.Record(player, mode, true)
-	if not rec then return nil end
-	local now = os.time()
-	local before = rec.Elo
-	local infoBefore = RankedServer.InfoFor(key, rec, player.UserId)
-	local delta = RankedCore.Delta(before, oppTier, won, draw)
-	local shieldUsed = false
-	if not won and not draw and delta < 0 and RankedCore.ShieldReady(rec, now) then
-		shieldUsed = true
-		delta = 0
-		rec.ShieldDay = RankedCore.Day(now)
-	end
-	if (rec.Placed or 0) < C.Placements then
-		if delta ~= 0 then delta = math.sign(delta) * math.clamp(math.abs(delta) * C.PlacementMultiplier, 1, 2 * C.MaxDelta) end
-		rec.Placed = (rec.Placed or 0) + 1
-	end
+-- the end of a result / leave: counts, write, leaderboard, attributes, payload
+local function finish(player: Player, key: string, rec, before: number, infoBefore, delta: number, extra)
 	rec.Elo = math.max(C.Floor, before + delta)
 	delta = rec.Elo - before
 	rec.Rating = rec.Elo
 	rec.Peak = math.max(rec.Peak or 0, rec.Elo)
-	if not draw then
-		if won then
+	if not extra.draw then
+		if extra.won then
 			rec.Wins = (rec.Wins or 0) + 1
 			rec.Streak = math.max(0, rec.Streak or 0) + 1
 		else
@@ -316,24 +320,97 @@ function RankedServer.ApplyResult(player: Player, mode: string, oppTier: number,
 			rec.Streak = math.min(0, rec.Streak or 0) - 1
 		end
 	end
-	rec.LastPlayed = now
+	rec.LastPlayed = os.time()
 	rec.Decayed = 0
+	rec.Pending = nil
 	writeRecord(player, key, rec)
 	Leaderboard.Write(key, player.UserId, rec.Elo, player.Name)
 	-- the cached cutoff may move with this write; the next refresh settles it. Warlord here uses the cached one.
 	local infoAfter = RankedServer.InfoFor(key, rec, player.UserId)
 	local up = infoAfter.tier > infoBefore.tier or (infoAfter.warlord and not infoBefore.warlord)
 	local down = infoAfter.tier < infoBefore.tier or (infoBefore.warlord and not infoAfter.warlord)
-	RankedServer.ApplyAttributes(player)
+	if player.Parent then RankedServer.ApplyAttributes(player) end
 	local payload = {
-		eloBefore = before, eloAfter = rec.Elo, delta = delta, shieldUsed = shieldUsed, promoted = up, demoted = down,
+		eloBefore = before, eloAfter = rec.Elo, delta = delta, shieldUsed = extra.shieldUsed == true, promoted = up, demoted = down,
 		rankBefore = infoBefore.name, rankAfter = infoAfter.name, tierBefore = infoBefore.tier, tierAfter = infoAfter.tier,
-		ladder = key, placed = rec.Placed, placements = C.Placements, draw = draw == true,
+		ladder = key, placed = rec.Placed, placements = C.Placements, draw = extra.draw == true, leave = extra.leave == true,
+		placement = extra.placement == true, revealed = extra.placement == true and (rec.Placed or 0) >= C.Placements,
 	}
 	RankedServer._last[player.UserId] = payload
-	print(("[Ranked] %s %s %s: %d -> %d (%+d)%s"):format(player.Name, key, draw and "draw" or (won and "win" or "loss"), before, rec.Elo, delta,
-		shieldUsed and " shield" or ""))
+	print(("[Ranked] %s %s %s: %d -> %d (%+d)%s%s"):format(player.Name, key, extra.leave and "LEAVE" or (extra.draw and "draw" or (extra.won and "win" or "loss")),
+		before, rec.Elo, delta, extra.shieldUsed and " shield" or "", extra.placement and (" placement " .. rec.Placed .. "/" .. C.Placements) or ""))
 	return payload
+end
+
+-- placement x2 (the first Placements matches); counts the placement match. Returns delta, isPlacement
+local function placement(rec, delta: number)
+	if (rec.Placed or 0) >= C.Placements then return delta, false end
+	if delta ~= 0 then delta = math.sign(delta) * math.clamp(math.abs(delta) * C.PlacementMultiplier, 1, 2 * C.MaxDelta) end
+	rec.Placed = (rec.Placed or 0) + 1
+	return delta, true
+end
+
+-- One ranked result. oppTier = the opposing team's average tier, ownTier = own team's average tier (team modes; nil / 1v1 =
+-- own tier). Returns the payload fields { eloBefore, eloAfter, delta, shieldUsed, promoted, demoted, rankBefore, rankAfter,
+-- tierBefore, tierAfter, ladder, placed, placements, draw, leave, placement, revealed }.
+function RankedServer.ApplyResult(player: Player, mode: string, oppTier: number, won: boolean, draw: boolean?, ownTier: number?)
+	local rec, key = RankedServer.Record(player, mode, true)
+	if not rec then return nil end
+	local now = os.time()
+	local before = rec.Elo
+	local infoBefore = RankedServer.InfoFor(key, rec, player.UserId)
+	local delta = RankedCore.Delta(before, oppTier, won, draw, ownTier)
+	local shieldUsed = false
+	if not won and not draw and delta < 0 and RankedCore.ShieldReady(rec, now) then
+		shieldUsed = true
+		delta = 0
+		rec.ShieldDay = RankedCore.Day(now)
+	end
+	local placed
+	delta, placed = placement(rec, delta)
+	return finish(player, key, rec, before, infoBefore, delta, { won = won, draw = draw, shieldUsed = shieldUsed, placement = placed })
+end
+
+-- Leaving a ranked match (Edward): the normal loss (team maths; x2 in placements) + LeavePenalty. The shield never applies.
+function RankedServer.ApplyLeave(player: Player, mode: string, oppTier: number, ownTier: number?, why: string?)
+	local rec, key = RankedServer.Record(player, mode, true)
+	if not rec then return nil end
+	local before = rec.Elo
+	local infoBefore = RankedServer.InfoFor(key, rec, player.UserId)
+	local delta, placed = placement(rec, RankedCore.LeaveDelta(before, oppTier, ownTier))
+	delta -= C.LeavePenalty
+	local payload = finish(player, key, rec, before, infoBefore, delta, { won = false, leave = true, placement = placed })
+	payload.why = why
+	return payload
+end
+
+-- a ranked match is starting for this player: stored in the record, so a disconnect (the profile is released at once and
+-- nothing written after that is saved) still costs the leave at the next join. Cleared by ApplyResult / ApplyLeave / ClearPending.
+function RankedServer.MarkPending(player: Player, mode: string, oppTier: number, ownTier: number?)
+	local rec, key = RankedServer.Record(player, mode, true)
+	if not rec then return false end
+	rec.Pending = { mode = mode, opp = oppTier, own = ownTier, t = os.time(), job = game.JobId }
+	writeRecord(player, key, rec)
+	return true
+end
+
+function RankedServer.ClearPending(player: Player, mode: string?)
+	local rec, key = RankedServer.Record(player, mode)
+	if not rec or rec.Pending == nil then return false end
+	rec.Pending = nil
+	writeRecord(player, key, rec)
+	return true
+end
+
+-- at join: a match left by a disconnect on another server (not this one: a reconnect to a running match is not a leave)
+function RankedServer.SettlePending(player: Player)
+	for _, key in RankedCore.LadderKeys() do
+		local rec = RankedServer.Record(player, key ~= C.SharedKey and key or nil)
+		local p = rec and rec.Pending
+		if type(p) == "table" and p.job ~= game.JobId then
+			RankedServer.ApplyLeave(player, p.mode or C.DefaultMode, tonumber(p.opp) or 0, tonumber(p.own), "disconnect")
+		end
+	end
 end
 
 -- decay owed since the last ranked match (flag DecayEnabled); applied at join
@@ -404,6 +481,7 @@ local started = false
 local function onJoin(player: Player)
 	if not getData(player, true) then return end
 	for _, mode in C.Modes do RankedServer.Record(player, mode) end
+	RankedServer.SettlePending(player)
 	RankedServer.ApplyDecay(player)
 	RankedServer.ApplyAttributes(player)
 	player:GetAttributeChangedSignal("MM_Queue"):Connect(function() RankedServer.ApplyAttributes(player) end)

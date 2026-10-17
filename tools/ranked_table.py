@@ -1,4 +1,5 @@
-"""Generates notes/ranked_elo_table.md from Edward's ranked rules (v2, 2026-10-16). Gap is measured in tiers (3 per rank)."""
+"""Generates notes/ranked_elo_table.md from Edward's ranked rules (v2, 2026-10-16; team() = Edward's answers 2026-10-17).
+Gap is measured in tiers (3 per rank)."""
 R = ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Elite", "Commander"]
 WIN = [30, 28, 25, 21, 17, 13, 10]   # beat someone your own rank
 LOSS = [10, 12, 15, 18, 21, 23, 25]  # lose to someone your own rank
@@ -24,6 +25,11 @@ def loss(me, opp):
         v = l + (60 - l) * g / 2 if g <= 2 else 60 + 40 * (g - 2) / 4
     return max(1, min(100, round(v)))
 
+def team(me, own, opp):  # Edward 2026-10-17: effective tier = (own tier + own team's average tier) / 2 vs the other team's average
+    eff = (me + sum(own) / len(own)) / 2
+    o = sum(opp) / len(opp)
+    return gain(eff, o), loss(eff, o)
+
 if __name__ == "__main__":
     T = lambda r: r * 3  # tier 1 of each rank
     checks = [("Bronze 1 beats Bronze 1", gain(0, 0), 30), ("Bronze 1 beats Gold 1", gain(0, T(2)), 60),
@@ -32,6 +38,10 @@ if __name__ == "__main__":
               ("Gold 1 loses to Gold 1", loss(T(2), T(2)), 15), ("Gold 1 loses to Bronze 1", loss(T(2), 0), 60),
               ("Commander beats Commander", gain(T(6), T(6)), 10), ("Commander loses to Commander", loss(T(6), T(6)), 25),
               ("Commander loses to Diamond (max 60)", loss(T(6), T(4)), 60)]
+    checks += [("2v2 Commander (+Bronze) vs Plat+Plat win", team(T(6), [T(6), 0], [T(3), T(3)])[0], 8),
+               ("2v2 Commander (+Bronze) vs Plat+Plat loss", team(T(6), [T(6), 0], [T(3), T(3)])[1], 50),
+               ("2v2 Bronze (+Commander) vs Plat+Plat win", team(0, [T(6), 0], [T(3), T(3)])[0], 45),
+               ("2v2 Bronze (+Commander) vs Plat+Plat loss", team(0, [T(6), 0], [T(3), T(3)])[1], 8)]
     for n, g, w in checks:
         print(f"{n:38s} {g:4d}  (Edward: {w})  {'OK' if g == w else 'DIFF'}")
     hdr = r"| You \ vs | " +" | ".join(r[:4] for r in R) + " |"

@@ -227,3 +227,10 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   RankedPlaceId` (0 = fall back to MatchPlaceId) + `LobbyConfig.PlaceIdFor(kind)`; NewPlayerTutorial, QueueManager.deploy, MatchmakingManager
   startMatch (`place` in MM_Results) / deliver use it. Run `python tools/split_build.py place|lobby <id> [Kind|UNDO]`; it goes last in both
   install orders (UNDO it first before touching data_release / ranked / match_place_build edits).
+- 2026-10-17 ranked v3 = Edward's answers (notes/ranked_server.md section 0; both places): **one shared ladder** `Ranked.All` (season record
+  `S = 1`; every older record resets to 100, old numbers in `Prev`), `Ranked["1v1"/"2v2"/"3v3"]` = mirrors `{Mirror="All", Rating, Wins, Losses}`;
+  `rec.Pending` (ranked match in progress; a disconnect pays the leave at the next join). ReplicatedStorage **`RankedTop` / `RankedCutoff`**
+  (+ `RankedTop_All` / `RankedCutoff_All`, same data; per-mode `RankedTop_<mode>` gone); store `Ranked_All_s1`. Flags on: 10 placements x2,
+  shield, decay (1600+, -25/day after 7), LeavePenalty 25, team blend, per-mode windows (`WindowSpeed`). New RoundManager [RANKED] edits
+  6-9 (`rankedPays` / `rankedLeave`, MarkPending at the match start, `match.resulted` + ClearPending, Leave handler); lobby MatchmakingManager
+  `pickGroup(..., mode)` + call with `q.Mode`. MatchResults adds `placement`, `revealed`, `leave`. RankedTestHook adds `leave pending settle decay`.

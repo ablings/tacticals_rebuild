@@ -74,3 +74,5 @@ lead session's ELO maths is agreed.
 - **Team ELO**: each player uses an effective tier = (own tier + own team's average tier) / 2, against the opposing team's
   average tier, through the normal table. So a carry earns little and a carried player earns a fair amount:
   2v2 Commander+Bronze vs Plat+Plat: Commander +8 / -50, Bronze +45 / -8. Even teams = the solo numbers.
+- **Built (2026-10-17, ranked v3):** `notes/ranked_server.md` section 0 (all of the above in both working copies; 168/168 unit tests
+  incl. this 2v2 check; Play-tested placements, shield, leave, decay, disconnect, shared ladder).

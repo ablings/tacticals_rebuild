@@ -51,8 +51,30 @@ if RunService:IsStudio() then
 			local top = RankedServer.Leaderboard.top[key]
 			return { count = top and #top or 0, cutoff = RankedServer.Leaderboard.cutoff[key], first = top and top[1], mock = RankedServer.Leaderboard.mock }
 		elseif cmd == "apply" then
-			-- a = userId, b = mode, c = { oppElo, won, draw }
-			return RankedServer.ApplyResult(who(a), b, RankedCore.TierOf(c.oppElo), c.won == true, c.draw == true)
+			-- a = userId, b = mode, c = { oppElo | oppTier, won, draw, ownTier? }
+			local opp = tonumber(c.oppTier) or RankedCore.TierOf(c.oppElo)
+			return RankedServer.ApplyResult(who(a), b, opp, c.won == true, c.draw == true, tonumber(c.ownTier))
+		elseif cmd == "leave" then
+			-- a = userId, b = mode, c = { oppElo | oppTier, ownTier? }
+			local opp = tonumber(c.oppTier) or RankedCore.TierOf(c.oppElo)
+			return RankedServer.ApplyLeave(who(a), b, opp, tonumber(c.ownTier), "test")
+		elseif cmd == "pending" then
+			-- a = userId, b = mode, c = { oppTier, ownTier?, job? }: mark; job = "other" fakes a match on another server
+			local p = who(a)
+			RankedServer.MarkPending(p, b, tonumber(c.oppTier) or 0, tonumber(c.ownTier))
+			if c.job then
+				local rec, key = RankedServer.Record(p, b)
+				rec.Pending.job = c.job
+				RankedServer.WriteRecord(p, key, rec)
+			end
+			return (RankedServer.Record(p, b)).Pending
+		elseif cmd == "settle" then
+			RankedServer.SettlePending(who(a))
+			return RankedServer._last[who(a).UserId]
+		elseif cmd == "decay" then
+			RankedServer.ApplyDecay(who(a))
+			RankedServer.ApplyAttributes(who(a))
+			return (RankedServer.Record(who(a), b))
 		end
 		return "unknown " .. tostring(cmd)
 	end

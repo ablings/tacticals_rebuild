@@ -7,11 +7,13 @@
 -- New (attribute RankedInstall = true): ReplicatedStorage.Modules.Shared.RankedCore, ServerScriptService.Shared.RankedServer,
 --   ServerScriptService.RankedService (Script), ServerScriptService.AdminFramework.Commands.Ranked (when the framework is there).
 -- [RANKED] edits (string swap; UNDO swaps back; backups ServerStorage._RebuildRemoved.RANKED_<name>_Orig before the first edit):
---   match: Managers.RoundManager (RankedCore deltas instead of the K32 Elo, payload in MatchResults, record via RankedServer)
---   lobby: Managers.MatchmakingManager (ranked window / pair rule from RankedCore, tier in the queue entry),
+--   match: Managers.RoundManager (RankedCore deltas instead of the K32 Elo, payload in MatchResults, record via RankedServer;
+--          v3 2026-10-17: team tier blend, pending mark at the match start, leave penalty on Leave / disconnect)
+--   lobby: Managers.MatchmakingManager (ranked window / pair rule from RankedCore, tier in the queue entry; v3: the mode's window),
 --          Data.DataManager.Template (Ranked comment), Data.PlayerStore (PlayerStore.Ranked)
--- ORDER: match place: match_place_build -> data_release -> THIS. Lobby: lobby_duels -> admin -> data_release -> THIS.
--- (tools/match_place_build.py rewrites RoundManager: re-run this after it.)
+-- ORDER: match place: match_place_build -> data_release -> THIS -> split. Lobby: lobby_duels -> admin -> data_release -> THIS -> split
+-- (UNDO split first: notes/place_split.md section 6). tools/match_place_build.py rewrites RoundManager: re-run this after it.
+-- Changing an edit's text: UNDO with the OLD file first (git show <commit>:fix/ranked_install.lua), then install the new one.
 local UNDO = false --@UNDO
 
 local SS = game:GetService("ServerStorage")
@@ -34,72 +36,88 @@ end
 local SOURCES = {}
 --@@BEGIN SOURCES
 SOURCES.RankedCore = [=[-- ReplicatedStorage/Modules/Shared/RankedCore (ModuleScript) [RANKED] 2026-10-16, notes/ranked_server.md
--- Edward's ranked rules v2 (notes/ranked_design.md; reference implementation tools/ranked_table.py, commit b7ddd07).
+-- Edward's ranked rules v2 (notes/ranked_design.md; reference implementation tools/ranked_table.py, commit b7ddd07)
+-- + Edward's answers 2026-10-17 (v3): one shared ladder, Season 1 reset to 100, 10 placements x2, daily shield, decay at
+-- Elite+, leave = loss + 25, per-mode queue windows, team ELO from (own tier + own team's average tier) / 2.
 -- Read-only maths shared by the server (both places) and the UI: the ladder, the ELO change per match, the matchmaking
 -- window and the config flags. No side effects, no services beyond what require needs: safe to require from the client.
 --
---   RankedCore.Config                          the flags (defaults + what is still open with Edward: notes/ranked_server.md)
---   RankedCore.LadderKey(mode)                 the Ranked[...] key / leaderboard of a mode ("1v1", or "All" for a shared ladder)
+--   RankedCore.Config                          the flags (notes/ranked_server.md section 5)
+--   RankedCore.LadderKey(mode)                 the Ranked[...] key / leaderboard of a mode ("All" with the shared ladder)
 --   RankedCore.TierOf(elo)                     0..20 (0 = Bronze 1 ... 20 = Commander 3; 2200+ stays 20)
 --   RankedCore.Info(elo, cutoff?, place?)      { elo, tier, rank, rankName, division, name, floor, nextFloor, nextName, warlord, place }
 --   RankedCore.Gain(myTier, oppTier) / Loss(myTier, oppTier)   ELO won / lost (1..100), exactly tools/ranked_table.py
---   RankedCore.Delta(myElo, oppTier, won, draw?)               signed ELO change for one player (team: oppTier = the other team's average tier)
---   RankedCore.Window(waitedSeconds)          matchmaking window in tiers (2 at 0 s, 6 at 5 min, 18 at 60 min)
---   RankedCore.PairOk(tierA, waitedA, tierB, waitedB)          each inside the other's window
---   RankedCore.PickGroup(pool, need, now)      ranked matchmaker pick over { {v = {t = joinedAt, k = tier}} } (oldest first)
---   RankedCore.Migrate(entry)                  lazy migration of an old Ranked[mode] entry -> the unified record (pure)
+--   RankedCore.TeamTier(myTier, ownTeamTier?)                  effective tier in a team: (own + own team's average) / 2
+--   RankedCore.Delta(myElo, oppTier, won, draw?, ownTeamTier?) signed ELO change (oppTier = the other team's average tier)
+--   RankedCore.LeaveDelta(myElo, oppTier, ownTeamTier?)        the normal loss of a leave (negative; LeavePenalty added by the server)
+--   RankedCore.Window(waitedSeconds, mode?)   matchmaking window in tiers (1v1: 2 at 0 s, 6 at 5 min, 18 at 60 min; 2v2 x2, 3v3 x4 faster)
+--   RankedCore.PairOk(tierA, waitedA, tierB, waitedB, mode?)   each inside the other's window
+--   RankedCore.PartyTier(elos)                 a party's queue tier (the average tier)
+--   RankedCore.PickGroup(pool, need, now, mode?) ranked matchmaker pick over { {v = {t = joinedAt, k = tier, n = size?}} } (oldest first)
+--   RankedCore.Migrate(entry)                  the unified record of this season from anything stored (pure)
 --   RankedCore.IsWarlord(elo, cutoff)          2200+ and (cutoff == nil or elo >= cutoff)
 
 local RankedCore = {}
 
 RankedCore.Config = {
-	-- Ladder per mode (Ranked["1v1"], ["2v2"], ["3v3"]) or one shared ladder. Switch: PerModeLadders = false (one line).
-	PerModeLadders = true,
+	-- Edward 2026-10-17: ONE shared rank across 1v1 / 2v2 / 3v3 (Ranked.All, one Warlord top 200). true = a ladder per mode.
+	PerModeLadders = false,
 	SharedKey = "All",
 	Modes = { "1v1", "2v2", "3v3" },
-	DefaultMode = "1v1",            -- the ladder the flat player attributes show in the lobby when not queued ranked
+	DefaultMode = "1v1",            -- per-mode ladders only: the ladder the flat player attributes show when not queued
+	MirrorModes = true,             -- shared ladder: also write Ranked[<mode>] = { Mirror = "All", Rating, Wins, Losses } for old "SR" readers
 
 	Floor = 100,                     -- Bronze 1: never below
 	TierSize = 100,
 	WarlordFrom = 2200,              -- 2200+: top WarlordCount by ELO are Warlord, others stay Commander 3
 	WarlordCount = 200,
 	MinDelta = 1, MaxDelta = 100,
-	DrawDelta = 0,                   -- a drawn match (trade on the last round / equal health) changes nothing (open)
+	DrawDelta = 0,                   -- a drawn match changes nothing (Edward: draws stay 0)
 
-	-- Start / migration (open): new players start at StartElo; an existing old Rating (K32 Elo, started at 1000) is mapped
-	-- with Elo = StartElo + (Rating - OldStart) * MigrateScale (never below Floor), when MigrateOldRating is on.
+	-- Start / reset (Edward 2026-10-17: everyone starts Season 1 at Bronze 1 = 100; old ratings do NOT carry over).
+	-- A record whose S (season) is not Season starts again at StartElo (the old numbers are kept in rec.Prev); bumping
+	-- Season resets everyone again. MigrateOldRating (off) would map an old 1000-based Rating as StartElo + (Rating - OldStart).
+	Season = 1,
 	StartElo = 100,
-	MigrateOldRating = true,
+	MigrateOldRating = false,
 	OldStart = 1000,
 	MigrateScale = 1,
 
-	-- Placements (open, default off): the first Placements ranked matches multiply the change by PlacementMultiplier
-	-- and the UI hides the emblem until RankPlaced >= Placements. Placements = 0 = everyone is placed.
-	Placements = 0,
+	-- Placements (Edward: 10, rank hidden, x2, from 100, revealed after match 10): the first Placements ranked matches
+	-- multiply the change by PlacementMultiplier and the UI hides the emblem until RankPlaced >= Placements.
+	Placements = 10,
 	PlacementMultiplier = 2,
 
-	-- Daily shield (open, default off): the first ranked loss of each UTC day costs 0 ELO while below ShieldBelowElo (Elite 1).
-	ShieldEnabled = false,
+	-- Daily shield (Edward: on): the first ranked loss of each UTC day costs 0 ELO while below ShieldBelowElo (Elite 1).
+	-- Never covers a leave; not used during placements.
+	ShieldEnabled = true,
 	ShieldBelowElo = 1600,
 
-	-- Decay (open, default off): at DecayFromElo+, after DecayIdleDays without a ranked match, lose DecayPerDay per further
-	-- idle day, never below DecayFromElo. Applied when the player joins either place.
-	DecayEnabled = false,
-	DecayFromElo = 2200,
+	-- Decay (Edward: Elite and up, after 7 idle days -25 per idle day, never below Elite 1): above DecayFromElo, after
+	-- DecayIdleDays without a ranked match, lose DecayPerDay per further idle day, never below DecayFromElo. Applied at join.
+	DecayEnabled = true,
+	DecayFromElo = 1600,
 	DecayIdleDays = 7,
-	DecayPerDay = 50,
+	DecayPerDay = 25,
 
-	-- Team modes: each player's change uses their own rank vs the opposing team's average tier.
-	TeamOpponent = "AverageTier",
+	-- Leaving a ranked match (Leave button or disconnect, from the match's start until its results): the normal loss
+	-- (x2 in placements) + LeavePenalty. The shield never applies.
+	LeavePenalty = 25,
 
-	-- Leaderboard: an OrderedDataStore per ladder, Ranked_<key>_v1, written on every ranked result (all ELOs, so the board
-	-- and the cutoff are complete); the lobby (and the match place) refresh the top WarlordCount every LeaderboardRefresh s.
-	LeaderboardVersion = "v1",
+	-- Team modes (Edward): each player's effective tier = (own tier + own team's average tier) / 2, against the other team's
+	-- average tier, through the normal Gain / Loss. Even teams = the solo numbers. "Blend" (or "AverageTier" = own tier only).
+	TeamOpponent = "Blend",
+
+	-- Leaderboard: an OrderedDataStore per ladder, Ranked_<key>_<LeaderboardVersion>, written on every ranked result (all
+	-- ELOs, so the board and the cutoff are complete); both places refresh the top WarlordCount every LeaderboardRefresh s.
+	LeaderboardVersion = "s1",       -- a new store per season: the old Ranked_<mode>_v1 boards are not read
 	LeaderboardRefresh = 120,
 	LeaderboardWriteMin = 0,         -- write only ELOs >= this (0 = all)
 
-	-- Matchmaking window, in tiers: Window0 at 0 s, linear to Window5 at Time5, then linear to WindowMax at TimeMax.
+	-- Matchmaking window, in tiers: Window0 at 0 s, linear to Window5 at Time5, then linear to WindowMax at TimeMax (1v1).
+	-- Team modes widen faster (Edward): waited time x WindowSpeed[mode] (2v2: full spread at 30 min, 3v3 at 15 min).
 	Window0 = 2, Window5 = 6, Time5 = 300, WindowMax = 18, TimeMax = 3600,
+	WindowSpeed = { ["1v1"] = 1, ["2v2"] = 2, ["3v3"] = 4 },
 
 	-- Studio only: a ranked match against a Studio test bot changes ELO (so the flow can be tested); live bot matches never pay.
 	StudioBotRanked = true,
@@ -148,7 +166,7 @@ function RankedCore.IsWarlord(elo: number, cutoff: number?): boolean
 	return elo >= C.WarlordFrom and (cutoff == nil or elo >= cutoff)
 end
 
--- everything the UI shows for an ELO. cutoff = ReplicatedStorage RankedCutoff_<key> (nil = fewer than 200 at 2200+),
+-- everything the UI shows for an ELO. cutoff = ReplicatedStorage RankedCutoff (nil = fewer than 200 at 2200+),
 -- place = leaderboard position if known
 function RankedCore.Info(elo: number, cutoff: number?, place: number?)
 	elo = RankedCore.ClampElo(elo)
@@ -223,12 +241,23 @@ function RankedCore.Loss(me: number, opp: number): number
 	return clampDelta(v)
 end
 
--- signed change for one player: myElo vs an opponent tier (team: the other team's average tier)
-function RankedCore.Delta(myElo: number, oppTier: number, won: boolean, draw: boolean?): number
+-- a player's effective tier in a team match: (own tier + own team's average tier) / 2 (1v1 / no team tier: own tier)
+function RankedCore.TeamTier(me: number, ownTeam: number?): number
+	if ownTeam == nil or C.TeamOpponent ~= "Blend" then return me end
+	return (me + ownTeam) / 2
+end
+
+-- signed change for one player: myElo vs an opponent tier (the other team's average tier; ownTeam = own team's average)
+function RankedCore.Delta(myElo: number, oppTier: number, won: boolean, draw: boolean?, ownTeam: number?): number
 	if draw then return C.DrawDelta end
-	local me = RankedCore.TierOf(myElo)
+	local me = RankedCore.TeamTier(RankedCore.TierOf(myElo), ownTeam)
 	if won then return RankedCore.Gain(me, oppTier) end
 	return -RankedCore.Loss(me, oppTier)
+end
+
+-- the normal loss of a leave (negative); RankedServer.ApplyLeave doubles it in placements and adds -LeavePenalty
+function RankedCore.LeaveDelta(myElo: number, oppTier: number, ownTeam: number?): number
+	return RankedCore.Delta(myElo, oppTier, false, false, ownTeam)
 end
 
 -- the average tier of a list of ELOs
@@ -239,38 +268,50 @@ function RankedCore.AverageTier(elos: { number }): number
 	return s / #elos
 end
 
--- matchmaking window (tiers either side) after waiting `waited` seconds
-function RankedCore.Window(waited: number): number
-	local t = math.max(0, waited or 0)
+-- a party's queue tier: the average tier of its members (Edward: "a team queues at its average tier")
+function RankedCore.PartyTier(elos: { number }): number
+	return RankedCore.AverageTier(elos)
+end
+
+-- matchmaking window (tiers either side) after waiting `waited` seconds in a mode's queue (team modes widen faster)
+function RankedCore.Window(waited: number, mode: string?): number
+	local t = math.max(0, waited or 0) * ((mode and C.WindowSpeed and C.WindowSpeed[mode]) or 1)
 	if t <= C.Time5 then return C.Window0 + (C.Window5 - C.Window0) * t / C.Time5 end
 	if t >= C.TimeMax then return C.WindowMax end
 	return C.Window5 + (C.WindowMax - C.Window5) * (t - C.Time5) / (C.TimeMax - C.Time5)
 end
 
--- a pair is valid only if each player is inside the other's window
-function RankedCore.PairOk(tierA: number, waitedA: number, tierB: number, waitedB: number): boolean
+-- a pair is valid only if each is inside the other's window
+function RankedCore.PairOk(tierA: number, waitedA: number, tierB: number, waitedB: number, mode: string?): boolean
 	local gap = math.abs(tierA - tierB)
-	return gap <= RankedCore.Window(waitedA) + 1e-9 and gap <= RankedCore.Window(waitedB) + 1e-9
+	return gap <= RankedCore.Window(waitedA, mode) + 1e-9 and gap <= RankedCore.Window(waitedB, mode) + 1e-9
 end
 
--- Ranked pick. pool = queue entries oldest first, each { v = { t = joinedAt (server time), k = tier } }.
--- The longest-waiting player anchors; the others are taken oldest first ("quickest match first") as long as every pair
--- in the group is valid. Returns the group (need entries) or nil.
-function RankedCore.PickGroup(pool, need: number, now: number)
-	if #pool < need then return nil end
+-- Ranked pick. pool = queue entries oldest first, each { v = { t = joinedAt (server time), k = tier, n = players (1) } };
+-- a party entry carries n > 1 and k = its average tier (PartyTier). The longest-waiting entry anchors; the others are
+-- taken oldest first ("quickest match first") as long as every pair in the group is valid in this mode's window and the
+-- players fit. Returns the entries whose sizes add up to `need` players, or nil.
+function RankedCore.PickGroup(pool, need: number, now: number, mode: string?)
 	local function tierOf(e) return tonumber(e.v.k) or RankedCore.TierOf(e.v.r or C.StartElo) end
+	local function size(e) return math.max(1, math.floor(tonumber(e.v.n) or 1)) end
+	local total = 0
+	for _, e in pool do total += size(e) end
+	if total < need then return nil end
 	for i, anchor in pool do
-		local group = { anchor }
-		if need == 1 then return group end
-		for j, e in pool do
-			if j ~= i then
-				local ok = true
-				for _, g in group do
-					if not RankedCore.PairOk(tierOf(g), now - (g.v.t or now), tierOf(e), now - (e.v.t or now)) then ok = false break end
-				end
-				if ok then
-					table.insert(group, e)
-					if #group == need then return group end
+		local group, n = { anchor }, size(anchor)
+		if n == need then return group end
+		if n < need then
+			for j, e in pool do
+				if j ~= i and n + size(e) <= need then
+					local ok = true
+					for _, g in group do
+						if not RankedCore.PairOk(tierOf(g), now - (g.v.t or now), tierOf(e), now - (e.v.t or now), mode) then ok = false break end
+					end
+					if ok then
+						table.insert(group, e)
+						n += size(e)
+						if n == need then return group end
+					end
 				end
 			end
 		end
@@ -283,12 +324,14 @@ function RankedCore.Day(t: number?): number
 	return (t or os.time()) // 86400
 end
 
--- The unified record: { Elo, Peak, Placed, Wins, Losses, Streak, ShieldDay, LastPlayed, Decayed, Rating (= Elo, mirror for
--- the old readers), V = 1 }. Migrates the lobby's old { Rating, Wins, Losses }, the match place's { Rating, Played, Wins }
--- and nil. Returns record, changed.
+-- The unified record: { V = 1, S = season, Elo, Peak, Placed, Wins, Losses, Streak, ShieldDay, LastPlayed, Decayed,
+-- Rating (= Elo, mirror for the old readers), Pending (a ranked match in progress, RankedServer.MarkPending), Prev }.
+-- A record of another season (every v2 record had none) starts again at StartElo with the old numbers in Prev; the old
+-- shapes ({ Rating, Wins, Losses } / { Rating, Played, Wins }) and nil start fresh too (MigrateOldRating off).
+-- Returns record, changed.
 function RankedCore.Migrate(entry)
-	if type(entry) == "table" and entry.V == 1 and tonumber(entry.Elo) then
-		-- Rating is a mirror of Elo for the old readers; if something else wrote Rating (old code, ;setstat Rating1v1), Elo follows it
+	if type(entry) == "table" and entry.V == 1 and tonumber(entry.Elo) and entry.S == C.Season then
+		-- Rating is a mirror of Elo for the old readers; if something else wrote Rating (old code, ;setstat), Elo follows it
 		local r = tonumber(entry.Rating)
 		local changed = r ~= entry.Elo
 		if r and changed then
@@ -299,27 +342,38 @@ function RankedCore.Migrate(entry)
 		return entry, changed
 	end
 	local old = type(entry) == "table" and entry or {}
+	-- a v1 record of another season: everything starts again
+	local reset = old.V == 1
 	local elo = C.StartElo
 	local rating = tonumber(old.Rating)
-	if C.MigrateOldRating and rating then
+	local carry = C.MigrateOldRating and not reset and not old.Mirror
+	if carry and rating then
 		elo = C.StartElo + (rating - C.OldStart) * C.MigrateScale
 	end
 	elo = RankedCore.ClampElo(elo)
-	local wins = tonumber(old.Wins) or 0
-	local losses = tonumber(old.Losses)
-	if not losses then losses = math.max(0, (tonumber(old.Played) or 0) - wins) end
-	local played = wins + losses
+	local wins, losses = 0, 0
+	if carry then
+		wins = tonumber(old.Wins) or 0
+		losses = tonumber(old.Losses) or math.max(0, (tonumber(old.Played) or 0) - wins)
+	end
+	local prev = nil
+	if next(old) ~= nil and not old.Mirror then
+		prev = { S = tonumber(old.S) or 0, Elo = tonumber(old.Elo) or tonumber(old.Rating), Peak = tonumber(old.Peak),
+			Wins = tonumber(old.Wins), Losses = tonumber(old.Losses) }
+	end
 	return {
 		V = 1,
+		S = C.Season,
+		Prev = prev,
 		Elo = elo,
 		Rating = elo,
-		Peak = math.max(elo, tonumber(old.Peak) or 0),
-		Placed = math.min(C.Placements, played),
+		Peak = elo,
+		Placed = math.min(C.Placements, wins + losses),
 		Wins = wins,
 		Losses = losses,
 		Streak = 0,
 		ShieldDay = 0,
-		LastPlayed = tonumber(old.LastPlayed) or 0,
+		LastPlayed = 0,
 		Decayed = 0,
 	}, true
 end
@@ -348,11 +402,15 @@ SOURCES.RankedServer = [=[-- ServerScriptService/Shared/RankedServer (ModuleScri
 -- The server side of ranked, the same file in the lobby and the match place. The maths is ReplicatedStorage.Modules.Shared.RankedCore.
 --   RankedServer.Record(player, mode)        the unified Ranked[key] record (lazy migration from the old shapes, written back)
 --   RankedServer.EloOf(player, mode)         its Elo (StartElo if the profile isn't loaded)
---   RankedServer.ApplyResult(player, mode, oppTier, won, draw)   one ranked result -> the MatchResults payload fields
+--   RankedServer.ApplyResult(player, mode, oppTier, won, draw, ownTier?)   one ranked result -> the MatchResults payload fields
+--   RankedServer.ApplyLeave(player, mode, oppTier, ownTier?, why?)        a leave: normal loss (x2 in placements) + LeavePenalty, no shield
+--   RankedServer.MarkPending / ClearPending / SettlePending   a ranked match in progress is stored in the record (rec.Pending); a
+--                                            player who disconnects keeps it and pays the leave at their next join (either place)
 --   RankedServer.SetElo / Reset / Lines      admin helpers (Commands/Ranked)
 --   RankedServer.ApplyAttributes(player)     RankElo, RankTier, RankDivision, RankName, RankPlaced, RankShield, ... + RankedAll
---   RankedServer.Leaderboard                 OrderedDataStore Ranked_<key>_v1 (a memory mock in Studio / when DataStores fail)
---   RankedServer.RefreshLeaderboards()       top WarlordCount -> ReplicatedStorage RankedTop_<key> (JSON) / RankedCutoff_<key>
+--   RankedServer.Leaderboard                 OrderedDataStore Ranked_<key>_s1 (a memory mock in Studio / when DataStores fail)
+--   RankedServer.RefreshLeaderboards()       top WarlordCount -> ReplicatedStorage RankedTop / RankedCutoff (shared ladder; mirrored as
+--                                            RankedTop_All / RankedCutoff_All) or RankedTop_<mode> / RankedCutoff_<mode> (per-mode ladders)
 --   RankedServer.Start()                     join hooks + the refresh loop (called by ServerScriptService.RankedService)
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -404,6 +462,17 @@ local function writeRecord(player: Player, key: string, rec)
 		if type(data.Ranked) ~= "table" then data.Ranked = {} end
 		data.Ranked[key] = rec
 	end
+	-- shared ladder: the old per-mode entries become mirrors of it (LobbyUIController / PlayScreen "SR", admin ;stats read
+	-- Ranked[mode].Rating). A mirror is never read back as a record.
+	if key == C.SharedKey and C.MirrorModes then
+		for _, m in C.Modes do
+			local mirror = { Mirror = key, Rating = rec.Elo, Wins = rec.Wins or 0, Losses = rec.Losses or 0 }
+			local curM = data.Ranked[m]
+			if type(curM) ~= "table" or curM.Mirror ~= key or curM.Rating ~= mirror.Rating or curM.Wins ~= mirror.Wins or curM.Losses ~= mirror.Losses then
+				if replica then replica:SetValue({ "Ranked", m }, mirror) else data.Ranked[m] = mirror end
+			end
+		end
+	end
 	return true
 end
 RankedServer.WriteRecord = writeRecord
@@ -420,7 +489,7 @@ function RankedServer.Record(player: Player, mode: string?, wait: boolean?)
 	if cur == nil and not C.PerModeLadders and type(data.Ranked) == "table" then
 		for _, m in C.Modes do
 			local e = data.Ranked[m]
-			if type(e) == "table" and (tonumber(e.Elo) or tonumber(e.Rating) or 0) > (cur and (tonumber(cur.Elo) or tonumber(cur.Rating) or 0) or -1) then cur = e end
+			if type(e) == "table" and not e.Mirror and (tonumber(e.Elo) or tonumber(e.Rating) or 0) > (cur and (tonumber(cur.Elo) or tonumber(cur.Rating) or 0) or -1) then cur = e end
 		end
 	end
 	local rec, changed = RankedCore.Migrate(cur and copy(cur) or nil)
@@ -552,8 +621,14 @@ function Leaderboard.Refresh(key: string)
 	-- the Warlord threshold: the 200th ELO when 200+ players are at 2200+; nil = every 2200+ player is Warlord
 	Leaderboard.cutoff[key] = (#list >= n) and list[n].elo or nil
 	Leaderboard.known[key] = true
-	ReplicatedStorage:SetAttribute("RankedTop_" .. key, HttpService:JSONEncode(list))
+	local json = HttpService:JSONEncode(list)
+	ReplicatedStorage:SetAttribute("RankedTop_" .. key, json)
 	ReplicatedStorage:SetAttribute("RankedCutoff_" .. key, Leaderboard.cutoff[key])
+	if key == C.SharedKey then
+		-- the shared ladder's plain names (RankedTop_All / RankedCutoff_All above stay as mirrors: RankedScreen reads "RankedTop_" .. key)
+		ReplicatedStorage:SetAttribute("RankedTop", json)
+		ReplicatedStorage:SetAttribute("RankedCutoff", Leaderboard.cutoff[key])
+	end
 	return true
 end
 
@@ -630,31 +705,14 @@ end
 -------------------------------------------------------------------------------
 -- Results
 -------------------------------------------------------------------------------
--- One ranked result. oppTier = the opposing team's average tier (RankedCore.AverageTier). Returns the payload fields
--- { eloBefore, eloAfter, delta, shieldUsed, promoted, demoted, rankBefore, rankAfter, ladder, placed, placements }.
-function RankedServer.ApplyResult(player: Player, mode: string, oppTier: number, won: boolean, draw: boolean?)
-	local rec, key = RankedServer.Record(player, mode, true)
-	if not rec then return nil end
-	local now = os.time()
-	local before = rec.Elo
-	local infoBefore = RankedServer.InfoFor(key, rec, player.UserId)
-	local delta = RankedCore.Delta(before, oppTier, won, draw)
-	local shieldUsed = false
-	if not won and not draw and delta < 0 and RankedCore.ShieldReady(rec, now) then
-		shieldUsed = true
-		delta = 0
-		rec.ShieldDay = RankedCore.Day(now)
-	end
-	if (rec.Placed or 0) < C.Placements then
-		if delta ~= 0 then delta = math.sign(delta) * math.clamp(math.abs(delta) * C.PlacementMultiplier, 1, 2 * C.MaxDelta) end
-		rec.Placed = (rec.Placed or 0) + 1
-	end
+-- the end of a result / leave: counts, write, leaderboard, attributes, payload
+local function finish(player: Player, key: string, rec, before: number, infoBefore, delta: number, extra)
 	rec.Elo = math.max(C.Floor, before + delta)
 	delta = rec.Elo - before
 	rec.Rating = rec.Elo
 	rec.Peak = math.max(rec.Peak or 0, rec.Elo)
-	if not draw then
-		if won then
+	if not extra.draw then
+		if extra.won then
 			rec.Wins = (rec.Wins or 0) + 1
 			rec.Streak = math.max(0, rec.Streak or 0) + 1
 		else
@@ -662,24 +720,97 @@ function RankedServer.ApplyResult(player: Player, mode: string, oppTier: number,
 			rec.Streak = math.min(0, rec.Streak or 0) - 1
 		end
 	end
-	rec.LastPlayed = now
+	rec.LastPlayed = os.time()
 	rec.Decayed = 0
+	rec.Pending = nil
 	writeRecord(player, key, rec)
 	Leaderboard.Write(key, player.UserId, rec.Elo, player.Name)
 	-- the cached cutoff may move with this write; the next refresh settles it. Warlord here uses the cached one.
 	local infoAfter = RankedServer.InfoFor(key, rec, player.UserId)
 	local up = infoAfter.tier > infoBefore.tier or (infoAfter.warlord and not infoBefore.warlord)
 	local down = infoAfter.tier < infoBefore.tier or (infoBefore.warlord and not infoAfter.warlord)
-	RankedServer.ApplyAttributes(player)
+	if player.Parent then RankedServer.ApplyAttributes(player) end
 	local payload = {
-		eloBefore = before, eloAfter = rec.Elo, delta = delta, shieldUsed = shieldUsed, promoted = up, demoted = down,
+		eloBefore = before, eloAfter = rec.Elo, delta = delta, shieldUsed = extra.shieldUsed == true, promoted = up, demoted = down,
 		rankBefore = infoBefore.name, rankAfter = infoAfter.name, tierBefore = infoBefore.tier, tierAfter = infoAfter.tier,
-		ladder = key, placed = rec.Placed, placements = C.Placements, draw = draw == true,
+		ladder = key, placed = rec.Placed, placements = C.Placements, draw = extra.draw == true, leave = extra.leave == true,
+		placement = extra.placement == true, revealed = extra.placement == true and (rec.Placed or 0) >= C.Placements,
 	}
 	RankedServer._last[player.UserId] = payload
-	print(("[Ranked] %s %s %s: %d -> %d (%+d)%s"):format(player.Name, key, draw and "draw" or (won and "win" or "loss"), before, rec.Elo, delta,
-		shieldUsed and " shield" or ""))
+	print(("[Ranked] %s %s %s: %d -> %d (%+d)%s%s"):format(player.Name, key, extra.leave and "LEAVE" or (extra.draw and "draw" or (extra.won and "win" or "loss")),
+		before, rec.Elo, delta, extra.shieldUsed and " shield" or "", extra.placement and (" placement " .. rec.Placed .. "/" .. C.Placements) or ""))
 	return payload
+end
+
+-- placement x2 (the first Placements matches); counts the placement match. Returns delta, isPlacement
+local function placement(rec, delta: number)
+	if (rec.Placed or 0) >= C.Placements then return delta, false end
+	if delta ~= 0 then delta = math.sign(delta) * math.clamp(math.abs(delta) * C.PlacementMultiplier, 1, 2 * C.MaxDelta) end
+	rec.Placed = (rec.Placed or 0) + 1
+	return delta, true
+end
+
+-- One ranked result. oppTier = the opposing team's average tier, ownTier = own team's average tier (team modes; nil / 1v1 =
+-- own tier). Returns the payload fields { eloBefore, eloAfter, delta, shieldUsed, promoted, demoted, rankBefore, rankAfter,
+-- tierBefore, tierAfter, ladder, placed, placements, draw, leave, placement, revealed }.
+function RankedServer.ApplyResult(player: Player, mode: string, oppTier: number, won: boolean, draw: boolean?, ownTier: number?)
+	local rec, key = RankedServer.Record(player, mode, true)
+	if not rec then return nil end
+	local now = os.time()
+	local before = rec.Elo
+	local infoBefore = RankedServer.InfoFor(key, rec, player.UserId)
+	local delta = RankedCore.Delta(before, oppTier, won, draw, ownTier)
+	local shieldUsed = false
+	if not won and not draw and delta < 0 and RankedCore.ShieldReady(rec, now) then
+		shieldUsed = true
+		delta = 0
+		rec.ShieldDay = RankedCore.Day(now)
+	end
+	local placed
+	delta, placed = placement(rec, delta)
+	return finish(player, key, rec, before, infoBefore, delta, { won = won, draw = draw, shieldUsed = shieldUsed, placement = placed })
+end
+
+-- Leaving a ranked match (Edward): the normal loss (team maths; x2 in placements) + LeavePenalty. The shield never applies.
+function RankedServer.ApplyLeave(player: Player, mode: string, oppTier: number, ownTier: number?, why: string?)
+	local rec, key = RankedServer.Record(player, mode, true)
+	if not rec then return nil end
+	local before = rec.Elo
+	local infoBefore = RankedServer.InfoFor(key, rec, player.UserId)
+	local delta, placed = placement(rec, RankedCore.LeaveDelta(before, oppTier, ownTier))
+	delta -= C.LeavePenalty
+	local payload = finish(player, key, rec, before, infoBefore, delta, { won = false, leave = true, placement = placed })
+	payload.why = why
+	return payload
+end
+
+-- a ranked match is starting for this player: stored in the record, so a disconnect (the profile is released at once and
+-- nothing written after that is saved) still costs the leave at the next join. Cleared by ApplyResult / ApplyLeave / ClearPending.
+function RankedServer.MarkPending(player: Player, mode: string, oppTier: number, ownTier: number?)
+	local rec, key = RankedServer.Record(player, mode, true)
+	if not rec then return false end
+	rec.Pending = { mode = mode, opp = oppTier, own = ownTier, t = os.time(), job = game.JobId }
+	writeRecord(player, key, rec)
+	return true
+end
+
+function RankedServer.ClearPending(player: Player, mode: string?)
+	local rec, key = RankedServer.Record(player, mode)
+	if not rec or rec.Pending == nil then return false end
+	rec.Pending = nil
+	writeRecord(player, key, rec)
+	return true
+end
+
+-- at join: a match left by a disconnect on another server (not this one: a reconnect to a running match is not a leave)
+function RankedServer.SettlePending(player: Player)
+	for _, key in RankedCore.LadderKeys() do
+		local rec = RankedServer.Record(player, key ~= C.SharedKey and key or nil)
+		local p = rec and rec.Pending
+		if type(p) == "table" and p.job ~= game.JobId then
+			RankedServer.ApplyLeave(player, p.mode or C.DefaultMode, tonumber(p.opp) or 0, tonumber(p.own), "disconnect")
+		end
+	end
 end
 
 -- decay owed since the last ranked match (flag DecayEnabled); applied at join
@@ -750,6 +881,7 @@ local started = false
 local function onJoin(player: Player)
 	if not getData(player, true) then return end
 	for _, mode in C.Modes do RankedServer.Record(player, mode) end
+	RankedServer.SettlePending(player)
 	RankedServer.ApplyDecay(player)
 	RankedServer.ApplyAttributes(player)
 	player:GetAttributeChangedSignal("MM_Queue"):Connect(function() RankedServer.ApplyAttributes(player) end)
@@ -828,8 +960,30 @@ if RunService:IsStudio() then
 			local top = RankedServer.Leaderboard.top[key]
 			return { count = top and #top or 0, cutoff = RankedServer.Leaderboard.cutoff[key], first = top and top[1], mock = RankedServer.Leaderboard.mock }
 		elseif cmd == "apply" then
-			-- a = userId, b = mode, c = { oppElo, won, draw }
-			return RankedServer.ApplyResult(who(a), b, RankedCore.TierOf(c.oppElo), c.won == true, c.draw == true)
+			-- a = userId, b = mode, c = { oppElo | oppTier, won, draw, ownTier? }
+			local opp = tonumber(c.oppTier) or RankedCore.TierOf(c.oppElo)
+			return RankedServer.ApplyResult(who(a), b, opp, c.won == true, c.draw == true, tonumber(c.ownTier))
+		elseif cmd == "leave" then
+			-- a = userId, b = mode, c = { oppElo | oppTier, ownTier? }
+			local opp = tonumber(c.oppTier) or RankedCore.TierOf(c.oppElo)
+			return RankedServer.ApplyLeave(who(a), b, opp, tonumber(c.ownTier), "test")
+		elseif cmd == "pending" then
+			-- a = userId, b = mode, c = { oppTier, ownTier?, job? }: mark; job = "other" fakes a match on another server
+			local p = who(a)
+			RankedServer.MarkPending(p, b, tonumber(c.oppTier) or 0, tonumber(c.ownTier))
+			if c.job then
+				local rec, key = RankedServer.Record(p, b)
+				rec.Pending.job = c.job
+				RankedServer.WriteRecord(p, key, rec)
+			end
+			return (RankedServer.Record(p, b)).Pending
+		elseif cmd == "settle" then
+			RankedServer.SettlePending(who(a))
+			return RankedServer._last[who(a).UserId]
+		elseif cmd == "decay" then
+			RankedServer.ApplyDecay(who(a))
+			RankedServer.ApplyAttributes(who(a))
+			return (RankedServer.Record(who(a), b))
 		end
 		return "unknown " .. tostring(cmd)
 	end
@@ -947,7 +1101,8 @@ local EDITS = {
 			.. '\t-- when RankedCore.Config.StudioBotRanked.\n'
 			.. '\tif ranked and not match.aborted and (not match.hasBot or (IS_STUDIO and RankedCore.Config.StudioBotRanked)) then\n'
 			.. '\t\tlocal other = side == "A" and "B" or "A"\n'
-			.. '\t\tlocal res = RankedServer.ApplyResult(player, mode, ratings[other] or 0, summary.Won == true, summary.Draw == true)\n'
+			.. '\t\t-- v3 (Edward 2026-10-17): your tier blends with your own team\'s average tier, (own + team) / 2\n'
+			.. '\t\tlocal res = RankedServer.ApplyResult(player, mode, ratings[other] or 0, summary.Won == true, summary.Draw == true, ratings[side])\n'
 			.. '\t\tif res then\n'
 			.. '\t\t\tfor k, v in res do summary[k] = v end\n'
 			.. '\t\t\tsummary.RatingChange = res.delta\n'
@@ -987,6 +1142,55 @@ local EDITS = {
 			.. '\t\t\tratings[side] = bot and RankedCore.TierOf(bot) or ratings[side == "A" and "B" or "A"] or 0\n'
 			.. '\t\tend\n'
 			.. '\tend\n' },
+	-- match RoundManager v3 (Edward 2026-10-17): leaving a ranked match = the normal loss + LeavePenalty (no shield)
+	{ function() return manager("RoundManager") end, "match",
+		'local function backToLobby(players)\n',
+		'-- [RANKED] v3 leave penalty (Edward 2026-10-17, notes/ranked_server.md): from the match\'s start until its results, a\n'
+			.. '-- Leave costs the normal loss (team maths, x2 in placements) + RankedCore.Config.LeavePenalty, never shielded. A\n'
+			.. '-- disconnect pays the same at the next join (RankedServer.MarkPending at the start, SettlePending at join).\n'
+			.. 'local function rankedPays(match)\n'
+			.. '\treturn match.ranked and not match.aborted and (not match.hasBot or (IS_STUDIO and RankedCore.Config.StudioBotRanked))\n'
+			.. 'end\n'
+			.. 'local function rankedLeave(match, m, why: string)\n'
+			.. '\tif not (match and m and m.player) or m.penalized or match.resulted or not match.ratings or not rankedPays(match) then return end\n'
+			.. '\tm.penalized = true\n'
+			.. '\tlocal other = m.team == "A" and "B" or "A"\n'
+			.. '\tRankedServer.ApplyLeave(m.player, match.mode, match.ratings[other] or 0, match.ratings[m.team], why)\n'
+			.. 'end\n'
+			.. '\n'
+			.. 'local function backToLobby(players)\n' },
+	{ function() return manager("RoundManager") end, "match",
+		'\tlocal maps, fallback = eligibleMaps(first.Mode)\n',
+		'\t-- [RANKED] v3 the match is on: keep the tiers for a leave, and mark it in each player\'s record (a disconnect pays at the next join)\n'
+			.. '\tmatch.ratings = ratings\n'
+			.. '\tif rankedPays(match) then\n'
+			.. '\t\tfor side, list in match.teams do\n'
+			.. '\t\t\tfor _, m in list do\n'
+			.. '\t\t\t\tif m.player then task.spawn(RankedServer.MarkPending, m.player, match.mode, ratings[side == "A" and "B" or "A"] or 0, ratings[side]) end\n'
+			.. '\t\t\tend\n'
+			.. '\t\tend\n'
+			.. '\tend\n'
+			.. '\tlocal maps, fallback = eligibleMaps(first.Mode)\n' },
+	{ function() return manager("RoundManager") end, "match",
+		'\tlocal winner, forfeit = MatchCore.playMatch(match.ctx)\n',
+		'\tlocal winner, forfeit = MatchCore.playMatch(match.ctx)\n'
+			.. '\t-- [RANKED] v3 results from here: no leave penalty any more; players still here who are not paid below (admin end,\n'
+			.. '\t-- live bot match) get the pending mark cleared (the paid ones: RankedServer.ApplyResult clears it)\n'
+			.. '\tmatch.resulted = true\n'
+			.. '\tfor _, list in match.teams do\n'
+			.. '\t\tfor _, m in list do\n'
+			.. '\t\t\tif m.player and m.player.Parent and not m.penalized and (m.left or not rankedPays(match)) then\n'
+			.. '\t\t\t\ttask.spawn(RankedServer.ClearPending, m.player, match.mode)\n'
+			.. '\t\t\tend\n'
+			.. '\t\tend\n'
+			.. '\tend\n' },
+	{ function() return manager("RoundManager") end, "match",
+		'\t\t\tm.left = true\n'
+			.. '\t\t\tplayer:SetAttribute("InMatch", false)\n',
+		'\t\t\tm.left = true\n'
+			.. '\t\t\tplayer:SetAttribute("InMatch", false)\n'
+			.. '\t\t\t-- [RANKED] v3 leaving a ranked match: normal loss + LeavePenalty (before backToLobby releases the profile)\n'
+			.. '\t\t\trankedLeave(match, m, "leave")\n' },
 	-- lobby MatchmakingManager
 	{ function() return manager("MatchmakingManager") end, "lobby",
 		'local Remotes = require(ServerScriptService.Lobby.LobbyRemotes)\n',
@@ -1024,9 +1228,18 @@ local EDITS = {
 		'\tif not ranked then\n'
 			.. '\t\treturn table.move(pool, 1, need, 1, {})\n'
 			.. '\tend\n'
-			.. '\t-- [RANKED] Edward\'s window (RankedCore.Window: 2 tiers at 0 s, 6 at 5 min, 18 at 60 min) and the pair rule (every pair\n'
-			.. '\t-- inside each other\'s window), oldest first. The old rating-gap pick below is no longer reached.\n'
-			.. '\tdo return RankedCore.PickGroup(pool, need, now) end\n' },
+			.. '\t-- [RANKED] Edward\'s window (RankedCore.Window: 1v1 2 tiers at 0 s, 6 at 5 min, 18 at 60 min; 2v2 twice and 3v3 four times\n'
+			.. '\t-- as fast) and the pair rule (every pair inside each other\'s window), oldest first; a party entry (v.n players)\n'
+			.. '\t-- queues at its average tier (v.k). The old rating-gap pick below is no longer reached.\n'
+			.. '\tdo return RankedCore.PickGroup(pool, need, now, mode) end\n' },
+	{ function() return manager("MatchmakingManager") end, "lobby",
+		'local function pickGroup(pool, need: number, ranked: boolean, now: number)\n',
+		'-- [RANKED] mode = the queue\'s mode (RankedCore.Window widens faster in 2v2 / 3v3)\n'
+			.. 'local function pickGroup(pool, need: number, ranked: boolean, now: number, mode: string?)\n' },
+	{ function() return manager("MatchmakingManager") end, "lobby",
+		'\t\t\tlocal group = pickGroup(pool, need, q.Ranked, now)\n',
+		'\t\t\t-- [RANKED] the queue\'s mode for the window\n'
+			.. '\t\t\tlocal group = pickGroup(pool, need, q.Ranked, now, q.Mode)\n' },
 	-- lobby Template + PlayerStore
 	{ function() local d = SSS:FindFirstChild("Data") return d and d:FindFirstChild("DataManager") and d.DataManager:FindFirstChild("Template") end, "lobby",
 		'\tRanked = {},                -- [mode] = { Rating, Wins, Losses } for the ranked queues\n',
