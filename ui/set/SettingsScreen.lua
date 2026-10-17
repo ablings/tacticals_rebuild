@@ -323,6 +323,7 @@ local function buildRow(tab, row, order)
 	resetBtn.Parent = frame
 	local shown = false
 	local function refreshReset(t)
+		if row.kind == "action" then return end -- [SET] an action row has no value to reset (it showed a stray red reset button)
 		local cur = values[tab.name][row.key]
 		local on
 		if typeof(cur) == "Color3" and typeof(default) == "Color3" then
