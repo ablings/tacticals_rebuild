@@ -38,7 +38,7 @@ eye-level olive band and the white floor lines. Light temperature and props are 
    and re-run to hide them (UNDO-able). The sheet shows the pad both ways.
 4. **Queue-pad Holo beam bug** (from before the polish): the 6 pad Holo beams render outside the Duels hall, because their
    Attachments hold world coordinates as local offsets. The fix is in `notes/particles.md`. Not done because it is your FX.
-5. **Exfil barrier fires from both sides:** walking back from the pad to the hangar through it also starts the cutscene.
+5. **(Done 2026-10-17: `fix/exfil_oneway.lua`, fires only while heading for the pad; tested both ways.)** **Exfil barrier fires from both sides:** walking back from the pad to the hangar through it also starts the cutscene.
    Options: fire only when moving +X, or add an EXFIL ZONE floor cue.
 6. **(Done 2026-10-16: no NPC or world prompt opens a panel now, `notes/npc_dialogue_only.md`.)** Outfitter NPC opens Kit, not Shop. `NPC_Quartermaster` (in the Shop) opens Kit and `NPC_Supply` (in the Armory) opens Shop.
    They look swapped. Their names and dialogue were updated, but the panel each one opens was not changed.
