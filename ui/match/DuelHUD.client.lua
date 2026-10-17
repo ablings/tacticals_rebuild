@@ -169,8 +169,12 @@ local function teamOf(uid)
 	return p and p:GetAttribute("Team")
 end
 local lastDeath -- the kill event that killed you (the kill-cam card shows how)
+local tally = {} -- uid -> { k, d, hs } from this match's kill events (headshots and bots have no attribute)
+local function tallyOf(uid) tally[uid] = tally[uid] or { k = 0, d = 0, hs = 0 }; return tally[uid] end
 local function addKill(d)
 	feedN += 1
+	if d.killer then local t = tallyOf(d.killer); t.k += 1; if d.headshot then t.hs += 1 end end
+	if d.victim then tallyOf(d.victim).d += 1 end
 	if d.victim == player.UserId then lastDeath = d end
 	local myTeam = player:GetAttribute("Team")
 	local function col(uid) if uid == player.UserId then return WHITE end; return teamOf(uid) == myTeam and TEAM_A[1] or Color3.fromRGB(255, 140, 120) end
@@ -435,6 +439,7 @@ RunService.RenderStepped:Connect(function()
 		lastMatchId = mid
 		results.Visible = false; banner.Visible = false; resultsShown = false; lastState = nil
 		for _, c in feed:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
+		tally = {}
 	end
 	if not inMatch() then results.Visible = false end
 	gui.Enabled = playing or results.Visible
@@ -631,6 +636,125 @@ end)
 
 -- (RunIn controls: the Tacticals session's RunInClient owns them; nothing here)
 
+---------------------------------------------------------------------------------------------------- scoreboard
+-- (2026-10-17, Edward) RIVALS' in-match scoreboard: hold Tab (your Open Scoreboard bind), the touch Scoreboard button
+-- toggles it, a controller uses View / Select. Score and round on top, then your team and the enemy team: headshot,
+-- name (+ rank emblem in ranked), K, D, HS, and a dimmed row while dead.
+local RankArtOk, RankArt = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("RankArt", 5)) end)
+local sgui = new("ScreenGui", { Name = "MatchScoreboard", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 14, Enabled = false, Parent = player:WaitForChild("PlayerGui") })
+local scanvas = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), Parent = sgui },
+	{ new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
+local board = new("Frame", { Name = "Board", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0.14), Size = UDim2.fromScale(0.5, 0.6), BackgroundColor3 = BLACK,
+	BackgroundTransparency = 0.25, Parent = scanvas }, { new("UICorner", { CornerRadius = UDim.new(0.025, 0) }), new("UIStroke", { Color = WHITE, Transparency = 0.85, Thickness = 1.5 }) })
+local sbTitle = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = STENCIL, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.04, 0.025),
+	Size = UDim2.fromScale(0.92, 0.08), Parent = board })
+local sbSub = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FB, TextScaled = true, TextColor3 = Color3.fromRGB(190, 192, 182), Position = UDim2.fromScale(0.04, 0.105),
+	Size = UDim2.fromScale(0.92, 0.04), Parent = board })
+local sbList = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromScale(0.03, 0.17), Size = UDim2.fromScale(0.94, 0.8), Parent = board },
+	{ new("UIListLayout", { Padding = UDim.new(0.012, 0), SortOrder = Enum.SortOrder.LayoutOrder }) })
+local sbOpenHold, sbOpenToggle = false, false
+
+local function sbHeader(order, text, color)
+	local f = new("Frame", { LayoutOrder = order, BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.07), Parent = sbList })
+	new("Frame", { BorderSizePixel = 0, BackgroundColor3 = color, Size = UDim2.fromScale(0.008, 0.8), Position = UDim2.fromScale(0, 0.1), Parent = f })
+	new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = STENCIL, TextScaled = true, TextColor3 = color, TextXAlignment = Enum.TextXAlignment.Left,
+		Position = UDim2.fromScale(0.02, 0.1), Size = UDim2.fromScale(0.5, 0.8), Parent = f })
+	for i, c in { "K", "D", "HS" } do
+		new("TextLabel", { BackgroundTransparency = 1, Text = c, FontFace = FB, TextScaled = true, TextColor3 = Color3.fromRGB(170, 172, 162),
+			Position = UDim2.fromScale(0.64 + (i - 1) * 0.12, 0.2), Size = UDim2.fromScale(0.1, 0.6), Parent = f })
+	end
+end
+local function sbRow(order, uid, mine)
+	local p = Players:GetPlayerByUserId(uid)
+	local t = tally[uid] or { k = 0, d = 0, hs = 0 }
+	local kills = (p and p:GetAttribute("MatchKills")) or t.k
+	local deaths = (p and p:GetAttribute("MatchDeaths")) or t.d
+	local alive
+	if p then alive = p:GetAttribute("Alive") ~= false
+	else local m = botModel(uid); local h = m and m:FindFirstChildOfClass("Humanoid"); alive = h ~= nil and h.Health > 0 end
+	local f = new("Frame", { LayoutOrder = order, Size = UDim2.fromScale(1, 0.1), BackgroundColor3 = WHITE, BackgroundTransparency = uid == player.UserId and 0.86 or 0.94,
+		Parent = sbList }, { new("UICorner", { CornerRadius = UDim.new(0.2, 0) }) })
+	local head = new("ImageLabel", { BackgroundColor3 = Color3.fromRGB(30, 34, 28), Position = UDim2.fromScale(0.012, 0.1), Size = UDim2.fromScale(0.8, 0.8),
+		SizeConstraint = Enum.SizeConstraint.RelativeYY, ImageTransparency = alive and 0 or 0.5, Parent = f }, { new("UICorner", { CornerRadius = UDim.new(0.25, 0) }) })
+	if uid > 0 then
+		task.spawn(function()
+			local ok, img = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+			if ok then head.Image = img end
+		end)
+	end
+	local nameX = 0.1
+	if RankArtOk and RankArt and p and (st("MatchRanked") == true or ReplicatedStorage:GetAttribute("PlaceKind") == "Ranked") then
+		local r = RankArt.Of(p)
+		if r.image then
+			new("ImageLabel", { BackgroundTransparency = 1, Image = r.image, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromScale(0.1, 0.1), Size = UDim2.fromScale(0.05, 0.8), Parent = f })
+			nameX = 0.16
+		end
+	end
+	new("TextLabel", { BackgroundTransparency = 1, Text = nameOf(uid) .. (p and p:GetAttribute("Level") and ("  ·  Lv " .. p:GetAttribute("Level")) or ""), FontFace = FB, TextScaled = true,
+		TextColor3 = alive and WHITE or Color3.fromRGB(140, 140, 136), TextXAlignment = Enum.TextXAlignment.Left, TextTruncate = Enum.TextTruncate.AtEnd,
+		Position = UDim2.fromScale(nameX, 0.2), Size = UDim2.fromScale(0.62 - nameX, 0.6), Parent = f })
+	for i, v in { kills, deaths, t.hs } do
+		new("TextLabel", { BackgroundTransparency = 1, Text = tostring(v), FontFace = FX, TextScaled = true, TextColor3 = WHITE,
+			Position = UDim2.fromScale(0.64 + (i - 1) * 0.12, 0.18), Size = UDim2.fromScale(0.1, 0.64), Parent = f })
+	end
+	if not alive then
+		new("Frame", { BorderSizePixel = 0, BackgroundColor3 = BAD, BackgroundTransparency = 0.3, Position = UDim2.fromScale(0.012, 0.48), Size = UDim2.fromScale(0.05, 0.06), Rotation = -20, Parent = f })
+	end
+end
+local function renderScoreboard()
+	for _, c in sbList:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
+	local myTeam = player:GetAttribute("Team") or "A"
+	if spectator() then myTeam = "A" end
+	local other = myTeam == "A" and "B" or "A"
+	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
+	local mine, theirs = myTeam == "A" and sa or sb, myTeam == "A" and sb or sa
+	sbTitle.Text = (spectator() and ("TEAM A  " .. sa .. " - " .. sb .. "  TEAM B")) or (mine .. "  -  " .. theirs)
+	sbSub.Text = string.format("Round %d  ·  First to %s  ·  %s", st("RoundNumber") or 1, tostring(st("RoundsToWin") or "?"), tostring(st("MatchMode") or ReplicatedStorage:GetAttribute("MatchMode") or ""))
+	local order = 0
+	local function team(key, title, color)
+		order += 1
+		sbHeader(order, title, color)
+		local ids = teamIds("Team" .. key)
+		table.sort(ids, function(a, b)
+			local ta, tb = tally[a] or { k = 0 }, tally[b] or { k = 0 }
+			local pa, pb = Players:GetPlayerByUserId(a), Players:GetPlayerByUserId(b)
+			return ((pa and pa:GetAttribute("MatchKills")) or ta.k) > ((pb and pb:GetAttribute("MatchKills")) or tb.k)
+		end)
+		for _, uid in ids do order += 1; sbRow(order, uid, key == myTeam) end
+	end
+	team(myTeam, spectator() and "TEAM " .. myTeam or "YOUR TEAM", TEAM_A[1])
+	team(other, spectator() and "TEAM " .. other or "ENEMY", Color3.fromRGB(255, 140, 120))
+end
+local function scoreboardWanted() return (sbOpenHold or sbOpenToggle) and gui.Enabled end
+local function scoreboardKey()
+	local name = player:GetAttribute("Bind_OpenScoreboard")
+	local ok, kc = pcall(function() return name and Enum.KeyCode[name] end)
+	return (ok and kc) or Enum.KeyCode.Tab
+end
+UserInputService.InputBegan:Connect(function(i, gp)
+	if i.KeyCode == scoreboardKey() and not gp then sbOpenHold = true end
+	if i.KeyCode == Enum.KeyCode.ButtonSelect then sbOpenToggle = not sbOpenToggle end
+end)
+UserInputService.InputEnded:Connect(function(i)
+	if i.KeyCode == scoreboardKey() then sbOpenHold = false end
+end)
+task.spawn(function()
+	local ok, IA = pcall(function() return require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)
+	if ok and IA then IA.Bind("Scoreboard", function(state) if state == Enum.UserInputState.Begin and inMatch() then sbOpenToggle = not sbOpenToggle end end) end
+end)
+local sbNext = 0
+RunService.Heartbeat:Connect(function()
+	local want = scoreboardWanted() and inMatch()
+	if not inMatch() then sbOpenToggle = false end
+	if want ~= sgui.Enabled then
+		sgui.Enabled = want
+		if want then renderScoreboard(); sbNext = os.clock() + 0.5 end
+	elseif want and os.clock() > sbNext then
+		sbNext = os.clock() + 0.5
+		renderScoreboard()
+	end
+end)
+
 -- Studio only: DuelHUDTest:Invoke(state, extra) fakes a match on the current state object
 if RunService:IsStudio() then
 	local hook = Instance.new("BindableFunction")
@@ -639,6 +763,7 @@ if RunService:IsStudio() then
 		local o = stateObject() or ReplicatedStorage
 		if stateName == "Kill" then addKill(extra) return true end
 		if stateName == "Results" then showResults(extra) return true end
+		if stateName == "Scoreboard" then sbOpenToggle = extra ~= false return true end
 		if stateName == "Finisher" or stateName == "Victory" or stateName == "NoPhase" then
 			o:SetAttribute("MatchPhase", stateName ~= "NoPhase" and stateName or nil)
 			return true
