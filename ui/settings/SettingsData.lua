@@ -35,6 +35,9 @@ return {
 				{ kind = "dropdown", name = "Padded HUD", icon = "padded", options = { "Always On", "Using Controller", "Disabled" }, value = "Using Controller", desc = "Adds space around the screen edges so nothing sits under a TV's border" },
 				{ kind = "dropdown", name = "Lobby Data", icon = "window", options = { "Level", "Wins", "Rank" }, value = "Level", desc = "Which stat the lobby shows for players: the player list and your nameplate (Rank: their ranked emblem)" },
 			} },
+			{ title = "Social", rows = {
+				{ kind = "dropdown", name = "Challenge Requests", icon = "inking", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can challenge you to a 1v1 from the lobby (player list or double click)" },
+			} },
 			{ title = "Graphics", rows = {
 				{ kind = "toggle", name = "Hide Muzzle Flashes", icon = "muzzle", value = false, desc = "Removes the flash at the end of a gun when it fires" },
 			} },

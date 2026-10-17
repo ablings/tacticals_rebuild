@@ -305,6 +305,97 @@ Players.PlayerRemoving:Connect(function(p)
 	if profile and profile.player == p then closeProfile() end
 end)
 
+---------------------------------------------------------------------------------------------------- challenge requests
+-- RIVALS' request popup on the right under the player list: headshot with a draining timer bar, the name,
+-- "challenges you to a duel!", red X (decline) and an olive tick (accept). Up to 4 stack, oldest on top.
+-- Driven by ReplicatedStorage.LobbySocial (Tacticals session): server -> ("Request", from, expiresAt) / ("Closed", other, reason)
+-- / ("Sent", target, ok, reason); client -> ("Respond", from, accept). Dormant until the remote exists.
+local requests = {} -- from Player -> { panel, done }
+local reqHolder
+local REQ_W, REQ_H, REQ_GAP = 320, 132, 10
+local function restack()
+	local i = 0
+	for _, r in requests do
+		if not r.closing then
+			i += 1
+			Kit.tween(r.panel, 0.2, { Position = UDim2.fromScale(r.panel.Position.X.Scale, (i - 1) * (REQ_H + REQ_GAP) / 600 + r.panel.AnchorPoint.Y * r.panel.Size.Y.Scale) }, Enum.EasingStyle.Quint)
+		end
+	end
+end
+local function closeRequest(from, respond)
+	local r = requests[from]
+	if not r or r.closing then return end
+	r.closing = true
+	if respond ~= nil and social() then social():FireServer("Respond", from, respond) end
+	Kit.close(r.panel, function() r.panel:Destroy(); if requests[from] == r then requests[from] = nil end; restack() end)
+end
+local function tickMark(parent, color)
+	for _, bar in { { 0.4, 0.58, 0.26, 45 }, { 0.57, 0.48, 0.48, -50 } } do
+		new("Frame", { BorderSizePixel = 0, BackgroundColor3 = color, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(bar[1], bar[2]),
+			Size = UDim2.fromScale(bar[3], 0.12), Rotation = bar[4], ZIndex = 33, Parent = parent }, { Kit.corner(2) })
+	end
+end
+local function showRequest(from: Player, expiresAt: number?)
+	ensureGui()
+	if requests[from] then closeRequest(from) end
+	local n = 0
+	for _, r in requests do if not r.closing then n += 1 end end
+	if n >= 4 then return end
+	if not reqHolder then
+		reqHolder = new("Frame", { Name = "Requests", BackgroundTransparency = 1, Position = UDim2.fromOffset(1590, 646), Size = UDim2.fromOffset(REQ_W, 600), ZIndex = 30, Parent = canvas })
+		Kit.toScale(reqHolder)
+	end
+	local panel = new("Frame", { Name = from.Name, Position = UDim2.fromOffset(0, n * (REQ_H + REQ_GAP)), Size = UDim2.fromOffset(REQ_W, REQ_H), BackgroundColor3 = DEEP,
+		BackgroundTransparency = 0.15, ZIndex = 30, Parent = reqHolder }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.85, Thickness = 1.5 }) })
+	local hs = new("ImageLabel", { BackgroundColor3 = hex("#4F6B23"), Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(86, 86), ZIndex = 31, Parent = panel }, { Kit.corner(8) })
+	headshot(hs, from)
+	local barBack = new("Frame", { Position = UDim2.fromOffset(12, 108), Size = UDim2.fromOffset(82, 8), BackgroundColor3 = hex("#3A3F36"), ClipsDescendants = true, ZIndex = 31, Parent = panel }, { Kit.corner(4) })
+	local bar = new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = BONE, ZIndex = 32, Parent = barBack }, { Kit.corner(4) })
+	label(panel, from.DisplayName, F_NAME, 25, 108, 8, 204, 30, BONE, nil, 31)
+	label(panel, "challenges you to a duel!", F_SUB, 18, 108, 38, 204, 22, FIELD, nil, 31)
+	local no = Kit.closeButton(UDim2.fromOffset(96, 48))
+	no.Position = UDim2.fromOffset(108, 72); no.ZIndex = 31; no.Parent = panel
+	local yes = Kit.button("key", UDim2.fromOffset(96, 48), nil, { Position = UDim2.fromOffset(212, 72), ZIndex = 31, Parent = panel })
+	local cc = yes:FindFirstChildOfClass("UICorner"); if cc then cc.CornerRadius = UDim.new(0, 8) end
+	local tickHolder = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(40, 40), ZIndex = 32, Parent = yes })
+	tickMark(tickHolder, Color3.new(1, 1, 1))
+	Kit.toScale(panel)
+	requests[from] = { panel = panel }
+	Kit.open(panel)
+	restack()
+	local left = math.max(1, (expiresAt and expiresAt - workspace:GetServerTimeNow()) or 10)
+	Kit.tween(bar, left, { Size = UDim2.fromScale(0, 1) }, Enum.EasingStyle.Linear)
+	no.Activated:Connect(function() closeRequest(from, false) end)
+	yes.Activated:Connect(function() closeRequest(from, true) end)
+	task.delay(left, function() closeRequest(from) end) -- the server expires it too ("Closed")
+end
+PlayerCards.ShowRequest = showRequest -- Studio tests: PlayerCards.ShowRequest(somePlayer, workspace:GetServerTimeNow() + 10)
+
+local CLOSED_TEXT = { declined = "declined your challenge", expired = "didn't answer your challenge", busy = "is busy right now", cancelled = "cancelled the challenge" }
+local function hookSocial(r)
+	if not r:IsA("RemoteEvent") then return end
+	r.OnClientEvent:Connect(function(kind, who, a, b)
+		if typeof(who) ~= "Instance" or not who:IsA("Player") then return end
+		if kind == "Request" then
+			showRequest(who, tonumber(a))
+		elseif kind == "Closed" then
+			if requests[who] then closeRequest(who) end
+			if CLOSED_TEXT[a] then toast(who.DisplayName .. " " .. CLOSED_TEXT[a]) end
+		elseif kind == "Sent" then
+			if a then toast("Challenge sent to " .. who.DisplayName, "good") else toast(tostring(b or "Couldn't send the challenge")) end
+		end
+	end)
+end
+task.spawn(function()
+	local r = ReplicatedStorage:FindFirstChild("LobbySocial")
+	if r then hookSocial(r); return end
+	local conn
+	conn = ReplicatedStorage.ChildAdded:Connect(function(c)
+		if c.Name == "LobbySocial" then conn:Disconnect(); hookSocial(c) end
+	end)
+end)
+Players.PlayerRemoving:Connect(function(p) if requests[p] then closeRequest(p) end end)
+
 ---------------------------------------------------------------------------------------------------- world: hover + double click
 function PlayerCards.StartWorld(allowed: () -> boolean)
 	ensureGui()
