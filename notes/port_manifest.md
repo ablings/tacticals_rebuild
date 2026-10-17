@@ -176,3 +176,13 @@ himself; we never publish.
 - Carries: MatchCore kill-cam (SpectateTarget / SpectateReason), round-1 RunIn opening run (RunInClient), final-round Victory
   (WinnerTeam / Winner), the UI session's kill-cam card / victory screen / crit hitmarker, LobbySocial Challenge (lobby),
   tutorial touch lines, TouchStick RunIn gate.
+
+## Live port 12: parties, aim assist, touch icons (2026-10-17 17:53-18:00, lead; Edward: "publish port 12 to both games")
+- Both working copies saved 17:53 (incl. the UI session's 39a81ef touch icons / RIVALS buttons / Layout Editor), publish files
+  rebuilt from them. Published, each in Activity History: tacticals (lobby) **v283** (prev v281; a stray upload dialog at 17:52
+  was closed without granting and never published), Tutorial **v8**, Matchmaking **v8**, Ranked **v8**.
+- Places renamed in Creator Hub (Edward): 118492914954668 = **Tutorial**, 97339328188402 = **Matchmaking**,
+  122908502889013 = **Ranked**. The old combined place keeps its name ("tutorial spot / matchmaking test", v115).
+- Carries: parties (PartyService / LobbyParty / [PARTY] matchmaking + the UI's party screen), aim assist (AimAssist module,
+  camera hook, right-stick look, Aim Assist setting, ;aimassist / ;aimnpc), smoke + wall + dead checks, scoreboard, controller
+  menus, UI sounds, touch icons.
