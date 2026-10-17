@@ -260,6 +260,7 @@ end
 local function refreshSpecCard()
 	local killer = player:GetAttribute("SpectateTarget")
 	local isKiller = killer ~= nil and target == killer and player:GetAttribute("SpectateReason") == "Killer" and not spectator()
+	specName.Text = target and nameOf(target) or "..." -- live (a bot id can move to a new model)
 	specTitle.Text = isKiller and "KILLED BY" or "SPECTATING"
 	specTitle.TextColor3 = isKiller and BAD or Color3.fromRGB(205, 205, 212)
 	local how = ""
