@@ -14,7 +14,7 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 | 2 | Profile card "View Profile": blurred lobby, card, stats, X under it (hud/HudController) | `PlayerCards.Profile`: rank emblem + ELO, Level / Wins / Win Rate / Matches / Kills / Headshot % from PublicStats | DONE |
 | 3 | World: hover a character = "Double tap to view profile", double click = card with Invite to PARTY / Challenge 1v1 (hud/HudController) | `PlayerCards.StartWorld` (raycast: your own character too) | DONE (touch tap: to verify in emulator) |
 | 4 | Duel / party request popup: headshot, draining timer, X + check (hud/HudController) | `PlayerCards` request stack under the list + Settings > Game > Social > Challenge Requests | LIVE in the lobby copy (LobbySocial by the Tacticals session); one-client check: self-challenge -> "You can't challenge yourself" toast. Needs a 2-player test |
-| 5 | Party screen (+ next to your avatar): your card + 4 slots, search, All / Friends / Lobby tabs (party/PartyController) | the + by the avatar exists; no party system | MECH (parties) |
+| 5 | Party screen (+ next to your avatar): your card + 4 slots, search, All / Friends / Lobby tabs (party/PartyController) | `UIKit.PartyScreen` + party heads by PLAY + party invites; server LobbyParty (Tacticals session) | BUILT (lobby copy), 2-player test pending |
 | 6 | Custom name titles (glitch / legend effects) on list, menu, card | none | TODO (cosmetic; needs a title source: shop item or admin) |
 | 7 | Weapons screen: Overview / Statistics / Contracts / Career (Duel History, Map Catalog, Collection) (weapons/WeaponsController) | Armory (Kit) shows loadout only | TODO: Statistics + Duel History need per-weapon stats (MECH) |
 | 8 | Season Pass screen (pass/PassController) | none (Missions instead) | N/A unless Edward wants a pass |
@@ -37,3 +37,4 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
   Note for the lead: teleporting the character from the command bar trips the server speed audit ("studs/s over 2 s").
 - 2026-10-17 04:48: all of the above live in port 11 (lobby v281, Tutorial/Matchmaking/Ranked v6).
 - 2026-10-17 05:00: phone pass (simulator) of Play / Shop / Missions / Codes / Kit: all readable; fixed touch buttons over the Kit room panels.
+- 2026-10-17 morning: party screen, in-match scoreboard, controller menus (GamepadNavController), UI sounds. Match copy Studio crashed (GPU reset): match deploys pending its reopen.
