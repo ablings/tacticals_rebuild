@@ -293,8 +293,16 @@ local statusLine = "CONNECTING"
 local loaded = false
 local startTime = os.clock()
 
-local function collectAssets(): { string }
+local function collectAssets(): { any }
 	local seen, ids = {}, {}
+	-- meshes / sounds / animations go in as their instances: a plain id string preloads as an Image, which printed
+	-- "Asset type does not match requested type" for every MeshId (the Tacticals session's log check, 2026-10-17)
+	local function addInst(inst, id)
+		if type(id) == "string" and id ~= "" and not seen[id] and not string.find(id, "^rbxasset://") then
+			seen[id] = true
+			table.insert(ids, inst)
+		end
+	end
 	local function add(id)
 		if type(id) == "string" and id ~= "" and not seen[id] and not string.find(id, "^rbxasset://") then
 			seen[id] = true
@@ -326,13 +334,13 @@ local function collectAssets(): { string }
 			n += 1
 			if n % 3000 == 0 then task.wait() end
 			pcall(function()
-				if d:IsA("MeshPart") then add(d.MeshId) add(d.TextureID)
-				elseif d:IsA("SpecialMesh") then add(d.MeshId) add(d.TextureId)
+				if d:IsA("MeshPart") then addInst(d, d.MeshId) add(d.TextureID)
+				elseif d:IsA("SpecialMesh") then addInst(d, d.MeshId) add(d.TextureId)
 				elseif d:IsA("Decal") then add(d.Texture)
-				elseif d:IsA("Sound") then add(d.SoundId)
+				elseif d:IsA("Sound") then addInst(d, d.SoundId)
 				elseif d:IsA("ImageLabel") or d:IsA("ImageButton") then add(d.Image)
 				elseif d:IsA("ParticleEmitter") or d:IsA("Beam") or d:IsA("Trail") then add(d.Texture)
-				elseif d:IsA("Animation") then add(d.AnimationId)
+				elseif d:IsA("Animation") then addInst(d, d.AnimationId)
 				elseif d:IsA("Sky") then
 					add(d.SkyboxBk) add(d.SkyboxDn) add(d.SkyboxFt) add(d.SkyboxLf) add(d.SkyboxRt) add(d.SkyboxUp)
 				end
@@ -357,7 +365,7 @@ task.spawn(function()
 	progress.place = 1
 	statusLine = "LOADING ASSETS"
 	local ids = collectAssets()
-	for _, s in sounds do table.insert(ids, s.SoundId) end
+	for _, s in sounds do table.insert(ids, s) end -- Sound instances (an id string would preload as an Image)
 	local total = math.max(1, #ids)
 	local done, finished = 0, false
 	-- preload in batches: each batch's callback counts its assets as they really finish

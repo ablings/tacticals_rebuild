@@ -260,7 +260,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 		actions = { "View Profile", "View Avatar" }
 	elseif inDuel(p) then
 		actions = { "Add Friend", "View Profile", "View Avatar", "Block" }
-		if social() then table.insert(actions, 2, "Spectate") end
+		-- Spectate: paused by Edward (2026-10-17), the row stays out even once LobbySocial exists
 	else
 		actions = { "Invite", "Add Friend", "View Profile", "View Avatar", "Block" }
 		if social() then table.insert(actions, 3, "Challenge") end
