@@ -9,6 +9,7 @@
 -- Settings > Touch: Left Handed Mode (mirror), Opaque Buttons, Buttons Transparency, Show Weapon Ammo, per button Enabled /
 -- Custom (+ its own Transparency), Touch Layout Slot 1-3 (each a JSON layout { [id] = { x, y, s } }, Scale of the screen).
 -- Layout Editor: TouchControls.OpenEditor(): hatched overlay, drag a button to move it, drag its ↘ handle to resize;
+-- The joystick ring is editable too (saved as "Joystick"; TouchStick reads StickX/StickY/StickSize off its ScreenGui).
 -- top pill: X (save + close), reset, slots 1 2 3. Saving goes through TouchControls.OnSave(slot, json) (LobbyUIController).
 -- Studio test: set the player attribute _ForceTouch = true to show the controls without a touch screen.
 local Players = game:GetService("Players")
@@ -41,6 +42,13 @@ local BUTTONS = {
 }
 local BY_ID = {}
 for _, b in BUTTONS do BY_ID[b.id] = b end
+-- the joystick (the lead's TouchStick): where it sits when the layout moves it. Unset = its own default half-screen zone.
+-- Stored like the buttons, in right-handed space (x mirrored for Left Handed Mode); s = ring diameter / screen height.
+local STICK_DEFAULT = { x = 0.2, y = 0.72, s = 0.22 }
+local function validStick(t)
+	if type(t) ~= "table" or not (tonumber(t.x) and tonumber(t.y) and tonumber(t.s)) then return nil end
+	return { x = math.clamp(t.x, 0.05, 0.95), y = math.clamp(t.y, 0.1, 0.95), s = math.clamp(t.s, 0.1, 0.5) }
+end
 
 local function setting(name, default)
 	local v = player:GetAttribute("Setting_" .. name:gsub("[^%w_]", ""))
@@ -71,6 +79,7 @@ local function layout()
 		local s = ok and type(saved) == "table" and saved[b.id]
 		out[b.id] = (type(s) == "table" and tonumber(s.x) and tonumber(s.y) and tonumber(s.s)) and { x = s.x, y = s.y, s = s.s } or { x = b.x, y = b.y, s = b.s }
 	end
+	out.Joystick = ok and type(saved) == "table" and validStick(saved.Joystick) or nil
 	return out, slot
 end
 
@@ -137,6 +146,7 @@ local function build()
 			ammo.AnchorPoint = Vector2.new(0.5, 0)
 			ammo.Position = UDim2.fromScale(0.5, 0.62)
 			ammo.Size = UDim2.fromScale(0.9, 0.34)
+			ammo.Text = ""
 			ammo.TextScaled = true
 			ammo.FontFace = g.FontFace
 			ammo.TextColor3 = Color3.new(1, 1, 1)
@@ -173,6 +183,18 @@ local function hideRobloxJump()
 	if jb and jb.Visible then jb.Visible = false end
 end
 
+-- the layout's joystick -> TouchStick's ScreenGui attributes (StickX/StickY absolute, so mirrored here)
+local function applyStick(j)
+	local sg = player.PlayerGui:FindFirstChild("TouchStick")
+	if not sg then return end
+	local x = j and (setting("Left Handed Mode", false) and (1 - j.x) or j.x)
+	local want = { StickX = x or false, StickY = j and j.y or false, StickSize = j and j.s or false }
+	for k, v in want do
+		if v == false then v = nil end
+		if sg:GetAttribute(k) ~= v then sg:SetAttribute(k, v) end
+	end
+end
+
 local wasShown = false
 local function refresh()
 	if not gui then return end
@@ -191,6 +213,7 @@ local function refresh()
 	wasShown = shown
 	if not gui.Enabled then return end
 	local l = layout()
+	applyStick(l.Joystick)
 	local inCombat = combat()
 	for id, m in made do
 		local b = BY_ID[id]
@@ -263,12 +286,55 @@ function controller.OpenEditor()
 		z.Parent = overlay
 	end
 	local left = setting("Left Handed Mode", false)
-	zone("Joystick", left and 0.8 or 0.2, 0.75)
 	if setting("Double Tap To Attack", true) then zone("Double Tap To Attack", left and 0.25 or 0.75, 0.48) end
+
+	-- the joystick: a ring you drag / resize like a button; the faint square around it is where a thumb starts the stick
+	local stickZone = Instance.new("Frame")
+	stickZone.Name = "JoystickZone"
+	stickZone.AnchorPoint = Vector2.new(0.5, 0.5)
+	stickZone.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	stickZone.BackgroundColor3 = Color3.new(0, 0, 0)
+	stickZone.BackgroundTransparency = 0.75
+	stickZone.Parent = holder
+	local zc = Instance.new("UICorner"); zc.CornerRadius = UDim.new(0.08, 0); zc.Parent = stickZone
+	local stick = Instance.new("TextButton")
+	stick.Name = "Joystick"
+	stick.Text = ""
+	stick.AutoButtonColor = false
+	stick.AnchorPoint = Vector2.new(0.5, 0.5)
+	stick.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	stick.BackgroundColor3 = Color3.fromRGB(14, 15, 13)
+	stick.BackgroundTransparency = 0.5
+	stick.ZIndex = 3
+	stick.Parent = holder
+	local sc = Instance.new("UICorner"); sc.CornerRadius = UDim.new(0.5, 0); sc.Parent = stick
+	local ss = Instance.new("UIStroke"); ss.Color = Color3.fromRGB(236, 232, 218); ss.Thickness = 2; ss.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; ss.Parent = stick
+	local sl = Instance.new("TextLabel")
+	sl.BackgroundTransparency = 1
+	sl.AnchorPoint = Vector2.new(0.5, 0.5)
+	sl.Position = UDim2.fromScale(0.5, 0.5)
+	sl.Size = UDim2.fromScale(0.8, 0.22)
+	sl.Text = "Joystick"
+	sl.TextScaled = true
+	sl.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+	sl.TextColor3 = Color3.fromRGB(236, 232, 218)
+	sl.ZIndex = 3
+	sl.Parent = stick
+	local function placeStick()
+		local j = work.Joystick or STICK_DEFAULT
+		local x = left and (1 - j.x) or j.x
+		stick.Position, stick.Size = UDim2.fromScale(x, j.y), UDim2.fromScale(j.s, j.s)
+		stickZone.Position, stickZone.Size = stick.Position, UDim2.fromScale(j.s * 3, j.s * 3)
+		ss.Transparency = work.Joystick and 0.2 or 0.55 -- dimmer while it is still the default zone
+	end
+	placeStick()
 
 	-- drag + resize handles
 	local conns = {}
-	for id, m in made do
+	local editables = {}
+	for id, m in made do editables[id] = m end
+	editables.Joystick = { btn = stick }
+	for id, m in editables do
 		m.btn.Visible = true
 		local handle = Instance.new("TextButton")
 		handle.Name = "Resize"
@@ -285,20 +351,22 @@ function controller.OpenEditor()
 			table.insert(conns, target.InputBegan:Connect(function(input)
 				if input.UserInputType ~= Enum.UserInputType.Touch and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 				local start = input.Position
+				if not work[id] then work[id] = table.clone(STICK_DEFAULT) end -- the joystick, first move
 				local p0 = table.clone(work[id])
 				local vs = workspace.CurrentCamera.ViewportSize
 				local moveConn, endConn
 				moveConn = UserInputService.InputChanged:Connect(function(i2)
 					if i2.UserInputType ~= Enum.UserInputType.Touch and i2.UserInputType ~= Enum.UserInputType.MouseMovement then return end
 					local d = i2.Position - start
+					local isStick = id == "Joystick"
 					if mode == "move" then
 						local dx = d.X / vs.X
-						work[id].x = math.clamp(p0.x + (left and -dx or dx), 0.03, 0.97)
-						work[id].y = math.clamp(p0.y + d.Y / vs.Y, 0.04, 0.96)
+						work[id].x = math.clamp(p0.x + (left and -dx or dx), isStick and 0.05 or 0.03, isStick and 0.95 or 0.97)
+						work[id].y = math.clamp(p0.y + d.Y / vs.Y, isStick and 0.1 or 0.04, isStick and 0.95 or 0.96)
 					else
-						work[id].s = math.clamp(p0.s - d.Y / vs.Y, 0.05, 0.3)
+						work[id].s = math.clamp(p0.s - d.Y / vs.Y, isStick and 0.1 or 0.05, isStick and 0.5 or 0.3)
 					end
-					place(id, m, work)
+					if isStick then placeStick() else place(id, m, work) end
 				end)
 				endConn = UserInputService.InputEnded:Connect(function(i3)
 					if i3.UserInputType == input.UserInputType then moveConn:Disconnect(); endConn:Disconnect() end
@@ -307,7 +375,7 @@ function controller.OpenEditor()
 		end
 		bindDrag(m.btn, "move")
 		bindDrag(handle, "resize")
-		place(id, m, work)
+		if id ~= "Joystick" then place(id, m, work) end
 	end
 
 	-- top pill: X (save + close) · reset · slots 1 2 3
@@ -346,6 +414,7 @@ function controller.OpenEditor()
 		if controller.OnSave then controller.OnSave(slot, json()) end
 		for _, c in conns do c:Disconnect() end
 		for _, m in made do local h = m.btn:FindFirstChild("Resize") if h then h:Destroy() end end
+		stick:Destroy(); stickZone:Destroy()
 		editing = false
 		overlay:Destroy(); overlay = nil
 		refresh()
@@ -353,7 +422,9 @@ function controller.OpenEditor()
 	pillButton("×", 1, close)
 	pillButton("Reset", 2, function()
 		for _, b in BUTTONS do work[b.id] = { x = b.x, y = b.y, s = b.s } end
+		work.Joystick = nil -- back to TouchStick's own default zone
 		for id, m in made do place(id, m, work) end
+		placeStick()
 	end)
 	for n = 1, 3 do
 		slotBtns[n] = pillButton(tostring(n), 2 + n, function()
@@ -366,7 +437,9 @@ function controller.OpenEditor()
 				local s = ok and type(saved) == "table" and saved[b.id]
 				work[b.id] = type(s) == "table" and { x = s.x, y = s.y, s = s.s } or { x = b.x, y = b.y, s = b.s }
 			end
+			work.Joystick = ok and type(saved) == "table" and validStick(saved.Joystick) or nil
 			for id, m in made do place(id, m, work) end
+			placeStick()
 			for k, sb in slotBtns do sb.BackgroundTransparency = k == n and 0 or 1; sb.TextColor3 = k == n and Color3.new(0, 0, 0) or Color3.new(1, 1, 1) end
 		end)
 	end
