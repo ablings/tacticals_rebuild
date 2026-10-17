@@ -358,6 +358,7 @@ local function weaponModel(id)
 end
 local function viewport(holder, id)
 	for _, c in holder:GetChildren() do if c:IsA("ViewportFrame") then c:Destroy() end end
+	if not id then return end -- an empty slot (e.g. a loadout chip before its pick): just cleared
 	local m = weaponModel(id)
 	if not m then return end
 	local vpf = new("ViewportFrame", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Ambient = Color3.fromRGB(170, 170, 176), LightColor = WHITE,

@@ -104,7 +104,7 @@ def build():
     ]
     for parent, name, cls, path in FILES:
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
-        parts.append(f"put({'dir' if '--match' in sys.argv else 'at'}('{parent}'), '{name}', '{cls}', {long_string(src)})")
+        parts.append(f"put({'dir' if ('--match' in sys.argv or PLACE_KIND) else 'at'}('{parent}'), '{name}', '{cls}', {long_string(src)})")
     parts.append("local SS = game:GetService('ServerStorage'); local bin = SS:FindFirstChild('_RebuildRemoved') or Instance.new('Folder'); bin.Name = '_RebuildRemoved'; bin.Parent = SS")
     for parent, name, path in SET_FILES:
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
