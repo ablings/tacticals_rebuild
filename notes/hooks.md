@@ -218,3 +218,12 @@ tags, attributes, prompts, touch parts, hard-coded coordinates and Lighting. Wor
   RankNextName, RankWarlord, RankPlace, RankPlaced, RankPlacements, RankShield, RankedAll`; ReplicatedStorage `RankedTop_<key>`, `RankedCutoff_<key>`,
   `RankedLadders`, `RankedRefreshedAt`, `RankedMock`; OrderedDataStores `Ranked_<key>_v1`; Studio-only `ServerStorage.RankedTestHook`.
   Re-run `python tools/ranked_build.py --run match` after `match_place_build` + `data_release`. UNDO `python tools/ranked_build.py --run <place> UNDO` (tested hash-exact).
+- 2026-10-16 place split (notes/place_split.md, survey notes/place_split_survey.md): **three new places** from copies of the match place,
+  one codebase, switch **`ReplicatedStorage.PlaceKind`** (StringValue Tutorial / Matchmaking / Ranked; none = the old combined place, unchanged).
+  Match place [SPLIT] (`fix/split_place_install.lua`, backups `SPLIT_<name>_Orig`): new `Modules.Shared.PlaceKind`; RoundManager `splitFirst` /
+  `runRejectServer` (wrong or missing TeleportData -> MatchState Cancelled, "WRONG SERVER", back to the lobby), MatchTestHook "split";
+  TutorialManager no Start / auto-start on Matchmaking / Ranked. Kind content moved to `ServerStorage._SplitStripped` (Tutorial: DuelMaps;
+  Matchmaking / Ranked: FiringRange). Lobby [SPLIT] (`fix/split_lobby_install.lua`): `LobbyConfig.TutorialPlaceId / MatchmakingPlaceId /
+  RankedPlaceId` (0 = fall back to MatchPlaceId) + `LobbyConfig.PlaceIdFor(kind)`; NewPlayerTutorial, QueueManager.deploy, MatchmakingManager
+  startMatch (`place` in MM_Results) / deliver use it. Run `python tools/split_build.py place|lobby <id> [Kind|UNDO]`; it goes last in both
+  install orders (UNDO it first before touching data_release / ranked / match_place_build edits).
