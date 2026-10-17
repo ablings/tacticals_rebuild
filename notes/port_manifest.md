@@ -168,3 +168,11 @@ himself; we never publish.
 - Carries: [SECURE] (MatchSpec, HitRewind, MoveGuard, dodge guard, pass confirm), leaderboard decay, touch controls (InputActions,
   TouchFire, TouchStick, UI session's touch HUD / Layout Editor / Touch tab), Exfil one-way, holo beams, dais clip, UI deploys to 2c8a186.
 - Old servers were not force-shut (none expected at 04:00). If anyone reports "WRONG SERVER" on ranked, restart servers in Creator Hub.
+
+## Live port 11: match features (2026-10-17 04:48-04:55, lead; Edward: kill-cam / opening run / victory / crit marker)
+- UI FREEZE at 52135e5 (incl. the WeaponController TrainingPadsController line a555ea2). Both copies saved 04:48.
+- Published, each checked in Activity History: tacticals (lobby) **v281** (prev v279), Tutorial ("_1") **v6**, Matchmaking ("_2")
+  **v6**, Ranked ("_3") **v6** (prev v4 each, mine). The old combined place stays v115 (the secured casual build, no new features).
+- Carries: MatchCore kill-cam (SpectateTarget / SpectateReason), round-1 RunIn opening run (RunInClient), final-round Victory
+  (WinnerTeam / Winner), the UI session's kill-cam card / victory screen / crit hitmarker, LobbySocial Challenge (lobby),
+  tutorial touch lines, TouchStick RunIn gate.

@@ -8,7 +8,7 @@ lobby **v279**, Tutorial / Matchmaking / Ranked **v4**, old combined place **v11
 table below went live with it, plus the touch controls (the UI session tested them in Studio's Device Simulator; real multi-touch
 still needs a phone).
 
-## After the publish (in the working copies, goes live with the next publish)
+## Also PUBLISHED 04:55 (port 11): lobby v281, Tutorial / Matchmaking / Ranked v6
 - **Kill-cam**: when you die you watch your killer (then a living teammate / anyone alive if they die). UI shows "KILLED BY".
 - **Opening run**: round 1 of every match starts with both sides near the middle, a standoff beat, then everyone runs round
   their pillar to their spawn (the tutorial's opening, now default for every match until you make per-map ones).
