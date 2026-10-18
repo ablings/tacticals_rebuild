@@ -901,4 +901,20 @@ function Kit.whoops(message)
 end
 
 
+-- (2026-10-18, Edward: "vector silhouettes" like RIVALS, not 3D viewmodels) white silhouette icons (ui/art/icons by codex,
+-- Gunsy Funsy uploads); tint them with ImageColor3
+Kit.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134680054948193", elims = "rbxassetid://87495411854172", inbox = "rbxassetid://106780166776464", level = "rbxassetid://122349404580689", news = "rbxassetid://98784760577764", play = "rbxassetid://112398761342835", rank = "rbxassetid://127088807913977", scissors = "rbxassetid://124651407398623", settings = "rbxassetid://77423905055797", streak = "rbxassetid://89001729086571", trophy = "rbxassetid://112797256867777" }
+
+-- the win-streak badge: an orange flame with the streak number over it (RIVALS, next to names). Scale inside `parent`.
+function Kit.streak(parent, n, pos, size, z)
+	local f = new("ImageLabel", { Name = "Streak", BackgroundTransparency = 1, Image = Kit.ICONS.streak, ImageColor3 = Color3.fromRGB(255, 140, 40),
+		ScaleType = Enum.ScaleType.Fit, Position = pos or UDim2.fromScale(0, 0), Size = size or UDim2.fromScale(1, 1), ZIndex = z or 3, Parent = parent },
+		{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
+	local l = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = tostring(n or 0), FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold),
+		TextScaled = true, TextColor3 = Color3.new(1, 1, 1), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.64), Size = UDim2.fromScale(0.7, 0.5),
+		ZIndex = (z or 3) + 1, Parent = f })
+	new("UIStroke", { Thickness = 1.5, Transparency = 0.1, Color = Color3.fromRGB(90, 30, 0), Parent = l })
+	return f
+end
+
 return Kit

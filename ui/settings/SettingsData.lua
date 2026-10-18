@@ -33,7 +33,7 @@ return {
 				{ kind = "toggle", name = "Hide HUD", icon = "eye", value = false, desc = "Hides most of the interface, for clean screenshots and clips. Can also be bound to a hotkey" },
 				{ kind = "toggle", name = "Hide Missions", key = "Hide Side Tasks", icon = "checklist", value = false, desc = "Hides the daily missions on the left of the lobby" },
 				{ kind = "dropdown", name = "Padded HUD", icon = "padded", options = { "Always On", "Using Controller", "Disabled" }, value = "Using Controller", desc = "Adds space around the screen edges so nothing sits under a TV's border" },
-				{ kind = "dropdown", name = "Lobby Data", icon = "window", options = { "Level", "Wins", "Rank" }, value = "Level", desc = "Which stat the lobby shows for players: the player list and your nameplate (Rank: their ranked emblem)" },
+				{ kind = "dropdown", name = "Lobby Data", icon = "window", options = { "Level", "Wins", "Rank", "Streak" }, value = "Level", desc = "Which stat the lobby shows for players: the player list and your nameplate (Rank: their ranked emblem; Streak: their win streak)" },
 			} },
 			{ title = "Aiming", rows = {
 				{ kind = "dropdown", name = "Aim Assist", icon = "inking", options = { "50%", "25%", "Off" }, value = "50%", desc = "Helps touch and controller players track targets. Max 25% in ranked." },

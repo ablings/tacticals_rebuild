@@ -548,27 +548,20 @@ function LobbyHud.Start()
 			local r = RankArtLB.Of(p)
 			return r.placed and r.elo or -1
 		end
+		if lbStat == "Streak" then return p:GetAttribute("WinStreak") or 0 end
 		return p:GetAttribute(lbStat) or 0
 	end
 	local function modeIcon()
 		for _, c in lbMode:GetChildren() do c:Destroy() end
-		local icons = ReplicatedStorage:FindFirstChild("UIIcons")
-		local lvl = icons and (icons:FindFirstChild("LevelUp") or icons:FindFirstChild("Badge"))
-		if lbStat == "Rank" and RankArtLB then
-			local mine = RankArtLB.Of(player)
-			Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = mine.image or RankArtLB.EMBLEM.Bronze, ScaleType = Enum.ScaleType.Fit,
-				Size = UDim2.fromScale(1, 1), Parent = lbMode })
-		elseif lbStat == "Level" and lvl then
-			ViewIconsLB.Viewport(lbMode, lvl:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.1, still = true })
-		else
-			ViewIconsLB.Icon(lbMode, "Trophy", { still = true })
-		end
+		-- (2026-10-18, live RIVALS) the column icon is a white silhouette: flame = streak, burst = level, trophy shield = rank
+		local id = (lbStat == "Rank" and Kit.ICONS.rank) or (lbStat == "Level" and Kit.ICONS.level) or (lbStat == "Streak" and Kit.ICONS.streak) or Kit.ICONS.trophy
+		Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = id, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), Parent = lbMode })
 	end
 	local lastLB
 	local function buildList(force)
 		local ps = Players:GetPlayers()
 		local key = lbStat
-		for _, p in ps do key ..= p.UserId .. "/" .. tostring(statValue(p)) .. tostring(p:GetAttribute("RankTier")) end
+		for _, p in ps do key ..= p.UserId .. "/" .. tostring(statValue(p)) .. tostring(p:GetAttribute("RankTier")) .. "/" .. tostring(p:GetAttribute("WinStreak")) end
 		if key == lastLB and not force then return end
 		lastLB = key
 		table.sort(ps, function(a, b)
@@ -594,8 +587,11 @@ function LobbyHud.Start()
 			if p.MembershipType == Enum.MembershipType.Premium then
 				Kit.label({ Text = utf8.char(0xE001), FontFace = LB_NUM, TextSize = 20, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
 			end
+			local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
 			Kit.label({ Text = p.DisplayName, FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
-				Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(196, 40), Parent = row })
+				Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(streakN > 0 and lbStat ~= "Streak" and 164 or 196, 40), Parent = row })
+			-- the win streak next to the name (RIVALS): a flame with the number over it
+			if streakN > 0 and lbStat ~= "Streak" then Kit.streak(row, streakN, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3) end
 			if lbStat == "Rank" and RankArtLB then
 				local r = RankArtLB.Of(p)
 				if r.image then
@@ -606,7 +602,7 @@ function LobbyHud.Start()
 						Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
 				end
 			else
-				Kit.label({ Text = tostring(p:GetAttribute(lbStat) or 0), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
+				Kit.label({ Text = tostring(statValue(p)), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
 					Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
 			end
 			Kit.toScale(row, Vector2.new(LB_W, 40))
@@ -614,13 +610,14 @@ function LobbyHud.Start()
 	end
 	local function lobbyData()
 		local v = player:GetAttribute("Setting_LobbyData")
-		if v == "Level" or v == "Wins" or v == "Rank" then lbStat = v; modeIcon(); buildList(true) end
+		if v == "Level" or v == "Wins" or v == "Rank" or v == "Streak" then lbStat = v; modeIcon(); buildList(true) end
 	end
 	player:GetAttributeChangedSignal("Setting_LobbyData"):Connect(lobbyData)
 	modeIcon()
 	lobbyData()
 	lbMode.Activated:Connect(function()
-		lbStat = lbStat == "Level" and "Wins" or (lbStat == "Wins" and RankArtLB and "Rank" or "Level")
+		-- Streak -> Level -> Rank -> Wins (RIVALS' three columns, plus our wins)
+		lbStat = lbStat == "Streak" and "Level" or (lbStat == "Level" and (RankArtLB and "Rank" or "Wins")) or (lbStat == "Rank" and "Wins") or "Streak"
 		modeIcon()
 		buildList(true)
 	end)

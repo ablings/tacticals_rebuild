@@ -463,7 +463,11 @@ end
 local RankedCoreOk, RankedCore = pcall(function() return require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("RankedCore", 5)) end)
 local RankArtOk2, RankArt2 = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("RankArt", 5)) end)
 local function rankWord(name) return name and tostring(name):match("^(%a+)") or nil end
-local function emblemOf(name) return RankArtOk2 and RankArt2 and RankArt2.EMBLEM[rankWord(name) or ""] or "" end
+local function emblemOf(name) -- "Gold 2" -> Gold's division-2 look (RankArt v3); a bare rank word -> its middle look
+	if not (RankArtOk2 and RankArt2) then return "" end
+	local div = name and tonumber(tostring(name):match("(%d+)%s*$"))
+	return (RankArt2.Emblem and RankArt2.Emblem(rankWord(name), div)) or RankArt2.EMBLEM[rankWord(name) or ""] or ""
+end
 
 local rgui = new("ScreenGui", { Name = "MatchResult", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 15, Enabled = false, Parent = player:WaitForChild("PlayerGui") })
 local rtint = new("Frame", { Name = "Tint", BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), Parent = rgui })
@@ -792,9 +796,11 @@ local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1)
 local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(8, 92), Size = UDim2.fromOffset(44, 44), ZIndex = 9, Parent = kcard }, { corner(22),
 	new("UIStroke", { Color = WHITE, Thickness = 2 }) })
 local kLevelL = label(kLevel, "1", FX, 24, 0, 0, 44, 44, WHITE, nil, 10)
-local kStreak = new("Frame", { BackgroundColor3 = Color3.fromRGB(240, 110, 30), Position = UDim2.fromOffset(98, 96), Size = UDim2.fromOffset(38, 38), Visible = false, ZIndex = 9, Parent = kcard }, { corner(19),
-	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(255, 200, 60), Color3.fromRGB(230, 70, 20)) }), new("UIStroke", { Color = WHITE, Thickness = 2 }) })
-local kStreakL = label(kStreak, "3", FX, 22, 0, 0, 38, 38, WHITE, nil, 10)
+-- the win streak: the flame silhouette with the number over it (Kit.ICONS.streak), like RIVALS
+local kStreak = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://89001729086571", ImageColor3 = Color3.fromRGB(255, 140, 40),
+	Position = UDim2.fromOffset(94, 88), Size = UDim2.fromOffset(46, 46), Visible = false, ZIndex = 9, Parent = kcard })
+local kStreakL = label(kStreak, "3", FX, 22, 0, 16, 46, 26, WHITE, nil, 10)
+new("UIStroke", { Thickness = 1.5, Color = Color3.fromRGB(90, 30, 0), Parent = kStreakL })
 local kName = label(kcard, "", FX, 46, 150, 10, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
 local kUser = label(kcard, "", FB, 20, 150, 60, 560, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
 local kHow = label(kcard, "", FB, 28, 158, 88, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)

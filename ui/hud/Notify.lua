@@ -21,7 +21,7 @@ local player = Players.LocalPlayer
 
 local Notify = {}
 -- white silhouette icons (rbxassetid) as they get uploaded; nil = the drawn fallback
-Notify.ICONS = { check = nil, inbox = nil, news = nil, settings = nil, scissors = nil, streak = nil, level = nil, rank = nil }
+Notify.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134680054948193", elims = "rbxassetid://87495411854172", inbox = "rbxassetid://106780166776464", level = "rbxassetid://122349404580689", news = "rbxassetid://98784760577764", play = "rbxassetid://112398761342835", rank = "rbxassetid://127088807913977", scissors = "rbxassetid://124651407398623", settings = "rbxassetid://77423905055797", streak = "rbxassetid://89001729086571", trophy = "rbxassetid://112797256867777" } -- (Gunsy Funsy uploads of ui/art/icons, 2026-10-18)
 
 local FX = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
 local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
@@ -29,6 +29,7 @@ local GREEN = Color3.fromRGB(110, 230, 60)
 local GREY = Color3.fromRGB(190, 190, 194)
 local PILL = Color3.fromRGB(18, 19, 21)
 
+for k, v in Kit.ICONS or {} do if Notify.ICONS[k] == nil then Notify.ICONS[k] = v end end
 local inbox = {} -- { t, title, sub, reward }
 local unread = 0
 local onUnread -- set by the top-right buttons

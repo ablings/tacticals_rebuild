@@ -109,7 +109,17 @@ local function build(p, character)
 	local oldVip = head:FindFirstChild("VipTag")
 	if oldVip and oldVip:IsA("BillboardGui") then oldVip.Enabled = false end
 	head.ChildAdded:Connect(function(c) if c.Name == "VipTag" and c:IsA("BillboardGui") then c.Enabled = false end end)
-	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip }
+	-- (2026-10-18) the win streak: RIVALS' flame with the number over it, right of the name
+	local streak = Instance.new("Frame")
+	streak.Name = "StreakHolder"
+	streak.LayoutOrder = 4
+	streak.BackgroundTransparency = 1
+	streak.Size = UDim2.fromScale(0.13, 0.95)
+	streak.Visible = false
+	streak.Parent = row
+	local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
+	local flame = Kit.streak(streak, 0, UDim2.fromScale(0, 0), UDim2.fromScale(1, 1), 2)
+	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip, streak = streak, streakN = flame:FindFirstChild("N") }
 end
 
 local function hook(p)
@@ -156,6 +166,9 @@ function Nameplates.Start()
 					e.badgeText.Text = tostring(v)
 				end
 				e.vip.Visible = p:GetAttribute("VIP") == true
+				local sn = tonumber(p:GetAttribute("WinStreak")) or 0
+				e.streak.Visible = sn > 0
+				if e.streakN then e.streakN.Text = tostring(sn) end
 			end
 		end
 	end)
