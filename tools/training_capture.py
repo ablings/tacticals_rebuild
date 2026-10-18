@@ -2,7 +2,7 @@
 captures and restores the previous Enabled states afterwards (attribute CapLightPrev).
 Usage (from tacticals_rebuild): python tools/training_capture.py <prefix: before|after> [names...]"""
 import json, os, subprocess, sys, shutil, tempfile
-SID = "018a7af6-6613-4d98-b9b4-c31491a28f2b"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
+SID = "63f7832a-a0f3-42a5-97a5-34139db0ba2b"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
   "t1_overview": ([-122, 630, -122], [40, 600, 60]),     # high 3/4 from the SW corner (under the old 636.5 ceiling too)

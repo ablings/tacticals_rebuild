@@ -1,7 +1,7 @@
 """Hub2 capture set (same cameras as hub1) via the stdio MCP bridge (rivals_practice/mcpcli.py).
 Usage: python tools/hub2_capture.py <prefix: before|after> [names...]   (run from tacticals_rebuild)"""
 import json, os, subprocess, sys, shutil
-SID = "018a7af6-6613-4d98-b9b4-c31491a28f2b"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
+SID = "63f7832a-a0f3-42a5-97a5-34139db0ba2b"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
   "c1_spawn_east":   ([0, 6, -4],    [90, 9, 0]),

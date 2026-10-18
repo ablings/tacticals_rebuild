@@ -2,7 +2,7 @@
 Usage (from tacticals_rebuild): python tools/backdrop_capture.py <prefix: before|after|tN> [names...]
 Run `pwsh -NoProfile -File tools/show_studio.ps1 tacticals` first (covered windows capture blank)."""
 import json, os, subprocess, sys, shutil
-SID = "018a7af6-6613-4d98-b9b4-c31491a28f2b"   # Tacticals_rebuild.rbxl
+SID = "63f7832a-a0f3-42a5-97a5-34139db0ba2b"   # Tacticals_rebuild.rbxl
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
   "pad":     ([140, 5.5, 0],     [230, 22, 0]),       # player on the pad looking out east

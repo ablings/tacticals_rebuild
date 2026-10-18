@@ -2,7 +2,7 @@
 version (git HEAD), so nobody's live edits are overwritten. --check only compares.
 Usage: python tools/push_module.py <lobby|match|studio_id> <Instance.Path> <repo file> [--check] [--force: skip the HEAD check, only for a module you just pushed yourself]"""
 import json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "018a7af6-6613-4d98-b9b4-c31491a28f2b", "match": "e46467fa-5915-4ac0-b397-d0841531fdab"}
+SIDS = {"lobby": "63f7832a-a0f3-42a5-97a5-34139db0ba2b", "match": "2f647323-e1f0-47f0-b336-38337f383a2e"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 
