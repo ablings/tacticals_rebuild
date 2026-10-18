@@ -1,0 +1,282 @@
+-- UIKit/Notify (ModuleScript, hub + match places): RIVALS' notification banner and Inbox (UI session 2026-10-18, from Edward's
+-- live captures).
+--   * Banner: a black pill slides down at the top centre: a green check on the left, a bold title ("Task Completed"), a grey
+--     line under it ("You've earned x3 Scissors!"), the reward on the right with its count. One at a time, queued.
+--   * Inbox: every banner this session also lands in the Inbox (newest first, "12m ago" chips on the left), opened from the
+--     top-right inbox button. It clears when you leave the server, like RIVALS'.
+--   * Top-right buttons (hub): Inbox / News / Settings as round icons with RIVALS' black tooltip bubbles on hover.
+-- Server contract (Tacticals session): Events.Lobby.Notify:FireClient(player, { title = "Task Completed",
+--   sub = "You've earned x3 Scissors!", icon = "check", reward = { kind = "Scissors" | "Item", id = itemId?, count = n? } })
+-- (a plain string still goes to the old lobby toast). Notify.Push(t) shows one from the client.
+-- Icons: white vector silhouettes (ui/art/icons, codex) once uploaded; until then the check and the buttons are drawn.
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
+
+local UIKit = script.Parent
+local Kit = require(UIKit:WaitForChild("Kit"))
+local new = Kit.new
+local player = Players.LocalPlayer
+
+local Notify = {}
+-- white silhouette icons (rbxassetid) as they get uploaded; nil = the drawn fallback
+Notify.ICONS = { check = nil, inbox = nil, news = nil, settings = nil, scissors = nil, streak = nil, level = nil, rank = nil }
+
+local FX = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local GREEN = Color3.fromRGB(110, 230, 60)
+local GREY = Color3.fromRGB(190, 190, 194)
+local PILL = Color3.fromRGB(18, 19, 21)
+
+local inbox = {} -- { t, title, sub, reward }
+local unread = 0
+local onUnread -- set by the top-right buttons
+
+local function txt(parent, text, font, size, x, y, w, h, color, align, z)
+	local l = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font, TextSize = size, TextColor3 = color or Color3.new(1, 1, 1),
+		TextXAlignment = align or Enum.TextXAlignment.Center, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 3, Parent = parent })
+	return l
+end
+
+-- an icon: the uploaded silhouette, or a drawn stand-in (the check is two rounded bars)
+local function icon(parent, kind, x, y, s, color, z)
+	local id = Notify.ICONS[kind]
+	if id then
+		return new("ImageLabel", { BackgroundTransparency = 1, Image = id, ImageColor3 = color or Color3.new(1, 1, 1), Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(s, s),
+			ZIndex = z or 4, Parent = parent })
+	end
+	local h = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(s, s), ZIndex = z or 4, Parent = parent })
+	if kind == "check" then
+		new("Frame", { BackgroundColor3 = color or GREEN, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(s * 0.3, s * 0.62),
+			Size = UDim2.fromOffset(s * 0.44, s * 0.2), Rotation = 45, ZIndex = z or 4, Parent = h }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		new("Frame", { BackgroundColor3 = color or GREEN, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(s * 0.6, s * 0.47),
+			Size = UDim2.fromOffset(s * 0.78, s * 0.2), Rotation = -48, ZIndex = z or 4, Parent = h }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+	else
+		local glyph = ({ inbox = "!", news = "N", settings = "*", scissors = "X" })[kind] or "?"
+		txt(h, glyph, FX, s * 0.7, 0, 0, s, s, color, nil, z or 4)
+	end
+	return h
+end
+
+-- the reward on the right of a pill: its picture (an item render id, or the scissors icon) and "xN" under it
+local function rewardBox(parent, r, x, y)
+	if type(r) ~= "table" then return end
+	local box = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = parent })
+	if r.image then
+		new("ImageLabel", { BackgroundTransparency = 1, Image = r.image, Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = box })
+	else
+		icon(box, r.kind == "Scissors" and "scissors" or "check", 8, 0, 54, Color3.fromRGB(255, 205, 60), 4)
+	end
+	if r.count then
+		local c = txt(box, "×" .. tostring(r.count), FX, 28, 0, 42, 70, 30, nil, nil, 5)
+		new("UIStroke", { Thickness = 2, Transparency = 0.2, Parent = c })
+	end
+end
+
+-- one pill (banner or inbox row), design px
+local function pill(parent, n, x, y, w, h)
+	local p = new("Frame", { Name = "Pill", BackgroundColor3 = PILL, BackgroundTransparency = 0.05, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
+		ZIndex = 3, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+	icon(p, n.icon or "check", 26, (h - 56) / 2, 56, GREEN, 4)
+	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 96, h * 0.06, w - 200, h * 0.52, nil, nil, 4)
+	t.TextScaled = false
+	txt(p, n.sub or "", FB, math.floor(h * 0.24), 96, h * 0.56, w - 200, h * 0.32, GREY, nil, 4)
+	rewardBox(p, n.reward, w - 96, (h - 70) / 2)
+	return p
+end
+
+---------------------------------------------------------------------------------------------------- banner
+local bannerGui, bannerRoot
+local queue, showing = {}, false
+local function ensureBanner()
+	if bannerGui and bannerGui.Parent then return end
+	bannerGui = new("ScreenGui", { Name = "NotifyBanner", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 40, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = player:WaitForChild("PlayerGui") })
+	local canvas = Kit.canvas(bannerGui)
+	bannerRoot = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
+end
+local function nextBanner()
+	if showing or #queue == 0 then return end
+	showing = true
+	local n = table.remove(queue, 1)
+	ensureBanner()
+	local holder = new("Frame", { Name = "Banner", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), Parent = bannerRoot })
+	local p = pill(holder, n, 545, 64, 830, 92)
+	Kit.toScale(holder)
+	holder.Size = UDim2.fromScale(1, 1)
+	-- slide down from above the screen with a little overshoot, hold, then slide back up and fade
+	local home = p.Position
+	p.Position = home - UDim2.fromScale(0, 0.14)
+	local sc = new("UIScale", { Scale = 0.9, Parent = p })
+	TweenService:Create(p, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Position = home }):Play()
+	TweenService:Create(sc, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	if Kit.sfx then pcall(Kit.sfx, "reward") end
+	task.delay(3.4, function()
+		TweenService:Create(p, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = home - UDim2.fromScale(0, 0.14) }):Play()
+		task.delay(0.32, function()
+			holder:Destroy()
+			showing = false
+			nextBanner()
+		end)
+	end)
+end
+
+function Notify.Push(n)
+	if type(n) ~= "table" then return end
+	if player:GetAttribute("Setting_DeliveryMode") == "Disabled" then return end
+	table.insert(inbox, 1, { t = os.time(), title = n.title, sub = n.sub, icon = n.icon, reward = n.reward })
+	while #inbox > 50 do table.remove(inbox) end
+	unread += 1
+	if onUnread then onUnread(unread) end
+	table.insert(queue, n)
+	nextBanner()
+end
+
+---------------------------------------------------------------------------------------------------- inbox
+local inboxGui, inboxRoot, blur
+local function ago(t)
+	local d = os.time() - t
+	if d < 60 then return "now" end
+	if d < 3600 then return d // 60 .. "m ago" end
+	return d // 3600 .. "h ago"
+end
+local function buildInbox()
+	if inboxGui and inboxGui.Parent then inboxGui:Destroy() end
+	inboxGui = new("ScreenGui", { Name = "InboxUI", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 26, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = player:WaitForChild("PlayerGui") })
+	new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), Parent = inboxGui })
+	local canvas = Kit.canvas(inboxGui)
+	inboxRoot = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
+	local head = new("Frame", { Name = "Head", BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(540, 208), Size = UDim2.fromOffset(828, 132),
+		ZIndex = 2, Parent = inboxRoot }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	icon(head, "inbox", 20, 10, 56, Color3.new(1, 1, 1), 3)
+	txt(head, "Inbox", FX, 46, 84, 6, 400, 60, nil, Enum.TextXAlignment.Left, 3)
+	txt(head, "All of your recent notifications end up here.\nYour inbox clears when you leave the server!", FB, 22, 0, 62, 828, 60, GREY, nil, 3)
+	local x = Kit.closeButton(UDim2.fromOffset(84, 50))
+	x.Position = UDim2.fromOffset(1406, 207)
+	x.Parent = inboxRoot
+	x.Activated:Connect(function() Notify.CloseInbox() end)
+	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(420, 360), Size = UDim2.fromOffset(940, 680),
+		ScrollBarThickness = 6, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Parent = inboxRoot })
+	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(940, math.max(680, #inbox * 108)), Parent = list })
+	if #inbox == 0 then
+		txt(content, "Nothing yet", FX, 34, 0, 40, 940, 44, nil, nil, 3)
+		txt(content, "Completed tasks, unlocks and rewards show up here.", FB, 22, 0, 86, 940, 30, GREY, nil, 3)
+	end
+	for i, n in inbox do
+		local y = (i - 1) * 108
+		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(4, y + 28), Size = UDim2.fromOffset(118, 46), ZIndex = 3,
+			Parent = content }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 46, GREY, nil, 4)
+		pill(content, n, 142, y, 785, 102)
+	end
+	Kit.toScale(inboxRoot)
+	-- the list's canvas: as tall as the rows (Scale is relative to the list's parent)
+	list.CanvasSize = UDim2.fromScale(0, math.max(680, #inbox * 108) / 1080)
+	content.Size = UDim2.fromScale(1, math.max(680, #inbox * 108) / 680)
+	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
+	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 18 }):Play()
+	if Kit.open then pcall(Kit.open, inboxRoot) end
+end
+function Notify.OpenInbox()
+	unread = 0
+	if onUnread then onUnread(0) end
+	buildInbox()
+end
+function Notify.CloseInbox()
+	if blur then TweenService:Create(blur, TweenInfo.new(0.2), { Size = 0 }):Play() end
+	if inboxGui then inboxGui:Destroy(); inboxGui = nil end
+end
+function Notify.InboxOpen() return inboxGui ~= nil and inboxGui.Parent ~= nil end
+
+---------------------------------------------------------------------------------------------------- news
+-- "Read the latest news": the update notes, newest first (edit NEWS when a port goes out)
+Notify.NEWS = {
+	{ title = "After-match lobby", sub = "Walk around after a match: To Hub, Play Again or Rematch (best of three)." },
+	{ title = "Weapon stats + Duel History", sub = "Kit > Statistics for each weapon, and your last 20 duels." },
+	{ title = "Switch Weapons", sub = "Press M between rounds to change your loadout." },
+}
+function Notify.OpenNews()
+	local saved = inbox
+	inbox = {}
+	for i, n in Notify.NEWS do inbox[i] = { t = os.time(), title = n.title, sub = n.sub, icon = "news" } end
+	buildInbox()
+	inbox = saved
+	-- the header says News instead of Inbox
+	local head = inboxRoot and inboxRoot:FindFirstChild("Head")
+	if head then
+		for _, l in head:GetDescendants() do
+			if l:IsA("TextLabel") and l.Text == "Inbox" then l.Text = "News" end
+			if l:IsA("TextLabel") and l.Text:find("notifications end up here", 1, true) then l.Text = "What's new in Tacticals." end
+		end
+	end
+	-- the time chips make no sense for news: hide them
+	local list = inboxRoot and inboxRoot:FindFirstChild("List")
+	for _, f in list and list:GetDescendants() or {} do
+		if f:IsA("TextLabel") and f.Text == "now" and f.Parent then f.Parent.Visible = false end
+	end
+end
+
+---------------------------------------------------------------------------------------------------- top-right buttons (hub)
+-- round icon buttons with RIVALS' tooltip bubbles: { { kind, tip, onClick }, ... } right to left from the corner
+function Notify.MountTopRight(buttons)
+	local gui = new("ScreenGui", { Name = "TopRightButtons", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 8, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = player:WaitForChild("PlayerGui") })
+	local canvas = Kit.canvas(gui)
+	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
+	local made = {}
+	for i, b in buttons do
+		local x = 1640 - (i - 1) * 62 -- (left of the region / fps readout and the gear already in the corner)
+		local btn = new("TextButton", { Name = b[1], Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.fromRGB(28, 29, 31), BackgroundTransparency = 0.15,
+			Position = UDim2.fromOffset(x, 16), Size = UDim2.fromOffset(52, 52), ZIndex = 2, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		btn:AddTag("Nonapplicable")
+		icon(btn, b[1], 10, 10, 32, Color3.new(1, 1, 1), 3)
+		-- the bubble: black rounded label under the button with a small notch, right-aligned to the screen edge
+		local tipW = math.max(140, #b[2] * 12 + 40)
+		local bubble = new("Frame", { Name = "Tip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.05, AnchorPoint = Vector2.new(1, 0),
+			Position = UDim2.fromOffset(52, 66), Size = UDim2.fromOffset(tipW, 40), Visible = false, ZIndex = 5, Parent = btn },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(tipW - 26, 0),
+			Size = UDim2.fromOffset(14, 14), ZIndex = 5, Parent = bubble })
+		txt(bubble, b[2], FB, 22, 0, 0, tipW, 40, nil, nil, 6)
+		local badge
+		if b[1] == "inbox" then
+			badge = new("Frame", { Name = "Badge", BackgroundColor3 = Color3.fromRGB(230, 50, 50), Position = UDim2.fromOffset(34, -4), Size = UDim2.fromOffset(24, 24),
+				Visible = false, ZIndex = 4, Parent = btn }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			txt(badge, "0", FX, 16, 0, 0, 24, 24, nil, nil, 5)
+		end
+		btn.MouseEnter:Connect(function() bubble.Visible = true end)
+		btn.MouseLeave:Connect(function() bubble.Visible = false end)
+		btn.SelectionGained:Connect(function() bubble.Visible = true end)
+		btn.SelectionLost:Connect(function() bubble.Visible = false end)
+		btn.Activated:Connect(function() bubble.Visible = false; if b[3] then b[3]() end end)
+		made[b[1]] = { btn = btn, badge = badge }
+	end
+	Kit.toScale(root)
+	local ib = made.inbox
+	if ib and ib.badge then
+		onUnread = function(n)
+			ib.badge.Visible = n > 0
+			local l = ib.badge:FindFirstChildOfClass("TextLabel")
+			if l then l.Text = n > 9 and "9+" or tostring(n) end
+		end
+		onUnread(unread)
+	end
+	return gui
+end
+
+---------------------------------------------------------------------------------------------------- server hook
+local hooked = false
+function Notify.Hook()
+	if hooked then return end
+	hooked = true
+	task.spawn(function()
+		local ev = ReplicatedStorage:WaitForChild("Events", 30)
+		local lobby = ev and ev:WaitForChild("Lobby", 30)
+		local n = lobby and lobby:WaitForChild("Notify", 30)
+		if n then n.OnClientEvent:Connect(function(a) if type(a) == "table" then Notify.Push(a) end end) end
+	end)
+end
+
+return Notify

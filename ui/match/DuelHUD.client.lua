@@ -920,6 +920,13 @@ local function hookEvents()
 	end
 end
 task.spawn(hookEvents)
+-- (2026-10-18) RIVALS' notification banners in a match too ("Contract Completed" mid-game): UIKit.Notify
+task.spawn(function()
+	local uk = ReplicatedStorage:WaitForChild("UIKit", 30)
+	local m = uk and uk:WaitForChild("Notify", 30)
+	local ok, N = pcall(function() return m and require(m) end)
+	if ok and N then N.Hook() end
+end)
 
 RunService.RenderStepped:Connect(function()
 	local o = stateObject()

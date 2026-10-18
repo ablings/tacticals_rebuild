@@ -103,6 +103,10 @@ function controller.UsesScope(): boolean
 	return cfg ~= nil or p > 0
 end
 
+function controller.Progress(): number -- 0..1 along the raise-to-eye sequence (the spectate relay sends it)
+	return p
+end
+
 function controller.IsScoped(): boolean
 	return p > 0.9
 end
@@ -237,13 +241,18 @@ local function update(dt: number)
 	-- do we want the scope up?
 	local reloading = (tool and tool:GetAttribute("Reloading") == true) or os.clock() < blockUntil
 	local want = scope ~= nil and Camera.IsAiming() and not reloading
+	-- [SPEC] (2026-10-18, Edward: spectating 1:1) watching someone: their scope progress (CameraController's _SpecScope)
+	local spec = localPlayer:GetAttribute("_SpecScope")
+	if typeof(spec) == "number" then want = false; wasWanted = false end
 	if want and not wasWanted and p < 0.2 then click(0.75, 0.25) end
 	if not want and wasWanted and p > 0.5 then click(0.9, 0.18) end
 	wasWanted = want
 
 	-- move along the sequence (put away fast if the gun itself is gone)
 	local s = scope or lastCfg
-	if want then
+	if typeof(spec) == "number" then
+		p = math.clamp(spec, 0, 1)
+	elseif want then
 		p = math.min(1, p + dt / s.InTime)
 	else
 		p = math.max(0, p - dt / (scope and s.OutTime or 0.12))

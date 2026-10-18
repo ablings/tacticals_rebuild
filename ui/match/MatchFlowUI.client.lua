@@ -477,7 +477,7 @@ local function refreshChips()
 	for _, s2 in SLOTS do
 		local c = chips[s2.id]
 		local id = picks[s2.id]
-		c.q.Visible = id == nil
+		c.q.Visible = false -- (Edward: the tabs below already name the slot; the empty square stays plain, like RIVALS)
 		if c.shown ~= id then c.shown = id; viewport(c.art, id) end
 		c.edge.Transparency = (step == c.index and optArea.Visible) and 0 or 1
 	end

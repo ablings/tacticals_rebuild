@@ -30,6 +30,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "PartyScreen", "ModuleScript", "hud/PartyScreen.lua"),
     ("ReplicatedStorage.UIKit", "PlayRow", "ModuleScript", "lobby/PlayRow.lua"),
     ("ReplicatedStorage.UIKit", "PseudoLobby", "ModuleScript", "pseudolobby/PseudoLobby.lua"),  # no-op in the hub; the match places' after-match lobby
+    ("ReplicatedStorage.UIKit", "Notify", "ModuleScript", "hud/Notify.lua"),  # RIVALS banner + Inbox (hub + match)
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "PromptsController", "ModuleScript", "hud/PromptsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "GamepadNavController", "ModuleScript", "hud/GamepadNavController.lua"),
@@ -56,6 +57,7 @@ SET_FILES = [
     (C, "PropController", "set/PropController.lua"),
     (C, "AimPoseController", "set/AimPoseController.lua"),
     (C, "CinematicCamera", "set/CinematicCamera.lua"),
+    (C, "ScopeController", "set/ScopeController.lua"),  # (2026-10-18) spectating follows the watched player's scope
     ("ReplicatedStorage.UIKit", "SettingsScreen", "set/SettingsScreen.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.GUIs", "HUD", "set/HUD.lua"),
     (C + ".LobbyUIController", "Armory", "lobby/Armory.lua"),
@@ -101,6 +103,7 @@ MATCH_FILES = [
 UK, CC = "ReplicatedStorage.UIKit", "StarterPlayer.StarterPlayerScripts.Client.Controllers"
 PSEUDO_FILES = [
     (UK, "PseudoLobby", "ModuleScript", "pseudolobby/PseudoLobby.lua"),
+    (UK, "Notify", "ModuleScript", "hud/Notify.lua"),
     (UK, "PlayRow", "ModuleScript", "lobby/PlayRow.lua"),
     (UK, "PlayerCards", "ModuleScript", "hud/PlayerCards.lua"),
     (UK, "PartyScreen", "ModuleScript", "hud/PartyScreen.lua"),

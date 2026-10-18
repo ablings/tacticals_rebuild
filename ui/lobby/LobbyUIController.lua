@@ -1551,7 +1551,7 @@ function LobbyUI.Start()
 	local transitionGui = player.PlayerGui:FindFirstChild("ArmoryTransition")
 	if transitionGui then Style.Apply(transitionGui) end
 
-	NotifyEvent.OnClientEvent:Connect(toast)
+	NotifyEvent.OnClientEvent:Connect(function(t, kind) if type(t) == "string" then toast(t, kind) end end) -- (tables are UIKit.Notify banners)
 	QueueState.OnClientEvent:Connect(function(snap)
 		queueSnap = snap
 		updateQueuePill()

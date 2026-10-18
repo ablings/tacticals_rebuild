@@ -268,10 +268,41 @@ local function spectateModel(): Model?
 	return nil
 end
 
+-- [SPEC] (2026-10-18, Edward: "spectating captures the player's camera and pov ... 1:1") the camera relay (Tacticals session):
+-- while the server marks you Watched, your client sends ReplicatedStorage.CamSync (UnreliableRemoteEvent) ~15 times a second:
+-- the camera position in your root's space, the look direction in your root's space, the FOV and the scope progress. The
+-- server puts them on your character (CamOff / CamLook / CamFOV / CamScope + CamT), and a spectator's camera rides on them.
+local SYNC_RATE = 1 / 15
+local lastSync = 0
+local function publishCamera(camera)
+	if not localPlayer:GetAttribute("Watched") then return end
+	local now = os.clock()
+	if now - lastSync < SYNC_RATE then return end
+	lastSync = now
+	local ev = game:GetService("ReplicatedStorage"):FindFirstChild("CamSync")
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	if not ev or not root then return end
+	local scopeP = 0
+	local Scope = ScopeRef()
+	if Scope and Scope.Progress then scopeP = Scope.Progress() end
+	ev:FireServer(root.CFrame:PointToObjectSpace(camera.CFrame.Position), root.CFrame:VectorToObjectSpace(camera.CFrame.LookVector), camera.FieldOfView, scopeP)
+end
+-- the watched player's relayed camera, or nil when it's stale (bots, older servers)
+local function relayedCamera(model: Model, root: BasePart): (CFrame?, number?, number?)
+	local off, look, fov, t = model:GetAttribute("CamOff"), model:GetAttribute("CamLook"), model:GetAttribute("CamFOV"), model:GetAttribute("CamT")
+	if typeof(off) ~= "Vector3" or typeof(look) ~= "Vector3" or type(t) ~= "number" then return nil end
+	if workspace:GetServerTimeNow() - t > 0.6 then return nil end
+	local pos = root.CFrame:PointToWorldSpace(off)
+	local dir = root.CFrame:VectorToWorldSpace(look)
+	if dir.Magnitude < 1e-3 then return nil end
+	return CFrame.lookAt(pos, pos + dir.Unit), tonumber(fov), tonumber(model:GetAttribute("CamScope")) or 0
+end
+
 -- // Per-frame update
 local function update(dt: number)
 	local camera = workspace.CurrentCamera
 	if not camera then return end
+	publishCamera(camera) -- (last frame's camera: one frame behind is fine for a spectator)
 
 	if camera.CameraType ~= Enum.CameraType.Scriptable then
 		camera.CameraType = Enum.CameraType.Scriptable
@@ -385,6 +416,18 @@ local function update(dt: number)
 	if benched or (not isAlive() and state.deathStart and os.clock() - state.deathStart > (Config.KillCamDelay or 1.1)) then
 		local model = spectateModel()
 		local root = model and model:FindFirstChild("HumanoidRootPart")
+		-- 1:1: their own camera (position, aim, FOV, scope) when the relay has it
+		local relCF, relFov, relScope
+		if root and root:IsA("BasePart") then relCF, relFov, relScope = relayedCamera(model, root) end
+		if relCF then
+			local cut = state.killCamFor ~= model
+			state.killCamFor = model
+			camera.CFrame = cut and relCF or camera.CFrame:Lerp(relCF, smoothing(22, dt))
+			camera.FieldOfView = lerp(camera.FieldOfView, relFov or Config.Hip.FOV, smoothing(18, dt))
+			localPlayer:SetAttribute("_SpecScope", relScope)
+			return
+		end
+		localPlayer:SetAttribute("_SpecScope", nil)
 		if root and root:IsA("BasePart") then
 			local focus = root.Position + Vector3.new(0, 2.2, 0)
 			local look = root.CFrame.LookVector * Vector3.new(1, 0, 1)
@@ -401,6 +444,7 @@ local function update(dt: number)
 		end
 	end
 	state.killCamFor = nil
+	if localPlayer:GetAttribute("_SpecScope") ~= nil then localPlayer:SetAttribute("_SpecScope", nil) end
 
 	-- Death camera: ease back and up over the body, slowly circling it
 	if not isAlive() and character and character.Parent then

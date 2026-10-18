@@ -190,6 +190,23 @@ buildCorner = function(gui, cb)
 end
 
 function LobbyHud.Start()
+	-- (2026-10-18) RIVALS' notification banner + Inbox, and the top-right Inbox / News / Settings buttons with tooltips
+	task.spawn(function()
+		local okN, Notify = pcall(require, UIKit:WaitForChild("Notify", 10))
+		if not okN or not Notify then return end
+		Notify.Hook()
+		local LobbyUI = shared.Get and shared.Get("LobbyUIController")
+		local top = Notify.MountTopRight({
+			{ "settings", "Change your crosshair & hotkeys", function() if LobbyUI then LobbyUI.Open("Settings") end end },
+			{ "news", "Read the latest news", function() Notify.OpenNews() end },
+			{ "inbox", "View your recent notifications", function() Notify.OpenInbox() end },
+		})
+		-- the buttons follow the lobby HUD (gone under menus, cards and during matches)
+		game:GetService("RunService").Heartbeat:Connect(function()
+			local hud = player.PlayerGui:FindFirstChild("LobbyHud")
+			top.Enabled = hud ~= nil and hud.Enabled and not Notify.InboxOpen()
+		end)
+	end)
 	PseudoLobby.Guard() -- match places: the lobby GUIs stay off during a (rematch) game
 	PseudoLobby.WaitMap() -- match places: built once the after-match lobby map is out (UIKit.PseudoLobby hides it during a match)
 	local LobbyUI = shared.Get and shared.Get("LobbyUIController")
@@ -729,6 +746,7 @@ function LobbyHud.Start()
 		local menuAway = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
 			or (PlayerCards ~= nil and PlayerCards.ProfileOpen()) -- the profile card pushes the HUD aside like a menu
 			or (player.PlayerGui:FindFirstChild("PartyUI") ~= nil and player.PlayerGui.PartyUI.Enabled) -- and Your Party
+			or player.PlayerGui:FindFirstChild("InboxUI") ~= nil -- and the Inbox / News
 		-- Kit room (LobbyUI on, its dock hidden by the Armory): RIVALS keeps the currency pill up there, nothing else
 		local kitDock = lobbyGui and lobbyGui:FindFirstChild("Dock", true)
 		local kitRoom = lobbyGui ~= nil and lobbyGui.Enabled and kitDock ~= nil and not kitDock.Visible
@@ -767,7 +785,7 @@ function LobbyHud.Start()
 		-- in a duel (playing or watching) the PLAY row and the dock go too, like Hide HUD (the hotbar stays)
 		local inDuel = player:GetAttribute("InDuel") == true or player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("DuelSpectate") ~= nil
 		local partyUp = player.PlayerGui:FindFirstChild("PartyUI") ~= nil and player.PlayerGui.PartyUI.Enabled
-		local cardUp = (PlayerCards ~= nil and PlayerCards.ProfileOpen()) or partyUp -- the profile card / Your Party: PLAY row + dock go too (RIVALS)
+		local cardUp = (PlayerCards ~= nil and PlayerCards.ProfileOpen()) or partyUp or player.PlayerGui:FindFirstChild("InboxUI") ~= nil -- the profile card / Your Party: PLAY row + dock go too (RIVALS)
 		if hide or inDuel or cardUp then
 			if dock and dockSaved == nil then dockSaved = dock.Visible end
 			if dock then dock.Visible = false end
