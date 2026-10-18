@@ -1,7 +1,9 @@
 -- AdminFramework/Commands/AimAssist [AIM] 2026-10-17 (Edward: "give me as an admin settings to enable aim assist for myself on pc
 -- so i can test and also setting to test against an npc").
---   ;aimassist on [strength 0-100] [player]   force aim assist on (mouse + keyboard too); optional test strength (else the
---                                            player's setting / 50%). Ranked still caps it at 25%.
+--   ;aimassist on [strength 0-100] [player]   force aim assist on (mouse + keyboard too). No number: the player's own
+--                                            Settings > Aim Assist choice (50% default / 25% / Off), exactly as on touch /
+--                                            controller (Edward 2026-10-18: "work with just the aim assist setting"); a number
+--                                            is a test strength (e.g. 100). Ranked still caps it at 25%.
 --   ;aimassist off [player]                   back to normal (touch / controller only)
 --   ;aimnpc [on|off] [distance]               a strafing R15 test dummy in front of you (tag AimAssistTarget, 150 HP,
 --                                            stands back up 3 s after dying); off removes yours
@@ -71,7 +73,7 @@ Players.PlayerRemoving:Connect(function(p) removeNpc(p.UserId) end)
 return {
 	{
 		name = "aimassist", aliases = { "aa" }, level = "Admin",
-		description = "on [strength 0-100] [player]: force aim assist on (PC too) for testing; off: back to touch / controller only.",
+		description = "on [strength 0-100] [player]: force aim assist on (PC too); no number = their Settings > Aim Assist strength; off: back to touch / controller only.",
 		args = {
 			{ name = "on", type = "boolean" },
 			{ name = "strength", type = "number", optional = true, min = 0, max = 100 },
@@ -81,12 +83,12 @@ return {
 			local names = {}
 			for _, p in a.player do
 				p:SetAttribute("AimAssistForce", a.on or nil)
-				p:SetAttribute("AimAssistStrength", (a.on and a.strength) or nil)
+				p:SetAttribute("AimAssistStrength", (a.on and a.strength) or nil) -- no number: the Settings choice
 				table.insert(names, p.Name)
 			end
 			if a.on then
 				return true, ("Aim assist forced ON for %s at %s (ranked caps it at 25%%)."):format(table.concat(names, ", "),
-					a.strength and (a.strength .. "%") or "their setting / 50%")
+					a.strength and (a.strength .. "%") or "their Settings > Aim Assist strength")
 			end
 			return true, "Aim assist back to normal for " .. table.concat(names, ", ") .. "."
 		end,
