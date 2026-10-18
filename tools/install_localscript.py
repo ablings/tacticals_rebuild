@@ -1,7 +1,7 @@
 """Create or update a LocalScript in StarterPlayer.StarterPlayerScripts from a repo file (attribute RepoSource = the file).
 Usage: python tools/install_localscript.py <lobby|match|studio_id> <Name> <repo file> [UNDO] [--server: a Script in ServerScriptService]"""
 import json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "7f9e7426-2e49-4e8e-916c-304843df58de", "match": "262bddc7-c737-4071-9821-532ab1e26f2f"}
+SIDS = {"lobby": "d7ca5f9f-18c6-4c56-8fda-3225cb2e5dd1", "match": "379cc32b-4d46-4950-8fc4-c3187ba355bf"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sid = SIDS.get(sys.argv[1], sys.argv[1]); name, f = sys.argv[2], sys.argv[3]

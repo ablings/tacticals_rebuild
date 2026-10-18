@@ -23,6 +23,9 @@ local module = {
 
 	Settings = {},               -- [key] = value; keys, ranges and defaults in Shared/Config/SettingsConfig
 	RedeemedCodes = {},         -- [CODE] = os.time()
+	-- [CAREER] RIVALS weapon Statistics + Career (written by the match places' RoundManager, fix/career_stats.lua)
+	WeaponStats = {},           -- [itemId] = { Kills, Headshots, Deaths, Matches, Wins }
+	MatchHistory = {},          -- newest first, max 20: { t, mode, ranked, map, won, score = {mine, theirs}, kills, deaths, opponents, eloDelta, loadout }
 
 	-- // Version tracking
 	ProfileVersion = 1
