@@ -16,7 +16,7 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 | 4 | Duel / party request popup: headshot, draining timer, X + check (hud/HudController) | `PlayerCards` request stack under the list + Settings > Game > Social > Challenge Requests | LIVE in the lobby copy (LobbySocial by the Tacticals session); one-client check: self-challenge -> "You can't challenge yourself" toast. Needs a 2-player test |
 | 5 | Party screen (+ next to your avatar): your card + 4 slots, search, All / Friends / Lobby tabs (party/PartyController) | `UIKit.PartyScreen` + party heads by PLAY + party invites; server LobbyParty (Tacticals session) | BUILT (lobby copy), 2-player test pending |
 | 6 | Custom name titles (glitch / legend effects) on list, menu, card | none | TODO (cosmetic; needs a title source: shop item or admin) |
-| 7 | Weapons screen: Overview / Statistics / Contracts / Career (Duel History, Map Catalog, Collection) (weapons/WeaponsController) | Armory (Kit) shows loadout only | TODO: Statistics + Duel History need per-weapon stats (MECH) |
+| 7 | Weapons screen: Overview / Statistics / Contracts / Career (Duel History, Map Catalog, Collection) (weapons/WeaponsController) | Kit: Statistics panel + Duel History (career data, Tacticals session) | DONE (Statistics, Duel History); Contracts / Map Catalog / Collection TODO |
 | 8 | Season Pass screen (pass/PassController) | none (Missions instead) | N/A unless Edward wants a pass |
 | 9 | Backpack (backpack/BackpackController) | Armory | covered |
 | 10 | Shooting Range HUD (range/RangeController) | Training (ExfilFX leave, crate picker) | covered |
@@ -38,3 +38,4 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 - 2026-10-17 04:48: all of the above live in port 11 (lobby v281, Tutorial/Matchmaking/Ranked v6).
 - 2026-10-17 05:00: phone pass (simulator) of Play / Shop / Missions / Codes / Kit: all readable; fixed touch buttons over the Kit room panels.
 - 2026-10-17 morning: party screen, in-match scoreboard, controller menus (GamepadNavController), UI sounds. Match copy Studio crashed (GPU reset): match deploys pending its reopen.
+- 2026-10-18 13:43: port 15 published by the Tacticals session (lobby + Tutorial / Matchmaking / Ranked): after-match lobby, Kit Statistics + Duel History, career data, Kit icon fix.
