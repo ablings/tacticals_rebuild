@@ -91,6 +91,8 @@ function SettingsEffects.Start()
 	end
 	applyLighting()
 	applyTextures()
+	-- the match places move a LobbyMap in after a match (pseudo lobby): apply Optimized Textures to it when it arrives
+	workspace.ChildAdded:Connect(function(c) if c.Name == "LobbyMap" then task.defer(applyTextures) end end)
 	SoundService.ChildAdded:Connect(function(c) if c.Name == "World" then task.defer(nestWorld) end end)
 	nestWorld()
 	for _, name in { "MasterVolume", "SFXVolume" } do player:GetAttributeChangedSignal("Setting_" .. name):Connect(applyVolume) end

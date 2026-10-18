@@ -189,6 +189,9 @@ buildCorner = function(gui, cb)
 end
 
 function LobbyHud.Start()
+	local PseudoLobby = require(UIKit:WaitForChild("PseudoLobby"))
+	PseudoLobby.Guard() -- match places: the lobby GUIs stay off during a (rematch) game
+	PseudoLobby.WaitMap() -- match places: built once the after-match lobby map is out (UIKit.PseudoLobby hides it during a match)
 	local LobbyUI = shared.Get and shared.Get("LobbyUIController")
 	local gui = new("ScreenGui", { Name = "LobbyHud", ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 7,
 		Parent = player:WaitForChild("PlayerGui") })

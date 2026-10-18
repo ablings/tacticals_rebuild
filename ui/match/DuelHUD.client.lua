@@ -45,7 +45,12 @@ local function send(...)
 	local _, id = stateObject()
 	if id then ev:FireServer(id, ...) else ev:FireServer(...) end
 end
-local function inLobby() return ReplicatedStorage:FindFirstChild("LobbyDuels") ~= nil or workspace:FindFirstChild("LobbyMap") ~= nil end
+-- the hub (lobby duels). The match places also get a LobbyMap after a match (the pseudo lobby: ReplicatedStorage attribute
+-- PseudoLobbyMap), so the map alone doesn't mean the hub.
+local function inLobby()
+	if ReplicatedStorage:GetAttribute("PseudoLobbyMap") == true then return false end
+	return ReplicatedStorage:FindFirstChild("LobbyDuels") ~= nil or workspace:FindFirstChild("LobbyMap") ~= nil
+end
 local function inMatch()
 	-- lobby: only while this player's match object exists (it's destroyed on the return)
 	if inLobby() then return stateObject() ~= nil and stateObject() ~= ReplicatedStorage end

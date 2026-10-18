@@ -125,7 +125,8 @@ end
 local arenaBlockers, arenaBlockersFor = {}, nil
 local function duelArena(): Instance?
 	-- match place: the map sits natively in Workspace (same Warehouse build, same OutOfBounds blockers)
-	if not workspace:FindFirstChild("LobbyMap") then
+	-- (the after-match pseudo lobby also puts a LobbyMap in the match places: ReplicatedStorage.PseudoLobbyMap)
+	if not workspace:FindFirstChild("LobbyMap") or ReplicatedStorage:GetAttribute("PseudoLobbyMap") == true then
 		for _, c in workspace:GetChildren() do if c:GetAttribute("DuelArena") ~= nil then return c end end
 		return workspace:FindFirstChild("Warehouse")
 	end

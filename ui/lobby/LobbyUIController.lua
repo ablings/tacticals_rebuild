@@ -27,6 +27,8 @@ local LobbyUI = {}
 -- Colours come from the shared UITheme. Panel / Panel2 / Panel3 / Line are "roles": Style turns them into
 -- the floating look (Panel = invisible, Panel2 = frosted glass, Panel3 = brighter glass, Line borders hidden).
 local UITheme = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("UITheme"))
+-- the after-match pseudo lobby in the Matchmaking / Ranked places (no-op in the hub): PLAY = Play Again there
+local PseudoLobby = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("PseudoLobby"))
 local UC = UITheme.Colors
 local THEME = {
 	Panel = Color3.fromRGB(5, 6, 8),
@@ -1237,6 +1239,8 @@ local function updatePlayButton()
 		PlayRow.SetState("DEPLOYING...", "busy")
 	elseif mine then
 		PlayRow.SetState("IN QUEUE · " .. string.upper(mine.mode), "busy")
+	elseif PseudoLobby.MatchPlace() then
+		PlayRow.SetState(player:GetAttribute("PlayAgainSent") and "SEARCHING..." or "PLAY AGAIN", player:GetAttribute("PlayAgainSent") and "busy" or "play")
 	else
 		PlayRow.SetState("PLAY", "play")
 	end
@@ -1449,6 +1453,16 @@ local function build()
 		onPlay = function()
 			-- in a party only the leader queues (the party follows them; RIVALS)
 			if PartyScreen and not PartyScreen.IsLeader() then toast("Only the party leader can queue", "bad") return end
+			-- pseudo lobby: back to the hub and straight into the queue (the party goes along); no queue menu here
+			if PseudoLobby.MatchPlace() then
+				if player:GetAttribute("PlayAgainSent") then return end
+				player:SetAttribute("PlayAgainSent", true)
+				PseudoLobby.PlayAgain()
+				updatePlayButton()
+				-- a failed teleport leaves you here: let PLAY AGAIN be pressed again
+				task.delay(15, function() player:SetAttribute("PlayAgainSent", nil); updatePlayButton() end)
+				return
+			end
 			LobbyUI.Open("Play")
 		end,
 		-- the + (and party heads) open "Your Party" (RIVALS); Roblox's invite sheet is its Invite for people elsewhere
@@ -1525,6 +1539,7 @@ end
 -- Start
 -------------------------------------------------------------------------------
 function LobbyUI.Start()
+	PseudoLobby.WaitMap() -- match places: only once the lobby map is out (after the first match)
 	local events = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Lobby")
 	Request = events:WaitForChild("Request")
 	QueueState = events:WaitForChild("QueueState")

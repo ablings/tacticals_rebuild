@@ -118,6 +118,10 @@ local function hook(p)
 end
 
 function Nameplates.Start()
+	-- match places: lobby plates only in the after-match lobby (never over your opponent in a duel)
+	local PseudoLobby = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("PseudoLobby"))
+	PseudoLobby.WaitMap()
+	Nameplates.Active = PseudoLobby.Active
 	Players.PlayerAdded:Connect(hook)
 	Players.PlayerRemoving:Connect(function(p)
 		local e = plates[p]
@@ -139,7 +143,7 @@ function Nameplates.Start()
 				local near = head and (workspace.CurrentCamera.CFrame.Position - head.Position).Magnitude < 9
 				-- only plates of people in the same place as you: same duel (or both in the lobby)
 				local sameSpace = (p:GetAttribute("DuelMatch") or false) == (player:GetAttribute("DuelMatch") or false)
-				e.gui.Enabled = not hideAll and not near and sameSpace and p:GetAttribute("InTraining") ~= true
+				e.gui.Enabled = Nameplates.Active() and not hideAll and not near and sameSpace and p:GetAttribute("InTraining") ~= true
 				local which, v = statOf(p)
 				if which == "Rank" then
 					local hasImg = v.image ~= nil

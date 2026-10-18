@@ -29,6 +29,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "PlayerCards", "ModuleScript", "hud/PlayerCards.lua"),
     ("ReplicatedStorage.UIKit", "PartyScreen", "ModuleScript", "hud/PartyScreen.lua"),
     ("ReplicatedStorage.UIKit", "PlayRow", "ModuleScript", "lobby/PlayRow.lua"),
+    ("ReplicatedStorage.UIKit", "PseudoLobby", "ModuleScript", "pseudolobby/PseudoLobby.lua"),  # no-op in the hub; the match places' after-match lobby
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "PromptsController", "ModuleScript", "hud/PromptsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "GamepadNavController", "ModuleScript", "hud/GamepadNavController.lua"),
@@ -90,6 +91,48 @@ MATCH_FILES = [
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),
     ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
 ]
+# ---- the after-match pseudo lobby (2026-10-18, lead session's split): the lobby's client side rides along in the match places.
+# Own files run as-is (UIKit.PseudoLobby: WaitMap / Active / Guard, no-op in the hub). Hub scripts other sessions own come
+# from snapshots (ui/pseudolobby/snapshot_hub.py) with a gate: "script" = the LocalScript waits for ReplicatedStorage
+# PseudoLobbyMap == true before running; "start" = the controller's Start() waits (never at module top level: ModuleLoader
+# requires one module at a time). Left out on purpose (the lead greys them out): training / range / exfil / pads / AssetCheck.
+UK, CC = "ReplicatedStorage.UIKit", "StarterPlayer.StarterPlayerScripts.Client.Controllers"
+PSEUDO_FILES = [
+    (UK, "PseudoLobby", "ModuleScript", "pseudolobby/PseudoLobby.lua"),
+    (UK, "PlayRow", "ModuleScript", "lobby/PlayRow.lua"),
+    (UK, "PlayerCards", "ModuleScript", "hud/PlayerCards.lua"),
+    (UK, "PartyScreen", "ModuleScript", "hud/PartyScreen.lua"),
+    (UK, "PlayScreen", "ModuleScript", "play/PlayScreen.lua"),
+    (UK, "CodesScreen", "ModuleScript", "lobby/CodesScreen.lua"),
+    (UK, "RankedScreen", "ModuleScript", "ranked/RankedScreen.lua"),
+    (UK, "ShopScreen", "ModuleScript", "shop/ShopScreen.lua"),
+    (UK, "SettingsKit", "ModuleScript", "settings/SettingsKit.lua"),
+    (UK, "SettingsScreen", "ModuleScript", "set/SettingsScreen.lua"),
+    (CC, "LobbyHudController", "ModuleScript", "hud/LobbyHudController.lua"),
+    (CC, "NameplatesController", "ModuleScript", "hud/NameplatesController.lua"),
+    (CC, "LobbyUIController", "ModuleScript", "lobby/LobbyUIController.lua"),
+    (CC + ".LobbyUIController", "Armory", "ModuleScript", "lobby/Armory.lua"),
+]
+_GATE_LUA = ('do local __RS = game:GetService("ReplicatedStorage") while __RS:GetAttribute("PseudoLobbyMap") ~= true do '
+             '__RS:GetAttributeChangedSignal("PseudoLobbyMap"):Wait() end end -- [PSEUDO] after-match lobby: wait for the lobby map (UI session)')
+def gated(src, gate):
+    import re
+    if gate == "script":
+        return _GATE_LUA + "\n" + src
+    if gate == "start":
+        m = re.search(r'^function\s+[\w.:]+[.:]Start\s*\([^)]*\)[^\n]*\n', src, re.M)
+        if not m: raise SystemExit('no Start() to gate')
+        return src[:m.end()] + "\t" + _GATE_LUA + "\n" + src[m.end():]
+    return src
+def _hub():
+    man = json.load(open(os.path.join(HERE, 'pseudolobby', 'hub', 'manifest.json'), encoding='utf-8'))
+    skip = {"Theme", "WorldMoodFX"}  # (Theme: the match place's is the same file; WorldMoodFX: queue backdrop, no queue here)
+    out = []
+    for parent, name, cls, path in man:
+        if name in skip: continue
+        gate = "script" if cls == "LocalScript" else ("start" if parent == CC else None)
+        out.append((parent, name, cls, path, gate))
+    return out
 MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory", "SettingsScreen")]
 # old pass-38 match HUD pieces that DuelHUD / MatchFlowUI replace (see the file)
 MATCH_PATCHES = [open(os.path.join(HERE, 'matchplace', 'match_patches.lua'), encoding='utf-8').read()]
@@ -97,7 +140,9 @@ MATCH_PATCHES = [open(os.path.join(HERE, 'matchplace', 'match_patches.lua'), enc
 # session's installer), so they take the match-place UI set. Per-kind differences: notes/place_split.md.
 PLACE_KIND = next((k for k in ('tutorial', 'matchmaking', 'ranked') if '--' + k in sys.argv), None)
 if '--match' in sys.argv or PLACE_KIND:
-    FILES, SET_FILES, PATCHES = MATCH_FILES, MATCH_SET_FILES, MATCH_PATCHES
+    FILES, SET_FILES, PATCHES = MATCH_FILES + PSEUDO_FILES + _hub(), MATCH_SET_FILES, MATCH_PATCHES + [
+        # a match place: clients tell it from the hub by this attribute (the lead's server sets it true once the map is out)
+        "local RS = game:GetService('ReplicatedStorage'); if RS:GetAttribute('PseudoLobbyMap') == nil then RS:SetAttribute('PseudoLobbyMap', false) end"]
 
 
 def long_string(s):
@@ -114,8 +159,9 @@ def build():
         "local function dir(path) local o = game; for p in path:gmatch('[^%.]+') do local c = o:FindFirstChild(p); if not c then c = Instance.new('Folder'); c.Name = p; c.Parent = o end; o = c end; return o end",
         "local function put(parent, name, class, src) local s = parent:FindFirstChild(name); if s and s.ClassName ~= class then s:Destroy(); s = nil end; if not s then s = Instance.new(class); s.Name = name; s.Parent = parent end; s.Source = src end",
     ]
-    for parent, name, cls, path in FILES:
-        src = open(os.path.join(HERE, path), encoding='utf-8').read()
+    for entry in FILES:
+        parent, name, cls, path = entry[:4]
+        src = gated(open(os.path.join(HERE, path), encoding='utf-8').read(), entry[4] if len(entry) > 4 else None)
         parts.append(f"put({'dir' if ('--match' in sys.argv or PLACE_KIND) else 'at'}('{parent}'), '{name}', '{cls}', {long_string(src)})")
     parts.append("local SS = game:GetService('ServerStorage'); local bin = SS:FindFirstChild('_RebuildRemoved') or Instance.new('Folder'); bin.Name = '_RebuildRemoved'; bin.Parent = SS")
     for parent, name, path in SET_FILES:
@@ -136,7 +182,7 @@ def build():
 HASHES = os.path.join(HERE, '_deployed_hashes.json')
 
 def targets():
-    out = [(parent + '.' + name) for parent, name, cls, path in FILES]
+    out = [(e[0] + '.' + e[1]) for e in FILES]
     out += [(parent + '.' + name) for parent, name, path in SET_FILES]
     return out
 
