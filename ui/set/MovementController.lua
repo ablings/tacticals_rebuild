@@ -251,6 +251,14 @@ local function updateSlide(): boolean
 	local a = math.clamp(elapsed / S.Time, 0, 1)
 	local speed = S.Speed + (S.EndSpeed - S.Speed) * (a ^ 0.7)
 	local actual = (root.AssemblyLinearVelocity * FLAT).Magnitude
+	-- [SLIDE] a jump (Space hop) cancels the slide and keeps its speed as momentum (Edward 2026-10-18: "jumping doesnt cancel
+	-- your slide"); the speed then eases down to walk / sprint in update()
+	local state = hum:GetState()
+	if state == Enum.HumanoidStateType.Jumping or state == Enum.HumanoidStateType.Freefall then
+		endSlide()
+		currentSpeed = math.max(currentSpeed, speed)
+		return true
+	end
 	if a >= 1 or (elapsed > 0.15 and actual < 2.5) then -- done, or ran into something
 		endSlide()
 		return true
