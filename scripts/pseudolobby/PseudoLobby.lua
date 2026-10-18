@@ -87,6 +87,16 @@ local function swapLighting(toLobby: boolean)
 	end
 end
 
+-- no kit in the lobby (UI session: the hotbar keys still equipped): CombatManager / MeleeManager hand the gun and melee out on
+-- every CharacterAdded, so tools are taken away while InPseudoLobby; the next match's spawn hands them out again
+local function strip(player: Player)
+	for _, container in { player.Character, player:FindFirstChildOfClass("Backpack") } do
+		for _, t in (container and container:GetChildren() or {}) do
+			if t:IsA("Tool") then t:Destroy() end
+		end
+	end
+end
+
 local function home(player: Player)
 	if not (shown and player:GetAttribute("InPseudoLobby")) then return end
 	local character = player.Character
@@ -100,6 +110,7 @@ local function hookPlayer(player: Player)
 		task.defer(function()
 			if character.Parent then home(player) end
 		end)
+		task.delay(1, function() if shown and player:GetAttribute("InPseudoLobby") then strip(player) end end)
 	end))
 end
 
@@ -111,6 +122,10 @@ function PseudoLobby.Show(): boolean
 	if m.Parent ~= workspace then m.Parent = workspace end -- first time only: then it stays
 	swapLighting(true)
 	ReplicatedStorage:SetAttribute("PseudoLobbyMap", true)
+	-- the match's test bots don't come along (RoundManager makes new ones for a rematch)
+	for _, b in game:GetService("CollectionService"):GetTagged("Bot") do
+		if b:IsDescendantOf(workspace) then b:Destroy() end
+	end
 	for _, p in Players:GetPlayers() do hookPlayer(p) end
 	table.insert(conns, Players.PlayerAdded:Connect(hookPlayer))
 	-- fall catch (the hub's LobbyFallCatch is not on the match server): well below the spawn = back on the spawn
@@ -120,7 +135,10 @@ function PseudoLobby.Show(): boolean
 		while shown do
 			for _, p in Players:GetPlayers() do
 				local root = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
-				if root and p:GetAttribute("InPseudoLobby") and root.Position.Y < floor then home(p) end
+				if p:GetAttribute("InPseudoLobby") then
+					if root and root.Position.Y < floor then home(p) end
+					strip(p)
+				end
 			end
 			task.wait(0.5)
 		end
