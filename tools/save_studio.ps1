@@ -2,6 +2,8 @@
 # foreground window really is that one, then sends Ctrl+S. Refuses (exit 1) if the window is in Play or the check fails.
 # Usage: pwsh tools/save_studio.ps1 Tacticals_rebuild | match_place_ref | Tutorial_place | ...
 # (2026-10-17: the publish routine saves each copy before copying it; never press keys into a window we didn't check.)
+# The match is -like (case-insensitive) on the whole title, and every title holds the folder "tacticals_rebuild": for the lobby
+# pass "\Tacticals_rebuild.rbxl", or it saves the first match (2026-10-18: "Tacticals_rebuild" saved match_place_ref).
 param([Parameter(Mandatory = $true)][string]$titlePart)
 Add-Type @'
 using System; using System.Text; using System.Runtime.InteropServices;
