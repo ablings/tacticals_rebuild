@@ -575,15 +575,15 @@ backB.Activated:Connect(function()
 	end
 end)
 -- RIVALS blurs the world and drops the gameplay HUD behind the result screen; both come back when it closes
-local rblur
+local rblur, rblurOn
 local rHidden = {}
 function resultBackdrop(on)
 	local Lighting = game:GetService("Lighting")
 	rblur = rblur or Lighting:FindFirstChild("ResultBlur") or new("BlurEffect", { Name = "ResultBlur", Size = 0, Parent = Lighting })
-	TweenService:Create(rblur, TweenInfo.new(0.3), { Size = on and 22 or 0 }):Play()
+	if rblurOn ~= on then rblurOn = on; TweenService:Create(rblur, TweenInfo.new(0.3), { Size = on and 22 or 0 }):Play() end
 	local pg = player.PlayerGui
 	if on then
-		for _, n in { "Hotbar", "Vitals", "HUD", "TouchControls", "TouchStick", "MainUI", "StealthUI", "RangeKitUI" } do
+		for _, n in { "Hotbar", "Vitals", "HUD", "TouchControls", "TouchStick", "MainUI", "TutorialUI", "StealthUI", "RangeKitUI" } do
 			local g = pg:FindFirstChild(n)
 			if g and g:IsA("ScreenGui") and g.Enabled and rHidden[g] == nil then rHidden[g] = true; g.Enabled = false end
 		end
@@ -636,8 +636,19 @@ end)
 RunService.Heartbeat:Connect(function()
 	if rgui.Enabled then
 		refreshRematch()
+		-- keep the HUD down while it's up (the victory screen restores the HUD after we've hidden it) and no banner over the card
+		resultBackdrop(true)
+		banner.Visible = false
 		rtint.Visible = rankPage.Visible -- the summary card (another ScreenGui, under this one) mustn't be dimmed
-		if not inMatch() and not postMatch() then rgui.Enabled = false; resultBackdrop(false) end
+		backB.Visible = rankPage.Visible or (lastSum ~= nil and lastSum.delta ~= nil) or postMatch() -- (PostMatch may land after the results)
+		-- a rematch (or any new match) is running: the result screen goes
+		local ms = st("MatchState")
+		local running = ms ~= nil and ms ~= "MatchEnd" and ms ~= "Ended" and ms ~= "Victory" and not postMatch()
+		if running or (not inMatch() and not postMatch()) then
+			rgui.Enabled = false; results.Visible = false
+			resultBackdrop(false)
+			return
+		end
 	end
 end)
 showResultScreenRef = showResultScreen
@@ -698,6 +709,7 @@ RunService.RenderStepped:Connect(function()
 	local o = stateObject()
 	local state = o and o:GetAttribute("MatchState")
 	local playing = inMatch() and (state == "RunIn" or state == "Countdown" or state == "Live" or state == "RoundEnd" or state == "Victory" or state == "MatchEnd")
+		and not (st("PostMatch") == true or player:GetAttribute("InPseudoLobby") == true) -- the post-match lobby: no match HUD (the results card can still show)
 	-- a new match (or none): the old card / banner never carries over
 	local _, mid = stateObject()
 	if mid ~= lastMatchId then
