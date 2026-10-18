@@ -35,12 +35,15 @@ local function applyLighting()
 end
 
 -- Optimized Textures ------------------------------------------------------------------------------------------
+local hiddenMap -- the LobbyMap those belong to
 local hidden -- [instance] = original Transparency (Texture / Decal) or original Parent (SurfaceAppearance)
 local function applyTextures()
 	local on = setting("OptimizedTextures") == true
 	local map = workspace:FindFirstChild("LobbyMap")
+	-- the after-match lobby brings a fresh copy of the map each time: what was hidden belonged to the last one
+	if hidden and hiddenMap ~= map then hidden = nil end
 	if on and not hidden and map then
-		hidden = {}
+		hidden, hiddenMap = {}, map
 		for _, d in map:GetDescendants() do
 			if d:IsA("Decal") then -- Texture is a Decal too
 				hidden[d] = d.Transparency

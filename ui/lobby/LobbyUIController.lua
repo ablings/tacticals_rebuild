@@ -1548,6 +1548,7 @@ function LobbyUI.Start()
 	Style.SetTokens(THEME)
 	build()
 	Style.Apply(gui)
+	updatePlayButton() -- (the after-match lobby reads PLAY AGAIN from the start)
 	local transitionGui = player.PlayerGui:FindFirstChild("ArmoryTransition")
 	if transitionGui then Style.Apply(transitionGui) end
 

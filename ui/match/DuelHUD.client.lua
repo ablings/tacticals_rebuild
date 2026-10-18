@@ -647,9 +647,17 @@ hubP.Activated:Connect(function() send("ToHub") end)
 againP.Activated:Connect(function() send("PlayAgain"); againPT.Text = "Searching..." end)
 rematchP.Activated:Connect(function() if st("RematchAllowed") ~= false then send("Rematch") end end)
 RunService.Heartbeat:Connect(function()
-	local on = postMatch() and not rgui.Enabled
+	-- (after-match lobby) a lobby menu / the Kit room hides the play row: the panel goes with it
+	local row = player.PlayerGui:FindFirstChild("PlayRowUI")
+	local on = postMatch() and not rgui.Enabled and not (row ~= nil and not row.Enabled)
 	if on ~= pgui.Enabled then pgui.Enabled = on; if on then againPT.Text = "Play Again" end end
-	if on then styleRematch(rematchP, rematchPT, rematchPS) end
+	if on then
+		styleRematch(rematchP, rematchPT, rematchPS)
+		-- in the after-match lobby the play row's big PLAY AGAIN is the Play Again: the panel keeps Rematch + To Hub
+		local lobbyRow = row ~= nil and row.Enabled
+		againP.Visible = not lobbyRow
+		rematchP.Position = UDim2.fromScale(0.992, lobbyRow and 0.91 or 0.835)
+	end
 end)
 RunService.Heartbeat:Connect(function()
 	if rgui.Enabled then

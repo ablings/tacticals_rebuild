@@ -124,5 +124,11 @@
   "SettingsTheme",
   "ModuleScript",
   "pseudolobby/hub/SettingsTheme.lua"
+ ],
+ [
+  "ReplicatedStorage.Modules.Shared",
+  "UITheme",
+  "ModuleScript",
+  "pseudolobby/hub/UITheme.lua"
  ]
 ]

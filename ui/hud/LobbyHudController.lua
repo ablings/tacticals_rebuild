@@ -17,6 +17,7 @@ local buildCorner
 local resetNav = function() end
 
 local UIKit = ReplicatedStorage:WaitForChild("UIKit")
+local PseudoLobby = require(UIKit:WaitForChild("PseudoLobby")) -- the after-match lobby in the match places (no-op in the hub)
 local Theme = require(UIKit:WaitForChild("Theme"))
 local Kit = require(UIKit:WaitForChild("Kit"))
 local Config = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Config"):WaitForChild("LobbyConfig"))
@@ -189,7 +190,6 @@ buildCorner = function(gui, cb)
 end
 
 function LobbyHud.Start()
-	local PseudoLobby = require(UIKit:WaitForChild("PseudoLobby"))
 	PseudoLobby.Guard() -- match places: the lobby GUIs stay off during a (rematch) game
 	PseudoLobby.WaitMap() -- match places: built once the after-match lobby map is out (UIKit.PseudoLobby hides it during a match)
 	local LobbyUI = shared.Get and shared.Get("LobbyUIController")
@@ -780,7 +780,7 @@ function LobbyHud.Start()
 		-- Hide Missions (Settings > Video > Interface)
 		local noMissions = player:GetAttribute("Setting_HideSideTasks") == true
 		missions.Visible = not noMissions and not kitShown
-		toPads.Visible = not noMissions and not kitShown
+		toPads.Visible = not noMissions and not kitShown and not PseudoLobby.MatchPlace() -- (after-match lobby: the pads are barricaded)
 		local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
 		seek.Visible = q ~= nil and st == "Searching" and not kitShown
 		if seek.Visible then

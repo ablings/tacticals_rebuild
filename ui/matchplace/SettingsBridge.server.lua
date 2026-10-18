@@ -34,4 +34,6 @@ local function apply(player: Player)
 end
 
 Players.PlayerAdded:Connect(apply)
+shared.SettingsApply = apply -- [PSEUDOLOBBY] LobbyManager.SaveSettings re-applies after a save
 for _, p in Players:GetPlayers() do task.spawn(apply, p) end
+

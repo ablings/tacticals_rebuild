@@ -18,6 +18,7 @@ HUB = [
     ("ReplicatedStorage.UIKit", "Theme", "ModuleScript"), ("ReplicatedStorage.UIKit", "Assets", "ModuleScript"),
     ("ReplicatedStorage.UIKit", "HotkeysPage", "ModuleScript"), ("ReplicatedStorage.UIKit", "MissionsScreen", "ModuleScript"),
     ("ReplicatedStorage.UIKit", "ViewIcons", "ModuleScript"), ("ReplicatedStorage.UIKit", "SettingsTheme", "ModuleScript"),
+    ("ReplicatedStorage.Modules.Shared", "UITheme", "ModuleScript"),
 ]
 def main(sid):
     man = []

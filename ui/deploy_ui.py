@@ -92,10 +92,12 @@ MATCH_FILES = [
     ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
 ]
 # ---- the after-match pseudo lobby (2026-10-18, lead session's split): the lobby's client side rides along in the match places.
-# Own files run as-is (UIKit.PseudoLobby: WaitMap / Active / Guard, no-op in the hub). Hub scripts other sessions own come
-# from snapshots (ui/pseudolobby/snapshot_hub.py) with a gate: "script" = the LocalScript waits for ReplicatedStorage
-# PseudoLobbyMap == true before running; "start" = the controller's Start() waits (never at module top level: ModuleLoader
-# requires one module at a time). Left out on purpose (the lead greys them out): training / range / exfil / pads / AssetCheck.
+# Own files run as-is (UIKit.PseudoLobby: WaitMap / Active / Guard, no-op in the hub). The hub's lobby look scripts that other
+# sessions own come from snapshots (ui/pseudolobby/snapshot_hub.py) as TEMPLATES in ReplicatedStorage.PseudoLobbyClient:
+# PseudoLobbyRunner clones them into PlayerScripts each time the map comes out and destroys them when it goes back (the
+# server re-sends a fresh map copy every PostMatch, so they must start over). A controller template is a ModuleHost
+# LocalScript with the controller as its "Module" child. Left out on purpose (the lead greys them out): training / range /
+# exfil / pads / AssetCheck / WorldMoodFX (queue backdrop).
 UK, CC = "ReplicatedStorage.UIKit", "StarterPlayer.StarterPlayerScripts.Client.Controllers"
 PSEUDO_FILES = [
     (UK, "PseudoLobby", "ModuleScript", "pseudolobby/PseudoLobby.lua"),
@@ -113,25 +115,21 @@ PSEUDO_FILES = [
     (CC, "LobbyUIController", "ModuleScript", "lobby/LobbyUIController.lua"),
     (CC + ".LobbyUIController", "Armory", "ModuleScript", "lobby/Armory.lua"),
 ]
-_GATE_LUA = ('do local __RS = game:GetService("ReplicatedStorage") while __RS:GetAttribute("PseudoLobbyMap") ~= true do '
-             '__RS:GetAttributeChangedSignal("PseudoLobbyMap"):Wait() end end -- [PSEUDO] after-match lobby: wait for the lobby map (UI session)')
-def gated(src, gate):
-    import re
-    if gate == "script":
-        return _GATE_LUA + "\n" + src
-    if gate == "start":
-        m = re.search(r'^function\s+[\w.:]+[.:]Start\s*\([^)]*\)[^\n]*\n', src, re.M)
-        if not m: raise SystemExit('no Start() to gate')
-        return src[:m.end()] + "\t" + _GATE_LUA + "\n" + src[m.end():]
-    return src
+PL_FOLDER = "ReplicatedStorage.PseudoLobbyClient"
 def _hub():
     man = json.load(open(os.path.join(HERE, 'pseudolobby', 'hub', 'manifest.json'), encoding='utf-8'))
-    skip = {"Theme", "WorldMoodFX"}  # (Theme: the match place's is the same file; WorldMoodFX: queue backdrop, no queue here)
-    out = []
+    out = [("StarterPlayer.StarterPlayerScripts", "PseudoLobbyRunner", "LocalScript", "pseudolobby/PseudoLobbyRunner.client.lua")]
     for parent, name, cls, path in man:
-        if name in skip: continue
-        gate = "script" if cls == "LocalScript" else ("start" if parent == CC else None)
-        out.append((parent, name, cls, path, gate))
+        if name in ("Theme", "WorldMoodFX"): continue  # (Theme: the match place's is the same file)
+        if name == "UITheme":
+            out.append(("ReplicatedStorage.Modules.Shared", "UITheme", "ModuleScript", path))  # the hub's menu look (same API)
+        elif cls == "LocalScript":
+            out.append((PL_FOLDER, name, "LocalScript", path))
+        elif parent == CC:
+            out.append((PL_FOLDER, name, "LocalScript", "pseudolobby/ModuleHost.client.lua"))
+            out.append((PL_FOLDER + "." + name, "Module", "ModuleScript", path))
+        else:
+            out.append((parent, name, cls, path))
     return out
 MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory", "SettingsScreen")]
 # old pass-38 match HUD pieces that DuelHUD / MatchFlowUI replace (see the file)
@@ -161,7 +159,7 @@ def build():
     ]
     for entry in FILES:
         parent, name, cls, path = entry[:4]
-        src = gated(open(os.path.join(HERE, path), encoding='utf-8').read(), entry[4] if len(entry) > 4 else None)
+        src = open(os.path.join(HERE, path), encoding='utf-8').read()
         parts.append(f"put({'dir' if ('--match' in sys.argv or PLACE_KIND) else 'at'}('{parent}'), '{name}', '{cls}', {long_string(src)})")
     parts.append("local SS = game:GetService('ServerStorage'); local bin = SS:FindFirstChild('_RebuildRemoved') or Instance.new('Folder'); bin.Name = '_RebuildRemoved'; bin.Parent = SS")
     for parent, name, path in SET_FILES:

@@ -52,16 +52,42 @@ end
 -- after every other render step, so a controller that re-enables its gui each frame never shows it during a match.
 PseudoLobby.GUIS = { "LobbyHud", "LobbyUI", "PlayRowUI", "ArmoryUI", "ArmoryTransition", "SettingsUI", "ShopUI", "ShopUI2", "CodesUI",
 	"RankedUI", "MissionsUI", "PlayUI", "PlayerCards", "PartyUI", "Tooltips" } -- (not UIBackdrop: the match screens use it too)
+-- the lobby GUIs that are simply "on" in the lobby (no menu): restored after the guard hid them
+-- (everything but the menus: ArmoryUI / ArmoryTransition / PlayerCards also sit enabled all the time)
+PseudoLobby.BASE = { "LobbyHud", "LobbyUI", "PlayRowUI", "ArmoryUI", "ArmoryTransition", "PlayerCards", "Tooltips" }
+-- the match's HUD (health, noise, hotbar, cover tutorial, near-miss): hidden while you're in the lobby part
+PseudoLobby.MATCH_HUD = { "HUD", "Hotbar", "Vitals", "StealthUI", "TutorialUI", "NearMissUI" }
 local guarding = false
 function PseudoLobby.Guard()
 	if guarding or not PseudoLobby.MatchPlace() then return end
 	guarding = true
 	local pg = Players.LocalPlayer:WaitForChild("PlayerGui")
+	local offByUs = {} -- match HUD guis we switched off in the lobby (switched back on when a game starts)
+	local lobbyOff = {} -- base lobby guis we switched off (back on when the lobby is showing again)
 	RunService:BindToRenderStep("PseudoLobbyGuard", Enum.RenderPriority.Last.Value + 5, function()
-		if PseudoLobby.Active() then return end
-		for _, name in PseudoLobby.GUIS do
+		local active = PseudoLobby.Active()
+		local results = pg:FindFirstChild("MatchResult")
+		-- the lobby GUIs: off during a game, and while the result screen is up over the lobby. The always-on ones (HUD, dock,
+		-- play row) are switched back on afterwards: their controllers only enable them on events, not every frame
+		if not active or (results and results:IsA("ScreenGui") and results.Enabled) then
+			for _, name in PseudoLobby.GUIS do
+				local g = pg:FindFirstChild(name)
+				if g and g:IsA("ScreenGui") and g.Enabled then
+					g.Enabled = false
+					if table.find(PseudoLobby.BASE, name) then lobbyOff[g] = true end
+				end
+			end
+		elseif next(lobbyOff) then
+			for g in lobbyOff do g.Enabled = true end
+			table.clear(lobbyOff)
+		end
+		-- the match HUD: off in the lobby (combat is off there; the hub has none of it)
+		for _, name in PseudoLobby.MATCH_HUD do
 			local g = pg:FindFirstChild(name)
-			if g and g:IsA("ScreenGui") and g.Enabled then g.Enabled = false end
+			if g and g:IsA("ScreenGui") then
+				if active and g.Enabled then g.Enabled = false; offByUs[g] = true
+				elseif not active and offByUs[g] then offByUs[g] = nil; g.Enabled = true end
+			end
 		end
 	end)
 	-- leaving the lobby part (rematch starting): close whatever menu was open so it doesn't come back on the next visit
