@@ -112,7 +112,18 @@ buildCorner = function(gui, cb)
 		return entry
 	end
 	local open = button("Open", ICON_GEAR, "See more")
-	local settings = button("Settings", ICON_GEAR, "Change your controls & graphics")
+	local settings = button("Settings", ICON_GEAR, "Change your crosshair & hotkeys")
+	-- (2026-10-18, Edward: "keep the corner gear and add your changes to it") RIVALS' corner: News + Inbox beside Settings
+	local news = button("News", Kit.ICONS.news, "Read the latest news")
+	local inbox = button("Inbox", Kit.ICONS.inbox, "View your recent notifications")
+	-- unread notifications: a red count on the gear while the corner is shut, on the Inbox while it's open
+	local function dot(parent)
+		local d = new("Frame", { Name = "Unread", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.85, 0.15), Size = UDim2.fromScale(0.5, 0.5),
+			BackgroundColor3 = Color3.fromRGB(230, 50, 50), Visible = false, ZIndex = 25, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		new("TextLabel", { Name = "N", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), TextScaled = true, Text = "0", TextColor3 = Color3.new(1, 1, 1),
+			FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold), ZIndex = 26, Parent = d })
+		return d
+	end
 	local codes = button("Codes", ICON_CODES, "Redeem a code")
 	local list = button("PlayerList", ICON_PLAYERS, "Open the player list")
 	local hud = button("HUD", ICON_HUD, "Enable your HUD")
@@ -156,7 +167,10 @@ buildCorner = function(gui, cb)
 	end
 	function ctl.layout()
 		if not isOpen then settings.b.Visible = false; codes.b.Visible = false end
-		local left = placeBar(mainPill, W - 12, isOpen and { open, settings, codes } or { open })
+		codes.b.Visible = false
+		local left = placeBar(mainPill, W - 12, isOpen and { open, settings, news, inbox } or { open })
+		if not isOpen then news.b.Visible = false; inbox.b.Visible = false; settings.b.Visible = false end
+		if ctl.unreadDots then ctl.unreadDots() end
 		local ctxItems = {}
 		if not cb.listShown() then table.insert(ctxItems, list) else list.b.Visible = false end
 		if cb.hudHidden and cb.hudHidden() then table.insert(ctxItems, hud) else hud.b.Visible = false end
@@ -182,6 +196,16 @@ buildCorner = function(gui, cb)
 	open.b.Activated:Connect(function() isOpen = not isOpen; ctl.layout() end)
 	settings.b.Activated:Connect(function() isOpen = false; ctl.layout(); cb.openSettings() end)
 	codes.b.Activated:Connect(function() isOpen = false; ctl.layout(); if cb.openCodes then cb.openCodes() end end)
+	news.b.Activated:Connect(function() isOpen = false; ctl.layout(); if cb.openNews then cb.openNews() end end)
+	inbox.b.Activated:Connect(function() isOpen = false; ctl.layout(); if cb.openInbox then cb.openInbox() end end)
+	local gearDot, inboxDot = dot(open.b), dot(inbox.b)
+	local unreadN = 0
+	function ctl.unreadDots()
+		for _, d in { gearDot, inboxDot } do d.N.Text = unreadN > 9 and "9+" or tostring(unreadN) end
+		gearDot.Visible = unreadN > 0 and not isOpen
+		inboxDot.Visible = unreadN > 0 and isOpen
+	end
+	function ctl.setUnread(n) unreadN = n; ctl.unreadDots() end
 	list.b.Activated:Connect(function() cb.openList() end)
 	hud.b.Activated:Connect(function() if cb.showHud then cb.showHud() end end)
 	leave.b.Activated:Connect(function() if cb.leave then cb.leave() end end)
@@ -189,23 +213,15 @@ buildCorner = function(gui, cb)
 	return ctl
 end
 
+local NotifyRef -- UIKit.Notify once loaded (the corner's Inbox / News)
 function LobbyHud.Start()
 	-- (2026-10-18) RIVALS' notification banner + Inbox, and the top-right Inbox / News / Settings buttons with tooltips
 	task.spawn(function()
 		local okN, Notify = pcall(require, UIKit:WaitForChild("Notify", 10))
 		if not okN or not Notify then return end
 		Notify.Hook()
-		local LobbyUI = shared.Get and shared.Get("LobbyUIController")
-		local top = Notify.MountTopRight({
-			{ "settings", "Change your crosshair & hotkeys", function() if LobbyUI then LobbyUI.Open("Settings") end end },
-			{ "news", "Read the latest news", function() Notify.OpenNews() end },
-			{ "inbox", "View your recent notifications", function() Notify.OpenInbox() end },
-		})
-		-- the buttons follow the lobby HUD (gone under menus, cards and during matches)
-		game:GetService("RunService").Heartbeat:Connect(function()
-			local hud = player.PlayerGui:FindFirstChild("LobbyHud")
-			top.Enabled = hud ~= nil and hud.Enabled and not Notify.InboxOpen()
-		end)
+		-- Inbox / News live in the corner gear (buildCorner); it shows the unread count
+		NotifyRef = Notify
 	end)
 	PseudoLobby.Guard() -- match places: the lobby GUIs stay off during a (rematch) game
 	PseudoLobby.WaitMap() -- match places: built once the after-match lobby map is out (UIKit.PseudoLobby hides it during a match)
@@ -637,6 +653,8 @@ function LobbyHud.Start()
 	corner = buildCorner(gui, {
 		openSettings = function() if LobbyUI then LobbyUI.Open("Settings") end end,
 		openCodes = function() if LobbyUI then LobbyUI.Open("Codes") end end,
+		openNews = function() if NotifyRef then NotifyRef.OpenNews() end end,
+		openInbox = function() if NotifyRef then NotifyRef.OpenInbox() end end,
 		openList = function() setList(true) end,
 		listShown = function() return lbOn end,
 		hudHidden = function() return hudHidden and hudHidden() end,
@@ -652,6 +670,12 @@ function LobbyHud.Start()
 			if ev then ev:Fire() end
 		end,
 	})
+	-- the corner's unread count follows UIKit.Notify (loaded in a task at the top of Start)
+	task.spawn(function()
+		local t0 = os.clock()
+		while not NotifyRef and os.clock() - t0 < 30 do task.wait(0.2) end
+		if NotifyRef and corner.setUnread then NotifyRef.OnUnread(corner.setUnread) end
+	end)
 	local function bound(action, fallback)
 		local name = player:GetAttribute("Bind_" .. action)
 		local ok, kc = pcall(function() return name and Enum.KeyCode[name] end)

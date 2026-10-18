@@ -331,6 +331,9 @@ function Notify.MountTopRight(buttons)
 	return gui
 end
 
+-- the unread count for a badge somewhere else (the lobby's corner gear): fn(n) now and on every change
+function Notify.OnUnread(fn) onUnread = fn; fn(unread) end
+
 ---------------------------------------------------------------------------------------------------- server hook
 local hooked = false
 function Notify.Hook()
