@@ -220,3 +220,14 @@ himself; we never publish.
 - Two monitors now: the Claude app covers the right one and computer-use captures showed Studio under it while input went to
   Claude (a few clicks, Escape, Alt+F, Alt+Shift+P; nothing typed). Fix: `tools/bring_primary.ps1 <title>` moves the Studio
   window and its popups (the permission prompt opens on the right monitor) onto the primary, then verify with a real capture.
+
+## Live port 16: RIVALS round end, Switch Weapons, 1:1 spectate, notifications, party Whoops (2026-10-18, lead; Edward: "go")
+- Working copies saved (lobby 2b73448 incl. the UI's 0b85ff8; match f02eb8f). Published, each retitled after Grant Permissions and
+  Publish: tacticals (lobby), Tutorial, Matchmaking, Ranked. Matchmaking / Ranked: split_build, then `deploy_ui.py --matchmaking|
+  --ranked` (56 files + 15 [SET]), checked career / pseudo lobby / postmatch / preload / CamSync / RichNotify / streak.
+- Carries (lead): Switch Weapons (Pick in RoundEnd / Countdown), WinStreak, FindMatch party refusals, CamSync relay + Watched,
+  RichNotify (Task Completed / Item Unlocked / Code Redeemed / Level Up / Rank Up). (UI): round end / killer card / hit vignette /
+  switch picker, party crown + Whoops, Notify banner + Inbox + News, spectate camera client, ScopeController, silhouette icons,
+  rank divisions, streak flame, RIVALS top-right corner.
+- Publish note: twice the File-menu click and the Publish As click in one batch missed (menu not open yet); one step at a time
+  with a screenshot between works. The stray clicks only selected parts / moved the editor camera.
