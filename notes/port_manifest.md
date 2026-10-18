@@ -237,3 +237,8 @@ himself; we never publish.
   retitled after Grant: tacticals (lobby), Tutorial, Matchmaking, Ranked; Matchmaking / Ranked with deploy_ui --matchmaking|--ranked
   and the usual checks. New tools/port_prep.sh does open / split_build / deploy / verify / save / bring-to-primary per place.
 - Publish note: click the Studio title bar before File (the first click into a fresh window only focuses it).
+
+## Live port 18: aim assist v2, no aiming while reloading (2026-10-18, lead; Edward AFK: "when you are done you are free to publish the port")
+- Both copies saved (a46fec5: lead aff42ae aim assist v2 + command; UI 9397c78 + 83d2778 no ADS while reloading). Published, each retitled after
+  Grant: tacticals (lobby; Roblox answered 'server busy, retrying' once, a second Grant went through), Tutorial, Matchmaking, Ranked
+  (port_prep.sh: split_build, deploy_ui --matchmaking|--ranked, checks).
