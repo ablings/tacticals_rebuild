@@ -13,6 +13,7 @@ local RunService = game:GetService("RunService")
 local Config = require(ReplicatedStorage.Modules.Shared.Config.LobbyConfig)
 local PlayerStore = require(ServerScriptService.Data.PlayerStore)
 local Remotes = require(ServerScriptService.Lobby.LobbyRemotes)
+local RN = require(ServerScriptService.Shared.RichNotify) -- [NOTIFY]
 
 local LobbyManager = {}
 
@@ -74,6 +75,7 @@ Remotes.Handlers.BuyItem = function(player, itemId)
 		return result(false, "Not enough scissors")
 	end
 	PlayerStore.Grant(player, itemId)
+	RN.Item(player, itemId) -- [NOTIFY]
 	return result(true, `{item.Name} unlocked`)
 end
 
@@ -93,7 +95,9 @@ Remotes.Handlers.BuyBundle = function(player, bundleId)
 		return result(false, "Not enough scissors")
 	end
 	for _, id in bundle.Items do
+		local had = PlayerStore.Owns(player, id)
 		PlayerStore.Grant(player, id)
+		if not had then RN.Item(player, id) end -- [NOTIFY]
 	end
 	return result(true, `{bundle.Name} unlocked`)
 end
@@ -163,6 +167,7 @@ Remotes.Handlers.ClaimQuest = function(player, scope, index)
 	local reward = math.floor(def.Reward * creditMultiplier(player) + 0.5)
 	PlayerStore.Set(player, { "Quests", scope, "List", index, "Claimed" }, true)
 	PlayerStore.Increment(player, { "Credits" }, reward)
+	RN.Send(player, "Task Completed", ("You've earned x%d Scissors!"):format(reward), { kind = "Scissors", count = reward }) -- [NOTIFY]
 	return result(true, `+{reward} scissors`)
 end
 
@@ -182,7 +187,9 @@ local function grantProduct(player: Player, product)
 	end
 
 	for _, id in product.Items or {} do
+		local had = PlayerStore.Owns(player, id)
 		PlayerStore.Grant(player, id)
+		if not had then RN.Item(player, id) end -- [NOTIFY]
 	end
 	Remotes.Notify(player, `{product.Name} purchased! Thanks for the support`, "good")
 end
@@ -330,6 +337,8 @@ Remotes.Handlers.RedeemCode = function(player, code)
 			table.insert(parts, Config.Items[id].Name)
 		end
 	end
+	RN.Send(player, "Code Redeemed", table.concat(parts, " + "), (def.Credits and def.Credits > 0) and { kind = "Scissors", count = def.Credits } or nil) -- [NOTIFY]
+	for _, id in def.Items or {} do if Config.Items[id] then RN.Item(player, id) end end -- [NOTIFY]
 	return result(true, `Code redeemed! {table.concat(parts, " + ")}`)
 end
 
