@@ -205,3 +205,8 @@ himself; we never publish.
   / a player gone, To Hub, Play Again with hub AutoQueue), the RIVALS result screen (ranked rank page, ELO pill, tier bar),
   the post-match UI, and the fix for the live v10 tutorial that never auto-started (half-applied clientLoaded edit).
 - Ran clean this time with Edward off the PC (Discord was on top once before Ranked; refocused Studio, checked by screenshot).
+
+## Next port (15) checklist: after-match lobby
+- Matchmaking / Ranked copies are made from match_place_ref (already has the map, server systems, hooks, assets, and the UI
+  session's client). After `split_build place <id> <Kind>`, also run `python ui/deploy_ui.py <sid> --matchmaking` / `--ranked`
+  (UI session's match deploy), then save and publish. Lobby: Tacticals_rebuild has fix/party_regroup.lua + the UI's Kit fix c040abb.
