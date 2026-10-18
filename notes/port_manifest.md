@@ -210,3 +210,13 @@ himself; we never publish.
 - Matchmaking / Ranked copies are made from match_place_ref (already has the map, server systems, hooks, assets, and the UI
   session's client). After `split_build place <id> <Kind>`, also run `python ui/deploy_ui.py <sid> --matchmaking` / `--ranked`
   (UI session's match deploy), then save and publish. Lobby: Tacticals_rebuild has fix/party_regroup.lua + the UI's Kit fix c040abb.
+
+## Live port 15: after-match lobby, career stats, Kit statistics (2026-10-18 13:43-14:02, lead; Edward: "publish port 15")
+- Both working copies saved 13:43 (UI d6fcf9b Kit Statistics + Duel History, 6dd04b6 RoomFX shift, c040abb Kit icon fix; lead
+  after-match lobby phase 2, career stats e329354, audio preload fix 61a1a78). Published, each window retitled to the place name
+  after Grant Permissions and Publish: tacticals (lobby), Tutorial, Matchmaking, Ranked. Matchmaking / Ranked: split_build, then
+  the UI's `deploy_ui.py <sid> --matchmaking|--ranked`, checked (career / pseudo lobby / postmatch / preload fix / PseudoLobbyMap
+  false / SettingsApply) before saving. Versions not read back from Creator Hub yet.
+- Two monitors now: the Claude app covers the right one and computer-use captures showed Studio under it while input went to
+  Claude (a few clicks, Escape, Alt+F, Alt+Shift+P; nothing typed). Fix: `tools/bring_primary.ps1 <title>` moves the Studio
+  window and its popups (the permission prompt opens on the right monitor) onto the primary, then verify with a real capture.
