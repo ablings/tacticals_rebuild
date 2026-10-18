@@ -456,21 +456,38 @@ local leaveB = bigButton("Leave", "Leave", nil, UDim2.fromScale(0.863, 0.99))
 local againB = bigButton("PlayAgain", "Play Again", nil, UDim2.fromScale(0.863, 0.903))
 local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UDim2.fromScale(0.863, 0.816))
 local rematchVoted = false
-leaveB.Activated:Connect(function() send("Leave"); rgui.Enabled = false; results.Visible = false; if resultBackdrop then resultBackdrop(false) end end)
+local function postMatch() return st("PostMatch") == true or player:GetAttribute("InPseudoLobby") == true end
+leaveB.Activated:Connect(function()
+	send(postMatch() and "ToHub" or "Leave") -- (the Tacticals session's post-match phase: Leave takes you to the hub)
+	rgui.Enabled = false; results.Visible = false
+	if resultBackdrop then resultBackdrop(false) end
+end)
 againB.Activated:Connect(function() send("PlayAgain"); againB:FindFirstChildOfClass("TextLabel").Text = "Searching..." end)
 rematchB.Activated:Connect(function()
 	if st("RematchAllowed") == false then return end
-	rematchVoted = not rematchVoted
-	send("Rematch", rematchVoted)
+	send("Rematch") -- toggles your vote on the server (player attribute RematchVote shows it)
 end)
-local function refreshRematch()
+-- one look for a Rematch button: votes "n/needed", your own vote lit olive, "Starting in N" once everyone's in,
+-- greyed "Unavailable" when the series is over (a side has 2 wins, 3 games played, or someone left)
+local function styleRematch(btn, title, sub)
 	local allowed = st("RematchAllowed") ~= false and st("RematchNeeded") ~= nil
-	rematchB.Active = allowed
-	rematchB.BackgroundTransparency = allowed and 0 or 0.6
-	rematchT.TextTransparency = allowed and 0 or 0.6
-	rematchSub.TextTransparency = allowed and 0 or 0.6
-	rematchSub.Text = allowed and string.format("%d/%d", st("RematchVotes") or 0, st("RematchNeeded") or 2) or tostring(st("RematchReason") or "Unavailable")
+	local voted = player:GetAttribute("RematchVote") == true
+	btn.Active = allowed
+	btn.BackgroundTransparency = allowed and 0 or 0.6
+	title.TextTransparency = allowed and 0 or 0.6
+	sub.TextTransparency = allowed and 0 or 0.6
+	local stroke = btn:FindFirstChildOfClass("UIStroke")
+	if stroke then stroke.Color = (allowed and voted) and OLIVE_HI or Color3.fromRGB(236, 232, 218) end
+	local startsAt = st("RematchStartsAt")
+	if not allowed then
+		sub.Text = tostring(st("RematchReason") or "Unavailable")
+	elseif typeof(startsAt) == "number" and startsAt > workspace:GetServerTimeNow() then
+		sub.Text = "Starting in " .. math.ceil(startsAt - workspace:GetServerTimeNow())
+	else
+		sub.Text = string.format("%d/%d", st("RematchVotes") or 0, st("RematchNeeded") or 2) .. (voted and "  ·  voted" or "")
+	end
 end
+local function refreshRematch() styleRematch(rematchB, rematchT, rematchSub) end
 
 local lastSum
 local function showRankPage(sum)
@@ -549,8 +566,12 @@ backB.Activated:Connect(function()
 		rankPage.Visible = false
 		results.Visible = true
 		backB.Visible = lastSum ~= nil and lastSum.delta ~= nil -- from the summary, Back returns to the rank page
-	elseif lastSum then
+	elseif lastSum and lastSum.delta ~= nil then
 		showRankPage(lastSum)
+	elseif postMatch() then
+		-- back into the pseudo lobby: the results go, the corner panel keeps To Hub / Play Again / Rematch
+		rgui.Enabled = false; results.Visible = false
+		if resultBackdrop then resultBackdrop(false) end
 	end
 end)
 -- RIVALS blurs the world and drops the gameplay HUD behind the result screen; both come back when it closes
@@ -578,13 +599,45 @@ local function showResultScreen(sum)
 	againB:FindFirstChildOfClass("TextLabel").Text = "Play Again"
 	rgui.Enabled = true
 	refreshRematch()
-	if sum.delta ~= nil then showRankPage(sum) else rankPage.Visible = false; backB.Visible = false end
+	if sum.delta ~= nil then showRankPage(sum) else rankPage.Visible = false; backB.Visible = postMatch() end
 end
+
+---------------------------------------------------------------------------------------------------- pseudo-lobby panel
+-- (2026-10-18, Edward) after the match the server keeps everyone in a lobby copy (PostMatch). Bottom right, always there
+-- while you walk around: To Hub, Play Again, Rematch (votes / countdown / Unavailable). Hidden while the result screen is up.
+local pgui = new("ScreenGui", { Name = "PostMatchPanel", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 9, Enabled = false, Parent = player:WaitForChild("PlayerGui") })
+local pcanvas = new("Frame", { Name = "Canvas", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), Parent = pgui },
+	{ new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
+local function panelButton(name, text, sub, y)
+	local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromScale(0.992, y), Size = UDim2.fromScale(0.118, 0.066),
+		BackgroundColor3 = WHITE, Parent = pcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.12, 0) }),
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(150, 156, 140), Color3.fromRGB(16, 18, 15)) }),
+		new("UIStroke", { Color = Color3.fromRGB(236, 232, 218), Thickness = 2.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	local t = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.08, sub and 0.1 or 0.18),
+		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
+	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.15, 0.62),
+		Size = UDim2.fromScale(0.7, 0.26), Parent = b }) or nil
+	local sc = new("UIScale", { Parent = b })
+	b.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1.04 }):Play() end)
+	b.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1 }):Play() end)
+	return b, t, st2
+end
+local hubP = panelButton("ToHub", "To Hub", nil, 0.985)
+local againP, againPT = panelButton("PlayAgain", "Play Again", nil, 0.91)
+local rematchP, rematchPT, rematchPS = panelButton("Rematch", "Rematch", "0/2", 0.835)
+hubP.Activated:Connect(function() send("ToHub") end)
+againP.Activated:Connect(function() send("PlayAgain"); againPT.Text = "Searching..." end)
+rematchP.Activated:Connect(function() if st("RematchAllowed") ~= false then send("Rematch") end end)
+RunService.Heartbeat:Connect(function()
+	local on = postMatch() and not rgui.Enabled
+	if on ~= pgui.Enabled then pgui.Enabled = on; if on then againPT.Text = "Play Again" end end
+	if on then styleRematch(rematchP, rematchPT, rematchPS) end
+end)
 RunService.Heartbeat:Connect(function()
 	if rgui.Enabled then
 		refreshRematch()
 		rtint.Visible = rankPage.Visible -- the summary card (another ScreenGui, under this one) mustn't be dimmed
-		if not inMatch() then rgui.Enabled = false; resultBackdrop(false) end
+		if not inMatch() and not postMatch() then rgui.Enabled = false; resultBackdrop(false) end
 	end
 end)
 showResultScreenRef = showResultScreen
@@ -653,7 +706,7 @@ RunService.RenderStepped:Connect(function()
 		for _, c in feed:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
 		tally = {}
 	end
-	if not inMatch() then results.Visible = false end
+	if not inMatch() and not postMatch() then results.Visible = false end -- (the post-match lobby keeps it)
 	gui.Enabled = playing or results.Visible
 	-- the victory screen owns the screen while it's up (its round banner and the feed drew over VICTORY / DEFEAT)
 	local vs = player.PlayerGui:FindFirstChild("VictoryScreen")
