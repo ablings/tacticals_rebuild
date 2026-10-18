@@ -186,3 +186,12 @@ himself; we never publish.
 - Carries: parties (PartyService / LobbyParty / [PARTY] matchmaking + the UI's party screen), aim assist (AimAssist module,
   camera hook, right-stick look, Aim Assist setting, ;aimassist / ;aimnpc), smoke + wall + dead checks, scoreboard, controller
   menus, UI sounds, touch icons.
+
+## Live port 13: tutorial load gate, loadout picker, dock bubbles (2026-10-17 20:51-22:03, lead; Edward: "go publish port 13")
+- Both working copies saved 20:51 (UI 6a8af2d loadout pick + dock bubbles; tutorial_wait_loaded fix). Published, each confirmed
+  (Activity History / Creator Hub version history, published tick): tacticals (lobby) **v287**, Tutorial **v10**,
+  Matchmaking **v10**, Ranked **v10**.
+- Notes: a v285 at 18:04 on the lobby was not published by this session (likely the 17:52 stray upload); v287 supersedes it.
+  The publish was interrupted three times (Discord on top of Studio taking clicks, Valorant's Vanguard blocking simulated
+  input with UIPI, a GPU "DXGI swapchain" error after the Tutorial publish). Lesson: only drive Publish As when Edward is off
+  the PC; check the foreground with a screenshot right before every click batch, not just the window title.
