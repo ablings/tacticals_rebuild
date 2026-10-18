@@ -92,7 +92,7 @@ end
 local function strip(player: Player)
 	for _, container in { player.Character, player:FindFirstChildOfClass("Backpack") } do
 		for _, t in (container and container:GetChildren() or {}) do
-			if t:IsA("Tool") then t:Destroy() end
+			if t:IsA("Tool") then t:SetAttribute("KitRemoved", true); t:Destroy() end -- [KITGUARD] on purpose
 		end
 	end
 end

@@ -182,13 +182,29 @@ local function startSlide()
 	game:GetService("Debris"):AddItem(scrape, 2)
 end
 
+-- [SLIDE] Roblox's keyboard controller zeroes its key state while it's disabled (the slide disables it), so keys still held
+-- when it comes back don't move you until they're pressed again. Re-read them into it.
+local function resyncHeldMoveKeys(c)
+	local kb = c and c.activeController
+	if not (kb and kb.forwardValue ~= nil and kb.UpdateMovement) then return end
+	local function down(...)
+		for _, k in { ... } do if UserInputService:IsKeyDown(k) then return true end end
+		return false
+	end
+	kb.forwardValue = down(Enum.KeyCode.W, Enum.KeyCode.Up) and -1 or 0
+	kb.backwardValue = down(Enum.KeyCode.S, Enum.KeyCode.Down) and 1 or 0
+	kb.leftValue = down(Enum.KeyCode.A) and -1 or 0
+	kb.rightValue = down(Enum.KeyCode.D) and 1 or 0
+	pcall(kb.UpdateMovement, kb, Enum.UserInputState.Begin)
+end
+
 local lastSlideEnd = 0
 local function endSlide()
 	lastSlideEnd = os.clock()
 	local wantCover = sliding ~= nil and sliding.wantCover == true
 	sliding = nil
 	local c = getControls()
-	if c then c:Enable() end
+	if c then c:Enable(); resyncHeldMoveKeys(c) end
 	if humanoid then
 		humanoid.AutoRotate = true
 		humanoid:Move(Vector3.zero)
@@ -201,9 +217,17 @@ local function endSlide()
 		localPlayer:SetAttribute("SlideCoverAt", os.clock())
 		return
 	end
-	-- a plain slide: you come back up on your feet at walking pace
+	-- a plain slide: you come back up on your feet; still holding Sprint and a movement key = straight on into a sprint
+	-- (Edward 2026-10-18: "if i am holding shift and a movement key and the slide has ended it should continue into a sprint"),
+	-- else walking pace
 	setCrouched(false)
-	currentSpeed = Config.Speeds.Walk
+	local moveHeld = humanoid ~= nil and humanoid.MoveDirection.Magnitude > 0.1
+	local c2 = getControls()
+	local kb = c2 and c2.activeController
+	if kb and kb.moveVector and kb.moveVector.Magnitude > 0.1 then moveHeld = true end
+	local keepRunning = moveHeld and wantsSprint() and not sprintBlocked and not exhausted and stamina > 0
+		and UserInputService:GetFocusedTextBox() == nil
+	currentSpeed = keepRunning and Config.Speeds.Sprint or Config.Speeds.Walk
 end
 
 -- A slide finished within the last `window` seconds (Q right after it still counts as sliding in)
