@@ -16,6 +16,8 @@ local function sync(player)
 	if player:GetAttribute("Level") ~= level then player:SetAttribute("Level", level) end
 	local wins = data.Stats and data.Stats.Wins or 0
 	if player:GetAttribute("Wins") ~= wins then player:SetAttribute("Wins", wins) end
+	local streak = tonumber(data.WinStreak) or 0 -- [STREAK] the killer card's flame badge
+	if player:GetAttribute("WinStreak") ~= streak then player:SetAttribute("WinStreak", streak) end
 	-- the profile card (UIKit.PlayerCards): matches / kills / headshots, for the win rate and headshot %
 	local st = type(data.Stats) == "table" and data.Stats or {}
 	for attr, key in { StatMatches = "MatchesPlayed", StatKills = "Kills", StatHeadshots = "Headshots" } do

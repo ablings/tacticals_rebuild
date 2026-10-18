@@ -25,6 +25,7 @@ local module = {
 	RedeemedCodes = {},         -- [CODE] = os.time()
 	-- [CAREER] RIVALS weapon Statistics + Career (written by the match places' RoundManager, fix/career_stats.lua)
 	WeaponStats = {},           -- [itemId] = { Kills, Headshots, Deaths, Matches, Wins }
+	WinStreak = 0,              -- [STREAK] consecutive match wins (fix/switch_streak.lua)
 	MatchHistory = {},          -- newest first, max 20: { t, mode, ranked, map, won, score = {mine, theirs}, kills, deaths, opponents, eloDelta, loadout }
 
 	-- // Version tracking
