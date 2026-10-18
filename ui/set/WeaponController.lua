@@ -216,6 +216,11 @@ local function computeShot(config, spreadDegrees: number?)
 end
 
 -- // Actions
+-- (2026-10-18, Edward: "you can not aim in while reloading") CameraController.IsAiming asks this
+function controller.IsReloading(): boolean
+	return isReloading()
+end
+
 function controller.Reload()
 	if not equipped or not isAlive() or isReloading() then return end
 	local config = equipped.config

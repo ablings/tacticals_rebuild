@@ -331,7 +331,7 @@ local function update(dt: number)
 		end
 		-- [SET] Video > Camera: Sensitivity, While Aiming, While Scoped (50% = the tuned default)
 		local sensitivity = math.rad(Config.Sensitivity) * setting("Sensitivity", 100) / 100
-			* (state.aimHeld and Config.AimSensitivityMultiplier * setting("WhileAiming", 50) / 50 or 1)
+			* (controller.IsAiming() and Config.AimSensitivityMultiplier * setting("WhileAiming", 50) / 50 or 1)
 		local scopeNow = ScopeRef()
 		if scopeNow and scopeNow.UsesScope() then
 			sensitivity *= lerp(1, scopeNow.FOV() / Config.Aim.FOV, scopeNow.Zoom()) -- through a scope: slower look to match the zoom
@@ -346,7 +346,7 @@ local function update(dt: number)
 		-- [AIM] friction near a target + a small pull toward it (the module returns 1 / 0 / 0 when it doesn't apply)
 		local aa
 		if AimAssist and isAlive() then
-			local ok, r = pcall(AimAssist.Step, dt, camera.CFrame, { aiming = state.aimHeld == true, firing = os.clock() - lastFire < 0.3, looking = delta.Magnitude > 0.01 })
+			local ok, r = pcall(AimAssist.Step, dt, camera.CFrame, { aiming = controller.IsAiming(), firing = os.clock() - lastFire < 0.3, looking = delta.Magnitude > 0.01 })
 			if ok and type(r) == "table" then aa = r; sensitivity *= (tonumber(r.sensitivity) or 1) end
 		end
 
@@ -712,6 +712,10 @@ end
 -- Holding aim doesn't aim in while cover blocks it (tall cover away from an edge, mid vault/dash)
 function controller.IsAiming(): boolean
 	if not (state.aimHeld and isAlive()) then return false end
+	-- (2026-10-18, Edward) no aiming in while reloading: a reload drops you out of ADS, and you're back in when it
+	-- ends if aim is still held (WeaponController's reload state: the server's Reloading flag + its own prediction)
+	local weapon = shared.Get and shared.Get("WeaponController")
+	if weapon and weapon.IsReloading and weapon.IsReloading() then return false end
 	local cover = CoverControllerRef()
 	return not (cover and cover.BlocksAim())
 end
