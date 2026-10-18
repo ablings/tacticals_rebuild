@@ -7,6 +7,7 @@
 --   Data.MatchHistory = newest first, max 20: { t, mode, ranked, map, won, draw?, forfeit?, score = {mine, theirs}, kills, deaths,
 --     opponents = { {id, name} }, eloDelta?, loadout = {Weapon, Melee, Gadget} }
 -- Counts: casual + ranked matches that pay (award's rules). Bot test / admin-ended matches don't; the tutorial never gets here.
+-- The hub's pad duels (LobbyDuelManager) count too, every one (also inside the pair reward cooldown); ranked false, no eloDelta.
 -- Studio check: ReplicatedStorage attribute StudioCareerTest = true also records bot matches (Studio only).
 -- Template keys (WeaponStats = {}, MatchHistory = {}) are added to both places' DataManager.Template by this file too.
 -- Idempotent; UNDO swaps back.
@@ -18,9 +19,14 @@ local log = {}
 local HELPERS = [==[
 -- [CAREER] weapon stats + match history (fix/career_stats.lua)
 local CAREER_GADGET_KINDS = { Gadget = true, Grenade = true, Frag = true, Molotov = true, Flash = true, Smoke = true }
+local function careerMember(match, uid)
+	if match.byUser then return match.byUser[uid] end -- match place
+	for _, list in match.teams do for _, m in list do if m.userId == uid then return m end end end -- hub duels
+	return nil
+end
 local function careerKill(match, info)
-	local killer = match.byUser[info.killer]
-	local victim = match.byUser[info.victim]
+	local killer = careerMember(match, info.killer)
+	local victim = careerMember(match, info.victim)
 	if not killer or killer.isBot or not victim or killer == victim or killer.team == victim.team then return end
 	local slot = info.kind == "Gun" and "KitWeapon" or info.kind == "Melee" and "KitMelee"
 		or (CAREER_GADGET_KINDS[info.kind] and "KitGadget") or nil
@@ -39,7 +45,7 @@ local function careerRecord(match, m, side: string, summary)
 	local okPS, PS = pcall(function() return require(ServerScriptService.Data.PlayerStore) end)
 	local data, replica = nil, nil
 	if okPS and PS then data, replica = PS.Get(player) end
-	data = data or profileData(player)
+	if not data and profileData then data = profileData(player) end
 	if type(data) ~= "table" then return end
 	local function set(path, value)
 		if replica then replica:SetValue(path, value) return end
@@ -111,7 +117,23 @@ local RM_EDITS = {
 			.. "\t\tif not okC then warn(\"[RoundManager] [CAREER] \" .. tostring(errC)) end\n\tend\n" },
 }
 
-local TPL_OLD = "\tRedeemedCodes = {},         -- [CODE] = os.time()\n"
+-- the hub's pad duels (LobbyDuelManager; UI session: "a hub pad duel is the most common one"): every duel counts, also one
+-- inside the pair reward cooldown (that only stops XP / scissors farming); ranked false, no eloDelta; test-bot duels don't
+local LDM_EDITS = {
+	{ "local function award(match, m, side: string, winner: string?, forfeit: boolean)\n",
+		HELPERS .. "local function award(match, m, side: string, winner: string?, forfeit: boolean)\n" },
+	{ "\t\tonKill = function(info) fireFlow(match, \"Kill\", info) end,\n",
+		"\t\tonKill = function(info) fireFlow(match, \"Kill\", info); pcall(careerKill, match, info) end, -- " .. TAG .. "\n" },
+	{ "\t\tsummary.Saved = true\n\tend\n\tresultsEv:FireClient(p, summary)\nend\n",
+		"\t\tsummary.Saved = true\n\tend\n"
+			.. "\tif not match.hasBot or (IS_STUDIO and ReplicatedStorage:GetAttribute(\"StudioCareerTest\")) then -- " .. TAG .. "\n"
+			.. "\t\tlocal okC, errC = pcall(careerRecord, match, m, side, summary)\n"
+			.. "\t\tif not okC then warn(\"[LobbyDuelManager] [CAREER] \" .. tostring(errC)) end\n"
+			.. "\tend\n"
+			.. "\tresultsEv:FireClient(p, summary)\nend\n" },
+}
+
+local TPL_OLD ="\tRedeemedCodes = {},         -- [CODE] = os.time()\n"
 local TPL_NEW = TPL_OLD
 	.. "\t-- " .. TAG .. " RIVALS weapon Statistics + Career (written by the match places' RoundManager, fix/career_stats.lua)\n"
 	.. "\tWeaponStats = {},           -- [itemId] = { Kills, Headshots, Deaths, Matches, Wins }\n"
@@ -150,6 +172,12 @@ if not isLobby then
 		for i, e in ipairs(RM_EDITS) do assert(RM.Source:find(e[2], 1, true) or RM.Source:find(e[1], 1, true), "RoundManager edit " .. i .. " not found") end
 	end
 	swap(RM, RM_EDITS, "RoundManager")
+else
+	local LDM = SSS.ServerScripts["[Server] Init"].GameManager.Managers.LobbyDuelManager
+	if not UNDO then
+		for i, e in ipairs(LDM_EDITS) do assert(LDM.Source:find(e[2], 1, true) or LDM.Source:find(e[1], 1, true), "LobbyDuelManager edit " .. i .. " not found") end
+	end
+	swap(LDM, LDM_EDITS, "LobbyDuelManager")
 end
 swap(tpl, { { TPL_OLD, TPL_NEW } }, "Template")
 return (isLobby and "lobby: " or "match: ") .. table.concat(log, ", ")
