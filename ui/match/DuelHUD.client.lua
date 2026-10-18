@@ -339,6 +339,8 @@ local leave = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = f
 	BackgroundColor3 = WHITE, Parent = results }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
 label(leave, "Continue", FX, 40, 0, 0, 250, 76, WHITE, nil, 5)
 leave.Activated:Connect(function() send("Leave"); results.Visible = false end)
+leave.Visible = false -- (RIVALS) the result screen's Rematch / Play Again / Leave buttons replace Continue
+local showResultScreenRef -- the RIVALS result screen (defined just below)
 local function showResults(sum)
 	sum = sum or {}
 	resTitle.Text = sum.Draw and "DRAW" or (sum.Won and "VICTORY" or "DEFEAT")
@@ -376,7 +378,217 @@ local function showResults(sum)
 	end
 	if sum.TestMatch or sum.Aborted then resRewards.Text = sum.Aborted and "Match ended early: no rewards" or "Test match: no rewards" end
 	results.Visible = true
+	if showResultScreenRef then showResultScreenRef(sum) end
 end
+---------------------------------------------------------------------------------------------------- RIVALS result screen
+-- (2026-10-18, Edward, RIVALS refs) after every ranked match: the screen blurs, your rank emblem sits in the middle with the
+-- ELO change in a pill under it ("+22" green / "-15" red), "Congratulations! You've promoted to Silver 1" over it on a
+-- promotion, and a bar under that: this tier's floor + emblem on the left, the next tier on the right, "Your ELO" counting
+-- up in the middle. A full rank change (Bronze -> Silver, not a division) swaps the emblem with a flash.
+-- Every match (ranked or not) ends with RIVALS' buttons: Back (bottom left, back to the match summary from the rank page),
+-- Rematch (votes n / needed, greyed "Unavailable" when the series is over), Play Again, Leave.
+-- Server contract (Tacticals session): MatchResults fields eloBefore / eloAfter / delta / promoted / demoted / rankBefore /
+-- rankAfter / placement / placed / placements / revealed; MatchFlow "Rematch" / "PlayAgain" / "Leave"; state attributes
+-- RematchVotes / RematchNeeded / RematchAllowed / RematchReason.
+local RankedCoreOk, RankedCore = pcall(function() return require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("RankedCore", 5)) end)
+local RankArtOk2, RankArt2 = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("RankArt", 5)) end)
+local function rankWord(name) return name and tostring(name):match("^(%a+)") or nil end
+local function emblemOf(name) return RankArtOk2 and RankArt2 and RankArt2.EMBLEM[rankWord(name) or ""] or "" end
+
+local rgui = new("ScreenGui", { Name = "MatchResult", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 15, Enabled = false, Parent = player:WaitForChild("PlayerGui") })
+local rtint = new("Frame", { Name = "Tint", BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), Parent = rgui })
+local rcanvas = new("Frame", { Name = "Canvas", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), Parent = rgui },
+	{ new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
+local rankPage = new("Frame", { Name = "RankPage", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, Parent = rcanvas })
+-- promotion pill
+local promo = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.282), Size = UDim2.fromScale(0.36, 0.044), BackgroundColor3 = BLACK, Visible = false, Parent = rankPage },
+	{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+local promoT = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.04, 0.12), Size = UDim2.fromScale(0.92, 0.76), Parent = promo })
+-- emblem + delta pill
+local emblem = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.435),
+	Size = UDim2.fromScale(0.2, 0.2), SizeConstraint = Enum.SizeConstraint.RelativeYY, Parent = rankPage })
+local emblemScale = new("UIScale", { Parent = emblem })
+local glow = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxasset://textures/ui/Glow.png", ImageColor3 = Color3.fromRGB(255, 220, 140), ImageTransparency = 1,
+	AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1.8, 1.8), ZIndex = 0, Parent = emblem })
+local deltaPill = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.516), Size = UDim2.fromScale(0.105, 0.062), BackgroundColor3 = BLACK, Parent = rankPage },
+	{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+local deltaT = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FX, TextScaled = true, TextColor3 = GOOD, Position = UDim2.fromScale(0.1, 0.08), Size = UDim2.fromScale(0.8, 0.84), Parent = deltaPill })
+-- the tier bar
+local bar = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.65), Size = UDim2.fromScale(0.48, 0.075), BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, Parent = rankPage },
+	{ new("UICorner", { CornerRadius = UDim.new(0.12, 0) }) })
+local track = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(40, 40, 44), Position = UDim2.fromScale(0.08, 0.68), Size = UDim2.fromScale(0.84, 0.12), Parent = bar },
+	{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+local fill = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = OLIVE_HI, Size = UDim2.fromScale(0, 1), Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+local leftEmb = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.05, 0.5), Size = UDim2.fromScale(1.1, 1.1),
+	SizeConstraint = Enum.SizeConstraint.RelativeYY, ZIndex = 2, Parent = bar })
+local rightEmb = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.95, 0.5), Size = UDim2.fromScale(1.1, 1.1),
+	SizeConstraint = Enum.SizeConstraint.RelativeYY, ZIndex = 2, Parent = bar })
+local function barText(x, align, top, size)
+	return new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FX, TextScaled = true, TextColor3 = WHITE, TextXAlignment = align, Position = UDim2.fromScale(x, top),
+		Size = UDim2.fromScale(0.3, size), Parent = bar })
+end
+local leftFloor = barText(0.1, Enum.TextXAlignment.Left, 0.1, 0.3)
+local leftName = barText(0.1, Enum.TextXAlignment.Left, 0.38, 0.3)
+local rightFloor = barText(0.6, Enum.TextXAlignment.Right, 0.1, 0.3)
+local rightName = barText(0.6, Enum.TextXAlignment.Right, 0.38, 0.3)
+local eloCap = new("TextLabel", { BackgroundTransparency = 1, Text = "Your ELO", FontFace = FB, TextScaled = true, TextColor3 = Color3.fromRGB(205, 205, 212), Position = UDim2.fromScale(0.4, 0.04),
+	Size = UDim2.fromScale(0.2, 0.22), Parent = bar })
+local eloNum = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.4, 0.24), Size = UDim2.fromScale(0.2, 0.44), Parent = bar })
+
+-- buttons (RIVALS: dark gradient, thick white rim)
+local function bigButton(name, text, sub, pos)
+	local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0, 1), Position = pos, Size = UDim2.fromScale(0.132, 0.078),
+		BackgroundColor3 = WHITE, Parent = rcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.12, 0) }),
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(150, 156, 140), Color3.fromRGB(16, 18, 15)) }),
+		new("UIStroke", { Color = Color3.fromRGB(236, 232, 218), Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	local t = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.08, sub and 0.1 or 0.18),
+		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
+	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.2, 0.62),
+		Size = UDim2.fromScale(0.6, 0.26), Parent = b }) or nil
+	local sc = new("UIScale", { Parent = b })
+	b.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1.04 }):Play() end)
+	b.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1 }):Play() end)
+	return b, t, st2
+end
+local resultBackdrop -- (defined further down; the buttons call it)
+local backB = bigButton("Back", "Back", nil, UDim2.fromScale(0.005, 0.99))
+local leaveB = bigButton("Leave", "Leave", nil, UDim2.fromScale(0.863, 0.99))
+local againB = bigButton("PlayAgain", "Play Again", nil, UDim2.fromScale(0.863, 0.903))
+local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UDim2.fromScale(0.863, 0.816))
+local rematchVoted = false
+leaveB.Activated:Connect(function() send("Leave"); rgui.Enabled = false; results.Visible = false; if resultBackdrop then resultBackdrop(false) end end)
+againB.Activated:Connect(function() send("PlayAgain"); againB:FindFirstChildOfClass("TextLabel").Text = "Searching..." end)
+rematchB.Activated:Connect(function()
+	if st("RematchAllowed") == false then return end
+	rematchVoted = not rematchVoted
+	send("Rematch", rematchVoted)
+end)
+local function refreshRematch()
+	local allowed = st("RematchAllowed") ~= false and st("RematchNeeded") ~= nil
+	rematchB.Active = allowed
+	rematchB.BackgroundTransparency = allowed and 0 or 0.6
+	rematchT.TextTransparency = allowed and 0 or 0.6
+	rematchSub.TextTransparency = allowed and 0 or 0.6
+	rematchSub.Text = allowed and string.format("%d/%d", st("RematchVotes") or 0, st("RematchNeeded") or 2) or tostring(st("RematchReason") or "Unavailable")
+end
+
+local lastSum
+local function showRankPage(sum)
+	-- the summary card (VICTORY / DEFEAT, stats) steps back; Back brings it again
+	results.Visible = false
+	rankPage.Visible = true
+	backB.Visible = true
+	local before, after = tonumber(sum.eloBefore) or 0, tonumber(sum.eloAfter) or 0
+	local d = tonumber(sum.delta) or (after - before)
+	deltaT.Text = (d >= 0 and "+" or "") .. d
+	deltaT.TextColor3 = d >= 0 and Color3.fromRGB(80, 230, 70) or BAD
+	-- placements: no rank yet (a faded Bronze), the count in the pill
+	local placing = sum.placement and not sum.revealed
+	local infoB = RankedCoreOk and RankedCore.Info(before) or { name = sum.rankBefore, floor = before, nextFloor = before + 100, nextName = "" }
+	local infoA = RankedCoreOk and RankedCore.Info(after) or { name = sum.rankAfter, floor = after, nextFloor = after + 100, nextName = "" }
+	promo.Visible = false
+	if sum.revealed then promoT.Text = "Your rank: " .. tostring(sum.rankAfter or infoA.name); promo.Visible = true
+	elseif placing then promoT.Text = string.format("Placement match %d / %d", sum.placed or 0, sum.placements or 10); promo.Visible = true
+	elseif sum.promoted then promoT.Text = "Congratulations! You've promoted to " .. tostring(sum.rankAfter or infoA.name); promo.Visible = true
+	elseif sum.demoted then promoT.Text = "You've been demoted to " .. tostring(sum.rankAfter or infoA.name); promo.Visible = true
+	elseif sum.shieldUsed then promoT.Text = "ELO Shield used: no ELO lost"; promo.Visible = true end
+	-- emblem: the old rank's; a full rank change swaps it with a flash after the count
+	local oldRank, newRank = rankWord(sum.rankBefore or infoB.name), rankWord(sum.rankAfter or infoA.name)
+	emblem.Image = emblemOf(oldRank)
+	emblem.ImageTransparency = placing and 0.6 or 0
+	emblemScale.Scale = 0.6
+	TweenService:Create(emblemScale, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	-- the bar starts on the old tier, the number counts to the new ELO
+	local function setBar(info, elo)
+		leftEmb.Image, rightEmb.Image = emblemOf(info.name), emblemOf(info.nextName)
+		leftFloor.Text, leftName.Text = tostring(info.floor or ""), tostring(info.name or "")
+		rightFloor.Text, rightName.Text = tostring(info.nextFloor or ""), tostring(info.nextName or "")
+		local span = math.max(1, (info.nextFloor or (info.floor + 100)) - info.floor)
+		return math.clamp((elo - info.floor) / span, 0, 1)
+	end
+	bar.Visible = not placing
+	fill.Size = UDim2.fromScale(setBar(infoB, before), 1)
+	eloNum.Text = tostring(before)
+	task.spawn(function()
+		task.wait(0.5)
+		local t0, dur = os.clock(), 1.1
+		while os.clock() - t0 < dur and rankPage.Visible do
+			local k = (os.clock() - t0) / dur
+			k = 1 - (1 - k) ^ 3
+			eloNum.Text = tostring(math.floor(before + (after - before) * k + 0.5))
+			task.wait()
+		end
+		eloNum.Text = tostring(after)
+		if infoA.name ~= infoB.name then
+			-- crossed a tier: fill out (or empty) the old bar, then the new tier's
+			TweenService:Create(fill, TweenInfo.new(0.25), { Size = UDim2.fromScale(after > before and 1 or 0, 1) }):Play()
+			task.wait(0.3)
+			fill.Size = UDim2.fromScale(after > before and 0 or 1, 1)
+		end
+		TweenService:Create(fill, TweenInfo.new(0.4, Enum.EasingStyle.Quad), { Size = UDim2.fromScale(setBar(infoA, after), 1) }):Play()
+		if newRank and oldRank and newRank ~= oldRank and not placing then
+			-- a whole new rank: the emblem flashes and swaps (RIVALS)
+			TweenService:Create(emblemScale, TweenInfo.new(0.18), { Scale = 0.2 }):Play()
+			task.wait(0.18)
+			emblem.Image = emblemOf(newRank)
+			glow.ImageTransparency = 0.1
+			TweenService:Create(glow, TweenInfo.new(1.2), { ImageTransparency = 1 }):Play()
+			TweenService:Create(emblemScale, TweenInfo.new(0.45, Enum.EasingStyle.Back), { Scale = 1.15 }):Play()
+			task.wait(0.45)
+			TweenService:Create(emblemScale, TweenInfo.new(0.25), { Scale = 1 }):Play()
+			local snd = Instance.new("Sound")
+			snd.SoundId = "rbxasset://sounds/victory.wav"; snd.Volume = 0.5
+			snd.SoundGroup = game:GetService("SoundService"):FindFirstChild("Effects")
+			snd.Parent = game:GetService("SoundService"); snd:Play()
+			task.delay(3, function() snd:Destroy() end)
+		end
+	end)
+end
+backB.Activated:Connect(function()
+	if rankPage.Visible then
+		rankPage.Visible = false
+		results.Visible = true
+		backB.Visible = lastSum ~= nil and lastSum.delta ~= nil -- from the summary, Back returns to the rank page
+	elseif lastSum then
+		showRankPage(lastSum)
+	end
+end)
+-- RIVALS blurs the world and drops the gameplay HUD behind the result screen; both come back when it closes
+local rblur
+local rHidden = {}
+function resultBackdrop(on)
+	local Lighting = game:GetService("Lighting")
+	rblur = rblur or Lighting:FindFirstChild("ResultBlur") or new("BlurEffect", { Name = "ResultBlur", Size = 0, Parent = Lighting })
+	TweenService:Create(rblur, TweenInfo.new(0.3), { Size = on and 22 or 0 }):Play()
+	local pg = player.PlayerGui
+	if on then
+		for _, n in { "Hotbar", "Vitals", "HUD", "TouchControls", "TouchStick", "MainUI", "StealthUI", "RangeKitUI" } do
+			local g = pg:FindFirstChild(n)
+			if g and g:IsA("ScreenGui") and g.Enabled and rHidden[g] == nil then rHidden[g] = true; g.Enabled = false end
+		end
+	else
+		for g in rHidden do if g.Parent then g.Enabled = true end end
+		rHidden = {}
+	end
+end
+local function showResultScreen(sum)
+	lastSum = sum
+	resultBackdrop(true)
+	rematchVoted = false
+	againB:FindFirstChildOfClass("TextLabel").Text = "Play Again"
+	rgui.Enabled = true
+	refreshRematch()
+	if sum.delta ~= nil then showRankPage(sum) else rankPage.Visible = false; backB.Visible = false end
+end
+RunService.Heartbeat:Connect(function()
+	if rgui.Enabled then
+		refreshRematch()
+		rtint.Visible = rankPage.Visible -- the summary card (another ScreenGui, under this one) mustn't be dimmed
+		if not inMatch() then rgui.Enabled = false; resultBackdrop(false) end
+	end
+end)
+showResultScreenRef = showResultScreen
+
 
 toScale(canvas, Vector2.new(W, H))
 rescale()
@@ -462,7 +674,8 @@ RunService.RenderStepped:Connect(function()
 		myIds = table.find(myIds, player.UserId) and { player.UserId } or {}
 	end
 	local minimal = player:GetAttribute("Setting_GameplayHUD") == "Minimal"
-	mineBox.frame.Visible, theirBox.frame.Visible, timerBox.Visible, toWin.Visible, feed.Visible = not minimal, not minimal, not minimal, not minimal, not minimal
+	local resUp = rgui ~= nil and rgui.Enabled
+	mineBox.frame.Visible, theirBox.frame.Visible, timerBox.Visible, toWin.Visible, feed.Visible = not minimal and not resUp, not minimal and not resUp, not minimal and not resUp, not minimal and not resUp, not minimal and not resUp
 	fillBox(mineBox, myIds)
 	fillBox(theirBox, myTeam == "A" and ids.B or ids.A)
 	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0

@@ -88,6 +88,7 @@ MATCH_FILES = [
     ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),
+    ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
 ]
 MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory", "SettingsScreen")]
 # old pass-38 match HUD pieces that DuelHUD / MatchFlowUI replace (see the file)
