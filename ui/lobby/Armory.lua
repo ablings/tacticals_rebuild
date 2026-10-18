@@ -1668,6 +1668,13 @@ local function buildLeft()
 		t.MouseButton1Down:Connect(function() setTab(slot) end)
 		t.TouchTap:Connect(function() setTab(slot) end)
 	end
+	-- (2026-10-18) RIVALS' Career > Duel History, from the profile card
+	local hb = mk("TextButton", { Name = "History", AutoButtonColor = false, Text = "", BackgroundColor3 = BLACK, BackgroundTransparency = TILE_T,
+		Size = UDim2.fromOffset(132, 52), Position = UDim2.fromOffset(192, 74), ZIndex = 4, Parent = prof }, { corner(6) })
+	shade(text({ Text = "Duel History", FontFace = FONT_HEAVY, TextSize = 19, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = hb }), 1.5)
+	hb.MouseEnter:Connect(function() TweenService:Create(hb, TI, { BackgroundTransparency = 0.25 }):Play() end)
+	hb.MouseLeave:Connect(function() TweenService:Create(hb, TI, { BackgroundTransparency = TILE_T }):Play() end)
+	hb.Activated:Connect(function() Armory.ShowHistory(true) end)
 
 	-- the list: one scrolling page holding a box per slot; wider than the boxes so renders can poke out of both edges
 	listScroll = mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(LEFT_X - SCROLL_PAD, LIST_Y),
@@ -1703,12 +1710,56 @@ end
 -------------------------------------------------------------------------------
 local infoCard, levelCard, actionCard
 local ACTIONS_BOTTOM = 990
-local ACTIONS_H, LEVEL_H = 3 * 62 + 12, 172
+local ACTIONS_H, LEVEL_H = 4 * 62 + 12, 172 -- (4th row: Statistics, RIVALS)
 
 local function clearCard(c)
 	for _, ch in c:GetChildren() do
 		if not ch:IsA("UICorner") and not ch:IsA("UIPadding") then ch:Destroy() end
 	end
+end
+
+local statsCard, statsOpen = nil, false -- RIVALS' Statistics panel, beside the right column
+
+-- (2026-10-18) lifetime numbers for one item, from Data.WeaponStats[id] (the Tacticals session's PlayerStore):
+-- { Kills, Headshots, Deaths, Matches, Wins }. Until it's tracked the panel says so.
+local function pct(a, b) return b > 0 and string.format("%.1f%%", a / b * 100) or "N/A" end
+local function renderStats(id)
+	if not statsCard then return end
+	clearCard(statsCard)
+	statsCard.Visible = statsOpen and id ~= nil
+	if not statsCard.Visible then return end
+	local item = ctx.Config.Items[id]
+	local data = ctx.getData()
+	local ws = data and data.WeaponStats and data.WeaponStats[id]
+	local ic = mk("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(14, 12), Size = UDim2.fromOffset(30, 30), ZIndex = 5, Parent = statsCard })
+	glyph(ic, "bars", 30, COL.Text, 5)
+	shade(text({ Text = "Statistics", FontFace = FONT_HEAVY, TextSize = 24, Position = UDim2.fromOffset(54, 10), Size = UDim2.fromOffset(CARD_W - 70, 26), ZIndex = 5, Parent = statsCard }), 1.5)
+	text({ Text = item and item.Name or id, FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, Position = UDim2.fromOffset(54, 34), Size = UDim2.fromOffset(CARD_W - 70, 16), ZIndex = 5, Parent = statsCard })
+	local y = 62
+	local function line(title, value, subs)
+		shade(text({ Text = title, FontFace = FONT_HEAVY, TextSize = 19, Position = UDim2.fromOffset(16, y), Size = UDim2.fromOffset(170, 24), ZIndex = 5, Parent = statsCard }), 1.2)
+		shade(text({ Text = value, FontFace = FONT_HEAVY, TextSize = 21, TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromOffset(CARD_W - 156, y), Size = UDim2.fromOffset(140, 24), ZIndex = 5, Parent = statsCard }), 1.2)
+		y += 25
+		for _, sub in subs do
+			text({ Text = sub[1], FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, Position = UDim2.fromOffset(34, y), Size = UDim2.fromOffset(170, 19), ZIndex = 5, Parent = statsCard })
+			text({ Text = sub[2], FontFace = FONT, TextSize = 16, TextColor3 = COL.Sub, TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromOffset(CARD_W - 156, y), Size = UDim2.fromOffset(140, 19), ZIndex = 5, Parent = statsCard })
+			y += 19
+		end
+		y += 8
+	end
+	if not ws then
+		text({ Text = "Nothing tracked yet", FontFace = FONT_HEAVY, TextSize = 19, Position = UDim2.fromOffset(16, y), Size = UDim2.fromOffset(CARD_W - 32, 24), ZIndex = 5, Parent = statsCard })
+		text({ Text = "Play a match with it in your loadout to start its lifetime stats.", FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, TextWrapped = true,
+			Position = UDim2.fromOffset(16, y + 26), Size = UDim2.fromOffset(CARD_W - 32, 40), TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 5, Parent = statsCard })
+		y += 72
+	else
+		local k, hs, d = ws.Kills or 0, ws.Headshots or 0, ws.Deaths or 0
+		local m, w = ws.Matches or 0, ws.Wins or 0
+		line("Matches Played", ctx.commas(m), { { "wins", ctx.commas(w) }, { "losses", ctx.commas(math.max(0, m - w)) }, { "win %", pct(w, m) } })
+		line("Eliminations", ctx.commas(k), { { "headshots", ctx.commas(hs) }, { "headshot %", pct(hs, k) } })
+		line("Deaths", ctx.commas(d), { { "eliminations ratio", d > 0 and string.format("%.2f", k / d) or (k > 0 and tostring(k) or "N/A") } })
+	end
+	statsCard.Size = UDim2.fromOffset(CARD_W, y + 6)
 end
 
 local function renderInfo()
@@ -1845,6 +1896,131 @@ local function renderInfo()
 		nextItem and `{nextItem.Name}, {ctx.priceText(nextItem.Price)}` or (owned and "Nothing left in this slot" or "Nothing after it here"))
 	local nb = bigButton(r3, "arrow", nextId ~= nil)
 	if nextId then nb.Activated:Connect(function() Armory.Select(nextId, 1) end) end
+	-- RIVALS' Statistics row: the panel opens beside the column, the button turns into an X while it's open
+	local r4 = cardRow(actionCard, 192, "bars", "Statistics", "See lifetime data")
+	bigButton(r4, statsOpen and "leave" or "eye", true).Activated:Connect(function()
+		statsOpen = not statsOpen
+		if statsOpen then Armory.ShowHistory(false) end
+		renderInfo()
+	end)
+	renderStats(id)
+end
+
+
+-------------------------------------------------------------------------------
+-- Duel History (RIVALS Career > Duel History): your last matches as VICTORY / DEFEAT cards, newest first; a click
+-- expands the loadout you used. Data.MatchHistory (the Tacticals session's PlayerStore, newest first, max 20):
+-- { t, mode, ranked, map, won, score = {mine, theirs}, kills, deaths, opponents = {{id, name}}, eloDelta, loadout }
+-------------------------------------------------------------------------------
+local historyPanel, historyExpanded
+local function ago(t)
+	local d = os.time() - (tonumber(t) or os.time())
+	if d < 3600 then return math.max(1, d // 60) .. "m ago" end
+	if d < 86400 then return d // 3600 .. "h ago" end
+	return d // 86400 .. "d ago"
+end
+local function buildHistoryList()
+	if not historyPanel then return end
+	local list = historyPanel:FindFirstChild("List")
+	for _, c in list:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
+	local data = ctx.getData()
+	local hist = data and data.MatchHistory or {}
+	local W = 600
+	local y = 0
+	if #hist == 0 then
+		shade(text({ Text = "No duels yet", FontFace = FONT_HEAVY, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 40),
+			Size = UDim2.fromOffset(W, 30), ZIndex = 22, Parent = list }), 1.5)
+		text({ Text = "Your last 20 matches show up here after you play.", FontFace = FONT_MED, TextSize = 17, TextColor3 = COL.Sub,
+			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 74), Size = UDim2.fromOffset(W, 22), ZIndex = 22, Parent = list })
+		y = 120
+	end
+	for i, m in hist do
+		local won, draw = m.won == true, m.draw == true
+		local card = mk("TextButton", { Name = "Duel" .. i, Text = "", AutoButtonColor = false, BackgroundColor3 = WHITE, Position = UDim2.fromOffset(0, y),
+			Size = UDim2.fromOffset(W, 104), ClipsDescendants = true, ZIndex = 21, Parent = list }, { corner(6),
+			mk("UIGradient", { Rotation = 90, Color = draw and ColorSequence.new(Color3.fromRGB(150, 152, 146), Color3.fromRGB(70, 72, 68))
+				or won and ColorSequence.new(Color3.fromRGB(150, 184, 74), Color3.fromRGB(70, 98, 30))
+				or ColorSequence.new(Color3.fromRGB(214, 74, 62), Color3.fromRGB(120, 30, 24)) }) })
+		local sc = m.score or {}
+		text({ Text = string.upper(tostring(m.mode or "1v1")) .. (m.ranked and "  ·  RANKED" or "") .. (m.forfeit and "  ·  FORFEIT" or ""), FontFace = FONT_HEAVY, TextSize = 15,
+			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(150, 6), Size = UDim2.fromOffset(300, 18), ZIndex = 22, Parent = card })
+		shade(text({ Text = draw and "DRAW" or (won and "VICTORY" or "DEFEAT"), FontFace = FONT_HEAVY, TextSize = 36, TextXAlignment = Enum.TextXAlignment.Center,
+			Position = UDim2.fromOffset(150, 22), Size = UDim2.fromOffset(300, 40), ZIndex = 22, Parent = card }), 2)
+		shade(text({ Text = `{sc[1] or 0} - {sc[2] or 0}`, FontFace = FONT_HEAVY, TextSize = 40, TextXAlignment = Enum.TextXAlignment.Right,
+			Position = UDim2.fromOffset(W - 170, 8), Size = UDim2.fromOffset(154, 46), ZIndex = 22, Parent = card }), 2)
+		text({ Text = "Your K / D", FontFace = FONT_MED, TextSize = 14, Position = UDim2.fromOffset(16, 8), Size = UDim2.fromOffset(130, 16), ZIndex = 22, Parent = card })
+		shade(text({ Text = `{m.kills or 0}  ·  {m.deaths or 0}`, FontFace = FONT_HEAVY, TextSize = 22, Position = UDim2.fromOffset(16, 24), Size = UDim2.fromOffset(130, 26),
+			ZIndex = 22, Parent = card }), 1.5)
+		text({ Text = `{m.map or "?"}  ·  {ago(m.t)}`, FontFace = FONT_MED, TextSize = 15, Position = UDim2.fromOffset(16, 74), Size = UDim2.fromOffset(200, 20), ZIndex = 22, Parent = card })
+		if typeof(m.eloDelta) == "number" then
+			shade(text({ Text = (m.eloDelta >= 0 and "+" or "") .. m.eloDelta .. " ELO", FontFace = FONT_HEAVY, TextSize = 18, TextXAlignment = Enum.TextXAlignment.Right,
+				Position = UDim2.fromOffset(W - 170, 70), Size = UDim2.fromOffset(154, 24), ZIndex = 22, Parent = card }), 1.5)
+		end
+		-- opponents: headshots + the first name
+		local opp = m.opponents or {}
+		for k, o in opp do
+			if k > 3 then break end
+			local h = mk("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(236 + (k - 1) * 44, 62), Size = UDim2.fromOffset(38, 38),
+				ZIndex = 22, Parent = card }, { circle() })
+			local uid = tonumber(o.id)
+			if uid and uid > 0 then
+				task.spawn(function()
+					local ok, im = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+					if ok then h.Image = im end
+				end)
+			end
+		end
+		if opp[1] then
+			text({ Text = "vs " .. tostring(opp[1].name or "?"), FontFace = FONT, TextSize = 15, Position = UDim2.fromOffset(240 + math.min(#opp, 3) * 44, 72),
+				Size = UDim2.fromOffset(150, 20), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 22, Parent = card })
+		end
+		y += 104
+		if historyExpanded == i then
+			local row = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, BorderSizePixel = 0, Position = UDim2.fromOffset(0, y), Size = UDim2.fromOffset(W, 40),
+				ZIndex = 21, Parent = list }, { corner(6) })
+			local lo = m.loadout or {}
+			local names = {}
+			for _, slot in SLOT_ORDER do
+				local it = lo[slot] and ctx.Config.Items[lo[slot]]
+				table.insert(names, it and it.Name or (lo[slot] or "-"))
+			end
+			text({ Text = "Loadout:  " .. table.concat(names, "  ·  "), FontFace = FONT, TextSize = 17, Position = UDim2.fromOffset(16, 0), Size = UDim2.fromOffset(W - 32, 40),
+				ZIndex = 22, Parent = row })
+			y += 44
+		end
+		y += 10
+		card.Activated:Connect(function()
+			historyExpanded = historyExpanded ~= i and i or nil
+			buildHistoryList()
+		end)
+	end
+	list.CanvasSize = UDim2.fromOffset(0, y)
+end
+function Armory.BuildHistory(parent)
+	historyPanel = panel({ Name = "DuelHistory", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 96), Size = UDim2.fromOffset(640, 780),
+		Visible = false, ZIndex = 20, Parent = parent })
+	historyPanel.BackgroundTransparency = 0.08 -- (solid enough that the item behind doesn't show through the list)
+	local ic = mk("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 18), Size = UDim2.fromOffset(36, 36), ZIndex = 21, Parent = historyPanel })
+	glyph(ic, "bars", 36, COL.Text, 21)
+	shade(text({ Text = "Duel History", FontFace = FONT_HEAVY, TextSize = 34, Position = UDim2.fromOffset(68, 14), Size = UDim2.fromOffset(400, 40), ZIndex = 21, Parent = historyPanel }), 2)
+	text({ Text = "Your most recent matches. Click one to see the loadout you used.", FontFace = FONT_MED, TextSize = 16, TextColor3 = COL.Sub,
+		Position = UDim2.fromOffset(68, 52), Size = UDim2.fromOffset(520, 20), ZIndex = 21, Parent = historyPanel })
+	local x = mk("TextButton", { Name = "Close", AutoButtonColor = false, Text = "", BackgroundColor3 = BLACK, BackgroundTransparency = TILE_T,
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -16, 0, 16), Size = UDim2.fromOffset(46, 46), ZIndex = 21, Parent = historyPanel }, { corner(6) })
+	local xi = mk("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(30, 30), ZIndex = 22, Parent = x })
+	glyph(xi, "leave", 30, nil, 22)
+	x.Activated:Connect(function() Armory.ShowHistory(false) end)
+	mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(20, 88), Size = UDim2.fromOffset(612, 676),
+		CanvasSize = UDim2.new(), ScrollBarThickness = 6, ScrollBarImageColor3 = COL.Sub, ScrollingDirection = Enum.ScrollingDirection.Y, ZIndex = 21, Parent = historyPanel })
+end
+function Armory.ShowHistory(on: boolean)
+	if not historyPanel then return end
+	if on then
+		historyExpanded = nil
+		buildHistoryList()
+		if statsOpen then statsOpen = false; renderInfo() end -- one panel at a time
+	end
+	historyPanel.Visible = on
 end
 
 -------------------------------------------------------------------------------
@@ -2029,6 +2205,9 @@ local function build()
 	mk("UIPadding", { PaddingBottom = UDim.new(0, 12), Parent = infoCard })
 	levelCard = panel({ Name = "Level", Size = UDim2.fromOffset(CARD_W, LEVEL_H), LayoutOrder = 3, ZIndex = 3, Parent = rightCol })
 	actionCard = panel({ Name = "Actions", Size = UDim2.fromOffset(CARD_W, ACTIONS_H), LayoutOrder = 4, ZIndex = 3, Parent = rightCol })
+	statsCard = panel({ Name = "Stats", AnchorPoint = Vector2.new(1, 1), Position = UDim2.new(1, -(11 + CARD_W + 10), 0, 985 - 53 - 10), -- (sits above the bottom strip)
+		Size = UDim2.fromOffset(CARD_W, 200), Visible = false, ZIndex = 3, Parent = hud })
+	Armory.BuildHistory(hud)
 
 	bottomBar = panel({ Name = "Bottom", AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0, 985), Size = UDim2.fromOffset(664, 53),
 		ZIndex = 3, Parent = hud })
@@ -2312,6 +2491,7 @@ function Armory.Leave(after: (() -> ())?)
 	if not active or busy then return end
 	busy = true
 	closeTray()
+	Armory.ShowHistory(false)
 	dragging = false
 	local cam = workspace.CurrentCamera
 	local tr = transition()
