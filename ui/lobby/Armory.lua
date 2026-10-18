@@ -845,6 +845,10 @@ local function mk(class: string, props, children)
 		if k ~= "Parent" then inst[k] = v end
 	end
 	for _, c in children or {} do c.Parent = inst end
+	-- (2026-10-18, Edward: the slot icons "glitch") the old InterfaceController hover/press-animates every button in a new
+	-- ScreenGui in Scale (ogSize.X.Scale * 1.05): these are Offset-sized, so a hover tweened them to 0 x 0 and the next click
+	-- fell through to the drag zone. Nonapplicable opts out; the screen animates its own buttons.
+	if inst:IsA("GuiButton") then inst:AddTag("Nonapplicable") end
 	if props and props.Parent then inst.Parent = props.Parent end
 	return inst
 end
@@ -1563,9 +1567,14 @@ local function canvasY(obj: GuiObject): number
 end
 
 local tabHold = 0 -- while a jump is animating the highlight stays on the clicked icon
+local pinnedTab -- (2026-10-18, Edward: the slot icons "glitch") a section near the end can't scroll to the top: keep its icon lit
+local function maxScroll(): number
+	return math.max(0, listScroll.AbsoluteCanvasSize.Y - listScroll.AbsoluteWindowSize.Y)
+end
 local function scrollTo(y: number)
 	tabHold = os.clock() + 0.5
-	TweenService:Create(listScroll, TweenInfo.new(0.38, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { CanvasPosition = Vector2.new(0, math.max(0, y)) }):Play()
+	-- clamp to what the list can actually reach (tweening past the end left it stuck and fighting the highlight)
+	TweenService:Create(listScroll, TweenInfo.new(0.38, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), { CanvasPosition = Vector2.new(0, math.clamp(y, 0, maxScroll())) }):Play()
 end
 
 -- the slot icons jump the list to that section
@@ -1573,7 +1582,11 @@ local function setTab(slot: string)
 	currentTab = slot
 	styleTabs()
 	local sec = sections[slot]
-	if sec then scrollTo(canvasY(sec.box)) end
+	if sec then
+		local y = canvasY(sec.box)
+		pinnedTab = y > maxScroll() + 2 and slot or nil -- it can't reach the top: hold its highlight at the end of the list
+		scrollTo(y)
+	end
 end
 
 -- scroll so the picked row is in view (used when it's picked from elsewhere, e.g. the next-unlock button)
@@ -1651,7 +1664,9 @@ local function buildLeft()
 		t.MouseLeave:Connect(function()
 			TweenService:Create(t, TI, { BackgroundTransparency = currentTab == slot and 0.2 or TILE_T }):Play()
 		end)
-		t.Activated:Connect(function() setTab(slot) end)
+		-- on press (Activated never fired here: the release was lost, so the icons looked broken); touch taps too
+		t.MouseButton1Down:Connect(function() setTab(slot) end)
+		t.TouchTap:Connect(function() setTab(slot) end)
 	end
 
 	-- the list: one scrolling page holding a box per slot; wider than the boxes so renders can poke out of both edges
@@ -1664,6 +1679,12 @@ local function buildLeft()
 	-- the highlighted slot icon follows whichever section is at the top of the list
 	listScroll:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
 		if os.clock() < tabHold or next(sections) == nil then return end
+		-- the clicked bottom section stays lit while the list sits at its end
+		if pinnedTab and listScroll.CanvasPosition.Y >= maxScroll() - 2 then
+			if currentTab ~= pinnedTab then currentTab = pinnedTab; styleTabs() end
+			return
+		end
+		pinnedTab = nil
 		local y = listScroll.CanvasPosition.Y + 90 * hud.Scale.Scale
 		local best = SLOT_ORDER[1]
 		for _, slot in SLOT_ORDER do

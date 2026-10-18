@@ -138,6 +138,7 @@ local function build()
 	holder.Parent = gui
 	for _, b in BUTTONS do
 		local btn = Instance.new("TextButton")
+		btn:AddTag("Nonapplicable") -- (the old InterfaceController would hover-tween this Offset button to 0 x 0)
 		btn.Name = b.id
 		btn.Text = ""
 		btn.AutoButtonColor = false
@@ -430,6 +431,7 @@ function controller.OpenEditor()
 	stickZone.Parent = holder
 	local zc = Instance.new("UICorner"); zc.CornerRadius = UDim.new(0.08, 0); zc.Parent = stickZone
 	local stick = Instance.new("TextButton")
+	stick:AddTag("Nonapplicable") -- (the old InterfaceController would hover-tween this Offset button to 0 x 0)
 	stick.Name = "Joystick"
 	stick.Text = ""
 	stick.AutoButtonColor = false
@@ -534,6 +536,7 @@ function controller.OpenEditor()
 	end
 	local function pmButton(text, x, step)
 		local b = Instance.new("TextButton")
+		b:AddTag("Nonapplicable") -- (the old InterfaceController would hover-tween this Offset button to 0 x 0)
 		b.Name = step > 0 and "SizePlus" or "SizeMinus"
 		b.Text = text
 		b.TextScaled = true
@@ -636,6 +639,7 @@ function controller.OpenEditor()
 	local slotBtns = {}
 	local function pillButton(text, i, fn)
 		local b = Instance.new("TextButton")
+		b:AddTag("Nonapplicable") -- (the old InterfaceController would hover-tween this Offset button to 0 x 0)
 		b.Text = text
 		b.TextScaled = true
 		b.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
