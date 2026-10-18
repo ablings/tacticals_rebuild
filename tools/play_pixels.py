@@ -3,7 +3,7 @@ Usage: python tools/play_pixels.py <png> [filter-substring] [NX NY]
 Casts one ray per grid cell from the client camera, skips parts with Transparency >= 0.9 (CanQuery-off visible parts are queried, then restored), averages a 3x3 pixel block per hit."""
 import json, os, subprocess, sys, tempfile
 from PIL import Image
-SID = "63f7832a-a0f3-42a5-97a5-34139db0ba2b"
+SID = "7f9e7426-2e49-4e8e-916c-304843df58de"
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 png = sys.argv[1]
 flt = sys.argv[2] if len(sys.argv) > 2 else ""

@@ -1,0 +1,118 @@
+# Tacticals animation list (for finishing in Blender)
+
+Read from match_place_ref.rbxl, 2026-10-16. Every source lives in `ReplicatedStorage.Repository.AnimationSources`; all 54 are
+**placeholders** (2 to 17 keyframes, no markers). Rig: **R15**. Keep the exact names: the scripts find animations by name.
+
+## Rules when you redo one
+- **Keep the name, the length and Loop.** Length matters most for one-shots: the scripts time things off the config, not the
+  animation (e.g. the Pistol reload must finish in **1.5 s**, the Revolver in **2.4 s**).
+- **`...Left` = the same move mirrored** for players who set Gun Hand = Left. Make the right version first; I can mirror it.
+- **Arms/torso aim is procedural.** AimPoseController bends Waist, shoulders and Neck for aim pitch on top of your animation, and
+  HeadLookController owns the neck. Animate at **level aim**, and keep the neck light.
+- Loop / priority below are what the game sets now; tell me if you want one changed.
+
+## 1. Character animations that exist (54)
+
+### Pistol (used by Pistol, Suppressed, **and for now Mini Uzi, Auto Rifle, Semi-Auto, Sniper**)
+| Name | Length | Loop | What it is |
+|---|---|---|---|
+| PistolHold (+Left) | 1.0 | yes | Arms up, aiming: shown while aiming or right after a hip-fire shot |
+| PistolLowered (+Left) | 1.0 | yes | Gun down at your side when not aiming (camera not facing forward) |
+| PistolEquip (+Left) | 0.35 | no | Bring the gun up when it's selected |
+| PistolFire (+Left) | 0.15 | no | One shot of recoil kick |
+| PistolReload (+Left) | 1.6 → **1.5** | no | Mag out, new mag in, rack the slide |
+
+### Revolver
+| Name | Length | Loop | What it is |
+|---|---|---|---|
+| RevolverHold (+Left) | 1.0 | yes | Aiming pose |
+| RevolverLowered (+Left) | 1.0 | yes | Gun down at your side |
+| RevolverEquip (+Left) | 0.35 | no | Bring it up |
+| RevolverFire (+Left) | 0.30 | no | Heavy recoil kick |
+| RevolverReload (+Left) | 2.4 | no | Swing out cylinder, dump shells, reload, flick shut |
+
+### Melee
+| Name | Length | Loop | What it is |
+|---|---|---|---|
+| MeleeSlash | 0.45 | no | Knife slash |
+| MeleePunch | 0.40 | no | Fists punch |
+| QuickMeleeBash | 0.40 | no | Quick melee with the gun in hand (now just a copy of the punch: should be a gun-butt bash) |
+
+### Gadgets (Smoke; Flash and Frag reuse these)
+| Name | Length | Loop | What it is |
+|---|---|---|---|
+| SmokeHold | 1.0 | yes | Holding the grenade ready |
+| SmokeThrow (+Left) | 0.40 | no | Overarm throw |
+| SmokeRoll | 0.55 | no | Underarm roll/lob along the floor |
+
+### Cover
+| Name | Length | Loop | What it is |
+|---|---|---|---|
+| CoverIdleTall (+Left) | 1.0 | yes | Standing with your back to tall cover |
+| CoverCrouch (+Left) | 1.0 | yes | Crouched behind low cover |
+| CoverCrouchPeek (+Left) | 1.0 | yes | Crouched, leaning out to aim past the edge |
+| CoverLookPos / CoverLookNeg | 1.0 | yes | Head and shoulders turned toward the left / right edge (blended in) |
+| CoverShuffleTall | 0.60 | yes | Side-stepping along tall cover |
+| CoverShuffleCrouch | 0.72 | yes | Side-stepping while crouched |
+| CoverBlindCorner (+Left) | 1.0 | yes | Blind fire: gun arm curled around a tall edge, body hidden |
+| CoverBlindCornerCrouch (+Left) | 1.0 | yes | Same, while crouched |
+| CoverBlindOver (+Left) | 1.0 | yes | Blind fire over low cover: half-rise, gun up over the top, other hand braced |
+| CoverBrace | 0.75 | no | Near miss: flinch and tuck into the cover |
+| CoverDash | 0.48 | yes | Sprint dash between covers |
+| CoverRoll | 0.50 | no | Dodge roll |
+| CoverVault | 0.55 | no | Vault over low cover |
+| CoverSneak | 1.2 | yes | Slow sneak walk |
+
+### Movement and hits
+| Name | Length | Loop | What it is |
+|---|---|---|---|
+| MoveCrouchIdle | 1.0 | yes | Crouched, standing still |
+| MoveCrouchWalk | 1.2 | yes | Crouch walk |
+| MoveSlide | 0 (one pose) | yes | Slide: currently a single held pose, needs a real loop |
+| HitFlinch | 0.30 | no | Small flinch when you get shot |
+| BotLeanLeft / BotLeanRight | 1.0 | yes | Training bots leaning out of cover (2 joints only) |
+
+## 2. What's missing for the other guns
+Mini Uzi, Auto Rifle, Semi-Auto and Sniper use the **Pistol** body animations now (`AnimationSourcePrefix = "Pistol"`), so they're
+held one-handed like a pistol. To give them their own, make a set for each (with Left versions) and I'll change the prefix:
+
+| New prefix | Guns | Hold / Lowered / Equip / Fire / Reload | Reload length |
+|---|---|---|---|
+| `SMG` | Mini Uzi | two-handed compact, fast recoil | 1.9 s |
+| `Rifle` | Auto Rifle, Semi-Auto | shouldered, two-handed | 2.4 s / 2.3 s (one anim, I'll speed it) |
+| `Sniper` | Sniper | shouldered; **Fire must include working the bolt** (1.3 s between shots) | 3.0 s |
+
+## 3. Gun model animations (the gun's own parts)
+Right now **every gun part is welded with a WeldConstraint**, so nothing on a gun can move yet. When you import, I'll swap the welds
+for Motor6Ds named after each part (Handle → part) so the parts listed below can be keyframed alongside the character. Animate the
+gun parts in the **same action** as the character move (e.g. PistolReload moves the arms *and* the mag/slide).
+
+| Gun | Parts that should move | Fire | Reload | Equip / Holster |
+|---|---|---|---|---|
+| Pistol | **Slide**, **MagBase** | Slide snaps back and forward | MagBase drops out, new one in, Slide racks | Slide check (optional) |
+| Suppressed | **Slide**, **MagBase** (Suppressor stays fixed) | Same as Pistol | Same as Pistol | — |
+| Revolver | **Cylinder**, **Hammer** | Hammer falls, Cylinder turns 1/6 | Cylinder swings out (and spins), back in | Hammer cock (optional) |
+| Mini Uzi | **Mag**, **CockingKnob** | CockingKnob is fixed on an Uzi, nothing needed | Mag out/in, CockingKnob pulled back | — |
+| Auto Rifle | **Mag**, **MagBase** (one piece: move together) | (optional: tiny Receiver shake) | Mag out/in, charge | — |
+| Semi-Auto | **Mag** | — | Mag out/in | — |
+| Sniper | **BoltArm**, **BoltKnob** (together), **Mag**, BipodLeg x2 (optional) | Bolt up, back, forward, down | Mag out/in, bolt cycle | Bipod fold (optional) |
+| Knife | single part (`Knife`) | — | — | flip/twirl for inspect (optional) |
+
+Parts that stay fixed: Handle, Frame, Receiver, Barrel, TriggerGuard, Stock, scopes, rails, vents, MuzzleBrake.
+
+## 4. New animations you want to add
+Not in the game yet: name them like this and I'll wire them into the scripts.
+
+| Name | What it is | Notes |
+|---|---|---|
+| `<Prefix>Holster` (+Left) | Put the gun away (back to the hip/back) | Plays when you holster (key 1) or switch slot; I'll wait for it to finish before the gun disappears |
+| `<Prefix>Draw` (+Left) | Pull the gun from the holster | Today's `Equip` is a quick bring-up; Draw would replace it on first pull-out |
+| `<Prefix>Inspect` (+Left) | Weapon inspect (needs a key: I'd suggest F) | Optional |
+| `MeleeKnifeHeavy`, `MeleeKnifeBackstab` | Knife heavy swing / backstab | Optional; there's only one knife swing now |
+| `FlashThrow`, `FragThrow` | Their own throws | Optional; they use the Smoke throw now |
+
+`<Prefix>` = Pistol, Revolver, and SMG / Rifle / Sniper if you make those sets.
+
+## Hand-off
+Export each action from Blender as FBX (R15 rig, one action each, names as above). When you send them over, I'll import them into
+AnimationSources, set Loop and priority, add the gun Motor6Ds, and update the scripts. Uploads go under Gunsy Funsy.

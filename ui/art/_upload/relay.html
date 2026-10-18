@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>relay</title>
+<script>
+// Hands the staged images to the Creator Hub tab (window.opener / parent) as ArrayBuffers.
+const FILES = ["small_rank_bronze.png","small_rank_silver.png","small_rank_gold.png","small_rank_platinum.png","small_rank_diamond.png",
+  "small_rank_elite.png","small_rank_commander.png","small_rank_warlord.png","small_map_warehouse.jpg"];
+(async () => {
+  const out = [];
+  for (const f of FILES) { const r = await fetch(f); out.push({ name: f.replace("small_", ""), type: r.headers.get("content-type"), buf: await r.arrayBuffer() }); }
+  const target = window.opener || window.parent;
+  target.postMessage({ kind: "tacticals-upload-files", files: out }, "https://create.roblox.com");
+  document.body.textContent = "sent " + out.length;
+})();
+</script>

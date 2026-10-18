@@ -1,6 +1,6 @@
 """Run a Luau file in a given studio (Edit). Usage: python tools/run_luau_at.py <lobby|match|studio_id> fix/x.lua [UNDO]"""
 import json, os, re, subprocess, sys, tempfile
-SIDS = {"lobby": "63f7832a-a0f3-42a5-97a5-34139db0ba2b", "match": "2f647323-e1f0-47f0-b336-38337f383a2e"}
+SIDS = {"lobby": "7f9e7426-2e49-4e8e-916c-304843df58de", "match": "262bddc7-c737-4071-9821-532ab1e26f2f"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 sid = SIDS.get(sys.argv[1], sys.argv[1])
 code = open(sys.argv[2], encoding="utf-8").read()

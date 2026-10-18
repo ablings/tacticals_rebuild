@@ -3,7 +3,7 @@ Usage (from tacticals_rebuild): python tools/polish_hub_capture.py <prefix: befo
        python tools/polish_hub_capture.py ref name x,y,z lx,ly,lz   (RIVALS reference, read-only)
        python tools/polish_hub_capture.py cam prefix_name x,y,z lx,ly,lz   (one-off Tacticals camera)"""
 import json, os, subprocess, sys, shutil
-SID = "63f7832a-a0f3-42a5-97a5-34139db0ba2b"   # Tacticals_rebuild.rbxl
+SID = "7f9e7426-2e49-4e8e-916c-304843df58de"   # Tacticals_rebuild.rbxl
 REF = "2e616d06-6bfd-4b39-a751-ddccf8eb9187"   # RIVALS reference (read-only)
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {

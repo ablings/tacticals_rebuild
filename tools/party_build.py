@@ -4,7 +4,7 @@ Usage (from tacticals_rebuild): python tools/party_build.py [--run lobby|match] 
 Studio ids change on reload (list_roblox_studios). Order: see the header of fix/party_install.lua."""
 import json, os, re, subprocess, sys, tempfile
 
-SIDS = {"lobby": "63f7832a-a0f3-42a5-97a5-34139db0ba2b", "match": "2f647323-e1f0-47f0-b336-38337f383a2e"}
+SIDS = {"lobby": "7f9e7426-2e49-4e8e-916c-304843df58de", "match": "262bddc7-c737-4071-9821-532ab1e26f2f"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..")

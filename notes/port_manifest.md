@@ -195,3 +195,13 @@ himself; we never publish.
   The publish was interrupted three times (Discord on top of Studio taking clicks, Valorant's Vanguard blocking simulated
   input with UIPI, a GPU "DXGI swapchain" error after the Tutorial publish). Lesson: only drive Publish As when Edward is off
   the PC; check the foreground with a screenshot right before every click batch, not just the window title.
+
+## Live port 14: post-match pseudo lobby, result screen, tutorial auto-start fix (2026-10-18 01:23-02:41, lead; Edward: "go")
+- Both working copies saved 01:23 (UI a5254be / 4662bcb / 23e8ed7 / 96985bb result + post-match screens; lead 6645356
+  post-match installer, a6bf11d tutorial clientLoaded fix). Published to all four places (each window retitled to the place
+  name after Grant Permissions and Publish): tacticals (lobby), Tutorial, Matchmaking, Ranked. Expected versions lobby v289,
+  the others v12; not yet read back from Creator Hub version history.
+- Carries: post-match phase 1 (series of max 3, rematch votes n/needed with a 3 s countdown, Unavailable at 2 wins / 3 games
+  / a player gone, To Hub, Play Again with hub AutoQueue), the RIVALS result screen (ranked rank page, ELO pill, tier bar),
+  the post-match UI, and the fix for the live v10 tutorial that never auto-started (half-applied clientLoaded edit).
+- Ran clean this time with Edward off the PC (Discord was on top once before Ranked; refocused Studio, checked by screenshot).

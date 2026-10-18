@@ -4,7 +4,7 @@ Read-only apart from toggling CanQuery on non-queryable visible parts inside a 9
 Shading: part colour x (0.35 + 0.65 * max(0, n.l)), Neon unshaded, SurfaceGuis ignored, transparency >= 0.95 skipped."""
 import json, os, subprocess, sys, tempfile
 from PIL import Image
-SID = "63f7832a-a0f3-42a5-97a5-34139db0ba2b"
+SID = "7f9e7426-2e49-4e8e-916c-304843df58de"
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 out = sys.argv[1]; cam = sys.argv[2]; look = sys.argv[3]
 W = int(sys.argv[4]) if len(sys.argv) > 4 else 256; H = int(sys.argv[5]) if len(sys.argv) > 5 else 160
