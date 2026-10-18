@@ -488,11 +488,13 @@ local function refreshChips()
 		t.l.TextColor3 = on and BLACK or WHITE
 		t.l.Text = SLOTS[i].label .. ((picks[SLOTS[i].id] and not on) and "  ·  set" or "")
 	end
-	ready.Visible = picks.Weapon ~= nil and picks.Melee ~= nil and picks.Gadget ~= nil
+	ready.Visible = not switching and picks.Weapon ~= nil and picks.Melee ~= nil and picks.Gadget ~= nil
 end
+local switching = false -- (2026-10-18, RIVALS "Switch Weapons [M]") the picker opened between rounds
 local function allPicked()
 	optArea.Visible = false
 	refreshChips()
+	if switching then task.delay(0.35, function() switching = false end) end -- the last pick closes it (RIVALS)
 end
 local function optionTile(parent, x, y, id, text, onPick, kind)
 	-- kind: "random" | "locked" | rarity name
@@ -541,7 +543,7 @@ function showStep(i)
 	end
 	local entries = { { kind = "random" } }
 	for _, id in mine do table.insert(entries, { id = id, kind = rarityOf(id) }) end
-	for _, id in locked do table.insert(entries, { id = id, kind = "locked" }) end
+	-- (2026-10-18, Edward: "locked weapons shouldn't show up at all") only what you own is listed
 	local rows = math.ceil(#entries / PER_ROW)
 	local rowH = OPT + 40
 	local contentH = math.max(GRID_H, 40 + rows * rowH)
@@ -587,11 +589,33 @@ local phase
 local function setPhase(p)
 	if p == phase then return end
 	phase = p
-	local on = p == "Loading" or p == "MapVote" or p == "Loadout"
+	local on = p == "Loading" or p == "MapVote" or p == "Loadout" or p == "Switch"
 	gui.Enabled = on
 	loading.Visible = p == "Loading"
 	vote.Visible = p == "MapVote"
-	lo.Visible = p == "Loadout"
+	lo.Visible = p == "Loadout" or p == "Switch"
+	loTimer.Parent.Visible = p ~= "Switch" -- (between rounds the match HUD's timer counts down)
+	-- Switch Weapons (RIVALS): the picker over the blurred match instead of the dark backdrop, no team boxes
+	local sw = p == "Switch"
+	back.BackgroundTransparency = sw and 0.55 or 0
+	for _, bx in loBoxes do local f = type(bx) == "table" and (bx.frame or (bx[1] and bx[1].h and bx[1].h.Parent)) or bx; if typeof(f) == "Instance" then f.Visible = not sw end end
+	local Lighting = game:GetService("Lighting")
+	local blur = Lighting:FindFirstChild("SwitchWeaponsBlur") or new("BlurEffect", { Name = "SwitchWeaponsBlur", Size = 0, Parent = Lighting })
+	TweenService:Create(blur, TweenInfo.new(0.2), { Size = sw and 16 or 0 }):Play()
+	-- the match HUD steps out while the picker is up (RIVALS keeps only the score bar); back on when it closes
+	local pg = player:FindFirstChild("PlayerGui")
+	for _, n in { "HUD", "Hotbar", "Vitals", "StealthUI", "TutorialUI", "NearMissUI", "TouchControls" } do
+		local g = pg and pg:FindFirstChild(n)
+		if g and g:IsA("ScreenGui") then
+			if sw and g.Enabled then g.Enabled = false; g:SetAttribute("SwitchHid", true)
+			elseif not sw and g:GetAttribute("SwitchHid") then g:SetAttribute("SwitchHid", nil); g.Enabled = true end
+		end
+	end
+	if p == "Switch" then
+		local chosen = st(STATE.Chosen)
+		mapBarL.Text = "Map: " .. tostring(chosen or "?")
+		startLoadout()
+	end
 	if p == "Loading" then tipL.Text = TIPS[math.random(#TIPS)] end
 	if p == "MapVote" then
 		player:SetAttribute("_MyVote", nil)
@@ -627,7 +651,12 @@ end
 local loadStart = os.clock()
 local teamTick
 RunService.RenderStepped:Connect(function()
-	setPhase(st(STATE.Phase))
+	-- Switch Weapons closes when the next round goes live (or the match moves on)
+	if switching then
+		local ms = st("MatchState")
+		if ms ~= "RoundEnd" and ms ~= "Countdown" then switching = false end
+	end
+	setPhase(switching and "Switch" or st(STATE.Phase))
 	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
 	if phase == "MapVote" then
 		voteTimer.Text = string.format("%.1f", left)
@@ -642,6 +671,20 @@ RunService.RenderStepped:Connect(function()
 	end
 	if phase == "Loading" then loadN.Text = tostring(math.min(99, math.floor((os.clock() - loadStart) * 25))) end
 end)
+
+-- (2026-10-18) DuelHUD's Switch Weapons button / M key: PlayerScripts.SwitchWeapons:Invoke("Open" | "Close" | "Toggle") -> open?
+do
+	local sw = Instance.new("BindableFunction")
+	sw.Name = "SwitchWeapons"
+	sw.OnInvoke = function(cmd)
+		local ms = st("MatchState")
+		local allowed = (ms == "RoundEnd" or ms == "Countdown") and st(STATE.Phase) ~= "Loadout"
+		if cmd == "Close" or (cmd == "Toggle" and switching) then switching = false
+		elseif allowed then switching = true end
+		return switching
+	end
+	sw.Parent = player:WaitForChild("PlayerScripts")
+end
 
 -- Studio only: MatchFlowTest:Invoke(phase) fakes the server state, so the screens can be checked without a match server
 if RunService:IsStudio() then

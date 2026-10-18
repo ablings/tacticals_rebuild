@@ -134,9 +134,16 @@ local function personCard(parent, x, y, w, pp, opts)
 	label(c, pp.name, F_NAME, 22, 86, 10, w - 96, 28, BONE, nil, 4)
 	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 15, 86, 38, w - 96, 20, FIELD, nil, 4)
 	if opts.crown then
-		-- the leader: a gold LEADER tag under the headshot (BuilderSans has no star / crown glyph)
-		local tag = new("Frame", { BackgroundColor3 = GOLD, Position = UDim2.fromOffset(12, 80), Size = UDim2.fromOffset(64, 20), ZIndex = 5, Parent = c }, { Kit.corner(5) })
-		label(tag, "LEADER", F_NAME, 13, 0, 0, 64, 20, DEEP, Enum.TextXAlignment.Center, 6)
+		-- (2026-10-18, live RIVALS) the leader: a gold crown on the headshot's corner (drawn: BuilderSans has no crown glyph)
+		Kit.crown(hs, UDim2.fromScale(0.86, 0.1), UDim2.fromScale(0.62, 0.48), 6)
+	end
+	if opts.leave then
+		-- your own card while you're in a party: a red Leave on it (RIVALS)
+		local lb = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(w - 112, 64), Size = UDim2.fromOffset(100, 36),
+			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 5, Parent = c }, { Kit.corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#E8463A"), hex("#9C1E16")) }) })
+		label(lb, "Leave", F_NAME, 20, 0, 0, 100, 36, BONE, Enum.TextXAlignment.Center, 6)
+		Kit.bindButton(lb, { hover = 1.06 })
+		lb.Activated:Connect(function() local r = party(); if r then r:FireServer("Leave") end end)
 	end
 	if opts.kick then
 		local k = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(w - 40, 8), Size = UDim2.fromOffset(30, 30), BackgroundColor3 = hex("#8E2A24"),
@@ -173,7 +180,7 @@ local function renderParty()
 		if uid then
 			local p = Players:GetPlayerByUserId(uid)
 			local card = personCard(col, 0, (i - 1) * 118, 340, { uid = uid, name = p and p.DisplayName or "...", user = p and p.Name or "...", where = not p and "elsewhere" or nil },
-				{ crown = #list > 1 and uid == leader, kick = amLeader and uid ~= player.UserId and party() ~= nil })
+				{ crown = #list > 1 and uid == leader, kick = amLeader and uid ~= player.UserId and party() ~= nil, leave = #list > 1 and uid == player.UserId })
 			if not p then
 				-- a member in another server (a party survives the teleport): look their name up
 				task.spawn(function()
@@ -195,7 +202,7 @@ local function renderParty()
 		end
 	end
 	local leave = col.Parent:FindFirstChild("LeaveParty")
-	if leave then leave.Visible = #members(player) > 1 end
+	if leave then leave.Visible = false end -- (Leave is on your own card now, RIVALS)
 	Kit.toScale(col)
 end
 

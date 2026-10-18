@@ -184,15 +184,58 @@ function hud.ShowHitmarker(zone: string, killed: boolean, headshot: boolean?)
 	end)
 end
 
--- // Damage direction markers
+-- // Damage direction markers + red vignette (RIVALS, checked live 2026-10-18 with Edward): a hit pulses a red vignette in
+-- from the screen edges and puts a red chevron around the crosshair pointing at the shooter; below half health the
+-- vignette stays, deeper the lower you are. Own full-screen layer in the HUD gui, all Scale.
 local DAMAGE_MARKER_TIME = 1.4
-local DAMAGE_MARKER_RADIUS = 110
-local activeMarkers = {} -- { frame, source, born }
+local DAMAGE_MARKER_RADIUS = 0.13 -- of the screen height, from the centre
+local RED = Color3.fromRGB(235, 28, 18)
+local activeMarkers = {} -- { frame, bars, source, born }
 local markerLoop: RBXScriptConnection?
+local flashAt = -10
+
+local layer, edges
+local function damageLayer()
+	if layer and layer.Parent then return layer end
+	layer = Instance.new("Frame")
+	layer.Name = "RivalsDamage"
+	layer.BackgroundTransparency = 1
+	layer.Size = UDim2.fromScale(1, 1)
+	layer.ZIndex = 20
+	layer.Parent = getGui()
+	edges = {}
+	-- four edge strips, each a red fade from the edge inwards (UIGradient: Rotation 90 = top to bottom)
+	for _, e in { { UDim2.fromScale(0, 0), UDim2.fromScale(1, 0.34), 90 }, { UDim2.fromScale(0, 0.66), UDim2.fromScale(1, 0.34), -90 },
+		{ UDim2.fromScale(0, 0), UDim2.fromScale(0.24, 1), 0 }, { UDim2.fromScale(0.76, 0), UDim2.fromScale(0.24, 1), 180 } } do
+		local f = Instance.new("Frame")
+		f.BorderSizePixel = 0
+		f.BackgroundColor3 = RED
+		f.Position, f.Size = e[1], e[2]
+		f.ZIndex = 20
+		local g = Instance.new("UIGradient")
+		g.Rotation = e[3]
+		g.Transparency = NumberSequence.new(1)
+		g.Parent = f
+		f.Parent = layer
+		table.insert(edges, g)
+	end
+	return layer
+end
+
+local function vignetteLevel(): number
+	local flash = math.clamp(1 - (os.clock() - flashAt) / 0.7, 0, 1)
+	local char = Players.LocalPlayer.Character
+	local hum = char and char:FindFirstChildOfClass("Humanoid")
+	local low = 0
+	if hum and hum.Health > 0 and hum.MaxHealth > 0 then low = math.clamp((0.5 - hum.Health / hum.MaxHealth) / 0.5, 0, 1) * 0.7 end
+	return math.max(flash * 0.85, low)
+end
 
 local function updateMarkers()
 	local camera = workspace.CurrentCamera
 	local now = os.clock()
+	local vp = camera.ViewportSize
+	local aspect = vp.Y / math.max(vp.X, 1)
 	for i = #activeMarkers, 1, -1 do
 		local m = activeMarkers[i]
 		local age = now - m.born
@@ -203,27 +246,68 @@ local function updateMarkers()
 			-- Direction to the shooter relative to where the camera faces (flattened)
 			local relative = camera.CFrame:VectorToObjectSpace(m.source - camera.CFrame.Position)
 			local angle = math.atan2(relative.X, -relative.Z)
-			m.frame.Position = UDim2.fromOffset(math.sin(angle) * DAMAGE_MARKER_RADIUS, -math.cos(angle) * DAMAGE_MARKER_RADIUS)
+			m.frame.Position = UDim2.fromScale(0.5 + math.sin(angle) * DAMAGE_MARKER_RADIUS * aspect, 0.5 - math.cos(angle) * DAMAGE_MARKER_RADIUS)
 			m.frame.Rotation = math.deg(angle)
-			m.frame.BackgroundTransparency = math.clamp((age / DAMAGE_MARKER_TIME) ^ 2, 0, 1)
+			local t = math.clamp((age / DAMAGE_MARKER_TIME) ^ 2, 0, 1)
+			for _, b in m.bars do b.BackgroundTransparency = t end
 		end
 	end
-	if #activeMarkers == 0 and markerLoop then
+	-- the vignette
+	local v = vignetteLevel()
+	if edges then
+		local seqT = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1 - v * 0.8), NumberSequenceKeypoint.new(1, 1) })
+		for _, g in edges do g.Transparency = seqT end
+	end
+	if #activeMarkers == 0 and v <= 0 and markerLoop then
 		markerLoop:Disconnect()
 		markerLoop = nil
 	end
 end
 
-function hud.ShowDamageFrom(source: Vector3)
-	local container = getGui().DamageIndicators
-	local frame = container.MarkerTemplate:Clone()
-	frame.Name = "Marker"
-	frame.Visible = true
-	frame.Parent = container
-	table.insert(activeMarkers, { frame = frame, source = source, born = os.clock() })
-	if not markerLoop then
-		markerLoop = game:GetService("RunService").RenderStepped:Connect(updateMarkers)
+local function ensureLoop()
+	if not markerLoop then markerLoop = game:GetService("RunService").RenderStepped:Connect(updateMarkers) end
+end
+-- low health keeps the vignette up between hits (healing fades it)
+task.spawn(function()
+	local function watch(char)
+		local hum = char:WaitForChild("Humanoid", 10)
+		if hum then hum.HealthChanged:Connect(function() damageLayer(); ensureLoop() end) end
 	end
+	local plr = Players.LocalPlayer
+	if plr.Character then task.spawn(watch, plr.Character) end
+	plr.CharacterAdded:Connect(watch)
+end)
+
+function hud.ShowDamageFrom(source: Vector3)
+	local l = damageLayer()
+	flashAt = os.clock()
+	-- a red chevron pointing out at the shooter (^ at angle 0 = straight ahead)
+	local frame = Instance.new("Frame")
+	frame.Name = "Marker"
+	frame.BackgroundTransparency = 1
+	frame.AnchorPoint = Vector2.new(0.5, 0.5)
+	frame.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	frame.Size = UDim2.fromScale(0.07, 0.07)
+	frame.ZIndex = 21
+	local bars = {}
+	for _, side in { -1, 1 } do
+		local b = Instance.new("Frame")
+		b.BorderSizePixel = 0
+		b.BackgroundColor3 = RED
+		b.AnchorPoint = Vector2.new(0.5, 0.5)
+		b.Position = UDim2.fromScale(0.5 + side * 0.2, 0.42)
+		b.Size = UDim2.fromScale(0.55, 0.13)
+		b.Rotation = side * 38
+		b.ZIndex = 21
+		local c = Instance.new("UICorner")
+		c.CornerRadius = UDim.new(0.5, 0)
+		c.Parent = b
+		b.Parent = frame
+		table.insert(bars, b)
+	end
+	frame.Parent = l
+	table.insert(activeMarkers, { frame = frame, bars = bars, source = source, born = os.clock() })
+	ensureLoop()
 	updateMarkers()
 end
 

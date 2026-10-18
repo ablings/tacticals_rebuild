@@ -856,4 +856,49 @@ function Kit.close(frame, done)
 	return tw
 end
 
+-- (2026-10-18, live RIVALS party checks with Edward) the party leader's gold crown, drawn in Scale inside `parent`
+-- (three points on a band). size / position are Scale of the parent; it keeps a 1.3 : 1 shape.
+function Kit.crown(parent, pos, size, z)
+	local GOLD, EDGE = Color3.fromRGB(255, 204, 48), Color3.fromRGB(150, 100, 10)
+	local c = new("Frame", { Name = "Crown", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = size, Rotation = 18,
+		ZIndex = z or 6, Parent = parent }, { new("UIAspectRatioConstraint", { AspectRatio = 1.3 }) })
+	new("Frame", { BackgroundColor3 = GOLD, BorderSizePixel = 0, Position = UDim2.fromScale(0.08, 0.56), Size = UDim2.fromScale(0.84, 0.36), ZIndex = (z or 6) + 1, Parent = c },
+		{ new("UICorner", { CornerRadius = UDim.new(0.2, 0) }), new("UIStroke", { Color = EDGE, Thickness = 1, Transparency = 0.3 }) })
+	for _, x in { 0.18, 0.5, 0.82 } do
+		new("Frame", { BackgroundColor3 = GOLD, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(x, 0.5), Size = UDim2.fromScale(0.26, 0.34),
+			Rotation = 45, ZIndex = z or 6, Parent = c }, { new("UIStroke", { Color = EDGE, Thickness = 1, Transparency = 0.3 }) })
+	end
+	return c
+end
+
+-- RIVALS' "Whoops!" box: a black card in the middle of the screen, the reason, and the red X to close it.
+-- Kit.whoops("Only the party leader can join a queue!")
+local whoopsGui
+function Kit.whoops(message)
+	local pg = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	if whoopsGui then whoopsGui:Destroy() end
+	whoopsGui = new("ScreenGui", { Name = "Whoops", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 60, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, Parent = pg })
+	local dim = new("TextButton", { Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), Parent = whoopsGui })
+	dim:AddTag("Nonapplicable")
+	local canvas = Kit.canvas(whoopsGui)
+	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
+	local card = new("Frame", { Name = "Card", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.05, Position = UDim2.fromOffset(700, 368),
+		Size = UDim2.fromOffset(520, 344), Parent = root }, { Kit.corner(6) })
+	Kit.label({ Text = "Whoops!", FontFace = F.display or F.bold, TextSize = 50, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 14),
+		Size = UDim2.fromOffset(520, 64), Parent = card })
+	Kit.label({ Text = message, FontFace = F.bold, TextSize = 34, TextWrapped = true, TextColor3 = Color3.fromRGB(200, 200, 204), TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(40, 96), Size = UDim2.fromOffset(440, 130), Parent = card })
+	local x = Kit.closeButton(UDim2.fromOffset(140, 64))
+	x.Position = UDim2.fromOffset(190, 252)
+	x.Parent = card
+	Kit.toScale(root)
+	local pop = new("UIScale", { Scale = 0.85, Parent = card })
+	TweenService:Create(pop, TweenInfo.new(0.2, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	local function close() if whoopsGui then whoopsGui:Destroy(); whoopsGui = nil end end
+	x.Activated:Connect(close)
+	dim.Activated:Connect(close)
+	if Kit.sfx then pcall(Kit.sfx, "close") end
+end
+
+
 return Kit

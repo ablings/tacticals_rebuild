@@ -1451,8 +1451,7 @@ local function build()
 	PlayRow.Init({
 		lobbyGui = gui, dock = dock,
 		onPlay = function()
-			-- in a party only the leader queues (the party follows them; RIVALS)
-			if PartyScreen and not PartyScreen.IsLeader() then toast("Only the party leader can queue", "bad") return end
+			-- (in a party only the leader queues: the Play menu's tiles show RIVALS' "Whoops!" for everyone else)
 			-- pseudo lobby: back to the hub and straight into the queue (the party goes along); no queue menu here
 			if PseudoLobby.MatchPlace() then
 				if player:GetAttribute("PlayAgainSent") then return end

@@ -71,6 +71,21 @@ local function new(class, props, kids)
 	return o
 end
 local function corner(r) return new("UICorner", { CornerRadius = UDim.new(0, r) }) end
+-- (2026-10-18, Edward: "as aesthetically pleasing as rivals") RIVALS' glossy panels: a white sheen over the top half
+local function gloss(f, r, strength)
+	return new("Frame", { Name = "Gloss", BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.5), ZIndex = (f.ZIndex or 1) + 1, Parent = f }, {
+		corner(r or 8), new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1 - (strength or 0.3)), NumberSequenceKeypoint.new(1, 1) }) }) })
+end
+-- a bright bar that sweeps across a card once (round card, banners)
+local function sweep(f, z)
+	local bar = new("Frame", { BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(-0.2, 0.5),
+		Size = UDim2.fromScale(0.18, 1.6), Rotation = 20, ZIndex = z or 9, Parent = f }, {
+		new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.45), NumberSequenceKeypoint.new(1, 1) }) }) })
+	f.ClipsDescendants = true
+	local tw = game:GetService("TweenService"):Create(bar, TweenInfo.new(0.55, Enum.EasingStyle.Quad), { Position = UDim2.fromScale(1.2, 0.5) })
+	tw.Completed:Once(function() bar:Destroy() end)
+	tw:Play()
+end
 local scaled = {}
 local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	local l = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font, TextSize = size, TextColor3 = color or WHITE,
@@ -116,27 +131,48 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 ---------------------------------------------------------------------------------------------------- score bar
 local function teamBox(x, cols, right)
 	local b = new("Frame", { Position = UDim2.fromOffset(x, 20), Size = UDim2.fromOffset(300, 84), BackgroundColor3 = WHITE, Parent = root },
-		{ corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }) })
+		{ corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }),
+			new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.6, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	gloss(b, 10, 0.28)
 	local slots = {}
 	for i = 1, 3 do
 		local hx = right and (96 + (i - 1) * 64) or (14 + (i - 1) * 64)
 		local h = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(hx, 14), Size = UDim2.fromOffset(56, 56), Visible = false, ZIndex = 3, Parent = b }, { corner(28) })
 		local x1 = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(28, 28), Size = UDim2.fromOffset(52, 6), BackgroundColor3 = BAD, Visible = false, ZIndex = 4, Parent = h })
 		local x2 = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = -45, Position = UDim2.fromOffset(28, 28), Size = UDim2.fromOffset(52, 6), BackgroundColor3 = BAD, Visible = false, ZIndex = 4, Parent = h })
-		slots[i] = { h = h, x1 = x1, x2 = x2 }
+		-- (2026-10-18, live RIVALS) a dead player's head turns into a skull: cranium, eye holes, nose, jaw with teeth gaps
+		local BONE = Color3.fromRGB(236, 232, 218)
+		local skull = new("Frame", { Name = "Skull", BackgroundTransparency = 1, Size = UDim2.fromOffset(56, 56), Visible = false, ZIndex = 5, Parent = h })
+		new("Frame", { BackgroundColor3 = BONE, Position = UDim2.fromOffset(10, 8), Size = UDim2.fromOffset(36, 30), ZIndex = 5, Parent = skull }, { corner(15) })
+		new("Frame", { BackgroundColor3 = BONE, Position = UDim2.fromOffset(17, 32), Size = UDim2.fromOffset(22, 14), ZIndex = 5, Parent = skull }, { corner(4) })
+		for _, ex in { 16, 30 } do new("Frame", { BackgroundColor3 = BLACK, Position = UDim2.fromOffset(ex, 20), Size = UDim2.fromOffset(10, 10), ZIndex = 6, Parent = skull }, { corner(5) }) end
+		new("Frame", { BackgroundColor3 = BLACK, Position = UDim2.fromOffset(26, 31), Size = UDim2.fromOffset(4, 5), ZIndex = 6, Parent = skull })
+		for _, tx in { 23, 28, 33 } do new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(tx - 1, 40), Size = UDim2.fromOffset(2, 6), ZIndex = 6, Parent = skull }) end
+		slots[i] = { h = h, x1 = x1, x2 = x2, skull = skull }
 	end
 	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, WHITE, nil, 4)
 	return { slots = slots, score = score, frame = b }
 end
 local mineBox = teamBox(580, TEAM_A, false)
 local theirBox = teamBox(1040, TEAM_B, true)
-local timerBox = new("Frame", { Position = UDim2.fromOffset(888, 20), Size = UDim2.fromOffset(144, 84), BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, Parent = root }, { corner(8) })
+local timerBox = new("Frame", { Position = UDim2.fromOffset(888, 20), Size = UDim2.fromOffset(144, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = root }, { corner(10),
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(46, 48, 52), Color3.fromRGB(12, 13, 15)) }),
+	new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.75, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
 local timerL = label(timerBox, "0:00", FX, 40, 0, 4, 144, 50, WHITE)
+-- (2026-10-18) the hourglass shown left of the time between rounds: top and bottom caps, two crossing glass sides
+do local hourglass = new("Frame", { Name = "Hourglass", BackgroundTransparency = 1, Position = UDim2.fromOffset(18, 12), Size = UDim2.fromOffset(24, 36), Visible = false, ZIndex = 4, Parent = timerBox })
+new("Frame", { BackgroundColor3 = WHITE, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(24, 5), ZIndex = 4, Parent = hourglass }, { corner(2) })
+new("Frame", { BackgroundColor3 = WHITE, Position = UDim2.fromOffset(0, 31), Size = UDim2.fromOffset(24, 5), ZIndex = 4, Parent = hourglass }, { corner(2) })
+for _, rot in { 33, -33 } do
+	new("Frame", { BackgroundColor3 = WHITE, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(12, 18), Size = UDim2.fromOffset(4, 32), Rotation = rot, ZIndex = 4, Parent = hourglass })
+end end
 local roundL = label(timerBox, "ROUND 1", STENCIL, 18, 0, 52, 144, 26, Color3.fromRGB(205, 205, 212))
 local toWin = label(root, "", FB, 18, 760, 108, 400, 24, Color3.fromRGB(205, 205, 212))
 
 ---------------------------------------------------------------------------------------------------- round banner
 local banner = new("Frame", { Name = "Banner", BackgroundTransparency = 1, Position = UDim2.fromOffset(360, 330), Size = UDim2.fromOffset(1200, 260), Visible = false, Parent = root })
+new("Frame", { Name = "Band", BackgroundColor3 = BLACK, BorderSizePixel = 0, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(1200, 210), ZIndex = 4, Parent = banner }, {
+	new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.25, 0.45), NumberSequenceKeypoint.new(0.75, 0.45), NumberSequenceKeypoint.new(1, 1) }) }) })
 local bannerTitle = label(banner, "", STENCIL, 110, 0, 0, 1200, 140, WHITE, nil, 5)
 local bannerSub = label(banner, "", FX, 48, 0, 140, 1200, 70, Color3.fromRGB(225, 225, 230), nil, 5)
 local bannerScale = new("UIScale", { Parent = banner })
@@ -149,6 +185,11 @@ local function showBanner(title, sub, color, seconds)
 	banner.Visible = true
 	bannerScale.Scale = 1.25
 	TweenService:Create(bannerScale, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	-- the title slides in from the left and fades up (RIVALS-style entrance)
+	local home = bannerTitle.Position
+	bannerTitle.Position = home - UDim2.fromScale(0.06, 0)
+	bannerTitle.TextTransparency = 1
+	TweenService:Create(bannerTitle, TweenInfo.new(0.3, Enum.EasingStyle.Quart), { Position = home, TextTransparency = 0 }):Play()
 	if seconds then task.delay(seconds, function() if bannerToken == my then banner.Visible = false end end) end
 end
 
@@ -173,6 +214,8 @@ local function teamOf(uid)
 	local p = Players:GetPlayerByUserId(uid or 0)
 	return p and p:GetAttribute("Team")
 end
+local botDown = {} -- bot uid -> true once killed this round (cleared when the next round starts)
+local showEliminated -- set below: "Eliminated <name>" under the crosshair
 local lastDeath -- the kill event that killed you (the kill-cam card shows how)
 local tally = {} -- uid -> { k, d, hs } from this match's kill events (headshots and bots have no attribute)
 local function tallyOf(uid) tally[uid] = tally[uid] or { k = 0, d = 0, hs = 0 }; return tally[uid] end
@@ -181,9 +224,15 @@ local function addKill(d)
 	if d.killer then local t = tallyOf(d.killer); t.k += 1; if d.headshot then t.hs += 1 end end
 	if d.victim then tallyOf(d.victim).d += 1 end
 	if d.victim == player.UserId then lastDeath = d end
+	if d.victim and d.victim < 0 then botDown[d.victim] = true end
+	if d.killer == player.UserId and d.victim and d.victim ~= player.UserId and showEliminated then showEliminated(d.victim) end
 	local myTeam = player:GetAttribute("Team")
-	local function col(uid) if uid == player.UserId then return WHITE end; return teamOf(uid) == myTeam and TEAM_A[1] or Color3.fromRGB(255, 140, 120) end
-	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Parent = feed }, { new("UICorner", { CornerRadius = UDim.new(0.25, 0) }) })
+	local function col(uid) return WHITE end -- (names white on the team-coloured row, RIVALS)
+	-- (2026-10-18, live RIVALS) the row is in the killer's team colour: yours when your side got the kill, red when theirs
+	local ours = d.killer == player.UserId or teamOf(d.killer) == myTeam
+	local rc = ours and TEAM_A or TEAM_B
+	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundColor3 = WHITE, BackgroundTransparency = 0.05, Parent = feed },
+		{ new("UICorner", { CornerRadius = UDim.new(0.25, 0) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(rc[1], rc[2]) }) })
 	local mine = d.killer == player.UserId or d.victim == player.UserId
 	if mine then new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = row }) end
 	local verb = d.kind == "Melee" and "bashed" or (d.kind == "Explosion" and "blew up" or (d.kind == "Burn" and "burned" or ">"))
@@ -192,6 +241,9 @@ local function addKill(d)
 	local l = new("TextLabel", { BackgroundTransparency = 1, RichText = true, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE,
 		TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.94, 0.7), Parent = row })
 	new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l })
+	gloss(row, 8, 0.22)
+	local ins = new("UIScale", { Scale = 0.6, Parent = row })
+	TweenService:Create(ins, TweenInfo.new(0.22, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	task.delay(5, function()
 		if row.Parent then
 			TweenService:Create(row, TweenInfo.new(0.4), { BackgroundTransparency = 1 }):Play()
@@ -680,6 +732,129 @@ end)
 showResultScreenRef = showResultScreen
 
 
+local RV = {} -- (2026-10-18) the RIVALS round-end pieces, in a block: this script is at the 200-locals limit
+do
+---------------------------------------------------------------------------------------------------- round card (RIVALS)
+-- (2026-10-18, live RIVALS with Edward) a round's end: a small green "ROUND / WON" or red "ROUND / LOST" card pops in under
+-- the timer with a white flash, and stays until the next round goes live.
+local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(818, 116), Size = UDim2.fromOffset(284, 100), BackgroundColor3 = WHITE,
+	Visible = false, ZIndex = 6, Parent = root }, { corner(8) })
+local roundGrad = new("UIGradient", { Rotation = 90, Parent = roundCard })
+local roundSmall = label(roundCard, "ROUND", FB, 26, 0, 4, 284, 30, WHITE, nil, 7)
+local roundBig = label(roundCard, "WON", FX, 64, 0, 26, 284, 70, WHITE, nil, 7)
+new("UIStroke", { Thickness = 2, Transparency = 0.5, Parent = roundBig })
+local roundFlash = new("Frame", { BackgroundColor3 = WHITE, BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 8, Parent = roundCard }, { corner(8) })
+local roundPop = new("UIScale", { Parent = roundCard })
+gloss(roundCard, 8, 0.3)
+local function showRoundCard(won)
+	roundGrad.Color = won and ColorSequence.new(Color3.fromRGB(120, 230, 70), Color3.fromRGB(40, 140, 24)) or ColorSequence.new(Color3.fromRGB(240, 70, 60), Color3.fromRGB(120, 18, 14))
+	roundBig.Text = won and "WON" or "LOST"
+	roundCard.Visible = true
+	roundPop.Scale = 1.35
+	TweenService:Create(roundPop, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	roundFlash.BackgroundTransparency = 0
+	TweenService:Create(roundFlash, TweenInfo.new(0.45, Enum.EasingStyle.Quad), { BackgroundTransparency = 1 }):Play()
+	task.delay(0.15, sweep, roundCard, 9)
+end
+
+---------------------------------------------------------------------------------------------------- eliminated
+local elimL = new("TextLabel", { Name = "Eliminated", BackgroundTransparency = 1, RichText = true, Text = "", FontFace = FB, TextSize = 34, TextColor3 = WHITE,
+	Position = UDim2.fromOffset(560, 640), Size = UDim2.fromOffset(800, 46), Visible = false, ZIndex = 6, Parent = root })
+elimL:SetAttribute("dTS", 34); table.insert(scaled, elimL)
+new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = elimL })
+local elimToken = 0
+showEliminated = function(uid)
+	elimToken += 1
+	local my = elimToken
+	elimL.Text = 'Eliminated  <font color="#C8A8FF">' .. nameOf(uid) .. '</font>'
+	elimL.TextTransparency = 0
+	elimL.Visible = true
+	local pop = elimL:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = elimL })
+	pop.Scale = 1.4
+	TweenService:Create(pop, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	task.delay(2.2, function()
+		if elimToken ~= my then return end
+		TweenService:Create(elimL, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
+		task.delay(0.45, function() if elimToken == my then elimL.Visible = false end end)
+	end)
+end
+
+---------------------------------------------------------------------------------------------------- killer card (RIVALS)
+-- bottom right while your killer is on camera: their headshot with a health bar over it, level badge, win streak flame,
+-- name + @username, "eliminated you with <weapon>". In the killer's team colour.
+local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(1150, 640), Size = UDim2.fromOffset(740, 140), BackgroundColor3 = WHITE,
+	Visible = false, ZIndex = 6, Parent = root }, { corner(10), new("UIGradient", { Rotation = 0, Color = ColorSequence.new(TEAM_B[1], TEAM_B[2]),
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.8, 0.1), NumberSequenceKeypoint.new(1, 1) }) }) })
+gloss(kcard, 10, 0.2)
+local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(20, 26), Size = UDim2.fromOffset(104, 104), ZIndex = 7, Parent = kcard }, { corner(52) })
+local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(32, 12), Size = UDim2.fromOffset(80, 10), ZIndex = 8, Parent = kcard }, { corner(5) })
+local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1), ZIndex = 9, Parent = kHpBack }, { corner(5) })
+local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(8, 92), Size = UDim2.fromOffset(44, 44), ZIndex = 9, Parent = kcard }, { corner(22),
+	new("UIStroke", { Color = WHITE, Thickness = 2 }) })
+local kLevelL = label(kLevel, "1", FX, 24, 0, 0, 44, 44, WHITE, nil, 10)
+local kStreak = new("Frame", { BackgroundColor3 = Color3.fromRGB(240, 110, 30), Position = UDim2.fromOffset(98, 96), Size = UDim2.fromOffset(38, 38), Visible = false, ZIndex = 9, Parent = kcard }, { corner(19),
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(255, 200, 60), Color3.fromRGB(230, 70, 20)) }), new("UIStroke", { Color = WHITE, Thickness = 2 }) })
+local kStreakL = label(kStreak, "3", FX, 22, 0, 0, 38, 38, WHITE, nil, 10)
+local kName = label(kcard, "", FX, 46, 150, 10, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
+local kUser = label(kcard, "", FB, 20, 150, 60, 560, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
+local kHow = label(kcard, "", FB, 28, 158, 88, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)
+new("UIStroke", { Thickness = 2, Transparency = 0.5, Parent = kName })
+local kFor
+local function refreshKillerCard(uid)
+	if uid ~= kFor then
+		kFor = uid
+		kHead.Image = ""
+		if uid and uid > 0 then
+			task.spawn(function()
+				local ok, img = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+				if ok and kFor == uid then kHead.Image = img end
+			end)
+		end
+	end
+	local p = uid and uid > 0 and Players:GetPlayerByUserId(uid)
+	kName.Text = nameOf(uid)
+	kUser.Text = p and ("@" .. p.Name) or ""
+	kLevelL.Text = tostring(p and p:GetAttribute("Level") or 1)
+	local streak = p and tonumber(p:GetAttribute("WinStreak")) or 0
+	kStreak.Visible = streak > 0
+	kStreakL.Text = tostring(streak)
+	local m = targetModel(uid)
+	local hum = m and m:FindFirstChildOfClass("Humanoid")
+	local frac = hum and hum.MaxHealth > 0 and math.clamp(hum.Health / hum.MaxHealth, 0, 1) or 0
+	kHp.Size = UDim2.fromScale(frac, 1)
+	kHp.BackgroundColor3 = frac > 0.5 and GOOD or (frac > 0.25 and Color3.fromRGB(235, 190, 60) or BAD)
+	local how = "eliminated you"
+	if lastDeath and lastDeath.killer == uid then
+		local kind = lastDeath.kind == "Melee" and "a melee hit" or (lastDeath.kind == "Explosion" and "an explosion" or (lastDeath.kind == "Burn" and "fire" or nil))
+		local w = lastDeath.weapon and tostring(lastDeath.weapon) or kind
+		if w then how ..= " with " .. w end
+	end
+	kHow.Text = how
+end
+
+---------------------------------------------------------------------------------------------------- switch weapons (RIVALS)
+-- between rounds: a blue "Switch Weapons [M]" button in the middle; it (or M) opens the loadout picker (MatchFlowUI)
+local switchB = new("TextButton", { Name = "SwitchWeapons", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(700, 770), Size = UDim2.fromOffset(470, 78),
+	BackgroundColor3 = WHITE, Visible = false, ZIndex = 6, Parent = root }, { corner(8),
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(70, 180, 255), Color3.fromRGB(20, 110, 230)) }) })
+label(switchB, "Switch Weapons", FX, 40, 20, 0, 370, 78, WHITE, nil, 7)
+local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Position = UDim2.fromOffset(396, 14), Size = UDim2.fromOffset(52, 50), ZIndex = 7, Parent = switchB }, { corner(6),
+	new("UIStroke", { Color = Color3.fromRGB(200, 200, 205), Thickness = 2 }) })
+local keyL = label(keyChip, "M", FX, 30, 0, 0, 52, 50, WHITE, nil, 8)
+local switchScale = new("UIScale", { Parent = switchB })
+gloss(switchB, 8, 0.3)
+switchB.MouseEnter:Connect(function() TweenService:Create(switchScale, TweenInfo.new(0.1), { Scale = 1.04 }):Play() end)
+switchB.MouseLeave:Connect(function() TweenService:Create(switchScale, TweenInfo.new(0.1), { Scale = 1 }):Play() end)
+local function switchHook() return player:FindFirstChild("PlayerScripts") and player.PlayerScripts:FindFirstChild("SwitchWeapons") end
+switchB.Activated:Connect(function() local h = switchHook(); if h then h:Invoke("Toggle") end end)
+UserInputService.InputBegan:Connect(function(i, gp)
+	if gp or not switchB.Visible then return end
+	if i.KeyCode == Enum.KeyCode.M or i.KeyCode == Enum.KeyCode.ButtonY then local h = switchHook(); if h then h:Invoke("Toggle") end end
+end)
+
+RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.switchHook = roundCard, showRoundCard, kcard, refreshKillerCard, switchB, switchHook
+end
+
 toScale(canvas, Vector2.new(W, H))
 rescale()
 
@@ -693,8 +868,14 @@ local function fillBox(box, ids)
 		if uid then
 			local p = uid > 0 and Players:GetPlayerByUserId(uid) or nil
 			local dead = (uid > 0 and not p) or (p and p:GetAttribute("Alive") == false)
-			s.h.ImageTransparency = dead and 0.65 or 0
-			s.x1.Visible, s.x2.Visible = dead, dead
+			if uid < 0 then -- a bot: dead once a kill event took it this round (its model can't always be found), or its humanoid is down
+				local bm = botModel(uid)
+				local bh = bm and bm:FindFirstChildOfClass("Humanoid")
+				dead = botDown[uid] == true or (bh ~= nil and bh.Health <= 0)
+			end
+			s.h.ImageTransparency = dead and 1 or 0
+			s.x1.Visible, s.x2.Visible = false, false
+			s.skull.Visible = dead
 			if uid < 0 then s.h.Image = ""
 			elseif heads[uid] then s.h.Image = heads[uid]
 			elseif heads[uid] == nil then
@@ -729,7 +910,10 @@ local function hookEvents()
 	if m then
 		m:WaitForChild("MatchResults", 30)
 		local ann = m:FindFirstChild("MatchAnnounce")
-		if ann then ann.OnClientEvent:Connect(function(t, sub) if inMatch() then showBanner(tostring(t or ""), sub and tostring(sub) or "", WHITE, 2.5) end end) end
+		if ann then ann.OnClientEvent:Connect(function(t, sub)
+			-- (RIVALS) a round's end is the small won / lost card only: no big "TEAM A WINS THE ROUND" across the screen
+			if tostring(t or ""):upper():find("WINS THE ROUND", 1, true) then return end
+			if inMatch() then showBanner(tostring(t or ""), sub and tostring(sub) or "", WHITE, 2.5) end end) end
 		local res = m:FindFirstChild("MatchResults")
 		-- (the results can land after the post-match phase began, when InMatch is already off)
 		if res then res.OnClientEvent:Connect(function(sum) if inMatch() or st("PostMatch") == true or player:GetAttribute("InPseudoLobby") == true then resultsShown = true; gotSummary = true; showResults(sum) end end) end
@@ -779,19 +963,27 @@ RunService.RenderStepped:Connect(function()
 	local mine, theirs = myTeam == "A" and sa or sb, myTeam == "A" and sb or sa
 	mineBox.score.Text, theirBox.score.Text = tostring(mine), tostring(theirs)
 	local left = math.max(0, (st("StateEndsAt") or st("PhaseEndsAt") or 0) - workspace:GetServerTimeNow())
-	timerL.Text = string.format("%d:%02d", left // 60, math.floor(left) % 60)
+	local between = state == "RoundEnd" or state == "Countdown"
+	timerBox.Hourglass.Visible = between
+	timerL.Text = between and string.format("%.1f", left) or string.format("%d:%02d", left // 60, math.floor(left) % 60)
+	timerL.Position = UDim2.fromScale(between and 0.12 or 0, timerL.Position.Y.Scale)
 	roundL.Text = "ROUND " .. tostring(st("RoundNumber") or 1)
 	toWin.Text = st("RoundsToWin") and ("First to " .. st("RoundsToWin")) or ""
 	-- banners
 	if state ~= lastState then
 		if state == "Countdown" or state == "RunIn" then gotSummary = false end
 		if state == "Countdown" then
-			showBanner("ROUND " .. tostring(st("RoundNumber") or 1), "", WHITE)
+			-- (RIVALS) the first round gets the big "ROUND 1"; later ones keep the won / lost card up instead
+			if not RV.roundCard.Visible then showBanner("ROUND " .. tostring(st("RoundNumber") or 1), "", WHITE) end
 		elseif state == "Live" then
-			showBanner("FIGHT!", "", GOOD, 0.9)
+			RV.roundCard.Visible = false
+			table.clear(botDown)
+			if (st("RoundNumber") or 1) <= 1 then showBanner("FIGHT!", "", GOOD, 0.9) end
 		elseif state == "RoundEnd" and not spectator() then
-			if mine ~= lastScoreMine and mine > (lastScoreMine or 0) then showBanner("ROUND WON", mine .. " - " .. theirs, GOOD, 2.5)
-			elseif theirs ~= lastScoreTheirs and theirs > (lastScoreTheirs or 0) then showBanner("ROUND LOST", mine .. " - " .. theirs, BAD, 2.5) end
+			if mine ~= lastScoreMine and mine > (lastScoreMine or 0) then RV.showRoundCard(true)
+			elseif theirs ~= lastScoreTheirs and theirs > (lastScoreTheirs or 0) then RV.showRoundCard(false) end
+		elseif state ~= "RoundEnd" then
+			RV.roundCard.Visible = false
 		elseif state == "MatchEnd" and not resultsShown then
 			-- the fallback card only when the server's summary never came (it often lands first, during Victory)
 			task.delay(1.5, function() if not resultsShown and not gotSummary and inMatch() then resultsShown = true; showResults(nil) end end)
@@ -800,9 +992,27 @@ RunService.RenderStepped:Connect(function()
 		lastScoreMine, lastScoreTheirs = mine, theirs
 	end
 	if state == "Countdown" and banner.Visible then bannerSub.Text = tostring(math.ceil(left)) end
+	-- Switch Weapons: between rounds (not the last one), for players in the match
+	local over = (st("MatchPhase") == "Victory" or st("MatchPhase") == "Finisher")
+	local mf = player.PlayerGui:FindFirstChild("MatchFlow")
+	local picking = mf ~= nil and mf.Enabled -- the Switch Weapons picker is up: only the score bar stays (RIVALS)
+	RV.switchB.Visible = between and not over and not spectator() and RV.switchHook() ~= nil and not picking
+	if picking then RV.roundCard.Visible = false; feed.Visible = false; local el = root:FindFirstChild("Eliminated"); if el then el.Visible = false end end
 	-- spectate: spectators, and duelists while dead
 	local spec = spectator() or (player:GetAttribute("Alive") == false and (state == "Live" or state == "RoundEnd" or state == "Victory"))
-	specBar.Visible = spec
+	-- your killer on camera: RIVALS' killer card bottom right instead of the spectate bar
+	local killerUid = player:GetAttribute("SpectateTarget")
+	local onKiller = spec and not spectator() and killerUid ~= nil and target == killerUid and player:GetAttribute("SpectateReason") == "Killer"
+	specBar.Visible = spec and not onKiller
+	if onKiller and not RV.kcard.Visible then
+		-- slide in from the right edge
+		local home = RV.kcardHome or RV.kcard.Position
+		RV.kcardHome = home
+		RV.kcard.Position = home + UDim2.fromScale(0.25, 0)
+		TweenService:Create(RV.kcard, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Position = home }):Play()
+	end
+	RV.kcard.Visible = onKiller
+	if onKiller then RV.refreshKillerCard(killerUid) end
 	specStop.Visible = spectator()
 	if spec then
 		-- your killer first (SpectateTarget), then anyone alive

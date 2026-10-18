@@ -34,6 +34,32 @@ local chatWas
 local tab = "Casual"
 local strips = {} -- live status lines, updated every tick without rebuilding
 
+-- (2026-10-18, live RIVALS party checks with Edward) the party: PartyMembers (JSON, leader first) + PartyLeader from LobbyParty
+local function partyList()
+	local ok, list = pcall(HttpService.JSONDecode, HttpService, player:GetAttribute("PartyMembers") or "")
+	return (ok and type(list) == "table") and list or {}
+end
+local function partyLeader(list) return player:GetAttribute("PartyLeader") or list[1] or player.UserId end
+-- why this party can't take a queue of `teamSize` (RIVALS' "Whoops!" reasons), or nil
+local function partyBlock(teamSize)
+	local list = partyList()
+	if #list <= 1 then return nil end
+	if partyLeader(list) ~= player.UserId then return "Only the party leader can join a queue!" end
+	if teamSize and #list > teamSize then return "This party is too big for this queue!" end
+	for _, uid in list do
+		local p = Players:GetPlayerByUserId(uid)
+		if p and (p:GetAttribute("InDuel") == true or p:GetAttribute("DuelMatch") ~= nil) then
+			return "A party member (@" .. p.Name .. ") is currently in a duel!"
+		end
+	end
+	return nil
+end
+local function openParty()
+	local mod = UIKit:FindFirstChild("PartyScreen")
+	local ok, PS = pcall(require, mod)
+	if ok and PS and PS.Open then Screen.Close(); PS.Open() end
+end
+
 local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	return Kit.label({ Text = text, FontFace = font, TextSize = size, TextColor3 = color or T.bone, TextXAlignment = align or Enum.TextXAlignment.Left,
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 3, Parent = parent })
@@ -199,6 +225,8 @@ local function modeCard(i, mode, ranked, x)
 		local myQ, st = search()
 		if myQ and q and myQ.Id == q.Id and st == "Searching" then ctx.ask("CancelMatch"); return end
 		if myQ or onPad() or not q then return end
+		local why = partyBlock(mode.TeamSize)
+		if why then Kit.whoops(why) return end
 		local r = ctx.ask("FindMatch", q.Id)
 		if r and r.ok then Screen.Close(); return end
 		-- say why on the tile itself (the lobby toasts sit under this menu)
@@ -276,6 +304,41 @@ local function render()
 		Screen.Close()
 		if ctx.toPads then ctx.toPads() end
 	end)
+	-- the party column, bottom left (RIVALS): the leader at the bottom with the crown, the others stacked above, a + on top;
+	-- any of them opens Your Party
+	local old = root:FindFirstChild("PartyColumn")
+	if old then old:Destroy() end
+	local colF = new("Frame", { Name = "PartyColumn", BackgroundTransparency = 1, Position = UDim2.fromOffset(84, 560), Size = UDim2.fromOffset(110, 500), Parent = root })
+	local list = partyList()
+	if #list == 0 then list = { player.UserId } end
+	local leader = partyLeader(list)
+	local order = { leader }
+	for _, uid in list do if uid ~= leader then table.insert(order, uid) end end
+	local y = 500
+	for i, uid in order do
+		local d = i == 1 and 100 or 80
+		y -= d + 8
+		local h = new("ImageButton", { Name = "Head" .. i, AutoButtonColor = false, BackgroundColor3 = Color3.fromRGB(26, 28, 24), BackgroundTransparency = 0.2,
+			Position = UDim2.fromOffset((110 - d) / 2, y), Size = UDim2.fromOffset(d, d), ZIndex = 4, Parent = colF }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		h:AddTag("Nonapplicable")
+		task.spawn(function()
+			local ok, im = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+			if ok then h.Image = im end
+		end)
+		if i == 1 and #list > 1 then Kit.crown(h, UDim2.fromScale(0.78, 0.12), UDim2.fromScale(0.55, 0.42), 6) end
+		Kit.bindButton(h, { hover = 1.06 })
+		h.Activated:Connect(openParty)
+	end
+	if #list < 5 then
+		y -= 72
+		local plus = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.fromRGB(26, 28, 24), BackgroundTransparency = 0.3,
+			Position = UDim2.fromOffset(19, y), Size = UDim2.fromOffset(72, 72), ZIndex = 4, Parent = colF }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		plus:AddTag("Nonapplicable")
+		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(30, 8), BackgroundColor3 = Color3.fromRGB(200, 200, 205), BorderSizePixel = 0, ZIndex = 5, Parent = plus })
+		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(8, 30), BackgroundColor3 = Color3.fromRGB(200, 200, 205), BorderSizePixel = 0, ZIndex = 5, Parent = plus })
+		Kit.bindButton(plus, { hover = 1.08 })
+		plus.Activated:Connect(openParty)
+	end
 	Kit.toScale(root)
 	-- 3D after the conversion (viewports fill their holders)
 	for _, sc in stages do squadScene(sc[1], sc[2], ranked) end
@@ -397,6 +460,9 @@ end
 function Screen.Init(context)
 	ctx = context or {}
 	if not gui then build() end
+	for _, a in { "PartyMembers", "PartyLeader" } do
+		player:GetAttributeChangedSignal(a):Connect(function() if isOpen then render() end end)
+	end
 end
 function Screen.Open() setOpen(true) end
 function Screen.Close() if gui then setOpen(false) end end

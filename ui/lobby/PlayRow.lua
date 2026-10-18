@@ -32,9 +32,9 @@ local function seq(kind)
 	}), hex(g[6])
 end
 
-local function headshot(img)
+local function headshot(img, uid)
 	task.spawn(function()
-		local ok, id = pcall(Players.GetUserThumbnailAsync, Players, Players.LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+		local ok, id = pcall(Players.GetUserThumbnailAsync, Players, uid or Players.LocalPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 		if ok then img.Image = id end
 	end)
 end
@@ -73,6 +73,7 @@ function PlayRow.Init(ctx)
 	local av = new("ImageButton", { Name = "Avatar", AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromOffset(1114, 850),
 		Size = UDim2.fromOffset(62, 62), Parent = root }, { Kit.corner(31), Kit.stroke(C.amber, 2.5, 0) })
 	headshot(av)
+	av:SetAttribute("Uid", Players.LocalPlayer.UserId)
 	Kit.bindButton(av, { hover = 1.08 })
 	av.Activated:Connect(function() if ctx.onInvite then ctx.onInvite() end end) -- your avatar opens Your Party too
 	local inv = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1186, 858), Size = UDim2.fromOffset(46, 46),
@@ -97,9 +98,16 @@ function PlayRow.Init(ctx)
 		for _, c in mates:GetChildren() do c:Destroy() end
 		local ok, list = pcall(HttpService.JSONDecode, HttpService, Players.LocalPlayer:GetAttribute("PartyMembers") or "")
 		list = (ok and type(list) == "table") and list or {}
+		-- (2026-10-18, live RIVALS) the party leader's head always comes first, crowned, even when you were the one invited
+		local me = Players.LocalPlayer.UserId
+		local leader = (#list > 1) and (Players.LocalPlayer:GetAttribute("PartyLeader") or list[1]) or me
+		if av:GetAttribute("Uid") ~= leader then av:SetAttribute("Uid", leader); av.Image = ""; headshot(av, leader) end
+		local crown = av:FindFirstChild("Crown")
+		if #list > 1 and not crown then Kit.crown(av, UDim2.fromScale(0.82, 0.08), UDim2.fromScale(0.6, 0.46), 6)
+		elseif #list <= 1 and crown then crown:Destroy() end
 		local n = 0
 		for _, uid in list do
-			if uid ~= Players.LocalPlayer.UserId and n < 4 then
+			if uid ~= leader and n < 4 then
 				local head = new("ImageButton", { AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromScale(n * 54 / (4 * 54), 0.06),
 					Size = UDim2.fromScale(50 / (4 * 54), 50 / 62), Parent = mates }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), Kit.stroke(C.olive, 2, 0) })
 				task.spawn(function()
