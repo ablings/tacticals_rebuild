@@ -77,6 +77,12 @@ local function combat()
 	local ok, on = pcall(function() return require(ReplicatedStorage.Modules.Shared.TrainingGate).On() end)
 	return ok and on == true
 end
+-- (2026-10-18) the hub's own movement (the Tacticals session's LobbyMovement): its slide is fired through SlideRequest
+local function lobbySlide()
+	local ps = player:FindFirstChild("PlayerScripts")
+	local lm = ps and ps:FindFirstChild("LobbyMovement")
+	return lm and lm:FindFirstChild("SlideRequest")
+end
 local function touchOn() return UserInputService.TouchEnabled or player:GetAttribute("_ForceTouch") == true end
 
 -- the saved layout of the chosen slot, merged over the defaults
@@ -192,7 +198,11 @@ local function build()
 			if editing then return end
 			if input.UserInputType ~= Enum.UserInputType.Touch and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 			local ia = actions()
-			if ia then
+			local hubSlide = b.id == "Slide" and not combat() and lobbySlide()
+			if hubSlide then
+				if ia and ia.Consume then ia.Consume(input, false) end
+				hubSlide:Fire() -- the hub slide (LobbyMovement)
+			elseif ia then
 				-- this touch belongs to the button; with camera sinking a drag from it may still turn the camera
 				if ia.Consume then ia.Consume(input, btn:GetAttribute("SinkCamera") == true) end
 				ia.Press(b.action)
@@ -281,7 +291,9 @@ local function refresh()
 		local b = BY_ID[id]
 		place(id, m, l)
 		styleButton(id, m)
-		m.btn.Visible = editing or ((inCombat or b.lobby) and setting(id .. " Enabled", b.id ~= "Slide"))
+		-- (the hub has its own slide: the Slide button always shows there; in combat it stays opt-in via Settings > Touch)
+		local hubSlide = id == "Slide" and not inCombat and lobbySlide() ~= nil
+		m.btn.Visible = editing or hubSlide or ((inCombat or b.lobby) and setting(id .. " Enabled", b.id ~= "Slide"))
 	end
 	-- ammo on the gun button (Show Weapon Ammo)
 	local gun = made["Equip Gun"]
