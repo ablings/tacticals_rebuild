@@ -411,30 +411,38 @@ local function slotItems(slot)
 	return out
 end
 
--- step pills under the title: 1 GUN · 2 MELEE · 3 GADGET
-local pills = {}
-for i, s in SLOTS do
-	local pill = new("Frame", { Name = "Step" .. i, Position = UDim2.fromOffset(620 + (i - 1) * 230, 232), Size = UDim2.fromOffset(220, 44),
-		BackgroundColor3 = BLACK, BackgroundTransparency = 0.5, Parent = lo }, { corner(22) })
-	local t = label(pill, i .. "  " .. string.upper(s.label), FB, 24, 0, 0, 220, 44, GREY)
-	pills[i] = { frame = pill, text = t }
-end
--- the list for the current step
-local list = new("Frame", { Name = "List", Position = UDim2.fromOffset(700, 300), Size = UDim2.fromOffset(520, 520), BackgroundColor3 = BLACK,
-	BackgroundTransparency = 0.45, Parent = lo }, { corner(12) })
--- picked chips along the bottom
+-- (2026-10-17, Edward: "if you have over 6 weapons you don't get to see all of them ... make this ui prettier, look at
+-- rivals") RIVALS' loadout pick (refs from Edward): the map in a dark bar, the slot row under it (each slot shows its pick
+-- in 3D, the current one in a white rounded frame; click a slot to re-pick), and the choices as big square tiles below -
+-- Random first, then everything you own: the item rendered big and spilling over the tile's top, its name bold and
+-- outlined along the bottom. Tiles wrap in centred rows of six inside a scroll area, so any number fits.
+titleL.Visible = false
+mapChip.Visible = false
+local mapBar = new("Frame", { Name = "MapBar", Position = UDim2.fromOffset(700, 210), Size = UDim2.fromOffset(520, 54), BackgroundColor3 = BLACK, BorderSizePixel = 0, Parent = lo },
+	{ new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.2, 0.25), NumberSequenceKeypoint.new(0.8, 0.25), NumberSequenceKeypoint.new(1, 1) }) }) })
+local mapBarL = label(mapBar, "Map", FX, 34, 0, 0, 520, 54, WHITE)
+local stepHint = label(lo, "", FB, 22, 560, 396, 800, 28, GREY)
+
+-- the slot row: GUN / MELEE / GADGET
+local SLOT_W, SLOT_GAP = 104, 14
+local slotRowX = 960 - (#SLOTS * SLOT_W + (#SLOTS - 1) * SLOT_GAP) / 2
 local chips = {}
-for i, s in SLOTS do
-	local chip = new("TextButton", { Name = "Chip" .. s.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(600 + (i - 1) * 250, 846),
-		Size = UDim2.fromOffset(230, 150), BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Parent = lo }, { corner(12) })
-	local edge = new("UIStroke", { Color = WHITE, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
-	label(chip, string.upper(s.label), STENCIL, 22, 14, 8, 200, 28, GREY, Enum.TextXAlignment.Left)
-	local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(40, 34), Size = UDim2.fromOffset(150, 78), ZIndex = 3, Parent = chip })
-	local q = label(chip, "?", FX, 56, 0, 34, 230, 78, Color3.fromRGB(90, 90, 96))
-	local name = label(chip, "", FB, 22, 0, 112, 230, 30, WHITE)
-	chips[s.id] = { chip = chip, edge = edge, art = art, q = q, name = name, index = i }
+for i, s2 in SLOTS do
+	local chip = new("TextButton", { Name = "Slot" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotRowX + (i - 1) * (SLOT_W + SLOT_GAP), 282),
+		Size = UDim2.fromOffset(SLOT_W, SLOT_W), BackgroundColor3 = Color3.fromRGB(14, 15, 14), BackgroundTransparency = 0.15, Parent = lo }, { corner(10),
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(70, 72, 70), Color3.fromRGB(10, 11, 10)) }) })
+	local edge = new("UIStroke", { Color = WHITE, Thickness = 5, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
+	local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-8, -14), Size = UDim2.fromOffset(SLOT_W + 16, SLOT_W + 10), ZIndex = 3, Parent = chip })
+	local q = label(chip, string.upper(s2.label), STENCIL, 20, 0, 0, SLOT_W, SLOT_W, Color3.fromRGB(110, 112, 108))
+	chips[s2.id] = { chip = chip, edge = edge, art = art, q = q, index = i }
 end
-local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1400, 880), Size = UDim2.fromOffset(300, 80),
+
+-- the choices: a scroll area, tiles placed in centred rows
+local OPT, OPT_GAP, PER_ROW = 122, 36, 6
+local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromOffset(460, 432), Size = UDim2.fromOffset(1000, 400), BackgroundTransparency = 1, BorderSizePixel = 0,
+	ScrollBarThickness = 6, ScrollBarImageColor3 = GREY, ScrollingDirection = Enum.ScrollingDirection.Y, CanvasSize = UDim2.new(), Parent = lo })
+local list = optArea -- (the old name: "the pick is open")
+local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(810, 872), Size = UDim2.fromOffset(300, 80),
 	BackgroundColor3 = WHITE, Visible = false, Parent = lo }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
 local readyL = label(ready, "READY", FX, 44, 0, 0, 300, 80, WHITE)
 ready.Activated:Connect(function()
@@ -446,70 +454,93 @@ end)
 local picks, step = {}, 1
 local showStep
 local function refreshChips()
-	for _, s in SLOTS do
-		local c = chips[s.id]
-		local id = picks[s.id]
+	for _, s2 in SLOTS do
+		local c = chips[s2.id]
+		local id = picks[s2.id]
 		c.q.Visible = id == nil
-		c.name.Text = id and nameOf(id) or ""
 		if c.shown ~= id then c.shown = id; viewport(c.art, id) end
-		c.edge.Transparency = (step == c.index and list.Visible) and 0.1 or 1
-	end
-	for i, s in SLOTS do
-		local done, cur = picks[s.id] ~= nil, i == step and list.Visible
-		pills[i].frame.BackgroundColor3 = cur and WHITE or (done and OLIVE or BLACK)
-		pills[i].frame.BackgroundTransparency = cur and 0 or (done and 0.1 or 0.5)
-		pills[i].text.TextColor3 = cur and BLACK or (done and WHITE or GREY)
-		pills[i].text.Text = i .. "  " .. string.upper(s.label) .. ((done and not cur) and "  ✓" or "")
+		local cur = step == c.index and optArea.Visible
+		c.edge.Transparency = cur and 0 or 1
 	end
 	ready.Visible = picks.Weapon ~= nil and picks.Melee ~= nil and picks.Gadget ~= nil
 end
 local function allPicked()
-	list.Visible = false
-	titleL.Text = "READY UP"
+	optArea.Visible = false
+	stepHint.Text = "Ready up"
 	refreshChips()
+end
+-- one choice tile: dark gradient square, the item big and spilling over its top, the name outlined at the bottom
+local function optionTile(parent, x, y, id, text, onPick, random)
+	local t = new("TextButton", { Name = text, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(OPT, OPT),
+		BackgroundColor3 = WHITE, Parent = parent }, { corner(8),
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(random and Color3.fromRGB(16, 16, 18) or Color3.fromRGB(38, 40, 44), random and Color3.fromRGB(6, 6, 8) or Color3.fromRGB(96, 98, 104)) }),
+		new("UIStroke", { Color = Color3.fromRGB(150, 152, 158), Thickness = 1.5, Transparency = random and 1 or 0.35, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	local scale = new("UIScale", { Parent = t })
+	if random then
+		label(t, "⇄", FX, 64, 0, 6, OPT, 80, Color3.fromRGB(60, 60, 64))
+	else
+		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-14, -34), Size = UDim2.fromOffset(OPT + 28, OPT + 8), ZIndex = 3, Parent = t })
+		task.defer(viewport, art, id)
+	end
+	local n = label(t, text, FX, #text > 11 and 22 or 28, -10, OPT - 40, OPT + 20, 36, WHITE)
+	n.ZIndex = 4
+	new("UIStroke", { Thickness = 2.5, Transparency = 0.1, Parent = n })
+	t.MouseEnter:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12, Enum.EasingStyle.Back), { Scale = 1.08 }):Play() end)
+	t.MouseLeave:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+	t.SelectionGained:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12, Enum.EasingStyle.Back), { Scale = 1.08 }):Play() end)
+	t.SelectionLost:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+	t.Activated:Connect(onPick)
+	return t
 end
 function showStep(i)
 	step = i
 	local slot = SLOTS[i].id
-	titleL.Text = "CHOOSE YOUR " .. string.upper(SLOTS[i].label)
-	for _, c in list:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
-	-- header: the slot name with a dotted rule (RIVALS weapon list)
-	label(list, string.upper(SLOTS[i].label), STENCIL, 30, 0, 10, 520, 40, GREY)
-	for d = 0, 24 do
-		new("Frame", { Position = UDim2.fromOffset(40 + d * 18, 56), Size = UDim2.fromOffset(6, 3), BackgroundColor3 = GREY, BackgroundTransparency = 0.4,
-			BorderSizePixel = 0, Parent = list })
+	stepHint.Text = "Choose your " .. string.lower(SLOTS[i].label)
+	for _, c in optArea:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
+	local mine = {}
+	for _, it in slotItems(slot) do if it.owned then table.insert(mine, it.id) end end
+	local function pick(id)
+		picks[slot] = id
+		send("Pick", slot, id)
+		local nextStep
+		for k, s2 in SLOTS do if not picks[s2.id] then nextStep = k break end end
+		if nextStep then showStep(nextStep) else allPicked() end
 	end
-	for n, it in slotItems(slot) do
-		local y = 66 + (n - 1) * 74
-		if y > 520 - 70 then break end
-		local row = new("TextButton", { Name = it.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(10, y), Size = UDim2.fromOffset(500, 68),
-			BackgroundColor3 = BLACK, BackgroundTransparency = picks[slot] == it.id and 0.2 or 1, Parent = list }, { corner(8) })
-		if it.owned then
-			local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-6, -10), Size = UDim2.fromOffset(150, 88), ZIndex = 3, Parent = row })
-			task.defer(viewport, art, it.id)
-			label(row, nameOf(it.id), FX, 32, 120, 0, 380, 68, picks[slot] == it.id and WHITE or GREY)
-			row.MouseEnter:Connect(function() row.BackgroundTransparency = 0.35 end)
-			row.MouseLeave:Connect(function() row.BackgroundTransparency = picks[slot] == it.id and 0.2 or 1 end)
-			row.Activated:Connect(function()
-				picks[slot] = it.id
-				send("Pick", slot, it.id)
-				local nextStep
-				for k, s2 in SLOTS do if not picks[s2.id] then nextStep = k break end end
-				if nextStep then showStep(nextStep) else allPicked() end
-			end)
+	-- tiles: Random, then everything owned; centred rows of PER_ROW
+	local entries = { { random = true } }
+	for _, id in mine do table.insert(entries, { id = id }) end
+	local rows = math.ceil(#entries / PER_ROW)
+	local rowH = OPT + 48 -- room for the art spilling over the top
+	local contentH = math.max(400, 40 + rows * rowH)
+	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(1000, contentH), Parent = optArea })
+	for k, e in entries do
+		local row = (k - 1) // PER_ROW
+		local inRow = math.min(PER_ROW, #entries - row * PER_ROW)
+		local rowW = inRow * OPT + (inRow - 1) * OPT_GAP
+		local col = (k - 1) % PER_ROW
+		local x = (1000 - rowW) / 2 + col * (OPT + OPT_GAP)
+		local y = 40 + row * rowH
+		if e.random then
+			optionTile(content, x, y, nil, "Random", function() if #mine > 0 then pick(mine[math.random(#mine)]) end end, true)
 		else
-			label(row, "🔒  " .. nameOf(it.id) .. "  🔒", FB, 28, 0, 0, 500, 68, Color3.fromRGB(70, 70, 76))
+			optionTile(content, x, y, e.id, nameOf(e.id), function() pick(e.id) end)
 		end
 	end
-	list.Visible = true
-	convertLater(list, Vector2.new(520, 520))
+	optArea.Visible = true
+	-- the canvas is as tall as the rows (scrolls past two rows); the content fills it
+	-- (CanvasSize Scale counts against the ScrollingFrame's PARENT, not the frame: scale the frame's own Scale size)
+	optArea.CanvasSize = UDim2.fromScale(optArea.Size.X.Scale, optArea.Size.Y.Scale * contentH / 400)
+	optArea.ScrollBarImageTransparency = contentH > 400 and 0.3 or 1 -- the bar only when there's more to see
+	convertLater(content, Vector2.new(1000, contentH))
+	content.Size = UDim2.fromScale(1, 1)
 	refreshChips()
 end
-for _, s in SLOTS do chips[s.id].chip.Activated:Connect(function() showStep(chips[s.id].index) end) end
+for _, s2 in SLOTS do chips[s2.id].chip.Activated:Connect(function() showStep(chips[s2.id].index) end) end
 local function startLoadout()
 	picks, step = {}, 1
 	for _, c in chips do c.shown = false end
 	player:SetAttribute("_Ready", nil); readyL.Text = "READY"
+	mapBarL.Text = "Map: " .. tostring(st(STATE.Chosen) or "?")
 	showStep(1)
 end
 local function refreshLoadout() refreshChips() end

@@ -190,7 +190,7 @@ end
 
 function LobbyHud.Start()
 	local LobbyUI = shared.Get and shared.Get("LobbyUIController")
-	local gui = new("ScreenGui", { Name = "LobbyHud", ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 5,
+	local gui = new("ScreenGui", { Name = "LobbyHud", ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 7,
 		Parent = player:WaitForChild("PlayerGui") })
 	local canvas = Kit.canvas(gui)
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
@@ -367,9 +367,15 @@ function LobbyHud.Start()
 		end
 		n.b.MouseEnter:Connect(function()
 			if away() then return end
-			n.tip.Visible = true; n.tip.Position = tipBase
 			hovered = true; gen += 1
-			task.spawn(bob, gen)
+			-- (Edward: the bubbles came up too early) the bubble waits until you've rested on the item a moment
+			local myGen = gen
+			task.delay(0.55, function()
+				if hovered and gen == myGen and not away() then
+					n.tip.Visible = true; n.tip.Position = tipBase
+					task.spawn(bob, myGen)
+				end
+			end)
 			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(true) end
 			Kit.tween(n.s, 0.15, { Scale = 1.12 }, Enum.EasingStyle.Back)
 			Kit.tween(n.b, 0.15, { Position = lift }, Enum.EasingStyle.Back)
