@@ -343,6 +343,15 @@ leave.Visible = false -- (RIVALS) the result screen's Rematch / Play Again / Lea
 local showResultScreenRef -- the RIVALS result screen (defined just below)
 local function showResults(sum)
 	sum = sum or {}
+	-- no summary from the server yet (the MatchEnd fallback): work the result out from the state, never assume a loss
+	if sum.Won == nil and sum.Draw == nil then
+		local myTeam = player:GetAttribute("Team") or "A"
+		local wt = st("WinnerTeam")
+		local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
+		if wt then sum.Won = wt == myTeam
+		elseif sa ~= sb then sum.Won = (myTeam == "A") == (sa > sb)
+		else sum.Draw = true end
+	end
 	resTitle.Text = sum.Draw and "DRAW" or (sum.Won and "VICTORY" or "DEFEAT")
 	resTitle.TextColor3 = sum.Draw and WHITE or (sum.Won and GOOD or BAD)
 	local myTeam = sum.Team or player:GetAttribute("Team") or "A"
@@ -377,8 +386,12 @@ local function showResults(sum)
 		end
 	end
 	if sum.TestMatch or sum.Aborted then resRewards.Text = sum.Aborted and "Match ended early: no rewards" or "Test match: no rewards" end
-	results.Visible = true
-	if showResultScreenRef then showResultScreenRef(sum) end
+	-- the victory screen plays first: the results wait for it (they often arrive during Victory)
+	task.spawn(function()
+		while st("MatchState") == "Victory" or st("MatchPhase") == "Victory" do task.wait(0.1) end
+		results.Visible = true
+		if showResultScreenRef then showResultScreenRef(sum) end
+	end)
 end
 ---------------------------------------------------------------------------------------------------- RIVALS result screen
 -- (2026-10-18, Edward, RIVALS refs) after every ranked match: the screen blurs, your rank emblem sits in the middle with the
@@ -684,6 +697,7 @@ end
 
 ---------------------------------------------------------------------------------------------------- wiring
 local lastState, lastScoreMine, lastScoreTheirs, resultsShown, lastMatchId
+local gotSummary = false -- the server's MatchResults arrived for this match
 local function hookEvents()
 	local ev = ReplicatedStorage:WaitForChild("MatchFlow", 30)
 	if ev then
@@ -695,12 +709,17 @@ local function hookEvents()
 			if kind == "Return" then results.Visible = false; banner.Visible = false end
 		end)
 	end
-	local m = ReplicatedStorage:FindFirstChild("Events") and ReplicatedStorage.Events:FindFirstChild("Match")
+	-- (wait for them: the server makes Events.Match.* as it starts, after this client may already be running; a plain
+	-- FindFirstChild at join missed MatchResults, so the result screen never got the ranked summary)
+	local ev = ReplicatedStorage:WaitForChild("Events", 30)
+	local m = ev and ev:WaitForChild("Match", 30)
 	if m then
+		m:WaitForChild("MatchResults", 30)
 		local ann = m:FindFirstChild("MatchAnnounce")
 		if ann then ann.OnClientEvent:Connect(function(t, sub) if inMatch() then showBanner(tostring(t or ""), sub and tostring(sub) or "", WHITE, 2.5) end end) end
 		local res = m:FindFirstChild("MatchResults")
-		if res then res.OnClientEvent:Connect(function(sum) if inMatch() then resultsShown = true; showResults(sum) end end) end
+		-- (the results can land after the post-match phase began, when InMatch is already off)
+		if res then res.OnClientEvent:Connect(function(sum) if inMatch() or st("PostMatch") == true or player:GetAttribute("InPseudoLobby") == true then resultsShown = true; gotSummary = true; showResults(sum) end end) end
 	end
 end
 task.spawn(hookEvents)
@@ -752,6 +771,7 @@ RunService.RenderStepped:Connect(function()
 	toWin.Text = st("RoundsToWin") and ("First to " .. st("RoundsToWin")) or ""
 	-- banners
 	if state ~= lastState then
+		if state == "Countdown" or state == "RunIn" then gotSummary = false end
 		if state == "Countdown" then
 			showBanner("ROUND " .. tostring(st("RoundNumber") or 1), "", WHITE)
 		elseif state == "Live" then
@@ -760,7 +780,8 @@ RunService.RenderStepped:Connect(function()
 			if mine ~= lastScoreMine and mine > (lastScoreMine or 0) then showBanner("ROUND WON", mine .. " - " .. theirs, GOOD, 2.5)
 			elseif theirs ~= lastScoreTheirs and theirs > (lastScoreTheirs or 0) then showBanner("ROUND LOST", mine .. " - " .. theirs, BAD, 2.5) end
 		elseif state == "MatchEnd" and not resultsShown then
-			task.delay(1.5, function() if not resultsShown and inMatch() then resultsShown = true; showResults(nil) end end)
+			-- the fallback card only when the server's summary never came (it often lands first, during Victory)
+			task.delay(1.5, function() if not resultsShown and not gotSummary and inMatch() then resultsShown = true; showResults(nil) end end)
 		end
 		lastState = state
 		lastScoreMine, lastScoreTheirs = mine, theirs
