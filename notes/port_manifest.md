@@ -231,3 +231,9 @@ himself; we never publish.
   rank divisions, streak flame, RIVALS top-right corner.
 - Publish note: twice the File-menu click and the Publish As click in one batch missed (menu not open yet); one step at a time
   with a screenshot between works. The stray clicks only selected parts / moved the editor camera.
+
+## Live port 17: one corner gear (2026-10-18, lead; Edward: "go save and publish port 17")
+- Both copies saved with the UI's c5da767 (Inbox + News inside the lobby HUD's corner gear, the separate row gone). Published, each
+  retitled after Grant: tacticals (lobby), Tutorial, Matchmaking, Ranked; Matchmaking / Ranked with deploy_ui --matchmaking|--ranked
+  and the usual checks. New tools/port_prep.sh does open / split_build / deploy / verify / save / bring-to-primary per place.
+- Publish note: click the Studio title bar before File (the first click into a fresh window only focuses it).
