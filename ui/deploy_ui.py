@@ -116,6 +116,15 @@ PSEUDO_FILES = [
     (CC + ".LobbyUIController", "Armory", "ModuleScript", "lobby/Armory.lua"),
 ]
 PL_FOLDER = "ReplicatedStorage.PseudoLobbyClient"
+# the after-match map is the hub's shifted by (0, 0, 2600) (lead session): hub coordinates in the snapshots move with it
+HUB_PATCHES = {
+    "pseudolobby/hub/RoomFX.lua": [
+        ('local c = CENTRES[h:GetAttribute("Room")]',
+         'local c = CENTRES[h:GetAttribute("Room")]; if c then c += MAP_SHIFT end -- [PSEUDO] the after-match map sits at +2600 Z'),
+        ('local CENTRES = {',
+         'local MAP_SHIFT = game:GetService("ReplicatedStorage"):GetAttribute("PseudoLobbyMap") ~= nil and Vector3.new(0, 0, 2600) or Vector3.zero -- [PSEUDO]\nlocal CENTRES = {'),
+    ],
+}
 def _hub():
     man = json.load(open(os.path.join(HERE, 'pseudolobby', 'hub', 'manifest.json'), encoding='utf-8'))
     out = [("StarterPlayer.StarterPlayerScripts", "PseudoLobbyRunner", "LocalScript", "pseudolobby/PseudoLobbyRunner.client.lua")]
@@ -160,6 +169,9 @@ def build():
     for entry in FILES:
         parent, name, cls, path = entry[:4]
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
+        for old, new in HUB_PATCHES.get(path, []):  # small fixes to the hub snapshots for the shifted after-match map
+            if src.count(old) != 1: raise SystemExit(f'hub patch no longer matches {path}: re-check it after a new snapshot')
+            src = src.replace(old, new)
         parts.append(f"put({'dir' if ('--match' in sys.argv or PLACE_KIND) else 'at'}('{parent}'), '{name}', '{cls}', {long_string(src)})")
     parts.append("local SS = game:GetService('ServerStorage'); local bin = SS:FindFirstChild('_RebuildRemoved') or Instance.new('Folder'); bin.Name = '_RebuildRemoved'; bin.Parent = SS")
     for parent, name, path in SET_FILES:
