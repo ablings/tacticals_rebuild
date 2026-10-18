@@ -233,50 +233,101 @@ function Notify.OpenNews()
 end
 
 ---------------------------------------------------------------------------------------------------- top-right buttons (hub)
--- round icon buttons with RIVALS' tooltip bubbles: { { kind, tip, onClick }, ... } right to left from the corner
+-- RIVALS' corner (Edward, 2026-10-18): only the gear shows ("See more"). Clicking it slides the other buttons out to its
+-- left (Inbox, News) and its own tooltip becomes "Change your crosshair & hotkeys"; clicking it again then opens Settings.
+-- A small x at the end of the row folds it back. buttons = { { kind, tip, onClick }, ... }: the first is the gear.
 function Notify.MountTopRight(buttons)
 	local gui = new("ScreenGui", { Name = "TopRightButtons", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 8, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		Parent = player:WaitForChild("PlayerGui") })
 	local canvas = Kit.canvas(gui)
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
-	local made = {}
-	for i, b in buttons do
-		local x = 1640 - (i - 1) * 62 -- (left of the region / fps readout and the gear already in the corner)
-		local btn = new("TextButton", { Name = b[1], Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.fromRGB(28, 29, 31), BackgroundTransparency = 0.15,
-			Position = UDim2.fromOffset(x, 16), Size = UDim2.fromOffset(52, 52), ZIndex = 2, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		btn:AddTag("Nonapplicable")
-		icon(btn, b[1], 10, 10, 32, Color3.new(1, 1, 1), 3)
-		-- the bubble: black rounded label under the button with a small notch, right-aligned to the screen edge
-		local tipW = math.max(140, #b[2] * 12 + 40)
+	local GEAR_X = 1640 -- (left of the region / fps readout already in the corner)
+	local made, order = {}, {}
+	local expanded = false
+	local function bubbleFor(btn, text)
+		local tipW = math.max(140, #text * 12 + 40)
 		local bubble = new("Frame", { Name = "Tip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.05, AnchorPoint = Vector2.new(1, 0),
 			Position = UDim2.fromOffset(52, 66), Size = UDim2.fromOffset(tipW, 40), Visible = false, ZIndex = 5, Parent = btn },
 			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 		new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(tipW - 26, 0),
 			Size = UDim2.fromOffset(14, 14), ZIndex = 5, Parent = bubble })
-		txt(bubble, b[2], FB, 22, 0, 0, tipW, 40, nil, nil, 6)
-		local badge
-		if b[1] == "inbox" then
-			badge = new("Frame", { Name = "Badge", BackgroundColor3 = Color3.fromRGB(230, 50, 50), Position = UDim2.fromOffset(34, -4), Size = UDim2.fromOffset(24, 24),
-				Visible = false, ZIndex = 4, Parent = btn }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-			txt(badge, "0", FX, 16, 0, 0, 24, 24, nil, nil, 5)
+		local l = txt(bubble, text, FB, 22, 0, 0, tipW, 40, nil, nil, 6)
+		return bubble, l
+	end
+	for i, b in buttons do
+		local x = GEAR_X - (i - 1) * 62
+		local btn = new("TextButton", { Name = b[1], Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.fromRGB(28, 29, 31), BackgroundTransparency = 0.15,
+			Position = UDim2.fromOffset(x, 16), Size = UDim2.fromOffset(52, 52), Visible = i == 1, ZIndex = 2, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		btn:AddTag("Nonapplicable")
+		icon(btn, b[1], 10, 10, 32, Color3.new(1, 1, 1), 3)
+		local bubble, tipL = bubbleFor(btn, i == 1 and "See more" or b[2])
+		if i == 1 then
+			-- the gear's tooltip is wider than "See more" needs: size it for the long text, the short one sits right-aligned
+			local w = math.max(140, #b[2] * 12 + 40)
+			bubble.Size = UDim2.fromOffset(w, 40)
+			tipL.Size = UDim2.fromOffset(w, 40)
+			bubble:FindFirstChildOfClass("Frame").Position = UDim2.fromOffset(w - 26, 0)
 		end
+		local badge = new("Frame", { Name = "Badge", BackgroundColor3 = Color3.fromRGB(230, 50, 50), Position = UDim2.fromOffset(34, -4), Size = UDim2.fromOffset(24, 24),
+			Visible = false, ZIndex = 4, Parent = btn }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		txt(badge, "0", FX, 16, 0, 0, 24, 24, nil, nil, 5)
 		btn.MouseEnter:Connect(function() bubble.Visible = true end)
 		btn.MouseLeave:Connect(function() bubble.Visible = false end)
 		btn.SelectionGained:Connect(function() bubble.Visible = true end)
 		btn.SelectionLost:Connect(function() bubble.Visible = false end)
-		btn.Activated:Connect(function() bubble.Visible = false; if b[3] then b[3]() end end)
-		made[b[1]] = { btn = btn, badge = badge }
+		made[b[1]] = { btn = btn, badge = badge, bubble = bubble, tip = tipL, def = b }
+		table.insert(order, b[1])
 	end
+	-- the x that folds the row back, left of the last button
+	local fold = new("TextButton", { Name = "Fold", Text = "", AutoButtonColor = false, BackgroundTransparency = 1, Position = UDim2.fromOffset(GEAR_X - #buttons * 62 + 18, 30),
+		Size = UDim2.fromOffset(28, 28), Visible = false, ZIndex = 2, Parent = root })
+	fold:AddTag("Nonapplicable")
+	txt(fold, "×", FX, 30, 0, -4, 28, 32, Color3.fromRGB(220, 220, 224), nil, 3)
 	Kit.toScale(root)
-	local ib = made.inbox
-	if ib and ib.badge then
-		onUnread = function(n)
-			ib.badge.Visible = n > 0
-			local l = ib.badge:FindFirstChildOfClass("TextLabel")
-			if l then l.Text = n > 9 and "9+" or tostring(n) end
+	local unreadN = unread
+	local function refresh()
+		for i, k in order do
+			local m = made[k]
+			if i > 1 then m.btn.Visible = expanded end
 		end
-		onUnread(unread)
+		fold.Visible = expanded
+		local gear = made[order[1]]
+		gear.tip.Text = expanded and gear.def[2] or "See more"
+		-- unread: on the inbox button when it's out, on the gear while folded
+		local ib = made.inbox
+		if ib then
+			ib.badge.Visible = expanded and unreadN > 0
+			ib.badge:FindFirstChildOfClass("TextLabel").Text = unreadN > 9 and "9+" or tostring(unreadN)
+		end
+		gear.badge.Visible = not expanded and unreadN > 0
+		gear.badge:FindFirstChildOfClass("TextLabel").Text = unreadN > 9 and "9+" or tostring(unreadN)
 	end
+	local function setExpanded(on)
+		expanded = on
+		refresh()
+		if on then
+			-- the buttons slide out from behind the gear
+			local gx = made[order[1]].btn.Position
+			for i = 2, #order do
+				local b2 = made[order[i]].btn
+				local home = b2:GetAttribute("Home") or b2.Position
+				b2:SetAttribute("Home", home)
+				b2.Position = gx
+				TweenService:Create(b2, TweenInfo.new(0.18 + i * 0.04, Enum.EasingStyle.Quart), { Position = home }):Play()
+			end
+		end
+	end
+	for i, k in order do
+		local m = made[k]
+		m.btn.Activated:Connect(function()
+			m.bubble.Visible = false
+			if i == 1 and not expanded then setExpanded(true) return end
+			if m.def[3] then m.def[3]() end
+		end)
+	end
+	fold.Activated:Connect(function() setExpanded(false) end)
+	onUnread = function(n) unreadN = n; refresh() end
+	refresh()
 	return gui
 end
 
