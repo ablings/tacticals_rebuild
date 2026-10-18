@@ -183,7 +183,9 @@ local function ask(action: string, ...)
 		toast("Couldn't reach the server", "bad")
 		return nil
 	end
-	if res and res.msg then toast(res.msg, res.ok and "good" or "bad") end
+	-- (2026-10-18) successful Redeem / Buy / Claim come back as RIVALS banners (UIKit.Notify, the server's RichNotify): no second toast
+	local banner = action == "RedeemCode" or action == "BuyItem" or action == "BuyBundle" or action == "ClaimQuest"
+	if res and res.msg and not (res.ok and banner) then toast(res.msg, res.ok and "good" or "bad") end
 	return res
 end
 

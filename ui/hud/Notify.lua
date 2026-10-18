@@ -53,7 +53,7 @@ local function icon(parent, kind, x, y, s, color, z)
 		new("Frame", { BackgroundColor3 = color or GREEN, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(s * 0.6, s * 0.47),
 			Size = UDim2.fromOffset(s * 0.78, s * 0.2), Rotation = -48, ZIndex = z or 4, Parent = h }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 	else
-		local glyph = ({ inbox = "!", news = "N", settings = "*", scissors = "X" })[kind] or "?"
+		local glyph = ({ inbox = "!", news = "N", settings = "*", scissors = "X", level = "L" })[kind] or "?"
 		txt(h, glyph, FX, s * 0.7, 0, 0, s, s, color, nil, z or 4)
 	end
 	return h
@@ -63,13 +63,26 @@ end
 local function rewardBox(parent, r, x, y)
 	if type(r) ~= "table" then return end
 	local box = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = parent })
-	if r.image then
-		new("ImageLabel", { BackgroundTransparency = 1, Image = r.image, Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = box })
+	-- the reward picture: a given image, a rank emblem (RankArt), an item's shop icon, or the silhouette icon for its kind
+	local img = r.image
+	if not img and r.kind == "Rank" and r.rank then
+		local ok, RankArt = pcall(require, UIKit:FindFirstChild("RankArt"))
+		if ok and RankArt and RankArt.EMBLEM then img = RankArt.EMBLEM[tostring(r.rank):match("^(%a+)") or r.rank] end
+	end
+	if not img and r.kind == "Item" and r.id then
+		local okC, cfg = pcall(function() return require(ReplicatedStorage.Modules.Shared.Config.LobbyConfig) end)
+		local item = okC and cfg and cfg.Items and cfg.Items[r.id]
+		img = item and (item.Icon or item.Image)
+	end
+	if img then
+		new("ImageLabel", { BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = box })
+	elseif r.kind == "Level" then
+		icon(box, "level", 8, 0, 54, Color3.fromRGB(90, 170, 255), 4)
 	else
 		icon(box, r.kind == "Scissors" and "scissors" or "check", 8, 0, 54, Color3.fromRGB(255, 205, 60), 4)
 	end
 	if r.count then
-		local c = txt(box, "×" .. tostring(r.count), FX, 28, 0, 42, 70, 30, nil, nil, 5)
+		local c = txt(box, (r.kind == "Level" and "" or "×") .. tostring(r.count), FX, 28, 0, 42, 70, 30, nil, nil, 5) -- (a level shows its number)
 		new("UIStroke", { Thickness = 2, Transparency = 0.2, Parent = c })
 	end
 end
