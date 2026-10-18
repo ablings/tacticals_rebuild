@@ -6,8 +6,13 @@
 --   moved OFFSET studs away so it never overlaps the match map (Warehouse sits inside the hub's footprint), Training stripped,
 --   the QueuePad / ExfilBarrier / DuelArena tags removed, each duel pad and the Exfil hatch barricaded ("AVAILABLE IN THE HUB").
 --   ServerStorage.PseudoLobby.Lighting holds the hub's Lighting children; its attributes hold the hub's Lighting properties.
--- Show(): the map goes into Workspace (named LobbyMap), the lighting swaps to the hub's, ReplicatedStorage.PseudoLobbyMap = true,
---   and anyone with InPseudoLobby who respawns or falls off is put back at LobbySpawn. Hide() undoes all of it.
+-- Show(): the map goes into Workspace (named LobbyMap) and STAYS there for the rest of the server (UI session: moving it back
+--   would hand clients fresh instances on the next Show and the hub's client scripts keep references to the old ones; it is
+--   OFFSET away from the arena, barricaded, and combat is off there). The lighting swaps to the hub's, anyone with InPseudoLobby
+--   who respawns or falls off is put back at LobbySpawn. Hide() swaps the lighting back and stops the respawn / fall catch.
+-- Contract with the UI: ReplicatedStorage.PseudoLobbyMap = false from server start on a match place (set when this module is
+--   first required, and saved false in the place), true once the map is in Workspace (then stays true). Whether the lobby is
+--   OPEN is the player attribute InPseudoLobby, never the map.
 -- RoundManager [PSEUDOLOBBY]: postMatch() calls Show() and spawns at SpawnCFrame(i); Hide() when the phase ends.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -20,12 +25,15 @@ local LIGHT_PROPS = { "Ambient", "OutdoorAmbient", "Brightness", "ClockTime", "G
 	"GlobalShadows", "ShadowSoftness" }
 
 local shown = false
+if ReplicatedStorage:GetAttribute("PseudoLobbyMap") == nil and not workspace:FindFirstChild("LobbyMap") then
+	ReplicatedStorage:SetAttribute("PseudoLobbyMap", false)
+end
 local matchLight = nil -- { props = {}, folder = Folder } while shown
 local conns = {}
 
 local function store() return ServerStorage:FindFirstChild("PseudoLobby") end
 local function map()
-	if shown then return workspace:FindFirstChild("LobbyMap") end
+	if ReplicatedStorage:GetAttribute("PseudoLobbyMap") == true then return workspace:FindFirstChild("LobbyMap") end
 	local s = store()
 	return s and s:FindFirstChild("LobbyMap")
 end
@@ -97,11 +105,10 @@ end
 
 function PseudoLobby.Show(): boolean
 	if shown then return true end
-	local s = store()
-	local m = s and s:FindFirstChild("LobbyMap")
+	local m = map()
 	if not m then return false end
 	shown = true
-	m.Parent = workspace
+	if m.Parent ~= workspace then m.Parent = workspace end -- first time only: then it stays
 	swapLighting(true)
 	ReplicatedStorage:SetAttribute("PseudoLobbyMap", true)
 	for _, p in Players:GetPlayers() do hookPlayer(p) end
@@ -126,16 +133,8 @@ function PseudoLobby.Hide()
 	shown = false
 	for _, c in conns do c:Disconnect() end
 	conns = {}
-	-- the floor is about to vanish: hold everyone in place until the next match respawns them (LoadCharacter)
-	for _, p in Players:GetPlayers() do
-		local root = p.Character and p.Character:FindFirstChild("HumanoidRootPart")
-		if root then root.Anchored = true end
-	end
-	local m = workspace:FindFirstChild("LobbyMap")
-	local s = store()
-	if m and s then m.Parent = s end
+	-- the map stays in Workspace (see the header); only the lighting goes back to the match's
 	swapLighting(false)
-	ReplicatedStorage:SetAttribute("PseudoLobbyMap", nil)
 end
 
 return PseudoLobby

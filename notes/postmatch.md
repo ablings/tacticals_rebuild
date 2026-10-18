@@ -43,3 +43,9 @@ match places, shown only while `InPseudoLobby`, PLAY in the dock = Play Again.
   spawn emblem, results screen over the hub; Equip ok in the pseudo lobby and refused mid-match; fall catch (y -300 -> spawn);
   Rematch 1/1 -> map back to ServerStorage, game 2 at the Warehouse team spawn, match lighting restored; no server errors.
   Not tested (needs two clients / live): party Play Again + hub regroup, purchases on the match server.
+- **Revised 2026-10-18 04:00 (UI session's asks)**: after the first Show() the map STAYS in Workspace for the server's life (moving it
+  back gave clients fresh instances on the next Show while hub client scripts held the old ones); Hide() only swaps the lighting
+  back and stops the lobby respawn / fall catch. Contract: `ReplicatedStorage.PseudoLobbyMap` = false on a match place (saved),
+  true from the first Show() on; `InPseudoLobby` (player) = lobby UI open. `assets` step copies Repository.Scissors, LobbyAssets,
+  SoundService.Effects, Config.TrainingConfig for the hub client scripts; `ServerScriptService.LobbySocial` on a match place is a
+  stand-in (`LobbySocialStub.lua`) that declines every Challenge with a toast.

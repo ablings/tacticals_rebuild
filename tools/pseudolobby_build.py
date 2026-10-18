@@ -2,6 +2,7 @@
 Usage: python tools/pseudolobby_build.py server [match|studio_id] [UNDO]   lobby server systems + PseudoLobby + remotes
        python tools/pseudolobby_build.py map    [match|studio_id] [lobby_id]  copy the hub's LobbyMap + Lighting (Edit only)
        python tools/pseudolobby_build.py hooks  [match|studio_id] [UNDO]   fix/pseudolobby_install.lua (RoundManager, SettingsBridge)
+       python tools/pseudolobby_build.py assets [match|studio_id] [lobby_id]  hub instances the lobby client scripts need + PseudoLobbyMap=false
 Everything it creates carries attribute PseudoLobbyNew (scripts: RepoSource too); UNDO removes exactly those.
 The map travels as SerializationService bytes, base64 in 90 KB slices (the Studio bridge caps a result at 100 KB):
 lobby shared.__PseudoLobbyB64 -> here (out/pseudolobby_map.b64, a local check copy) -> match shared.__PseudoLobbyIn ->
@@ -39,6 +40,7 @@ SCRIPTS = [  # (class, parent path, name, repo file)
     ("Script", "ServerScriptService", "LobbyLeaderboard", "scripts/pseudolobby/server/LobbyLeaderboard.lua"),
     ("Script", "ServerScriptService", "LobbyNPCs", "scripts/pseudolobby/server/LobbyNPCs.lua"),
     ("Script", "ServerScriptService", "LobbyParty", "scripts/pseudolobby/server/LobbyParty.lua"),
+    ("Script", "ServerScriptService", "LobbySocial", "scripts/pseudolobby/server/LobbySocialStub.lua"),
     # last: the ModuleLoader starts every module under [Server] Init, and this one needs the ones above
     ("ModuleScript", MGR, "LobbyManager", "scripts/pseudolobby/server/LobbyManager.lua"),
 ]
@@ -60,7 +62,7 @@ def server(sid, undo):
     if undo:
         template_undo(sid)
         code = PATH_FN + '''local out = {}
-for _, root in { game.ServerScriptService, game.ReplicatedStorage, game.ServerStorage } do
+for _, root in { game.ServerScriptService, game.ReplicatedStorage, game.ServerStorage, game:GetService("SoundService") } do
 	for _, d in root:GetDescendants() do
 		if d.Parent and d:GetAttribute("PseudoLobbyNew") then table.insert(out, d:GetFullName()); d:Destroy() end
 	end
@@ -267,6 +269,58 @@ def build_map(sid, lobby):
         assert r.strip().isdigit(), r[:300]
     print(call(sid, IMPORT % (d["bytes"], *OFFSET)))
 
+# hub instances the lobby CLIENT scripts need in the match place (UI session, 2026-10-18); copied to the same parent path,
+# only where that name is missing, each tagged PseudoLobbyNew
+ASSETS = ["ReplicatedStorage.Repository.Scissors", "ReplicatedStorage.LobbyAssets", "SoundService.Effects",
+          "ReplicatedStorage.Modules.Shared.Config.TrainingConfig"]
+ENCODE_TAIL = EXPORT[EXPORT.index("local raw = buffer.tostring(buf)"):EXPORT.index("return HS:JSONEncode")]
+DECODE_HEAD = IMPORT[IMPORT.index("local b64 = table.concat"):IMPORT.index("local list = SS:Deserialize")]
+
+def transfer(src_sid, dst_sid, export_code, import_code_fmt):
+    """export_code leaves its base64 in shared.__PseudoLobbyB64 and returns JSON {len, bytes, ...}; import_code_fmt gets %d bytes."""
+    d = json.loads(call(src_sid, export_code))
+    CHUNK = 90000
+    parts = [call(src_sid, f"return string.sub(shared.__PseudoLobbyB64, {i + 1}, {i + CHUNK})") for i in range(0, d["len"], CHUNK)]
+    call(src_sid, "shared.__PseudoLobbyB64 = nil return 1")
+    b64 = "".join(parts)
+    assert len(base64.b64decode(b64)) == d["bytes"], "base64 mismatch"
+    call(dst_sid, "shared.__PseudoLobbyIn = {} return 1")
+    for i in range(0, len(b64), CHUNK):
+        r = call(dst_sid, 'table.insert(shared.__PseudoLobbyIn, "' + b64[i:i + CHUNK] + '") return #shared.__PseudoLobbyIn')
+        assert r.strip().isdigit(), r[:300]
+    return d, call(dst_sid, import_code_fmt % d["bytes"])
+
+def assets(sid, lobby):
+    export = PATH_FN + '''local HS = game:GetService("HttpService")
+local SS = game:GetService("SerializationService")
+local list = {}
+for _, p in HS:JSONDecode(%s) do
+	local o = at(p)
+	if o then
+		local c = o:Clone()
+		c:SetAttribute("PseudoLobbyPath", p:match("^(.*)%%.[^%%.]+$"))
+		c:SetAttribute("PseudoLobbyNew", true)
+		table.insert(list, c)
+	end
+end
+local buf = SS:SerializeInstancesAsync(list)
+for _, c in list do c:Destroy() end
+''' % lit(json.dumps(ASSETS)) + ENCODE_TAIL + '''shared.__PseudoLobbyB64 = table.concat(t)
+return HS:JSONEncode({ len = #shared.__PseudoLobbyB64, bytes = #raw, count = #list })'''
+    imp = PATH_FN.replace("%", "%%") + '''local SS = game:GetService("SerializationService")
+''' + DECODE_HEAD.replace("%%", "%") .replace("%", "%%").replace("%%d", "%d") + '''local list = SS:DeserializeInstancesAsync(buffer.fromstring(raw))
+local out = {}
+for _, inst in list do
+	local parent = at(inst:GetAttribute("PseudoLobbyPath"), true)
+	if parent:FindFirstChild(inst.Name) then table.insert(out, inst.Name .. " (already there)"); inst:Destroy()
+	else inst.Parent = parent; table.insert(out, inst:GetFullName()) end
+end
+return "assets: " .. table.concat(out, ", ")'''
+    d, r = transfer(lobby, sid, export, imp)
+    print(f"{d['count']} assets, {d['bytes']} bytes"); print(r)
+    # the UI contract: a match place says PseudoLobbyMap = false until the map is out (saved in the place)
+    print(call(sid, 'if game.ReplicatedStorage:GetAttribute("PseudoLobbyMap") == nil then game.ReplicatedStorage:SetAttribute("PseudoLobbyMap", false) end return "PseudoLobbyMap = " .. tostring(game.ReplicatedStorage:GetAttribute("PseudoLobbyMap"))'))
+
 def hooks(sid, undo):
     code = open(os.path.join(ROOT, "fix", "pseudolobby_install.lua"), encoding="utf-8").read()
     if undo: code = code.replace("local UNDO = false --@UNDO", "local UNDO = true --@UNDO")
@@ -279,4 +333,5 @@ if __name__ == "__main__":
     if step == "server": server(sid, undo)
     elif step == "map": build_map(sid, SIDS.get(sys.argv[3], sys.argv[3]) if len(sys.argv) > 3 else SIDS["lobby"])
     elif step == "hooks": hooks(sid, undo)
+    elif step == "assets": assets(sid, SIDS.get(sys.argv[3], sys.argv[3]) if len(sys.argv) > 3 else SIDS["lobby"])
     else: print(__doc__)
