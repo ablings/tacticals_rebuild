@@ -337,7 +337,7 @@ local function update(dt: number)
 			sensitivity *= lerp(1, scopeNow.FOV() / Config.Aim.FOV, scopeNow.Zoom()) -- through a scope: slower look to match the zoom
 			sensitivity *= setting("WhileScoped", 50) / 50
 		else
-			local scopeFOV = state.aimHeld and weaponAimFOV()
+			local scopeFOV = controller.IsAiming() and weaponAimFOV() -- (not while reloading: no ADS then)
 			if scopeFOV then sensitivity *= scopeFOV / Config.Aim.FOV end -- zoomed guns: slower look to match
 		end
 		local invert = (Config.InvertY ~= (setting("InvertedY", false) == true)) and -1 or 1 -- [SET] Inverted Y
