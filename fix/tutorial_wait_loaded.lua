@@ -37,7 +37,10 @@ if UNDO then
 	tm.Source = src
 	return "undone"
 end
-if src:find(TAG, 1, true) then return "already applied" end
+-- (2026-10-18) a half-applied state (the wait loop in, the clientLoaded definition missing) broke the live tutorial: the
+-- auto-start threw "attempt to index nil" and never started. "Already applied" now means BOTH parts are in.
+if src:find(TAG, 1, true) and src:find("local clientLoaded", 1, true) then return "already applied" end
+if src:find(TAG, 1, true) then error("half-applied [TUTORIAL] loaded edit found: fix it by hand (see notes) before re-running") end
 assert(src:find(OLD1, 1, true), "autoStart wait not found")
 assert(src:find(OLD2, 1, true), "autoStart not found")
 local a, b = src:find(OLD1, 1, true); src = src:sub(1, a - 1) .. NEW1 .. src:sub(b + 1)
