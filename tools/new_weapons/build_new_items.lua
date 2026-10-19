@@ -101,7 +101,8 @@ do
 	copyChildren(knife.Handle, h, { "Swing", "Hit" })
 	part(t, h, "Knob", Vector3.new(0.26, 0.26, 0.08), CFrame.new(0, 0, 0.47), GRIP, Enum.Material.SmoothPlastic)
 	for i, d in { 0.24, 0.3, 0.36 } do
-		part(t, h, "Barrel" .. i, Vector3.new(d, d, 0.55), CFrame.new(0, 0, -0.45 - i * 0.52), WOOD, Enum.Material.Wood, Enum.PartType.Cylinder)
+		part(t, h, "Barrel" .. i, Vector3.new(0.55, d, d), -- (a Cylinder runs along X: length first)
+			 CFrame.new(0, 0, -0.45 - i * 0.52), WOOD, Enum.Material.Wood, Enum.PartType.Cylinder)
 			.CFrame = h.CFrame * CFrame.new(0, 0, -0.45 - i * 0.52) * CFrame.Angles(0, math.rad(90), 0)
 	end
 	finish(t, M)
