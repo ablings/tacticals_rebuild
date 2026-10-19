@@ -311,4 +311,132 @@ function hud.ShowDamageFrom(source: Vector3)
 	updateMarkers()
 end
 
+-- // Weapon ability HUD (2026-10-19, Edward's weapon design: notes/weapon_abilities.md). All Scale, around the crosshair.
+--   Semi-Auto "Precision Rhythm": three pips under the crosshair, filled by the player attribute RhythmStacks (0..3).
+--   Revolver "Knockback Shot": a ring around the crosshair that tightens and turns gold while RevolverReady is true.
+--   Fists "Vault Takedown": hud.ShowTakedown() - a big TAKEDOWN that pops in and out (the Tacticals session's hit event calls it).
+local abilityLayer, pips, ring, ringStroke, takedown
+local function abilityHud()
+	if abilityLayer and abilityLayer.Parent then return end
+	abilityLayer = Instance.new("Frame")
+	abilityLayer.Name = "AbilityHUD"
+	abilityLayer.BackgroundTransparency = 1
+	abilityLayer.Size = UDim2.fromScale(1, 1)
+	abilityLayer.ZIndex = 15
+	abilityLayer.Parent = getGui()
+	-- the pips: a row of three small rounded bars under the centre
+	local row = Instance.new("Frame")
+	row.Name = "RhythmPips"
+	row.BackgroundTransparency = 1
+	row.AnchorPoint = Vector2.new(0.5, 0)
+	row.Position = UDim2.fromScale(0.5, 0.535)
+	row.Size = UDim2.fromScale(0.05, 0.012)
+	row.Visible = false
+	row.Parent = abilityLayer
+	local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 6; ar.Parent = row
+	pips = {}
+	for i = 1, 3 do
+		local p = Instance.new("Frame")
+		p.BorderSizePixel = 0
+		p.BackgroundColor3 = Color3.new(1, 1, 1)
+		p.BackgroundTransparency = 0.7
+		p.Position = UDim2.fromScale((i - 1) * 0.36, 0)
+		p.Size = UDim2.fromScale(0.28, 1)
+		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = p
+		local s = Instance.new("UIStroke"); s.Thickness = 1; s.Transparency = 0.5; s.Parent = p
+		local sc = Instance.new("UIScale"); sc.Parent = p
+		p.Parent = row
+		pips[i] = { f = p, sc = sc, on = false }
+	end
+	pips.row = row
+	-- the revolver ring
+	ring = Instance.new("Frame")
+	ring.Name = "RevolverRing"
+	ring.BackgroundTransparency = 1
+	ring.AnchorPoint = Vector2.new(0.5, 0.5)
+	ring.Position = UDim2.fromScale(0.5, 0.5)
+	ring.SizeConstraint = Enum.SizeConstraint.RelativeYY
+	ring.Size = UDim2.fromScale(0.07, 0.07)
+	ring.Visible = false
+	ring.Parent = abilityLayer
+	local rc = Instance.new("UICorner"); rc.CornerRadius = UDim.new(0.5, 0); rc.Parent = ring
+	ringStroke = Instance.new("UIStroke"); ringStroke.Thickness = 2; ringStroke.Color = Color3.new(1, 1, 1); ringStroke.Transparency = 0.6; ringStroke.Parent = ring
+	-- the TAKEDOWN marker
+	takedown = Instance.new("TextLabel")
+	takedown.Name = "Takedown"
+	takedown.BackgroundTransparency = 1
+	takedown.AnchorPoint = Vector2.new(0.5, 0.5)
+	takedown.Position = UDim2.fromScale(0.5, 0.4)
+	takedown.Size = UDim2.fromScale(0.4, 0.09)
+	takedown.TextScaled = true
+	takedown.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+	takedown.Text = "TAKEDOWN"
+	takedown.TextColor3 = Color3.fromRGB(255, 205, 60)
+	takedown.Visible = false
+	takedown.ZIndex = 16
+	local ts = Instance.new("UIStroke"); ts.Thickness = 3; ts.Transparency = 0.1; ts.Parent = takedown
+	local tsc = Instance.new("UIScale"); tsc.Parent = takedown
+	takedown.Parent = abilityLayer
+end
+
+local function equippedName(): string?
+	local char = Players.LocalPlayer.Character
+	local tool = char and char:FindFirstChildOfClass("Tool")
+	return tool and (tool:GetAttribute("ItemId") or tool.Name) or nil
+end
+
+local lastStacks, lastReady = -1, nil
+game:GetService("RunService").RenderStepped:Connect(function()
+	local g = gui or Players.LocalPlayer:FindFirstChild("PlayerGui") and Players.LocalPlayer.PlayerGui:FindFirstChild("HUD")
+	if not g then return end
+	gui = g
+	abilityHud()
+	local cross = g:FindFirstChild("Crosshair")
+	local showing = cross ~= nil and cross.Visible
+	local name = equippedName()
+	-- Precision Rhythm pips
+	local stacks = tonumber(Players.LocalPlayer:GetAttribute("RhythmStacks")) or 0
+	local semi = name == "SemiAuto" or name == "Semi-Auto"
+	pips.row.Visible = showing and semi
+	if stacks ~= lastStacks then
+		for i, p in ipairs(pips) do
+			local on = i <= stacks
+			if on and not p.on then -- a new stack pops in gold
+				p.sc.Scale = 1.6
+				TweenService:Create(p.sc, TweenInfo.new(0.2, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+			end
+			p.on = on
+			p.f.BackgroundColor3 = on and Color3.fromRGB(255, 205, 60) or Color3.new(1, 1, 1)
+			p.f.BackgroundTransparency = on and 0 or 0.7
+		end
+		lastStacks = stacks
+	end
+	-- Knockback Shot ring
+	local ready = Players.LocalPlayer:GetAttribute("RevolverReady") == true
+	ring.Visible = showing and name == "Revolver"
+	if ready ~= lastReady then
+		lastReady = ready
+		TweenService:Create(ring, TweenInfo.new(0.18, Enum.EasingStyle.Quad), { Size = UDim2.fromScale(ready and 0.045 or 0.07, ready and 0.045 or 0.07) }):Play()
+		TweenService:Create(ringStroke, TweenInfo.new(0.18), { Color = ready and Color3.fromRGB(255, 205, 60) or Color3.new(1, 1, 1), Transparency = ready and 0 or 0.6,
+			Thickness = ready and 3 or 2 }):Play()
+	end
+end)
+
+local takedownToken = 0
+function hud.ShowTakedown()
+	abilityHud()
+	takedownToken += 1
+	local my = takedownToken
+	local sc = takedown:FindFirstChildOfClass("UIScale")
+	takedown.Visible = true
+	takedown.TextTransparency = 0
+	sc.Scale = 1.8
+	TweenService:Create(sc, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	task.delay(1.2, function()
+		if takedownToken ~= my then return end
+		TweenService:Create(takedown, TweenInfo.new(0.3), { TextTransparency = 1 }):Play()
+		task.delay(0.32, function() if takedownToken == my then takedown.Visible = false end end)
+	end)
+end
+
 return hud
