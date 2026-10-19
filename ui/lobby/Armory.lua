@@ -1821,7 +1821,8 @@ local function renderInfo()
 			corner(4), mk("UIPadding", { PaddingTop = UDim.new(0, 6), PaddingBottom = UDim.new(0, 7), PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 8) }),
 			mk("UIListLayout", { Padding = UDim.new(0, 2), SortOrder = Enum.SortOrder.LayoutOrder }),
 		})
-		mk("Frame", { BackgroundColor3 = COL.BlueTop, BorderSizePixel = 0, Position = UDim2.fromOffset(-10, -6), Size = UDim2.new(0, 3, 1, 13), ZIndex = 6, Parent = box })
+		-- (no Scale-sized accent bar inside: a Scale child of an AutomaticSize box feeds back and grows the card off the screen)
+		mk("UIStroke", { Color = COL.BlueTop, Thickness = 1, Transparency = 0.4, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = box })
 		shade(text({ Text = (ab.perk and "PERK  ·  " or "ABILITY  ·  ") .. string.upper(ab.ability), FontFace = FONT_HEAVY, TextSize = 16, TextColor3 = COL.Text,
 			Size = UDim2.fromOffset(CARD_W - 84, 18), LayoutOrder = 1, ZIndex = 6, Parent = box }), 1.2)
 		text({ Text = ab.desc, FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y,
