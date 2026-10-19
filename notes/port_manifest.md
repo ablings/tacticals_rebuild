@@ -250,3 +250,14 @@ himself; we never publish.
   streak / hitdebug / AimRaised / HitboxClean / JumpFeel / LobbyMovement).
 - Carries: lobby movement + slide (+ touch Slide), JumpFeel 0.75, slide -> sprint / jump-cancel, E-cancel keeps moving, lunge dive, floor
   cover aim, aim pose in the real lean, invisible-head fix, AimRaised, lag-comp cap 0.25 s, hats not hittable, ;hitdebug.
+
+## Live port 20: weapon abilities + 8 new items (2026-10-19 ~12:45, lead; Edward in this chat: "alright publish it")
+- Both copies saved 12:36 (fa7da81: lead 51c7098 / 5549c93 / 124af4b weapon abilities phases 1-3 + new items; UI a35b48e / 8a02193 /
+  3c37777 / 6214147 / 8d35ff8 Kit cards + bars, gadget renders, kill-feed kinds, item HUD). Published on the SECOND monitor, each window
+  retitled after Grant: tacticals (lobby), Tutorial, Matchmaking, Ranked (port_prep.sh BRING_ARGS=-secondary: split_build,
+  deploy_ui --matchmaking|--ranked, all checks true; every copy carries the [ABILITY2] controllers, Shared.Abilities and PumpShotgun).
+- Carries: speed ladder, Quickdraw, Whisper, Run and Gun, 30-round Auto Rifle, Precision Rhythm, one-shot Sniper headshot, Revolver
+  knockback into cover, Pump Shotgun, Dual Pistols, Fists vault takedown, Knife slide lunge, Bat, Katana parry, Riot Shield, Sticky
+  Grenade, Landmine, Medkit, shop items.
+- Publish note: Edward had Firefox in front, so the foreground-guarded save refused and computer use couldn't click (Firefox is
+  read-only tier); he closed it, then everything went through. Click File and Publish As in one batch with a wait in between.
