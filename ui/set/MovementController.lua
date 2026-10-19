@@ -156,6 +156,9 @@ local function getControls()
 end
 
 -- // Slide
+-- weapon stats (WeaponConfig MoveSpeed / AimMoveSpeed / Mobility / RunAndGun)
+local WeaponConfig = require(ReplicatedStorage.Modules.Shared.Config.WeaponConfig)
+
 local function startSlide()
 	local hum, root = humanoid :: Humanoid, rootPart :: BasePart
 	local v = root.AssemblyLinearVelocity * FLAT
@@ -263,7 +266,7 @@ local function updateSlide(): boolean
 		endSlide()
 		return true
 	end
-	hum.WalkSpeed = speed
+	hum.WalkSpeed = speed * (WeaponConfig.Mobility and WeaponConfig.Mobility(hum.Parent) or 1) -- [ABILITY] the speed ladder: lighter guns slide further
 	hum:Move(s.dir, false)
 	return true
 end
@@ -274,7 +277,6 @@ end
 
 -- // Per frame
 -- Heavier guns slow you down (WeaponConfig MoveSpeed), and more so while aiming (AimMoveSpeed)
-local WeaponConfig = require(ReplicatedStorage.Modules.Shared.Config.WeaponConfig)
 local function weaponSpeedScale(character: Model?): number
 	local tool = character and character:FindFirstChildOfClass("Tool")
 	local config = tool and WeaponConfig.Get(tool:GetAttribute("WeaponId") or "")
@@ -320,6 +322,10 @@ local function update(dt: number)
 		return
 	end
 	local aiming = CameraController and CameraController.IsAiming()
+	-- [ABILITY] Run and Gun (Mini Uzi): aiming in doesn't stop a sprint
+	local heldGun = hum.Parent and hum.Parent:FindFirstChildOfClass("Tool")
+	local heldConfig = heldGun and WeaponConfig.Get(heldGun:GetAttribute("WeaponId") or "")
+	if aiming and heldConfig and heldConfig.RunAndGun then aiming = false end
 	if aiming then sprintBlocked = true; sprintBlockedAt = os.clock(); sprintToggled = false end
 	local moving = hum.MoveDirection.Magnitude > 0.1
 	if not moving then sprintToggled = false end -- [SET] Toggle Sprint ends when you stop

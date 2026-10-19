@@ -1,7 +1,7 @@
 """Overlap sweep capture set (eye height ~5 above floor) via the stdio MCP bridge.
 Usage: python tools/overlap_capture.py <prefix: before|after> [names...]   (run from tacticals_rebuild)"""
 import json, os, subprocess, sys, shutil
-SID = "d7ca5f9f-18c6-4c56-8fda-3225cb2e5dd1"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
+SID = "d93b3ec2-422d-40e2-87ce-6dd7b5c4e24c"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
   "o1_duels_eastwall": ([-125, 21, 20],  [-95, 30, -10]),   # Duels east wall = hub W wall back + Duels cladding

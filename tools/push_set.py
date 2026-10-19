@@ -1,7 +1,7 @@
 """Push ONE [SET] client module (ui/set/<Name>.lua) into a Studio's StarterPlayerScripts.Client.Controllers.<Name>, without a full
 deploy_ui run (used for a single fix while the UI session works elsewhere). Usage: python tools/push_set.py <lobby|match|id> <Name>"""
 import json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "d7ca5f9f-18c6-4c56-8fda-3225cb2e5dd1", "match": "379cc32b-4d46-4950-8fc4-c3187ba355bf"}
+SIDS = {"lobby": "d93b3ec2-422d-40e2-87ce-6dd7b5c4e24c", "match": "f297bc30-46c5-414e-a250-d1593301e5a0"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sid = SIDS.get(sys.argv[1], sys.argv[1]); name = sys.argv[2]
@@ -9,7 +9,7 @@ src = open(os.path.join(ROOT, "ui", "set", name + ".lua"), encoding="utf-8").rea
 n = 1
 while ("]" + "=" * n + "]") in src: n += 1
 lit = "[" + "=" * n + "[" + src + "]" + "=" * n + "]"
-code = ("local m = game.StarterPlayer.StarterPlayerScripts.Client.Controllers:FindFirstChild(%s)\n" % json.dumps(name)
+code = ("local m = game.StarterPlayer.StarterPlayerScripts.Client.Controllers:FindFirstChild(%s, true)\n" % json.dumps(name)
         + "if not m then return 'no such controller' end\nlocal src = " + lit
         + "\nlocal f, err = loadstring(src)\nif not f then return 'SYNTAX ' .. tostring(err) end\nm.Source = src\nreturn 'pushed ' .. m:GetFullName() .. ' ' .. #src")
 fd, p = tempfile.mkstemp(suffix=".json"); os.close(fd)

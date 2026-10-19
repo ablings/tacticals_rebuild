@@ -5,7 +5,7 @@ Shared files (scripts/duels/*) are the same ones the lobby installer embeds: aft
 (tools/lobby_duels_build.py --run, then tools/admin_build.py --run in the lobby) and this one."""
 import json, os, re, subprocess, sys, tempfile
 
-SID = "379cc32b-4d46-4950-8fc4-c3187ba355bf"  # match_place_ref.rbxl
+SID = "f297bc30-46c5-414e-a250-d1593301e5a0"  # match_place_ref.rbxl
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..")

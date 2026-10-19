@@ -231,6 +231,10 @@ function controller.Reload()
 	ReloadWeapon:FireServer()
 	WeaponEffects.PlaySound(equipped.tool, "Reload")
 	playAnimation("Reload")
+	do -- [ABILITY] the reload animation fits the gun's ReloadTime (the speed ladder)
+		local track = equipped and ((gunHand < 0 and equipped.tracks.ReloadLeft) or equipped.tracks.Reload)
+		if track and track.Length > 0 then track:AdjustSpeed(track.Length / config.ReloadTime) end
+	end
 	local Scope = Get("ScopeController")
 	if Scope and Scope.OnReload then Scope.OnReload(config.ReloadTime) end -- the scope comes down to reload
 	local spent = config.MagazineSize - getAmmo()
@@ -265,8 +269,10 @@ local function fire()
 	local aiming = CameraController.IsAiming()
 
 	-- Firing while sprinting: the sprint stops and you shoot while walking
+	-- [ABILITY] Run and Gun (Mini Uzi): the sprint carries on through the burst
 	local MovementController = Get("MovementController")
-	if MovementController then MovementController.StopSprint() end
+	local runningAimed = config.RunAndGun and aiming and MovementController and MovementController.IsSprinting()
+	if MovementController and not config.RunAndGun then MovementController.StopSprint() end
 
 	local CoverController = Get("CoverController")
 
@@ -305,7 +311,7 @@ local function fire()
 		CameraController.FaceCamera(config.HipFireFaceTime)
 		updatePose()
 	end
-	controller._Shoot(config, aiming and 0 or config.HipFireSpread)
+	controller._Shoot(config, aiming and (runningAimed and (config.AimSprintSpread or 0) or 0) or config.HipFireSpread)
 end
 
 -- Fires one shot now (after all checks). Used by aimed, hip and blind fire.

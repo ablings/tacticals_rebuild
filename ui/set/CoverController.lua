@@ -47,6 +47,11 @@ end
 
 -- [SET] Settings > Hotkeys / Controls (UI session 2026-10-16): binds and settings arrive as player attributes
 local Binds = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Binds"))
+-- [ABILITY] the weapon speed ladder (WeaponConfig MoveSpeed): lighter guns dash to cover and vault faster
+local WeaponConfig = require(Shared:WaitForChild("Config"):WaitForChild("WeaponConfig"))
+local function mobility(): number
+	return WeaponConfig.Mobility and WeaponConfig.Mobility(localPlayer.Character) or 1
+end
 local Get = shared.Get
 
 -- // Root
@@ -731,7 +736,7 @@ local function startMove(hit: RaycastResult?, stand: Vector3, route: { Vector3 }
 	local _ = targetLow
 
 	exitCover(true)
-	local speed = Config.MoveSpeeds[style]
+	local speed = Config.MoveSpeeds[style] * mobility() -- [ABILITY]
 	local c = getControls()
 	if c then c:Disable() end
 	hum.WalkSpeed = speed
@@ -772,7 +777,7 @@ end
 -- to land straight in cover, or E to sneak to the cover under your crosshair once you're down.
 local function startVault(c, fast: boolean?)
 	local root = rootPart :: BasePart
-	local duration = fast and Config.VaultTime or Config.VaultTime * (Config.SilentVaultSlowdown or 1.7)
+	local duration = (fast and Config.VaultTime or Config.VaultTime * (Config.SilentVaultSlowdown or 1.7)) / mobility() -- [ABILITY]
 	-- Landing spot must be clear: just past the far side of the crate
 	local landing = c.point - c.normal * (c.depth + Config.WallOffset + 0.4)
 	landing = Vector3.new(landing.X, root.Position.Y, landing.Z)

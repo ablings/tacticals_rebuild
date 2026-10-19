@@ -199,6 +199,14 @@ function effects.PlaySound(tool: Tool?, soundName: string)
 		local loudness = config and config.Loudness or 1
 		sound.RollOffMaxDistance = template.RollOffMaxDistance * loudness
 		sound.RollOffMinDistance = math.min(template.RollOffMinDistance, sound.RollOffMaxDistance * 0.25)
+	else
+		-- [ABILITY] Whisper (Suppressed): its reload / dry-fire / draw sounds carry less too (WeaponConfig SoundScale)
+		local config = WeaponConfig.Get(tool and tool:GetAttribute("WeaponId") or "")
+		local scale = config and config.SoundScale
+		if scale then
+			sound.RollOffMaxDistance = template.RollOffMaxDistance * scale
+			sound.RollOffMinDistance = math.min(template.RollOffMinDistance, sound.RollOffMaxDistance * 0.25)
+		end
 	end
 	sound.Parent = handle
 	SoundTrim.Play(sound)

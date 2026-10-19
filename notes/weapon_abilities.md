@@ -38,3 +38,11 @@ Smoke, Flash (Flashbang), Frag, plus NEW: **StickyGrenade** (sticks to surfaces 
 - HUD: Semi-Auto stack pips by the crosshair; Revolver "ready" tick when fully aimed in; "TAKEDOWN" marker for the Fists.
 - Data: ReplicatedStorage.Modules.Shared.Config.WeaponAbilities (ui/settings/WeaponAbilities.lua): text + the ladder ranks;
   the Tacticals session can read the same module for its numbers.
+
+## Status (Tacticals session)
+- 2026-10-19 Phase 1 in both working copies (not published): `fix/weapon_abilities.lua` (WeaponConfig + CombatManager) and
+  [ABILITY] edits in ui/set Weapon/Movement/Cover controllers + WeaponEffects. Speed ladder (MoveSpeed: run, crouch, slide,
+  dash to cover, vault via `WeaponConfig.Mobility`; ReloadTime, reload animation stretched to fit), Pistol hip 1.75°,
+  Suppressed SoundScale 0.35, Mini Uzi RunAndGun (AimSprintSpread 1.5°), Auto Rifle 30/120, Semi-Auto Rhythm
+  (player attribute RhythmStacks; tested 45/47/50/52, miss -> 0), Sniper HeadshotKills (no head drop-off).
+- Next: Phase 2 (Revolver Knockback on the target, Fists Vault Takedown, Knife Slide Lunge), then Phase 3 new items (need models).
