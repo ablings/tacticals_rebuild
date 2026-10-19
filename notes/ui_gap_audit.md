@@ -42,3 +42,4 @@ session first (UI hides the part until it exists) · N/A = RIVALS-only content w
 - 2026-10-18: port 16 published by the Tacticals session (lobby + Tutorial / Matchmaking / Ranked): RIVALS round end, killer card, hit vignette, Switch Weapons, party crown + Whoops, Notify banner / Inbox / News / gear corner, 1:1 spectate (CamSync), silhouette icons, rank divisions, streak flame.
 - 2026-10-18: port 17 published (single corner gear: Inbox + News inside the lobby HUD corner, c5da767).
 - 2026-10-18: port 18 published by the Tacticals session (Edward AFK, gave the go): aim assist v2 + no ADS while reloading (9397c78, 83d2778). The reload/ADS change still needs a hands-on check.
+- 2026-10-18: port 19 published (hub movement + JumpFeel, slide->sprint / jump-cancel, aim pose in lean + AimRaised, cover fixes, HEADFIX, hub touch Slide 59809bd).
