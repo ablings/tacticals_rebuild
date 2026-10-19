@@ -965,7 +965,7 @@ function controller.Start()
 		end
 	end)
 	-- the kit can change mid-session (tutorial 2 swaps smoke for flash): keep the gadget slot current
-	for _, attribute in { "KitGadget", "SmokeCharges", "FlashCharges", "Loadout", "KitMelee" } do
+	for _, attribute in { "KitGadget", "SmokeCharges", "FlashCharges", "FragCharges", "StickyCharges", "MineCharges", "MedkitCharges", "Loadout", "KitMelee" } -- [ABILITY2] + the new gadgets do
 		localPlayer:GetAttributeChangedSignal(attribute):Connect(function() task.defer(refreshUI) end)
 	end
 	local function bindSlots()
