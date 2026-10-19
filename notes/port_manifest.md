@@ -242,3 +242,11 @@ himself; we never publish.
 - Both copies saved (a46fec5: lead aff42ae aim assist v2 + command; UI 9397c78 + 83d2778 no ADS while reloading). Published, each retitled after
   Grant: tacticals (lobby; Roblox answered 'server busy, retrying' once, a second Grant went through), Tutorial, Matchmaking, Ranked
   (port_prep.sh: split_build, deploy_ui --matchmaking|--ranked, checks).
+
+## Live port 19: movement, aim pose, peek fairness, hit debug (2026-10-18 ~20:00, lead; Edward: "push the changes to the main game")
+- Both copies saved (the match save needed retries: Discord / the Claude app took the foreground). Published on the SECOND monitor
+  (Edward on YouTube on the main one; bring_primary.ps1 -secondary, port_prep.sh BRING_ARGS=-secondary), each retitled after Grant:
+  tacticals (lobby), Tutorial, Matchmaking, Ranked; all checks true (career / pseudo lobby / postmatch / preload / CamSync / RichNotify /
+  streak / hitdebug / AimRaised / HitboxClean / JumpFeel / LobbyMovement).
+- Carries: lobby movement + slide (+ touch Slide), JumpFeel 0.75, slide -> sprint / jump-cancel, E-cancel keeps moving, lunge dive, floor
+  cover aim, aim pose in the real lean, invisible-head fix, AimRaised, lag-comp cap 0.25 s, hats not hittable, ;hitdebug.

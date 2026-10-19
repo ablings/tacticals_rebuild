@@ -24,4 +24,4 @@ esac
 python tools/run_luau_at.py "$ID" out/v.lua
 python tools/run_luau_at.py "$ID" out/v2.lua
 $PS -File tools/save_studio.ps1 "\\${KIND}_place.rbxl"
-$PS -File tools/bring_primary.ps1 "\\${KIND}_place.rbxl"
+$PS -File tools/bring_primary.ps1 "\\${KIND}_place.rbxl" $BRING_ARGS

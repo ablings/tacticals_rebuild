@@ -2,7 +2,8 @@
 # "Some assets need permission" prompt) onto the PRIMARY monitor, maximise the main one, focus it. (2026-10-18: with two
 # monitors the Claude app covers the right one; computer-use captures showed Studio under it while clicks went to Claude.)
 # -list only prints the windows. Usage: pwsh tools/bring_primary.ps1 <titlePart> [-list]
-param([Parameter(Mandatory = $true)][string]$titlePart, [switch]$list)
+# -secondary: use the OTHER monitor instead (Edward 2026-10-18: "use the second monitor so i can watch youtube on my main one")
+param([Parameter(Mandatory = $true)][string]$titlePart, [switch]$list, [switch]$secondary)
 Add-Type @"
 using System; using System.Text; using System.Runtime.InteropServices; using System.Collections.Generic;
 public class BP {
@@ -26,6 +27,10 @@ public class BP {
 "@
 Add-Type -AssemblyName System.Windows.Forms
 $prim = [System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea
+if ($secondary) {
+  $other = [System.Windows.Forms.Screen]::AllScreens | Where-Object { -not $_.Primary } | Select-Object -First 1
+  if ($other) { $prim = $other.WorkingArea }
+}
 $p = Get-Process RobloxStudioBeta -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -like "*$titlePart*" } | Select-Object -First 1
 if (-not $p) { Write-Error "no Studio window with '$titlePart'"; exit 1 }
 foreach ($h in [BP]::Of($p.Id)) {
