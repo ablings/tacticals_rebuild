@@ -443,7 +443,15 @@ end
 --   MedkitUntil (player, server time; channel 2.5 s), MeleeChargeStart (player, os.clock; Bat full at 0.8 s),
 --   ShieldHealth / ShieldBroken (held tool; of 400), ParryUntil (character, server time; window 0.35 s).
 do
+	-- tunables come from the configs (Edward tunes them there); the numbers here are only fallbacks
 	local MEDKIT_TIME, BAT_TIME, SHIELD_MAX = 2.5, 0.8, 400
+	pcall(function()
+		local Cfg = game:GetService("ReplicatedStorage").Modules.Shared.Config
+		local G, M = require(Cfg.GadgetConfig), require(Cfg.MeleeConfig)
+		MEDKIT_TIME = G.Medkit.ChannelTime or MEDKIT_TIME
+		BAT_TIME = M.Weapons.Bat.Charge.Time or BAT_TIME
+		SHIELD_MAX = M.Weapons.RiotShield.Shield.Health or SHIELD_MAX
+	end)
 	local GOLD, GREEN, RED, CYAN = Color3.fromRGB(255, 205, 60), Color3.fromRGB(110, 230, 120), Color3.fromRGB(235, 70, 60), Color3.fromRGB(120, 220, 255)
 	local FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
 	local items -- built lazily inside the ability layer
