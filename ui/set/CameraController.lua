@@ -189,12 +189,17 @@ local function castTo(from: Vector3, to: Vector3, radius: number?): Vector3
 end
 
 local function setCharacterFade(alpha: number)
-	if not character or math.abs(alpha - state.lastFade) < 0.02 then return end
-	state.lastFade = alpha
-
+	if not character then return end
+	-- [HEADFIX] 2026-10-18 (Edward: "when you are near a wall and aim in near that wall your head remains invisible"):
+	-- this used to write only when OUR fade changed, so anything else that hid a part while the camera was squeezed in
+	-- (Roblox's own camera transparency logic hides the head when the camera is right at it) stayed hidden: by our numbers
+	-- nothing had changed. Now every part that doesn't match the fade is put back, every frame (only the ones that differ
+	-- are written, so it's cheap).
+	if math.abs(alpha - state.lastFade) >= 0.02 then state.lastFade = alpha end
+	local want = state.lastFade
 	for _, desc in character:GetDescendants() do
-		if desc:IsA("BasePart") or desc:IsA("Decal") then
-			desc.LocalTransparencyModifier = alpha
+		if (desc:IsA("BasePart") or desc:IsA("Decal")) and math.abs(desc.LocalTransparencyModifier - want) > 0.01 then
+			desc.LocalTransparencyModifier = want
 		end
 	end
 end
