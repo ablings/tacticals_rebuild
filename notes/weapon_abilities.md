@@ -12,7 +12,7 @@ Mechanics: Tacticals session. Kit screen, icons, HUD feedback: UI session. Numbe
 | Pistol | **Quickdraw** | More accurate when shooting without aiming in (hip fire). Fastest movement in the game (run, dash to cover, slide, vault) and the fastest reload. |
 | SilencedPistol | **Whisper** | Second fastest (movement + reload). All its sounds are quieter: they can't be heard beyond a short range (all guns share a similar sound cue, this one just carries less). |
 | MiniUzi | **Run and Gun** | Keeps full movement speed while running and shooting; slightly more accurate hip fire. It can sprint while aimed in (other guns can't, or are slowed), but aimed-in accuracy drops to 85% while sprinting (slight spread). |
-| Revolver | **Knockback Shot** | A fully aimed-in shot that hits forces the target back into cover: their peek / aim is cancelled and they are pushed back behind their cover. (UI reading; Edward to confirm it's the target, not the shooter.) |
+| Revolver | **Knockback Shot** | A fully aimed-in shot that hits forces the target to dash to the nearest cover (Edward 2026-10-19: the target, not the shooter): their peek / aim is cancelled and they are moved into that cover. |
 | AutoRifle | (no ability) **30-round magazine** | Already strong: no ability, a 30-round magazine instead. |
 | SemiAuto | **Precision Rhythm** | Consecutive hits without missing add damage: +5% per hit, up to 3 stacks (tune). A miss resets it. A small stack counter on the crosshair. |
 | Sniper | (no ability) **One-shot headshot** | A headshot is a one-shot kill: that's its reward. |
