@@ -280,7 +280,9 @@ end
 local function weaponSpeedScale(character: Model?): number
 	local tool = character and character:FindFirstChildOfClass("Tool")
 	local config = tool and WeaponConfig.Get(tool:GetAttribute("WeaponId") or "")
-	if not config then return 1 end
+	if not config then -- [ABILITY2] melee items have a weight too (the riot shield is slow to carry)
+		return WeaponConfig.Mobility and WeaponConfig.Mobility(character) or 1
+	end
 	local scale = config.MoveSpeed or 1
 	if CameraController and CameraController.IsAiming and CameraController.IsAiming() then
 		scale *= config.AimMoveSpeed or 1

@@ -593,6 +593,13 @@ function controller.Press(): boolean
 	if charges() <= 0 or os.clock() < busyUntil or holdStart then return false end
 	local _, humanoid = getParts()
 	if not humanoid then return false end
+	-- [ABILITY2] Landmine (Use = "Place") / Medkit (Use = "Channel"): pressed, not thrown; the server does the rest
+	local useCfg = GadgetConfig[kitGadget()]
+	if useCfg and useCfg.Use then
+		busyUntil = os.clock() + (useCfg.Cooldown or 1)
+		ThrowGadget:FireServer(kitGadget(), aimDirection(), 1, "Use", 0)
+		return true
+	end
 	holdStart = os.clock()
 	local t = loadTracks(humanoid)
 	local gm = gadgetMode()

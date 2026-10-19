@@ -45,6 +45,11 @@ LobbyConfig.Items = {
 		Desc = "Hard-hitting marksman rifle that holds its damage at long range." },
 	Sniper = { Name = "Sniper", Slot = "Weapon", Price = 4000, Rarity = "Legendary",
 		Desc = "Bolt-action. A headshot kills at any range. Slow, heavy, punishing to miss." },
+	-- [ABILITY2] new guns
+	PumpShotgun = { Name = "Pump Shotgun", Slot = "Weapon", Price = 2500, Rarity = "Epic",
+		Desc = "Point-blank power. A close hit knocks them out of cover. Reloads shell by shell." },
+	DualPistols = { Name = "Dual Pistols", Slot = "Weapon", Price = 2200, Rarity = "Rare",
+		Desc = "No aiming in. Dead accurate from the hip, twice the fire rate on the move." },
 	-- gadgets (GadgetConfig ids)
 	Smoke = { Name = "Smoke", Slot = "Gadget", Price = 0, Default = true, Rarity = "Standard",
 		Desc = "Blocks sight lines. Cross open ground safely." },
@@ -52,11 +57,25 @@ LobbyConfig.Items = {
 		Desc = "Blinds anyone looking at it." },
 	Frag = { Name = "Frag", Slot = "Gadget", Price = 2000, Rarity = "Epic",
 		Desc = "Flush enemies out of cover." },
+	-- [ABILITY2] new gadgets
+	StickyGrenade = { Name = "Sticky Grenade", Slot = "Gadget", Price = 1500, Rarity = "Rare",
+		Desc = "Sticks to walls and people, then blows." },
+	Landmine = { Name = "Landmine", Slot = "Gadget", Price = 1800, Rarity = "Epic",
+		Desc = "Put it down, it arms. The next enemy to walk over it won't." },
+	Medkit = { Name = "Medkit", Slot = "Gadget", Price = 1000, Rarity = "Rare",
+		Desc = "Patch up 60 HP over a couple of seconds. Getting hit stops it." },
 	-- melee (MeleeConfig ids)
 	Fists = { Name = "Fists", Slot = "Melee", Price = 0, Default = true, Rarity = "Standard",
 		Desc = "Fast jabs. Lethal from behind." },
 	Knife = { Name = "Knife", Slot = "Melee", Price = 800, Rarity = "Rare",
 		Desc = "More damage and reach than fists." },
+	-- [ABILITY2] new melee
+	Bat = { Name = "Bat", Slot = "Melee", Price = 1000, Rarity = "Rare",
+		Desc = "Hold to charge: a charged hit knocks them out of cover or off a ledge." },
+	Katana = { Name = "Katana", Slot = "Melee", Price = 2500, Rarity = "Epic",
+		Desc = "Right after a swing, bullets from the front are deflected." },
+	RiotShield = { Name = "Riot Shield", Slot = "Melee", Price = 3000, Rarity = "Legendary",
+		Desc = "Blocks bullets from the front while held. Bash to stun. Slow to carry." },
 }
 
 -- Card art. Paste "rbxassetid://..." per item; "" = placeholder card with the name.

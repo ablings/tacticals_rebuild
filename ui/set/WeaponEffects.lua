@@ -552,11 +552,14 @@ local function smokeTunnel(origin: Vector3, endPos: Vector3)
 	end
 end
 
-function effects.PlayShot(tool: Tool?, origin: Vector3, endPos: Vector3, hitCharacter: boolean, _normal: Vector3?, effectConfig)
+-- silent = true: a shotgun's extra pellets (streak + impact only: the blast's first pellet carried the bang and the flash)
+function effects.PlayShot(tool: Tool?, origin: Vector3, endPos: Vector3, hitCharacter: boolean, _normal: Vector3?, effectConfig, silent: boolean?)
 	task.spawn(smokeTunnel, origin, endPos)
-	flashMuzzle(tool, effectConfig)
-	if not distantShot(tool, origin) then
-		effects.PlaySound(tool, "Fire")
+	if not silent then -- [ABILITY2]
+		flashMuzzle(tool, effectConfig)
+		if not distantShot(tool, origin) then
+			effects.PlaySound(tool, "Fire")
+		end
 	end
 	local travelTime = bulletStreak(origin, endPos, effectConfig) or 0
 

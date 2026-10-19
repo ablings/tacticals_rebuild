@@ -941,6 +941,9 @@ local function updateMovement(): boolean
 			-- Land standing (a crouch doesn't survive a vault) and keep running if a direction is held
 			local MovementController = Get("MovementController")
 			local carry = MovementController and MovementController.OnVaultLanded() or 0
+			-- [ABILITY2] Fists Vault Takedown: landing next to an enemy topples them
+			local Abilities = Get("AbilityController")
+			if Abilities and Abilities.OnVaultLanded then task.spawn(Abilities.OnVaultLanded) end
 			hum:ChangeState(Enum.HumanoidStateType.Freefall)
 			local facing = vault.facing
 			local vaultedPart = vault.part
@@ -2288,8 +2291,9 @@ function controller.ForceRush(part: BasePart, standAt: Vector3?): boolean
 			local route = planRoute(stand, part) or { stand }
 			if not cover then savedWalkSpeed = (humanoid :: Humanoid).WalkSpeed end
 			forceFast = true
-			local ok = pcall(startMove, faceHit, stand, route)
+			local ok, err = pcall(startMove, faceHit, stand, route)
 			forceFast = false
+			controller._lastRushError = not ok and tostring(err) or nil -- (debug: why a forced rush didn't start)
 			if ok and move ~= nil then return true end
 		end
 	end

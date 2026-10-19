@@ -49,6 +49,7 @@ local controller = {}
 -- // State
 local character: Model?, humanoid: Humanoid?
 local equipped = nil -- { tool, config, muzzle, connections, tracks }
+local shellShots = {} -- [ABILITY2] shot ids still waiting for the server that each cost a round
 local shotId = 0
 local lastFireTime = -math.huge
 local localReloadEnd = 0
@@ -72,7 +73,12 @@ local function getAmmo(): number
 	local tool = equipped.tool
 	local serverAmmo = tool:GetAttribute("Ammo") or 0
 	local acked = tool:GetAttribute("AckShot") or 0
-	return math.max(serverAmmo - math.max(shotId - acked, 0), 0)
+	-- [ABILITY2] only shots that cost a round count (a shotgun blast's extra pellets ride on its first shot id)
+	local pending = 0
+	for i = #shellShots, 1, -1 do
+		if shellShots[i] <= acked then table.remove(shellShots, i) else pending += 1 end
+	end
+	return math.max(serverAmmo - pending, 0)
 end
 
 local function isReloading(): boolean
@@ -227,7 +233,8 @@ function controller.Reload()
 	if getAmmo() >= config.MagazineSize then return end
 	if (equipped.tool:GetAttribute("Reserve") or 0) <= 0 then return end -- no spare rounds
 
-	localReloadEnd = os.clock() + config.ReloadTime
+	-- [ABILITY2] shell by shell (Pump Shotgun): predict the first shell; the server's Reloading flag covers the rest
+	localReloadEnd = os.clock() + (config.ShellReload and (config.ShellReload.StartDelay + config.ShellReload.ShellTime) or config.ReloadTime)
 	ReloadWeapon:FireServer()
 	WeaponEffects.PlaySound(equipped.tool, "Reload")
 	playAnimation("Reload")
@@ -258,8 +265,14 @@ local function fire()
 	end)
 	if stateObj:GetAttribute("CombatEnabled") == false then return end -- countdown / between rounds
 	local now = os.clock()
-	if now - lastFireTime < config.FireInterval then return end
-	if isReloading() then return end
+	if (localPlayer:GetAttribute("NoFireUntil") or 0) > now then return end -- [ABILITY2] stunned (takedown / bash)
+	-- [ABILITY2] Dual Pistols: twice the fire rate while moving
+	local interval = config.FireInterval
+	if config.MovingFireInterval and humanoid and humanoid.MoveDirection.Magnitude > 0.1 then interval = config.MovingFireInterval end
+	if now - lastFireTime < interval then return end
+	-- [ABILITY2] Pump Shotgun: a shot cuts a shell-by-shell reload short (the server stops it too)
+	if config.ShellReload and isReloading() and getAmmo() > 0 then localReloadEnd = 0 end
+	if isReloading() and not (config.ShellReload and getAmmo() > 0) then return end
 
 	if getAmmo() <= 0 then
 		WeaponEffects.PlaySound(equipped.tool, "Empty")
@@ -318,11 +331,30 @@ end
 function controller._Shoot(config, spreadDegrees: number)
 	local CoverController = Get("CoverController")
 	if CoverController then CoverController.NotifyShot() end -- blocks hopping until the shot has finished
-	local shot = computeShot(config, spreadDegrees)
+	-- [ABILITY2] Dual Pistols: the shots alternate between the two guns
+	if config.Akimbo then
+		local left = equipped.tool:FindFirstChild("LeftBarrel")
+		local other = left and left:FindFirstChild("Muzzle")
+		if other then
+			equipped.akimboLeft = not equipped.akimboLeft
+			equipped.muzzle = equipped.akimboLeft and other or WeaponUtil.GetMuzzle(equipped.tool)
+		end
+	end
+	-- [ABILITY2] extra info for the server: fully aimed in (the Revolver's knockback), which pellet of a shotgun blast
+	local aimedIn = CameraController.IsAiming() and (not config.Knockback or localPlayer:GetAttribute("RevolverReady") == true)
+	local shot = computeShot(config, spreadDegrees + (config.PelletSpread or 0) * (config.Pellets and 0.5 or 0))
 	shotId += 1
-	FireWeapon:FireServer(shotId, shot.origin, shot.direction, shot.hitPart, shot.hitPosition)
+	table.insert(shellShots, shotId)
+	FireWeapon:FireServer(shotId, shot.origin, shot.direction, shot.hitPart, shot.hitPosition, { aimed = aimedIn, pellet = config.Pellets and 1 or nil })
 
 	WeaponEffects.PlayShot(equipped.tool, shot.origin, shot.endPos, shot.hitCharacter == true, shot.normal, config.Effects)
+	-- [ABILITY2] the rest of the blast: each pellet its own ray in the cone, one shell, one bang
+	for i = 2, config.Pellets or 1 do
+		local pellet = computeShot(config, spreadDegrees + (config.PelletSpread or 0))
+		shotId += 1
+		FireWeapon:FireServer(shotId, pellet.origin, pellet.direction, pellet.hitPart, pellet.hitPosition, { aimed = aimedIn, pellet = i })
+		WeaponEffects.PlayShot(equipped.tool, pellet.origin, pellet.endPos, pellet.hitCharacter == true, pellet.normal, config.Effects, true)
+	end
 	local Props = Get("PropController")
 	if Props and Props.OnLocalShot then Props.OnLocalShot(shot.origin, shot.endPos) end -- bottles etc. react this frame
 	if config.CasingEject == "Fire" then WeaponEffects.DropCasings(equipped.tool, 1) end -- pistols eject one per shot
@@ -586,14 +618,19 @@ function controller.Start()
 		end
 	end)
 
+	local remoteBlastAt = setmetatable({}, { __mode = "k" }) -- [ABILITY2] [shooter] = os.clock() of their last shotgun blast
 	WeaponFired.OnClientEvent:Connect(function(shooter: Instance, origin: Vector3, endPos: Vector3, hitCharacter: boolean)
 		if shooter == localPlayer then return end -- already played locally
 		-- shooter is a Player, or an AI character Model
 		local shooterCharacter = shooter and (shooter:IsA("Player") and shooter.Character or shooter)
 		local tool = shooterCharacter and shooterCharacter:FindFirstChildOfClass("Tool")
 		local config = WeaponConfig.Get(tool and tool:GetAttribute("WeaponId") or "") or WeaponConfig.Get(WeaponConfig.DefaultWeapon)
-		WeaponEffects.PlayShot(tool, origin, endPos, hitCharacter, nil, config.Effects)
-		if config.CasingEject == "Fire" then WeaponEffects.DropCasings(tool, 1) end
+		-- [ABILITY2] a shotgun blast arrives as one event per pellet: one bang and one shell for the lot
+		local now = os.clock()
+		local samePellets = config.Pellets and remoteBlastAt[shooter] and now - remoteBlastAt[shooter] < 0.12
+		if not samePellets then remoteBlastAt[shooter] = now end
+		WeaponEffects.PlayShot(tool, origin, endPos, hitCharacter, nil, config.Effects, samePellets)
+		if config.CasingEject == "Fire" and not samePellets then WeaponEffects.DropCasings(tool, 1) end
 	end)
 
 	-- Weapon select: cycles your loadout (the server only allows it between rounds, or any time in Studio)

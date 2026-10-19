@@ -110,12 +110,35 @@ local function faceNearestEnemy(range: number)
 	end
 end
 
-local function slash(quick: boolean?, fKey: boolean?)
+local lastLunge = 0
+local chargeStart: number? = nil -- [ABILITY2] the bat's charge (hold the swing)
+local function slash(quick: boolean?, fKey: boolean?, kind: string?)
 	local hum = humanoidOf()
 	local tool = heldTool()
 	local weapon = quick and MeleeConfig.QuickMelee or (tool and MeleeConfig.Weapons[tool:GetAttribute("MeleeId") or ""])
 	if not hum or not weapon or os.clock() - lastSlash < weapon.Cooldown then return end
+	if (localPlayer:GetAttribute("NoFireUntil") or 0) > os.clock() then return end -- [ABILITY2] stunned
 	lastSlash = os.clock()
+	-- [ABILITY2] Knife Slide Lunge: the first swing during / right after a slide lunges you forward (more reach and damage)
+	local Movement = Get("MovementController")
+	if not quick and not fKey and weapon.Lunge and Movement and os.clock() - lastLunge > 1
+		and ((Movement.IsSliding and Movement.IsSliding()) or (Movement.SlideEndedRecently and Movement.SlideEndedRecently(weapon.Lunge.Window))) then
+		lastLunge = os.clock()
+		kind = "Lunge"
+		local root = hum.Parent and hum.Parent:FindFirstChild("HumanoidRootPart")
+		if root then
+			local look = workspace.CurrentCamera.CFrame.LookVector * Vector3.new(1, 0, 1)
+			look = look.Magnitude > 0.1 and look.Unit or root.CFrame.LookVector
+			root.CFrame = CFrame.lookAt(root.Position, root.Position + look)
+			local speed = weapon.Lunge.Distance / weapon.Lunge.Time
+			local t0 = os.clock()
+			local conn
+			conn = RunService.Heartbeat:Connect(function()
+				if os.clock() - t0 > weapon.Lunge.Time or not root.Parent then conn:Disconnect() return end
+				root.AssemblyLinearVelocity = look * speed + Vector3.new(0, root.AssemblyLinearVelocity.Y, 0)
+			end)
+		end
+	end
 	-- swinging from cover (or mid-loop round a pillar) steps you off the wall, and if someone's right
 	-- next to you, you turn to face them first
 	local Cover = Get("CoverController")
@@ -150,7 +173,7 @@ local function slash(quick: boolean?, fKey: boolean?)
 	swish.Parent = hum.Parent and hum.Parent:FindFirstChild("HumanoidRootPart") or workspace
 	SoundTrim.Play(swish)
 	game:GetService("Debris"):AddItem(swish, 2)
-	MeleeRemote:FireServer((quick or fKey) and "Quick" or nil)
+	MeleeRemote:FireServer((quick or fKey) and "Quick" or kind) -- [ABILITY2] kind: "Lunge" / "Charged"
 end
 
 -- [F] quick melee: the gun in your hands becomes a club; with the knife/fists out it's their normal attack.
@@ -968,6 +991,21 @@ function controller.Start()
 			elseif state == Enum.UserInputState.End then Gadget.Release() end
 			return Enum.ContextActionResult.Sink
 		elseif slot == 2 then
+			-- [ABILITY2] Bat Home Run: hold to charge, let go to swing (charged after Charge.Time s)
+			local tool = heldTool()
+			local melee = tool and MeleeConfig.Weapons[tool:GetAttribute("MeleeId") or ""]
+			if melee and melee.Charge then
+				if state == Enum.UserInputState.Begin then
+					chargeStart = os.clock()
+					localPlayer:SetAttribute("MeleeChargeStart", chargeStart)
+				elseif state == Enum.UserInputState.End and chargeStart then
+					local held = os.clock() - chargeStart
+					chargeStart = nil
+					localPlayer:SetAttribute("MeleeChargeStart", nil)
+					slash(nil, nil, held >= melee.Charge.Time and "Charged" or nil)
+				end
+				return Enum.ContextActionResult.Sink
+			end
 			if state == Enum.UserInputState.Begin then slash() end
 			return Enum.ContextActionResult.Sink
 		end

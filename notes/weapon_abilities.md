@@ -46,3 +46,25 @@ Smoke, Flash (Flashbang), Frag, plus NEW: **StickyGrenade** (sticks to surfaces 
   Suppressed SoundScale 0.35, Mini Uzi RunAndGun (AimSprintSpread 1.5°), Auto Rifle 30/120, Semi-Auto Rhythm
   (player attribute RhythmStacks; tested 45/47/50/52, miss -> 0), Sniper HeadshotKills (no head drop-off).
 - Next: Phase 2 (Revolver Knockback on the target, Fists Vault Takedown, Knife Slide Lunge), then Phase 3 new items (need models).
+- 2026-10-19 (overnight) **Phases 2 + 3 in both working copies** (not published): `fix/abilities_install.lua` (built by
+  `tools/abilities_build.py --run both`, embeds `scripts/abilities/Abilities.lua` -> ServerScriptService.Shared.Abilities and
+  `scripts/abilities/AbilityController.lua` -> Client.Controllers.AbilityController) + [ABILITY2] edits in ui/set
+  (Weapon/Camera/Movement/Cover/Hotbar/Gadget controllers, WeaponEffects). Tested in Studio:
+  - Revolver Knockback: aimed (RevolverReady, 0.25 s settled) hit -> victim's client ForceRush to the nearest cover on the
+    far side from the shooter + Suppress (no aim) 0.8 s. Seen in the training room (dashed into cover behind a LowBlock).
+  - Pump Shotgun: 8 pellets / one shell (144 body point blank), shell-by-shell reload (a shot cuts it), Door Breaker
+    within 6 studs knocks the target out of cover (~6 studs shove). Dual Pistols: NoAim, hip spread 0, 2x fire rate moving
+    (server checks root speed), shots alternate muzzles.
+  - Fists Vault Takedown: CoverController vault landing -> Melee remote "Takedown" -> 50 dmg, 1 s FallingDown topple +
+    stun (NoFireUntil, Suppress), 8 s per target / 3 s per attacker; HitConfirm kind "Takedown", LastAttackKind "Takedown".
+  - Knife Slide Lunge: swing while sliding / 0.45 s after -> 6-stud lunge, +25 dmg, +6 reach (server: faster than a walk,
+    once per 1.5 s). Bat: hold 0.8 s -> charged 60 dmg + 55 studs/s knockback (~15 studs). Katana: 0.35 s parry window
+    after each swing (bullets from the front within 70 deg deflected). Riot Shield: blocks front 75 deg, 400 HP then
+    breaks (slab hidden), MoveSpeed 0.8, bash stuns 0.7 s.
+  - Sticky Grenade (sticks to surfaces / bodies, 2.2 s fuse, own blast), Landmine (placed ahead, arms 1.2 s, 4-stud
+    trigger), Medkit (60 HP over 2.5 s, damage stops it). Lobby: no explosions outside duel arenas (by design).
+  - LobbyConfig (live copies + scripts/match + scripts/pseudolobby) has the 8 new items; WeaponConfig.Loadout has the two guns.
+  - UI hooks: RhythmStacks, RevolverReady, HitConfirm kind, MedkitUntil (server time), MeleeChargeStart (os.clock, local),
+    tool ShieldHealth / ShieldBroken, character ParryUntil (server time). Debug: player attribute AbilityDebug prints.
+- Not done: proper left-hand grip for Dual Pistols (left gun is welded 1.1 studs off the right hand), real animations for
+  the bat / katana / shield (MeleeSlash / MeleePunch placeholders), bots don't use the new kit.
