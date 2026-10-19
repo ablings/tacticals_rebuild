@@ -439,4 +439,164 @@ function hud.ShowTakedown()
 	end)
 end
 
+-- // Item HUD (2026-10-19, lead's hooks): Medkit channel bar, Bat charge ring, Riot Shield health, Katana parry flash. All Scale.
+--   MedkitUntil (player, server time; channel 2.5 s), MeleeChargeStart (player, os.clock; Bat full at 0.8 s),
+--   ShieldHealth / ShieldBroken (held tool; of 400), ParryUntil (character, server time; window 0.35 s).
+do
+	local MEDKIT_TIME, BAT_TIME, SHIELD_MAX = 2.5, 0.8, 400
+	local GOLD, GREEN, RED, CYAN = Color3.fromRGB(255, 205, 60), Color3.fromRGB(110, 230, 120), Color3.fromRGB(235, 70, 60), Color3.fromRGB(120, 220, 255)
+	local FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+	local items -- built lazily inside the ability layer
+	local function corner(o) local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = o end
+	-- a rounded labelled bar: { box, fill, label }
+	local function bar(name, y, label, color)
+		local box = Instance.new("Frame")
+		box.Name = name
+		box.AnchorPoint = Vector2.new(0.5, 0)
+		box.Position = UDim2.fromScale(0.5, y)
+		box.Size = UDim2.fromScale(0.12, 0.011)
+		box.BackgroundColor3 = Color3.fromRGB(14, 16, 20)
+		box.BackgroundTransparency = 0.35
+		box.BorderSizePixel = 0
+		box.Visible = false
+		box.ZIndex = 15
+		corner(box)
+		local st = Instance.new("UIStroke"); st.Thickness = 1; st.Transparency = 0.6; st.Parent = box
+		local fill = Instance.new("Frame")
+		fill.Name = "Fill"
+		fill.BackgroundColor3 = color
+		fill.BorderSizePixel = 0
+		fill.Size = UDim2.fromScale(0, 1)
+		fill.ZIndex = 16
+		corner(fill)
+		local gr = Instance.new("UIGradient")
+		gr.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.15), NumberSequenceKeypoint.new(1, 0) })
+		gr.Parent = fill
+		fill.Parent = box
+		local t = Instance.new("TextLabel")
+		t.Name = "Label"
+		t.BackgroundTransparency = 1
+		t.AnchorPoint = Vector2.new(0.5, 1)
+		t.Position = UDim2.fromScale(0.5, -0.4)
+		t.Size = UDim2.fromScale(1, 1.6)
+		t.TextScaled = true
+		t.FontFace = FONT
+		t.Text = label
+		t.TextColor3 = Color3.new(1, 1, 1)
+		t.ZIndex = 16
+		local ts = Instance.new("UIStroke"); ts.Thickness = 1.5; ts.Transparency = 0.3; ts.Parent = t
+		t.Parent = box
+		box.Parent = abilityLayer
+		return { box = box, fill = fill, label = t }
+	end
+	-- a ring around the crosshair with a disc growing inside it
+	local function ringWithDisc(name, color)
+		local r = Instance.new("Frame")
+		r.Name = name
+		r.BackgroundTransparency = 1
+		r.AnchorPoint = Vector2.new(0.5, 0.5)
+		r.Position = UDim2.fromScale(0.5, 0.5)
+		r.SizeConstraint = Enum.SizeConstraint.RelativeYY
+		r.Size = UDim2.fromScale(0.08, 0.08)
+		r.Visible = false
+		r.ZIndex = 15
+		corner(r)
+		local st = Instance.new("UIStroke"); st.Thickness = 2; st.Color = color; st.Transparency = 0.3; st.Parent = r
+		local d = Instance.new("Frame")
+		d.Name = "Disc"
+		d.AnchorPoint = Vector2.new(0.5, 0.5)
+		d.Position = UDim2.fromScale(0.5, 0.5)
+		d.Size = UDim2.fromScale(0, 0)
+		d.BackgroundColor3 = color
+		d.BackgroundTransparency = 0.75
+		d.BorderSizePixel = 0
+		d.ZIndex = 15
+		corner(d)
+		d.Parent = r
+		r.Parent = abilityLayer
+		return { ring = r, stroke = st, disc = d }
+	end
+	local function build()
+		if items and items.medkit.box.Parent == abilityLayer then return end
+		items = {
+			medkit = bar("MedkitBar", 0.6, "HEALING", GREEN),
+			shield = bar("ShieldBar", 0.64, "SHIELD", Color3.fromRGB(150, 190, 230)),
+			bat = ringWithDisc("BatCharge", Color3.new(1, 1, 1)),
+			parry = ringWithDisc("ParryFlash", CYAN),
+		}
+	end
+
+	local wasFull, lastParry, shieldWasBroken = false, nil, false
+	game:GetService("RunService").RenderStepped:Connect(function()
+		if not abilityLayer or not abilityLayer.Parent then return end
+		build()
+		local lp = Players.LocalPlayer
+		local char = lp.Character
+		local tool = char and char:FindFirstChildOfClass("Tool")
+		local now = workspace:GetServerTimeNow()
+		-- Medkit: fills over the channel, hidden once done or cancelled
+		local untilT = tonumber(lp:GetAttribute("MedkitUntil"))
+		local left = untilT and (untilT - now) or 0
+		items.medkit.box.Visible = left > 0
+		if left > 0 then
+			items.medkit.fill.Size = UDim2.fromScale(math.clamp(1 - left / MEDKIT_TIME, 0, 1), 1)
+		end
+		-- Bat: the disc grows to fill the ring; full = gold + a pop
+		local start = tonumber(lp:GetAttribute("MeleeChargeStart"))
+		local charging = start ~= nil and tool ~= nil and (tool:GetAttribute("MeleeId") or tool.Name) == "Bat"
+		items.bat.ring.Visible = charging
+		if charging then
+			local k = math.clamp((os.clock() - start) / BAT_TIME, 0, 1)
+			items.bat.disc.Size = UDim2.fromScale(k, k)
+			local full = k >= 1
+			if full and not wasFull then
+				items.bat.ring.Size = UDim2.fromScale(0.1, 0.1)
+				TweenService:Create(items.bat.ring, TweenInfo.new(0.18, Enum.EasingStyle.Back), { Size = UDim2.fromScale(0.08, 0.08) }):Play()
+			end
+			items.bat.stroke.Color = full and GOLD or Color3.new(1, 1, 1)
+			items.bat.disc.BackgroundColor3 = full and GOLD or Color3.new(1, 1, 1)
+			items.bat.disc.BackgroundTransparency = full and 0.55 or 0.75
+			wasFull = full
+		else
+			wasFull = false
+		end
+		-- Riot Shield: health bar while held; BROKEN in red
+		local hp = tool and tonumber(tool:GetAttribute("ShieldHealth"))
+		items.shield.box.Visible = hp ~= nil
+		if hp then
+			local broken = tool:GetAttribute("ShieldBroken") == true
+			items.shield.fill.Size = UDim2.fromScale(broken and 0 or math.clamp(hp / SHIELD_MAX, 0, 1), 1)
+			items.shield.fill.BackgroundColor3 = hp / SHIELD_MAX < 0.3 and RED or Color3.fromRGB(150, 190, 230)
+			items.shield.label.Text = broken and "SHIELD BROKEN" or "SHIELD"
+			items.shield.label.TextColor3 = broken and RED or Color3.new(1, 1, 1)
+			if broken and not shieldWasBroken then
+				items.shield.box.Position = UDim2.fromScale(0.508, 0.64)
+				TweenService:Create(items.shield.box, TweenInfo.new(0.25, Enum.EasingStyle.Elastic), { Position = UDim2.fromScale(0.5, 0.64) }):Play()
+			end
+			shieldWasBroken = broken
+		else
+			shieldWasBroken = false
+		end
+		-- Katana parry: a cyan ring snaps out and fades over the window
+		local pu = char and tonumber(char:GetAttribute("ParryUntil"))
+		if pu ~= lastParry then
+			lastParry = pu
+			if pu and pu > now then
+				local r = items.parry
+				r.ring.Visible = true
+				r.ring.Size = UDim2.fromScale(0.05, 0.05)
+				r.stroke.Transparency = 0
+				r.stroke.Thickness = 3
+				r.disc.Size = UDim2.fromScale(1, 1)
+				r.disc.BackgroundTransparency = 0.7
+				local ti = TweenInfo.new(math.max(pu - now, 0.15), Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+				TweenService:Create(r.ring, ti, { Size = UDim2.fromScale(0.13, 0.13) }):Play()
+				TweenService:Create(r.stroke, ti, { Transparency = 1, Thickness = 1 }):Play()
+				TweenService:Create(r.disc, ti, { BackgroundTransparency = 1 }):Play()
+			end
+		end
+		if items.parry.ring.Visible and not (pu and pu > now) then items.parry.ring.Visible = false end
+	end)
+end
+
 return hud
