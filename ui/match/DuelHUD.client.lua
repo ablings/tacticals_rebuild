@@ -235,7 +235,7 @@ local function addKill(d)
 		{ new("UICorner", { CornerRadius = UDim.new(0.25, 0) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(rc[1], rc[2]) }) })
 	local mine = d.killer == player.UserId or d.victim == player.UserId
 	if mine then new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = row }) end
-	local verb = d.kind == "Takedown" and "took down" or (d.kind == "Melee" and "bashed" or (d.kind == "Explosion" and "blew up" or (d.kind == "Burn" and "burned" or ">")))
+	local verb = ({ Takedown = "took down", Melee = "bashed", Explosion = "blew up", StickyGrenade = "blew up", Landmine = "blew up", Burn = "burned" })[d.kind] or ">"
 	local txt = string.format('<font color="#%s">%s</font>  %s%s  <font color="#%s">%s</font>', col(d.killer):ToHex(), nameOf(d.killer),
 		verb, d.headshot and "  ◉" or "", col(d.victim):ToHex(), nameOf(d.victim)) -- (◉: BuilderSans has no ✦)
 	local l = new("TextLabel", { BackgroundTransparency = 1, RichText = true, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE,
@@ -326,7 +326,7 @@ local function refreshSpecCard()
 	specTitle.TextColor3 = isKiller and BAD or Color3.fromRGB(205, 205, 212)
 	local how = ""
 	if isKiller and lastDeath and lastDeath.killer == killer then
-		local kind = lastDeath.kind == "Melee" and "a melee hit" or (lastDeath.kind == "Explosion" and "an explosion" or (lastDeath.kind == "Burn" and "fire" or nil))
+		local kind = ({ Melee = "a melee hit", Takedown = "a takedown", Explosion = "an explosion", StickyGrenade = "a sticky grenade", Landmine = "a landmine", Burn = "fire" })[lastDeath.kind]
 		how = (lastDeath.weapon and ("with " .. tostring(lastDeath.weapon)) or (kind and ("with " .. kind) or "")) .. (lastDeath.headshot and "  ·  HEADSHOT" or "")
 	end
 	specHow.Text = how
@@ -831,7 +831,7 @@ local function refreshKillerCard(uid)
 	kHp.BackgroundColor3 = frac > 0.5 and GOOD or (frac > 0.25 and Color3.fromRGB(235, 190, 60) or BAD)
 	local how = "eliminated you"
 	if lastDeath and lastDeath.killer == uid then
-		local kind = lastDeath.kind == "Melee" and "a melee hit" or (lastDeath.kind == "Explosion" and "an explosion" or (lastDeath.kind == "Burn" and "fire" or nil))
+		local kind = ({ Melee = "a melee hit", Takedown = "a takedown", Explosion = "an explosion", StickyGrenade = "a sticky grenade", Landmine = "a landmine", Burn = "fire" })[lastDeath.kind]
 		local w = lastDeath.weapon and tostring(lastDeath.weapon) or kind
 		if w then how ..= " with " .. w end
 	end
