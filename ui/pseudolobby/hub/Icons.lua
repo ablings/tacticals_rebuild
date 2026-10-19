@@ -263,11 +263,44 @@ function Icons.Grenade(kind: string)
 	return m
 end
 
+-- (2026-10-19, UI session) the new gadgets (Edward's weapon design): drawn in the same part style
+function Icons.Sticky()
+	local m = Instance.new("Model")
+	local up = CFrame.Angles(0, 0, math.rad(90))
+	p(m, Vector3.new(1.05, 1.05, 1.05), CFrame.new(0, 0, 0), Color3.fromRGB(150, 44, 36), Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+	p(m, Vector3.new(0.62, 0.62, 0.62), CFrame.new(-0.42, -0.18, -0.2), Color3.fromRGB(120, 220, 70), Enum.Material.SmoothPlastic, Enum.PartType.Ball) -- the glue
+	p(m, Vector3.new(0.34, 0.34, 0.34), CFrame.new(-0.58, -0.46, 0.02), Color3.fromRGB(120, 220, 70), Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+	p(m, Vector3.new(0.18, 0.32, 0.32), CFrame.new(0, 0.6, 0) * up, Color3.fromRGB(70, 72, 76), Enum.Material.Metal, Enum.PartType.Cylinder)
+	p(m, Vector3.new(0.05, 0.3, 0.3), CFrame.new(-0.18, 0.67, 0) * CFrame.Angles(0, math.rad(90), 0), Color3.fromRGB(196, 170, 90), Enum.Material.Metal, Enum.PartType.Cylinder)
+	return m
+end
+function Icons.Landmine()
+	local m = Instance.new("Model")
+	local up = CFrame.Angles(0, 0, math.rad(90))
+	p(m, Vector3.new(0.28, 1.7, 1.7), up, Color3.fromRGB(86, 96, 58), Enum.Material.Metal, Enum.PartType.Cylinder) -- the disc
+	p(m, Vector3.new(0.14, 1.1, 1.1), CFrame.new(0, 0.2, 0) * up, Color3.fromRGB(64, 72, 44), Enum.Material.Metal, Enum.PartType.Cylinder) -- pressure plate
+	p(m, Vector3.new(0.1, 0.4, 0.4), CFrame.new(0, 0.3, 0) * up, Color3.fromRGB(40, 42, 38), Enum.Material.Metal, Enum.PartType.Cylinder)
+	p(m, Vector3.new(0.14, 0.14, 0.14), CFrame.new(0.55, 0.2, -0.3), Color3.fromRGB(255, 50, 40), Enum.Material.Neon, Enum.PartType.Ball) -- armed light
+	return m
+end
+function Icons.Medkit()
+	local m = Instance.new("Model")
+	p(m, Vector3.new(1.5, 1.05, 0.55), CFrame.new(0, 0, 0), Color3.fromRGB(236, 234, 228), Enum.Material.SmoothPlastic) -- the case
+	p(m, Vector3.new(0.5, 0.16, 0.06), CFrame.new(0, 0, -0.29), Color3.fromRGB(210, 40, 40), Enum.Material.SmoothPlastic) -- the cross
+	p(m, Vector3.new(0.16, 0.5, 0.06), CFrame.new(0, 0, -0.29), Color3.fromRGB(210, 40, 40), Enum.Material.SmoothPlastic)
+	p(m, Vector3.new(0.6, 0.12, 0.16), CFrame.new(0, 0.62, 0), Color3.fromRGB(60, 62, 66), Enum.Material.SmoothPlastic) -- handle
+	p(m, Vector3.new(1.52, 0.08, 0.57), CFrame.new(0, 0.2, 0), Color3.fromRGB(190, 188, 182), Enum.Material.SmoothPlastic) -- lid seam
+	return m
+end
+
 -- Returns model, view, zoom for any LobbyConfig item id
 local GRENADES = { Smoke = true, Flash = true, Frag = true }
+local NEW_GADGETS = { StickyGrenade = "Sticky", Landmine = "Landmine", Medkit = "Medkit" }
 function Icons.Item(itemId: string)
 	if GRENADES[itemId] then
 		return Icons.Grenade(itemId), CFrame.Angles(math.rad(18), math.rad(30), math.rad(-10)), 1.05
+	elseif NEW_GADGETS[itemId] then
+		return Icons[NEW_GADGETS[itemId]](), CFrame.Angles(math.rad(22), math.rad(30), math.rad(-8)), 1.05
 	elseif itemId == "Fists" then
 		return Icons.Fist(), CFrame.Angles(math.rad(14), math.rad(30), math.rad(8)), 1.05
 	end

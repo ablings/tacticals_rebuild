@@ -17,7 +17,7 @@ WeaponAbilities.Items = {
 	MiniUzi = { ability = "Run and Gun", desc = "Full speed while running and shooting. Sprint while aimed in, at 85% accuracy.", speed = 4.1, reload = 4.2, accuracy = 2 },
 	Revolver = { ability = "Knockback Shot", desc = "A fully aimed-in hit makes the target dash to the nearest cover.", speed = 3.6, reload = 3.5, accuracy = 4 },
 	AutoRifle = { ability = "30-Round Magazine", desc = "No ability: a deep magazine to hold the fight.", perk = true, speed = 3.2, reload = 3.1, accuracy = 3.5 },
-	PumpShotgun = { ability = "Door Breaker", desc = "A point-blank hit knocks the target out of cover. Reloads shell by shell.", speed = 2.5, reload = 1.5, accuracy = 1.5 },
+	PumpShotgun = { ability = "Door Breaker", desc = "A point-blank hit knocks the target out of cover. Reloads shell by shell.", speed = 2.5, reload = 1.0, accuracy = 1.5 },
 	SemiAuto = { ability = "Precision Rhythm", desc = "Each hit in a row adds damage, up to 3. A miss resets it.", speed = 2.4, reload = 2.5, accuracy = 4.5 },
 	Sniper = { ability = "One-Shot Headshot", desc = "No ability: a headshot is a one-shot kill.", perk = true, speed = 1.8, reload = 1.4, accuracy = 5 },
 	-- melee

@@ -292,6 +292,28 @@ BUILDERS.Smoke = function(m) grenade(m, "Smoke") end
 BUILDERS.Flash = function(m) grenade(m, "Flash") end
 BUILDERS.Frag = function(m) grenade(m, "Frag") end
 
+-- (2026-10-19) the new gadgets: Sticky Grenade, Landmine, Medkit (same look as the Kit icons)
+BUILDERS.StickyGrenade = function(m)
+	local up = CFrame.Angles(0, 0, math.rad(90))
+	p(m, Vector3.new(1.15, 1.15, 1.15), CFrame.new(0, 0, 0), Color3.fromRGB(150, 44, 36), Enum.PartType.Ball)
+	p(m, Vector3.new(0.66, 0.66, 0.66), CFrame.new(-0.45, -0.2, -0.22), Color3.fromRGB(120, 220, 70), Enum.PartType.Ball)
+	p(m, Vector3.new(0.36, 0.36, 0.36), CFrame.new(-0.62, -0.5, 0.02), Color3.fromRGB(120, 220, 70), Enum.PartType.Ball)
+	p(m, Vector3.new(0.3, 0.42, 0.42), CFrame.new(0, 0.68, 0) * up, METAL, Enum.PartType.Cylinder, Enum.Material.Metal)
+end
+BUILDERS.Landmine = function(m)
+	local up = CFrame.Angles(0, 0, math.rad(90))
+	p(m, Vector3.new(0.3, 1.8, 1.8), up, Color3.fromRGB(86, 96, 58), Enum.PartType.Cylinder)
+	p(m, Vector3.new(0.16, 1.15, 1.15), CFrame.new(0, 0.22, 0) * up, Color3.fromRGB(64, 72, 44), Enum.PartType.Cylinder)
+	p(m, Vector3.new(0.12, 0.42, 0.42), CFrame.new(0, 0.32, 0) * up, Color3.fromRGB(40, 42, 38), Enum.PartType.Cylinder)
+	p(m, Vector3.new(0.16, 0.16, 0.16), CFrame.new(0.58, 0.22, -0.32), Color3.fromRGB(255, 50, 40), Enum.PartType.Ball, Enum.Material.Neon)
+end
+BUILDERS.Medkit = function(m)
+	p(m, Vector3.new(1.55, 1.1, 0.58), CFrame.new(0, 0, 0), Color3.fromRGB(236, 234, 228))
+	p(m, Vector3.new(0.52, 0.17, 0.06), CFrame.new(0, 0, -0.31), Color3.fromRGB(210, 40, 40))
+	p(m, Vector3.new(0.17, 0.52, 0.06), CFrame.new(0, 0, -0.31), Color3.fromRGB(210, 40, 40))
+	p(m, Vector3.new(0.62, 0.13, 0.17), CFrame.new(0, 0.65, 0), Color3.fromRGB(60, 62, 66))
+end
+
 -- three-quarter "held" pose: barrel out to the left, angled toward you and up, top tipped into view
 local POSE_GUN = CFrame.Angles(0, 0, math.rad(-15)) * CFrame.Angles(math.rad(12), 0, 0) * CFrame.Angles(0, math.rad(108), 0)
 local POSE_DRAWN = CFrame.Angles(math.rad(10), 0, 0) * CFrame.Angles(0, math.rad(90 + 24), 0) * CFrame.Angles(0, 0, math.rad(-6))
