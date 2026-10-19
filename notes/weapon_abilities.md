@@ -4,7 +4,7 @@ Each weapon has one identity, shown on the Kit screen (ability row + Speed / Rel
 Mechanics: Tacticals session. Kit screen, icons, HUD feedback: UI session. Numbers marked (tune) are suggestions.
 
 ## Speed ladder (movement: run, dash to cover, slide, vault; and reload time)
-1 Pistol (fastest) · 2 Suppressed · 3 Mini Uzi · 4 Revolver · 5 Automatic Rifle · 6 Semi-Auto · 7 Sniper (slowest)
+1 Pistol (fastest) · 2 Dual Pistols · 3 Suppressed · 4 Mini Uzi · 5 Revolver · 6 Automatic Rifle · 7 Semi-Auto · 8 Sniper (slowest)
 
 ## Guns
 | Item id | Ability | What it does |
@@ -16,15 +16,20 @@ Mechanics: Tacticals session. Kit screen, icons, HUD feedback: UI session. Numbe
 | AutoRifle | (no ability) **30-round magazine** | Already strong: no ability, a 30-round magazine instead. |
 | SemiAuto | **Precision Rhythm** | Consecutive hits without missing add damage: +5% per hit, up to 3 stacks (tune). A miss resets it. A small stack counter on the crosshair. |
 | Sniper | (no ability) **One-shot headshot** | A headshot is a one-shot kill: that's its reward. |
+| DualPistols (NEW) | **Akimbo** | Can't aim in at all, but hip fire is fully accurate and the fire rate doubles while moving. Close-range aggression. Price ~2200 (tune). |
 
 ## Melee
 | Item id | Ability | What it does |
 |---|---|---|
 | Fists | **Vault Takedown** | Vaulting over cover into an enemy near the vault (within ~4-5 studs of the landing, or crouched behind that cover) stuns and topples them for ~1 s (can't shoot / aim) and deals 50 damage. Per-target cooldown ~8 s (tune). Heavy thud, victim camera shake, "TAKEDOWN" hit marker; fist icon in the kill feed. |
 | Knife | **Slide Lunge** | The first swing during or right after a slide lunges ~6 studs forward with bonus damage (tune). |
+| Bat (NEW) | **Home Run** | Hold to charge a swing (~0.8 s); a charged hit knocks the target back several studs: out of cover or off a ledge. Price ~1000 (tune). |
+| Katana (NEW) | **Parry** | Right after a swing there's a short block window (~0.35 s): bullets hitting you from the front in it are deflected (no damage), with a spark + clang. Rewards timing. Price ~2500 (tune). (UI proposal; Edward to confirm.) |
+| RiotShield (NEW) | **Bulwark** | Held out it blocks bullets from the front; you move slowly and can bash (short stun). Damage to the shield is capped / it can break (tune). Price ~3000 (tune). |
 
-## Gadgets (Smoke, Flash, Frag)
-Not decided yet.
+## Gadgets (no abilities yet: Edward)
+Smoke, Flash (Flashbang), Frag, plus NEW: **StickyGrenade** (sticks to surfaces / players, then explodes; ~1500),
+**Landmine** (placed on the floor, triggers on an enemy stepping near; ~1800), **Medkit** (heals over a short channel; ~1000).
 
 ## UI side (UI session)
 - Kit screen: an ability row under the info card (silhouette icon, name, one line), plus Speed / Reload / Accuracy bars from the ladder.
