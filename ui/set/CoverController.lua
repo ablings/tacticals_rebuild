@@ -682,7 +682,23 @@ local function finishMovement()
 	if dive and character then character:SetAttribute("Diving", nil) end
 	move, vault, dive = nil, nil, nil
 	local c = getControls()
-	if c then c:Enable() end
+	if c then
+		c:Enable()
+		-- [MOVEKEYS] Roblox's keyboard controller zeroes its key state while disabled: keys still held (the movement key
+		-- that just cancelled an E move) didn't move you until pressed again (Edward 2026-10-18). Re-read them.
+		local kb = c.activeController
+		if kb and kb.forwardValue ~= nil and kb.UpdateMovement then
+			local function down(...)
+				for _, k in { ... } do if UserInputService:IsKeyDown(k) then return true end end
+				return false
+			end
+			kb.forwardValue = down(Enum.KeyCode.W, Enum.KeyCode.Up) and -1 or 0
+			kb.backwardValue = down(Enum.KeyCode.S, Enum.KeyCode.Down) and 1 or 0
+			kb.leftValue = down(Enum.KeyCode.A) and -1 or 0
+			kb.rightValue = down(Enum.KeyCode.D) and 1 or 0
+			pcall(kb.UpdateMovement, kb, Enum.UserInputState.Begin)
+		end
+	end
 	if humanoid then
 		humanoid.WalkSpeed = savedWalkSpeed
 		humanoid.AutoRotate = true
@@ -1613,11 +1629,22 @@ local function aimedCover(origin: Vector3, look: Vector3): (BasePart?, Vector3?)
 		local fwd = look * FLAT
 		if fwd.Magnitude < 0.1 then return nil end
 		local spot = Vector3.new(hit.Position.X, (rootPart :: BasePart).Position.Y + Config.WaistHeight, hit.Position.Z)
+		local floorSpot = Vector3.new(hit.Position.X, (rootPart :: BasePart).Position.Y, hit.Position.Z)
 		for _, deg in { 0, -20, 20 } do
 			local dir = CFrame.Angles(0, math.rad(deg), 0) * fwd.Unit
 			local probe = castWorld(spot, dir * Config.SpotCoverReach, cover and cover.part or nil)
-			if isUsableWall(probe) then return (probe :: RaycastResult).Instance :: BasePart, (probe :: RaycastResult).Position end
+			if isUsableWall(probe) then return (probe :: RaycastResult).Instance :: BasePart, (probe :: RaycastResult).Position, floorSpot end
 		end
+		-- [COVERAIM] (Edward 2026-10-18: aiming at the floor beside / behind a crate's corner should still take you there,
+		-- "make it also be relative to the cover around you"): the nearest cover in ANY direction around the aimed spot
+		local best: RaycastResult? = nil
+		local reach = math.max(Config.SpotCoverReach, 7)
+		for i = 0, 15 do
+			local a = math.rad(i * 22.5)
+			local probe = castWorld(spot, Vector3.new(math.cos(a), 0, math.sin(a)) * reach, cover and cover.part or nil)
+			if isUsableWall(probe) and (not best or (probe :: RaycastResult).Distance < best.Distance) then best = probe end
+		end
+		if best then return best.Instance :: BasePart, best.Position, floorSpot end
 		return nil
 	end
 	if not isUsableWall(hit) then return nil end
@@ -1627,7 +1654,7 @@ end
 -- Returns stand, hit, route, takeNow (the face is right next to you: just take cover), tooFar
 local function pickCoverTarget(origin: Vector3, look: Vector3)
 	if not isAlive() then return nil end
-	local part, aimPoint = aimedCover(origin, look)
+	local part, aimPoint, floorSpot = aimedCover(origin, look)
 	if not part or not aimPoint then return nil end
 	if cover and part == cover.part then return nil end -- same object: slide along it instead
 	local only = localPlayer:GetAttribute("MoveTarget")
@@ -1643,6 +1670,23 @@ local function pickCoverTarget(origin: Vector3, look: Vector3)
 		end
 		table.insert(seen, n)
 		table.insert(ordered, face)
+	end
+	-- [COVERAIM] aimed at the floor: the side of that cover closest to where you aimed (behind the crate -> its back)
+	if floorSpot and not cover then
+		local sides = {}
+		local cf0 = part.CFrame
+		for _, n in { cf0.RightVector, -cf0.RightVector, cf0.LookVector, -cf0.LookVector } do
+			local flat = n * FLAT
+			if flat.Magnitude > 0.5 then
+				local face = faceWithNormal(part, flat.Unit, floorSpot)
+				if face and isUsableWall(face) then
+					local st = face.Position + (face.Normal * FLAT).Unit * Config.WallOffset
+					table.insert(sides, { face = face, d = ((st - floorSpot) * FLAT).Magnitude })
+				end
+			end
+		end
+		table.sort(sides, function(a, b) return a.d < b.d end)
+		for _, s in sides do add(s.face) end
 	end
 	if cover then add(backFace(part, aimPoint)) end
 	add(faceOnYourSide(part, aimPoint))
@@ -2299,7 +2343,9 @@ function controller.JumpDive(): boolean
 	if not cover then savedWalkSpeed = hum.WalkSpeed end
 	local fromVault = vault
 	for _, d in { Config.DiveDistance or 11, 9, 7, 5 } do
-		if startDive(nil :: any, root.Position + dir * d, true) then
+		-- [DIVE] a lunge from the hop (Edward 2026-10-18: "too high ... should feel like a lunge forward"): the plain dive,
+		-- not the diving-board mode (that added 3.6 studs of lift and a 0.4 s hang on top of the hop)
+		if startDive(nil :: any, root.Position + dir * d, false) then
 			if fromVault then
 				if fromVault.track then fromVault.track:Stop(0.1) end
 				if character then character:SetAttribute("SilentMove", nil) end

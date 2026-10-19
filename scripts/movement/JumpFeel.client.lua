@@ -6,12 +6,12 @@
 --   * the launch speed is capped at sqrt(2 g Scale H) (H = JumpHeight at the jump), so the apex stays as high as before (cover hops,
 --     vault clearances and level design unchanged) - the arc is just slower and floatier (airtime x 1/sqrt(Scale)).
 -- Falling off a ledge without jumping keeps normal gravity. Scale: ReplicatedStorage attribute JumpGravityScale (0.2..1),
--- default 0.65 (airtime about +24%).
+-- default 0.75 (25% less gravity in the air, airtime about +15%).
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local DEFAULT_SCALE = 0.65
+local DEFAULT_SCALE = 0.75 -- Edward 2026-10-18: "maybe 25% less" gravity
 local player = Players.LocalPlayer
 local humanoid, root, force, attach = nil, nil, nil, nil
 local jumping = false   -- in the air from a jump
