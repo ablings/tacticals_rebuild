@@ -12,8 +12,11 @@ local RunService = game:GetService("RunService")
 local HitRewind = {}
 HitRewind.Tolerance = 1.25   -- studs between the claimed point and the rewound part box (pose differences)
 HitRewind.History = 1.2      -- seconds of root CFrames kept per character
-HitRewind.MaxWindow = 1.0    -- longest lag window looked back, seconds
-HitRewind.MinWindow = 0.2
+HitRewind.MaxWindow = 0.25   -- longest lag window looked back, seconds (was 1.0). [LAGCAP] 2026-10-18, Edward: "if on my
+                             -- screen i am fully behind a pillar" a shooter's stale view stops counting after this: favour
+                             -- the shooter only up to a quarter second, like Overwatch / Valorant cap it
+HitRewind.MinWindow = 0.1
+HitRewind.Interp = 0.1       -- the shooter's client shows others ~this far in the past (interpolation)
 
 local tracks = setmetatable({}, { __mode = "k" }) -- [Model] = { root = BasePart, t = {}, cf = {}, head = n }
 local started = false
@@ -77,7 +80,7 @@ function HitRewind.Check(shooter: Player, victimCharacter: Model, hitPart: BaseP
 	local rel = tr.root.CFrame:ToObjectSpace(hitPart.CFrame)
 	local ok, ping = pcall(shooter.GetNetworkPing, shooter)
 	ping = ok and tonumber(ping) or 0.1
-	local window = math.clamp(ping * 2 + 0.15, HitRewind.MinWindow, HitRewind.MaxWindow)
+	local window = math.clamp(ping * 2 + HitRewind.Interp, HitRewind.MinWindow, HitRewind.MaxWindow)
 	local now = os.clock()
 	for i, t in tr.t do
 		if now - t <= window + 1 / 30 then

@@ -22,6 +22,7 @@ local controller = {}
 local currentPitch = setmetatable({}, { __mode = "k" }) -- [Model] = smoothed degrees (losing one is harmless)
 local raisedAmt = setmetatable({}, { __mode = "k" })    -- [Model] = 0..1, how far the aim pose is blended in [POSE]
 local lastSentPitch, lastSentTime = 0, 0
+local lastSentRaised = nil -- [POSE]
 local myHeadPitch = 0 -- radians, read by HeadLookController (it owns your own neck)
 
 -- How the aim is shared out (degrees). Positive = looking up.
@@ -136,9 +137,11 @@ local function update(dt: number)
 	end
 
 	local now = os.clock()
-	if now - lastSentTime >= 1 / Config.AimPitchSendRate and math.abs(myPitch - lastSentPitch) > 1 then
-		lastSentTime, lastSentPitch = now, myPitch
-		AimPitchRemote:FireServer(myPitch)
+	-- [POSE] the raised state goes with the pitch (others bend your aim pose only while it's true, like your own screen)
+	local sendRaised = raised and myCharacter ~= nil and hasWeaponOut(myCharacter)
+	if now - lastSentTime >= 1 / Config.AimPitchSendRate and (math.abs(myPitch - lastSentPitch) > 1 or sendRaised ~= lastSentRaised) then
+		lastSentTime, lastSentPitch, lastSentRaised = now, myPitch, sendRaised
+		AimPitchRemote:FireServer(myPitch, sendRaised)
 	end
 
 	local blend = 1 - math.exp(-15 * dt)
@@ -157,7 +160,9 @@ local function update(dt: number)
 			currentPitch[character] = pitch
 
 			-- [POSE] the aim pose only while the gun is up; otherwise everything eases back to rest
-			local raisedNow = hasWeaponOut(character) and (player ~= localPlayer or myRaised)
+			-- others: only while THEIR gun is raised (AimRaised from the server; unset = an old client: as before)
+			local raisedNow = hasWeaponOut(character)
+				and ((player == localPlayer and myRaised) or (player ~= localPlayer and character:GetAttribute("AimRaised") ~= false))
 			local up = (raisedAmt[character] or 0) + ((raisedNow and 1 or 0) - (raisedAmt[character] or 0)) * blend
 			raisedAmt[character] = up
 			-- pitch is relative to the hips (that's what's sent); the world aim adds the hips back
