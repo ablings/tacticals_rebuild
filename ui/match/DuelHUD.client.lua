@@ -235,7 +235,7 @@ local function addKill(d)
 		{ new("UICorner", { CornerRadius = UDim.new(0.25, 0) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(rc[1], rc[2]) }) })
 	local mine = d.killer == player.UserId or d.victim == player.UserId
 	if mine then new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = row }) end
-	local verb = d.kind == "Melee" and "bashed" or (d.kind == "Explosion" and "blew up" or (d.kind == "Burn" and "burned" or ">"))
+	local verb = d.kind == "Takedown" and "took down" or (d.kind == "Melee" and "bashed" or (d.kind == "Explosion" and "blew up" or (d.kind == "Burn" and "burned" or ">")))
 	local txt = string.format('<font color="#%s">%s</font>  %s%s  <font color="#%s">%s</font>', col(d.killer):ToHex(), nameOf(d.killer),
 		verb, d.headshot and "  ◉" or "", col(d.victim):ToHex(), nameOf(d.victim)) -- (◉: BuilderSans has no ✦)
 	local l = new("TextLabel", { BackgroundTransparency = 1, RichText = true, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE,

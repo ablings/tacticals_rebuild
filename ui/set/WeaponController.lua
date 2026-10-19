@@ -573,7 +573,9 @@ function controller.Start()
 		IA.Bind("Equip1", function(state) if state == Enum.UserInputState.Begin and not equipped then toggleHolster() end end)
 	end)
 
-	HitConfirm.OnClientEvent:Connect(function(zone: string, _damage: number, killed: boolean, headshot: boolean?)
+	HitConfirm.OnClientEvent:Connect(function(zone: string, _damage: number, killed: boolean, headshot: boolean?, kind: string?)
+		-- (2026-10-19) ability hits: the Fists vault takedown gets RIVALS-style big TAKEDOWN text
+		if kind == "Takedown" and HUD.ShowTakedown then HUD.ShowTakedown() end
 		-- [SET] 4th arg: true only for gun hits on the head (backstabs report zone "Head" but send no flag)
 		HUD.ShowHitmarker(zone, killed, headshot)
 	end)
