@@ -24,6 +24,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "SettingsData", "ModuleScript", "settings/SettingsData.lua"),
     ("ReplicatedStorage.UIKit", "SettingsKit", "ModuleScript", "settings/SettingsKit.lua"),
     ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
+    ("ReplicatedStorage.Modules.Shared.Config", "WeaponAbilities", "ModuleScript", "settings/WeaponAbilities.lua"),  # Kit screen ability rows (notes/weapon_abilities.md)
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),
     ("ReplicatedStorage.UIKit", "PlayerCards", "ModuleScript", "hud/PlayerCards.lua"),
@@ -82,6 +83,7 @@ MATCH_FILES = [
     ("ReplicatedStorage.UIKit", "Kit", "ModuleScript", "lobby/Kit.lua"),
     ("ReplicatedStorage.UIKit", "SettingsData", "ModuleScript", "settings/SettingsData.lua"),
     ("ReplicatedStorage.Modules.Shared.Config", "SettingsConfig", "ModuleScript", "settings/SettingsConfig.lua"),
+    ("ReplicatedStorage.Modules.Shared.Config", "WeaponAbilities", "ModuleScript", "settings/WeaponAbilities.lua"),  # Kit screen ability rows (notes/weapon_abilities.md)
     ("ServerScriptService", "SettingsBridge", "Script", "matchplace/SettingsBridge.server.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "SettingsEffectsController", "ModuleScript", "settings/SettingsEffectsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "CombatFeedbackController", "ModuleScript", "hud/CombatFeedbackController.lua"),

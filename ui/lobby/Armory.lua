@@ -1810,6 +1810,38 @@ local function renderInfo()
 				Size = UDim2.fromOffset(CARD_W - 64, 17), TextYAlignment = Enum.TextYAlignment.Top, LayoutOrder = i, ZIndex = 5, Parent = notes })
 		end
 	end
+	-- (2026-10-19, Edward's weapon design) the item's ability (or perk), then Speed / Reload / Accuracy bars for guns
+	local okA, Abilities = pcall(function()
+		return require(ReplicatedStorage.Modules.Shared.Config:FindFirstChild("WeaponAbilities"))
+	end)
+	local ab = okA and Abilities and Abilities.Items and Abilities.Items[id]
+	if ab then
+		local box = mk("Frame", { Name = "Ability", BackgroundColor3 = COL.BlueTop, BackgroundTransparency = 0.82, BorderSizePixel = 0, Size = UDim2.fromOffset(CARD_W - 64, 0),
+			AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 10, ZIndex = 5, Parent = notes }, {
+			corner(4), mk("UIPadding", { PaddingTop = UDim.new(0, 6), PaddingBottom = UDim.new(0, 7), PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 8) }),
+			mk("UIListLayout", { Padding = UDim.new(0, 2), SortOrder = Enum.SortOrder.LayoutOrder }),
+		})
+		mk("Frame", { BackgroundColor3 = COL.BlueTop, BorderSizePixel = 0, Position = UDim2.fromOffset(-10, -6), Size = UDim2.new(0, 3, 1, 13), ZIndex = 6, Parent = box })
+		shade(text({ Text = (ab.perk and "PERK  ·  " or "ABILITY  ·  ") .. string.upper(ab.ability), FontFace = FONT_HEAVY, TextSize = 16, TextColor3 = COL.Text,
+			Size = UDim2.fromOffset(CARD_W - 84, 18), LayoutOrder = 1, ZIndex = 6, Parent = box }), 1.2)
+		text({ Text = ab.desc, FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y,
+			Size = UDim2.fromOffset(CARD_W - 84, 16), TextYAlignment = Enum.TextYAlignment.Top, LayoutOrder = 2, ZIndex = 6, Parent = box })
+		if ab.speed then
+			for k, st in { { "Speed", ab.speed }, { "Reload", ab.reload }, { "Accuracy", ab.accuracy } } do
+				local row = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(CARD_W - 64, 16), LayoutOrder = 20 + k, ZIndex = 5, Parent = notes })
+				text({ Text = st[1], FontFace = FONT, TextSize = 14, TextColor3 = COL.Sub, Size = UDim2.fromOffset(74, 16), ZIndex = 5, Parent = row })
+				-- five segments, filled to the rating (halves allowed)
+				for seg = 1, 5 do
+					local f = math.clamp((st[2] or 0) - (seg - 1), 0, 1)
+					local back = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, BorderSizePixel = 0, Position = UDim2.fromOffset(78 + (seg - 1) * 34, 4),
+						Size = UDim2.fromOffset(30, 8), ZIndex = 5, Parent = row }, { corner(2) })
+					if f > 0 then
+						mk("Frame", { BackgroundColor3 = COL.BlueTop, BorderSizePixel = 0, Size = UDim2.fromScale(f, 1), ZIndex = 6, Parent = back }, { corner(2) })
+					end
+				end
+			end
+		end
+	end
 
 	-- level card: XP bar with the level in the middle, then level up and account level
 	local xp = (data and data.ItemXP and data.ItemXP[id]) or 0
