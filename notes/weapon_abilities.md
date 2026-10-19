@@ -4,7 +4,7 @@ Each weapon has one identity, shown on the Kit screen (ability row + Speed / Rel
 Mechanics: Tacticals session. Kit screen, icons, HUD feedback: UI session. Numbers marked (tune) are suggestions.
 
 ## Speed ladder (movement: run, dash to cover, slide, vault; and reload time)
-1 Pistol (fastest) · 2 Dual Pistols · 3 Suppressed · 4 Mini Uzi · 5 Revolver · 6 Automatic Rifle · 7 Semi-Auto · 8 Sniper (slowest)
+1 Pistol (fastest) · 2 Dual Pistols · 3 Suppressed · 4 Mini Uzi · 5 Revolver · 6 Automatic Rifle · 7 Pump Shotgun · 8 Semi-Auto · 9 Sniper (slowest)
 
 ## Guns
 | Item id | Ability | What it does |
@@ -16,6 +16,7 @@ Mechanics: Tacticals session. Kit screen, icons, HUD feedback: UI session. Numbe
 | AutoRifle | (no ability) **30-round magazine** | Already strong: no ability, a 30-round magazine instead. |
 | SemiAuto | **Precision Rhythm** | Consecutive hits without missing add damage: +5% per hit, up to 3 stacks (tune). A miss resets it. A small stack counter on the crosshair. |
 | Sniper | (no ability) **One-shot headshot** | A headshot is a one-shot kill: that's its reward. |
+| PumpShotgun (NEW) | **Door Breaker** | The close-range answer. A point-blank hit (~6 studs) on someone in cover knocks them out of it: the reverse of the Revolver. Reloads one shell at a time (a shot interrupts the reload). Price ~2500 (tune). |
 | DualPistols (NEW) | **Akimbo** | Can't aim in at all, but hip fire is fully accurate and the fire rate doubles while moving. Close-range aggression. Price ~2200 (tune). |
 
 ## Melee
