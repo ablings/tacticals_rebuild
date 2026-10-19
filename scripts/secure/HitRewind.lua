@@ -5,7 +5,9 @@
 -- character's root CFrame and checks the claimed point against the claimed part where it WAS during the shooter's lag
 -- window (ping x 2 + interpolation), with a small tolerance for animation pose (RewindTolerance, default 1.25 studs).
 --   HitRewind.Start()                                        once, on the server
---   HitRewind.Check(shooter, victimCharacter, hitPart, hitPosition) -> ok, bestDistance
+--   HitRewind.Check(shooter, victimCharacter, hitPart, hitPosition) -> ok, bestDistance, detail
+--     detail (for ;hitdebug) = { rewound = the part's CFrame at the best-matching moment, now = its CFrame now, size,
+--     age = how far back that moment was (s), window = the lag window looked at (s), ping }
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
@@ -66,7 +68,8 @@ end
 
 function HitRewind.Check(shooter: Player, victimCharacter: Model, hitPart: BasePart, hitPosition: Vector3): (boolean, number)
 	local best = boxDistance(hitPart.CFrame, hitPart.Size, hitPosition)
-	if best <= HitRewind.Tolerance then return true, best end
+	local detail = { rewound = hitPart.CFrame, now = hitPart.CFrame, size = hitPart.Size, age = 0, window = 0, ping = 0 }
+	if best <= HitRewind.Tolerance then return true, best, detail end
 	local tr = tracks[victimCharacter]
 	if not tr then
 		track(victimCharacter)
@@ -74,7 +77,7 @@ function HitRewind.Check(shooter: Player, victimCharacter: Model, hitPart: BaseP
 	end
 	if not tr or tr.n == 0 then
 		-- no history yet (just spawned): the old, looser rule
-		return best <= hitPart.Size.Magnitude / 2 + 6, best
+		return best <= hitPart.Size.Magnitude / 2 + 6, best, detail
 	end
 	-- the claimed part's offset from the root now (accessories included: their own CFrame follows the head)
 	local rel = tr.root.CFrame:ToObjectSpace(hitPart.CFrame)
@@ -82,13 +85,15 @@ function HitRewind.Check(shooter: Player, victimCharacter: Model, hitPart: BaseP
 	ping = ok and tonumber(ping) or 0.1
 	local window = math.clamp(ping * 2 + HitRewind.Interp, HitRewind.MinWindow, HitRewind.MaxWindow)
 	local now = os.clock()
+	detail.window, detail.ping = window, ping
 	for i, t in tr.t do
 		if now - t <= window + 1 / 30 then
-			local d = boxDistance(tr.cf[i] * rel, hitPart.Size, hitPosition)
-			if d < best then best = d end
+			local cf = tr.cf[i] * rel
+			local d = boxDistance(cf, hitPart.Size, hitPosition)
+			if d < best then best = d; detail.rewound = cf; detail.age = now - t end
 		end
 	end
-	return best <= HitRewind.Tolerance, best
+	return best <= HitRewind.Tolerance, best, detail
 end
 
 return HitRewind
