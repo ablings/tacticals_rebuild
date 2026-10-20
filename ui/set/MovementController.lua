@@ -32,9 +32,19 @@ local function isDown(k): boolean
 	return UserInputService:IsKeyDown(k)
 end
 local sprintToggled = false -- [SET] Toggle Sprint: on until you stop, aim or fire
+-- [PAD] (Edward 2026-10-20, RIVALS controls) clicking L3 starts a sprint that holds until you stop, aim or fire (or click
+-- L3 again). Shared as the client attribute PadSprint so CoverController's running vault sees it too.
+local padSprint = false
+local function setPadSprint(on: boolean)
+	if padSprint == on then return end
+	padSprint = on
+	localPlayer:SetAttribute("PadSprint", on or nil)
+end
+local PAD_CROUCH = Enum.KeyCode.ButtonB -- [PAD] B = crouch / slide
 local sprintBlockedAt = 0
 -- [SET] Shift (your Sprint bind) held, or Toggle Sprint / Auto Sprint asking to run
 local function wantsSprint(): boolean
+	if padSprint then return true end -- [PAD]
 	if localPlayer:GetAttribute("Setting_AutoSprint") == true then return true end
 	if localPlayer:GetAttribute("Setting_ToggleSprint") == true then return sprintToggled end
 	return isDown(Binds.Key(localPlayer, "Sprint", Config.Keybinds.Sprint))
@@ -327,9 +337,9 @@ local function update(dt: number)
 	local heldGun = hum.Parent and hum.Parent:FindFirstChildOfClass("Tool")
 	local heldConfig = heldGun and WeaponConfig.Get(heldGun:GetAttribute("WeaponId") or "")
 	if aiming and heldConfig and heldConfig.RunAndGun then aiming = false end
-	if aiming then sprintBlocked = true; sprintBlockedAt = os.clock(); sprintToggled = false end
+	if aiming then sprintBlocked = true; sprintBlockedAt = os.clock(); sprintToggled = false; setPadSprint(false) end
 	local moving = hum.MoveDirection.Magnitude > 0.1
-	if not moving then sprintToggled = false end -- [SET] Toggle Sprint ends when you stop
+	if not moving then sprintToggled = false; setPadSprint(false) end -- [SET] Toggle Sprint ends when you stop
 
 	local target
 	sprinting = false
@@ -378,6 +388,8 @@ end
 -- // Input
 local function onInputBegan(input: InputObject, gameProcessed: boolean)
 	if gameProcessed then return end
+	-- [PAD] L3 click: start / stop the controller sprint
+	if input.KeyCode == Enum.KeyCode.ButtonL3 then setPadSprint(not padSprint) end
 	-- [SET] Toggle Sprint: tap your Sprint key to start / stop running
 	if Binds.Matches(localPlayer, "Sprint", input, Config.Keybinds.Sprint) and localPlayer:GetAttribute("Setting_ToggleSprint") == true then
 		sprintToggled = not sprintToggled
@@ -393,6 +405,7 @@ local function onInputBegan(input: InputObject, gameProcessed: boolean)
 	end
 	-- your Crouch bind (C by default) or Ctrl crouches / slides
 	local isCrouchKey = Binds.Matches(localPlayer, "Crouch", input, Config.Keybinds.Crouch) or input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl
+		or input.KeyCode == PAD_CROUCH
 	if not isCrouchKey then return end
 	if not isAlive() then return end
 	-- In cover, C is the cover crouch (CoverController handles it)
@@ -412,6 +425,7 @@ end
 local function onInputEnded(input: InputObject)
 	if localPlayer:GetAttribute("Setting_ToggleCrouch") ~= false then return end
 	local isCrouchKey = Binds.Matches(localPlayer, "Crouch", input, Config.Keybinds.Crouch) or input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl
+		or input.KeyCode == PAD_CROUCH
 	if not isCrouchKey or not crouched then return end
 	if CoverController and (CoverController.IsInCover() or CoverController.IsMoving()) then return end
 	setCrouched(false)
@@ -450,6 +464,7 @@ function controller.StopSprint()
 	sprintBlocked = true
 	sprintBlockedAt = os.clock() -- [SET]
 	sprintToggled = false
+	setPadSprint(false) -- [PAD] firing ends the L3 sprint
 	if sprinting and humanoid then
 		sprinting = false
 		currentSpeed = crouched and Config.Speeds.Crouch or Config.Speeds.Walk

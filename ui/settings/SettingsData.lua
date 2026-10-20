@@ -92,22 +92,22 @@ return {
 				{ kind = "bind", name = "Aim", key = "Ability", icon = "aim", value = { "MouseButton2", "", "ButtonL2", "" } },
 				{ kind = "bind", name = "Reload", icon = "reset", value = { "R", "", "ButtonX", "" } },
 				{ kind = "bind", name = "Shoulder Swap", icon = "arrows_h", value = { "V", "", "DPadDown", "" } },
-				{ kind = "bind", name = "Gun Bash", key = "Quick Melee", icon = "effects2", value = { "F", "", "ButtonR1", "" } },
-				{ kind = "bind", name = "Throw Gadget", key = "Quick Utility", icon = "particles", value = { "G", "", "ButtonL1", "" } },
+				{ kind = "bind", name = "Gun Bash", key = "Quick Melee", icon = "effects2", value = { "F", "", "ButtonR3", "" } },
+				{ kind = "bind", name = "Throw Gadget", key = "Quick Utility", icon = "particles", value = { "G", "", "ButtonY", "" } },
 			} },
 			{ title = nil, rows = {
 				{ kind = "bind", name = "Jump / Vault", key = "Jump", icon = "jump", value = { "Space", "", "ButtonA", "" } },
 				{ kind = "bind", name = "Sprint", icon = "sprint", value = { "LeftShift", "", "ButtonL3", "" } },
-				{ kind = "bind", name = "Crouch", icon = "crouch", value = { "C", "LeftControl", "ButtonR3", "" } },
+				{ kind = "bind", name = "Crouch", icon = "crouch", value = { "C", "LeftControl", "ButtonB", "" } },
 				{ kind = "bind", name = "Slide", icon = "effects2", value = { "", "", "", "" } },
-				{ kind = "bind", name = "Take Cover", icon = "padded", value = { "Q", "", "ButtonB", "" } },
-				{ kind = "bind", name = "Dash", icon = "sprint", value = { "E", "", "ButtonY", "" } },
+				{ kind = "bind", name = "Take Cover", icon = "padded", value = { "Q", "", "ButtonL1", "" } },
+				{ kind = "bind", name = "Dash", icon = "sprint", value = { "E", "", "", "" } }, -- (controller: double-tap LB)
 			} },
 			{ title = nil, rows = {
 				{ kind = "bind", name = "Equip Gun", key = "Equip Primary", icon = "inking", value = { "One", "", "DPadLeft", "" } },
 				{ kind = "bind", name = "Equip Melee", icon = "inking", value = { "Two", "", "DPadUp", "" } },
 				{ kind = "bind", name = "Equip Gadget", key = "Equip Utility", icon = "particles", value = { "Three", "", "DPadRight", "" } },
-				{ kind = "bind", name = "Cycle Weapon", key = "Switch Weapons", icon = "reset", value = { "Z", "", "", "" } },
+				{ kind = "bind", name = "Cycle Weapon", key = "Switch Weapons", icon = "reset", value = { "Z", "", "ButtonR1", "" } },
 			} },
 			{ title = nil, rows = {
 				{ kind = "bind", name = "Free Cursor", icon = "camera", value = { "LeftAlt", "", "", "" } },

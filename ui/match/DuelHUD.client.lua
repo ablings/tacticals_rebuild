@@ -912,8 +912,16 @@ local function switchHook() return player:FindFirstChild("PlayerScripts") and pl
 switchB.Activated:Connect(function() local h = switchHook(); if h then h:Invoke("Toggle") end end)
 UserInputService.InputBegan:Connect(function(i, gp)
 	if gp or not switchB.Visible then return end
-	if i.KeyCode == Enum.KeyCode.M or i.KeyCode == Enum.KeyCode.ButtonY then local h = switchHook(); if h then h:Invoke("Toggle") end end
+	if i.KeyCode == Enum.KeyCode.M or i.KeyCode == Enum.KeyCode.ButtonX then local h = switchHook(); if h then h:Invoke("Toggle") end end -- [PAD] X (Edward 2026-10-20)
 end)
+-- the chip shows X with a controller
+local function chipText(t)
+	t = t or UserInputService:GetLastInputType()
+	if t == Enum.UserInputType.MouseMovement then return end -- (2026-10-20) mouse MOVEMENT never flips back to keyboard + mouse: a resting mouse / locked cursor sends it, and hid every controller icon
+	keyL.Text = t.Name:find("Gamepad") and "X" or "M"
+end
+UserInputService.LastInputTypeChanged:Connect(chipText)
+chipText()
 
 RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.switchHook = roundCard, showRoundCard, kcard, refreshKillerCard, switchB, switchHook
 end
@@ -1016,11 +1024,19 @@ RunService.RenderStepped:Connect(function()
 		lastState = nil; resultsShown = false
 		return
 	end
-	leaveDuel.Visible = inLobby() and not spectator() and state ~= "MatchEnd"
 	-- score bar
 	local myTeam = player:GetAttribute("Team") or "A"
 	if spectator() then myTeam = "A" end
 	local ids = { A = teamIds("TeamA"), B = teamIds("TeamB") }
+	-- (Edward 2026-10-20) no Leave button in a real match: only in solo duels (everyone else is a bot) and Studio tests
+	local solo = RunService:IsStudio()
+	if not solo then
+		solo = true
+		for _, team in { ids.A, ids.B } do
+			for _, uid in team do if uid > 0 and uid ~= player.UserId then solo = false end end
+		end
+	end
+	leaveDuel.Visible = solo and not spectator() and state ~= "MatchEnd"
 	-- Settings > Game: Hide Teammate Display keeps only you in your team's box; Gameplay HUD "Minimal" drops the score
 	-- bar and kill feed (banners and the results card stay)
 	local myIds = ids[myTeam] or ids.A

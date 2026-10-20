@@ -119,8 +119,52 @@ local function update(dt)
 	fill.BackgroundTransparency = low and (0.15 + 0.15 * math.sin(os.clock() * 8)) or 0
 end
 
+-- [PAD] (Edward 2026-10-20, RIVALS) with a controller the health box sits bottom right (the hotbar takes the bottom left).
+-- The NOISE meter (StealthUI, built just above this box) moves with it.
+local function padLayout()
+	local UIS = game:GetService("UserInputService")
+	local orig = frame.Position
+	local stealthOrig = {}
+	local function apply(pad: boolean)
+		frame.AnchorPoint = pad and Vector2.new(1, 1) or Vector2.new(0, 1)
+		frame.Position = pad and UDim2.fromScale(1 - orig.X.Scale, orig.Y.Scale) or orig
+		local st = localPlayer.PlayerGui:FindFirstChild("StealthUI")
+		-- the meter's panel: the first GuiObject under the canvas that isn't a full-screen holder (StealthUI.Canvas.Root.Frame)
+		local panels = {}
+		local function dig(node)
+			for _, c in node:GetChildren() do
+				if c:IsA("GuiObject") then
+					if c.Size.X.Scale >= 0.99 and c.Size.Y.Scale >= 0.99 then dig(c) else table.insert(panels, c) end
+				end
+			end
+		end
+		local canvas = st and st:FindFirstChild("Canvas")
+		if canvas then dig(canvas) end
+		for _, f in panels do
+			stealthOrig[f] = stealthOrig[f] or { f.AnchorPoint, f.Position }
+			local o = stealthOrig[f]
+			f.AnchorPoint = pad and Vector2.new(1 - o[1].X, o[1].Y) or o[1]
+			f.Position = pad and UDim2.fromScale(1 - o[2].X.Scale, o[2].Y.Scale) or o[2]
+		end
+	end
+	local on = nil
+	local function check(t)
+		if t == Enum.UserInputType.MouseMovement then return end -- (2026-10-20) mouse MOVEMENT never flips back to keyboard + mouse: a resting mouse / locked cursor sends it, and hid every controller icon
+		local pad = t.Name:find("Gamepad") ~= nil
+		if not pad and not (t == Enum.UserInputType.Keyboard or t.Name:find("Mouse")) then return end
+		if pad ~= on then on = pad; apply(pad) end
+	end
+	UIS.LastInputTypeChanged:Connect(check)
+	check(UIS:GetLastInputType())
+	localPlayer:GetAttributeChangedSignal("_ForcePad"):Connect(function() -- Studio test switch
+		if RunService:IsStudio() then on = localPlayer:GetAttribute("_ForcePad") == true; apply(on) end
+	end)
+	localPlayer.PlayerGui.ChildAdded:Connect(function(c) if c.Name == "StealthUI" and on then task.defer(apply, true) end end)
+end
+
 function controller.Start()
 	build()
+	padLayout()
 	RunService.RenderStepped:Connect(update)
 end
 

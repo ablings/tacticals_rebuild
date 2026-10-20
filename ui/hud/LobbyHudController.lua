@@ -370,12 +370,55 @@ function LobbyHud.Start()
 			BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 9, Parent = tip })
 		Kit.label({ Text = it.Tip, FontFace = NAV_FONT, TextSize = 21, TextColor3 = Color3.fromRGB(24, 24, 28), TextXAlignment = Enum.TextXAlignment.Center,
 			Size = UDim2.fromScale(1, 1), ZIndex = 11, Parent = tip })
+		-- [PAD] (Edward 2026-10-20, RIVALS) the D-pad direction that opens it, beside the icon (shown with a controller)
+		local padGlyph = new("ImageLabel", { Name = "PadGlyph", BackgroundTransparency = 1, Visible = false, AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromOffset(104, 52), Size = UDim2.fromOffset(42, 42), ZIndex = 6, Parent = b })
 		local sc = new("UIScale", { Parent = b })
-		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id })
+		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id, pad = padGlyph })
 		b.Activated:Connect(function() if LobbyUI then LobbyUI.Open(it.Id) end end)
 	end
 
 	Kit.toScale(root)
+
+	-- [PAD] D-pad opens the nav screens from the hub (RIVALS: Weapons left, Tasks down, Shop right, Pass up). Only while the
+	-- nav is on screen (it slides away for menus, duels and training) - in a round the D-pad equips weapons.
+	do
+		local DPAD = { Kit = Enum.KeyCode.DPadLeft, Missions = Enum.KeyCode.DPadDown, Shop = Enum.KeyCode.DPadRight, Codes = Enum.KeyCode.DPadUp }
+		local padMode = false
+		local function showGlyphs()
+			for _, nb in navButtons do
+				local code = DPAD[nb.id]
+				local img = ""
+				if code then pcall(function() img = UserInputService:GetImageForKeyCode(code) end) end
+				nb.pad.Image = img
+				nb.pad.Visible = padMode and img ~= ""
+			end
+		end
+		local function onType(t)
+			if t == Enum.UserInputType.MouseMovement then return end
+			local pad = t.Name:find("Gamepad") ~= nil
+			if not pad and not (t == Enum.UserInputType.Keyboard or t.Name:find("Mouse") or t == Enum.UserInputType.Touch) then return end
+			if pad ~= padMode then padMode = pad; showGlyphs() end
+		end
+		UserInputService.LastInputTypeChanged:Connect(onType)
+		onType(UserInputService:GetLastInputType())
+		player:GetAttributeChangedSignal("_ForcePad"):Connect(function()
+			if game:GetService("RunService"):IsStudio() then padMode = player:GetAttribute("_ForcePad") == true; showGlyphs() end
+		end)
+		UserInputService.InputBegan:Connect(function(input, gp)
+			if gp then return end
+			for id, code in DPAD do
+				if input.KeyCode == code then
+					local nb
+					for _, x in navButtons do if x.id == id then nb = x end end
+					local b = nb and nb.b
+					local vp = workspace.CurrentCamera.ViewportSize
+					local onScreen = b and b.Visible and b.AbsolutePosition.Y < vp.Y and b.AbsolutePosition.Y + b.AbsoluteSize.Y > 0
+					if onScreen and player:GetAttribute("InTraining") ~= true and LobbyUI then LobbyUI.Open(id) end
+				end
+			end
+		end)
+	end
 
 	-- nav: 3D icons (after the conversion, so the viewports fill their holders), hover grow + lift + bobbing bubble
 	for id, n in navIcons do
@@ -718,7 +761,10 @@ function LobbyHud.Start()
 	end
 	-- Padded HUD: everything pulled in from the screen edges (TV safe area), always or while a controller is in use
 	local lastPad = false
-	UserInputService.LastInputTypeChanged:Connect(function(t) lastPad = t.Name:find("Gamepad") ~= nil end)
+	UserInputService.LastInputTypeChanged:Connect(function(t)
+		if t == Enum.UserInputType.MouseMovement then return end -- (2026-10-20) mouse MOVEMENT never flips back to keyboard + mouse: a resting mouse / locked cursor sends it, and hid every controller icon
+		lastPad = t.Name:find("Gamepad") ~= nil
+	end)
 	local function padded()
 		local v = player:GetAttribute("Setting_PaddedHUD") or "Using Controller"
 		return v == "Always On" or (v == "Using Controller" and lastPad)

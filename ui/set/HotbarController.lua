@@ -695,7 +695,10 @@ local function buildUI()
 	-- 1 / 2 / 3 tile keys go and LB / RB chips sit beside the row when equip cycling is bound.
 	-- The buttons are the gameplay scripts' binds (CameraController / CoverController / GadgetController / WeaponController /
 	-- this file); Modules.Shared.Config.GamepadConfig, if the Tacticals session adds it, overrides them by action name.
-	local PAD = { TakeCover = Enum.KeyCode.ButtonB, GunBash = Enum.KeyCode.ButtonR1, ThrowGadget = Enum.KeyCode.ButtonL1, Reload = Enum.KeyCode.ButtonX }
+	-- (Edward 2026-10-20) A jump / vault, B crouch / slide, X reload (Switch Weapons between rounds), Y throw gadget,
+	-- LB cover (double tap: dash), RB next weapon, L3 sprint, R3 gun bash
+	local PAD = { TakeCover = Enum.KeyCode.ButtonL1, GunBash = Enum.KeyCode.ButtonR3, ThrowGadget = Enum.KeyCode.ButtonY, Reload = Enum.KeyCode.ButtonX,
+		CycleRight = Enum.KeyCode.ButtonR1 }
 	pcall(function()
 		local cfg = require(game:GetService("ReplicatedStorage").Modules.Shared.Config:FindFirstChild("GamepadConfig"))
 		for k, v in cfg do if typeof(v) == "EnumItem" then PAD[k] = v end end
@@ -814,9 +817,29 @@ local function buildUI()
 			chip.Visible = padState.on and img ~= ""
 		end
 		for _, sl in slots do sl.keyBox.Visible = not padState.on end
+		-- [PAD] RIVALS controller layout: the row bottom LEFT, the held name above it in gold, the hint strip under it
+		-- (the health box moves to the bottom right: HealthBarController)
+		local pad = padState.on
+		padState.orig = padState.orig or { held = { heldName.AnchorPoint, heldName.Position }, hints = { hints.AnchorPoint, hints.Position } }
+		local o = padState.orig
+		column.AnchorPoint = pad and Vector2.new(0, 1) or Vector2.new(1, 1)
+		column.Position = UDim2.fromScale((pad and 30 or 1920 - 30) / 1920, (1080 - 64) / 1080)
+		heldName.AnchorPoint = pad and Vector2.new(1 - o.held[1].X, o.held[1].Y) or o.held[1]
+		heldName.Position = pad and UDim2.fromScale(1 - o.held[2].X.Scale, o.held[2].Y.Scale) or o.held[2]
+		heldName.TextXAlignment = pad and Enum.TextXAlignment.Left or Enum.TextXAlignment.Right
+		-- gold as a gradient: a plain TextColor3 got reset to white by another HUD pass
+		local gold = heldName:FindFirstChild("PadGold") or Instance.new("UIGradient")
+		gold.Name = "PadGold"
+		gold.Color = ColorSequence.new(Color3.fromRGB(255, 222, 90), Color3.fromRGB(255, 176, 40))
+		gold.Rotation = 90
+		gold.Enabled = pad
+		gold.Parent = heldName
+		hints.AnchorPoint = pad and Vector2.new(1 - o.hints[1].X, o.hints[1].Y) or o.hints[1]
+		hints.Position = pad and UDim2.fromScale(1 - o.hints[2].X.Scale, o.hints[2].Y.Scale) or o.hints[2]
 		if padState.rebuild then padState.rebuild() end
 	end
 	local function onInputType(t)
+		if t == Enum.UserInputType.MouseMovement then return end -- (2026-10-20) mouse MOVEMENT never flips back to keyboard + mouse: a resting mouse / locked cursor sends it, and hid every controller icon
 		local pad = t.Name:find("Gamepad") ~= nil
 		local kbm = t == Enum.UserInputType.Keyboard or t.Name:find("Mouse") ~= nil
 		if not pad and not kbm then return end -- touch etc. don't flip it
@@ -824,6 +847,11 @@ local function buildUI()
 	end
 	UserInputService.LastInputTypeChanged:Connect(onInputType)
 	onInputType(UserInputService:GetLastInputType())
+	-- Studio test switch: _ForcePad = true shows the controller HUD without a controller
+	localPlayer:GetAttributeChangedSignal("_ForcePad"):Connect(function()
+		if not game:GetService("RunService"):IsStudio() then return end
+		padState.on = localPlayer:GetAttribute("_ForcePad") == true; applyPad()
+	end)
 	applyPad()
 end
 
@@ -956,7 +984,7 @@ function controller.Start()
 			if promptsShown > 0 then return Enum.ContextActionResult.Pass end
 			if state == Enum.UserInputState.Begin then quickMelee() end
 			return Enum.ContextActionResult.Sink
-		end, false, 2500, Binds.Key(localPlayer, "GunBash", MeleeConfig.QuickMelee.Key), Enum.KeyCode.ButtonR1)
+		end, false, 2500, Binds.Key(localPlayer, "GunBash", MeleeConfig.QuickMelee.Key), Enum.KeyCode.ButtonR3) -- [PAD] R3
 	end
 	bindQuickMelee()
 	Binds.Changed(localPlayer, "GunBash", bindQuickMelee)
@@ -994,6 +1022,20 @@ function controller.Start()
 	end
 	bindSlots()
 	for _, a in { "EquipGun", "EquipMelee", "EquipGadget" } do Binds.Changed(localPlayer, a, bindSlots) end
+	-- [PAD] RB steps gun -> melee -> gadget (Edward 2026-10-20; X is reload, and opens Switch Weapons between rounds).
+	-- Stands down while the Switch Weapons picker is up (MatchFlowUI sets SwitchingWeapons).
+	ContextActionService:BindActionAtPriority("PadCycle", function(_, state)
+		if state ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Pass end
+		if localPlayer:GetAttribute("SwitchingWeapons") then return Enum.ContextActionResult.Pass end
+		local order = { GUN, MELEE, GADGET }
+		local i = table.find(order, controller.ActiveSlot()) or 1
+		for step = 1, 2 do
+			local before = controller.ActiveSlot()
+			select(order[(i - 1 + step) % 3 + 1])
+			if controller.ActiveSlot() ~= before then break end
+		end
+		return Enum.ContextActionResult.Sink
+	end, false, 2500, Enum.KeyCode.ButtonR1)
 	-- [SET] Game > Controls > Scroll Equip: the mouse wheel steps gun -> melee -> gadget
 	local lastScroll = 0
 	UserInputService.InputChanged:Connect(function(input, gp)

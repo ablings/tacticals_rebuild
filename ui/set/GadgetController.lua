@@ -657,7 +657,7 @@ function controller.Start()
 		end
 		return Enum.ContextActionResult.Pass
 	end
-	ContextActionService:BindAction("ThrowSmoke", throwHandler, false, Binds.Key(localPlayer, "ThrowGadget", GadgetConfig.Keybinds.Smoke), Enum.KeyCode.ButtonL1) -- [SET] Throw Gadget bind
+	ContextActionService:BindAction("ThrowSmoke", throwHandler, false, Binds.Key(localPlayer, "ThrowGadget", GadgetConfig.Keybinds.Smoke), Enum.KeyCode.ButtonY) -- [SET] Throw Gadget bind, [PAD] Y (RIVALS Quick Utility)
 	-- [TOUCH] mobile: the Throw Gadget button (Quick Utility) holds to aim and throws on release, like the key
 	task.spawn(function()
 		local ok, IA = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)

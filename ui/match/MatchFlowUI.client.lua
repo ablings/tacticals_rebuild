@@ -699,11 +699,13 @@ end
 local loadStart = os.clock()
 local teamTick
 RunService.RenderStepped:Connect(function()
-	-- Switch Weapons closes when the next round goes live (or the match moves on)
+	-- (Edward 2026-10-20) Switch Weapons stays up when the next round goes live: only the match moving on closes it
+	-- (or the player: Done / X / M / B)
 	if switching then
 		local ms = st("MatchState")
-		if ms ~= "RoundEnd" and ms ~= "Countdown" then switching = false end
+		if ms ~= "RoundEnd" and ms ~= "Countdown" and ms ~= "Live" then switching = false end
 	end
+	if player:GetAttribute("SwitchingWeapons") ~= (switching or nil) then player:SetAttribute("SwitchingWeapons", switching or nil) end
 	setPhase(switching and "Switch" or st(STATE.Phase))
 	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
 	if phase == "MapVote" then

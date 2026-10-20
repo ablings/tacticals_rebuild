@@ -556,7 +556,7 @@ local function equip(tool: Tool)
 	local keys = WeaponConfig.Keybinds
 	-- [SET] your Fire / Reload binds (re-read on every equip), plus the pad triggers
 	ContextActionService:BindAction("WeaponFire", onInput, false, Binds.Key(localPlayer, "Fire", keys.Fire), Enum.KeyCode.ButtonR2)
-	ContextActionService:BindAction("WeaponReload", onInput, false, Binds.Key(localPlayer, "Reload", keys.Reload), Enum.KeyCode.ButtonX)
+	ContextActionService:BindAction("WeaponReload", onInput, false, Binds.Key(localPlayer, "Reload", keys.Reload), Enum.KeyCode.ButtonX) -- [PAD] X (Edward 2026-10-20)
 
 	HUD.SetWeapon(config.DisplayName)
 	refreshHUD()

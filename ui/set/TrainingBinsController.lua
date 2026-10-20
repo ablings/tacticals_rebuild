@@ -260,8 +260,9 @@ local function build()
 		BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = weaponsBtn }, { corner(0.3) })
 	local keyText = new("TextLabel", { Name = "Key", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Text = "T", TextScaled = true,
 		TextColor3 = BLACK, FontFace = FONT_H, Parent = chip }, { new("UIPadding", { PaddingTop = UDim.new(0.14, 0), PaddingBottom = UDim.new(0.14, 0) }) })
-	local function keyHint()
-		local t = UserInputService:GetLastInputType()
+	local function keyHint(t)
+		t = t or UserInputService:GetLastInputType()
+		if t == Enum.UserInputType.MouseMovement then return end -- (2026-10-20) mouse MOVEMENT never flips back to keyboard + mouse: a resting mouse / locked cursor sends it, and hid every controller icon
 		local pad = t.Name:find("Gamepad") ~= nil
 		local touch = t == Enum.UserInputType.Touch
 		chip.Visible = not touch

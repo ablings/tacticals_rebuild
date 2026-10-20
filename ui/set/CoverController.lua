@@ -100,6 +100,7 @@ local function sprintHeld(): boolean
 	if sk.EnumType == Enum.UserInputType and UserInputService:IsMouseButtonPressed(sk) then return true end
 	if sk.EnumType == Enum.KeyCode and UserInputService:IsKeyDown(sk) then return true end
 	if Players.LocalPlayer:GetAttribute("Setting_AutoSprint") == true then return true end -- [SET] Auto Sprint
+	if Players.LocalPlayer:GetAttribute("PadSprint") == true then return true end -- [PAD] L3 sprint (MovementController)
 	return RunService:IsStudio() and Players.LocalPlayer:GetAttribute("TestShift") == true
 end
 
@@ -1573,9 +1574,20 @@ local function update(dt: number)
 end
 
 -- // Input
-local function onCoverKey(_, inputState: Enum.UserInputState)
+local lastPadCoverAt = 0 -- [PAD] double-tap LB = dash (Edward 2026-10-20)
+local onDashKey
+local function onCoverKey(_, inputState: Enum.UserInputState, input: InputObject?)
 	if inputState ~= Enum.UserInputState.Begin then
 		return Enum.ContextActionResult.Pass
+	end
+	-- [PAD] LB: the first tap takes / leaves cover as usual, a second tap within 0.3 s dashes (E on keyboard)
+	if input and input.KeyCode == Enum.KeyCode.ButtonL1 then
+		local now = os.clock()
+		if now - lastPadCoverAt < 0.3 then
+			lastPadCoverAt = 0
+			return onDashKey("CoverDash", inputState)
+		end
+		lastPadCoverAt = now
 	end
 	-- Q during a jump dive (or its roll): finish it in cover
 	if isAlive() and dive then
@@ -1820,7 +1832,7 @@ local function showCoverHint(text: string)
 	end)
 end
 
-local function onDashKey(_, inputState: Enum.UserInputState)
+function onDashKey(_, inputState: Enum.UserInputState) -- (forward-declared above for the LB double tap)
 	if inputState ~= Enum.UserInputState.Begin then
 		return Enum.ContextActionResult.Pass
 	end
@@ -2401,11 +2413,11 @@ function controller.Start()
 	-- [SET] Take Cover / Crouch / Dash / Jump-Vault follow Settings > Hotkeys (rebound when they change)
 	local function bindCover()
 		for _, a in { "Cover", "CoverCrouch", "CoverDash", "CoverVault" } do ContextActionService:UnbindAction(a) end
-		ContextActionService:BindAction("Cover", onCoverKey, false, Binds.Key(localPlayer, "TakeCover", Config.Keybinds.Cover), Enum.KeyCode.ButtonB)
-		ContextActionService:BindAction("CoverCrouch", onCrouchKey, false, Binds.Key(localPlayer, "Crouch", Config.Keybinds.Crouch), Enum.KeyCode.LeftControl, Enum.KeyCode.RightControl) -- C or Ctrl
+		ContextActionService:BindAction("Cover", onCoverKey, false, Binds.Key(localPlayer, "TakeCover", Config.Keybinds.Cover), Enum.KeyCode.ButtonL1) -- [PAD] LB (B is crouch)
+		ContextActionService:BindAction("CoverCrouch", onCrouchKey, false, Binds.Key(localPlayer, "Crouch", Config.Keybinds.Crouch), Enum.KeyCode.LeftControl, Enum.KeyCode.RightControl, Enum.KeyCode.ButtonB) -- C or Ctrl, [PAD] B
 		ContextActionService:BindAction("CoverDash", onDashKey, false, Binds.Key(localPlayer, "Dash", Config.Keybinds.Dash))
 		ContextActionService:BindActionAtPriority("CoverVault", onJumpKey, false,
-			Enum.ContextActionPriority.High.Value, Binds.Key(localPlayer, "Jump", Config.Keybinds.Vault))
+			Enum.ContextActionPriority.High.Value, Binds.Key(localPlayer, "Jump", Config.Keybinds.Vault), Enum.KeyCode.ButtonA) -- [PAD] A: vault / hop / dive
 	end
 	bindCover()
 	for _, a in { "TakeCover", "Crouch", "Dash", "Jump" } do Binds.Changed(localPlayer, a, bindCover) end

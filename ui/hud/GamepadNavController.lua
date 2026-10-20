@@ -14,6 +14,11 @@ local UserInputService = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
 local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GamepadService = game:GetService("GamepadService")
+-- (Edward 2026-10-20) menus that use the controller CURSOR like RIVALS, not button-to-button selection: the weapons picker.
+-- And whenever the player has the cursor on, the selection is never forced on them (it used to flip to selection
+-- after the picker rebuilt its buttons).
+local CURSOR_MENUS = { MatchFlow = true }
 
 local controller = {}
 local player = Players.LocalPlayer
@@ -121,7 +126,12 @@ local function closeTop(menu)
 	elseif name == "WeaponBin" then
 		local TB = shared.Get and shared.Get("TrainingBinsController"); if TB and TB.Close then TB.Close() end
 	elseif name == "MatchFlow" then
-		return -- map vote / loadout: no backing out
+		-- Switch Weapons (between rounds, or still up in the round) closes; map vote / loadout: no backing out
+		if player:GetAttribute("SwitchingWeapons") then
+			local sw = player:FindFirstChild("PlayerScripts") and player.PlayerScripts:FindFirstChild("SwitchWeapons")
+			if sw then sw:Invoke("Close") end
+		end
+		return
 	elseif name == "DuelHUD" then
 		-- results: B puts the selection on Continue (A presses it)
 		local res = menu:FindFirstChild("Results", true)
@@ -156,6 +166,7 @@ function controller.Start()
 	local pg = player:WaitForChild("PlayerGui")
 	pg.SelectionImageObject = selectionImage()
 	local function onType(t)
+		if t == Enum.UserInputType.MouseMovement then return end -- (2026-10-20) mouse MOVEMENT never flips back to keyboard + mouse: a resting mouse / locked cursor sends it, and hid every controller icon
 		local pad = t.Name:find("Gamepad") ~= nil
 		if pad then padOn = true
 		elseif t == Enum.UserInputType.Keyboard or t.Name:find("Mouse") or t == Enum.UserInputType.Touch then
@@ -166,6 +177,7 @@ function controller.Start()
 	onType(UserInputService:GetLastInputType())
 
 	local lastMenu
+	local cursorOurs = false
 	local t = 0
 	RunService.Heartbeat:Connect(function(dt)
 		t += dt
@@ -174,6 +186,22 @@ function controller.Start()
 		local menu = topMenu()
 		if RunService:IsStudio() and player:GetAttribute("_ForcePad") == true then padOn = true end -- Studio test switch
 		if not padOn then lastMenu = menu return end
+		-- cursor menus: the controller cursor on while it's up, off after; nothing is selected for the player
+		if menu and CURSOR_MENUS[menu.Name] then
+			if menu ~= lastMenu then
+				GuiService.SelectedObject = nil
+				pcall(function() GamepadService:EnableGamepadCursor(firstButton(menu)) end)
+				cursorOurs = true
+			end
+			lastMenu = menu
+			return
+		end
+		if cursorOurs and (not menu or not CURSOR_MENUS[menu.Name]) then
+			cursorOurs = false
+			pcall(function() GamepadService:DisableGamepadCursor() end)
+		end
+		-- the player switched the cursor on themselves: leave them in it
+		if GamepadService.GamepadCursorEnabled then lastMenu = menu return end
 		local sel = GuiService.SelectedObject
 		local selOk = sel ~= nil and menu ~= nil and sel:IsDescendantOf(menu) and shown(sel)
 		if menu and (menu ~= lastMenu or not selOk) then
