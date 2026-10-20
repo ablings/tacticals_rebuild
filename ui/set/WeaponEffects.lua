@@ -250,6 +250,7 @@ function effects.PlaySound(tool: Tool?, soundName: string)
 	sound.Parent = handle
 	SoundTrim.Play(sound)
 	Debris:AddItem(sound, math.max(sound.TimeLength, 2) + 0.5)
+	return sound -- [MOVE2] the caller can cut it short (a cancelled reload)
 end
 
 -- // Bullet streak travelling from the muzzle to the hit point

@@ -245,6 +245,24 @@ local function clearCountdowns()
 	for _, kind in { "Draw", "Reload", "Fire" } do setCountdown(kind, nil) end
 end
 
+-- [MOVE2] reload cancel (Edward: "the full sound cue for reloads plays even after i cancel the reload by switching weapons"):
+-- the server already stops the reload when the gun leaves the hands; this stops what you see and hear. Runs on unequip /
+-- switching, death, a shot cutting a shell-by-shell reload, and the server dropping Reloading before the magazine is full.
+local function cancelReloadFx(eq)
+	eq = eq or equipped
+	if not eq then return end
+	eq.reloadId = (eq.reloadId or 0) + 1 -- skips the pending revolver casing drop
+	local sound = eq.reloadSound
+	eq.reloadSound = nil
+	if sound then sound:Stop(); sound:Destroy() end
+	for _, name in { "Reload", "ReloadLeft" } do
+		local track = eq.tracks and eq.tracks[name]
+		if track and track.IsPlaying then track:Stop(0.1) end
+	end
+	if eq == equipped then localReloadEnd = 0 end
+	setCountdown("Reload", nil)
+end
+
 function controller.Reload()
 	if not equipped or not isAlive() or isReloading() then return end
 	local config = equipped.config
@@ -256,7 +274,9 @@ function controller.Reload()
 	setCountdown("Reload", localReloadEnd - os.clock()) -- [MOVE2] (shell by shell: the first shell; the Ammo watcher times the rest)
 	setCountdown("Fire", nil)
 	ReloadWeapon:FireServer()
-	WeaponEffects.PlaySound(equipped.tool, "Reload")
+	equipped.reloadSound = WeaponEffects.PlaySound(equipped.tool, "Reload") -- [MOVE2] kept so a cancel can cut it
+	equipped.reloadId = (equipped.reloadId or 0) + 1
+	equipped.reloadEndsAt = os.clock() + config.ReloadTime
 	playAnimation("Reload")
 	do -- [ABILITY] the reload animation fits the gun's ReloadTime (the speed ladder)
 		local track = equipped and ((gunHand < 0 and equipped.tracks.ReloadLeft) or equipped.tracks.Reload)
@@ -267,7 +287,11 @@ function controller.Reload()
 	local spent = config.MagazineSize - getAmmo()
 	local reloadTool = equipped.tool
 	if config.CasingEject ~= "Fire" then -- revolvers dump their spent casings on reload
-		task.delay(0.5, function() WeaponEffects.DropCasings(reloadTool, spent) end)
+		local thisEquip, thisReload = equipped, equipped.reloadId
+		task.delay(0.5, function()
+			if equipped ~= thisEquip or thisEquip.reloadId ~= thisReload then return end -- [MOVE2] the reload was cancelled
+			WeaponEffects.DropCasings(reloadTool, spent)
+		end)
 	end
 	refreshHUD()
 	task.delay(config.ReloadTime + 0.05, refreshHUD)
@@ -292,7 +316,7 @@ local function fire()
 	if config.MovingFireInterval and humanoid and humanoid.MoveDirection.Magnitude > 0.1 then interval = config.MovingFireInterval end
 	if now - lastFireTime < interval then return end
 	-- [ABILITY2] Pump Shotgun: a shot cuts a shell-by-shell reload short (the server stops it too)
-	if config.ShellReload and isReloading() and getAmmo() > 0 then localReloadEnd = 0 end
+	if config.ShellReload and isReloading() and getAmmo() > 0 then cancelReloadFx() end -- [MOVE2] stops at the current shell
 	if isReloading() and not (config.ShellReload and getAmmo() > 0) then return end
 
 	if getAmmo() <= 0 then
@@ -455,6 +479,7 @@ local function unequip()
 	for _, track in equipped.tracks do
 		track:Stop()
 	end
+	cancelReloadFx() -- [MOVE2] switching weapons cancels the reload: no sound tail, no animation, no casings
 	equipped = nil
 	triggerHeld = false
 	localReloadEnd = 0
@@ -492,8 +517,15 @@ local function equip(tool: Tool)
 	clearCountdowns()
 	setCountdown("Draw", (config.DrawTime or 0) > 0 and config.DrawTime or nil)
 	-- [MOVE2] crosshair reload countdown: ends with the server's Reloading flag; shell by shell, one shell at a time
+	local thisEquipR = equipped
 	table.insert(equipped.connections, tool:GetAttributeChangedSignal("Reloading"):Connect(function()
-		if tool:GetAttribute("Reloading") ~= true and os.clock() >= localReloadEnd then setCountdown("Reload", nil) end
+		if tool:GetAttribute("Reloading") == true then return end
+		-- [MOVE2] the server stopped the reload before the magazine was full (cancelled): stop the sound and animation too
+		if (tool:GetAttribute("Ammo") or 0) < config.MagazineSize and (config.ShellReload or os.clock() < (thisEquipR.reloadEndsAt or 0) - 0.15) then
+			cancelReloadFx(thisEquipR)
+		elseif os.clock() >= localReloadEnd then
+			setCountdown("Reload", nil)
+		end
 	end))
 	table.insert(equipped.connections, tool:GetAttributeChangedSignal("Ammo"):Connect(function()
 		if config.ShellReload and tool:GetAttribute("Reloading") == true then setCountdown("Reload", config.ShellReload.ShellTime) end
@@ -548,6 +580,7 @@ local function bindCharacter(newCharacter: Model)
 	gunHand = 1
 	humanoid = newCharacter:WaitForChild("Humanoid", 10) :: Humanoid?
 	if character ~= newCharacter then return end
+	if humanoid then humanoid.Died:Connect(function() cancelReloadFx() end) end -- [MOVE2] dying cancels the reload
 
 	newCharacter.ChildAdded:Connect(function(child)
 		if child:IsA("Tool") and child:GetAttribute("WeaponId") then
