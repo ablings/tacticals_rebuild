@@ -17,10 +17,10 @@ KillIcons.weapons = {
 }
 
 -- a kill's kind when the weapon isn't an item (Edward: every melee and gadget kill shows its icon too)
-KillIcons.kinds = { Takedown = "Fists", Explosion = "Frag", StickyGrenade = "StickyGrenade", Landmine = "Landmine", Melee = "Knife" }
+KillIcons.kinds = { Takedown = "Fists", Explosion = "Frag", Barrel = "Frag", StickyGrenade = "StickyGrenade", Landmine = "Landmine", Melee = "Knife" }
 
 function KillIcons.Weapon(id, kind)
-	local a = id and KillIcons.weapons[id]
+	local a = id and (KillIcons.weapons[id] or (KillIcons.kinds[id] and KillIcons.weapons[KillIcons.kinds[id]]))
 	if (not a or a == "") and kind and KillIcons.kinds[kind] then a = KillIcons.weapons[KillIcons.kinds[kind]] end
 	return (a and a ~= "") and a or nil
 end
