@@ -46,8 +46,8 @@ local TIPS = { "Peek from cover: you're only exposed while you aim", "Throw a sm
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE, OLIVE_HI = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
-local TEAM_A = { Color3.fromRGB(90, 170, 255), Color3.fromRGB(30, 95, 210) }  -- cream / olive (our team colours)
-local TEAM_B = { Color3.fromRGB(255, 140, 60), Color3.fromRGB(214, 70, 28) }     -- red
+local TEAM_A = { Color3.fromRGB(126, 232, 120), Color3.fromRGB(46, 168, 72) }  -- (2026-10-20, Edward) us: light green
+local TEAM_B = { Color3.fromRGB(255, 128, 118), Color3.fromRGB(222, 72, 66) }     -- them: lighter red
 -- (2026-10-20, Edward picked style D "Comic Ink" with RIVALS' see-through panels) Bangers headings, heavy black ink outlines,
 -- hard black drop shadows, small tilts, comic yellow for "selected"; panels stay dark and see-through
 local FX = Font.new("rbxasset://fonts/families/Bangers.json")

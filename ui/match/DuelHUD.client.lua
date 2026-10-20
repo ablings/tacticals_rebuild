@@ -22,8 +22,8 @@ local player = Players.LocalPlayer
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE_HI = Color3.fromRGB(255, 212, 0)
-local TEAM_A = { Color3.fromRGB(90, 170, 255), Color3.fromRGB(30, 95, 210) }
-local TEAM_B = { Color3.fromRGB(255, 140, 60), Color3.fromRGB(214, 70, 28) }
+local TEAM_A = { Color3.fromRGB(126, 232, 120), Color3.fromRGB(46, 168, 72) } -- (2026-10-20, Edward) us: light green
+local TEAM_B = { Color3.fromRGB(255, 128, 118), Color3.fromRGB(222, 72, 66) } -- them: lighter red
 local GOOD, BAD = Color3.fromRGB(255, 212, 0), Color3.fromRGB(235, 70, 60)
 -- (2026-10-20, Edward's style D "Comic Ink" + RIVALS see-through) Bangers headings; the INK pass at the end of this script
 -- gives every panel a heavy black outline, small corners, and the big pieces a hard drop shadow and a tilt
@@ -866,7 +866,7 @@ local roundFlash = new("Frame", { BackgroundColor3 = WHITE, BackgroundTransparen
 local roundPop = new("UIScale", { Parent = roundCard })
 gloss(roundCard, 8, 0.3)
 local function showRoundCard(won)
-	roundGrad.Color = won and ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214)) or ColorSequence.new(Color3.fromRGB(240, 70, 60), Color3.fromRGB(120, 18, 14))
+	roundGrad.Color = won and ColorSequence.new(Color3.fromRGB(126, 232, 120), Color3.fromRGB(46, 168, 72)) or ColorSequence.new(Color3.fromRGB(255, 128, 118), Color3.fromRGB(222, 72, 66))
 	roundBig.Text = won and "WON" or "LOST"
 	roundCard.Visible = true
 	roundPop.Scale = 1.35
