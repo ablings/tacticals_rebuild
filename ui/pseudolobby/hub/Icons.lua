@@ -304,6 +304,12 @@ function Icons.Item(itemId: string)
 	elseif itemId == "Fists" then
 		return Icons.Fist(), CFrame.Angles(math.rad(14), math.rad(30), math.rad(8)), 1.05
 	end
+	-- (2026-10-20) the Riot Shield's plate lies in XY facing -Z (the icon camera's side): show its face, not the melee side view
+	if itemId == "RiotShield" then
+		local s = cloneTool("Melee", itemId)
+		if #s:GetChildren() > 0 then return s, CFrame.Angles(math.rad(8), math.rad(-28), 0), 1 end
+		s:Destroy()
+	end
 	local melee = cloneTool("Melee", itemId)
 	if #melee:GetChildren() > 0 then
 		return melee, CFrame.Angles(0, math.rad(-90), 0) * CFrame.Angles(math.rad(38), 0, 0), 1

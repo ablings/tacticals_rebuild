@@ -42,8 +42,8 @@ local SLOTS = Config.Slots or { "Weapon", "Gadget", "Melee" }
 
 -- grid geometry (design px, measured off the reference at 1080 high)
 local TILE, PITCH, COLS = 124, 160, 5
-local GRID_X, GRID_Y, GRID_H = 960 - ((COLS - 1) * PITCH + TILE) / 2, 420, 4 * PITCH
-local TAB, TAB_PITCH, TAB_Y = 100, 108, 286
+local GRID_X, GRID_Y, GRID_H = 960 - ((COLS - 1) * PITCH + TILE) / 2, 440, 4 * PITCH
+local TAB, TAB_PITCH, TAB_Y = 100, 108, 280   -- (2026-10-20 review) captions sit fully below the tabs, the grid starts under them
 
 local gui, root, gridHolder, tabsHolder, dots, weaponsBtn, trialTag, blur
 local isOpen, ready, slotNow, closedAt = false, false, SLOTS[1], 0
@@ -112,6 +112,14 @@ end
 -------------------------------------------------------------------------------
 -- tiles
 -------------------------------------------------------------------------------
+-- (2026-10-20 review: the renders were near-black) light like the Kit: its LIT ambient / key colour, and the key light coming
+-- from the camera's side (ViewIcons' default points away from the -Z camera, so every face we see sat in shadow)
+local function lightLikeKit(vpf)
+	vpf.Ambient = Color3.fromRGB(150, 150, 158)
+	vpf.LightColor = Color3.fromRGB(250, 248, 250)
+	vpf.LightDirection = Vector3.new(-0.45, -0.7, 0.55)
+end
+
 local function sparkle(parent, x, y, s, delay)
 	-- a four-point star from two thin rotated diamonds, twinkling
 	local f = new("Frame", { Name = "Sparkle", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(x, y),
@@ -158,7 +166,7 @@ local function makeTile(parent, slot, id, index)
 					BackgroundColor3 = grey, BorderSizePixel = 0, ZIndex = 3, Parent = mark }, { corner(0.5) })
 			end
 		end
-		label(b, "Name", UDim2.fromScale(-0.15, 0.7), UDim2.fromScale(1.3, 0.24), "Random", FONT_H, 6)
+		label(b, "Name", UDim2.fromScale(0.03, 0.74), UDim2.fromScale(0.94, 0.22), "Random", FONT_H, 7)
 	else
 		local it = Config.Items[id] or {}
 		local rar = Config.Rarities and Config.Rarities[it.Rarity or ""]
@@ -169,13 +177,14 @@ local function makeTile(parent, slot, id, index)
 			sparkle(bg, 0.16, 0.2, 0.2, 0); sparkle(bg, 0.84, 0.62, 0.16, 0.45); sparkle(bg, 0.3, 0.78, 0.12, 0.8)
 		end
 		-- the render, bigger than the tile so it pokes out at an angle (RIVALS)
-		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.4),
-			Size = UDim2.fromScale(1.5, 1.5), ZIndex = 5, Parent = b })
+		-- (2026-10-20 review) 1.2x the tile: a slight poke-out without covering the neighbours' names
+		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.42),
+			Size = UDim2.fromScale(1.2, 1.2), ZIndex = 5, Parent = b })
 		local model, view, zoom = itemModel(id, slot)
 		local tilt = CFrame.Angles(0, 0, math.rad(slot == "Weapon" and 24 or 12))
 		local vp = ViewIcons.Viewport(art, model, { view = tilt * (view or CFrame.identity), zoom = (zoom or 1) * 1.05, still = true, zIndex = 5 })
-		vp.Frame.Ambient = Color3.fromRGB(165, 165, 170)
-		label(b, "Name", UDim2.fromScale(-0.15, 0.7), UDim2.fromScale(1.3, 0.24), it.Name or id, FONT_H, 6)
+		lightLikeKit(vp.Frame)
+		label(b, "Name", UDim2.fromScale(0.03, 0.74), UDim2.fromScale(0.94, 0.22), it.Name or id, FONT_H, 7)   -- fits the tile
 	end
 	b.MouseEnter:Connect(function() b:SetAttribute("Hover", true) end)
 	b.MouseLeave:Connect(function() b:SetAttribute("Hover", false) end)
@@ -212,6 +221,7 @@ local function tabIcon(slot)
 	if id then
 		local model, view, zoom = itemModel(id, slot)
 		t.Vp = ViewIcons.Viewport(t.Holder, model, { view = view, zoom = (zoom or 1) * 0.95, still = true, zIndex = 4 })
+		lightLikeKit(t.Vp.Frame)
 	end
 	tabLook(slotNow)
 end
@@ -281,8 +291,8 @@ local function build()
 	-- slot tabs
 	local n = #SLOTS
 	tabsHolder = new("Frame", { Name = "Tabs", BackgroundTransparency = 1, Position = S(960 - ((n - 1) * TAB_PITCH + TAB) / 2, TAB_Y),
-		Size = S((n - 1) * TAB_PITCH + TAB, TAB + 26), Parent = root })
-	local tw, th = (n - 1) * TAB_PITCH + TAB, TAB + 26
+		Size = S((n - 1) * TAB_PITCH + TAB, TAB + 36), Parent = root })
+	local tw, th = (n - 1) * TAB_PITCH + TAB, TAB + 36
 	for i, slot in SLOTS do
 		local b = button({ Name = slot .. "Tab", Position = R((i - 1) * TAB_PITCH, 0, tw, th), Size = R(TAB, TAB, tw, th), BackgroundColor3 = WHITE, ZIndex = 2, Parent = tabsHolder })
 		corner(0.12).Parent = b
@@ -290,7 +300,7 @@ local function build()
 		new("UIStroke", { Name = "Edge", ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = WHITE, Thickness = 5, Transparency = 1, Parent = b })
 		b:SetAttribute("NavTab", i)
 		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, Position = UDim2.fromScale(0.08, 0.06), Size = UDim2.fromScale(0.84, 0.84), ZIndex = 3, Parent = b })
-		local nm = label(tabsHolder, slot .. "Name", R((i - 1) * TAB_PITCH, TAB + 4, tw, th), R(TAB, 22, tw, th), (Config.SlotNames and Config.SlotNames[slot]) or slot:upper(), FONT_B, 2)
+		local nm = label(tabsHolder, slot .. "Name", R((i - 1) * TAB_PITCH - 4, TAB + 10, tw, th), R(TAB + 8, 24, tw, th), (Config.SlotNames and Config.SlotNames[slot]) or slot:upper(), FONT_B, 7)
 		tabs[slot] = { Button = b, Holder = holder, Name = nm }
 		b.Activated:Connect(function() showSlot(slot) end)
 		b:GetAttributeChangedSignal("NavPressed"):Connect(function() showSlot(slot) end)   -- LB / RB (GamepadNavController)

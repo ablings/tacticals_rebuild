@@ -69,6 +69,21 @@ SET_FILES = [
 PATCHES = [
     # pads wait for real players in Studio too (RIVALS); set true to test a full bay alone
     "local m = game.ReplicatedStorage.Modules.Shared.Config.LobbyConfig; m.Source = m.Source:gsub('LobbyConfig%.StudioSoloStart = true', 'LobbyConfig.StudioSoloStart = false')",
+    # (2026-10-20) LobbyUIController.Icons (Studio-only source; snapshot in pseudolobby/hub/Icons.lua): the Riot Shield shows its
+    # face (plate in XY, front at -Z = the icon camera's side) instead of the melee side view that drew it edge-on (Kit, picker)
+    r'''local m = game.StarterPlayer.StarterPlayerScripts.Client.Controllers.LobbyUIController:FindFirstChild("Icons")
+    if m and not m.Source:find("RiotShield", 1, true) then
+        local ins = "\tif itemId == \"RiotShield\" then\n\t\tlocal s = cloneTool(\"Melee\", itemId)\n\t\tif #s:GetChildren() > 0 then return s, CFrame.Angles(math.rad(8), math.rad(-28), 0), 1 end\n\t\ts:Destroy()\n\tend\n"
+        local src = m.Source
+        local a = src:find('local melee = cloneTool("Melee", itemId)', 1, true)
+        if a then
+            local ls = a
+            while ls > 1 and src:sub(ls - 1, ls - 1) ~= "\n" do ls -= 1 end
+            m.Source = src:sub(1, ls - 1) .. ins .. src:sub(ls)
+        else
+            warn("[deploy] Icons.Item: melee line not found, Riot Shield view not patched")
+        end
+    end''',
 ]
 
 

@@ -40,9 +40,16 @@ local okCfg, Config = pcall(function() return require(ReplicatedStorage.Modules.
 
 local function modeText()
 	local q = player:GetAttribute("MM_Queue")
-	local oq = okCfg and Config.QueueById and q and Config.QueueById(q)
-	if not oq then return "" end
-	return (oq.Ranked and "RANKED  ·  " or "") .. string.upper(tostring(oq.Mode or ""))
+	if q == nil then return "" end
+	local oq = okCfg and Config.QueueById and Config.QueueById(q)
+	if oq then return (oq.Ranked and "RANKED  ·  " or "") .. string.upper(tostring(oq.Mode or "")) end
+	-- (2026-10-20 review: the line was blank) unknown to QueueById: read the id itself. Ranked ids start with "R" ("R1v1"),
+	-- a bare "Ranked" is just RANKED
+	local s = tostring(q)
+	if s:lower() == "ranked" then return "RANKED" end
+	local ranked = s:match("^R%d") ~= nil
+	local mode = ranked and s:sub(2) or s
+	return (ranked and "RANKED  ·  " or "") .. string.upper(mode)
 end
 
 local function build()
@@ -194,6 +201,9 @@ function controller.Start()
 	player:GetAttributeChangedSignal("MM_Status"):Connect(function()
 		failedAt = nil
 		update()
+	end)
+	player:GetAttributeChangedSignal("MM_Queue"):Connect(function()
+		if active and sub and player:GetAttribute("MM_Queue") ~= nil then sub.Text = modeText() end   -- a late queue id still shows
 	end)
 	TeleportService.TeleportInitFailed:Connect(function(p, _, msg)
 		if p ~= player or not active then return end
