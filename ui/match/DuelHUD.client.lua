@@ -3,7 +3,7 @@
 -- ReplicatedStorage.LobbyDuels[DuelMatch or DuelSpectate] (lobby).
 --   * Score bar (top centre): your team's box left, theirs right (headshots in TeamA/TeamB order, dimmed + crossed when not
 --     Alive), the round wins in each box, and the round timer between them (StateEndsAt).
---   * Round banner: "ROUND N" on Countdown with the big countdown number, "ROUND WON" / "ROUND LOST" on RoundEnd
+--   * Round banner: (no 3-2-1 / FIGHT since 2026-10-19), "ROUND WON" / "ROUND LOST" on RoundEnd
 --     (from the score change), plus MatchAnnounce titles.
 --   * Kill feed (top right): MatchFlow "Kill" events, killer > weapon > victim, headshot mark, fades after 5 s.
 --   * Spectate (spectators and dead duelists): "SPECTATING <name>" bar at the bottom, Q / E cycle Alive players, own team
@@ -978,7 +978,9 @@ RunService.RenderStepped:Connect(function()
 	local left = math.max(0, (st("StateEndsAt") or st("PhaseEndsAt") or 0) - workspace:GetServerTimeNow())
 	local between = state == "RoundEnd" or state == "Countdown"
 	timerBox.Hourglass.Visible = between
-	timerL.Text = between and string.format("%.1f", left) or string.format("%d:%02d", left // 60, math.floor(left) % 60)
+	-- (RIVALS, Edward 2026-10-19) under a minute the clock counts tenths (59.9, ... 4.9, 4.8); under 5 s of a live round it turns red
+	timerL.Text = left < 60 and string.format("%.1f", math.floor(left * 10) / 10) or string.format("%d:%02d", left // 60, math.floor(left) % 60)
+	timerL.TextColor3 = (state == "Live" and left < 5) and BAD or WHITE
 	timerL.Position = UDim2.fromScale(between and 0.12 or 0, timerL.Position.Y.Scale)
 	roundL.Text = "ROUND " .. tostring(st("RoundNumber") or 1)
 	toWin.Text = st("RoundsToWin") and ("First to " .. st("RoundsToWin")) or ""
@@ -986,12 +988,10 @@ RunService.RenderStepped:Connect(function()
 	if state ~= lastState then
 		if state == "Countdown" or state == "RunIn" then gotSummary = false end
 		if state == "Countdown" then
-			-- (RIVALS) the first round gets the big "ROUND 1"; later ones keep the won / lost card up instead
-			if not RV.roundCard.Visible then showBanner("ROUND " .. tostring(st("RoundNumber") or 1), "", WHITE) end
+			-- (Edward 2026-10-19) no 3-2-1 / FIGHT: the top clock counts the countdown down in tenths instead
 		elseif state == "Live" then
 			RV.roundCard.Visible = false
 			table.clear(botDown)
-			if (st("RoundNumber") or 1) <= 1 then showBanner("FIGHT!", "", GOOD, 0.9) end
 		elseif state == "RoundEnd" and not spectator() then
 			if mine ~= lastScoreMine and mine > (lastScoreMine or 0) then RV.showRoundCard(true)
 			elseif theirs ~= lastScoreTheirs and theirs > (lastScoreTheirs or 0) then RV.showRoundCard(false) end
@@ -1004,7 +1004,6 @@ RunService.RenderStepped:Connect(function()
 		lastState = state
 		lastScoreMine, lastScoreTheirs = mine, theirs
 	end
-	if state == "Countdown" and banner.Visible then bannerSub.Text = tostring(math.ceil(left)) end
 	-- Switch Weapons: between rounds (not the last one), for players in the match
 	local over = (st("MatchPhase") == "Victory" or st("MatchPhase") == "Finisher")
 	local mf = player.PlayerGui:FindFirstChild("MatchFlow")
