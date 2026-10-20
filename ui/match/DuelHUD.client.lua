@@ -236,10 +236,49 @@ local function addKill(d)
 	local mine = d.killer == player.UserId or d.victim == player.UserId
 	if mine then new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = row }) end
 	local verb = ({ Takedown = "took down", Melee = "bashed", Explosion = "blew up", StickyGrenade = "blew up", Landmine = "blew up", Burn = "burned" })[d.kind] or ">"
-	local txt = string.format('<font color="#%s">%s</font>  %s%s  <font color="#%s">%s</font>', col(d.killer):ToHex(), nameOf(d.killer),
-		verb, d.headshot and "  ◉" or "", col(d.victim):ToHex(), nameOf(d.victim)) -- (◉: BuilderSans has no ✦)
-	local l = new("TextLabel", { BackgroundTransparency = 1, RichText = true, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE,
-		TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.94, 0.7), Parent = row })
+	-- (2026-10-20, RIVALS feed) killer · white weapon silhouette · victim. The silhouette is the weapon's own tool (Repository
+	-- Weapons / Melee) in a flat-lit ViewportFrame, barrel to the right; no tool (gadgets, burn) keeps the verb text.
+	local tool
+	if typeof(d.weapon) == "string" and d.kind ~= "Takedown" then
+		local repo = ReplicatedStorage:FindFirstChild("Repository")
+		for _, f in { "Weapons", "Melee" } do
+			local folder = repo and repo:FindFirstChild(f)
+			tool = tool or (folder and folder:FindFirstChild(d.weapon))
+		end
+	end
+	local l, l2
+	if tool then
+		l = new("TextLabel", { BackgroundTransparency = 1, Text = nameOf(d.killer), FontFace = FB, TextScaled = true, TextColor3 = col(d.killer),
+			TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.4, 0.7), Parent = row })
+		local vpf = new("ViewportFrame", { BackgroundTransparency = 1, Ambient = WHITE, LightColor = Color3.new(0, 0, 0),
+			Position = UDim2.fromScale(0.45, 0), Size = UDim2.fromScale(0.16, 1), Parent = row })
+		local m = Instance.new("Model")
+		for _, part in tool:GetDescendants() do
+			if part:IsA("BasePart") and part.Transparency < 0.9 then
+				local c = part:Clone()
+				for _, k in c:GetChildren() do if not k:IsA("DataModelMesh") then k:Destroy() end end
+				c.Anchored, c.Color, c.Material = true, WHITE, Enum.Material.SmoothPlastic
+				if c:IsA("MeshPart") then c.TextureID = "" end
+				c.Parent = m
+			end
+		end
+		m.Parent = vpf
+		local cf, size = m:GetBoundingBox()
+		local cam = Instance.new("Camera")
+		cam.FieldOfView = 20
+		local reach = math.max(size.Y, size.Z) / 2 / math.tan(math.rad(10)) * 1.08
+		cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(reach, 0, 0), cf.Position) -- from +X: the barrel (-Z) points right
+		cam.Parent = vpf
+		vpf.CurrentCamera = cam
+		l2 = new("TextLabel", { BackgroundTransparency = 1, Text = (d.headshot and "◉ " or "") .. nameOf(d.victim), FontFace = FB, TextScaled = true,
+			TextColor3 = col(d.victim), TextXAlignment = Enum.TextXAlignment.Left, Position = UDim2.fromScale(0.63, 0.15), Size = UDim2.fromScale(0.34, 0.7), Parent = row })
+		new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l2 })
+	else
+		local txt = string.format('<font color="#%s">%s</font>  %s%s  <font color="#%s">%s</font>', col(d.killer):ToHex(), nameOf(d.killer),
+			verb, d.headshot and "  ◉" or "", col(d.victim):ToHex(), nameOf(d.victim)) -- (◉: BuilderSans has no ✦)
+		l = new("TextLabel", { BackgroundTransparency = 1, RichText = true, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE,
+			TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.94, 0.7), Parent = row })
+	end
 	new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l })
 	gloss(row, 8, 0.22)
 	local ins = new("UIScale", { Scale = 0.6, Parent = row })
@@ -248,6 +287,8 @@ local function addKill(d)
 		if row.Parent then
 			TweenService:Create(row, TweenInfo.new(0.4), { BackgroundTransparency = 1 }):Play()
 			TweenService:Create(l, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
+			if l2 then TweenService:Create(l2, TweenInfo.new(0.4), { TextTransparency = 1 }):Play() end
+			for _, v in row:GetChildren() do if v:IsA("ViewportFrame") then TweenService:Create(v, TweenInfo.new(0.4), { ImageTransparency = 1 }):Play() end end
 			task.delay(0.45, function() row:Destroy() end)
 		end
 	end)
