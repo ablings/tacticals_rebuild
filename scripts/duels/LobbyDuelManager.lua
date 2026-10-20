@@ -354,11 +354,8 @@ local function run(match)
 	if C.DuelMapVote ~= false and not MatchCore.forfeitSide(ctx) then
 		MatchCore.setState(ctx, "MapVote", C.MapVoteTime or 10)
 		local everyone = #playersOf(match)
-		waitPhase(match, C.MapVoteTime or 10, function()
-			local n = 0
-			for _ in match.votes do n += 1 end
-			return n >= everyone and everyone > 0 and os.clock() - match.lastVote > 1.5
-		end)
+		-- (Edward) everyone voted: the clock drops to 5 s (MatchCore.waitVote)
+		MatchCore.waitVote(ctx, C.MapVoteTime or 10, function() return match.votes end, everyone)
 	end
 	local chosen = MatchCore.resolveVote(match.votes, maps)
 	match.map = MapRegistry.Get(chosen)

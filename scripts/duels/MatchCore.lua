@@ -519,6 +519,32 @@ function MatchCore.waitPhase(ctx, seconds: number, done)
 	end
 	return false
 end
+-- the map vote's wait (2026-10-19, Edward: "once both players vote for a map the cooldown should reduce to 5 seconds"):
+-- once every voter has voted the clock drops to C.MapVoteAllVotedTime (5 s); never lengthened, and a later vote change
+-- doesn't reset it. getVotes() -> { [userId] = mapId }; voters = how many members can vote (bots don't).
+function MatchCore.waitVote(ctx, seconds: number, getVotes, voters: number)
+	local deadline = os.clock() + seconds
+	local cut = false
+	local short = ctx.config.MapVoteAllVotedTime or 5
+	while os.clock() < deadline do
+		if MatchCore.forfeitSide(ctx) then return false end
+		if not cut and voters > 0 then
+			local n = 0
+			for _ in getVotes() do n += 1 end
+			if n >= voters then
+				cut = true
+				if deadline - os.clock() > short then
+					deadline = os.clock() + short
+					local ends = workspace:GetServerTimeNow() + short
+					ctx.state:SetAttribute("StateEndsAt", ends)
+					ctx.state:SetAttribute("PhaseEndsAt", ends)
+				end
+			end
+		end
+		task.wait(0.1)
+	end
+	return true
+end
 -- Loading (C.LoadingTime; opts.skipLoading) -> Intro (opts.introTime, optional) -> MapVote (C.MapVoteTime; skipped when C.DuelMapVote == false or no map is eligible)
 -- -> MapChosen -> Loadout (C.LoadoutTime, ends early when every present player member is Ready).
 -- opts.maps = the eligible maps (registry entries); opts.voters() -> number of members who can vote;
@@ -543,11 +569,7 @@ function MatchCore.runPreMatch(ctx, opts)
 	if C.DuelMapVote ~= false and #maps > 0 and not MatchCore.forfeitSide(ctx) then
 		MatchCore.setState(ctx, "MapVote", C.MapVoteTime or 10)
 		local voters = opts.voters and opts.voters() or 0
-		MatchCore.waitPhase(ctx, C.MapVoteTime or 10, function()
-			local n = 0
-			for _ in ctx.votes do n += 1 end
-			return voters > 0 and n >= voters and os.clock() - ctx.lastVote > 1.5
-		end)
+		MatchCore.waitVote(ctx, C.MapVoteTime or 10, function() return ctx.votes end, voters)
 	end
 	local chosen = MatchCore.resolveVote(ctx.votes, maps)
 	s:SetAttribute("MapChosen", chosen)

@@ -267,10 +267,18 @@ SOURCES.MatchCore = [=[-- ServerScriptService/Shared/MatchCore (ModuleScript): t
 -- Published on ctx.state (names from notes/lobby_duels_design.md section 6; PhaseEndsAt == StateEndsAt always):
 --   MatchState, MatchPhase, StateEndsAt, PhaseEndsAt, CombatEnabled, RoundNumber, RoundsToWin, ScoreA, ScoreB
 -- Player (member) attributes: InMatch, Team, RoundWins, MatchKills, MatchDeaths, Alive
+-- 2026-10-17 (Edward: kill-cam, opening run, final-round victory; the UI session draws them):
+--   member SpectateTarget = UserId to watch while dead (the killer first; bots have negative ids: their model carries
+--     attribute SpectateId = the same id), SpectateReason = "Killer" | "Teammate" | "Enemy"; both nil when the next round starts.
+--   state MatchState "RunIn" (MatchPhase "RunIn"): round 1 opening, both sides start close in the middle, freeze for a
+--     standoff beat, then run back to their own spawn / pillar (C.RunIn = false turns it off; C.RunInEveryRound for every round).
+--   state MatchState "Victory" (MatchPhase "Victory") between the deciding round and MatchEnd (C.VictoryTime, default 4 s):
+--     WinnerTeam = "A" | "B", Winner = UserId of the player who got the final kill (nil if none / draw); cleared at match start.
+--     The default screen until Edward makes per-player finishers / victory cutscenes.
 local MatchCore = {}
 
 local PHASE_OF = { Loading = "Loading", MapVote = "MapVote", Loadout = "Loadout", Countdown = "Playing", Live = "Playing",
-	RoundEnd = "Playing", MatchEnd = "Ended", Cancelled = "Ended" }
+	RoundEnd = "Playing", MatchEnd = "Ended", Cancelled = "Ended", RunIn = "RunIn", Victory = "Victory" }
 
 -- // Members (a Player, or a server test bot = an R15 Model) ---------------------------------------------------------
 function MatchCore.attrHolder(m) return m.player or m.bot end
@@ -308,6 +316,34 @@ local function memberById(ctx, uid)
 	return nil
 end
 
+-- // Kill-cam: who a dead member watches -----------------------------------------------------------------------------
+local function aliveMembers(ctx, side)
+	local out = {}
+	for s, list in ctx.teams do
+		if side == nil or s == side then
+			for _, x in list do if ctx.isPresent(x) and MatchCore.isAlive(x) then table.insert(out, x) end end
+		end
+	end
+	return out
+end
+local function spectateOn(m, target, reason)
+	if target and target.bot then target.bot:SetAttribute("SpectateId", target.userId) end
+	MatchCore.setAttr(m, "SpectateTarget", target and target.userId or nil)
+	MatchCore.setAttr(m, "SpectateReason", target and reason or nil)
+end
+-- pick for a dead member: the killer if alive, else a living teammate, else any living enemy
+local function pickSpectate(ctx, m, killer)
+	if killer and killer ~= m and ctx.isPresent(killer) and MatchCore.isAlive(killer) then return killer, "Killer" end
+	local mates = aliveMembers(ctx, MatchCore.getAttr(m, "Team"))
+	if #mates > 0 then return mates[1], "Teammate" end
+	local any = aliveMembers(ctx, nil)
+	if #any > 0 then return any[1], "Enemy" end
+	return nil, nil
+end
+function MatchCore.clearSpectate(ctx)
+	for _, list in ctx.teams do for _, x in list do spectateOn(x, nil) end end
+end
+
 -- call once per spawned character of a member (round spawns)
 function MatchCore.watchCharacter(ctx, m, character: Model)
 	local humanoid = character:FindFirstChildOfClass("Humanoid") or character:WaitForChild("Humanoid", 10)
@@ -333,6 +369,20 @@ function MatchCore.watchCharacter(ctx, m, character: Model)
 			ctx.onKill({ killer = killer and killer.userId or 0, victim = m.userId, headshot = headshot, kind = kind,
 				weapon = killer and MatchCore.getAttr(killer, "Loadout") or nil })
 		end
+		-- the final kill decides the Victory screen's Winner; the dead watch their killer (kill-cam)
+		local realKiller = (killer and killer ~= m) and killer or nil
+		ctx.lastKill = { killer = realKiller and realKiller.userId or nil, victim = m.userId }
+		local target, reason = pickSpectate(ctx, m, realKiller)
+		spectateOn(m, target, reason)
+		-- anyone who was watching the one who just died moves on to someone alive
+		for _, list in ctx.teams do
+			for _, x in list do
+				if x ~= m and MatchCore.getAttr(x, "SpectateTarget") == m.userId then
+					local t2, r2 = pickSpectate(ctx, x, nil)
+					spectateOn(x, t2, r2)
+				end
+			end
+		end
 	end)
 end
 
@@ -350,9 +400,143 @@ function MatchCore.forfeitSide(ctx)
 	return nil
 end
 
+-- // Opening run (default cutscene): each side starts 35% of the way toward the middle, a standoff beat, then everyone
+-- runs back to the spawn they were placed on (behind their pillar). Ends frozen exactly on the spawn, ready for the countdown.
+local function flatDist(a: Vector3, b: Vector3): number
+	return Vector3.new(a.X - b.X, 0, a.Z - b.Z).Magnitude
+end
+function MatchCore.runIn(ctx)
+	local C = ctx.config
+	local standoff, runTime = C.RunInStandoff or 0.8, C.RunInTime or 2.2
+	local homes, sum, n = {}, { A = Vector3.zero, B = Vector3.zero }, { A = 0, B = 0 }
+	for side, list in ctx.teams do
+		for _, m in list do
+			local ch = ctx.isPresent(m) and MatchCore.character(m)
+			if ch and ch.PrimaryPart then
+				homes[m] = { cf = ch:GetPivot() }
+				sum[side] += homes[m].cf.Position
+				n[side] += 1
+			end
+		end
+	end
+	if n.A == 0 or n.B == 0 then return end
+	local centre = (sum.A / n.A + sum.B / n.B) / 2
+	MatchCore.setState(ctx, "RunIn", standoff + runTime + 0.3)
+	-- start close in the middle, facing the other side: the first spot toward the middle (35% first, then nearer / further,
+	-- then sideways) that is free of collision and has a path back home; the route is kept for the run
+	local PFS = game:GetService("PathfindingService")
+	local chars = {}
+	for m2 in homes do local c2 = MatchCore.character(m2); if c2 then table.insert(chars, c2) end end
+	local overlap = OverlapParams.new()
+	overlap.FilterType = Enum.RaycastFilterType.Exclude
+	overlap.FilterDescendantsInstances = chars
+	local function clear(pos)
+		for _, part in workspace:GetPartBoundsInBox(CFrame.new(pos + Vector3.new(0, 0.5, 0)), Vector3.new(3, 4.5, 3), overlap) do
+			if part.CanCollide then return false end
+		end
+		return true
+	end
+	local function routeFrom(from, home)
+		local path = PFS:CreatePath({ AgentRadius = 1.5, AgentHeight = 5, AgentCanJump = true, WaypointSpacing = 4 })
+		local okP = pcall(function() path:ComputeAsync(from, home) end)
+		if not (okP and path.Status == Enum.PathStatus.Success) then return nil end
+		local route, len, prev = {}, 0, from
+		for k, w in path:GetWaypoints() do
+			if k > 1 then
+				table.insert(route, { pos = w.Position, jump = w.Action == Enum.PathWaypointAction.Jump })
+				len += flatDist(prev, w.Position)
+				prev = w.Position
+			end
+		end
+		return route, len
+	end
+	for m, h in homes do
+		local p = h.cf.Position
+		local flat = Vector3.new(centre.X - p.X, 0, centre.Z - p.Z)
+		local side = flat.Magnitude > 0.1 and Vector3.new(-flat.Z, 0, flat.X).Unit or Vector3.xAxis
+		local from, route, len = p, nil, 0
+		if flat.Magnitude > 1 then
+			for _, frac in { 0.35, 0.3, 0.4, 0.25, 0.45, 0.2 } do
+				for _, off in { 0, 3, -3, 6, -6 } do
+					local c = p + flat * frac + side * off
+					if clear(c) then
+						local r, l = routeFrom(c, p)
+						if r then from, route, len = c, r, l break end
+					end
+				end
+				if route then break end
+			end
+		end
+		local ch = MatchCore.character(m)
+		if ch and route then
+			ctx.setFrozen(m, true)
+			ch:PivotTo(CFrame.lookAt(from, Vector3.new(centre.X, from.Y, centre.Z)))
+			h.from, h.route, h.len = from, route, len
+		end
+	end
+	task.wait(standoff)
+	-- break for cover: everyone runs back home round the pillar, at a pace that arrives together.
+	-- Players run on their own client (StarterPlayerScripts.RunInClient: player attributes RunInRoute = JSON {x,y,z,jump},
+	-- RunInSpeed, RunInGo = a counter), because the client owns its character's physics; bots run here on the server.
+	local HS = game:GetService("HttpService")
+	for m, h in homes do
+		local hum = MatchCore.humanoid(m)
+		if hum and h.from then
+			local speed = math.clamp(h.len / math.max(runTime - 0.2, 0.5), 10, 30)
+			if m.player then
+				local pts = {}
+				for _, wp in h.route do
+					table.insert(pts, { math.floor(wp.pos.X * 10) / 10, math.floor(wp.pos.Y * 10) / 10, math.floor(wp.pos.Z * 10) / 10, wp.jump and 1 or 0 })
+				end
+				m.player:SetAttribute("RunInRoute", HS:JSONEncode(pts))
+				m.player:SetAttribute("RunInSpeed", speed)
+				ctx.setFrozen(m, false)
+				m.player:SetAttribute("RunInGo", (m.player:GetAttribute("RunInGo") or 0) + 1)
+			else
+				ctx.setFrozen(m, false)
+				h.speed = hum.WalkSpeed
+				hum.WalkSpeed = speed
+				task.spawn(function()
+					for _, wp in h.route do
+						if not (hum.Parent and hum.Health > 0) or ctx.over then break end
+						if wp.jump then hum.Jump = true end
+						local reached = false
+						local conn = hum.MoveToFinished:Once(function() reached = true end)
+						hum:MoveTo(wp.pos)
+						local t1 = os.clock()
+						while not reached and os.clock() - t1 < 1 do task.wait() end
+						conn:Disconnect()
+					end
+				end)
+			end
+		end
+	end
+	local t0 = os.clock()
+	while os.clock() - t0 < runTime do
+		local all = true
+		for m, h in homes do
+			local ch = MatchCore.character(m)
+			if ch and h.from and flatDist(ch:GetPivot().Position, h.cf.Position) > 2 then all = false end
+		end
+		if all then break end
+		task.wait(0.05)
+	end
+	-- snap exactly onto the spawn, facing as spawned, frozen for the countdown
+	for m, h in homes do
+		local ch, hum = MatchCore.character(m), MatchCore.humanoid(m)
+		if hum and h.speed then hum.WalkSpeed = h.speed end
+		if ch and ch.Parent then ch:PivotTo(h.cf) end
+		ctx.setFrozen(m, true)
+		if m.player then m.player:SetAttribute("RunInRoute", nil) end
+	end
+	task.wait(0.3)
+end
+
 function MatchCore.playRound(ctx, roundNumber: number)
 	local C = ctx.config
 	ctx.state:SetAttribute("RoundNumber", roundNumber)
+	MatchCore.clearSpectate(ctx)
+	ctx.lastKill = nil
 	if ctx.onRoundStart then ctx.onRoundStart(roundNumber) end
 
 	MatchCore.setState(ctx, "Countdown", C.CountdownTime + 2)
@@ -373,6 +557,12 @@ function MatchCore.playRound(ctx, roundNumber: number)
 	local waited = 0
 	while done < total and waited < 12 do waited += task.wait(0.1) end
 	local f = MatchCore.forfeitSide(ctx); if f then return f, true end
+
+	-- opening run (round 1 unless C.RunInEveryRound): the default "run to your pillar" until per-map cutscenes exist
+	if C.RunIn ~= false and (roundNumber == 1 or C.RunInEveryRound) then
+		MatchCore.runIn(ctx)
+		f = MatchCore.forfeitSide(ctx); if f then return f, true end
+	end
 
 	MatchCore.setState(ctx, "Countdown", C.CountdownTime)
 	ctx.announce("ROUND " .. roundNumber, scoreLine(ctx))
@@ -407,6 +597,7 @@ function MatchCore.playMatch(ctx)
 	local s = ctx.state
 	s:SetAttribute("ScoreA", 0); s:SetAttribute("ScoreB", 0)
 	s:SetAttribute("RoundsToWin", C.RoundsToWin)
+	s:SetAttribute("WinnerTeam", nil); s:SetAttribute("Winner", nil)
 	for side, list in ctx.teams do
 		for _, m in list do
 			MatchCore.setAttr(m, "InMatch", true); MatchCore.setAttr(m, "RoundWins", 0); MatchCore.setAttr(m, "Team", side)
@@ -452,6 +643,27 @@ function MatchCore.playMatch(ctx)
 		end
 	end
 	ctx.over = true
+	-- final-round Victory beat (default screen; finisher / victory cutscenes come later). Not after a forfeit or an admin end.
+	if winner and not forfeit and not ctx.aborted and (C.VictoryTime or 4) > 0 then
+		s:SetAttribute("WinnerTeam", winner)
+		local lk = ctx.lastKill
+		local winnerId = lk and lk.killer
+		if winnerId then
+			local wm = memberById(ctx, winnerId)
+			if not (wm and MatchCore.getAttr(wm, "Team") == winner) then winnerId = nil end
+		end
+		if not winnerId then
+			for _, wm in ctx.teams[winner] do
+				if ctx.isPresent(wm) then winnerId = wm.userId break end
+			end
+		end
+		s:SetAttribute("Winner", winnerId)
+		MatchCore.setState(ctx, "Victory", C.VictoryTime or 4)
+		task.wait(C.VictoryTime or 4)
+	elseif winner then
+		s:SetAttribute("WinnerTeam", winner)
+	end
+	MatchCore.clearSpectate(ctx)
 	MatchCore.setState(ctx, "MatchEnd", C.ResultsTime or 12)
 	if ctx.aborted then
 		ctx.announce("MATCH ENDED", "Ended by an admin - no rewards")
@@ -557,6 +769,32 @@ function MatchCore.waitPhase(ctx, seconds: number, done)
 	end
 	return false
 end
+-- the map vote's wait (2026-10-19, Edward: "once both players vote for a map the cooldown should reduce to 5 seconds"):
+-- once every voter has voted the clock drops to C.MapVoteAllVotedTime (5 s); never lengthened, and a later vote change
+-- doesn't reset it. getVotes() -> { [userId] = mapId }; voters = how many members can vote (bots don't).
+function MatchCore.waitVote(ctx, seconds: number, getVotes, voters: number)
+	local deadline = os.clock() + seconds
+	local cut = false
+	local short = ctx.config.MapVoteAllVotedTime or 5
+	while os.clock() < deadline do
+		if MatchCore.forfeitSide(ctx) then return false end
+		if not cut and voters > 0 then
+			local n = 0
+			for _ in getVotes() do n += 1 end
+			if n >= voters then
+				cut = true
+				if deadline - os.clock() > short then
+					deadline = os.clock() + short
+					local ends = workspace:GetServerTimeNow() + short
+					ctx.state:SetAttribute("StateEndsAt", ends)
+					ctx.state:SetAttribute("PhaseEndsAt", ends)
+				end
+			end
+		end
+		task.wait(0.1)
+	end
+	return true
+end
 -- Loading (C.LoadingTime; opts.skipLoading) -> Intro (opts.introTime, optional) -> MapVote (C.MapVoteTime; skipped when C.DuelMapVote == false or no map is eligible)
 -- -> MapChosen -> Loadout (C.LoadoutTime, ends early when every present player member is Ready).
 -- opts.maps = the eligible maps (registry entries); opts.voters() -> number of members who can vote;
@@ -581,11 +819,7 @@ function MatchCore.runPreMatch(ctx, opts)
 	if C.DuelMapVote ~= false and #maps > 0 and not MatchCore.forfeitSide(ctx) then
 		MatchCore.setState(ctx, "MapVote", C.MapVoteTime or 10)
 		local voters = opts.voters and opts.voters() or 0
-		MatchCore.waitPhase(ctx, C.MapVoteTime or 10, function()
-			local n = 0
-			for _ in ctx.votes do n += 1 end
-			return voters > 0 and n >= voters and os.clock() - ctx.lastVote > 1.5
-		end)
+		MatchCore.waitVote(ctx, C.MapVoteTime or 10, function() return ctx.votes end, voters)
 	end
 	local chosen = MatchCore.resolveVote(ctx.votes, maps)
 	s:SetAttribute("MapChosen", chosen)
@@ -1375,11 +1609,8 @@ local function run(match)
 	if C.DuelMapVote ~= false and not MatchCore.forfeitSide(ctx) then
 		MatchCore.setState(ctx, "MapVote", C.MapVoteTime or 10)
 		local everyone = #playersOf(match)
-		waitPhase(match, C.MapVoteTime or 10, function()
-			local n = 0
-			for _ in match.votes do n += 1 end
-			return n >= everyone and everyone > 0 and os.clock() - match.lastVote > 1.5
-		end)
+		-- (Edward) everyone voted: the clock drops to 5 s (MatchCore.waitVote)
+		MatchCore.waitVote(ctx, C.MapVoteTime or 10, function() return match.votes end, everyone)
 	end
 	local chosen = MatchCore.resolveVote(match.votes, maps)
 	match.map = MapRegistry.Get(chosen)

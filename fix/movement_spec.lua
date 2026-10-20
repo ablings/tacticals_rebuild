@@ -2,8 +2,8 @@
 -- Run in Edit mode (execute_luau) in BOTH working copies. Idempotent: the first run keeps each edited module's original source
 -- in ServerStorage._MOVE2_Originals (StringValues) and every run re-applies the edits to that original. Set UNDO = true to put
 -- the originals back. Lobby walk / no-run lives in scripts/lobby/LobbyMovement.client.lua (installed separately).
---   MovementConfig  Sprint 23 -> 25, Slide EndSpeed 9 -> 25, crouch sprint removed (CrouchSprint / CrouchSprintDrain)
---   CoverConfig     MoveSpeeds Sneak 9 -> 10, Dash 26 -> 30; VaultTime 0.55 -> 0.275 (silent vault x1.7 = 0.4675 s)
+--   MovementConfig  Edward 25 / 30->25, then base speeds -20%: Walk 10, Sprint 20, Crouch 4.8, Slide 24->20; crouch sprint removed
+--   CoverConfig     Sneak 8, Dash 24, Roll 22.4, Sprint 24.8, CoverWalk 8, Dive 27.2, VaultTime 0.34375 (Edward 0.275 / 0.8)
 --   WeaponConfig    MoveSpeed per gun; GadgetMoveSpeed 1.1; Mobility() = held gadget (player attribute HeldSlot) / gun / melee
 --   MeleeConfig     MoveSpeed per melee item
 --   MoveGuard       LIMIT 42 -> 48 (flag-only; legit top is now cover sprint 31 x Fists 1.3 = 40.3)
@@ -62,15 +62,22 @@ return MeleeConfig]==]
 
 -- { module, { {old, new}, ... } }: each old must appear exactly once in the original
 local EDITS = {
+	-- (2026-10-19, Edward: "slow everyones speed down by 20%", final pick: the BASE speeds x0.8, item multipliers unchanged)
 	{ Config.MovementConfig, {
-		{ "\t\tSprint = 23,", "\t\tSprint = 25, -- [MOVE2] was 23" },
+		{ "\t\tWalk = 12.5,", "\t\tWalk = 10, -- [MOVE2] was 12.5 (base -20%)" },
+		{ "\t\tSprint = 23,", "\t\tSprint = 20, -- [MOVE2] was 23 (25, then base -20%)" },
+		{ "\t\tCrouch = 6,", "\t\tCrouch = 4.8, -- [MOVE2] was 6 (base -20%)" },
 		{ "\t\tCrouchSprint = 16,  -- Shift while crouched: fast silent strides. Costs stamina (faster drain than sprinting).\n", "" },
 		{ "\t\tCrouchSprintDrain = 28, -- per second (about 3.5s of fast strides from full)\n", "" },
-		{ "\t\tEndSpeed = 9,", "\t\tEndSpeed = 25, -- [MOVE2] was 9 (30 down to 25);" },
+		{ "\t\tSpeed = 30,", "\t\tSpeed = 24, -- [MOVE2] was 30 (base -20%)" },
+		{ "\t\tEndSpeed = 9,", "\t\tEndSpeed = 20, -- [MOVE2] was 9 (25, then base -20%);" },
 	} },
 	{ Config.CoverConfig, {
-		{ "MoveSpeeds = { Sneak = 9, Dash = 26,", "MoveSpeeds = { Sneak = 10, Dash = 30, --[[ [MOVE2] were 9 / 26 ]]" },
-		{ "\tVaultTime = 0.55,", "\tVaultTime = 0.275, -- [MOVE2] was 0.55: running and silent vault 2x faster" },
+		{ "\tCoverWalkSpeed = 10,", "\tCoverWalkSpeed = 8, -- [MOVE2] was 10 (base -20%)" },
+		{ "MoveSpeeds = { Sneak = 9, Dash = 26, Roll = 28, Sprint = 31 },",
+		  "MoveSpeeds = { Sneak = 8, Dash = 24, Roll = 22.4, Sprint = 24.8 }, --[[ [MOVE2] were 9 / 26 / 28 / 31: Edward's 10 / 30, then base -20% ]]" },
+		{ "\tDiveSpeed = 34,", "\tDiveSpeed = 27.2, -- [MOVE2] was 34 (base -20%)" },
+		{ "\tVaultTime = 0.55,", "\tVaultTime = 0.34375, -- [MOVE2] was 0.55: Edward's 2x faster (0.275), then base -20% (/0.8)" },
 	} },
 	{ Config.WeaponConfig, { { "\nreturn WeaponConfig", "\n" .. WEAPON_BLOCK } } },
 	{ Config.MeleeConfig, { { "\nreturn MeleeConfig", "\n" .. MELEE_BLOCK } } },
