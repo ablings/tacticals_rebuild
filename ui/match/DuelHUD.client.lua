@@ -529,7 +529,9 @@ local backB = bigButton("Back", "Back", nil, UDim2.fromScale(0.005, 0.99))
 local leaveB = bigButton("Leave", "Leave", nil, UDim2.fromScale(0.863, 0.99))
 local againB = bigButton("PlayAgain", "Play Again", nil, UDim2.fromScale(0.863, 0.903))
 local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UDim2.fromScale(0.863, 0.816))
-local rematchVoted = false
+-- (2026-10-19, Edward: "Rematch 2/2" after a rematch) the game-end snapshot: votes / own vote still left from the last game
+-- read as 0 until the server changes them (a table, not new locals: this script is at the 200-locals limit)
+local rematchVoted = { stale = false }
 local function postMatch() return st("PostMatch") == true or player:GetAttribute("InPseudoLobby") == true end
 leaveB.Activated:Connect(function()
 	send(postMatch() and "ToHub" or "Leave") -- (the Tacticals session's post-match phase: Leave takes you to the hub)
@@ -542,10 +544,21 @@ rematchB.Activated:Connect(function()
 	send("Rematch") -- toggles your vote on the server (player attribute RematchVote shows it)
 end)
 -- one look for a Rematch button: votes "n/needed", your own vote lit olive, "Starting in N" once everyone's in,
--- greyed "Unavailable" when the series is over (a side has 2 wins, 3 games played, or someone left)
+-- greyed only when the server says RematchAllowed = false (with RematchReason). (2026-10-19, Edward: "you should be able to
+-- rematch instantly") nil = not sent yet = allowed, and RematchNeeded defaults to the match's player count (1v1 -> 2), so it
+-- reads 0/2 the moment the game ends.
 local function styleRematch(btn, title, sub)
-	local allowed = st("RematchAllowed") ~= false and st("RematchNeeded") ~= nil
-	local voted = player:GetAttribute("RematchVote") == true
+	local allowed = st("RematchAllowed") ~= false
+	local rv = rematchVoted
+	local votes, vote = st("RematchVotes"), player:GetAttribute("RematchVote")
+	if rv.stale and (votes ~= rv.votes or vote ~= rv.vote) then rv.stale = false end   -- the server moved: trust it
+	if rv.stale then votes, vote = 0, false end
+	local voted = vote == true
+	local needed = tonumber(st("RematchNeeded"))
+	if not needed then
+		local a, b = tostring(st("MatchMode") or ""):match("(%d+)%s*[vV]%s*(%d+)")
+		needed = (tonumber(a) or 1) + (tonumber(b) or 1)
+	end
 	btn.Active = allowed
 	btn.BackgroundTransparency = allowed and 0 or 0.6
 	title.TextTransparency = allowed and 0 or 0.6
@@ -558,7 +571,7 @@ local function styleRematch(btn, title, sub)
 	elseif typeof(startsAt) == "number" and startsAt > workspace:GetServerTimeNow() then
 		sub.Text = "Starting in " .. math.ceil(startsAt - workspace:GetServerTimeNow())
 	else
-		sub.Text = string.format("%d/%d", st("RematchVotes") or 0, st("RematchNeeded") or 2) .. (voted and "  ·  voted" or "")
+		sub.Text = string.format("%d/%d", tonumber(votes) or 0, needed) .. (voted and "  ·  voted" or "")
 	end
 end
 local function refreshRematch() styleRematch(rematchB, rematchT, rematchSub) end
@@ -669,7 +682,10 @@ end
 local function showResultScreen(sum)
 	lastSum = sum
 	resultBackdrop(true)
-	rematchVoted = false
+	rematchVoted = { stale = true, votes = st("RematchVotes"), vote = player:GetAttribute("RematchVote") }
+	print(string.format("[Rematch] game end: RematchAllowed=%s RematchNeeded=%s RematchReason=%s RematchVotes=%s RematchVote=%s MatchMode=%s",
+		tostring(st("RematchAllowed")), tostring(st("RematchNeeded")), tostring(st("RematchReason")), tostring(st("RematchVotes")),
+		tostring(player:GetAttribute("RematchVote")), tostring(st("MatchMode"))))
 	againB:FindFirstChildOfClass("TextLabel").Text = "Play Again"
 	rgui.Enabled = true
 	refreshRematch()
