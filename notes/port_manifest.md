@@ -288,3 +288,13 @@ himself; we never publish.
   cloud place (place id, PlaceKind, the three client hashes, TrainingBinsManager in the lobby). Versions not read from Creator Hub.
 - The port-21 cloud windows never finished "Applying script changes" (hung ~90 min, no edits in them) and were force-closed before this publish;
   the port-22 cloud windows were force-closed after the read-back.
+
+## Live port 23: movement spec, draw time + crosshair ring, Training picker flow (2026-10-19 21:29-21:32, Shadow PC lead; Edward: "once you get to a reasonable spot start publishing then continue")
+- Working copies saved 21:08 (6582c77), both 49/49 and 72/72 against the repo before copying. Carries: [MOVE2] movement numbers + multipliers
+  (068cd91), DrawTime + server draw check + Xhair countdown attributes (ed4f0db), TrialKit (62f0de1), UI 2fb87c0 Kit speed bars,
+  62c611e crosshair ring, 303d0bc picker flow.
+- Diff vs port 22: lobby 16 scripts (Cover/Melee/Movement/Weapon configs, WeaponAbilities, MoveGuard, CombatManager, TrainingBinsManager,
+  Camera/Hotbar/Movement/Weapon controllers, Armory, TrainingBinsController, HUD, LobbyMovement); match places the same minus the two
+  Training scripts. Nothing else.
+- Published tacticals, Tutorial, Matchmaking, Ranked (Publish As > gunsy funsy > tacticals > Overwrite > Grant); each read back (place id,
+  PlaceKind, WeaponController / HUD / MovementConfig hashes, CombatManager draw check, lobby TrainingBinsManager). All Studio windows closed after.
