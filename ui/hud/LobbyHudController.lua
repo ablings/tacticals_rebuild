@@ -240,7 +240,7 @@ function LobbyHud.Start()
 	local count = Kit.label({ Text = "...", FontFace = PFONT, TextSize = 31, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(130, 42), ZIndex = 3, Parent = pill })
 	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = count })
-	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(174, 4), Size = UDim2.fromOffset(34, 34), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 3, Parent = pill },
+	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(174, -1), Size = UDim2.fromOffset(44, 44), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 3, Parent = pill }, -- (audit) 34 -> 44: a tappable size
 		{ new("UICorner", { CornerRadius = UDim.new(0, 7) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#B9CC70"), hex("#5B6E2C")) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(18, 6), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 18), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })

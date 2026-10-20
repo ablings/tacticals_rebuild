@@ -2320,24 +2320,25 @@ function Armory.BuildOverlay()
 	overlay.black = ctx.new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 1, Parent = gui })
 	fade = overlay.black
 	local function door(side: number)
-		local f = ctx.new("Frame", { BackgroundColor3 = Color3.fromRGB(54, 57, 60), BorderSizePixel = 0, Size = UDim2.new(0.5, 2, 1, 0),
+		local f = ctx.new("Frame", { BackgroundColor3 = Color3.fromRGB(54, 57, 60), BorderSizePixel = 0, Size = UDim2.fromScale(0.502, 1),
 			Position = side < 0 and UDim2.fromScale(-0.52, 0) or UDim2.fromScale(1.02, 0), ZIndex = 2, ClipsDescendants = true, Parent = gui })
 		ctx.new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(205, 205, 205), Color3.fromRGB(120, 120, 120)), Parent = f })
 		for i = 1, 5 do -- plate seams
-			ctx.new("Frame", { BackgroundColor3 = Color3.fromRGB(30, 32, 34), BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 3), Position = UDim2.fromScale(0, i / 6), ZIndex = 2, Parent = f })
+			ctx.new("Frame", { BackgroundColor3 = Color3.fromRGB(30, 32, 34), BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.003), Position = UDim2.fromScale(0, i / 6), ZIndex = 2, Parent = f })
 		end
 		for i = 0, 5 do -- rivets near the outer edge
-			ctx.new("Frame", { BackgroundColor3 = Color3.fromRGB(96, 100, 104), Size = UDim2.new(0, 10, 0, 10), AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.new(side < 0 and 0 or 1, side < 0 and 22 or -22, (i + 0.5) / 6, 0), ZIndex = 2, Parent = f }, { ctx.new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+			ctx.new("Frame", { BackgroundColor3 = Color3.fromRGB(96, 100, 104), Size = UDim2.fromScale(0.0104, 0.0093), AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(side < 0 and 0.0228 or 0.9772, (i + 0.5) / 6), ZIndex = 2, Parent = f },
+				{ ctx.new("UICorner", { CornerRadius = UDim.new(1, 0) }), ctx.new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
 		end
 		-- hazard band along the edge that meets the other door
-		local band = ctx.new("Frame", { BackgroundColor3 = HAZARD_K, BorderSizePixel = 0, Size = UDim2.new(0, 30, 1, 0),
-			Position = side < 0 and UDim2.new(1, -30, 0, 0) or UDim2.new(0, 0, 0, 0), ZIndex = 3, Parent = f })
+		local band = ctx.new("Frame", { BackgroundColor3 = HAZARD_K, BorderSizePixel = 0, Size = UDim2.fromScale(0.0311, 1),
+			Position = side < 0 and UDim2.fromScale(0.9689, 0) or UDim2.fromScale(0, 0), ZIndex = 3, Parent = f })
 		for i = 0, 23, 2 do
 			ctx.new("Frame", { BackgroundColor3 = HAZARD_Y, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1 / 24, 0), Position = UDim2.fromScale(0, i / 24), ZIndex = 3, Parent = band })
 		end
 		local tag = ctx.label({ Text = side < 0 and "A-07" or "TAC", Font = Enum.Font.GothamBlack, TextSize = 46, TextColor3 = Color3.fromRGB(30, 32, 34),
-			TextTransparency = 0.35, Size = UDim2.new(0.6, 0, 0, 50), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+			TextTransparency = 0.35, TextScaled = true, Size = UDim2.fromScale(0.6, 0.046), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
 			TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 2, Parent = f })
 		return f
 	end
@@ -2348,11 +2349,11 @@ function Armory.BuildOverlay()
 	overlay.barBot = ctx.new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.13),
 		Position = UDim2.fromScale(0, 1.01), ZIndex = 4, Parent = gui })
 	overlay.title = ctx.label({ Text = "ARMORY", Font = Enum.Font.GothamBlack, TextSize = 64, TextColor3 = ctx.THEME.Accent, TextTransparency = 1,
-		Size = UDim2.new(1, 0, 0, 70), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.48), TextXAlignment = Enum.TextXAlignment.Center,
+		TextScaled = true, Size = UDim2.fromScale(1, 0.065), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.48), TextXAlignment = Enum.TextXAlignment.Center,
 		ZIndex = 6, Parent = gui })
 	overlay.titleStroke = ctx.new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 3, Transparency = 1, Parent = overlay.title })
 	overlay.titleLine = ctx.new("Frame", { BackgroundColor3 = ctx.THEME.Accent, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.56), Size = UDim2.new(0, 0, 0, 4), ZIndex = 6, Parent = gui })
+		Position = UDim2.fromScale(0.5, 0.56), Size = UDim2.fromScale(0, 0.0037), ZIndex = 6, Parent = gui })
 	overlay.flash = ctx.new("Frame", { BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 8, Parent = gui })
 	overlay.blur = Lighting:FindFirstChild("TransitionBlur") or Instance.new("BlurEffect")
 	overlay.blur.Name = "TransitionBlur"
@@ -2370,7 +2371,7 @@ local function showTitle(text: string, on: boolean, time: number)
 	overlay.title.Text = text
 	tw(overlay.title, time, { TextTransparency = on and 0 or 1 })
 	tw(overlay.titleStroke, time, { Transparency = on and 0.2 or 1 })
-	tw(overlay.titleLine, time, { Size = UDim2.new(0, on and 260 or 0, 0, 4) }, Enum.EasingStyle.Quart)
+	tw(overlay.titleLine, time, { Size = UDim2.fromScale(on and 0.135 or 0, 0.0037) }, Enum.EasingStyle.Quart)
 end
 
 local function shake(cam, strength: number, times: number)

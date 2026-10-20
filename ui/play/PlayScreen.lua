@@ -283,7 +283,7 @@ local function render()
 	local TW = 2 * MW + GAP
 	local tb = tile(0, Y2, TW, MH)
 	big(tb, "Training", 64, 28, 26, 420, 76, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
-	Kit.label({ Text = "Practice room: cover, vaults, live targets.\nSwap your gun at the crates.", FontFace = SEMI, TextSize = 21, TextColor3 = Color3.fromRGB(215, 215, 220),
+	Kit.label({ Text = "Practice room: cover, vaults, live targets.\nTry any weapon, gadget or melee for free.", FontFace = SEMI, TextSize = 21, TextColor3 = Color3.fromRGB(215, 215, 220),
 		Position = UDim2.fromOffset(32, 104), Size = UDim2.fromOffset(330, 60), TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 4, Parent = tb })
 	local tStatus = big(tb, "Enter  >", 30, 30, MH - 66, 330, 40, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
 	local gunHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(330, 20), Size = UDim2.fromOffset(320, 232), ZIndex = 2, Parent = tb })
