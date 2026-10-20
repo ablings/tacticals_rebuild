@@ -332,12 +332,16 @@ function controller._Shoot(config, spreadDegrees: number)
 	local CoverController = Get("CoverController")
 	if CoverController then CoverController.NotifyShot() end -- blocks hopping until the shot has finished
 	-- [ABILITY2] Dual Pistols: the shots alternate between the two guns
+	-- (Edward 2026-10-19: one gun per shot, L R L R) name both muzzles: GetMuzzle returns the first Muzzle found, which can be
+	-- the left gun's, so "else GetMuzzle" fired the left gun every time
 	if config.Akimbo then
 		local left = equipped.tool:FindFirstChild("LeftBarrel")
-		local other = left and left:FindFirstChild("Muzzle")
-		if other then
+		local right = equipped.tool:FindFirstChild("Barrel")
+		local leftMuzzle = left and left:FindFirstChild("Muzzle")
+		local rightMuzzle = right and right:FindFirstChild("Muzzle")
+		if leftMuzzle and rightMuzzle then
 			equipped.akimboLeft = not equipped.akimboLeft
-			equipped.muzzle = equipped.akimboLeft and other or WeaponUtil.GetMuzzle(equipped.tool)
+			equipped.muzzle = equipped.akimboLeft and leftMuzzle or rightMuzzle
 		end
 	end
 	-- [ABILITY2] extra info for the server: fully aimed in (the Revolver's knockback), which pellet of a shotgun blast

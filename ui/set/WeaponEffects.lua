@@ -75,9 +75,48 @@ end
 -- // Muzzle
 -- Driven by the gun's blueprint (WeaponConfig …Effects.Muzzle / .GasPuff), so a revolver, a service
 -- pistol and a suppressed pistol each fire with their own signature.
-local function flashMuzzle(tool: Tool?, effectConfig)
-	local muzzle = tool and WeaponUtil.GetMuzzle(tool)
+-- [ABILITY2] a tool with two guns (Dual Pistols): the Muzzle nearest the shot's origin is the gun that fired; the
+-- shooter and every observer only know the origin, so this picks the same gun for everyone
+local function shotMuzzle(tool: Tool?, origin: Vector3?): Attachment?
+	if not tool then return nil end
+	local left = tool:FindFirstChild("LeftBarrel")
+	if not (left and origin) then return WeaponUtil.GetMuzzle(tool) end
+	local best, bestDist = nil, math.huge
+	for _, d in tool:GetDescendants() do
+		if d.Name == "Muzzle" and d:IsA("Attachment") then
+			local dist = (d.WorldPosition - origin).Magnitude
+			if dist < bestDist then best, bestDist = d, dist end
+		end
+	end
+	return best
+end
+
+-- [ABILITY2] Dual Pistols: only the gun that fired kicks (its slide snaps back for a moment), so the two don't move as one
+local function kickGun(tool: Tool?, muzzle: Attachment?)
+	if not (tool and muzzle and tool:FindFirstChild("LeftBarrel")) then return end
+	local side = muzzle.Parent and muzzle.Parent.Name == "LeftBarrel" and "Left" or "Right"
+	local slide = tool:FindFirstChild(side .. "Slide")
+	local weld = slide and slide:FindFirstChildOfClass("WeldConstraint")
+	if not (weld and weld.Enabled) or slide:GetAttribute("Kicking") then return end
+	slide:SetAttribute("Kicking", true)
+	local back = muzzle.WorldCFrame.LookVector * -0.18
+	weld.Enabled = false
+	slide.CFrame += back
+	weld.Enabled = true
+	task.delay(0.06, function()
+		if slide.Parent and weld.Parent then
+			weld.Enabled = false
+			slide.CFrame -= back
+			weld.Enabled = true
+		end
+		slide:SetAttribute("Kicking", nil)
+	end)
+end
+
+local function flashMuzzle(tool: Tool?, effectConfig, origin: Vector3?)
+	local muzzle = shotMuzzle(tool, origin)
 	if not muzzle then return end
+	kickGun(tool, muzzle)
 	local bp = effectConfig and effectConfig.Muzzle or nil
 	local scale = bp and bp.Scale or 1
 
@@ -556,7 +595,7 @@ end
 function effects.PlayShot(tool: Tool?, origin: Vector3, endPos: Vector3, hitCharacter: boolean, _normal: Vector3?, effectConfig, silent: boolean?)
 	task.spawn(smokeTunnel, origin, endPos)
 	if not silent then -- [ABILITY2]
-		flashMuzzle(tool, effectConfig)
+		flashMuzzle(tool, effectConfig, origin)
 		if not distantShot(tool, origin) then
 			effects.PlaySound(tool, "Fire")
 		end
