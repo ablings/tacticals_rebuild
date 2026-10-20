@@ -249,7 +249,29 @@ local function addKill(d)
 		end
 	end
 	local l, l2
-	if tool then
+	-- (2026-10-20, Edward: RIVALS kill feed) uploaded silhouettes (UIKit.KillIcons) win over the tool render: the weapon, then
+	-- headshot / no-scope marks before the victim; an icon that isn't uploaded yet falls back to the render / the mark
+	local KI = nil
+	pcall(function() KI = require(ReplicatedStorage.UIKit.KillIcons) end)
+	local wIcon = KI and KI.Weapon(typeof(d.weapon) == "string" and d.kind ~= "Takedown" and d.weapon or nil, d.kind)
+	local marks = {}
+	if KI and d.headshot and KI.Status("headshot") then table.insert(marks, KI.Status("headshot")) end
+	if KI and d.noscope and KI.Status("noscope") then table.insert(marks, KI.Status("noscope")) end
+	if wIcon then
+		l = new("TextLabel", { BackgroundTransparency = 1, Text = nameOf(d.killer), FontFace = FB, TextScaled = true, TextColor3 = col(d.killer),
+			TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.36, 0.7), Parent = row })
+		new("ImageLabel", { BackgroundTransparency = 1, Image = wIcon, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromScale(0.41, 0.1),
+			Size = UDim2.fromScale(0.16, 0.8), Parent = row })
+		local x = 0.58
+		for _, img in marks do
+			new("ImageLabel", { BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromScale(x, 0.15),
+				Size = UDim2.fromScale(0.06, 0.7), Parent = row })
+			x += 0.065
+		end
+		l2 = new("TextLabel", { BackgroundTransparency = 1, Text = ((d.headshot and #marks == 0) and "◉ " or "") .. nameOf(d.victim), FontFace = FB, TextScaled = true,
+			TextColor3 = col(d.victim), TextXAlignment = Enum.TextXAlignment.Left, Position = UDim2.fromScale(x + 0.01, 0.15), Size = UDim2.fromScale(0.96 - x, 0.7), Parent = row })
+		new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l2 })
+	elseif tool then
 		l = new("TextLabel", { BackgroundTransparency = 1, Text = nameOf(d.killer), FontFace = FB, TextScaled = true, TextColor3 = col(d.killer),
 			TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.4, 0.7), Parent = row })
 		local vpf = new("ViewportFrame", { BackgroundTransparency = 1, Ambient = WHITE, LightColor = Color3.new(0, 0, 0),
@@ -929,6 +951,16 @@ local function refreshKillerCard(uid)
 		if w then how ..= " with " .. w end
 	end
 	kHow.Text = how
+	-- (2026-10-20) RIVALS: the weapon's silhouette on the card's right, a headshot / no-scope mark under it
+	local KI = nil
+	pcall(function() KI = require(ReplicatedStorage.UIKit.KillIcons) end)
+	local wi = kcard:FindFirstChild("WeaponIcon") or new("ImageLabel", { Name = "WeaponIcon", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
+		Position = UDim2.fromScale(0.7, 0.12), Size = UDim2.fromScale(0.27, 0.5), ZIndex = 8, Parent = kcard })
+	local mk = kcard:FindFirstChild("ShotMark") or new("ImageLabel", { Name = "ShotMark", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
+		Position = UDim2.fromScale(0.86, 0.6), Size = UDim2.fromScale(0.1, 0.34), ZIndex = 8, Parent = kcard })
+	local ld = (lastDeath and lastDeath.killer == uid) and lastDeath or nil
+	wi.Image = (KI and ld and KI.Weapon(typeof(ld.weapon) == "string" and ld.kind ~= "Takedown" and ld.weapon or nil, ld.kind)) or ""
+	mk.Image = (KI and ld and ((ld.noscope and KI.Status("noscope")) or (ld.headshot and KI.Status("headshot")))) or ""
 end
 
 ---------------------------------------------------------------------------------------------------- switch weapons (RIVALS)

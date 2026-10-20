@@ -18,6 +18,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "PlayScreen", "ModuleScript", "play/PlayScreen.lua"),
     ("ReplicatedStorage.UIKit", "CodesScreen", "ModuleScript", "lobby/CodesScreen.lua"),
     ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
+    ("ReplicatedStorage.UIKit", "KillIcons", "ModuleScript", "match/KillIcons.lua"),  # (2026-10-20) kill feed / killer card silhouettes
     ("ReplicatedStorage.UIKit", "RankedScreen", "ModuleScript", "ranked/RankedScreen.lua"),
     ("ReplicatedStorage.UIKit", "Tac", "ModuleScript", "lobby/Tac.lua"),
     ("ReplicatedStorage.UIKit", "Kit", "ModuleScript", "lobby/Kit.lua"),
@@ -111,6 +112,7 @@ MATCH_FILES = [
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),
     ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
+    ("ReplicatedStorage.UIKit", "KillIcons", "ModuleScript", "match/KillIcons.lua"),  # (2026-10-20) kill feed / killer card silhouettes
 ]
 # ---- the after-match pseudo lobby (2026-10-18, lead session's split): the lobby's client side rides along in the match places.
 # Own files run as-is (UIKit.PseudoLobby: WaitMap / Active / Guard, no-op in the hub). The hub's lobby look scripts that other

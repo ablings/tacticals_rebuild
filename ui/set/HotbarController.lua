@@ -223,7 +223,7 @@ local BONE = Color3.fromRGB(255, 255, 255)
 -- (2026-10-20, Edward's style D "Comic Ink") Bangers for the held name, solid black ink strokes, black-outlined tiles,
 -- the held tile outlined in comic yellow
 local STENCIL = Font.new("rbxasset://fonts/families/Bangers.json")
-local INK_YELLOW = Color3.fromRGB(255, 212, 0)
+local INK_YELLOW = Color3.fromRGB(255, 255, 255) -- (2026-10-20, Edward: the bottom HUD in white, not yellow; name kept)
 local UIKitFolder = ReplicatedStorage:WaitForChild("UIKit")
 local Kit = require(UIKitFolder:WaitForChild("Kit"))
 local ICON_FOV = 30
