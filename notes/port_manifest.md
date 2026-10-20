@@ -298,3 +298,14 @@ himself; we never publish.
   Training scripts. Nothing else.
 - Published tacticals, Tutorial, Matchmaking, Ranked (Publish As > gunsy funsy > tacticals > Overwrite > Grant); each read back (place id,
   PlaceKind, WeaponController / HUD / MovementConfig hashes, CombatManager draw check, lobby TrainingBinsManager). All Studio windows closed after.
+
+## Live port 24: reload cancel, base speeds -20%, 5 s map vote, rematch, MM_FailReason + MATCH FOUND (2026-10-19 22:03-22:07, Shadow PC lead; Edward: "once you get to a reasonable spot start publishing then continue")
+- Working copies saved 21:48 (port 24 freeze commit), 50/50 and 72/72 against the repo. Carries: aa077f1 reload cancel, ac780fd base speeds
+  -20% + MatchCore.waitVote, 10751a7 rematch (no cap, votes reset per game), c025ec9 MM_FailReason, UI MatchFoundGate (961f071 / 3a01d8b) and
+  the rematch DuelHUD (7b46ce9).
+- Diff vs port 23: lobby = Cover/Movement configs, LobbyDuelManager (vote block), MatchmakingManager ([MMFAIL]), MatchCore, MatchFoundGate (new),
+  WeaponController, WeaponEffects, DuelHUD; match places = configs, RoundManager (rematch) + its split backup, MatchCore, WeaponController,
+  WeaponEffects, DuelHUD. Nothing else.
+- Published tacticals, Tutorial, Matchmaking, Ranked; read back from each (place id, PlaceKind, WeaponController / MatchCore / MovementConfig
+  hashes, rematch fix in the match places, [MMFAIL] + MatchFoundGate in the lobby). The Ranked comparison window hung on a dialog twice
+  (port 23 and 24) and was restarted; screenshot it next time.
