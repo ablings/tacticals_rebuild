@@ -314,3 +314,12 @@ himself; we never publish.
 - Working copies as of 2dfc99b (HolsterManager installed in both, tested in Training and in a 1v1 match). Diff vs port 24: only the new
   ServerScriptService.HolsterManager in every place. Published tacticals, Tutorial, Matchmaking, Ranked; read back (HolsterManager hash in all four).
 - The window that hung at every 8th Studio open is Studio's "Low System Resources" dialog: click Proceed (Edward pointed it out).
+
+## Live port 26: Practice Range map, draw from the holster, overnight UI (2026-10-20 ~02:25, main PC lead; Edward in the lead's chat: "model this map ... then publish changes", then "whatever you disagree with on the floor plan just do i am going to sleep")
+- Working copies saved 02:17 by the UI session (9f14db8). Published on the second monitor, each window retitled after Grant: tacticals (lobby),
+  Tutorial, Matchmaking, Ranked (port_prep.sh BRING_ARGS=-secondary: split_build, deploy_ui --matchmaking|--ranked, all checks true).
+  Verified per copy: DuelMaps Warehouse + PracticeRange (Matchmaking / Ranked / lobby; Tutorial strips DuelMaps as always), Workspace.PracticeRange,
+  applyMapEnv x3 in RoundManager, CameraController follows ArenaMap, DrawBackLeft PublishedId set, no StudioTeleportData.
+- Carries: Practice Range (open-roofed whitebox from Edward's floor plan, 1v1 / 2v2 / 3v3, per-map spawns + lighting; lobby duels 2v2 / 3v3
+  pads now open), the 4 draw-from-holster animations, the UI's kill-feed silhouettes + screen-size audit fixes + map-vote aerial card, HUD fit
+  (tutorial panel above the hotbar, bigger NOISE meter above HEALTH).
