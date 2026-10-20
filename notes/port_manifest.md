@@ -277,3 +277,14 @@ himself; we never publish.
 - Shadow PC notes: the reopened cloud windows show "Applying script changes. Studio will close automatically when complete." on close; the
   lobby was re-read after that and still carried the new build. tools/split_build.py and run_luau_at.py now find mcpcli.py under ~ (were
   hard-coded to C:\Users\aroki).
+
+## Live port 22: Dual Pistols L/R fire, Training trial picker for every slot (2026-10-19 20:40-20:48, Shadow PC lead; Edward in this chat: "go ahead and publish")
+- Working copies: lobby saved 20:31 (3a468aa: TrialItem server + the UI's bc44ae7 picker, 21ea714 Dual Pistols), match 20:38 (UI deploy incl.
+  bc44ae7's GamepadNavController). Both checked against the repo before copying (49/49, 72/72).
+- Publish files built as in port 21. Script-by-script diff vs the port-21 files: lobby = TrainingBinsManager, TrainingBinsController,
+  GamepadNavController, WeaponController, WeaponEffects (373 scripts); Tutorial / Matchmaking / Ranked = GamepadNavController, WeaponController,
+  WeaponEffects (339 each). Nothing else.
+- Published (Publish As > gunsy funsy > tacticals > Overwrite > Grant): tacticals, Tutorial, Matchmaking, Ranked; each read back from the reopened
+  cloud place (place id, PlaceKind, the three client hashes, TrainingBinsManager in the lobby). Versions not read from Creator Hub.
+- The port-21 cloud windows never finished "Applying script changes" (hung ~90 min, no edits in them) and were force-closed before this publish;
+  the port-22 cloud windows were force-closed after the read-back.
