@@ -210,6 +210,32 @@ local function buildMaps(list)
 			label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
 		elseif m.image and m.image ~= "" then
 			new("ImageLabel", { BackgroundTransparency = 1, Image = m.image, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromScale(1, 1), Parent = t })
+		else
+			-- (2026-10-20) no picture uploaded yet (Practice Range): an aerial render of the map itself. Lobby duels keep the
+			-- map's look in ReplicatedStorage.DuelMaps[id].Visual; the match place has it in Workspace[id].
+			local reg = ReplicatedStorage:FindFirstChild("DuelMaps") and ReplicatedStorage.DuelMaps:FindFirstChild(m.id)
+			local src = (reg and reg:FindFirstChild("Visual")) or workspace:FindFirstChild(m.id)
+			if src then
+				local vpf = new("ViewportFrame", { BackgroundColor3 = Color3.fromRGB(150, 190, 225), Size = UDim2.fromScale(1, 1),
+					Ambient = Color3.fromRGB(120, 124, 132), LightColor = Color3.new(1, 1, 1), LightDirection = Vector3.new(-0.5, -1, -0.35), Parent = t })
+				local world = Instance.new("WorldModel")
+				for _, d in src:GetDescendants() do
+					if d:IsA("BasePart") and d.Transparency < 0.95 then
+						local c = d:Clone()
+						for _, k in c:GetChildren() do if not (k:IsA("DataModelMesh") or k:IsA("Decal") or k:IsA("Texture") or k:IsA("SurfaceAppearance")) then k:Destroy() end end
+						c.Anchored = true
+						c.Parent = world
+					end
+				end
+				world.Parent = vpf
+				local cf, size = world:GetBoundingBox()
+				local cam = Instance.new("Camera")
+				cam.FieldOfView = 40
+				local span = math.max(size.X, size.Z)
+				cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(-0.45 * span, 0.62 * span, 0.62 * span), cf.Position)
+				cam.Parent = vpf
+				vpf.CurrentCamera = cam
+			end
 		end
 		-- striped name bar
 		local barH = th * 0.2

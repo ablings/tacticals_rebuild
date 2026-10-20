@@ -52,17 +52,19 @@ end
 -- Design canvas: Scale-sized 16:9 frame, centred (letterboxed on ultrawide). Screens are written in
 -- 1920x1080 design px, then Kit.toScale() converts them: UI rule (Edward) = Position/Size in Scale only.
 function Kit.canvas(screenGui)
-	local cam = workspace.CurrentCamera
 	local canvas = new("Frame", {
 		Name = "Canvas", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), Parent = screenGui,
 	}, { new("UIAspectRatioConstraint", { AspectRatio = Theme.design.X / Theme.design.Y }) })
 	canvas:SetAttribute("DesignCanvas", true)
-	Kit._canvas = Kit._canvas or canvas
-	if not Kit._viewportHooked then
-		Kit._viewportHooked = true
-		cam:GetPropertyChangedSignal("ViewportSize"):Connect(function() task.defer(Kit.rescaleText) end)
-	end
+	if not (Kit._canvas and Kit._canvas.Parent) then Kit._canvas = canvas end
+	-- (2026-10-20) rescale text when the canvas itself resizes: the old CurrentCamera ViewportSize hook went dead when a place
+	-- swapped CurrentCamera (match intro / spectate), so text kept the size of the window it was built in
+	canvas:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		if Kit._rescalePending then return end
+		Kit._rescalePending = true
+		task.defer(function() Kit._rescalePending = false; Kit.rescaleText() end)
+	end)
 	return canvas
 end
 
