@@ -452,7 +452,7 @@ do
 		BAT_TIME = M.Weapons.Bat.Charge.Time or BAT_TIME
 		SHIELD_MAX = M.Weapons.RiotShield.Shield.Health or SHIELD_MAX
 	end)
-	local GOLD, GREEN, RED, CYAN = Color3.fromRGB(255, 205, 60), Color3.fromRGB(110, 230, 120), Color3.fromRGB(235, 70, 60), Color3.fromRGB(120, 220, 255)
+	local GOLD, GREEN, RED, CYAN = Color3.fromRGB(255, 205, 60), Color3.fromRGB(90, 190, 255), Color3.fromRGB(235, 70, 60), Color3.fromRGB(120, 220, 255)
 	local FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
 	local items -- built lazily inside the ability layer
 	local function corner(o) local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = o end

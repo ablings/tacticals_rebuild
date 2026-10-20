@@ -8,35 +8,42 @@ local function hex(s)
 end
 Theme.hex = hex
 
+-- (2026-10-20, Edward: "the green ... is just ugly") palette for style D "Comic Ink", from game-UI colour practice:
+-- 60/30/10 = dark see-through charcoal-navy panels / white + black ink / ONE vivid accent (comic yellow);
+-- primary buttons bright blue (white text stays readable); teams blue vs orange (the colourblind-safe pair); no olive, no green.
 Theme.color = {
-	text = hex("#ECE8DA"),        -- bone white
-	textDim = hex("#A7AD98"),     -- field grey
-	textDark = hex("#11130E"),
-	panel = hex("#0C0E0B"),       -- gunmetal, drawn see-through
-	panelRaised = hex("#1D211A"),
-	scrim = hex("#0A0D08"),
-	white = hex("#F1EDE0"),       -- light controls (boxes, selected tabs)
-	control = hex("#E4E0D2"),
-	track = hex("#4A5038"),       -- olive drab slider track
-	green = hex("#8A9C4A"),       -- "on" state: olive (pass 34, was amber)
-	red = hex("#D6403A"),
-	redDark = hex("#9E2620"),
-	badge = hex("#D6403A"),
-	gold = hex("#ECE8DA"),
-	blue = hex("#8FA64A"),        -- secondary accent: olive
-	disabled = hex("#575B4E"),
-	olive = hex("#6B7A3A"),
-	amber = hex("#8A9C4A"),     -- (pass 34: no amber; kept as a name)
+	text = hex("#FFFFFF"),
+	textDim = hex("#C3C7D4"),
+	textDark = hex("#111114"),
+	panel = hex("#0E1016"),       -- charcoal-navy, drawn see-through
+	panelRaised = hex("#1B1F2A"),
+	scrim = hex("#07080C"),
+	white = hex("#FFFFFF"),       -- light controls (boxes, selected tabs)
+	control = hex("#EEF0F5"),
+	track = hex("#2A3040"),       -- slider track
+	green = hex("#3A9BFF"),       -- "on" state (name kept): blue
+	red = hex("#FF4D3A"),
+	redDark = hex("#C22E1E"),
+	badge = hex("#FF4D3A"),
+	gold = hex("#FFD400"),        -- the accent: comic yellow
+	blue = hex("#3A9BFF"),
+	disabled = hex("#4A4F5C"),
+	olive = hex("#FFD400"),       -- (name kept for old code: now the yellow accent)
+	amber = hex("#FFD400"),
+	ink = hex("#111114"),
+	teamUs = hex("#3A9BFF"),
+	teamThem = hex("#FF7A2E"),
 }
 
 -- vertical gradients, top -> bottom
 Theme.gradient = {
 	robux = { hex("#D6FF6E"), hex("#7DF632") },   -- Robux purchases keep Roblox green
-	key = { hex("#9DB05A"), hex("#5B6E2C") },     -- olive: play / buy / claim (pass 34)
-	blue = { hex("#4A5142"), hex("#23271F") },    -- gunmetal: secondary actions (pass 34)
-	red = { hex("#F06A5E"), hex("#B3281F") },
-	grey = { hex("#A9AC9F"), hex("#6C7064") },
-	gun = { hex("#2E322A"), hex("#151813") },      -- close / neutral (pass 34)
+	key = { hex("#5AB2FF"), hex("#1E63D6") },     -- primary: play / buy / claim (blue)
+	blue = { hex("#2B3142"), hex("#161A24") },    -- secondary actions (dark navy)
+	red = { hex("#FF6A4D"), hex("#C52A1A") },
+	grey = { hex("#B5B9C4"), hex("#7A7F8C") },
+	gun = { hex("#22262F"), hex("#101217") },      -- close / neutral
+	yellow = { hex("#FFE14D"), hex("#F2B600") },  -- the accent as a fill (black text on it)
 }
 
 -- Headings in Oswald (condensed, stencil-like); labels and body copy in Rubik (cloud font

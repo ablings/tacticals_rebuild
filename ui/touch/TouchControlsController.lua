@@ -410,7 +410,7 @@ function controller.OpenEditor()
 	overlay = Instance.new("Frame")
 	overlay.Name = "LayoutEditor"
 	overlay.Size = UDim2.fromScale(1, 1)
-	overlay.BackgroundColor3 = Color3.fromRGB(70, 110, 40)
+	overlay.BackgroundColor3 = Color3.fromRGB(30, 95, 210)
 	overlay.BackgroundTransparency = 0.55
 	overlay.ClipsDescendants = true
 	overlay.ZIndex = 0

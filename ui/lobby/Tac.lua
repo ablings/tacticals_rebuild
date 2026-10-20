@@ -5,8 +5,8 @@
 --   Tac.hoverBrackets(button, frames, base)        brackets light up bone-white on hover
 local Tac = {}
 Tac.C = {
-	bone = Color3.fromRGB(236, 232, 218), field = Color3.fromRGB(150, 156, 140), olive = Color3.fromRGB(107, 122, 58),
-	oliveHi = Color3.fromRGB(138, 156, 74), oliveDark = Color3.fromRGB(70, 80, 38), gun = Color3.fromRGB(26, 29, 26),
+	bone = Color3.fromRGB(236, 232, 218), field = Color3.fromRGB(150, 156, 140), olive = Color3.fromRGB(255, 212, 0),
+	oliveHi = Color3.fromRGB(255, 212, 0), oliveDark = Color3.fromRGB(70, 80, 38), gun = Color3.fromRGB(26, 29, 26),
 	gunDeep = Color3.fromRGB(12, 14, 11), line = Color3.fromRGB(64, 70, 58), violet = Color3.fromRGB(176, 120, 255),
 	red = Color3.fromRGB(196, 52, 46), ink = Color3.fromRGB(10, 12, 9),
 }

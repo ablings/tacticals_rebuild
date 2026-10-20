@@ -21,10 +21,10 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
-local OLIVE_HI = Color3.fromRGB(150, 172, 84)
-local TEAM_A = { Color3.fromRGB(198, 206, 168), Color3.fromRGB(96, 108, 56) }
-local TEAM_B = { Color3.fromRGB(232, 92, 72), Color3.fromRGB(140, 36, 28) }
-local GOOD, BAD = Color3.fromRGB(110, 220, 80), Color3.fromRGB(235, 70, 60)
+local OLIVE_HI = Color3.fromRGB(255, 212, 0)
+local TEAM_A = { Color3.fromRGB(90, 170, 255), Color3.fromRGB(30, 95, 210) }
+local TEAM_B = { Color3.fromRGB(255, 140, 60), Color3.fromRGB(214, 70, 28) }
+local GOOD, BAD = Color3.fromRGB(255, 212, 0), Color3.fromRGB(235, 70, 60)
 -- (2026-10-20, Edward's style D "Comic Ink" + RIVALS see-through) Bangers headings; the INK pass at the end of this script
 -- gives every panel a heavy black outline, small corners, and the big pieces a hard drop shadow and a tilt
 local FX = Font.new("rbxasset://fonts/families/Bangers.json")
@@ -436,7 +436,7 @@ local resRewards = label(results, "", FX, 32, 0, 392, 800, 44, OLIVE_HI, nil, 4)
 -- ranked: the rank line (promotion / demotion / shield / placements / reveal)
 local resRank = label(results, "", FX, 30, 0, 436, 800, 40, WHITE, nil, 4)
 local leave = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(275, 490), Size = UDim2.fromOffset(250, 76),
-	BackgroundColor3 = WHITE, Parent = results }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
+	BackgroundColor3 = WHITE, Parent = results }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214)) }) })
 label(leave, "Continue", FX, 40, 0, 0, 250, 76, WHITE, nil, 5)
 leave.Activated:Connect(function() send("Leave"); results.Visible = false end)
 leave.Visible = false -- (RIVALS) the result screen's Rematch / Play Again / Leave buttons replace Continue
@@ -662,7 +662,7 @@ local function showRankPage(sum)
 	local before, after = tonumber(sum.eloBefore) or 0, tonumber(sum.eloAfter) or 0
 	local d = tonumber(sum.delta) or (after - before)
 	deltaT.Text = (d >= 0 and "+" or "") .. d
-	deltaT.TextColor3 = d >= 0 and Color3.fromRGB(80, 230, 70) or BAD
+	deltaT.TextColor3 = d >= 0 and Color3.fromRGB(90, 190, 255) or BAD
 	-- placements: no rank yet (a faded Bronze), the count in the pill
 	local placing = sum.placement and not sum.revealed
 	local infoB = RankedCoreOk and RankedCore.Info(before) or { name = sum.rankBefore, floor = before, nextFloor = before + 100, nextName = "" }
@@ -844,7 +844,7 @@ local roundFlash = new("Frame", { BackgroundColor3 = WHITE, BackgroundTransparen
 local roundPop = new("UIScale", { Parent = roundCard })
 gloss(roundCard, 8, 0.3)
 local function showRoundCard(won)
-	roundGrad.Color = won and ColorSequence.new(Color3.fromRGB(120, 230, 70), Color3.fromRGB(40, 140, 24)) or ColorSequence.new(Color3.fromRGB(240, 70, 60), Color3.fromRGB(120, 18, 14))
+	roundGrad.Color = won and ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214)) or ColorSequence.new(Color3.fromRGB(240, 70, 60), Color3.fromRGB(120, 18, 14))
 	roundBig.Text = won and "WON" or "LOST"
 	roundCard.Visible = true
 	roundPop.Scale = 1.35

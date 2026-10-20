@@ -25,7 +25,7 @@ Notify.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134
 
 local FX = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
 local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local GREEN = Color3.fromRGB(110, 230, 60)
+local GREEN = Color3.fromRGB(255, 212, 0) -- (2026-10-20 palette: the accent, no green)
 local GREY = Color3.fromRGB(190, 190, 194)
 local PILL = Color3.fromRGB(18, 19, 21)
 

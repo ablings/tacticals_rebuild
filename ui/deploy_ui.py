@@ -6,6 +6,7 @@ import json, os, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 MCP = os.path.expanduser('~/Documents/rivals_practice/mcpcli.py')
 FILES = [
+    ("ReplicatedStorage.UIKit", "Theme", "ModuleScript", "matchplace/Theme.lua"),  # (2026-10-20) one palette for both places (was the hub's own copy)
     ("StarterPlayer.StarterPlayerScripts", "PadUI", "LocalScript", "pads/PadUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "PadBoards", "LocalScript", "pads/PadBoards.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),

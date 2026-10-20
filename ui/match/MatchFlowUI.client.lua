@@ -45,9 +45,9 @@ local TIPS = { "Peek from cover: you're only exposed while you aim", "Throw a sm
 
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
-local OLIVE, OLIVE_HI = Color3.fromRGB(107, 122, 58), Color3.fromRGB(150, 172, 84)
-local TEAM_A = { Color3.fromRGB(198, 206, 168), Color3.fromRGB(96, 108, 56) }  -- cream / olive (our team colours)
-local TEAM_B = { Color3.fromRGB(232, 92, 72), Color3.fromRGB(140, 36, 28) }     -- red
+local OLIVE, OLIVE_HI = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
+local TEAM_A = { Color3.fromRGB(90, 170, 255), Color3.fromRGB(30, 95, 210) }  -- cream / olive (our team colours)
+local TEAM_B = { Color3.fromRGB(255, 140, 60), Color3.fromRGB(214, 70, 28) }     -- red
 -- (2026-10-20, Edward picked style D "Comic Ink" with RIVALS' see-through panels) Bangers headings, heavy black ink outlines,
 -- hard black drop shadows, small tilts, comic yellow for "selected"; panels stay dark and see-through
 local FX = Font.new("rbxasset://fonts/families/Bangers.json")
@@ -189,7 +189,7 @@ local function fillTeams(boxes)
 				local lv = pl and pl:GetAttribute(STATE.Level) or nil
 				local ready = pl and pl:GetAttribute("LoadoutReady") == true
 				s.ll.Text = ready and "✓" or (p.bot and "BOT" or tostring(lv or "-"))
-				s.lv.BackgroundColor3 = ready and Color3.fromRGB(70, 180, 60) or Color3.fromRGB(20, 18, 24)
+				s.lv.BackgroundColor3 = ready and Color3.fromRGB(90, 178, 255) or Color3.fromRGB(20, 18, 24)
 				s.h.ImageTransparency = p.gone and 0.6 or 0
 				if p.bot then s.h.Image = ""
 				elseif heads[p.UserId] then s.h.Image = heads[p.UserId]

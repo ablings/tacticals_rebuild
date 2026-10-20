@@ -2,7 +2,7 @@
 -- A slow scan line sweeps each screen, a LIVE dot blinks in the header, and the Ranked screen
 -- gets a scrolling ticker. Pure client visuals; the screens' text stays owned by the map.
 local RunService = game:GetService("RunService")
-local TEAL = Color3.fromRGB(138, 156, 74)
+local TEAL = Color3.fromRGB(255, 212, 0)
 local FONT = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
 local NAMES = { "Screen_Brief_East", "Screen_Brief_West", "Screen_GunWall_East", "Screen_GunWall_West", "Screen_Ranked" }
 local TICKER = "RANKED UNLOCKS AT LEVEL 50     ·     WIN DUELS TO CLIMB THE LADDER     ·     NEW SEASON SOON     ·     GOOD LUCK, OPERATOR     ·     "

@@ -33,7 +33,7 @@ local GREY = Theme.hex("#CFCDD3")
 local EMBLEM = require(UIKit:WaitForChild("RankArt")).EMBLEM
 local RANK_COLOR = {
 	Bronze = Theme.hex("#C07A45"), Silver = Theme.hex("#C3C9D3"), Gold = Theme.hex("#F2C14E"), Platinum = Theme.hex("#3FD0D4"),
-	Diamond = Theme.hex("#3C8CFF"), Elite = Theme.hex("#7D8F45"), Commander = Theme.hex("#ECE8DA"), Warlord = Theme.hex("#D9AE3F"),
+	Diamond = Theme.hex("#3C8CFF"), Elite = Theme.hex("#3FD1C4"), Commander = Theme.hex("#ECE8DA"), Warlord = Theme.hex("#D9AE3F"),
 }
 local RANKS = { "Bronze", "Silver", "Gold", "Platinum", "Diamond", "Elite", "Commander", "Warlord" }
 local MODES = { "1v1", "2v2", "3v3" }
@@ -256,7 +256,7 @@ local function build()
 	local track = new("Frame", { Position = UDim2.fromOffset(104, 88), Size = UDim2.fromOffset(1272, 10), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
 		{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 	ui.fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = WHITE, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }),
-		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#B9C77A"), Theme.hex("#ECE8DA")) }) })
+		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#FFE14D"), Theme.hex("#FFFFFF")) }) })
 
 	-- banner (white pill, RIVALS)
 	ui.banner = new("Frame", { Name = "Banner", Position = UDim2.fromOffset(220, 362), Size = UDim2.fromOffset(1480, 54), BackgroundColor3 = WHITE, Visible = false, Parent = root },

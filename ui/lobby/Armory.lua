@@ -670,7 +670,7 @@ function Armory.CutTape(done: (() -> ())?)
 		if trail and os.clock() - lastGlint > 0.035 then
 			lastGlint = os.clock()
 			local at = sc.toScreen(st.P) + Vector2.new(math.random(-30, 30), math.random(-30, 30))
-			TP.glint(layer, at, math.random(14, 30), 0.45, math.random() < 0.3 and Color3.fromRGB(200, 214, 150) or nil)
+			TP.glint(layer, at, math.random(14, 30), 0.45, math.random() < 0.3 and Color3.fromRGB(120, 190, 255) or nil)
 		end
 	end)
 	local function to(key: string, value: number, time: number, style, dir)
@@ -689,7 +689,7 @@ function Armory.CutTape(done: (() -> ())?)
 			local a = math.random() * math.pi * 2
 			local r = math.random() * spread
 			TP.glint(layer, at + Vector2.new(math.cos(a) * r, math.sin(a) * r), math.random(18, 40), 0.55 + math.random() * 0.25,
-				math.random() < 0.35 and Color3.fromRGB(200, 214, 150) or nil)
+				math.random() < 0.35 and Color3.fromRGB(120, 190, 255) or nil)
 		end
 	end
 	local function snip(t, at: Vector2, pitch: number)
@@ -807,10 +807,10 @@ local COL = {
 	Ink = Color3.fromRGB(14, 15, 18),
 	Red = Color3.fromRGB(236, 232, 218), -- the LEAVE X: bone (pass 34)
 	RedEdge = Color3.fromRGB(20, 22, 18),
-	BlueTop = Color3.fromRGB(157, 176, 90),    -- olive (pass 34, was RIVALS blue)
-	BlueBottom = Color3.fromRGB(91, 110, 44),
-	BlueEdge = Color3.fromRGB(40, 50, 18),
-	BlueText = Color3.fromRGB(200, 214, 150),
+	BlueTop = Color3.fromRGB(90, 178, 255),    -- blue primary (2026-10-20 palette)
+	BlueBottom = Color3.fromRGB(30, 99, 214),
+	BlueEdge = Color3.fromRGB(14, 40, 96),
+	BlueText = Color3.fromRGB(120, 190, 255),
 	GreenTop = Color3.fromRGB(236, 232, 218),   -- equipped: bone (pass 34)
 	GreenBottom = Color3.fromRGB(170, 166, 150),
 	OffTop = Color3.fromRGB(76, 78, 86),
@@ -1989,7 +1989,7 @@ local function buildHistoryList()
 		local card = mk("TextButton", { Name = "Duel" .. i, Text = "", AutoButtonColor = false, BackgroundColor3 = WHITE, Position = UDim2.fromOffset(0, y),
 			Size = UDim2.fromOffset(W, 104), ClipsDescendants = true, ZIndex = 21, Parent = list }, { corner(6),
 			mk("UIGradient", { Rotation = 90, Color = draw and ColorSequence.new(Color3.fromRGB(150, 152, 146), Color3.fromRGB(70, 72, 68))
-				or won and ColorSequence.new(Color3.fromRGB(150, 184, 74), Color3.fromRGB(70, 98, 30))
+				or won and ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214))
 				or ColorSequence.new(Color3.fromRGB(214, 74, 62), Color3.fromRGB(120, 30, 24)) }) })
 		local sc = m.score or {}
 		text({ Text = string.upper(tostring(m.mode or "1v1")) .. (m.ranked and "  ·  RANKED" or "") .. (m.forfeit and "  ·  FORFEIT" or ""), FontFace = FONT_HEAVY, TextSize = 15,
@@ -2312,7 +2312,7 @@ end
 -------------------------------------------------------------------------------
 -- Transition overlay (black, flash, letterbox bars, blast doors, title)
 -------------------------------------------------------------------------------
-local HAZARD_Y, HAZARD_K = Color3.fromRGB(138, 156, 74), Color3.fromRGB(22, 22, 24)
+local HAZARD_Y, HAZARD_K = Color3.fromRGB(255, 212, 0), Color3.fromRGB(22, 22, 24)
 function Armory.BuildOverlay()
 	local gui = ctx.new("ScreenGui", { Name = "ArmoryTransition", IgnoreGuiInset = true, DisplayOrder = 50, ResetOnSpawn = false,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling, Parent = player:WaitForChild("PlayerGui") })

@@ -18,7 +18,7 @@ local okC, LF = pcall(function() return require(ReplicatedStorage:WaitForChild("
 -- palette (Tacticals loading screen)
 local INK, INK2, PANEL = Color3.fromRGB(10, 12, 10), Color3.fromRGB(22, 25, 21), Color3.fromRGB(30, 34, 29)
 local CREAM, SAGE, WARM = Color3.fromRGB(236, 232, 218), Color3.fromRGB(167, 173, 152), Color3.fromRGB(200, 196, 186)
-local OLIVE, DOLIVE = Color3.fromRGB(138, 156, 74), Color3.fromRGB(107, 122, 58)
+local OLIVE, DOLIVE = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
 local RED = Color3.fromRGB(196, 64, 52)
 local TITLE = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)

@@ -2,7 +2,7 @@
 local Players=game:GetService("Players") local RunService=game:GetService("RunService") local PPS=game:GetService("ProximityPromptService") local TS=game:GetService("TweenService")
 local plr=Players.LocalPlayer
 local map=workspace:WaitForChild("LobbyMap") local folder=map:WaitForChild("Labels",30)
-local ACC={Teal=Color3.fromRGB(138, 156, 74),Magenta=Color3.fromRGB(236, 232, 218),Violet=Color3.fromRGB(176,120,255)}
+local ACC={Teal=Color3.fromRGB(255, 212, 0),Magenta=Color3.fromRGB(236, 232, 218),Violet=Color3.fromRGB(176,120,255)}
 local labels={}
 if folder then for _,a in ipairs(folder:GetChildren()) do
 	local bb=Instance.new("BillboardGui") bb.Size=UDim2.fromScale(9,2.4) bb.LightInfluence=0 bb.AlwaysOnTop=false bb.Adornee=a bb.MaxDistance=a:GetAttribute("Dist")+10 bb.Parent=a
@@ -35,7 +35,7 @@ PPS.PromptTriggered:Connect(function(prompt,who)
 	local bb=Instance.new("BillboardGui") bb.Size=UDim2.fromOffset(260,70) bb.StudsOffset=Vector3.new(0,3.2,0) bb.LightInfluence=0 bb.MaxDistance=40 bb.Adornee=head bb.Parent=head
 	local fr=Instance.new("Frame",bb) fr.Size=UDim2.fromScale(1,1) fr.BackgroundColor3=Color3.fromRGB(12,14,18) fr.BackgroundTransparency=0.15
 	Instance.new("UICorner",fr).CornerRadius=UDim.new(0,10)
-	local sk=Instance.new("UIStroke",fr) sk.Color=Color3.fromRGB(138, 156, 74) sk.Thickness=1.5 sk.Transparency=0.3
+	local sk=Instance.new("UIStroke",fr) sk.Color=Color3.fromRGB(255, 212, 0) sk.Thickness=1.5 sk.Transparency=0.3
 	local tl=Instance.new("TextLabel",fr) tl.BackgroundTransparency=1 tl.Size=UDim2.new(1,-20,1,-12) tl.Position=UDim2.fromOffset(10,6) tl.TextWrapped=true tl.TextScaled=true tl.Font=Enum.Font.GothamMedium tl.TextColor3=Color3.new(1,1,1)
 	local line=lines[math.random(1,#lines)] tl.Text=""
 	bubbles[npc]=bb

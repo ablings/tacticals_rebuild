@@ -1,7 +1,7 @@
 -- LeaderboardScreen: draws ReplicatedStorage.LobbyTopWins on the hub leaderboard screen.
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
-local TEAL = Color3.fromRGB(138, 156, 74)
+local TEAL = Color3.fromRGB(255, 212, 0)
 local GOLD_FREE = Color3.fromRGB(235, 238, 242) -- no yellow/orange in this game: rank 1 uses white + teal
 local FONT = "rbxasset://fonts/families/GothamSSm.json"
 local player = Players.LocalPlayer

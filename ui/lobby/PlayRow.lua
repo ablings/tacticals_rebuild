@@ -20,9 +20,9 @@ local gui, play, playLabel, playGrad, playStroke
 
 -- top band pale, fast fall to the main colour, slightly deeper at the bottom (RIVALS play button shape)
 local GRADS = {
-	play = { "#E6EBC6", "#C8D290", "#9DB05A", "#86993C", "#6A7C2E", "#2F3A14" }, -- olive (pass 34, was amber)
+	play = { "#D6ECFF", "#9CCEFF", "#5AB2FF", "#3A8CF0", "#1E63D6", "#0E2F6E" }, -- blue primary (2026-10-20 palette)
 	busy = { "#9A9E8C", "#787D69", "#525846", "#41463A", "#2C3027", "#151813" }, -- gunmetal while searching
-	found = { "#F6FFBE", "#E9FEB7", "#BCFC4E", "#94FB24", "#79EC31", "#4FA61E" },
+	found = { "#FFF6BF", "#FFEC80", "#FFD400", "#F5C200", "#E0A800", "#7A5A00" }, -- match found: the comic-yellow accent
 }
 local function seq(kind)
 	local g = GRADS[kind] or GRADS.play
@@ -57,12 +57,12 @@ function PlayRow.Init(ctx)
 
 	-- PLAY: chunky amber button, Oswald with a darker amber outline; grows from its centre on hover
 	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(830, 846), Size = UDim2.fromOffset(260, 70),
-		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2), Kit.stroke(hex("#DDE3B8"), 1.5, 0.3) })
+		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2), Kit.stroke(hex("#CFE6FF"), 1.5, 0.3) })
 	playGrad = new("UIGradient", { Rotation = 90, Parent = play })
 	playLabel = Kit.label({ Text = "PLAY", FontFace = F.display, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center,
 		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(236, 54), Parent = play })
 	new("UITextSizeConstraint", { MaxTextSize = 46, Parent = playLabel })
-	playStroke = new("UIStroke", { Color = hex("#B8740C"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
+	playStroke = new("UIStroke", { Color = hex("#0E2F6E"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
 	local Tac = require(UIKit:WaitForChild("Tac"))
 	Tac.hoverBrackets(play, Tac.brackets(play, Tac.C.bone, 16, 3))
 	Kit.bindButton(play, { hover = 1.08 })
@@ -78,7 +78,7 @@ function PlayRow.Init(ctx)
 	av.Activated:Connect(function() if ctx.onInvite then ctx.onInvite() end end) -- your avatar opens Your Party too
 	local inv = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1186, 858), Size = UDim2.fromOffset(46, 46),
 		BackgroundColor3 = C.white, Parent = root },
-		{ Kit.corner(23), Kit.stroke(C.olive, 1.5, 0.3), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#5C6248"), hex("#1E2118")),
+		{ Kit.corner(23), Kit.stroke(C.olive, 1.5, 0.3), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#2B3142"), hex("#161A24")),
 			Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 0.1) }) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(20, 6), BackgroundColor3 = C.text, Parent = inv }, { Kit.corner(2) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 20), BackgroundColor3 = C.text, Parent = inv }, { Kit.corner(2) })

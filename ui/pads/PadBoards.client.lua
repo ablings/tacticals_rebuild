@@ -13,10 +13,10 @@ local player = Players.LocalPlayer
 local Lobby = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Lobby")
 local Request, QueueState = Lobby:WaitForChild("Request"), Lobby:WaitForChild("QueueState")
 
-local BONE, FIELD, OLIVE, GUN, GUN2 = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(107, 122, 58), Color3.fromRGB(20, 23, 20), Color3.fromRGB(34, 38, 32)
+local BONE, FIELD, OLIVE, GUN, GUN2 = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(255, 212, 0), Color3.fromRGB(20, 23, 20), Color3.fromRGB(34, 38, 32)
 local RED, BLUE, VIOLET = Color3.fromRGB(214, 52, 52), Color3.fromRGB(60, 140, 240), Color3.fromRGB(176, 120, 255)
 -- [PolishDuels] team colours match the floor: team A cream, team B olive
-local TEAM_A, TEAM_B = Color3.fromRGB(236, 232, 218), Color3.fromRGB(157, 176, 90)
+local TEAM_A, TEAM_B = Color3.fromRGB(236, 232, 218), Color3.fromRGB(255, 212, 0)
 local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 local NEAR = 20 -- studs from a pad's post that shows the JOIN button
@@ -170,7 +170,7 @@ local function drawSide(nearPad)
 		-- near a pad: the JOIN button
 		local mode, id = nearPad:GetAttribute("Mode"), nearPad:GetAttribute("BayId")
 		local btn = new("TextButton", { Text = "", AutoButtonColor = false, BackgroundColor3 = OLIVE, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 92) }, holder)
-		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(157, 176, 90), Color3.fromRGB(80, 96, 40)) }, btn)
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(255, 225, 77), Color3.fromRGB(242, 182, 0)) }, btn)
 		brackets(btn, BONE, 16, 3)
 		label("JOIN " .. string.upper(mode) .. (b.ranked and " RANKED" or " DUEL") .. "  >", 30, BONE, OSWALD, btn, { Position = UDim2.fromOffset(18, 12), Size = UDim2.new(1, -36, 0, 34) })
 		label(`PAD {id}  ·  {b.count} / {b.total} PLAYERS  ·  or step onto a plate`, 13, Color3.fromRGB(226, 230, 200), BODY, btn, { Position = UDim2.fromOffset(18, 56), Size = UDim2.new(1, -36, 0, 16) })

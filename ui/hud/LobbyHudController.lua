@@ -27,7 +27,7 @@ local player = Players.LocalPlayer
 local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
-local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#6B7A3A"), hex("#8A9C4A")
+local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#FFD400"), hex("#FFD400")
 local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
 local LB_NAME, LB_NUM = Font.new(BUILDER, Enum.FontWeight.Medium), Font.new(BUILDER, Enum.FontWeight.Bold)
 local GUN, DEEP, LINE, RED = hex("#1A1D1A"), hex("#0C0E0B"), hex("#40463A"), hex("#D6403A")
@@ -38,7 +38,7 @@ local function label(parent, text, font, size, x, y, w, h, color, align, z)
 end
 -- (Edward 2026-10-16: no "4 corners box" look) panels get RIVALS' soft rounded corners and a faint edge; the edge keeps
 -- its colour only where colour means something (team A / B, ranked violet), otherwise it's a soft white line
-local NEUTRAL_EDGE = { [Color3.fromRGB(64, 70, 58):ToHex()] = true, [Color3.fromRGB(107, 122, 58):ToHex()] = true,
+local NEUTRAL_EDGE = { [Color3.fromRGB(64, 70, 58):ToHex()] = true, [Color3.fromRGB(255, 212, 0):ToHex()] = true,
 	[Color3.fromRGB(236, 232, 218):ToHex()] = true }
 local function brackets(p, color, len, th, z)
 	if not p:FindFirstChildOfClass("UICorner") then
@@ -241,7 +241,7 @@ function LobbyHud.Start()
 		Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(130, 42), ZIndex = 3, Parent = pill })
 	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = count })
 	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(174, -1), Size = UDim2.fromOffset(44, 44), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 3, Parent = pill }, -- (audit) 34 -> 44: a tappable size
-		{ new("UICorner", { CornerRadius = UDim.new(0, 7) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#B9CC70"), hex("#5B6E2C")) }) })
+		{ new("UICorner", { CornerRadius = UDim.new(0, 7) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#7CC4FF"), hex("#1E63D6")) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(18, 6), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 18), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	Kit.bindButton(plus, { hover = 1.12 })
@@ -262,10 +262,10 @@ function LobbyHud.Start()
 	Kit.bindButton(missions, { hover = 1.02, press = 0.99 })
 	-- To Pads: RIVALS' chunky "To Duels" button in our lobby colours
 	local toPads = new("TextButton", { Name = "ToPads", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(95, 686), Size = UDim2.fromOffset(204, 50), BackgroundColor3 = Color3.new(1, 1, 1), Parent = root },
-		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#B9CC70"), hex("#5B6E2C")) }),
-			new("UIStroke", { Color = hex("#D6E6A0"), Thickness = 1.5, Transparency = 0.15, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#7CC4FF"), hex("#1E63D6")) }),
+			new("UIStroke", { Color = hex("#CFE6FF"), Thickness = 1.5, Transparency = 0.15, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
 	local tp = Kit.label({ Text = "»  To Pads  «", FontFace = WFONT, TextSize = 30, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(204, 50), ZIndex = 3, Parent = toPads })
-	new("UIStroke", { Color = hex("#3E4B1C"), Thickness = 2, Transparency = 0.1, Parent = tp })
+	new("UIStroke", { Color = hex("#10306E"), Thickness = 2, Transparency = 0.1, Parent = tp })
 	Kit.bindButton(toPads, { hover = 1.06 })
 	function LobbyHud.ToPads()
 		-- straight to the duel hall, in front of the first pad (not on it)
@@ -546,7 +546,7 @@ function LobbyHud.Start()
 			new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = t })
 			local back = new("Frame", { Position = UDim2.fromOffset(50, y + 34), Size = UDim2.fromOffset(262, 7), BackgroundColor3 = Color3.new(0, 0, 0),
 				BackgroundTransparency = 0.45, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-			new("Frame", { Size = UDim2.fromScale(math.clamp(e.prog / e.def.Goal, 0, 1), 1), BackgroundColor3 = done and hex("#5BE04A") or hex("#ECE8DA"), ZIndex = 5, Parent = back },
+			new("Frame", { Size = UDim2.fromScale(math.clamp(e.prog / e.def.Goal, 0, 1), 1), BackgroundColor3 = done and hex("#FFD400") or hex("#ECE8DA"), ZIndex = 5, Parent = back },
 				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 			if done or e.claimed then
 				-- done: a big green check instead of the count and reward (RIVALS)
@@ -579,7 +579,7 @@ function LobbyHud.Start()
 				local mesh = icons and icons:FindFirstChild("Check")
 				if mesh then
 					local m = mesh:Clone()
-					for _, d in (m:IsA("BasePart") and { m } or m:GetDescendants()) do if d:IsA("BasePart") then d.Color = hex("#5BE04A") end end
+					for _, d in (m:IsA("BasePart") and { m } or m:GetDescendants()) do if d:IsA("BasePart") then d.Color = hex("#FFD400") end end
 					VI.Viewport(h2, m, { zoom = 1.05, still = true })
 				end
 			else

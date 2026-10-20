@@ -17,15 +17,15 @@ Theme.color = {
 	scrim = hex("#0A0D08"),
 	white = hex("#F1EDE0"),       -- light controls (boxes, selected tabs)
 	control = hex("#E4E0D2"),
-	track = hex("#4A5038"),       -- olive drab slider track
+	track = hex("#2A3040"),       -- olive drab slider track
 	green = hex("#E8AC30"),       -- "on" state: amber
 	red = hex("#D6403A"),
 	redDark = hex("#9E2620"),
 	badge = hex("#D6403A"),
 	gold = hex("#E8AC30"),
-	blue = hex("#8FA64A"),        -- secondary accent: olive
+	blue = hex("#FFD400"),        -- secondary accent: olive
 	disabled = hex("#575B4E"),
-	olive = hex("#6B7A3A"),
+	olive = hex("#FFD400"),
 	amber = hex("#E8AC30"),
 }
 
@@ -33,7 +33,7 @@ Theme.color = {
 Theme.gradient = {
 	robux = { hex("#D6FF6E"), hex("#7DF632") },   -- Robux purchases keep Roblox green
 	key = { hex("#FFE08A"), hex("#E09A18") },     -- amber: play / buy / claim
-	blue = { hex("#B9CC7A"), hex("#5E7230") },    -- olive: secondary actions
+	blue = { hex("#2B3142"), hex("#161A24") },    -- secondary actions (2026-10-20 palette: dark navy)
 	red = { hex("#F06A5E"), hex("#B3281F") },
 	grey = { hex("#A9AC9F"), hex("#6C7064") },
 }

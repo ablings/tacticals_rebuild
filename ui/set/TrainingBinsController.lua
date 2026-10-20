@@ -32,7 +32,7 @@ local DW, DH = 1920, 1080
 local function S(x, y) return UDim2.fromScale(x / DW, y / DH) end                       -- design px -> Scale of the canvas
 local function R(x, y, w, h) return UDim2.fromScale(x / w, y / h) end                     -- px -> Scale of a w x h parent
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
-local OLIVE = Color3.fromRGB(138, 156, 74)                                                 -- Tac.C.oliveHi: the Kit's accent
+local OLIVE = Color3.fromRGB(255, 212, 0)                                                 -- Tac.C.oliveHi: the Kit's accent
 local AMBER = Color3.fromRGB(255, 196, 92)
 local FONT_H = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
 local FONT_B = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)

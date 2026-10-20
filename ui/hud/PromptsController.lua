@@ -17,7 +17,7 @@ local player = Players.LocalPlayer
 local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
 local F_ACTION = Font.new(BUILDER, Enum.FontWeight.ExtraBold)
 local F_OBJECT = Font.new(BUILDER, Enum.FontWeight.Medium)
-local BONE, FIELD, DEEP, OLIVE = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(12, 14, 11), Color3.fromRGB(157, 176, 90)
+local BONE, FIELD, DEEP, OLIVE = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(12, 14, 11), Color3.fromRGB(255, 212, 0)
 
 local function new(class, props, children)
 	local o = Instance.new(class)

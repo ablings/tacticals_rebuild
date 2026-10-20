@@ -75,7 +75,7 @@ local SOUNDS = {
 	Bang = "rbxassetid://130435518414889",
 }
 local RED, BLUE, TEAL = Color3.fromRGB(230, 36, 48), Color3.fromRGB(36, 120, 255), Color3.fromRGB(40, 230, 200)
-local AMBER, OLIVE = Color3.fromRGB(138, 156, 74), Color3.fromRGB(107, 122, 58)
+local AMBER, OLIVE = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
 -- the whole intro uses the lobby UI's military look: gunmetal, amber (left / primary), olive (right / secondary)
 local GLOW_L, GLOW_R = AMBER, OLIVE
 local FONT = "rbxasset://fonts/families/GothamSSm.json"

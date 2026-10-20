@@ -34,7 +34,7 @@ local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
 local F_NUM = Font.new(BUILDER, Enum.FontWeight.ExtraBold)
 local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
-local OLIVE_HI = hex("#9DB05A")
+local OLIVE_HI = hex("#5AB2FF")
 
 local PlayerCards = {}
 
@@ -147,7 +147,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	local card = new("Frame", { Name = "Card", Position = UDim2.fromOffset((1920 - W) / 2, 320), Size = UDim2.fromOffset(W, H), BackgroundColor3 = GUN,
 		ClipsDescendants = true, ZIndex = 2, Parent = root }, { Kit.corner(12), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.82, Thickness = 2 }) })
 	-- olive wash fading down from the top, faint diagonal stripes (the Tacticals panel look)
-	new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = hex("#4A5A22"), ZIndex = 2, Parent = card },
+	new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = hex("#1B1F2A"), ZIndex = 2, Parent = card },
 		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(0.55, 0.92), NumberSequenceKeypoint.new(1, 1) }) }) })
 	for i = 0, 14 do
 		new("Frame", { BorderSizePixel = 0, BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.965, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
@@ -178,7 +178,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	local r = RankArt and RankArt.Of(p) or { placed = false, name = "Unranked", elo = 0 }
 	local placedN, needN = p:GetAttribute("RankPlaced") or 0, p:GetAttribute("RankPlacements") or 0
 	local cols = { 248, 392, 536 } -- centres
-	local lvl = new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cols[1], 88), Size = UDim2.fromOffset(64, 56), BackgroundColor3 = hex("#5B6E2C"), ZIndex = 3, Parent = card },
+	local lvl = new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cols[1], 88), Size = UDim2.fromOffset(64, 56), BackgroundColor3 = hex("#1E63D6"), ZIndex = 3, Parent = card },
 		{ Kit.corner(12), new("UIStroke", { Color = OLIVE_HI, Thickness = 2 }) })
 	local ln = label(lvl, tostring(p:GetAttribute("Level") or 1), F_NUM, 30, 0, 0, 64, 56, BONE, Enum.TextXAlignment.Center, 4)
 	ln.TextTruncate = Enum.TextTruncate.None
@@ -250,7 +250,7 @@ function PlayerCards.MenuOpen() return menu ~= nil end
 
 -- RIVALS' colours, pulled toward the Tacticals palette (olive for the friendly ones)
 local ACTION_COLOR = {
-	["Invite"] = hex("#4F6B23"), ["Add Friend"] = hex("#4F6B23"), ["Challenge"] = hex("#9A6A1E"), ["Spectate"] = hex("#9A6A1E"),
+	["Invite"] = hex("#1E63D6"), ["Add Friend"] = hex("#1E63D6"), ["Challenge"] = hex("#9A6A1E"), ["Spectate"] = hex("#9A6A1E"),
 	["View Profile"] = hex("#2F5170"), ["View Avatar"] = hex("#2F5170"), ["Block"] = hex("#8E2A24"),
 }
 local ACTION_GLYPH = { ["Invite"] = "+", ["Add Friend"] = "+", ["Challenge"] = "»", ["Spectate"] = "◎", ["View Profile"] = "→", ["View Avatar"] = "→", ["Block"] = "×" }
@@ -382,7 +382,7 @@ local function showRequest(from: Player, expiresAt: number?, kind: string?)
 	end
 	local panel = new("Frame", { Name = from.Name, Position = UDim2.fromOffset(0, n * (REQ_H + REQ_GAP)), Size = UDim2.fromOffset(REQ_W, REQ_H), BackgroundColor3 = DEEP,
 		BackgroundTransparency = 0.15, ZIndex = 30, Parent = reqHolder }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.85, Thickness = 1.5 }) })
-	local hs = new("ImageLabel", { BackgroundColor3 = hex("#4F6B23"), Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(86, 86), ZIndex = 31, Parent = panel }, { Kit.corner(8) })
+	local hs = new("ImageLabel", { BackgroundColor3 = hex("#1E63D6"), Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(86, 86), ZIndex = 31, Parent = panel }, { Kit.corner(8) })
 	headshot(hs, from)
 	local barBack = new("Frame", { Position = UDim2.fromOffset(12, 108), Size = UDim2.fromOffset(82, 8), BackgroundColor3 = hex("#3A3F36"), ClipsDescendants = true, ZIndex = 31, Parent = panel }, { Kit.corner(4) })
 	local bar = new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = BONE, ZIndex = 32, Parent = barBack }, { Kit.corner(4) })

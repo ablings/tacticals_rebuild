@@ -1,7 +1,7 @@
 -- Scrolling LED tickers + small status monitors around the lobby (live: armory reset, queues, range best, top wins)
 local Players=game:GetService("Players") local RS=game:GetService("ReplicatedStorage") local HttpService=game:GetService("HttpService") local RunService=game:GetService("RunService")
 local folder=workspace:WaitForChild("LobbyMap"):WaitForChild("Screens",30) if not folder then return end
-local TEAL=Color3.fromRGB(138, 156, 74) local MAG=Color3.fromRGB(236, 232, 218) local VIO=Color3.fromRGB(176,120,255) local GREY=Color3.fromRGB(170,175,185)
+local TEAL=Color3.fromRGB(255, 212, 0) local MAG=Color3.fromRGB(236, 232, 218) local VIO=Color3.fromRGB(176,120,255) local GREY=Color3.fromRGB(170,175,185)
 local function resetIn() local now=os.time() local nxt=(math.floor(now/86400)+1)*86400 local d=nxt-now return string.format("%02d:%02d:%02d",d//3600,(d%3600)//60,d%60) end
 local function queues()
 	local ok,t=pcall(HttpService.JSONDecode,HttpService,RS:GetAttribute("MM_Counts") or "{}") if not ok or type(t)~="table" then return nil end

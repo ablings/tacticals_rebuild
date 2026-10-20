@@ -36,7 +36,7 @@ local function renderList()
 	for i, code in used do
 		local row = new("Frame", { Name = code, LayoutOrder = i, Size = UDim2.fromOffset(250, 50), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Parent = list },
 			{ new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-		local l = Kit.label({ Text = "✓  " .. code, FontFace = FB, TextSize = 22, TextColor3 = Theme.hex("#7CFF5A"), Position = UDim2.fromOffset(16, 0), Size = UDim2.fromOffset(226, 50), Parent = row })
+		local l = Kit.label({ Text = "✓  " .. code, FontFace = FB, TextSize = 22, TextColor3 = Theme.hex("#FFD400"), Position = UDim2.fromOffset(16, 0), Size = UDim2.fromOffset(226, 50), Parent = row })
 		l:SetAttribute("dTS", 22)
 	end
 	Kit.toScale(list, Vector2.new(960, 200))
@@ -49,7 +49,7 @@ local function redeem()
 	local r = ctx.ask and ctx.ask("RedeemCode", code)
 	if r and r.ok then
 		box.Text = ""
-		status.Text = r.msg or "Redeemed!"; status.TextColor3 = Theme.hex("#7CFF5A")
+		status.Text = r.msg or "Redeemed!"; status.TextColor3 = Theme.hex("#FFD400")
 	else
 		status.Text = (r and r.msg) or "That code didn't work"; status.TextColor3 = Theme.hex("#FF6A5E")
 	end

@@ -208,7 +208,7 @@ local FONT_MED = Font.new(UI_FONT, Enum.FontWeight.Medium)
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local SUB = Color3.fromRGB(196, 194, 182) -- pass 34 (lobby training copy): bone / olive / gunmetal
 local RED = Color3.fromRGB(255, 90, 100)
-local BLUE = Color3.fromRGB(200, 214, 150)
+local BLUE = Color3.fromRGB(120, 190, 255)
 
 -- [UI] restyle (UI session 2026-10-16, Edward: RIVALS' aesthetics, classy, no olive / corner brackets on gameplay UI):
 -- RIVALS' row of dark glass tiles, the held one bigger and lighter with a soft white edge, white type, the big 3D items

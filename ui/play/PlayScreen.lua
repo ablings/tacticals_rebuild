@@ -379,7 +379,7 @@ local function tick()
 			elseif mine then
 				s.left.Text = "Match found!"
 				s.right.Text = ""
-				s.strip.BackgroundColor3 = Color3.fromRGB(70, 180, 60)
+				s.strip.BackgroundColor3 = Color3.fromRGB(90, 178, 255)
 				s.strip.BackgroundTransparency = 0.1
 			elseif myQ or pad then
 				s.left.Text = myQ and ("Searching " .. myQ.Mode) or "On a lobby pad"
