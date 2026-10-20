@@ -140,6 +140,8 @@ local function hurt(attacker: Player, victim: Model, amount: number, attackKind:
 	if not hum or hum.Health <= 0 or amount <= 0 then return end
 	hum:SetAttribute("LastAttacker", attacker.UserId)
 	hum:SetAttribute("LastAttackKind", attackKind)
+	hum:SetAttribute("LastAttackWeapon", attackKind == "Takedown" and "Fists" or attackKind) -- [KILLFEED] the item, for the kill feed icon
+	hum:SetAttribute("LastNoScope", nil)
 	hum:SetAttribute("LastHitZone", "Body")
 	hum:TakeDamage(amount)
 	local confirm = Combat:FindFirstChild("HitConfirm")

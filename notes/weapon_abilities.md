@@ -68,3 +68,6 @@ Smoke, Flash (Flashbang), Frag, plus NEW: **StickyGrenade** (sticks to surfaces 
     tool ShieldHealth / ShieldBroken, character ParryUntil (server time). Debug: player attribute AbilityDebug prints.
 - Not done: proper left-hand grip for Dual Pistols (left gun is welded 1.1 studs off the right hand), real animations for
   the bat / katana / shield (MeleeSlash / MeleePunch placeholders), bots don't use the new kit.
+- 2026-10-20 drift note: fix/abilities_install.lua no longer re-runs cleanly on live (its CombatManager fire-rate anchor was changed by the
+  Shadow PC's draw-time patch, fix/movement_spec.lua). It stops before writing anything. To update just the modules, push
+  scripts/abilities/*.lua sources directly (as done for the [KILLFEED] change), don't re-run the whole installer.
