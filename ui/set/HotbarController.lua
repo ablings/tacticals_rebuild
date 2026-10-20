@@ -220,7 +220,10 @@ local RENDER_LIFT = -10                                        -- the render sit
 local TILE_GREY, TILE_T = Color3.fromRGB(0, 0, 0), 0.55       -- a tile: dark glass
 local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in your hands: lighter glass
 local BONE = Color3.fromRGB(255, 255, 255)
-local STENCIL = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+-- (2026-10-20, Edward's style D "Comic Ink") Bangers for the held name, solid black ink strokes, black-outlined tiles,
+-- the held tile outlined in comic yellow
+local STENCIL = Font.new("rbxasset://fonts/families/Bangers.json")
+local INK_YELLOW = Color3.fromRGB(255, 212, 0)
 local UIKitFolder = ReplicatedStorage:WaitForChild("UIKit")
 local Kit = require(UIKitFolder:WaitForChild("Kit"))
 local ICON_FOV = 30
@@ -510,9 +513,9 @@ end
 local function shade(t: GuiObject, thick: number?): UIStroke
 	local s = Instance.new("UIStroke")
 	s.Color = BLACK
-	s.Thickness = thick or 1.5
-	s.Transparency = 0.45
-	s.LineJoinMode = Enum.LineJoinMode.Round
+	s.Thickness = (thick or 1.5) + 0.5
+	s.Transparency = 0
+	s.LineJoinMode = Enum.LineJoinMode.Miter
 	s.Parent = t
 	return s
 end
@@ -551,13 +554,14 @@ local function makeTile(i: number)
 	})
 	g.Parent = fade
 	fade.Parent = tile
-	round(tile, 10)
-	round(fade, 10)
+	round(tile, 4)
+	round(fade, 4)
 	-- the held one gets a soft white edge
 	local edge = Instance.new("UIStroke")
-	edge.Color = WHITE
-	edge.Thickness = 2
-	edge.Transparency = 1
+	edge.Color = BLACK -- (style D) always inked; the held one turns comic yellow
+	edge.Thickness = 3.5
+	edge.LineJoinMode = Enum.LineJoinMode.Miter
+	edge.Transparency = 0
 	edge.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	edge.Parent = tile
 
@@ -666,6 +670,7 @@ end
 local function buildUI()
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "Hotbar"
+	game:GetService("CollectionService"):AddTag(gui, "KeepColors") -- (UIStyleController would turn the yellow neutral)
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- every item draws over every tile, so they can spill onto the next one
@@ -832,7 +837,8 @@ local function buildUI()
 		gold.Name = "PadGold"
 		gold.Color = ColorSequence.new(Color3.fromRGB(255, 222, 90), Color3.fromRGB(255, 176, 40))
 		gold.Rotation = 90
-		gold.Enabled = pad
+		gold.Enabled = false -- (style D: the name is always comic yellow, below)
+		heldName.TextColor3 = INK_YELLOW
 		gold.Parent = heldName
 		hints.AnchorPoint = pad and Vector2.new(1 - o.hints[1].X, o.hints[1].Y) or o.hints[1]
 		hints.Position = pad and UDim2.fromScale(1 - o.hints[2].X.Scale, o.hints[2].Y.Scale) or o.hints[2]
@@ -924,7 +930,7 @@ local function refreshUI()
 			heldName.TextTransparency = 1
 			heldStroke.Transparency = 1
 			TweenService:Create(heldName, TweenInfo.new(0.22, Enum.EasingStyle.Quint), { TextTransparency = 0 }):Play()
-			TweenService:Create(heldStroke, TI, { Transparency = 0.45 }):Play()
+			TweenService:Create(heldStroke, TI, { Transparency = 0 }):Play()
 		else
 			TweenService:Create(heldName, TI, { TextTransparency = 1 }):Play()
 			TweenService:Create(heldStroke, TI, { Transparency = 1 }):Play()
@@ -940,7 +946,7 @@ local function refreshUI()
 			sl.selected, sl.empty = on, empty
 			TweenService:Create(sl.tile, TI, { BackgroundColor3 = on and HELD_FILL or TILE_GREY, BackgroundTransparency = on and HELD_T or TILE_T }):Play()
 			TweenService:Create(sl.grow, POP, { Scale = on and 1 or 0.86 }):Play()
-			TweenService:Create(sl.edge, TI, { Transparency = on and 0.35 or 1 }):Play()
+			TweenService:Create(sl.edge, TI, { Color = on and INK_YELLOW or BLACK, Thickness = on and 5 or 3.5 }):Play()
 			TweenService:Create(sl.fade, TI, { BackgroundTransparency = on and 0 or 1 }):Play()
 			TweenService:Create(sl.icon.scale, POP, { Scale = on and 1.08 or 0.92 }):Play()
 			local tint = empty and Color3.fromRGB(90, 96, 80) or (on and Color3.fromRGB(236, 232, 218) or Color3.fromRGB(200, 198, 186))

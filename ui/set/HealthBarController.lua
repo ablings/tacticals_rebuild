@@ -19,7 +19,7 @@ local LOW_AT = 0.3 -- fraction of max health
 -- no plate, just the big white number with a cross and a rounded quartered bar on dark glass, like RIVALS.
 -- Built in 1920x1080 design px on a UIKit canvas, then Kit.toScale (Scale only).
 local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
-local STENCIL = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+local STENCIL = Font.new("rbxasset://fonts/families/Bangers.json") -- (2026-10-20, style D "Comic Ink")
 local FIELD = Color3.fromRGB(200, 200, 206)
 
 local gui, fill, trail, number, frame
@@ -56,6 +56,7 @@ local function build()
 	label.Text = "HEALTH"
 	label.ZIndex = 3
 	label.Parent = frame
+	local ls = Instance.new("UIStroke"); ls.Thickness = 2; ls.LineJoinMode = Enum.LineJoinMode.Miter; ls.Parent = label
 
 	-- medical cross beside the number
 	local cross = box(frame, { AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(W - 112, 14), Size = UDim2.fromOffset(26, 26), BackgroundTransparency = 1, ZIndex = 3 })
@@ -68,6 +69,7 @@ local function build()
 	number.Position = UDim2.fromOffset(W - 18, 2)
 	number.Size = UDim2.fromOffset(90, 50)
 	number.FontFace = STENCIL
+	local ns = Instance.new("UIStroke") ns.Thickness = 2.5 ns.LineJoinMode = Enum.LineJoinMode.Miter ns.Parent = number -- (style D)
 	number.TextSize = 46
 	number.TextColor3 = COLOR_OK
 	number.TextXAlignment = Enum.TextXAlignment.Right
@@ -77,7 +79,8 @@ local function build()
 
 	local back = box(frame, { Name = "Bar", Position = UDim2.fromOffset(20, 56), Size = UDim2.fromOffset(WIDTH, HEIGHT),
 		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5, ClipsDescendants = true, ZIndex = 3 })
-	local rc = Instance.new("UICorner") rc.CornerRadius = UDim.new(0, 5) rc.Parent = back
+	local rc = Instance.new("UICorner") rc.CornerRadius = UDim.new(0, 3) rc.Parent = back
+	local bs = Instance.new("UIStroke") bs.Color = Color3.new(0, 0, 0) bs.Thickness = 3.5 bs.LineJoinMode = Enum.LineJoinMode.Miter bs.Parent = back -- (style D)
 	trail = box(back, { Name = "Damage", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(255, 150, 120), BackgroundTransparency = 0.25, ZIndex = 3 })
 	fill = box(back, { Name = "Fill", Size = UDim2.fromScale(1, 1), BackgroundColor3 = COLOR_OK, ZIndex = 4 })
 	-- quarter ticks

@@ -25,9 +25,11 @@ local OLIVE_HI = Color3.fromRGB(150, 172, 84)
 local TEAM_A = { Color3.fromRGB(198, 206, 168), Color3.fromRGB(96, 108, 56) }
 local TEAM_B = { Color3.fromRGB(232, 92, 72), Color3.fromRGB(140, 36, 28) }
 local GOOD, BAD = Color3.fromRGB(110, 220, 80), Color3.fromRGB(235, 70, 60)
-local FX = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local STENCIL = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+-- (2026-10-20, Edward's style D "Comic Ink" + RIVALS see-through) Bangers headings; the INK pass at the end of this script
+-- gives every panel a heavy black outline, small corners, and the big pieces a hard drop shadow and a tilt
+local FX = Font.new("rbxasset://fonts/families/Bangers.json")
+local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Heavy)
+local STENCIL = FX
 
 ---------------------------------------------------------------------------------------------------- state
 local function stateObject()
@@ -91,7 +93,7 @@ local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	local l = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font, TextSize = size, TextColor3 = color or WHITE,
 		TextXAlignment = align or Enum.TextXAlignment.Center, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 3, Parent = parent })
 	l:SetAttribute("dTS", size)
-	new("UIStroke", { Thickness = math.max(1.5, size / 22), Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+	new("UIStroke", { Thickness = math.max(2, size / 13), Transparency = 0, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
 	return l
 end
 local function toScale(g, pd)
@@ -639,7 +641,7 @@ local function styleRematch(btn, title, sub)
 	title.TextTransparency = allowed and 0 or 0.6
 	sub.TextTransparency = allowed and 0 or 0.6
 	local stroke = btn:FindFirstChildOfClass("UIStroke")
-	if stroke then stroke.Color = (allowed and voted) and OLIVE_HI or Color3.fromRGB(236, 232, 218) end
+	if stroke then stroke.Color = (allowed and voted) and Color3.fromRGB(255, 212, 0) or BLACK end -- (style D: ink, yellow once voted)
 	local startsAt = st("RematchStartsAt")
 	if not allowed then
 		sub.Text = tostring(st("RematchReason") or "Unavailable")
@@ -1438,4 +1440,61 @@ if RunService:IsStudio() then
 		return true
 	end
 	hook.Parent = player:WaitForChild("PlayerScripts")
+end
+
+---------------------------------------------------------------------------------------------------- INK (style D)
+-- (2026-10-20) Comic Ink over the whole duel HUD + results, keeping RIVALS' see-through panels:
+--   * gloss highlights off, border strokes heavy black (Miter), corners small (round pills / heads stay round)
+--   * text strokes solid black
+--   * the big pieces get a hard black drop shadow (a sibling, offset in Scale) and a small tilt
+--   * runs on what exists now and on everything added later (kill feed rows, results rows)
+do
+	local CS = game:GetService("CollectionService")
+	local function inkOne(d)
+		if d:IsA("UIStroke") then
+			if d.ApplyStrokeMode == Enum.ApplyStrokeMode.Border then
+				d.Color = BLACK; d.Transparency = 0; d.Thickness = math.max(d.Thickness, 3.5); d.LineJoinMode = Enum.LineJoinMode.Miter
+			elseif d.Parent and (d.Parent:IsA("TextLabel") or d.Parent:IsA("TextButton")) then
+				d.Color = BLACK; d.Transparency = 0; d.LineJoinMode = Enum.LineJoinMode.Miter
+			end
+		elseif d:IsA("UICorner") then
+			if d.CornerRadius.Scale == 0 then
+				local r = d:GetAttribute("dR") or d.CornerRadius.Offset
+				if r > 6 and r < 20 then d:SetAttribute("dR", 6); d.CornerRadius = UDim.new(0, math.min(d.CornerRadius.Offset, 6)) end
+			elseif d.CornerRadius.Scale > 0.05 and d.CornerRadius.Scale < 0.4 then
+				d.CornerRadius = UDim.new(0.06, 0)
+			end
+		elseif d:IsA("Frame") and d.Name == "Gloss" then
+			d.Visible = false
+		elseif (d:IsA("TextLabel") or d:IsA("TextButton")) and d.TextScaled and d.Text ~= "" and not d:FindFirstChildOfClass("UIStroke") then
+			new("UIStroke", { Color = BLACK, Thickness = 2, LineJoinMode = Enum.LineJoinMode.Miter, Parent = d })
+		end
+	end
+	local function inkTree(g)
+		CS:AddTag(g, "KeepColors")
+		for _, d in g:GetDescendants() do inkOne(d) end
+		g.DescendantAdded:Connect(function(d) task.defer(function() if d.Parent then inkOne(d) end end) end)
+	end
+	inkTree(gui)
+	inkTree(rgui)
+	-- hard shadows + tilts on the big pieces (their parents are W x H design canvases: offsets in Scale)
+	local function shadow(t, off, tilt)
+		if not t then return end
+		t.Rotation = tilt or t.Rotation
+		local sh = new("Frame", { Name = t.Name .. "Ink", BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, BorderSizePixel = 0,
+			AnchorPoint = t.AnchorPoint, Size = t.Size, Position = t.Position + UDim2.fromScale(off / W, off / H), Rotation = t.Rotation,
+			ZIndex = math.max(0, t.ZIndex - 1), Visible = t.Visible, Parent = t.Parent }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
+		t:GetPropertyChangedSignal("Visible"):Connect(function() sh.Visible = t.Visible end)
+		t:GetPropertyChangedSignal("Position"):Connect(function() sh.Position = t.Position + UDim2.fromScale(off / W, off / H) end)
+		t:GetPropertyChangedSignal("Size"):Connect(function() sh.Size = t.Size end)
+	end
+	shadow(mineBox.frame, 8, -1)
+	shadow(theirBox.frame, 8, 1)
+	shadow(timerBox, 8, 0)
+	shadow(RV.roundCard, 10, -3)
+	shadow(RV.kcard, 10, -1.5)
+	shadow(RV.switchB, 9, -2)
+	shadow(results, 12, -1)
+	shadow(specBar, 8, -1)
+	for _, b in { backB, leaveB, againB, rematchB } do shadow(b, 8, -1.5) end
 end
