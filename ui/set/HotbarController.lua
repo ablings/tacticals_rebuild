@@ -220,9 +220,9 @@ local RENDER_LIFT = -10                                        -- the render sit
 local TILE_GREY, TILE_T = Color3.fromRGB(0, 0, 0), 0.55       -- a tile: dark glass
 local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in your hands: lighter glass
 local BONE = Color3.fromRGB(255, 255, 255)
--- (2026-10-20, Edward's style D "Comic Ink") Bangers for the held name, solid black ink strokes, black-outlined tiles,
--- the held tile outlined in comic yellow
-local STENCIL = Font.new("rbxasset://fonts/families/Bangers.json")
+-- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) Montserrat Heavy for labels, soft text edges, tiles with a
+-- hairline white edge (Sniper Duels), the held tile's edge solid white
+local STENCIL = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy)
 local INK_YELLOW = Color3.fromRGB(255, 255, 255) -- (2026-10-20, Edward: the bottom HUD in white, not yellow; name kept)
 local UIKitFolder = ReplicatedStorage:WaitForChild("UIKit")
 local Kit = require(UIKitFolder:WaitForChild("Kit"))
@@ -513,9 +513,8 @@ end
 local function shade(t: GuiObject, thick: number?): UIStroke
 	local s = Instance.new("UIStroke")
 	s.Color = BLACK
-	s.Thickness = (thick or 1.5) + 0.5
-	s.Transparency = 0
-	s.LineJoinMode = Enum.LineJoinMode.Miter
+	s.Thickness = thick or 1.5
+	s.Transparency = 0.5
 	s.Parent = t
 	return s
 end
@@ -558,10 +557,9 @@ local function makeTile(i: number)
 	round(fade, 4)
 	-- the held one gets a soft white edge
 	local edge = Instance.new("UIStroke")
-	edge.Color = BLACK -- (style D) always inked; the held one turns comic yellow
-	edge.Thickness = 3.5
-	edge.LineJoinMode = Enum.LineJoinMode.Miter
-	edge.Transparency = 0
+	edge.Color = WHITE -- (serious pass) a faint hairline; the held one turns solid white
+	edge.Thickness = 1.5
+	edge.Transparency = 0.82
 	edge.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	edge.Parent = tile
 
@@ -779,7 +777,7 @@ local function buildUI()
 	column.Parent = canvas
 
 	-- name of what's in your hands: big stencil type above the row, an olive bar at its right end
-	heldName = text(column, STENCIL, 56, BONE, 10)
+	heldName = text(column, Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Heavy), 50, BONE, 10) -- (2026-10-20) RIVALS: title case in a clean heavy sans (Bangers has no lower case)
 	heldName.Name = "HeldName"
 	heldName.AnchorPoint = Vector2.new(1, 1)
 	heldName.Position = UDim2.new(1, -4, 0, -12)
@@ -926,7 +924,7 @@ local function refreshUI()
 	if active ~= shownActive then
 		shownActive = active
 		if active > 0 then
-			heldName.Text = string.upper(slots[active].title)
+			heldName.Text = (string.gsub(string.lower(slots[active].title), "(%a)([%w']*)", function(a, b) return string.upper(a) .. b end)) -- (2026-10-20, RIVALS) "Pistol", not "PISTOL"
 			heldName.TextTransparency = 1
 			heldStroke.Transparency = 1
 			TweenService:Create(heldName, TweenInfo.new(0.22, Enum.EasingStyle.Quint), { TextTransparency = 0 }):Play()
@@ -936,7 +934,7 @@ local function refreshUI()
 			TweenService:Create(heldStroke, TI, { Transparency = 1 }):Play()
 		end
 	elseif active > 0 then
-		heldName.Text = string.upper(slots[active].title)
+		heldName.Text = (string.gsub(string.lower(slots[active].title), "(%a)([%w']*)", function(a, b) return string.upper(a) .. b end)) -- (2026-10-20, RIVALS) "Pistol", not "PISTOL"
 	end
 
 	for i, sl in slots do
@@ -946,7 +944,7 @@ local function refreshUI()
 			sl.selected, sl.empty = on, empty
 			TweenService:Create(sl.tile, TI, { BackgroundColor3 = on and HELD_FILL or TILE_GREY, BackgroundTransparency = on and HELD_T or TILE_T }):Play()
 			TweenService:Create(sl.grow, POP, { Scale = on and 1 or 0.86 }):Play()
-			TweenService:Create(sl.edge, TI, { Color = on and INK_YELLOW or BLACK, Thickness = on and 5 or 3.5 }):Play()
+			TweenService:Create(sl.edge, TI, { Color = on and INK_YELLOW or WHITE, Thickness = on and 2.5 or 1.5, Transparency = on and 0 or 0.82 }):Play()
 			TweenService:Create(sl.fade, TI, { BackgroundTransparency = on and 0 or 1 }):Play()
 			TweenService:Create(sl.icon.scale, POP, { Scale = on and 1.08 or 0.92 }):Play()
 			local tint = empty and Color3.fromRGB(90, 96, 80) or (on and Color3.fromRGB(236, 232, 218) or Color3.fromRGB(200, 198, 186))

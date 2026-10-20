@@ -22,13 +22,14 @@ local player = Players.LocalPlayer
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE_HI = Color3.fromRGB(255, 212, 0)
-local TEAM_A = { Color3.fromRGB(126, 232, 120), Color3.fromRGB(46, 168, 72) } -- (2026-10-20, Edward) us: light green
-local TEAM_B = { Color3.fromRGB(255, 128, 118), Color3.fromRGB(222, 72, 66) } -- them: lighter red
+local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) } -- (2026-10-20, Edward: "serious", like the old bone/olive but better) us: warm beige
+local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) } -- them: muted dark green
 local GOOD, BAD = Color3.fromRGB(255, 212, 0), Color3.fromRGB(235, 70, 60)
--- (2026-10-20, Edward's style D "Comic Ink" + RIVALS see-through) Bangers headings; the INK pass at the end of this script
--- gives every panel a heavy black outline, small corners, and the big pieces a hard drop shadow and a tilt
-local FX = Font.new("rbxasset://fonts/families/Bangers.json")
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Heavy)
+-- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
+-- panels in a calmer dress: Montserrat Heavy headlines, Builder Sans body, hairline edges, team colour only as an accent.
+-- The SERIOUS pass at the end of this script applies it to everything (it replaced the comic style D pass).
+local FX = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy)
+local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
 local STENCIL = FX
 
 ---------------------------------------------------------------------------------------------------- state
@@ -93,7 +94,7 @@ local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	local l = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font, TextSize = size, TextColor3 = color or WHITE,
 		TextXAlignment = align or Enum.TextXAlignment.Center, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 3, Parent = parent })
 	l:SetAttribute("dTS", size)
-	new("UIStroke", { Thickness = math.max(2, size / 13), Transparency = 0, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+	new("UIStroke", { Thickness = math.max(1, size / 30), Transparency = 0.55, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
 	return l
 end
 local function toScale(g, pd)
@@ -132,10 +133,13 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 
 ---------------------------------------------------------------------------------------------------- score bar
 local function teamBox(x, cols, right)
-	local b = new("Frame", { Position = UDim2.fromOffset(x, 20), Size = UDim2.fromOffset(300, 84), BackgroundColor3 = WHITE, Parent = root },
-		{ corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }),
-			new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.6, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
-	gloss(b, 10, 0.28)
+	-- (2026-10-20, Edward via Knife Duels: "find balance") dark see-through plate; the team colour is only an accent: a strip
+	-- along the bottom and the score digits
+	local b = new("Frame", { Position = UDim2.fromOffset(x, 20), Size = UDim2.fromOffset(300, 84), BackgroundColor3 = Color3.fromRGB(16, 17, 20),
+		BackgroundTransparency = 0.35, Parent = root },
+		{ corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.85, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	new("Frame", { AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 7 / 84), BackgroundColor3 = WHITE, BorderSizePixel = 0,
+		ZIndex = 2, Parent = b }, { new("UIGradient", { Rotation = 0, Color = ColorSequence.new(cols[1], cols[2]) }) })
 	local slots = {}
 	for i = 1, 3 do
 		local hx = right and (96 + (i - 1) * 64) or (14 + (i - 1) * 64)
@@ -152,7 +156,7 @@ local function teamBox(x, cols, right)
 		for _, tx in { 23, 28, 33 } do new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(tx - 1, 40), Size = UDim2.fromOffset(2, 6), ZIndex = 6, Parent = skull }) end
 		slots[i] = { h = h, x1 = x1, x2 = x2, skull = skull }
 	end
-	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, WHITE, nil, 4)
+	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, cols[1], nil, 4)
 	return { slots = slots, score = score, frame = b }
 end
 local mineBox = teamBox(580, TEAM_A, false)
@@ -229,17 +233,38 @@ local function addKill(d)
 	if d.victim and d.victim < 0 then botDown[d.victim] = true end
 	if d.killer == player.UserId and d.victim and d.victim ~= player.UserId and showEliminated then showEliminated(d.victim) end
 	local myTeam = player:GetAttribute("Team")
-	local function col(uid) return WHITE end -- (names white on the team-coloured row, RIVALS)
-	-- (2026-10-18, live RIVALS) the row is in the killer's team colour: yours when your side got the kill, red when theirs
-	local ours = d.killer == player.UserId or teamOf(d.killer) == myTeam
-	local rc = ours and TEAM_A or TEAM_B
-	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundColor3 = WHITE, BackgroundTransparency = 0.05, Parent = feed },
-		{ new("UICorner", { CornerRadius = UDim.new(0.25, 0) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(rc[1], rc[2]) }) })
-	local mine = d.killer == player.UserId or d.victim == player.UserId
-	if mine then new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = row }) end
+	-- (2026-10-20, Edward's screen: Knife Duels' feed) no coloured row: separate small dark pills sized to their content and
+	-- packed to the right: [killer] [weapon] (headshot / no-scope marks, no pill) [victim]. Names are white; each name pill has
+	-- a thin underline in that player's team colour (ours / theirs).
+	local function sideOf(uid) return uid == player.UserId or teamOf(uid) == myTeam end
+	local ROW_W, ROW_H = 480, 45 -- the feed's design width, a row's design height (0.15 of 300)
+	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundTransparency = 1, Parent = feed },
+		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Right,
+			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0.008, 0), SortOrder = Enum.SortOrder.LayoutOrder }) })
+	local order = 0
+	local function pill(wDesign, underline)
+		order += 1
+		local f = new("Frame", { LayoutOrder = order, Size = UDim2.fromScale(wDesign / ROW_W, 0.82), BackgroundColor3 = Color3.fromRGB(18, 19, 23),
+			BackgroundTransparency = 0.25, Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.18, 0) }) })
+		if underline then
+			new("Frame", { AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromScale(0.5, 1), Size = UDim2.fromScale(0.86, 0.09), BackgroundColor3 = underline,
+				BorderSizePixel = 0, Parent = f })
+		end
+		return f
+	end
+	local function namePill(uid)
+		local txt = nameOf(uid)
+		local w = game:GetService("TextService"):GetTextSize(txt, 22, Enum.Font.BuilderSansBold, Vector2.new(1000, 100)).X + 26
+		local f = pill(math.clamp(w, 60, 200), sideOf(uid) and TEAM_A[1] or TEAM_B[1])
+		local t = new("TextLabel", { BackgroundTransparency = 1, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE, TextTruncate = Enum.TextTruncate.AtEnd,
+			Position = UDim2.fromScale(0.06, 0.16), Size = UDim2.fromScale(0.88, 0.6), Parent = f })
+		new("UITextSizeConstraint", { MaxTextSize = 22, Parent = t })
+		if uid == player.UserId then new("UIStroke", { Color = WHITE, Thickness = 1.2, Transparency = 0.45, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f }) end
+		return f
+	end
 	local verb = ({ Takedown = "took down", Melee = "bashed", Explosion = "blew up", StickyGrenade = "blew up", Landmine = "blew up", Burn = "burned" })[d.kind] or ">"
-	-- (2026-10-20, RIVALS feed) killer · white weapon silhouette · victim. The silhouette is the weapon's own tool (Repository
-	-- Weapons / Melee) in a flat-lit ViewportFrame, barrel to the right; no tool (gadgets, burn) keeps the verb text.
+	-- the weapon: an uploaded silhouette (UIKit.KillIcons), else the weapon's own tool rendered white in a ViewportFrame,
+	-- else the verb as text
 	local tool
 	if typeof(d.weapon) == "string" and d.kind ~= "Takedown" then
 		local repo = ReplicatedStorage:FindFirstChild("Repository")
@@ -248,34 +273,21 @@ local function addKill(d)
 			tool = tool or (folder and folder:FindFirstChild(d.weapon))
 		end
 	end
-	local l, l2
-	-- (2026-10-20, Edward: RIVALS kill feed) uploaded silhouettes (UIKit.KillIcons) win over the tool render: the weapon, then
-	-- headshot / no-scope marks before the victim; an icon that isn't uploaded yet falls back to the render / the mark
 	local KI = nil
 	pcall(function() KI = require(ReplicatedStorage.UIKit.KillIcons) end)
 	local wIcon = KI and KI.Weapon(typeof(d.weapon) == "string" and d.kind ~= "Takedown" and d.weapon or nil, d.kind)
 	local marks = {}
 	if KI and d.headshot and KI.Status("headshot") then table.insert(marks, KI.Status("headshot")) end
 	if KI and d.noscope and KI.Status("noscope") then table.insert(marks, KI.Status("noscope")) end
+	if d.killer then namePill(d.killer) end
 	if wIcon then
-		l = new("TextLabel", { BackgroundTransparency = 1, Text = nameOf(d.killer), FontFace = FB, TextScaled = true, TextColor3 = col(d.killer),
-			TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.36, 0.7), Parent = row })
-		new("ImageLabel", { BackgroundTransparency = 1, Image = wIcon, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromScale(0.41, 0.1),
-			Size = UDim2.fromScale(0.16, 0.8), Parent = row })
-		local x = 0.58
-		for _, img in marks do
-			new("ImageLabel", { BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromScale(x, 0.15),
-				Size = UDim2.fromScale(0.06, 0.7), Parent = row })
-			x += 0.065
-		end
-		l2 = new("TextLabel", { BackgroundTransparency = 1, Text = ((d.headshot and #marks == 0) and "◉ " or "") .. nameOf(d.victim), FontFace = FB, TextScaled = true,
-			TextColor3 = col(d.victim), TextXAlignment = Enum.TextXAlignment.Left, Position = UDim2.fromScale(x + 0.01, 0.15), Size = UDim2.fromScale(0.96 - x, 0.7), Parent = row })
-		new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l2 })
+		local f = pill(84)
+		new("ImageLabel", { BackgroundTransparency = 1, Image = wIcon, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromScale(0.1, 0.12),
+			Size = UDim2.fromScale(0.8, 0.76), Parent = f })
 	elseif tool then
-		l = new("TextLabel", { BackgroundTransparency = 1, Text = nameOf(d.killer), FontFace = FB, TextScaled = true, TextColor3 = col(d.killer),
-			TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.4, 0.7), Parent = row })
+		local f = pill(84)
 		local vpf = new("ViewportFrame", { BackgroundTransparency = 1, Ambient = WHITE, LightColor = Color3.new(0, 0, 0),
-			Position = UDim2.fromScale(0.45, 0), Size = UDim2.fromScale(0.16, 1), Parent = row })
+			Position = UDim2.fromScale(0.08, 0), Size = UDim2.fromScale(0.84, 1), Parent = f })
 		local m = Instance.new("Model")
 		for _, part in tool:GetDescendants() do
 			if part:IsA("BasePart") and part.Transparency < 0.9 then
@@ -294,25 +306,35 @@ local function addKill(d)
 		cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(reach, 0, 0), cf.Position) -- from +X: the barrel (-Z) points right
 		cam.Parent = vpf
 		vpf.CurrentCamera = cam
-		l2 = new("TextLabel", { BackgroundTransparency = 1, Text = (d.headshot and "◉ " or "") .. nameOf(d.victim), FontFace = FB, TextScaled = true,
-			TextColor3 = col(d.victim), TextXAlignment = Enum.TextXAlignment.Left, Position = UDim2.fromScale(0.63, 0.15), Size = UDim2.fromScale(0.34, 0.7), Parent = row })
-		new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l2 })
 	else
-		local txt = string.format('<font color="#%s">%s</font>  %s%s  <font color="#%s">%s</font>', col(d.killer):ToHex(), nameOf(d.killer),
-			verb, d.headshot and "  ◉" or "", col(d.victim):ToHex(), nameOf(d.victim)) -- (◉: BuilderSans has no ✦)
-		l = new("TextLabel", { BackgroundTransparency = 1, RichText = true, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE,
-			TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromScale(0.03, 0.15), Size = UDim2.fromScale(0.94, 0.7), Parent = row })
+		local w = game:GetService("TextService"):GetTextSize(verb, 20, Enum.Font.BuilderSansBold, Vector2.new(1000, 100)).X + 22
+		local f = pill(w)
+		local t = new("TextLabel", { BackgroundTransparency = 1, Text = verb, FontFace = FB, TextScaled = true, TextColor3 = Color3.fromRGB(205, 205, 212),
+			Position = UDim2.fromScale(0.08, 0.2), Size = UDim2.fromScale(0.84, 0.6), Parent = f })
+		new("UITextSizeConstraint", { MaxTextSize = 20, Parent = t })
 	end
-	new("UIStroke", { Thickness = 1, Transparency = 0.5, Parent = l })
-	gloss(row, 8, 0.22)
+	if d.headshot and #marks == 0 then -- no uploaded mark: the old ◉
+		order += 1
+		new("TextLabel", { LayoutOrder = order, BackgroundTransparency = 1, Text = "◉", FontFace = FB, TextScaled = true, TextColor3 = WHITE,
+			Size = UDim2.fromScale(28 / ROW_W, 0.6), Parent = row })
+	end
+	for _, img in marks do
+		order += 1
+		new("ImageLabel", { LayoutOrder = order, BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(34 / ROW_W, 0.76), Parent = row })
+	end
+	if d.victim then namePill(d.victim) end
 	local ins = new("UIScale", { Scale = 0.6, Parent = row })
 	TweenService:Create(ins, TweenInfo.new(0.22, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	task.delay(5, function()
 		if row.Parent then
-			TweenService:Create(row, TweenInfo.new(0.4), { BackgroundTransparency = 1 }):Play()
-			TweenService:Create(l, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
-			if l2 then TweenService:Create(l2, TweenInfo.new(0.4), { TextTransparency = 1 }):Play() end
-			for _, v in row:GetChildren() do if v:IsA("ViewportFrame") then TweenService:Create(v, TweenInfo.new(0.4), { ImageTransparency = 1 }):Play() end end
+			local fade = TweenInfo.new(0.4)
+			for _, v in row:GetDescendants() do
+				if v:IsA("GuiObject") and v.BackgroundTransparency < 1 then TweenService:Create(v, fade, { BackgroundTransparency = 1 }):Play() end
+				if v:IsA("TextLabel") then TweenService:Create(v, fade, { TextTransparency = 1 }):Play() end
+				if v:IsA("ImageLabel") or v:IsA("ViewportFrame") then TweenService:Create(v, fade, { ImageTransparency = 1 }):Play() end
+				if v:IsA("UIStroke") then TweenService:Create(v, fade, { Transparency = 1 }):Play() end
+			end
 			task.delay(0.45, function() row:Destroy() end)
 		end
 	end)
@@ -475,7 +497,7 @@ local function showResults(sum)
 		else sum.Draw = true end
 	end
 	resTitle.Text = sum.Draw and "DRAW" or (sum.Won and "VICTORY" or "DEFEAT")
-	resTitle.TextColor3 = sum.Draw and WHITE or (sum.Won and GOOD or BAD)
+	resTitle.TextColor3 = sum.Draw and WHITE or (sum.Won and TEAM_A[1] or TEAM_B[1])
 	local myTeam = sum.Team or player:GetAttribute("Team") or "A"
 	local sc = sum.Score or { A = st("ScoreA") or 0, B = st("ScoreB") or 0 }
 	local mine, theirs = myTeam == "A" and sc.A or sc.B, myTeam == "A" and sc.B or sc.A
@@ -574,12 +596,11 @@ local eloCap = new("TextLabel", { BackgroundTransparency = 1, Text = "Your ELO",
 	Size = UDim2.fromScale(0.2, 0.22), Parent = bar })
 local eloNum = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.4, 0.24), Size = UDim2.fromScale(0.2, 0.44), Parent = bar })
 
--- buttons (RIVALS: dark gradient, thick white rim)
+-- buttons (RIVALS layout; 2026-10-20 serious pass: flat dark plates with a hairline edge, Sniper / Murder Duels)
 local function bigButton(name, text, sub, pos)
 	local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0, 1), Position = pos, Size = UDim2.fromScale(0.132, 0.078),
-		BackgroundColor3 = WHITE, Parent = rcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.12, 0) }),
-		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(150, 156, 140), Color3.fromRGB(16, 18, 15)) }),
-		new("UIStroke", { Color = Color3.fromRGB(236, 232, 218), Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		BackgroundColor3 = Color3.fromRGB(18, 19, 23), BackgroundTransparency = 0.2, Parent = rcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.08, 0) }),
+		new("UIStroke", { Color = WHITE, Transparency = 0.75, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) }) -- (serious pass) flat dark plate, hairline edge
 	local t = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.08, sub and 0.1 or 0.18),
 		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
 	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.2, 0.62),
@@ -663,7 +684,11 @@ local function styleRematch(btn, title, sub)
 	title.TextTransparency = allowed and 0 or 0.6
 	sub.TextTransparency = allowed and 0 or 0.6
 	local stroke = btn:FindFirstChildOfClass("UIStroke")
-	if stroke then stroke.Color = (allowed and voted) and Color3.fromRGB(255, 212, 0) or BLACK end -- (style D: ink, yellow once voted)
+	if stroke then -- (serious pass) hairline white; solid beige (our colour) once voted
+		stroke.Color = (allowed and voted) and TEAM_A[1] or WHITE
+		stroke.Transparency = (allowed and voted) and 0 or 0.75
+		stroke.Thickness = (allowed and voted) and 2.5 or 1.5
+	end
 	local startsAt = st("RematchStartsAt")
 	if not allowed then
 		sub.Text = tostring(st("RematchReason") or "Unavailable")
@@ -799,9 +824,8 @@ local pcanvas = new("Frame", { Name = "Canvas", BackgroundTransparency = 1, Anch
 	{ new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
 local function panelButton(name, text, sub, y)
 	local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromScale(0.992, y), Size = UDim2.fromScale(0.118, 0.066),
-		BackgroundColor3 = WHITE, Parent = pcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.12, 0) }),
-		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(150, 156, 140), Color3.fromRGB(16, 18, 15)) }),
-		new("UIStroke", { Color = Color3.fromRGB(236, 232, 218), Thickness = 2.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		BackgroundColor3 = Color3.fromRGB(18, 19, 23), BackgroundTransparency = 0.2, Parent = pcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.08, 0) }),
+		new("UIStroke", { Color = WHITE, Transparency = 0.75, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) }) -- (serious pass) flat dark plate, hairline edge
 	local t = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.08, sub and 0.1 or 0.18),
 		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
 	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.15, 0.62),
@@ -856,24 +880,25 @@ do
 ---------------------------------------------------------------------------------------------------- round card (RIVALS)
 -- (2026-10-18, live RIVALS with Edward) a round's end: a small green "ROUND / WON" or red "ROUND / LOST" card pops in under
 -- the timer with a white flash, and stays until the next round goes live.
-local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(818, 116), Size = UDim2.fromOffset(284, 100), BackgroundColor3 = WHITE,
-	Visible = false, ZIndex = 6, Parent = root }, { corner(8) })
-local roundGrad = new("UIGradient", { Rotation = 90, Parent = roundCard })
-local roundSmall = label(roundCard, "ROUND", FB, 26, 0, 4, 284, 30, WHITE, nil, 7)
-local roundBig = label(roundCard, "WON", FX, 64, 0, 26, 284, 70, WHITE, nil, 7)
-new("UIStroke", { Thickness = 2, Transparency = 0.5, Parent = roundBig })
-local roundFlash = new("Frame", { BackgroundColor3 = WHITE, BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 8, Parent = roundCard }, { corner(8) })
+-- (2026-10-20, Edward: RIVALS + Murder Duels' seriousness) now a banner: a dark plate fading out at its sides, "WIN" / "LOSS"
+-- in the side's colour (beige ours, green theirs), "ROUND n" under it and one thin line in the same colour.
+local SIDE_FADE = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.22, 0.3), NumberSequenceKeypoint.new(0.78, 0.3), NumberSequenceKeypoint.new(1, 1) })
+local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(660, 136), Size = UDim2.fromOffset(600, 104), BackgroundColor3 = BLACK, BorderSizePixel = 0,
+	Visible = false, ZIndex = 6, Parent = root }, { new("UIGradient", { Transparency = SIDE_FADE }) })
+local roundBig = label(roundCard, "WIN", FX, 58, 0, 4, 600, 66, WHITE, nil, 7)
+local roundSmall = label(roundCard, "ROUND", FB, 22, 0, 68, 600, 26, Color3.fromRGB(215, 215, 220), nil, 7)
+local roundLine = new("Frame", { BorderSizePixel = 0, Position = UDim2.fromOffset(0, 100), Size = UDim2.fromOffset(600, 3), BackgroundColor3 = WHITE, ZIndex = 7, Parent = roundCard },
+	{ new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.3, 0), NumberSequenceKeypoint.new(0.7, 0), NumberSequenceKeypoint.new(1, 1) }) }) })
 local roundPop = new("UIScale", { Parent = roundCard })
-gloss(roundCard, 8, 0.3)
 local function showRoundCard(won)
-	roundGrad.Color = won and ColorSequence.new(Color3.fromRGB(126, 232, 120), Color3.fromRGB(46, 168, 72)) or ColorSequence.new(Color3.fromRGB(255, 128, 118), Color3.fromRGB(222, 72, 66))
-	roundBig.Text = won and "WON" or "LOST"
+	local c = won and TEAM_A[1] or TEAM_B[1]
+	roundBig.Text = won and "WIN" or "LOSS"
+	roundBig.TextColor3 = c
+	roundLine.BackgroundColor3 = c
+	roundSmall.Text = "ROUND " .. tostring(st("RoundNumber") or "")
 	roundCard.Visible = true
-	roundPop.Scale = 1.35
-	TweenService:Create(roundPop, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	roundFlash.BackgroundTransparency = 0
-	TweenService:Create(roundFlash, TweenInfo.new(0.45, Enum.EasingStyle.Quad), { BackgroundTransparency = 1 }):Play()
-	task.delay(0.15, sweep, roundCard, 9)
+	roundPop.Scale = 1.12
+	TweenService:Create(roundPop, TweenInfo.new(0.25, Enum.EasingStyle.Quad), { Scale = 1 }):Play()
 end
 
 ---------------------------------------------------------------------------------------------------- eliminated
@@ -902,9 +927,11 @@ end
 -- bottom right while your killer is on camera: their headshot with a health bar over it, level badge, win streak flame,
 -- name + @username, "eliminated you with <weapon>". In the killer's team colour.
 local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(1150, 640), Size = UDim2.fromOffset(740, 140), BackgroundColor3 = WHITE,
-	Visible = false, ZIndex = 6, Parent = root }, { corner(10), new("UIGradient", { Rotation = 0, Color = ColorSequence.new(TEAM_B[1], TEAM_B[2]),
-		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.8, 0.1), NumberSequenceKeypoint.new(1, 1) }) }) })
-gloss(kcard, 10, 0.2)
+	Visible = false, ZIndex = 6, Parent = root }, { corner(6), new("UIGradient", { Rotation = 0, Color = ColorSequence.new(Color3.fromRGB(16, 17, 20)),
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.25), NumberSequenceKeypoint.new(0.8, 0.3), NumberSequenceKeypoint.new(1, 1) }) }) })
+-- (2026-10-20, serious pass) the killer's colour is one line along the bottom (Knife / Sniper Duels' killer strip)
+new("Frame", { Name = "TeamLine", BorderSizePixel = 0, Position = UDim2.fromOffset(0, 136), Size = UDim2.fromOffset(740, 4), BackgroundColor3 = TEAM_B[1], ZIndex = 7, Parent = kcard },
+	{ new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.8, 0), NumberSequenceKeypoint.new(1, 1) }) }) })
 local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(20, 26), Size = UDim2.fromOffset(104, 104), ZIndex = 7, Parent = kcard }, { corner(52) })
 local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(32, 12), Size = UDim2.fromOffset(80, 10), ZIndex = 8, Parent = kcard }, { corner(5) })
 local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1), ZIndex = 9, Parent = kHpBack }, { corner(5) })
@@ -1272,9 +1299,9 @@ local function showVictory(phase)
 	if spectator() or not myTeam then
 		title, top, bottom = winner and ("TEAM " .. winner .. " WINS") or "DRAW", Color3.fromRGB(255, 255, 255), Color3.fromRGB(190, 190, 180)
 	elseif winner == myTeam then
-		title, top, bottom = "VICTORY", Color3.fromRGB(255, 230, 150), Color3.fromRGB(214, 160, 40)
+		title, top, bottom = "VICTORY", TEAM_A[1], TEAM_A[2]
 	elseif winner then
-		title, top, bottom = "DEFEAT", Color3.fromRGB(255, 140, 120), Color3.fromRGB(170, 40, 30)
+		title, top, bottom = "DEFEAT", Color3.fromRGB(150, 178, 136), TEAM_B[1]
 	else
 		title, top, bottom = "DRAW", Color3.fromRGB(235, 235, 235), Color3.fromRGB(150, 150, 150)
 	end
@@ -1474,59 +1501,41 @@ if RunService:IsStudio() then
 	hook.Parent = player:WaitForChild("PlayerScripts")
 end
 
----------------------------------------------------------------------------------------------------- INK (style D)
--- (2026-10-20) Comic Ink over the whole duel HUD + results, keeping RIVALS' see-through panels:
---   * gloss highlights off, border strokes heavy black (Miter), corners small (round pills / heads stay round)
---   * text strokes solid black
---   * the big pieces get a hard black drop shadow (a sibling, offset in Scale) and a small tilt
+---------------------------------------------------------------------------------------------------- SERIOUS (2026-10-20)
+-- (Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") over the whole duel HUD + results:
+--   * gloss highlights off; panel borders become a hairline white edge (Sniper Duels' tiles); corners small
+--   * text strokes soft (a faint dark edge for legibility, no ink outline); no drop shadows, no tilts
 --   * runs on what exists now and on everything added later (kill feed rows, results rows)
 do
 	local CS = game:GetService("CollectionService")
-	local function inkOne(d)
+	local function calmOne(d)
 		if d:IsA("UIStroke") then
 			if d.ApplyStrokeMode == Enum.ApplyStrokeMode.Border then
-				d.Color = BLACK; d.Transparency = 0; d.Thickness = math.max(d.Thickness, 3.5); d.LineJoinMode = Enum.LineJoinMode.Miter
+				if d.Color ~= WHITE or d.Transparency < 0.4 then -- coloured / strong borders (selection, voted) keep their colour, thinner
+					d.Thickness = math.min(d.Thickness, 2)
+				else
+					d.Color = WHITE; d.Transparency = 0.82; d.Thickness = 1.5
+				end
+				d.LineJoinMode = Enum.LineJoinMode.Round
 			elseif d.Parent and (d.Parent:IsA("TextLabel") or d.Parent:IsA("TextButton")) then
-				d.Color = BLACK; d.Transparency = 0; d.LineJoinMode = Enum.LineJoinMode.Miter
+				d.Color = BLACK; d.Transparency = math.max(d.Transparency, 0.55); d.Thickness = math.min(d.Thickness, 2); d.LineJoinMode = Enum.LineJoinMode.Round
 			end
 		elseif d:IsA("UICorner") then
 			if d.CornerRadius.Scale == 0 then
 				local r = d:GetAttribute("dR") or d.CornerRadius.Offset
 				if r > 6 and r < 20 then d:SetAttribute("dR", 6); d.CornerRadius = UDim.new(0, math.min(d.CornerRadius.Offset, 6)) end
 			elseif d.CornerRadius.Scale > 0.05 and d.CornerRadius.Scale < 0.4 then
-				d.CornerRadius = UDim.new(0.06, 0)
+				d.CornerRadius = UDim.new(0.08, 0)
 			end
 		elseif d:IsA("Frame") and d.Name == "Gloss" then
 			d.Visible = false
-		elseif (d:IsA("TextLabel") or d:IsA("TextButton")) and d.TextScaled and d.Text ~= "" and not d:FindFirstChildOfClass("UIStroke") then
-			new("UIStroke", { Color = BLACK, Thickness = 2, LineJoinMode = Enum.LineJoinMode.Miter, Parent = d })
 		end
 	end
-	local function inkTree(g)
+	local function calmTree(g)
 		CS:AddTag(g, "KeepColors")
-		for _, d in g:GetDescendants() do inkOne(d) end
-		g.DescendantAdded:Connect(function(d) task.defer(function() if d.Parent then inkOne(d) end end) end)
+		for _, d in g:GetDescendants() do calmOne(d) end
+		g.DescendantAdded:Connect(function(d) task.defer(function() if d.Parent then calmOne(d) end end) end)
 	end
-	inkTree(gui)
-	inkTree(rgui)
-	-- hard shadows + tilts on the big pieces (their parents are W x H design canvases: offsets in Scale)
-	local function shadow(t, off, tilt)
-		if not t then return end
-		t.Rotation = tilt or t.Rotation
-		local sh = new("Frame", { Name = t.Name .. "Ink", BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, BorderSizePixel = 0,
-			AnchorPoint = t.AnchorPoint, Size = t.Size, Position = t.Position + UDim2.fromScale(off / W, off / H), Rotation = t.Rotation,
-			ZIndex = math.max(0, t.ZIndex - 1), Visible = t.Visible, Parent = t.Parent }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
-		t:GetPropertyChangedSignal("Visible"):Connect(function() sh.Visible = t.Visible end)
-		t:GetPropertyChangedSignal("Position"):Connect(function() sh.Position = t.Position + UDim2.fromScale(off / W, off / H) end)
-		t:GetPropertyChangedSignal("Size"):Connect(function() sh.Size = t.Size end)
-	end
-	shadow(mineBox.frame, 8, -1)
-	shadow(theirBox.frame, 8, 1)
-	shadow(timerBox, 8, 0)
-	shadow(RV.roundCard, 10, -3)
-	shadow(RV.kcard, 10, -1.5)
-	shadow(RV.switchB, 9, -2)
-	shadow(results, 12, -1)
-	shadow(specBar, 8, -1)
-	for _, b in { backB, leaveB, againB, rematchB } do shadow(b, 8, -1.5) end
+	calmTree(gui)
+	calmTree(rgui)
 end

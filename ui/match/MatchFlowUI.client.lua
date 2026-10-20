@@ -46,14 +46,15 @@ local TIPS = { "Peek from cover: you're only exposed while you aim", "Throw a sm
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE, OLIVE_HI = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
-local TEAM_A = { Color3.fromRGB(126, 232, 120), Color3.fromRGB(46, 168, 72) }  -- (2026-10-20, Edward) us: light green
-local TEAM_B = { Color3.fromRGB(255, 128, 118), Color3.fromRGB(222, 72, 66) }     -- them: lighter red
--- (2026-10-20, Edward picked style D "Comic Ink" with RIVALS' see-through panels) Bangers headings, heavy black ink outlines,
--- hard black drop shadows, small tilts, comic yellow for "selected"; panels stay dark and see-through
-local FX = Font.new("rbxasset://fonts/families/Bangers.json")
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Heavy)
+local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) }  -- (2026-10-20, Edward: "serious", like the old bone/olive but better) us: warm beige
+local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) }     -- them: muted dark green
+-- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
+-- panels, calmer: Montserrat Heavy headlines, Builder Sans body, hairline white edges, no tilts or drop shadows; "selected"
+-- is a warm white; team colours (beige / green) only as accents
+local FX = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy)
+local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
 local STENCIL = FX
-local INK_YELLOW = Color3.fromRGB(255, 212, 0)
+local INK_YELLOW = Color3.fromRGB(240, 232, 212) -- (serious pass) selected: warm white, not comic yellow
 local PANEL_T = 0.35 -- RIVALS-style see-through
 
 local function new(class, props, kids)
@@ -68,16 +69,17 @@ local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	local l = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font, TextSize = size, TextColor3 = color or WHITE,
 		TextXAlignment = align or Enum.TextXAlignment.Center, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 3, Parent = parent })
 	l:SetAttribute("dTS", size)
-	new("UIStroke", { Thickness = math.max(2, size / 13), Transparency = 0, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+	new("UIStroke", { Thickness = math.max(1, size / 30), Transparency = 0.55, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
 	return l
 end
--- ink: a thick black outline and a hard black drop shadow behind (a sibling, so it is converted to Scale with the rest)
+-- ink (serious pass, 2026-10-20): a hairline white edge (Sniper Duels' tiles). The old drop-shadow sibling is still made
+-- (callers hold it) but it draws nothing.
 local function ink(target, off, thick)
 	if (thick or 4) > 0 then
-		new("UIStroke", { Color = BLACK, Thickness = thick or 4, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = target })
+		new("UIStroke", { Color = WHITE, Transparency = 0.82, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = target })
 	end
 	local r = target:FindFirstChildOfClass("UICorner")
-	local sh = new("Frame", { Name = target.Name .. "Shadow", BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, BorderSizePixel = 0,
+	local sh = new("Frame", { Name = target.Name .. "Shadow", BackgroundColor3 = BLACK, BackgroundTransparency = 1, BorderSizePixel = 0,
 		Position = target.Position + UDim2.fromOffset(off or 8, off or 8), Size = target.Size, Rotation = target.Rotation,
 		ZIndex = math.max(0, target.ZIndex - 1), Visible = target.Visible, Parent = target.Parent }, r and { corner(r.CornerRadius.Offset) } or nil)
 	target:GetPropertyChangedSignal("Visible"):Connect(function() sh.Visible = target.Visible end)
@@ -138,9 +140,11 @@ local loadN = label(loading, "0", FB, 40, 1440, 976, 380, 50, Color3.fromRGB(205
 
 ---------------------------------------------------------------------------------------------------- shared: team boxes + timer
 local function teamBox(parent, x, cols, right)
-	local b = new("Frame", { Position = UDim2.fromOffset(x, 34), Size = UDim2.fromOffset(290, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.15,
-		Rotation = right and 1 or -1, ZIndex = 2, Parent = parent }, { corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }) })
+	local b = new("Frame", { Position = UDim2.fromOffset(x, 34), Size = UDim2.fromOffset(290, 84), BackgroundColor3 = Color3.fromRGB(16, 17, 20), BackgroundTransparency = PANEL_T,
+		ZIndex = 2, Parent = parent }, { corner(6) })
 	ink(b, 7, 4)
+	new("Frame", { AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 84), Size = UDim2.fromOffset(290, 6), BackgroundColor3 = WHITE, BorderSizePixel = 0,
+		ZIndex = 3, Parent = b }, { new("UIGradient", { Rotation = 0, Color = ColorSequence.new(cols[1], cols[2]) }) })
 	local slots = {}
 	for i = 1, 3 do
 		local hx = right and (90 + (i - 1) * 64) or (14 + (i - 1) * 64)
@@ -222,10 +226,10 @@ local function buildMaps(list)
 	local x0 = (1420 - (n * tw + (n - 1) * 30)) / 2
 	for i, m in all do
 		local t = new("TextButton", { Name = m.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x0 + (i - 1) * (tw + 30), 40), Size = UDim2.fromOffset(tw, th),
-			BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ClipsDescendants = true, Rotation = (i % 2 == 0) and 1.5 or -1.5, ZIndex = 2, Parent = mapHolder }, { corner(6) })
-		ink(t, 12, 0).BackgroundTransparency = 0.2
-		local edgeCol = BLACK
-		local edge = new("UIStroke", { Color = edgeCol, Thickness = 6, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
+			BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ClipsDescendants = true, ZIndex = 2, Parent = mapHolder }, { corner(6) })
+		ink(t, 12, 0)
+		local edgeCol = Color3.fromRGB(70, 72, 78) -- (serious pass) a quiet grey edge; your vote turns it beige
+		local edge = new("UIStroke", { Color = edgeCol, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
 		if m.random then
 			label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
 		elseif m.image and m.image ~= "" then
@@ -259,11 +263,10 @@ local function buildMaps(list)
 		end
 		-- striped name bar
 		local barH = th * 0.2
-		-- the name on a yellow comic caption strip
-		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = m.random and WHITE or INK_YELLOW,
-			BorderSizePixel = 0, ZIndex = 2, Parent = t }, { new("UIStroke", { Color = BLACK, Thickness = 5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
-		local nl = label(bar, string.upper(m.name), FX, 50, 0, 0, tw, barH, BLACK, nil, 3)
-		for _, k in nl:GetChildren() do if k:IsA("UIStroke") then k.Color = WHITE; k.Thickness = 2 end end
+		-- (serious pass, Sniper / Murder Duels) the name in white on a dark see-through caption strip
+		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = BLACK, BackgroundTransparency = 0.3,
+			BorderSizePixel = 0, ZIndex = 2, Parent = t })
+		label(bar, string.upper(m.name), FX, 40, 0, 0, tw, barH, WHITE, nil, 3)
 		-- voters (headshots along the top)
 		local voters = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(tw - 24, 56), ZIndex = 4, Parent = t },
 			{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 6) }) })
@@ -301,8 +304,8 @@ refreshVotes = function()
 			end) end
 		end
 		tile.count.Text = #ids > 0 and tostring(#ids) or ""
-		tile.edge.Color = hasMe and WHITE or tile.col
-		tile.edge.Thickness = hasMe and 6 or 4
+		tile.edge.Color = hasMe and TEAM_A[1] or tile.col
+		tile.edge.Thickness = hasMe and 3 or 1.5
 	end
 end
 
@@ -496,7 +499,7 @@ for i, s2 in SLOTS do
 	local chip = new("TextButton", { Name = "Slot" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotRowX + (i - 1) * (SLOT_W + SLOT_GAP), 186),
 		Size = UDim2.fromOffset(SLOT_W, SLOT_W), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ZIndex = 2, Parent = lo }, { corner(6) })
 	ink(chip, 6, 4)
-	local edge = new("UIStroke", { Color = INK_YELLOW, Thickness = 5, Transparency = 1, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
+	local edge = new("UIStroke", { Color = INK_YELLOW, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
 	local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-8, -12), Size = UDim2.fromOffset(SLOT_W + 16, SLOT_W + 8), ZIndex = 3, Parent = chip })
 	local q = label(chip, string.upper(s2.label), STENCIL, 18, 0, 0, SLOT_W, SLOT_W, Color3.fromRGB(110, 112, 108))
 	chips[s2.id] = { chip = chip, edge = edge, art = art, q = q, index = i }
@@ -508,7 +511,7 @@ local tabX = 960 - (#SLOTS * TAB_W + (#SLOTS - 1) * TAB_GAP) / 2
 local tabs = {}
 for i, s2 in SLOTS do
 	local t = new("TextButton", { Name = "Tab" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(tabX + (i - 1) * (TAB_W + TAB_GAP), 300),
-		Size = UDim2.fromOffset(TAB_W, 48), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, Rotation = -2, ZIndex = 2, Parent = lo }, { corner(4) })
+		Size = UDim2.fromOffset(TAB_W, 48), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ZIndex = 2, Parent = lo }, { corner(4) })
 	ink(t, 6, 4)
 	local tl = label(t, string.upper(s2.label), FX, 34, 0, 0, TAB_W, 48, WHITE)
 	tabs[i] = { b = t, l = tl }
@@ -521,7 +524,7 @@ local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromO
 	BorderSizePixel = 0, ScrollBarThickness = 6, ScrollBarImageColor3 = GREY, ScrollingDirection = Enum.ScrollingDirection.Y, CanvasSize = UDim2.new(), Parent = lo })
 local list = optArea
 local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1500, 900), Size = UDim2.fromOffset(300, 80),
-	BackgroundColor3 = INK_YELLOW, Visible = false, Rotation = -3, ZIndex = 2, Parent = lo }, { corner(6) })
+	BackgroundColor3 = INK_YELLOW, Visible = false, ZIndex = 2, Parent = lo }, { corner(6) })
 ink(ready, 10, 6)
 local readyL = label(ready, "READY!", FX, 56, 0, 0, 300, 80, BLACK)
 for _, k in readyL:GetChildren() do if k:IsA("UIStroke") then k.Color = WHITE; k.Thickness = 2 end end
@@ -569,7 +572,7 @@ local function optionTile(parent, x, y, id, text, onPick, kind)
 	-- kind: "random" | "locked" | rarity name
 	local cols = kind == "random" and { Color3.fromRGB(20, 20, 24), Color3.fromRGB(6, 6, 8) } or (RARITY[kind] or RARITY.Standard)
 	local t = new("TextButton", { Name = text, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(OPT, OPT), BackgroundColor3 = WHITE,
-		BackgroundTransparency = 0.2, Rotation = ((x // OPT) % 2 == 0) and -1.5 or 1.5, ZIndex = 2, Parent = parent },
+		BackgroundTransparency = 0.2, ZIndex = 2, Parent = parent },
 		{ corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }) })
 	ink(t, 7, 4)
 	local scale = new("UIScale", { Parent = t })
@@ -711,8 +714,8 @@ local function onChosen()
 	local tile = mapTiles[st(STATE.Chosen) or ""]
 	if tile and phase == "MapVote" then
 		task.spawn(function()
-			for _ = 1, 3 do tile.edge.Color = WHITE; tile.edge.Thickness = 8; task.wait(0.15); tile.edge.Color = tile.col; task.wait(0.15) end
-			tile.edge.Color = WHITE
+			for _ = 1, 3 do tile.edge.Color = TEAM_A[1]; tile.edge.Thickness = 4; task.wait(0.15); tile.edge.Color = tile.col; task.wait(0.15) end
+			tile.edge.Color = TEAM_A[1]
 		end)
 	end
 end

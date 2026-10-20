@@ -183,6 +183,9 @@ def long_string(s):
     return "[" + "=" * n + "[" + s + "]" + "=" * n + "]"
 
 
+SKIP = {x for a in sys.argv if a.startswith('--skip=') for x in a[7:].split(',') if x}
+
+
 def build():
     parts = [
         "local CHS = game:GetService('ChangeHistoryService'); local rec = CHS:TryBeginRecording('Deploy lobby UI (UI session)')",
@@ -192,6 +195,7 @@ def build():
     ]
     for entry in FILES:
         parent, name, cls, path = entry[:4]
+        if parent + '.' + name in SKIP: continue  # --skip=Parent.Name,...: leave someone else's live edit alone
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
         for old, new in HUB_PATCHES.get(path, []):  # small fixes to the hub snapshots for the shifted after-match map
             if src.count(old) != 1: raise SystemExit(f'hub patch no longer matches {path}: re-check it after a new snapshot')
@@ -199,6 +203,7 @@ def build():
         parts.append(f"put({'dir' if ('--match' in sys.argv or PLACE_KIND) else 'at'}('{parent}'), '{name}', '{cls}', {long_string(src)})")
     parts.append("local SS = game:GetService('ServerStorage'); local bin = SS:FindFirstChild('_RebuildRemoved') or Instance.new('Folder'); bin.Name = '_RebuildRemoved'; bin.Parent = SS")
     for parent, name, path in SET_FILES:
+        if parent + '.' + name in SKIP: continue
         src = open(os.path.join(HERE, path), encoding='utf-8').read()
         parts.append(f"do local s = at('{parent}'):FindFirstChild('{name}') or error('missing {name}'); "
                      f"if not bin:FindFirstChild('SET_{name}_Orig') and not s.Source:find('[SET]', 1, true) then local b = s:Clone(); b.Name = 'SET_{name}_Orig'; b:ClearAllChildren(); b.Parent = bin end; "

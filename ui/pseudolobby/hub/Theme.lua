@@ -31,8 +31,8 @@ Theme.color = {
 	olive = hex("#FFD400"),       -- (name kept for old code: now the yellow accent)
 	amber = hex("#FFD400"),
 	ink = hex("#111114"),
-	teamUs = hex("#7EE878"),
-	teamThem = hex("#FF8076"),
+	teamUs = hex("#E2D2AC"),
+	teamThem = hex("#6E8C62"),
 }
 
 -- vertical gradients, top -> bottom

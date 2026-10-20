@@ -1,6 +1,6 @@
 local __TG = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("TrainingGate"))
 -- StarterPlayer/StarterPlayerScripts/Client/Controllers/HealthBarController (ModuleScript)
--- Health bar, bottom left. 100 HP. When you're hit, the bar drops straight away and a pale "damage"
+-- Health bar, bottom centre (Knife Duels' look). 100 HP. When you're hit, the bar drops straight away and a pale "damage"
 -- chunk drains after it; it turns red when you're low. Display only.
 
 local Players = game:GetService("Players")
@@ -11,7 +11,7 @@ local TweenService = game:GetService("TweenService")
 local localPlayer = Players.LocalPlayer
 local controller = {}
 
-local WIDTH, HEIGHT = 330, 18 -- the bar (design px)
+local WIDTH, HEIGHT = 470, 12 -- the bar (design px)
 local COLOR_OK = Color3.fromRGB(236, 232, 218) -- bone (pass 34)
 local COLOR_LOW = Color3.fromRGB(240, 70, 60)
 local LOW_AT = 0.3 -- fraction of max health
@@ -19,7 +19,7 @@ local LOW_AT = 0.3 -- fraction of max health
 -- no plate, just the big white number with a cross and a rounded quartered bar on dark glass, like RIVALS.
 -- Built in 1920x1080 design px on a UIKit canvas, then Kit.toScale (Scale only).
 local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
-local STENCIL = Font.new("rbxasset://fonts/families/Bangers.json") -- (2026-10-20, style D "Comic Ink")
+local STENCIL = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (2026-10-20, serious pass)
 local FIELD = Color3.fromRGB(200, 200, 206)
 
 local gui, fill, trail, number, frame
@@ -41,52 +41,29 @@ local function build()
 	gui.IgnoreGuiInset = true
 	local canvas = Kit.canvas(gui)
 	local root = box(canvas, { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1) })
-	local W, H = WIDTH + 44, 88
-	frame = box(root, { Name = "Health", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(28, 1080 - 64), Size = UDim2.fromOffset(W, H),
+	-- (2026-10-20, Edward's screen: Knife Duels' health) bottom CENTRE: "100 HP" in white over one thin, long, rounded bar with a
+	-- dark outline; no plate, no ticks, no icon. Same place with a controller (the hotbar takes a corner either way).
+	local W, H = WIDTH, 58
+	frame = box(root, { Name = "Health", AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(960, 1080 - 56), Size = UDim2.fromOffset(W, H),
 		BackgroundTransparency = 1 })
-
-	local label = Instance.new("TextLabel")
-	label.BackgroundTransparency = 1
-	label.Position = UDim2.fromOffset(20, 22)
-	label.Size = UDim2.fromOffset(160, 22)
-	label.FontFace = STENCIL
-	label.TextSize = 19
-	label.TextColor3 = FIELD
-	label.TextXAlignment = Enum.TextXAlignment.Left
-	label.Text = "HEALTH"
-	label.ZIndex = 3
-	label.Parent = frame
-	local ls = Instance.new("UIStroke"); ls.Thickness = 2; ls.LineJoinMode = Enum.LineJoinMode.Miter; ls.Parent = label
-
-	-- medical cross beside the number
-	local cross = box(frame, { AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(W - 112, 14), Size = UDim2.fromOffset(26, 26), BackgroundTransparency = 1, ZIndex = 3 })
-	box(cross, { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(26, 9), BackgroundColor3 = COLOR_OK, ZIndex = 3 })
-	box(cross, { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(9, 26), BackgroundColor3 = COLOR_OK, ZIndex = 3 })
-
 	number = Instance.new("TextLabel")
 	number.BackgroundTransparency = 1
-	number.AnchorPoint = Vector2.new(1, 0)
-	number.Position = UDim2.fromOffset(W - 18, 2)
-	number.Size = UDim2.fromOffset(90, 50)
-	number.FontFace = STENCIL
-	local ns = Instance.new("UIStroke") ns.Thickness = 2.5 ns.LineJoinMode = Enum.LineJoinMode.Miter ns.Parent = number -- (style D)
-	number.TextSize = 46
-	number.TextColor3 = COLOR_OK
-	number.TextXAlignment = Enum.TextXAlignment.Right
-	number.Text = "100"
-	number.ZIndex = 3
+	number.Size = UDim2.fromOffset(W, 36)
+	number.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	number.TextSize = 32
+	number.TextColor3 = Color3.new(1, 1, 1)
+	number.Text = "100 HP"
+	number.ZIndex = 6
 	number.Parent = frame
-
-	local back = box(frame, { Name = "Bar", Position = UDim2.fromOffset(20, 56), Size = UDim2.fromOffset(WIDTH, HEIGHT),
-		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5, ClipsDescendants = true, ZIndex = 3 })
-	local rc = Instance.new("UICorner") rc.CornerRadius = UDim.new(0, 3) rc.Parent = back
-	local bs = Instance.new("UIStroke") bs.Color = Color3.new(0, 0, 0) bs.Thickness = 3.5 bs.LineJoinMode = Enum.LineJoinMode.Miter bs.Parent = back -- (style D)
+	local ns = Instance.new("UIStroke") ns.Thickness = 1.5 ns.Transparency = 0.4 ns.Parent = number
+	local back = box(frame, { Name = "Bar", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, H - 2), Size = UDim2.fromOffset(W, HEIGHT),
+		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5, ZIndex = 3 })
+	local rc = Instance.new("UICorner") rc.CornerRadius = UDim.new(0.5, 0) rc.Parent = back
+	local bs = Instance.new("UIStroke") bs.Color = Color3.fromRGB(20, 20, 22) bs.Thickness = 2 bs.Transparency = 0.2 bs.Parent = back
 	trail = box(back, { Name = "Damage", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(255, 150, 120), BackgroundTransparency = 0.25, ZIndex = 3 })
+	local tc = Instance.new("UICorner") tc.CornerRadius = UDim.new(0.5, 0) tc.Parent = trail
 	fill = box(back, { Name = "Fill", Size = UDim2.fromScale(1, 1), BackgroundColor3 = COLOR_OK, ZIndex = 4 })
-	-- quarter ticks
-	for i = 1, 3 do
-		box(back, { Position = UDim2.new(i / 4, -2, 0, 0), Size = UDim2.new(0, 4, 1, 0), BackgroundColor3 = Color3.fromRGB(12, 14, 11), ZIndex = 5 })
-	end
+	local fc = Instance.new("UICorner") fc.CornerRadius = UDim.new(0.5, 0) fc.Parent = fill
 	Kit.toScale(root)
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
 end
@@ -112,62 +89,38 @@ local function update(dt)
 	if trailValue < shown then trailValue = shown end -- healing: no chunk
 	fill.Size = UDim2.fromScale(shown, 1)
 	trail.Size = UDim2.fromScale(trailValue, 1)
-	number.Text = tostring(math.ceil(health))
+	number.Text = tostring(math.ceil(health)) .. " HP"
 	local low = shown <= LOW_AT
 	-- the number flashes red for a moment when you're hit, and stays red when low
 	local flash = math.clamp(1 - (os.clock() - lastHitAt) / 0.6, 0, 1)
-	number.TextColor3 = low and COLOR_LOW or COLOR_OK:Lerp(COLOR_LOW, flash)
+	number.TextColor3 = Color3.new(1, 1, 1):Lerp(COLOR_LOW, low and 0 or flash)
 	fill.BackgroundColor3 = low and COLOR_LOW or COLOR_OK
 	-- low health: the bar pulses
 	fill.BackgroundTransparency = low and (0.15 + 0.15 * math.sin(os.clock() * 8)) or 0
 end
 
--- [PAD] (Edward 2026-10-20, RIVALS) with a controller the health box sits bottom right (the hotbar takes the bottom left).
--- The NOISE meter (StealthUI, built just above this box) moves with it.
-local function padLayout()
-	local UIS = game:GetService("UserInputService")
-	local orig = frame.Position
-	local stealthOrig = {}
-	local function apply(pad: boolean)
-		frame.AnchorPoint = pad and Vector2.new(1, 1) or Vector2.new(0, 1)
-		frame.Position = pad and UDim2.fromScale(1 - orig.X.Scale, orig.Y.Scale) or orig
-		local st = localPlayer.PlayerGui:FindFirstChild("StealthUI")
-		-- the meter's panel: the first GuiObject under the canvas that isn't a full-screen holder (StealthUI.Canvas.Root.Frame)
-		local panels = {}
-		local function dig(node)
-			for _, c in node:GetChildren() do
-				if c:IsA("GuiObject") then
-					if c.Size.X.Scale >= 0.99 and c.Size.Y.Scale >= 0.99 then dig(c) else table.insert(panels, c) end
-				end
+-- (2026-10-20, Edward: "remove the noise indicator we don't need people to know how loud they are") the NOISE meter
+-- (StealthUI, built by the stealth gameplay script) is hidden here: its contents stay invisible whatever turns the ScreenGui
+-- on or off (the match HUD toggles it with the rest). Noise itself still works; only the meter is gone.
+local function hideNoiseMeter()
+	local function hide(gui)
+		for _, c in gui:GetChildren() do
+			if c:IsA("GuiObject") then
+				c.Visible = false
+				c:GetPropertyChangedSignal("Visible"):Connect(function() if c.Visible then c.Visible = false end end)
 			end
 		end
-		local canvas = st and st:FindFirstChild("Canvas")
-		if canvas then dig(canvas) end
-		for _, f in panels do
-			stealthOrig[f] = stealthOrig[f] or { f.AnchorPoint, f.Position }
-			local o = stealthOrig[f]
-			f.AnchorPoint = pad and Vector2.new(1 - o[1].X, o[1].Y) or o[1]
-			f.Position = pad and UDim2.fromScale(1 - o[2].X.Scale, o[2].Y.Scale) or o[2]
-		end
+		gui.ChildAdded:Connect(function(c) if c:IsA("GuiObject") then task.defer(function() c.Visible = false end) end end)
 	end
-	local on = nil
-	local function check(t)
-		if t == Enum.UserInputType.MouseMovement then return end -- (2026-10-20) mouse MOVEMENT never flips back to keyboard + mouse: a resting mouse / locked cursor sends it, and hid every controller icon
-		local pad = t.Name:find("Gamepad") ~= nil
-		if not pad and not (t == Enum.UserInputType.Keyboard or t.Name:find("Mouse")) then return end
-		if pad ~= on then on = pad; apply(pad) end
-	end
-	UIS.LastInputTypeChanged:Connect(check)
-	check(UIS:GetLastInputType())
-	localPlayer:GetAttributeChangedSignal("_ForcePad"):Connect(function() -- Studio test switch
-		if RunService:IsStudio() then on = localPlayer:GetAttribute("_ForcePad") == true; apply(on) end
-	end)
-	localPlayer.PlayerGui.ChildAdded:Connect(function(c) if c.Name == "StealthUI" and on then task.defer(apply, true) end end)
+	local pg = localPlayer:WaitForChild("PlayerGui")
+	local st = pg:FindFirstChild("StealthUI")
+	if st then hide(st) end
+	pg.ChildAdded:Connect(function(c) if c.Name == "StealthUI" then hide(c) end end)
 end
 
 function controller.Start()
 	build()
-	padLayout()
+	hideNoiseMeter()
 	RunService.RenderStepped:Connect(update)
 end
 
