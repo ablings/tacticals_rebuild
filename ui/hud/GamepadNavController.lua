@@ -20,7 +20,7 @@ local player = Players.LocalPlayer
 
 -- ScreenGui name -> how B closes it
 local MENUS = {
-	"PlayerCards", "PartyUI", "SettingsUI", "ShopUI2", "PlayUI", "CodesUI", "MissionsUI", "RankedUI", "MatchFlow", "DuelHUD", "LobbyUI",
+	"PlayerCards", "PartyUI", "SettingsUI", "ShopUI2", "PlayUI", "CodesUI", "MissionsUI", "RankedUI", "MatchFlow", "DuelHUD", "LobbyUI", "WeaponBin",
 }
 
 local padOn = false
@@ -57,6 +57,9 @@ local function topMenu()
 			elseif name == "LobbyUI" then -- only its centre panel (the old Offset panels)
 				local panel = g:FindFirstChild("Panel", true)
 				ok = panel ~= nil and panel:IsA("GuiObject") and panel.Visible
+			elseif name == "WeaponBin" then -- the Training picker; its Weapons button alone is not a menu
+				local picker = g:FindFirstChild("Picker", true)
+				ok = picker ~= nil and picker.Visible
 			elseif name == "PlayerCards" then
 				ok = g:FindFirstChild("ProfileTint") ~= nil or g:FindFirstChild("PlayerMenu", true) ~= nil
 			end
@@ -115,6 +118,8 @@ local function closeTop(menu)
 		if PC then if PC.ProfileOpen() then PC.CloseProfile() else PC.CloseMenu() end end
 	elseif name == "PartyUI" then
 		local P = mod("PartyScreen"); if P then P.Close() end
+	elseif name == "WeaponBin" then
+		local TB = shared.Get and shared.Get("TrainingBinsController"); if TB and TB.Close then TB.Close() end
 	elseif name == "MatchFlow" then
 		return -- map vote / loadout: no backing out
 	elseif name == "DuelHUD" then
