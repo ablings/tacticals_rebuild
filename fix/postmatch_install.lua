@@ -1,13 +1,13 @@
 -- fix/postmatch_install.lua [POSTMATCH] 2026-10-18 (Edward via the UI session): RIVALS-style post-match on the match places
 -- (Matchmaking / Ranked): after the results players stay on the match server (the "pseudo lobby"), with To Hub / Play Again /
--- Rematch. A series is at most 3 games; a rematch is allowed while games < 3, neither side has 2 wins, and every original
--- player is still here; it starts when every present player has voted.
+-- Rematch. (2026-10-19, Edward) no series cap: a rematch is allowed while every original player is still here (else
+-- RematchReason "Opponent left"); it starts when every present player has voted. Each game starts with RematchVotes 0.
 -- Match place (RoundManager):
 --   runSeries(first) wraps runMatchServer: runMatchServer now RETURNS the winner instead of sending everyone home; after
 --   each match postMatch() runs the pseudo-lobby phase (state below) and returns "rematch" (same server, same teams) or ends.
 --   MatchFlow kinds "Rematch" (toggle vote), "PlayAgain" (teleport to the hub with TeleportData AutoQueue = queue id),
 --   "ToHub" (teleport to the hub).
---   State (ReplicatedStorage): PostMatch, RematchVotes, RematchNeeded, RematchAllowed, RematchReason ("Unavailable" | nil),
+--   State (ReplicatedStorage): PostMatch, RematchVotes, RematchNeeded, RematchAllowed, RematchReason ("Opponent left" | nil),
 --   RematchStartsAt, SeriesGames, SeriesWinsA, SeriesWinsB. Player: InPseudoLobby, RematchVote.
 --   MatchConfig.PostMatchTime (default 300 s): then everyone still here goes to the hub. RematchCountdown default 3 s.
 -- Lobby (MatchmakingManager): a player arriving with TeleportData AutoQueue = <queue id> is queued for it a moment after
@@ -38,12 +38,14 @@ local function seriesUpdate()
 			if s.votes[p.UserId] then votes += 1 end
 		end
 	end
-	local allowed = s.games < 3 and s.winsA < 2 and s.winsB < 2 and present == s.total and s.total > 0
+	-- (2026-10-19, Edward: "when the game ends you should instantly be able to rematch") no series cap: a rematch is always
+	-- allowed while every original player is still here
+	local allowed = present == s.total and s.total > 0
 	ReplicatedStorage:SetAttribute("SeriesGames", s.games)
 	ReplicatedStorage:SetAttribute("SeriesWinsA", s.winsA)
 	ReplicatedStorage:SetAttribute("SeriesWinsB", s.winsB)
 	ReplicatedStorage:SetAttribute("RematchAllowed", allowed)
-	ReplicatedStorage:SetAttribute("RematchReason", (not allowed) and "Unavailable" or nil)
+	ReplicatedStorage:SetAttribute("RematchReason", (not allowed) and "Opponent left" or nil)
 	ReplicatedStorage:SetAttribute("RematchVotes", votes)
 	ReplicatedStorage:SetAttribute("RematchNeeded", present)
 	return allowed and present > 0 and votes == present
@@ -137,6 +139,11 @@ local function runSeries(first)
 	end
 	while true do
 		series.games += 1
+		-- (Edward: "after a rematch it says Rematch 2/2 instead of 0/2", "unavailable shows on the first game") every game starts
+		-- with a clean vote, so the results screen reads 0/needed and allowed the moment the match ends
+		series.votes = {}
+		ReplicatedStorage:SetAttribute("RematchStartsAt", nil)
+		for _, p in Players:GetPlayers() do p:SetAttribute("RematchVote", nil) end
 		seriesUpdate()
 		local winner = runMatchServer(first)
 		if winner == "A" then series.winsA += 1 elseif winner == "B" then series.winsB += 1 end
