@@ -721,6 +721,7 @@ function controller.IsAiming(): boolean
 	-- ends if aim is still held (WeaponController's reload state: the server's Reloading flag + its own prediction)
 	local weapon = shared.Get and shared.Get("WeaponController")
 	if weapon and weapon.IsReloading and weapon.IsReloading() then return false end
+	if weapon and weapon.IsDrawing and weapon.IsDrawing() then return false end -- [MOVE2] no aiming in until the gun is out
 	-- [ABILITY2] Dual Pistols (Akimbo): no aiming in at all
 	local character = localPlayer.Character
 	local held = character and character:FindFirstChildOfClass("Tool")

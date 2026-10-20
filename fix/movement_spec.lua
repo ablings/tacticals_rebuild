@@ -7,6 +7,8 @@
 --   WeaponConfig    MoveSpeed per gun; GadgetMoveSpeed 1.1; Mobility() = held gadget (player attribute HeldSlot) / gun / melee
 --   MeleeConfig     MoveSpeed per melee item
 --   MoveGuard       LIMIT 42 -> 48 (flag-only; legit top is now cover sprint 31 x Fists 1.3 = 40.3)
+--   WeaponConfig    DrawTime per gun (C3: "wait until your gun is fully pulled out to shoot it and aim in"); back guns longer
+--   CombatManager   rejects a shot sooner than DrawTime x DrawTimeTolerance after the gun went into the hand (state.equippedAt)
 local UNDO = false --@UNDO
 
 local RS, SS, SSS = game:GetService("ReplicatedStorage"), game:GetService("ServerStorage"), game:GetService("ServerScriptService")
@@ -21,6 +23,15 @@ do
 		if W[id] then W[id].MoveSpeed = v end
 	end
 end
+-- [MOVE2] draw time (s): no firing or aiming in until the gun is out. Hip guns quick, back-carried guns slower.
+do
+	local W = WeaponConfig.Weapons
+	for id, v in { Pistol = 0.3, SilencedPistol = 0.35, DualPistols = 0.4, Revolver = 0.4, MiniUzi = 0.4,
+		AutoRifle = 0.6, PumpShotgun = 0.65, SemiAuto = 0.65, Sniper = 0.8 } do
+		if W[id] then W[id].DrawTime = v end
+	end
+end
+WeaponConfig.DrawTimeTolerance = 0.75 -- [MOVE2] the server allows a shot from 75% of DrawTime after the equip reached it
 WeaponConfig.GadgetMoveSpeed = 1.1 -- [MOVE2] holding the gadget slot (no Tool: HotbarController sets player attribute HeldSlot)
 
 -- [MOVE2] movement multiplier of what this character holds: the gadget slot, a gun's MoveSpeed, a melee item's MoveSpeed, else 1
@@ -63,6 +74,12 @@ local EDITS = {
 	} },
 	{ Config.WeaponConfig, { { "\nreturn WeaponConfig", "\n" .. WEAPON_BLOCK } } },
 	{ Config.MeleeConfig, { { "\nreturn MeleeConfig", "\n" .. MELEE_BLOCK } } },
+	{ SSS:FindFirstChild("CombatManager", true), {
+		{ "\ttool:GetPropertyChangedSignal(\"Parent\"):Connect(function()\n\t\tlocal character = player.Character\n",
+		  "\ttool:GetPropertyChangedSignal(\"Parent\"):Connect(function()\n\t\tlocal character = player.Character\n\t\tif tool.Parent == character then state.equippedAt = os.clock() end -- [MOVE2] draw time starts\n" },
+		{ "\t\tif now - state.lastFire < interval * V.FireIntervalTolerance then\n",
+		  "\t\t-- [MOVE2] draw time: no shot before the gun is out\n\t\tif state.equippedAt and now - state.equippedAt < (config.DrawTime or 0) * (WeaponConfig.DrawTimeTolerance or 0.75) then\n\t\t\treturn finish(\"still drawing\")\n\t\tend\n\t\tif now - state.lastFire < interval * V.FireIntervalTolerance then\n" },
+	} },
 	{ SSS:FindFirstChild("MoveGuard", true), { { "local LIMIT = 42\n", "local LIMIT = 48 -- [MOVE2] was 42 (cover sprint 31 x Fists 1.3 = 40.3)\n" } } },
 }
 

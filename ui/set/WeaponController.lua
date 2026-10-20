@@ -227,6 +227,24 @@ function controller.IsReloading(): boolean
 	return isReloading()
 end
 
+-- [MOVE2] draw time (Edward: "wait until your gun is fully pulled out to shoot it and aim in"); CameraController.IsAiming asks too
+function controller.IsDrawing(): boolean
+	return equipped ~= nil and os.clock() < (equipped.drawEndsAt or 0)
+end
+
+-- [MOVE2] crosshair countdown (RIVALS): client-only player attributes the HUD draws next to the crosshair, all in os.clock() time.
+--   XhairDrawEnd / XhairDrawTime     the gun is still coming out
+--   XhairReloadEnd / XhairReloadTime the reload (shell by shell: one shell at a time)
+--   XhairFireEnd / XhairFireTime     the next shot, only for slow guns (FireInterval >= XHAIR_MIN_COOLDOWN)
+local XHAIR_MIN_COOLDOWN = 0.3
+local function setCountdown(kind: string, duration: number?)
+	localPlayer:SetAttribute("Xhair" .. kind .. "End", duration and os.clock() + duration or nil)
+	localPlayer:SetAttribute("Xhair" .. kind .. "Time", duration)
+end
+local function clearCountdowns()
+	for _, kind in { "Draw", "Reload", "Fire" } do setCountdown(kind, nil) end
+end
+
 function controller.Reload()
 	if not equipped or not isAlive() or isReloading() then return end
 	local config = equipped.config
@@ -235,6 +253,8 @@ function controller.Reload()
 
 	-- [ABILITY2] shell by shell (Pump Shotgun): predict the first shell; the server's Reloading flag covers the rest
 	localReloadEnd = os.clock() + (config.ShellReload and (config.ShellReload.StartDelay + config.ShellReload.ShellTime) or config.ReloadTime)
+	setCountdown("Reload", localReloadEnd - os.clock()) -- [MOVE2] (shell by shell: the first shell; the Ammo watcher times the rest)
+	setCountdown("Fire", nil)
 	ReloadWeapon:FireServer()
 	WeaponEffects.PlaySound(equipped.tool, "Reload")
 	playAnimation("Reload")
@@ -265,6 +285,7 @@ local function fire()
 	end)
 	if stateObj:GetAttribute("CombatEnabled") == false then return end -- countdown / between rounds
 	local now = os.clock()
+	if now < (equipped.drawEndsAt or 0) then return end -- [MOVE2] still drawing the gun
 	if (localPlayer:GetAttribute("NoFireUntil") or 0) > now then return end -- [ABILITY2] stunned (takedown / bash)
 	-- [ABILITY2] Dual Pistols: twice the fire rate while moving
 	local interval = config.FireInterval
@@ -363,6 +384,7 @@ function controller._Shoot(config, spreadDegrees: number)
 	if Props and Props.OnLocalShot then Props.OnLocalShot(shot.origin, shot.endPos) end -- bottles etc. react this frame
 	if config.CasingEject == "Fire" then WeaponEffects.DropCasings(equipped.tool, 1) end -- pistols eject one per shot
 	playAnimation("Fire")
+	if config.FireInterval >= XHAIR_MIN_COOLDOWN then setCountdown("Fire", config.FireInterval) end -- [MOVE2] slow guns only
 
 	local recoil = config.Recoil
 	-- through a scope the kick is shorter, and the scope adds its own clean shot motion (ScopeController)
@@ -436,6 +458,7 @@ local function unequip()
 	equipped = nil
 	triggerHeld = false
 	localReloadEnd = 0
+	clearCountdowns() -- [MOVE2]
 	ContextActionService:UnbindAction("WeaponFire")
 	ContextActionService:UnbindAction("WeaponReload")
 	HUD.SetWeapon(nil)
@@ -464,6 +487,17 @@ local function equip(tool: Tool)
 	for _, attribute in { "Ammo", "AckShot", "Reloading", "Reserve" } do
 		table.insert(equipped.connections, tool:GetAttributeChangedSignal(attribute):Connect(refreshHUD))
 	end
+	-- [MOVE2] draw time: no firing or aiming in until the gun is out (the server checks it too); the crosshair counts it down
+	equipped.drawEndsAt = os.clock() + (config.DrawTime or 0)
+	clearCountdowns()
+	setCountdown("Draw", (config.DrawTime or 0) > 0 and config.DrawTime or nil)
+	-- [MOVE2] crosshair reload countdown: ends with the server's Reloading flag; shell by shell, one shell at a time
+	table.insert(equipped.connections, tool:GetAttributeChangedSignal("Reloading"):Connect(function()
+		if tool:GetAttribute("Reloading") ~= true and os.clock() >= localReloadEnd then setCountdown("Reload", nil) end
+	end))
+	table.insert(equipped.connections, tool:GetAttributeChangedSignal("Ammo"):Connect(function()
+		if config.ShellReload and tool:GetAttribute("Reloading") == true then setCountdown("Reload", config.ShellReload.ShellTime) end
+	end))
 
 	local keys = WeaponConfig.Keybinds
 	-- [SET] your Fire / Reload binds (re-read on every equip), plus the pad triggers
@@ -499,6 +533,11 @@ local function equip(tool: Tool)
 		end
 		setGunHand(CameraController.GetShoulder()) -- also starts the right pose
 		playAnimation("Equip")
+		do -- [MOVE2] the draw animation fits the gun's DrawTime (whatever is left of it after the Ready wait)
+			local track = thisEquip.tracks.Equip
+			local left = (thisEquip.drawEndsAt or 0) - os.clock()
+			if track and track.Length > 0 and left > 0.05 then track:AdjustSpeed(track.Length / left) end
+		end
 	end)
 end
 
