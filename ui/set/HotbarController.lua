@@ -316,6 +316,8 @@ end
 
 -- three-quarter "held" pose: barrel out to the left, angled toward you and up, top tipped into view
 local POSE_GUN = CFrame.Angles(0, 0, math.rad(-15)) * CFrame.Angles(math.rad(12), 0, 0) * CFrame.Angles(0, math.rad(108), 0)
+-- (2026-10-20) the Riot Shield's plate faces -Z: the gun pose showed its edge, so it gets a face-on three-quarter turn
+local POSE_SHIELD = CFrame.Angles(0, 0, math.rad(-10)) * CFrame.Angles(0, math.rad(180 - 30), 0)
 local POSE_DRAWN = CFrame.Angles(math.rad(10), 0, 0) * CFrame.Angles(0, math.rad(90 + 24), 0) * CFrame.Angles(0, 0, math.rad(-6))
 local CORNERS = { Vector3.new(1, 1, 1), Vector3.new(1, 1, -1), Vector3.new(1, -1, 1), Vector3.new(1, -1, -1),
 	Vector3.new(-1, 1, 1), Vector3.new(-1, 1, -1), Vector3.new(-1, -1, 1), Vector3.new(-1, -1, -1) }
@@ -344,7 +346,7 @@ local function iconModel(kind: string, id: string): Model
 			end
 		end
 	end
-	local pose = POSE_GUN
+	local pose = id == "RiotShield" and POSE_SHIELD or POSE_GUN
 	if #m:GetChildren() == 0 and BUILDERS[id] then
 		BUILDERS[id](m)
 		pose = POSE_DRAWN
