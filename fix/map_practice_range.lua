@@ -40,13 +40,18 @@ local function planY(py) return snap(55 - (py - 100) / SY) end
 -- plan point -> world (plan +y = north = world -Z)
 local function W(x, y, h) return ORIGIN + Vector3.new(x, h or FLOOR_TOP, -y) end
 
+-- [PRANGE2] 2026-10-20 Edward: "put the greybox repeating texture that we have in our training room and make all of the objects
+-- white". Everything is white SmoothPlastic with the training room's grid (GRID_TEX, 5-stud tiles, dark at 0.32 transparency, as on
+-- LobbyMap.Training); the floor is the training floor's grey, the box walls a shade under the cover; only the spawn pads keep a faint tint.
+local WHITE, BOXWHITE = Color3.fromRGB(238, 238, 241), Color3.fromRGB(226, 226, 230)
 local PALETTE = {
-	Floor = Color3.fromRGB(236, 238, 240), Grid = Color3.fromRGB(214, 218, 223),
-	Box = Color3.fromRGB(246, 247, 248), Band = Color3.fromRGB(200, 214, 228), Rim = Color3.fromRGB(176, 186, 198),
-	P = Color3.fromRGB(226, 229, 233), W = Color3.fromRGB(204, 209, 215), C = Color3.fromRGB(196, 214, 198),
-	L = Color3.fromRGB(232, 220, 190), R = Color3.fromRGB(188, 204, 228), V = Color3.fromRGB(244, 198, 156),
-	SpawnA = Color3.fromRGB(150, 210, 236), SpawnB = Color3.fromRGB(240, 170, 170),
+	Floor = Color3.fromRGB(214, 214, 218), Grid = Color3.fromRGB(214, 214, 218),
+	Box = BOXWHITE, Band = BOXWHITE, Rim = BOXWHITE,
+	P = WHITE, W = WHITE, C = WHITE, L = WHITE, R = WHITE, V = WHITE,
+	SpawnA = Color3.fromRGB(206, 226, 238), SpawnB = Color3.fromRGB(238, 212, 212),
 }
+local GRID_TEX = "rbxassetid://86361987736184" -- the training room's greybox grid
+local GRID_TILE, GRID_COLOR, GRID_ALPHA = 5, Color3.fromRGB(34, 34, 34), 0.32
 local HEIGHT = { P = 10, W = 7, C = 5, L = 3.4, VPost = 7, VSill = 3.4, Platform = 6, Parapet = 3.4, Box = 16 }
 
 local map = Instance.new("Model")
@@ -88,12 +93,8 @@ end
 
 -- // Floor: 10-stud tiles with a 0.3 grout line (the whitebox grid), one slab under them
 local SIZE_X, SIZE_Z = 150, 110
-part(folders.Floor, "Slab", Vector3.new(SIZE_X + 4, 1, SIZE_Z + 4), CFrame.new(W(0, 0, FLOOR_TOP - 0.55)), PALETTE.Grid)
-for gx = -SIZE_X / 2, SIZE_X / 2 - 10, 10 do
-	for gz = -SIZE_Z / 2, SIZE_Z / 2 - 10, 10 do
-		part(folders.Floor, "Tile", Vector3.new(9.7, 0.1, 9.7), CFrame.new(W(gx + 5, gz + 5, FLOOR_TOP - 0.04)), PALETTE.Floor)
-	end
-end
+part(folders.Floor, "Slab", Vector3.new(SIZE_X + 4, 1, SIZE_Z + 4), CFrame.new(W(0, 0, FLOOR_TOP - 0.5)), PALETTE.Floor)
+-- (the grid texture draws the tiles now: no separate tile parts)
 
 -- // The box: perimeter walls, open roof, no doors. 2 thick, outside the 150 x 110 play area.
 local T = 2
@@ -109,7 +110,6 @@ for _, s in {
 	wall:SetAttribute("NotCover", true) -- the box itself isn't cover (no hugging the outer wall)
 	-- a pale accent band at eye height and a darker rim on top
 	local inset = s[2] + Vector3.new(0.1, 0, 0.1)
-	part(folders.Box, s[1] .. "Band", Vector3.new(inset.X, 1.2, inset.Z), CFrame.new(W(c.X, c.Z, FLOOR_TOP + 5)), PALETTE.Band).CanCollide = false
 	part(folders.Box, s[1] .. "Rim", Vector3.new(inset.X, 0.6, inset.Z), CFrame.new(W(c.X, c.Z, FLOOR_TOP + boxH + 0.3)), PALETTE.Rim)
 end
 
@@ -216,6 +216,23 @@ spawnPad("A", 58, 755, 148, 860, PALETTE.SpawnA)
 spawnPad("B", 1062, 108, 1148, 182, PALETTE.SpawnB)
 
 map:SetAttribute("Whitebox", true)
+-- the training room's grid on every visible face of every part (not the bottom; not the invisible spawn markers)
+local textured = 0
+for _, p in map:GetDescendants() do
+	if p:IsA("BasePart") and p.Transparency < 1 then
+		for _, face in { Enum.NormalId.Top, Enum.NormalId.Front, Enum.NormalId.Back, Enum.NormalId.Left, Enum.NormalId.Right } do
+			local t = Instance.new("Texture")
+			t.Name = "Grid"
+			t.Texture = GRID_TEX
+			t.Face = face
+			t.StudsPerTileU, t.StudsPerTileV = GRID_TILE, GRID_TILE
+			t.Color3 = GRID_COLOR
+			t.Transparency = GRID_ALPHA
+			t.Parent = p
+			textured += 1
+		end
+	end
+end
 map.PrimaryPart = folders.Floor:FindFirstChild("Slab")
 if LOBBY then
 	if not sourceFolder then
