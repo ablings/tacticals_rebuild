@@ -12,6 +12,7 @@
 -- Lobby duels phase 1 (2026-10-16). Idempotent (rebuilds the outputs). Tacticals_rebuild.rbxl only (studio 8ef4e21a).
 -- UNDO: python tools/run_luau.py fix/duel_split_map.lua UNDO  (removes the outputs; the _DuelSource stays)
 local UNDO = false --@UNDO
+local ONLY = nil --@ONLY (a map id: build just that one; the others' layers stay as they are)
 
 -- One entry per map. Model = the map model inside the source folder; Spawns = team -> list of marker paths (inside the
 -- source folder); a team with one marker and several players lines teammates up beside it (SpawnSpacing studs).
@@ -38,6 +39,26 @@ local MAPS = {
 				{ "Atmosphere", { Density = 0.38, Offset = 0.1, Color = Color3.fromRGB(60, 62, 70), Decay = Color3.fromRGB(20, 20, 26), Glare = 0, Haze = 1.4 } },
 				{ "BloomEffect", { Intensity = 0.2, Size = 20, Threshold = 2.4 } },
 				{ "ColorCorrectionEffect", { Brightness = 0, Contrast = 0.28, Saturation = -0.15, TintColor = Color3.fromRGB(236, 240, 255) } },
+			},
+		},
+	},
+	-- [PRANGE] 2026-10-20 Edward's floor plan: the open-roofed whitebox (fix/map_practice_range.lua builds the source)
+	PracticeRange = {
+		DisplayName = "Practice Range",
+		Image = "",
+		Modes = { "1v1", "2v2", "3v3" },
+		Model = "PracticeRange",
+		Spawns = { A = { "PracticeRange.MatchSpawns.SpawnA" }, B = { "PracticeRange.MatchSpawns.SpawnB" } },
+		SpawnSpacing = 4,
+		Dynamic = {},
+		Lighting = {
+			props = { Brightness = 1.6, ClockTime = 15.2, GeographicLatitude = 40, Ambient = Color3.fromRGB(86, 86, 88),
+				OutdoorAmbient = Color3.fromRGB(112, 112, 114), ExposureCompensation = -0.55, EnvironmentDiffuseScale = 0.25,
+				EnvironmentSpecularScale = 0.2, ShadowSoftness = 0.2, ColorShift_Top = Color3.new(0, 0, 0), ColorShift_Bottom = Color3.new(0, 0, 0) },
+			effects = {
+				{ "Atmosphere", { Density = 0.26, Offset = 0.05, Color = Color3.fromRGB(214, 220, 228), Decay = Color3.fromRGB(150, 160, 176), Glare = 0.1, Haze = 1 } },
+				{ "BloomEffect", { Intensity = 0.4, Size = 24, Threshold = 1.6 } },
+				{ "ColorCorrectionEffect", { Brightness = 0, Contrast = 0.14, Saturation = 0.05, TintColor = Color3.fromRGB(255, 250, 244) } },
 			},
 		},
 	},
@@ -71,6 +92,7 @@ end
 local function v3(v) return string.format("Vector3.new(%.3f, %.3f, %.3f)", v.X, v.Y, v.Z) end
 
 for id, cfg in MAPS do
+	if ONLY and id ~= ONLY then continue end
 	local src = SS:FindFirstChild("_DuelSource") and SS._DuelSource:FindFirstChild(id)
 	local model = src and src:FindFirstChild(cfg.Model)
 	if not model then say(id, "SKIPPED: no ServerStorage._DuelSource." .. id .. "." .. cfg.Model .. " (run tools/duel_map_port.py)"); continue end
