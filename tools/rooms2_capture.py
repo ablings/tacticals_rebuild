@@ -1,7 +1,7 @@
 """Rooms2 capture set (Shop, Armory, both corridors; player height + 3/4) via the stdio MCP bridge (rivals_practice/mcpcli.py).
 Usage: python tools/rooms2_capture.py <prefix: before|after> [names...]   (run from tacticals_rebuild)"""
 import json, os, subprocess, sys, shutil
-SID = "d93b3ec2-422d-40e2-87ce-6dd7b5c4e24c"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
+SID = "5e5685e4-6afe-4dde-b307-dd6c67c0a85d"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
   "n1_corrN_player": ([0, 5.5, 34],    [0, 5, 80]),
