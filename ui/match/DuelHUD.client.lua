@@ -231,7 +231,7 @@ local function addKill(d)
 	if d.victim then tallyOf(d.victim).d += 1 end
 	if d.victim == player.UserId then lastDeath = d end
 	if d.victim and d.victim < 0 then botDown[d.victim] = true end
-	if d.killer == player.UserId and d.victim and d.victim ~= player.UserId and showEliminated then showEliminated(d.victim) end
+	if d.killer == player.UserId and d.victim and d.victim ~= player.UserId and showEliminated then showEliminated(d.victim, d) end
 	local myTeam = player:GetAttribute("Team")
 	-- (2026-10-20, Edward's screen: Knife Duels' feed) no coloured row: separate small dark pills sized to their content and
 	-- packed to the right: [killer] [weapon] (headshot / no-scope marks, no pill) [victim]. Names are white; each name pill has
@@ -472,13 +472,30 @@ local resScore = label(results, "3 - 1", FX, 60, 0, 150, 800, 70, WHITE, nil, 4)
 local resMode = label(results, "", FB, 24, 0, 220, 800, 30, Color3.fromRGB(205, 205, 212), nil, 4)
 local stats = {}
 for i, k in { "Kills", "Deaths", "Headshots" } do
-	local x = 80 + (i - 1) * 220
-	stats[k] = label(results, "0", FX, 56, x, 280, 200, 66, WHITE, nil, 4)
-	label(results, k, FB, 22, x, 344, 200, 28, Color3.fromRGB(205, 205, 212), nil, 4)
+	local x = 310 + (i - 1) * 150
+	stats[k] = label(results, "0", FX, 56, x, 280, 150, 66, WHITE, nil, 4)
+	label(results, k, FB, 22, x, 344, 150, 28, Color3.fromRGB(205, 205, 212), nil, 4)
 end
 local resRewards = label(results, "", FX, 32, 0, 392, 800, 44, OLIVE_HI, nil, 4)
 -- ranked: the rank line (promotion / demotion / shield / placements / reveal)
 local resRank = label(results, "", FX, 30, 0, 436, 800, 40, WHITE, nil, 4)
+-- (2026-10-20, the common theme of every reference end screen: Knife / Sniper / Murder Duels, RIVALS, Hood Rivals show the
+-- player, not just numbers) your character on the left with your name and a line in our colour; the numbers move right
+do
+	local av = new("ImageLabel", { Name = "Avatar", BackgroundColor3 = BLACK, BackgroundTransparency = 0.55, ScaleType = Enum.ScaleType.Fit,
+		Position = UDim2.fromOffset(40, 160), Size = UDim2.fromOffset(250, 250), ZIndex = 4, Parent = results }, { corner(6) })
+	new("Frame", { BorderSizePixel = 0, BackgroundColor3 = TEAM_A[1], Position = UDim2.fromOffset(40, 410), Size = UDim2.fromOffset(250, 4), ZIndex = 5, Parent = results })
+	label(results, player.DisplayName, FX, 30, 40, 420, 250, 36, WHITE, nil, 4)
+	label(results, "@" .. player.Name, FB, 20, 40, 456, 250, 24, Color3.fromRGB(205, 205, 212), nil, 4)
+	for _, l in { resScore, resMode, resRewards, resRank } do
+		l.Position = UDim2.fromOffset(310, l.Position.Y.Offset)
+		l.Size = UDim2.fromOffset(450, l.Size.Y.Offset)
+	end
+	task.spawn(function()
+		local ok, img = pcall(function() return Players:GetUserThumbnailAsync(math.max(player.UserId, 1), Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420) end)
+		if ok and img then av.Image = img end
+	end)
+end
 local leave = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(275, 490), Size = UDim2.fromOffset(250, 76),
 	BackgroundColor3 = WHITE, Parent = results }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214)) }) })
 label(leave, "Continue", FX, 40, 0, 0, 250, 76, WHITE, nil, 5)
@@ -876,6 +893,11 @@ showResultScreenRef = showResultScreen
 
 
 local RV = {} -- (2026-10-18) the RIVALS round-end pieces, in a block: this script is at the 200-locals limit
+do -- the round-change dip to black (its own ScreenGui above the HUD; full screen, Scale only)
+	local fg = new("ScreenGui", { Name = "RoundFade", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 14, Parent = player:WaitForChild("PlayerGui") })
+	RV.fade = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), Parent = fg })
+	RV.fadeWant = 1
+end
 do
 ---------------------------------------------------------------------------------------------------- round card (RIVALS)
 -- (2026-10-18, live RIVALS with Edward) a round's end: a small green "ROUND / WON" or red "ROUND / LOST" card pops in under
@@ -906,20 +928,36 @@ local elimL = new("TextLabel", { Name = "Eliminated", BackgroundTransparency = 1
 	Position = UDim2.fromOffset(560, 640), Size = UDim2.fromOffset(800, 46), Visible = false, ZIndex = 6, Parent = root })
 elimL:SetAttribute("dTS", 34); table.insert(scaled, elimL)
 new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = elimL })
+-- (2026-10-20, the common theme of every duel game Edward showed: Knife / Murder Duels' "+XP HEADSHOT / KILL", Redliner's
+-- "Killed X!", Hood Rivals' ELIMINATED) what the kill was, in small grey caps under the name
+local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 22, TextColor3 = Color3.fromRGB(205, 205, 212),
+	Position = UDim2.fromOffset(560, 686), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
+elimSub:SetAttribute("dTS", 22); table.insert(scaled, elimSub)
+new("UIStroke", { Thickness = 1.5, Transparency = 0.55, Parent = elimSub })
 local elimToken = 0
-showEliminated = function(uid)
+showEliminated = function(uid, d)
 	elimToken += 1
 	local my = elimToken
-	elimL.Text = 'Eliminated  <font color="#C8A8FF">' .. nameOf(uid) .. '</font>'
+	-- (serious pass) the name in their side's colour (light green), not the old purple
+	elimL.Text = 'Eliminated  <font color="#96B288">' .. nameOf(uid) .. '</font>'
 	elimL.TextTransparency = 0
 	elimL.Visible = true
+	local how = {}
+	if d and d.noscope then table.insert(how, "NO-SCOPE") end
+	if d and d.headshot then table.insert(how, "HEADSHOT") end
+	if d and (d.kind == "Melee" or d.kind == "Takedown") then table.insert(how, string.upper(d.kind)) end
+	table.insert(how, "KILL")
+	elimSub.Text = table.concat(how, "   ·   ")
+	elimSub.TextTransparency = 0
+	elimSub.Visible = true
 	local pop = elimL:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = elimL })
 	pop.Scale = 1.4
 	TweenService:Create(pop, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	task.delay(2.2, function()
 		if elimToken ~= my then return end
 		TweenService:Create(elimL, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
-		task.delay(0.45, function() if elimToken == my then elimL.Visible = false end end)
+		TweenService:Create(elimSub, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
+		task.delay(0.45, function() if elimToken == my then elimL.Visible = false; elimSub.Visible = false end end)
 	end)
 end
 
@@ -1019,6 +1057,20 @@ UserInputService.LastInputTypeChanged:Connect(chipText)
 chipText()
 
 RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.switchHook = roundCard, showRoundCard, kcard, refreshKillerCard, switchB, switchHook
+-- (2026-10-20, Knife Duels / Murder Duels / RIVALS) MATCH POINT on the same banner, through the countdown of a round that can
+-- end the match: "You need 1 point to win!" (ours, beige) / "They need 1 point to win" (theirs, green) / both: "Next round wins"
+RV.showMatchPoint = function(mine, theirs, toWin)
+	if not toWin or (mine < toWin - 1 and theirs < toWin - 1) then return end
+	local us, them = mine >= toWin - 1, theirs >= toWin - 1
+	local c = (us and not them) and TEAM_A[1] or ((them and not us) and TEAM_B[1] or WHITE)
+	roundBig.Text = "MATCH POINT"
+	roundBig.TextColor3 = c
+	roundLine.BackgroundColor3 = c
+	roundSmall.Text = (us and them) and "Next round wins" or (us and "You need 1 point to win!" or "They need 1 point to win")
+	roundCard.Visible = true
+	roundPop.Scale = 1.12
+	TweenService:Create(roundPop, TweenInfo.new(0.25, Enum.EasingStyle.Quad), { Scale = 1 }):Play()
+end
 end
 
 toScale(canvas, Vector2.new(W, H))
@@ -1100,6 +1152,16 @@ end)
 RunService.RenderStepped:Connect(function()
 	local o = stateObject()
 	local state = o and o:GetAttribute("MatchState")
+	-- (2026-10-20, Knife / Sniper / Murder Duels, Hood Rivals, Redliner) the round-change dip to black: the last 0.35 s of a
+	-- RoundEnd in your match, lifted as soon as the next state starts (before any early return, so it can never stick)
+	do
+		local endsIn = (st("StateEndsAt") or 0) - workspace:GetServerTimeNow()
+		local want = (inMatch() and state == "RoundEnd" and endsIn < 0.35 and endsIn > 0) and 0 or 1
+		if want ~= RV.fadeWant then
+			RV.fadeWant = want
+			TweenService:Create(RV.fade, TweenInfo.new(want == 0 and 0.3 or 0.45, Enum.EasingStyle.Quad), { BackgroundTransparency = want }):Play()
+		end
+	end
 	local playing = inMatch() and (state == "RunIn" or state == "Countdown" or state == "Live" or state == "RoundEnd" or state == "Victory" or state == "MatchEnd")
 		and not (st("PostMatch") == true or player:GetAttribute("InPseudoLobby") == true) -- the post-match lobby: no match HUD (the results card can still show)
 	-- a new match (or none): the old card / banner never carries over
@@ -1160,6 +1222,8 @@ RunService.RenderStepped:Connect(function()
 		if state == "Countdown" or state == "RunIn" then gotSummary = false end
 		if state == "Countdown" then
 			-- (Edward 2026-10-19) no 3-2-1 / FIGHT: the top clock counts the countdown down in tenths instead
+			-- the round's WIN / LOSS banner stays through the countdown, unless the next round can end the match (MATCH POINT)
+			if not spectator() then RV.showMatchPoint(mine, theirs, st("RoundsToWin")) end
 		elseif state == "Live" then
 			RV.roundCard.Visible = false
 			table.clear(botDown)
