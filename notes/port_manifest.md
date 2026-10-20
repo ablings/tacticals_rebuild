@@ -261,3 +261,19 @@ himself; we never publish.
   Grenade, Landmine, Medkit, shop items.
 - Publish note: Edward had Firefox in front, so the foreground-guarded save refused and computer use couldn't click (Firefox is
   read-only tier); he closed it, then everything went through. Click File and Publish As in one batch with a wait in between.
+
+## Live port 21: match clock, Kit blur, connected item models (2026-10-19 18:54-19:00, UI session on the SHADOW PC; Edward in this chat: "yeah publish on this pc", then "Yes, you publish it")
+- First publish from the Shadow PC (Roblox account whitteguy, group gunsy funsy). Working copies saved 18:40 (a2bcff4: UI f27a2d4 / ed50188
+  match clock, 474a994 Kit blur, 83d6997 Pump Shotgun / Bat / Riot Shield rebuilt in both copies). Before publishing, the live tacticals Team
+  Create session was fingerprinted against the port-20 Tacticals_main_ported.rbxl: identical (no live edits lost).
+- Publish files: Tacticals_main_ported.rbxl = copy of Tacticals_rebuild.rbxl (Technology Future); Tutorial / Matchmaking / Ranked_place.rbxl =
+  copies of match_place_ref.rbxl, `split_build place <id> <Kind>`, then `deploy_ui.py --matchmaking|--ranked --force` for those two. Instead of
+  out/v.lua / v2.lua (not in the repo), each was diffed script-by-script against its port-20 file: only Armory, DuelHUD and the PumpShotgun /
+  Bat tool part counts differed (339 scripts each).
+- Published with File > Publish As > gunsy funsy > tacticals > Overwrite > Grant Permissions and Publish, one place at a time, a screenshot
+  before every click: tacticals (lobby), Tutorial, Matchmaking, Ranked. Read back from each reopened cloud place through the MCP: place ids
+  126491009194165 / 118492914954668 / 97339328188402 / 122908502889013, PlaceKind, the new DuelHUD + Armory, shotgun 9 / bat 6 / shield 4 parts.
+  Versions not read back from Creator Hub (not logged in on the Shadow PC's browser).
+- Shadow PC notes: the reopened cloud windows show "Applying script changes. Studio will close automatically when complete." on close; the
+  lobby was re-read after that and still carried the new build. tools/split_build.py and run_luau_at.py now find mcpcli.py under ~ (were
+  hard-coded to C:\Users\aroki).

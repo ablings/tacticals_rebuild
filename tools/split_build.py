@@ -7,7 +7,7 @@ Copies scripts/split/PlaceKind.lua into fix/split_place_install.lua (between --@
 --@UNDO lines in a temp copy and runs it through the stdio MCP bridge (rivals_practice/mcpcli.py). Never saves the place."""
 import json, os, re, subprocess, sys, tempfile
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
+CLI = os.path.expanduser(r"~\Documents\rivals_practice\mcpcli.py")
 FORBIDDEN = ("dcee58ac", "82b89850")  # sandbox / RIVALS replica: never
 
 def embed():
