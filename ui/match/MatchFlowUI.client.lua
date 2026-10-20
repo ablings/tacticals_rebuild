@@ -707,6 +707,17 @@ RunService.RenderStepped:Connect(function()
 	end
 	if player:GetAttribute("SwitchingWeapons") ~= (switching or nil) then player:SetAttribute("SwitchingWeapons", switching or nil) end
 	setPhase(switching and "Switch" or st(STATE.Phase))
+	-- (2026-10-20) picks during a live round are queued by the server (NextKitWeapon / Melee / Gadget) for the next spawn
+	if phase == "Switch" then
+		local q = {}
+		for _, k in { "NextKitWeapon", "NextKitMelee", "NextKitGadget" } do
+			local v = player:GetAttribute(k)
+			if v then table.insert(q, tostring(v)) end
+		end
+		local txt = st("MatchState") == "Live" and (#q > 0 and ("Next round: " .. table.concat(q, ", ")) or "Changes apply next round")
+			or ("Map: " .. tostring(st(STATE.Chosen) or "?"))
+		if mapBarL.Text ~= txt then mapBarL.Text = txt end
+	end
 	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
 	if phase == "MapVote" then
 		voteTimer.Text = string.format("%.1f", left)
