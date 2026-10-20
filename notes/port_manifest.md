@@ -323,3 +323,11 @@ himself; we never publish.
 - Carries: Practice Range (open-roofed whitebox from Edward's floor plan, 1v1 / 2v2 / 3v3, per-map spawns + lighting; lobby duels 2v2 / 3v3
   pads now open), the 4 draw-from-holster animations, the UI's kill-feed silhouettes + screen-size audit fixes + map-vote aerial card, HUD fit
   (tutorial panel above the hotbar, bigger NOISE meter above HEALTH).
+
+## Live port 27: Practice Range white + training grid (2026-10-20 ~12:00, main PC lead; Edward in the lead's chat: "go")
+- From 4d299fd (both copies saved 10:5x). Published on the second monitor, each retitled after Grant: tacticals (lobby), Tutorial,
+  Matchmaking, Ranked (port_prep.sh, all checks true; 485 grid textures on Workspace.PracticeRange, applyMapEnv x3).
+- Ranked: Studio died with "Device encountered an error: Device removed (0x887a0006)" (GPU) as Publish As opened. The file had already been
+  saved by port_prep, so it was reopened, re-verified (v.lua all true) and published from the reopened window.
+- Carries: every Practice Range object white SmoothPlastic with the training room's greybox grid (rbxassetid://86361987736184, 5-stud tiles,
+  dark at 0.32), one textured floor slab, lobby duel layers re-split.
