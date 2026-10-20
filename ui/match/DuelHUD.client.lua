@@ -24,6 +24,10 @@ local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE_HI = Color3.fromRGB(255, 212, 0)
 local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) } -- (2026-10-20, Edward: "serious", like the old bone/olive but better) us: warm beige
 local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) } -- them: muted dark green
+-- (2026-10-20, Edward: "a mix" of RIVALS + Sniper / Murder Duels) RIVALS fills its score boxes, round card, kill feed pills and
+-- killer card with the side's colour; ours use these muted fills (tan / dark green) so white text stays readable
+TEAM_A.fill = { Color3.fromRGB(176, 156, 116), Color3.fromRGB(118, 98, 68) }
+TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
 local GOOD, BAD = Color3.fromRGB(255, 212, 0), Color3.fromRGB(235, 70, 60)
 -- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
 -- panels in a calmer dress: Montserrat Heavy headlines, Builder Sans body, hairline edges, team colour only as an accent.
@@ -133,13 +137,10 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 
 ---------------------------------------------------------------------------------------------------- score bar
 local function teamBox(x, cols, right)
-	-- (2026-10-20, Edward via Knife Duels: "find balance") dark see-through plate; the team colour is only an accent: a strip
-	-- along the bottom and the score digits
-	local b = new("Frame", { Position = UDim2.fromOffset(x, 20), Size = UDim2.fromOffset(300, 84), BackgroundColor3 = Color3.fromRGB(16, 17, 20),
-		BackgroundTransparency = 0.35, Parent = root },
-		{ corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.85, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
-	new("Frame", { AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 7 / 84), BackgroundColor3 = WHITE, BorderSizePixel = 0,
-		ZIndex = 2, Parent = b }, { new("UIGradient", { Rotation = 0, Color = ColorSequence.new(cols[1], cols[2]) }) })
+	-- (2026-10-20, the RIVALS mix) RIVALS' box filled with the side's colour (muted tan / dark green), white score, hairline edge
+	local b = new("Frame", { Position = UDim2.fromOffset(x, 20), Size = UDim2.fromOffset(300, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.08, Parent = root },
+		{ corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols.fill[1], cols.fill[2]) }),
+			new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.85, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
 	local slots = {}
 	for i = 1, 3 do
 		local hx = right and (96 + (i - 1) * 64) or (14 + (i - 1) * 64)
@@ -156,7 +157,7 @@ local function teamBox(x, cols, right)
 		for _, tx in { 23, 28, 33 } do new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(tx - 1, 40), Size = UDim2.fromOffset(2, 6), ZIndex = 6, Parent = skull }) end
 		slots[i] = { h = h, x1 = x1, x2 = x2, skull = skull }
 	end
-	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, cols[1], nil, 4)
+	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, WHITE, nil, 4)
 	return { slots = slots, score = score, frame = b }
 end
 local mineBox = teamBox(580, TEAM_A, false)
@@ -233,38 +234,13 @@ local function addKill(d)
 	if d.victim and d.victim < 0 then botDown[d.victim] = true end
 	if d.killer == player.UserId and d.victim and d.victim ~= player.UserId and showEliminated then showEliminated(d.victim, d) end
 	local myTeam = player:GetAttribute("Team")
-	-- (2026-10-20, Edward's screen: Knife Duels' feed) no coloured row: separate small dark pills sized to their content and
-	-- packed to the right: [killer] [weapon] (headshot / no-scope marks, no pill) [victim]. Names are white; each name pill has
-	-- a thin underline in that player's team colour (ours / theirs).
+	-- (2026-10-20, the RIVALS mix) RIVALS' feed: ONE pill per kill, filled with the killer's side colour (muted tan ours, dark
+	-- green theirs), packed right and sized to its content: killer · weapon silhouette · headshot / no-scope marks · victim
 	local function sideOf(uid) return uid == player.UserId or teamOf(uid) == myTeam end
-	local ROW_W, ROW_H = 480, 45 -- the feed's design width, a row's design height (0.15 of 300)
-	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundTransparency = 1, Parent = feed },
-		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Right,
-			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0.008, 0), SortOrder = Enum.SortOrder.LayoutOrder }) })
-	local order = 0
-	local function pill(wDesign, underline)
-		order += 1
-		local f = new("Frame", { LayoutOrder = order, Size = UDim2.fromScale(wDesign / ROW_W, 0.82), BackgroundColor3 = Color3.fromRGB(18, 19, 23),
-			BackgroundTransparency = 0.25, Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.18, 0) }) })
-		if underline then
-			new("Frame", { AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromScale(0.5, 1), Size = UDim2.fromScale(0.86, 0.09), BackgroundColor3 = underline,
-				BorderSizePixel = 0, Parent = f })
-		end
-		return f
-	end
-	local function namePill(uid)
-		local txt = nameOf(uid)
-		local w = game:GetService("TextService"):GetTextSize(txt, 22, Enum.Font.BuilderSansBold, Vector2.new(1000, 100)).X + 26
-		local f = pill(math.clamp(w, 60, 200), sideOf(uid) and TEAM_A[1] or TEAM_B[1])
-		local t = new("TextLabel", { BackgroundTransparency = 1, Text = txt, FontFace = FB, TextScaled = true, TextColor3 = WHITE, TextTruncate = Enum.TextTruncate.AtEnd,
-			Position = UDim2.fromScale(0.06, 0.16), Size = UDim2.fromScale(0.88, 0.6), Parent = f })
-		new("UITextSizeConstraint", { MaxTextSize = 22, Parent = t })
-		if uid == player.UserId then new("UIStroke", { Color = WHITE, Thickness = 1.2, Transparency = 0.45, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f }) end
-		return f
-	end
+	local ROW_W = 480 -- the feed's design width
+	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundTransparency = 1, Parent = feed })
+	local function textW(txt, size) return game:GetService("TextService"):GetTextSize(txt, size, Enum.Font.BuilderSansBold, Vector2.new(1000, 100)).X end
 	local verb = ({ Takedown = "took down", Melee = "bashed", Explosion = "blew up", StickyGrenade = "blew up", Landmine = "blew up", Burn = "burned" })[d.kind] or ">"
-	-- the weapon: an uploaded silhouette (UIKit.KillIcons), else the weapon's own tool rendered white in a ViewportFrame,
-	-- else the verb as text
 	local tool
 	if typeof(d.weapon) == "string" and d.kind ~= "Takedown" then
 		local repo = ReplicatedStorage:FindFirstChild("Repository")
@@ -279,51 +255,60 @@ local function addKill(d)
 	local marks = {}
 	if KI and d.headshot and KI.Status("headshot") then table.insert(marks, KI.Status("headshot")) end
 	if KI and d.noscope and KI.Status("noscope") then table.insert(marks, KI.Status("noscope")) end
-	if d.killer then namePill(d.killer) end
-	if wIcon then
-		local f = pill(84)
-		new("ImageLabel", { BackgroundTransparency = 1, Image = wIcon, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromScale(0.1, 0.12),
-			Size = UDim2.fromScale(0.8, 0.76), Parent = f })
-	elseif tool then
-		local f = pill(84)
-		local vpf = new("ViewportFrame", { BackgroundTransparency = 1, Ambient = WHITE, LightColor = Color3.new(0, 0, 0),
-			Position = UDim2.fromScale(0.08, 0), Size = UDim2.fromScale(0.84, 1), Parent = f })
-		local m = Instance.new("Model")
-		for _, part in tool:GetDescendants() do
-			if part:IsA("BasePart") and part.Transparency < 0.9 then
-				local c = part:Clone()
-				for _, k in c:GetChildren() do if not k:IsA("DataModelMesh") then k:Destroy() end end
-				c.Anchored, c.Color, c.Material = true, WHITE, Enum.Material.SmoothPlastic
-				if c:IsA("MeshPart") then c.TextureID = "" end
-				c.Parent = m
+	-- the parts, each { kind, value, design width }
+	local parts = {}
+	if d.killer then table.insert(parts, { "name", nameOf(d.killer), math.clamp(textW(nameOf(d.killer), 22) + 6, 24, 170) }) end
+	if wIcon then table.insert(parts, { "icon", wIcon, 66 })
+	elseif tool then table.insert(parts, { "vpf", tool, 66 })
+	else table.insert(parts, { "text", verb, textW(verb, 20) + 6 }) end
+	if d.headshot and #marks == 0 then table.insert(parts, { "glyph", "◉", 22 }) end
+	for _, img in marks do table.insert(parts, { "mark", img, 28 }) end
+	if d.victim then table.insert(parts, { "name", nameOf(d.victim), math.clamp(textW(nameOf(d.victim), 22) + 6, 24, 170) }) end
+	local GAP, PADX = 8, 14
+	local total = PADX * 2
+	for i, part in parts do total += part[3] + (i > 1 and GAP or 0) end
+	local fill = (d.killer and sideOf(d.killer)) and TEAM_A.fill or TEAM_B.fill
+	local pill = new("Frame", { Name = "Pill", AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.fromScale(1, 0.5), Size = UDim2.fromScale(math.min(total, ROW_W) / ROW_W, 0.82),
+		BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = row }, {
+		new("UICorner", { CornerRadius = UDim.new(0.2, 0) }),
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(fill[1], fill[2]) }),
+		new("UIPadding", { PaddingLeft = UDim.new(PADX / total, 0), PaddingRight = UDim.new(PADX / total, 0) }),
+		new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
+			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(GAP / total, 0), SortOrder = Enum.SortOrder.LayoutOrder }) })
+	if d.killer == player.UserId or d.victim == player.UserId then
+		new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = pill })
+	end
+	for i, part in parts do
+		local kind, v, w = part[1], part[2], part[3] / total
+		if kind == "name" or kind == "text" or kind == "glyph" then
+			local t = new("TextLabel", { LayoutOrder = i, BackgroundTransparency = 1, Text = v, FontFace = FB, TextScaled = true, TextTruncate = Enum.TextTruncate.AtEnd,
+				TextColor3 = kind == "text" and Color3.fromRGB(225, 225, 230) or WHITE, Size = UDim2.fromScale(w, 0.6), Parent = pill })
+			new("UITextSizeConstraint", { MaxTextSize = kind == "text" and 20 or 22, Parent = t })
+			new("UIStroke", { Thickness = 1, Transparency = 0.6, Parent = t })
+		elseif kind == "icon" or kind == "mark" then
+			new("ImageLabel", { LayoutOrder = i, BackgroundTransparency = 1, Image = v, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(w, kind == "icon" and 0.8 or 0.7), Parent = pill })
+		elseif kind == "vpf" then
+			local vpf = new("ViewportFrame", { LayoutOrder = i, BackgroundTransparency = 1, Ambient = WHITE, LightColor = Color3.new(0, 0, 0), Size = UDim2.fromScale(w, 1), Parent = pill })
+			local m = Instance.new("Model")
+			for _, bp in v:GetDescendants() do
+				if bp:IsA("BasePart") and bp.Transparency < 0.9 then
+					local c = bp:Clone()
+					for _, k in c:GetChildren() do if not k:IsA("DataModelMesh") then k:Destroy() end end
+					c.Anchored, c.Color, c.Material = true, WHITE, Enum.Material.SmoothPlastic
+					if c:IsA("MeshPart") then c.TextureID = "" end
+					c.Parent = m
+				end
 			end
+			m.Parent = vpf
+			local cf, size = m:GetBoundingBox()
+			local cam = Instance.new("Camera")
+			cam.FieldOfView = 20
+			local reach = math.max(size.Y, size.Z) / 2 / math.tan(math.rad(10)) * 1.08
+			cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(reach, 0, 0), cf.Position) -- from +X: the barrel (-Z) points right
+			cam.Parent = vpf
+			vpf.CurrentCamera = cam
 		end
-		m.Parent = vpf
-		local cf, size = m:GetBoundingBox()
-		local cam = Instance.new("Camera")
-		cam.FieldOfView = 20
-		local reach = math.max(size.Y, size.Z) / 2 / math.tan(math.rad(10)) * 1.08
-		cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(reach, 0, 0), cf.Position) -- from +X: the barrel (-Z) points right
-		cam.Parent = vpf
-		vpf.CurrentCamera = cam
-	else
-		local w = game:GetService("TextService"):GetTextSize(verb, 20, Enum.Font.BuilderSansBold, Vector2.new(1000, 100)).X + 22
-		local f = pill(w)
-		local t = new("TextLabel", { BackgroundTransparency = 1, Text = verb, FontFace = FB, TextScaled = true, TextColor3 = Color3.fromRGB(205, 205, 212),
-			Position = UDim2.fromScale(0.08, 0.2), Size = UDim2.fromScale(0.84, 0.6), Parent = f })
-		new("UITextSizeConstraint", { MaxTextSize = 20, Parent = t })
 	end
-	if d.headshot and #marks == 0 then -- no uploaded mark: the old ◉
-		order += 1
-		new("TextLabel", { LayoutOrder = order, BackgroundTransparency = 1, Text = "◉", FontFace = FB, TextScaled = true, TextColor3 = WHITE,
-			Size = UDim2.fromScale(28 / ROW_W, 0.6), Parent = row })
-	end
-	for _, img in marks do
-		order += 1
-		new("ImageLabel", { LayoutOrder = order, BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit,
-			Size = UDim2.fromScale(34 / ROW_W, 0.76), Parent = row })
-	end
-	if d.victim then namePill(d.victim) end
 	local ins = new("UIScale", { Scale = 0.6, Parent = row })
 	TweenService:Create(ins, TweenInfo.new(0.22, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	task.delay(5, function()
@@ -471,10 +456,12 @@ local resTitle = label(results, "VICTORY", STENCIL, 110, 0, 20, 800, 130, GOOD, 
 local resScore = label(results, "3 - 1", FX, 60, 0, 150, 800, 70, WHITE, nil, 4)
 local resMode = label(results, "", FB, 24, 0, 220, 800, 30, Color3.fromRGB(205, 205, 212), nil, 4)
 local stats = {}
-for i, k in { "Kills", "Deaths", "Headshots" } do
-	local x = 310 + (i - 1) * 150
-	stats[k] = label(results, "0", FX, 56, x, 280, 150, 66, WHITE, nil, 4)
-	label(results, k, FB, 22, x, 344, 150, 28, Color3.fromRGB(205, 205, 212), nil, 4)
+-- (2026-10-20, the RIVALS mix) RIVALS' numbers: Eliminations / Deaths / Assists, then Damage Dealt / Damage Taken (+ our Headshots).
+-- Assists and damage need the server's MatchResults fields Assists / DamageDealt / DamageTaken ("-" until it sends them).
+for i, k in { { "Kills", "Eliminations" }, { "Deaths", "Deaths" }, { "Assists", "Assists" }, { "DamageDealt", "Damage Dealt" }, { "DamageTaken", "Damage Taken" }, { "Headshots", "Headshots" } } do
+	local x, y = 310 + ((i - 1) % 3) * 150, i <= 3 and 270 or 372
+	stats[k[1]] = label(results, "0", FX, i <= 3 and 50 or 40, x, y, 150, i <= 3 and 58 or 50, WHITE, nil, 4)
+	label(results, k[2], FB, 20, x, y + (i <= 3 and 58 or 50), 150, 26, Color3.fromRGB(205, 205, 212), nil, 4)
 end
 local resRewards = label(results, "", FX, 32, 0, 392, 800, 44, OLIVE_HI, nil, 4)
 -- ranked: the rank line (promotion / demotion / shield / placements / reveal)
@@ -491,6 +478,8 @@ do
 		l.Position = UDim2.fromOffset(310, l.Position.Y.Offset)
 		l.Size = UDim2.fromOffset(450, l.Size.Y.Offset)
 	end
+	resScore.Position, resMode.Position = UDim2.fromOffset(310, 150), UDim2.fromOffset(310, 220)
+	resRewards.Position, resRank.Position = UDim2.fromOffset(310, 460), UDim2.fromOffset(310, 504)
 	task.spawn(function()
 		local ok, img = pcall(function() return Players:GetUserThumbnailAsync(math.max(player.UserId, 1), Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420) end)
 		if ok and img then av.Image = img end
@@ -523,6 +512,9 @@ local function showResults(sum)
 	stats.Kills.Text = tostring(sum.Kills or player:GetAttribute("MatchKills") or 0)
 	stats.Deaths.Text = tostring(sum.Deaths or player:GetAttribute("MatchDeaths") or 0)
 	stats.Headshots.Text = tostring(sum.Headshots or 0)
+	stats.Assists.Text = sum.Assists ~= nil and tostring(sum.Assists) or "-"
+	stats.DamageDealt.Text = sum.DamageDealt ~= nil and tostring(math.floor(sum.DamageDealt)) or "-"
+	stats.DamageTaken.Text = sum.DamageTaken ~= nil and tostring(math.floor(sum.DamageTaken)) or "-"
 	local bits = {}
 	if sum.XP then table.insert(bits, "+" .. sum.XP .. " XP") end
 	if sum.Scissors then table.insert(bits, "+" .. sum.Scissors .. " scissors") end
@@ -902,25 +894,26 @@ do
 ---------------------------------------------------------------------------------------------------- round card (RIVALS)
 -- (2026-10-18, live RIVALS with Edward) a round's end: a small green "ROUND / WON" or red "ROUND / LOST" card pops in under
 -- the timer with a white flash, and stays until the next round goes live.
--- (2026-10-20, Edward: RIVALS + Murder Duels' seriousness) now a banner: a dark plate fading out at its sides, "WIN" / "LOSS"
--- in the side's colour (beige ours, green theirs), "ROUND n" under it and one thin line in the same colour.
-local SIDE_FADE = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.22, 0.3), NumberSequenceKeypoint.new(0.78, 0.3), NumberSequenceKeypoint.new(1, 1) })
-local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(660, 136), Size = UDim2.fromOffset(600, 104), BackgroundColor3 = BLACK, BorderSizePixel = 0,
-	Visible = false, ZIndex = 6, Parent = root }, { new("UIGradient", { Transparency = SIDE_FADE }) })
-local roundBig = label(roundCard, "WIN", FX, 58, 0, 4, 600, 66, WHITE, nil, 7)
-local roundSmall = label(roundCard, "ROUND", FB, 22, 0, 68, 600, 26, Color3.fromRGB(215, 215, 220), nil, 7)
-local roundLine = new("Frame", { BorderSizePixel = 0, Position = UDim2.fromOffset(0, 100), Size = UDim2.fromOffset(600, 3), BackgroundColor3 = WHITE, ZIndex = 7, Parent = roundCard },
-	{ new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.3, 0), NumberSequenceKeypoint.new(0.7, 0), NumberSequenceKeypoint.new(1, 1) }) }) })
+-- (2026-10-20, the RIVALS mix) back to RIVALS' small card under the timer: "ROUND" over "WON" / "LOST", filled with the side's
+-- muted colour (tan ours, dark green theirs). Through a deciding round's countdown it reads MATCH POINT (RV.showMatchPoint).
+local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(810, 132), Size = UDim2.fromOffset(300, 96), BackgroundColor3 = WHITE, BackgroundTransparency = 0.06,
+	Visible = false, ZIndex = 6, Parent = root }, { corner(8) })
+local roundGrad = new("UIGradient", { Rotation = 90, Parent = roundCard })
+local roundSmall = label(roundCard, "ROUND", FB, 22, 0, 6, 300, 26, WHITE, nil, 7)
+local roundBig = label(roundCard, "WON", FX, 50, 0, 28, 300, 60, WHITE, nil, 7)
+local roundMP = label(roundCard, "MATCH POINT", FX, 34, 0, 8, 300, 44, WHITE, nil, 7)
+local roundMPSub = label(roundCard, "", FB, 19, 0, 54, 300, 30, WHITE, nil, 7)
+roundMP.Visible, roundMPSub.Visible = false, false
 local roundPop = new("UIScale", { Parent = roundCard })
 local function showRoundCard(won)
-	local c = won and TEAM_A[1] or TEAM_B[1]
-	roundBig.Text = won and "WIN" or "LOSS"
-	roundBig.TextColor3 = c
-	roundLine.BackgroundColor3 = c
-	roundSmall.Text = "ROUND " .. tostring(st("RoundNumber") or "")
+	local f = won and TEAM_A.fill or TEAM_B.fill
+	roundGrad.Color = ColorSequence.new(f[1], f[2])
+	roundBig.Text = won and "WON" or "LOST"
+	roundSmall.Text = "ROUND"
+	roundBig.Visible, roundSmall.Visible, roundMP.Visible, roundMPSub.Visible = true, true, false, false
 	roundCard.Visible = true
-	roundPop.Scale = 1.12
-	TweenService:Create(roundPop, TweenInfo.new(0.25, Enum.EasingStyle.Quad), { Scale = 1 }):Play()
+	roundPop.Scale = 1.25
+	TweenService:Create(roundPop, TweenInfo.new(0.28, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 end
 
 ---------------------------------------------------------------------------------------------------- eliminated
@@ -965,11 +958,9 @@ end
 -- bottom right while your killer is on camera: their headshot with a health bar over it, level badge, win streak flame,
 -- name + @username, "eliminated you with <weapon>". In the killer's team colour.
 local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(1150, 640), Size = UDim2.fromOffset(740, 140), BackgroundColor3 = WHITE,
-	Visible = false, ZIndex = 6, Parent = root }, { corner(6), new("UIGradient", { Rotation = 0, Color = ColorSequence.new(Color3.fromRGB(16, 17, 20)),
-		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.25), NumberSequenceKeypoint.new(0.8, 0.3), NumberSequenceKeypoint.new(1, 1) }) }) })
--- (2026-10-20, serious pass) the killer's colour is one line along the bottom (Knife / Sniper Duels' killer strip)
-new("Frame", { Name = "TeamLine", BorderSizePixel = 0, Position = UDim2.fromOffset(0, 136), Size = UDim2.fromOffset(740, 4), BackgroundColor3 = TEAM_B[1], ZIndex = 7, Parent = kcard },
-	{ new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.8, 0), NumberSequenceKeypoint.new(1, 1) }) }) })
+	Visible = false, ZIndex = 6, Parent = root }, { corner(8), new("UIGradient", { Rotation = 0, Color = ColorSequence.new(TEAM_B.fill[1], TEAM_B.fill[2]),
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.05), NumberSequenceKeypoint.new(0.8, 0.12), NumberSequenceKeypoint.new(1, 1) }) }) })
+-- (2026-10-20, the RIVALS mix) RIVALS' killer card filled with the killer's side colour (muted dark green), fading to the right
 local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(20, 26), Size = UDim2.fromOffset(104, 104), ZIndex = 7, Parent = kcard }, { corner(52) })
 local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(32, 12), Size = UDim2.fromOffset(80, 10), ZIndex = 8, Parent = kcard }, { corner(5) })
 local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1), ZIndex = 9, Parent = kHpBack }, { corner(5) })
@@ -1062,14 +1053,13 @@ RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.s
 RV.showMatchPoint = function(mine, theirs, toWin)
 	if not toWin or (mine < toWin - 1 and theirs < toWin - 1) then return end
 	local us, them = mine >= toWin - 1, theirs >= toWin - 1
-	local c = (us and not them) and TEAM_A[1] or ((them and not us) and TEAM_B[1] or WHITE)
-	roundBig.Text = "MATCH POINT"
-	roundBig.TextColor3 = c
-	roundLine.BackgroundColor3 = c
-	roundSmall.Text = (us and them) and "Next round wins" or (us and "You need 1 point to win!" or "They need 1 point to win")
+	local f = (us and not them) and TEAM_A.fill or ((them and not us) and TEAM_B.fill or { Color3.fromRGB(40, 42, 48), Color3.fromRGB(16, 17, 20) })
+	roundGrad.Color = ColorSequence.new(f[1], f[2])
+	roundMPSub.Text = (us and them) and "Next round wins" or (us and "You need 1 point to win!" or "They need 1 point to win")
+	roundBig.Visible, roundSmall.Visible, roundMP.Visible, roundMPSub.Visible = false, false, true, true
 	roundCard.Visible = true
-	roundPop.Scale = 1.12
-	TweenService:Create(roundPop, TweenInfo.new(0.25, Enum.EasingStyle.Quad), { Scale = 1 }):Play()
+	roundPop.Scale = 1.25
+	TweenService:Create(roundPop, TweenInfo.new(0.28, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 end
 end
 

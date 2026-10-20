@@ -48,6 +48,9 @@ local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE, OLIVE_HI = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
 local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) }  -- (2026-10-20, Edward: "serious", like the old bone/olive but better) us: warm beige
 local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) }     -- them: muted dark green
+-- (2026-10-20, the RIVALS mix) the muted fills RIVALS-style boxes use (same as DuelHUD)
+TEAM_A.fill = { Color3.fromRGB(176, 156, 116), Color3.fromRGB(118, 98, 68) }
+TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
 -- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
 -- panels, calmer: Montserrat Heavy headlines, Builder Sans body, hairline white edges, no tilts or drop shadows; "selected"
 -- is a warm white; team colours (beige / green) only as accents
@@ -140,11 +143,10 @@ local loadN = label(loading, "0", FB, 40, 1440, 976, 380, 50, Color3.fromRGB(205
 
 ---------------------------------------------------------------------------------------------------- shared: team boxes + timer
 local function teamBox(parent, x, cols, right)
-	local b = new("Frame", { Position = UDim2.fromOffset(x, 34), Size = UDim2.fromOffset(290, 84), BackgroundColor3 = Color3.fromRGB(16, 17, 20), BackgroundTransparency = PANEL_T,
-		ZIndex = 2, Parent = parent }, { corner(6) })
+	-- (2026-10-20, the RIVALS mix) RIVALS' box filled with the side's muted colour (tan ours, dark green theirs)
+	local b = new("Frame", { Position = UDim2.fromOffset(x, 34), Size = UDim2.fromOffset(290, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.08,
+		ZIndex = 2, Parent = parent }, { corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols.fill[1], cols.fill[2]) }) })
 	ink(b, 7, 4)
-	new("Frame", { AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 84), Size = UDim2.fromOffset(290, 6), BackgroundColor3 = WHITE, BorderSizePixel = 0,
-		ZIndex = 3, Parent = b }, { new("UIGradient", { Rotation = 0, Color = ColorSequence.new(cols[1], cols[2]) }) })
 	local slots = {}
 	for i = 1, 3 do
 		local hx = right and (90 + (i - 1) * 64) or (14 + (i - 1) * 64)
