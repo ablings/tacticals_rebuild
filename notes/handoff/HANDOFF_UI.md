@@ -2,9 +2,9 @@
 
 ## Get the project
 ```
-git clone "%USERPROFILE%\OneDrive\Documents\tacticals_handoff\tacticals_rebuild.bundle" "%USERPROFILE%\Documents\tacticals_rebuild"
+git clone https://github.com/ablings/<private repo>.git "%USERPROFILE%\Documents\tacticals_rebuild"
 ```
-(If the folder already exists there: `git pull "<bundle path>" main` instead.) HEAD = 83d6997. The bundle holds the
+(If the folder already exists there: `git pull` instead.) Work commits end at 83d6997. The repo holds the
 saved working places (Tacticals_rebuild.rbxl = lobby, match_place_ref.rbxl = match; saved by the lead at fa7da81, port 20).
 `rivals_practice` is on GitHub (`git pull`); it holds `mcpcli.py` (Studio MCP bridge client).
 Read `CLAUDE.md` in tacticals_rebuild, and the vault pages `wiki/tacticals/Lobby UI Kit.md` + `wiki/log.md`.
