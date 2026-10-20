@@ -5,13 +5,13 @@
 --     Gadget / Melee; the open one white-outlined, the others dim), and a 5-wide grid of square tiles: "Random" first (shuffle
 --     mark on black), then EVERY item of that slot, owned or not, the Kit's 3D render poking out past the tile at an angle and
 --     the bold outlined name across the bottom. Tiles are a dark gradient tinted by LobbyConfig rarity (Legendary sparkles);
---     the held item is white-edged, hover / controller selection lights the Tacticals olive.
+--     this round's pick is white-edged, hover / controller selection lights the Tacticals olive.
 --   * the world behind blurs hard (Lighting.TrainingPickerBlur, like the Kit).
--- Opens: on entering Training (InTraining -> true), at a weapon bin (ProximityPrompt with attribute TrainingBin; a "Slot"
--- attribute on the prompt or its bin opens that tab), the "Weapons" button at the top of the screen, T / D-pad up.
--- Closes: the X, Esc, B (gamepad), T / D-pad up again, picking an item (RIVALS equips and closes), leaving Training.
--- Equip (Training only, never the real loadout): Events.Training.TrialItem(slot, itemId) (server: Handoff preparation);
--- until that remote exists the Weapon tab falls back to the bins' Events.Training.SwapWeapon(id) (works near a bin only).
+-- Opens: on entering Training (InTraining -> true), at a weapon bin (ProximityPrompt with attribute TrainingBin), the
+-- "Weapons" button at the top of the screen, T / D-pad up. Every open starts blank and walks Weapon -> Gadget -> Melee
+-- (Edward's flow, see "open / close / pick" below); the last pick applies the kit and closes.
+-- Closes: the X, Esc, B (gamepad), T / D-pad up again (all of these cancel: the old kit comes back), leaving Training.
+-- Equip (Training only, never the real loadout): Events.Training.TrialKit / TrialItem (server: Handoff preparation).
 -- UI rule: every Position / Size in Scale (design px 1920 x 1080 through S()).
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -37,9 +37,7 @@ local AMBER = Color3.fromRGB(255, 196, 92)
 local FONT_H = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
 local FONT_B = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
 local TITLE = "Try out any weapon here for free!"
-local HELD_ATTR = { Weapon = "Loadout", Gadget = "KitGadget", Melee = "KitMelee" }
 local TRIAL_ATTR = { Weapon = "TrialWeapon", Gadget = "TrialGadget", Melee = "TrialMelee" }
-local DEFAULTS = Config.DefaultLoadout or {}
 local SLOTS = Config.Slots or { "Weapon", "Gadget", "Melee" }
 
 -- grid geometry (design px, measured off the reference at 1080 high)
@@ -50,6 +48,7 @@ local TAB, TAB_PITCH, TAB_Y = 100, 108, 286
 local gui, root, gridHolder, tabsHolder, dots, weaponsBtn, trialTag, blur
 local isOpen, ready, slotNow, closedAt = false, false, SLOTS[1], 0
 local grids, tabs, tiles = {}, {}, {}                                                      -- per slot; tiles[slot][id] = button
+local picks = {}                                                                           -- this round's picks: [slot] = itemId
 local trialEvent, swapEvent
 
 -------------------------------------------------------------------------------
@@ -109,9 +108,6 @@ local function itemsFor(slot)
 	return list
 end
 
-local function held(slot)
-	return player:GetAttribute(HELD_ATTR[slot]) or DEFAULTS[slot]
-end
 
 -------------------------------------------------------------------------------
 -- tiles
@@ -205,13 +201,14 @@ local function tabLook(slot)
 	end
 end
 
+-- a tab shows what you picked for its slot this time (Edward: the boxes start empty and fill as you go)
 local function tabIcon(slot)
 	local t = tabs[slot]
 	if not t then return end
-	local id = held(slot)
+	local id = picks[slot]
 	if t.Id == id then return end
 	t.Id = id
-	if t.Vp then t.Vp.Frame:Destroy() end
+	if t.Vp then t.Vp.Frame:Destroy(); t.Vp = nil end
 	if id then
 		local model, view, zoom = itemModel(id, slot)
 		t.Vp = ViewIcons.Viewport(t.Holder, model, { view = view, zoom = (zoom or 1) * 0.95, still = true, zIndex = 4 })
@@ -225,10 +222,9 @@ local function showSlot(slot)
 	tabLook(slot)
 end
 
-local function refreshHeld()
+local function refreshPicks()
 	for slot, list in tiles do
-		local h = held(slot)
-		for id, b in list do b:SetAttribute("Held", id == h) end
+		for id, b in list do b:SetAttribute("Held", id == picks[slot]) end
 		tabIcon(slot)
 	end
 end
@@ -321,7 +317,7 @@ local function buildGrids()
 	end
 	ready = true
 	if dots then dots.Visible = false end
-	refreshHeld()
+	refreshPicks()
 	showSlot(slotNow)
 end
 
@@ -341,12 +337,48 @@ local function keys(_, state, input)
 	return Enum.ContextActionResult.Sink
 end
 
-function controller.Open(slot)
+-- Edward's flow (2026-10-19): every open starts blank on Weapon and clears the trial kit from your hands ("when you open the
+-- crate it removes your weapons and makes you do this again"); a pick fills its tab and moves to the next empty slot
+-- (Weapon -> Gadget -> Melee); the last one applies all three and closes. A filled tab can be clicked to redo that step.
+-- X / Esc / B before the end applies nothing and gives back what you held before opening.
+-- Server: Events.Training.TrialKit (Handoff preparation): FireServer("Clear") / ("Apply", {Weapon=, Gadget=, Melee=}) /
+-- ("Cancel"). Without it: no clear, and Apply falls back to TrialItem per slot (spaced past its 0.25 s rate limit).
+local kitEvent
+local cleared = false
+
+local function nextEmpty()
+	local i = table.find(SLOTS, slotNow) or 0
+	for k = 1, #SLOTS do
+		local s = SLOTS[(i + k - 1) % #SLOTS + 1]
+		if not picks[s] then return s end
+	end
+	return nil
+end
+
+local function apply()
+	local kit = table.clone(picks)
+	if kitEvent then
+		kitEvent:FireServer("Apply", kit)
+	elseif trialEvent then
+		task.spawn(function()
+			for _, s in SLOTS do
+				if kit[s] then trialEvent:FireServer(s, kit[s]); task.wait(0.3) end
+			end
+		end)
+	elseif kit.Weapon and swapEvent then
+		swapEvent:FireServer(kit.Weapon)                       -- the bins' old path (server checks you stand at a bin)
+	end
+end
+
+function controller.Open()
 	if not root or player:GetAttribute("InTraining") ~= true then return end
-	if slot and table.find(SLOTS, slot) then slotNow = slot end
-	if dots then dots.Visible = not ready end
-	if ready then refreshHeld(); showSlot(slotNow) end
 	if isOpen then return end
+	table.clear(picks)
+	slotNow = SLOTS[1]
+	if dots then dots.Visible = not ready end
+	if ready then refreshPicks(); showSlot(slotNow) end
+	cleared = kitEvent ~= nil
+	if kitEvent then kitEvent:FireServer("Clear") end         -- hands empty until the three picks are made
 	isOpen = true
 	root.Visible = true
 	if okKit and Kit.open then Kit.open(root) end
@@ -357,10 +389,12 @@ function controller.Open(slot)
 		Enum.KeyCode.Escape, Enum.KeyCode.ButtonB, Enum.KeyCode.T, Enum.KeyCode.DPadUp)
 end
 
-function controller.Close()
+function controller.Close(applied)
 	if not isOpen then return end
 	isOpen = false
 	closedAt = os.clock()
+	if not applied and cleared and kitEvent then kitEvent:FireServer("Cancel") end   -- closed early: give the old kit back
+	cleared = false
 	ContextActionService:UnbindAction("TrainingPickerKeys")
 	setBlur(false)
 	if okKit and Kit.close then Kit.close(root) else root.Visible = false end
@@ -370,19 +404,22 @@ end
 function controller.IsOpen() return isOpen end
 
 function controller.Pick(slot, id)
+	if not isOpen then return end
 	if id == "Random" then
-		local list, h = itemsFor(slot), held(slot)
-		local pool = {}
-		for _, v in list do if v ~= h then table.insert(pool, v) end end
-		id = pool[math.random(1, math.max(#pool, 1))] or list[1]
+		local list = itemsFor(slot)
+		id = list[math.random(1, math.max(#list, 1))]
 	end
 	if not id then return end
-	if trialEvent then
-		trialEvent:FireServer(slot, id)
-	elseif slot == "Weapon" and swapEvent then
-		swapEvent:FireServer(id)                              -- the bins' path (server checks you stand at a bin)
+	picks[slot] = id
+	slotNow = slot
+	refreshPicks()
+	local nxt = nextEmpty()
+	if nxt then
+		showSlot(nxt)
+	else
+		apply()
+		controller.Close(true)
 	end
-	controller.Close()                                        -- RIVALS: equip and close
 end
 
 -------------------------------------------------------------------------------
@@ -395,15 +432,15 @@ function controller.Start()
 		if not ev then return end
 		swapEvent = ev:WaitForChild("SwapWeapon", 30)
 		trialEvent = ev:FindFirstChild("TrialItem")
-		ev.ChildAdded:Connect(function(c) if c.Name == "TrialItem" then trialEvent = c end end)
+		kitEvent = ev:FindFirstChild("TrialKit")
+		ev.ChildAdded:Connect(function(c)
+			if c.Name == "TrialItem" then trialEvent = c elseif c.Name == "TrialKit" then kitEvent = c end
+		end)
 	end)
 	-- a bin opens the picker (on its slot's tab when the prompt / bin says one)
 	ProximityPromptService.PromptTriggered:Connect(function(prompt)
 		if not prompt:GetAttribute("TrainingBin") or player:GetAttribute("InTraining") ~= true then return end
-		local slot = prompt:GetAttribute("Slot")
-		local bin = prompt:FindFirstAncestorOfClass("Model")
-		slot = slot or (bin and bin:GetAttribute("Slot"))
-		if isOpen then controller.Close() else controller.Open(slot or "Weapon") end
+		if isOpen then controller.Close() else controller.Open() end
 	end)
 	-- T / D-pad up (re)open it while in Training (Close's own binding handles the closing press)
 	UserInputService.InputBegan:Connect(function(input, processed)
@@ -423,7 +460,6 @@ function controller.Start()
 		trialTag.Visible = inT and #parts > 0
 	end
 	for _, a in TRIAL_ATTR do player:GetAttributeChangedSignal(a):Connect(trial) end
-	for _, a in HELD_ATTR do player:GetAttributeChangedSignal(a):Connect(function() if ready then refreshHeld() end end) end
 	local function onTraining()
 		local inT = player:GetAttribute("InTraining") == true
 		weaponsBtn.Visible = inT
