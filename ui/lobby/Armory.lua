@@ -77,7 +77,7 @@ local showcaseVpf
 local shadowParts = {} -- soft contact shadow under the item
 local LIT = { Ambient = Color3.fromRGB(95, 95, 102), LightColor = Color3.fromRGB(250, 248, 250) }
 local DARK = { Ambient = Color3.new(0, 0, 0), LightColor = Color3.new(0, 0, 0) } -- locked: pure silhouette
-local BACKGROUND_BLUR = 0 -- (2026-10-16) the lit Showroom2 set is sharp now; depth comes from ArmoryDOF below
+local BACKGROUND_BLUR = 8 -- (2026-10-19, Edward: "more blur on the kit screen") the room blurs, the item (ViewportFrame) stays sharp
 local overlay = {}     -- transition overlay pieces
 
 -- UI refs
@@ -2480,8 +2480,8 @@ local function backgroundBlur(on: boolean)
 	local dof = Lighting:FindFirstChild("ArmoryDOF") or Instance.new("DepthOfFieldEffect")
 	dof.Name = "ArmoryDOF"
 	dof.FocusDistance = 13.05
-	dof.InFocusRadius = 6
-	dof.FarIntensity = 0.5
+	dof.InFocusRadius = 3
+	dof.FarIntensity = 0.85
 	dof.NearIntensity = 0
 	dof.Parent = Lighting
 	dof.Enabled = on
