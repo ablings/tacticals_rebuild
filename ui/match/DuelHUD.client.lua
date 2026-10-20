@@ -919,6 +919,9 @@ local function hookEvents()
 		if ann then ann.OnClientEvent:Connect(function(t, sub)
 			-- (RIVALS) a round's end is the small won / lost card only: no big "TEAM A WINS THE ROUND" across the screen
 			if tostring(t or ""):upper():find("WINS THE ROUND", 1, true) then return end
+			-- (Edward 2026-10-19) no ROUND n / FIGHT call-outs around the countdown: the top clock counts it instead
+			local up = tostring(t or ""):upper()
+			if up:find("^FIGHT") or up:find("^ROUND %d+$") then return end
 			if inMatch() then showBanner(tostring(t or ""), sub and tostring(sub) or "", WHITE, 2.5) end end) end
 		local res = m:FindFirstChild("MatchResults")
 		-- (the results can land after the post-match phase began, when InMatch is already off)
