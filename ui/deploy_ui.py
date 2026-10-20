@@ -35,6 +35,7 @@ FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TouchControlsController", "ModuleScript", "touch/TouchControlsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "PromptsController", "ModuleScript", "hud/PromptsController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "GamepadNavController", "ModuleScript", "hud/GamepadNavController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "MatchFoundGate", "ModuleScript", "hud/MatchFoundGate.lua"),  # (2026-10-19) match found: every lobby UI off, MATCH FOUND only
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),  # same file in both places; QuickIntro only in the match place
 ]
