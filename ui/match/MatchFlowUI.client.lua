@@ -48,9 +48,13 @@ local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE, OLIVE_HI = Color3.fromRGB(107, 122, 58), Color3.fromRGB(150, 172, 84)
 local TEAM_A = { Color3.fromRGB(198, 206, 168), Color3.fromRGB(96, 108, 56) }  -- cream / olive (our team colours)
 local TEAM_B = { Color3.fromRGB(232, 92, 72), Color3.fromRGB(140, 36, 28) }     -- red
-local FX = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local STENCIL = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+-- (2026-10-20, Edward picked style D "Comic Ink" with RIVALS' see-through panels) Bangers headings, heavy black ink outlines,
+-- hard black drop shadows, small tilts, comic yellow for "selected"; panels stay dark and see-through
+local FX = Font.new("rbxasset://fonts/families/Bangers.json")
+local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Heavy)
+local STENCIL = FX
+local INK_YELLOW = Color3.fromRGB(255, 212, 0)
+local PANEL_T = 0.35 -- RIVALS-style see-through
 
 local function new(class, props, kids)
 	local o = Instance.new(class)
@@ -64,8 +68,20 @@ local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	local l = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font, TextSize = size, TextColor3 = color or WHITE,
 		TextXAlignment = align or Enum.TextXAlignment.Center, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 3, Parent = parent })
 	l:SetAttribute("dTS", size)
-	new("UIStroke", { Thickness = math.max(1.5, size / 22), Transparency = 0.35, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+	new("UIStroke", { Thickness = math.max(2, size / 13), Transparency = 0, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
 	return l
+end
+-- ink: a thick black outline and a hard black drop shadow behind (a sibling, so it is converted to Scale with the rest)
+local function ink(target, off, thick)
+	if (thick or 4) > 0 then
+		new("UIStroke", { Color = BLACK, Thickness = thick or 4, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = target })
+	end
+	local r = target:FindFirstChildOfClass("UICorner")
+	local sh = new("Frame", { Name = target.Name .. "Shadow", BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, BorderSizePixel = 0,
+		Position = target.Position + UDim2.fromOffset(off or 8, off or 8), Size = target.Size, Rotation = target.Rotation,
+		ZIndex = math.max(0, target.ZIndex - 1), Visible = target.Visible, Parent = target.Parent }, r and { corner(r.CornerRadius.Offset) } or nil)
+	target:GetPropertyChangedSignal("Visible"):Connect(function() sh.Visible = target.Visible end)
+	return sh
 end
 
 -- Offset -> Scale for a subtree (sizes / positions from design px); text sizes follow the canvas
@@ -91,6 +107,7 @@ end
 
 local gui = new("ScreenGui", { Name = "MatchFlow", IgnoreGuiInset = true, ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 30,
 	Enabled = false, Parent = player:WaitForChild("PlayerGui") })
+game:GetService("CollectionService"):AddTag(gui, "KeepColors") -- (UIStyleController would turn the comic yellow neutral)
 local back = new("Frame", { Name = "Back", Size = UDim2.fromScale(1, 1), BackgroundColor3 = WHITE, Parent = gui },
 	{ new("UIGradient", { Rotation = 35, Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 12, 10)),
 		ColorSequenceKeypoint.new(0.55, Color3.fromRGB(26, 30, 24)), ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 14, 12)) }) }) })
@@ -121,8 +138,9 @@ local loadN = label(loading, "0", FB, 40, 1440, 976, 380, 50, Color3.fromRGB(205
 
 ---------------------------------------------------------------------------------------------------- shared: team boxes + timer
 local function teamBox(parent, x, cols, right)
-	local b = new("Frame", { Position = UDim2.fromOffset(x, 34), Size = UDim2.fromOffset(290, 84), BackgroundColor3 = WHITE, Parent = parent },
-		{ corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }) })
+	local b = new("Frame", { Position = UDim2.fromOffset(x, 34), Size = UDim2.fromOffset(290, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.15,
+		Rotation = right and 1 or -1, ZIndex = 2, Parent = parent }, { corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }) })
+	ink(b, 7, 4)
 	local slots = {}
 	for i = 1, 3 do
 		local hx = right and (90 + (i - 1) * 64) or (14 + (i - 1) * 64)
@@ -134,7 +152,8 @@ local function teamBox(parent, x, cols, right)
 	return slots
 end
 local function timerBox(parent)
-	local t = new("Frame", { Position = UDim2.fromOffset(888, 34), Size = UDim2.fromOffset(144, 76), BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, Parent = parent }, { corner(8) })
+	local t = new("Frame", { Position = UDim2.fromOffset(888, 34), Size = UDim2.fromOffset(144, 76), BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, ZIndex = 2, Parent = parent }, { corner(6) })
+	ink(t, 7, 4)
 	return label(t, "10.0", FX, 42, 0, 0, 144, 76, WHITE)
 end
 local heads = {}
@@ -203,9 +222,10 @@ local function buildMaps(list)
 	local x0 = (1420 - (n * tw + (n - 1) * 30)) / 2
 	for i, m in all do
 		local t = new("TextButton", { Name = m.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x0 + (i - 1) * (tw + 30), 40), Size = UDim2.fromOffset(tw, th),
-			BackgroundColor3 = Color3.fromRGB(28, 30, 26), ClipsDescendants = true, Parent = mapHolder }, { corner(10) })
-		local edgeCol = m.random and Color3.fromRGB(90, 90, 96) or OLIVE_HI
-		local edge = new("UIStroke", { Color = edgeCol, Thickness = 4, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
+			BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ClipsDescendants = true, Rotation = (i % 2 == 0) and 1.5 or -1.5, ZIndex = 2, Parent = mapHolder }, { corner(6) })
+		ink(t, 12, 0).BackgroundTransparency = 0.2
+		local edgeCol = BLACK
+		local edge = new("UIStroke", { Color = edgeCol, Thickness = 6, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
 		if m.random then
 			label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
 		elseif m.image and m.image ~= "" then
@@ -239,13 +259,11 @@ local function buildMaps(list)
 		end
 		-- striped name bar
 		local barH = th * 0.2
-		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = BLACK, BackgroundTransparency = 0.25,
-			ClipsDescendants = true, ZIndex = 2, Parent = t })
-		for s = 0, math.floor(tw / 20) do
-			new("Frame", { Rotation = 30, Position = UDim2.fromOffset(s * 20, -8), Size = UDim2.fromOffset(7, barH * 1.6), BackgroundColor3 = edgeCol, BackgroundTransparency = 0.6,
-				BorderSizePixel = 0, ZIndex = 2, Parent = bar })
-		end
-		label(bar, m.name, FX, 44, 0, 0, tw, barH, WHITE, nil, 3)
+		-- the name on a yellow comic caption strip
+		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = m.random and WHITE or INK_YELLOW,
+			BorderSizePixel = 0, ZIndex = 2, Parent = t }, { new("UIStroke", { Color = BLACK, Thickness = 5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		local nl = label(bar, string.upper(m.name), FX, 50, 0, 0, tw, barH, BLACK, nil, 3)
+		for _, k in nl:GetChildren() do if k:IsA("UIStroke") then k.Color = WHITE; k.Thickness = 2 end end
 		-- voters (headshots along the top)
 		local voters = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(tw - 24, 56), ZIndex = 4, Parent = t },
 			{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 6) }) })
@@ -476,9 +494,9 @@ local slotRowX = 960 - (#SLOTS * SLOT_W + (#SLOTS - 1) * SLOT_GAP) / 2
 local chips = {}
 for i, s2 in SLOTS do
 	local chip = new("TextButton", { Name = "Slot" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotRowX + (i - 1) * (SLOT_W + SLOT_GAP), 186),
-		Size = UDim2.fromOffset(SLOT_W, SLOT_W), BackgroundColor3 = WHITE, Parent = lo }, { corner(10),
-		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(60, 62, 60), Color3.fromRGB(12, 13, 12)) }) })
-	local edge = new("UIStroke", { Color = WHITE, Thickness = 4, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
+		Size = UDim2.fromOffset(SLOT_W, SLOT_W), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ZIndex = 2, Parent = lo }, { corner(6) })
+	ink(chip, 6, 4)
+	local edge = new("UIStroke", { Color = INK_YELLOW, Thickness = 5, Transparency = 1, LineJoinMode = Enum.LineJoinMode.Miter, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
 	local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-8, -12), Size = UDim2.fromOffset(SLOT_W + 16, SLOT_W + 8), ZIndex = 3, Parent = chip })
 	local q = label(chip, string.upper(s2.label), STENCIL, 18, 0, 0, SLOT_W, SLOT_W, Color3.fromRGB(110, 112, 108))
 	chips[s2.id] = { chip = chip, edge = edge, art = art, q = q, index = i }
@@ -490,9 +508,9 @@ local tabX = 960 - (#SLOTS * TAB_W + (#SLOTS - 1) * TAB_GAP) / 2
 local tabs = {}
 for i, s2 in SLOTS do
 	local t = new("TextButton", { Name = "Tab" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(tabX + (i - 1) * (TAB_W + TAB_GAP), 300),
-		Size = UDim2.fromOffset(TAB_W, 48), BackgroundColor3 = Color3.fromRGB(12, 14, 12), BackgroundTransparency = 0.15, Parent = lo }, { corner(8) })
-	local tl = label(t, s2.label, FX, 28, 0, 0, TAB_W, 48, WHITE)
-	for _, k in tl:GetChildren() do if k:IsA("UIStroke") then k:Destroy() end end -- (an outline muddied the dark text on the white tab)
+		Size = UDim2.fromOffset(TAB_W, 48), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, Rotation = -2, ZIndex = 2, Parent = lo }, { corner(4) })
+	ink(t, 6, 4)
+	local tl = label(t, string.upper(s2.label), FX, 34, 0, 0, TAB_W, 48, WHITE)
 	tabs[i] = { b = t, l = tl }
 end
 
@@ -503,12 +521,14 @@ local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromO
 	BorderSizePixel = 0, ScrollBarThickness = 6, ScrollBarImageColor3 = GREY, ScrollingDirection = Enum.ScrollingDirection.Y, CanvasSize = UDim2.new(), Parent = lo })
 local list = optArea
 local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1500, 900), Size = UDim2.fromOffset(300, 80),
-	BackgroundColor3 = WHITE, Visible = false, Parent = lo }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(196, 214, 120), Color3.fromRGB(92, 110, 44)) }) })
-local readyL = label(ready, "READY", FX, 44, 0, 0, 300, 80, WHITE)
+	BackgroundColor3 = INK_YELLOW, Visible = false, Rotation = -3, ZIndex = 2, Parent = lo }, { corner(6) })
+ink(ready, 10, 6)
+local readyL = label(ready, "READY!", FX, 56, 0, 0, 300, 80, BLACK)
+for _, k in readyL:GetChildren() do if k:IsA("UIStroke") then k.Color = WHITE; k.Thickness = 2 end end
 ready.Activated:Connect(function()
 	send("Ready")
 	player:SetAttribute("_Ready", true)
-	readyL.Text = "READY!"
+	readyL.Text = "LOCKED IN!"
 end)
 
 local RARITY = {
@@ -531,10 +551,11 @@ local function refreshChips()
 	end
 	for i, t in tabs do
 		local on = i == step and optArea.Visible
-		t.b.BackgroundColor3 = on and WHITE or Color3.fromRGB(12, 14, 12)
-		t.b.BackgroundTransparency = on and 0 or 0.15
+		t.b.BackgroundColor3 = on and INK_YELLOW or BLACK
+		t.b.BackgroundTransparency = on and 0 or PANEL_T
 		t.l.TextColor3 = on and BLACK or WHITE
-		t.l.Text = SLOTS[i].label .. ((picks[SLOTS[i].id] and not on) and "  ·  set" or "")
+		local ts = t.l:FindFirstChildOfClass("UIStroke"); if ts then ts.Color = on and WHITE or BLACK end
+		t.l.Text = string.upper(SLOTS[i].label) .. ((picks[SLOTS[i].id] and not on) and "  ·  SET" or "")
 	end
 	ready.Visible = not switching and picks.Weapon ~= nil and picks.Melee ~= nil and picks.Gadget ~= nil
 end
@@ -547,19 +568,19 @@ end
 local function optionTile(parent, x, y, id, text, onPick, kind)
 	-- kind: "random" | "locked" | rarity name
 	local cols = kind == "random" and { Color3.fromRGB(20, 20, 24), Color3.fromRGB(6, 6, 8) } or (RARITY[kind] or RARITY.Standard)
-	local t = new("TextButton", { Name = text, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(OPT, OPT), BackgroundColor3 = WHITE, Parent = parent },
-		{ corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }),
-		new("UIStroke", { Color = Color3.fromRGB(230, 230, 236), Thickness = 1.5, Transparency = kind == "random" and 1 or 0.55, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	local t = new("TextButton", { Name = text, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(OPT, OPT), BackgroundColor3 = WHITE,
+		BackgroundTransparency = 0.2, Rotation = ((x // OPT) % 2 == 0) and -1.5 or 1.5, ZIndex = 2, Parent = parent },
+		{ corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols[1], cols[2]) }) })
+	ink(t, 7, 4)
 	local scale = new("UIScale", { Parent = t })
 	if kind == "random" then
-		label(t, "⇄", FX, 64, 0, 6, OPT, 80, Color3.fromRGB(60, 60, 64))
+		label(t, "⇄", FB, 64, 0, 6, OPT, 80, Color3.fromRGB(200, 200, 206))
 	else
 		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-14, -34), Size = UDim2.fromOffset(OPT + 28, OPT + 8), ZIndex = 3, Parent = t })
 		task.defer(viewport, art, id)
 	end
-	local n = label(t, text, FX, #text > 11 and 22 or 28, -10, OPT - 40, OPT + 20, 36, WHITE)
+	local n = label(t, string.upper(text), FX, #text > 11 and 26 or 32, -10, OPT - 40, OPT + 20, 36, WHITE)
 	n.ZIndex = 4
-	new("UIStroke", { Thickness = 2.5, Transparency = 0.1, Parent = n })
 	if kind == "locked" then
 		t.BackgroundTransparency = 0.5
 		new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = t }, { corner(8) })
@@ -605,7 +626,9 @@ function showStep(i)
 			optionTile(content, x, y, nil, "Random", function() if #mine > 0 then pick(mine[math.random(#mine)]) end end, "random")
 		else
 			local tile = optionTile(content, x, y, e.id, nameOf(e.id), function() pick(e.id) end, e.kind)
-			if picks[slot] == e.id then new("UIStroke", { Color = WHITE, Thickness = 4, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = tile }) end
+			if picks[slot] == e.id then
+				for _, k in tile:GetChildren() do if k:IsA("UIStroke") then k.Color = INK_YELLOW; k.Thickness = 6 end end
+			end
 		end
 	end
 	optArea.Visible = true
@@ -621,8 +644,8 @@ for i, t in tabs do t.b.Activated:Connect(function() showStep(i) end) end
 local function startLoadout()
 	picks, step = {}, 1
 	for _, c in chips do c.shown = false end
-	player:SetAttribute("_Ready", nil); readyL.Text = "READY"
-	mapBarL.Text = "Map: " .. tostring(st(STATE.Chosen) or "?")
+	player:SetAttribute("_Ready", nil); readyL.Text = "READY!"
+	mapBarL.Text = "Map: " .. itemName(st(STATE.Chosen) or "?")
 	showStep(1)
 end
 local function refreshLoadout() refreshChips() end
@@ -645,7 +668,8 @@ local function setPhase(p)
 	loTimer.Parent.Visible = p ~= "Switch" -- (between rounds the match HUD's timer counts down)
 	-- Switch Weapons (RIVALS): the picker over the blurred match instead of the dark backdrop, no team boxes
 	local sw = p == "Switch"
-	back.BackgroundTransparency = sw and 0.55 or 0
+	-- RIVALS: the map vote / gun pick sit over the world, see-through (the loading screen stays solid)
+	back.BackgroundTransparency = sw and 0.55 or (p == "Loading" and 0 or 0.3)
 	for _, bx in loBoxes do local f = type(bx) == "table" and (bx.frame or (bx[1] and bx[1].h and bx[1].h.Parent)) or bx; if typeof(f) == "Instance" then f.Visible = not sw end end
 	local Lighting = game:GetService("Lighting")
 	local blur = Lighting:FindFirstChild("SwitchWeaponsBlur") or new("BlurEffect", { Name = "SwitchWeaponsBlur", Size = 0, Parent = Lighting })
@@ -655,13 +679,15 @@ local function setPhase(p)
 	for _, n in { "HUD", "Hotbar", "Vitals", "StealthUI", "TutorialUI", "NearMissUI", "TouchControls" } do
 		local g = pg and pg:FindFirstChild(n)
 		if g and g:IsA("ScreenGui") then
-			if sw and g.Enabled then g.Enabled = false; g:SetAttribute("SwitchHid", true)
-			elseif not sw and g:GetAttribute("SwitchHid") then g:SetAttribute("SwitchHid", nil); g.Enabled = true end
+			-- (2026-10-20) the see-through vote / gun pick hide the match HUD too
+			local hideHud = sw or p == "MapVote" or p == "Loadout"
+			if hideHud and g.Enabled then g.Enabled = false; g:SetAttribute("SwitchHid", true)
+			elseif not hideHud and g:GetAttribute("SwitchHid") then g:SetAttribute("SwitchHid", nil); g.Enabled = true end
 		end
 	end
 	if p == "Switch" then
 		local chosen = st(STATE.Chosen)
-		mapBarL.Text = "Map: " .. tostring(chosen or "?")
+		mapBarL.Text = "Map: " .. itemName(chosen or "?")
 		startLoadout()
 	end
 	if p == "Loading" then tipL.Text = TIPS[math.random(#TIPS)] end
@@ -674,7 +700,7 @@ local function setPhase(p)
 	end
 	if p == "Loadout" then
 		local chosen = st(STATE.Chosen)
-		mapChip.Text = chosen and ("Map: " .. chosen) or ""
+		mapChip.Text = chosen and ("Map: " .. itemName(chosen)) or ""
 		fillTeams(loBoxes)
 		startLoadout()
 	end
@@ -715,7 +741,7 @@ RunService.RenderStepped:Connect(function()
 			if v then table.insert(q, tostring(v)) end
 		end
 		local txt = st("MatchState") == "Live" and (#q > 0 and ("Next round: " .. table.concat(q, ", ")) or "Changes apply next round")
-			or ("Map: " .. tostring(st(STATE.Chosen) or "?"))
+			or ("Map: " .. itemName(st(STATE.Chosen) or "?"))
 		if mapBarL.Text ~= txt then mapBarL.Text = txt end
 	end
 	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
