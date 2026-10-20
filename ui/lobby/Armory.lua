@@ -1827,8 +1827,25 @@ local function renderInfo()
 			Size = UDim2.fromOffset(CARD_W - 84, 18), LayoutOrder = 1, ZIndex = 6, Parent = box }), 1.2)
 		text({ Text = ab.desc, FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y,
 			Size = UDim2.fromOffset(CARD_W - 84, 16), TextYAlignment = Enum.TextYAlignment.Top, LayoutOrder = 2, ZIndex = 6, Parent = box })
-		if ab.speed then
-			for k, st in { { "Speed", ab.speed }, { "Reload", ab.reload }, { "Accuracy", ab.accuracy } } do
+		-- (2026-10-19, movement spec) Speed follows the live MoveSpeed multiplier (WeaponConfig / MeleeConfig, 0.7 .. 1.3 -> 1 .. 5)
+		-- so a retune shows here by itself; melee gets the Speed row alone. ab.speed is the fallback.
+		local speed = ab.speed
+		pcall(function()
+			local cfgs = ReplicatedStorage.Modules.Shared.Config
+			local cfg
+			if item.Slot == "Melee" then
+				local MC = require(cfgs:FindFirstChild("MeleeConfig"))
+				cfg = MC.Weapons and MC.Weapons[id]
+			else
+				local WC = require(cfgs:FindFirstChild("WeaponConfig"))
+				cfg = WC.Get and WC.Get(id)
+			end
+			local ms = cfg and tonumber(cfg.MoveSpeed)
+			if ms then speed = math.clamp(1 + 4 * (ms - 0.7) / 0.6, 0.5, 5) end
+		end)
+		if speed then
+			for k, st in { { "Speed", speed }, { "Reload", ab.reload }, { "Accuracy", ab.accuracy } } do
+				if not st[2] then continue end
 				local row = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(CARD_W - 64, 16), LayoutOrder = 20 + k, ZIndex = 5, Parent = notes })
 				text({ Text = st[1], FontFace = FONT, TextSize = 14, TextColor3 = COL.Sub, Size = UDim2.fromOffset(74, 16), ZIndex = 5, Parent = row })
 				-- five segments, filled to the rating (halves allowed)
