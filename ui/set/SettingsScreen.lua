@@ -670,6 +670,8 @@ function Screen.Init(context)
 	ctx = context or {}
 	if not built then build() end
 end
+-- (2026-10-20) true once someone (the lobby UI, or the match HUD's gear) gave it the profile to read / save
+function Screen.HasContext() return ctx.getSettings ~= nil end
 function Screen.Open() if not built then build() end Screen._setOpen(true) end
 function Screen.Close() if built then Screen._setOpen(false) end end
 function Screen.IsOpen() return built and Screen._isOpen() end

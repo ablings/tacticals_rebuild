@@ -222,6 +222,9 @@ end
 local function matchMenuUp(): boolean
 	local pg = localPlayer:FindFirstChild("PlayerGui")
 	if not pg then return false end
+	-- (2026-10-20) the SETTINGS screen opened from the match HUD's gear
+	local settingsUI = pg:FindFirstChild("SettingsUI")
+	if settingsUI and settingsUI:IsA("ScreenGui") and settingsUI.Enabled then return true end
 	local flow = pg:FindFirstChild("MatchFlow")
 	if flow and flow:IsA("ScreenGui") and flow.Enabled then return true end
 	local hud = pg:FindFirstChild("DuelHUD")

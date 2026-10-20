@@ -72,7 +72,8 @@ function PseudoLobby.Guard()
 		if not active or (results and results:IsA("ScreenGui") and results.Enabled) then
 			for _, name in PseudoLobby.GUIS do
 				local g = pg:FindFirstChild(name)
-				if g and g:IsA("ScreenGui") and g.Enabled then
+				-- (2026-10-20) SETTINGS opened from the match HUD's gear belongs to the match: leave it
+				if g and g:IsA("ScreenGui") and g.Enabled and not (name == "SettingsUI" and g:GetAttribute("MatchOpened")) then
 					g.Enabled = false
 					if table.find(PseudoLobby.BASE, name) then lobbyOff[g] = true end
 				end

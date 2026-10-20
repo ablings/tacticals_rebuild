@@ -431,6 +431,53 @@ UserInputService.InputBegan:Connect(function(i, gp)
 	if i.KeyCode == Enum.KeyCode.Q then cycle(-1) elseif i.KeyCode == Enum.KeyCode.E then cycle(1) end
 end)
 
+-- (2026-10-20, Edward: "lobby settings should be in the matchmaking as well") RIVALS' gear in the top right of a match opens
+-- the lobby's SETTINGS screen (UIKit.SettingsScreen) with your saved profile; changes save through Events.Lobby.Request
+-- "SaveSettings" exactly like the lobby (the match places' SettingsBridge re-applies them at once). Free the cursor (Free
+-- Cursor key) to click it; the camera frees the mouse while it is open. In the hub the lobby's own Init is kept.
+do
+	local gear = new("TextButton", { Name = "SettingsGear", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(1920 - 24, 24),
+		Size = UDim2.fromOffset(52, 52), BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, Parent = root }, { corner(26) })
+	new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://77423905055797", ImageColor3 = WHITE, ScaleType = Enum.ScaleType.Fit,
+		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.62, 0.62), Parent = gear })
+	local SS, busy = nil, false
+	gear.Activated:Connect(function()
+		if busy then return end
+		busy = true
+		if not SS then
+			local ok, mod = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("SettingsScreen", 5)) end)
+			if ok and mod and not (mod.HasContext and mod.HasContext()) then
+				-- the saved settings come from the profile replica; never open on defaults (a save would overwrite the profile)
+				local replica
+				pcall(function()
+					local P = require(script.Parent:WaitForChild("Client"):WaitForChild("Registry"):WaitForChild("PlayerData", 5))
+					replica = P:GetMyReplica()
+				end)
+				if replica and replica.Data then
+					local ev = ReplicatedStorage:FindFirstChild("Events")
+					local req = ev and ev:FindFirstChild("Lobby") and ev.Lobby:FindFirstChild("Request")
+					mod.Init({
+						getSettings = function() return replica.Data.Settings end,
+						save = function(st2)
+							if type(st2) == "table" then st2.Version = 2 end
+							if req then pcall(req.InvokeServer, req, "SaveSettings", st2) end
+						end,
+					})
+					SS = mod
+				end
+			elseif ok and mod then
+				SS = mod
+			end
+		end
+		if SS then
+			-- marked so the after-match lobby's guard (PseudoLobby.Guard) doesn't switch it off mid-match
+			local sg = player.PlayerGui:FindFirstChild("SettingsUI")
+			if sg then sg:SetAttribute("MatchOpened", true) end
+			if SS.IsOpen() then SS.Close() else SS.Open() end
+		end
+		busy = false
+	end)
+end
 local leaveDuel = new("TextButton", { Name = "LeaveDuel", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(30, 30), Size = UDim2.fromOffset(150, 52),
 	BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, Visible = false, Parent = root }, { corner(10) })
 label(leaveDuel, "Leave", FX, 28, 0, 0, 150, 52, WHITE)
