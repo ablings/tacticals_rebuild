@@ -923,6 +923,14 @@ end
 
 function controller.Start()
 	buildUI()
+	-- [MOVE2] the gadget slot holds no Tool: tell the movement code (WeaponConfig.Mobility) through player attribute HeldSlot
+	local heldGadget = nil
+	game:GetService("RunService").Heartbeat:Connect(function()
+		if smokeMode ~= heldGadget then
+			heldGadget = smokeMode
+			Players.LocalPlayer:SetAttribute("HeldSlot", smokeMode and "Gadget" or nil)
+		end
+	end)
 	-- F is also the door key: next to a door panel (its prompt is showing) F works the door instead
 	local promptsShown = 0
 	local PPS = game:GetService("ProximityPromptService")

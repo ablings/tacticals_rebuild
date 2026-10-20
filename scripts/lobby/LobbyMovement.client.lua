@@ -3,7 +3,8 @@
 -- faster in the lobby themselves".
 -- Only while you're in the lobby itself: the hub (Workspace.LobbyMap from the start) or the after-match lobby (InPseudoLobby),
 -- and never in Training / a duel / a match / a cutscene (the combat MovementController owns movement there).
---   Faster:  walk Speeds.Walk (Roblox's default is 16), hold Sprint (Shift / your Sprint bind) for Speeds.Run. No stamina.
+--   Faster:  walk Speeds.Walk (Roblox's default is 16), no stamina. [MOVE2] 2026-10-19 Edward: "no running in the lobby you should
+--            always be at a 28 walk speed": Shift does nothing here (Speeds.Run = Speeds.Walk).
 --   Slide:   C / Ctrl / gamepad B / a touch button (fire the SlideRequest BindableEvent under this script) while moving on the
 --            ground: a burst to Slide.Speed easing back over Slide.Time, low on the hip (the match slide's pose), a scrape.
 --            You keep steering (controls are never disabled, so held keys never get lost).
@@ -16,7 +17,7 @@ local UserInputService = game:GetService("UserInputService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local C = {
-	Speeds = { Walk = 22, Run = 28 },
+	Speeds = { Walk = 28, Run = 28 }, -- [MOVE2] were 22 / 28: no run in the lobby
 	Slide = { Speed = 46, Time = 0.9, Cooldown = 0.5, MinMove = 4 },
 	Jump = { Height = 8 },
 	Ease = 70, -- studs/s per second back toward the walk / run speed
