@@ -377,36 +377,127 @@ local function endKitTrials(player, restore)
 	end
 end
 
-local function onTrialItem(player, slot, id)
-	if not (ok and TX.On("SwapBins") and okLC) then return end
-	local now = os.clock()
-	if lastItemCall[player] and now - lastItemCall[player] < 0.25 then return end
-	lastItemCall[player] = now
-	if player:GetAttribute("InTraining") ~= true then return end
-	if type(slot) ~= "string" or type(id) ~= "string" then return end
+local function manager_(name)
+	local mgr = shared.Get and shared.Get(name)
+	if not mgr and script.Parent:FindFirstChild(name) then
+		local okM, m = pcall(require, script.Parent[name]); mgr = okM and m or nil
+	end
+	return mgr
+end
+
+-- one slot of a trial pick (callers check InTraining and the rate limit); true if the id was valid for the slot
+local function applySlot(player, slot, id)
+	if type(slot) ~= "string" or type(id) ~= "string" then return false end
 	local item = LobbyConfig.Items[id]
-	if not (item and item.Slot == slot) then return end
+	if not (item and item.Slot == slot) then return false end
 	if slot == "Weapon" then
-		if table.find(WeaponConfig.Loadout, id) then pickWeapon(player, id, true) end
-		return
+		if not table.find(WeaponConfig.Loadout, id) then return false end
+		pickWeapon(player, id, true)
+		return true
 	end
 	local attr = KIT_ATTR[slot]
-	if not attr then return end
+	if not attr then return false end
 	local kt = kitTrials[player] or {}
 	kitTrials[player] = kt
 	kt[slot] = id                                      -- set first: the KitMelee / KitGadget watcher sees the pick as expected
 	player:SetAttribute("Trial" .. slot, (not owns(player, id)) and id or nil)
 	if player:GetAttribute(attr) == id then
 		-- same item again: no attribute change, so give / refill by hand
-		local name = slot == "Melee" and "MeleeManager" or "GadgetManager"
-		local mgr = shared.Get and shared.Get(name)
-		if not mgr and script.Parent:FindFirstChild(name) then
-			local okM, m = pcall(require, script.Parent[name]); mgr = okM and m or nil
-		end
+		local mgr = manager_(slot == "Melee" and "MeleeManager" or "GadgetManager")
 		if slot == "Melee" and mgr and mgr.GiveMelee then mgr.GiveMelee(player) end
 		if slot == "Gadget" and mgr and mgr.Refill then mgr.Refill(player) end
 	else
 		player:SetAttribute(attr, id)
+	end
+	return true
+end
+
+local function onTrialItem(player, slot, id)
+	if not (ok and TX.On("SwapBins") and okLC) then return end
+	local now = os.clock()
+	if lastItemCall[player] and now - lastItemCall[player] < 0.25 then return end
+	lastItemCall[player] = now
+	if player:GetAttribute("InTraining") ~= true then return end
+	applySlot(player, slot, id)
+end
+
+-- (2026-10-19, Edward: "when you open the crate it removes your weapons and makes you do this again") Remote
+-- Events.Training.TrialKit(action, kit): the picker's whole-kit flow. InTraining only, 5/s.
+--   "Clear"  every open: remember the Training kit (gun + KitMelee + KitGadget) and empty the hands (gun and melee tools
+--            removed, gadget charges 0). A second Clear keeps the first memory (never remembers the empty kit).
+--   "Apply", { Weapon = id, Gadget = id, Melee = id }  the last pick: all three like TrialItem, in one call; drops the memory.
+--   "Cancel" closed early: the remembered kit comes back (gadget charges refilled, as on any pick).
+-- Leaving Training while cleared: the normal restore (saved loadout) and the memory is dropped.
+local cleared = {}      -- [Player] = { Weapon = id?, Melee = id?, Gadget = id? } remembered by "Clear"
+local lastKitCall = {}
+local function heldGun(player)
+	for _, c in { player.Character, player:FindFirstChildOfClass("Backpack") } do
+		for _, t in (c and c:GetChildren() or {}) do
+			if t:IsA("Tool") and t:GetAttribute("WeaponId") then return t:GetAttribute("WeaponId") end
+		end
+	end
+	return player:GetAttribute("Loadout") or player:GetAttribute("KitWeapon")
+end
+local function emptyHands(player)
+	for _, c in { player.Character, player:FindFirstChildOfClass("Backpack") } do
+		for _, t in (c and c:GetChildren() or {}) do
+			if t:IsA("Tool") and (t:GetAttribute("WeaponId") or t:GetAttribute("MeleeId")) then t:Destroy() end
+		end
+	end
+	local okG, GadgetConfig = pcall(require, ReplicatedStorage.Modules.Shared.Config.GadgetConfig)
+	for _, cfg in (okG and GadgetConfig or {}) do
+		if type(cfg) == "table" and cfg.ChargesAttribute then player:SetAttribute(cfg.ChargesAttribute, 0) end
+	end
+end
+-- while cleared, anything handed out late (MeleeManager gives the melee 0.5 s after a spawn) is taken away again
+local function guardHands(player, mem)
+	if mem.conns then return end
+	mem.conns = {}
+	local function watchContainer(c)
+		if not c then return end
+		table.insert(mem.conns, c.ChildAdded:Connect(function(t)
+			if cleared[player] == mem and t:IsA("Tool") and (t:GetAttribute("WeaponId") or t:GetAttribute("MeleeId")) then
+				task.defer(function() if cleared[player] == mem and t.Parent then t:Destroy() end end)
+			end
+		end))
+	end
+	watchContainer(player.Character)
+	watchContainer(player:FindFirstChildOfClass("Backpack"))
+end
+local function forget(player)
+	local mem = cleared[player]
+	cleared[player] = nil
+	for _, c in (mem and mem.conns or {}) do c:Disconnect() end
+end
+
+local function onTrialKit(player, action, kit)
+	if not (ok and TX.On("SwapBins") and okLC) then return end
+	local now = os.clock()
+	if lastKitCall[player] and now - lastKitCall[player] < 0.2 then return end
+	lastKitCall[player] = now
+	if player:GetAttribute("InTraining") ~= true then return end
+	if action == "Clear" then
+		if not cleared[player] then
+			cleared[player] = { Weapon = heldGun(player), Melee = player:GetAttribute("KitMelee"), Gadget = player:GetAttribute("KitGadget") }
+		end
+		emptyHands(player)
+		guardHands(player, cleared[player])
+	elseif action == "Apply" then
+		if type(kit) ~= "table" then return end
+		for _, slot in { "Weapon", "Gadget", "Melee" } do
+			local id = kit[slot]
+			local item = type(id) == "string" and LobbyConfig.Items[id]
+			if not (item and item.Slot == slot) then return end   -- all three valid, or nothing changes
+		end
+		forget(player)
+		for _, slot in { "Weapon", "Gadget", "Melee" } do applySlot(player, slot, kit[slot]) end
+	elseif action == "Cancel" then
+		local mem = cleared[player]
+		if not mem then return end
+		forget(player)
+		for _, slot in { "Weapon", "Gadget", "Melee" } do
+			if type(mem[slot]) == "string" then applySlot(player, slot, mem[slot]) end
+		end
 	end
 end
 
@@ -434,6 +525,7 @@ local function watch(player)
 		else
 			endTrial(player, true)                     -- left Training: the trial gun is gone, Loadout back as it was
 			endKitTrials(player, true)                 -- and KitMelee / KitGadget back from the saved loadout
+			forget(player)                             -- a picker left open: the respawn gives the kit back anyway
 		end
 	end)
 	player:GetAttributeChangedSignal("Loadout"):Connect(function()
@@ -460,9 +552,12 @@ function manager.Start()
 	local trial = ev:FindFirstChild("TrialItem")
 	if not trial then trial = Instance.new("RemoteEvent"); trial.Name = "TrialItem"; trial.Parent = ev end
 	trial.OnServerEvent:Connect(onTrialItem)
+	local trialKit = ev:FindFirstChild("TrialKit")
+	if not trialKit then trialKit = Instance.new("RemoteEvent"); trialKit.Name = "TrialKit"; trialKit.Parent = ev end
+	trialKit.OnServerEvent:Connect(onTrialKit)
 	Players.PlayerAdded:Connect(watch)
 	for _, p in Players:GetPlayers() do watch(p) end
-	Players.PlayerRemoving:Connect(function(p) trials[p] = nil; kitTrials[p] = nil; lastCall[p] = nil; lastItemCall[p] = nil end)
+	Players.PlayerRemoving:Connect(function(p) trials[p] = nil; kitTrials[p] = nil; forget(p); lastCall[p] = nil; lastItemCall[p] = nil; lastKitCall[p] = nil end)
 end
 
 return manager
