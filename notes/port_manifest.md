@@ -309,3 +309,8 @@ himself; we never publish.
 - Published tacticals, Tutorial, Matchmaking, Ranked; read back from each (place id, PlaceKind, WeaponController / MatchCore / MovementConfig
   hashes, rematch fix in the match places, [MMFAIL] + MatchFoundGate in the lobby). The Ranked comparison window hung on a dialog twice
   (port 23 and 24) and was restarted; screenshot it next time.
+
+## Live port 25: holstered kit on the body (2026-10-19 22:22-22:27, Shadow PC lead; Edward: "once you get to a reasonable spot start publishing then continue")
+- Working copies as of 2dfc99b (HolsterManager installed in both, tested in Training and in a 1v1 match). Diff vs port 24: only the new
+  ServerScriptService.HolsterManager in every place. Published tacticals, Tutorial, Matchmaking, Ranked; read back (HolsterManager hash in all four).
+- The window that hung at every 8th Studio open is Studio's "Low System Resources" dialog: click Proceed (Edward pointed it out).
