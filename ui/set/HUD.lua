@@ -607,4 +607,82 @@ do
 	end)
 end
 
+-- // Crosshair countdown (2026-10-19, lead's API ed4f0db; RIVALS' ring that fills around the crosshair). All Scale.
+--   LocalPlayer attributes in os.clock() time: Xhair<Kind>End / Xhair<Kind>Time for Draw (gun coming out), Reload (the Pump
+--   resets per shell), Fire (next shot, slow guns only). Shown while End > os.clock(); one arc, priority Draw > Reload > Fire.
+--   The arc: two clipped half-rings, each a UIStroke with a hard-stop UIGradient turned to the progress angle (no images).
+do
+	local KINDS = { "Draw", "Reload", "Fire" }
+	local LOOK = { Draw = { 0.35, 2.5 }, Reload = { 0, 3 }, Fire = { 0.2, 2 } }   -- stroke transparency, thickness
+	local arc -- { root, track, halves = { right = gradient, left = gradient }, strokes }
+	local STEP = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.5, 0),
+		NumberSequenceKeypoint.new(0.501, 1), NumberSequenceKeypoint.new(1, 1) })
+	local function ringFrame(parent, size, pos)
+		local f = Instance.new("Frame")
+		f.BackgroundTransparency = 1
+		f.Size = size
+		f.Position = pos
+		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = f
+		f.Parent = parent
+		return f
+	end
+	local function build()
+		if arc and arc.root.Parent == abilityLayer then return end
+		local root = Instance.new("Frame")
+		root.Name = "XhairCountdown"
+		root.BackgroundTransparency = 1
+		root.AnchorPoint = Vector2.new(0.5, 0.5)
+		root.Position = UDim2.fromScale(0.5, 0.5)
+		root.SizeConstraint = Enum.SizeConstraint.RelativeYY
+		root.Size = UDim2.fromScale(0.046, 0.046)
+		root.Visible = false
+		root.ZIndex = 15
+		root.Parent = abilityLayer
+		local track = ringFrame(root, UDim2.fromScale(1, 1), UDim2.fromScale(0, 0))
+		local ts = Instance.new("UIStroke"); ts.Thickness = 3; ts.Color = Color3.new(0, 0, 0); ts.Transparency = 0.7; ts.Parent = track
+		arc = { root = root, halves = {}, strokes = {} }
+		for _, side in { "right", "left" } do
+			local clip = Instance.new("Frame")
+			clip.Name = "Half_" .. side
+			clip.BackgroundTransparency = 1
+			clip.ClipsDescendants = true
+			clip.Size = UDim2.fromScale(0.5, 1)
+			clip.Position = UDim2.fromScale(side == "right" and 0.5 or 0, 0)
+			clip.Parent = root
+			-- the full ring, twice the clip's width, shifted so its centre sits on the clip's inner edge
+			local ring = ringFrame(clip, UDim2.fromScale(2, 1), UDim2.fromScale(side == "right" and -1 or 0, 0))
+			local st = Instance.new("UIStroke"); st.Thickness = 3; st.Color = Color3.new(1, 1, 1); st.Parent = ring
+			local g = Instance.new("UIGradient"); g.Transparency = STEP; g.Parent = st
+			arc.halves[side] = g
+			table.insert(arc.strokes, st)
+		end
+	end
+	-- progress 0..1 clockwise from the top: right half shows 0..180 degrees, left half 180..360
+	local function setProgress(p)
+		local a = math.clamp(p, 0, 1) * 360
+		arc.halves.right.Rotation = math.min(a, 180)
+		arc.halves.left.Rotation = math.max(a, 180)
+	end
+
+	game:GetService("RunService").RenderStepped:Connect(function()
+		if not abilityLayer or not abilityLayer.Parent then return end
+		build()
+		local lp = Players.LocalPlayer
+		local now = os.clock()
+		local kind, p
+		for _, k in KINDS do
+			local e, t = tonumber(lp:GetAttribute("Xhair" .. k .. "End")), tonumber(lp:GetAttribute("Xhair" .. k .. "Time"))
+			if e and t and t > 0 and e > now then
+				kind, p = k, 1 - (e - now) / t
+				break
+			end
+		end
+		arc.root.Visible = kind ~= nil
+		if kind then
+			setProgress(p)
+			for _, st in arc.strokes do st.Transparency, st.Thickness = LOOK[kind][1], LOOK[kind][2] end
+		end
+	end)
+end
+
 return hud
