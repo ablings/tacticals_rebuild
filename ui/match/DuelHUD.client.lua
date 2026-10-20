@@ -574,16 +574,50 @@ local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UD
 -- read as 0 until the server changes them (a table, not new locals: this script is at the 200-locals limit)
 local rematchVoted = { stale = false }
 local function postMatch() return st("PostMatch") == true or player:GetAttribute("InPseudoLobby") == true end
-leaveB.Activated:Connect(function()
+-- [PAD] (Edward 2026-10-20, RIVALS results) Y Rematch, X Play Again, B Leave: a round glyph on each button's left edge with a
+-- controller, and those buttons press them (in a table / do-block: this script is at the 200-locals limit)
+local resultActs = {}
+function resultActs.leave()
 	send(postMatch() and "ToHub" or "Leave") -- (the Tacticals session's post-match phase: Leave takes you to the hub)
 	rgui.Enabled = false; results.Visible = false
 	if resultBackdrop then resultBackdrop(false) end
-end)
-againB.Activated:Connect(function() send("PlayAgain"); againB:FindFirstChildOfClass("TextLabel").Text = "Searching..." end)
-rematchB.Activated:Connect(function()
+end
+function resultActs.again() send("PlayAgain"); againB:FindFirstChildOfClass("TextLabel").Text = "Searching..." end
+function resultActs.rematch()
 	if st("RematchAllowed") == false then return end
 	send("Rematch") -- toggles your vote on the server (player attribute RematchVote shows it)
-end)
+end
+leaveB.Activated:Connect(resultActs.leave)
+againB.Activated:Connect(resultActs.again)
+rematchB.Activated:Connect(resultActs.rematch)
+do
+	local MAP = { { rematchB, Enum.KeyCode.ButtonY, resultActs.rematch }, { againB, Enum.KeyCode.ButtonX, resultActs.again }, { leaveB, Enum.KeyCode.ButtonB, resultActs.leave } }
+	local glyphs = {}
+	for _, m in MAP do
+		local img = ""
+		pcall(function() img = UserInputService:GetImageForKeyCode(m[2]) end)
+		local g = new("ImageLabel", { Name = "PadGlyph", BackgroundTransparency = 1, Image = img, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0, 0.5),
+			Size = UDim2.fromScale(0.62, 0.62), SizeConstraint = Enum.SizeConstraint.RelativeYY, Visible = false, ZIndex = 9, Parent = m[1] })
+		table.insert(glyphs, g)
+	end
+	local padOn = false
+	local function show() for _, g in glyphs do g.Visible = padOn and g.Image ~= "" end end
+	local function onType(t)
+		if t == Enum.UserInputType.MouseMovement then return end -- (a resting mouse must not hide the glyphs)
+		local pad = t.Name:find("Gamepad") ~= nil
+		if not pad and not (t == Enum.UserInputType.Keyboard or t.Name:find("Mouse") or t == Enum.UserInputType.Touch) then return end
+		padOn = pad; show()
+	end
+	UserInputService.LastInputTypeChanged:Connect(onType)
+	onType(UserInputService:GetLastInputType())
+	player:GetAttributeChangedSignal("_ForcePad"):Connect(function() if RunService:IsStudio() then padOn = player:GetAttribute("_ForcePad") == true; show() end end)
+	UserInputService.InputBegan:Connect(function(input)
+		if not rgui.Enabled then return end
+		for _, m in MAP do
+			if input.KeyCode == m[2] and m[1].Visible then m[3]() return end
+		end
+	end)
+end
 -- one look for a Rematch button: votes "n/needed", your own vote lit olive, "Starting in N" once everyone's in,
 -- greyed only when the server says RematchAllowed = false (with RematchReason). (2026-10-19, Edward: "you should be able to
 -- rematch instantly") nil = not sent yet = allowed, and RematchNeeded defaults to the match's player count (1v1 -> 2), so it
