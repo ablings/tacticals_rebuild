@@ -180,6 +180,28 @@ local function loadAnimations(config): { [string]: AnimationTrack }
 			end
 		end
 	end
+	-- [MOVE2] the draw from the holster (WeaponConfig.DrawAnimation: DrawHip / DrawBack, plus the Left mirror), played
+	-- instead of Equip; published ids on the sources (PublishedId), the KeyframeSequence itself in Studio before upload
+	if config.DrawAnimation then
+		local sources = ReplicatedStorage:FindFirstChild("Repository") and ReplicatedStorage.Repository:FindFirstChild("AnimationSources")
+		for _, suffix in { "", "Left" } do
+			local source = sources and sources:FindFirstChild(config.DrawAnimation .. suffix)
+			local id = source and source:GetAttribute("PublishedId") or ""
+			if id == "" and source and source:IsA("KeyframeSequence") and RunService:IsStudio() then
+				local ok, tempId = pcall(function() return game:GetService("KeyframeSequenceProvider"):RegisterKeyframeSequence(source) end)
+				if ok then id = tempId end
+			end
+			if id ~= "" then
+				local animation = Instance.new("Animation")
+				animation.AnimationId = id
+				local ok, track = pcall(animator.LoadAnimation, animator, animation)
+				if ok then
+					track.Priority = Enum.AnimationPriority.Action4
+					tracks["Draw" .. suffix] = track
+				end
+			end
+		end
+	end
 	return tracks
 end
 
@@ -564,9 +586,10 @@ local function equip(tool: Tool)
 			end
 		end
 		setGunHand(CameraController.GetShoulder()) -- also starts the right pose
-		playAnimation("Equip")
+		local drawName = thisEquip.tracks.Draw and "Draw" or "Equip" -- [MOVE2] from the holster when there is a draw animation
+		playAnimation(drawName)
 		do -- [MOVE2] the draw animation fits the gun's DrawTime (whatever is left of it after the Ready wait)
-			local track = thisEquip.tracks.Equip
+			local track = (gunHand < 0 and thisEquip.tracks[drawName .. "Left"]) or thisEquip.tracks[drawName]
 			local left = (thisEquip.drawEndsAt or 0) - os.clock()
 			if track and track.Length > 0 and left > 0.05 then track:AdjustSpeed(track.Length / left) end
 		end

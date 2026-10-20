@@ -31,6 +31,14 @@ do
 		if W[id] then W[id].DrawTime = v end
 	end
 end
+-- [MOVE2] the draw animation matches the holster (scripts/holster/HolsterManager): thigh guns DrawHip, back guns DrawBack
+do
+	local W = WeaponConfig.Weapons
+	for id, v in { Pistol = "DrawHip", SilencedPistol = "DrawHip", DualPistols = "DrawHip", Revolver = "DrawHip", MiniUzi = "DrawHip",
+		AutoRifle = "DrawBack", PumpShotgun = "DrawBack", SemiAuto = "DrawBack", Sniper = "DrawBack" } do
+		if W[id] then W[id].DrawAnimation = v end
+	end
+end
 WeaponConfig.DrawTimeTolerance = 0.75 -- [MOVE2] the server allows a shot from 75% of DrawTime after the equip reached it
 WeaponConfig.GadgetMoveSpeed = 1.1 -- [MOVE2] holding the gadget slot (no Tool: HotbarController sets player attribute HeldSlot)
 
