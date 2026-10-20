@@ -11,7 +11,9 @@
 --     big centred MATCH FOUND (+ RANKED / mode) on top of it here, which steps aside once Teleporting starts.
 --   * our hotkeys (letters, numbers, Tab, Esc, the gamepad buttons) are sunk at a high ContextAction priority, so no menu opens.
 -- Falls through (MM_Status leaves Found / Teleporting without a teleport, or TeleportInitFailed): everything is restored and a
--- Whoops says so. UI rule: Scale only.
+-- Whoops says so, with the server's MM_FailReason when set (fix/mm_failreason.lua; set just before MM_Status -> nil).
+-- Server order (MatchmakingManager): Searching -> Found -> 1.2 s -> Teleporting, MM_Queue set throughout (ranked ids start
+-- with "R"); a failure sets MM_Status AND MM_Queue nil (not re-queued). Studio: Found -> nil after 2.5 s. UI rule: Scale only.
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ContextActionService = game:GetService("ContextActionService")
@@ -195,9 +197,14 @@ function controller.Start()
 	end)
 	TeleportService.TeleportInitFailed:Connect(function(p, _, msg)
 		if p ~= player or not active then return end
-		failedAt = os.clock()
-		exit(true)
 		warn("[MatchFoundGate] teleport failed: " .. tostring(msg))
+		-- the server normally answers first (MM_FailReason, then MM_Status -> nil); this is the backstop if it doesn't
+		task.delay(1.5, function()
+			if not active then return end
+			failedAt = os.clock()
+			local reason = player:GetAttribute("MM_FailReason")
+			exit(type(reason) == "string" and reason ~= "" and reason or "Teleport failed: " .. tostring(msg))
+		end)
 	end)
 	update()
 end
