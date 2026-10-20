@@ -44,7 +44,7 @@ edit(C:FindFirstChild("StealthController"),
 	meterFrame = Instance.new("Frame")
 	meterFrame.AnchorPoint = Vector2.new(0, 1)
 	meterFrame.Position = UDim2.fromOffset(28, 1080 - 64 - 88 - 10)
-	meterFrame.Size = UDim2.fromOffset(170, 34)
+	meterFrame.Size = UDim2.fromOffset(230, 50)
 	meterFrame.BackgroundColor3 = Color3.fromRGB(14, 14, 16)
 	meterFrame.BackgroundTransparency = 0.35
 	meterFrame.BorderSizePixel = 0
@@ -58,6 +58,17 @@ edit(C:FindFirstChild("StealthController"),
 	Kit.toScale(root) -- [HUDFIT]
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
 ]])
+
+-- [HUDFIT] bigger meter + label (the UI audit: NOISE text was ~6 px on a phone after Kit.toScale)
+edit(C:FindFirstChild("StealthController"),
+	"\tmeterLabel.Position = UDim2.fromOffset(8, 2)\n\tmeterLabel.Size = UDim2.new(1, -16, 0, 14)\n",
+	"\tmeterLabel.Position = UDim2.fromOffset(12, 4)\n\tmeterLabel.Size = UDim2.new(1, -24, 0, 24)\n")
+edit(C:FindFirstChild("StealthController"),
+	"\tmeterLabel.TextSize = 11\n",
+	"\tmeterLabel.TextSize = 20\n")
+edit(C:FindFirstChild("StealthController"),
+	"\tbar.Position = UDim2.fromOffset(8, 19)\n\tbar.Size = UDim2.new(1, -16, 0, 5)\n",
+	"\tbar.Position = UDim2.fromOffset(12, 34)\n\tbar.Size = UDim2.new(1, -24, 0, 8)\n")
 
 local out, sources = {}, {}
 for _, e in edits do sources[e[1]] = sources[e[1]] or e[1].Source end
