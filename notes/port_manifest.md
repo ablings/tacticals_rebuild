@@ -331,3 +331,11 @@ himself; we never publish.
   saved by port_prep, so it was reopened, re-verified (v.lua all true) and published from the reopened window.
 - Carries: every Practice Range object white SmoothPlastic with the training room's greybox grid (rbxassetid://86361987736184, 5-stud tiles,
   dark at 0.32), one textured floor slab, lobby duel layers re-split.
+
+## Live port 28: controller layout, live picks, restyle, kill feed, results stats, in-match settings (2026-10-20 ~17:30, main PC lead; Edward in the lead's chat: "go")
+- From d4ad50b (both copies saved). Published on the second monitor, each retitled after Grant: tacticals (lobby), Tutorial, Matchmaking,
+  Ranked (port_prep.sh, all checks true; MatchCore [STATS] + [KILLFEED] present in every copy, applyMapEnv x3, ArenaMap camera).
+- Carries: UI (RIVALS controller layout + pad HUD, results glyphs, picker cursor / stays open / next-round label, Leave only solo/test, the
+  serious restyle 3bfcb2a / 684d72e in muted tan + dark green, kill-feed silhouettes, DuelHUD headshot line / match point / round fade /
+  avatar, in-match Settings gear db66db9, NOISE hidden); lead (live picks queued to round end, Kill payload weapon = item + noscope,
+  results Assists / DamageDealt / DamageTaken).
