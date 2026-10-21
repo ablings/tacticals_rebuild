@@ -39,6 +39,14 @@ function Badges.Name(p, name)
 	return name
 end
 
+-- (2026-10-20, RIVALS) the device a player uses, after their name (server attribute Device, lead's DeviceBridge; cosmetic only).
+-- White silhouettes from ui/art/device (codex), empty until uploaded under the group.
+Badges.DEVICE = { PC = "", Controller = "", Phone = "", Tablet = "", Console = "" }
+function Badges.DeviceIcon(p)
+	local id = isPlayer(p) and Badges.DEVICE[p:GetAttribute("Device") or ""]
+	return (id and id ~= "") and id or nil
+end
+
 -- (2026-10-20, Edward, RIVALS) the ONE icon beside a name (nameplates, killer banner, match boxes), picked by the VIEWER's
 -- leaderboard mode (Settings > Lobby Data): Level / Streak / Wins -> their win-streak flame if they have one, else their level
 -- (Wins: their wins); Rank -> their rank emblem if ranked, else their level.

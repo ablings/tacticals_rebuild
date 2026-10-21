@@ -97,8 +97,11 @@ end
 
 -- Same launch formula as the server
 local function launchVelocity(direction: Vector3, p: number): Vector3
-	local speed = Config.MinThrowSpeed + (Config.MaxThrowSpeed - Config.MinThrowSpeed) * p
-	local lift = Config.MinLift + (Config.MaxLift - Config.MinLift) * p
+	-- (2026-10-20, Edward: "the toss ... is very weak") each gadget's own throw numbers (GadgetConfig[kit], lead's withThrow
+	-- defaults 36-105 studs/s), so the preview matches the server's launchVelocity; Smoke's only as a fallback
+	local C = GadgetConfig[kitGadget()] or Config
+	local speed = (C.MinThrowSpeed or Config.MinThrowSpeed) + ((C.MaxThrowSpeed or Config.MaxThrowSpeed) - (C.MinThrowSpeed or Config.MinThrowSpeed)) * p
+	local lift = (C.MinLift or Config.MinLift) + ((C.MaxLift or Config.MaxLift) - (C.MinLift or Config.MinLift)) * p
 	return direction * speed + Vector3.new(0, lift, 0)
 end
 
@@ -593,7 +596,8 @@ function controller.Press(): boolean
 	if charges() <= 0 or os.clock() < busyUntil or holdStart then return false end
 	local _, humanoid = getParts()
 	if not humanoid then return false end
-	-- [ABILITY2] Landmine (Use = "Place") / Medkit (Use = "Channel"): pressed, not thrown; the server does the rest
+	-- [ABILITY2] Medkit (Use = "Channel"): pressed, not thrown; the server does the rest. (2026-10-20: Landmine lost its Use =
+	-- "Place" and is thrown like the grenades, Edward: "all gadgets besides medkit should be throwable")
 	local useCfg = GadgetConfig[kitGadget()]
 	if useCfg and useCfg.Use then
 		busyUntil = os.clock() + (useCfg.Cooldown or 1)

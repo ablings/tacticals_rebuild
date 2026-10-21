@@ -122,7 +122,16 @@ local function build(p, character)
 	streak.Parent = row
 	local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
 	local flame = Kit.streak(streak, 0, UDim2.fromScale(0, 0), UDim2.fromScale(1, 1), 2)
-	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name }
+	-- (2026-10-20, RIVALS) the device icon after the name (UIKit.Badges.DeviceIcon; hidden until the art is uploaded)
+	local dev = Instance.new("ImageLabel")
+	dev.Name = "Device"
+	dev.LayoutOrder = 5
+	dev.BackgroundTransparency = 1
+	dev.ScaleType = Enum.ScaleType.Fit
+	dev.Size = UDim2.fromScale(0.09, 0.7)
+	dev.Visible = false
+	dev.Parent = row
+	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name, device = dev }
 end
 
 local function hook(p)
@@ -183,6 +192,8 @@ function Nameplates.Start()
 				if e.name then
 					local okB, B = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
 					e.name.Text = (okB and B) and B.Name(p) or p.DisplayName
+					local dv = (okB and B and B.DeviceIcon) and B.DeviceIcon(p) or nil
+					if e.device then e.device.Visible = dv ~= nil; e.device.Image = dv or "" end
 				end
 			end
 		end

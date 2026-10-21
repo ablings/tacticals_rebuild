@@ -620,7 +620,7 @@ function LobbyHud.Start()
 	local function buildList(force)
 		local ps = Players:GetPlayers()
 		local key = lbStat
-		for _, p in ps do key ..= p.UserId .. "/" .. tostring(statValue(p)) .. tostring(p:GetAttribute("RankTier")) .. "/" .. tostring(p:GetAttribute("WinStreak")) end
+		for _, p in ps do key ..= p.UserId .. "/" .. tostring(statValue(p)) .. tostring(p:GetAttribute("RankTier")) .. "/" .. tostring(p:GetAttribute("WinStreak")) .. "/" .. tostring(p:GetAttribute("Device")) .. tostring(p:GetAttribute("Setting_DisplayBadges")) end -- (device / badges change -> rebuild)
 		if key == lastLB and not force then return end
 		lastLB = key
 		table.sort(ps, function(a, b)
@@ -649,6 +649,14 @@ function LobbyHud.Start()
 				Kit.label({ Text = utf8.char(0xE001), FontFace = LB_NUM, TextSize = 20, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
 			end
 			local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
+			-- (2026-10-20, RIVALS) the device icon right after the name (UIKit.Badges.DeviceIcon)
+			local dv = (okBd and Bd and Bd.DeviceIcon) and Bd.DeviceIcon(p) or nil
+			if dv then
+				local nameText = p.DisplayName .. Bd.Suffix(p)
+				local w = game:GetService("TextService"):GetTextSize(nameText, 21, Enum.Font.BuilderSansBold, Vector2.new(400, 40)).X
+				Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = dv, ScaleType = Enum.ScaleType.Fit,
+					Position = UDim2.fromOffset(math.min(44 + w + 6, 222), 11), Size = UDim2.fromOffset(18, 18), Parent = row })
+			end
 			Kit.label({ Text = p.DisplayName .. ((okBd and Bd) and Bd.Suffix(p) or ""), FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
 				Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(streakN > 0 and lbStat ~= "Streak" and 164 or 196, 40), Parent = row })
 			-- the win streak next to the name (RIVALS): a flame with the number over it
