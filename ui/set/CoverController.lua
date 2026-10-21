@@ -814,6 +814,51 @@ local function startVault(c, fast: boolean?)
 	return true
 end
 
+-- [CLIMB] (Edward 2026-10-21) "on vaultable objects lets say an object is very wide it shouldn't default to a vault with
+-- spacebar it should be a climb animation instead to get ontop of it this can also work on taller objects aswell if your head
+-- is over the object" / "if the object is too long instead of vaulting a really long object it climbs ontop of it".
+-- Space on cover that is too deep to vault across (or whose far side is blocked), or on a wall a little too tall to vault whose
+-- top is still under the top of your head: you climb up and stand on top of it (hands on the edge, knee up, step on).
+local CLIMB_MIN_DEPTH = Config.ClimbMinDepth or 5 -- deeper than this (studs, front to back): climb instead of vault
+local CLIMB_MAX_ABOVE_ROOT = Config.ClimbMaxAboveRoot or 2.6 -- the top may be up to here above the root (the top of the head)
+
+-- the top surface just behind the wall's face, if you can stand there; nil when it is too high or there's no headroom
+local function climbSpot(c): Vector3?
+	local root = rootPart :: BasePart
+	local hum = humanoid :: Humanoid
+	local rootOffset = hum.HipHeight + root.Size.Y / 2
+	local inset = math.clamp(c.depth / 2, 0.8, 1.6)
+	local at = c.point - c.normal * inset
+	local down = castWorld(Vector3.new(at.X, root.Position.Y + CLIMB_MAX_ABOVE_ROOT + 0.5, at.Z), Vector3.new(0, -(CLIMB_MAX_ABOVE_ROOT + 4), 0))
+	if not down or down.Normal.Y < 0.7 then return nil end
+	local topY = down.Position.Y
+	if topY > root.Position.Y + CLIMB_MAX_ABOVE_ROOT or topY < root.Position.Y - rootOffset + 1 then return nil end
+	local stand = Vector3.new(at.X, topY + rootOffset, at.Z)
+	-- headroom to stand up there, and nothing between you and the edge at the top
+	if castWorld(Vector3.new(at.X, topY + 0.2, at.Z), Vector3.new(0, rootOffset * 2 + 0.3, 0)) then return nil end
+	local edge = Vector3.new(root.Position.X, topY + 0.6, root.Position.Z)
+	if castWorld(edge, Vector3.new(at.X, topY + 0.6, at.Z) - edge) then return nil end
+	return stand
+end
+
+local function startClimb(c, stand: Vector3): boolean
+	local root = rootPart :: BasePart
+	local hum = humanoid :: Humanoid
+	local from = root.Position
+	local rise = math.max(stand.Y - from.Y, 0.5)
+	local duration = ((Config.ClimbTime or 0.62) + rise * 0.06) / mobility() -- [ABILITY]
+	-- up the face first, then forward onto the top: the curve leaves straight up and arrives level
+	local face = Vector3.new(from.X, stand.Y + 0.35, from.Z):Lerp(Vector3.new(stand.X, stand.Y + 0.35, stand.Z), 0.15)
+	exitCover()
+	hum.AutoRotate = false
+	hum:ChangeState(Enum.HumanoidStateType.Physics)
+	local track = playMoveTrack("Climb")
+	if track and track.Length > 0 then track:AdjustSpeed(track.Length / duration) end
+	vault = { from = from, over = face, to = stand, facing = -c.normal, start = os.clock(), track = track, fromCover = false, part = c.part,
+		duration = duration, fast = false, climb = true }
+	return true
+end
+
 -- JUMP DIVE: Space, then quickly Shift+E while you're in the air. You launch at the cover under your
 -- crosshair in an arc - high enough to clear a low wall in the way - body thrown forward, and land in a roll
 -- that carries you on to the spot. On its own the roll stands you up in the open; press Q during the dive
@@ -940,6 +985,12 @@ local function updateMovement(): boolean
 		local position = a:Lerp(b, alpha)
 		root.CFrame = CFrame.lookAt(position, position + vault.facing)
 		root.AssemblyLinearVelocity = Vector3.zero
+		if alpha >= 1 and vault.climb then -- [CLIMB] standing on top: on your feet, no follow-through
+			hum:ChangeState(Enum.HumanoidStateType.Running)
+			finishMovement()
+			root.AssemblyLinearVelocity = Vector3.zero
+			return true
+		end
 		if alpha >= 1 then
 			-- Land standing (a crouch doesn't survive a vault) and keep running if a direction is held
 			local MovementController = Get("MovementController")
@@ -1988,6 +2039,16 @@ local function onJumpKey(_, inputState: Enum.UserInputState)
 	if not isAlive() then return Enum.ContextActionResult.Sink end
 
 	-- Shift+Space in cover: press E straight after and you dive out off it like a diving board
+	-- [CLIMB] tall cover whose top is still under your head: climb onto it (before the stand-up below)
+	do
+		local tall = (cover and not cover.isLow) and cover or nil
+		if not tall and not cover then
+			local nearby = findNearbyCover()
+			if nearby and not nearby.isLow then tall = nearby end
+		end
+		local stand = tall and climbSpot(tall)
+		if stand and not localPlayer:GetAttribute("SneakDisabled") and startClimb(tall, stand) then return Enum.ContextActionResult.Sink end
+	end
 	-- Crouched behind tall cover: Space stands you back up (you can't jump in cover anyway).
 	-- (Low cover keeps you crouched, so there Space still vaults.)
 	if cover and not cover.isLow and crouched then
@@ -2018,8 +2079,18 @@ local function onJumpKey(_, inputState: Enum.UserInputState)
 		if revault then fast = true
 		elseif cover or target or findNearbyCover() then return Enum.ContextActionResult.Sink end
 	end
+	-- [CLIMB] too deep to vault across: climb on top of it instead
+	if target and not revault and target.depth > CLIMB_MIN_DEPTH then
+		local stand = climbSpot(target)
+		if stand and startClimb(target, stand) then return Enum.ContextActionResult.Sink end
+	end
 	if target and startVault(target, fast) then
 		return Enum.ContextActionResult.Sink
+	end
+	-- [CLIMB] the far side is blocked (vault refused): climb on top instead
+	if target and not revault then
+		local stand = climbSpot(target)
+		if stand and startClimb(target, stand) then return Enum.ContextActionResult.Sink end
 	end
 	-- In cover, Space never jumps (it only vaults)
 	if cover then return Enum.ContextActionResult.Sink end

@@ -23,7 +23,10 @@
 7. [x] **Controller dash = D-pad up** instead of double-tapping LB (deployed both copies; CoverDash bound E + DPadUp, LB = cover only).
    Moved off D-pad up: match Settings = HOLD View/Select 0.5 s (tap = scoreboard as before); Training picker = T / D-pad down;
    hub Codes loses its D-pad glyph; Settings > Hotkeys shows Dash = D-pad up, Equip Melee pad blank (RB cycles).
-8. [ ] **Climb** (new mechanic): on vaultable objects that are very WIDE or very LONG (deep), Space doesn't vault across: a climb
+8. [x] (fix/climb.lua [CLIMB] + CoverController startClimb/climbSpot; tested on a test platform: 8-deep crate climbs (+3 up, 1.6 on),
+   3-deep crate still vaults, 5-stud wall (top under the head) climbs, 6-stud wall just hops; poses checked on R15 dummies.
+   LIVE NEEDS the CoverClimb upload: Save to Roblox under Gunsy Funsy on Edward's account, then set PublishedId - until then
+   the climb moves you without its animation) **Climb** (new mechanic): on vaultable objects that are very WIDE or very LONG (deep), Space doesn't vault across: a climb
    animation puts you on top. Also on taller objects, as long as your head is above the object's top.
 6. [x] (MatchFlowUI: the map vote is back on the solid gradient backdrop like the loading screen; the gun pick stays see-through; screenshot-checked) **Map-selection overlay**: like RIVALS (and like we had before), a background overlay during the map-vote / loading so the player
    can't see which map they're on.
