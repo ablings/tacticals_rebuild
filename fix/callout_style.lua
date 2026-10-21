@@ -86,6 +86,10 @@ table.insert(res, patch(SC, {
 	TweenService:Create(group, TweenInfo.new(0.15), { GroupTransparency = 0 }):Play()
 ]] },
 	{ "\tgui.Size = UDim2.fromOffset(220, 34)\n", "\tgui.Size = UDim2.fromOffset(320, 44)\n" }, -- (UI round 4: a bigger bubble)
+	-- (UI round 6) higher, clear of the tutorial's enemy chevron / world keycaps; the pop-in tween ends 0.4 above it (was 3.4 -> 3.8)
+	{ "\tgui.StudsOffsetWorldSpace = Vector3.new(0, 3.4, 0)\n",
+	  "\tgui.StudsOffsetWorldSpace = Vector3.new(0, 4.8, 0) -- (UI round 6: clear of the tutorial's enemy chevron / world keycaps)\n" },
+	{ "{ StudsOffsetWorldSpace = Vector3.new(0, 3.8, 0) }):Play()", "{ StudsOffsetWorldSpace = Vector3.new(0, 5.2, 0) }):Play()" },
 	{ "\t\t\tTweenService:Create(label, TweenInfo.new(0.4), { TextTransparency = 1, TextStrokeTransparency = 1 }):Play()\n",
 	  "\t\t\tTweenService:Create(group, TweenInfo.new(0.4), { GroupTransparency = 1 }):Play() -- [CALLOUT] the whole plate fades\n" },
 }))
