@@ -147,6 +147,11 @@ local function clearShowcase()
 	table.clear(showcase)
 end
 
+-- (2026-10-20, Edward: "you also cant turn the locked weapon either") a locked item's silhouette can't be turned, zoomed or spun
+local function currentLocked(): boolean
+	for _, e in showcase do if not e.leaving then return e.locked == true end end
+	return false
+end
 local function showItem(itemId: string, direction: number)
 	local owned = ctx.owns(itemId)
 	local entry = makeShowcase(itemId, not owned)
@@ -312,7 +317,10 @@ function Armory.Silhouette(model: Model)
 	for _, p in model:GetDescendants() do
 		if p:IsA("BasePart") then
 			p.Color = Color3.new(0, 0, 0)
-			p.Material = Enum.Material.SmoothPlastic
+			-- (2026-10-20, Edward: "no reflectance or shadows on locked weapons") in the world the room lights it, so a
+			-- black Neon part: Neon ignores lighting and shadows (black emits nothing), so it stays one flat black shape
+			p.Material = SHOWCASE_WORLD and Enum.Material.Neon or Enum.Material.SmoothPlastic
+			p.MaterialVariant = ""
 			p.Reflectance = 0
 			p.CastShadow = false
 			if p:IsA("MeshPart") then p.TextureID = "" end
@@ -1931,7 +1939,7 @@ local function renderInfo()
 	end
 	local r2 = cardRow(actionCard, 68, "lens", "Inspect", "Give it a spin")
 	bigButton(r2, "eye", true).Activated:Connect(function()
-		if not dragging then
+		if not dragging and not currentLocked() then
 			spinStart = os.clock()
 			returning = false
 			yawVel, pitchVel = 0, 0
@@ -2247,7 +2255,7 @@ local function build()
 	dragZone = mk("TextButton", { Name = "DragZone", AutoButtonColor = false, Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1),
 		ZIndex = 1, Parent = ui })
 	dragZone.InputBegan:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and not currentLocked() then
 			dragging = true
 			dragLast = input.Position
 			dragStarts += 1
@@ -2649,6 +2657,7 @@ local function hookZoom()
 				return -- over a panel / the list: let it scroll instead
 			end
 		end
+		if currentLocked() then return end
 		zoomTarget = math.clamp(zoomTarget * (1 + WHEEL_STEP * input.Position.Z), 1, WHEEL_MAX_ZOOM)
 	end)
 end
