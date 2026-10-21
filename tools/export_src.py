@@ -1,7 +1,7 @@
 """Export every live script's Source (read-only) to out/src_<place>/<full.name>.lua for offline auditing.
 Usage: python tools/export_src.py lobby|match   (skips ServerStorage backups _RebuildRemoved/_Pre*/_MainGame*)"""
 import json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "5e5685e4-6afe-4dde-b307-dd6c67c0a85d", "match": "7a8bab8a-3a9c-479b-b323-38d82789723b"}
+SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "7a8bab8a-3a9c-479b-b323-38d82789723b"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 place = sys.argv[1]
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "out", "src_" + place)

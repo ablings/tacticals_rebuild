@@ -1,7 +1,7 @@
 """Rooms3 capture set (Duels hall / west deck, Exfil tunnel end / hangar / pad / cutscene camera) via the stdio MCP bridge.
 Usage: python tools/rooms3_capture.py <prefix: before|after> [names...]   (run from tacticals_rebuild)"""
 import json, os, subprocess, sys, shutil
-SID = "5e5685e4-6afe-4dde-b307-dd6c67c0a85d"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
+SID = "ddbec6a6-8f28-4bef-9054-7be5bea3e83a"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
   "d1_door_hall":   ([-86, 21.5, 0],    [-125, 20, 0]),    # from the hub top landing through the Duels door
