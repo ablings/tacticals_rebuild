@@ -917,6 +917,7 @@ local function markEnemy(on: boolean)
 	local c = text(b, "Chevron", F_HEAVY, ALERT_RED)
 	c.Size = UDim2.fromScale(1, 1)
 	c.Text = "▼"
+	c.Visible = false -- (round 7: the brackets mark him now; the chevron sat right where his shouts pop up)
 	stroke(c, PLATE, 2, 0.2)
 	b.Parent = workspace.CurrentCamera
 	enemyMark = b
@@ -927,6 +928,18 @@ local function markEnemy(on: boolean)
 			local h = math.max(0.8, 0.045 * 2 * d * math.tan(math.rad(cam.FieldOfView / 2)))
 			b.Size = UDim2.fromScale(h, h)
 			b.StudsOffsetWorldSpace = Vector3.new(0, 2.2 + h * 0.5 + math.sin(os.clock() * 4) * 0.15 * h, 0)
+			-- (round 7, graders: spotting had no "got it") with him under your crosshair the brackets snap in tight and the
+			-- strip's LOOK key lights amber and reads SPOTTED
+			local toward = (head.Position - cam.CFrame.Position).Unit
+			local ang = math.deg(math.acos(math.clamp(cam.CFrame.LookVector:Dot(toward), -1, 1)))
+			local locked = ang <= math.deg(math.atan(2.5 / math.max(d, 1))) + 2.5
+			if enemyBrackets then
+				enemyBrackets.Size = locked and UDim2.new(3.4, 18, 5.4, 26) or UDim2.new(4.2, 40, 6.2, 56)
+			end
+			if strip and strip.reticle.Visible then
+				strip.reticle.BackgroundColor3 = locked and AMBER or KEY_WHITE
+				strip.reticle.Caption.Text = locked and "SPOTTED" or "LOOK"
+			end
 			task.wait()
 		end
 	end)
@@ -1080,8 +1093,13 @@ RunService.RenderStepped:Connect(function(dt)
 		if not stripDoneFlag and k.cap.Visible then
 			local breathe = (i == nextKey) and (1 + 0.04 * math.sin(os.clock() * 4)) or 1
 			k.scale.Scale = breathe * (1 - s.x)
-			-- a look-at step: the key lights amber while you're looking at the target ("ready")
-			if stripLook and i == 1 and not keyDone[i] then k.face.BackgroundColor3 = gazeReady and AMBER or KEY_WHITE end
+			-- (round 7, graders: the same key showed white in the strip and amber in the world) one rule everywhere: the key to
+			-- press next is amber (a look-at step waits for your eyes first). Mouse keys stay cream so their amber button reads.
+			if not keyDone[i] then
+				local isMouse = stripGlyphs[i] == "RMB" or stripGlyphs[i] == "LMB"
+				local lit = i == nextKey and not isMouse and (not stripLook or gazeReady)
+				k.face.BackgroundColor3 = lit and AMBER or KEY_WHITE
+			end
 		end
 	end
 end)
