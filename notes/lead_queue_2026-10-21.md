@@ -63,7 +63,9 @@
     DualGrip left gun (Textures on 6 faces + tint; WrapChannel Primary / Accent tags on every template part, WrapSkip on lenses /
     muzzles). Start ~8 (4 plain colours, Glossy, 3 codex-made seamless patterns); everyone owns the plain ones. How the rest are earned
     = Edward's call (store / cases / weapon levels or contracts). UI has the screens + client-only preview of locked wraps.
-17. [ ] Training trash cans: 2-3 red cans with a "Q  Trash Can / Change Weapons" prompt that opens the free weapon picker.
+17. [x] (fix/trash_cans.lua [TRASHCAN], lobby copy saved: the 9 Training swap bins are red Part-built cans, crate kept invisible
+    so its prompt still shows - a prompt moved onto the new Body part stopped showing; F at a can fires "Trash Can / Change Weapons"
+    and toggles the picker; notes/feel_ref/trash_can_training.png. A Blender mesh can may replace the Parts later.) Training trash cans: 2-3 red cans with a "Q  Trash Can / Change Weapons" prompt that opens the free weapon picker.
     Wrap look per channel (from RIVALS frames): Color, Material (incl. Neon / Glass / ForceField), Texture + StudsPerTile (fixed per
     wrap so patterns keep their size on every part), Transparency (ghost wraps ~0.3-0.5; cap it on the local player's held gun if aiming
     suffers), optional client-side animation: texture Scroll and/or a colour cycle { colours, period } on the glow channel (cap animated
