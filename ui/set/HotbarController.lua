@@ -118,6 +118,12 @@ local function slash(quick: boolean?, fKey: boolean?, kind: string?)
 	local weapon = quick and MeleeConfig.QuickMelee or (tool and MeleeConfig.Weapons[tool:GetAttribute("MeleeId") or ""])
 	if not hum or not weapon or os.clock() - lastSlash < weapon.Cooldown then return end
 	if (localPlayer:GetAttribute("NoFireUntil") or 0) > os.clock() then return end -- [ABILITY2] stunned
+	do -- [PREROUND] (Edward) no melee until the round starts: nothing in the countdown / loadout before a round
+		local stateObj = ReplicatedStorage
+		pcall(function() stateObj = require(ReplicatedStorage.Modules.Shared:FindFirstChild("MatchState")).For(localPlayer) or ReplicatedStorage end)
+		local st = stateObj:GetAttribute("MatchState")
+		if st == "Countdown" or st == "RunIn" or st == "Loadout" then return end
+	end
 	lastSlash = os.clock()
 	-- [ABILITY2] Knife Slide Lunge: the first swing during / right after a slide lunges you forward (more reach and damage)
 	local Movement = Get("MovementController")

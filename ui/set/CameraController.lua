@@ -727,6 +727,12 @@ function controller.IsAiming(): boolean
 	local weapon = shared.Get and shared.Get("WeaponController")
 	if weapon and weapon.IsReloading and weapon.IsReloading() then return false end
 	if weapon and weapon.IsDrawing and weapon.IsDrawing() then return false end -- [MOVE2] no aiming in until the gun is out
+	do -- [PREROUND] (Edward) no aiming in until the round starts (the 5 s countdown, the loadout)
+		local stateObj = game:GetService("ReplicatedStorage")
+		pcall(function() stateObj = require(stateObj.Modules.Shared:FindFirstChild("MatchState")).For(localPlayer) or stateObj end)
+		local st = stateObj:GetAttribute("MatchState")
+		if st == "Countdown" or st == "RunIn" or st == "Loadout" then return false end
+	end
 	-- [ABILITY2] Dual Pistols (Akimbo): no aiming in at all
 	local character = localPlayer.Character
 	local held = character and character:FindFirstChildOfClass("Tool")

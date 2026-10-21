@@ -589,13 +589,18 @@ local function refreshChips()
 		local ts = t.l:FindFirstChildOfClass("UIStroke"); if ts then ts.Color = on and WHITE or BLACK end
 		t.l.Text = string.upper(SLOTS[i].label) .. ((picks[SLOTS[i].id] and not on) and "  ·  SET" or "")
 	end
-	ready.Visible = not switching and picks.Weapon ~= nil and picks.Melee ~= nil and picks.Gadget ~= nil
+	ready.Visible = false -- (2026-10-21, Edward) no Ready button: the third pick readies you (allPicked)
 end
 local switching = false -- (2026-10-18, RIVALS "Switch Weapons [M]") the picker opened between rounds
 local function allPicked()
 	optArea.Visible = false
 	refreshChips()
 	if switching then task.delay(0.35, function() switching = false end) end -- the last pick closes it (RIVALS)
+	-- (2026-10-21, Edward: "there shouldn't be a ready button ... after you pick all your weapons it should put you in the game")
+	if not switching and player:GetAttribute("_Ready") ~= true then
+		send("Ready")
+		player:SetAttribute("_Ready", true)
+	end
 end
 local function optionTile(parent, x, y, id, text, onPick, kind)
 	-- kind: "random" | "locked" | rarity name
