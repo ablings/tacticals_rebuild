@@ -374,10 +374,17 @@ function Kit.button(kind, size, text, props)
 		Name = (text or kind) .. "Button", Size = size, AutoButtonColor = false, Text = "",
 		BackgroundColor3 = C.white,
 	}, { Kit.corner(3), Kit.vgrad(Theme.gradient[kind]), Kit.stroke(C.textDark, 1.5, 0.6) })
+	-- (2026-10-21, RIVALS "alive") the button brightens a touch on hover: a white sheen fades in over its gradient
+	local sheen = new("Frame", { Name = "HoverSheen", BackgroundColor3 = C.white, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
+		ZIndex = 2, Parent = btn }, { Kit.corner(3) })
+	btn.MouseEnter:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.86 }) end)
+	btn.MouseLeave:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }) end)
+	btn.SelectionGained:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.86 }) end)
+	btn.SelectionLost:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }) end)
 	if text then
 		local lbl = Kit.label({
 			Name = "Label", Text = text, Size = UDim2.fromScale(1, 1), TextXAlignment = Enum.TextXAlignment.Center,
-			FontFace = F.chunky, TextSize = math.floor(size.Y.Offset * 0.55), Parent = btn,
+			FontFace = F.chunky, TextSize = math.floor(size.Y.Offset * 0.55), ZIndex = 3, Parent = btn, -- (over the hover sheen)
 		})
 		Kit.textStroke(2).Parent = lbl
 	end

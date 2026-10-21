@@ -168,15 +168,28 @@ local function itemCard(pg, hover, id, x, y, w, h)
 	local rar = Config.Rarities[item.Rarity] or Config.Rarities.Standard
 	local owned = ctx.owns(id)
 	local card = new("TextButton", { Name = id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
-		BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
+		BackgroundColor3 = C.white, ClipsDescendants = false, Parent = pg },
 		{ Kit.corner(2), Kit.stroke(rar.Color, 1, 0.75),
 			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
-	new("Frame", { Name = "RarityStripe", BackgroundColor3 = rar.Color, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 6), ZIndex = 2, Parent = card })
+	-- (2026-10-21, Edward: the lobby should feel alive like RIVALS) the card's own decor stays clipped to it; the 3D item breaks
+	-- out over its top edge and tilts / grows on hover (RIVALS' shop tiles)
+	local clip = new("Frame", { Name = "Clip", BackgroundTransparency = 1, ClipsDescendants = true, Size = UDim2.fromOffset(w, h), Parent = card }, { Kit.corner(2) })
+	new("Frame", { Name = "RarityStripe", BackgroundColor3 = rar.Color, BorderSizePixel = 0, Size = UDim2.fromOffset(w, 6), ZIndex = 2, Parent = clip })
 	-- olive diagonal stripe behind the art
 	new("Frame", { BackgroundColor3 = rar.Color, BackgroundTransparency = 0.85, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromOffset(w * 0.62, h * 0.35), Size = UDim2.fromOffset(w * 0.3, h * 1.6), Rotation = 24, Parent = card })
-	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(w - 20, h - 132), Parent = card })
+		Position = UDim2.fromOffset(w * 0.62, h * 0.35), Size = UDim2.fromOffset(w * 0.3, h * 1.6), Rotation = 24, Parent = clip })
+	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(w / 2, (h - 112) / 2 - 14),
+		Size = UDim2.fromOffset(w + 10, h - 96), ZIndex = 3, Parent = card })
 	itemArt(art, id, card)
+	local artScale = new("UIScale", { Parent = art })
+	card.MouseEnter:Connect(function()
+		Kit.tween(artScale, 0.18, { Scale = 1.08 }, Enum.EasingStyle.Back)
+		Kit.tween(art, 0.18, { Rotation = -4 }, Enum.EasingStyle.Back)
+	end)
+	card.MouseLeave:Connect(function()
+		Kit.tween(artScale, 0.18, { Scale = 1 })
+		Kit.tween(art, 0.18, { Rotation = 0 })
+	end)
 	outlined(Kit.label({ Text = item.Name, FontFace = F.display, TextSize = 34, Position = UDim2.fromOffset(16, h - 120), Size = UDim2.fromOffset(w - 32, 40), Parent = card }), 2)
 	Kit.label({ Text = string.upper(item.Rarity .. " " .. (Config.SlotNames[item.Slot] or item.Slot)), FontFace = F.bold, TextSize = 18, TextColor3 = rar.Color,
 		Position = UDim2.fromOffset(16, h - 82), Size = UDim2.fromOffset(w - 32, 22), Parent = card })

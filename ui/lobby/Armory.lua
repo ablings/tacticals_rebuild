@@ -1937,8 +1937,8 @@ local function renderInfo()
 			end)
 		end
 	end
-	local r2 = cardRow(actionCard, 68, "lens", "Inspect", "Give it a spin")
-	bigButton(r2, "eye", true).Activated:Connect(function()
+	local r2 = cardRow(actionCard, 68, "lens", "Inspect", owned and "Give it a spin" or "Unlock it to inspect")
+	bigButton(r2, "eye", owned).Activated:Connect(function() -- (2026-10-21) greyed out while locked: it can't be turned
 		if not dragging and not currentLocked() then
 			spinStart = os.clock()
 			returning = false

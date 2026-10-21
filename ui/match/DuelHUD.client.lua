@@ -446,7 +446,7 @@ do
 	new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://77423905055797", ImageColor3 = WHITE, ScaleType = Enum.ScaleType.Fit,
 		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.62, 0.62), Parent = gear })
 	local SS, busy = nil, false
-	gear.Activated:Connect(function()
+	local function toggleSettings()
 		if busy then return end
 		busy = true
 		if not SS then
@@ -481,6 +481,22 @@ do
 			if SS.IsOpen() then SS.Close() else SS.Open() end
 		end
 		busy = false
+	end
+	gear.Activated:Connect(toggleSettings)
+	-- (2026-10-21) controller: D-pad up opens / closes Settings in a match (free in a duel; Training uses it for the bins),
+	-- with its glyph beside the gear while a controller is the last input
+	local UIS = game:GetService("UserInputService")
+	local glyph = new("ImageLabel", { Name = "PadGlyph", BackgroundTransparency = 1, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.fromOffset(1920 - 84, 50),
+		Size = UDim2.fromOffset(34, 34), Visible = false, Parent = root })
+	pcall(function() glyph.Image = UIS:GetImageForKeyCode(Enum.KeyCode.DPadUp) end)
+	local function onType(t)
+		if t == Enum.UserInputType.MouseMovement then return end
+		glyph.Visible = t.Name:find("Gamepad") ~= nil and glyph.Image ~= ""
+	end
+	UIS.LastInputTypeChanged:Connect(onType)
+	onType(UIS:GetLastInputType())
+	UIS.InputBegan:Connect(function(input, gp)
+		if input.KeyCode == Enum.KeyCode.DPadUp and gui.Enabled and inMatch() and player:GetAttribute("InTraining") ~= true then toggleSettings() end
 	end)
 end
 local leaveDuel = new("TextButton", { Name = "LeaveDuel", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(30, 30), Size = UDim2.fromOffset(150, 52),
@@ -536,6 +552,43 @@ do
 		local ok, img = pcall(function() return Players:GetUserThumbnailAsync(math.max(player.UserId, 1), Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420) end)
 		if ok and img then av.Image = img end
 	end)
+	-- (2026-10-21, Edward: RIVALS poses your character in 3D on the result screen) a copy of your live character, standing
+	-- and slowly swaying in its own lit viewport; the flat thumbnail stays underneath as the fallback (no character / dead)
+	local vpf = new("ViewportFrame", { Name = "Pose", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5,
+		Ambient = Color3.fromRGB(150, 150, 156), LightColor = Color3.fromRGB(255, 250, 240), LightDirection = Vector3.new(-0.6, -0.8, -0.5), Parent = av })
+	local wm = Instance.new("WorldModel"); wm.Parent = vpf
+	local cam = Instance.new("Camera"); cam.FieldOfView = 30; cam.Parent = vpf; vpf.CurrentCamera = cam
+	local spin
+	local function pose()
+		wm:ClearAllChildren()
+		if spin then spin:Disconnect(); spin = nil end
+		local char = player.Character
+		local hum = char and char:FindFirstChildOfClass("Humanoid")
+		if not (char and hum and hum.Health > 0) then av.ImageTransparency = 0; return end
+		local was = char.Archivable
+		char.Archivable = true
+		local okC, clone = pcall(function() return char:Clone() end)
+		char.Archivable = was
+		if not (okC and clone) then av.ImageTransparency = 0; return end
+		for _, d in clone:GetDescendants() do
+			if d:IsA("LuaSourceContainer") or d:IsA("Tool") or d:IsA("ForceField") or d:IsA("BillboardGui") or d:IsA("Sound") then d:Destroy()
+			elseif d:IsA("BasePart") then d.Anchored = true; d.CanCollide = false end
+		end
+		local root = clone:FindFirstChild("HumanoidRootPart")
+		if root then clone.PrimaryPart = root end
+		clone:PivotTo(CFrame.new(0, 0, 0))
+		clone.Parent = wm
+		local cf, size = clone:GetBoundingBox()
+		local dist = size.Y / 2 / math.tan(math.rad(cam.FieldOfView / 2)) * 1.15
+		cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(0, size.Y * 0.05, -dist), cf.Position) -- the rig faces -Z: look at its front
+		av.ImageTransparency = 1
+		local t0 = os.clock()
+		spin = RunService.RenderStepped:Connect(function()
+			if not results.Visible then return end
+			clone:PivotTo(CFrame.Angles(0, math.sin((os.clock() - t0) * 0.6) * math.rad(22), 0))
+		end)
+	end
+	results:GetPropertyChangedSignal("Visible"):Connect(function() if results.Visible then pose() end end)
 end
 local leave = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(275, 490), Size = UDim2.fromOffset(250, 76),
 	BackgroundColor3 = WHITE, Parent = results }, { corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214)) }) })
