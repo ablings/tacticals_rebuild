@@ -6,8 +6,8 @@
 local Logo = {}
 
 Logo.IMG = {
-	Frame = "rbxassetid://81042695231423",   -- the frame with the letters removed (bone / olive). Teal-fixed upload pending:
-	                                          -- ui/art/logo/_upload/tac_logo_frame.png (200 stray teal pixels on the olive half)
+	Frame = "rbxassetid://78445006727868",   -- the frame with the letters removed (bone / olive), teal-fixed (tac_logo_frame, 2026-10-21;
+	                                          -- the old 81042695231423 had 200 stray teal pixels on the olive half)
 	Letters = "rbxassetid://117542693397702", -- atlas: the nine letters
 	Glow = "rbxasset://textures/ui/Glow.png",
 }

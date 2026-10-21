@@ -42,7 +42,8 @@ local playerGui = player:WaitForChild("PlayerGui")
 -- Art + layout
 -------------------------------------------------------------------------------
 local IMG = {
-	Backdrop = "rbxassetid://81042695231423",  -- the frame with the letters removed (1024 x 346), recoloured bone/olive (pass 34; amber version rbxassetid://97236428853521)
+	Backdrop = "rbxassetid://78445006727868",  -- (2026-10-21) teal-fixed tac_logo_frame (was 81042695231423, a teal line on the olive half)
+	-- was:  -- the frame with the letters removed (1024 x 346), recoloured bone/olive (pass 34; amber version rbxassetid://97236428853521)
 	                                           -- (red/blue original: rbxassetid://119406307898600; art/logo in tacticals_ui)
 	Letters = "rbxassetid://117542693397702",  -- atlas: the nine letters
 	Halves = "rbxassetid://100554075354658",   -- atlas: every letter cut in two along a slash (glowing cut edge)
