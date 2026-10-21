@@ -38,6 +38,11 @@ local OLIVE_HI = hex("#5AB2FF")
 
 local PlayerCards = {}
 
+-- (2026-10-20, Edward) Roblox badges with the name: Premium before, verified after (UIKit.Badges; Settings > Display Badges)
+local function badgeName(p)
+	local ok, B = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
+	return (ok and B) and B.Name(p) or p.DisplayName
+end
 local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	return Kit.label({ Text = text, FontFace = font, TextSize = size, TextColor3 = color or BONE, TextXAlignment = align or Enum.TextXAlignment.Left,
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 2, TextTruncate = Enum.TextTruncate.AtEnd, Parent = parent })
@@ -171,7 +176,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	goldNum(rate, 222, 34)
 	label(card, "win rate", F_SUB, 17, 10, 260, 144, 20, gold, Enum.TextXAlignment.Center, 3)
 	-- right: name + @username
-	local nm = label(card, p.DisplayName, F_NAME, 36, 172, 14, 440, 44, BONE, nil, 3)
+	local nm = label(card, badgeName(p), F_NAME, 36, 172, 14, 440, 44, BONE, nil, 3)
 	nm.TextScaled = false
 	label(card, "@" .. p.Name, F_SUB, 19, 172, 54, 440, 22, FIELD, nil, 3)
 	-- three badges: Level, ELO, Rank
@@ -284,7 +289,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 		BackgroundColor3 = GUN, BackgroundTransparency = 0.04, ZIndex = 21, Parent = root }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.85, Thickness = 1.5 }) })
 	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 2), Size = UDim2.fromOffset(78, 78), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle
 	headshot(hs, p)
-	label(panel, p.DisplayName, F_NAME, 23, 92, 14, 206, 30, BONE, nil, 22)
+	label(panel, badgeName(p), F_NAME, 23, 92, 14, 206, 30, BONE, nil, 22)
 	label(panel, "@" .. p.Name, F_SUB, 16, 92, 44, 206, 20, FIELD, nil, 22)
 	for i, a in actions do
 		local col = ACTION_COLOR[a]

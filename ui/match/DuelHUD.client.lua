@@ -213,7 +213,10 @@ end
 local function nameOf(uid)
 	if (uid or 0) < 0 then local m = botModel(uid); return m and m.Name or "Bot" end
 	local p = Players:GetPlayerByUserId(uid or 0)
-	return p and p.DisplayName or "?"
+	if not p then return "?" end
+	-- (2026-10-20, Edward) Roblox badges with the name (Premium before, verified after; Settings > Display Badges)
+	local ok, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
+	return (ok and B) and B.Name(p) or p.DisplayName
 end
 local function teamOf(uid)
 	if table.find(teamIds("TeamA"), uid) then return "A" end
@@ -519,7 +522,7 @@ do
 	local av = new("ImageLabel", { Name = "Avatar", BackgroundColor3 = BLACK, BackgroundTransparency = 0.55, ScaleType = Enum.ScaleType.Fit,
 		Position = UDim2.fromOffset(40, 160), Size = UDim2.fromOffset(250, 250), ZIndex = 4, Parent = results }, { corner(6) })
 	new("Frame", { BorderSizePixel = 0, BackgroundColor3 = TEAM_A[1], Position = UDim2.fromOffset(40, 410), Size = UDim2.fromOffset(250, 4), ZIndex = 5, Parent = results })
-	label(results, player.DisplayName, FX, 30, 40, 420, 250, 36, WHITE, nil, 4)
+	label(results, nameOf(player.UserId), FX, 30, 40, 420, 250, 36, WHITE, nil, 4)
 	label(results, "@" .. player.Name, FB, 20, 40, 456, 250, 24, Color3.fromRGB(205, 205, 212), nil, 4)
 	for _, l in { resScore, resMode, resRewards, resRank } do
 		l.Position = UDim2.fromOffset(310, l.Position.Y.Offset)

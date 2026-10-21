@@ -84,6 +84,7 @@ local function build(p, character)
 	name.TextScaled = true
 	name.TextColor3 = Color3.new(1, 1, 1)
 	name.Text = p.DisplayName
+	name.Name = "DisplayName" -- (2026-10-20) badges are added by the update loop (UIKit.Badges)
 	name.Parent = row
 	local ns = Instance.new("UIStroke"); ns.Thickness = 2; ns.Transparency = 0.25; ns.Parent = name
 	local vip = Instance.new("TextLabel")
@@ -121,7 +122,7 @@ local function build(p, character)
 	streak.Parent = row
 	local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
 	local flame = Kit.streak(streak, 0, UDim2.fromScale(0, 0), UDim2.fromScale(1, 1), 2)
-	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip, streak = streak, streakN = flame:FindFirstChild("N") }
+	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name }
 end
 
 local function hook(p)
@@ -168,6 +169,11 @@ function Nameplates.Start()
 					e.badgeText.Text = tostring(v)
 				end
 				e.vip.Visible = p:GetAttribute("VIP") == true
+				-- (2026-10-20, Edward) Roblox badges with the name (UIKit.Badges: Premium before, verified after; Display Badges)
+				if e.name then
+					local okB, B = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
+					e.name.Text = (okB and B) and B.Name(p) or p.DisplayName
+				end
 				local sn = tonumber(p:GetAttribute("WinStreak")) or 0
 				e.streak.Visible = sn > 0
 				if e.streakN then e.streakN.Text = tostring(sn) end

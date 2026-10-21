@@ -68,6 +68,7 @@ return {
 				{ kind = "swatch", name = "Color", key = "Damage Color", icon = "damage", level = 2, color = hex("#FFFFFF"), palette = PALETTE, desc = "The colour of normal damage numbers" },
 				{ kind = "swatch", name = "Critical Color", icon = "damage", level = 2, color = hex("#FF3232"), palette = PALETTE, desc = "The colour of damage numbers for critical hits" },
 				{ kind = "toggle", name = "Hide Teammate Display", icon = "emote", value = false, desc = "Hides the teammate panel during matches" },
+				{ kind = "toggle", name = "Display Badges", icon = "emote", value = true, desc = "Shows your Roblox verified badge next to your name for everyone" },
 				{ kind = "toggle", name = "Aiming Animation", icon = "crosshair", value = true, desc = "Plays the animation when you raise your weapon to aim" },
 			} },
 			{ title = "Interface", rows = {

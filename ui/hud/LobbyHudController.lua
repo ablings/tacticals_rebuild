@@ -643,11 +643,13 @@ function LobbyHud.Start()
 			row.MouseLeave:Connect(function() row.BackgroundTransparency = baseT end)
 			new("Frame", { Name = "Divider", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 40), Size = UDim2.fromOffset(LB_W, 1), BackgroundColor3 = Color3.new(1, 1, 1),
 				BackgroundTransparency = 0.92, BorderSizePixel = 0, Parent = row })
-			if p.MembershipType == Enum.MembershipType.Premium then
+			-- (2026-10-20, Edward) Roblox badges: Premium before the name, verified after (UIKit.Badges; Settings > Display Badges)
+			local okBd, Bd = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
+			if (okBd and Bd and Bd.Prefix(p) ~= "") or (not okBd and p.MembershipType == Enum.MembershipType.Premium) then
 				Kit.label({ Text = utf8.char(0xE001), FontFace = LB_NUM, TextSize = 20, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
 			end
 			local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
-			Kit.label({ Text = p.DisplayName, FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
+			Kit.label({ Text = p.DisplayName .. ((okBd and Bd) and Bd.Suffix(p) or ""), FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
 				Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(streakN > 0 and lbStat ~= "Streak" and 164 or 196, 40), Parent = row })
 			-- the win streak next to the name (RIVALS): a flame with the number over it
 			if streakN > 0 and lbStat ~= "Streak" then Kit.streak(row, streakN, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3) end
