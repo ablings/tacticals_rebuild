@@ -239,7 +239,7 @@ local playTab = "Casual" -- Casual | Ranked
 local PC = { -- the KIT screen's navy + grey palette
 	Card = Color3.fromRGB(20, 23, 20), Row = Color3.fromRGB(32, 36, 30), Line = Color3.fromRGB(64, 70, 58),
 	Hi = Color3.fromRGB(74, 80, 64), HiLine = Color3.fromRGB(226, 222, 208), Sub = Color3.fromRGB(150, 156, 140),
-	Dim = Color3.fromRGB(100, 106, 92), Ranked = Color3.fromRGB(176, 120, 255), Found = Color3.fromRGB(90, 178, 255),
+	Dim = Color3.fromRGB(100, 106, 92), Ranked = Color3.fromRGB(176, 120, 255), Found = Color3.fromRGB(141, 191, 90),
 }
 
 local function mmCounts(): { [string]: number }
@@ -1416,7 +1416,7 @@ local function build()
 		corner(10), stroke(Color3.fromRGB(18, 34, 10), 2.5),
 	})
 	local playScale = new("UIScale", { Parent = play })
-	local playGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214)), Parent = play })
+	local playGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = play })
 	new("Frame", { BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.8, BorderSizePixel = 0, Size = UDim2.new(1, -12, 0.42, 0),
 		Position = UDim2.new(0, 6, 0, 4), Parent = play }, { corner(7) })
 	local playText = label({ Text = "PLAY", Font = THEME.Title, TextSize = 34, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), Parent = play })

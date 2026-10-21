@@ -41,7 +41,7 @@ local C = {
 	Blue = Color3.fromRGB(36, 120, 255),
 	Violet = Color3.fromRGB(176, 120, 255),
 	Magenta = Color3.fromRGB(255, 90, 210),
-	Go = Color3.fromRGB(90, 178, 255),
+	Go = Color3.fromRGB(141, 191, 90),
 }
 local F = {
 	Title = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy),

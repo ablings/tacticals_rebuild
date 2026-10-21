@@ -821,8 +821,8 @@ local COL = {
 	Ink = Color3.fromRGB(14, 15, 18),
 	Red = Color3.fromRGB(236, 232, 218), -- the LEAVE X: bone (pass 34)
 	RedEdge = Color3.fromRGB(20, 22, 18),
-	BlueTop = Color3.fromRGB(90, 178, 255),    -- blue primary (2026-10-20 palette)
-	BlueBottom = Color3.fromRGB(30, 99, 214),
+	BlueTop = Color3.fromRGB(141, 191, 90),    -- (2026-10-20, Edward) field-green primary: matches the lobby's olive / lime and reads apart from Robux lime
+	BlueBottom = Color3.fromRGB(76, 122, 46),
 	BlueEdge = Color3.fromRGB(14, 40, 96),
 	BlueText = Color3.fromRGB(120, 190, 255),
 	GreenTop = Color3.fromRGB(236, 232, 218),   -- equipped: bone (pass 34)
@@ -2003,7 +2003,7 @@ local function buildHistoryList()
 		local card = mk("TextButton", { Name = "Duel" .. i, Text = "", AutoButtonColor = false, BackgroundColor3 = WHITE, Position = UDim2.fromOffset(0, y),
 			Size = UDim2.fromOffset(W, 104), ClipsDescendants = true, ZIndex = 21, Parent = list }, { corner(6),
 			mk("UIGradient", { Rotation = 90, Color = draw and ColorSequence.new(Color3.fromRGB(150, 152, 146), Color3.fromRGB(70, 72, 68))
-				or won and ColorSequence.new(Color3.fromRGB(90, 178, 255), Color3.fromRGB(30, 99, 214))
+				or won and ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46))
 				or ColorSequence.new(Color3.fromRGB(214, 74, 62), Color3.fromRGB(120, 30, 24)) }) })
 		local sc = m.score or {}
 		text({ Text = string.upper(tostring(m.mode or "1v1")) .. (m.ranked and "  ·  RANKED" or "") .. (m.forfeit and "  ·  FORFEIT" or ""), FontFace = FONT_HEAVY, TextSize = 15,

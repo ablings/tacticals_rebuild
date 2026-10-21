@@ -27,7 +27,7 @@ local F_NAME = Font.new(BUILDER, Enum.FontWeight.Bold)
 local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
 local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
-local OLIVE, OLIVE_HI, GOLD = hex("#1E63D6"), hex("#5AB2FF"), hex("#E9C46A")
+local OLIVE, OLIVE_HI, GOLD = hex("#4C7A2E"), hex("#8DBF5A"), hex("#E9C46A")
 
 local PartyScreen = {}
 local MAX = 5
@@ -155,7 +155,7 @@ local function personCard(parent, x, y, w, pp, opts)
 		local bx = w - 12
 		if opts.invite then
 			bx -= 88
-			actionButton(c, bx, 66, "Invite", "Invite", pp.uid, { hex("#7CC4FF"), hex("#1E63D6") }, function() return invite(pp.uid, pp.inServer) end)
+			actionButton(c, bx, 66, "Invite", "Invite", pp.uid, { hex("#A9D27A"), hex("#4C7A2E") }, function() return invite(pp.uid, pp.inServer) end)
 		end
 		if opts.duel and social() then
 			bx -= 96

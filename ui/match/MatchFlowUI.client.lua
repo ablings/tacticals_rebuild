@@ -132,8 +132,13 @@ canvas:GetPropertyChangedSignal("AbsoluteSize"):Connect(rescale)
 
 ---------------------------------------------------------------------------------------------------- 1. Loading
 local loading = new("Frame", { Name = "Loading", BackgroundTransparency = 1, Size = UDim2.fromOffset(W, H), Visible = false, Parent = canvas })
-label(loading, "TACTICALS", STENCIL, 170, 360, 300, 1200, 200, WHITE)
-new("Frame", { Position = UDim2.fromOffset(760, 500), Size = UDim2.fromOffset(400, 8), BackgroundColor3 = OLIVE, BorderSizePixel = 0, Parent = loading }, { corner(4) })
+-- (2026-10-20, Edward: "should utilize our logo") the real TACTICALS logo instead of the plain wordmark (UIKit.Logo)
+local okLogo, LogoMod = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("Logo", 10)) end)
+if okLogo and LogoMod then
+	LogoMod.Breathe(LogoMod.Build(loading, { Position = UDim2.fromOffset(960, 400), Size = UDim2.fromOffset(980, 331), ZIndex = 3 }))
+else
+	label(loading, "TACTICALS", STENCIL, 170, 360, 300, 1200, 200, WHITE)
+end
 local bubble = new("Frame", { Position = UDim2.fromOffset(120, 950), Size = UDim2.fromOffset(640, 60), BackgroundColor3 = WHITE, Parent = loading }, { corner(10) })
 new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(40, 60), Size = UDim2.fromOffset(20, 20), BackgroundColor3 = WHITE, BorderSizePixel = 0, Parent = bubble })
 local tipL = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 26, TextColor3 = Color3.fromRGB(20, 20, 24), Size = UDim2.fromScale(1, 1), Parent = bubble })

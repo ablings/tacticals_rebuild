@@ -20,6 +20,7 @@ FILES = [
     ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
     ("ReplicatedStorage.UIKit", "KillIcons", "ModuleScript", "match/KillIcons.lua"),  # (2026-10-20) kill feed / killer card silhouettes
     ("ReplicatedStorage.UIKit", "Badges", "ModuleScript", "hud/Badges.lua"),  # (2026-10-20) Roblox verified / Premium glyphs with names
+    ("ReplicatedStorage.UIKit", "Logo", "ModuleScript", "lobby/Logo.lua"),  # (2026-10-20) the TACTICALS logo for loading / teleport screens
     ("ReplicatedStorage.UIKit", "RankedScreen", "ModuleScript", "ranked/RankedScreen.lua"),
     ("ReplicatedStorage.UIKit", "Tac", "ModuleScript", "lobby/Tac.lua"),
     ("ReplicatedStorage.UIKit", "Kit", "ModuleScript", "lobby/Kit.lua"),
@@ -115,6 +116,7 @@ MATCH_FILES = [
     ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
     ("ReplicatedStorage.UIKit", "KillIcons", "ModuleScript", "match/KillIcons.lua"),  # (2026-10-20) kill feed / killer card silhouettes
     ("ReplicatedStorage.UIKit", "Badges", "ModuleScript", "hud/Badges.lua"),
+    ("ReplicatedStorage.UIKit", "Logo", "ModuleScript", "lobby/Logo.lua"),
 ]
 # ---- the after-match pseudo lobby (2026-10-18, lead session's split): the lobby's client side rides along in the match places.
 # Own files run as-is (UIKit.PseudoLobby: WaitMap / Active / Guard, no-op in the hub). The hub's lobby look scripts that other

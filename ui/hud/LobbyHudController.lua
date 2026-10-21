@@ -241,7 +241,7 @@ function LobbyHud.Start()
 		Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(130, 42), ZIndex = 3, Parent = pill })
 	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = count })
 	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(174, -1), Size = UDim2.fromOffset(44, 44), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 3, Parent = pill }, -- (audit) 34 -> 44: a tappable size
-		{ new("UICorner", { CornerRadius = UDim.new(0, 7) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#7CC4FF"), hex("#1E63D6")) }) })
+		{ new("UICorner", { CornerRadius = UDim.new(0, 7) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A9D27A"), hex("#4C7A2E")) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(18, 6), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 18), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	Kit.bindButton(plus, { hover = 1.12 })
@@ -262,8 +262,8 @@ function LobbyHud.Start()
 	Kit.bindButton(missions, { hover = 1.02, press = 0.99 })
 	-- To Pads: RIVALS' chunky "To Duels" button in our lobby colours
 	local toPads = new("TextButton", { Name = "ToPads", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(95, 686), Size = UDim2.fromOffset(204, 50), BackgroundColor3 = Color3.new(1, 1, 1), Parent = root },
-		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#7CC4FF"), hex("#1E63D6")) }),
-			new("UIStroke", { Color = hex("#CFE6FF"), Thickness = 1.5, Transparency = 0.15, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A9D27A"), hex("#4C7A2E")) }),
+			new("UIStroke", { Color = hex("#D8ECC0"), Thickness = 1.5, Transparency = 0.15, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
 	local tp = Kit.label({ Text = "»  To Pads  «", FontFace = WFONT, TextSize = 30, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(204, 50), ZIndex = 3, Parent = toPads })
 	new("UIStroke", { Color = hex("#10306E"), Thickness = 2, Transparency = 0.1, Parent = tp })
 	Kit.bindButton(toPads, { hover = 1.06 })

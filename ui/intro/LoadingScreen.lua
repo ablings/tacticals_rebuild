@@ -75,7 +75,7 @@ local SOUNDS = {
 	Bang = "rbxassetid://130435518414889",
 }
 local RED, BLUE, TEAL = Color3.fromRGB(230, 36, 48), Color3.fromRGB(36, 120, 255), Color3.fromRGB(40, 230, 200)
-local AMBER, OLIVE = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
+local AMBER, OLIVE = Color3.fromRGB(138, 156, 74), Color3.fromRGB(107, 122, 58) -- (2026-10-20, Edward) back to the original olive: the palette pass had made it yellow without being asked
 -- the whole intro uses the lobby UI's military look: gunmetal, amber (left / primary), olive (right / secondary)
 local GLOW_L, GLOW_R = AMBER, OLIVE
 local FONT = "rbxasset://fonts/families/GothamSSm.json"
@@ -217,9 +217,15 @@ local function teleportGui()
 	local tg = new("ScreenGui", { Name = "TacticalsTeleport", IgnoreGuiInset = true, DisplayOrder = 1000, ResetOnSpawn = false })
 	tg:SetAttribute("NoStyle", true)
 	background(tg)
-	local holder = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, STAGE_Y),
-		Size = UDim2.fromScale(0.26, 0.26), ZIndex = 5, Parent = tg }, { new("UIAspectRatioConstraint", { AspectRatio = GF_RATIO }) })
-	new("ImageLabel", { BackgroundTransparency = 1, Image = IMG.GF, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = holder })
+	-- (2026-10-20, Edward: server transitions "should utilize our logo") the TACTICALS logo (UIKit.Logo) instead of the GF mark
+	local okL, LogoMod = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit", 5):WaitForChild("Logo", 5)) end)
+	if okL and LogoMod then
+		LogoMod.Build(tg, { Position = UDim2.fromScale(0.5, STAGE_Y), Size = UDim2.fromScale(0.5, 0.3), ZIndex = 5 })
+	else
+		local holder = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, STAGE_Y),
+			Size = UDim2.fromScale(0.26, 0.26), ZIndex = 5, Parent = tg }, { new("UIAspectRatioConstraint", { AspectRatio = GF_RATIO }) })
+		new("ImageLabel", { BackgroundTransparency = 1, Image = IMG.GF, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = holder })
+	end
 	new("TextLabel", { BackgroundTransparency = 1, Text = "DEPLOYING", FontFace = Font.new(FONT, Enum.FontWeight.Medium), TextSize = 14,
 		TextColor3 = Color3.fromRGB(160, 168, 190), AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0.66),
 		Size = UDim2.fromScale(0.3, 0.03), TextScaled = true, ZIndex = 5, Parent = tg }, { new("UITextSizeConstraint", { MaxTextSize = 16 }) })

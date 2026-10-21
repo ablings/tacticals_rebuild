@@ -20,7 +20,7 @@ local gui, play, playLabel, playGrad, playStroke
 
 -- top band pale, fast fall to the main colour, slightly deeper at the bottom (RIVALS play button shape)
 local GRADS = {
-	play = { "#D6ECFF", "#9CCEFF", "#5AB2FF", "#3A8CF0", "#1E63D6", "#0E2F6E" }, -- blue primary (2026-10-20 palette)
+	play = { "#E3F0D2", "#BCDC96", "#8DBF5A", "#6FA544", "#4C7A2E", "#1F3A14" }, -- (2026-10-20, Edward) field-green primary: matches the lobby's olive / lime and reads apart from Robux lime
 	busy = { "#9A9E8C", "#787D69", "#525846", "#41463A", "#2C3027", "#151813" }, -- gunmetal while searching
 	found = { "#FFF6BF", "#FFEC80", "#FFD400", "#F5C200", "#E0A800", "#7A5A00" }, -- match found: the comic-yellow accent
 }
@@ -57,12 +57,12 @@ function PlayRow.Init(ctx)
 
 	-- PLAY: chunky amber button, Oswald with a darker amber outline; grows from its centre on hover
 	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(830, 846), Size = UDim2.fromOffset(260, 70),
-		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2), Kit.stroke(hex("#CFE6FF"), 1.5, 0.3) })
+		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2), Kit.stroke(hex("#D8ECC0"), 1.5, 0.3) })
 	playGrad = new("UIGradient", { Rotation = 90, Parent = play })
 	playLabel = Kit.label({ Text = "PLAY", FontFace = F.display, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center,
 		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(236, 54), Parent = play })
 	new("UITextSizeConstraint", { MaxTextSize = 46, Parent = playLabel })
-	playStroke = new("UIStroke", { Color = hex("#0E2F6E"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
+	playStroke = new("UIStroke", { Color = hex("#1F3A14"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
 	local Tac = require(UIKit:WaitForChild("Tac"))
 	Tac.hoverBrackets(play, Tac.brackets(play, Tac.C.bone, 16, 3))
 	Kit.bindButton(play, { hover = 1.08 })

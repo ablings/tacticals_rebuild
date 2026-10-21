@@ -24,9 +24,9 @@ local Request, QueueState = Lobby:WaitForChild("Request"), Lobby:WaitForChild("Q
 local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
-local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#FFD400"), hex("#FFD400")
+local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#6B7A3A"), hex("#8A9C4A") -- (2026-10-20, Edward) the lobby olive back (the palette pass had made it yellow)
 local GUN, GUN2, DEEP, LINE = hex("#1A1D1A"), hex("#262A22"), hex("#0C0E0B"), hex("#40463A")
-local TEAM = { A = hex("#ECE8DA"), B = hex("#5AB2FF") } -- the pads' floor colours: team A cream, team B olive
+local TEAM = { A = hex("#ECE8DA"), B = hex("#9DB05A") } -- the pads' floor colours: team A cream, team B olive
 local VIOLET = hex("#B078FF")
 
 local gui = new("ScreenGui", { Name = "PadUI", ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 8,
@@ -40,7 +40,7 @@ end
 -- corner brackets (our signature instead of RIVALS' round outlines)
 -- (Edward 2026-10-16: no "4 corners box" look) panels get RIVALS' soft rounded corners and a faint edge; the edge keeps
 -- its colour only where colour means something (team A / B, ranked violet), otherwise it's a soft white line
-local NEUTRAL_EDGE = { [Color3.fromRGB(64, 70, 58):ToHex()] = true, [Color3.fromRGB(255, 212, 0):ToHex()] = true,
+local NEUTRAL_EDGE = { [Color3.fromRGB(64, 70, 58):ToHex()] = true, [Color3.fromRGB(107, 122, 58):ToHex()] = true,
 	[Color3.fromRGB(236, 232, 218):ToHex()] = true }
 local function brackets(p, color, len, th, z)
 	if not p:FindFirstChildOfClass("UICorner") then
@@ -165,7 +165,7 @@ local function buildPadBox(b, me)
 	label(strip, "SQUAD UP", OSWALD, 24, 22, 0, 200, 46, BONE, nil, 3)
 	label(strip, "Bring a friend onto your team", BODY, 15, 140, 0, 400, 46, FIELD, nil, 3)
 	local inv = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(W - 150, 6), Size = UDim2.fromOffset(140, 34), BackgroundColor3 = accent, ZIndex = 3, Parent = strip })
-	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(b.ranked and hex("#C9A0FF") or hex("#7CC4FF"), b.ranked and hex("#7A4CC0") or hex("#1E63D6")), Parent = inv })
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(b.ranked and hex("#C9A0FF") or hex("#A9D27A"), b.ranked and hex("#7A4CC0") or hex("#4C7A2E")), Parent = inv })
 	label(inv, "INVITE", OSWALD, 22, 0, 0, 140, 34, BONE, Enum.TextXAlignment.Center, 4)
 	Kit.bindButton(inv, { hover = 1.06 })
 	inv.Activated:Connect(function()
@@ -219,10 +219,11 @@ local dTitle, dMode, dTip, dMarks, dCount
 -- (UI session 2026-10-16) RIVALS' teleport screen: the TACTICALS wordmark in the middle, the mode under it, a tip in a white
 -- speech bubble bottom left, "Loading" + a counter bottom right. The match place's MatchFlowUI opens on the same look.
 do
-	dTitle = label(deploy, "TACTICALS", OSWALD, 170, 360, 300, 1200, 200, BONE, Enum.TextXAlignment.Center, 53)
-	new("Frame", { Position = UDim2.fromOffset(760, 500), Size = UDim2.fromOffset(400, 8), BackgroundColor3 = OLIVE, BorderSizePixel = 0, ZIndex = 53, Parent = deploy },
-		{ new("UICorner", { CornerRadius = UDim.new(0, 4) }) })
-	dMode = label(deploy, "", OSWALD, 40, 360, 520, 1200, 52, OLIVE_HI, Enum.TextXAlignment.Center, 53)
+	-- (2026-10-20, Edward: "should utilize our logo") the real TACTICALS logo instead of the plain wordmark (UIKit.Logo)
+	local Logo = require(UIKit:WaitForChild("Logo"))
+	dTitle = Logo.Build(deploy, { Position = UDim2.fromOffset(960, 360), Size = UDim2.fromOffset(980, 331), ZIndex = 53 })
+	dMode = label(deploy, "", OSWALD, 40, 360, 560, 1200, 52, OLIVE_HI, Enum.TextXAlignment.Center, 53)
+	Logo.Breathe(dTitle)
 	local bubble = new("Frame", { Position = UDim2.fromOffset(120, 950), Size = UDim2.fromOffset(640, 60), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 53, Parent = deploy },
 		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(40, 60), Size = UDim2.fromOffset(20, 20), BackgroundColor3 = Color3.new(1, 1, 1),
@@ -312,7 +313,7 @@ local function buildJoin(list)
 			continue
 		end
 		local join = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset((W - 140) / 2, 78), Size = UDim2.fromOffset(140, 32), BackgroundColor3 = OLIVE, ZIndex = 3, Parent = f })
-		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#7CC4FF"), hex("#1E63D6")), Parent = join })
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A9D27A"), hex("#4C7A2E")), Parent = join })
 		label(join, "JOIN  >", OSWALD, 20, 0, 0, 140, 32, BONE, Enum.TextXAlignment.Center, 4)
 		Kit.bindButton(join, { hover = 1.06 })
 		join.Activated:Connect(function() busyAsk("JoinPad", b.mode, b.id) end)
