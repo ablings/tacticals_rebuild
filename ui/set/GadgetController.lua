@@ -633,6 +633,9 @@ local function release()
 		anim:AdjustSpeed(Config.AnimSpeed or 1)
 	end
 	busyUntil = os.clock() + delay + 0.25
+	-- (2026-10-21, RIVALS) the under-crosshair widget shows the gadget wait with a stopwatch (HUD.lua, Xhair* attributes)
+	localPlayer:SetAttribute("XhairGadgetTime", delay + 0.25)
+	localPlayer:SetAttribute("XhairGadgetEnd", busyUntil)
 	task.delay(delay, function()
 		local _, h = getParts()
 		if h and charges() > 0 then
@@ -655,10 +658,16 @@ function controller.Press(): boolean
 	local useCfg = GadgetConfig[kitGadget()]
 	if useCfg and useCfg.Use then
 		busyUntil = os.clock() + (useCfg.Cooldown or 1)
+		localPlayer:SetAttribute("XhairGadgetTime", useCfg.Cooldown or 1)
+		localPlayer:SetAttribute("XhairGadgetEnd", busyUntil)
 		ThrowGadget:FireServer(kitGadget(), aimDirection(), 1, "Use", 0)
 		return true
 	end
 	holdStart = os.clock()
+	-- [COOK] a cooking gadget (Frag): the fuse starts now, on the server (fix/cook.lua); held too long it goes off in your hand
+	if (GadgetConfig[kitGadget()] or {}).Cook and gadgetMode() ~= "Full" then
+		ThrowGadget:FireServer(kitGadget(), aimDirection(), 1, "Cook", 0)
+	end
 	local t = loadTracks(humanoid)
 	local gm = gadgetMode()
 	if gm == "Roll" or gm == "Light" then
@@ -727,6 +736,18 @@ function controller.Start()
 	RunService.RenderStepped:Connect(updateArc)
 	RunService.Heartbeat:Connect(function()
 		if not holdStart then return end
+		-- [COOK] a cooking frag isn't thrown for you: when its fuse runs out it went off in your hand (server), so the hold just ends
+		local cookCfg = GadgetConfig[kitGadget()]
+		if cookCfg and cookCfg.Cook and gadgetMode() ~= "Full" then
+			if os.clock() - holdStart >= (cookCfg.FuseTime or 2) then
+				holdStart, pendingRelease = nil, false
+				hideArc()
+				local _, humanoid = getParts()
+				local t = humanoid and loadTracks(humanoid)
+				if t and t.Hold then t.Hold:Stop(0.1) end
+			end
+			return
+		end
 		-- you can't cook a throw forever: at MaxHoldTime it's fully charged and leaves your hand by itself
 		if os.clock() - holdStart >= (Config.MaxHoldTime or 1.5)
 			or (power() >= 1 and (pendingRelease or gadgetMode() == "Full")) then
