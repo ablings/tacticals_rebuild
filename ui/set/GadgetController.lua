@@ -230,10 +230,12 @@ local lastTint = -1
 
 local function previewAllowed(): boolean
 	local mode = GadgetConfig.ArcPreview or "Tutorial"
-	if mode == "Always" then return true end
 	if mode == "Never" then return false end
-	return inTutorial()
+	-- (2026-10-20, Edward: "i need a tracer for the gadget throws aswell but dont make it look crazy", RIVALS) outside the
+	-- tutorials a plain dashed white arc + a faint landing ring (SIMPLE); the tutorials keep the full arrow
+	return true
 end
+local SIMPLE = { Dashes = 70, Gap = 1.1, DashLength = 0.45, DashWidth = 0.07, Ring = 0.35, Dash = 0.25 }
 
 local function previewPart(size: Vector3, shape: Enum.PartType?): BasePart
 	local p = Instance.new("Part")
@@ -293,9 +295,15 @@ local function buildArc()
 	for i = 1, 4 do pointers[i] = { previewPart(pointerArm), previewPart(pointerArm) } end
 	local dot = previewPart(Vector3.new(0.03, 0.34, 0.34), Enum.PartType.Cylinder)
 	local glow = previewPart(Vector3.new(0.02, P.RingRadius * 2, P.RingRadius * 2), Enum.PartType.Cylinder)
+	local simple = {}
+	for i = 1, SIMPLE.Dashes do
+		local d = previewPart(Vector3.new(SIMPLE.DashWidth, SIMPLE.DashWidth, SIMPLE.DashLength))
+		d.Color = Color3.new(1, 1, 1)
+		simple[i] = d
+	end
 	preview = {
 		chevrons = chevrons, head = head, a0 = a0, a1 = a1, beam = beam, b0 = b0, b1 = b1, beacon = beacon,
-		dashes = dashes, pointers = pointers, dot = dot, glow = glow,
+		dashes = dashes, pointers = pointers, dot = dot, glow = glow, simple = simple,
 	}
 end
 
@@ -417,6 +425,52 @@ local function updateArc(dt: number)
 		local tangent = v0 + gravity * (flight * (i - 1 + f) / n)
 		return pts[i]:Lerp(pts[i + 1], f), (tangent.Magnitude > 1e-3 and tangent.Unit or direction)
 	end
+
+	-- (2026-10-20, RIVALS) matches: dashes along the flight + a thin white ring where it lands; nothing else
+	if not inTutorial() then
+		local parts, cframes = {}, {}
+		pv.beam.Transparency = NumberSequence.new(1)
+		pv.beacon.Transparency = NumberSequence.new(1)
+		for _, arms in pv.chevrons do hideChevron(arms) end
+		hideChevron(pv.head)
+		for _, arms in pv.pointers do hideChevron(arms) end
+		pv.dot.Transparency, pv.glow.Transparency = 1, 1
+		local gap = math.max(SIMPLE.Gap, total / SIMPLE.Dashes)
+		for i, d in pv.simple do
+			local sAt = (i - 0.5) * gap
+			if sAt > total then
+				d.Transparency = 1
+			else
+				local pos, tangent = sample(sAt)
+				table.insert(parts, d)
+				table.insert(cframes, CFrame.lookAt(pos, pos + tangent))
+				d.Color = Color3.new(1, 1, 1)
+				d.Transparency = SIMPLE.Dash + (1 - SIMPLE.Dash) * (1 - math.clamp(sAt / 1.8, 0, 1)) -- fades in leaving the hand
+			end
+		end
+		if hitAt then
+			local up = (hitNormal :: Vector3)
+			local ref = math.abs(up.Y) < 0.95 and Vector3.yAxis or Vector3.xAxis
+			local right = ref:Cross(up).Unit
+			local fwd = up:Cross(right).Unit
+			local centre = (hitAt :: Vector3) + up * 0.05
+			local count = #pv.dashes
+			for i, dash in pv.dashes do
+				local a = (i - 1) / count * 2 * math.pi
+				local out = right * math.cos(a) + fwd * math.sin(a)
+				table.insert(parts, dash)
+				table.insert(cframes, CFrame.fromMatrix(centre + out * P.RingRadius, up:Cross(out), up))
+				dash.Color = Color3.new(1, 1, 1)
+				dash.Transparency = SIMPLE.Ring
+			end
+		else
+			for _, dash in pv.dashes do dash.Transparency = 1 end
+		end
+		if #parts > 0 then workspace:BulkMoveTo(parts, cframes, Enum.BulkMoveMode.FireCFrameChanged) end
+		arcFolder.Parent = workspace.CurrentCamera
+		return
+	end
+	for _, d in pv.simple do d.Transparency = 1 end
 
 	local now = os.clock()
 	if not shownAt then shownAt = now end

@@ -513,7 +513,42 @@ function LobbyHud.Start()
 			end
 		end
 		local mb = navBadges and navBadges.Missions
-		if mb then mb.f.Visible = ready > 0; mb.l.Text = tostring(ready) end
+		if mb then
+		-- (2026-10-20, RIVALS' "Claim your FREE reward now!") a red callout bobs above Missions while a reward waits
+		local navM = mb.f.Parent
+		local call = navM and navM:FindFirstChild("Callout")
+		if navM and not call then
+			call = new("Frame", { Name = "Callout", AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromScale(0.5, -0.14), Size = UDim2.fromScale(2.0, 0.3),
+				BackgroundColor3 = Color3.fromRGB(235, 50, 50), Visible = false, ZIndex = 9, Parent = navM }, { new("UICorner", { CornerRadius = UDim.new(0.3, 0) }) })
+			new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromScale(0.5, 1), Size = UDim2.fromScale(0.07, 0.38),
+				SizeConstraint = Enum.SizeConstraint.RelativeYY, BackgroundColor3 = Color3.fromRGB(235, 50, 50), BorderSizePixel = 0, ZIndex = 8, Parent = call })
+			local t = new("TextLabel", { BackgroundTransparency = 1, Text = "Claim your reward!", FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold),
+				TextScaled = true, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromScale(0.06, 0.14), Size = UDim2.fromScale(0.88, 0.72), ZIndex = 10, Parent = call })
+			new("UITextSizeConstraint", { MaxTextSize = 22, Parent = t })
+			local home = call.Position
+			task.spawn(function()
+				local bub = navM:FindFirstChild("Bubble")
+				while call.Parent do
+					call.Visible = call:GetAttribute("Want") == true and not (bub and bub.Visible) -- (the hover bubble takes its place)
+					if call.Visible then
+						Kit.tween(call, 0.6, { Position = home - UDim2.fromScale(0, 0.06) }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+						task.wait(0.6)
+						Kit.tween(call, 0.6, { Position = home }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+					end
+					task.wait(0.6)
+				end
+			end)
+		end
+		if call then call:SetAttribute("Want", ready > 0); call.Visible = ready > 0 end
+		-- (2026-10-20, RIVALS "alive") the count pops when it goes up
+		local was = tonumber(mb.l.Text) or 0
+		mb.f.Visible = ready > 0; mb.l.Text = tostring(ready)
+		if ready > was then
+			local sc = mb.f:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = mb.f })
+			sc.Scale = 1.6
+			Kit.tween(sc, 0.35, { Scale = 1 }, Enum.EasingStyle.Back)
+		end
+	end
 		local w = data.Loadout and data.Loadout.Weapon
 		if w and w ~= shownKitWeapon and navIcons and navIcons.Kit and navIcons.Kit.vp then
 			shownKitWeapon = w

@@ -93,6 +93,24 @@ function PlayRow.Init(ctx)
 		ctx.tooltip(inv, "Invite", "Invite a friend to your squad.")
 	end
 	Kit.toScale(root)
+	-- (2026-10-20, Edward: make the lobby "feel alive" like RIVALS) a light sweeps across PLAY every few seconds (its own clipped
+	-- layer, so the hover brackets outside the button aren't cut off)
+	do
+		local clip = new("Frame", { Name = "ShineClip", BackgroundTransparency = 1, ClipsDescendants = true, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = play },
+			{ Kit.corner(2) })
+		local bar = new("Frame", { Name = "Shine", BackgroundColor3 = C.white, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 20,
+			Position = UDim2.fromScale(-0.3, 0.5), Size = UDim2.fromScale(0.16, 2.2), ZIndex = 3, Parent = clip }, {
+			new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.55), NumberSequenceKeypoint.new(1, 1) }) }) })
+		task.spawn(function()
+			while bar.Parent do
+				task.wait(4.5)
+				if play.Visible and gui.Enabled then
+					bar.Position = UDim2.fromScale(-0.3, 0.5)
+					Kit.tween(bar, 0.7, { Position = UDim2.fromScale(1.3, 0.5) }, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+				end
+			end
+		end)
+	end
 	local function refreshParty()
 		invHome = invHome or inv.Position
 		for _, c in mates:GetChildren() do c:Destroy() end
