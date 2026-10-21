@@ -329,7 +329,8 @@ local function fire()
 		local MS = require(ReplicatedStorage.Modules.Shared:FindFirstChild("MatchState"))
 		stateObj = MS.For(localPlayer) or ReplicatedStorage
 	end)
-	if stateObj:GetAttribute("CombatEnabled") == false then return end -- countdown / between rounds
+	-- countdown / between rounds; [ROUNDFLOW] guns still fire during RoundEnd (the server plays the shot, the hit doesn't count)
+	if stateObj:GetAttribute("CombatEnabled") == false and stateObj:GetAttribute("MatchState") ~= "RoundEnd" then return end
 	local now = os.clock()
 	if now < (equipped.drawEndsAt or 0) then return end -- [MOVE2] still drawing the gun
 	if (localPlayer:GetAttribute("NoFireUntil") or 0) > now then return end -- [ABILITY2] stunned (takedown / bash)
