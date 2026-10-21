@@ -437,7 +437,16 @@ end
 function controller.Start()
 	if not (okTX and TX.On("SwapBins")) then return end
 	build()
-	task.spawn(buildGrids)
+	-- (2026-10-21, Edward: mobile loading is slow) the ~23 tile viewports are built the first time you enter Training, not at
+	-- join; Open shows the loading dots until they're ready
+	local gridsStarted = false
+	local function startGrids()
+		if gridsStarted or player:GetAttribute("InTraining") ~= true then return end
+		gridsStarted = true
+		task.spawn(buildGrids)
+	end
+	player:GetAttributeChangedSignal("InTraining"):Connect(startGrids)
+	startGrids()
 	task.spawn(function()
 		local ev = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Training", 30)
 		if not ev then return end

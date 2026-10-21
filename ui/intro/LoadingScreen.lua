@@ -83,6 +83,8 @@ local FONT = "rbxasset://fonts/families/GothamSSm.json"
 local UI_READY = { "LobbyUI", "HUD" }
 local MAX_LOAD_TIME = 40
 local ASSET_TIMEOUT = 12 -- (2026-10-16) essentials only now; whatever isn't in by then streams in during play
+-- (2026-10-21, Edward: "loading on mobile for some reason is so slow") phones wait at most 5 s for assets; the rest loads in play
+if game:GetService("UserInputService").TouchEnabled and not game:GetService("UserInputService").KeyboardEnabled then ASSET_TIMEOUT = 5 end
 local STAGE_Y = 0.42
 
 -------------------------------------------------------------------------------
