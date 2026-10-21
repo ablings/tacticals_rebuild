@@ -65,3 +65,7 @@
     wrap so patterns keep their size on every part), Transparency (ghost wraps ~0.3-0.5; cap it on the local player's held gun if aiming
     suffers), optional client-side animation: texture Scroll and/or a colour cycle { colours, period } on the glow channel (cap animated
     parts). Inverted = swap Primary / Accent. Sources seen in RIVALS: wrap case, weapon contract (per weapon), season pass, bundles.
+    SKINS (Edward builds them himself; keep compatible): a skin = a different model of the same weapon with its own animations /
+    sounds / FX and identical gameplay. Stats only from WeaponConfig[weaponId] (keep WeaponId on the tool); one lookup (weapon id + skin
+    id -> template) for tools / holsters / Kit models / DualGrip; animations / sounds / muzzle FX per (weapon, skin) with fallback; wraps
+    apply to skin models via the same WrapChannel / WrapSkip tags. Wraps v1 = static only (Edward); Inverted = swap the two looks.
