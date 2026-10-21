@@ -288,6 +288,7 @@ end
 
 local function gearGrid(pg, hover, ids, y, cols)
 	local gap = 18
+	if y < 26 then y = 26 end -- (2026-10-21) headroom: the items break out over their cards' top edge
 	local w = (PAGE_W - 16 - gap * (cols - 1)) / cols
 	local h = math.floor(w * 1.12)
 	for i, id in ids do

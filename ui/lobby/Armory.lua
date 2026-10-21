@@ -823,8 +823,8 @@ local COL = {
 	RedEdge = Color3.fromRGB(20, 22, 18),
 	BlueTop = Color3.fromRGB(141, 191, 90),    -- (2026-10-20, Edward) field-green primary: matches the lobby's olive / lime and reads apart from Robux lime
 	BlueBottom = Color3.fromRGB(76, 122, 46),
-	BlueEdge = Color3.fromRGB(14, 40, 96),
-	BlueText = Color3.fromRGB(120, 190, 255),
+	BlueEdge = Color3.fromRGB(31, 58, 20), -- (2026-10-21) the green button's dark-green lip (was the old blue one)
+	BlueText = Color3.fromRGB(169, 210, 122), -- (2026-10-21) light field green (was blue)
 	GreenTop = Color3.fromRGB(236, 232, 218),   -- equipped: bone (pass 34)
 	GreenBottom = Color3.fromRGB(170, 166, 150),
 	OffTop = Color3.fromRGB(76, 78, 86),
@@ -1456,7 +1456,10 @@ local creditText, listScroll
 local function fitHud()
 	local h = ui and ui.AbsoluteSize.Y or 0
 	if h < 10 then return end
-	local s = h / BASE_H
+	-- (2026-10-21, UI audit) narrower than 16:9 (tablets, 4:3 windows) the side panels met in the middle over the item: fit the
+	-- width as well as the height
+	local w = ui.AbsoluteSize.X
+	local s = math.min(h / BASE_H, w / (BASE_H * 16 / 9))
 	hud.Scale.Scale = s
 	hud.Size = UDim2.fromScale(1 / s, 1 / s)
 end
