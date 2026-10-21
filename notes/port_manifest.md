@@ -352,3 +352,14 @@ himself; we never publish.
 ## Pending for port 30
 - Lobby working copy: deploy the teal-fixed logo frame (UI 03e505a, rbxassetid://78445006727868: lobby/Logo.lua UIKit.Logo + intro/LoadingScreen.lua
   IMG.Backdrop) with ui/deploy_ui.py on the lobby Studio before saving. Match copy already has it (UI session deployed to 7a8bab8a).
+
+## Live port 30: full-strength throws, rematch fix, Dual Pistols grip, UI overnight (2026-10-21 ~12:05, main PC lead; Edward in the lead's chat: "publish it if you haven't")
+- Working copies: lobby saved 02:32:55 (UI a173046), match saved 02:34:46 (544a718). A GPU reset ("Device removed") at about 11:5x had
+  killed every Studio, so the copies were published from the saved files (nothing unsaved was lost). Published on the second monitor,
+  each retitled after Grant: tacticals (lobby), Tutorial, Matchmaking, Ranked (port_prep.sh, all checks true; out/c30.lua in every
+  copy: THROWNOW + Frag fuse 2, DualGrip, ROUNDFLOW, STATS, DeviceBridge; match places also REMATCHEARLY + TUTSTUDIO; no test attrs).
+- Carries: lead (THROWNOW: every gadget thrown at full strength on press, no charge / roll; Frag fuse 2 s; REMATCHEARLY: Rematch
+  pressed during the results counts; DUALGRIP: Dual Pistols left gun in the left hand; TUTSTUDIO Studio-only; abilities installer
+  tidy), UI (teal logo frame 03e505a, any-map HUD readability, 3D results character, Shop break-out tiles, Kit Inspect greyed when
+  locked + 4:3 fit + green lip, D-pad up Settings in a match, button hover sheen).
+- Pending: the 4:3 tutorial cover box overlaps the hotbar during the tutorial itself (UI).
