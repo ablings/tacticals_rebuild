@@ -348,3 +348,7 @@ himself; we never publish.
 - Carries: UI c8d5798 (badges, device icons, throw tracer, Kit models, field-green buttons, TACTICALS logo on match-search / loading /
   teleport; the teal-fixed logo frame art is still an upload pending), lead (swap weapon until you move or fire, guns fire in RoundEnd
   with no damage, stronger gadget throws 36..105 studs/s + thrown Landmine, hub settings as server attributes, player attribute Device).
+
+## Pending for port 30
+- Lobby working copy: deploy the teal-fixed logo frame (UI 03e505a, rbxassetid://78445006727868: lobby/Logo.lua UIKit.Logo + intro/LoadingScreen.lua
+  IMG.Backdrop) with ui/deploy_ui.py on the lobby Studio before saving. Match copy already has it (UI session deployed to 7a8bab8a).
