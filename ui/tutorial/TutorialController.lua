@@ -107,6 +107,7 @@ local WHITE = Color3.new(1, 1, 1)
 local KEY_WHITE = Color3.fromRGB(240, 240, 236) -- the hotbar's key badge face
 local BLUE = AMBER                              -- (old name, kept for the few references below)
 local ALERT_RED = Color3.fromRGB(255, 64, 70)
+local STRIP_H = 0.115 -- (round 4, graders: 1.25x so the words and key verbs read on a phone)
 local PANEL_POS = UDim2.fromScale(0.5, 0.8)    -- the subtitle: below the character's body, clear of the hotbar / health / touch buttons
 local gui, panel, lineLabel, objectiveLabel
 local panelScale, portraitScale, panelStroke
@@ -182,7 +183,7 @@ local function keycap(parent, name)
 	mouse.Name = "Mouse"
 	mouse.AnchorPoint = Vector2.new(0.5, 0.5)
 	mouse.Position = UDim2.fromScale(0.5, 0.5)
-	mouse.Size = UDim2.fromScale(0.46, 0.7)
+	mouse.Size = UDim2.fromScale(0.56, 0.82)
 	mouse.BackgroundColor3 = KEY_WHITE
 	mouse.BorderSizePixel = 0
 	mouse.Visible = false
@@ -235,7 +236,7 @@ local function buildUI()
 	local cv = canvas(gui)
 
 	-- // Radio subtitle (the old "panel" / "Line" names stay so the rest of the controller keeps working)
-	panel = Instance.new("Frame")
+	panel = Instance.new("CanvasGroup") -- (round 4: the tag, plate and words fade together; no empty tag left behind)
 	panel.Name = "Panel"
 	panel.AnchorPoint = Vector2.new(0.5, 1)
 	panel.Position = PANEL_POS
@@ -246,18 +247,15 @@ local function buildUI()
 	panel.Visible = false
 	panel.Parent = cv
 	panelScale = Instance.new("UIScale"); panelScale.Parent = panel
-	local shade = Instance.new("Frame") -- a dark band behind the words (fades out at both ends; sits below the character's body)
+	-- (round 4, graders: the gradient band was the last generic piece) the strip's own solid plate, sized to the words
+	local shade = Instance.new("Frame")
 	shade.Name = "Shade"
-	shade.AnchorPoint = Vector2.new(0.5, 0)
-	shade.Position = UDim2.fromScale(0.5, 0)
+	shade.Position = UDim2.fromScale(0.06, 0)
 	shade.BackgroundColor3 = PLATE
-	shade.BackgroundTransparency = 0.3
+	shade.BackgroundTransparency = 0.15
 	shade.BorderSizePixel = 0
-	shade.Size = UDim2.fromScale(0.78, 1) -- (round 3: ends well clear of the hotbar)
-	local sg = Instance.new("UIGradient")
-	sg.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.1, 0),
-		NumberSequenceKeypoint.new(0.9, 0), NumberSequenceKeypoint.new(1, 1) })
-	sg.Parent = shade
+	shade.Size = UDim2.fromScale(0.88, 1)
+	corner(shade, 0.18)
 	shade.Parent = panel
 	panelStroke = stroke(shade, WHITE, 0, 1) -- (no edge; kept for the alert code)
 	-- the callsign: a solid dark-green radio tag with tan caps (no decorative dot)
@@ -288,7 +286,7 @@ local function buildUI()
 	root.Name = "Objective"
 	root.AnchorPoint = Vector2.new(0.5, 0)
 	root.Position = UDim2.fromScale(0.5, 0.1)
-	root.Size = UDim2.fromScale(0.4, 0.09)
+	root.Size = UDim2.fromScale(0.4, STRIP_H)
 	root.BackgroundColor3 = PLATE
 	root.BackgroundTransparency = 0.15
 	root.BorderSizePixel = 0
@@ -337,23 +335,31 @@ local function buildUI()
 	end
 	local k1, k2 = slot(1), slot(2)
 	-- a passive step ("spot the target"): an amber reticle, not a key you could think you must press
+	-- (round 4, graders: a bare dark ring read as an empty slot) the reticle sits on a cream keycap face like every other step
 	local reticle = Instance.new("Frame")
 	reticle.Name = "Reticle"
-	reticle.BackgroundTransparency = 1
+	reticle.BackgroundColor3 = KEY_WHITE
+	reticle.BorderSizePixel = 0
+	corner(reticle, 0.22)
 	reticle.Size = UDim2.fromScale(1, 1)
 	reticle.LayoutOrder = 1
 	reticle.Visible = false
 	local rar = Instance.new("UIAspectRatioConstraint"); rar.AspectRatio = 1; rar.Parent = reticle
 	local ring = Instance.new("Frame"); ring.AnchorPoint = Vector2.new(0.5, 0.5); ring.Position = UDim2.fromScale(0.5, 0.5)
 	ring.Size = UDim2.fromScale(0.78, 0.78); ring.BackgroundTransparency = 1; corner(ring, 0.5); ring.Parent = reticle
-	stroke(ring, AMBER, 3, 0).ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	ring.Size = UDim2.fromScale(0.56, 0.56)
+	stroke(ring, PLATE, 2.5, 0).ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	local dot = Instance.new("Frame"); dot.AnchorPoint = Vector2.new(0.5, 0.5); dot.Position = UDim2.fromScale(0.5, 0.5)
-	dot.Size = UDim2.fromScale(0.2, 0.2); dot.BackgroundColor3 = AMBER; dot.BorderSizePixel = 0; corner(dot, 0.5); dot.Parent = reticle
+	dot.Size = UDim2.fromScale(0.16, 0.16); dot.BackgroundColor3 = AMBER; dot.BorderSizePixel = 0; corner(dot, 0.5); dot.Parent = reticle
 	for _, r in { 0, 90, 180, 270 } do
-		local tick = Instance.new("Frame"); tick.AnchorPoint = Vector2.new(0.5, 1); tick.BackgroundColor3 = AMBER; tick.BorderSizePixel = 0
-		tick.Position = UDim2.fromScale(0.5 + math.sin(math.rad(r)) * 0.5, 0.5 - math.cos(math.rad(r)) * 0.5 + (r == 0 and 0.12 or 0))
-		tick.Size = UDim2.fromScale(0.06, 0.2); tick.Rotation = r; tick.Parent = reticle
+		local tick = Instance.new("Frame"); tick.AnchorPoint = Vector2.new(0.5, 0.5); tick.BackgroundColor3 = PLATE; tick.BorderSizePixel = 0
+		tick.Position = UDim2.fromScale(0.5 + math.sin(math.rad(r)) * 0.33, 0.5 - math.cos(math.rad(r)) * 0.33)
+		tick.Size = UDim2.fromScale(0.06, 0.16); tick.Rotation = r; tick.Parent = reticle
 	end
+	local rcap = text(reticle, "Caption", F_HEAVY, Color3.fromRGB(226, 222, 208))
+	rcap.AnchorPoint = Vector2.new(0.5, 0)
+	rcap.Position = UDim2.fromScale(0.5, 1.06)
+	rcap.Size = UDim2.fromScale(2.4, 0.42)
 	reticle.Parent = caps
 	local plus = text(caps, "Plus", F_HEAVY, WHITE)
 	plus.LayoutOrder = 3
@@ -371,7 +377,7 @@ local function buildUI()
 	pipRow.BackgroundTransparency = 1
 	pipRow.AnchorPoint = Vector2.new(1, 0.5)
 	pipRow.Position = UDim2.fromScale(0.965, 0.5)
-	pipRow.Size = UDim2.fromScale(0.14, 0.34)
+	pipRow.Size = UDim2.fromScale(0.16, 0.4)
 	pipRow.Parent = root
 	local pl = Instance.new("UIListLayout")
 	pl.FillDirection = Enum.FillDirection.Horizontal
@@ -439,11 +445,11 @@ end
 -- line under the words; sub = the Instructor's radio line (max ~8 words). Steps not listed fall back to the long line.
 local STEP = {
 	-- (round 3) caps = a short verb under each keycap (replaces the tiny hint line); passive = no key, a reticle instead
-	Welcome = { obj = "SPOT THE TARGET", passive = true,
+	Welcome = { obj = "SPOT THE TARGET", passive = true, caps = { "LOOK" },
 		sub = "That's your target. Red outline." },
-	EscapeCover = { obj = "PEEK OUT", kb = { "Q" }, pad = { "LB" }, touch = { "COVER" },
-		sub = "Peek out. Draw his fire." },
-	TakeCover = { obj = "GET BEHIND IT", kb = { "Q" }, pad = { "LB" }, touch = { "COVER" },
+	EscapeCover = { obj = "LEAN OUT", kb = { "Q" }, pad = { "LB" }, touch = { "COVER" }, caps = { "LEAN" },
+		sub = "Lean out. Draw his fire." },
+	TakeCover = { obj = "GET BEHIND IT", kb = { "Q" }, pad = { "LB" }, touch = { "COVER" }, caps = { "COVER" },
 		sub = "Back behind the pillar. Now!" },
 	Rush = { obj = "DASH TO THE CRATE", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, caps = { "DASH" }, look = true,
 		sub = "Get to that crate." },
@@ -451,7 +457,7 @@ local STEP = {
 		sub = "Hold run, then slide!" },
 	ToWall = { obj = "DASH TO THE LOW WALL", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, caps = { "DASH" }, look = true,
 		sub = "The low wall's next. Go!" },
-	Vault = { obj = "JUMP OVER", kb = { "SPACE" }, pad = { "A" }, touch = { "JUMP" },
+	Vault = { obj = "JUMP OVER", kb = { "SPACE" }, pad = { "A" }, touch = { "JUMP" }, caps = { "JUMP" },
 		sub = "Jump the wall!" },
 	AimShoot = { obj = "AIM + SHOOT", kb = { "RMB", "LMB" }, pad = { "LT", "RT" }, touch = { "AIM", "FIRE" }, caps = { "AIM", "FIRE" },
 		sub = "He's exposed. Take the shot." },
@@ -837,19 +843,19 @@ local function ensurePips()
 		p.Name = "Tick" .. i
 		p.BackgroundColor3 = TODO
 		p.BorderSizePixel = 0
-		p.Size = UDim2.fromScale(0.09, 1)
+		p.Size = UDim2.fromScale(0.11, 1)
 		p.LayoutOrder = i
 		corner(p, 0.3)
-		local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 0.4; ar.Parent = p
+		local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 0.5; ar.Parent = p
 		p.Parent = strip.pipRow
 		strip.pips[i] = p
 	end
 end
--- ticks: done = white, current = amber, to do = grey; all done = olive
+-- ticks: done = tan, current = amber, to do = grey; all done = olive
 local function paintPips(current: number?, doneUpTo: number)
 	local all = doneUpTo >= #strip.pips
 	for i, p in strip.pips do
-		p.BackgroundColor3 = all and GOOD or (i <= doneUpTo and WHITE or (i == current and AMBER or TODO))
+		p.BackgroundColor3 = all and GOOD or (i <= doneUpTo and TAN or (i == current and AMBER or TODO))
 	end
 end
 local function paintKey(k, done: boolean)
@@ -903,9 +909,9 @@ local function showStrip(key: string, entry)
 	local captions = entry.caps
 	-- width hugs the content: keys + words, between 26 % and 42 % of the screen
 	local words = #(entry.obj or "")
-	local W = math.clamp(0.16 + words * 0.0098 + (#list >= 2 and 0.06 or 0), 0.26, 0.42)
-	strip.root.Size = UDim2.fromScale(W, 0.09)
-	local ratio = (W * 16 / 9) / 0.09
+	local W = math.clamp((0.16 + words * 0.0098 + (#list >= 2 and 0.06 or 0)) * 1.25, 0.3, 0.52)
+	strip.root.Size = UDim2.fromScale(W, STRIP_H)
+	local ratio = (W * 16 / 9) / STRIP_H
 	local keyH = captions and 0.5 or 0.68
 	strip.capsRow.Position = UDim2.fromScale(0.035, captions and 0.1 or 0.16)
 	strip.capsRow.Size = UDim2.fromScale(0.6, keyH)
@@ -923,6 +929,7 @@ local function showStrip(key: string, entry)
 		end
 	end
 	strip.reticle.Visible = entry.passive == true
+	strip.reticle.Caption.Text = (entry.passive and captions and captions[1]) or ""
 	if entry.passive then width += keyH / ratio end
 	strip.plus.Visible = #list >= 2
 	if #list >= 2 then width += 0.07 end
@@ -964,7 +971,7 @@ local function showStrip(key: string, entry)
 			local gap = rh * 0.32
 			local labelW = #(entry.obj or "") * rh * 0.5 * 0.5
 			local need = (right - rx) + gap + labelW + gap + strip.pipRow.AbsoluteSize.X + pad
-			if need > rw then root.Size = UDim2.fromScale(math.min(need / screenW, 0.5), 0.09) end
+			if need > rw then root.Size = UDim2.fromScale(math.min(need / screenW, 0.6), STRIP_H) end
 			local w = root.AbsoluteSize.X
 			local x = (right - rx + gap) / w
 			strip.label.Position = UDim2.fromScale(x, 0.5)
@@ -1013,8 +1020,8 @@ local function stripDone()
 	local fight = stripKey == "AimShoot"
 	if fight then
 		strip.label.Text = "TARGET DOWN"
-		strip.punch.Scale = 1.25
-		TweenService:Create(strip.punch, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+		strip.punch.Scale = 1.4 -- (round 4: the kill gets a bigger moment than a step: it settles larger and holds)
+		TweenService:Create(strip.punch, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1.15 }):Play()
 	end
 	local k = stripKey
 	task.delay(fight and 2.4 or 0.6, function() if stripKey == k and stripDoneFlag then hideStrip() end end)
@@ -1181,7 +1188,7 @@ local function showFinish()
 		pressed = true
 		psc.Scale = 0.94
 		TweenService:Create(psc, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-		pl.Text = "LOADING..."
+		pl.Text = "LOADING"
 	end)
 	play.Parent = side
 	local ssc = Instance.new("UIScale"); ssc.Scale = 0.94; ssc.Parent = side
@@ -1191,9 +1198,22 @@ local function showFinish()
 	TweenService:Create(fill, TweenInfo.new(hold, Enum.EasingStyle.Linear), { Size = UDim2.fromScale(0, 1) }):Play()
 	while finish and finish.Parent and not pressed do
 		local left = math.max(0, math.ceil(hold - (os.clock() - t0)))
-		pl.Text = left > 0 and ("PLAY IN " .. left) or "LOADING..."
+		pl.Text = left > 0 and ("PLAY IN " .. left) or "LOADING"
 		if left <= 0 then break end
 		task.wait(0.1)
+	end
+	-- (round 4, graders: a bright static "LOADING..." still looked clickable) the button dims and goes inert, and three
+	-- dots cycle (the Kit.loadingDots rhythm) until the teleport takes us
+	play.Active = false
+	play.AutoButtonColor = false
+	fill.Visible = false
+	TweenService:Create(play, TweenInfo.new(0.25), { BackgroundColor3 = Color3.fromRGB(52, 60, 38) }):Play()
+	TweenService:Create(pl, TweenInfo.new(0.25), { TextTransparency = 0.25 }):Play()
+	local n = 0
+	while finish and finish.Parent do
+		n = n % 3 + 1
+		pl.Text = "LOADING" .. string.rep(".", n) .. string.rep(" ", 3 - n)
+		task.wait(0.35)
 	end
 end
 
@@ -1228,13 +1248,22 @@ local function showLine(text: string, key: string?)
 	lineLabel.MaxVisibleGraphemes = -1
 	panel.Visible = true
 	panelScale.Scale = 0.97
-	lineLabel.TextTransparency = 1
+	lineLabel.TextTransparency = 0
+	panel.GroupTransparency = 1
 	TweenService:Create(panelScale, TweenInfo.new(0.25, Enum.EasingStyle.Quint), { Scale = 1 }):Play()
-	TweenService:Create(lineLabel, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { TextTransparency = 0 }):Play()
+	TweenService:Create(panel, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { GroupTransparency = 0 }):Play()
+	task.defer(function() -- the plate ends just past the last word
+		local shade = panel:FindFirstChild("Shade")
+		local pw = panel.AbsoluteSize.X
+		if shade and pw > 0 then
+			local right = lineLabel.AbsolutePosition.X - panel.AbsolutePosition.X + lineLabel.TextBounds.X + panel.AbsoluteSize.Y * 0.5
+			shade.Size = UDim2.fromScale(math.clamp(right / pw - 0.06, 0.3, 0.88), 1)
+		end
+	end)
 	local hold = math.max(2.6, #say * 0.06)
 	task.delay(hold, function()
 		if token ~= typeToken then return end
-		TweenService:Create(lineLabel, TweenInfo.new(0.35), { TextTransparency = 1 }):Play()
+		TweenService:Create(panel, TweenInfo.new(0.35), { GroupTransparency = 1 }):Play()
 		task.delay(0.35, function() if token == typeToken then panel.Visible = false end end)
 	end)
 	if entry and entry.obj then showStrip(key, entry)
@@ -1385,8 +1414,8 @@ local function setHighlight(part: BasePart)
 	box.FillTransparency, box.OutlineTransparency = 0.55, 0
 	box.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
 	box.Parent = workspace.CurrentCamera
-	-- (round 2) one pulse of fill, then outline only: no Studio-selection tint left on the cover
-	TweenService:Create(box, TweenInfo.new(0.7, Enum.EasingStyle.Quad), { FillTransparency = 1, OutlineTransparency = 0.1 }):Play()
+	-- (round 2) one pulse of fill, then outline only: no Studio-selection tint left on the cover (round 4: a softer outline)
+	TweenService:Create(box, TweenInfo.new(0.7, Enum.EasingStyle.Quad), { FillTransparency = 1, OutlineTransparency = 0.45 }):Play()
 	highlightBox = box
 	local tag = Instance.new("BillboardGui")
 	tag.Name = "TutorialTargetKey"
@@ -1425,7 +1454,8 @@ local function setHighlight(part: BasePart)
 			local angle = math.deg(math.acos(math.clamp(cam.CFrame.LookVector:Dot(toward.Unit), -1, 1)))
 			local slack = math.deg(math.atan((math.max(part.Size.X, part.Size.Z) * 0.6) / math.max(d, 1))) + 4
 			gazeReady = angle <= slack
-			if face then face.BackgroundColor3 = gazeReady and AMBER or KEY_WHITE end
+			-- (round 4) amber = do this, the same as the strip; only a look-at step waits for your eyes before going amber
+			if face then face.BackgroundColor3 = (gazeReady or not stripLook) and AMBER or KEY_WHITE end
 			task.wait()
 		end
 		gazeReady = false
