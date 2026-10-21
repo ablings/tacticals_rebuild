@@ -31,5 +31,9 @@
    animation puts you on top. Also on taller objects, as long as your head is above the object's top.
 6. [x] (MatchFlowUI: the map vote is back on the solid gradient backdrop like the loading screen; the gun pick stays see-through; screenshot-checked) **Map-selection overlay**: like RIVALS (and like we had before), a background overlay during the map-vote / loading so the player
    can't see which map they're on.
-9. [ ] **Mobile loading is very slow** (Edward). Investigate what loads at join (preloads, ContentProvider, image counts) on mobile.
-10. [ ] **Logos are pixelated** (Edward). Likely low-res image assets / scaled-up ImageLabels; UI session's area.
+9. [ ] **Mobile loading is very slow** (Edward). Found: lobby StreamingEnabled=false with 7,645 parts / 1,109 unique meshes, so game.Loaded
+   waits for the whole map; LoadingScreen then waits up to 12 s on assets; join also preloads menu images and builds ~23 training-picker
+   ViewportFrames (UI: can defer to first InTraining). Options asked of Edward: quick (5 s cap on touch) vs streaming test.
+10. [ ] **Logos are pixelated** (Edward). UI: sources are 1024 wide (no downscale on upload), clean 1:1 at 1080p, so it is upscaling on
+   bigger / high-DPI screens or mobile low texture quality. Needs Edward's original logo art (tacticals_ui repo not on this PC) + his group
+   upload, and which screen / device looks pixelated.
