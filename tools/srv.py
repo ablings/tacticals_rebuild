@@ -2,7 +2,7 @@
 Usage: python tools/srv.py <lobby|match|id> <file.lua | -e code> [Client]"""
 import json, os, subprocess, sys, tempfile
 SIDS = {"lobby": "835403f5-1c18-4451-b6da-d25ee5c2f672", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
-CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
+CLI = os.path.expanduser(r"~\Documents\rivals_practice\mcpcli.py")
 sid = SIDS.get(sys.argv[1], sys.argv[1])
 code = sys.argv[3] if sys.argv[2] == "-e" else open(sys.argv[2], encoding="utf-8").read()
 mode = "Client" if "Client" in sys.argv[3:] else "Server"
