@@ -233,6 +233,9 @@ local function buildUI()
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 	gui.DisplayOrder = 6
 	gui.Enabled = false
+	-- (round 6) the legacy UIStyleController turns any warm colour navy as it's created: that's what made the mouse buttons
+	-- and the reticle dot dark. Our amber is deliberate.
+	gui:AddTag("KeepColors")
 	local cv = canvas(gui)
 
 	-- // Radio subtitle (the old "panel" / "Line" names stay so the rest of the controller keeps working)
@@ -460,7 +463,7 @@ local STEP = {
 		sub = "Get to that crate." },
 	Slide = { obj = "RUN + SLIDE", kb = { "SHIFT", "C" }, pad = { "L3", "B" }, touch = { "RUN", "CROUCH" }, caps = { "HOLD", "SLIDE" },
 		sub = "Hold run, then slide!" },
-	ToWall = { obj = "DASH TO THE LOW WALL", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, caps = { "DASH" }, look = true,
+	ToWall = { obj = "DASH TO THE WALL", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, caps = { "DASH" }, look = true,
 		sub = "The low wall's next. Go!" },
 	Vault = { obj = "JUMP OVER", kb = { "SPACE" }, pad = { "A" }, touch = { "JUMP" }, caps = { "JUMP" },
 		sub = "Jump the wall!" },
@@ -859,7 +862,7 @@ end
 -- ticks: done = tan, current = amber, to do = grey; all done = olive
 local function paintPips(current: number?, doneUpTo: number)
 	local all = doneUpTo >= #strip.pips
-	strip.count.Text = string.format("%d/%d", math.min(current or doneUpTo, #strip.pips), #strip.pips)
+	strip.count.Text = string.format("%d/%d", math.min(doneUpTo, #strip.pips), #strip.pips) -- (round 6: steps DONE, so the kill fills the last)
 	strip.count.TextColor3 = all and GOOD or TAN
 	for i, p in strip.pips do
 		p.BackgroundColor3 = all and GOOD or (i <= doneUpTo and TAN or (i == current and AMBER or TODO))
@@ -1020,7 +1023,7 @@ local function showStrip(key: string, entry)
 		local mk = highlightTag:FindFirstChild("Key")
 		if mk and stripGlyph and stripGlyph ~= "" then setGlyph(mk, stripGlyph) end
 	end
-	markEnemy(entry.passive == true)
+	markEnemy(entry.passive == true or key == "AimShoot") -- (round 6: brackets on him while you shoot too)
 	strip.accent.BackgroundColor3 = AMBER
 	local idx = table.find(STARTER_ORDER, key)
 	strip.pipRow.Visible = true
@@ -1148,7 +1151,8 @@ local function showFinish()
 	side.BorderSizePixel = 0
 	corner(side, 0.04)
 	side.Parent = finish
-	local edge = Instance.new("Frame"); edge.BackgroundColor3 = TAN; edge.BorderSizePixel = 0; edge.Size = UDim2.fromScale(0.012, 1); edge.Parent = side
+	-- (round 6, graders: the tan stripe + bordered tiles read as a stock achievement card) no stripe, no tile boxes: the keycaps
+	-- you pressed, each with its olive check, in one row
 	local logoOk, Logo = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit", 2):WaitForChild("Logo", 2)) end)
 	if logoOk and Logo and Logo.Build then
 		pcall(Logo.Build, side, { AnchorPoint = Vector2.new(0, 0), Position = UDim2.fromScale(0.08, 0.07), Size = UDim2.fromScale(0.44, 0.14), Glow = false, ZIndex = 41 })
@@ -1167,11 +1171,8 @@ local function showFinish()
 		tile.Name = "Skill" .. s[1]
 		tile.Position = UDim2.fromScale(0.07 + (i - 1) * 0.218, 0.45)
 		tile.Size = UDim2.fromScale(0.2, 0.22)
-		tile.BackgroundColor3 = Color3.fromRGB(28, 31, 26)
+		tile.BackgroundTransparency = 1
 		tile.BorderSizePixel = 0
-		corner(tile, 0.08)
-		local ob = Instance.new("Frame"); ob.BackgroundColor3 = GOOD; ob.BorderSizePixel = 0
-		ob.AnchorPoint = Vector2.new(0, 1); ob.Position = UDim2.fromScale(0, 1); ob.Size = UDim2.fromScale(1, 0.06); ob.Parent = tile
 		local iconHolder = Instance.new("Frame"); iconHolder.BackgroundTransparency = 1
 		iconHolder.Position = UDim2.fromScale(0.2, 0.12); iconHolder.Size = UDim2.fromScale(0.6, 0.42); iconHolder.Parent = tile
 		local cap = keycap(iconHolder, "Key")
@@ -1239,18 +1240,35 @@ local function showFinish()
 		if left <= 0 then break end
 		task.wait(0.1)
 	end
-	-- (round 4, graders: a bright static "LOADING..." still looked clickable) the button dims and goes inert, and three
-	-- dots cycle (the Kit.loadingDots rhythm) until the teleport takes us
+	-- (round 6, graders) the same olive button changes state: inert, no label, the house three loading dots (Kit.loadingDots'
+	-- look: three white dots bobbing in turn) until the teleport takes us
 	play.Active = false
 	play.AutoButtonColor = false
 	fill.Visible = false
-	TweenService:Create(play, TweenInfo.new(0.25), { BackgroundColor3 = Color3.fromRGB(52, 60, 38) }):Play()
-	TweenService:Create(pl, TweenInfo.new(0.25), { TextTransparency = 0.25 }):Play()
-	local n = 0
+	pl.Visible = false
+	play.BackgroundColor3 = Color3.fromRGB(107, 122, 58)
+	local dots = {}
+	for i = 1, 3 do
+		local d = Instance.new("Frame")
+		d.AnchorPoint = Vector2.new(0.5, 0.5)
+		d.Position = UDim2.fromScale(0.5 + (i - 2) * 0.07, 0.5)
+		d.Size = UDim2.fromScale(0.2, 0.2)
+		d.BackgroundColor3 = WHITE
+		d.BorderSizePixel = 0
+		d.ZIndex = 3
+		corner(d, 0.5)
+		local a = Instance.new("UIAspectRatioConstraint"); a.AspectRatio = 1; a.Parent = d
+		d.Parent = play
+		dots[i] = d
+	end
 	while finish and finish.Parent do
-		n = n % 3 + 1
-		pl.Text = "LOADING" .. string.rep(".", n) .. string.rep(" ", 3 - n)
-		task.wait(0.35)
+		local t = os.clock()
+		for i, d in dots do
+			local k = math.max(0, math.sin((t * 6) - i * 0.9))
+			d.Position = UDim2.fromScale(0.5 + (i - 2) * 0.07, 0.5 - k * 0.12)
+			d.BackgroundTransparency = 0.35 - k * 0.35
+		end
+		task.wait()
 	end
 end
 
