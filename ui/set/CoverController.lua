@@ -2055,6 +2055,12 @@ local function bindCharacter(newCharacter: Model)
 	exitCover()
 	character = newCharacter
 	coverTracks, moveTracks = nil, nil
+	-- (2026-10-21) the server rebuilds the body after a spawn and then sets Ready: tracks loaded earlier sit on the old joints
+	newCharacter:GetAttributeChangedSignal("Ready"):Connect(function()
+		if character ~= newCharacter then return end
+		for _, set in { coverTracks or {}, moveTracks or {} } do for _, t in set do t:Stop(0) end end
+		coverTracks, moveTracks = nil, nil
+	end)
 	humanoid = newCharacter:WaitForChild("Humanoid", 10) :: Humanoid?
 	rootPart = newCharacter:WaitForChild("HumanoidRootPart", 10) :: BasePart?
 	if humanoid then

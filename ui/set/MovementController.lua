@@ -107,7 +107,18 @@ local function loadTracks()
 	return result
 end
 
+-- (2026-10-21, Edward: "after you pick all your weapons you can't crouch or slide ... the animations dont appear") the server
+-- rebuilds the body right after a spawn (PlayerRegistry: ApplyDescription, then character attribute Ready). Tracks loaded
+-- before that sit on the old joints and play invisibly for the whole life; online that depends on lag, so some rounds lost
+-- crouch / slide. Load only once the character is Ready (or 4 s after the spawn if no Ready ever comes), and reload on a re-Ready.
+local boundCharacter: Model? = nil
+local boundAt = 0
+local function bodyReady(): boolean
+	return boundCharacter ~= nil and (boundCharacter:GetAttribute("Ready") == true or os.clock() - boundAt > 4)
+end
+
 local function setPose(name: string?, speed: number?)
+	if not tracks and not bodyReady() then return end
 	tracks = tracks or loadTracks()
 	for trackName, track in tracks do
 		if trackName == name then
@@ -435,6 +446,12 @@ local function bindCharacter(character: Model)
 	humanoid = character:WaitForChild("Humanoid", 10) :: Humanoid?
 	rootPart = character:WaitForChild("HumanoidRootPart", 10) :: BasePart?
 	tracks = nil
+	boundCharacter, boundAt = character, os.clock()
+	character:GetAttributeChangedSignal("Ready"):Connect(function()
+		if boundCharacter ~= character then return end
+		for _, t in (tracks or {}) do t:Stop(0) end
+		tracks = nil -- the body was (re)built: load again on the new joints at the next pose
+	end)
 	if sliding then sliding = nil local c = getControls() if c then c:Enable() end end
 	crouched = false
 	sprinting = false
