@@ -8,7 +8,7 @@ The map travels as SerializationService bytes, base64 in 90 KB slices (the Studi
 lobby shared.__PseudoLobbyB64 -> here (out/pseudolobby_map.b64, a local check copy) -> match shared.__PseudoLobbyIn ->
 DeserializeInstancesAsync. (HttpService is off in the match place, so no local HTTP fetch.)"""
 import base64, json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "7a8bab8a-3a9c-479b-b323-38d82789723b"}
+SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 SERVE_DIR = os.path.join(ROOT, "out")   # local check copy of the map bytes (base64)

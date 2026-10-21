@@ -1,7 +1,7 @@
 """Run Luau in a Studio's Play SERVER (or Client) datamodel; the bridge rejects multi-line code there, so lines are joined.
 Usage: python tools/srv.py <lobby|match|id> <file.lua | -e code> [Client]"""
 import json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "7a8bab8a-3a9c-479b-b323-38d82789723b"}
+SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 sid = SIDS.get(sys.argv[1], sys.argv[1])
 code = sys.argv[3] if sys.argv[2] == "-e" else open(sys.argv[2], encoding="utf-8").read()
