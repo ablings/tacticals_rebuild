@@ -1,7 +1,7 @@
 -- fix/callout_style.lua [CALLOUT] 2026-10-21 (UI session graders, tutorial UI redesign): the Instructor's world barks ("Shifting right!",
 -- "On the move!") were plain white text with no plate, so they read as a different system from the new tutorial UI.
 --  * StealthController.showCallout (client, match places): a dark plate (14,16,13 @ 0.15) with a small red tick on the left (red = enemy),
---    Builder Sans Heavy, sized to the text; the whole bubble fades in / out together (CanvasGroup).
+--    Builder Sans Heavy 26 in a 320x44 bubble (UI session round 4: "read like a debug label" at 18), sized to the text; the whole bubble fades in / out together (CanvasGroup).
 --  * TutorialManager: "Repositioning!" dropped (hard for 8-10 year olds); the line pool is Moving! / On the move! / Shifting right!.
 -- Match copy only (the lobby has no StealthController). Idempotent; UNDO = true swaps back.
 local UNDO = false --@UNDO
@@ -63,7 +63,7 @@ table.insert(res, patch(SC, {
 	plate.BackgroundTransparency = 0.15
 	plate.Parent = group
 	local pc = Instance.new("UICorner") pc.CornerRadius = UDim.new(0, 6) pc.Parent = plate
-	local pad = Instance.new("UIPadding") pad.PaddingLeft = UDim.new(0, 16) pad.PaddingRight = UDim.new(0, 12) pad.Parent = plate
+	local pad = Instance.new("UIPadding") pad.PaddingLeft = UDim.new(0, 20) pad.PaddingRight = UDim.new(0, 16) pad.Parent = plate
 	local tick = Instance.new("Frame")
 	tick.AnchorPoint = Vector2.new(0, 0.5)
 	tick.Position = UDim2.new(0, -10, 0.5, 0)
@@ -76,7 +76,7 @@ table.insert(res, patch(SC, {
 	label.Size = UDim2.fromScale(0, 1)
 	label.BackgroundTransparency = 1
 	label.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Heavy)
-	label.TextSize = 18
+	label.TextSize = 26 -- (UI round 4, graders: 18 read like a debug label)
 	label.TextColor3 = Color3.fromRGB(240, 236, 226)
 	label.Text = text
 	label.Parent = plate
@@ -85,6 +85,7 @@ table.insert(res, patch(SC, {
 	local TweenService = game:GetService("TweenService")
 	TweenService:Create(group, TweenInfo.new(0.15), { GroupTransparency = 0 }):Play()
 ]] },
+	{ "\tgui.Size = UDim2.fromOffset(220, 34)\n", "\tgui.Size = UDim2.fromOffset(320, 44)\n" }, -- (UI round 4: a bigger bubble)
 	{ "\t\t\tTweenService:Create(label, TweenInfo.new(0.4), { TextTransparency = 1, TextStrokeTransparency = 1 }):Play()\n",
 	  "\t\t\tTweenService:Create(group, TweenInfo.new(0.4), { GroupTransparency = 1 }):Play() -- [CALLOUT] the whole plate fades\n" },
 }))
