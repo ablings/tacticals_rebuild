@@ -45,10 +45,13 @@
 
 ## Afternoon (Edward via the main PC lead / Roblox training)
 11. [x] HitConfirm payload for RIVALS hit numbers / flash (fix/hitinfo.lua [HITINFO], tested; e16a1ec).
-12. [~] Frag cooking, 2 s fuse from the press, explodes in hand (fix/cook.lua [COOK] + GadgetController; written, NOT applied / tested).
-13. [~] RIVALS throw for every throwable (fix/rivals_throw.lua [RTHROW] + GadgetController): tap = roll (TapTime 0.15), hold = throw
+12. [x] Frag cooking, 2 s fuse from the press, explodes in hand (fix/cook.lua [COOK] + GadgetController; both copies, saved 15:32).
+    Tested: hold 0.6 s -> thrown, blew 1.28 s later (2 - 0.6 - 0.12); held 2.6 s -> blast in hand (150 -> 0), late release threw nothing;
+    CookStart / CookFuse set while held, nil after (UI shows the draining bar).
+13. [x] RIVALS throw for every throwable (fix/rivals_throw.lua [RTHROW] + GadgetController): tap = roll (TapTime 0.15), hold = throw
     at 100 studs/s straight at the crosshair, gravity x0.1875 until first touch (RIVALS ItemLibrary: ThrowForce 100, ThrowGravity 0.375,
-    the same for all throwables; lob 50 / 0.75 not ported), dashed arc while held (ArcPreview Always). Written, NOT applied / tested.
+    the same for all throwables; lob 50 / 0.75 not ported), dashed arc while held (ArcPreview Always). Applied both copies, saved 15:32. Tested: tap -> roll (flat, no VectorForce, blew 1.75 s later); hold -> 100 studs/s
+    with the reduced-gravity VectorForce.
 14. [ ] Throw feel on our camera: overhand windup, white streak trail, follow-through, next item rising in from below.
 15. [ ] Weapon feel (notes/feel_brief_2026-10-21.md): equip bounce spring, sway / bob, recoil kick, reload motion, quick-switch off the
     Sniper. Edward: keep OUR over-the-shoulder camera, bring the RIVALS feel to how items are used.
