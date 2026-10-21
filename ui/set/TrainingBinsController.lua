@@ -141,6 +141,19 @@ local function tileLook(b)
 	edge.Color = hover and OLIVE or WHITE
 	edge.Transparency = (hover or isHeld) and 0 or 1
 	edge.Thickness = isHeld and not hover and 3 or 2.5
+	-- (2026-10-21, live RIVALS) hover: the name grows ~1.3x and the render tilts a little toward you; both ease back
+	local ti = TweenInfo.new(hover and 0.16 or 0.2, hover and Enum.EasingStyle.Back or Enum.EasingStyle.Quad)
+	local name = b:FindFirstChild("Name")
+	if name then
+		local s = name:FindFirstChild("Grow") or new("UIScale", { Name = "Grow", Parent = name })
+		TweenService:Create(s, ti, { Scale = hover and 1.3 or 1 }):Play()
+	end
+	local art = b:FindFirstChild("Art")
+	if art then
+		local s = art:FindFirstChild("Grow") or new("UIScale", { Name = "Grow", Parent = art })
+		TweenService:Create(s, ti, { Scale = hover and 1.06 or 1 }):Play()
+		TweenService:Create(art, ti, { Rotation = hover and -7 or 0 }):Play()
+	end
 end
 
 local function makeTile(parent, slot, id, index)
@@ -437,6 +450,16 @@ end
 function controller.Start()
 	if not (okTX and TX.On("SwapBins")) then return end
 	build()
+	-- Studio only: PlayerScripts.TrainingPickerTestHook:Invoke("Open" | "Close" | "Pick", slot, id) for MCP-driven tests
+	if game:GetService("RunService"):IsStudio() then
+		local hook = Instance.new("BindableFunction")
+		hook.Name = "TrainingPickerTestHook"
+		hook.OnInvoke = function(cmd, ...)
+			if controller[cmd] then controller[cmd](...) end
+			return isOpen
+		end
+		hook.Parent = player:WaitForChild("PlayerScripts")
+	end
 	-- (2026-10-21, Edward: mobile loading is slow) the ~23 tile viewports are built the first time you enter Training, not at
 	-- join; Open shows the loading dots until they're ready
 	local gridsStarted = false
@@ -492,6 +515,21 @@ function controller.Start()
 			controller.Close()
 		end
 	end
+	-- (2026-10-21) the Weapons pill and the TRIAL line step aside while you look through a scope
+	game:GetService("RunService").RenderStepped:Connect(function()
+		if not weaponsBtn.Visible and not trialTag.Visible then return end
+		local Scope = shared.Get and shared.Get("ScopeController")
+		local b = Scope and Scope.UsesScope and Scope.UsesScope() and Scope.Blend and Scope.Blend() or 0
+		local hide = math.clamp(b / 0.5, 0, 1)
+		weaponsBtn.BackgroundTransparency = 0.45 + 0.55 * hide
+		for _, d in weaponsBtn:GetDescendants() do
+			if d:IsA("TextLabel") then d.TextTransparency = hide
+			elseif d:IsA("UIStroke") then d.Transparency = d.Parent == weaponsBtn and 0.75 + 0.25 * hide or math.max(0.1, hide)
+			elseif d:IsA("Frame") then d.BackgroundTransparency = 0.1 + 0.9 * hide end
+		end
+		trialTag.TextTransparency = hide
+		local ts = trialTag:FindFirstChildOfClass("UIStroke"); if ts then ts.Transparency = math.max(0.1, hide) end
+	end)
 	player:GetAttributeChangedSignal("InTraining"):Connect(onTraining)
 	if player:GetAttribute("InTraining") == true then onTraining() end
 end

@@ -58,3 +58,7 @@
     muzzles). Start ~8 (4 plain colours, Glossy, 3 codex-made seamless patterns); everyone owns the plain ones. How the rest are earned
     = Edward's call (store / cases / weapon levels or contracts). UI has the screens + client-only preview of locked wraps.
 17. [ ] Training trash cans: 2-3 red cans with a "Q  Trash Can / Change Weapons" prompt that opens the free weapon picker.
+    Wrap look per channel (from RIVALS frames): Color, Material (incl. Neon / Glass / ForceField), Texture + StudsPerTile (fixed per
+    wrap so patterns keep their size on every part), Transparency (ghost wraps ~0.3-0.5; cap it on the local player's held gun if aiming
+    suffers), optional client-side animation: texture Scroll and/or a colour cycle { colours, period } on the glow channel (cap animated
+    parts). Inverted = swap Primary / Accent. Sources seen in RIVALS: wrap case, weapon contract (per weapon), season pass, bundles.

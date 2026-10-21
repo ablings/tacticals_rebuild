@@ -629,7 +629,7 @@ local function makeTile(i: number)
 	local icon = makeRender(tile)
 	tile.Parent = column
 	return { tile = tile, fade = fade, key = key, keyBox = keyBox, big = big, small = small, bullets = bullets, icon = icon,
-		edge = edge, grow = grow, title = "", selected = nil, empty = nil }
+		edge = edge, grow = grow, title = "", selected = nil, empty = nil, kick = { x = 0, v = 0 } }
 end
 
 -- the gun tile's bullets icon: the mesh render, or three drawn rounds if the mesh isn't there
@@ -893,6 +893,44 @@ local function amount(n: number?): string
 	return tostring(math.floor(n + 0.5))
 end
 
+-- (2026-10-21, Edward: "weapon switching ... certain bounce and select effects that make changing weapons feel good") RIVALS'
+-- HotbarSlot, read from the reference: the newly held slot's item gets an upward kick on a spring (damper 0.75, speed 20,
+-- velocity -10 in tile heights / s) that settles back; on top a bright band sweeps once across the tile. Scale only.
+local KICK_D, KICK_W = 0.75, 20
+local function stepKicks(dt: number)
+	for _, sl in slots do
+		local k = sl.kick
+		if k and (k.x ~= 0 or k.v ~= 0) then
+			k.v += (-KICK_W * KICK_W * k.x - 2 * KICK_D * KICK_W * k.v) * dt
+			k.x += k.v * dt
+			if math.abs(k.x) < 1e-4 and math.abs(k.v) < 1e-3 then k.x, k.v = 0, 0 end
+			local p = sl.icon.box.Position
+			sl.icon.box.Position = UDim2.new(p.X.Scale, p.X.Offset, 0.5 + k.x, p.Y.Offset)
+		end
+	end
+end
+local function sweep(tile: GuiObject)
+	local band = Instance.new("Frame")
+	band.Name = "SelectSweep"
+	band.Size = UDim2.fromScale(1, 1)
+	band.BackgroundColor3 = WHITE
+	band.BorderSizePixel = 0
+	band.ZIndex = 8
+	local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0, 4); c.Parent = band
+	local g = Instance.new("UIGradient")
+	g.Rotation = 20
+	g.Transparency = NumberSequence.new({
+		NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.42, 1), NumberSequenceKeypoint.new(0.5, 0.55),
+		NumberSequenceKeypoint.new(0.58, 1), NumberSequenceKeypoint.new(1, 1),
+	})
+	g.Offset = Vector2.new(-1, 0)
+	g.Parent = band
+	band.Parent = tile
+	local tw = TweenService:Create(g, TweenInfo.new(0.38, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Offset = Vector2.new(1, 0) })
+	tw.Completed:Once(function() band:Destroy() end)
+	tw:Play()
+end
+
 local function refreshUI()
 	local active = controller.ActiveSlot()
 	local gun = findTool(function(t) return t:GetAttribute("WeaponId") ~= nil end)
@@ -939,6 +977,12 @@ local function refreshUI()
 			heldName.Text = (string.gsub(string.lower(slots[active].title), "(%a)([%w']*)", function(a, b) return string.upper(a) .. b end)) -- (2026-10-20, RIVALS) "Pistol", not "PISTOL"
 			heldName.TextTransparency = 1
 			heldStroke.Transparency = 1
+			-- (2026-10-21) the name punches in with the tile: a touch big, then settles
+			local punch = heldName:FindFirstChild("Punch") or Instance.new("UIScale")
+			punch.Name = "Punch"
+			punch.Parent = heldName
+			punch.Scale = 1.18
+			TweenService:Create(punch, POP, { Scale = 1 }):Play()
 			TweenService:Create(heldName, TweenInfo.new(0.22, Enum.EasingStyle.Quint), { TextTransparency = 0 }):Play()
 			TweenService:Create(heldStroke, TI, { Transparency = 0 }):Play()
 		else
@@ -949,16 +993,36 @@ local function refreshUI()
 		heldName.Text = (string.gsub(string.lower(slots[active].title), "(%a)([%w']*)", function(a, b) return string.upper(a) .. b end)) -- (2026-10-20, RIVALS) "Pistol", not "PISTOL"
 	end
 
+	-- (2026-10-21, RIVALS) the held gun's name turns red when the magazine is low (a quarter or less)
+	local mag = gunConfig and gunConfig.MagazineSize
+	local low = active == GUN and type(current) == "number" and type(mag) == "number" and mag > 0 and current <= math.max(1, math.floor(mag * 0.25))
+	-- (2026-10-21, live RIVALS note 9) the name wears the held item's rarity colour (Standard stays white)
+	local heldId = active == GUN and gunId or (active == MELEE and meleeId) or (active == GADGET and localPlayer:GetAttribute("KitGadget")) or nil
+	local tint = BONE
+	pcall(function()
+		local LC = require(ReplicatedStorage.Modules.Shared.Config.LobbyConfig)
+		local item = heldId and LC.Items[heldId]
+		local rar = item and item.Rarity ~= "Standard" and LC.Rarities and LC.Rarities[item.Rarity]
+		if rar then tint = rar.Color:Lerp(Color3.new(1, 1, 1), 0.25) end -- a touch lighter so it reads over the world
+	end)
+	heldName.TextColor3 = low and RED or tint
+
 	for i, sl in slots do
 		local on = i == active
 		local empty = i == GADGET and charges <= 0
 		if sl.selected ~= on or sl.empty ~= empty then
 			sl.selected, sl.empty = on, empty
+			local wasOn = sl.selected
 			TweenService:Create(sl.tile, TI, { BackgroundColor3 = on and HELD_FILL or TILE_GREY, BackgroundTransparency = on and HELD_T or TILE_T }):Play()
-			TweenService:Create(sl.grow, POP, { Scale = on and 1 or 0.86 }):Play()
+			-- held: pops up with a little overshoot (Back); let go: eases back down without one
+			TweenService:Create(sl.grow, on and POP or TI, { Scale = on and 1 or 0.86 }):Play()
+			if on and wasOn == false and not empty then
+				sl.kick.v = -10
+				sweep(sl.tile)
+			end
 			TweenService:Create(sl.edge, TI, { Color = on and INK_YELLOW or WHITE, Thickness = on and 2.5 or 1.5, Transparency = on and 0 or 0.82 }):Play()
 			TweenService:Create(sl.fade, TI, { BackgroundTransparency = on and 0 or 1 }):Play()
-			TweenService:Create(sl.icon.scale, POP, { Scale = on and 1.08 or 0.92 }):Play()
+			TweenService:Create(sl.icon.scale, on and POP or TI, { Scale = on and 1.08 or 0.92 }):Play()
 			local tint = empty and Color3.fromRGB(90, 96, 80) or (on and Color3.fromRGB(236, 232, 218) or Color3.fromRGB(200, 198, 186))
 			TweenService:Create(sl.icon.main, TI, { ImageColor3 = tint, ImageTransparency = empty and 0.4 or 0 }):Play()
 			TweenService:Create(sl.icon.shadow, TI, { ImageTransparency = empty and 0.8 or 0.45 }):Play()
@@ -969,6 +1033,7 @@ end
 
 function controller.Start()
 	buildUI()
+	game:GetService("RunService").RenderStepped:Connect(function(dt) stepKicks(math.min(dt, 1 / 20)) end)
 	-- [MOVE2] the gadget slot holds no Tool: tell the movement code (WeaponConfig.Mobility) through player attribute HeldSlot
 	local heldGadget = nil
 	game:GetService("RunService").Heartbeat:Connect(function()

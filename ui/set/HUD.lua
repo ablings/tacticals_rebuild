@@ -74,6 +74,20 @@ local CROSSHAIR_IDLE = 0.75 -- transparency when not aimed in
 local crosshairAimed = nil
 function hud.SetCrosshair(visible: boolean, aimed: boolean)
 	local crosshair = getGui().Crosshair
+	-- (2026-10-21, smooth scoping) WeaponController hides the dot once the scope blend passes 0.5; instead the dot fades out
+	-- with the scope coming in (gone by 60 % of the raise) and back in as it goes, so there is no cut either way
+	local Scope = shared.Get and shared.Get("ScopeController")
+	local b = (Scope and Scope.UsesScope and Scope.UsesScope() and Scope.Blend and Scope.Blend()) or 0
+	if b > 0.001 and (visible or b > 0.5) then
+		crosshair.Visible = true
+		local base = aimed and 0 or CROSSHAIR_IDLE
+		local k = math.clamp(b / 0.6, 0, 1)
+		crosshair.BackgroundTransparency = base + (1 - base) * k
+		local stroke = crosshair:FindFirstChildOfClass("UIStroke")
+		if stroke then stroke.Transparency = 0.3 + 0.7 * k end
+		crosshairAimed = nil -- re-apply the aim look once the scope is gone
+		return
+	end
 	if crosshair.Visible ~= visible then
 		crosshair.Visible = visible
 	end
@@ -140,10 +154,13 @@ function hud.ShowHitmarker(zone: string, killed: boolean, headshot: boolean?)
 	-- sizes are 1080p px, scaled to the screen height (a phone got the PC size before)
 	local f = math.clamp(workspace.CurrentCamera.ViewportSize.Y / 1080, 0.35, 2)
 	local from, to = head and 66 or (killed and 40 or 34), head and 44 or (killed and 30 or 26)
-	marker.Size = UDim2.fromOffset(from * f, from * f)
-	TweenService:Create(marker, TweenInfo.new(head and 0.16 or 0.08, Enum.EasingStyle.Back), { Size = UDim2.fromOffset(to * f, to * f) }):Play()
-	marker.Rotation = head and 12 or 0
-	if head then TweenService:Create(marker, TweenInfo.new(0.16, Enum.EasingStyle.Back), { Rotation = 0 }):Play() end
+	-- (2026-10-21, RIVALS' MouseCrosshair from the reference: a critically damped spring, speed 20, reset on every hit) the
+	-- ticks open wide and turned +-15 deg, then close in and straighten over ~0.25 s; every bullet restarts it
+	local close = TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+	marker.Size = UDim2.fromOffset(from * 1.6 * f, from * 1.6 * f)
+	TweenService:Create(marker, close, { Size = UDim2.fromOffset(to * f, to * f) }):Play()
+	marker.Rotation = (math.random() < 0.5 and -1 or 1) * 15
+	TweenService:Create(marker, close, { Rotation = 0 }):Play()
 	local life = head and CRIT_TIME or HITMARKER_TIME
 
 	for _, line in marker:GetChildren() do
@@ -612,7 +629,7 @@ end
 --   resets per shell), Fire (next shot, slow guns only). Shown while End > os.clock(); one arc, priority Draw > Reload > Fire.
 --   The arc: two clipped half-rings, each a UIStroke with a hard-stop UIGradient turned to the progress angle (no images).
 do
-	local KINDS = { "Draw", "Reload", "Fire" }
+	local KINDS = { "Draw", "Reload", "Fire", "Gadget" } -- Gadget: GadgetController's throw / use wait (stopwatch mark)
 	local LOOK = { Draw = { 0.35, 2.5 }, Reload = { 0, 3 }, Fire = { 0.2, 2 } }   -- stroke transparency, thickness
 	local arc -- { root, track, halves = { right = gradient, left = gradient }, strokes }
 	local STEP = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.5, 0),
@@ -664,24 +681,116 @@ do
 		arc.halves.left.Rotation = math.max(a, 180)
 	end
 
-	game:GetService("RunService").RenderStepped:Connect(function()
+	-- the under-crosshair widget (all Scale, sized off the screen height)
+	local under = {}
+	do
+		local box, fill, mark, watch, shown = nil, nil, nil, nil, 0
+		local function make()
+			box = Instance.new("CanvasGroup")
+			box.Name = "XhairUnder"
+			box.BackgroundTransparency = 1
+			box.Position = UDim2.fromScale(0.503, 0.522)
+			box.SizeConstraint = Enum.SizeConstraint.RelativeYY
+			box.Size = UDim2.fromScale(0.036, 0.03)
+			box.GroupTransparency = 1
+			box.ZIndex = 15
+			box.Parent = abilityLayer
+			-- the reload mark: a ring with a gap and an arrow tip
+			mark = Instance.new("Frame")
+			mark.Name = "Mark"
+			mark.BackgroundTransparency = 1
+			mark.SizeConstraint = Enum.SizeConstraint.RelativeYY
+			mark.Size = UDim2.fromScale(0.5, 0.5)
+			mark.Parent = box
+			local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = mark
+			local st = Instance.new("UIStroke"); st.Thickness = 1.6; st.Color = Color3.new(1, 1, 1); st.Parent = mark
+			local g = Instance.new("UIGradient"); g.Rotation = -40
+			g.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.78, 0),
+				NumberSequenceKeypoint.new(0.79, 1), NumberSequenceKeypoint.new(1, 1) }); g.Parent = st
+			local tip = Instance.new("Frame")
+			tip.BackgroundColor3 = Color3.new(1, 1, 1); tip.BorderSizePixel = 0
+			tip.AnchorPoint = Vector2.new(0.5, 0.5); tip.Rotation = 45
+			tip.Position = UDim2.fromScale(0.88, 0.2); tip.Size = UDim2.fromScale(0.28, 0.28)
+			tip.Parent = mark
+			-- the gadget mark: a stopwatch (a ring, a crown on top and one hand)
+			watch = Instance.new("Frame")
+			watch.Name = "Stopwatch"
+			watch.BackgroundTransparency = 1
+			watch.SizeConstraint = Enum.SizeConstraint.RelativeYY
+			watch.Position = UDim2.fromScale(0, 0.06)
+			watch.Size = UDim2.fromScale(0.44, 0.44)
+			watch.Visible = false
+			watch.Parent = box
+			local wc = Instance.new("UICorner"); wc.CornerRadius = UDim.new(0.5, 0); wc.Parent = watch
+			local ws = Instance.new("UIStroke"); ws.Thickness = 1.6; ws.Color = Color3.new(1, 1, 1); ws.Parent = watch
+			for _, spec in { { 0.5, -0.2, 0.34, 0.16, 0 }, { 0.5, 0.32, 0.1, 0.36, 0 }, { 0.6, 0.48, 0.1, 0.26, 60 } } do
+				local f = Instance.new("Frame")
+				f.BackgroundColor3 = Color3.new(1, 1, 1); f.BorderSizePixel = 0
+				f.AnchorPoint = Vector2.new(0.5, 0.5); f.Position = UDim2.fromScale(spec[1], spec[2])
+				f.Size = UDim2.fromScale(spec[3], spec[4]); f.Rotation = spec[5]
+				f.Parent = watch
+			end
+			-- the bar
+			local track = Instance.new("Frame")
+			track.Name = "Track"
+			track.BackgroundColor3 = Color3.new(0, 0, 0); track.BackgroundTransparency = 0.55; track.BorderSizePixel = 0
+			track.Position = UDim2.fromScale(0, 0.68); track.Size = UDim2.fromScale(1, 0.13)
+			track.Parent = box
+			local tc = Instance.new("UICorner"); tc.CornerRadius = UDim.new(0.5, 0); tc.Parent = track
+			fill = Instance.new("Frame")
+			fill.Name = "Fill"
+			fill.BackgroundColor3 = Color3.new(1, 1, 1); fill.BorderSizePixel = 0
+			fill.Size = UDim2.fromScale(0, 1)
+			fill.Parent = track
+			local fc = Instance.new("UICorner"); fc.CornerRadius = UDim.new(0.5, 0); fc.Parent = fill
+		end
+		function under.set(kind, p, dt)
+			if not box or box.Parent ~= abilityLayer then make() end
+			local want = kind ~= nil and 1 or 0
+			shown += (want - shown) * math.min(1, (dt or 1 / 60) * 18)
+			box.GroupTransparency = 1 - shown * (kind == "Draw" and 0.6 or 1)
+			if kind then
+				mark.Visible = kind == "Reload"
+				watch.Visible = kind == "Gadget" or kind == "Cook"
+				fill.Size = UDim2.fromScale(math.clamp(p, 0, 1), 1)
+				-- (2026-10-21, Edward: the Frag cooks) the fuse drains; the last third goes red and pulses, faster near 0
+				if kind == "Cook" then
+					local danger = p < 1 / 3
+					local beat = danger and (0.5 + 0.5 * math.sin(os.clock() * (10 + (1 / 3 - p) * 60))) or 0
+					local c = danger and Color3.fromRGB(255, 70, 60):Lerp(Color3.new(1, 1, 1), beat * 0.5) or Color3.new(1, 1, 1)
+					fill.BackgroundColor3 = c
+					box.Size = UDim2.fromScale(0.036 * (1 + beat * 0.12), 0.03 * (1 + beat * 0.12))
+				else
+					fill.BackgroundColor3 = Color3.new(1, 1, 1)
+					box.Size = UDim2.fromScale(0.036, 0.03)
+				end
+			end
+		end
+	end
+	game:GetService("RunService").RenderStepped:Connect(function(dt0)
 		if not abilityLayer or not abilityLayer.Parent then return end
 		build()
 		local lp = Players.LocalPlayer
 		local now = os.clock()
 		local kind, p
-		for _, k in KINDS do
+		-- a cooking Frag first: the lead's CookStart (server time at the press) + CookFuse (s); the bar shows what's LEFT
+		local cs, cf = tonumber(lp:GetAttribute("CookStart")), tonumber(lp:GetAttribute("CookFuse"))
+		if cs and cf and cf > 0 then
+			local left = 1 - (workspace:GetServerTimeNow() - cs) / cf
+			if left > 0 then kind, p = "Cook", left end
+		end
+		for _, k in (kind and {} or KINDS) do
 			local e, t = tonumber(lp:GetAttribute("Xhair" .. k .. "End")), tonumber(lp:GetAttribute("Xhair" .. k .. "Time"))
 			if e and t and t > 0 and e > now then
 				kind, p = k, 1 - (e - now) / t
 				break
 			end
 		end
-		arc.root.Visible = kind ~= nil
-		if kind then
-			setProgress(p)
-			for _, st in arc.strokes do st.Transparency, st.Thickness = LOOK[kind][1], LOOK[kind][2] end
-		end
+		-- (2026-10-21, Edward: "the reload and shooting UI under the crosshair", RIVALS) the ring is retired for a small widget
+		-- just below and right of the centre: a reload mark (reload only) over a thin bar that fills left to right; the Pump's
+		-- shell-by-shell reload refills it per shell (the lead's XhairReloadTime restarts per shell). Fades in and out.
+		arc.root.Visible = false
+		under.set(kind, p, dt0)
 	end)
 end
 

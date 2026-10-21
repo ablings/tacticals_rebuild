@@ -88,20 +88,78 @@ local function nearestTarget(): Model?
 	return best
 end
 
+-- (2026-10-21, Edward + live RIVALS captures) ONE live number per target with a running total. "As long as the damage
+-- indicator hasn't disappeared, the new damage replaces the old one ... and adds the damage on top": a hit while it is alive
+-- (even mid-exit) adds to the total, re-plays the pop and restarts its life; only once it has fully gone does the next hit
+-- start a fresh one from 0. Life of one number:
+--   spawn : a little up-right of the hit point, tilted -20 deg and small; it springs onto the hit point at once
+--   hit   : flashes the hit colour (red fill, white outline) with a scale punch and a tilt, then settles to the resting look
+--           (white fill, dark outline) while it waits
+--   exit  : after LIFE s without a hit it turns ~90 deg, drifts up-right, shrinks and fades
+-- Numbers keep one decimal ("11.2", "15"). Sizes are studs (a BillboardGui): it shrinks with distance like the target does.
+local LIFE, EXIT = 0.7, 0.45
+local FONT_NUM = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+local function numberText(n: number): string
+	local r = math.floor(n * 10 + 0.5) / 10
+	if math.abs(r - math.floor(r + 0.5)) < 0.05 then return tostring(math.floor(r + 0.5)) end
+	return string.format("%.1f", r)
+end
+
+local function step(p, dt: number)
+	local now = os.clock()
+	local age = now - p.t
+	p.punch *= math.exp(-dt * 11)
+	p.flash *= math.exp(-dt * 7)
+	p.tilt *= math.exp(-dt * 13)
+	p.off *= math.exp(-dt * 22)
+	local e = age > LIFE and math.clamp((age - LIFE) / EXIT, 0, 1) or 0
+	if e >= 1 then return false end
+	local ee = e * e
+	local rest, hit = p.rest, p.hitColor
+	p.label.TextColor3 = rest:Lerp(hit, math.clamp(p.flash, 0, 1))
+	p.stroke.Color = Color3.fromRGB(24, 18, 18):Lerp(Color3.new(1, 1, 1), math.clamp(p.flash, 0, 1))
+	p.label.Rotation = p.tilt + 90 * ee
+	p.scale.Scale = (1 + 0.45 * p.punch) * (1 - 0.45 * ee)
+	p.label.TextTransparency = ee
+	p.stroke.Transparency = ee
+	p.gui.StudsOffset = Vector3.new(0.5 * p.off + 1.4 * ee, 0.5 * p.off + 1.8 * ee, 0)
+	return true
+end
+
+local alive = false
+local function run()
+	if alive then return end
+	alive = true
+	local conn
+	conn = game:GetService("RunService").RenderStepped:Connect(function(dt)
+		dt = math.min(dt, 1 / 20)
+		local any = false
+		for key, p in popups do
+			if p.anchor.Parent and step(p, dt) then
+				any = true
+			else
+				p.anchor:Destroy()
+				popups[key] = nil
+			end
+		end
+		if not any then alive = false; conn:Disconnect() end
+	end)
+end
+
 local function popNumber(target: Model?, at: Vector3, damage: number, crit: boolean, killed: boolean)
 	if setting("DamageNumbers", true) == false then return end
-	local c = crit and color("CriticalColor", "#ff3232") or color("DamageColor", "#ffffff")
 	local key = target or at
 	local p = popups[key]
-	if p and p.gui.Parent and os.clock() - p.t < 0.8 then
-		p.total += damage
+	local fresh = not (p and p.anchor.Parent)
+	if not fresh then
+		p.total += damage -- still alive (waiting or mid-exit): add on top, same label
 	else
 		local anchor = Instance.new("Part")
 		anchor.Name = "DamageNumber"
 		anchor.Anchored, anchor.CanCollide, anchor.CanQuery, anchor.CanTouch = true, false, false, false
 		anchor.Transparency = 1
 		anchor.Size = Vector3.one * 0.1
-		anchor.Position = at + Vector3.new((math.random() - 0.5) * 1.2, 1.2, 0)
+		anchor.Position = at
 		anchor.Parent = workspace.CurrentCamera
 		local gui = Instance.new("BillboardGui")
 		gui.Size = UDim2.fromScale(3.2, 1.5) -- studs: shrinks with distance like a world object
@@ -111,36 +169,33 @@ local function popNumber(target: Model?, at: Vector3, damage: number, crit: bool
 		gui.Parent = anchor
 		local label = Instance.new("TextLabel")
 		label.BackgroundTransparency = 1
+		label.AnchorPoint = Vector2.new(0.5, 0.5)
+		label.Position = UDim2.fromScale(0.5, 0.5)
 		label.Size = UDim2.fromScale(1, 1)
 		label.TextScaled = true
-		label.FontFace = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy)
+		label.FontFace = FONT_NUM
 		label.Parent = gui
+		local scale = Instance.new("UIScale")
+		scale.Parent = label
 		local stroke = Instance.new("UIStroke")
-		stroke.Thickness = 2
-		stroke.Color = Color3.new(0, 0, 0)
+		stroke.Thickness = 2.5
 		stroke.Parent = label
-		p = { gui = gui, label = label, stroke = stroke, anchor = anchor, total = damage }
+		-- spawn: up-right of the point, tilted and small; the springs pull it onto the point
+		p = { gui = gui, label = label, stroke = stroke, scale = scale, anchor = anchor, total = damage,
+			punch = -0.6, flash = 1, tilt = -20, off = 1 }
 		popups[key] = p
 	end
 	p.t = os.clock()
-	p.label.Text = tostring(math.floor(p.total + 0.5))
-	p.label.TextColor3 = c
-	p.label.TextTransparency, p.stroke.Transparency = 0, 0
+	p.anchor.Position = at -- sits on the latest hit point
+	p.rest = color("DamageColor", "#ffffff")
+	p.hitColor = crit and color("CriticalColor", "#ff3232") or Color3.fromRGB(255, 52, 52)
+	p.label.Text = numberText(p.total)
 	p.gui.Size = UDim2.fromScale(killed and 4.2 or 3.2, killed and 2 or 1.5)
-	local mine = p
-	task.delay(0.55, function()
-		if mine.t > os.clock() - 0.5 then return end -- topped up since: the newer hit restarts the fade
-		local info = TweenInfo.new(0.35)
-		TweenService:Create(mine.label, info, { TextTransparency = 1 }):Play()
-		TweenService:Create(mine.stroke, info, { Transparency = 1 }):Play()
-		TweenService:Create(mine.anchor, info, { Position = mine.anchor.Position + Vector3.new(0, 1, 0) }):Play()
-		task.delay(0.4, function()
-			if os.clock() - mine.t >= 0.85 then
-				mine.anchor:Destroy()
-				if popups[key] == mine then popups[key] = nil end
-			end
-		end)
-	end)
+	-- the hit pop: punch, red flash, a tilt (a headshot punches harder)
+	p.punch = crit and 1.4 or 1
+	p.flash = 1
+	p.tilt = fresh and -20 or (math.random() < 0.5 and -1 or 1) * (crit and 14 or 9)
+	run()
 end
 
 function controller.Start()
@@ -163,7 +218,20 @@ function controller.Start()
 		end
 		lastShot = { t = os.clock(), pos = endPos, char = char }
 	end)
-	Combat:WaitForChild("HitConfirm").OnClientEvent:Connect(function(zone, damage, killed, headshot)
+	Combat:WaitForChild("HitConfirm").OnClientEvent:Connect(function(zone, damage, killed, headshot, _kind, info)
+		-- (2026-10-21, lead's [HITINFO]) info = { pos, victim, dealt, source, weapon, pellet, backstab }: the number shows the
+		-- health actually removed, at the real hit point, on the real victim (each shotgun pellet adds to the same number)
+		if type(info) == "table" then
+			local dealt = tonumber(info.dealt) or damage
+			if type(dealt) ~= "number" or dealt <= 0 then return end
+			local victim = typeof(info.victim) == "Instance" and info.victim or nil
+			local at = typeof(info.pos) == "Vector3" and info.pos or headOf(victim)
+			if not at then return end
+			local onHit = victim and victim:FindFirstChild("OnHit")
+			if onHit and onHit:IsA("BindableEvent") then return end -- firing-range dummies show their own numbers
+			popNumber(victim, at, dealt, headshot == true, killed == true)
+			return
+		end
 		if type(damage) ~= "number" or damage <= 0 then return end
 		local target, at
 		if lastShot and os.clock() - lastShot.t < 0.75 then

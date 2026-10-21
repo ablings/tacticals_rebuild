@@ -30,11 +30,22 @@ local Get = shared.Get
 local localPlayer = Players.LocalPlayer
 local controller = {}
 
+-- Studio only: player attribute _TestAim = true holds the scope up (MCP-driven tests can't press the mouse)
+local studioTest = game:GetService("RunService"):IsStudio()
 local DEFAULT = { FOV = 14, InTime = 0.3, OutTime = 0.22, Sway = 1, RecoilScale = 0.45 }
 local CLICK = "rbxassetid://9117197553" -- short metal click (scope in / out, bolt)
 
 -- // State
-local p = 0               -- sequence progress: 0 = over the shoulder, 1 = fully scoped
+-- (2026-10-21, Edward: "a smooth transition from unscoped to scoped") RIVALS' timing, read from the reference place: two
+-- critically damped springs that start together. The raise (here: shoulder -> eye) runs at speed 30 x AimSpeed, the zoom at
+-- 20 x AimSpeed (sniper AimSpeed 0.55: raise ~0.24 s, zoom ~0.4 s); letting go runs both at full speed (30 / 20).
+-- Before: one linear 0.3 s sequence with the zoom only in its last 30 % and a black blink at the eye.
+local AIM_SPEED = 0.55
+local RAISE_W, ZOOM_W = 30, 20
+local p = 0               -- raise progress (spring): 0 = over the shoulder, 1 = at the eye
+local pv = 0
+local z, zv = 0, 0        -- zoom progress (spring): 0 = normal aim FOV, 1 = the scope's FOV
+local ui = {}             -- the overlay (built below)
 local cfg = nil           -- the equipped weapon's Scope table
 local lastCfg = DEFAULT
 local blockUntil = 0      -- reloading: no scope until then
@@ -88,11 +99,21 @@ end
 
 -- // Public
 function controller.Blend(): number -- camera position: 0 = shoulder, 1 = eye
-	return smootherstep(p / 0.8)
+	return clamp01(p)
 end
 
 function controller.Zoom(): number -- FOV: 0 = normal aim, 1 = through the scope
-	return smootherstep((p - 0.7) / 0.3)
+	return clamp01(z)
+end
+
+-- a weapon change / unequip mid-scope: the overlay, the eye position and the shot motion go the same frame; the zoom eases
+-- back at full speed (RIVALS: its FOV spring just retargets, ~0.25 s) so the FOV never snaps. full = true (respawn): all of it.
+function controller.DropNow(full: boolean?)
+	p, pv = 0, 0
+	if full then z, zv = 0, 0 end
+	boltAt, flash = nil, 0
+	for _, sp in springs do sp.x, sp.v = 0, 0 end
+	if ui.gui then ui.gui.Enabled = false end
 end
 
 function controller.FOV(): number
@@ -100,7 +121,7 @@ function controller.FOV(): number
 end
 
 function controller.UsesScope(): boolean
-	return cfg ~= nil or p > 0
+	return cfg ~= nil or p > 0 or z > 0.002 -- (the zoom still easing out after a switch counts: no FOV snap)
 end
 
 function controller.Progress(): number -- 0..1 along the raise-to-eye sequence (the spectate relay sends it)
@@ -141,7 +162,6 @@ end
 -- Overlay: a black eyepiece with a round lens, a duplex reticle with mil dots and a lit centre dot,
 -- a faint lens tint and glare. The black around the lens is one circle with a huge stroke.
 -------------------------------------------------------------------------------
-local ui = {}
 local function new(class: string, props, children)
 	local inst = Instance.new(class)
 	for k, v in props or {} do
@@ -235,12 +255,14 @@ local function update(dt: number)
 	local Camera = Get("CameraController")
 	if not Camera then return end
 	local scope, tool = currentScope()
+	-- the scoped gun left your hands (switch / unequip / death): drop it this frame, RIVALS-clean
+	if scope == nil and cfg ~= nil and p > 0 then controller.DropNow() end
 	cfg = scope
 	if scope then lastCfg = scope end
 
 	-- do we want the scope up?
 	local reloading = (tool and tool:GetAttribute("Reloading") == true) or os.clock() < blockUntil
-	local want = scope ~= nil and Camera.IsAiming() and not reloading
+	local want = scope ~= nil and (Camera.IsAiming() or (studioTest and localPlayer:GetAttribute("_TestAim") == true)) and not reloading
 	-- [SPEC] (2026-10-18, Edward: spectating 1:1) watching someone: their scope progress (CameraController's _SpecScope)
 	local spec = localPlayer:GetAttribute("_SpecScope")
 	if typeof(spec) == "number" then want = false; wasWanted = false end
@@ -248,14 +270,22 @@ local function update(dt: number)
 	if not want and wasWanted and p > 0.5 then click(0.9, 0.18) end
 	wasWanted = want
 
-	-- move along the sequence (put away fast if the gun itself is gone)
+	-- the two springs (critically damped: no overshoot); a scope's AimSpeed overrides the sniper's 0.55
 	local s = scope or lastCfg
 	if typeof(spec) == "number" then
-		p = math.clamp(spec, 0, 1)
-	elseif want then
-		p = math.min(1, p + dt / s.InTime)
+		p, z, pv, zv = math.clamp(spec, 0, 1), math.clamp(spec, 0, 1), 0, 0
 	else
-		p = math.max(0, p - dt / (scope and s.OutTime or 0.12))
+		local aimSpeed = want and (s.AimSpeed or AIM_SPEED) or 1
+		local target = want and 1 or 0
+		local function step(x, v, w)
+			v += (-w * w * (x - target) - 2 * w * v) * dt
+			x += v * dt
+			if not want and x < 0.002 then x, v = 0, 0 end
+			if want and x > 0.998 then x, v = 1, 0 end
+			return x, v
+		end
+		p, pv = step(p, pv, RAISE_W * aimSpeed)
+		z, zv = step(z, zv, ZOOM_W * aimSpeed)
 	end
 
 	-- shot springs and the bolt
@@ -301,7 +331,7 @@ local function update(dt: number)
 	ui.lens.Size = UDim2.fromOffset(d, d)
 	ui.lens.Position = UDim2.new(0.5, lensOffset.X + shake.X, 0.5, lensOffset.Y + shake.Y)
 	ui.mask.Transparency = 1 - math.min(1, e * 1.4)
-	ui.dark.BackgroundTransparency = 1 - math.sin(math.min(o, 0.85) / 0.85 * math.pi) * 0.92
+	ui.dark.BackgroundTransparency = 1 -- (2026-10-21) no black blink at the eye: it read as a cut (RIVALS has none)
 	ui.glass.GroupTransparency = 1 - clamp01((o - 0.55) / 0.45)
 	ui.rim.Transparency = 1 - clamp01((o - 0.5) / 0.5) * 0.8
 	for _, r in ui.rings do r.stroke.Transparency = 1 - (1 - r.base) * e end
@@ -327,7 +357,8 @@ function controller.Start()
 	layout()
 	workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(layout)
 	__TG.CharacterAdded:Connect(function()
-		p, blockUntil, boltAt, flash = 0, 0, nil, 0
+		blockUntil = 0
+		controller.DropNow(true)
 	end)
 	RunService:BindToRenderStep("ScopeController", Enum.RenderPriority.Camera.Value + 5, update)
 end
