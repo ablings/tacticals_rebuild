@@ -1183,13 +1183,13 @@ local function showFinish()
 	subT.Position = UDim2.fromScale(0.07, 0.37)
 	subT.Size = UDim2.fromScale(0.86, 0.05)
 	subT.Text = "YOU LEARNED"
-	-- (round 8, graders: LEAN and DASH were taught too) every move from the run, in order
-	local skills = { { "LEAN", "Q" }, { "COVER", "Q" }, { "DASH", "E" }, { "SLIDE", "C" }, { "JUMP", "SPACE" }, { "SHOOT", "LMB" } }
+	-- (round 8, graders: DASH was taught too) one badge per key you learned, in order; lean + cover share Q, so one COVER
+	local skills = { { "COVER", "Q" }, { "DASH", "E" }, { "SLIDE", "C" }, { "JUMP", "SPACE" }, { "SHOOT", "LMB" } }
 	for i, s in skills do
 		local tile = Instance.new("Frame")
 		tile.Name = "Skill" .. s[1]
-		tile.Position = UDim2.fromScale(0.07 + (i - 1) * 0.146, 0.45)
-		tile.Size = UDim2.fromScale(0.136, 0.22)
+		tile.Position = UDim2.fromScale(0.07 + (i - 1) * 0.174, 0.45)
+		tile.Size = UDim2.fromScale(0.164, 0.22)
 		tile.BackgroundTransparency = 1
 		tile.BorderSizePixel = 0
 		local iconHolder = Instance.new("Frame"); iconHolder.BackgroundTransparency = 1
