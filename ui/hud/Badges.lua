@@ -41,9 +41,11 @@ end
 
 -- (2026-10-20, RIVALS) the device a player uses, after their name (server attribute Device, lead's DeviceBridge; cosmetic only).
 -- White silhouettes from ui/art/device (codex), empty until uploaded under the group.
-Badges.DEVICE = { PC = "", Controller = "", Phone = "", Tablet = "", Console = "" }
+Badges.DEVICE = { PC = "", Controller = "", Phone = "", Tablet = "" }
 function Badges.DeviceIcon(p)
-	local id = isPlayer(p) and Badges.DEVICE[p:GetAttribute("Device") or ""]
+	local dev = isPlayer(p) and p:GetAttribute("Device") or ""
+	if dev == "Console" then dev = "Controller" end -- (Edward: controller and console share the icon)
+	local id = Badges.DEVICE[dev]
 	return (id and id ~= "") and id or nil
 end
 
