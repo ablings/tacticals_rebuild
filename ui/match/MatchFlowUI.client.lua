@@ -705,8 +705,9 @@ local function setPhase(p)
 	loTimer.Parent.Visible = p ~= "Switch" -- (between rounds the match HUD's timer counts down)
 	-- Switch Weapons (RIVALS): the picker over the blurred match instead of the dark backdrop, no team boxes
 	local sw = p == "Switch"
-	-- RIVALS: the map vote / gun pick sit over the world, see-through (the loading screen stays solid)
-	back.BackgroundTransparency = sw and 0.55 or (p == "Loading" and 0 or 0.3)
+	-- RIVALS: the gun pick sits over the world, see-through; the loading screen AND the map vote stay solid (Edward 2026-10-21:
+	-- "rivals uses a background overlay ... to hide the player from seeing what map they are on" during map selection)
+	back.BackgroundTransparency = sw and 0.55 or ((p == "Loading" or p == "MapVote") and 0 or 0.3)
 	for _, bx in loBoxes do local f = type(bx) == "table" and (bx.frame or (bx[1] and bx[1].h and bx[1].h.Parent)) or bx; if typeof(f) == "Instance" then f.Visible = not sw end end
 	local Lighting = game:GetService("Lighting")
 	local blur = Lighting:FindFirstChild("SwitchWeaponsBlur") or new("BlurEffect", { Name = "SwitchWeaponsBlur", Size = 0, Parent = Lighting })

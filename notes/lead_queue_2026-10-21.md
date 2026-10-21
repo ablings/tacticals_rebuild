@@ -25,7 +25,7 @@
    hub Codes loses its D-pad glyph; Settings > Hotkeys shows Dash = D-pad up, Equip Melee pad blank (RB cycles).
 8. [ ] **Climb** (new mechanic): on vaultable objects that are very WIDE or very LONG (deep), Space doesn't vault across: a climb
    animation puts you on top. Also on taller objects, as long as your head is above the object's top.
-6. [ ] **Map-selection overlay**: like RIVALS (and like we had before), a background overlay during the map-vote / loading so the player
+6. [x] (MatchFlowUI: the map vote is back on the solid gradient backdrop like the loading screen; the gun pick stays see-through; screenshot-checked) **Map-selection overlay**: like RIVALS (and like we had before), a background overlay during the map-vote / loading so the player
    can't see which map they're on.
 9. [ ] **Mobile loading is very slow** (Edward). Investigate what loads at join (preloads, ContentProvider, image counts) on mobile.
 10. [ ] **Logos are pixelated** (Edward). Likely low-res image assets / scaled-up ImageLabels; UI session's area.
