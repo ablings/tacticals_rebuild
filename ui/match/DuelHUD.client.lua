@@ -1058,6 +1058,20 @@ local function refreshKillerCard(uid)
 	emb.Visible, emb.Image = kind == "rank", kind == "rank" and v or ""
 	kLevel.Visible = kind == "level" or kind == "wins"
 	kLevelL.Text = tostring((kind == "level" or kind == "wins") and v or 1)
+	-- (2026-10-20) level: our tiered shield (Kit.levelTier) instead of the blue circle
+	local okK, K = pcall(function() return require(ReplicatedStorage.UIKit.Kit) end)
+	local shield = kLevel:FindFirstChild("Shield") or new("ImageLabel", { Name = "Shield", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
+		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1.3, 1.3), ZIndex = 9, Parent = kLevel })
+	local useShield = kind == "level" and okK and K.levelTier ~= nil
+	shield.Visible = useShield
+	kLevel.BackgroundTransparency = useShield and 1 or 0
+	local ks = kLevel:FindFirstChildOfClass("UIStroke"); if ks then ks.Enabled = not useShield end
+	local ls = kLevelL:FindFirstChildOfClass("UIStroke")
+	if useShield then
+		local img, edge = K.levelTier(v)
+		shield.Image = img
+		if ls then ls.Color, ls.Transparency = edge, 0 end
+	elseif ls then ls.Color = BLACK end
 	local m = targetModel(uid)
 	local hum = m and m:FindFirstChildOfClass("Humanoid")
 	local frac = hum and hum.MaxHealth > 0 and math.clamp(hum.Health / hum.MaxHealth, 0, 1) or 0

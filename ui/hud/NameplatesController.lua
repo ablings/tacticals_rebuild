@@ -76,6 +76,7 @@ local function build(p, character)
 	bi.ScaleType = Enum.ScaleType.Fit
 	bi.Visible = false
 	bi.Parent = badge
+	bt.ZIndex = bi.ZIndex + 1 -- the number sits over the level shield / emblem
 	local name = Instance.new("TextLabel")
 	name.LayoutOrder = 2
 	name.BackgroundTransparency = 1
@@ -181,10 +182,23 @@ function Nameplates.Start()
 						e.badgeImage.Visible, e.badgeImage.Image = true, r.image
 						e.badgeText.Text = ""
 						e.badge.BackgroundTransparency = 1
+					elseif mode ~= "Wins" then
+						-- (2026-10-20) our tiered level shield (Kit.levelTier) with the number over it in the tier's edge colour
+						local K = require(game:GetService("ReplicatedStorage").UIKit.Kit)
+						local lv = tonumber(p:GetAttribute("Level")) or 1
+						local img, edge = K.levelTier(lv)
+						e.badgeImage.Visible, e.badgeImage.Image = true, img
+						e.badge.BackgroundTransparency = 1
+						e.badgeText.Text = tostring(lv)
+						local st = e.badgeText:FindFirstChildOfClass("UIStroke") or Instance.new("UIStroke")
+						st.Color, st.Thickness, st.Transparency = edge, 2, 0
+						st.Parent = e.badgeText
 					else
 						e.badgeImage.Visible = false
 						e.badge.BackgroundTransparency = 0.25
-						e.badgeText.Text = tostring(p:GetAttribute(mode == "Wins" and "Wins" or "Level") or 0)
+						e.badgeText.Text = tostring(p:GetAttribute("Wins") or 0)
+						local st = e.badgeText:FindFirstChildOfClass("UIStroke")
+						if st then st.Transparency = 1 end
 					end
 				end
 				e.vip.Visible = p:GetAttribute("VIP") == true

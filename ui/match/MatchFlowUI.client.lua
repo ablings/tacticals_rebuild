@@ -202,8 +202,11 @@ local function fillTeams(boxes)
 				end
 				local icon = s.lv:FindFirstChild("Icon") or new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
 					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1.5, 1.5), ZIndex = 4, Parent = s.lv })
-				local isImg = kind == "streak" or kind == "rank"
-				if isImg then
+				local isImg = kind == "streak" or kind == "rank" or (kind == "level" and pl ~= nil and not ready)
+				if kind == "level" and isImg then -- (2026-10-20) our tiered level shield
+					local K = require(ReplicatedStorage.UIKit.Kit)
+					if K.levelTier then icon.Image, icon.ImageColor3 = K.levelTier(v), Color3.new(1, 1, 1) else isImg = false end
+				elseif isImg then
 					local K = require(ReplicatedStorage.UIKit.Kit)
 					local img, tint = K.ICONS.streak, Color3.fromRGB(255, 140, 40)
 					if K.streakImage then img, tint = K.streakImage() end

@@ -910,7 +910,21 @@ Kit.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134680
 -- the win-streak badge: an orange flame with the streak number over it (RIVALS, next to names). Scale inside `parent`.
 -- (2026-10-20, Edward: the old flame "looks flat and bland in comp to rivals") a full-colour codex flame (ui/art/streak/streak_v2):
 -- shown in its own colours (no tint). Empty until it's uploaded under the group: the old tinted silhouette meanwhile.
-Kit.ICONS.streakColor = ""
+Kit.ICONS.streakColor = "rbxassetid://99079058513557" -- tac_streak_color (Gunsy Funsy upload 2026-10-20)
+-- (2026-10-20, Edward: "look at their levels lets get unique") our level badge: a tactical hex shield in five tiers (codex,
+-- ui/art/level). Kit.levelTier(level) -> image, the number's edge colour
+Kit.LEVEL_TIERS = {
+	{ min = 200, img = "rbxassetid://114661007103309", edge = Color3.fromRGB(148, 98, 16) },  -- gold
+	{ min = 100, img = "rbxassetid://85417993163392", edge = Color3.fromRGB(21, 68, 148) },   -- blue
+	{ min = 50, img = "rbxassetid://140385134180578", edge = Color3.fromRGB(58, 74, 38) },    -- olive
+	{ min = 25, img = "rbxassetid://71445899871171", edge = Color3.fromRGB(122, 94, 52) },    -- tan
+	{ min = 0, img = "rbxassetid://138983138877521", edge = Color3.fromRGB(74, 85, 99) },     -- steel
+}
+function Kit.levelTier(level)
+	level = tonumber(level) or 1
+	for _, t in Kit.LEVEL_TIERS do if level >= t.min then return t.img, t.edge end end
+	return Kit.LEVEL_TIERS[#Kit.LEVEL_TIERS].img, Kit.LEVEL_TIERS[#Kit.LEVEL_TIERS].edge
+end
 function Kit.streakImage()
 	local full = Kit.ICONS.streakColor ~= nil and Kit.ICONS.streakColor ~= ""
 	return full and Kit.ICONS.streakColor or Kit.ICONS.streak, full and Color3.new(1, 1, 1) or Color3.fromRGB(255, 140, 40)
