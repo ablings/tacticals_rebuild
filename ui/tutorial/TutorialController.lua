@@ -97,14 +97,17 @@ local UI_FONT = "rbxasset://fonts/families/BuilderSans.json"
 local F_BODY = Font.new(UI_FONT, Enum.FontWeight.Bold)
 local F_BOLD = Font.new(UI_FONT, Enum.FontWeight.Bold)
 local F_HEAVY = Font.new(UI_FONT, Enum.FontWeight.Heavy)
-local AMBER = Color3.fromRGB(255, 196, 92)     -- the one "do this" accent
-local GOOD = Color3.fromRGB(120, 220, 120)     -- done
-local TAN = Color3.fromRGB(214, 190, 140)      -- our team tan (the callsign)
+-- (round 2, graders) one accent system: amber = do this, olive = done (never mint), red = the enemy only
+local AMBER = Color3.fromRGB(232, 174, 69)     -- the one "do this" accent
+local GOOD = Color3.fromRGB(127, 166, 80)      -- done: our olive
+local TAN = Color3.fromRGB(214, 190, 140)      -- our team tan (the callsign text)
+local DARK_GREEN = Color3.fromRGB(47, 58, 36)  -- the callsign tag plate
 local PLATE = Color3.fromRGB(14, 16, 13)       -- the HUD's dark plate
 local WHITE = Color3.new(1, 1, 1)
+local KEY_WHITE = Color3.fromRGB(240, 240, 236) -- the hotbar's key badge face
 local BLUE = AMBER                              -- (old name, kept for the few references below)
 local ALERT_RED = Color3.fromRGB(255, 64, 70)
-local PANEL_POS = UDim2.fromScale(0.5, 0.735)  -- the subtitle: lower third, clear of the hotbar / health / touch buttons
+local PANEL_POS = UDim2.fromScale(0.5, 0.8)    -- the subtitle: below the character's body, clear of the hotbar / health / touch buttons
 local gui, panel, lineLabel, objectiveLabel
 local panelScale, portraitScale, panelStroke
 local headline, headScale, headStroke, flash
@@ -152,27 +155,73 @@ local function canvas(parentGui)
 	return c
 end
 
--- a keycap: a light key face with the glyph, a darker base under it (reads as a key you can press)
+-- (round 2) ONE keycap component everywhere (strip, world markers, finish tiles), in the hotbar's key-badge look: a white
+-- face, a dark glyph, the badge's corner radius and a soft dark drop shadow (it reads on dark walls too). Square for one
+-- letter, wider for SHIFT / SPACE / touch button names; AIM / FIRE on a mouse draw a mouse with that half lit.
 local function keycap(parent, name)
 	local cap = Instance.new("Frame")
 	cap.Name = name
-	cap.BackgroundColor3 = Color3.fromRGB(70, 66, 56)
+	cap.BackgroundColor3 = Color3.new(0, 0, 0)
+	cap.BackgroundTransparency = 0.45 -- the drop shadow
 	cap.BorderSizePixel = 0
-	corner(cap, 0.18)
+	corner(cap, 0.22)
+	local ar = Instance.new("UIAspectRatioConstraint"); ar.Name = "Aspect"; ar.AspectRatio = 1; ar.Parent = cap
 	local face = Instance.new("Frame")
 	face.Name = "Face"
-	face.BackgroundColor3 = Color3.fromRGB(246, 240, 226)
+	face.BackgroundColor3 = KEY_WHITE
 	face.BorderSizePixel = 0
-	face.Size = UDim2.fromScale(1, 0.86)
-	corner(face, 0.18)
+	face.Size = UDim2.fromScale(1, 0.9)
+	corner(face, 0.22)
 	face.Parent = cap
 	local glyph = text(face, "Glyph", F_HEAVY, PLATE)
 	glyph.AnchorPoint = Vector2.new(0.5, 0.5)
 	glyph.Position = UDim2.fromScale(0.5, 0.5)
-	glyph.Size = UDim2.fromScale(0.84, 0.62)
+	glyph.Size = UDim2.fromScale(0.78, 0.6)
+	-- the mouse (hidden unless the glyph is RMB / LMB)
+	local mouse = Instance.new("Frame")
+	mouse.Name = "Mouse"
+	mouse.AnchorPoint = Vector2.new(0.5, 0.5)
+	mouse.Position = UDim2.fromScale(0.5, 0.5)
+	mouse.Size = UDim2.fromScale(0.46, 0.7)
+	mouse.BackgroundColor3 = KEY_WHITE
+	mouse.BorderSizePixel = 0
+	mouse.Visible = false
+	corner(mouse, 0.45)
+	local ms = stroke(mouse, PLATE, 2, 0); ms.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	for _, side in { "L", "R" } do
+		local half = Instance.new("Frame")
+		half.Name = side
+		half.BackgroundColor3 = AMBER
+		half.BorderSizePixel = 0
+		half.Position = UDim2.fromScale(side == "L" and 0 or 0.5, 0)
+		half.Size = UDim2.fromScale(0.5, 0.42)
+		half.Parent = mouse
+	end
+	local split = Instance.new("Frame"); split.BackgroundColor3 = PLATE; split.BorderSizePixel = 0
+	split.AnchorPoint = Vector2.new(0.5, 0); split.Position = UDim2.fromScale(0.5, 0); split.Size = UDim2.fromScale(0.06, 0.42); split.Parent = mouse
+	local line = Instance.new("Frame"); line.BackgroundColor3 = PLATE; line.BorderSizePixel = 0
+	line.Position = UDim2.fromScale(0, 0.42); line.Size = UDim2.fromScale(1, 0.05); line.Parent = mouse
+	mouse.Parent = face
 	local sc = Instance.new("UIScale"); sc.Name = "Press"; sc.Parent = cap
 	cap.Parent = parent
 	return cap, glyph, sc, face
+end
+-- put a glyph on a keycap: the shape follows (square / wide / mouse)
+local function setGlyph(cap: Frame, glyph: string?)
+	local face = cap:FindFirstChild("Face")
+	local t, mouse = face and face:FindFirstChild("Glyph"), face and face:FindFirstChild("Mouse")
+	if not (t and mouse) then return end
+	local isMouse = glyph == "RMB" or glyph == "LMB"
+	mouse.Visible = isMouse
+	t.Visible = not isMouse
+	if isMouse then
+		mouse.L.Visible = glyph == "LMB"
+		mouse.R.Visible = glyph == "RMB"
+	end
+	t.Text = isMouse and "" or (glyph or "")
+	local wide = not isMouse and glyph and #glyph > 2
+	cap.Aspect.AspectRatio = wide and math.clamp(#glyph * 0.38, 1.4, 2.6) or 1
+	t.Size = UDim2.fromScale(wide and 0.84 or 0.78, wide and 0.5 or 0.6)
 end
 
 local function buildUI()
@@ -197,99 +246,117 @@ local function buildUI()
 	panel.Visible = false
 	panel.Parent = cv
 	panelScale = Instance.new("UIScale"); panelScale.Parent = panel
-	local shade = Instance.new("Frame") -- a soft dark band behind the words (fades out at both ends)
+	local shade = Instance.new("Frame") -- a dark band behind the words (fades out at both ends; sits below the character's body)
 	shade.Name = "Shade"
+	shade.AnchorPoint = Vector2.new(0.5, 0)
+	shade.Position = UDim2.fromScale(0.5, 0)
 	shade.BackgroundColor3 = PLATE
-	shade.BackgroundTransparency = 0.35
+	shade.BackgroundTransparency = 0.3
 	shade.BorderSizePixel = 0
-	shade.Size = UDim2.fromScale(1, 1)
+	shade.Size = UDim2.fromScale(0.86, 1)
 	local sg = Instance.new("UIGradient")
-	sg.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.12, 0),
-		NumberSequenceKeypoint.new(0.88, 0), NumberSequenceKeypoint.new(1, 1) })
+	sg.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.1, 0),
+		NumberSequenceKeypoint.new(0.9, 0), NumberSequenceKeypoint.new(1, 1) })
 	sg.Parent = shade
 	shade.Parent = panel
 	panelStroke = stroke(shade, WHITE, 0, 1) -- (no edge; kept for the alert code)
-	local call = text(panel, "Callsign", F_HEAVY, TAN, Enum.TextXAlignment.Right)
-	call.Position = UDim2.fromScale(0.04, 0.22)
-	call.Size = UDim2.fromScale(0.17, 0.56)
+	-- the callsign: a solid dark-green radio tag with tan caps (no decorative dot)
+	local tag = Instance.new("Frame")
+	tag.Name = "Callsign"
+	tag.Position = UDim2.fromScale(0.08, 0.16)
+	tag.Size = UDim2.fromScale(0.17, 0.68)
+	tag.BackgroundColor3 = DARK_GREEN
+	tag.BorderSizePixel = 0
+	corner(tag, 0.22)
+	tag.Parent = panel
+	local call = text(tag, "Text", F_HEAVY, TAN)
+	call.Position = UDim2.fromScale(0.08, 0.14)
+	call.Size = UDim2.fromScale(0.84, 0.72)
 	call.Text = string.upper((Config.Instructor and Config.Instructor.Callsign) or "INSTRUCTOR")
-	local dot = Instance.new("Frame") -- the "on air" dot
-	dot.Name = "OnAir"
-	dot.AnchorPoint = Vector2.new(0.5, 0.5)
-	dot.Position = UDim2.fromScale(0.235, 0.5)
-	dot.Size = UDim2.fromScale(0.012, 0.22)
-	dot.BackgroundColor3 = TAN
-	dot.BorderSizePixel = 0
-	corner(dot, 0.5)
-	local dar = Instance.new("UIAspectRatioConstraint"); dar.AspectRatio = 1; dar.Parent = dot
-	dot.Parent = panel
 	lineLabel = text(panel, "Line", F_BODY, WHITE, Enum.TextXAlignment.Left)
-	lineLabel.Position = UDim2.fromScale(0.26, 0.18)
-	lineLabel.Size = UDim2.fromScale(0.72, 0.64)
+	lineLabel.Position = UDim2.fromScale(0.28, 0.12)
+	lineLabel.Size = UDim2.fromScale(0.64, 0.76)
 	lineLabel.RichText = true
 	stroke(lineLabel, PLATE, 1.5, 0.35)
 	portraitScale = Instance.new("UIScale") -- (no portrait: kept so old tweens have a target)
 	objectiveLabel = text(panel, "ObjectiveOld", F_HEAVY, AMBER) -- (unused: the strip below carries the objective)
 	objectiveLabel.Visible = false
 
-	-- // Objective strip (top centre, under the timer / score area)
+	-- // Objective strip (top centre, under the timer / score area). Round 2: bigger (9 % of the screen height), one or two
+	-- keycaps, the words, segment ticks; no outline (amber lives only in the left bar), no repeated "PRESS X" line.
 	local root = Instance.new("CanvasGroup")
 	root.Name = "Objective"
 	root.AnchorPoint = Vector2.new(0.5, 0)
-	root.Position = UDim2.fromScale(0.5, 0.11)
-	root.Size = UDim2.fromScale(0.34, 0.082)
+	root.Position = UDim2.fromScale(0.5, 0.1)
+	root.Size = UDim2.fromScale(0.4, 0.09)
 	root.BackgroundColor3 = PLATE
-	root.BackgroundTransparency = 0.18
+	root.BackgroundTransparency = 0.15
 	root.BorderSizePixel = 0
 	root.GroupTransparency = 1
 	root.Visible = false
-	corner(root, 0.16)
-	local edge = stroke(root, AMBER, 1.5, 0.35)
+	corner(root, 0.14)
+	local edge = stroke(root, WHITE, 1, 1) -- (kept for the done flash; invisible normally)
 	edge.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	root.Parent = cv
-	local accent = Instance.new("Frame") -- a slim amber bar down the left edge: "this is what to do"
+	local accent = Instance.new("Frame") -- the amber bar down the left edge: "this is what to do"
 	accent.Name = "Accent"
 	accent.BackgroundColor3 = AMBER
 	accent.BorderSizePixel = 0
 	accent.Size = UDim2.fromScale(0.012, 1)
 	accent.Parent = root
-	local capHolder = Instance.new("Frame")
-	capHolder.Name = "CapHolder"
-	capHolder.BackgroundTransparency = 1
-	capHolder.Position = UDim2.fromScale(0.045, 0.14)
-	capHolder.Size = UDim2.fromScale(0.2, 0.72)
-	capHolder.Parent = root
-	local cap, capText, capScale, capFace = keycap(capHolder, "Key")
-	cap.AnchorPoint = Vector2.new(0.5, 0.5)
-	cap.Position = UDim2.fromScale(0.5, 0.5)
-	cap.Size = UDim2.fromScale(1, 1)
-	local check = text(capFace, "Check", F_HEAVY, WHITE) -- the ✓ that replaces the glyph when it's done
-	check.AnchorPoint = Vector2.new(0.5, 0.5)
-	check.Position = UDim2.fromScale(0.5, 0.5)
-	check.Size = UDim2.fromScale(0.7, 0.7)
-	check.Text = "✓"
-	check.Visible = false
+	-- the keycaps sit in a row that sizes to them (a UIListLayout; each cap keeps its own aspect)
+	local caps = Instance.new("Frame")
+	caps.Name = "Caps"
+	caps.BackgroundTransparency = 1
+	caps.Position = UDim2.fromScale(0.04, 0.16)
+	caps.Size = UDim2.fromScale(0.3, 0.68)
+	caps.Parent = root
+	local cl = Instance.new("UIListLayout")
+	cl.FillDirection = Enum.FillDirection.Horizontal
+	cl.VerticalAlignment = Enum.VerticalAlignment.Center
+	cl.SortOrder = Enum.SortOrder.LayoutOrder
+	cl.Padding = UDim.new(0.03, 0)
+	cl.Parent = caps
+	local function slot(order)
+		local c, g, s, f = keycap(caps, "Key" .. order)
+		c.Size = UDim2.fromScale(1, 1)
+		c.LayoutOrder = order * 2
+		local chk = text(f, "Check", F_HEAVY, WHITE)
+		chk.AnchorPoint = Vector2.new(0.5, 0.5)
+		chk.Position = UDim2.fromScale(0.5, 0.5)
+		chk.Size = UDim2.fromScale(0.7, 0.7)
+		chk.Text = "✓"
+		chk.Visible = false
+		return { cap = c, glyph = g, scale = s, face = f, check = chk }
+	end
+	local k1, k2 = slot(1), slot(2)
+	local plus = text(caps, "Plus", F_HEAVY, WHITE)
+	plus.LayoutOrder = 3
+	plus.Size = UDim2.fromScale(0.12, 0.6)
+	plus.Text = "+"
 	local label = text(root, "Label", F_HEAVY, WHITE, Enum.TextXAlignment.Left)
-	label.Position = UDim2.fromScale(0.29, 0.14)
-	label.Size = UDim2.fromScale(0.5, 0.44)
-	local sub = text(root, "Sub", F_BOLD, Color3.fromRGB(200, 196, 182), Enum.TextXAlignment.Left)
-	sub.Position = UDim2.fromScale(0.29, 0.6)
-	sub.Size = UDim2.fromScale(0.5, 0.26)
+	label.AnchorPoint = Vector2.new(0, 0.5)
+	label.Position = UDim2.fromScale(0.3, 0.5)
+	label.Size = UDim2.fromScale(0.5, 0.5)
+	local sub = text(root, "Sub", F_BOLD, Color3.fromRGB(214, 210, 196), Enum.TextXAlignment.Left)
+	sub.Position = UDim2.fromScale(0.3, 0.64)
+	sub.Size = UDim2.fromScale(0.5, 0.24)
 	local pipRow = Instance.new("Frame")
 	pipRow.Name = "Pips"
 	pipRow.BackgroundTransparency = 1
 	pipRow.AnchorPoint = Vector2.new(1, 0.5)
-	pipRow.Position = UDim2.fromScale(0.96, 0.5)
-	pipRow.Size = UDim2.fromScale(0.17, 0.16)
+	pipRow.Position = UDim2.fromScale(0.965, 0.5)
+	pipRow.Size = UDim2.fromScale(0.14, 0.34)
 	pipRow.Parent = root
 	local pl = Instance.new("UIListLayout")
 	pl.FillDirection = Enum.FillDirection.Horizontal
 	pl.HorizontalAlignment = Enum.HorizontalAlignment.Right
 	pl.VerticalAlignment = Enum.VerticalAlignment.Center
-	pl.Padding = UDim.new(0.04, 0)
+	pl.Padding = UDim.new(0.035, 0)
 	pl.Parent = pipRow
-	strip = { root = root, edge = edge, accent = accent, cap = cap, capFace = capFace, capText = capText, capScale = capScale,
-		check = check, label = label, sub = sub, pipRow = pipRow, pips = {} }
+	strip = { root = root, edge = edge, accent = accent, keys = { k1, k2 }, plus = plus, capsRow = caps,
+		cap = k1.cap, capFace = k1.face, capText = k1.glyph, capScale = k1.scale, check = k1.check,
+		label = label, sub = sub, pipRow = pipRow, pips = {} }
 
 	-- danger: the slam headline and a red flash over the whole screen (unused by the starter tutorial)
 	flash = Instance.new("Frame")
@@ -345,30 +412,34 @@ end
 -- for the other tutorials). obj = the strip's 2-4 words; kb / pad / touch = the keycap glyph per device; hint = the small
 -- line under the words; sub = the Instructor's radio line (max ~8 words). Steps not listed fall back to the long line.
 local STEP = {
-	Welcome = { sub = "That's your target, outlined in red. Basics first." },
-	EscapeCover = { obj = "LEAVE COVER", kb = "Q", pad = "LB", touch = "COVER", hint = { kb = "PRESS Q", pad = "PRESS LB", touch = "TAP TAKE COVER" },
+	-- (round 2, graders) kid words, and keys as LISTS: two keycaps where a step needs two inputs. hint only for combos.
+	Welcome = { obj = "SPOT THE TARGET", kb = { "!" }, pad = { "!" }, touch = { "!" }, passive = true,
+		sub = "That's your target. Red outline." },
+	EscapeCover = { obj = "STEP OUT", kb = { "Q" }, pad = { "LB" }, touch = { "COVER" },
 		sub = "Step out. Let him see you." },
-	TakeCover = { obj = "TAKE COVER", kb = "Q", pad = "LB", touch = "COVER", hint = { kb = "PRESS Q AGAIN", pad = "PRESS LB AGAIN", touch = "TAP TAKE COVER" },
+	TakeCover = { obj = "GET BEHIND IT", kb = { "Q" }, pad = { "LB" }, touch = { "COVER" },
 		sub = "Back behind the pillar. Now!" },
-	Rush = { obj = "RUN TO THE CRATE", kb = "E", pad = "LB", touch = "DASH", hint = { kb = "LOOK AT IT + PRESS E", pad = "LOOK AT IT + DOUBLE TAP LB", touch = "LOOK AT IT + TAP DASH" },
+	Rush = { obj = "RUN TO THE CRATE", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, hint = { kb = "LOOK AT IT FIRST", pad = "LOOK + DOUBLE TAP", touch = "LOOK AT IT FIRST" },
 		sub = "Get to that crate." },
-	Slide = { obj = "SLIDE", kb = "C", pad = "B", touch = "CROUCH", hint = { kb = "HOLD SHIFT + PRESS C", pad = "RUN + PRESS B", touch = "RUN + TAP CROUCH" },
+	Slide = { obj = "RUN + SLIDE", kb = { "SHIFT", "C" }, pad = { "L3", "B" }, touch = { "RUN", "CROUCH" }, hint = { kb = "HOLD SHIFT, THEN C", pad = "SPRINT, THEN B", touch = "RUN, THEN TAP CROUCH" },
 		sub = "Move like you mean it." },
-	ToWall = { obj = "RUN TO THE WALL", kb = "E", pad = "LB", touch = "DASH", hint = { kb = "LOOK AT IT + PRESS E", pad = "LOOK AT IT + DOUBLE TAP LB", touch = "LOOK AT IT + TAP DASH" },
+	ToWall = { obj = "RUN TO THE WALL", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, hint = { kb = "LOOK AT IT FIRST", pad = "LOOK + DOUBLE TAP", touch = "LOOK AT IT FIRST" },
 		sub = "The wall's next. Go!" },
-	Vault = { obj = "VAULT THE WALL", kb = "SPACE", pad = "A", touch = "JUMP", hint = { kb = "PRESS SPACE", pad = "PRESS A", touch = "TAP JUMP" },
+	Vault = { obj = "JUMP OVER", kb = { "SPACE" }, pad = { "A" }, touch = { "JUMP" },
 		sub = "Over it." },
-	AimShoot = { obj = "TAKE HIM DOWN", kb = "RMB", pad = "LT", touch = "AIM", hint = { kb = "RIGHT CLICK AIM · LEFT CLICK FIRE", pad = "LT AIM · RT FIRE", touch = "HOLD AIM · TAP FIRE" },
+	AimShoot = { obj = "AIM + SHOOT", kb = { "RMB", "LMB" }, pad = { "LT", "RT" }, touch = { "AIM", "FIRE" }, hint = { kb = "HOLD RIGHT, CLICK LEFT", pad = "HOLD LT, PULL RT", touch = "HOLD AIM, TAP FIRE" },
 		sub = "He's exposed. Take the shot." },
-	Win = { sub = "Target down. Nice work." },
+	Win = { sub = "Nice shot!" },
 	Ready = { sub = "You're cleared for the real thing." },
 }
 local STARTER_ORDER = { "EscapeCover", "TakeCover", "Rush", "Slide", "ToWall", "Vault", "AimShoot" }
--- which inputs press each glyph (the keycap squashes on them)
+-- which inputs press each glyph (its keycap squashes on them)
 local GLYPH_INPUTS = {
 	Q = { Enum.KeyCode.Q }, E = { Enum.KeyCode.E }, C = { Enum.KeyCode.C, Enum.KeyCode.LeftControl }, SPACE = { Enum.KeyCode.Space },
-	RMB = { Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton1 },
-	LB = { Enum.KeyCode.ButtonL1 }, B = { Enum.KeyCode.ButtonB }, A = { Enum.KeyCode.ButtonA }, LT = { Enum.KeyCode.ButtonL2, Enum.KeyCode.ButtonR2 },
+	SHIFT = { Enum.KeyCode.LeftShift, Enum.KeyCode.RightShift },
+	RMB = { Enum.UserInputType.MouseButton2 }, LMB = { Enum.UserInputType.MouseButton1 },
+	LB = { Enum.KeyCode.ButtonL1 }, B = { Enum.KeyCode.ButtonB }, A = { Enum.KeyCode.ButtonA }, L3 = { Enum.KeyCode.ButtonL3 },
+	LT = { Enum.KeyCode.ButtonL2 }, RT = { Enum.KeyCode.ButtonR2 },
 }
 local function device(): string
 	local t = UserInputService:GetLastInputType()
@@ -410,18 +481,21 @@ local function killcam()
 	stamp.Name = "TargetDown"
 	stamp.AnchorPoint = Vector2.new(0.5, 0.5)
 	stamp.Position = UDim2.fromScale(0.5, 0.36)
-	stamp.Size = UDim2.fromScale(0.3, 0.075)
+	-- (round 2) bigger (9 % of the height), a tan bar like a kill-feed entry, an elimination cross, no outline
+	stamp.Size = UDim2.fromScale(0.36, 0.09)
 	stamp.BackgroundColor3 = PLATE
-	stamp.BackgroundTransparency = 0.1
+	stamp.BackgroundTransparency = 0.08
 	stamp.BorderSizePixel = 0
 	stamp.GroupTransparency = 1
 	corner(stamp, 0.14)
-	local se = stroke(stamp, AMBER, 2, 0); se.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	local bar = Instance.new("Frame"); bar.BackgroundColor3 = AMBER; bar.BorderSizePixel = 0; bar.Size = UDim2.fromScale(0.012, 1); bar.Parent = stamp
-	local st = text(stamp, "Text", F_HEAVY, WHITE)
-	st.AnchorPoint = Vector2.new(0.5, 0.5)
-	st.Position = UDim2.fromScale(0.5, 0.5)
-	st.Size = UDim2.fromScale(0.86, 0.6)
+	local bar = Instance.new("Frame"); bar.BackgroundColor3 = TAN; bar.BorderSizePixel = 0; bar.Size = UDim2.fromScale(0.014, 1); bar.Parent = stamp
+	local cross = text(stamp, "Elim", F_HEAVY, ALERT_RED)
+	cross.Position = UDim2.fromScale(0.06, 0.16)
+	cross.Size = UDim2.fromScale(0.12, 0.68)
+	cross.Text = "✕"
+	local st = text(stamp, "Text", F_HEAVY, WHITE, Enum.TextXAlignment.Left)
+	st.Position = UDim2.fromScale(0.2, 0.18)
+	st.Size = UDim2.fromScale(0.74, 0.64)
 	st.Text = "TARGET DOWN"
 	local scale = Instance.new("UIScale") scale.Scale = 1.35 scale.Parent = stamp
 	stamp.Parent = gui:FindFirstChild("Canvas") or gui
@@ -743,90 +817,143 @@ local function slam(text: string)
 	end)
 end
 
--- // Objective strip
+-- // Objective strip (round 2: one or two keycaps, segment ticks, olive done)
 local stripKey: string? = nil      -- the step it shows
-local stripGlyph: string? = nil    -- the keycap's glyph (for the press squash)
+local stripGlyph: string? = nil    -- the first keycap's glyph (the world marker shows it too)
+local stripGlyphs: { string } = {}
 local stripDoneFlag = false
-local KEY_FACE = Color3.fromRGB(246, 240, 226)
+local keyDone = {}                 -- [i] = that keycap was pressed (a two-key step ticks them one by one)
+local TODO = Color3.fromRGB(110, 110, 104)
+local STRIP_RATIO = (0.4 * 16 / 9) / 0.09 -- the strip's width / height (16:9 canvas)
 local function ensurePips()
 	if #strip.pips > 0 then return end
 	for i = 1, #STARTER_ORDER do
 		local p = Instance.new("Frame")
-		p.Name = "Pip" .. i
-		p.BackgroundColor3 = Color3.fromRGB(90, 88, 80)
+		p.Name = "Tick" .. i
+		p.BackgroundColor3 = TODO
 		p.BorderSizePixel = 0
-		p.Size = UDim2.fromScale(0.1, 1)
+		p.Size = UDim2.fromScale(0.09, 1)
 		p.LayoutOrder = i
-		corner(p, 0.5)
-		local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 1; ar.Parent = p
+		corner(p, 0.3)
+		local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 0.4; ar.Parent = p
 		p.Parent = strip.pipRow
 		strip.pips[i] = p
 	end
 end
+-- ticks: done = white, current = amber, to do = grey; all done = olive
 local function paintPips(current: number?, doneUpTo: number)
+	local all = doneUpTo >= #strip.pips
 	for i, p in strip.pips do
-		p.BackgroundColor3 = i <= doneUpTo and GOOD or (i == current and AMBER or Color3.fromRGB(90, 88, 80))
+		p.BackgroundColor3 = all and GOOD or (i <= doneUpTo and WHITE or (i == current and AMBER or TODO))
 	end
+end
+local function paintKey(k, done: boolean)
+	k.face.BackgroundColor3 = done and GOOD or KEY_WHITE
+	k.check.Visible = done
+	local mouse = k.face:FindFirstChild("Mouse")
+	if done then k.glyph.Visible = false; if mouse then mouse.Visible = false end
+	else setGlyph(k.cap, k.cap:GetAttribute("Glyph")) end
 end
 local function showStrip(key: string, entry)
 	ensurePips()
 	local dev = device()
 	stripKey, stripDoneFlag = key, false
-	stripGlyph = entry[dev] or entry.kb
-	strip.capText.Text = stripGlyph or ""
-	strip.capText.Visible = true
-	strip.check.Visible = false
-	strip.capFace.BackgroundColor3 = KEY_FACE
+	local list = entry[dev] or entry.kb or {}
+	if typeof(list) == "string" then list = { list } end
+	stripGlyphs = list
+	stripGlyph = list[1]
+	keyDone = {}
+	-- keycaps (one or two) and where the words start
+	local width = 0
+	for i, k in strip.keys do
+		local g = list[i]
+		k.cap.Visible = g ~= nil and g ~= ""
+		if k.cap.Visible then
+			k.cap:SetAttribute("Glyph", g)
+			setGlyph(k.cap, g)
+			paintKey(k, false)
+			width += 0.68 / STRIP_RATIO * k.cap.Aspect.AspectRatio
+		end
+	end
+	strip.plus.Visible = #list >= 2
+	if #list >= 2 then width += 0.12 * 0.3 + 0.03 * 0.3 * 2 end
+	local x = 0.04 + width + 0.03
+	local hint = entry.hint and (entry.hint[dev] or entry.hint.kb)
 	strip.label.Text = entry.obj
-	strip.sub.Text = (entry.hint and (entry.hint[dev] or entry.hint.kb)) or ""
+	strip.label.Position = UDim2.fromScale(x, hint and 0.38 or 0.5)
+	strip.label.Size = UDim2.fromScale(0.82 - x, hint and 0.42 or 0.5)
+	strip.sub.Text = hint or ""
+	strip.sub.Visible = hint ~= nil
+	strip.sub.Position = UDim2.fromScale(x, 0.62)
+	strip.sub.Size = UDim2.fromScale(0.82 - x, 0.22)
 	-- the marker on the target cover shows the same key (the server sends the highlight before the line)
-	local mk = highlightTag and highlightTag:FindFirstChild("Glyph", true)
-	if mk and stripGlyph and stripGlyph ~= "" then mk.Text = stripGlyph end
-	strip.edge.Color, strip.accent.BackgroundColor3 = AMBER, AMBER
+	if highlightTag then
+		local mk = highlightTag:FindFirstChild("Key")
+		if mk and stripGlyph and stripGlyph ~= "" then setGlyph(mk, stripGlyph) end
+	end
+	strip.accent.BackgroundColor3 = AMBER
 	local idx = table.find(STARTER_ORDER, key)
 	strip.pipRow.Visible = idx ~= nil
 	if idx then paintPips(idx, idx - 1) end
 	-- in: slide down + fade
 	strip.root.Visible = true
-	strip.root.Position = UDim2.fromScale(0.5, 0.085)
+	strip.root.Position = UDim2.fromScale(0.5, 0.075)
 	strip.root.GroupTransparency = 1
-	TweenService:Create(strip.root, TweenInfo.new(0.25, Enum.EasingStyle.Quint), { Position = UDim2.fromScale(0.5, 0.11), GroupTransparency = 0 }):Play()
+	TweenService:Create(strip.root, TweenInfo.new(0.25, Enum.EasingStyle.Quint), { Position = UDim2.fromScale(0.5, 0.1), GroupTransparency = 0 }):Play()
 end
 local function hideStrip()
 	if not strip or not strip.root.Visible then return end
 	local k = stripKey
-	TweenService:Create(strip.root, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = UDim2.fromScale(0.5, 0.085), GroupTransparency = 1 }):Play()
+	TweenService:Create(strip.root, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = UDim2.fromScale(0.5, 0.075), GroupTransparency = 1 }):Play()
 	task.delay(0.22, function() if stripKey == k then strip.root.Visible = false end end)
 end
--- done: the keycap goes green with a check, its pip fills, then the strip slides up (the next one drops in with the next step)
+-- done: every keycap goes olive with a check, the tick fills, then the strip slides up (the next one drops in with the next step)
 local function stripDone()
 	if not strip or not strip.root.Visible or stripDoneFlag then return end
 	stripDoneFlag = true
-	strip.capText.Visible = false
-	strip.check.Visible = true
-	strip.capFace.BackgroundColor3 = GOOD
-	strip.edge.Color, strip.accent.BackgroundColor3 = GOOD, GOOD
-	strip.capScale.Scale = 1.2
-	TweenService:Create(strip.capScale, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	for i, k in strip.keys do
+		if k.cap.Visible then
+			paintKey(k, true)
+			k.scale.Scale = 1.2
+			TweenService:Create(k.scale, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+		end
+	end
+	strip.accent.BackgroundColor3 = GOOD
 	local idx = stripKey and table.find(STARTER_ORDER, stripKey)
 	if idx then paintPips(nil, idx) end
 	local k = stripKey
-	task.delay(0.55, function() if stripKey == k and stripDoneFlag then hideStrip() end end)
+	task.delay(0.6, function() if stripKey == k and stripDoneFlag then hideStrip() end end)
 end
--- the keycap breathes until pressed; a press squashes it (the hotbar's kick spring: damper 0.75, speed 20)
-local press = { x = 0, v = 0 }
+-- the next keycap to press breathes; a press squashes it (the hotbar's kick spring) and, on a two-key step, ticks it
+local press = { { x = 0, v = 0 }, { x = 0, v = 0 } }
 RunService.RenderStepped:Connect(function(dt)
 	if not strip or not strip.root.Visible then return end
-	press.v += (-400 * press.x - 30 * press.v) * math.min(dt, 1 / 30)
-	press.x += press.v * math.min(dt, 1 / 30)
-	if stripDoneFlag then return end
-	local breathe = 1 + 0.035 * math.sin(os.clock() * 4)
-	strip.capScale.Scale = breathe * (1 - press.x)
+	dt = math.min(dt, 1 / 30)
+	local nextKey = 1
+	for i = 1, #stripGlyphs do if not keyDone[i] then nextKey = i break end end
+	for i, k in strip.keys do
+		local s = press[i]
+		s.v += (-400 * s.x - 30 * s.v) * dt
+		s.x += s.v * dt
+		if not stripDoneFlag and k.cap.Visible then
+			local breathe = (i == nextKey) and (1 + 0.04 * math.sin(os.clock() * 4)) or 1
+			k.scale.Scale = breathe * (1 - s.x)
+		end
+	end
 end)
 UserInputService.InputBegan:Connect(function(input)
-	if not strip or not strip.root.Visible or stripDoneFlag or not stripGlyph then return end
-	for _, want in GLYPH_INPUTS[stripGlyph] or {} do
-		if input.KeyCode == want or input.UserInputType == want then press.v += 6 return end
+	if not strip or not strip.root.Visible or stripDoneFlag then return end
+	for i, g in stripGlyphs do
+		for _, want in GLYPH_INPUTS[g] or {} do
+			if input.KeyCode == want or input.UserInputType == want then
+				press[i].v += 6
+				if #stripGlyphs > 1 and i < #stripGlyphs and not keyDone[i] then
+					keyDone[i] = true
+					paintKey(strip.keys[i], true) -- the first of two keys ticks on its own (e.g. aimed: now fire)
+				end
+				return
+			end
+		end
 	end
 end)
 
@@ -835,95 +962,111 @@ end)
 local function showFinish()
 	if finish and finish.Parent then return end
 	hideStrip()
+	typeToken += 1
+	panel.Visible = false -- (no subtitle bleeding through the results)
 	local cv = gui:FindFirstChild("Canvas") or gui
 	finish = Instance.new("CanvasGroup")
 	finish.Name = "TrainingComplete"
 	finish.Size = UDim2.fromScale(1, 1)
 	finish.BackgroundColor3 = PLATE
-	finish.BackgroundTransparency = 0.35
+	finish.BackgroundTransparency = 0.25
 	finish.BorderSizePixel = 0
 	finish.GroupTransparency = 1
 	finish.ZIndex = 40
 	finish.Parent = cv
-	local title = text(finish, "Title", F_HEAVY, WHITE)
-	title.AnchorPoint = Vector2.new(0.5, 0.5)
-	title.Position = UDim2.fromScale(0.5, 0.3)
-	title.Size = UDim2.fromScale(0.6, 0.085)
+	-- (round 2, graders) an off-centre results panel in our language: a dark plate down the left third with a tan edge,
+	-- the TACTICALS logo, icon tiles with olive bars, one big flat olive PLAY; no gradient, no hairline, no outlined cards
+	local side = Instance.new("Frame")
+	side.Name = "Panel"
+	side.Position = UDim2.fromScale(0.06, 0.16)
+	side.Size = UDim2.fromScale(0.4, 0.66)
+	side.BackgroundColor3 = PLATE
+	side.BackgroundTransparency = 0.05
+	side.BorderSizePixel = 0
+	corner(side, 0.04)
+	side.Parent = finish
+	local edge = Instance.new("Frame"); edge.BackgroundColor3 = TAN; edge.BorderSizePixel = 0; edge.Size = UDim2.fromScale(0.012, 1); edge.Parent = side
+	local logoOk, Logo = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit", 2):WaitForChild("Logo", 2)) end)
+	if logoOk and Logo and Logo.Build then
+		pcall(Logo.Build, side, { AnchorPoint = Vector2.new(0, 0), Position = UDim2.fromScale(0.07, 0.05), Size = UDim2.fromScale(0.5, 0.17), Glow = false, ZIndex = 41 })
+	end
+	local title = text(side, "Title", F_HEAVY, WHITE, Enum.TextXAlignment.Left)
+	title.Position = UDim2.fromScale(0.07, 0.25)
+	title.Size = UDim2.fromScale(0.86, 0.11)
 	title.Text = "TRAINING COMPLETE"
-	stroke(title, PLATE, 2, 0.2)
-	local tsc = Instance.new("UIScale"); tsc.Scale = 1.25; tsc.Parent = title
-	local bar = Instance.new("Frame")
-	bar.AnchorPoint = Vector2.new(0.5, 0.5)
-	bar.Position = UDim2.fromScale(0.5, 0.36)
-	bar.Size = UDim2.fromScale(0.0, 0.006)
-	bar.BackgroundColor3 = AMBER
-	bar.BorderSizePixel = 0
-	bar.Parent = finish
-	local skills = { { "COVER", "Q" }, { "SLIDE", "C" }, { "VAULT", "SPACE" }, { "SHOOT", "RMB" } }
-	local dev = device()
+	local subT = text(side, "Sub", F_BOLD, TAN, Enum.TextXAlignment.Left)
+	subT.Position = UDim2.fromScale(0.07, 0.37)
+	subT.Size = UDim2.fromScale(0.86, 0.05)
+	subT.Text = "YOU LEARNED"
+	local skills = { { "COVER", "Q" }, { "SLIDE", "C" }, { "JUMP", "SPACE" }, { "SHOOT", "LMB" } }
 	for i, s in skills do
 		local tile = Instance.new("Frame")
 		tile.Name = "Skill" .. s[1]
-		tile.AnchorPoint = Vector2.new(0.5, 0.5)
-		tile.Position = UDim2.fromScale(0.5 + (i - 2.5) * 0.105, 0.48)
-		tile.Size = UDim2.fromScale(0.09, 0.15)
-		tile.BackgroundColor3 = Color3.fromRGB(24, 27, 22)
+		tile.Position = UDim2.fromScale(0.07 + (i - 1) * 0.218, 0.45)
+		tile.Size = UDim2.fromScale(0.2, 0.22)
+		tile.BackgroundColor3 = Color3.fromRGB(28, 31, 26)
 		tile.BorderSizePixel = 0
-		corner(tile, 0.1)
-		local ts = stroke(tile, GOOD, 2, 0.1); ts.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		local tk = text(tile, "Check", F_HEAVY, GOOD)
-		tk.Position = UDim2.fromScale(0.25, 0.1)
-		tk.Size = UDim2.fromScale(0.5, 0.45)
-		tk.Text = "✓"
+		corner(tile, 0.08)
+		local ob = Instance.new("Frame"); ob.BackgroundColor3 = GOOD; ob.BorderSizePixel = 0
+		ob.AnchorPoint = Vector2.new(0, 1); ob.Position = UDim2.fromScale(0, 1); ob.Size = UDim2.fromScale(1, 0.06); ob.Parent = tile
+		local iconHolder = Instance.new("Frame"); iconHolder.BackgroundTransparency = 1
+		iconHolder.Position = UDim2.fromScale(0.2, 0.12); iconHolder.Size = UDim2.fromScale(0.6, 0.42); iconHolder.Parent = tile
+		local cap = keycap(iconHolder, "Key")
+		cap.AnchorPoint = Vector2.new(0.5, 0.5); cap.Position = UDim2.fromScale(0.5, 0.5); cap.Size = UDim2.fromScale(1, 1)
+		setGlyph(cap, s[2])
 		local tl = text(tile, "Name", F_HEAVY, WHITE)
-		tl.Position = UDim2.fromScale(0.08, 0.62)
-		tl.Size = UDim2.fromScale(0.84, 0.24)
+		tl.Position = UDim2.fromScale(0.06, 0.62)
+		tl.Size = UDim2.fromScale(0.88, 0.24)
 		tl.Text = s[1]
 		local sc = Instance.new("UIScale"); sc.Scale = 0; sc.Parent = tile
-		tile.Parent = finish
-		task.delay(0.25 + i * 0.12, function()
+		tile.Parent = side
+		task.delay(0.3 + i * 0.12, function()
 			TweenService:Create(sc, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-			if confirmSound then local c = confirmSound:Clone(); c.PlaybackSpeed = 1.1 + i * 0.1; c.Parent = gui; c:Play(); game:GetService("Debris"):AddItem(c, 1.5) end
+			if confirmSound then local c = confirmSound:Clone(); c.PlaybackSpeed = 1.05 + i * 0.1; c.Parent = gui; c:Play(); game:GetService("Debris"):AddItem(c, 1.5) end
 		end)
 	end
-	local _ = dev
-	-- the big PLAY button (field green, our primary)
+	-- the big PLAY (flat olive, the hotbar's radius); a darker fill drains across it as the countdown runs
 	local play = Instance.new("TextButton")
 	play.Name = "Play"
 	play.AutoButtonColor = false
 	play.Text = ""
-	play.AnchorPoint = Vector2.new(0.5, 0.5)
-	play.Position = UDim2.fromScale(0.5, 0.68)
-	play.Size = UDim2.fromScale(0.2, 0.085)
-	play.BackgroundColor3 = WHITE
+	play.Position = UDim2.fromScale(0.07, 0.74)
+	play.Size = UDim2.fromScale(0.86, 0.19)
+	play.BackgroundColor3 = Color3.fromRGB(86, 112, 50)
 	play.BorderSizePixel = 0
+	play.ClipsDescendants = true
 	play:AddTag("Nonapplicable")
-	corner(play, 0.18)
-	local pg = Instance.new("UIGradient"); pg.Rotation = 90
-	pg.Color = ColorSequence.new(Color3.fromHex("#8DBF5A"), Color3.fromHex("#4C7A2E")); pg.Parent = play
-	stroke(play, Color3.fromRGB(20, 34, 12), 2, 0.2).ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	corner(play, 0.14)
+	local fill = Instance.new("Frame")
+	fill.Name = "Fill"
+	fill.BackgroundColor3 = GOOD
+	fill.BorderSizePixel = 0
+	fill.Size = UDim2.fromScale(1, 1)
+	fill.Parent = play
 	local pl = text(play, "Label", F_HEAVY, WHITE)
-	pl.Position = UDim2.fromScale(0.06, 0.18)
-	pl.Size = UDim2.fromScale(0.88, 0.64)
-	stroke(pl, Color3.fromRGB(20, 34, 12), 1.5, 0.3)
+	pl.Position = UDim2.fromScale(0.06, 0.2)
+	pl.Size = UDim2.fromScale(0.88, 0.6)
+	pl.ZIndex = 2
+	stroke(pl, Color3.fromRGB(28, 40, 14), 1.5, 0.3)
 	local psc = Instance.new("UIScale"); psc.Parent = play
-	play.MouseEnter:Connect(function() TweenService:Create(psc, TweenInfo.new(0.12), { Scale = 1.06 }):Play() end)
+	play.MouseEnter:Connect(function() TweenService:Create(psc, TweenInfo.new(0.12), { Scale = 1.04 }):Play() end)
 	play.MouseLeave:Connect(function() TweenService:Create(psc, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
 	local pressed = false
 	play.Activated:Connect(function()
 		pressed = true
-		psc.Scale = 0.92
+		psc.Scale = 0.94
 		TweenService:Create(psc, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 		pl.Text = "LOADING..."
 	end)
-	play.Parent = finish
+	play.Parent = side
+	local ssc = Instance.new("UIScale"); ssc.Scale = 0.94; ssc.Parent = side
 	TweenService:Create(finish, TweenInfo.new(0.35, Enum.EasingStyle.Quad), { GroupTransparency = 0 }):Play()
-	TweenService:Create(tsc, TweenInfo.new(0.4, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	TweenService:Create(bar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Size = UDim2.fromScale(0.3, 0.006) }):Play()
+	TweenService:Create(ssc, TweenInfo.new(0.4, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	local t0, hold = os.clock(), Config.ReadyHold or 4
+	TweenService:Create(fill, TweenInfo.new(hold, Enum.EasingStyle.Linear), { Size = UDim2.fromScale(0, 1) }):Play()
 	while finish and finish.Parent and not pressed do
 		local left = math.max(0, math.ceil(hold - (os.clock() - t0)))
-		pl.Text = left > 0 and ("PLAY  ·  " .. left) or "LOADING..."
+		pl.Text = left > 0 and ("PLAY  (" .. left .. ")") or "LOADING..."
 		if left <= 0 then break end
 		task.wait(0.1)
 	end
@@ -1117,19 +1260,22 @@ local function setHighlight(part: BasePart)
 	box.FillTransparency, box.OutlineTransparency = 0.55, 0
 	box.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
 	box.Parent = workspace.CurrentCamera
-	TweenService:Create(box, TweenInfo.new(0.6, Enum.EasingStyle.Quad), { FillTransparency = 0.9 }):Play()
+	-- (round 2) one pulse of fill, then outline only: no Studio-selection tint left on the cover
+	TweenService:Create(box, TweenInfo.new(0.7, Enum.EasingStyle.Quad), { FillTransparency = 1, OutlineTransparency = 0.1 }):Play()
 	highlightBox = box
 	local tag = Instance.new("BillboardGui")
 	tag.Name = "TutorialTargetKey"
 	tag.Adornee = part
-	tag.Size = UDim2.fromScale(2.2, 3)
+	tag.Size = UDim2.fromScale(3, 4) -- studs (round 2: bigger, it was easy to miss on a far wall)
 	local lift = math.min(part.Size.Y / 2 + 1.8, 2.6) -- (tall cover: at eye height, not off the top of the screen)
 	tag.StudsOffsetWorldSpace = Vector3.new(0, lift, 0)
 	tag.AlwaysOnTop = true
 	tag.LightInfluence = 0
-	local cap, glyph = keycap(tag, "Key")
+	local cap = keycap(tag, "Key")
+	cap.AnchorPoint = Vector2.new(0.5, 0)
+	cap.Position = UDim2.fromScale(0.5, 0)
 	cap.Size = UDim2.fromScale(1, 0.68)
-	glyph.Text = stripGlyph or "E"
+	setGlyph(cap, stripGlyph or "E")
 	local chev = text(tag, "Chevron", F_HEAVY, AMBER)
 	chev.Position = UDim2.fromScale(0, 0.68)
 	chev.Size = UDim2.fromScale(1, 0.32)
@@ -1425,6 +1571,11 @@ local function onStep(payload)
 	end
 	if payload.highlight == false then clearHighlight()
 	elseif typeof(payload.highlight) == "Instance" then setHighlight(payload.highlight) end
+	-- (round 2) the vault step has no server highlight: mark the wall you vault (TutorialConfig.VaultCover) here
+	if payload.waitFor == "Vaulted" and typeof(payload.highlight) ~= "Instance" and Config.VaultCover then
+		local wall = workspace:FindFirstChild(Config.VaultCover, true)
+		if wall and wall:IsA("BasePart") then setHighlight(wall) end
+	end
 	if payload.line then
 		local template = Config.Lines[payload.line] or payload.line
 		local ok, text = pcall(string.format, template, table.unpack(payload.args or {}))
