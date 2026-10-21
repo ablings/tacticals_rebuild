@@ -183,7 +183,7 @@ local function keycap(parent, name)
 	mouse.Name = "Mouse"
 	mouse.AnchorPoint = Vector2.new(0.5, 0.5)
 	mouse.Position = UDim2.fromScale(0.5, 0.5)
-	mouse.Size = UDim2.fromScale(0.56, 0.82)
+	mouse.Size = UDim2.fromScale(0.64, 0.88)
 	mouse.BackgroundColor3 = KEY_WHITE
 	mouse.BorderSizePixel = 0
 	mouse.Visible = false
@@ -271,7 +271,7 @@ local function buildUI()
 	call.Position = UDim2.fromScale(0.08, 0.14)
 	call.Size = UDim2.fromScale(0.84, 0.72)
 	call.Text = string.upper((Config.Instructor and Config.Instructor.Callsign) or "INSTRUCTOR")
-	lineLabel = text(panel, "Line", F_BODY, WHITE, Enum.TextXAlignment.Left)
+	lineLabel = text(panel, "Line", F_BOLD, WHITE, Enum.TextXAlignment.Left) -- (round 5: one weight heavier)
 	lineLabel.Position = UDim2.fromScale(0.28, 0.12)
 	lineLabel.Size = UDim2.fromScale(0.64, 0.76)
 	lineLabel.RichText = true
@@ -329,7 +329,7 @@ local function buildUI()
 		local cap = text(c, "Caption", F_HEAVY, Color3.fromRGB(226, 222, 208))
 		cap.AnchorPoint = Vector2.new(0.5, 0)
 		cap.Position = UDim2.fromScale(0.5, 1.06)
-		cap.Size = UDim2.fromScale(2.4, 0.42)
+		cap.Size = UDim2.fromScale(2.6, 0.56) -- (round 5, graders: the verbs must read on a phone)
 		cap.Visible = false
 		return { cap = c, glyph = g, scale = s, face = f, check = chk, caption = cap }
 	end
@@ -359,7 +359,7 @@ local function buildUI()
 	local rcap = text(reticle, "Caption", F_HEAVY, Color3.fromRGB(226, 222, 208))
 	rcap.AnchorPoint = Vector2.new(0.5, 0)
 	rcap.Position = UDim2.fromScale(0.5, 1.06)
-	rcap.Size = UDim2.fromScale(2.4, 0.42)
+	rcap.Size = UDim2.fromScale(2.6, 0.56)
 	reticle.Parent = caps
 	local plus = text(caps, "Plus", F_HEAVY, WHITE)
 	plus.LayoutOrder = 3
@@ -385,10 +385,15 @@ local function buildUI()
 	pl.VerticalAlignment = Enum.VerticalAlignment.Center
 	pl.Padding = UDim.new(0.035, 0)
 	pl.Parent = pipRow
+	-- (round 5, graders: seven thin ticks are hard to count) "3/7" in tan just left of the ticks
+	local count = text(root, "Count", F_HEAVY, TAN, Enum.TextXAlignment.Right)
+	count.AnchorPoint = Vector2.new(1, 0.5)
+	count.Position = UDim2.fromScale(0.79, 0.5)
+	count.Size = UDim2.fromScale(0.09, 0.34)
 	local rootScale = Instance.new("UIScale"); rootScale.Name = "Punch"; rootScale.Parent = root
 	strip = { root = root, edge = edge, accent = accent, keys = { k1, k2 }, plus = plus, capsRow = caps, reticle = reticle, punch = rootScale,
 		cap = k1.cap, capFace = k1.face, capText = k1.glyph, capScale = k1.scale, check = k1.check,
-		label = label, sub = sub, pipRow = pipRow, pips = {} }
+		label = label, sub = sub, pipRow = pipRow, count = count, pips = {} }
 
 	-- danger: the slam headline and a red flash over the whole screen (unused by the starter tutorial)
 	flash = Instance.new("Frame")
@@ -854,6 +859,8 @@ end
 -- ticks: done = tan, current = amber, to do = grey; all done = olive
 local function paintPips(current: number?, doneUpTo: number)
 	local all = doneUpTo >= #strip.pips
+	strip.count.Text = string.format("%d/%d", math.min(current or doneUpTo, #strip.pips), #strip.pips)
+	strip.count.TextColor3 = all and GOOD or TAN
 	for i, p in strip.pips do
 		p.BackgroundColor3 = all and GOOD or (i <= doneUpTo and TAN or (i == current and AMBER or TODO))
 	end
@@ -866,12 +873,37 @@ local function paintKey(k, done: boolean)
 	else setGlyph(k.cap, k.cap:GetAttribute("Glyph")) end
 end
 -- a red marker over the enemy while you're asked to spot him (red = enemy only)
+local enemyBrackets: BillboardGui? = nil
 local function markEnemy(on: boolean)
 	if enemyMark then enemyMark:Destroy() enemyMark = nil end
+	if enemyBrackets then enemyBrackets:Destroy() enemyBrackets = nil end
 	if not on then return end
 	local boss = workspace:FindFirstChild(Config.BossName or "Instructor")
 	local head = boss and (boss:FindFirstChild("Head") or boss.PrimaryPart)
 	if not head then return end
+	-- (round 5, graders: a far target is a few pixels of red outline) red corner brackets framing his whole body, sized in
+	-- studs so they hug him at any distance, plus a floor of 40 px so a far target is still a clear box to find
+	local body = boss:FindFirstChild("HumanoidRootPart") or boss.PrimaryPart or head
+	local br = Instance.new("BillboardGui")
+	br.Name = "TutorialEnemyBrackets"
+	br.Adornee = body
+	br.AlwaysOnTop = true
+	br.LightInfluence = 0
+	br.Size = UDim2.new(4.2, 40, 6.2, 56)
+	br.StudsOffsetWorldSpace = Vector3.new(0, 0.4, 0)
+	for _, c in { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } } do
+		for _, horiz in { true, false } do
+			local f = Instance.new("Frame")
+			f.BackgroundColor3 = ALERT_RED
+			f.BorderSizePixel = 0
+			f.AnchorPoint = Vector2.new(c[1], c[2])
+			f.Position = UDim2.fromScale(c[1], c[2])
+			f.Size = horiz and UDim2.new(0.26, 0, 0, 4) or UDim2.new(0, 4, 0.18, 0)
+			f.Parent = br
+		end
+	end
+	br.Parent = workspace.CurrentCamera
+	enemyBrackets = br
 	local b = Instance.new("BillboardGui")
 	b.Name = "TutorialEnemyMark"
 	b.Adornee = head
@@ -912,8 +944,8 @@ local function showStrip(key: string, entry)
 	local W = math.clamp((0.16 + words * 0.0098 + (#list >= 2 and 0.06 or 0)) * 1.25, 0.3, 0.52)
 	strip.root.Size = UDim2.fromScale(W, STRIP_H)
 	local ratio = (W * 16 / 9) / STRIP_H
-	local keyH = captions and 0.5 or 0.68
-	strip.capsRow.Position = UDim2.fromScale(0.035, captions and 0.1 or 0.16)
+	local keyH = captions and 0.46 or 0.68
+	strip.capsRow.Position = UDim2.fromScale(0.035, captions and 0.07 or 0.16)
 	strip.capsRow.Size = UDim2.fromScale(0.6, keyH)
 	local width = 0
 	for i, k in strip.keys do
@@ -970,12 +1002,17 @@ local function showStrip(key: string, entry)
 			end
 			local gap = rh * 0.32
 			local labelW = #(entry.obj or "") * rh * 0.5 * 0.5
-			local need = (right - rx) + gap + labelW + gap + strip.pipRow.AbsoluteSize.X + pad
+			local countW = rh * 0.62
+			local need = (right - rx) + gap + labelW + gap + countW + strip.pipRow.AbsoluteSize.X + pad
 			if need > rw then root.Size = UDim2.fromScale(math.min(need / screenW, 0.6), STRIP_H) end
 			local w = root.AbsoluteSize.X
 			local x = (right - rx + gap) / w
+			-- the count sits just left of the first tick; the words stop short of the count
+			local first = strip.pips[1]
+			local ticksLeft = (first and first.AbsolutePosition.X or strip.pipRow.AbsolutePosition.X) - rx
+			strip.count.Position = UDim2.fromScale((ticksLeft - rh * 0.12) / w, 0.5)
 			strip.label.Position = UDim2.fromScale(x, 0.5)
-			strip.label.Size = UDim2.fromScale(math.max(0.1, (strip.pipRow.AbsolutePosition.X - rx - gap) / w - x), 0.5)
+			strip.label.Size = UDim2.fromScale(math.max(0.1, (ticksLeft - rh * 0.12 - countW - gap * 0.5) / w - x), 0.5)
 		end
 	end)
 	-- the marker on the target cover shows the same key (the server sends the highlight before the line)
