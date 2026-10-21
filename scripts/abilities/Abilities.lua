@@ -447,23 +447,16 @@ local function throwSticky(player: Player, cfg, direction: Vector3, power: numbe
 	end)
 end
 
--- Landmine: dropped at your feet ahead of you; arms after ArmTime; an enemy within TriggerRadius sets it off
+-- Landmine ([GADGETTHROW] 2026-10-20 Edward: "all gadgets besides medkit should be throwable"): thrown like a grenade, it lands,
+-- settles flat on the floor where it stops, then arms after ArmTime; an enemy within TriggerRadius sets it off
 local mines = {} -- [Player] = { mine part }
-local function placeMine(player: Player, cfg)
-	local character = player.Character
-	local hum, root = alive(character)
-	if not hum or not root then return end
-	local look = flatUnit(root.CFrame.LookVector) or Vector3.zAxis
-	local from = root.Position + look * 2 + Vector3.new(0, 1, 0)
-	losParams.FilterDescendantsInstances = characters()
-	local floor = workspace:Raycast(from, Vector3.new(0, -8, 0), losParams)
-	if not floor then return end
+local MINE_SIZE = Vector3.new(0.22, 1.3, 1.3)
+local function newMine(player: Player): (BasePart, BasePart)
 	local mine = Instance.new("Part")
 	mine.Name = "LandmineGrenade" -- (cleared between rounds with the grenades)
 	mine.Shape = Enum.PartType.Cylinder
-	mine.Size = Vector3.new(0.22, 1.3, 1.3)
-	mine.CFrame = CFrame.new(floor.Position + Vector3.new(0, 0.11, 0)) * CFrame.Angles(0, 0, math.rad(90))
-	mine.Anchored, mine.CanCollide, mine.CanQuery, mine.CanTouch = true, false, false, false
+	mine.Size = MINE_SIZE
+	mine.CanQuery, mine.CanTouch = false, false
 	mine.Color = Color3.fromRGB(58, 62, 52)
 	mine.Material = Enum.Material.Metal
 	mine:SetAttribute("Owner", player.UserId)
@@ -471,20 +464,28 @@ local function placeMine(player: Player, cfg)
 	led.Name = "LED"
 	led.Shape = Enum.PartType.Ball
 	led.Size = Vector3.one * 0.18
-	led.CFrame = mine.CFrame * CFrame.new(0.13, 0, 0)
-	led.Anchored, led.CanCollide, led.CanQuery, led.CanTouch = true, false, false, false
+	led.CanCollide, led.CanQuery, led.CanTouch, led.Massless = false, false, false, true
 	led.Material = Enum.Material.Neon
 	led.Color = Color3.fromRGB(60, 60, 60)
-	led.Parent = mine
-	mine.Parent = workspace
-	mines[player] = mines[player] or {}
-	table.insert(mines[player], mine)
+	return mine, led
+end
+-- lay the mine flat on the floor under `at` and arm it
+local function armMine(player: Player, cfg, mine: BasePart, led: BasePart, at: Vector3)
+	losParams.FilterDescendantsInstances = { mine, table.unpack(characters()) }
+	local floor = workspace:Raycast(at + Vector3.new(0, 1.5, 0), Vector3.new(0, -12, 0), losParams)
+	local ground = floor and floor.Position or at
+	for _, c in mine:GetChildren() do if c:IsA("WeldConstraint") or c:IsA("NoCollisionConstraint") then c:Destroy() end end
+	mine.Anchored, mine.CanCollide = true, false
+	mine.AssemblyLinearVelocity, mine.AssemblyAngularVelocity = Vector3.zero, Vector3.zero
+	mine.CFrame = CFrame.new(ground + Vector3.new(0, MINE_SIZE.X / 2, 0)) * CFrame.Angles(0, 0, math.rad(90))
+	led.Anchored = true
+	led.CFrame = mine.CFrame * CFrame.new(0.13, 0, 0)
 	beep(mine, 1.2, 0.4)
 	task.delay(cfg.ArmTime, function()
 		if not mine.Parent then return end
 		led.Color = Color3.fromRGB(255, 40, 30)
 		beep(mine, 1.9, 0.3)
-		fxAll(character :: Model, "MineArmed", { position = mine.Position })
+		fxAll(mine, "MineArmed", { position = mine.Position })
 		local conn
 		local nextCheck = 0
 		conn = RunService.Heartbeat:Connect(function()
@@ -509,6 +510,72 @@ local function placeMine(player: Player, cfg)
 			end
 		end)
 	end)
+end
+local function throwMine(player: Player, cfg, direction: Vector3, power: number, mode: string, side: number, launchVelocity)
+	local character = player.Character
+	local hum, root = alive(character)
+	local head = character and character:FindFirstChild("Head")
+	if not hum or not root or not head then return end
+	local mine, led = newMine(player)
+	mine.CanCollide = true
+	mine.CustomPhysicalProperties = PhysicalProperties.new(3, 1.5, 0.05, 1, 1) -- heavy, grippy, barely bounces: it lands and stays
+	local origin = head.Position
+	if side and side ~= 0 then
+		local right = direction:Cross(Vector3.yAxis)
+		if right.Magnitude > 0.05 then
+			local offset = right.Unit * side * 1.7
+			if clearBetween(origin, origin + offset, { character :: Model }) then origin += offset end
+		end
+	end
+	local flat = flatUnit(direction) or root.CFrame.LookVector
+	if mode == "Roll" then
+		mine.CFrame = CFrame.new(root.Position + flat * 1.6 - Vector3.new(0, 2.4, 0))
+	else
+		mine.CFrame = CFrame.new(origin + direction * 1.5)
+	end
+	led.CFrame = mine.CFrame * CFrame.new(0.13, 0, 0)
+	local w = Instance.new("WeldConstraint")
+	w.Part0, w.Part1 = led, mine
+	w.Parent = led
+	led.Parent = mine
+	for _, p in (character :: Model):GetDescendants() do
+		if p:IsA("BasePart") then
+			local c = Instance.new("NoCollisionConstraint")
+			c.Part0, c.Part1 = mine, p
+			c.Parent = mine
+		end
+	end
+	mine.Parent = workspace
+	mine:SetNetworkOwner(nil)
+	mine.AssemblyLinearVelocity = mode == "Roll" and flat * (cfg.RollSpeed or 24) or launchVelocity(cfg, direction, power)
+	mines[player] = mines[player] or {}
+	table.insert(mines[player], mine)
+	-- settle: once it has (nearly) stopped for a moment, or after 4 s in the air, it lies down and arms
+	local t0, still = os.clock(), 0
+	local conn
+	conn = RunService.Heartbeat:Connect(function(dt)
+		if not mine.Parent then conn:Disconnect() return end
+		local age = os.clock() - t0
+		if age > 0.25 and mine.AssemblyLinearVelocity.Magnitude < 1.5 then still += dt else still = 0 end
+		if still > 0.2 or age > 4 or mine.Position.Y < -50 then
+			conn:Disconnect()
+			if mine.Position.Y < -50 then mine:Destroy() return end
+			armMine(player, cfg, mine, led, mine.Position)
+		end
+	end)
+end
+-- (placed at your feet ahead of you: kept for a config with Use = "Place")
+local function placeMine(player: Player, cfg)
+	local character = player.Character
+	local hum, root = alive(character)
+	if not hum or not root then return end
+	local look = flatUnit(root.CFrame.LookVector) or Vector3.zAxis
+	local mine, led = newMine(player)
+	led.Parent = mine
+	mine.Parent = workspace
+	mines[player] = mines[player] or {}
+	table.insert(mines[player], mine)
+	armMine(player, cfg, mine, led, root.Position + look * 2)
 end
 
 -- Medkit: heal over a channel. Taking damage stops it. Player attribute MedkitUntil (server time) while channelling.
@@ -542,7 +609,7 @@ function A.Gadget(player: Player, gadget: string, cfg, direction: Vector3, power
 		throwSticky(player, cfg, direction, power, side, launchVelocity)
 		return true
 	elseif gadget == "Landmine" then
-		placeMine(player, cfg)
+		if cfg.Use == "Place" then placeMine(player, cfg) else throwMine(player, cfg, direction, power, mode, side, launchVelocity) end
 		return true
 	elseif gadget == "Medkit" then
 		useMedkit(player, cfg)
