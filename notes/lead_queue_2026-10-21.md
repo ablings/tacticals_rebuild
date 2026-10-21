@@ -55,7 +55,10 @@
 14. [ ] Throw feel on our camera: overhand windup, white streak trail, follow-through, next item rising in from below.
 15. [ ] Weapon feel (notes/feel_brief_2026-10-21.md): equip bounce spring, sway / bob, recoil kick, reload motion, quick-switch off the
     Sniper. Edward: keep OUR over-the-shoulder camera, bring the RIVALS feel to how items are used.
-16. [ ] Wraps (cosmetic, every weapon): WrapConfig (primary + accent channels, inverted swaps them, rarity, source text), PlayerStore
+16. [~] (v1 IN both copies, saved: scripts/wraps/WrapConfig + WrapManager via tools/wraps_install.py; 120 template parts tagged
+    A / B / skip; 8 wraps - Beige / Blue / Salmon / Yellow / Glossy owned by default, Hazard / Woodland / Carbon locked (source TBD by
+    Edward); textures art/wraps (Python-made, uploaded). Tested lobby Training: Equip(Pistol, Yellow) -> held gun + holster copy body
+    yellow, details kept; Hazard previewed client-side: notes/feel_ref/wrap_hazard_pistol.png. UI builds the Wrap tab.) Wraps (cosmetic, every weapon): WrapConfig (primary + accent channels, inverted swaps them, rarity, source text), PlayerStore
     OwnedWraps / EquippedWrap[weapon] (incl. Random) / FavoriteWraps, equip remote, server-side apply on tools / holsters / Kit models /
     DualGrip left gun (Textures on 6 faces + tint; WrapChannel Primary / Accent tags on every template part, WrapSkip on lenses /
     muzzles). Start ~8 (4 plain colours, Glossy, 3 codex-made seamless patterns); everyone owns the plain ones. How the rest are earned
