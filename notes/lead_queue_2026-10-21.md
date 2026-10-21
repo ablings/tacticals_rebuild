@@ -52,7 +52,8 @@
     at 100 studs/s straight at the crosshair, gravity x0.1875 until first touch (RIVALS ItemLibrary: ThrowForce 100, ThrowGravity 0.375,
     the same for all throwables; lob 50 / 0.75 not ported), dashed arc while held (ArcPreview Always). Applied both copies, saved 15:32. Tested: tap -> roll (flat, no VectorForce, blew 1.75 s later); hold -> 100 studs/s
     with the reduced-gravity VectorForce.
-14. [ ] Throw feel on our camera: overhand windup, white streak trail, follow-through, next item rising in from below.
+14. [~] (white trail done + tested: fix/throw_trail.lua, on in flight, off at first landing; windup / follow-through / rise-in to do)
+    Throw feel on our camera: overhand windup, white streak trail, follow-through, next item rising in from below.
 15. [ ] Weapon feel (notes/feel_brief_2026-10-21.md): equip bounce spring, sway / bob, recoil kick, reload motion, quick-switch off the
     Sniper. Edward: keep OUR over-the-shoulder camera, bring the RIVALS feel to how items are used.
 16. [~] (v1 IN both copies, saved: scripts/wraps/WrapConfig + WrapManager via tools/wraps_install.py; 120 template parts tagged
