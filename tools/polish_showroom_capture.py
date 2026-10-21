@@ -4,7 +4,7 @@ BlurEffect size 16) so the set is judged the way players see it.
 Usage (from tacticals_rebuild): python tools/polish_showroom_capture.py <prefix> [wide]"""
 import json, os, subprocess, sys, shutil, tempfile
 from PIL import Image, ImageFilter
-SID = "ddbec6a6-8f28-4bef-9054-7be5bea3e83a"
+SID = "835403f5-1c18-4451-b6da-d25ee5c2f672"
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 OUT = os.path.join("out", "polish", "showroom"); os.makedirs(OUT, exist_ok=True)
 def luau(code):

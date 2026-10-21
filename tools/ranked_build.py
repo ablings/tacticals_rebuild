@@ -4,7 +4,7 @@ Usage (from tacticals_rebuild): python tools/ranked_build.py [--run lobby|match]
 Studio ids change on reload (list_roblox_studios). Order: see the header of fix/ranked_install.lua."""
 import json, os, re, subprocess, sys, tempfile
 
-SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
+SIDS = {"lobby": "835403f5-1c18-4451-b6da-d25ee5c2f672", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..")

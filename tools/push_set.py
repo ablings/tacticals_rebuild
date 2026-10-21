@@ -1,7 +1,7 @@
 """Push ONE [SET] client module (ui/set/<Name>.lua) into a Studio's StarterPlayerScripts.Client.Controllers.<Name>, without a full
 deploy_ui run (used for a single fix while the UI session works elsewhere). Usage: python tools/push_set.py <lobby|match|id> <Name>"""
 import json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
+SIDS = {"lobby": "835403f5-1c18-4451-b6da-d25ee5c2f672", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sid = SIDS.get(sys.argv[1], sys.argv[1]); name = sys.argv[2]

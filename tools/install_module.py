@@ -1,7 +1,7 @@
 """Create or update a ModuleScript from a repo file (attribute RepoSource = the file). Refuses a module it didn't create.
 Usage: python tools/install_module.py <lobby|match|studio_id> <Parent.Path> <Name> <repo file> [UNDO]"""
 import json, os, subprocess, sys, tempfile
-SIDS = {"lobby": "ddbec6a6-8f28-4bef-9054-7be5bea3e83a", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
+SIDS = {"lobby": "835403f5-1c18-4451-b6da-d25ee5c2f672", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 sid = SIDS.get(sys.argv[1], sys.argv[1]); parent, name, f = sys.argv[2], sys.argv[3], sys.argv[4]

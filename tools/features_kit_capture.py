@@ -2,7 +2,7 @@
 Usage (from tacticals_rebuild): python tools/features_kit_capture.py <prefix: before|after|play> [names...]
 Writes out/features_kit/<prefix>_<name>.png. Edit-mode captures (screen_capture works on the Edit viewport)."""
 import json, os, subprocess, sys, shutil
-SID = "ddbec6a6-8f28-4bef-9054-7be5bea3e83a"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
+SID = "835403f5-1c18-4451-b6da-d25ee5c2f672"   # Tacticals_rebuild.rbxl (local copy); ids change on reload
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 CAMS = {
   "s1_leaderboard":  ([-55.5, 5.5, 14],  [-55.5, 13, 44]),

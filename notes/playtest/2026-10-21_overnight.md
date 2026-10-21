@@ -27,5 +27,5 @@ into the arena (1 dmg hits) and its panel shows; that's why two rounds went to B
   in the Backpack. Measured: LeftGrip 0.1 studs from the left hand (was 1.9, hanging off the right gun).
   Before / after: 2026-10-21_dualpistols_before.png / _after.png (arms down only because the test camera stops the aim pose).
 - Riot Shield holstered on the back while a gun is out: 2026-10-21_riotshield_holster.png, flat on the back, no clipping.
-- Installed + saved in the match copy (221cdf09). The lobby copy still needs fix/dual_grip_install.lua (its Studio was down).
+- Installed + saved in both copies (match 221cdf09, lobby 835403f5 at 02:23:48).
 - 02:15 GPU reset ("Device removed 0x887a0007") killed the match Studio mid-test; the 02:11 save had everything, reopened.

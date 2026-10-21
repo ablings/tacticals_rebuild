@@ -3,7 +3,7 @@ maps each grid pixel to the part it hits, and averages the PNG pixels per part (
 Usage: python tools/part_pixels.py <png> x,y,z lx,ly,lz [filter-substring]"""
 import json, os, subprocess, sys, tempfile
 from PIL import Image
-SID = "ddbec6a6-8f28-4bef-9054-7be5bea3e83a"
+SID = "835403f5-1c18-4451-b6da-d25ee5c2f672"
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 png, cam, look = sys.argv[1], sys.argv[2], sys.argv[3]
 flt = sys.argv[4] if len(sys.argv) > 4 else ""
