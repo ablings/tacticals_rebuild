@@ -27,6 +27,36 @@ local LETTERS = {
 
 local function SP(x, y) return UDim2.fromScale(x / STAGE.X, y / STAGE.Y) end
 
+-- (2026-10-21, Edward: "the logos are pixelated", on phone / tablet, "only for a moment, then sharp") a logo shown before its
+-- images finished downloading draws a low-res pass first. The module preloads the frame + letter atlas the moment anything
+-- requires it (at join), and Build keeps a logo invisible until that's done, then fades it in (8 s cap: never hidden for good).
+Logo.Ready = false
+function Logo.Preload()
+	if Logo._preloading then return end
+	Logo._preloading = true
+	task.spawn(function()
+		pcall(function() game:GetService("ContentProvider"):PreloadAsync({ Logo.IMG.Frame, Logo.IMG.Letters }) end)
+		Logo.Ready = true
+	end)
+end
+local function revealWhenReady(f)
+	local images = {}
+	for _, d in f:GetChildren() do
+		if d:IsA("ImageLabel") and d.Name ~= "Glow" then
+			images[d] = d.ImageTransparency
+			d.ImageTransparency = 1
+		end
+	end
+	task.spawn(function()
+		local t0 = os.clock()
+		while not Logo.Ready and os.clock() - t0 < 8 do task.wait(0.1) end
+		local TweenService = game:GetService("TweenService")
+		for img, tr in images do
+			if img.Parent then TweenService:Create(img, TweenInfo.new(0.2), { ImageTransparency = tr }):Play() end
+		end
+	end)
+end
+
 function Logo.Build(parent, props)
 	props = props or {}
 	local z = props.ZIndex or 5
@@ -73,6 +103,7 @@ function Logo.Build(parent, props)
 		l.ZIndex = z + 2 + i
 		l.Parent = f
 	end
+	if not Logo.Ready then Logo.Preload(); revealWhenReady(f) end
 	f.Parent = parent
 	return f
 end
@@ -90,4 +121,5 @@ function Logo.Breathe(f)
 	return tw
 end
 
+Logo.Preload() -- at require (join): by the time a match-found / deploy / teleport screen needs the logo it is already sharp
 return Logo

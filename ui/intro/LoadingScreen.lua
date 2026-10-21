@@ -936,7 +936,9 @@ task.spawn(function()
 	pcall(function() ContentProvider:PreloadAsync(own) end)
 	ownDone = true
 end)
-waitUntil(function() return ownDone end, 4)
+-- (2026-10-21, Edward: the logo looked pixelated for a moment on phone / tablet) 4 s ran out on mobile and the letters dropped
+-- in on their low-res first pass: wait longer for the screen's own art before the logo appears
+waitUntil(function() return ownDone end, 10)
 
 -- 1. frame + letters while the game loads, with the bar under them
 pause(0.2)
