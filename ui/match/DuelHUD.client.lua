@@ -965,15 +965,15 @@ end
 
 ---------------------------------------------------------------------------------------------------- eliminated
 local elimL = new("TextLabel", { Name = "Eliminated", BackgroundTransparency = 1, RichText = true, Text = "", FontFace = FB, TextSize = 34, TextColor3 = WHITE,
-	Position = UDim2.fromOffset(560, 640), Size = UDim2.fromOffset(800, 46), Visible = false, ZIndex = 6, Parent = root })
+	Position = UDim2.fromOffset(560, 690), Size = UDim2.fromOffset(800, 46), Visible = false, ZIndex = 6, Parent = root }) -- (2026-10-20) lower, off the character (RIVALS ~0.65-0.73)
 elimL:SetAttribute("dTS", 34); table.insert(scaled, elimL)
 new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = elimL })
 -- (2026-10-20, the common theme of every duel game Edward showed: Knife / Murder Duels' "+XP HEADSHOT / KILL", Redliner's
 -- "Killed X!", Hood Rivals' ELIMINATED) what the kill was, in small grey caps under the name
-local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 22, TextColor3 = Color3.fromRGB(205, 205, 212),
-	Position = UDim2.fromOffset(560, 686), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
+local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 22, TextColor3 = Color3.fromRGB(232, 232, 236),
+	Position = UDim2.fromOffset(560, 736), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
 elimSub:SetAttribute("dTS", 22); table.insert(scaled, elimSub)
-new("UIStroke", { Thickness = 1.5, Transparency = 0.55, Parent = elimSub })
+new("UIStroke", { Thickness = 2, Transparency = 0.25, Parent = elimSub }) -- (live check) readable over the bright Practice Range walls
 local elimToken = 0
 showEliminated = function(uid, d)
 	elimToken += 1
@@ -1280,7 +1280,10 @@ RunService.RenderStepped:Connect(function()
 	local over = (st("MatchPhase") == "Victory" or st("MatchPhase") == "Finisher")
 	local mf = player.PlayerGui:FindFirstChild("MatchFlow")
 	local picking = mf ~= nil and mf.Enabled -- the Switch Weapons picker is up: only the score bar stays (RIVALS)
-	RV.switchB.Visible = between and not over and not spectator() and RV.switchHook() ~= nil and not picking
+	-- (2026-10-20, Edward: "switching weapons appears way too early ... it should only appear when the round starts") like
+	-- RIVALS: only through the countdown into a round, and not before the first one (you just picked your kit)
+	local preRound = state == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1
+	RV.switchB.Visible = preRound and not over and not spectator() and RV.switchHook() ~= nil and not picking
 	if picking then RV.roundCard.Visible = false; feed.Visible = false; local el = root:FindFirstChild("Eliminated"); if el then el.Visible = false end end
 	-- spectate: spectators, and duelists while dead
 	local spec = spectator() or (player:GetAttribute("Alive") == false and (state == "Live" or state == "RoundEnd" or state == "Victory"))

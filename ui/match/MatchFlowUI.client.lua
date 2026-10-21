@@ -508,14 +508,14 @@ for i, s2 in SLOTS do
 end
 
 -- slot tabs
-local TAB_W, TAB_GAP = 200, 10
+local TAB_W, TAB_GAP = 250, 10 -- (2026-10-20) wide enough for "MELEE  ·  SET" in Montserrat
 local tabX = 960 - (#SLOTS * TAB_W + (#SLOTS - 1) * TAB_GAP) / 2
 local tabs = {}
 for i, s2 in SLOTS do
 	local t = new("TextButton", { Name = "Tab" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(tabX + (i - 1) * (TAB_W + TAB_GAP), 300),
 		Size = UDim2.fromOffset(TAB_W, 48), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ZIndex = 2, Parent = lo }, { corner(4) })
 	ink(t, 6, 4)
-	local tl = label(t, string.upper(s2.label), FX, 34, 0, 0, TAB_W, 48, WHITE)
+	local tl = label(t, string.upper(s2.label), FX, 26, 0, 0, TAB_W, 48, WHITE)
 	tabs[i] = { b = t, l = tl }
 end
 
@@ -738,6 +738,27 @@ RunService.RenderStepped:Connect(function()
 	end
 	if player:GetAttribute("SwitchingWeapons") ~= (switching or nil) then player:SetAttribute("SwitchingWeapons", switching or nil) end
 	setPhase(switching and "Switch" or st(STATE.Phase))
+	-- (2026-10-20, live check with Edward) the hotbar / health came back behind the map vote and gun pick: their controllers
+	-- switch them on after the phase began, so keep them off every frame while one of these screens is up
+	-- (2026-10-20, Edward: "i shouldnt see myself floating when the match starts") your body is parked out of the way
+	-- during loading / map vote / gun pick: hide it on your screen (LocalTransparencyModifier, client only), back when it ends
+	do
+		local hide = phase == "Loading" or phase == "MapVote" or phase == "Loadout"
+		local char = player.Character
+		if char and (hide or char:GetAttribute("_FlowHidden")) then
+			for _, d in char:GetDescendants() do
+				if d:IsA("BasePart") or d:IsA("Decal") then d.LocalTransparencyModifier = hide and 1 or 0 end
+			end
+			char:SetAttribute("_FlowHidden", hide or nil)
+		end
+	end
+	if phase == "MapVote" or phase == "Loadout" or phase == "Switch" then
+		local pg = player:FindFirstChild("PlayerGui")
+		for _, n in { "HUD", "Hotbar", "Vitals", "TutorialUI", "NearMissUI", "TouchControls" } do
+			local g = pg and pg:FindFirstChild(n)
+			if g and g:IsA("ScreenGui") and g.Enabled then g.Enabled = false; g:SetAttribute("SwitchHid", true) end
+		end
+	end
 	-- (2026-10-20) picks during a live round are queued by the server (NextKitWeapon / Melee / Gadget) for the next spawn
 	if phase == "Switch" then
 		local q = {}
@@ -770,7 +791,7 @@ do
 	sw.Name = "SwitchWeapons"
 	sw.OnInvoke = function(cmd)
 		local ms = st("MatchState")
-		local allowed = (ms == "RoundEnd" or ms == "Countdown") and st(STATE.Phase) ~= "Loadout"
+		local allowed = ms == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1 and st(STATE.Phase) ~= "Loadout" -- (2026-10-20, Edward) the countdown into a round only, not before the first
 		if cmd == "Close" or (cmd == "Toggle" and switching) then switching = false
 		elseif allowed then switching = true end
 		return switching

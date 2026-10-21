@@ -29,6 +29,7 @@ local function build(p, character)
 	if old and old.gui then old.gui:Destroy() end
 	local g = Instance.new("BillboardGui")
 	g.Name = "Nameplate_" .. p.UserId
+	g.Enabled = false -- (2026-10-20) starts hidden: the 0.25 s update decides (a respawn mid-duel flashed a blank plate)
 	g.Adornee = head
 	g.Size = UDim2.fromScale(9, 2) -- studs
 	g.StudsOffset = Vector3.new(0, 2.1, 0)
@@ -62,6 +63,7 @@ local function build(p, character)
 	bt.FontFace = BOLD
 	bt.TextScaled = true
 	bt.TextColor3 = Color3.new(1, 1, 1)
+	bt.Text = "" -- (2026-10-20) never Roblox's default "Label" before the first update fills it
 	bt.Parent = badge
 	local bp = Instance.new("UIPadding"); bp.PaddingTop = UDim.new(0.12, 0); bp.PaddingBottom = UDim.new(0.12, 0); bp.Parent = bt
 	-- Lobby Data = Rank: the ranked emblem, a little bigger than the badge
