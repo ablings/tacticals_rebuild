@@ -42,3 +42,19 @@
 10. [ ] **Logos are pixelated** (Edward). UI: sources are 1024 wide (no downscale on upload), clean 1:1 at 1080p, so it is upscaling on
    bigger / high-DPI screens or mobile low texture quality. Needs Edward's original logo art (tacticals_ui repo not on this PC) + his group
    upload, and which screen / device looks pixelated.
+
+## Afternoon (Edward via the main PC lead / Roblox training)
+11. [x] HitConfirm payload for RIVALS hit numbers / flash (fix/hitinfo.lua [HITINFO], tested; e16a1ec).
+12. [~] Frag cooking, 2 s fuse from the press, explodes in hand (fix/cook.lua [COOK] + GadgetController; written, NOT applied / tested).
+13. [~] RIVALS throw for every throwable (fix/rivals_throw.lua [RTHROW] + GadgetController): tap = roll (TapTime 0.15), hold = throw
+    at 100 studs/s straight at the crosshair, gravity x0.1875 until first touch (RIVALS ItemLibrary: ThrowForce 100, ThrowGravity 0.375,
+    the same for all throwables; lob 50 / 0.75 not ported), dashed arc while held (ArcPreview Always). Written, NOT applied / tested.
+14. [ ] Throw feel on our camera: overhand windup, white streak trail, follow-through, next item rising in from below.
+15. [ ] Weapon feel (notes/feel_brief_2026-10-21.md): equip bounce spring, sway / bob, recoil kick, reload motion, quick-switch off the
+    Sniper. Edward: keep OUR over-the-shoulder camera, bring the RIVALS feel to how items are used.
+16. [ ] Wraps (cosmetic, every weapon): WrapConfig (primary + accent channels, inverted swaps them, rarity, source text), PlayerStore
+    OwnedWraps / EquippedWrap[weapon] (incl. Random) / FavoriteWraps, equip remote, server-side apply on tools / holsters / Kit models /
+    DualGrip left gun (Textures on 6 faces + tint; WrapChannel Primary / Accent tags on every template part, WrapSkip on lenses /
+    muzzles). Start ~8 (4 plain colours, Glossy, 3 codex-made seamless patterns); everyone owns the plain ones. How the rest are earned
+    = Edward's call (store / cases / weapon levels or contracts). UI has the screens + client-only preview of locked wraps.
+17. [ ] Training trash cans: 2-3 red cans with a "Q  Trash Can / Change Weapons" prompt that opens the free weapon picker.

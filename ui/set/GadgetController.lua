@@ -81,8 +81,28 @@ local function loadTracks(humanoid: Humanoid)
 	return tracks
 end
 
+-- [RTHROW] RIVALS aims the throw from the hand at whatever the crosshair is on (not along the camera's look, which sits off the
+-- shoulder): camera ray -> first hit (or 999 studs out) -> direction from the head to that point
+local aimParams = RaycastParams.new()
+aimParams.FilterType = Enum.RaycastFilterType.Exclude
 local function aimDirection(): Vector3
-	return workspace.CurrentCamera.CFrame.LookVector
+	local cam = workspace.CurrentCamera.CFrame
+	local character = localPlayer.Character
+	local head = character and character:FindFirstChild("Head")
+	if not head then return cam.LookVector end
+	aimParams.FilterDescendantsInstances = { character }
+	local hit = workspace:Raycast(cam.Position, cam.LookVector * 999, aimParams)
+	local target = hit and hit.Position or cam.Position + cam.LookVector * 999
+	local d = target - head.Position
+	if d.Magnitude < 2 or d.Unit:Dot(cam.LookVector) < 0.3 then return cam.LookVector end
+	return d.Unit
+end
+
+-- [RTHROW] the flight's gravity: workspace.Gravity * 0.5 * ThrowGravity (RIVALS), the same as the server's VectorForce
+local function flightGravity(): number
+	local C = GadgetConfig[kitGadget()] or Config
+	local k = C.ThrowGravity or Config.ThrowGravity
+	return workspace.Gravity * (k and 0.5 * k or 1)
 end
 
 local function inTutorial(): boolean
@@ -161,9 +181,30 @@ local function zoneThrow(head: BasePart): (Vector3?, number?)
 	local range = flat.Magnitude
 	if range < 1 then return nil end
 	local drop = from.Y - zone.Y -- how far below the hand the marker is (positive = below)
-	local g = workspace.Gravity
+	local g = flightGravity() -- [RTHROW]
 	local character = head.Parent
 	sideParams.FilterDescendantsInstances = { character, arcFolder }
+	-- [RTHROW] fixed throw speed (RIVALS): solve the elevation for the range instead of the power (low arc first, then the high one)
+	do
+		local C = GadgetConfig[kitGadget()] or Config
+		local v = C.MaxThrowSpeed or Config.MaxThrowSpeed
+		if (C.MinThrowSpeed or Config.MinThrowSpeed) == v and (C.MaxLift or Config.MaxLift or 0) == 0 then
+			local y = -drop
+			local disc = v ^ 4 - g * (g * range * range + 2 * y * v * v)
+			if disc >= 0 then
+				local fallback
+				for _, sign in { -1, 1 } do
+					local elev = math.atan((v * v + sign * math.sqrt(disc)) / (g * range))
+					local dir = flat.Unit * math.cos(elev) + Vector3.new(0, math.sin(elev), 0)
+					fallback = fallback or dir
+					local apex = from.Y + (v * math.sin(elev)) ^ 2 / (2 * g)
+					local roof = workspace:Raycast(from, Vector3.new(0, 30, 0), sideParams)
+					if not workspace:Raycast(from, dir * 7, sideParams) and apex < (roof and roof.Position.Y or math.huge) - 1 then return dir, 1 end
+				end
+				return fallback, 1
+			end
+		end
+	end
 	-- Try a comfortable lob first; if cover right in front would catch it (you're throwing from behind a
 	-- crate), lob higher and higher until the first few studs are clear and it still fits under the roof.
 	local best = nil
@@ -387,7 +428,7 @@ local function updateArc(dt: number)
 	-- Fly it: the same physics as the server's grenade, up to the first thing it hits
 	local start = throwOrigin(head, direction, throwSide(head, direction))
 	local v0 = launchVelocity(direction, pw)
-	local gravity = Vector3.new(0, -workspace.Gravity, 0)
+	local gravity = Vector3.new(0, -flightGravity(), 0) -- [RTHROW] the server's flight gravity
 	local position, velocity = start, v0
 	local flight, hitAt, hitNormal = 0, nil, nil
 	for _ = 1, 90 do
