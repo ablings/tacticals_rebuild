@@ -1,34 +1,51 @@
-# Tacticals UI handoff → Shadow PC (2026-10-19, from the main PC UI session)
+# Tacticals UI handoff → Shadow PC (2026-10-21, from the main PC UI session)
 
 ## Get the project
 ```
 git clone https://github.com/ablings/<private repo>.git "%USERPROFILE%\Documents\tacticals_rebuild"
 ```
-(If the folder already exists there: `git pull` instead.) Work commits end at 83d6997. The repo holds the
-saved working places (Tacticals_rebuild.rbxl = lobby, match_place_ref.rbxl = match; saved by the lead at fa7da81, port 20).
-`rivals_practice` is on GitHub (`git pull`); it holds `mcpcli.py` (Studio MCP bridge client).
-Read `CLAUDE.md` in tacticals_rebuild, and the vault pages `wiki/tacticals/Lobby UI Kit.md` + `wiki/log.md`.
+(If the folder already exists there: `git pull` instead.) `rivals_practice` is on GitHub too (`git pull`); it holds `mcpcli.py`
+(Studio MCP bridge client). Read `CLAUDE.md` in tacticals_rebuild, the lead's `notes/handoff/HANDOFF_LEAD.md`, and the vault pages
+`wiki/tacticals/Lobby UI Kit.md` (everything below is written up there, with lessons) + `wiki/log.md`.
 
-## State
-- Port 20 is live (weapon abilities, 8 new items, Kit cards, item HUD). Published by the lead session on Edward's go.
-- Commits AFTER port 20, in the repo but NOT deployed to any studio and NOT published:
-  - f27a2d4 + ed50188: match clock. No 3-2-1 / FIGHT / ROUND n banners. The clock counts tenths under a minute
-    (5.0, 4.9 ...), red under 5 s of a live round. (`ui/match/DuelHUD.client.lua`)
-  - 474a994: Kit screen blur (BlurEffect 8 + stronger DOF; the item stays sharp). (`ui/lobby/Armory.lua`)
-  - 83d6997: Pump Shotgun / Bat / Riot Shield models had gaps (Edward: "detached"). Fixed in
-    `tools/new_weapons/build_new_items.lua`.
+## State: everything is LIVE (port 30, published by the lead on Edward's go)
+Nothing of the UI session is pending deploy or publish. What shipped across ports 28-30:
+- **Look**: "the RIVALS mix" = RIVALS layout and shapes, filled with muted team colours (tan = us, dark green = them), Montserrat Heavy
+  + Builder Sans, hairline edges, no comic ink. Field-green primary buttons (#8DBF5A -> #4C7A2E) in the lobby. Intro / pads olive.
+  The in-match HUD was tested over pure white / black / green backdrops for readability (hint strip on a dark pill, darker tiles).
+- **Match HUD**: content-sized kill-feed pills, ROUND WON/LOST card + MATCH POINT, round fade, kill-type line, RIVALS health bar
+  (bottom left, bone -> amber -> red), killer card, Switch Weapons from the countdown until KitLocked (lead), Settings gear (D-pad up),
+  RIVALS dashed gadget throw tracer (rarely visible now: THROWNOW throws on tap).
+- **Results**: 3D clone of your character, Eliminations / Deaths / Assists / Damage Dealt / Damage Taken / Headshots (lead's fields).
+- **Names**: Roblox verified / Premium glyphs (UIKit.Badges; Settings > Game > Display Badges), device icons (lead's Device
+  attribute; console = controller icon), ONE icon left of the name: streak flame > rank emblem (Rank mode) > tiered level shield.
+- **Kit**: the real item model in the world (not a ViewportFrame), DOF blur; locked items flat black Neon and can't be turned /
+  zoomed / inspected; panels fit width on narrow screens.
+- **Lobby alive**: PLAY shine sweep, Missions claim callout, nav badge pop, button hover sheen, Shop gear art breaks out of its card
+  and tilts on hover.
+- **Loading screens**: the TACTICALS logo (UIKit.Logo) on match-found / deploy / match loading / teleport; logo frame teal-fixed.
+- Uploaded art (Gunsy Funsy group) and their image ids are in `ui/lobby/Kit.lua` (LEVEL_TIERS, ICONS.streakColor),
+  `ui/hud/Badges.lua` (DEVICE), `ui/match/KillIcons.lua`, `ui/lobby/Logo.lua`. Sources under `ui/art/*/_upload`.
 
-## To do on the Shadow PC (only when Edward says Studio can be opened)
-1. Open both places, run `list_roblox_studios`, note the new ids.
-2. UI deploy (check live == repo first; the guard needs `--force` on a new machine since its hash file is per studio):
-   `python ui/deploy_ui.py <lobby id>` and `python ui/deploy_ui.py <match id> --match`
-3. Model rebuild in BOTH studios (Edit mode, execute_luau): prepend `ONLY = { PumpShotgun = true, Bat = true, RiotShield = true }`
-   to the source of `tools/new_weapons/build_new_items.lua`. Never rebuild DualPistols (LeftBarrel.Muzzle lookup).
-   Lead's constraints: one "Muzzle" attachment in the shotgun; the grip stays "Handle" with its sounds.
-4. Check in Play (take `tools/play_lock.py take ui` first, release after): Kit renders of the three models, the Kit blur,
-   and a bot round for the clock (out/td.json-style StudioTeleportData).
-5. Commit, vault, and tell the lead session ("Roblox training"). Publishing is the lead's job, and only on Edward's go.
+## Open items (need Edward's call)
+1. **4:3 tablets**: every screen is built on Kit.canvas = a centred 16:9 aspect lock, so on 4:3 the whole HUD sits small in a middle
+   band (lobby and match). Fix = anchor HUD groups to the screen edges instead. Design decision; not started.
+   Same on tablets: the lead's tutorial "OBJECTIVE · LEAVE COVER" box overlaps the hotbar + Switch Weapons during the real tutorial.
+2. Lobby "alive" leftovers from the RIVALS study: a scrolling reward strip on pass / bundle cards on hover (not done).
+3. The ;duelsolo results card Edward once saw skipped could not be reproduced in Studio (it showed ~10 s). Watch it live.
+
+## Working with Studio here
+- Studio ids change on every reopen: `list_roblox_studios`, then point your test json files at the new ids.
+- Deploy: check live == repo first, then `python ui/deploy_ui.py <lobby id>` / `python ui/deploy_ui.py <match id> --match`
+  (`--skip=Parent.Name` leaves someone else's live script alone).
+- Play lock: run `python tools/play_lock.py take ui` as ITS OWN command and continue only if it prints "taken by ui"; release after.
+  Save the lobby / match with `tools/save_studio.ps1` only while holding the lock (shared with the lead).
+- Bot match test: ReplicatedStorage `StudioTeleportData` = `{"Mode":"1v1","Teams":{"A":["me"],"B":["bot"]},"StudioTimes":{...}}` in
+  Edit, then Play; `ServerStorage.MatchTestHook:Invoke("kill", victim, killer, headshot)` in the Server DM (task.spawn it to capture
+  round-end UI). Clear the attribute after. Lobby duel: `ServerStorage.DuelTestHook:Invoke("solo", userId, "1v1")`.
+- The main PC's GPU reset several times with 3+ Studios open: keep only the two working copies open.
 
 ## Rules (Edward)
-Never publish yourself, never enter credentials, UI in Scale only, commit only your own paths with the Co-Authored-By trailer,
-vault lessons after each finished piece of work.
+Never publish yourself (the lead publishes on Edward's go in its own chat), never enter credentials, uploads only under the
+Gunsy Funsy group (Edward uploads), UI in Scale only, commit only your own paths with the Co-Authored-By trailer, push after
+commits, vault lessons after each finished piece of work, don't recolour screens nobody asked about.
