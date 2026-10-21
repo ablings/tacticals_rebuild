@@ -859,13 +859,13 @@ local function ensurePips()
 		strip.pips[i] = p
 	end
 end
--- ticks: done = tan, current = amber, to do = grey; all done = olive
+-- ticks: done = olive, current = amber, to do = grey; all done = olive
 local function paintPips(current: number?, doneUpTo: number)
 	local all = doneUpTo >= #strip.pips
 	strip.count.Text = string.format("%d/%d", math.min(doneUpTo, #strip.pips), #strip.pips) -- (round 6: steps DONE, so the kill fills the last)
 	strip.count.TextColor3 = all and GOOD or TAN
 	for i, p in strip.pips do
-		p.BackgroundColor3 = all and GOOD or (i <= doneUpTo and TAN or (i == current and AMBER or TODO))
+		p.BackgroundColor3 = (all or i <= doneUpTo) and GOOD or (i == current and AMBER or TODO) -- (round 8: done = olive, like every other done)
 	end
 end
 local function paintKey(k, done: boolean)
@@ -1183,12 +1183,13 @@ local function showFinish()
 	subT.Position = UDim2.fromScale(0.07, 0.37)
 	subT.Size = UDim2.fromScale(0.86, 0.05)
 	subT.Text = "YOU LEARNED"
-	local skills = { { "COVER", "Q" }, { "SLIDE", "C" }, { "JUMP", "SPACE" }, { "SHOOT", "LMB" } }
+	-- (round 8, graders: LEAN and DASH were taught too) every move from the run, in order
+	local skills = { { "LEAN", "Q" }, { "COVER", "Q" }, { "DASH", "E" }, { "SLIDE", "C" }, { "JUMP", "SPACE" }, { "SHOOT", "LMB" } }
 	for i, s in skills do
 		local tile = Instance.new("Frame")
 		tile.Name = "Skill" .. s[1]
-		tile.Position = UDim2.fromScale(0.07 + (i - 1) * 0.218, 0.45)
-		tile.Size = UDim2.fromScale(0.2, 0.22)
+		tile.Position = UDim2.fromScale(0.07 + (i - 1) * 0.146, 0.45)
+		tile.Size = UDim2.fromScale(0.136, 0.22)
 		tile.BackgroundTransparency = 1
 		tile.BorderSizePixel = 0
 		local iconHolder = Instance.new("Frame"); iconHolder.BackgroundTransparency = 1
@@ -1510,7 +1511,7 @@ local function setHighlight(part: BasePart)
 	stroke(chev, PLATE, 1.5, 0.3)
 	tag.Parent = workspace.CurrentCamera
 	highlightTag = tag
-	-- (round 3) one size rule for every world keycap: about 4.5 % of the screen height at any distance (studs follow the
+	-- (round 3) one size rule for every world keycap: about 6 % of the screen height (round 8) at any distance (studs follow the
 	-- distance), centred above the target, bobbing; and a "ready" state: while you look at the target the key lights amber
 	task.spawn(function()
 		local cam = workspace.CurrentCamera
@@ -1518,7 +1519,7 @@ local function setHighlight(part: BasePart)
 		local glyphLbl = face and face:FindFirstChild("Glyph")
 		while highlightTag == tag and tag.Parent do
 			local d = (cam.CFrame.Position - part.Position).Magnitude
-			local h = math.max(0.9, 0.045 * 2 * d * math.tan(math.rad(cam.FieldOfView / 2))) -- the key's height in studs
+			local h = math.max(0.9, 0.06 * 2 * d * math.tan(math.rad(cam.FieldOfView / 2))) -- the key's height in studs
 			local aspect = cap.Aspect.AspectRatio
 			tag.Size = UDim2.fromScale(h * math.max(1, aspect), h / 0.68)
 			tag.StudsOffsetWorldSpace = Vector3.new(0, math.min(part.Size.Y / 2, 2) + h * 0.75 + math.sin(os.clock() * 3) * 0.12 * h, 0) -- (tall cover: not off the top of the screen)
