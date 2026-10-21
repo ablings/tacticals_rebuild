@@ -1018,10 +1018,15 @@ local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), P
 	new("UIStroke", { Color = WHITE, Thickness = 2 }) })
 local kLevelL = label(kLevel, "1", FX, 24, 0, 0, 44, 44, WHITE, nil, 10)
 -- the win streak: the flame silhouette with the number over it (Kit.ICONS.streak), like RIVALS
-local kStreak = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://89001729086571", ImageColor3 = Color3.fromRGB(255, 140, 40),
+local kStreak = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://89001729086571", ImageColor3 = Color3.fromRGB(255, 140, 40), -- (re-pointed below to Kit.streakImage)
 	Position = UDim2.fromOffset(94, 88), Size = UDim2.fromOffset(46, 46), Visible = false, ZIndex = 9, Parent = kcard })
+pcall(function() -- (2026-10-20) the full-colour codex flame once it's uploaded (UIKit.Kit.streakImage)
+	local K = require(ReplicatedStorage.UIKit.Kit)
+	if K.streakImage then kStreak.Image, kStreak.ImageColor3 = K.streakImage() end
+end)
 local kStreakL = label(kStreak, "3", FX, 22, 0, 16, 46, 26, WHITE, nil, 10)
-new("UIStroke", { Thickness = 1.5, Color = Color3.fromRGB(90, 30, 0), Parent = kStreakL })
+new("UIStroke", { Thickness = 2.5, Color = Color3.fromRGB(240, 70, 30), Parent = kStreakL }) -- (2026-10-20) RIVALS number edge
+new("UIGradient", { Rotation = 90, Color = ColorSequence.new(WHITE, Color3.fromRGB(255, 222, 196)), Parent = kStreakL })
 local kName = label(kcard, "", FX, 46, 150, 10, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
 local kUser = label(kcard, "", FB, 20, 150, 60, 560, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
 local kHow = label(kcard, "", FB, 28, 158, 88, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)
@@ -1041,10 +1046,18 @@ local function refreshKillerCard(uid)
 	local p = uid and uid > 0 and Players:GetPlayerByUserId(uid)
 	kName.Text = nameOf(uid)
 	kUser.Text = p and ("@" .. p.Name) or ""
-	kLevelL.Text = tostring(p and p:GetAttribute("Level") or 1)
-	local streak = p and tonumber(p:GetAttribute("WinStreak")) or 0
-	kStreak.Visible = streak > 0
-	kStreakL.Text = tostring(streak)
+	-- (2026-10-20, Edward) ONE icon (UIKit.Badges.Icon): their streak flame, else their rank emblem (Rank mode), else their level
+	local okB, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
+	local kind, v = "level", p and p:GetAttribute("Level") or 1
+	if okB and B and p then kind, v = B.Icon(p) end
+	local emb = kcard:FindFirstChild("RankIcon") or new("ImageLabel", { Name = "RankIcon", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
+		Position = kLevel.Position, Size = kLevel.Size, ZIndex = 9, Parent = kcard })
+	kStreak.Visible = kind == "streak"
+	kStreak.Position = kLevel.Position
+	kStreakL.Text = tostring(kind == "streak" and v or 0)
+	emb.Visible, emb.Image = kind == "rank", kind == "rank" and v or ""
+	kLevel.Visible = kind == "level" or kind == "wins"
+	kLevelL.Text = tostring((kind == "level" or kind == "wins") and v or 1)
 	local m = targetModel(uid)
 	local hum = m and m:FindFirstChildOfClass("Humanoid")
 	local frac = hum and hum.MaxHealth > 0 and math.clamp(hum.Health / hum.MaxHealth, 0, 1) or 0
@@ -1285,7 +1298,9 @@ RunService.RenderStepped:Connect(function()
 	local picking = mf ~= nil and mf.Enabled -- the Switch Weapons picker is up: only the score bar stays (RIVALS)
 	-- (2026-10-20, Edward: "switching weapons appears way too early ... it should only appear when the round starts") like
 	-- RIVALS: only through the countdown into a round, and not before the first one (you just picked your kit)
-	local preRound = state == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1
+	-- + (Edward: "you should be able to change your weapon until you shoot or move") on into the live round until the server
+	-- sets KitLocked (your first move / landed shot); picks before that swap at once
+	local preRound = (state == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1) or (state == "Live" and player:GetAttribute("KitLocked") ~= true)
 	RV.switchB.Visible = preRound and not over and not spectator() and RV.switchHook() ~= nil and not picking
 	if picking then RV.roundCard.Visible = false; feed.Visible = false; local el = root:FindFirstChild("Eliminated"); if el then el.Visible = false end end
 	-- spectate: spectators, and duelists while dead

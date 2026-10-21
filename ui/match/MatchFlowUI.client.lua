@@ -194,7 +194,26 @@ local function fillTeams(boxes)
 				local pl = p.player
 				local lv = pl and pl:GetAttribute(STATE.Level) or nil
 				local ready = pl and pl:GetAttribute("LoadoutReady") == true
-				s.ll.Text = ready and "✓" or (p.bot and "BOT" or tostring(lv or "-"))
+				-- (2026-10-20, Edward) the ONE icon rule (UIKit.Badges.Icon): streak flame, else rank emblem (Rank mode), else level
+				local kind, v = "level", lv
+				if pl and not ready then
+					local okB, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
+					if okB and B then kind, v = B.Icon(pl) end
+				end
+				local icon = s.lv:FindFirstChild("Icon") or new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
+					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1.5, 1.5), ZIndex = 4, Parent = s.lv })
+				local isImg = kind == "streak" or kind == "rank"
+				if isImg then
+					local K = require(ReplicatedStorage.UIKit.Kit)
+					local img, tint = K.ICONS.streak, Color3.fromRGB(255, 140, 40)
+					if K.streakImage then img, tint = K.streakImage() end
+					if kind == "rank" then img, tint = v, Color3.new(1, 1, 1) end
+					icon.Image, icon.ImageColor3 = img, tint
+				end
+				icon.Visible = isImg
+				s.ll.Text = ready and "✓" or (p.bot and "BOT" or (kind == "rank" and "" or tostring(v or "-")))
+				s.ll.ZIndex = 6
+				s.lv.BackgroundTransparency = isImg and 1 or 0
 				s.lv.BackgroundColor3 = ready and Color3.fromRGB(90, 178, 255) or Color3.fromRGB(20, 18, 24)
 				s.h.ImageTransparency = p.gone and 0.6 or 0
 				if p.bot then s.h.Image = ""
@@ -791,7 +810,9 @@ do
 	sw.Name = "SwitchWeapons"
 	sw.OnInvoke = function(cmd)
 		local ms = st("MatchState")
-		local allowed = ms == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1 and st(STATE.Phase) ~= "Loadout" -- (2026-10-20, Edward) the countdown into a round only, not before the first
+		-- (2026-10-20, Edward) the countdown into a round (not before the first), and on into the live round until you move or
+		-- land a shot (the server's KitLocked)
+		local allowed = ((ms == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1) or (ms == "Live" and player:GetAttribute("KitLocked") ~= true)) and st(STATE.Phase) ~= "Loadout"
 		if cmd == "Close" or (cmd == "Toggle" and switching) then switching = false
 		elseif allowed then switching = true end
 		return switching

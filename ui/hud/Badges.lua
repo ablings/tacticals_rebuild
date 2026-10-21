@@ -39,4 +39,23 @@ function Badges.Name(p, name)
 	return name
 end
 
+-- (2026-10-20, Edward, RIVALS) the ONE icon beside a name (nameplates, killer banner, match boxes), picked by the VIEWER's
+-- leaderboard mode (Settings > Lobby Data): Level / Streak / Wins -> their win-streak flame if they have one, else their level
+-- (Wins: their wins); Rank -> their rank emblem if ranked, else their level.
+--   Badges.Icon(player) -> "streak", n | "rank", imageId | "level", n | "wins", n
+function Badges.Icon(p)
+	local viewer = game:GetService("Players").LocalPlayer
+	local mode = (viewer and viewer:GetAttribute("Setting_LobbyData")) or "Level"
+	if not isPlayer(p) then return "level", 1 end
+	local sn = tonumber(p:GetAttribute("WinStreak")) or 0
+	if sn > 0 and mode ~= "Rank" then return "streak", sn end
+	if mode == "Rank" then
+		local ok, RankArt = pcall(function() return require(script.Parent:WaitForChild("RankArt", 2)) end)
+		local r = ok and RankArt and RankArt.Of and RankArt.Of(p)
+		if r and r.image then return "rank", r.image end
+	end
+	if mode == "Wins" then return "wins", tonumber(p:GetAttribute("Wins")) or 0 end
+	return "level", tonumber(p:GetAttribute("Level")) or 1
+end
+
 return Badges

@@ -115,7 +115,7 @@ local function build(p, character)
 	-- (2026-10-18) the win streak: RIVALS' flame with the number over it, right of the name
 	local streak = Instance.new("Frame")
 	streak.Name = "StreakHolder"
-	streak.LayoutOrder = 4
+	streak.LayoutOrder = 0 -- (2026-10-20, Edward) the flame takes the badge's place, left of the name
 	streak.BackgroundTransparency = 1
 	streak.Size = UDim2.fromScale(0.13, 0.95)
 	streak.Visible = false
@@ -157,26 +157,33 @@ function Nameplates.Start()
 				-- only plates of people in the same place as you: same duel (or both in the lobby)
 				local sameSpace = (p:GetAttribute("DuelMatch") or false) == (player:GetAttribute("DuelMatch") or false)
 				e.gui.Enabled = Nameplates.Active() and not hideAll and not near and sameSpace and p:GetAttribute("InTraining") ~= true
-				local which, v = statOf(p)
-				if which == "Rank" then
-					local hasImg = v.image ~= nil
-					e.badgeImage.Visible, e.badgeImage.Image = hasImg, v.image or ""
-					e.badgeText.Text = hasImg and "" or "?"
-					e.badge.BackgroundTransparency = hasImg and 1 or 0.25
-				else
-					e.badgeImage.Visible = false
-					e.badge.BackgroundTransparency = 0.25
-					e.badgeText.Text = tostring(v)
+				-- (2026-10-20, Edward, RIVALS) ONE icon left of the name, picked by your leaderboard mode (Lobby Data):
+				--   Level / Streak (/ Wins): their win-streak flame if they have one, else their level (Wins: their wins)
+				--   Rank: their rank emblem if they're ranked, else their level
+				local mode = player:GetAttribute("Setting_LobbyData") or "Level"
+				local sn = tonumber(p:GetAttribute("WinStreak")) or 0
+				local flame = sn > 0 and mode ~= "Rank"
+				e.streak.Visible = flame
+				e.badge.Visible = not flame
+				if e.streakN then e.streakN.Text = tostring(sn) end
+				if not flame then
+					local r = (mode == "Rank" and RankArt) and RankArt.Of(p) or nil
+					if r and r.image then
+						e.badgeImage.Visible, e.badgeImage.Image = true, r.image
+						e.badgeText.Text = ""
+						e.badge.BackgroundTransparency = 1
+					else
+						e.badgeImage.Visible = false
+						e.badge.BackgroundTransparency = 0.25
+						e.badgeText.Text = tostring(p:GetAttribute(mode == "Wins" and "Wins" or "Level") or 0)
+					end
 				end
 				e.vip.Visible = p:GetAttribute("VIP") == true
-				-- (2026-10-20, Edward) Roblox badges with the name (UIKit.Badges: Premium before, verified after; Display Badges)
+				-- (2026-10-20, Edward) Roblox badges with the name (UIKit.Badges: verified while Display Badges is on, else Premium)
 				if e.name then
 					local okB, B = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
 					e.name.Text = (okB and B) and B.Name(p) or p.DisplayName
 				end
-				local sn = tonumber(p:GetAttribute("WinStreak")) or 0
-				e.streak.Visible = sn > 0
-				if e.streakN then e.streakN.Text = tostring(sn) end
 			end
 		end
 	end)
