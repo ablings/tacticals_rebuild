@@ -78,6 +78,11 @@ local shadowParts = {} -- soft contact shadow under the item
 local LIT = { Ambient = Color3.fromRGB(95, 95, 102), LightColor = Color3.fromRGB(250, 248, 250) }
 local DARK = { Ambient = Color3.new(0, 0, 0), LightColor = Color3.new(0, 0, 0) } -- locked: pure silhouette
 local BACKGROUND_BLUR = 8 -- (2026-10-19, Edward: "more blur on the kit screen") the room blurs, the item (ViewportFrame) stays sharp
+-- (2026-10-20, Edward: "rivals kit viewing doesn't use viewport frames it uses the gun's physical model") the item is a real
+-- model in the world (client-only: a LocalScript's parts never replicate), lit by the room with real shadows; the room behind
+-- it blurs through depth of field focused on the item instead of a full-screen BlurEffect (that would blur the item too).
+-- false = the old full-screen ViewportFrame.
+local SHOWCASE_WORLD = true
 local overlay = {}     -- transition overlay pieces
 
 -- UI refs
@@ -113,6 +118,7 @@ local function prepModel(model: Model, targetDiameter: number)
 			d.Anchored = true
 			d.CanCollide = false
 			d.CanQuery = false
+			d.CanTouch = false
 			d.CastShadow = true
 		end
 	end
@@ -265,7 +271,7 @@ function Armory.UpdateShadow(d: Vector3, camCF: CFrame)
 	for _, e in showcase do
 		if not e.leaving and e.model and e.model.Parent then current = e end
 	end
-	if not current or current.locked then -- silhouettes stay flat black: no shadow
+	if SHOWCASE_WORLD or not current or current.locked then -- silhouettes stay flat black: no shadow (world mode: the room casts real ones)
 		for _, p in shadowParts do p.Transparency = 1 end
 		return
 	end
@@ -2212,8 +2218,29 @@ local function build()
 	showcaseCam = Instance.new("Camera")
 	showcaseCam.Parent = vpf
 	vpf.CurrentCamera = showcaseCam
-	displayFolder = Instance.new("WorldModel")
-	displayFolder.Parent = vpf
+	if SHOWCASE_WORLD then
+		displayFolder = Instance.new("Folder")
+		displayFolder.Name = "ArmoryShowcase"
+		displayFolder.Parent = workspace
+		-- a product-shot key light up and to the left of the camera, so the item reads with contrast against the room
+		local dp, cp = points()
+		if dp and cp then
+			local lamp = Instance.new("Part")
+			lamp.Name = "ShowcaseKey"
+			lamp.Anchored, lamp.CanCollide, lamp.CanQuery, lamp.CanTouch, lamp.CastShadow = true, false, false, false, false
+			lamp.Transparency = 1
+			lamp.Size = Vector3.one * 0.2
+			lamp.CFrame = CFrame.lookAt(cp.Position + cp.UpVector * 4 - cp.RightVector * 4, dp)
+			local spot = Instance.new("SpotLight")
+			spot.Brightness, spot.Range, spot.Angle, spot.Face, spot.Shadows = 2.2, 24, 50, Enum.NormalId.Front, true
+			spot.Color = Color3.fromRGB(255, 248, 238)
+			spot.Parent = lamp
+			lamp.Parent = displayFolder
+		end
+	else
+		displayFolder = Instance.new("WorldModel")
+		displayFolder.Parent = vpf
+	end
 	showcaseVpf = vpf
 
 	-- click-and-drag anywhere that isn't a panel turns the item
@@ -2493,13 +2520,20 @@ local function backgroundBlur(on: boolean)
 	b.Name = "ArmoryBackgroundBlur"
 	b.Parent = Lighting
 	b.Size = BACKGROUND_BLUR
-	b.Enabled = on and BACKGROUND_BLUR > 0
+	b.Enabled = on and BACKGROUND_BLUR > 0 and not SHOWCASE_WORLD
 	-- soft depth of field instead (values from the Tacticals session's Showroom2 build). Not named "ArmoryBlur": that name is deleted above
 	local dof = Lighting:FindFirstChild("ArmoryDOF") or Instance.new("DepthOfFieldEffect")
 	dof.Name = "ArmoryDOF"
 	dof.FocusDistance = 13.05
 	dof.InFocusRadius = 3
 	dof.FarIntensity = 0.85
+	if SHOWCASE_WORLD then -- the item sharp, the room behind it soft
+		local d, camCF = points()
+		if d and camCF then dof.FocusDistance = (camCF.Position - d).Magnitude end
+		dof.InFocusRadius = 0.6 -- (Edward: "add more blur to the room") Roblox DOF at full strength, focus band just the item
+		dof.FarIntensity = 1
+		dof.NearIntensity = 1
+	end
 	dof.NearIntensity = 0
 	dof.Parent = Lighting
 	dof.Enabled = on
