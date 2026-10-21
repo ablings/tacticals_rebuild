@@ -339,3 +339,12 @@ himself; we never publish.
   serious restyle 3bfcb2a / 684d72e in muted tan + dark green, kill-feed silhouettes, DuelHUD headshot line / match point / round fade /
   avatar, in-match Settings gear db66db9, NOISE hidden); lead (live picks queued to round end, Kill payload weapon = item + noscope,
   results Assists / DamageDealt / DamageTaken).
+
+## Live port 29: round flow, gadget throws, hub settings, Device, UI badges (2026-10-20 ~23:28, main PC lead; Edward in the lead's chat: "go")
+- From 7514fa9 (both copies saved). Published on the second monitor, each retitled after Grant: tacticals (lobby), Tutorial, Matchmaking,
+  Ranked (port_prep.sh, all checks true; [ROUNDFLOW] + DeviceBridge in every copy, HubSettingsBridge lobby only by design, applyMapEnv x3,
+  ArenaMap camera, [STATS] / [KILLFEED]).
+- Windows' On-Screen Keyboard sat over the Publish dialog part way through; Edward closed it and the publish carried on.
+- Carries: UI c8d5798 (badges, device icons, throw tracer, Kit models, field-green buttons, TACTICALS logo on match-search / loading /
+  teleport; the teal-fixed logo frame art is still an upload pending), lead (swap weapon until you move or fire, guns fire in RoundEnd
+  with no damage, stronger gadget throws 36..105 studs/s + thrown Landmine, hub settings as server attributes, player attribute Device).
