@@ -711,7 +711,7 @@ local function buildUI()
 	-- The buttons are the gameplay scripts' binds (CameraController / CoverController / GadgetController / WeaponController /
 	-- this file); Modules.Shared.Config.GamepadConfig, if the Tacticals session adds it, overrides them by action name.
 	-- (Edward 2026-10-20) A jump / vault, B crouch / slide, X reload (Switch Weapons between rounds), Y throw gadget,
-	-- LB cover (double tap: dash), RB next weapon, L3 sprint, R3 gun bash
+	-- LB cover, D-pad up dash (2026-10-21), RB next weapon, L3 sprint, R3 gun bash
 	local PAD = { TakeCover = Enum.KeyCode.ButtonL1, GunBash = Enum.KeyCode.ButtonR3, ThrowGadget = Enum.KeyCode.ButtonY, Reload = Enum.KeyCode.ButtonX,
 		CycleRight = Enum.KeyCode.ButtonR1 }
 	pcall(function()

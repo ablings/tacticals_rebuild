@@ -102,11 +102,11 @@ return {
 				{ kind = "bind", name = "Crouch", icon = "crouch", value = { "C", "LeftControl", "ButtonB", "" } },
 				{ kind = "bind", name = "Slide", icon = "effects2", value = { "", "", "", "" } },
 				{ kind = "bind", name = "Take Cover", icon = "padded", value = { "Q", "", "ButtonL1", "" } },
-				{ kind = "bind", name = "Dash", icon = "sprint", value = { "E", "", "", "" } }, -- (controller: double-tap LB)
+				{ kind = "bind", name = "Dash", icon = "sprint", value = { "E", "", "DPadUp", "" } }, -- (controller: D-pad up, Edward 2026-10-21)
 			} },
 			{ title = nil, rows = {
 				{ kind = "bind", name = "Equip Gun", key = "Equip Primary", icon = "inking", value = { "One", "", "DPadLeft", "" } },
-				{ kind = "bind", name = "Equip Melee", icon = "inking", value = { "Two", "", "DPadUp", "" } },
+				{ kind = "bind", name = "Equip Melee", icon = "inking", value = { "Two", "", "", "" } }, -- (D-pad up is Dash; RB cycles to it)
 				{ kind = "bind", name = "Equip Gadget", key = "Equip Utility", icon = "particles", value = { "Three", "", "DPadRight", "" } },
 				{ kind = "bind", name = "Cycle Weapon", key = "Switch Weapons", icon = "reset", value = { "Z", "", "ButtonR1", "" } },
 			} },

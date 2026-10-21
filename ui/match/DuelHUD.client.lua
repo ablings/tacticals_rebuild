@@ -19,6 +19,7 @@ local HttpService = game:GetService("HttpService")
 local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
+local padSettings: (() -> ())? = nil -- [PAD] hold View / Select = Settings in a match (set where Settings is built)
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE_HI = Color3.fromRGB(255, 212, 0)
@@ -483,21 +484,21 @@ do
 		busy = false
 	end
 	gear.Activated:Connect(toggleSettings)
-	-- (2026-10-21) controller: D-pad up opens / closes Settings in a match (free in a duel; Training uses it for the bins),
-	-- with its glyph beside the gear while a controller is the last input
+	-- (2026-10-21) controller: HOLD View / Select opens / closes Settings in a match (a tap is still the scoreboard; D-pad up is
+	-- Dash since Edward 2026-10-21), with its glyph beside the gear while a controller is the last input
 	local UIS = game:GetService("UserInputService")
 	local glyph = new("ImageLabel", { Name = "PadGlyph", BackgroundTransparency = 1, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.fromOffset(1920 - 84, 50),
 		Size = UDim2.fromOffset(34, 34), Visible = false, Parent = root })
-	pcall(function() glyph.Image = UIS:GetImageForKeyCode(Enum.KeyCode.DPadUp) end)
+	pcall(function() glyph.Image = UIS:GetImageForKeyCode(Enum.KeyCode.ButtonSelect) end)
 	local function onType(t)
 		if t == Enum.UserInputType.MouseMovement then return end
 		glyph.Visible = t.Name:find("Gamepad") ~= nil and glyph.Image ~= ""
 	end
 	UIS.LastInputTypeChanged:Connect(onType)
 	onType(UIS:GetLastInputType())
-	UIS.InputBegan:Connect(function(input, gp)
-		if input.KeyCode == Enum.KeyCode.DPadUp and gui.Enabled and inMatch() and player:GetAttribute("InTraining") ~= true then toggleSettings() end
-	end)
+	padSettings = function()
+		if gui.Enabled and inMatch() and player:GetAttribute("InTraining") ~= true then toggleSettings() end
+	end
 end
 local leaveDuel = new("TextButton", { Name = "LeaveDuel", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(30, 30), Size = UDim2.fromOffset(150, 52),
 	BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, Visible = false, Parent = root }, { corner(10) })
@@ -1640,12 +1641,21 @@ local function scoreboardKey()
 	local ok, kc = pcall(function() return name and Enum.KeyCode[name] end)
 	return (ok and kc) or Enum.KeyCode.Tab
 end
+local selectPress, selectHeld = 0, false
 UserInputService.InputBegan:Connect(function(i, gp)
 	if i.KeyCode == scoreboardKey() and not gp then sbOpenHold = true end
-	if i.KeyCode == Enum.KeyCode.ButtonSelect then sbOpenToggle = not sbOpenToggle end
+	if i.KeyCode == Enum.KeyCode.ButtonSelect then -- [PAD] tap = scoreboard, hold 0.5 s = Settings
+		selectPress += 1
+		local press = selectPress
+		selectHeld = true
+		task.delay(0.5, function()
+			if selectHeld and press == selectPress then selectHeld = false if padSettings then padSettings() end end
+		end)
+	end
 end)
 UserInputService.InputEnded:Connect(function(i)
 	if i.KeyCode == scoreboardKey() then sbOpenHold = false end
+	if i.KeyCode == Enum.KeyCode.ButtonSelect and selectHeld then selectHeld = false sbOpenToggle = not sbOpenToggle end
 end)
 task.spawn(function()
 	local ok, IA = pcall(function() return require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 15)) end)

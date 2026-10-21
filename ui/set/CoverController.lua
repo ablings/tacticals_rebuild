@@ -1574,20 +1574,10 @@ local function update(dt: number)
 end
 
 -- // Input
-local lastPadCoverAt = 0 -- [PAD] double-tap LB = dash (Edward 2026-10-20)
-local onDashKey
+local onDashKey -- [PAD] dash on a controller = D-pad up (Edward 2026-10-21; was double-tap LB)
 local function onCoverKey(_, inputState: Enum.UserInputState, input: InputObject?)
 	if inputState ~= Enum.UserInputState.Begin then
 		return Enum.ContextActionResult.Pass
-	end
-	-- [PAD] LB: the first tap takes / leaves cover as usual, a second tap within 0.3 s dashes (E on keyboard)
-	if input and input.KeyCode == Enum.KeyCode.ButtonL1 then
-		local now = os.clock()
-		if now - lastPadCoverAt < 0.3 then
-			lastPadCoverAt = 0
-			return onDashKey("CoverDash", inputState)
-		end
-		lastPadCoverAt = now
 	end
 	-- Q during a jump dive (or its roll): finish it in cover
 	if isAlive() and dive then
@@ -2421,7 +2411,7 @@ function controller.Start()
 		for _, a in { "Cover", "CoverCrouch", "CoverDash", "CoverVault" } do ContextActionService:UnbindAction(a) end
 		ContextActionService:BindAction("Cover", onCoverKey, false, Binds.Key(localPlayer, "TakeCover", Config.Keybinds.Cover), Enum.KeyCode.ButtonL1) -- [PAD] LB (B is crouch)
 		ContextActionService:BindAction("CoverCrouch", onCrouchKey, false, Binds.Key(localPlayer, "Crouch", Config.Keybinds.Crouch), Enum.KeyCode.LeftControl, Enum.KeyCode.RightControl, Enum.KeyCode.ButtonB) -- C or Ctrl, [PAD] B
-		ContextActionService:BindAction("CoverDash", onDashKey, false, Binds.Key(localPlayer, "Dash", Config.Keybinds.Dash))
+		ContextActionService:BindAction("CoverDash", onDashKey, false, Binds.Key(localPlayer, "Dash", Config.Keybinds.Dash), Enum.KeyCode.DPadUp) -- [PAD] D-pad up
 		ContextActionService:BindActionAtPriority("CoverVault", onJumpKey, false,
 			Enum.ContextActionPriority.High.Value, Binds.Key(localPlayer, "Jump", Config.Keybinds.Vault), Enum.KeyCode.ButtonA) -- [PAD] A: vault / hop / dive
 	end

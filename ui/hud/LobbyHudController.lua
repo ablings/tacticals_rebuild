@@ -383,7 +383,7 @@ function LobbyHud.Start()
 	-- [PAD] D-pad opens the nav screens from the hub (RIVALS: Weapons left, Tasks down, Shop right, Pass up). Only while the
 	-- nav is on screen (it slides away for menus, duels and training) - in a round the D-pad equips weapons.
 	do
-		local DPAD = { Kit = Enum.KeyCode.DPadLeft, Missions = Enum.KeyCode.DPadDown, Shop = Enum.KeyCode.DPadRight, Codes = Enum.KeyCode.DPadUp }
+		local DPAD = { Kit = Enum.KeyCode.DPadLeft, Missions = Enum.KeyCode.DPadDown, Shop = Enum.KeyCode.DPadRight } -- (Codes lost D-pad up: it is Dash, 2026-10-21)
 		local padMode = false
 		local function showGlyphs()
 			for _, nb in navButtons do

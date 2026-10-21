@@ -20,9 +20,12 @@
    starts (round refresh).
 5. [x] **Gadget hold** (MaxHoldTime 5; tested: held 3 s no throw, release throws, auto-throw past 5 s): throwing auto-releases far too fast (THROWNOW MaxHoldTime 0.02); you must be able to hold the gadget at least
    5 s (still full strength on release).
-7. [ ] **Controller dash = D-pad up** instead of double-tapping LB. (Check the conflicts: D-pad up = Settings in a match / the
-   Training picker.)
+7. [x] **Controller dash = D-pad up** instead of double-tapping LB (deployed both copies; CoverDash bound E + DPadUp, LB = cover only).
+   Moved off D-pad up: match Settings = HOLD View/Select 0.5 s (tap = scoreboard as before); Training picker = T / D-pad down;
+   hub Codes loses its D-pad glyph; Settings > Hotkeys shows Dash = D-pad up, Equip Melee pad blank (RB cycles).
 8. [ ] **Climb** (new mechanic): on vaultable objects that are very WIDE or very LONG (deep), Space doesn't vault across: a climb
    animation puts you on top. Also on taller objects, as long as your head is above the object's top.
 6. [ ] **Map-selection overlay**: like RIVALS (and like we had before), a background overlay during the map-vote / loading so the player
    can't see which map they're on.
+9. [ ] **Mobile loading is very slow** (Edward). Investigate what loads at join (preloads, ContentProvider, image counts) on mobile.
+10. [ ] **Logos are pixelated** (Edward). Likely low-res image assets / scaled-up ImageLabels; UI session's area.

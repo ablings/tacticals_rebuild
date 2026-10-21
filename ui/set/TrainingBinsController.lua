@@ -344,7 +344,7 @@ end
 local function keys(_, state, input)
 	if state ~= Enum.UserInputState.Begin then return Enum.ContextActionResult.Sink end
 	local k = input.KeyCode
-	if k == Enum.KeyCode.Escape or k == Enum.KeyCode.ButtonB or k == Enum.KeyCode.T or k == Enum.KeyCode.DPadUp then controller.Close() end
+	if k == Enum.KeyCode.Escape or k == Enum.KeyCode.ButtonB or k == Enum.KeyCode.T or k == Enum.KeyCode.DPadDown then controller.Close() end
 	return Enum.ContextActionResult.Sink
 end
 
@@ -397,7 +397,7 @@ function controller.Open()
 	local cam = shared.Get and shared.Get("CameraController")
 	if cam and cam.SetMouseFree then cam.SetMouseFree(true) end
 	ContextActionService:BindActionAtPriority("TrainingPickerKeys", keys, false, 3000,
-		Enum.KeyCode.Escape, Enum.KeyCode.ButtonB, Enum.KeyCode.T, Enum.KeyCode.DPadUp)
+		Enum.KeyCode.Escape, Enum.KeyCode.ButtonB, Enum.KeyCode.T, Enum.KeyCode.DPadDown)
 end
 
 function controller.Close(applied)
@@ -453,11 +453,11 @@ function controller.Start()
 		if not prompt:GetAttribute("TrainingBin") or player:GetAttribute("InTraining") ~= true then return end
 		if isOpen then controller.Close() else controller.Open() end
 	end)
-	-- T / D-pad up (re)open it while in Training (Close's own binding handles the closing press)
+	-- T / D-pad down (re)open it (D-pad up is Dash, 2026-10-21) while in Training (Close's own binding handles the closing press)
 	UserInputService.InputBegan:Connect(function(input, processed)
 		if processed or isOpen or os.clock() - closedAt < 0.25 or player:GetAttribute("InTraining") ~= true then return end
 		if UserInputService:GetFocusedTextBox() then return end
-		if input.KeyCode == Enum.KeyCode.T or input.KeyCode == Enum.KeyCode.DPadUp then controller.Open() end
+		if input.KeyCode == Enum.KeyCode.T or input.KeyCode == Enum.KeyCode.DPadDown then controller.Open() end
 	end)
 	local function trial()
 		local inT = player:GetAttribute("InTraining") == true
