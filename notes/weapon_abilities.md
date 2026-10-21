@@ -71,3 +71,9 @@ Smoke, Flash (Flashbang), Frag, plus NEW: **StickyGrenade** (sticks to surfaces 
 - 2026-10-20 drift note: fix/abilities_install.lua no longer re-runs cleanly on live (its CombatManager fire-rate anchor was changed by the
   Shadow PC's draw-time patch, fix/movement_spec.lua). It stops before writing anything. To update just the modules, push
   scripts/abilities/*.lua sources directly (as done for the [KILLFEED] change), don't re-run the whole installer.
+- 2026-10-21 fixed: fix/abilities_install.lua re-runs cleanly again. An edit whose added lines are all already in the source counts as
+  applied ("~" in the result, e.g. edit 9 after movement_spec's fire-rate rewording) instead of stopping the install, and the
+  MeleeConfig / GadgetConfig appends are keyed on their first assignment, so [GADGETTHROW]'s reworded Landmine no longer gets a
+  second copy. Sources re-embedded with tools/abilities_build.py (thrown mine). Dry run on the match copy: 23 "=", 1 "~", nothing
+  to write, both modules identical to scripts/abilities. A Python heredoc via the Bash tool turned "\n" into real newlines inside Lua
+  strings; make such edits with the Edit tool.
