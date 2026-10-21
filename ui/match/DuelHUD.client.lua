@@ -175,6 +175,8 @@ for _, rot in { 33, -33 } do
 end end
 local roundL = label(timerBox, "ROUND 1", STENCIL, 18, 0, 52, 144, 26, Color3.fromRGB(205, 205, 212))
 local toWin = label(root, "", FB, 18, 760, 108, 400, 24, Color3.fromRGB(205, 205, 212))
+-- (2026-10-21, any-map readability) "First to 5" sat bare under the timer and vanished on white maps: a solid dark edge
+do local st = toWin:FindFirstChildOfClass("UIStroke"); if st then st.Thickness, st.Transparency, st.Color = 1.3, 0.15, BLACK end; toWin.TextColor3 = Color3.fromRGB(235, 235, 240); toWin:SetAttribute("KeepStroke", true) end
 
 ---------------------------------------------------------------------------------------------------- round banner
 local banner = new("Frame", { Name = "Banner", BackgroundTransparency = 1, Position = UDim2.fromOffset(360, 330), Size = UDim2.fromOffset(1200, 260), Visible = false, Parent = root })
@@ -1653,7 +1655,7 @@ do
 					d.Color = WHITE; d.Transparency = 0.82; d.Thickness = 1.5
 				end
 				d.LineJoinMode = Enum.LineJoinMode.Round
-			elseif d.Parent and (d.Parent:IsA("TextLabel") or d.Parent:IsA("TextButton")) then
+			elseif d.Parent and (d.Parent:IsA("TextLabel") or d.Parent:IsA("TextButton")) and not d.Parent:GetAttribute("KeepStroke") then
 				d.Color = BLACK; d.Transparency = math.max(d.Transparency, 0.55); d.Thickness = math.min(d.Thickness, 2); d.LineJoinMode = Enum.LineJoinMode.Round
 			end
 		elseif d:IsA("UICorner") then

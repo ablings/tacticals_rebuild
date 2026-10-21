@@ -217,7 +217,7 @@ local TILE = Vector2.new(186, 124)                             -- one tile (desi
 local GAP = 14                                                 -- between tiles
 local RENDER = Vector2.new(244, 160)                           -- the item's render box: bigger than the tile, so it spills out
 local RENDER_LIFT = -10                                        -- the render sits this far above the tile's centre
-local TILE_GREY, TILE_T = Color3.fromRGB(0, 0, 0), 0.55       -- a tile: dark glass
+local TILE_GREY, TILE_T = Color3.fromRGB(0, 0, 0), 0.42       -- a tile: dark glass (2026-10-21: 0.55 went grey on white maps)
 local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in your hands: lighter glass
 local BONE = Color3.fromRGB(255, 255, 255)
 -- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) Montserrat Heavy for labels, soft text edges, tiles with a
@@ -652,13 +652,15 @@ local function keycap(parent: Instance, key: string, order: number)
 	cap.LayoutOrder = order
 	cap.AutomaticSize = Enum.AutomaticSize.X
 	cap.Size = UDim2.fromOffset(22, 22)
-	cap.BackgroundColor3 = BLACK
-	cap.BackgroundTransparency = 0.42 -- dark glass, like the tiles
+	-- (2026-10-21, any-map readability) a light keycap with dark text, like RIVALS' white glyph circles: it reads on the
+	-- strip's dark plate, and on white or black maps alike
+	cap.BackgroundColor3 = Color3.fromRGB(236, 236, 240)
+	cap.BackgroundTransparency = 0
 	cap.BorderSizePixel = 0
 	round(cap, 6)
 	cap.FontFace = FONT
 	cap.TextSize = 14
-	cap.TextColor3 = WHITE
+	cap.TextColor3 = Color3.fromRGB(22, 22, 26)
 	cap.Text = key
 	local pad = Instance.new("UIPadding") pad.PaddingLeft = UDim.new(0, 7) pad.PaddingRight = UDim.new(0, 7) pad.Parent = cap
 	cap.Parent = parent
@@ -674,14 +676,18 @@ local function buildUI()
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- every item draws over every tile, so they can spill onto the next one
 	local canvas = Kit.canvas(gui) -- [UI] 1920x1080 design canvas
 
-	-- quick controls (very bottom right): just text + keycaps, no box
+	-- quick controls (very bottom right). (2026-10-21, Edward: the in-match HUD must read on ANY map colour) RIVALS' hint strip:
+	-- a dark see-through pill behind the labels + keycaps, so white walls or a black sky never swallow them
 	local hints = Instance.new("Frame")
 	hints.Name = "Controls"
 	hints.AnchorPoint = Vector2.new(1, 1)
-	hints.Position = UDim2.fromScale(1 - 22 / 1920, 1 - 14 / 1080)
+	hints.Position = UDim2.fromScale(1 - 22 / 1920, 1 - 12 / 1080)
 	hints.AutomaticSize = Enum.AutomaticSize.X
-	hints.Size = UDim2.fromOffset(0, 26)
-	hints.BackgroundTransparency = 1
+	hints.Size = UDim2.fromOffset(0, 30)
+	hints.BackgroundColor3 = BLACK
+	hints.BackgroundTransparency = 0.45
+	round(hints, 15)
+	local hpad = Instance.new("UIPadding") hpad.PaddingLeft = UDim.new(0, 12) hpad.PaddingRight = UDim.new(0, 6) hpad.Parent = hints
 	local hlist = Instance.new("UIListLayout")
 	hlist.FillDirection = Enum.FillDirection.Horizontal
 	hlist.VerticalAlignment = Enum.VerticalAlignment.Center
