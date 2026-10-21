@@ -107,6 +107,11 @@ do
 			elseif e:IsA("Beam") and e.Name == "Arc" and math.random() < 0.5 then e.Enabled = false end
 		end
 		for _, l in workspace.LobbyMap:GetDescendants() do if l:IsA("Light") then l.Shadows = false end end
+		-- [STREAM] lights / emitters streamed in later get the same treatment
+		workspace.LobbyMap.DescendantAdded:Connect(function(d)
+			if d:IsA("Light") then d.Shadows = false
+			elseif d:IsA("ParticleEmitter") and d:IsDescendantOf(FX) and not d:GetAttribute("_LowRate") then d:SetAttribute("_LowRate", true) d.Rate = d.Rate * 0.3 end
+		end)
 		local dof = Lighting:FindFirstChild("Lobby_DOF"); if dof then dof.Enabled = false end
 		local bl = Lighting:FindFirstChild("Lobby_Bloom"); if bl then bl.Size = 18 end
 	end
@@ -218,7 +223,7 @@ end
 task.spawn(function()
 	task.wait(9)
 	if not workspace:GetAttribute("LobbyFXLow") then return end
-	for _, sg in workspace.LobbyMap:GetDescendants() do
+	local function cull(sg)
 		if sg:IsA("SurfaceGui") then
 			local host = sg.Parent and sg.Parent.Name or ""
 			if host == "HullMark" then sg.Enabled = false
@@ -226,4 +231,6 @@ task.spawn(function()
 			else sg.MaxDistance = math.min(sg.MaxDistance, 60) end
 		end
 	end
+	for _, sg in workspace.LobbyMap:GetDescendants() do cull(sg) end
+	workspace.LobbyMap.DescendantAdded:Connect(cull) -- [STREAM] screens streamed in later
 end)

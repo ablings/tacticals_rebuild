@@ -53,6 +53,12 @@ local function applyTextures()
 				d.Parent = nil
 			end
 		end
+		-- [STREAM] decals / surface appearances streamed in later are hidden too while the setting is on
+		map.DescendantAdded:Connect(function(d)
+			if not hidden or hiddenMap ~= map or hidden[d] ~= nil then return end
+			if d:IsA("Decal") then hidden[d] = d.Transparency d.Transparency = 1
+			elseif d:IsA("SurfaceAppearance") then hidden[d] = d.Parent task.defer(function() if hidden and hidden[d] then d.Parent = nil end end) end
+		end)
 	elseif not on and hidden then
 		for d, v in hidden do
 			if d:IsA("SurfaceAppearance") then

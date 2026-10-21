@@ -31,7 +31,12 @@
    animation puts you on top. Also on taller objects, as long as your head is above the object's top.
 6. [x] (MatchFlowUI: the map vote is back on the solid gradient backdrop like the loading screen; the gun pick stays see-through; screenshot-checked) **Map-selection overlay**: like RIVALS (and like we had before), a background overlay during the map-vote / loading so the player
    can't see which map they're on.
-9. [ ] **Mobile loading is very slow** (Edward). Found: lobby StreamingEnabled=false with 7,645 parts / 1,109 unique meshes, so game.Loaded
+9. [x] (Edward: "do both". Quick: phones wait <=5 s for join assets, training picker tiles built on first InTraining (0d91124).
+   Streaming (fix/streaming.lua [STREAM], lobby copy only, saved; NOT live until the next port): StreamingEnabled on, pads / Heli /
+   Showroom pinned Persistent (Showroom Folder -> Model), LobbyFX + SettingsEffects catch streamed-in parts. Tested at target radius
+   96 (3,860 of ~8,300 parts at join): hub, Kit armory camera, To Pads + boards, Training entry all fine, console clean; radius back
+   to 1024, integrity PauseOutsideLoadedArea (Properties panel only - scripts can't read these). Edward to feel it on a phone.)
+   **Mobile loading is very slow** (Edward). Found: lobby StreamingEnabled=false with 7,645 parts / 1,109 unique meshes, so game.Loaded
    waits for the whole map; LoadingScreen then waits up to 12 s on assets; join also preloads menu images and builds ~23 training-picker
    ViewportFrames (UI: can defer to first InTraining). Options asked of Edward: quick (5 s cap on touch) vs streaming test.
 10. [ ] **Logos are pixelated** (Edward). UI: sources are 1024 wide (no downscale on upload), clean 1:1 at 1080p, so it is upscaling on
