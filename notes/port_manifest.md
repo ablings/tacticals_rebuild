@@ -363,3 +363,13 @@ himself; we never publish.
   tidy), UI (teal logo frame 03e505a, any-map HUD readability, 3D results character, Shop break-out tiles, Kit Inspect greyed when
   locked + 4:3 fit + green lip, D-pad up Settings in a match, button hover sheen).
 - Pending: the 4:3 tutorial cover box overlaps the hotbar during the tutorial itself (UI).
+
+## Live port 31: pre-round, auto-ready, RoundEnd utility, gadget hold, D-pad dash, solid map vote, climb (2026-10-21 ~13:56-14:10, Shadow PC lead; Edward in the lead's chat: "once you get to a reasonable spot start publishing then continue")
+- From 7a1a01f (both working copies saved 13:54). Copied to Tacticals_main_ported / Tutorial / Matchmaking / Ranked, built with
+  port_prep.sh (Shadow paths; the Ranked window listed as "Game" in MCP, so its split/deploy/save were run by hand), every copy checked
+  with out/c31.lua (all true), Publish As > gunsy funsy > tacticals > Overwrite > Grant Permissions and Publish. Tutorial, Matchmaking and
+  Ranked read back from the reopened cloud windows (c31 all true); the lobby window retitled "tacticals".
+- Carries: crouch/slide track fix (tracks load after Ready), no Ready button (3rd pick = ready), [PREROUND] 5 s countdown + kit locks at
+  Live + no aim / melee before Live, gadgets in RoundEnd + cleared at each countdown, MaxHoldTime 5, dash on D-pad up (Settings = hold
+  View/Select, Training picker = D-pad down), map vote on the solid backdrop, [CLIMB].
+- Pending: CoverClimb has no PublishedId (Edward's group upload): live climbs move without the animation until then.

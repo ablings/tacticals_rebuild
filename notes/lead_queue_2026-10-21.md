@@ -1,4 +1,5 @@
 # Lead queue, 2026-10-21 (Edward in the Shadow PC lead chat). Work top to bottom; tick when done + tested.
+# Items 1-8 LIVE in port 31 (~14:10).
 
 1. [~] **Crouch / slide animations vanish mid-match.** FIX deployed to both copies (not live): MovementController loads its tracks
    only once the character is Ready (PlayerRegistry rebuilds the body with ApplyDescription and then sets Ready; tracks loaded
