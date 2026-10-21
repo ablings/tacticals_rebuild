@@ -1,4 +1,4 @@
-﻿-- StarterPlayer/StarterPlayerScripts/Client/Controllers/TutorialController (ModuleScript)
+-- StarterPlayer/StarterPlayerScripts/Client/Controllers/TutorialController (ModuleScript)
 -- Client half of the tutorial (TutorialManager runs the script on the server):
 --   * shows each line at the bottom of the screen, with an objective tag when it's waiting on you
 --   * highlights the cover you should move to
@@ -87,23 +87,33 @@ local function updateLock(inCover: boolean)
 end
 
 -- // UI
--- Builderman's panel: rounded dark glass with chunky Builder Sans type. Lines pop in, keys like [Q] light
--- up blue, CAPS words punch out in bold white. Danger lines (TutorialConfig.Alerts) SLAM a big red
--- headline onto the screen with a red flash and a shake.
+-- (2026-10-21 redesign, notes/tutorial_ui/redesign_brief.md) The tutorial looks like part of the HUD, not a chat card:
+--   * OBJECTIVE STRIP (top centre): a keycap for your device + 2-4 words + step pips. The keycap breathes until you press
+--     it, squashes on the press (the hotbar kick spring), then turns green with a check, a pip fills and the next one drops in.
+--   * RADIO SUBTITLES (lower third, above the hotbar): a small INSTRUCTOR callsign + one short line, no portrait, no typewriter.
+--   * World markers in our palette: one amber "do this" accent, green = done, red = the enemy only.
+--   * One font family (Builder Sans, the HUD's), every size in Scale.
 local UI_FONT = "rbxasset://fonts/families/BuilderSans.json"
-local F_BODY = Font.new(UI_FONT, Enum.FontWeight.Medium)
+local F_BODY = Font.new(UI_FONT, Enum.FontWeight.Bold)
 local F_BOLD = Font.new(UI_FONT, Enum.FontWeight.Bold)
-local F_HEAVY = Font.new(UI_FONT, Enum.FontWeight.ExtraBold)
-local BLUE = Color3.fromRGB(124, 200, 255)
+local F_HEAVY = Font.new(UI_FONT, Enum.FontWeight.Heavy)
+local AMBER = Color3.fromRGB(255, 196, 92)     -- the one "do this" accent
+local GOOD = Color3.fromRGB(120, 220, 120)     -- done
+local TAN = Color3.fromRGB(214, 190, 140)      -- our team tan (the callsign)
+local PLATE = Color3.fromRGB(14, 16, 13)       -- the HUD's dark plate
+local WHITE = Color3.new(1, 1, 1)
+local BLUE = AMBER                              -- (old name, kept for the few references below)
 local ALERT_RED = Color3.fromRGB(255, 64, 70)
-local PANEL_POS = UDim2.fromScale(0.5, 0.82) -- [HUDFIT] above the hotbar on any screen (was 66 px from the bottom: covered the item tiles on phones)
+local PANEL_POS = UDim2.fromScale(0.5, 0.735)  -- the subtitle: lower third, clear of the hotbar / health / touch buttons
 local gui, panel, lineLabel, objectiveLabel
 local panelScale, portraitScale, panelStroke
 local headline, headScale, headStroke, flash
 local thump: Sound? = nil
-local typeSounds: { Sound } = {} -- created in buildUI
+local typeSounds: { Sound } = {} -- (no typewriter any more; kept empty)
 local confirmSound: Sound? = nil
 local barTop, barBottom
+local strip -- { root, cap, capText, capScale, label, sub, pips = {}, check }
+local finish -- the TRAINING COMPLETE screen
 local function stroke(parent, color, thick, transparency)
 	local st = Instance.new("UIStroke")
 	st.Color = color
@@ -113,123 +123,175 @@ local function stroke(parent, color, thick, transparency)
 	st.Parent = parent
 	return st
 end
+local function corner(parent, scale)
+	local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(scale, 0); c.Parent = parent
+	return c
+end
+local function text(parent, name, font, color, xa)
+	local t = Instance.new("TextLabel")
+	t.Name = name
+	t.BackgroundTransparency = 1
+	t.FontFace = font
+	t.TextScaled = true
+	t.TextColor3 = color
+	t.TextXAlignment = xa or Enum.TextXAlignment.Center
+	t.Text = ""
+	t.Parent = parent
+	return t
+end
+-- a 16:9 canvas so design proportions hold; sizes are Scale of it
+local function canvas(parentGui)
+	local c = Instance.new("Frame")
+	c.Name = "Canvas"
+	c.BackgroundTransparency = 1
+	c.AnchorPoint = Vector2.new(0.5, 0.5)
+	c.Position = UDim2.fromScale(0.5, 0.5)
+	c.Size = UDim2.fromScale(1, 1)
+	local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 16 / 9; ar.Parent = c
+	c.Parent = parentGui
+	return c
+end
+
+-- a keycap: a light key face with the glyph, a darker base under it (reads as a key you can press)
+local function keycap(parent, name)
+	local cap = Instance.new("Frame")
+	cap.Name = name
+	cap.BackgroundColor3 = Color3.fromRGB(70, 66, 56)
+	cap.BorderSizePixel = 0
+	corner(cap, 0.18)
+	local face = Instance.new("Frame")
+	face.Name = "Face"
+	face.BackgroundColor3 = Color3.fromRGB(246, 240, 226)
+	face.BorderSizePixel = 0
+	face.Size = UDim2.fromScale(1, 0.86)
+	corner(face, 0.18)
+	face.Parent = cap
+	local glyph = text(face, "Glyph", F_HEAVY, PLATE)
+	glyph.AnchorPoint = Vector2.new(0.5, 0.5)
+	glyph.Position = UDim2.fromScale(0.5, 0.5)
+	glyph.Size = UDim2.fromScale(0.84, 0.62)
+	local sc = Instance.new("UIScale"); sc.Name = "Press"; sc.Parent = cap
+	cap.Parent = parent
+	return cap, glyph, sc, face
+end
+
 local function buildUI()
 	gui = Instance.new("ScreenGui")
 	gui.Name = "TutorialUI"
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
+	gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+	gui.DisplayOrder = 6
 	gui.Enabled = false
+	local cv = canvas(gui)
 
+	-- // Radio subtitle (the old "panel" / "Line" names stay so the rest of the controller keeps working)
 	panel = Instance.new("Frame")
 	panel.Name = "Panel"
 	panel.AnchorPoint = Vector2.new(0.5, 1)
-	panel.Position = PANEL_POS -- between the health bar (left) and the item tiles (right)
-	panel.Size = UDim2.fromOffset(660, 0)
-	panel.AutomaticSize = Enum.AutomaticSize.Y -- grows to fit the line
-	panel.BackgroundColor3 = Color3.fromRGB(10, 10, 13)
-	panel.BackgroundTransparency = 0.25
+	panel.Position = PANEL_POS
+	panel.Size = UDim2.fromScale(0.5, 0.046)
+	panel.BackgroundColor3 = PLATE
+	panel.BackgroundTransparency = 1
 	panel.BorderSizePixel = 0
-	panel.Parent = gui
-	local corner = Instance.new("UICorner"); corner.CornerRadius = UDim.new(0, 14); corner.Parent = panel
-	panelStroke = stroke(panel, Color3.new(1, 1, 1), 1.5, 0.86)
+	panel.Visible = false
+	panel.Parent = cv
 	panelScale = Instance.new("UIScale"); panelScale.Parent = panel
-	local minH = Instance.new("UISizeConstraint"); minH.MinSize = Vector2.new(0, 92); minH.Parent = panel
-	local pad = Instance.new("UIPadding")
-	pad.PaddingLeft, pad.PaddingRight = UDim.new(0, 84), UDim.new(0, 22)
-	pad.PaddingTop, pad.PaddingBottom = UDim.new(0, 14), UDim.new(0, 16)
-	pad.Parent = panel
-	local list = Instance.new("UIListLayout")
-	list.SortOrder = Enum.SortOrder.LayoutOrder
-	list.Padding = UDim.new(0, 6)
-	list.Parent = panel
-
-	-- Who's talking: a round portrait popping out of the panel's top-left corner, name tag beside it
-	local who = Config.Instructor or {}
-	local holder = Instance.new("Frame") -- (outside the list: positioned by hand)
-	holder.Name = "Speaker"
-	holder.BackgroundTransparency = 1
-	holder.Size = UDim2.fromOffset(0, 0)
-	holder.Parent = gui
-	local portrait = Instance.new("ImageLabel")
-	portrait.Name = "Portrait"
-	portrait.AnchorPoint = Vector2.new(0.5, 0.5)
-	portrait.Size = UDim2.fromOffset(68, 68)
-	portrait.BackgroundColor3 = Color3.fromRGB(28, 29, 34)
-	portrait.Image = who.Image or ""
-	portrait.ZIndex = 5
-	local pc = Instance.new("UICorner") pc.CornerRadius = UDim.new(1, 0) pc.Parent = portrait
-	stroke(portrait, BLUE, 3, 0)
-	portraitScale = Instance.new("UIScale"); portraitScale.Parent = portrait
-	portrait.Parent = panel
-	portrait.Position = UDim2.fromOffset(-84 + 14 + 26, 4) -- sits over the panel's left edge
-	-- (UIListLayout ignores nothing, so keep the portrait out of it)
-	portrait.Parent = gui
-	if (who.Image or "") == "" and who.UserId then
-		task.spawn(function()
-			local ok, image = pcall(Players.GetUserThumbnailAsync, Players, who.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
-			if ok and image then portrait.Image = image end
-		end)
-	end
-	local nameTag = Instance.new("TextLabel")
-	nameTag.Name = "SpeakerName"
-	nameTag.BackgroundColor3 = BLUE
-	nameTag.AutomaticSize = Enum.AutomaticSize.X
-	nameTag.Size = UDim2.fromOffset(0, 24)
-	nameTag.FontFace = F_HEAVY
-	nameTag.TextSize = 15
-	nameTag.TextColor3 = Color3.fromRGB(10, 14, 22)
-	nameTag.Text = string.upper(who.Name or "Instructor")
-	nameTag.ZIndex = 4
-	local np = Instance.new("UIPadding") np.PaddingLeft = UDim.new(0, 40) np.PaddingRight = UDim.new(0, 12) np.Parent = nameTag
-	local nc = Instance.new("UICorner") nc.CornerRadius = UDim.new(1, 0) nc.Parent = nameTag
-	nameTag.Parent = gui
-	-- keep the portrait + name tag glued to the panel's top-left corner (the panel grows with its line)
-	game:GetService("RunService").RenderStepped:Connect(function()
-		if not gui.Enabled then return end
-		local p, sz = panel.AbsolutePosition, panel.AbsoluteSize
-		local inset = game:GetService("GuiService"):GetGuiInset()
-		local _ = inset
-		portrait.Position = UDim2.fromOffset(p.X + 38, p.Y + 8)
-		nameTag.Position = UDim2.fromOffset(p.X + 30, p.Y - 26)
-		portrait.Visible, nameTag.Visible = panel.Visible, panel.Visible
-		local _ = sz
-	end)
-
-	objectiveLabel = Instance.new("TextLabel")
-	objectiveLabel.Name = "Objective"
-	objectiveLabel.LayoutOrder = 1
-	objectiveLabel.BackgroundColor3 = BLUE
-	objectiveLabel.BackgroundTransparency = 0.82
-	objectiveLabel.AutomaticSize = Enum.AutomaticSize.X
-	objectiveLabel.Size = UDim2.fromOffset(0, 22)
-	objectiveLabel.FontFace = F_HEAVY
-	objectiveLabel.TextSize = 14
-	objectiveLabel.TextXAlignment = Enum.TextXAlignment.Left
-	objectiveLabel.TextColor3 = BLUE
-	objectiveLabel.Text = ""
-	objectiveLabel.Visible = false
-	local oc = Instance.new("UICorner") oc.CornerRadius = UDim.new(1, 0) oc.Parent = objectiveLabel
-	local op = Instance.new("UIPadding") op.PaddingLeft = UDim.new(0, 10) op.PaddingRight = UDim.new(0, 10) op.Parent = objectiveLabel
-	objectiveLabel.Parent = panel
-
-	lineLabel = Instance.new("TextLabel")
-	lineLabel.Name = "Line"
-	lineLabel.LayoutOrder = 2
-	lineLabel.BackgroundTransparency = 1
-	lineLabel.AutomaticSize = Enum.AutomaticSize.Y
-	lineLabel.Size = UDim2.new(1, 0, 0, 26)
-	lineLabel.FontFace = F_BODY
-	lineLabel.TextSize = 22
-	lineLabel.LineHeight = 1.05
+	local shade = Instance.new("Frame") -- a soft dark band behind the words (fades out at both ends)
+	shade.Name = "Shade"
+	shade.BackgroundColor3 = PLATE
+	shade.BackgroundTransparency = 0.35
+	shade.BorderSizePixel = 0
+	shade.Size = UDim2.fromScale(1, 1)
+	local sg = Instance.new("UIGradient")
+	sg.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.12, 0),
+		NumberSequenceKeypoint.new(0.88, 0), NumberSequenceKeypoint.new(1, 1) })
+	sg.Parent = shade
+	shade.Parent = panel
+	panelStroke = stroke(shade, WHITE, 0, 1) -- (no edge; kept for the alert code)
+	local call = text(panel, "Callsign", F_HEAVY, TAN, Enum.TextXAlignment.Right)
+	call.Position = UDim2.fromScale(0.04, 0.22)
+	call.Size = UDim2.fromScale(0.17, 0.56)
+	call.Text = string.upper((Config.Instructor and Config.Instructor.Callsign) or "INSTRUCTOR")
+	local dot = Instance.new("Frame") -- the "on air" dot
+	dot.Name = "OnAir"
+	dot.AnchorPoint = Vector2.new(0.5, 0.5)
+	dot.Position = UDim2.fromScale(0.235, 0.5)
+	dot.Size = UDim2.fromScale(0.012, 0.22)
+	dot.BackgroundColor3 = TAN
+	dot.BorderSizePixel = 0
+	corner(dot, 0.5)
+	local dar = Instance.new("UIAspectRatioConstraint"); dar.AspectRatio = 1; dar.Parent = dot
+	dot.Parent = panel
+	lineLabel = text(panel, "Line", F_BODY, WHITE, Enum.TextXAlignment.Left)
+	lineLabel.Position = UDim2.fromScale(0.26, 0.18)
+	lineLabel.Size = UDim2.fromScale(0.72, 0.64)
 	lineLabel.RichText = true
-	lineLabel.TextWrapped = true
-	lineLabel.TextXAlignment = Enum.TextXAlignment.Left
-	lineLabel.TextYAlignment = Enum.TextYAlignment.Top
-	lineLabel.TextColor3 = Color3.fromRGB(226, 229, 236)
-	lineLabel.Text = ""
-	lineLabel.Parent = panel
+	stroke(lineLabel, PLATE, 1.5, 0.35)
+	portraitScale = Instance.new("UIScale") -- (no portrait: kept so old tweens have a target)
+	objectiveLabel = text(panel, "ObjectiveOld", F_HEAVY, AMBER) -- (unused: the strip below carries the objective)
+	objectiveLabel.Visible = false
 
-	-- danger: the slam headline and a red flash over the whole screen
+	-- // Objective strip (top centre, under the timer / score area)
+	local root = Instance.new("CanvasGroup")
+	root.Name = "Objective"
+	root.AnchorPoint = Vector2.new(0.5, 0)
+	root.Position = UDim2.fromScale(0.5, 0.11)
+	root.Size = UDim2.fromScale(0.34, 0.082)
+	root.BackgroundColor3 = PLATE
+	root.BackgroundTransparency = 0.18
+	root.BorderSizePixel = 0
+	root.GroupTransparency = 1
+	root.Visible = false
+	corner(root, 0.16)
+	local edge = stroke(root, AMBER, 1.5, 0.35)
+	edge.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	root.Parent = cv
+	local accent = Instance.new("Frame") -- a slim amber bar down the left edge: "this is what to do"
+	accent.Name = "Accent"
+	accent.BackgroundColor3 = AMBER
+	accent.BorderSizePixel = 0
+	accent.Size = UDim2.fromScale(0.012, 1)
+	accent.Parent = root
+	local capHolder = Instance.new("Frame")
+	capHolder.Name = "CapHolder"
+	capHolder.BackgroundTransparency = 1
+	capHolder.Position = UDim2.fromScale(0.045, 0.14)
+	capHolder.Size = UDim2.fromScale(0.2, 0.72)
+	capHolder.Parent = root
+	local cap, capText, capScale, capFace = keycap(capHolder, "Key")
+	cap.AnchorPoint = Vector2.new(0.5, 0.5)
+	cap.Position = UDim2.fromScale(0.5, 0.5)
+	cap.Size = UDim2.fromScale(1, 1)
+	local check = text(capFace, "Check", F_HEAVY, WHITE) -- the ✓ that replaces the glyph when it's done
+	check.AnchorPoint = Vector2.new(0.5, 0.5)
+	check.Position = UDim2.fromScale(0.5, 0.5)
+	check.Size = UDim2.fromScale(0.7, 0.7)
+	check.Text = "✓"
+	check.Visible = false
+	local label = text(root, "Label", F_HEAVY, WHITE, Enum.TextXAlignment.Left)
+	label.Position = UDim2.fromScale(0.29, 0.14)
+	label.Size = UDim2.fromScale(0.5, 0.44)
+	local sub = text(root, "Sub", F_BOLD, Color3.fromRGB(200, 196, 182), Enum.TextXAlignment.Left)
+	sub.Position = UDim2.fromScale(0.29, 0.6)
+	sub.Size = UDim2.fromScale(0.5, 0.26)
+	local pipRow = Instance.new("Frame")
+	pipRow.Name = "Pips"
+	pipRow.BackgroundTransparency = 1
+	pipRow.AnchorPoint = Vector2.new(1, 0.5)
+	pipRow.Position = UDim2.fromScale(0.96, 0.5)
+	pipRow.Size = UDim2.fromScale(0.17, 0.16)
+	pipRow.Parent = root
+	local pl = Instance.new("UIListLayout")
+	pl.FillDirection = Enum.FillDirection.Horizontal
+	pl.HorizontalAlignment = Enum.HorizontalAlignment.Right
+	pl.VerticalAlignment = Enum.VerticalAlignment.Center
+	pl.Padding = UDim.new(0.04, 0)
+	pl.Parent = pipRow
+	strip = { root = root, edge = edge, accent = accent, cap = cap, capFace = capFace, capText = capText, capScale = capScale,
+		check = check, label = label, sub = sub, pipRow = pipRow, pips = {} }
+
+	-- danger: the slam headline and a red flash over the whole screen (unused by the starter tutorial)
 	flash = Instance.new("Frame")
 	flash.Name = "AlertFlash"
 	flash.Size = UDim2.fromScale(1, 1)
@@ -237,26 +299,19 @@ local function buildUI()
 	flash.BackgroundTransparency = 1
 	flash.BorderSizePixel = 0
 	flash.ZIndex = 20
-	local fg = Instance.new("UIGradient") -- red round the edges, clear in the middle
+	local fg = Instance.new("UIGradient")
 	fg.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.3, 0.85),
 		NumberSequenceKeypoint.new(0.7, 0.85), NumberSequenceKeypoint.new(1, 0) })
 	fg.Parent = flash
 	flash.Parent = gui
-	headline = Instance.new("TextLabel")
-	headline.Name = "Alert"
+	headline = text(cv, "Alert", F_HEAVY, ALERT_RED)
 	headline.AnchorPoint = Vector2.new(0.5, 0.5)
 	headline.Position = UDim2.fromScale(0.5, 0.3)
-	headline.Size = UDim2.new(0.9, 0, 0, 90)
-	headline.BackgroundTransparency = 1
-	headline.FontFace = F_HEAVY
-	headline.TextSize = 72
-	headline.TextColor3 = ALERT_RED
+	headline.Size = UDim2.fromScale(0.8, 0.08)
 	headline.TextTransparency = 1
-	headline.Text = ""
 	headline.ZIndex = 30
-	headStroke = stroke(headline, Color3.fromRGB(40, 0, 4), 4, 1)
+	headStroke = stroke(headline, Color3.fromRGB(40, 0, 4), 3, 1)
 	headScale = Instance.new("UIScale"); headScale.Parent = headline
-	headline.Parent = gui
 
 	-- cinematic letterbox bars (slide in while the camera is directing your eye)
 	local function bar(top)
@@ -272,16 +327,6 @@ local function buildUI()
 		return f
 	end
 	barTop, barBottom = bar(true), bar(false)
-	-- UI sounds: plain Sound objects inside the ScreenGui (2D, always audible), loaded once and
-	-- simply :Play()ed. A few copies of the tick take turns so fast typing never cuts one off.
-	for i = 1, 4 do
-		local snd = Instance.new("Sound")
-		snd.Name = "TypeTick" .. i
-		snd.SoundId = Audio.TypingSound
-		snd.Volume = Audio.TypingVolume
-		snd.Parent = gui
-		table.insert(typeSounds, snd)
-	end
 	confirmSound = Instance.new("Sound")
 	confirmSound.Name = "Confirm"
 	confirmSound.SoundId = Audio.ConfirmSound
@@ -294,6 +339,42 @@ local function buildUI()
 	thump.PlaybackSpeed = 0.42
 	thump.Parent = gui
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
+end
+
+-- // What each starter step SAYS (client-side, keyed by the server's line key; TutorialConfig keeps the long lines
+-- for the other tutorials). obj = the strip's 2-4 words; kb / pad / touch = the keycap glyph per device; hint = the small
+-- line under the words; sub = the Instructor's radio line (max ~8 words). Steps not listed fall back to the long line.
+local STEP = {
+	Welcome = { sub = "That's your target, outlined in red. Basics first." },
+	EscapeCover = { obj = "LEAVE COVER", kb = "Q", pad = "LB", touch = "COVER", hint = { kb = "PRESS Q", pad = "PRESS LB", touch = "TAP TAKE COVER" },
+		sub = "Step out. Let him see you." },
+	TakeCover = { obj = "TAKE COVER", kb = "Q", pad = "LB", touch = "COVER", hint = { kb = "PRESS Q AGAIN", pad = "PRESS LB AGAIN", touch = "TAP TAKE COVER" },
+		sub = "Back behind the pillar. Now!" },
+	Rush = { obj = "RUN TO THE CRATE", kb = "E", pad = "LB", touch = "DASH", hint = { kb = "LOOK AT IT + PRESS E", pad = "LOOK AT IT + DOUBLE TAP LB", touch = "LOOK AT IT + TAP DASH" },
+		sub = "Get to that crate." },
+	Slide = { obj = "SLIDE", kb = "C", pad = "B", touch = "CROUCH", hint = { kb = "HOLD SHIFT + PRESS C", pad = "RUN + PRESS B", touch = "RUN + TAP CROUCH" },
+		sub = "Move like you mean it." },
+	ToWall = { obj = "RUN TO THE WALL", kb = "E", pad = "LB", touch = "DASH", hint = { kb = "LOOK AT IT + PRESS E", pad = "LOOK AT IT + DOUBLE TAP LB", touch = "LOOK AT IT + TAP DASH" },
+		sub = "The wall's next. Go!" },
+	Vault = { obj = "VAULT THE WALL", kb = "SPACE", pad = "A", touch = "JUMP", hint = { kb = "PRESS SPACE", pad = "PRESS A", touch = "TAP JUMP" },
+		sub = "Over it." },
+	AimShoot = { obj = "TAKE HIM DOWN", kb = "RMB", pad = "LT", touch = "AIM", hint = { kb = "RIGHT CLICK AIM · LEFT CLICK FIRE", pad = "LT AIM · RT FIRE", touch = "HOLD AIM · TAP FIRE" },
+		sub = "He's exposed. Take the shot." },
+	Win = { sub = "Target down. Nice work." },
+	Ready = { sub = "You're cleared for the real thing." },
+}
+local STARTER_ORDER = { "EscapeCover", "TakeCover", "Rush", "Slide", "ToWall", "Vault", "AimShoot" }
+-- which inputs press each glyph (the keycap squashes on them)
+local GLYPH_INPUTS = {
+	Q = { Enum.KeyCode.Q }, E = { Enum.KeyCode.E }, C = { Enum.KeyCode.C, Enum.KeyCode.LeftControl }, SPACE = { Enum.KeyCode.Space },
+	RMB = { Enum.UserInputType.MouseButton2, Enum.UserInputType.MouseButton1 },
+	LB = { Enum.KeyCode.ButtonL1 }, B = { Enum.KeyCode.ButtonB }, A = { Enum.KeyCode.ButtonA }, LT = { Enum.KeyCode.ButtonL2, Enum.KeyCode.ButtonR2 },
+}
+local function device(): string
+	local t = UserInputService:GetLastInputType()
+	if t == Enum.UserInputType.Touch or localPlayer:GetAttribute("_ForceTouch") == true then return "touch" end
+	if t.Name:find("Gamepad") then return "pad" end
+	return "kb"
 end
 
 local barsShown = false
@@ -324,26 +405,32 @@ local function killcam()
 		world.Volume = 0.35
 		TweenService:Create(world, TweenInfo.new(2.4, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Volume = 1 }):Play()
 	end
-	local stamp = Instance.new("TextLabel")
+	-- (2026-10-21 redesign) TARGET DOWN in the HUD's look: a dark plate with an amber edge, our font, a quick punch-in
+	local stamp = Instance.new("CanvasGroup")
+	stamp.Name = "TargetDown"
 	stamp.AnchorPoint = Vector2.new(0.5, 0.5)
-	stamp.Position = UDim2.fromScale(0.5, 0.42)
-	stamp.Size = UDim2.fromOffset(520, 70)
-	stamp.BackgroundTransparency = 1
-	stamp.Font = Enum.Font.GothamBlack
-	stamp.Text = "ELIMINATED"
-	stamp.TextSize = 54
-	stamp.TextColor3 = Color3.fromRGB(255, 70, 60)
-	stamp.TextStrokeTransparency = 0.4
-	stamp.TextTransparency = 1
-	stamp.Rotation = -4
-	local scale = Instance.new("UIScale") scale.Scale = 1.6 scale.Parent = stamp
-	stamp.Parent = gui
-	TweenService:Create(stamp, TweenInfo.new(0.18, Enum.EasingStyle.Back), { TextTransparency = 0 }):Play()
-	TweenService:Create(scale, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	stamp.Position = UDim2.fromScale(0.5, 0.36)
+	stamp.Size = UDim2.fromScale(0.3, 0.075)
+	stamp.BackgroundColor3 = PLATE
+	stamp.BackgroundTransparency = 0.1
+	stamp.BorderSizePixel = 0
+	stamp.GroupTransparency = 1
+	corner(stamp, 0.14)
+	local se = stroke(stamp, AMBER, 2, 0); se.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	local bar = Instance.new("Frame"); bar.BackgroundColor3 = AMBER; bar.BorderSizePixel = 0; bar.Size = UDim2.fromScale(0.012, 1); bar.Parent = stamp
+	local st = text(stamp, "Text", F_HEAVY, WHITE)
+	st.AnchorPoint = Vector2.new(0.5, 0.5)
+	st.Position = UDim2.fromScale(0.5, 0.5)
+	st.Size = UDim2.fromScale(0.86, 0.6)
+	st.Text = "TARGET DOWN"
+	local scale = Instance.new("UIScale") scale.Scale = 1.35 scale.Parent = stamp
+	stamp.Parent = gui:FindFirstChild("Canvas") or gui
+	TweenService:Create(stamp, TweenInfo.new(0.15, Enum.EasingStyle.Quad), { GroupTransparency = 0 }):Play()
+	TweenService:Create(scale, TweenInfo.new(0.32, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	task.delay(2.4, function()
 		TweenService:Create(cc, TweenInfo.new(0.9), { Saturation = 0, Contrast = 0 }):Play()
 		TweenService:Create(blur, TweenInfo.new(0.9), { Size = 0 }):Play()
-		TweenService:Create(stamp, TweenInfo.new(0.9), { TextTransparency = 1, TextStrokeTransparency = 1 }):Play()
+		TweenService:Create(stamp, TweenInfo.new(0.5), { GroupTransparency = 1 }):Play()
 		task.delay(1, function() cc:Destroy() blur:Destroy() stamp:Destroy() end)
 	end)
 end
@@ -362,10 +449,10 @@ local function fade(mode: string, title: string?)
 		fadeTitle = Instance.new("TextLabel")
 		fadeTitle.AnchorPoint = Vector2.new(0.5, 0.5)
 		fadeTitle.Position = UDim2.fromScale(0.5, 0.5)
-		fadeTitle.Size = UDim2.new(0.8, 0, 0, 80)
+		fadeTitle.Size = UDim2.fromScale(0.8, 0.05)
 		fadeTitle.BackgroundTransparency = 1
-		fadeTitle.Font = Enum.Font.GothamMedium
-		fadeTitle.TextSize = 26
+		fadeTitle.FontFace = F_BODY -- (one font family)
+		fadeTitle.TextScaled = true
 		fadeTitle.TextWrapped = true
 		fadeTitle.TextColor3 = Color3.fromRGB(235, 235, 235)
 		fadeTitle.TextTransparency = 1
@@ -548,7 +635,7 @@ local function richLine(text: string): string
 		elseif st == "done" then
 			return '<font color="#78E68C"><b>[' .. name .. ']</b></font>'
 		end
-		return '<font color="#7CC8FF"><b>[' .. name .. ']</b></font>'
+		return '<font color="#FFC45C"><b>[' .. name .. ']</b></font>' -- (the amber accent)
 	end)
 	return out
 end
@@ -656,6 +743,192 @@ local function slam(text: string)
 	end)
 end
 
+-- // Objective strip
+local stripKey: string? = nil      -- the step it shows
+local stripGlyph: string? = nil    -- the keycap's glyph (for the press squash)
+local stripDoneFlag = false
+local KEY_FACE = Color3.fromRGB(246, 240, 226)
+local function ensurePips()
+	if #strip.pips > 0 then return end
+	for i = 1, #STARTER_ORDER do
+		local p = Instance.new("Frame")
+		p.Name = "Pip" .. i
+		p.BackgroundColor3 = Color3.fromRGB(90, 88, 80)
+		p.BorderSizePixel = 0
+		p.Size = UDim2.fromScale(0.1, 1)
+		p.LayoutOrder = i
+		corner(p, 0.5)
+		local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 1; ar.Parent = p
+		p.Parent = strip.pipRow
+		strip.pips[i] = p
+	end
+end
+local function paintPips(current: number?, doneUpTo: number)
+	for i, p in strip.pips do
+		p.BackgroundColor3 = i <= doneUpTo and GOOD or (i == current and AMBER or Color3.fromRGB(90, 88, 80))
+	end
+end
+local function showStrip(key: string, entry)
+	ensurePips()
+	local dev = device()
+	stripKey, stripDoneFlag = key, false
+	stripGlyph = entry[dev] or entry.kb
+	strip.capText.Text = stripGlyph or ""
+	strip.capText.Visible = true
+	strip.check.Visible = false
+	strip.capFace.BackgroundColor3 = KEY_FACE
+	strip.label.Text = entry.obj
+	strip.sub.Text = (entry.hint and (entry.hint[dev] or entry.hint.kb)) or ""
+	-- the marker on the target cover shows the same key (the server sends the highlight before the line)
+	local mk = highlightTag and highlightTag:FindFirstChild("Glyph", true)
+	if mk and stripGlyph and stripGlyph ~= "" then mk.Text = stripGlyph end
+	strip.edge.Color, strip.accent.BackgroundColor3 = AMBER, AMBER
+	local idx = table.find(STARTER_ORDER, key)
+	strip.pipRow.Visible = idx ~= nil
+	if idx then paintPips(idx, idx - 1) end
+	-- in: slide down + fade
+	strip.root.Visible = true
+	strip.root.Position = UDim2.fromScale(0.5, 0.085)
+	strip.root.GroupTransparency = 1
+	TweenService:Create(strip.root, TweenInfo.new(0.25, Enum.EasingStyle.Quint), { Position = UDim2.fromScale(0.5, 0.11), GroupTransparency = 0 }):Play()
+end
+local function hideStrip()
+	if not strip or not strip.root.Visible then return end
+	local k = stripKey
+	TweenService:Create(strip.root, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = UDim2.fromScale(0.5, 0.085), GroupTransparency = 1 }):Play()
+	task.delay(0.22, function() if stripKey == k then strip.root.Visible = false end end)
+end
+-- done: the keycap goes green with a check, its pip fills, then the strip slides up (the next one drops in with the next step)
+local function stripDone()
+	if not strip or not strip.root.Visible or stripDoneFlag then return end
+	stripDoneFlag = true
+	strip.capText.Visible = false
+	strip.check.Visible = true
+	strip.capFace.BackgroundColor3 = GOOD
+	strip.edge.Color, strip.accent.BackgroundColor3 = GOOD, GOOD
+	strip.capScale.Scale = 1.2
+	TweenService:Create(strip.capScale, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	local idx = stripKey and table.find(STARTER_ORDER, stripKey)
+	if idx then paintPips(nil, idx) end
+	local k = stripKey
+	task.delay(0.55, function() if stripKey == k and stripDoneFlag then hideStrip() end end)
+end
+-- the keycap breathes until pressed; a press squashes it (the hotbar's kick spring: damper 0.75, speed 20)
+local press = { x = 0, v = 0 }
+RunService.RenderStepped:Connect(function(dt)
+	if not strip or not strip.root.Visible then return end
+	press.v += (-400 * press.x - 30 * press.v) * math.min(dt, 1 / 30)
+	press.x += press.v * math.min(dt, 1 / 30)
+	if stripDoneFlag then return end
+	local breathe = 1 + 0.035 * math.sin(os.clock() * 4)
+	strip.capScale.Scale = breathe * (1 - press.x)
+end)
+UserInputService.InputBegan:Connect(function(input)
+	if not strip or not strip.root.Visible or stripDoneFlag or not stripGlyph then return end
+	for _, want in GLYPH_INPUTS[stripGlyph] or {} do
+		if input.KeyCode == want or input.UserInputType == want then press.v += 6 return end
+	end
+end)
+
+-- // TRAINING COMPLETE (2026-10-21 redesign): the payoff moment before the teleport. The skills you just did as ticked tiles,
+-- and a big green PLAY button counting down to the lobby (it continues by itself; pressing it just says so sooner).
+local function showFinish()
+	if finish and finish.Parent then return end
+	hideStrip()
+	local cv = gui:FindFirstChild("Canvas") or gui
+	finish = Instance.new("CanvasGroup")
+	finish.Name = "TrainingComplete"
+	finish.Size = UDim2.fromScale(1, 1)
+	finish.BackgroundColor3 = PLATE
+	finish.BackgroundTransparency = 0.35
+	finish.BorderSizePixel = 0
+	finish.GroupTransparency = 1
+	finish.ZIndex = 40
+	finish.Parent = cv
+	local title = text(finish, "Title", F_HEAVY, WHITE)
+	title.AnchorPoint = Vector2.new(0.5, 0.5)
+	title.Position = UDim2.fromScale(0.5, 0.3)
+	title.Size = UDim2.fromScale(0.6, 0.085)
+	title.Text = "TRAINING COMPLETE"
+	stroke(title, PLATE, 2, 0.2)
+	local tsc = Instance.new("UIScale"); tsc.Scale = 1.25; tsc.Parent = title
+	local bar = Instance.new("Frame")
+	bar.AnchorPoint = Vector2.new(0.5, 0.5)
+	bar.Position = UDim2.fromScale(0.5, 0.36)
+	bar.Size = UDim2.fromScale(0.0, 0.006)
+	bar.BackgroundColor3 = AMBER
+	bar.BorderSizePixel = 0
+	bar.Parent = finish
+	local skills = { { "COVER", "Q" }, { "SLIDE", "C" }, { "VAULT", "SPACE" }, { "SHOOT", "RMB" } }
+	local dev = device()
+	for i, s in skills do
+		local tile = Instance.new("Frame")
+		tile.Name = "Skill" .. s[1]
+		tile.AnchorPoint = Vector2.new(0.5, 0.5)
+		tile.Position = UDim2.fromScale(0.5 + (i - 2.5) * 0.105, 0.48)
+		tile.Size = UDim2.fromScale(0.09, 0.15)
+		tile.BackgroundColor3 = Color3.fromRGB(24, 27, 22)
+		tile.BorderSizePixel = 0
+		corner(tile, 0.1)
+		local ts = stroke(tile, GOOD, 2, 0.1); ts.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		local tk = text(tile, "Check", F_HEAVY, GOOD)
+		tk.Position = UDim2.fromScale(0.25, 0.1)
+		tk.Size = UDim2.fromScale(0.5, 0.45)
+		tk.Text = "✓"
+		local tl = text(tile, "Name", F_HEAVY, WHITE)
+		tl.Position = UDim2.fromScale(0.08, 0.62)
+		tl.Size = UDim2.fromScale(0.84, 0.24)
+		tl.Text = s[1]
+		local sc = Instance.new("UIScale"); sc.Scale = 0; sc.Parent = tile
+		tile.Parent = finish
+		task.delay(0.25 + i * 0.12, function()
+			TweenService:Create(sc, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+			if confirmSound then local c = confirmSound:Clone(); c.PlaybackSpeed = 1.1 + i * 0.1; c.Parent = gui; c:Play(); game:GetService("Debris"):AddItem(c, 1.5) end
+		end)
+	end
+	local _ = dev
+	-- the big PLAY button (field green, our primary)
+	local play = Instance.new("TextButton")
+	play.Name = "Play"
+	play.AutoButtonColor = false
+	play.Text = ""
+	play.AnchorPoint = Vector2.new(0.5, 0.5)
+	play.Position = UDim2.fromScale(0.5, 0.68)
+	play.Size = UDim2.fromScale(0.2, 0.085)
+	play.BackgroundColor3 = WHITE
+	play.BorderSizePixel = 0
+	play:AddTag("Nonapplicable")
+	corner(play, 0.18)
+	local pg = Instance.new("UIGradient"); pg.Rotation = 90
+	pg.Color = ColorSequence.new(Color3.fromHex("#8DBF5A"), Color3.fromHex("#4C7A2E")); pg.Parent = play
+	stroke(play, Color3.fromRGB(20, 34, 12), 2, 0.2).ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	local pl = text(play, "Label", F_HEAVY, WHITE)
+	pl.Position = UDim2.fromScale(0.06, 0.18)
+	pl.Size = UDim2.fromScale(0.88, 0.64)
+	stroke(pl, Color3.fromRGB(20, 34, 12), 1.5, 0.3)
+	local psc = Instance.new("UIScale"); psc.Parent = play
+	play.MouseEnter:Connect(function() TweenService:Create(psc, TweenInfo.new(0.12), { Scale = 1.06 }):Play() end)
+	play.MouseLeave:Connect(function() TweenService:Create(psc, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+	local pressed = false
+	play.Activated:Connect(function()
+		pressed = true
+		psc.Scale = 0.92
+		TweenService:Create(psc, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+		pl.Text = "LOADING..."
+	end)
+	play.Parent = finish
+	TweenService:Create(finish, TweenInfo.new(0.35, Enum.EasingStyle.Quad), { GroupTransparency = 0 }):Play()
+	TweenService:Create(tsc, TweenInfo.new(0.4, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	TweenService:Create(bar, TweenInfo.new(0.5, Enum.EasingStyle.Quint), { Size = UDim2.fromScale(0.3, 0.006) }):Play()
+	local t0, hold = os.clock(), Config.ReadyHold or 4
+	while finish and finish.Parent and not pressed do
+		local left = math.max(0, math.ceil(hold - (os.clock() - t0)))
+		pl.Text = left > 0 and ("PLAY  ·  " .. left) or "LOADING..."
+		if left <= 0 then break end
+		task.wait(0.1)
+	end
+end
+
 local function showLine(text: string, key: string?)
 	gui.Enabled = true
 	-- [TOUCH] touch-only players get the button names instead of keys (TutorialConfig.ForTouch)
@@ -673,37 +946,35 @@ local function showLine(text: string, key: string?)
 		end
 		slam(head)
 	end
-	-- pop in: a bouncy little grow from the bottom, the portrait bobs
-	panel.BackgroundTransparency = 0.6
-	panelScale.Scale = 0.88
-	TweenService:Create(panel, TweenInfo.new(0.3, Enum.EasingStyle.Quad), { BackgroundTransparency = 0.25 }):Play()
-	TweenService:Create(panelScale, TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play()
-	portraitScale.Scale = 1.25
-	TweenService:Create(portraitScale, TweenInfo.new(0.5, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out), { Scale = 1 }):Play()
+	-- (2026-10-21 redesign) the line is a radio subtitle: the step's short line (STEP[key].sub) or the long one for steps
+	-- without one; it shows at once (no typewriter) and fades on its own timer. The objective strip carries what to do.
 	typeToken += 1
 	local token = typeToken
 	keyCount, keyAnim = {}, {}
-	shownText = text
-	lineCounter = string.match(text, "{(%d+)}") and tonumber(string.match(text, "{(%d+)}")) or nil
-	lineLabel.Text = richLine(text)
-	lineLabel.TextColor3 = head and Color3.fromRGB(255, 214, 214) or Color3.fromRGB(226, 229, 236)
-	lineLabel.MaxVisibleGraphemes = 0
-	local count = utf8.len(text) or #text
-	task.spawn(function()
-		for i = 1, count do
-			if token ~= typeToken then return end
-			lineLabel.MaxVisibleGraphemes = i
-			-- typewriter tick (every other letter, skipping spaces, slightly varied)
-			local ch = text:sub(i, i)
-			if i % (Audio.TypingEvery or 2) == 0 and ch ~= " " and #typeSounds > 0 then
-				tickIndex = tickIndex % #typeSounds + 1
-				local snd = typeSounds[tickIndex]
-				snd.PlaybackSpeed = 0.95 + math.random() * 0.15
-				snd:Play()
-			end
-			task.wait(Config.TypeSpeed or 0.03)
-		end
-		lineLabel.MaxVisibleGraphemes = -1
+	local entry = key and STEP[key]
+	local say = (entry and entry.sub) or text
+	shownText = say
+	lineCounter = string.match(say, "{(%d+)}") and tonumber(string.match(say, "{(%d+)}")) or nil
+	lineLabel.Text = richLine(say)
+	lineLabel.TextColor3 = head and Color3.fromRGB(255, 214, 214) or WHITE
+	lineLabel.MaxVisibleGraphemes = -1
+	panel.Visible = true
+	panelScale.Scale = 0.97
+	lineLabel.TextTransparency = 1
+	TweenService:Create(panelScale, TweenInfo.new(0.25, Enum.EasingStyle.Quint), { Scale = 1 }):Play()
+	TweenService:Create(lineLabel, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { TextTransparency = 0 }):Play()
+	local hold = math.max(2.6, #say * 0.06)
+	task.delay(hold, function()
+		if token ~= typeToken then return end
+		TweenService:Create(lineLabel, TweenInfo.new(0.35), { TextTransparency = 1 }):Play()
+		task.delay(0.35, function() if token == typeToken then panel.Visible = false end end)
+	end)
+	if entry and entry.obj then showStrip(key, entry)
+	elseif (key == "Win" or key == "Ready") and stripKey then stripDone() end -- the fight has no waitFor: winning ticks "TAKE HIM DOWN"
+	if key == "Ready" then task.spawn(showFinish) end
+	-- a short read beat, then the step's controls unlock (the typewriter used to gate this)
+	task.delay(0.35, function()
+		if token ~= typeToken then return end
 		typingDoneAt = os.clock()
 		if pendingAllow then
 			allowed = pendingAllow
@@ -725,12 +996,15 @@ local function objectiveFor(event: string?): string?
 	return event
 end
 
+-- (2026-10-21 redesign) the strip carries the objective: a step it doesn't know (the other tutorials) gets a plain one
+-- built from the old objective names; done = the strip's green check
 local function setObjective(text: string?, done: boolean?)
-	objectiveLabel.Visible = text ~= nil
-	objectiveLabel.Text = text and ((done and "✓  " or "OBJECTIVE  ·  ") .. string.upper(text)) or ""
-	local color = done and Color3.fromRGB(120, 230, 140) or BLUE
-	objectiveLabel.TextColor3 = color
-	objectiveLabel.BackgroundColor3 = color
+	if done then stripDone() return end
+	if text and (not stripKey or not STEP[stripKey] or not strip.root.Visible or stripDoneFlag) then
+		local k = "_" .. text
+		STEP[k] = STEP[k] or { obj = string.upper(text), kb = "", hint = { kb = "" } }
+		showStrip(k, STEP[k])
+	end
 end
 
 local OBJECTIVES = {
@@ -801,30 +1075,75 @@ local function setHighlight(part: BasePart)
 	clearHighlight()
 	highlightPart = part
 	localPlayer:SetAttribute("MoveTarget", part.Name) -- E / Shift+E only go to this cover
-	local box = Instance.new("SelectionBox")
+	-- (2026-10-21 redesign) an amber outline (a Highlight, not a Studio-style SelectionBox) that pulses once, and the step's
+	-- keycap floating ON the cover with a chevron under it (studs-sized, so it reads at any distance like a world object)
+	local box = Instance.new("Highlight")
+	box.Name = "TutorialTarget"
 	box.Adornee = part
-	box.Color3 = Color3.fromRGB(90, 170, 255)
-	box.LineThickness = 0.06
-	box.SurfaceTransparency = 0.85
-	box.SurfaceColor3 = Color3.fromRGB(90, 170, 255)
+	-- cover targets are invisible collision proxies, and a Highlight only draws on OPAQUE geometry (tested: transparency 0.5
+	-- already draws nothing). Outline the visible meshes the proxy stands for instead: the model owning most of the opaque
+	-- parts inside its box; failing that, an opaque client-only ghost shrunk just inside the cover.
+	if part.Transparency > 0.05 then
+		local params = OverlapParams.new()
+		params.FilterType = Enum.RaycastFilterType.Exclude
+		params.FilterDescendantsInstances = { localPlayer.Character, workspace.CurrentCamera }
+		local counts, best, bestN = {}, nil, 0
+		for _, p in workspace:GetPartBoundsInBox(part.CFrame, part.Size * 1.05, params) do
+			if p ~= part and p.Transparency < 0.05 then
+				-- the part's own model, unless that model is much bigger than the cover (the whole map / a room)
+				local owner: Instance = p:FindFirstAncestorOfClass("Model") or p
+				local ext = owner:IsA("Model") and select(2, (owner :: Model):GetBoundingBox()) or p.Size
+				if ext.Magnitude > part.Size.Magnitude * 2.5 then owner, ext = p, p.Size end
+				if ext.Magnitude < part.Size.Magnitude * 2.5 then
+					counts[owner] = (counts[owner] or 0) + 1
+					if counts[owner] > bestN then best, bestN = owner, counts[owner] end
+				end
+			end
+		end
+		if best then
+			box.Adornee = best
+		else
+			local ghost = Instance.new("Part")
+			ghost.Name = "TargetGhost"
+			ghost.Anchored, ghost.CanCollide, ghost.CanQuery, ghost.CanTouch, ghost.CastShadow = true, false, false, false, false
+			ghost.Size = part.Size * 0.97
+			ghost.CFrame = part.CFrame
+			ghost.Color = Color3.fromRGB(30, 30, 30)
+			ghost.Parent = box
+			box.Adornee = ghost
+		end
+	end
+	box.FillColor, box.OutlineColor = AMBER, AMBER
+	box.FillTransparency, box.OutlineTransparency = 0.55, 0
+	box.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
 	box.Parent = workspace.CurrentCamera
+	TweenService:Create(box, TweenInfo.new(0.6, Enum.EasingStyle.Quad), { FillTransparency = 0.9 }):Play()
 	highlightBox = box
 	local tag = Instance.new("BillboardGui")
+	tag.Name = "TutorialTargetKey"
 	tag.Adornee = part
-	tag.Size = UDim2.fromOffset(120, 28)
-	tag.StudsOffsetWorldSpace = Vector3.new(0, part.Size.Y / 2 + 1.5, 0)
+	tag.Size = UDim2.fromScale(2.2, 3)
+	local lift = math.min(part.Size.Y / 2 + 1.8, 2.6) -- (tall cover: at eye height, not off the top of the screen)
+	tag.StudsOffsetWorldSpace = Vector3.new(0, lift, 0)
 	tag.AlwaysOnTop = true
-	local t = Instance.new("TextLabel")
-	t.Size = UDim2.fromScale(1, 1)
-	t.BackgroundTransparency = 1
-	t.Font = Enum.Font.GothamBold
-	t.TextSize = 16
-	t.TextColor3 = Color3.fromRGB(90, 170, 255)
-	t.TextStrokeTransparency = 0.4
-	t.Text = "▼ COVER"
-	t.Parent = tag
+	tag.LightInfluence = 0
+	local cap, glyph = keycap(tag, "Key")
+	cap.Size = UDim2.fromScale(1, 0.68)
+	glyph.Text = stripGlyph or "E"
+	local chev = text(tag, "Chevron", F_HEAVY, AMBER)
+	chev.Position = UDim2.fromScale(0, 0.68)
+	chev.Size = UDim2.fromScale(1, 0.32)
+	chev.Text = "▼"
+	stroke(chev, PLATE, 1.5, 0.3)
 	tag.Parent = workspace.CurrentCamera
 	highlightTag = tag
+	-- a gentle bob so it reads as "go here"
+	task.spawn(function()
+		while highlightTag == tag and tag.Parent do
+			tag.StudsOffsetWorldSpace = Vector3.new(0, lift + math.sin(os.clock() * 3) * 0.18, 0)
+			task.wait()
+		end
+	end)
 end
 
 -- // Watching for the requested action
@@ -869,17 +1188,7 @@ local function confirm()
 			game:GetService("Debris"):AddItem(hi, 1.5)
 		end)
 	end
-	local scale = objectiveLabel:FindFirstChildOfClass("UIScale") or Instance.new("UIScale")
-	scale.Parent = objectiveLabel
-	scale.Scale = 1.35
-	TweenService:Create(scale, TweenInfo.new(0.35, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play()
-	local stroke = panel:FindFirstChild("ConfirmStroke") or Instance.new("UIStroke")
-	stroke.Name = "ConfirmStroke"
-	stroke.Color = Color3.fromRGB(120, 230, 140)
-	stroke.Thickness = 2
-	stroke.Transparency = 0
-	stroke.Parent = panel
-	TweenService:Create(stroke, TweenInfo.new(0.9, Enum.EasingStyle.Quad), { Transparency = 1 }):Play()
+	stripDone() -- (the visual half of the confirm lives on the strip now)
 end
 
 local function report(eventName: string)
@@ -1028,7 +1337,9 @@ local function onStep(payload)
 		clearHighlight()
 		if zoneMarker then zoneMarker:Destroy() zoneMarker = nil end
 		localPlayer:SetAttribute("GadgetZone", nil)
-		task.delay(1.5, function() if not active then gui.Enabled = false end end)
+		hideStrip()
+		-- (the TRAINING COMPLETE screen stays up through the teleport; anything else goes)
+		task.delay(1.5, function() if not active and not (finish and finish.Parent) then gui.Enabled = false end end)
 		return
 	end
 	active = true
@@ -1089,15 +1400,27 @@ local function onStep(payload)
 	elseif typeof(payload.zone) == "Vector3" then
 		localPlayer:SetAttribute("GadgetZone", payload.zone)
 		if zoneMarker then zoneMarker:Destroy() end
+		-- (2026-10-21 redesign) a thin amber ring on the floor (a SurfaceGui on an invisible slab), not a Neon disc
 		zoneMarker = Instance.new("Part")
 		zoneMarker.Name = "TutorialZone"
-		zoneMarker.Shape = Enum.PartType.Cylinder
-		zoneMarker.Size = Vector3.new(0.1, 5, 5)
-		zoneMarker.CFrame = CFrame.new(payload.zone + Vector3.new(0, 0.1, 0)) * CFrame.Angles(0, 0, math.rad(90))
+		zoneMarker.Size = Vector3.new(5, 0.05, 5)
+		zoneMarker.CFrame = CFrame.new(payload.zone + Vector3.new(0, 0.06, 0))
 		zoneMarker.Anchored, zoneMarker.CanCollide, zoneMarker.CanQuery, zoneMarker.CanTouch = true, false, false, false
-		zoneMarker.Material = Enum.Material.Neon
-		zoneMarker.Color = Color3.fromRGB(90, 170, 255)
-		zoneMarker.Transparency = 0.55
+		zoneMarker.Transparency = 1
+		local sgui = Instance.new("SurfaceGui")
+		sgui.Face = Enum.NormalId.Top
+		sgui.LightInfluence = 0
+		sgui.PixelsPerStud = 60
+		sgui.Parent = zoneMarker
+		local ring = Instance.new("Frame")
+		ring.AnchorPoint = Vector2.new(0.5, 0.5)
+		ring.Position = UDim2.fromScale(0.5, 0.5)
+		ring.Size = UDim2.fromScale(0.92, 0.92)
+		ring.BackgroundColor3 = AMBER
+		ring.BackgroundTransparency = 0.85
+		corner(ring, 0.5)
+		local rs = stroke(ring, AMBER, 9, 0.05); rs.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		ring.Parent = sgui
 		zoneMarker.Parent = workspace.CurrentCamera
 	end
 	if payload.highlight == false then clearHighlight()

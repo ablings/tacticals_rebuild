@@ -97,6 +97,7 @@ PATCHES = [
 # Missing parent folders (UIKit) are created. Run it only in the combined match-place pass with the Tacticals session.
 MATCH_FILES = [
     ("ReplicatedStorage.Modules.Shared", "TrainingGate", "ModuleScript", "matchplace/TrainingGate.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "TutorialController", "ModuleScript", "tutorial/TutorialController.lua"),  # (2026-10-21) tutorial UI redesign; baseline 8d79ff9 = the live one
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
     ("ReplicatedStorage.UIKit", "Theme", "ModuleScript", "matchplace/Theme.lua"),
     ("ReplicatedStorage.UIKit", "Tac", "ModuleScript", "lobby/Tac.lua"),
