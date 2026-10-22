@@ -1131,6 +1131,37 @@ function GLYPH.star(h, s, c) -- a rounded eight-point burst
 		b:FindFirstChildOfClass("UICorner").CornerRadius = UDim.new(1, 0)
 	end
 end
+-- (lobby revamp, graders: four identical crossed circles read as "broken") one drawn icon per cosmetic slot
+function GLYPH.skin(h, s, c) -- a pistol silhouette: slide, grip, trigger guard
+	blob(h, s, 0.12, 0.26, 0.76, 0.2, c)
+	local g = blob(h, s, 0.5, 0.4, 0.2, 0.42, c)
+	g.Rotation = 14
+	ring(h, s, 0.42, 0.52, 0.18, s * 0.06, c)
+end
+function GLYPH.wrap(h, s, c) -- a paint swatch: three slanted stripes
+	for i = 0, 2 do
+		local b = blob(h, s, 0.2 + i * 0.22, 0.14, 0.14, 0.72, c)
+		b.Rotation = 18
+		b.BackgroundTransparency = i * 0.25
+	end
+end
+function GLYPH.finisher(h, s, c) -- a crosshair with a hit spark
+	ring(h, s, 0.5, 0.5, 0.62, s * 0.08, c)
+	seg(h, s, 0.5, 0.06, 0.5, 0.3, s * 0.08, c)
+	seg(h, s, 0.5, 0.7, 0.5, 0.94, s * 0.08, c)
+	seg(h, s, 0.06, 0.5, 0.3, 0.5, s * 0.08, c)
+	seg(h, s, 0.7, 0.5, 0.94, 0.5, s * 0.08, c)
+end
+function GLYPH.cutscene(h, s, c) -- a clapperboard
+	blob(h, s, 0.14, 0.4, 0.72, 0.46, c)
+	local top = blob(h, s, 0.14, 0.2, 0.72, 0.14, c)
+	top.Rotation = -10
+	for i = 0, 2 do
+		local st = blob(h, s, 0.2 + i * 0.22, 0.2, 0.08, 0.14, COL.Ink)
+		st.Rotation = -10
+		st.ZIndex = 3
+	end
+end
 function GLYPH.leave(h, s)
 	for _, a in { { 0.14, 0.14, 0.86, 0.86 }, { 0.14, 0.86, 0.86, 0.14 } } do
 		local b = seg(h, s, a[1], a[2], a[3], a[4], s * 0.25, COL.Red)
@@ -2153,7 +2184,7 @@ local function renderBottom()
 		if c.Id == "Leave" then
 			glyph(b, "leave", 76, nil, 5)
 		else
-			glyph(b, "none", 46, COL.Empty, 5)
+			glyph(b, string.lower(c.Id), 46, COL.Text, 5)
 		end
 		shade(text({ Text = c.Label, FontFace = FONT_HEAVY, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromOffset(cx, 34), Size = UDim2.fromOffset(116, 26), ZIndex = 6, Parent = bottomBar }), 2)

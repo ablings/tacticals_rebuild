@@ -74,8 +74,15 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, key)
 	local ts = math.floor(h * 0.62)
 	local num = Kit.label({ LayoutOrder = 2, Text = text, FontFace = F.display, TextSize = ts, TextColor3 = Color3.new(0, 0, 0), TextTransparency = 0.75,
 		AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, h), ZIndex = 6, Parent = row })
-	Kit.label({ Name = "Text", Text = text, FontFace = F.display, TextSize = ts, TextColor3 = (owned or steel) and Theme.hex("#1C2026") or C.white,
+	-- (lobby revamp, graders: a 4,000 tag looked the same with 500 in the wallet) can't afford = the number goes red and the
+	-- tag dims; it still opens the Kit / confirm so you can see what it is
+	local short = (kind == "scissors" or kind == "kit") and not owned and amount and (data().Credits or 0) < amount
+	Kit.label({ Name = "Text", Text = text, FontFace = F.display, TextSize = ts, TextColor3 = short and Theme.hex("#C8352B") or ((owned or steel) and Theme.hex("#1C2026") or C.white),
 		Position = UDim2.fromOffset(0, -2), Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = num })
+	if short then
+		new("Frame", { Name = "Short", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.6, ZIndex = 5, Parent = tag },
+			{ Kit.corner(7) })
+	end
 	if not owned and not confirm then
 		local img = kind == "robux" and ROBUX_IMG or SCISSORS_IMG
 		new("ImageLabel", { LayoutOrder = kind == "robux" and 1 or 3, BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit,

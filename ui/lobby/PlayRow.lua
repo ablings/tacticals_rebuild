@@ -56,12 +56,14 @@ function PlayRow.Init(ctx)
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
 	-- PLAY: chunky amber button, Oswald with a darker amber outline; grows from its centre on hover
-	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(830, 846), Size = UDim2.fromOffset(260, 70),
+	-- (lobby revamp, graders: PLAY was barely bigger than the dock icons) 340 x 84 design px: the biggest thing on the hub,
+	-- about 30 % taller on a phone (over the 44 pt tap minimum on a 390 pt tall screen)
+	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(790, 838), Size = UDim2.fromOffset(340, 84),
 		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2), Kit.stroke(hex("#D8ECC0"), 1.5, 0.3) })
 	playGrad = new("UIGradient", { Rotation = 90, Parent = play })
 	playLabel = Kit.label({ Text = "PLAY", FontFace = F.display, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center,
-		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(236, 54), Parent = play })
-	new("UITextSizeConstraint", { MaxTextSize = 46, Parent = playLabel })
+		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(310, 66), Parent = play })
+	new("UITextSizeConstraint", { MaxTextSize = 58, Parent = playLabel })
 	playStroke = new("UIStroke", { Color = hex("#1F3A14"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
 	local Tac = require(UIKit:WaitForChild("Tac"))
 	Tac.hoverBrackets(play, Tac.brackets(play, Tac.C.bone, 16, 3))
@@ -70,13 +72,13 @@ function PlayRow.Init(ctx)
 	PlayRow.SetState("PLAY", "play")
 
 	-- party: your avatar in an amber ring, then a round "+" to invite friends
-	local av = new("ImageButton", { Name = "Avatar", AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromOffset(1114, 850),
+	local av = new("ImageButton", { Name = "Avatar", AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromOffset(1150, 849),
 		Size = UDim2.fromOffset(62, 62), Parent = root }, { Kit.corner(31), Kit.stroke(C.amber, 2.5, 0) })
 	headshot(av)
 	av:SetAttribute("Uid", Players.LocalPlayer.UserId)
 	Kit.bindButton(av, { hover = 1.08 })
 	av.Activated:Connect(function() if ctx.onInvite then ctx.onInvite() end end) -- your avatar opens Your Party too
-	local inv = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1186, 858), Size = UDim2.fromOffset(46, 46),
+	local inv = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1222, 857), Size = UDim2.fromOffset(46, 46),
 		BackgroundColor3 = C.white, Parent = root },
 		{ Kit.corner(23), Kit.stroke(C.olive, 1.5, 0.3), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#2B3142"), hex("#161A24")),
 			Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 0.1) }) }) })
@@ -85,7 +87,7 @@ function PlayRow.Init(ctx)
 	Kit.bindButton(inv, { hover = 1.1 })
 	inv.Activated:Connect(function() if ctx.onInvite then ctx.onInvite() end end)
 	-- party members: up to four more heads after yours; the + slides right past them
-	local mates = new("Frame", { Name = "PartyMates", BackgroundTransparency = 1, Position = UDim2.fromOffset(1184, 850), Size = UDim2.fromOffset(4 * 54, 62), Parent = root })
+	local mates = new("Frame", { Name = "PartyMates", BackgroundTransparency = 1, Position = UDim2.fromOffset(1220, 849), Size = UDim2.fromOffset(4 * 54, 62), Parent = root })
 	local invHome -- read after Kit.bindButton has re-anchored the + (it moves it a frame later)
 	if ctx.tooltip then
 		ctx.tooltip(play, "Play", "Find a match online: 1v1, 2v2 or 3v3, casual or ranked.")

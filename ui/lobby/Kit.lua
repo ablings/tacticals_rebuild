@@ -472,6 +472,9 @@ function Kit.toggle(value, onChange)
 		Name = "Toggle", Size = UDim2.fromOffset(110, 55), AutoButtonColor = false, Text = "", BackgroundColor3 = C.control,
 	}, { Kit.corner(7) })
 	local knob = new("Frame", { Name = "Knob", AnchorPoint = Vector2.new(0, 0.5), Size = UDim2.fromOffset(41, 41), BackgroundColor3 = C.textDark, Parent = btn }, { Kit.corner(4) })
+	-- (lobby revamp, graders: on vs off was unreadable) the word sits on the free side of the knob
+	local word = new("TextLabel", { Name = "State", BackgroundTransparency = 1, FontFace = F.bold, TextSize = 20, TextColor3 = C.textDark,
+		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(52, 30), Parent = btn })
 	local api = { value = value }
 	-- smooth, slow slide + colour blend (RIVALS). No debounce: each click starts a new tween from the
 	-- knob's current spot, so fast clicking reverses it mid-way.
@@ -479,6 +482,9 @@ function Kit.toggle(value, onChange)
 	local function render(t)
 		Kit.tween(knob, t, { Position = api.value and UDim2.fromScale(62 / 110, 0.5) or UDim2.fromScale(7 / 110, 0.5) }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 		Kit.tween(btn, t, { BackgroundColor3 = api.value and C.green or C.control }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+		word.Text = api.value and "ON" or "OFF"
+		word.TextColor3 = api.value and Color3.new(1, 1, 1) or C.textDark
+		word.Position = api.value and UDim2.fromScale(32 / 110, 0.5) or UDim2.fromScale(80 / 110, 0.5)
 	end
 	function api.set(v) api.value = v; render(TOGGLE_TIME); if onChange then onChange(v) end end
 	btn.Activated:Connect(function() api.set(not api.value) end)

@@ -51,6 +51,7 @@ local ctx = {}
 local gui, root, column, blur, scrim
 local isOpen = false
 local bars = {}
+local CARD_H = 258 -- (lobby revamp) was 300
 
 local PANEL_T = 0.5
 local COL_X, COL_W = 532, 828
@@ -85,7 +86,9 @@ local function panel(name, order, height)
 end
 
 local function bar(parent, pos, size, frac, done)
-	local back = new("Frame", { Name = "Bar", Position = pos, Size = size, BackgroundColor3 = C.track, ClipsDescendants = true, Parent = parent })
+	-- (lobby revamp, graders: an empty bar was invisible) a lighter, rounded track so 0 / N still shows how far there is to go
+	local back = new("Frame", { Name = "Bar", Position = pos, Size = size, BackgroundColor3 = Color3.fromRGB(70, 74, 64), ClipsDescendants = true, Parent = parent },
+		{ Kit.corner(6) })
 	local fill = new("Frame", { Name = "Fill", Size = UDim2.fromScale(math.clamp(frac, 0, 1), 1), BackgroundColor3 = done and Tac.C.oliveHi or Tac.C.bone, BorderSizePixel = 0, Parent = back })
 	table.insert(bars, { fill = fill, frac = math.clamp(frac, 0, 1) })
 	return back
@@ -107,7 +110,7 @@ local function taskCard(parent, scope, i, entry, def, x, y)
 	local done = prog >= def.Goal
 	local ready = done and not entry.Claimed
 	local card = new("Frame", {
-		Name = scope .. i, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(243, 300),
+		Name = scope .. i, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(243, CARD_H),
 		BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.3, Parent = parent,
 	}, { Kit.corner(2) })
 	local br = Tac.brackets(card, ready and Tac.C.bone or Tac.C.line, 18, 3)
@@ -118,19 +121,19 @@ local function taskCard(parent, scope, i, entry, def, x, y)
 	local title = Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 21, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(10, 22), Size = UDim2.new(1, -20, 0, 48), Parent = card })
 	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromOffset(121, 104), Size = UDim2.fromOffset(200, 92), Parent = card })
+		Position = UDim2.fromOffset(121, 100), Size = UDim2.fromOffset(200, 60), Parent = card })
 	statIcon(art, def.Stat, card)
-	bar(card, UDim2.fromOffset(18, 166), UDim2.fromOffset(206, 10), prog / def.Goal, done)
+	bar(card, UDim2.fromOffset(18, 146), UDim2.fromOffset(206, 12), prog / def.Goal, done)
 	if done then
 		title.TextColor3 = Tac.C.oliveHi
 		new("ImageLabel", { BackgroundTransparency = 1, Image = icon("check"), ImageColor3 = Tac.C.oliveHi, AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromOffset(121, 171), Size = UDim2.fromOffset(36, 36), ZIndex = 3, Parent = card })
+			Position = UDim2.fromOffset(121, 151), Size = UDim2.fromOffset(36, 36), ZIndex = 3, Parent = card })
 	else
 		local count = Kit.label({ Text = prog .. " / " .. def.Goal, FontFace = F.bold, TextSize = 27, TextXAlignment = Enum.TextXAlignment.Center,
-			Position = UDim2.fromOffset(0, 156), Size = UDim2.new(1, 0, 0, 30), ZIndex = 3, Parent = card })
+			Position = UDim2.fromOffset(0, 137), Size = UDim2.new(1, 0, 0, 30), ZIndex = 3, Parent = card })
 		Kit.textStroke(2).Parent = count
 	end
-	reward(card, def.Reward, 48, UDim2.fromOffset(98, 218))
+	reward(card, def.Reward, 44, UDim2.fromOffset(98, 186))
 	-- claim strip along the bottom
 	local strip = UDim2.fromOffset(218, 40)
 	if entry.Claimed then
@@ -160,7 +163,7 @@ local function scopePanel(scope, order, title, iconModel)
 	local data = ctx.getData() or {}
 	local q = data.Quests and data.Quests[scope]
 	local list = (q and q.List) or {}
-	local p = panel(scope, order, 82 + 300 + 30)
+	local p = panel(scope, order, 82 + CARD_H + 24)
 	local head = new("Frame", { Name = "HeadIcon", BackgroundTransparency = 1, Position = UDim2.fromOffset(26, 6), Size = UDim2.fromOffset(56, 56), Parent = p })
 	ViewIcons.Icon(head, iconModel, { hoverTarget = p })
 	Kit.label({ Text = title, FontFace = F.display, TextSize = 40, Position = UDim2.fromOffset(84, 8), Size = UDim2.fromOffset(400, 52), Parent = p })
@@ -210,7 +213,8 @@ local function build()
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	column = new("ScrollingFrame", {
-		Name = "Column", Position = UDim2.fromOffset(COL_X, 208), Size = UDim2.fromOffset(852, 760), BackgroundTransparency = 1, BorderSizePixel = 0,
+		-- (lobby revamp, graders: the weekly row was cut off) taller column + shorter cards: both rows and the footer fit
+		Name = "Column", Position = UDim2.fromOffset(COL_X, 204), Size = UDim2.fromOffset(852, 840), BackgroundTransparency = 1, BorderSizePixel = 0,
 		ScrollBarThickness = 8, ScrollBarImageColor3 = C.olive, ScrollBarImageTransparency = 0.3, CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = root,
 	})

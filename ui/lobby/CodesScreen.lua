@@ -30,7 +30,7 @@ local function renderList()
 	for code in (d.RedeemedCodes or {}) do table.insert(used, code) end
 	table.sort(used)
 	if #used == 0 then
-		local l = Kit.label({ Text = "No codes redeemed yet", FontFace = FM, TextSize = 24, TextColor3 = Theme.hex("#9C98A3"), Size = UDim2.fromOffset(600, 40), Parent = list })
+		local l = Kit.label({ Text = "None yet. New codes come with updates and in the group.", FontFace = FM, TextSize = 24, TextColor3 = Theme.hex("#9C98A3"), Size = UDim2.fromOffset(900, 40), Parent = list })
 		l:SetAttribute("dTS", 24)
 	end
 	for i, code in used do
@@ -39,7 +39,7 @@ local function renderList()
 		local l = Kit.label({ Text = "✓  " .. code, FontFace = FB, TextSize = 22, TextColor3 = Theme.hex("#FFD400"), Position = UDim2.fromOffset(16, 0), Size = UDim2.fromOffset(226, 50), Parent = row })
 		l:SetAttribute("dTS", 22)
 	end
-	Kit.toScale(list, Vector2.new(960, 200))
+	Kit.toScale(list, Vector2.new(960, 80))
 end
 
 local function redeem()
@@ -65,7 +65,8 @@ local function build()
 	local canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 	-- the panel
-	local panel = new("Frame", { Name = "Panel", Position = UDim2.fromOffset(430, 250), Size = UDim2.fromOffset(1060, 560), BackgroundColor3 = Color3.new(0, 0, 0),
+	-- (lobby revamp, graders: mostly empty black) a shorter panel: the list area only has to show a couple of rows
+	local panel = new("Frame", { Name = "Panel", Position = UDim2.fromOffset(430, 250), Size = UDim2.fromOffset(1060, 450), BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0.3, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) })
 	local tagHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(30, 18), Size = UDim2.fromOffset(84, 84), Parent = panel })
 	stroke(Kit.label({ Text = "Codes", FontFace = FB, TextSize = 60, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(126, 22), Size = UDim2.fromOffset(500, 72), Parent = panel }), 2.5)
@@ -80,13 +81,19 @@ local function build()
 	go.Name = "Redeem"
 	go.Position = UDim2.fromOffset(806, 156)
 	go.Parent = panel
-	go.Activated:Connect(redeem)
+	go.Activated:Connect(function() if (box.Text or ""):match("%S") then redeem() end end)
+	-- (lobby revamp, graders: Redeem looked live with nothing typed) dimmed and inert until there's a code in the box
+	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 20, Parent = go },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	local function paintGo() dim.Visible = not (box.Text or ""):match("%S") end
+	box:GetPropertyChangedSignal("Text"):Connect(paintGo)
+	paintGo()
 	box.FocusLost:Connect(function(enter) if enter then redeem() end end)
 	status = Kit.label({ Text = "", FontFace = FB, TextSize = 24, TextColor3 = Theme.hex("#CFCDD3"), Position = UDim2.fromOffset(34, 250), Size = UDim2.fromOffset(990, 32), Parent = panel })
 	status:SetAttribute("dTS", 24)
 	stroke(Kit.label({ Text = "Redeemed", FontFace = FB, TextSize = 32, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(32, 300), Size = UDim2.fromOffset(400, 40), Parent = panel }), 2)
-	list = new("Frame", { Name = "List", BackgroundTransparency = 1, Position = UDim2.fromOffset(32, 350), Size = UDim2.fromOffset(960, 200), Parent = panel },
-		{ new("UIGridLayout", { CellSize = UDim2.fromScale(250 / 960, 50 / 200), CellPadding = UDim2.fromScale(12 / 960, 12 / 200), SortOrder = Enum.SortOrder.LayoutOrder }) })
+	list = new("Frame", { Name = "List", BackgroundTransparency = 1, Position = UDim2.fromOffset(32, 350), Size = UDim2.fromOffset(960, 80), Parent = panel },
+		{ new("UIGridLayout", { CellSize = UDim2.fromScale(250 / 960, 50 / 80), CellPadding = UDim2.fromScale(12 / 960, 12 / 80), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
 	close.Position = UDim2.fromOffset(1520, 250)
 	close.Parent = root

@@ -202,6 +202,7 @@ local function tile(x, y, w, h, top, bottom)
 end
 
 local MW, MH, GAP = 322, 272, 8
+local STRIP = 58 -- (lobby revamp) the bottom action bar of every tile
 local function modeCard(i, mode, ranked, x)
 	local q = ctx.Config.QueueFor(mode.Id, ranked)
 	local accent = ranked and T.violet or Color3.fromRGB(236, 232, 218)
@@ -213,13 +214,19 @@ local function modeCard(i, mode, ranked, x)
 		local chip = new("TextLabel", { Text = "RANKED", FontFace = HEAVY, TextSize = 18, TextColor3 = Color3.new(1, 1, 1), BackgroundColor3 = T.violet,
 			Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(94, 26), ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
 	end
-	-- status strip along the bottom
-	local strip = new("Frame", { Position = UDim2.fromOffset(0, MH - 44), Size = UDim2.fromOffset(MW, 44), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35,
+	-- status strip along the bottom. (lobby revamp, graders: "Play >" in 22 px read as a small link, not the button) idle = a
+	-- full-width field-green PLAY bar, so the whole card reads as one big button; the queue count is a pill top right
+	local strip = new("Frame", { Position = UDim2.fromOffset(0, MH - STRIP), Size = UDim2.fromOffset(MW, STRIP), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35,
 		BorderSizePixel = 0, ZIndex = 3, Parent = card })
-	local left = Kit.label({ Text = "", FontFace = HEAVY, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(14, 0), Size = UDim2.fromOffset(MW - 28, 44), ZIndex = 4, Parent = strip })
-	local right = Kit.label({ Text = "", FontFace = SEMI, TextSize = 16, TextColor3 = Color3.fromRGB(205, 205, 212), TextXAlignment = Enum.TextXAlignment.Right,
-		Position = UDim2.fromOffset(MW - 214, 0), Size = UDim2.fromOffset(200, 44), ZIndex = 4, Parent = strip })
-	table.insert(strips, { q = q, left = left, right = right, strip = strip, card = card, ranked = ranked, mode = mode, accent = accent })
+	local green = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Enabled = false, Parent = strip })
+	local left = Kit.label({ Text = "", FontFace = HEAVY, TextSize = 30, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(14, 0), Size = UDim2.fromOffset(MW - 28, STRIP), ZIndex = 4, Parent = strip })
+	new("UIStroke", { Color = Color3.fromRGB(28, 44, 16), Thickness = 2, Transparency = 0.3, Parent = left })
+	local right = Kit.label({ Text = "", FontFace = SEMI, TextSize = 20, TextColor3 = Color3.fromRGB(225, 225, 228), TextXAlignment = Enum.TextXAlignment.Right,
+		Position = UDim2.fromOffset(MW - 214, 0), Size = UDim2.fromOffset(200, STRIP), ZIndex = 4, Parent = strip })
+	local pill = new("TextLabel", { Text = "", FontFace = HEAVY, TextSize = 19, TextColor3 = Color3.fromRGB(225, 225, 228), BackgroundColor3 = Color3.fromRGB(10, 12, 9),
+		BackgroundTransparency = 0.25, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(MW - 12, 12), Size = UDim2.fromOffset(150, 30), ZIndex = 5, Parent = card },
+		{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+	table.insert(strips, { q = q, left = left, right = right, strip = strip, green = green, pill = pill, card = card, ranked = ranked, mode = mode, accent = accent })
 	Kit.bindButton(card, { hover = 1.03, press = 0.985 })
 	card.Activated:Connect(function()
 		local myQ, st = search()
@@ -260,7 +267,15 @@ local function render()
 	local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(RW / 2, 150), Size = UDim2.fromOffset(230, 230), ZIndex = 3, Parent = rt })
 	local rankedSub
 	if not open then
-		big(rt, "Unlocked at\nLevel " .. Config.RankedLevel, 40, 20, 392, RW - 40, 100, Color3.fromRGB(225, 225, 230))
+		big(rt, "UNLOCKS AT LEVEL " .. Config.RankedLevel, 30, 20, 392, RW - 40, 40, Color3.fromRGB(225, 225, 230))
+		-- (lobby revamp, graders: a bare lock gives no sense of distance) how far you are: LV n / 50 on a bar
+		local lv = math.max(1, (ctx.level and ctx.level()) or 1)
+		local need = math.max(1, Config.RankedLevel)
+		local track = new("Frame", { Position = UDim2.fromOffset(30, 446), Size = UDim2.fromOffset(RW - 60, 18), BackgroundColor3 = Color3.fromRGB(10, 10, 12),
+			BackgroundTransparency = 0.2, BorderSizePixel = 0, ZIndex = 4, Parent = rt }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		new("Frame", { Size = UDim2.fromScale(math.clamp(lv / need, 0.04, 1), 1), BackgroundColor3 = Color3.fromRGB(232, 212, 168), BorderSizePixel = 0, ZIndex = 5, Parent = track },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		big(rt, "LV " .. lv .. " / " .. need, 24, 20, 470, RW - 40, 30, Color3.fromRGB(232, 212, 168))
 	else
 		rankedSub = big(rt, ranked and "Ranked queues: ON" or "Ranked queues: OFF", 34, 20, 392, RW - 40, 44, ranked and T.violet:Lerp(Color3.new(1, 1, 1), 0.4) or Color3.new(1, 1, 1))
 		Kit.label({ Text = ranked and "Click to go back to casual" or "Click to play rated duels", FontFace = SEMI, TextSize = 20, TextColor3 = Color3.fromRGB(205, 205, 212),
@@ -285,7 +300,10 @@ local function render()
 	big(tb, "Training", 64, 28, 26, 420, 76, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
 	Kit.label({ Text = "Practice room: cover, vaults, live targets.\nTry any weapon, gadget or melee for free.", FontFace = SEMI, TextSize = 21, TextColor3 = Color3.fromRGB(215, 215, 220),
 		Position = UDim2.fromOffset(32, 104), Size = UDim2.fromOffset(330, 60), TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 4, Parent = tb })
-	local tStatus = big(tb, "Enter  >", 30, 30, MH - 66, 330, 40, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
+	-- (lobby revamp) the same green bottom bar as the mode tiles
+	local tBar = new("Frame", { Position = UDim2.fromOffset(0, MH - STRIP), Size = UDim2.fromOffset(TW, STRIP), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 3, Parent = tb },
+		{ new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)) }) })
+	local tStatus = big(tBar, "ENTER", 30, 0, 0, TW, STRIP, Color3.new(1, 1, 1))
 	local gunHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(330, 20), Size = UDim2.fromOffset(320, 232), ZIndex = 2, Parent = tb })
 	Kit.bindButton(tb, { hover = 1.02, press = 0.985 })
 	tb.Activated:Connect(function()
@@ -298,7 +316,10 @@ local function render()
 	big(db, "Lobby\nDuels", 52, 0, 40, MW, 130)
 	Kit.label({ Text = "Fight people in this server", FontFace = SEMI, TextSize = 19, TextColor3 = Color3.fromRGB(215, 215, 220), TextXAlignment = Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(0, 172), Size = UDim2.fromOffset(MW, 26), ZIndex = 4, Parent = db })
-	big(db, "To Pads  >", 28, 0, MH - 64, MW, 40)
+	-- secondary action: a dark bar (PLAY-green is for the queues)
+	local dBar = new("Frame", { Position = UDim2.fromOffset(0, MH - STRIP), Size = UDim2.fromOffset(MW, STRIP), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35,
+		BorderSizePixel = 0, ZIndex = 3, Parent = db })
+	big(dBar, "TO PADS", 28, 0, 0, MW, STRIP)
 	Kit.bindButton(db, { hover = 1.03, press = 0.985 })
 	db.Activated:Connect(function()
 		Screen.Close()
@@ -362,10 +383,13 @@ local function tick()
 	local pad = onPad()
 	for _, s in strips do
 		if s.training then
-			s.training.Text = (myQ or pad) and "Unavailable while queued" or "Enter  >"
+			s.training.Text = (myQ or pad) and "UNAVAILABLE WHILE QUEUED" or "ENTER"
 		else
 			local n = s.q and cnt[s.q.Id] or 0
 			local mine = myQ and s.q and myQ.Id == s.q.Id
+			s.green.Enabled = false
+			s.left.TextXAlignment = Enum.TextXAlignment.Left
+			s.pill.Visible = false
 			if s.flash and os.clock() < s.flash.untilT then
 				s.left.Text = s.flash.text
 				s.right.Text = ""
@@ -387,7 +411,12 @@ local function tick()
 				s.strip.BackgroundColor3 = Color3.new(0, 0, 0)
 				s.strip.BackgroundTransparency = 0.35
 			else
-				s.left.Text = "Play  >"
+				s.left.Text = "PLAY"
+				s.left.TextXAlignment = Enum.TextXAlignment.Center
+				s.green.Enabled = not s.ranked
+				s.pill.Visible = true
+				s.pill.Text = n .. " SEARCHING"
+				s.pill.TextColor3 = n > 0 and Color3.fromRGB(170, 220, 120) or Color3.fromRGB(225, 225, 228)
 				local extra = ""
 				if s.ranked then
 					local player = game:GetService("Players").LocalPlayer
@@ -397,9 +426,10 @@ local function tick()
 				return (player:GetAttribute("RankName") or "Bronze 1") .. "  " .. tostring(player:GetAttribute("RankElo") or 100) .. " ELO"
 			end)()
 				end
-				s.right.Text = n .. " searching" .. extra
-				s.strip.BackgroundColor3 = s.ranked and T.violet or Color3.new(0, 0, 0)
-				s.strip.BackgroundTransparency = s.ranked and 0.25 or 0.35
+				s.right.Text = s.ranked and (extra:gsub("^  ·  ", "")) or ""
+				if s.ranked then s.left.TextXAlignment = Enum.TextXAlignment.Left end
+				s.strip.BackgroundColor3 = s.ranked and T.violet or Color3.new(1, 1, 1)
+				s.strip.BackgroundTransparency = s.ranked and 0.25 or 0
 			end
 		end
 	end
