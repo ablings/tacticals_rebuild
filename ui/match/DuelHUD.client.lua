@@ -351,8 +351,23 @@ local hpText = label(specBar, "", FB, 20, 514, 76, 80, 26, WHITE)
 hpText.TextXAlignment = Enum.TextXAlignment.Left
 local specHow = label(specBar, "", FB, 20, 206, 98, 380, 22, Color3.fromRGB(180, 182, 172))
 specHow.TextXAlignment = Enum.TextXAlignment.Left
-local specPrev = label(specBar, "Q  <", FX, 28, 10, 36, 80, 48, Color3.fromRGB(205, 205, 212))
-local specNext = label(specBar, ">  E", FX, 28, 596, 36, 80, 48, Color3.fromRGB(205, 205, 212))
+-- (2026-10-21, RIVALS pass) the "Q <" / "> E" labels become chunky clickable arrows (RIVALS' big spectate arrows): a solid dark
+-- block (no hairline border), a big chevron and a cream key badge like the hotbar's. Built in a function (200-locals limit);
+-- clicks are wired to cycle() below it and Kit.bindButton gives them the press squash (after `stats`).
+local specPrev, specNext = (function()
+	local OSW = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+	local function arrow(name, x, chev, key, badgeX)
+		local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, 16), Size = UDim2.fromOffset(78, 88),
+			BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, ZIndex = 3, Parent = specBar }, { corner(10) })
+		label(b, chev, OSW, 52, 0, 8, 78, 80, WHITE, nil, 4)
+		local badge = new("Frame", { Name = "KeyBadge", BackgroundColor3 = Color3.fromRGB(236, 230, 210), Position = UDim2.fromOffset(badgeX, -10), Size = UDim2.fromOffset(32, 32),
+			ZIndex = 5, Parent = b }, { corner(6) })
+		local kl = label(badge, key, OSW, 22, 0, 0, 32, 32, Color3.fromRGB(17, 17, 20), nil, 6)
+		local ks = kl:FindFirstChildOfClass("UIStroke"); if ks then ks.Enabled = false end -- dark letter on cream: no edge needed
+		return b
+	end
+	return arrow("SpecPrev", 8, "<", "Q", -8), arrow("SpecNext", 594, ">", "E", 54)
+end)()
 local specStop = new("TextButton", { Name = "StopSpectate", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1280, 950), Size = UDim2.fromOffset(150, 52),
 	BackgroundColor3 = WHITE, Visible = false, Parent = root }, { corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(240, 110, 100), Color3.fromRGB(170, 40, 30)) }) })
 label(specStop, "Stop", FX, 30, 0, 0, 150, 52, WHITE)
@@ -423,6 +438,9 @@ local function cycle(step)
 	local i = table.find(list, target) or 0
 	setTarget(list[(i - 1 + step) % #list + 1])
 end
+-- (2026-10-21, RIVALS pass) the spectate arrows are buttons now: a click cycles like Q / E
+specPrev.Activated:Connect(function() cycle(-1) end)
+specNext.Activated:Connect(function() cycle(1) end)
 do
 	local hook = Instance.new("BindableFunction")
 	hook.Name = "DuelSpectate"
@@ -530,8 +548,22 @@ local stats = {}
 for i, k in { { "Kills", "Eliminations" }, { "Deaths", "Deaths" }, { "Assists", "Assists" }, { "DamageDealt", "Damage Dealt" }, { "DamageTaken", "Damage Taken" }, { "Headshots", "Headshots" } } do
 	local x, y = 310 + ((i - 1) % 3) * 150, i <= 3 and 270 or 372
 	stats[k[1]] = label(results, "0", FX, i <= 3 and 50 or 40, x, y, 150, i <= 3 and 58 or 50, WHITE, nil, 4)
-	label(results, k[2], FB, 20, x, y + (i <= 3 and 58 or 50), 150, 26, Color3.fromRGB(205, 205, 212), nil, 4)
+	-- (2026-10-21, RIVALS pass) the caption is kept (stats.cap) so an empty stat can hide with its number
+	stats.cap = stats.cap or {}
+	stats.cap[k[1]] = label(results, k[2], FB, 20, x, y + (i <= 3 and 58 or 50), 150, 26, Color3.fromRGB(205, 205, 212), nil, 4)
 end
+-- (2026-10-21, RIVALS pass) the shared UIKit.Kit motion helpers, kept in the `stats` table (this script is at the 200-locals
+-- limit). stats.bind = Kit.bindButton when Kit loaded (hover 1.05 / press 0.93 / hover + click sfx / pad-select grow).
+stats.Kit = (function()
+	local ok, K = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit", 10):WaitForChild("Kit", 5)) end)
+	return ok and K or nil
+end)()
+function stats.bind(b, opts)
+	if stats.Kit and stats.Kit.bindButton then stats.Kit.bindButton(b, opts) end
+	return b
+end
+-- one button behaviour: the spectate arrows, Stop and Leave (built above `stats`) squash like every Kit button
+stats.bind(specPrev); stats.bind(specNext); stats.bind(specStop); stats.bind(leaveDuel)
 local resRewards = label(results, "", FX, 32, 0, 392, 800, 44, OLIVE_HI, nil, 4)
 -- ranked: the rank line (promotion / demotion / shield / placements / reveal)
 local resRank = label(results, "", FX, 30, 0, 436, 800, 40, WHITE, nil, 4)
@@ -615,12 +647,33 @@ local function showResults(sum)
 	local mine, theirs = myTeam == "A" and sc.A or sc.B, myTeam == "A" and sc.B or sc.A
 	resScore.Text = string.format("%d  -  %d", mine or 0, theirs or 0)
 	resMode.Text = (sum.Mode or st("MatchMode") or "") .. (sum.Ranked and "  ·  RANKED" or "")
-	stats.Kills.Text = tostring(sum.Kills or player:GetAttribute("MatchKills") or 0)
-	stats.Deaths.Text = tostring(sum.Deaths or player:GetAttribute("MatchDeaths") or 0)
-	stats.Headshots.Text = tostring(sum.Headshots or 0)
-	stats.Assists.Text = sum.Assists ~= nil and tostring(sum.Assists) or "-"
-	stats.DamageDealt.Text = sum.DamageDealt ~= nil and tostring(math.floor(sum.DamageDealt)) or "-"
-	stats.DamageTaken.Text = sum.DamageTaken ~= nil and tostring(math.floor(sum.DamageTaken)) or "-"
+	-- (2026-10-21, RIVALS pass) few big numbers: a stat the server didn't send is hidden (no "-"); the shown ones are laid out
+	-- Eliminations / Deaths / Headshots big on row 1, the rest on row 2; they count up when the card shows (stats.vals)
+	stats.vals = {
+		Kills = tonumber(sum.Kills or player:GetAttribute("MatchKills") or 0) or 0,
+		Deaths = tonumber(sum.Deaths or player:GetAttribute("MatchDeaths") or 0) or 0,
+		Headshots = tonumber(sum.Headshots or 0) or 0,
+		Assists = tonumber(sum.Assists),
+		DamageDealt = sum.DamageDealt ~= nil and math.floor(tonumber(sum.DamageDealt) or 0) or nil,
+		DamageTaken = sum.DamageTaken ~= nil and math.floor(tonumber(sum.DamageTaken) or 0) or nil,
+	}
+	stats.order = {}
+	for _, key in { "Kills", "Deaths", "Headshots", "Assists", "DamageDealt", "DamageTaken" } do
+		local v, num, cap = stats.vals[key], stats[key], stats.cap[key]
+		num.Visible, cap.Visible = v ~= nil, v ~= nil
+		if v ~= nil then
+			table.insert(stats.order, key)
+			local n = #stats.order
+			local big = n <= 3
+			local x, y = 310 + ((n - 1) % 3) * 150, big and 270 or 372 -- design px in the 800 x 600 card (same grid as before)
+			local nh = big and 58 or 50
+			num.Position, num.Size = UDim2.fromScale(x / 800, y / 600), UDim2.fromScale(150 / 800, nh / 600)
+			cap.Position = UDim2.fromScale(x / 800, (y + nh) / 600)
+			num:SetAttribute("dTS", big and 50 or 40)
+			num.Text = tostring(v)
+		end
+	end
+	rescale()
 	local bits = {}
 	if sum.XP then table.insert(bits, "+" .. sum.XP .. " XP") end
 	if sum.Scissors then table.insert(bits, "+" .. sum.Scissors .. " scissors") end
@@ -630,16 +683,17 @@ local function showResults(sum)
 	resRank.Text, resRank.TextColor3 = "", WHITE
 	if sum.delta ~= nil then
 		local d = (sum.delta >= 0 and "+" or "") .. sum.delta .. " ELO"
+		-- (2026-10-21, RIVALS pass) short kid-readable phrases; the long explanation lives on the rank page (same colours)
 		if sum.revealed then
-			resRank.Text, resRank.TextColor3 = "RANK REVEALED:  " .. tostring(sum.rankAfter) .. "  (" .. tostring(sum.eloAfter) .. " ELO)", OLIVE_HI
+			resRank.Text, resRank.TextColor3 = "Your rank: " .. tostring(sum.rankAfter), OLIVE_HI
 		elseif sum.placement then
-			resRank.Text = string.format("Placement match %d / %d: your rank shows after the last one", sum.placed or 0, sum.placements or 10)
+			resRank.Text = string.format("Placement %d/%d", sum.placed or 0, sum.placements or 10)
 		elseif sum.shieldUsed then
-			resRank.Text, resRank.TextColor3 = "ELO Shield used: no ELO lost", Color3.fromRGB(205, 205, 212)
+			resRank.Text, resRank.TextColor3 = "Shield saved you", Color3.fromRGB(205, 205, 212)
 		elseif sum.promoted then
-			resRank.Text, resRank.TextColor3 = "PROMOTED   " .. tostring(sum.rankBefore) .. "  >  " .. tostring(sum.rankAfter) .. "   " .. d, GOOD
+			resRank.Text, resRank.TextColor3 = "Rank up! " .. tostring(sum.rankAfter) .. "   " .. d, GOOD
 		elseif sum.demoted then
-			resRank.Text, resRank.TextColor3 = "DEMOTED   " .. tostring(sum.rankBefore) .. "  >  " .. tostring(sum.rankAfter) .. "   " .. d, BAD
+			resRank.Text, resRank.TextColor3 = "Rank down: " .. tostring(sum.rankAfter) .. "   " .. d, BAD
 		else
 			resRank.Text = tostring(sum.rankAfter or "") .. "   " .. d
 		end
@@ -648,7 +702,21 @@ local function showResults(sum)
 	-- the victory screen plays first: the results wait for it (they often arrive during Victory)
 	task.spawn(function()
 		while st("MatchState") == "Victory" or st("MatchPhase") == "Victory" do task.wait(0.1) end
-		results.Visible = true
+		-- (2026-10-21, RIVALS pass) the card pops in (Kit.open), VICTORY slides in and fades up like showBanner, and the numbers
+		-- count up from 0, staggered. A second summary for a card already up only recounts.
+		local K = stats.Kit
+		if K and not results.Visible then K.open(results) else results.Visible = true end
+		stats.titleHome = stats.titleHome or resTitle.Position
+		if K then
+			resTitle.Position = stats.titleHome - UDim2.fromScale(0.06, 0)
+			resTitle.TextTransparency = 1
+			TweenService:Create(resTitle, TweenInfo.new(0.3, Enum.EasingStyle.Quart), { Position = stats.titleHome, TextTransparency = 0 }):Play()
+			for i, key in stats.order or {} do
+				local num, v = stats[key], stats.vals[key]
+				num.Text = "0"
+				task.delay(0.15 + (i - 1) * 0.08, function() K.countTo(num, 0, v, 0.5) end)
+			end
+		end
 		if showResultScreenRef then showResultScreenRef(sum) end
 	end)
 end
@@ -720,9 +788,8 @@ local function bigButton(name, text, sub, pos)
 		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
 	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.2, 0.62),
 		Size = UDim2.fromScale(0.6, 0.26), Parent = b }) or nil
-	local sc = new("UIScale", { Parent = b })
-	b.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1.04 }):Play() end)
-	b.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1 }):Play() end)
+	-- (2026-10-21, RIVALS pass) one button behaviour: Kit.bindButton (hover 1.05, press 0.93, sfx) replaces the hover-only UIScale
+	stats.bind(b)
 	return b, t, st2
 end
 local resultBackdrop -- (defined further down; the buttons call it)
@@ -730,6 +797,16 @@ local backB = bigButton("Back", "Back", nil, UDim2.fromScale(0.005, 0.99))
 local leaveB = bigButton("Leave", "Leave", nil, UDim2.fromScale(0.863, 0.99))
 local againB = bigButton("PlayAgain", "Play Again", nil, UDim2.fromScale(0.863, 0.903))
 local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UDim2.fromScale(0.863, 0.816))
+-- (2026-10-21, RIVALS pass) a clear order: Play Again is THE primary (field-green #8DBF5A -> #4C7A2E fill, cream words, no hairline
+-- border), Rematch the tan secondary (the file's own TEAM_A.fill tan), Leave and Back stay dark plates
+do
+	againB.BackgroundColor3, againB.BackgroundTransparency = WHITE, 0
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = againB })
+	local s = againB:FindFirstChildOfClass("UIStroke"); if s then s:Destroy() end
+	againB:FindFirstChildOfClass("TextLabel").TextColor3 = Color3.fromRGB(236, 230, 210)
+	rematchB.BackgroundColor3 = WHITE -- styleRematch keeps driving its transparency (greyed when unavailable)
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = rematchB })
+end
 -- (2026-10-19, Edward: "Rematch 2/2" after a rematch) the game-end snapshot: votes / own vote still left from the last game
 -- read as 0 until the server changes them (a table, not new locals: this script is at the 200-locals limit)
 local rematchVoted = { stale = false }
@@ -945,9 +1022,7 @@ local function panelButton(name, text, sub, y)
 		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
 	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.15, 0.62),
 		Size = UDim2.fromScale(0.7, 0.26), Parent = b }) or nil
-	local sc = new("UIScale", { Parent = b })
-	b.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1.04 }):Play() end)
-	b.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.1), { Scale = 1 }):Play() end)
+	stats.bind(b) -- (2026-10-21, RIVALS pass) one button behaviour (Kit.bindButton; it re-anchors the button to its centre)
 	return b, t, st2
 end
 local hubP = panelButton("ToHub", "To Hub", nil, 0.985)
@@ -966,7 +1041,9 @@ RunService.Heartbeat:Connect(function()
 		-- in the after-match lobby the play row's big PLAY AGAIN is the Play Again: the panel keeps Rematch + To Hub
 		local lobbyRow = row ~= nil and row.Enabled
 		againP.Visible = not lobbyRow
-		rematchP.Position = UDim2.fromScale(0.992, lobbyRow and 0.91 or 0.835)
+		-- (2026-10-21, RIVALS pass) bottom-right corner at (0.992, y) whatever its anchor (Kit.bindButton centres it)
+		local ap, sz = rematchP.AnchorPoint, rematchP.Size
+		rematchP.Position = UDim2.fromScale(0.992 - sz.X.Scale * (1 - ap.X), (lobbyRow and 0.91 or 0.835) - sz.Y.Scale * (1 - ap.Y))
 	end
 end)
 RunService.Heartbeat:Connect(function()
@@ -1020,6 +1097,18 @@ local function showRoundCard(won)
 	roundCard.Visible = true
 	roundPop.Scale = 1.25
 	TweenService:Create(roundPop, TweenInfo.new(0.28, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	RV.flashRoundCard()
+end
+-- (2026-10-21, RIVALS pass) the flash the header comment promises: a cream wash fades off the card (0.3 -> 1 over 0.25 s) and the
+-- existing sweep() bar crosses it once. In RV (200-locals limit); MATCH POINT uses it too.
+function RV.flashRoundCard()
+	local wash = new("Frame", { Name = "Flash", BackgroundColor3 = Color3.fromRGB(236, 230, 210), BackgroundTransparency = 0.3, BorderSizePixel = 0,
+		Size = UDim2.fromScale(1, 1), ZIndex = 8, Parent = roundCard })
+	local c = roundCard:FindFirstChildOfClass("UICorner"); if c then c:Clone().Parent = wash end
+	local tw = TweenService:Create(wash, TweenInfo.new(0.25, Enum.EasingStyle.Quad), { BackgroundTransparency = 1 })
+	tw.Completed:Once(function() wash:Destroy() end)
+	tw:Play()
+	sweep(roundCard, 8)
 end
 
 ---------------------------------------------------------------------------------------------------- eliminated
@@ -1163,8 +1252,8 @@ local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Po
 local keyL = label(keyChip, "M", FX, 30, 0, 0, 52, 50, WHITE, nil, 8)
 local switchScale = new("UIScale", { Parent = switchB })
 gloss(switchB, 8, 0.3)
-switchB.MouseEnter:Connect(function() TweenService:Create(switchScale, TweenInfo.new(0.1), { Scale = 1.04 }):Play() end)
-switchB.MouseLeave:Connect(function() TweenService:Create(switchScale, TweenInfo.new(0.1), { Scale = 1 }):Play() end)
+-- (2026-10-21, RIVALS pass) one button behaviour: Kit.bindButton drives switchScale (hover 1.05 / press 0.93 / sfx)
+stats.bind(switchB)
 local function switchHook() return player:FindFirstChild("PlayerScripts") and player.PlayerScripts:FindFirstChild("SwitchWeapons") end
 switchB.Activated:Connect(function() local h = switchHook(); if h then h:Invoke("Toggle") end end)
 UserInputService.InputBegan:Connect(function(i, gp)
@@ -1193,6 +1282,7 @@ RV.showMatchPoint = function(mine, theirs, toWin)
 	roundCard.Visible = true
 	roundPop.Scale = 1.25
 	TweenService:Create(roundPop, TweenInfo.new(0.28, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	RV.flashRoundCard() -- (2026-10-21, RIVALS pass)
 end
 end
 
@@ -1217,6 +1307,12 @@ local function fillBox(box, ids)
 			s.h.ImageTransparency = dead and 1 or 0
 			s.x1.Visible, s.x2.Visible = false, false
 			s.skull.Visible = dead
+			-- (2026-10-21, RIVALS pass) a death is noticed: the skull pops 1.6 -> 1 when a head flips to dead (state in s.dead)
+			if dead and s.dead == false and stats.Kit then
+				if not s.centred then s.centred = true; stats.Kit.centreAnchor(s.skull) end -- grow from the middle of the head
+				stats.Kit.pop(s.skull, 1.6)
+			end
+			s.dead = dead and true or false
 			if uid < 0 then s.h.Image = ""
 			elseif heads[uid] then s.h.Image = heads[uid]
 			elseif heads[uid] == nil then
@@ -1294,6 +1390,7 @@ RunService.RenderStepped:Connect(function()
 		results.Visible = false; banner.Visible = false; resultsShown = false; lastState = nil
 		for _, c in feed:GetChildren() do if c:IsA("Frame") then c:Destroy() end end
 		tally = {}
+		mineBox.last, theirBox.last = nil, nil -- (2026-10-21, RIVALS pass) no score bump for the new match's 0
 	end
 	if not inMatch() and not postMatch() then results.Visible = false end -- (the post-match lobby keeps it)
 	gui.Enabled = playing or results.Visible
@@ -1331,6 +1428,14 @@ RunService.RenderStepped:Connect(function()
 	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
 	local mine, theirs = myTeam == "A" and sa or sb, myTeam == "A" and sb or sa
 	mineBox.score.Text, theirBox.score.Text = tostring(mine), tostring(theirs)
+	-- (2026-10-21, RIVALS pass) the score block bumps on a point (Kit.pop 1.5 -> 1); the last value lives in the box table
+	for _, bx in { { mineBox, mine }, { theirBox, theirs } } do
+		if bx[1].last ~= nil and bx[1].last ~= bx[2] and stats.Kit then
+			if not bx[1].centred then bx[1].centred = true; stats.Kit.centreAnchor(bx[1].score) end -- grow from the digit's middle
+			stats.Kit.pop(bx[1].score, 1.5)
+		end
+		bx[1].last = bx[2]
+	end
 	local left = math.max(0, (st("StateEndsAt") or st("PhaseEndsAt") or 0) - workspace:GetServerTimeNow())
 	local between = state == "RoundEnd" or state == "Countdown"
 	timerBox.Hourglass.Visible = between

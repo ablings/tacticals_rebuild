@@ -27,7 +27,9 @@ local ctx -- helpers handed over by LobbyUIController (new, label, button, THEME
 local active, busy = false, false
 
 local selectedSlot, selectedId = "Weapon", nil
-local pendingUnlock = false
+-- (2026-10-21, RIVALS pass) Kit (UIKit.Kit) for the button feel and pop-in motion. It takes the old unlock-confirm local's slot
+-- (the "SURE?" step is gone; an unlock in flight is Armory._unlocking) so the chunk's local count doesn't grow.
+local Kit = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("Kit"))
 
 -- display state
 local showcase = {}      -- list of { model, lock, offset (NumberValue), view }
@@ -470,9 +472,10 @@ function Armory.TickTape(dt: number)
 			local g = (TP.time + t.glareAt) % 3.2
 			t.glareGrad.Offset = Vector2.new(g < 1 and (-0.6 + g * 1.2) or -1, 0)
 			-- flutter: a slow breathing tilt + bob (tighter while you're about to cut it)
+			-- (2026-10-21, RIVALS pass) "about to cut" = the one-press unlock is going through (was the "SURE?" step)
 			if not t.sliding then
-				local amp = pendingUnlock and 0.9 or 0.35
-				local wob = math.sin(TP.time * (pendingUnlock and 9 or 1.6) + t.phase) * amp
+				local amp = Armory._unlocking and 0.9 or 0.35
+				local wob = math.sin(TP.time * (Armory._unlocking and 9 or 1.6) + t.phase) * amp
 				t.holder.Rotation = t.angle + wob
 				t.holder.Position = UDim2.new(0.5, 0, t.y, math.sin(TP.time * 1.3 + t.phase) * 2)
 			end
@@ -802,11 +805,14 @@ end
 -- Laid out on a canvas 1008 units tall that is scaled to the screen, so it keeps its proportions at
 -- any resolution. Lives in its own ScreenGui so the lobby's auto-styling doesn't touch it.
 -------------------------------------------------------------------------------
--- Builder Sans, heavy (set ARMORY_FONT to UITheme.FontFamily to go back to Gotham SSm)
-local ARMORY_FONT = "rbxasset://fonts/families/BuilderSans.json"
-local FONT = Font.new(ARMORY_FONT, Enum.FontWeight.Bold)
-local FONT_HEAVY = Font.new(ARMORY_FONT, Enum.FontWeight.ExtraBold)
-local FONT_MED = Font.new(ARMORY_FONT, Enum.FontWeight.Medium)
+-- Builder Sans, heavy, for body text and labels
+-- (2026-10-21, RIVALS pass, Edward's font decision) headings, big words and numbers are Oswald Bold (FONT_TITLE). FONT_TITLE takes
+-- the old ARMORY_FONT local's slot (the path is inlined below) so the chunk's local count doesn't grow. Body-text fonts wait for the
+-- integrator's pass.
+local FONT_TITLE = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local FONT_HEAVY = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+local FONT_MED = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium)
 local BASE_H = 1008
 local BLACK, WHITE = Color3.new(0, 0, 0), Color3.new(1, 1, 1)
 local TacKit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Tac"))
@@ -1456,12 +1462,10 @@ local function bigButton(parent: Instance, kind: string?, enabled: boolean, labe
 		glyph(face, kind, math.floor(sz.Y * 0.64), enabled and COL.Text or COL.Grey, 8)
 	end
 	if enabled then
-		local sc = mk("UIScale", { Parent = b })
-		b.MouseEnter:Connect(function() TweenService:Create(sc, TI, { Scale = 1.04 }):Play() end)
-		b.MouseLeave:Connect(function()
-			TweenService:Create(sc, TI, { Scale = 1 }):Play()
-			face.Position = UDim2.new()
-		end)
+		-- (2026-10-21, RIVALS pass) Kit.bindButton: chunky squash + hover / click sounds + gamepad selection grow (was a silent
+		-- 1.04 hover). The 2 px face drop stays.
+		Kit.bindButton(b, { hover = 1.06, press = 0.92 })
+		b.MouseLeave:Connect(function() face.Position = UDim2.new() end)
 		b.MouseButton1Down:Connect(function() face.Position = UDim2.fromOffset(0, 2) end)
 		b.MouseButton1Up:Connect(function() face.Position = UDim2.new() end)
 	end
@@ -1582,7 +1586,8 @@ local function makeHeader(slot: string, order: number, parent: Instance)
 		local box = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(60, 40), LayoutOrder = side, ZIndex = 4, Parent = row })
 		slotIcon(box, slot, COL.DimHead, side == 3)
 	end
-	text({ Text = SLOT_TITLE[slot], FontFace = FONT_HEAVY, TextSize = 30, TextColor3 = COL.DimHead, AutomaticSize = Enum.AutomaticSize.X,
+	-- (2026-10-21, RIVALS pass) heading font: Oswald Bold
+	text({ Text = SLOT_TITLE[slot], FontFace = FONT_TITLE, TextSize = 30, TextColor3 = COL.DimHead, AutomaticSize = Enum.AutomaticSize.X,
 		Size = UDim2.fromOffset(0, 36), LayoutOrder = 2, ZIndex = 4, Parent = row })
 	for i = 0, 21 do
 		mk("Frame", { BackgroundColor3 = COL.DimHead, BorderSizePixel = 0, Position = UDim2.fromOffset(34 + i * 12, 64), Size = UDim2.fromOffset(5, 3), ZIndex = 4, Parent = h })
@@ -1710,6 +1715,7 @@ local function buildLeft()
 		local box = mk("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
 			Size = UDim2.fromOffset(46, 32), ZIndex = 5, Parent = t })
 		tabs[slot] = { button = t, icon = slotIcon(box, slot, COL.Grey, false, 0.76) }
+		Kit.bindButton(t, { hover = 1.08, press = 0.9 }) -- (2026-10-21, RIVALS pass) Kit button feel + sounds
 		t.MouseEnter:Connect(function()
 			if currentTab ~= slot then TweenService:Create(t, TI, { BackgroundTransparency = 0.35 }):Play() end
 		end)
@@ -1727,6 +1733,7 @@ local function buildLeft()
 	hb.MouseEnter:Connect(function() TweenService:Create(hb, TI, { BackgroundTransparency = 0.25 }):Play() end)
 	hb.MouseLeave:Connect(function() TweenService:Create(hb, TI, { BackgroundTransparency = TILE_T }):Play() end)
 	hb.Activated:Connect(function() Armory.ShowHistory(true) end)
+	Kit.bindButton(hb, { hover = 1.05, press = 0.93 }) -- (2026-10-21, RIVALS pass) Kit button feel + sounds
 
 	-- the list: one scrolling page holding a box per slot; wider than the boxes so renders can poke out of both edges
 	listScroll = mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(LEFT_X - SCROLL_PAD, LIST_Y),
@@ -1766,8 +1773,34 @@ local ACTIONS_H, LEVEL_H = 4 * 62 + 12, 172 -- (4th row: Statistics, RIVALS)
 
 local function clearCard(c)
 	for _, ch in c:GetChildren() do
-		if not ch:IsA("UICorner") and not ch:IsA("UIPadding") then ch:Destroy() end
+		-- (2026-10-21, RIVALS pass) keeps the panel's PopScale too, so a re-render mid pop-in doesn't snap it
+		if not ch:IsA("UICorner") and not ch:IsA("UIPadding") and not ch:IsA("UIScale") then ch:Destroy() end
 	end
+end
+
+-- (2026-10-21, RIVALS pass) Statistics, Duel History and the cosmetic tray pop in (Kit.popIn: 0.85 -> 1 with a little overshoot,
+-- plus the open sound) and pop out (shrink, then hide), instead of a Visible toggle. Only a "PopScale" UIScale is touched, never
+-- Position / AnchorPoint, so the bottom-anchored tray and Stats card stay where they are. (Table fields, not locals: the chunk is
+-- near the local limit.)
+function Armory._popIn(g: GuiObject)
+	g:SetAttribute("Closing", nil)
+	g.Visible = true
+	Kit.popIn(g)
+	Kit.sfx("open")
+end
+function Armory._popOut(g: GuiObject)
+	if not g.Visible or g:GetAttribute("Closing") then return end
+	g:SetAttribute("Closing", true)
+	Kit.sfx("close")
+	local s = g:FindFirstChild("PopScale")
+	if s then TweenService:Create(s, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Scale = 0.9 }):Play() end
+	task.delay(0.12, function()
+		if g:GetAttribute("Closing") then -- (not reopened meanwhile)
+			g:SetAttribute("Closing", nil)
+			g.Visible = false
+			if s and s.Parent then s.Scale = 1 end
+		end
+	end)
 end
 
 local statsCard, statsOpen = nil, false -- RIVALS' Statistics panel, beside the right column
@@ -1777,15 +1810,19 @@ local statsCard, statsOpen = nil, false -- RIVALS' Statistics panel, beside the 
 local function pct(a, b) return b > 0 and string.format("%.1f%%", a / b * 100) or "N/A" end
 local function renderStats(id)
 	if not statsCard then return end
+	-- (2026-10-21, RIVALS pass) pops in when it opens, out when it closes; a re-render while it's open just redraws in place
+	if not (statsOpen and id ~= nil) then
+		Armory._popOut(statsCard)
+		return
+	end
+	local opening = not statsCard.Visible or statsCard:GetAttribute("Closing") == true
 	clearCard(statsCard)
-	statsCard.Visible = statsOpen and id ~= nil
-	if not statsCard.Visible then return end
 	local item = ctx.Config.Items[id]
 	local data = ctx.getData()
 	local ws = data and data.WeaponStats and data.WeaponStats[id]
 	local ic = mk("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(14, 12), Size = UDim2.fromOffset(30, 30), ZIndex = 5, Parent = statsCard })
 	glyph(ic, "bars", 30, COL.Text, 5)
-	shade(text({ Text = "Statistics", FontFace = FONT_HEAVY, TextSize = 24, Position = UDim2.fromOffset(54, 10), Size = UDim2.fromOffset(CARD_W - 70, 26), ZIndex = 5, Parent = statsCard }), 1.5)
+	shade(text({ Text = "Statistics", FontFace = FONT_TITLE, TextSize = 24, Position = UDim2.fromOffset(54, 10), Size = UDim2.fromOffset(CARD_W - 70, 26), ZIndex = 5, Parent = statsCard }), 1.5)
 	text({ Text = item and item.Name or id, FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, Position = UDim2.fromOffset(54, 34), Size = UDim2.fromOffset(CARD_W - 70, 16), ZIndex = 5, Parent = statsCard })
 	local y = 62
 	local function line(title, value, subs)
@@ -1812,6 +1849,7 @@ local function renderStats(id)
 		line("Deaths", ctx.commas(d), { { "eliminations ratio", d > 0 and string.format("%.2f", k / d) or (k > 0 and tostring(k) or "N/A") } })
 	end
 	statsCard.Size = UDim2.fromOffset(CARD_W, y + 6)
+	if opening then Armory._popIn(statsCard) end
 end
 
 local function renderInfo()
@@ -1828,7 +1866,8 @@ local function renderInfo()
 	-- item card: render breaking out of the top-left corner, name, favourite box, notes
 	local rbox = mk("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-36, -30), Size = UDim2.fromOffset(92, 74), ZIndex = 6, Parent = infoCard })
 	itemRender(rbox, id, Vector2.new(92, 74), owned and { z = 6, fill = 0.95 } or { z = 6, fill = 0.95, flat = true, color = COL.Dim })
-	shade(text({ Text = item.Name, FontFace = FONT_HEAVY, TextSize = 34, Position = UDim2.fromOffset(46, 6), Size = UDim2.fromOffset(CARD_W - 98, 40),
+	-- (2026-10-21, RIVALS pass) heading font: Oswald Bold
+	shade(text({ Text = item.Name, FontFace = FONT_TITLE, TextSize = 34, Position = UDim2.fromOffset(46, 6), Size = UDim2.fromOffset(CARD_W - 98, 40),
 		TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 5, Parent = infoCard }), 2)
 	local fav = isFavourite(id)
 	local favBox = mk("TextButton", { Name = "Favourite", AutoButtonColor = false, Text = "", BackgroundColor3 = WHITE, BackgroundTransparency = fav and 0 or 1,
@@ -1840,11 +1879,11 @@ local function renderInfo()
 		local on = not isFavourite(id)
 		favBox.BackgroundTransparency = on and 0 or 1
 		tick.Visible = on
-		local pop = mk("UIScale", { Scale = 1.25, Parent = favBox })
-		TweenService:Create(pop, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-		task.delay(0.35, function() pop:Destroy() end)
+		-- (2026-10-21, RIVALS pass) the box itself squashes through Kit.bindButton (one UIScale only), the tick pops in
+		if on then Kit.pop(tick, 1.3) end
 		ctx.ask("Favorite", id, on)
 	end)
+	Kit.bindButton(favBox, { hover = 1.12, press = 0.88 })
 	local tagline
 	if item.Price == 0 then
 		tagline = "Starter " .. string.lower(SLOT_LABEL[item.Slot])
@@ -1952,24 +1991,42 @@ local function renderInfo()
 		local b = bigButton(r1, "check", not equipped)
 		if not equipped then b.Activated:Connect(function() ctx.ask("Equip", item.Slot, id) end) end
 	else
-		local afford = (data and data.Credits or 0) >= item.Price
-		r1 = cardRow(actionCard, 6, "unlock", "Unlock", afford and ctx.priceText(item.Price) or ("Need " .. ctx.priceText(item.Price)))
-		local b = bigButton(r1, "lock", afford, pendingUnlock and "SURE?" or nil)
+		-- (2026-10-21, RIVALS pass) the price sits on the button (number + the scissors currency icon) and ONE press buys it: no
+		-- "SURE?" second click. The press is the confirmation and the scissors cutting the tape is the payoff. Armory._unlocking
+		-- blocks a second buy while the request or the cut is running (Kit.busy dots on the button meanwhile). Can't afford: the
+		-- button is off-tone and the sub-line says how many more you need.
+		local credits = (data and data.Credits) or 0
+		local afford = credits >= item.Price
+		r1 = cardRow(actionCard, 6, "unlock", "Unlock", afford and "Cut the tape" or ("Need " .. ctx.commas(item.Price - credits) .. " more"))
+		local b = bigButton(r1, nil, afford, ctx.commas(item.Price), Vector2.new(108, 50))
+		local face = b:FindFirstChild("Face")
+		local priceLabel = face and face:FindFirstChildOfClass("TextLabel")
+		if priceLabel then
+			priceLabel.FontFace = FONT_TITLE -- (a big number: heading font)
+			priceLabel.Position = UDim2.fromOffset(6, 0)
+			priceLabel.Size = UDim2.new(1, -38, 1, 0)
+			priceLabel.TextScaled = true
+			mk("UITextSizeConstraint", { MaxTextSize = 25, Parent = priceLabel })
+			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissors, ImageColor3 = afford and COL.Text or COL.Grey,
+				ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -7, 0.5, 0), Size = UDim2.fromOffset(24, 24),
+				ZIndex = 8, Parent = face })
+		end
 		if afford then
 			b.Activated:Connect(function()
-				if not pendingUnlock then
-					pendingUnlock = true
-					renderInfo()
-					return
-				end
-				pendingUnlock = false
-				local res = ctx.ask("BuyItem", id)
-				if res and res.ok then
+				if Armory._unlocking or Armory._cutting then return end
+				Armory._unlocking = true
+				task.delay(10, function() Armory._unlocking = false end) -- failsafe: never leave the button dead
+				local stopBusy = Kit.busy(b)
+				local okAsk, res = pcall(ctx.ask, "BuyItem", id)
+				stopBusy()
+				if okAsk and res and res.ok then
 					ctx.ask("Equip", item.Slot, id)
 					Armory.CutTape(function() -- the scissors snip both strips, then the item comes back in full colour
+						Armory._unlocking = false
 						if active and selectedId == id then showItem(id, 1) end
 					end)
 				else
+					Armory._unlocking = false
 					renderInfo()
 				end
 			end)
@@ -2104,7 +2161,8 @@ function Armory.BuildHistory(parent)
 	historyPanel.BackgroundTransparency = 0.08 -- (solid enough that the item behind doesn't show through the list)
 	local ic = mk("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 18), Size = UDim2.fromOffset(36, 36), ZIndex = 21, Parent = historyPanel })
 	glyph(ic, "bars", 36, COL.Text, 21)
-	shade(text({ Text = "Duel History", FontFace = FONT_HEAVY, TextSize = 34, Position = UDim2.fromOffset(68, 14), Size = UDim2.fromOffset(400, 40), ZIndex = 21, Parent = historyPanel }), 2)
+	-- (2026-10-21, RIVALS pass) heading font: Oswald Bold
+	shade(text({ Text = "Duel History", FontFace = FONT_TITLE, TextSize = 34, Position = UDim2.fromOffset(68, 14), Size = UDim2.fromOffset(400, 40), ZIndex = 21, Parent = historyPanel }), 2)
 	text({ Text = "Your most recent matches. Click one to see the loadout you used.", FontFace = FONT_MED, TextSize = 16, TextColor3 = COL.Sub,
 		Position = UDim2.fromOffset(68, 52), Size = UDim2.fromOffset(520, 20), ZIndex = 21, Parent = historyPanel })
 	local x = mk("TextButton", { Name = "Close", AutoButtonColor = false, Text = "", BackgroundColor3 = BLACK, BackgroundTransparency = TILE_T,
@@ -2112,6 +2170,7 @@ function Armory.BuildHistory(parent)
 	local xi = mk("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(30, 30), ZIndex = 22, Parent = x })
 	glyph(xi, "leave", 30, nil, 22)
 	x.Activated:Connect(function() Armory.ShowHistory(false) end)
+	Kit.bindButton(x, { hover = 1.08, press = 0.9 }) -- (2026-10-21, RIVALS pass) Kit button feel + sounds
 	mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(20, 88), Size = UDim2.fromOffset(612, 676),
 		CanvasSize = UDim2.new(), ScrollBarThickness = 6, ScrollBarImageColor3 = COL.Sub, ScrollingDirection = Enum.ScrollingDirection.Y, ZIndex = 21, Parent = historyPanel })
 end
@@ -2122,7 +2181,8 @@ function Armory.ShowHistory(on: boolean)
 		buildHistoryList()
 		if statsOpen then statsOpen = false; renderInfo() end -- one panel at a time
 	end
-	historyPanel.Visible = on
+	-- (2026-10-21, RIVALS pass) pops in / out (was a Visible toggle)
+	if on then Armory._popIn(historyPanel) else Armory._popOut(historyPanel) end
 end
 
 -------------------------------------------------------------------------------
@@ -2139,20 +2199,23 @@ local bottomBar, tray
 local openTray = nil
 local slotRings = {}
 
-local function closeTray()
+local function closeTray(instant: boolean?)
 	openTray = nil
-	if tray then tray.Visible = false end
+	-- (2026-10-21, RIVALS pass) the tray pops out; instant when another slot's tray replaces it
+	if tray then
+		if instant then tray.Visible = false; tray:SetAttribute("Closing", nil) else Armory._popOut(tray) end
+	end
 	for _, r in slotRings do r.Transparency = 1 end
 end
 
 local function openCosmeticTray(c)
 	if openTray == c.Id then closeTray() return end
-	closeTray()
+	closeTray(true)
 	openTray = c.Id
 	if slotRings[c.Id] then slotRings[c.Id].Transparency = 0 end
 	clearCard(tray)
-	tray.Visible = true
-	shade(text({ Text = `{c.Label}  ·  {ctx.Config.Items[selectedId].Name}`, FontFace = FONT_HEAVY, TextSize = 20, Position = UDim2.fromOffset(18, 12),
+	Armory._popIn(tray) -- (2026-10-21, RIVALS pass) pops in over the strip (was a Visible toggle)
+	shade(text({ Text = `{c.Label}  ·  {ctx.Config.Items[selectedId].Name}`, FontFace = FONT_TITLE, TextSize = 20, Position = UDim2.fromOffset(18, 12),
 		Size = UDim2.fromOffset(430, 24), ZIndex = 5, Parent = tray }), 1.5)
 	for i = 1, 4 do
 		local isDefault = i == 1
@@ -2160,8 +2223,11 @@ local function openCosmeticTray(c)
 		local dot = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = TILE_T, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(cx, 80),
 			Size = UDim2.fromOffset(64, 64), ZIndex = 5, Parent = tray }, { circle() })
 		mk("UIStroke", { Color = WHITE, Thickness = 3, Transparency = isDefault and 0 or 1, Parent = dot })
-		glyph(dot, "none", 34, COL.Empty, 6)
-		shade(text({ Text = isDefault and "Default" or "Soon", FontFace = FONT_HEAVY, TextSize = 15, TextColor3 = isDefault and COL.Text or COL.Grey,
+		-- (2026-10-21, RIVALS pass) locked cosmetics show a padlock + "Coming soon" (all four looked alike: a "no" mark + "Soon");
+		-- the circles pop in one after another
+		glyph(dot, isDefault and "none" or "lock", 34, isDefault and COL.Empty or COL.Grey, 6)
+		Kit.popIn(dot, (i - 1) * 0.04)
+		shade(text({ Text = isDefault and "Default" or "Coming soon", FontFace = FONT_HEAVY, TextSize = 15, TextColor3 = isDefault and COL.Text or COL.Grey,
 			TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cx, 116), Size = UDim2.fromOffset(100, 20),
 			ZIndex = 6, Parent = tray }), 1.5)
 	end
@@ -2184,7 +2250,6 @@ local function renderBottom()
 		local b = mk("TextButton", { Name = c.Id, AutoButtonColor = false, Text = "", BackgroundColor3 = BLACK, BackgroundTransparency = TILE_T,
 			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(cx, -2), Size = UDim2.fromOffset(SLOT_D, SLOT_D), ZIndex = 4, Parent = bottomBar }, { circle() })
 		slotRings[c.Id] = mk("UIStroke", { Color = WHITE, Thickness = 3, Transparency = 1, Parent = b })
-		local sc = mk("UIScale", { Parent = b })
 		if c.Id == "Leave" then
 			glyph(b, "closex", 50, nil, 5) -- (lobby revamp Phase B: the lobby's cream X, not the cartoon red one)
 		else
@@ -2192,8 +2257,7 @@ local function renderBottom()
 		end
 		shade(text({ Text = c.Label, FontFace = FONT_HEAVY, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromOffset(cx, 34), Size = UDim2.fromOffset(116, 26), ZIndex = 6, Parent = bottomBar }), 2)
-		b.MouseEnter:Connect(function() TweenService:Create(sc, TI, { Scale = 1.07 }):Play() end)
-		b.MouseLeave:Connect(function() TweenService:Create(sc, TI, { Scale = 1 }):Play() end)
+		Kit.bindButton(b, { hover = 1.07, press = 0.92 }) -- (2026-10-21, RIVALS pass) Kit squash + sounds (was a silent 1.07 hover)
 		b.Activated:Connect(function()
 			if c.Id == "Leave" then
 				Armory.Leave()
@@ -2230,7 +2294,6 @@ function Armory.Select(id: string, direction: number?)
 	local first = selectedId == nil
 	selectedId = id
 	selectedSlot = ctx.Config.Items[id].Slot
-	pendingUnlock = false
 	showItem(id, direction or 1)
 	local key = ownedSignature()
 	if key ~= ownedKey or next(rows) == nil then
@@ -2337,6 +2400,15 @@ local function build()
 	bottomBar:FindFirstChildOfClass("UICorner").CornerRadius = UDim.new(0, 4)
 	tray = panel({ Name = "Tray", AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0, 868), Size = UDim2.fromOffset(470, 150), Visible = false,
 		ZIndex = 3, Parent = hud })
+	-- (2026-10-21, RIVALS pass) the columns slide in from the screen edges on Enter and back out on Leave (Armory.SlidePanels):
+	-- where each one rests, and how far off-screen it starts (canvas units)
+	Armory._slides = {
+		{ g = hud:FindFirstChild("Profile"), off = UDim2.fromOffset(-(LEFT_W + 40), 0), delay = 0 },
+		{ g = listScroll, off = UDim2.fromOffset(-(LEFT_W + SCROLL_PAD + 40), 0), delay = 0.05 },
+		{ g = rightCol, off = UDim2.fromOffset(CARD_W + 40, 0), delay = 0.03 },
+		{ g = bottomBar, off = UDim2.fromOffset(0, 150), delay = 0.08 },
+	}
+	for _, sl in Armory._slides do sl.home = sl.g and sl.g.Position end
 
 	-- contact shadow: dark ellipses lying on the real workbench. The room's blur softens them into
 	-- a natural shadow (a shadow drawn inside the sharp item layer looked like a hard disc).
@@ -2585,6 +2657,18 @@ local function backgroundBlur(on: boolean)
 	dof.Enabled = on
 end
 
+-- (2026-10-21, RIVALS pass) on = slide the columns in from off-screen (Quart out, staggered, after `after` s), off = slide them out
+function Armory.SlidePanels(on: boolean, after: number?)
+	for _, sl in Armory._slides or {} do
+		if sl.g and sl.home then
+			if on then sl.g.Position = sl.home + sl.off end
+			local info = TweenInfo.new(on and 0.38 or 0.22, Enum.EasingStyle.Quart, on and Enum.EasingDirection.Out or Enum.EasingDirection.In, 0, false,
+				on and ((after or 0) + sl.delay) or 0)
+			TweenService:Create(sl.g, info, { Position = on and sl.home or (sl.home + sl.off) }):Play()
+		end
+	end
+end
+
 local renderConn
 function Armory.Enter(focusId: string?)
 	local focus = (focusId and ctx.Config.Items[focusId]) and focusId or nil
@@ -2613,6 +2697,7 @@ function Armory.Enter(focusId: string?)
 	ui.Visible = true
 	local okSel, err2 = pcall(Armory.Select, focus or equippedIn(selectedSlot), 1)
 	if not okSel then warn("[Armory] select: " .. tostring(err2)) end
+	Armory.SlidePanels(true, 0.15) -- (2026-10-21, RIVALS pass) the columns arrive as the reveal opens
 	local okRev, err3 = pcall(tr.reveal, cam, camCF, { fov = 40, label = "ARMORY" })
 	if not okRev then warn("[Armory] reveal: " .. tostring(err3)) cam.CFrame = camCF end
 	busy = false
@@ -2623,6 +2708,10 @@ function Armory.Leave(after: (() -> ())?)
 	busy = true
 	closeTray()
 	Armory.ShowHistory(false)
+	-- (2026-10-21, RIVALS pass) Statistics closes too (it isn't one of the sliding columns), then the columns slide out under the cover
+	statsOpen = false
+	if statsCard then Armory._popOut(statsCard) end
+	Armory.SlidePanels(false)
 	dragging = false
 	local cam = workspace.CurrentCamera
 	local tr = transition()

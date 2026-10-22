@@ -107,3 +107,25 @@ Scope: `ui/shop/ShopScreen.lua`. Shared code (`ui/lobby/Kit.lua`, `ui/matchplace
 - The banner's drop and auto-hide timing.
 - Whether the check animates.
 - Reveal camera motion (`t0016-0055s`). We have no crate flow; it's a candidate for the Founder's Bundle buy only.
+
+## Implemented (group B)
+2026-10-21, `ui/shop/ShopScreen.lua` only (not run in Studio: needs a play test).
+- **Update in place** (l.28-35, 94-170, 839-861, 902-914). `priceTag` builds both faces (price / owned) and returns `update()`, registered on the page being built. `Screen.Refresh` now only updates the wallet, every tag (owned, price, can't afford), the bundle tiles' OWNED labels (l.324-327) and an open detail card. Pages persist. A page whose owned set changed (`ownedSig`, l.55-62, also includes the Shop Hover setting) is marked dirty and rebuilt only when it is next shown (`showTab`, l.889-900), never under the cursor. Featured hero / Arms / Featured gear tags are live too (l.287-288, 444-449, 550).
+- **Preload at join** (l.954-965, 831-833, 924-952). `Init` (called from the lobby's menu prewarm) builds all four pages (one frame apart). `SetTab` / `Open` only toggle `Visible`. An open before that finishes shows `Kit.loadingDots` and opens when ready.
+- **Detail card** (l.637-773, specs l.227-247). It is a local function and could move to Kit later as a generic modal. The card is a solid `Theme.plate` card with an offset shadow block: no thin border and no left bar. It has the 3D item tiles with names and owned checks (or the pack / pass icon plus "+N scissors" / its description), the red "xN value" badge, `Kit.closeButton`, and a field-green buy button. The button shows `Kit.busy` until `ctx.ask` returns. Then the card closes on `res.ok`, or the button shakes. A module `buying` flag allows one purchase in flight (replaces `pending`/`pendingAt`).
+  - The card is used by bundles (tag + card click), offer slides (pass + bundle), scissor packs (Scissors page and Featured top-left) and passes (tag + card click).
+  - The `ask("BuyBundle" / "BuyRobux" / "BuyPass", id)` calls are unchanged, so Robux buys still get Roblox's own prompt.
+  - The Featured hero (Founder's Bundle) still buys straight away (not in the list).
+- **Wallet count-up** (l.863-874). `Kit.countTo` 0.4 s plus `Kit.pop` on the pill (centre-anchored, l.828-830). It snaps while the shop is closed.
+- **Tab pop + page slide** (l.875-900). The tab colours tween 0.12 s (same colours), the selected tab's 3D icon pops (1.15), and the page slides in 24 px over 0.15 s in Scale. No fade: the page holder would have had to become a CanvasGroup with ~40 ViewportFrames inside, which is too risky.
+- **Carousel slides** (l.493-512, 530-533). The old slide goes out and the new one comes in (0.25 s, Scale). Auto-advance always goes forward and only runs on the Featured tab. The active dot is a 1.9x wide pill.
+- **Can't afford** (l.48-54, 157-166, detail l.755-760). The tag runs `Kit.shake` (guarded against stacking), then still opens the Kit room / detail card. In the card, buy shakes plus "Not enough scissors" and does not ask.
+- **Owned = cream check** (l.63-75). This is a `Theme.plate` disc with two cream bars. It sits beside the existing grey "Owned" words on tags, on the detail card's tiles and on its button. It pops when a tag flips to owned.
+- **Skipped:**
+  - Amber-out, the tag bob and hover calm (Tac.hoverBrackets kept): these are colour / decor questions (Q1 / Q3).
+  - The page fade (see above).
+  - The "Purchase Complete" banner: the server's RichNotify already does it.
+- **Existing AI tells seen (not touched):**
+  - corner + thin stroke on price tags (l.106-109), item / bundle / pack / pass cards, bundle tiles, offer tiles and `Kit.closeButton` (used in the card);
+  - the bundle card's left `AccentBar` (l.310);
+  - all text is F.display / F.bold / F.medium, so it now follows the integrator's Theme fonts.

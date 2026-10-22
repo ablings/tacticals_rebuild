@@ -22,9 +22,10 @@ local C, new = Theme.color, Kit.new
 local T = Tac.C
 local player = Players.LocalPlayer
 
-local OSWALD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
-local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
-local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
+-- (2026-10-21, Edward's font decision: Gotham / Montserrat read as AI-made) headings Oswald Bold, body Rubik (Theme.font)
+local OSWALD = Theme.font.display
+local BODY = Theme.font.medium
+local BOLD = Theme.font.bold
 
 local Screen = {}
 local ctx = {}
@@ -184,12 +185,15 @@ end
 -- click to switch the modes to ranked), Training and Lobby Duels under the modes, the red X top right. No header.
 local HEAVY = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
 local SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local function big(parent, text, size, x, y, w, h, color, align, z)
-	local l = Kit.label({ Text = text, FontFace = HEAVY, TextSize = size, TextColor3 = color or Color3.new(1, 1, 1), TextXAlignment = align or Enum.TextXAlignment.Center,
+local function big(parent, text, size, x, y, w, h, color, align, z, font)
+	local l = Kit.label({ Text = text, FontFace = font or HEAVY, TextSize = size, TextColor3 = color or Color3.new(1, 1, 1), TextXAlignment = align or Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 4, Parent = parent })
 	new("UIStroke", { Color = Color3.fromRGB(10, 10, 12), Thickness = math.max(2, math.floor(size / 28)), Transparency = 0.15, Parent = l })
 	return l
 end
+-- (2026-10-21, RIVALS pass) tiles pop in one after another when the screen opens (setOpen sets popStep = 0; nil = no pop,
+-- so a tab switch / party change re-render stays still). popIn runs before bindButton, which then reuses its UIScale.
+local popStep
 local function tile(x, y, w, h, top, bottom)
 	local f = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		BackgroundColor3 = Color3.new(1, 1, 1), ClipsDescendants = true, Parent = body })
@@ -198,7 +202,60 @@ local function tile(x, y, w, h, top, bottom)
 	local st = new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 1, Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
 	f.MouseEnter:Connect(function() Kit.tween(st, 0.1, { Transparency = 0.15 }) end)
 	f.MouseLeave:Connect(function() Kit.tween(st, 0.1, { Transparency = 1 }) end)
+	if popStep then Kit.popIn(f, popStep * 0.04); popStep += 1 end
 	return f
+end
+
+-- (2026-10-21, RIVALS pass) locked Ranked: a centred requirement card (RIVALS' checklist: the line, a bar, an "n / 50" count
+-- and a greyed PLAY under it) instead of a toast. Solid plate, no outline; Oswald / Rubik (Theme.font). Built in design px
+-- inside a full-screen shade, converted with Kit.toScale before it shows.
+local lockShade
+local function showLockCard()
+	local Config = ctx.Config
+	local lv = math.max(0, (ctx.level and ctx.level()) or 0)
+	local need = math.max(1, Config.RankedLevel)
+	if lockShade then lockShade:Destroy() end
+	local W, H = 640, 400
+	local shade = new("TextButton", { Name = "RankedLock", Text = "", AutoButtonColor = false, Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.new(0, 0, 0),
+		BackgroundTransparency = 0.45, ZIndex = 20, Parent = root })
+	lockShade = shade
+	local card = new("Frame", { Name = "Card", Active = true, Position = UDim2.fromOffset((1920 - W) / 2, (1080 - H) / 2), Size = UDim2.fromOffset(W, H), BackgroundColor3 = C.plate,
+		BorderSizePixel = 0, ZIndex = 21, Parent = shade }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) })
+	local white, grey = Color3.new(1, 1, 1), Color3.fromRGB(150, 150, 156)
+	big(card, "RANKED", 56, 0, 24, W, 64, white, nil, 22, Theme.font.display)
+	Kit.label({ Text = "Unlock it by reaching:", FontFace = Theme.font.medium, TextSize = 24, TextColor3 = Color3.fromRGB(205, 205, 212), TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(0, 94), Size = UDim2.fromOffset(W, 30), ZIndex = 22, Parent = card })
+	local line = new("Frame", { Position = UDim2.fromOffset(40, 138), Size = UDim2.fromOffset(W - 80, 100), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5,
+		BorderSizePixel = 0, ZIndex = 22, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	big(line, "Reach Level " .. need, 34, 20, 10, 360, 46, white, Enum.TextXAlignment.Left, 23, Theme.font.display)
+	big(line, math.min(lv, need) .. " / " .. need, 34, W - 300, 10, 200, 46, C.tan, Enum.TextXAlignment.Right, 23, Theme.font.display)
+	local track = new("Frame", { Position = UDim2.fromOffset(20, 66), Size = UDim2.fromOffset(W - 120, 16), BackgroundColor3 = Color3.fromRGB(10, 10, 12), BackgroundTransparency = 0.2,
+		BorderSizePixel = 0, ZIndex = 23, Parent = line }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+	local fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = C.tan, BorderSizePixel = 0, ZIndex = 24, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+	-- the greyed PLAY: disabled, it shakes when pressed
+	local playBtn = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(40, 264), Size = UDim2.fromOffset(W - 80, 84),
+		BackgroundColor3 = Color3.fromRGB(58, 62, 54), BorderSizePixel = 0, ZIndex = 22, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	big(playBtn, "PLAY", 44, 0, 0, W - 80, 84, grey, nil, 23, Theme.font.display)
+	local x = Kit.closeButton(UDim2.fromOffset(96, 50))
+	x.Position = UDim2.fromOffset(W - 68, 18) -- (closeButton is square: h x h)
+	x.ZIndex = 23
+	x.Parent = card
+	Kit.toScale(shade, Vector2.new(1920, 1080))
+	local function hide()
+		if lockShade == shade then lockShade = nil end
+		Kit.close(card, function() shade:Destroy() end)
+	end
+	x.Activated:Connect(hide)
+	shade.Activated:Connect(hide)
+	local shaking = false
+	playBtn.Activated:Connect(function()
+		if shaking then return end -- (a second shake mid-way would start from a moved spot)
+		shaking = true
+		Kit.shake(playBtn)
+		task.delay(0.25, function() shaking = false end)
+	end)
+	Kit.open(card)
+	Kit.fillTo(fill, math.clamp(lv / need, 0.04, 1), 0.6)
 end
 
 local MW, MH, GAP = 322, 272, 8
@@ -284,8 +341,7 @@ local function render()
 	Kit.bindButton(rt, { hover = 1.02, press = 0.985 })
 	rt.Activated:Connect(function()
 		if not open then
-			local lv = ctx.level and ctx.level() or 0
-			if ctx.toast then ctx.toast(`Ranked unlocks at level {Config.RankedLevel} (you are {lv})`, "bad") end
+			showLockCard() -- (2026-10-21, RIVALS pass) was a toast
 			return
 		end
 		-- (2026-10-17) ranked has its own page now (UIKit.RankedScreen); the old in-place switch stays as the fallback
@@ -477,11 +533,14 @@ local function setOpen(on)
 	if on then
 		gui.Enabled = true
 		header()
+		popStep = 0 -- (2026-10-21, RIVALS pass) tiles pop in on open only
 		render()
+		popStep = nil
 		tick()
 		if ctx.onOpen then ctx.onOpen() end
 		Kit.open(root)
 	else
+		if lockShade then lockShade:Destroy(); lockShade = nil end
 		Kit.close(root, function() if not isOpen then gui.Enabled = false end end)
 		if ctx.onClose then ctx.onClose() end
 	end

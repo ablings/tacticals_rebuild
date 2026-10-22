@@ -24,9 +24,10 @@ local Config = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("S
 local new, hex = Kit.new, Theme.hex
 local player = Players.LocalPlayer
 
-local OSWALD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
-local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
-local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
+-- (2026-10-21, Edward's font decision: Gotham / Montserrat read as AI-made) headings Oswald Bold, body Rubik (Theme.font)
+local OSWALD = Theme.font.display
+local BODY = Theme.font.medium
+local BOLD = Theme.font.bold
 local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#FFD400"), hex("#FFD400")
 local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
 local LB_NAME, LB_NUM = Font.new(BUILDER, Enum.FontWeight.Medium), Font.new(BUILDER, Enum.FontWeight.Bold)
@@ -128,8 +129,10 @@ buildCorner = function(gui, cb)
 	local list = button("PlayerList", ICON_PLAYERS, "Open the player list")
 	local hud = button("HUD", ICON_HUD, "Enable your HUD")
 	local leave = button("Leave", ICON_LEAVE, "Leave the training room")
+	-- (2026-10-21, RIVALS pass) the corner's Settings / News / Inbox react like every other button (grow on hover, squash on press)
+	for _, e in { settings, news, inbox } do Kit.bindButton(e.b, { hover = 1.1 }) end
 
-	local BODYI = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium, Enum.FontStyle.Italic)
+	local BODYI = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium, Enum.FontStyle.Italic) -- (2026-10-21) Rubik, was Gotham
 	local function line(y)
 		return new("TextLabel", { AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromScale(sx(W - 70), sy(y)), Size = UDim2.fromScale(sx(260), sy(16)), BackgroundTransparency = 1,
 			Text = "", TextScaled = true, TextColor3 = hex("#D9D9D9"), TextTransparency = 0.15, FontFace = BODYI, TextXAlignment = Enum.TextXAlignment.Right, ZIndex = 21, Parent = frame })
@@ -205,7 +208,12 @@ buildCorner = function(gui, cb)
 		gearDot.Visible = unreadN > 0 and not isOpen
 		inboxDot.Visible = unreadN > 0 and isOpen
 	end
-	function ctl.setUnread(n) unreadN = n; ctl.unreadDots() end
+	function ctl.setUnread(n)
+		local up = n > unreadN
+		unreadN = n; ctl.unreadDots()
+		-- (2026-10-21, RIVALS pass) a new notification: the red count punches
+		if up then for _, d in { gearDot, inboxDot } do if d.Visible then Kit.pop(d, 1.3) end end end
+	end
 	list.b.Activated:Connect(function() cb.openList() end)
 	hud.b.Activated:Connect(function() if cb.showHud then cb.showHud() end end)
 	leave.b.Activated:Connect(function() if cb.leave then cb.leave() end end)
@@ -352,9 +360,12 @@ function LobbyHud.Start()
 		local cx = 960 + (i - (#NAV + 1) / 2) * STEP
 		local b = new("TextButton", { Name = "Nav" .. it.Id, Text = "", AutoButtonColor = false, BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1),
 			Position = UDim2.fromOffset(cx, 1062), Size = UDim2.fromOffset(124, 116), Parent = root })
-		new("Frame", { Name = "Disc", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(62, 46), Size = UDim2.fromOffset(92, 92), BackgroundColor3 = Color3.new(1, 1, 1), Parent = b },
+		local disc = new("Frame", { Name = "Disc", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(62, 46), Size = UDim2.fromOffset(92, 92), BackgroundColor3 = Color3.new(1, 1, 1), Parent = b },
 			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.new(0, 0, 0)),
 				Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(0.6, 0.3), NumberSequenceKeypoint.new(1, 0.15) }) }) })
+		-- (2026-10-21, RIVALS pass) the disc lights up on hover (RIVALS' dock): a field-green layer over the dark disc, off until hovered
+		local glow = new("Frame", { Name = "Glow", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.color.field, BackgroundTransparency = 1, BorderSizePixel = 0, Parent = disc },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(62, 42), Size = UDim2.fromOffset(100, 100), ZIndex = 2, Parent = b })
 		navIcons[it.Id] = { holder = holder, it = it }
 		local lbl = Kit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 28, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center,
@@ -375,7 +386,7 @@ function LobbyHud.Start()
 		local padGlyph = new("ImageLabel", { Name = "PadGlyph", BackgroundTransparency = 1, Visible = false, AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromOffset(104, 52), Size = UDim2.fromOffset(42, 42), ZIndex = 6, Parent = b })
 		local sc = new("UIScale", { Parent = b })
-		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id, pad = padGlyph })
+		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id, pad = padGlyph, glow = glow })
 		b.Activated:Connect(function() if LobbyUI then LobbyUI.Open(it.Id) end end)
 	end
 
@@ -461,10 +472,12 @@ function LobbyHud.Start()
 			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(true) end
 			Kit.tween(n.s, 0.15, { Scale = 1.12 }, Enum.EasingStyle.Back)
 			Kit.tween(n.b, 0.15, { Position = lift }, Enum.EasingStyle.Back)
+			Kit.tween(n.glow, 0.12, { BackgroundTransparency = 0.6 }) -- (2026-10-21, RIVALS pass) disc lights
 		end)
 		n.b.MouseLeave:Connect(function()
 			hovered = false; gen += 1
 			n.tip.Visible = false; n.tip.Position = tipBase
+			Kit.tween(n.glow, 0.15, { BackgroundTransparency = 1 })
 			if away() then Kit.tween(n.s, 0.15, { Scale = 1 }); return end
 			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(false) end
 			Kit.tween(n.s, 0.15, { Scale = 1 })
@@ -475,11 +488,13 @@ function LobbyHud.Start()
 			n.tip.Visible = false; n.tip.Position = tipBase
 			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(false) end
 			n.s.Scale = 1
+			n.glow.BackgroundTransparency = 1
 			n.b.Position = base
 		end)
 		n.b.Activated:Connect(function() task.defer(resetNav) end) -- a click opens something: the bubble goes with it
-		n.b.MouseButton1Down:Connect(function() if not away() then Kit.tween(n.s, 0.06, { Scale = 1.02 }) end end)
-		n.b.MouseButton1Up:Connect(function() if not away() then Kit.tween(n.s, 0.12, { Scale = 1.12 }, Enum.EasingStyle.Back) end end)
+		-- (2026-10-21, RIVALS pass) a real press: squash below 1 (was 1.02), then spring back past the hover size
+		n.b.MouseButton1Down:Connect(function() if not away() then Kit.tween(n.s, 0.06, { Scale = 0.94 }) end end)
+		n.b.MouseButton1Up:Connect(function() if not away() then Kit.tween(n.s, 0.16, { Scale = hovered and 1.12 or 1 }, Enum.EasingStyle.Back) end end)
 	end
 	-- hide the old dock's contents (the Dock frame keeps its Visible state for the Kit room / PlayRow)
 	task.spawn(function()
@@ -504,6 +519,8 @@ function LobbyHud.Start()
 	end
 	local lastRows
 	local shownKitWeapon
+	-- (2026-10-21, RIVALS pass) what the widgets showed last: the scissors count and each mission's bar / done state, so changes animate
+	local hudFx = { credits = nil, frac = {}, done = {} }
 	local function refresh()
 		if not data then return end
 		-- nav: Missions badge = missions ready to claim; the Kit icon follows your gun
@@ -557,7 +574,15 @@ function LobbyHud.Start()
 			shownKitWeapon = w
 			navIcons.Kit.vp.SetModel(Icons.Weapon(w), Icons.GunView)
 		end
-		count.Text = commas(data.Credits or 0)
+		-- (2026-10-21, RIVALS pass) the scissors count counts up from what was shown, and the pill pops when it rises
+		local credits = data.Credits or 0
+		if hudFx.credits == nil then
+			count.Text = commas(credits)
+		elseif credits ~= hudFx.credits then
+			Kit.countTo(count, hudFx.credits, credits, 0.6, commas)
+			if credits > hudFx.credits then Kit.pop(pill, 1.12) end
+		end
+		hudFx.credits = credits
 		local q = data.Quests and data.Quests.Daily
 		local key = ""
 		local entries = {}
@@ -574,19 +599,39 @@ function LobbyHud.Start()
 		for _, c in rows:GetChildren() do c:Destroy() end
 		local holder = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(372, 196), ZIndex = 3, Parent = rows })
 		local art = {}
+		local fills = {} -- (2026-10-21, RIVALS pass) bars built at their old fraction, tweened to the new one after toScale
+		local firstBuild = next(hudFx.frac) == nil
 		for i, e in entries do
 			local y = (i - 1) * 64
 			local done = e.prog >= e.def.Goal
 			local ic = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4, y + 2), Size = UDim2.fromOffset(42, 42), ZIndex = 4, Parent = holder })
 			table.insert(art, { ic, e.def.Stat })
-			local t = Kit.label({ Text = e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = (e.claimed or done) and hex("#D9D6DA") or Color3.new(1, 1, 1),
+			local t = Kit.label({ Text = e.def.Short or e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = (e.claimed or done) and hex("#D9D6DA") or Color3.new(1, 1, 1),
 				Position = UDim2.fromOffset(50, y), Size = UDim2.fromOffset(210, 30), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = holder })
 			new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = t })
 			local back = new("Frame", { Position = UDim2.fromOffset(50, y + 34), Size = UDim2.fromOffset(262, 7), BackgroundColor3 = Color3.new(0, 0, 0),
 				BackgroundTransparency = 0.45, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-			new("Frame", { Size = UDim2.fromScale(math.clamp(e.prog / e.def.Goal, 0, 1), 1), BackgroundColor3 = done and hex("#FFD400") or hex("#ECE8DA"), ZIndex = 5, Parent = back },
+			local frac = math.clamp(e.prog / e.def.Goal, 0, 1)
+			local wasFrac = hudFx.frac[e.def.Id] or frac
+			local fill = new("Frame", { Size = UDim2.fromScale(wasFrac, 1), BackgroundColor3 = done and hex("#FFD400") or hex("#ECE8DA"), ZIndex = 5, Parent = back },
 				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-			if done or e.claimed then
+			if wasFrac ~= frac then table.insert(fills, { fill, frac }) end
+			hudFx.frac[e.def.Id] = frac
+			local newlyDone = done and not firstBuild and hudFx.done[e.def.Id] == false
+			hudFx.done[e.def.Id] = done
+			if done and not e.claimed then
+				-- (2026-10-21, RIVALS pass) done but not claimed: a green CLAIM pill (solid fill on an offset block, no outline) that opens Missions
+				new("Frame", { Name = "ClaimShadow", Position = UDim2.fromOffset(292, y + 8), Size = UDim2.fromOffset(74, 34), BackgroundColor3 = Theme.color.fieldDark,
+					BorderSizePixel = 0, ZIndex = 5, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+				local claim = new("TextButton", { Name = "Claim", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(292, y + 4), Size = UDim2.fromOffset(74, 34),
+					BackgroundColor3 = Theme.color.field, BorderSizePixel = 0, ZIndex = 6, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+				local cl = Kit.label({ Text = "CLAIM", FontFace = Theme.font.chunky, TextSize = 21, TextColor3 = Theme.color.cream, TextXAlignment = Enum.TextXAlignment.Center,
+					Size = UDim2.fromOffset(74, 34), ZIndex = 7, Parent = claim })
+				new("UIStroke", { Color = Theme.color.fieldDark, Thickness = 2, Transparency = 0.1, Parent = cl }) -- text outline (legibility), not a border
+				if newlyDone then Kit.popIn(claim, 0.3) end -- (before bindButton: it reuses this UIScale)
+				Kit.bindButton(claim, { hover = 1.08 })
+				claim.Activated:Connect(function() if LobbyUI then LobbyUI.Open("Missions") end end)
+			elseif done or e.claimed then
 				-- done: a big green check instead of the count and reward (RIVALS)
 				local ck = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(318, y + 2), Size = UDim2.fromOffset(44, 44), ZIndex = 4, Parent = holder })
 				table.insert(art, { ck, "_Check" })
@@ -604,6 +649,7 @@ function LobbyHud.Start()
 		if #entries == 0 then label(holder, "Loading missions...", BODY, 18, 18, 0, 330, 24, FIELD, nil, 4) end
 		Kit.toScale(holder, Vector2.new(372, 196))
 		holder.Size = UDim2.fromScale(1, 1)
+		for _, f in fills do Kit.fillTo(f[1], f[2], 0.5) end
 		-- 3D art after the conversion: mission icons (same mapping as the Missions screen), scissors, check
 		local VI = require(UIKit:WaitForChild("ViewIcons"))
 		local STAT = { Wins = { "Trophy" }, MatchesPlayed = { "DogTags" }, Kills = { "Weapon", "AutoRifle" }, Headshots = { "Weapon", "Sniper" },
@@ -655,6 +701,47 @@ function LobbyHud.Start()
 		Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = id, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), Parent = lbMode })
 	end
 	local lastLB
+	-- (2026-10-21, RIVALS pass) rows are kept by UserId: a row's contents rebuild only when its own numbers change, a re-sort
+	-- slides rows to their new slot, newcomers pop in, leavers shrink away. Your own row has a soft field-green fill (no edge bar).
+	-- Rows hover-lift (UIScale 1.02); they are centre-anchored so the lift grows evenly.
+	local lbRows = {} -- [UserId] = { row, scale, key, p }
+	local function fillRow(row, p)
+		for _, c in row:GetChildren() do if not c:IsA("UIScale") then c:Destroy() end end
+		new("Frame", { Name = "Divider", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 40), Size = UDim2.fromOffset(LB_W, 1), BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundTransparency = 0.92, BorderSizePixel = 0, Parent = row })
+		-- (2026-10-20, Edward) Roblox badges: Premium before the name, verified after (UIKit.Badges; Settings > Display Badges)
+		local okBd, Bd = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
+		if (okBd and Bd and Bd.Prefix(p) ~= "") or (not okBd and p.MembershipType == Enum.MembershipType.Premium) then
+			Kit.label({ Text = utf8.char(0xE001), FontFace = LB_NUM, TextSize = 20, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
+		end
+		local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
+		-- (2026-10-20, RIVALS) the device icon right after the name (UIKit.Badges.DeviceIcon)
+		local dv = (okBd and Bd and Bd.DeviceIcon) and Bd.DeviceIcon(p) or nil
+		if dv then
+			local nameText = p.DisplayName .. Bd.Suffix(p)
+			local w = game:GetService("TextService"):GetTextSize(nameText, 21, Enum.Font.BuilderSansBold, Vector2.new(400, 40)).X
+			Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = dv, ScaleType = Enum.ScaleType.Fit,
+				Position = UDim2.fromOffset(math.min(44 + w + 6, 222), 11), Size = UDim2.fromOffset(18, 18), Parent = row })
+		end
+		Kit.label({ Text = p.DisplayName .. ((okBd and Bd) and Bd.Suffix(p) or ""), FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
+			Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(streakN > 0 and lbStat ~= "Streak" and 164 or 196, 40), Parent = row })
+		-- the win streak next to the name (RIVALS): a flame with the number over it
+		if streakN > 0 and lbStat ~= "Streak" then Kit.streak(row, streakN, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3) end
+		if lbStat == "Rank" and RankArtLB then
+			local r = RankArtLB.Of(p)
+			if r.image then
+				Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = r.image, ScaleType = Enum.ScaleType.Fit,
+					Position = UDim2.fromOffset(266, 3), Size = UDim2.fromOffset(34, 34), Parent = row })
+			else
+				Kit.label({ Text = "-", FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.fromRGB(150, 150, 156), TextXAlignment = Enum.TextXAlignment.Right,
+					Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
+			end
+		else
+			Kit.label({ Text = tostring(statValue(p)), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
+				Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
+		end
+		Kit.toScale(row, Vector2.new(LB_W, 40))
+	end
 	local function buildList(force)
 		local ps = Players:GetPlayers()
 		local key = lbStat
@@ -666,53 +753,56 @@ function LobbyHud.Start()
 			if va ~= vb then return va > vb end
 			return a.DisplayName:lower() < b.DisplayName:lower()
 		end)
-		for _, c in lbList:GetChildren() do c:Destroy() end
 		-- rows are 40 design px in a 502 px window, in Scale; CanvasSize Scale is relative to the list's parent (lb)
 		local winH = LB_H - 34
 		local canvasH = math.max(winH, #ps * 40)
 		lbList.CanvasSize = UDim2.fromScale(0, canvasH / LB_H)
+		local present = {}
 		for i, p in ps do
-			local row = new("TextButton", { Name = p.Name, Text = "", AutoButtonColor = false, Position = UDim2.fromScale(0, (i - 1) * 40 / canvasH), Size = UDim2.fromScale(1, 40 / canvasH),
-				BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = i % 2 == 0 and 0.97 or 1, Parent = lbList })
-			local baseT = row.BackgroundTransparency
-			-- click a row: RIVALS' player menu slides out to the left of the list (UIKit.PlayerCards)
-			row.Activated:Connect(function() if PlayerCards then PlayerCards.Menu(p, row, 1590) end end)
-			row.MouseEnter:Connect(function() row.BackgroundTransparency = 0.94 end)
-			row.MouseLeave:Connect(function() row.BackgroundTransparency = baseT end)
-			new("Frame", { Name = "Divider", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 40), Size = UDim2.fromOffset(LB_W, 1), BackgroundColor3 = Color3.new(1, 1, 1),
-				BackgroundTransparency = 0.92, BorderSizePixel = 0, Parent = row })
-			-- (2026-10-20, Edward) Roblox badges: Premium before the name, verified after (UIKit.Badges; Settings > Display Badges)
-			local okBd, Bd = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
-			if (okBd and Bd and Bd.Prefix(p) ~= "") or (not okBd and p.MembershipType == Enum.MembershipType.Premium) then
-				Kit.label({ Text = utf8.char(0xE001), FontFace = LB_NUM, TextSize = 20, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
-			end
-			local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
-			-- (2026-10-20, RIVALS) the device icon right after the name (UIKit.Badges.DeviceIcon)
-			local dv = (okBd and Bd and Bd.DeviceIcon) and Bd.DeviceIcon(p) or nil
-			if dv then
-				local nameText = p.DisplayName .. Bd.Suffix(p)
-				local w = game:GetService("TextService"):GetTextSize(nameText, 21, Enum.Font.BuilderSansBold, Vector2.new(400, 40)).X
-				Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = dv, ScaleType = Enum.ScaleType.Fit,
-					Position = UDim2.fromOffset(math.min(44 + w + 6, 222), 11), Size = UDim2.fromOffset(18, 18), Parent = row })
-			end
-			Kit.label({ Text = p.DisplayName .. ((okBd and Bd) and Bd.Suffix(p) or ""), FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
-				Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(streakN > 0 and lbStat ~= "Streak" and 164 or 196, 40), Parent = row })
-			-- the win streak next to the name (RIVALS): a flame with the number over it
-			if streakN > 0 and lbStat ~= "Streak" then Kit.streak(row, streakN, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3) end
-			if lbStat == "Rank" and RankArtLB then
-				local r = RankArtLB.Of(p)
-				if r.image then
-					Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = r.image, ScaleType = Enum.ScaleType.Fit,
-						Position = UDim2.fromOffset(266, 3), Size = UDim2.fromOffset(34, 34), Parent = row })
-				else
-					Kit.label({ Text = "-", FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.fromRGB(150, 150, 156), TextXAlignment = Enum.TextXAlignment.Right,
-						Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
-				end
+			present[p.UserId] = true
+			local mine = p == player
+			local slot = UDim2.fromScale(0.5, (i - 1) * 40 / canvasH)
+			local baseT = mine and 0.82 or (i % 2 == 0 and 0.97 or 1)
+			local e = lbRows[p.UserId]
+			if e and e.row.Parent == nil then e = nil end
+			if not e then
+				local row = new("TextButton", { Name = p.Name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0), Position = slot, Size = UDim2.fromScale(1, 40 / canvasH),
+					BackgroundColor3 = mine and Theme.color.field or Color3.new(1, 1, 1), BackgroundTransparency = baseT, Parent = lbList })
+				e = { row = row, p = p }
+				lbRows[p.UserId] = e
+				Kit.popIn(row, (i - 1) * 0.03) -- makes the row's PopScale, reused for the hover lift
+				e.scale = row:FindFirstChild("PopScale")
+				-- click a row: RIVALS' player menu slides out to the left of the list (UIKit.PlayerCards)
+				row.Activated:Connect(function() if PlayerCards then PlayerCards.Menu(e.p, row, 1590) end end)
+				row.MouseEnter:Connect(function()
+					row.BackgroundTransparency = math.max(0, (row:GetAttribute("BaseT") or 1) - 0.06)
+					if e.scale then Kit.tween(e.scale, 0.1, { Scale = 1.02 }) end
+				end)
+				row.MouseLeave:Connect(function()
+					row.BackgroundTransparency = row:GetAttribute("BaseT") or 1
+					if e.scale then Kit.tween(e.scale, 0.1, { Scale = 1 }) end
+				end)
 			else
-				Kit.label({ Text = tostring(statValue(p)), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
-					Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
+				e.p = p
+				if e.row.Position ~= slot then Kit.tween(e.row, 0.25, { Position = slot }, Enum.EasingStyle.Quad) end
+				e.row.Size = UDim2.fromScale(1, 40 / canvasH)
+				e.row.BackgroundTransparency = baseT
 			end
-			Kit.toScale(row, Vector2.new(LB_W, 40))
+			e.row:SetAttribute("BaseT", baseT)
+			local rowKey = lbStat .. "/" .. tostring(statValue(p)) .. "/" .. tostring(p:GetAttribute("RankTier")) .. "/" .. tostring(p:GetAttribute("WinStreak")) .. "/"
+				.. tostring(p:GetAttribute("Device")) .. "/" .. tostring(p:GetAttribute("Setting_DisplayBadges")) .. "/" .. p.DisplayName
+			if rowKey ~= e.key or force then
+				e.key = rowKey
+				fillRow(e.row, p)
+			end
+		end
+		for uid, e in lbRows do
+			if not present[uid] then
+				lbRows[uid] = nil
+				local row = e.row
+				if e.scale then Kit.tween(e.scale, 0.15, { Scale = 0 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In) end
+				task.delay(0.16, function() row:Destroy() end)
+			end
 		end
 	end
 	local function lobbyData()
@@ -741,6 +831,7 @@ function LobbyHud.Start()
 		Kit.tween(lb, 0.12, { Position = on and lbHome or UDim2.fromScale(lbHome.X.Scale + 0.25, lbHome.Y.Scale) }, Enum.EasingStyle.Linear)
 	end
 	lbHide.Activated:Connect(function() setList(false) end)
+	Kit.bindButton(lbHide, { hover = 1.15 }) -- (2026-10-21, RIVALS pass) the x reacts too
 	corner = buildCorner(gui, {
 		openSettings = function() if LobbyUI then LobbyUI.Open("Settings") end end,
 		openCodes = function() if LobbyUI then LobbyUI.Open("Codes") end end,

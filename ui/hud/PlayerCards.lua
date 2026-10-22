@@ -32,7 +32,7 @@ local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
 local F_NAME = Font.new(BUILDER, Enum.FontWeight.Bold)
 local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
 local F_NUM = Font.new(BUILDER, Enum.FontWeight.ExtraBold)
-local F_HEAD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
+local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, RIVALS pass) Edward's final font decision: Oswald Bold headings (Montserrat read as AI-made)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
 local OLIVE_HI = hex("#8DBF5A")
 
@@ -259,6 +259,11 @@ local ACTION_COLOR = {
 	["View Profile"] = hex("#2F5170"), ["View Avatar"] = hex("#2F5170"), ["Block"] = hex("#8E2A24"),
 }
 local ACTION_GLYPH = { ["Invite"] = "+", ["Add Friend"] = "+", ["Challenge"] = "»", ["Spectate"] = "◎", ["View Profile"] = "→", ["View Avatar"] = "→", ["Block"] = "×" }
+-- (2026-10-21, RIVALS pass) where UIKit.FlatIcons has a matching drawing it replaces the glyph (same bone colour, ink on hover);
+-- the set has no plus / duel / eye / block art yet, so those rows keep their glyphs
+local ACTION_ICON = { ["View Profile"] = "account", ["View Avatar"] = "account" }
+local FlatIcons
+pcall(function() FlatIcons = require(UIKit:WaitForChild("FlatIcons", 5)) end)
 
 function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	ensureGui()
@@ -291,6 +296,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	headshot(hs, p)
 	label(panel, badgeName(p), F_NAME, 23, 92, 14, 206, 30, BONE, nil, 22)
 	label(panel, "@" .. p.Name, F_SUB, 16, 92, 44, 206, 20, FIELD, nil, 22)
+	local pendingIcons = {}
 	for i, a in actions do
 		local col = ACTION_COLOR[a]
 		local b = new("TextButton", { Name = a, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(4, HEAD + (i - 1) * ROW), Size = UDim2.fromOffset(302, ROW - 4),
@@ -298,14 +304,20 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 		local grad = new("UIGradient", { Color = ColorSequence.new(GUN, col), Parent = b })
 		local t = label(b, a, F_NAME, 19, 18, 0, 200, ROW - 4, BONE, nil, 23)
 		local g = label(b, ACTION_GLYPH[a], F_NUM, 30, 240, 0, 48, ROW - 4, BONE, Enum.TextXAlignment.Center, 23)
+		local iconRef = {} -- the FlatIcons stage, drawn after Kit.toScale (it is already in Scale)
+		if FlatIcons and ACTION_ICON[a] then g.Text = ""; table.insert(pendingIcons, { g = g, name = ACTION_ICON[a], ref = iconRef }) end
+		local function tintIcon(c)
+			if not iconRef.st then return end
+			for _, d in iconRef.st:GetDescendants() do if d:IsA("Frame") then d.BackgroundColor3 = c end end
+		end
 		local sent = false
-		b.MouseEnter:Connect(function() grad.Enabled = false; t.TextColor3 = DEEP; g.TextColor3 = DEEP end)
-		b.MouseLeave:Connect(function() grad.Enabled = true; t.TextColor3 = BONE; g.TextColor3 = sent and FIELD or BONE end)
-		local pop = new("UIScale", { Parent = b })
+		b.MouseEnter:Connect(function() grad.Enabled = false; t.TextColor3 = DEEP; g.TextColor3 = DEEP; tintIcon(DEEP) end)
+		b.MouseLeave:Connect(function() grad.Enabled = true; t.TextColor3 = BONE; g.TextColor3 = sent and FIELD or BONE; tintIcon(BONE) end)
+		-- (2026-10-21, RIVALS pass) Kit.bindButton (hover lift + press squash) replaces the hand-made click pop. One UIScale,
+		-- named PopScale, so the stagger-in (Kit.popIn below) and the hover share it.
+		new("UIScale", { Name = "PopScale", Parent = b })
+		Kit.bindButton(b, { hover = 1.03 })
 		b.Activated:Connect(function()
-			pop.Scale = 1
-			Kit.tween(pop, 0.07, { Scale = 1.06 })
-			task.delay(0.07, function() Kit.tween(pop, 0.16, { Scale = 1 }, Enum.EasingStyle.Back) end)
 			if a == "View Profile" then PlayerCards.Profile(p, false); return end
 			local opened = run(a, p)
 			-- sent once: the glyph turns into a grey tick (Invite / Challenge), RIVALS-style
@@ -323,6 +335,12 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	end
 	Kit.toScale(root)
 	for _, c in panel:GetChildren() do if c:IsA("TextButton") then Kit.centreAnchor(c) end end
+	for _, pi in pendingIcons do pi.ref.st = FlatIcons.Draw(pi.g, pi.name, { color = BONE, scale = 0.62 }) end
+	-- (2026-10-21, RIVALS pass) the rows fill in one after another as the panel slides out (RIVALS t0110 -> t0111)
+	for i, a in actions do
+		local b = panel:FindFirstChild(a)
+		if b then Kit.popIn(b, 0.04 + i * 0.04) end
+	end
 	-- slides out from under the list (from the right)
 	local home = panel.Position
 	panel.Position = UDim2.fromScale(home.X.Scale + 0.1, home.Y.Scale)

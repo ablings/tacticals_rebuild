@@ -8,6 +8,7 @@
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
+local TweenService = game:GetService("TweenService") -- (2026-10-21, RIVALS pass) the looping CLAIM sheen
 
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -56,6 +57,18 @@ local CARD_H = 258 -- (lobby revamp) was 300
 local PANEL_T = 0.5
 local COL_X, COL_W = 532, 828
 local CARD_X = { 45, 292, 540 }
+-- (2026-10-21, RIVALS pass) a claim's check / reward pop must finish before data refreshes rebuild the cards
+local holdUntil, renderToken = 0, 0
+local render -- forward: the claim handler re-renders through renderSoon
+local function renderSoon()
+	renderToken += 1 -- the latest call wins (a hold shortened after the server answers reschedules)
+	local token, delay = renderToken, holdUntil - os.clock()
+	if delay <= 0 then render() return end
+	task.delay(delay, function()
+		if token ~= renderToken or not isOpen then return end
+		if os.clock() >= holdUntil then render() else renderSoon() end
+	end)
+end
 
 local function resetIn(scope)
 	local t = os.time()
@@ -114,8 +127,7 @@ local function taskCard(parent, scope, i, entry, def, x, y)
 		BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.3, Parent = parent,
 	}, { Kit.corner(2) })
 	local br = Tac.brackets(card, ready and Tac.C.bone or Tac.C.line, 18, 3)
-	Kit.label({ Text = string.format("%s-%02d", scope == "Daily" and "D" or "W", i), FontFace = F.display, TextSize = 18, TextColor3 = C.textDim,
-		Position = UDim2.fromOffset(10, 4), Size = UDim2.fromOffset(60, 20), ZIndex = 3, Parent = card })
+	-- (2026-10-21, RIVALS pass) the "D-01" / "W-02" id label is gone: RIVALS' cards carry no ids (clean)
 	if ready then new("Frame", { Name = "ReadyStripe", BackgroundColor3 = Tac.C.oliveHi, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 5), ZIndex = 2, Parent = card }) end
 	if not entry.Claimed then Tac.hoverBrackets(card, br) end
 	local title = Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 21, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center,
@@ -133,7 +145,7 @@ local function taskCard(parent, scope, i, entry, def, x, y)
 			Position = UDim2.fromOffset(0, 137), Size = UDim2.new(1, 0, 0, 30), ZIndex = 3, Parent = card })
 		Kit.textStroke(2).Parent = count
 	end
-	reward(card, def.Reward, 44, UDim2.fromOffset(98, 186))
+	local rewardHolder = reward(card, def.Reward, 44, UDim2.fromOffset(98, 186))
 	-- claim strip along the bottom
 	local strip = UDim2.fromOffset(218, 40)
 	if entry.Claimed then
@@ -145,11 +157,54 @@ local function taskCard(parent, scope, i, entry, def, x, y)
 		b.AnchorPoint = Vector2.new(0.5, 1)
 		b.Position = UDim2.new(0.5, 0, 1, -10)
 		b.Parent = card
-		b.Activated:Connect(function() ctx.ask("ClaimQuest", scope, i) end)
-	else
-		Kit.label({ Text = "IN PROGRESS", FontFace = F.display, TextSize = 22, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -10), Size = strip, Parent = card })
+		-- (2026-10-21, RIVALS pass) ready cards pull the eye: the card breathes (from its centre), a sheen sweeps CLAIM on a
+		-- loop, and the card lifts on hover. A position lift, not a UIScale: one UIScale per object (the breathe owns it).
+		Kit.centreAnchor(card)
+		Kit.breathe(card, 0.03, 1.6)
+		local sheen = new("Frame", { Name = "ClaimSheen", BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 2, Parent = b },
+			{ Kit.corner(3), new("UIGradient", { Rotation = 20, Offset = Vector2.new(-1, 0), Transparency = NumberSequence.new({
+				NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.4, 1), NumberSequenceKeypoint.new(0.5, 0.55),
+				NumberSequenceKeypoint.new(0.6, 1), NumberSequenceKeypoint.new(1, 1) }) }) })
+		TweenService:Create(sheen:FindFirstChildOfClass("UIGradient"), TweenInfo.new(0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, false, 1.1),
+			{ Offset = Vector2.new(1, 0) }):Play()
+		card.MouseEnter:Connect(function()
+			local home = card:GetAttribute("LiftHome") or card.Position -- (Scale by now: toScale ran after the build)
+			card:SetAttribute("LiftHome", home)
+			Kit.tween(card, 0.12, { Position = home - UDim2.fromScale(0, 6 / (82 + CARD_H + 24)) })
+		end)
+		card.MouseLeave:Connect(function()
+			local home = card:GetAttribute("LiftHome")
+			if home then Kit.tween(card, 0.12, { Position = home }) end
+		end)
+		-- (2026-10-21, RIVALS pass) the claim is a moment: squash, busy dots while the server answers, then a check pops
+		-- over the art, the reward punches, the reward sound plays, and only then the cards re-render
+		local claiming = false
+		b.Activated:Connect(function()
+			if claiming then return end
+			claiming = true
+			holdUntil = os.clock() + 15 -- no rebuild while we wait on the server
+			local sc = b:FindFirstChildOfClass("UIScale") -- bindButton's own scale (Kit.button binds it)
+			if sc then Kit.tween(sc, 0.08, { Scale = 0.88 }) end
+			local stopBusy = Kit.busy(b)
+			local r = ctx.ask("ClaimQuest", scope, i)
+			stopBusy()
+			if sc and sc.Parent then Kit.tween(sc, 0.2, { Scale = 1 }, Enum.EasingStyle.Back) end
+			if r and r.ok and card.Parent then
+				local check = new("ImageLabel", { Name = "ClaimCheck", BackgroundTransparency = 1, Image = icon("check"), ImageColor3 = C.cream or Color3.new(1, 1, 1),
+					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 100 / CARD_H), Size = UDim2.fromScale(0.42, 0.42 * 243 / CARD_H), ZIndex = 6, Parent = card },
+					{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
+				Kit.popIn(check)
+				task.delay(0.12, function() if rewardHolder.Parent then Kit.pop(rewardHolder, 1.3) end end)
+				Kit.sfx("reward")
+				holdUntil = os.clock() + 0.65
+			else
+				holdUntil = 0
+				claiming = false
+			end
+			if isOpen then renderSoon() end
+		end)
 	end
+	-- (2026-10-21, RIVALS pass) no IN PROGRESS strip: the "3 / 5" count already says it (clean)
 	if ctx.tooltip then
 		ctx.tooltip(card, def.Text, function()
 			return done and (entry.Claimed and "Reward collected." or `Done! Claim your {def.Reward} scissors.`)
@@ -182,7 +237,7 @@ local function scopePanel(scope, order, title, iconModel)
 	return p
 end
 
-local function render()
+function render() -- (forward-declared above renderSoon)
 	bars = {}
 	Kit.restoreModifiers(column)
 	column.AutomaticCanvasSize = Enum.AutomaticSize.Y
@@ -193,7 +248,7 @@ local function render()
 	scopePanel("Daily", 1, "Daily Missions", "Clipboard")
 	scopePanel("Weekly", 2, "Weekly Contracts", "Medal")
 	local foot = new("Frame", { Name = "Foot", LayoutOrder = 3, BackgroundTransparency = 1, Size = UDim2.fromOffset(COL_W, 40), Parent = column })
-	Kit.label({ Text = "Mission progress comes from matches. Finish one, come back and claim it.", FontFace = F.medium, TextSize = 22,
+	Kit.label({ Text = "Play matches to fill these up." --[[ (2026-10-21, RIVALS pass) shorter footer ]], FontFace = F.medium, TextSize = 22,
 		TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), Parent = foot })
 	Kit.toScale(root) -- UI rule: everything in Scale
 end
@@ -266,6 +321,6 @@ end
 function Screen.Open() setOpen(true) end
 function Screen.Close() if gui then setOpen(false) end end
 function Screen.IsOpen() return isOpen end
-function Screen.Refresh() if isOpen then render() end end
+function Screen.Refresh() if isOpen then renderSoon() end end -- (2026-10-21, RIVALS pass) waits for a claim's pop
 
 return Screen

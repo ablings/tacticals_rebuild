@@ -862,8 +862,10 @@ end
 -- (2026-10-21, RIVALS three-qualities pass) shared motion helpers: every screen uses these instead of its own copies.
 -- They only move / scale / recolour things already built; they never change a screen's look.
 -------------------------------------------------------------------------------
+-- Roblox honours only ONE UIScale per object, so the motion helpers share whichever UIScale the object already has
+-- (bindButton's, Kit.open's MotionScale) instead of adding a second one that would be ignored
 local function motionScale(g: GuiObject, name: string)
-	return g:FindFirstChild(name) or new("UIScale", { Name = name, Parent = g })
+	return g:FindFirstChildOfClass("UIScale") or new("UIScale", { Name = name, Parent = g })
 end
 
 -- count a TextLabel's number from `from` to `to` (fmt(n) -> text; default commas); returns at once
@@ -983,6 +985,7 @@ function Kit.open(frame)
 	Kit.sfx("open")
 	Kit.centreAnchor(frame) -- scale from the centre
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
+	frame:SetAttribute("_MotionToken", (frame:GetAttribute("_MotionToken") or 0) + 1) -- (cancels a pending close's hide)
 	frame.Visible = true
 	s.Scale = 0.9
 	Kit.tween(s, 0.22, { Scale = 1 }, Enum.EasingStyle.Back)
@@ -993,7 +996,10 @@ function Kit.close(frame, done)
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
 	Kit.tween(s, 0.12, { Scale = 0.92 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	local tw = frame:IsA("CanvasGroup") and Kit.tween(frame, 0.12, { GroupTransparency = 1 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-	task.delay(0.12, function() frame.Visible = false; if done then done() end end)
+	local token = (frame:GetAttribute("_MotionToken") or 0) + 1
+	frame:SetAttribute("_MotionToken", token)
+	-- (2026-10-21) an open() straight after this close wins: only hide if nothing re-opened it meanwhile
+	task.delay(0.12, function() if frame:GetAttribute("_MotionToken") == token then frame.Visible = false end; if done then done() end end)
 	return tw
 end
 

@@ -159,7 +159,7 @@ local function buildInbox()
 	if inboxGui and inboxGui.Parent then inboxGui:Destroy() end
 	inboxGui = new("ScreenGui", { Name = "InboxUI", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 26, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		Parent = player:WaitForChild("PlayerGui") })
-	new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), Parent = inboxGui })
+	new("Frame", { Name = "Dim", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), Parent = inboxGui }) -- (2026-10-21, RIVALS pass) named: CloseInbox fades it
 	local canvas = Kit.canvas(inboxGui)
 	inboxRoot = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 	local head = new("Frame", { Name = "Head", BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(540, 208), Size = UDim2.fromOffset(828, 132),
@@ -183,7 +183,14 @@ local function buildInbox()
 		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(4, y + 28), Size = UDim2.fromOffset(118, 46), ZIndex = 3,
 			Parent = content }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 46, GREY, nil, 4)
-		pill(content, n, 142, y, 785, 102)
+		local row = pill(content, n, 142, y, 785, 102)
+		-- (2026-10-21, RIVALS pass) the first rows pop in one after another (0.03 s apart) instead of all at once
+		if Kit.popIn and i <= 10 then
+			chip.AnchorPoint = Vector2.new(0.5, 0.5); chip.Position = UDim2.fromOffset(4 + 59, y + 28 + 23)
+			row.AnchorPoint = Vector2.new(0.5, 0.5); row.Position = UDim2.fromOffset(142 + 392.5, y + 51)
+			pcall(Kit.popIn, chip, 0.08 + i * 0.03)
+			pcall(Kit.popIn, row, 0.08 + i * 0.03)
+		end
 	end
 	Kit.toScale(inboxRoot)
 	-- the list's canvas: as tall as the rows (Scale is relative to the list's parent)
@@ -200,7 +207,18 @@ function Notify.OpenInbox()
 end
 function Notify.CloseInbox()
 	if blur then TweenService:Create(blur, TweenInfo.new(0.2), { Size = 0 }):Play() end
-	if inboxGui then inboxGui:Destroy(); inboxGui = nil end
+	-- (2026-10-21, RIVALS pass) close with Kit.close (shrink + close sound) and fade the dim, then destroy; InboxOpen() is
+	-- false at once, and a reopen during the 0.12 s builds a fresh one (this one is destroyed by its own callback)
+	local g, r = inboxGui, inboxRoot
+	inboxGui, inboxRoot = nil, nil
+	if not g then return end
+	local dim = g:FindFirstChild("Dim")
+	if dim then TweenService:Create(dim, TweenInfo.new(0.12), { BackgroundTransparency = 1 }):Play() end
+	if Kit.close and r and r.Parent then
+		local ok = pcall(Kit.close, r, function() g:Destroy() end)
+		if ok then return end
+	end
+	g:Destroy()
 end
 function Notify.InboxOpen() return inboxGui ~= nil and inboxGui.Parent ~= nil end
 
@@ -268,9 +286,10 @@ function Notify.MountTopRight(buttons)
 			tipL.Size = UDim2.fromOffset(w, 40)
 			bubble:FindFirstChildOfClass("Frame").Position = UDim2.fromOffset(w - 26, 0)
 		end
-		local badge = new("Frame", { Name = "Badge", BackgroundColor3 = Color3.fromRGB(230, 50, 50), Position = UDim2.fromOffset(34, -4), Size = UDim2.fromOffset(24, 24),
+		local badge = new("Frame", { Name = "Badge", BackgroundColor3 = Color3.fromRGB(230, 50, 50), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(46, 8), Size = UDim2.fromOffset(24, 24),
 			Visible = false, ZIndex = 4, Parent = btn }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		txt(badge, "0", FX, 16, 0, 0, 24, 24, nil, nil, 5)
+		txt(badge, "0", FX, 16, 0, 0, 24, 24, nil, nil, 5) -- (2026-10-21, RIVALS pass) badge centre-anchored (same spot) so its pop grows from the middle
+		if Kit.bindButton then Kit.bindButton(btn, { hover = 1.1 }) end -- (2026-10-21, RIVALS pass) hover grow / press squash + sounds
 		btn.MouseEnter:Connect(function() bubble.Visible = true end)
 		btn.MouseLeave:Connect(function() bubble.Visible = false end)
 		btn.SelectionGained:Connect(function() bubble.Visible = true end)
@@ -326,7 +345,15 @@ function Notify.MountTopRight(buttons)
 		end)
 	end
 	fold.Activated:Connect(function() setExpanded(false) end)
-	onUnread = function(n) unreadN = n; refresh() end
+	onUnread = function(n)
+		local changed = n ~= unreadN
+		unreadN = n
+		refresh()
+		-- (2026-10-21, RIVALS pass) the badge that shows the count punches when it changes
+		if changed and n > 0 and Kit.pop then
+			for _, m in made do if m.badge.Visible then pcall(Kit.pop, m.badge, 1.35) end end
+		end
+	end
 	refresh()
 	return gui
 end

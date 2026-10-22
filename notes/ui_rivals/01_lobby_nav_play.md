@@ -34,3 +34,43 @@
 - Hover and press timing on the RIVALS dock and Play (only the hover disc shows in `t0188.9` / `t0254.9`). I assume a scale-up of about 0.1 s.
 - Whether Ranked pops in with a scale or a fade (`t0285.4` to `t0286.0` are 0.6 s apart).
 - Counter and bar animation in RIVALS (no before / after pair in the lobby).
+
+## Implemented (group A)
+Done 2026-10-21 by the group A agent. These are code edits only: nothing was run in Studio and nothing was committed. Line numbers are for the edited files.
+Rules followed: no colour changes to existing elements. New elements use Theme.color field / fieldDark / cream / tan / plate. There are no UICorner + hairline UIStroke combos and no left-edge bars; new buttons are solid fills on an offset block. New text uses Oswald Bold (Theme.font.display / chunky) or Rubik (Theme.font.medium). Everything created after toScale is in Scale.
+
+- **Nav disc lights + press squash** (`ui/hud/LobbyHudController.lua:367`, `:475`, `:496`). Each Disc gets a new `Glow` layer (Theme.color.field). It tweens to 0.6 transparency on hover and back on leave / resetNav. A press now squashes to 0.94 (was 1.02). Release springs with Back to 1.12 while hovered, or to 1 otherwise. The bubble delay stays at 0.55 s (Edward asked for it).
+- **Corner buttons** (`LobbyHudController.lua:133`, `:211`). Settings / News / Inbox get `Kit.bindButton`. `ctl.setUnread` runs `Kit.pop` on the visible red count when the number goes up.
+- **Scissors pill counts up** (`LobbyHudController.lua:577-585`). `Kit.countTo(count, old, new, 0.6, commas)` runs on each change, and the pill gets `Kit.pop(pill, 1.12)` when the count rises. The first fill is set directly.
+- **Hub Daily Missions widget** (`LobbyHudController.lua:523`, `:600-652`). Each bar is built at its last fraction (`hudFx.frac`) and `Kit.fillTo` moves it to the new one after toScale. A mission that is done but not claimed shows a green **CLAIM** pill in place of the check: field fill on a fieldDark offset block, cream Oswald word, `bindButton`. The pill opens Missions, and it pops in when the mission has just finished. Claimed missions keep the check. The title uses `def.Short or def.Text` (`:609`), ready for the lead's `Short` label.
+- **Player list** (`LobbyHudController.lua:707-799`, plus `:834`). Rows are kept in `lbRows[UserId]`:
+  - a row's contents (`fillRow`) rebuild only when that player's own key changes, or when forced;
+  - a re-sort tweens rows to their new slot (0.25 s Quad), newcomers pop in staggered, and leavers shrink away before they are destroyed;
+  - your own row has a soft field-green fill (0.82; no bar);
+  - hover brightens the row and lifts it (PopScale 1.02); rows are centre-anchored;
+  - the list's x (`lbHide`) gets bindButton.
+- **Play tiles pop in** (`ui/play/PlayScreen.lua:194-206`, `:536-538`). `tile()` calls `Kit.popIn(f, step * 0.04)` when `popStep` is set. setOpen sets it only around the opening render, so tab / party re-renders don't pop. popIn runs before bindButton, so both share one UIScale.
+- **Locked Ranked requirement card** (`PlayScreen.lua:208-259`, `:344`, `:543`). This replaces the toast. The centred plate card has:
+  - "RANKED", a "Reach Level N" line with an "n / N" count (tan) and a bar that fills with `Kit.fillTo`;
+  - a greyed PLAY under it that `Kit.shake`s when pressed;
+  - the Kit X close.
+  It opens and closes with `Kit.open` / `Kit.close`, and it is removed when the Play screen closes. It is built in design px and then `Kit.toScale(shade, 1920x1080)`. `big()` got an optional font argument.
+- **Green PLAY bars on the Ranked mode cards** (`ui/ranked/RankedScreen.lua:283-292`, `:131-141`). PlayScreen's field-green gradient strip is used as an inset 432x62 button on a fieldDark offset block, replacing the grey "Click to queue" line. The status is written in the bar:
+  - idle: PLAY on green;
+  - searching: "SEARCHING... TAP TO CANCEL" on a dark bar;
+  - in another queue: "IN ANOTHER QUEUE".
+- **Fonts (Edward's decision)**: in LobbyHudController and PlayScreen, the Montserrat / Gotham definitions (`OSWALD`, `BODY`, `BOLD`, and the corner's italic `BODYI`) now point at Theme.font.display / medium / bold and Rubik italic.
+
+### Skipped / notes
+- **PlayRow.lua: no changes.** Its only audit items are colour changes (the yellow ring, + and found state), which are blocked by the no-colour rule (Q1).
+- Not in the group A list, so not done: the Ranked popups' Kit.open (audit item 7), the ELO bar fillTo, cutting the reading load (8), and the Ranked violet (Q2).
+- I did not give `lbMode` a bindButton: `modeIcon()` destroys all its children, which would include the UIScale.
+- **Kit issue (not changed):** `Kit.pop` / `popIn` / `breathe` add a *second* UIScale ("PopScale" / "BreatheScale") to anything that already has a bindButton UIScale. Roblox applies only one UIScale per object. I worked around it by calling popIn before bindButton. A shared fix would be for motionScale to reuse an existing UIScale.
+- **Existing AI tells seen, left alone:**
+  - Builder Sans is still the base font of PlayScreen (`HEAVY` / `SEMI`), RankedScreen (`FB` / `FS` / `FM`) and the HUD (`WFONT`, `PFONT`, `NAV_FONT`, `LB_*`, the bubble).
+  - `Kit.closeButton` is corner + 1.5 px tan hairline.
+  - PlayRow's Invite + is corner + hairline (`PlayRow.lua:83`).
+  - The Play tiles and plates use corner + 2-3 px edge strokes (`PlayScreen.lua` edge() / tile()).
+  - The HUD `brackets()` helper is corner + 1.5 px edge.
+  - The Ranked popups use corner panels.
+- **Not verified in Studio:** I couldn't run Luau tooling. A token-level check shows balanced blocks and brackets in all three files, and the HUD's Start() has ~80 top-level locals, under the 200 limit.

@@ -79,7 +79,10 @@ local RED, BLUE, TEAL = Color3.fromRGB(230, 36, 48), Color3.fromRGB(36, 120, 255
 local AMBER, OLIVE = Color3.fromRGB(138, 156, 74), Color3.fromRGB(107, 122, 58) -- (2026-10-20, Edward) back to the original olive: the palette pass had made it yellow without being asked
 -- the whole intro uses the lobby UI's military look: gunmetal, amber (left / primary), olive (right / secondary)
 local GLOW_L, GLOW_R = AMBER, OLIVE
-local FONT = "rbxasset://fonts/families/GothamSSm.json"
+-- (2026-10-21, RIVALS pass) Edward's final font decision: Gotham (drawn as Montserrat) is out. Big words / numbers in
+-- Oswald Bold (FONT), the small status line in Rubik (FONT_BODY). The logo art is untouched.
+local FONT = "rbxasset://fonts/families/Oswald.json"
+local FONT_BODY = "rbxassetid://12187365977"
 local UI_READY = { "LobbyUI", "HUD" }
 local MAX_LOAD_TIME = 40
 local ASSET_TIMEOUT = 12 -- (2026-10-16) essentials only now; whatever isn't in by then streams in during play
@@ -173,7 +176,7 @@ local fx = new("Frame", { Name = "FX", BackgroundTransparency = 1, Size = UDim2.
 local barBox = new("Frame", { Name = "Bar", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Size = SP(STAGE.X * 0.36, 40),
 	Position = SP(STAGE.X / 2, STAGE.Y + 26), ZIndex = 15, Parent = stage })
 local barGroup = new("CanvasGroup", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), GroupTransparency = 1, ZIndex = 15, Parent = barBox })
-local statusText = new("TextLabel", { BackgroundTransparency = 1, FontFace = Font.new(FONT, Enum.FontWeight.Medium), TextSize = 13,
+local statusText = new("TextLabel", { BackgroundTransparency = 1, FontFace = Font.new(FONT_BODY, Enum.FontWeight.Medium), TextSize = 13,
 	TextColor3 = Color3.fromRGB(167, 173, 152), TextXAlignment = Enum.TextXAlignment.Left, Text = "", Size = UDim2.fromScale(0.8, 0.45), TextScaled = true,
 	ZIndex = 16, Parent = barGroup }, { new("UITextSizeConstraint", { MaxTextSize = 15 }) })
 local pctText = new("TextLabel", { BackgroundTransparency = 1, FontFace = Font.new(FONT, Enum.FontWeight.Bold), TextSize = 14,
@@ -229,7 +232,7 @@ local function teleportGui()
 			Size = UDim2.fromScale(0.26, 0.26), ZIndex = 5, Parent = tg }, { new("UIAspectRatioConstraint", { AspectRatio = GF_RATIO }) })
 		new("ImageLabel", { BackgroundTransparency = 1, Image = IMG.GF, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = holder })
 	end
-	new("TextLabel", { BackgroundTransparency = 1, Text = "DEPLOYING", FontFace = Font.new(FONT, Enum.FontWeight.Medium), TextSize = 14,
+	new("TextLabel", { BackgroundTransparency = 1, Text = "DEPLOYING", FontFace = Font.new(FONT, Enum.FontWeight.Bold), TextSize = 14,
 		TextColor3 = Color3.fromRGB(160, 168, 190), AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0.66),
 		Size = UDim2.fromScale(0.3, 0.03), TextScaled = true, ZIndex = 5, Parent = tg }, { new("UITextSizeConstraint", { MaxTextSize = 16 }) })
 	return tg

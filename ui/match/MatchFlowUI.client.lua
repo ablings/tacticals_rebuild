@@ -15,6 +15,10 @@ local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
 local localPlayer = player
+-- (2026-10-21, RIVALS pass) the shared motion helpers (UIKit.Kit: open / close / bindButton / pop / pulse / loadingDots).
+-- pcall'd: if UIKit is missing the screens still work, just without the motion.
+local okKit, Kit = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit", 10):WaitForChild("Kit", 10)) end)
+if not okKit or type(Kit) ~= "table" then Kit = nil end
 local STATE = { -- attribute names (agreed with the Tacticals session)
 	Phase = "MatchPhase", EndsAt = "PhaseEndsAt", Maps = "MapList", Votes = "MapVotes", Chosen = "MapChosen",
 	Team = "Team", Level = "Level", Owned = "OwnedItems", Kit = { Weapon = "KitWeapon", Melee = "KitMelee", Gadget = "KitGadget" },
@@ -54,7 +58,10 @@ TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
 -- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
 -- panels, calmer: Montserrat Heavy headlines, Builder Sans body, hairline white edges, no tilts or drop shadows; "selected"
 -- is a warm white; team colours (beige / green) only as accents
-local FX = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy)
+-- (2026-10-21, RIVALS pass) Edward's final font decision: headings / big words / numbers in Oswald Bold (was Montserrat Heavy),
+-- small / body text in Rubik (FR). Builder Sans (FB) stays on the old body text until the integrator's font pass.
+local FX = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FR = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
 local STENCIL = FX
 local INK_YELLOW = Color3.fromRGB(240, 232, 212) -- (serious pass) selected: warm white, not comic yellow
@@ -143,8 +150,19 @@ local bubble = new("Frame", { Position = UDim2.fromOffset(120, 950), Size = UDim
 new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(40, 60), Size = UDim2.fromOffset(20, 20), BackgroundColor3 = WHITE, BorderSizePixel = 0, Parent = bubble })
 local tipL = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 26, TextColor3 = Color3.fromRGB(20, 20, 24), Size = UDim2.fromScale(1, 1), Parent = bubble })
 tipL:SetAttribute("dTS", 26)
-label(loading, "Loading", FB, 46, 1440, 920, 380, 56, WHITE, Enum.TextXAlignment.Right)
-local loadN = label(loading, "0", FB, 40, 1440, 976, 380, 50, Color3.fromRGB(205, 205, 212), Enum.TextXAlignment.Right)
+-- (2026-10-21, RIVALS pass) honest loading: the fake 0-99 counter is gone. Plain words say what we wait for, and RIVALS'
+-- three dots (Kit.loadingDots) sit under them. Rubik (the body font).
+local loadWords = label(loading, "Waiting for opponent", FR, 46, 1100, 920, 720, 56, WHITE, Enum.TextXAlignment.Right)
+local loadN = label(loading, "", FB, 40, 1440, 976, 380, 50, Color3.fromRGB(205, 205, 212), Enum.TextXAlignment.Right)
+loadN.Visible = false -- kept (unused) so nothing else breaks; the dots replace it
+if Kit and Kit.loadingDots then
+	local dots = Kit.loadingDots(loading)
+	dots.AnchorPoint = Vector2.new(1, 0.5)
+	dots.Position = UDim2.fromScale(1820 / W, 1004 / H)
+	dots.Size = UDim2.fromScale(150 / W, 40 / H)
+	dots.ZIndex = 3
+	for _, d in dots:GetChildren() do if d:IsA("GuiObject") then d.ZIndex = 3 end end
+end
 
 ---------------------------------------------------------------------------------------------------- shared: team boxes + timer
 local function teamBox(parent, x, cols, right)
@@ -300,9 +318,13 @@ local function buildMaps(list)
 		local voters = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(tw - 24, 56), ZIndex = 4, Parent = t },
 			{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 6) }) })
 		local count = label(t, "", FX, 34, tw - 110, 12, 96, 44, WHITE, Enum.TextXAlignment.Right, 4)
-		local sc = new("UIScale", { Parent = t })
-		t.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1.03 }):Play() end)
-		t.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+		-- (2026-10-21, RIVALS pass) Kit.bindButton: the same hover grow plus a press squash (every tap answers)
+		if Kit then Kit.bindButton(t, { hover = 1.03 })
+		else
+			local sc = new("UIScale", { Parent = t })
+			t.MouseEnter:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1.03 }):Play() end)
+			t.MouseLeave:Connect(function() TweenService:Create(sc, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+		end
 		t.Activated:Connect(function()
 			send("Vote", m.id)
 			player:SetAttribute("_MyVote", m.id) -- instant feedback before the server echoes MapVotes
@@ -322,6 +344,9 @@ refreshVotes = function()
 		local hasMe = table.find(ids, player.UserId) ~= nil
 		if mine == id and not hasMe then table.insert(ids, player.UserId); hasMe = true end
 		for _, c in tile.voters:GetChildren() do if c:IsA("ImageLabel") then c:Destroy() end end
+		-- (2026-10-21, RIVALS pass) a head that just joined this tile pops in (the others are rebuilt still)
+		local before = tile.seen or {}
+		tile.seen = {}
 		for k, uid in ids do
 			if k > 6 then break end
 			local img = new("ImageLabel", { BackgroundColor3 = WHITE, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = tile.voters },
@@ -331,8 +356,13 @@ refreshVotes = function()
 				local ok2, im = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
 				if ok2 then heads[uid] = im; img.Image = im end
 			end) end
+			tile.seen[uid] = true
+			if Kit and not before[uid] then Kit.popIn(img) end
 		end
-		tile.count.Text = #ids > 0 and tostring(#ids) or ""
+		-- (2026-10-21, RIVALS pass) the vote count punches when it changes
+		local countText = #ids > 0 and tostring(#ids) or ""
+		if Kit and countText ~= tile.count.Text and countText ~= "" then Kit.pop(tile.count) end
+		tile.count.Text = countText
 		tile.edge.Color = hasMe and TEAM_A[1] or tile.col
 		tile.edge.Thickness = hasMe and 3 or 1.5
 	end
@@ -578,7 +608,10 @@ local function refreshChips()
 		local c = chips[s2.id]
 		local id = picks[s2.id]
 		c.q.Visible = false -- (Edward: the tabs below already name the slot; the empty square stays plain, like RIVALS)
-		if c.shown ~= id then c.shown = id; viewport(c.art, id) end
+		if c.shown ~= id then
+			c.shown = id; viewport(c.art, id)
+			if Kit and id then Kit.pop(c.chip) end -- (2026-10-21, RIVALS pass) a new pick lands with a punch
+		end
 		c.edge.Transparency = (step == c.index and optArea.Visible) and 0 or 1
 	end
 	for i, t in tabs do
@@ -625,10 +658,14 @@ local function optionTile(parent, x, y, id, text, onPick, kind)
 		lock.ZIndex = 6
 		return t
 	end
-	t.MouseEnter:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12, Enum.EasingStyle.Back), { Scale = 1.08 }):Play() end)
-	t.MouseLeave:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
-	t.SelectionGained:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12, Enum.EasingStyle.Back), { Scale = 1.08 }):Play() end)
-	t.SelectionLost:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+	-- (2026-10-21, RIVALS pass) Kit.bindButton (hover / gamepad grow 1.08 as before, plus a press squash); same UIScale
+	if Kit then Kit.bindButton(t, { hover = 1.08 })
+	else
+		t.MouseEnter:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12, Enum.EasingStyle.Back), { Scale = 1.08 }):Play() end)
+		t.MouseLeave:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+		t.SelectionGained:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12, Enum.EasingStyle.Back), { Scale = 1.08 }):Play() end)
+		t.SelectionLost:Connect(function() TweenService:Create(scale, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+	end
 	t.Activated:Connect(onPick)
 	return t
 end
@@ -692,22 +729,51 @@ toScale(canvas, Vector2.new(W, H))
 -- children of converted frames keep Scale; holders built later are converted against their own design size
 function convertLater(holder, size) toScale(holder, size); rescale() end
 rescale()
+-- (2026-10-21, RIVALS pass) things that punch / pulse grow from their centre, not their top-left corner
+if Kit then
+	for _, c in chips do Kit.centreAnchor(c.chip) end
+	Kit.centreAnchor(voteTimer); Kit.centreAnchor(loTimer)
+end
 
 local phase
+local function flowOn(p) return p == "Loading" or p == "MapVote" or p == "Loadout" or p == "Switch" end
+-- (2026-10-21, RIVALS pass) phases pop in (Kit.open: scale 0.9 -> 1, Back) and step out (Kit.close: shrink, then hide)
+-- instead of instant Visible flips. A frame reopened while its close is still running is shown again by the close's done().
+-- Frames stay plain Frames (no CanvasGroup: the map / item ViewportFrames and big text would go soft), so the fade is the
+-- backdrop's, below.
+local function showFrame(f, show)
+	if not Kit then f.Visible = show; return end
+	if show then
+		if f:GetAttribute("_FlowOn") then return end
+		f:SetAttribute("_FlowOn", true)
+		Kit.open(f)
+	else
+		if not f:GetAttribute("_FlowOn") then f.Visible = false; return end
+		f:SetAttribute("_FlowOn", nil)
+		Kit.close(f, function() if f:GetAttribute("_FlowOn") then f.Visible = true end end)
+	end
+end
 local function setPhase(p)
 	if p == phase then return end
 	phase = p
-	local on = p == "Loading" or p == "MapVote" or p == "Loadout" or p == "Switch"
-	gui.Enabled = on
-	loading.Visible = p == "Loading"
-	vote.Visible = p == "MapVote"
-	lo.Visible = p == "Loadout" or p == "Switch"
+	local on = flowOn(p)
+	if on or not Kit then gui.Enabled = on
+	else -- let the close motion play before the whole screen switches off
+		task.delay(0.14, function() if not flowOn(phase) then gui.Enabled = false end end)
+	end
+	showFrame(loading, p == "Loading")
+	showFrame(vote, p == "MapVote")
+	showFrame(lo, p == "Loadout" or p == "Switch")
 	loTimer.Parent.Visible = p ~= "Switch" -- (between rounds the match HUD's timer counts down)
 	-- Switch Weapons (RIVALS): the picker over the blurred match instead of the dark backdrop, no team boxes
 	local sw = p == "Switch"
 	-- RIVALS: the gun pick sits over the world, see-through; the loading screen AND the map vote stay solid (Edward 2026-10-21:
 	-- "rivals uses a background overlay ... to hide the player from seeing what map they are on" during map selection)
-	back.BackgroundTransparency = sw and 0.55 or ((p == "Loading" or p == "MapVote") and 0 or 0.3)
+	-- (2026-10-21, RIVALS pass) the backdrop fades to its level (and away when the flow ends) instead of snapping
+	local backT = not on and 1 or (sw and 0.55 or ((p == "Loading" or p == "MapVote") and 0 or 0.3))
+	if Kit then
+		if back.BackgroundTransparency ~= backT then TweenService:Create(back, TweenInfo.new(0.18), { BackgroundTransparency = backT }):Play() end
+	else back.BackgroundTransparency = backT end
 	for _, bx in loBoxes do local f = type(bx) == "table" and (bx.frame or (bx[1] and bx[1].h and bx[1].h.Parent)) or bx; if typeof(f) == "Instance" then f.Visible = not sw end end
 	local Lighting = game:GetService("Lighting")
 	local blur = Lighting:FindFirstChild("SwitchWeaponsBlur") or new("BlurEffect", { Name = "SwitchWeaponsBlur", Size = 0, Parent = Lighting })
@@ -762,6 +828,8 @@ end
 
 local loadStart = os.clock()
 local teamTick
+local lastBeat -- (2026-10-21, RIVALS pass) the last timer second that pulsed
+local wordsAt = 0 -- (2026-10-21, RIVALS pass) when the loading words were last checked
 RunService.RenderStepped:Connect(function()
 	-- (Edward 2026-10-20) Switch Weapons stays up when the next round goes live: only the match moving on closes it
 	-- (or the player: Done / X / M / B)
@@ -804,6 +872,11 @@ RunService.RenderStepped:Connect(function()
 		if mapBarL.Text ~= txt then mapBarL.Text = txt end
 	end
 	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
+	-- (2026-10-21, RIVALS pass) the last 3 s: the timer punches once per whole second (no colour flash this round: Q1 pending)
+	if Kit and (phase == "MapVote" or phase == "Loadout") and left > 0 then
+		local beat = phase .. math.ceil(left)
+		if math.ceil(left) <= 3 and beat ~= lastBeat then lastBeat = beat; Kit.pulse(phase == "MapVote" and voteTimer or loTimer) end
+	end
 	if phase == "MapVote" then
 		voteTimer.Text = string.format("%.1f", left)
 		local v, c = st(STATE.Votes), st(STATE.Chosen)
@@ -815,7 +888,15 @@ RunService.RenderStepped:Connect(function()
 		teamTick = (teamTick or 0) + 1
 		if teamTick % 15 == 0 then fillTeams(loBoxes) end -- ready ticks
 	end
-	if phase == "Loading" then loadN.Text = tostring(math.min(99, math.floor((os.clock() - loadStart) * 25))) end
+	-- (2026-10-21, RIVALS pass) honest loading: no fake counter. Twice a second: is anyone on the other side yet?
+	if phase == "Loading" and os.clock() - wordsAt > 0.5 then
+		wordsAt = os.clock()
+		local mine = player:GetAttribute(STATE.Team) or "A"
+		local other = teamList(mine == "A" and "TeamB" or "TeamA")
+		local here = false
+		for _, e in other or {} do if e.bot or e.player then here = true break end end
+		loadWords.Text = here and "Getting the map ready" or "Waiting for opponent"
+	end
 end)
 
 -- (2026-10-18) DuelHUD's Switch Weapons button / M key: PlayerScripts.SwitchWeapons:Invoke("Open" | "Close" | "Toggle") -> open?

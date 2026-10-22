@@ -54,3 +54,56 @@ Shared needs: `Kit.pop`, `Kit.pulse` and new `Kit.ICONS` entries in `ui/lobby/Ki
 - RIVALS' teleport / loading screen between places: none captured.
 - Nameplate behaviour with distance, and RIVALS' touch press feedback (no mobile capture).
 - Whether the Settings detail panel animates beyond the text swap.
+
+## Implemented (group F)
+Done 2026-10-21 by the group F agent. Not run in Studio: no Luau analyser here, so this is a careful read only. Line numbers are as of this pass.
+
+**ui/match/MatchFlowUI.client.lua**
+- l.18: `UIKit.Kit` required under a pcall. Without it, every change below falls back to the old behaviour.
+- l.61: fonts. `FX` (headings, timers, map names) is Oswald Bold now, was Montserrat Heavy. A new `FR` is Rubik SemiBold. `FB` (Builder Sans) is untouched on the old body text.
+- l.153: honest loading. The fake 0-99 counter is hidden (`loadN` kept, not visible) and the `Kit.loadingDots` sit bottom-right. The words are in Rubik. At l.891 they are rechecked twice a second: "Waiting for opponent" until the other team list has a player or bot, then "Getting the map ready".
+- l.321: map tiles use `Kit.bindButton(t,{hover=1.03})` (hover plus a press squash). l.661 does the same for loadout option tiles (`{hover=1.08}`, gamepad selection included).
+- l.347 / l.362: a voter headshot that is new on a tile gets `Kit.popIn`, and the vote count gets `Kit.pop` when it changes.
+- l.613: a loadout chip gets `Kit.pop` when a new pick lands in it.
+- l.732: chips and both timers are centre-anchored, so the punches grow from their middle.
+- l.740: `showFrame` plus `setPhase`. Loading, MapVote and Loadout / Switch now open with `Kit.open` and leave with `Kit.close`. The ScreenGui switches off 0.14 s later, so the close can play. A frame reopened mid-close comes back through the close's `done`.
+- l.772: the backdrop tweens to its level over 0.18 s (to 1 when the flow ends) instead of snapping.
+- l.875: the vote and loadout timers get `Kit.pulse` once per whole second in the last 3 s. There is no red flash because of the no-colour rule.
+- Unchanged: votes, picks, the third pick readying you (`allPicked`), Switch Weapons and KitLocked, and the HUD hiding.
+
+**ui/hud/PartyScreen.lua**
+- l.28: the `F_HEAD` "YOUR PARTY" heading is Oswald Bold, was Montserrat Heavy.
+- l.84: `actionButton` is 130x52 (was 88x34) with text at 24 (was 18). It has `Kit.bindButton`, and the sent tick is bigger and gets `Kit.pop`. Same gradients.
+- l.133 / l.238: cards with buttons are 150 tall (was 108), with buttons at y 86 and a grid row step of 160 (was 118). Party-column cards stay 108.
+- l.155: the kick X is `Kit.closeButton` at 44 px (was a 30 px red square with a "×" glyph). Its tan hairline UIStroke is removed because of the no corner + thin stroke rule. Note that it is dark at rest and warms red on hover, which is the shared helper's look and not the old solid red.
+- l.305: the All / Friends / Lobby tabs have `Kit.bindButton`.
+
+**ui/hud/PlayerCards.lua**
+- l.35: the `F_HEAD` font is Oswald Bold, was Montserrat Heavy.
+- l.262: View Profile and View Avatar draw `FlatIcons` "account" in bone, turning to ink on hover like the glyph did. FlatIcons has no plus, duel, eye or block art, so Invite, Add Friend, Challenge, Spectate and Block keep their glyphs.
+- l.316: menu rows use `Kit.bindButton(b,{hover=1.03})` instead of the hand-made click pop. They share one UIScale named `PopScale`.
+- l.339: rows stagger in with `Kit.popIn(b, 0.04 + i*0.04)` as the panel slides out. Duel invites and requests are untouched.
+
+**ui/intro/LoadingScreen.lua**
+- l.82: `FONT` is Oswald, was GothamSSm. It covers the % number, DEPLOYING (now Bold) and PRESS ANY KEY. The status line is Rubik Medium (`FONT_BODY`). The logo art, slash and shatter are untouched.
+
+**Skipped, and why**
+- TouchControlsController press squash (audit item 12) is not in the group F list and touch input is fragile, so it is left. Its fonts are Builder Sans only and were left alone.
+- NameplatesController has nothing in the group F list. It uses Builder Sans only, so no change was needed.
+- LoadingScreen MaxTextSize 15/16 to 22/26 (audit item 10) is not in the group F list.
+- Phase fades are scale-only, plus the backdrop fade. The phase frames were not wrapped in CanvasGroups, because the map and item ViewportFrames and the large text would render soft or blurry inside a CanvasGroup.
+- There is no red flash on the timers because of the no-colour-change rule.
+- Builder Sans body text in these files was not switched to Rubik: the instruction named Montserrat and Gotham. It is left for the integrator's font pass.
+
+**Kit notes (missing or worth knowing)**
+- `Kit.pop` / `popIn` use a UIScale named `PopScale`, `breathe` uses `BreatheScale` and `bindButton` takes the first UIScale. Two UIScales on one object don't multiply, so I pre-made one `PopScale` for both (PlayerCards rows). Kit could make `motionScale` reuse an existing UIScale.
+- `Kit.open` / `close` always play the open / close sfx, so match-flow phase swaps now make those sounds. A `silent` option would help.
+- `Kit.close`'s delayed `Visible = false` is not cancelled by a later `Kit.open`. Callers have to re-show the frame in `done`, as MatchFlowUI does.
+- FlatIcons needs plus, duel, eye and block drawings for the remaining player-menu glyphs.
+
+**Existing AI tells seen (not restyled)**
+- PartyScreen l.286: a 10 px olive left-edge accent bar beside "YOUR PARTY".
+- PartyScreen `personCard` and the empty slots, and the PlayerCards menu panel: UICorner + 1.5 px UIStroke.
+- MatchFlowUI `ink()`: a 1.5 px white UIStroke on cornered tiles, boxes and timers.
+- `Kit.closeButton` itself: corner + 1.5 px tan stroke.
+- Builder Sans body text throughout (MatchFlowUI `FB`, PartyScreen / PlayerCards `F_NAME` / `F_SUB` / `F_NUM`, Nameplates, Touch).

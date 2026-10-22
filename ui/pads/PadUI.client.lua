@@ -21,9 +21,11 @@ local player = Players.LocalPlayer
 local Lobby = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Lobby")
 local Request, QueueState = Lobby:WaitForChild("Request"), Lobby:WaitForChild("QueueState")
 
-local OSWALD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
-local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
-local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
+-- (2026-10-21, RIVALS pass) the game's font decision (Edward): Oswald Bold for headings / big words / numbers, Rubik for
+-- small and body text (was Montserrat Heavy / Gotham SSm)
+local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local BODY = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
+local BOLD = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#6B7A3A"), hex("#8A9C4A") -- (2026-10-20, Edward) the lobby olive back (the palette pass had made it yellow)
 local GUN, GUN2, DEEP, LINE = hex("#1A1D1A"), hex("#262A22"), hex("#0C0E0B"), hex("#40463A")
 local TEAM = { A = hex("#ECE8DA"), B = hex("#9DB05A") } -- the pads' floor colours: team A cream, team B olive
@@ -80,14 +82,8 @@ end
 
 -- the lobby HUD steps aside while you're on a pad or deploying (RIVALS); our own UI shows instead
 local HIDE = { "LobbyUI", "PlayRowUI" }
--- PadBoards' old side panel (JOIN <MODE> near a pad, the queued panel) is replaced by this script
-task.spawn(function()
-	local old = player.PlayerGui:WaitForChild("PadQueueUI", 30)
-	if old then
-		old.Enabled = false
-		old:GetPropertyChangedSignal("Enabled"):Connect(function() if old.Enabled then old.Enabled = false end end)
-	end
-end)
+-- (2026-10-21, RIVALS pass) PadBoards no longer builds its old side panel (PadQueueUI), so the guard that hid it is gone;
+-- this script's on-pad box and JOIN boxes are the only pad screen UI.
 local hidden = {}
 local function hideLobby(on)
 	local pg = player.PlayerGui
@@ -345,8 +341,10 @@ local function refresh()
 		local key = b.mode .. b.id .. b.state .. b.count .. tostring(b.ranked)
 		for _, o in b.occupants or {} do key ..= o.u .. o.t .. o.i end
 		local sub
-		if key ~= lastBoxKey then lastBoxKey = key; sub = buildPadBox(b, me) end
+		local rebuilt = false
+		if key ~= lastBoxKey then lastBoxKey = key; sub = buildPadBox(b, me); rebuilt = true end
 		sub = sub or padBox:FindFirstChild("Sub", true)
+		local before = countLabel.Text
 		if noMap(b) then
 			countLabel.Text = "VS"
 			if sub then sub.Text = "NO " .. modeName(b.mode) .. " MAPS YET" end
@@ -361,6 +359,8 @@ local function refresh()
 			countLabel.Text = "VS"
 			if sub then sub.Text = (b.total - b.count) .. " MORE TO START" end
 		end
+		-- (2026-10-21, RIVALS pass) the VS / countdown number pops each time it changes (Kit.pop; refresh also runs every 0.3 s)
+		if not rebuilt and countLabel.Text ~= before then Kit.pop(countLabel) end
 		padBox.Visible = true
 	else
 		padBox.Visible = false

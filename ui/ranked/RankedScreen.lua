@@ -130,7 +130,13 @@ local function render()
 	for mode, c in ui.cards do
 		local mq = queueFor(mode)
 		local mine = q and mq and q == mq.Id and st == "Searching"
-		c.status.Text = mine and "Searching...   click to cancel" or (q and "In another queue" or "Click to queue")
+		-- (2026-10-21, RIVALS pass) the status lives in the green PLAY bar: idle = PLAY on field green, searching / busy = a dark bar
+		local idle = not q
+		c.status.Text = mine and "SEARCHING...  TAP TO CANCEL" or (q and "IN ANOTHER QUEUE" or "PLAY")
+		c.green.Enabled = idle
+		c.bar.BackgroundColor3 = idle and WHITE or BLACK
+		c.bar.BackgroundTransparency = idle and 0 or (mine and 0.1 or 0.35)
+		c.shadow.Visible = idle
 		c.edge.Transparency = mine and 0.05 or 1
 	end
 	-- Warlord strip
@@ -274,7 +280,15 @@ local function build()
 		local edge = new("UIStroke", { Color = WHITE, Thickness = 4, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = card })
 		stroke(label(card, "Ranked", FB, 72, 0, 90, 480, 84, WHITE), 3)
 		stroke(label(card, mode, FB, 96, 0, 170, 480, 108, WHITE), 3)
-		local status = label(card, "Click to queue", FS, 26, 0, 318, 480, 40, GREY)
+		-- (2026-10-21, RIVALS pass) a real PLAY bar (PlayScreen's field-green strip, inset as a button): solid fill on an offset
+		-- block, no outline; the queue status is written in it (render)
+		local shadow = new("Frame", { Name = "PlayShadow", Position = UDim2.fromOffset(24, 302), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = C.fieldDark,
+			BorderSizePixel = 0, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+		local bar = new("Frame", { Name = "PlayBar", Position = UDim2.fromOffset(24, 296), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = WHITE,
+			BorderSizePixel = 0, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+		local green = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = bar })
+		local status = label(bar, "PLAY", Theme.font.chunky, 30, 0, 0, 432, 62, WHITE)
+		new("UIStroke", { Color = Color3.fromRGB(28, 44, 16), Thickness = 2, Transparency = 0.3, Parent = status }) -- text outline, not a border
 		Kit.bindButton(card, { hover = 1.02, press = 0.985 })
 		card.Activated:Connect(function()
 			local q, st = searching()
@@ -285,7 +299,7 @@ local function build()
 			local r = ctx.ask and ctx.ask("FindMatch", mq.Id)
 			if not (r and r.ok) and ctx.toast then ctx.toast((r and r.msg) or "Couldn't join the ranked queue", "bad") end
 		end)
-		ui.cards[mode] = { card = card, status = status, edge = edge }
+		ui.cards[mode] = { card = card, status = status, edge = edge, bar = bar, green = green, shadow = shadow }
 	end
 
 	-- Warlord strip + leaderboard button

@@ -91,7 +91,12 @@ local function update(dt)
 	local target = health / max
 	if target < shown - 0.001 then
 		-- took damage: snap down, the pale chunk waits a moment then drains
-		if localPlayer.Character and shown > 0 and health > 0 then lastHitAt = os.clock() end
+		if localPlayer.Character and shown > 0 and health > 0 then
+			lastHitAt = os.clock()
+			-- (2026-10-21, RIVALS pass) the bar itself reacts to a hit: a quick 1.06 -> 1 punch (from its bottom-left corner,
+			-- so it never drifts off the screen edge); the bone -> amber -> red ramp is untouched
+			Kit.pop(frame, 1.06)
+		end
 	end
 	shown = target
 	if os.clock() - lastHitAt > 0.45 then

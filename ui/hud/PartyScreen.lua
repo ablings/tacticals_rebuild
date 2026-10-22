@@ -25,7 +25,7 @@ local player = Players.LocalPlayer
 local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
 local F_NAME = Font.new(BUILDER, Enum.FontWeight.Bold)
 local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
-local F_HEAD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
+local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, RIVALS pass) Edward's final font decision: Oswald Bold headings (Montserrat read as AI-made)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
 local OLIVE, OLIVE_HI, GOLD = hex("#4C7A2E"), hex("#8DBF5A"), hex("#E9C46A")
 
@@ -80,14 +80,17 @@ local function tick(parent, color)
 			Size = UDim2.fromScale(bar[3], 0.12), Rotation = bar[4], ZIndex = 6, Parent = parent }, { Kit.corner(2) })
 	end
 end
--- a small gradient button that becomes a grey tick once sent
+-- a gradient button that becomes a grey tick once sent
+-- (2026-10-21, RIVALS pass) chunky for kids: 130x52 design px (was 88x34), text 24 (was 18), and Kit.bindButton so it
+-- grows on hover and squashes on press like every other button. Same gradients and font.
+local ACT_W, ACT_H, ACT_GAP = 130, 52, 8
 local function actionButton(card, x, y, text, kind, uid, colors, onPress)
-	local b = new("TextButton", { Name = kind, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(88, 34),
+	local b = new("TextButton", { Name = kind, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(ACT_W, ACT_H),
 		BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 4, Parent = card }, { Kit.corner(6) })
 	local g = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(colors[1], colors[2]), Parent = b })
-	local l = label(b, text, F_NAME, 18, 0, 0, 88, 34, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
+	local l = label(b, text, F_NAME, 24, 0, 0, ACT_W, ACT_H, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
 	new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.2, Transparency = 0.5, Parent = l })
-	local tickHolder = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(26, 26), Visible = false, ZIndex = 5, Parent = b })
+	local tickHolder = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(36, 36), Visible = false, ZIndex = 5, Parent = b })
 	tick(tickHolder, Color3.new(1, 1, 1))
 	local key = uid .. "|" .. kind
 	local function showSent(left)
@@ -102,8 +105,9 @@ local function actionButton(card, x, y, text, kind, uid, colors, onPress)
 	if sent[key] and os.clock() - sent[key] < 15 then showSent(15 - (os.clock() - sent[key])) end
 	b.Activated:Connect(function()
 		if sent[key] and os.clock() - sent[key] < 15 then return end
-		if onPress() ~= false then sent[key] = os.clock(); showSent(15) end
+		if onPress() ~= false then sent[key] = os.clock(); showSent(15); Kit.pop(tickHolder) end
 	end)
+	Kit.bindButton(b, { hover = 1.05 })
 	return b
 end
 
@@ -126,8 +130,10 @@ local function invite(uid, inServer)
 	return ok
 end
 
+-- (2026-10-21, RIVALS pass) cards with buttons are 150 tall (was 108) so the 52 px buttons sit under the name line
+local CARD_H, CARD_H_BTN = 108, 150
 local function personCard(parent, x, y, w, pp, opts)
-	local c = new("Frame", { Name = tostring(pp.uid), Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, 108), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
+	local c = new("Frame", { Name = tostring(pp.uid), Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, opts.buttons and CARD_H_BTN or CARD_H), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
 		ZIndex = 3, Parent = parent }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.88, Thickness = 1.5 }) })
 	local hs = new("ImageLabel", { BackgroundColor3 = GUN, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(64, 64), ZIndex = 4, Parent = c }, { Kit.corner(8) })
 	headshot(hs, pp.uid)
@@ -146,20 +152,27 @@ local function personCard(parent, x, y, w, pp, opts)
 		lb.Activated:Connect(function() local r = party(); if r then r:FireServer("Leave") end end)
 	end
 	if opts.kick then
-		local k = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(w - 40, 8), Size = UDim2.fromOffset(30, 30), BackgroundColor3 = hex("#8E2A24"),
-			ZIndex = 5, Parent = c }, { Kit.corner(8) })
-		label(k, "×", F_NAME, 24, 0, -2, 30, 30, BONE, Enum.TextXAlignment.Center, 6)
+		-- (2026-10-21, RIVALS pass) Kit.closeButton (our square dark X, warms red on hover, press squash) at 44 px (was a
+		-- 30 px red square with a "×" glyph). Its tan hairline UIStroke is dropped here: Edward's no corner + thin stroke rule.
+		local k = Kit.closeButton(UDim2.fromOffset(44, 44))
+		k.Name = "Kick"
+		k.Position = UDim2.fromOffset(w - 52, 8)
+		k.ZIndex = 5
+		for _, d in k:GetChildren() do
+			if d:IsA("UIStroke") then d:Destroy() elseif d:IsA("GuiObject") then d.ZIndex = 6 end
+		end
+		k.Parent = c
 		k.Activated:Connect(function() local r = party(); local t = Players:GetPlayerByUserId(pp.uid); if r and t then r:FireServer("Kick", t) end end)
 	end
 	if opts.buttons then
 		local bx = w - 12
 		if opts.invite then
-			bx -= 88
-			actionButton(c, bx, 66, "Invite", "Invite", pp.uid, { hex("#A9D27A"), hex("#4C7A2E") }, function() return invite(pp.uid, pp.inServer) end)
+			bx -= ACT_W
+			actionButton(c, bx, 86, "Invite", "Invite", pp.uid, { hex("#A9D27A"), hex("#4C7A2E") }, function() return invite(pp.uid, pp.inServer) end)
 		end
 		if opts.duel and social() then
-			bx -= 96
-			actionButton(c, bx, 66, "1v1", "Duel", pp.uid, { hex("#F0B550"), hex("#B06A12") }, function()
+			bx -= ACT_W + ACT_GAP
+			actionButton(c, bx, 86, "1v1", "Duel", pp.uid, { hex("#F0B550"), hex("#B06A12") }, function()
 				local t = Players:GetPlayerByUserId(pp.uid)
 				if t then social():FireServer("Challenge", t) return true end
 				return false
@@ -222,6 +235,7 @@ local function people()
 	return out
 end
 
+local GRID_STEP = CARD_H_BTN + 10 -- (2026-10-21, RIVALS pass) row step for the taller button cards (was 118)
 local function renderGrid()
 	for _, ch in grid:GetChildren() do ch:Destroy() end
 	local holder = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(900, 10), Parent = grid })
@@ -232,7 +246,7 @@ local function renderGrid()
 	for _, pp in people() do
 		local show = current == "All" and pp.inServer or (current == "Lobby" and pp.inServer and pp.lobby) or (current == "Friends" and pp.friend)
 		if show and (q == "" or pp.name:lower():find(q, 1, true) or pp.user:lower():find(q, 1, true)) then
-			personCard(holder, (k % 3) * 300, (k // 3) * 118, 290, pp, {
+			personCard(holder, (k % 3) * 300, (k // 3) * GRID_STEP, 290, pp, {
 				buttons = not inParty[pp.uid], invite = not inParty[pp.uid] and (not pp.inServer or pp.lobby), duel = pp.inServer and pp.lobby })
 			k += 1
 		end
@@ -241,7 +255,7 @@ local function renderGrid()
 		label(holder, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 24, 0, 30, 900, 30, FIELD, Enum.TextXAlignment.Center, 3)
 		k = 1
 	end
-	holder.Size = UDim2.fromOffset(900, math.max(10, math.ceil(k / 3) * 118))
+	holder.Size = UDim2.fromOffset(900, math.max(10, math.ceil(k / 3) * GRID_STEP))
 	Kit.toScale(grid)
 end
 
@@ -288,6 +302,7 @@ local function build()
 			Parent = root }, { Kit.corner(10) })
 		local l = label(b, t[1], F_NAME, 24, 0, 0, t[2], 54, DEEP, Enum.TextXAlignment.Center, 3)
 		tabBtns[t[1]] = { b = b, l = l }
+		Kit.bindButton(b, { hover = 1.04 }) -- (2026-10-21, RIVALS pass) the tabs answer hover / press too
 		b.Activated:Connect(function() PartyScreen.SetTab(t[1]) end)
 		b:SetAttribute("NavTab", i) -- [PAD] LB / RB
 		b:GetAttributeChangedSignal("NavPressed"):Connect(function() PartyScreen.SetTab(t[1]) end)

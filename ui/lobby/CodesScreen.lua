@@ -19,6 +19,7 @@ local Screen = {}
 local ctx = {}
 local gui, root, blur, scrim, box, list, status
 local isOpen = false
+local goBtn, boxHome, redeeming -- (2026-10-21, RIVALS pass) the Redeem button, the box's resting Scale position, a guard
 
 local function stroke(l, t) new("UIStroke", { Thickness = t or 2, Transparency = 0.3, Parent = l }) return l end
 
@@ -42,16 +43,31 @@ local function renderList()
 	Kit.toScale(list, Vector2.new(960, 80))
 end
 
+-- (2026-10-21, RIVALS pass) feedback you can feel: a wrong / empty code shakes the box, a good one pops the status line
+-- and the Redeem button; busy dots sit in Redeem while the server answers (FocusLost + Activated can't double-redeem)
+local function shakeBox()
+	if boxHome then box.Position = boxHome end -- a second shake starts from rest, not mid-swing
+	Kit.shake(box)
+end
 local function redeem()
+	if redeeming then return end
 	local code = (box.Text or ""):gsub("^%s+", ""):gsub("%s+$", "")
-	if code == "" then status.Text = "Type a code first"; status.TextColor3 = Theme.hex("#FF6A5E") return end
+	if code == "" then status.Text = "Type a code first"; status.TextColor3 = Theme.hex("#FF6A5E"); shakeBox() return end
+	redeeming = true
 	status.Text = "Checking..."; status.TextColor3 = Theme.hex("#CFCDD3")
+	local stopBusy = goBtn and Kit.busy(goBtn)
 	local r = ctx.ask and ctx.ask("RedeemCode", code)
+	if stopBusy then stopBusy() end
+	redeeming = false
 	if r and r.ok then
 		box.Text = ""
 		status.Text = r.msg or "Redeemed!"; status.TextColor3 = Theme.hex("#FFD400")
+		Kit.pop(status, 1.25)
+		local sc = goBtn and goBtn:FindFirstChildOfClass("UIScale") -- bindButton's scale (one UIScale per object)
+		if sc then sc.Scale = 1.15; Kit.tween(sc, 0.28, { Scale = 1 }, Enum.EasingStyle.Back) end
 	else
 		status.Text = (r and r.msg) or "That code didn't work"; status.TextColor3 = Theme.hex("#FF6A5E")
+		shakeBox()
 	end
 	task.delay(0.3, renderList)
 end
@@ -79,6 +95,7 @@ local function build()
 	box:SetAttribute("dTS", 36)
 	local go = Kit.button("robux", UDim2.fromOffset(222, 84), "Redeem")
 	go.Name = "Redeem"
+	goBtn = go
 	go.Position = UDim2.fromOffset(806, 156)
 	go.Parent = panel
 	go.Activated:Connect(function() if (box.Text or ""):match("%S") then redeem() end end)
@@ -89,8 +106,8 @@ local function build()
 	box:GetPropertyChangedSignal("Text"):Connect(paintGo)
 	paintGo()
 	box.FocusLost:Connect(function(enter) if enter then redeem() end end)
-	status = Kit.label({ Text = "", FontFace = FB, TextSize = 24, TextColor3 = Theme.hex("#CFCDD3"), Position = UDim2.fromOffset(34, 250), Size = UDim2.fromOffset(990, 32), Parent = panel })
-	status:SetAttribute("dTS", 24)
+	status = Kit.label({ Text = "", FontFace = FB, TextSize = 24, TextColor3 = Theme.hex("#CFCDD3"), AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(34, 266), Size = UDim2.fromOffset(990, 32), Parent = panel })
+	status:SetAttribute("dTS", 24) -- (2026-10-21, RIVALS pass) anchored left-middle (same spot) so the success pop grows from the text's start
 	stroke(Kit.label({ Text = "Redeemed", FontFace = FB, TextSize = 32, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(32, 300), Size = UDim2.fromOffset(400, 40), Parent = panel }), 2)
 	list = new("Frame", { Name = "List", BackgroundTransparency = 1, Position = UDim2.fromOffset(32, 350), Size = UDim2.fromOffset(960, 80), Parent = panel },
 		{ new("UIGridLayout", { CellSize = UDim2.fromScale(250 / 960, 50 / 80), CellPadding = UDim2.fromScale(12 / 960, 12 / 80), SortOrder = Enum.SortOrder.LayoutOrder }) })
@@ -99,6 +116,7 @@ local function build()
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	Kit.toScale(root)
+	boxHome = box.Position -- (2026-10-21, RIVALS pass) Scale home for the error shake
 	ViewIcons.Icon(tagHold, "DogTags", { hoverTarget = panel })
 	root.Visible = false
 	GuiService.MenuOpened:Connect(function() if isOpen then root.Visible = false end end)
