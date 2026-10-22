@@ -1,0 +1,250 @@
+[
+  {
+    "name": "shop_bg_founders.png",
+    "width": 1536,
+    "height": 1024,
+    "alpha": false,
+    "prompt": "",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-bdc1aa4c-fe17-4d41-842a-7b7bbab6e41b.png"
+  },
+  {
+    "name": "shop_bg_operator.png",
+    "width": 1536,
+    "height": 1024,
+    "alpha": false,
+    "prompt": "Use case: stylized-concept. One game shop bundle-card background, landscape 1536x1024, fully opaque, in the style of the Roblox game RIVALS' bundle banners. Glossy chunky low-poly 3D cartoon look, bright saturated colours, soft studio lighting. Deep electric-blue colour field with a strong lighter radial glow right of centre where a hero item will be placed later, faint scattered plus-shaped sparkles, a few soft dark out-of-focus silhouettes of crates and gear at the right and bottom edges, a soft vignette. The left third stays calm, open space for a title. No weapons in the centre, no characters, no text, letters, logos or watermark.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-3eb343d8-d70d-4a61-acdc-d685daf67a1f.png"
+  },
+  {
+    "name": "shop_tag_random.png",
+    "width": 256,
+    "height": 208,
+    "alpha": true,
+    "prompt": "Flat 2D game UI corner tag, Roblox RIVALS shop style: a dark charcoal #3A3A3A tab with a rounded bottom-left corner and square other corners, filling the whole image. On it, a light grey #CDCDCD solid silhouette of a blocky assault rifle pointing up-right, and at its lower right a bold rounded question mark '?' in the same grey. No outline, no shadow, PNG with transparent outside the tab.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-4b843dd4-455b-4f06-8280-21c4e54cc7d0.png"
+  },
+  {
+    "name": "shop_tag_all.png",
+    "width": 256,
+    "height": 208,
+    "alpha": true,
+    "prompt": "Flat 2D game UI corner tag, Roblox RIVALS shop style: a dark charcoal #3A3A3A tab with a rounded bottom-left corner and square other corners, filling the whole image. On it, a light grey #CDCDCD solid silhouette of a blocky assault rifle pointing up-right, and at its lower right a bold rounded infinity sign '∞' in the same grey. No outline, no shadow, PNG with transparent outside the tab.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-6b935ca3-e214-48d0-a1d4-f32270005ff6.png"
+  },
+  {
+    "name": "kit_inspect.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D UI icon, pure white #FFFFFF on transparent background, Roblox RIVALS style: a chunky magnifying glass, a thick ring with a short fat rounded handle pointing down-right, and a small four-point sparkle inside the lens near the top-left, solid fill, no outline, centred, 8% padding, PNG. No text.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-a62a9cf9-325c-4d43-9d4b-021d45ff4248.png"
+  },
+  {
+    "name": "row_texture.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a 3x3 checkerboard, white squares at the four corners and the centre, transparent squares between, the outer corners rounded.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-05c4bc40-4770-4a39-ab62-50d46a7e32ea.png"
+  },
+  {
+    "name": "row_wraps.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: an unrolled sheet of wrapping material: a wide curled sheet with a wavy top edge, rolled into a tube at the bottom-left.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-978fd1dc-6a2a-4f01-9240-626698250891.png"
+  },
+  {
+    "name": "row_damage.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a cartoon explosion burst, a wide jagged crown of 5-7 uneven spikes with a notch at the bottom centre like an inner flame.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-542ffb2f-f26d-44c9-a33d-e02bad468150.png"
+  },
+  {
+    "name": "row_crouch.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a blocky Roblox-style figure crouching on one knee, with a thick downward arrow on its left.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-edadde1e-6112-4bda-a241-d24cd6f80070.png"
+  },
+  {
+    "name": "row_sprint.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a chunky sneaker in side view facing right, with three horizontal speed lines trailing behind it.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-cf623546-764f-4665-8f36-fda4ef3df3fb.png"
+  },
+  {
+    "name": "row_slide.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a blocky Roblox-style figure sliding feet-first, leaning back, with a thick right-pointing arrow above its legs.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-3ecd2ced-993c-4d99-b2d0-8e276aee3c25.png"
+  },
+  {
+    "name": "row_quickattack.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a spiral swoosh curling up at the right end, trailing a dashed motion line to the left.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-d59d7612-4f36-4ac4-82e9-4a912e78e50c.png"
+  },
+  {
+    "name": "row_hidehud.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: an eye (almond outline with a round pupil) inside a thick rounded-square frame.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-f19c9b61-5135-4442-b67e-6646ff51703b.png"
+  },
+  {
+    "name": "row_weaponpicker.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a blocky M16-style assault rifle tilted 45°, muzzle up-left, with two short motion ticks at the stock.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-6995bb00-cb4d-4ee2-aab3-d5308c6942bf.png"
+  },
+  {
+    "name": "hk_reload.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a thick circular arc open at the top right with an arrowhead, three upright bullets standing inside the arc.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-cb0b338b-2f72-423c-95c3-133d375ea47f.png"
+  },
+  {
+    "name": "hk_quickmelee.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a chunky fist punching right, with three speed lines streaking behind it to the left.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-a3cda2ef-9517-49b5-bd64-5afe0d297eef.png"
+  },
+  {
+    "name": "hk_quickutility.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D settings-menu icon, pure white #FFFFFF solid silhouette on transparent background, Roblox RIVALS style, chunky blocky shapes, no outline, no text, centred, 8% padding, PNG: a round grenade with its top lever tilted, a small spark at the top.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-490302e9-98ea-437f-9051-5a56f4cb121c.png"
+  },
+  {
+    "name": "pad_R2.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF trapezoid trigger shape, wider at the top, rounded corners with the bold black #111111 label 'R2' in a rounded heavy sans-serif (Fredoka-like), centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-ee921ee8-846a-48bd-b11c-91055cedf160.png"
+  },
+  {
+    "name": "pad_L2.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF trapezoid trigger shape, wider at the top, rounded corners with the bold black #111111 label 'L2' in a rounded heavy sans-serif (Fredoka-like), centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-31f1897f-a56a-4610-9ab3-e7f7ff4e9c50.png"
+  },
+  {
+    "name": "pad_R3.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF stick cap with a small downward triangle above with the bold black #111111 label 'R3' in a rounded heavy sans-serif (Fredoka-like), centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-63bf4ded-6134-4c06-a893-7fa040760583.png"
+  },
+  {
+    "name": "pad_A.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF filled circle with the bold black #111111 label 'A' in a rounded heavy sans-serif (Fredoka-like), centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-a829cb50-7d47-4ef4-abc5-fdfe858bea03.png"
+  },
+  {
+    "name": "pad_X.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF filled circle with the bold black #111111 label 'X' in a rounded heavy sans-serif (Fredoka-like), centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-273cf27c-2d6e-457b-95ba-f8169f52aaa1.png"
+  },
+  {
+    "name": "pad_Y.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF filled circle with the bold black #111111 label 'Y' in a rounded heavy sans-serif (Fredoka-like), centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-bde061e0-e781-4523-9b4c-a57a909759bd.png"
+  },
+  {
+    "name": "pad_dpad_up.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF plus-shaped d-pad with the up arm darker grey with no text, centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-7360cdcb-6505-4ad7-8a5b-566ab6c9fa40.png"
+  },
+  {
+    "name": "pad_dpad_down.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF plus-shaped d-pad with the down arm darker grey with no text, centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-8420d6d4-322c-4346-ba3d-f723f30d3afc.png"
+  },
+  {
+    "name": "pad_dpad_left.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF plus-shaped d-pad with the left arm darker grey with no text, centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-77c8fd52-4d58-4d18-9491-47dbd162aace.png"
+  },
+  {
+    "name": "pad_dpad_right.png",
+    "width": 256,
+    "height": 256,
+    "alpha": true,
+    "prompt": "Flat 2D controller button glyph, Roblox RIVALS hotkey style: a solid white #FFFFFF plus-shaped d-pad with the right arm darker grey with no text, centred, no outline, no shadow, transparent background, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-2ad98b61-598b-4d7c-b0a9-2520924d78e2.png"
+  },
+  {
+    "name": "kit_locked_sparkles.png",
+    "width": 512,
+    "height": 512,
+    "alpha": true,
+    "prompt": "Flat 2D overlay, pure white #FFFFFF on transparent background: three four-point sparkle stars (✦) of different sizes, scattered around the edges (big at the top-left, medium at the right, small at the bottom), leaving the centre empty for a padlock, solid fill, no outline, PNG.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-ddc038ba-16aa-4341-97f0-46c5fda6fd13.png"
+  },
+  {
+    "name": "play_card_1v1.png",
+    "width": 1024,
+    "height": 640,
+    "alpha": false,
+    "prompt": "Use case: stylized-concept. A game-mode card illustration, 1024x640, fully opaque, in the style of RIVALS' gamemode cards. A first-person view: a big chunky blocky toy pistol in the foreground at the bottom right, held by a blocky arm. Inside a clean white-lavender boxy arena of large tiles, 1 blocky Roblox-style enemy drawn as flat solid red #E0212B silhouettes holding rifles. A strong pink-purple colour wash over everything, soft light, room for a big white title in the centre-left. No text, logos or watermark.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-197be3c3-09c8-43e3-b2b1-9b455e78da8d.png"
+  },
+  {
+    "name": "play_card_2v2.png",
+    "width": 1024,
+    "height": 640,
+    "alpha": false,
+    "prompt": "Use case: stylized-concept. A game-mode card illustration, 1024x640, fully opaque, in the style of RIVALS' gamemode cards. A first-person view: a big chunky blocky toy pistol in the foreground at the bottom right, held by a blocky arm. Inside a clean white-lavender boxy arena of large tiles, 2 blocky Roblox-style enemies drawn as flat solid red #E0212B silhouettes holding rifles. A strong pink-purple colour wash over everything, soft light, room for a big white title in the centre-left. No text, logos or watermark.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-3896881a-d2a9-4949-a5b9-25bb53698b37.png"
+  },
+  {
+    "name": "play_card_3v3.png",
+    "width": 1024,
+    "height": 640,
+    "alpha": false,
+    "prompt": "Use case: stylized-concept. A game-mode card illustration, 1024x640, fully opaque, in the style of RIVALS' gamemode cards. A first-person view: a big chunky blocky toy pistol in the foreground at the bottom right, held by a blocky arm. Inside a clean white-lavender boxy arena of large tiles, 3 blocky Roblox-style enemies drawn as flat solid red #E0212B silhouettes holding rifles. A strong pink-purple colour wash over everything, soft light, room for a big white title in the centre-left. No text, logos or watermark.",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16221-f93b-7d42-9f8b-fb62efed39cb\\exec-62f39fcd-8f15-4eeb-99aa-e8df7391a8a1.png"
+  }
+]

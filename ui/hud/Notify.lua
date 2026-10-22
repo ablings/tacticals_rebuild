@@ -25,7 +25,7 @@ Notify.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134
 
 -- (2026-10-21, AI-tells cleanup) Builder Sans -> Oswald Bold (titles, counts) / Rubik SemiBold (sub lines, chips, tips);
 -- the check / done colour is field green #8DBF5A (was the #FFD400 yellow), the reward icon cream #ECE6D2
-local FX = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FX = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local GREEN = Color3.fromRGB(141, 191, 90) -- field green: done
 local GREY = Color3.fromRGB(190, 190, 194)

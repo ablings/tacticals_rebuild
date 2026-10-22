@@ -35,7 +35,7 @@ local GOOD, BAD = Color3.fromRGB(141, 191, 90), Color3.fromRGB(235, 70, 60) -- (
 -- (2026-10-21, AI-tells cleanup) Oswald Bold headlines / numbers, Rubik body (was Montserrat Heavy + Builder Sans); no hairline
 -- panel borders, no left accent bars.
 -- The SERIOUS pass at the end of this script applies it to everything (it replaced the comic style D pass).
-local FX = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FX = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local STENCIL = FX
 
@@ -361,7 +361,7 @@ specHow.TextXAlignment = Enum.TextXAlignment.Left
 -- block (no hairline border), a big chevron and a cream key badge like the hotbar's. Built in a function (200-locals limit);
 -- clicks are wired to cycle() below it and Kit.bindButton gives them the press squash (after `stats`).
 local specPrev, specNext = (function()
-	local OSW = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+	local OSW = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 	local function arrow(name, x, chev, key, badgeX)
 		local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, 16), Size = UDim2.fromOffset(78, 88),
 			BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, ZIndex = 3, Parent = specBar }, { corner(10) })

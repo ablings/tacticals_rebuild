@@ -386,7 +386,7 @@ local function abilityHud()
 	takedown.Position = UDim2.fromScale(0.5, 0.4)
 	takedown.Size = UDim2.fromScale(0.4, 0.09)
 	takedown.TextScaled = true
-	takedown.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Builder Sans
+	takedown.FontFace = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Builder Sans
 	takedown.Text = "TAKEDOWN"
 	takedown.TextColor3 = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) label: yellow -> cream
 	takedown.Visible = false
@@ -471,7 +471,7 @@ do
 	end)
 	-- (2026-10-21, AI-tells cleanup) GOLD (Bat fully charged = ready) is field green now, name kept; FONT is Oswald Bold
 	local GOLD, GREEN, RED, CYAN = Color3.fromRGB(141, 191, 90), Color3.fromRGB(90, 190, 255), Color3.fromRGB(235, 70, 60), Color3.fromRGB(120, 220, 255)
-	local FONT = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+	local FONT = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 	local items -- built lazily inside the ability layer
 	local function corner(o) local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = o end
 	-- a rounded labelled bar: { box, fill, label }

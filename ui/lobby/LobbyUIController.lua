@@ -43,7 +43,7 @@ local THEME = {
 	Bad = UC.Danger,
 	Robux = UC.Go,
 	-- (2026-10-21, AI-tells cleanup) Gotham -> Oswald Bold headings / Rubik body; Font objects, set as FontFace
-	Title = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold),
+	Title = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold),
 	Bold = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold),
 	Body = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium),
 }

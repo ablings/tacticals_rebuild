@@ -5,7 +5,7 @@
 local Players=game:GetService("Players") local RunService=game:GetService("RunService") local PPS=game:GetService("ProximityPromptService") local TS=game:GetService("TweenService")
 local plr=Players.LocalPlayer
 local map=workspace:WaitForChild("LobbyMap") local folder=map:WaitForChild("Labels",30)
-local TITLE=Font.new("rbxasset://fonts/families/Oswald.json",Enum.FontWeight.Bold) local BOLD=Font.new("rbxassetid://12187365977",Enum.FontWeight.Bold) local BODY=Font.new("rbxassetid://12187365977",Enum.FontWeight.Medium)
+local TITLE=Font.new("rbxasset://fonts/families/Rubik.json",Enum.FontWeight.Bold) local BOLD=Font.new("rbxassetid://12187365977",Enum.FontWeight.Bold) local BODY=Font.new("rbxassetid://12187365977",Enum.FontWeight.Medium)
 local CREAM=Color3.fromRGB(236,230,210) local INK=Color3.fromRGB(10,12,10) local LIP=Color3.fromRGB(4,5,4)
 local ACC={Teal=Color3.fromRGB(141,191,90),Magenta=CREAM,Violet=Color3.fromRGB(226,210,172)} -- attribute names kept from the map
 local ACCLIP={Teal=Color3.fromRGB(76,122,46),Magenta=Color3.fromRGB(150,140,112),Violet=Color3.fromRGB(150,132,92)}

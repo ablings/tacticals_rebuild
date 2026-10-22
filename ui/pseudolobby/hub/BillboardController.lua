@@ -14,7 +14,7 @@ local BillboardController = {}
 
 local PPS = 18 -- SurfaceGui pixels per stud
 -- (2026-10-21, AI-tells sweep) Oswald Bold for the big ad words, Rubik Bold for sub lines / the ticker (was GothamBlack / GothamBold)
-local HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local HEAD = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local BODY = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 
 local SLIDES = {

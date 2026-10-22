@@ -1183,7 +1183,7 @@ function Kit.streak(parent, n, pos, size, z)
 	local f = new("ImageLabel", { Name = "Streak", BackgroundTransparency = 1, Image = img, ImageColor3 = tint,
 		ScaleType = Enum.ScaleType.Fit, Position = pos or UDim2.fromScale(0, 0), Size = size or UDim2.fromScale(1, 1), ZIndex = z or 3, Parent = parent },
 		{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
-	local l = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = tostring(n or 0), FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold), -- (2026-10-21: no Builder Sans)
+	local l = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = tostring(n or 0), FontFace = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold), -- (2026-10-21: no Builder Sans)
 		TextScaled = true, TextColor3 = Color3.new(1, 1, 1), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.64), Size = UDim2.fromScale(0.7, 0.5),
 		ZIndex = (z or 3) + 1, Parent = f })
 	new("UIStroke", { Thickness = 2.5, Transparency = 0, Color = Color3.fromRGB(240, 70, 30), Parent = l }) -- (2026-10-20) RIVALS: a thick orange-red edge on the number

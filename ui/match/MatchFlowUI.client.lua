@@ -62,7 +62,7 @@ TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
 -- is a warm white; team colours (beige / green) only as accents
 -- (2026-10-21, RIVALS pass) Edward's final font decision: headings / big words / numbers in Oswald Bold (was Montserrat Heavy),
 -- small / body text in Rubik (FR). (2026-10-21, AI-tells cleanup) FB is Rubik Bold now (was Builder Sans).
-local FX = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FX = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local FR = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local STENCIL = FX

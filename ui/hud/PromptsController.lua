@@ -17,7 +17,7 @@ local player = Players.LocalPlayer
 
 -- (2026-10-21, RIVALS pass) the game's font decision (Edward): Oswald Bold for the big action word and the key, Rubik for the
 -- small object line (was Builder Sans ExtraBold / Medium)
-local F_ACTION = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local F_ACTION = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local F_OBJECT = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
 local BONE, FIELD, DEEP, OLIVE = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(12, 14, 11), Color3.fromRGB(141, 191, 90)
 -- (2026-10-21, AI-tells cleanup) OLIVE = the hold-bar fill: field green #8DBF5A (was comic yellow 255,212,0, low contrast on cream)

@@ -95,7 +95,7 @@ end
 --   * Every size in Scale.
 -- (2026-10-21, AI-tells cleanup) no Builder Sans: headings, keys, words and numbers in Oswald Bold (F_HEAVY / F_BODY);
 -- the radio subtitle line and the small captions in Rubik (F_BOLD)
-local F_HEAVY = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local F_HEAVY = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local F_BODY = F_HEAVY -- the fade title card
 local F_BOLD = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells) Rubik Bold, the house body weight
 -- (round 2, graders) one accent system: amber = do this, olive = done (never mint), red = the enemy only

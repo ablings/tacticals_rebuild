@@ -16,7 +16,7 @@ local VIOLET = Color3.fromRGB(150, 116, 52) -- (2026-10-21, AI-tells cleanup) ra
 -- [PolishDuels] team colours match the floor: team A cream, team B olive
 local TEAM_A, TEAM_B = Color3.fromRGB(236, 232, 218), Color3.fromRGB(157, 176, 90) -- (2026-10-20, Edward) olive back
 -- (2026-10-21, RIVALS pass) the game's font decision (Edward): Oswald Bold for big words / numbers (was Montserrat Heavy)
-local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local OSWALD = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local SHADOW = Color3.fromRGB(8, 9, 7) -- the cards' offset shadow block
 local BOARD_W, BOARD_H = 11, 6 -- billboard size in studs (R = W / H converts X-scale thickness to Y-scale)
 

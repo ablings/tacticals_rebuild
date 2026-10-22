@@ -26,7 +26,7 @@ local player = Players.LocalPlayer
 local RUBIK = "rbxassetid://12187365977"
 local F_NAME = Font.new(RUBIK, Enum.FontWeight.Bold)
 local F_SUB = Font.new(RUBIK, Enum.FontWeight.Medium)
-local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, RIVALS pass) Edward's final font decision: Oswald Bold headings (Montserrat read as AI-made)
+local F_HEAD = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold) -- (2026-10-21, RIVALS pass) Edward's final font decision: Oswald Bold headings (Montserrat read as AI-made)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
 local OLIVE, OLIVE_HI, GOLD = hex("#4C7A2E"), hex("#8DBF5A"), hex("#E9C46A")
 

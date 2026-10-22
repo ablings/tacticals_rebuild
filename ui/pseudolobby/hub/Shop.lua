@@ -45,7 +45,7 @@ local C = {
 }
 -- (2026-10-21, AI-tells sweep) Oswald Bold titles, Rubik body (was Gotham SSm)
 local F = {
-	Title = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold),
+	Title = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold),
 	Bold = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold),
 	Body = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium),
 }

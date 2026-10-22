@@ -87,7 +87,7 @@ local function build()
 		l.Text = str
 		l.TextScaled = true
 		l.TextColor3 = color
-		l.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", weight)
+		l.FontFace = Font.new("rbxasset://fonts/families/Rubik.json", weight)
 		local st = Instance.new("UIStroke"); st.Thickness = 3; st.Transparency = 0.2; st.Parent = l
 		l.Parent = canvas
 		return l

@@ -228,7 +228,7 @@ local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in you
 local BONE = Color3.fromRGB(255, 255, 255)
 -- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) soft text edges; the held tile is the lighter one.
 -- (2026-10-21, AI-tells cleanup) Oswald Bold (was Montserrat Heavy); no hairline tile edge, only a thick (3) white ring on the held tile
-local STENCIL = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local STENCIL = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local INK_YELLOW = Color3.fromRGB(255, 255, 255) -- (2026-10-20, Edward: the bottom HUD in white, not yellow; name kept)
 local UIKitFolder = ReplicatedStorage:WaitForChild("UIKit")
 local Kit = require(UIKitFolder:WaitForChild("Kit"))

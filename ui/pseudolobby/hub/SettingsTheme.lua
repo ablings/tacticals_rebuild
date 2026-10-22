@@ -41,7 +41,7 @@ Theme.gradient = {
 -- Headings in Oswald (condensed, stencil-like); labels and body copy in Rubik (cloud font
 -- 12187365977) at the weights the practice screens were tuned to.
 local RUBIK = "rbxassetid://12187365977"
-local OSWALD = "rbxasset://fonts/families/Oswald.json" -- (2026-10-21: back from Montserrat, the "AI UI" font)
+local OSWALD = "rbxasset://fonts/families/Rubik.json" -- (2026-10-21: back from Montserrat, the "AI UI" font)
 Theme.font = {
 	display = Font.new(OSWALD, Enum.FontWeight.Bold),
 	heavy = Font.new(RUBIK, Enum.FontWeight.SemiBold),

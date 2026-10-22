@@ -35,7 +35,7 @@ local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local OLIVE = Color3.fromRGB(236, 230, 210)                                               -- (2026-10-21, AI-tells cleanup) hover edge accent: yellow -> cream
 local AMBER = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) the TRIAL label: yellow-amber -> cream (name kept)
 -- (2026-10-21, AI-tells cleanup) Oswald Bold headings / names, Rubik for the small tab captions (was Builder Sans)
-local FONT_H = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FONT_H = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local FONT_B = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local TITLE = "Try out any weapon here for free!"
 local TRIAL_ATTR = { Weapon = "TrialWeapon", Gadget = "TrialGadget", Melee = "TrialMelee" }

@@ -12,7 +12,7 @@ local Tooltip = {}
 -- (2026-10-21, AI-tells + RIVALS) RIVALS' hover bubble: a light pill with dark words (t0024), the same cream bubble as the Kit.
 -- Was a dark glass card with a 1.5 px border, round corners and an amber bar down the left edge (all three AI-UI tells).
 local CREAM, TAN, INK = Color3.fromRGB(236, 232, 218), Color3.fromRGB(176, 164, 132), Color3.fromRGB(20, 22, 18)
-local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local OSWALD = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
 local RUBIK = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
 local DELAY = 0.35
 local MAX_W = 280
