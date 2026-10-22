@@ -392,7 +392,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	-- amber edge to stay legible)
 	stroke(txt, math.clamp(h * 0.035, 1.5, 2.5), isRobux and 0.55 or 0.4)
 	txt:FindFirstChildOfClass("UIStroke").Color = isRobux and Color3.fromRGB(46, 120, 18) or Color3.fromRGB(160, 110, 0)
-	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or (Kit.ICONS and Kit.ICONS.scissors) or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit, -- (round 3, grader B: RIVALS' tag currency is a flat white glyph)
+	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or (Kit.ICONS and (Kit.ICONS.scissorsWhite or Kit.ICONS.scissors)) or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit, -- (round 3, grader B: RIVALS' tag currency is a flat white glyph)
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(isz / w, isz / h), ZIndex = z + 1, Visible = live.text == nil, Parent = row })
 	-- Robux glyph left of the number, the scissors right of it (RIVALS' key button: "5 [key]"); Rubik ExtraBold digits ~0.64 em
 	local function place(text)

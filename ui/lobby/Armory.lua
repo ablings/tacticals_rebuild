@@ -2208,6 +2208,11 @@ local function renderInfo()
 		-- "Level up now!" + the yellow button. Tacticals has no paid level-up: the button shows the XP still to earn and shakes
 		cardRow(lvl, 44, "up", maxed and "Max level!" or "Level up now!", nil)
 		local up = bigButton(lvl, 217, 42, nil, maxed and "grey" or "key")
+		-- (round 4, grader C vs t0051) RIVALS' key button runs a saturated (252,246,90) -> (241,208,17) so the white price + glyph read
+		if not maxed then
+			local ug = up:FindFirstChildOfClass("UIGradient")
+			if ug then ug.Color = ColorSequence.new(Color3.fromRGB(252, 246, 90), Color3.fromRGB(241, 208, 17)) end
+		end
 		-- (2026-10-22, the approved scissors economy; the lead's Request "LevelUpItem"(itemId)) RIVALS' "Level up now!" is a real buy:
 		-- 9 keys there, 1,000 scissors here. The button shows the price + scissors; one press asks the server, a refusal shakes it.
 		local LEVEL_UP_PRICE = 1000
@@ -2215,7 +2220,7 @@ local function renderInfo()
 			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(6, 8), Size = UDim2.fromOffset(maxed and 99 or 66, 36), ZIndex = 7, Parent = up }), 1.5, 0.6)
 		mk("UITextSizeConstraint", { MaxTextSize = 32, Parent = upL })
 		if not maxed then
-			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissors, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' flat white key)
+			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissorsWhite or Kit.ICONS.scissors, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' flat white key)
 				Position = UDim2.fromOffset(72, 8), Size = UDim2.fromOffset(32, 32), ZIndex = 7, Parent = up })
 		end
 		Kit.bindButton(up, { hover = 1.05, press = 0.92 })
@@ -2774,9 +2779,9 @@ local function renderBottom()
 		-- ~46 px (grey), Leave is gen.kit_leave_x (coloured, ~84 px, it breaks out of its disc)
 		-- (2026-10-22, RIVALS 16:9) fainter discs (0.66, was 0.45)
 		mk("Frame", { Name = "Disc", BackgroundColor3 = BLACK, BackgroundTransparency = 0.66, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromOffset(50, 27), Size = UDim2.fromOffset(85, 85), ZIndex = 5, Parent = b }, { circle() }) -- (round 2-3, grader A vs t0058: discs ~85, raised 13 so the bar cuts them at ~0.42)
+			Position = UDim2.fromOffset(50, 50), Size = UDim2.fromOffset(85, 85), ZIndex = 5, Parent = b }, { circle() }) -- (rounds 2-4, grader A vs t0058: discs ~85; the bar cuts them at ~0.42, labels over their lower fifth)
 		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 85 or 44, COL.Empty, 6)
-		g.Position = UDim2.fromOffset(50, 27)
+		g.Position = UDim2.fromOffset(50, 50)
 		if c.Id ~= "Leave" then slotRings[c.Id] = b end
 		local lbl = text({ Text = c.Label, FontFace = FB, TextSize = 22, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-20, 66),
 			Size = UDim2.fromOffset(140, 38), ZIndex = 7, Parent = b })

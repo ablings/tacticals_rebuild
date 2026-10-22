@@ -593,7 +593,7 @@ local GRID_H = 556
 local CORNER = 8 -- small rounded corners (live capture; 2026-10-22 round 0: RIVALS ~8, was 6)
 local SHADE = 0.7 -- RIVALS: bright art under a 30 % black shade; hover lifts it to 0.95 (the picture brightens)
 -- (2026-10-21, port3) titles ~15 % bigger (RIVALS' "1v1" box ~7.4 % of the screen height): 100 -> 115, 88 -> 101
-local TITLE, WIDE_TITLE = 115, 81 -- (round 3, grader A vs t0016: bottom-row titles fill <= 50 % of the tile, was 101)
+local TITLE, WIDE_TITLE = 107, 107 -- (round 4, grader A vs t0016: both rows one size (4v4 = 1v1), all x0.93; r3's 81 was wrong)
 -- the gradient behind each 3D set shows as the sky over its back wall: Theme blue (ranked: Theme key gold)
 -- (2026-10-21, port3) graders: Training / Duel Pads / Ranked must share the 1v1-3v3 cards' grade (pink highlights, purple
 -- mids; sampled from gen.play_card_*: ~#FC96F8 / #AA64E6). Every 3D tile now uses that sky, its lighting and a wash (grade()).

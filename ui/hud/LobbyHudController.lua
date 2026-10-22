@@ -706,7 +706,9 @@ function LobbyHud.Start()
 
 	-- the 3D scissors in the pill (the same view icon as the shop's balance pill)
 	local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
-	ViewIcons.Icon(iconHolder, "Scissors", { hoverTarget = pill, zoom = 1.15 })
+	-- (round 4, grader B: RIVALS' counter key is a solid glyph, ours a hairline 3D outline) the filled red scissors
+	new("ImageLabel", { BackgroundTransparency = 1, Image = Kit.ICONS.scissorsReward or "", ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.86, 0.86), ZIndex = 3, Parent = iconHolder })
 
 	---------------------------------------------------------------------------------------------- data
 	local data
@@ -891,7 +893,7 @@ function LobbyHud.Start()
 			if what == "_Scissors" then
 				-- (2026-10-22, section round 1, grader C) the bright scissors render Missions uses (RIVALS' key render); the 3D model drew ~40 %
 				-- dimmer on the see-through widget
-				new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://120480559804238", ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1),
+				new("ImageLabel", { BackgroundTransparency = 1, Image = Kit.ICONS.scissorsReward or "rbxassetid://120480559804238", ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1),
 					ZIndex = 5, Parent = h2 })
 			elseif what == "_Check" then
 				local icons = ReplicatedStorage:FindFirstChild("UIIcons")

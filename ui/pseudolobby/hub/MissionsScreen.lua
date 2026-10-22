@@ -27,7 +27,7 @@ local FB = Font.new(F.heavy.Family, Enum.FontWeight.Bold)
 local FM = F.medium
 local BLACK = C.textDark
 
-local SCISSORS = "rbxassetid://120480559804238" -- (2026-10-21, RIVALS 1:1) the bright scissors render (RIVALS' key render)
+local SCISSORS = (Kit.ICONS and Kit.ICONS.scissorsReward) or "rbxassetid://120480559804238" -- (2026-10-21, RIVALS 1:1) the bright scissors render (RIVALS' key render)
 local A = RA.tasks or {}
 local ROW = RA.rowIcon or {}
 local ICONS = Kit.ICONS or {}
@@ -72,7 +72,7 @@ local CARD_W, CARD_H = 243, 242
 local CARD_X = { 44, 293, 542 } -- (2026-10-22, section round 1, grader C vs tasks.png: 6 px gaps, were 4)
 local HEAD_H, ROW_H, ROW_PAD = 82, 62, 40
 local SORTS = { "Default", "Near Completion" }
-local sortBy = SORTS[1]
+local sortBy = SORTS[2] -- (round 4, grader C: RIVALS opens on "Near Completion")
 
 local function commas(n)
 	local str = tostring(math.floor(tonumber(n) or 0))
@@ -360,7 +360,7 @@ local function dailyPanel(order)
 		local claimed = Players.LocalPlayer:GetAttribute("LoginClaimed") == true
 		local okR, rewards = pcall(function() return game:GetService("HttpService"):JSONDecode(game:GetService("ReplicatedStorage"):GetAttribute("LoginRewards") or "[]") end)
 		rewards = (okR and type(rewards) == "table" and #rewards > 0) and rewards or { 50, 50, 100, 100, 150, 150, 400 }
-		local y0 = top + CARD_H + 50
+		local y0 = top + CARD_H + 59 -- (round 4, grader A: the rule 9 lower, the circles stay)
 		for k = 0, math.floor((COL_W - 80) / 14) do
 			new("Frame", { BackgroundColor3 = C.textDim, BackgroundTransparency = 0.5, BorderSizePixel = 0, Position = UDim2.fromOffset(40 + k * 14, y0), Size = UDim2.fromOffset(5, 5),
 				Parent = p }, { RK.corner(3) })
@@ -371,7 +371,7 @@ local function dailyPanel(order)
 		local D, STEP = 84, 108
 		local x0 = (COL_W - (6 * STEP + D)) / 2
 		for d = 1, 7 do
-			local cx, cy = x0 + (d - 1) * STEP, y0 + 44
+			local cx, cy = x0 + (d - 1) * STEP, y0 + 35
 			if d < 7 then
 				new("Frame", { Name = "Link" .. d, BackgroundColor3 = C.track, BackgroundTransparency = 0.3, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 0.5),
 					Position = UDim2.fromOffset(cx + D, cy + D / 2), Size = UDim2.fromOffset(STEP - D, 2), Parent = p })
@@ -393,7 +393,7 @@ local function dailyPanel(order)
 					Position = UDim2.fromOffset(0, 26), Size = UDim2.fromOffset(D, 48), ZIndex = 2, Parent = circle })
 			else
 				new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
-					Position = UDim2.fromScale(0.5, 0.46), Size = UDim2.fromOffset(math.floor(D * 0.7), math.floor(D * 0.7)), ZIndex = 3, Parent = circle })
+					Position = UDim2.fromScale(0.5, 0.45), Size = UDim2.fromOffset(math.floor(D * 0.62), math.floor(D * 0.62)), ZIndex = 3, Parent = circle })
 				local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 20, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0),
 					Position = UDim2.fromOffset(D / 2, math.floor(D * 0.58)), Size = UDim2.fromOffset(D, 24), ZIndex = 4, Parent = circle })
 				RK.textStroke(1.5).Parent = n
@@ -428,7 +428,7 @@ local function contractsPanel(order)
 			local target = tiers[paidTiers + 1]
 			if target and (item.Slot == "Weapon" or item.Slot == "Melee") and (owned or kills > 0) then
 				local def = { Id = "W_" .. id .. "_" .. (paidTiers + 1), Stat = "Kills", Goal = target.Kills, Reward = target.Reward, Prog = kills,
-					Text = (item.Name or id) .. " • Eliminations", Short = item.Name or id, White = true }
+					Text = (item.Name or id) .. "  •  Eliminations", Short = item.Name or id, White = true }
 				table.insert(rows, { entry = { Id = def.Id, Base = 0 }, def = def, frac = math.clamp(kills / target.Kills, 0, 1), i = #rows + 1, name = item.Name or id })
 			end
 		end
