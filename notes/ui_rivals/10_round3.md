@@ -196,3 +196,32 @@ File: `ui/lobby/Armory.lua` only. Not run in Studio; checked by block / bracket 
   Settings tab icons popping above the bar (RIVALS' posed tab renders do the same).
 - Not captured (needs clicks in Studio, which were not granted): the Kit cosmetic picker and hover states. Check these by hand.
 - Still open: the own nameplate shows over the Kit character view (from before this round).
+
+## Leaderboard board (2026-10-21)
+- `ui/pseudolobby/hub/LeaderboardScreen.lua` rewritten after RIVALS' lobby board (06_leaderboards changes 1-5). Same part, Front face, 940x580 canvas; all Position/Size in Scale.
+- Tabs Wins / Elims / Streak / Level (Kit.ICONS lb* flat icons, tinted), red LIVE pill that pulses. A tab shows only once its StringValue
+  (`LobbyTopWins/Kills/Streak/Level`) exists; late values attach via ChildAdded. Selected tab is cream with dark text, others dark plates.
+- Auto-cycle every 8 s (slide left + fade out, in from the right; the content is one CanvasGroup). Tabs are clickable (SurfaceGui in PlayerGui); a click pauses the cycle 20 s.
+- #1 hero row: cream plate with a tan lip, yellow "1" badge (the only #FFD400), 100 px headshot, name, big number, unit (Level: "LV n" + "x XP").
+  #2-#10 in two columns: rank, 44 px headshot, name, number right-aligned. Own row = field-green gradient with dark text. Empty -> "No one yet - be the first!".
+- Numbers count up (NumberValue tween; from 0 on a category change, from the old value on refresh); rows pop in staggered (UIScale Back) on a change, and on refresh only rows whose player changed pop.
+- Look: Oswald Bold / Rubik, chunky plates with a darker offset lip, no UIStroke, no accent bar, no Gotham. Brightness 1.25 (was 1.5) so the cream does not bloom.
+- Check in Studio: CanvasGroup fade on a SurfaceGui (blurry text at 940x580?), icon tint on cream tabs, long names shrinking in rows, the LIVE pill size (100x38), hero headshot load.
+
+## Auto-pay (2026-10-21)
+- The server now pays every finished Daily / Weekly task by itself (`fix/quest_autopay.lua`: on join and every ~3 s, through the
+  ClaimQuest handler, which sets `Claimed` and fires Notify's "Task Completed / You've earned xN Scissors!" banner). The UI follows RIVALS: no CLAIM click.
+- Client state: `data.Quests[scope] = { Key, List = { { Id, Base, Claimed } } }`, progress = `data.Stats[def.Stat] - Base`. Both files now treat a
+  task as done when `Claimed` OR progress >= Goal, and a paid task always reads full (a stat reset cannot un-fill it).
+- `ui/pseudolobby/hub/MissionsScreen.lua`: CLAIM button, card breathe, CLAIM sheen, ReadyStripe, claim handler and the `ClaimQuest` call are gone
+  (TweenService no longer needed). A done card: dark field-green plate, full #8DBF5A -> #4C7A2E bar, green "x / x", title in field green, and a round
+  green check badge (gradient, cream check glyph) in the task glyph's place. Paid: the 3D scissors and "xN" dim and a field-green PAID sits at the bottom.
+  Hover lift now on every card. `seen[scope:period:id]` remembers each task's state/progress: on a live refresh (screen open) the bar grows and the
+  count ticks on from the last shown value, a task that just finished pops its check (Kit.pop), one just paid pops PAID (Kit.popIn) and the reward;
+  `holdUntil` (0.5 s) keeps the next refresh from rebuilding mid-pop. Opening the screen still animates bars/counts from 0 with no pops.
+- `ui/hud/LobbyHudController.lua` (Daily Missions widget only): CLAIM pill gone. Done row: name, full field-green gradient bar, green "x / x" count,
+  the 3D green check in the reward's place; the check pops when the task finishes or its Claimed flips while the HUD is up (`hudFx.paid`).
+- Not changed (outside the widget): the nav Missions badge and its red "Claim your reward!" callout still count done-but-unpaid tasks, so they can
+  flash for up to ~3 s before the payout; LobbyUIController's rail badge (`claimableCount`) likewise. Candidates to remove next.
+- Check in Studio: the check badge reads at 56 px over the card, the PAID tag + dimmed scissors, the pop when a task completes with Missions open
+  (raise a stat with the admin tools), and that the widget's "x / x" fits beside the shortened (186 px) name.

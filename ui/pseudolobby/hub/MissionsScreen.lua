@@ -1,14 +1,14 @@
 -- UIKit/MissionsScreen (ModuleScript): the lobby MISSIONS screen. Layout follows the RIVALS Tasks screen
 -- (ported from rivals_practice/ui/tasks): a centred column of panels, each with task cards (title, icon,
 -- progress bar with the count, reward). Data is tacticals' real quests: data.Quests.Daily / .Weekly,
--- progress = data.Stats[def.Stat] - entry.Base, rewards in scissors, claimed with "ClaimQuest".
+-- progress = data.Stats[def.Stat] - entry.Base, rewards in scissors.
+-- (2026-10-21, auto-pay) the server pays a finished task by itself (~3 s, and on join) and sets entry.Claimed; no CLAIM button.
 -- Design px at 1920x1080, converted to Scale (Kit.toScale) - no Offset on screen.
---   MissionsScreen.Init({ Config, getData, ask, tooltip, onOpen, onClose })
+--   MissionsScreen.Init({ Config, getData, tooltip, onOpen, onClose, openPlay? })
 --   MissionsScreen.Open() / Close() / IsOpen() / Refresh()
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
-local TweenService = game:GetService("TweenService") -- (2026-10-21, RIVALS pass) the looping CLAIM sheen
 
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -27,6 +27,8 @@ local function icon(name)
 	end
 	return ""
 end
+-- (2026-10-21, auto-pay) the done badge's check glyph: the tasks art's check, else the flat cream check (Kit.ICONS)
+local CHECK = icon("check") ~= "" and icon("check") or (Kit.ICONS and Kit.ICONS.check) or ""
 -- which 3D icon each quest stat shows (ViewIcons): a named model, or a real weapon from the Repository
 local STAT_ICON = {
 	Wins = { "Trophy" }, MatchesPlayed = { "DogTags" }, Kills = { "Weapon", "AutoRifle" }, Headshots = { "Weapon", "Sniper" },
@@ -76,22 +78,26 @@ local bars = {}
 local CARD_H = 266 -- (lobby revamp) was 300; (2026-10-21, round 3) 258 -> 266: room for the count under the bar + a bigger reward
 -- (2026-10-21, round 3: match RIVALS) the cards leave the navy-slate C.panelRaised for our dark plate / field-green family
 local CARD_BG = C.plate or Color3.fromRGB(24, 26, 21) -- charcoal-green plate
-local CARD_READY = Color3.fromRGB(34, 52, 24) -- a claimable card is lit dark field green
+local CARD_DONE = Color3.fromRGB(34, 52, 24) -- (2026-10-21, auto-pay) a finished card is lit dark field green (was the claimable card)
 local FIELD, FIELD_DARK = C.field or Color3.fromRGB(141, 191, 90), C.fieldDark or Color3.fromRGB(76, 122, 46)
 
 local PANEL_T = 0.5
 local COL_X, COL_W = 532, 828
 local CARD_X = { 45, 292, 540 }
--- (2026-10-21, RIVALS pass) a claim's check / reward pop must finish before data refreshes rebuild the cards
+-- (2026-10-21, auto-pay) what each task looked like at the last render ([scope:period:id] = { state, prog }), so a task that
+-- finishes or gets paid while the screen is open pops its check / PAID tag and grows its bar, with no click
+local seen = {}
+local pops = {} -- this render's pops, played after Kit.toScale
+-- (2026-10-21, RIVALS pass) a pop must finish before the next data refresh rebuilds the cards
 local holdUntil, renderToken = 0, 0
-local render -- forward: the claim handler re-renders through renderSoon
+local render -- forward: Refresh re-renders through renderSoon
 local function renderSoon()
-	renderToken += 1 -- the latest call wins (a hold shortened after the server answers reschedules)
+	renderToken += 1 -- the latest call wins
 	local token, delay = renderToken, holdUntil - os.clock()
-	if delay <= 0 then render() return end
+	if delay <= 0 then render(true) return end
 	task.delay(delay, function()
 		if token ~= renderToken or not isOpen then return end
-		if os.clock() >= holdUntil then render() else renderSoon() end
+		if os.clock() >= holdUntil then render(true) else renderSoon() end
 	end)
 end
 
@@ -148,101 +154,88 @@ local function reward(parent, amount, size, pos, hoverTarget)
 	return holder
 end
 
-local function taskCard(parent, scope, i, entry, def, x, y)
+local function taskCard(parent, scope, i, entry, def, x, y, period)
 	local data = ctx.getData() or {}
-	local prog = math.clamp(((data.Stats and data.Stats[def.Stat]) or 0) - (entry.Base or 0), 0, def.Goal)
-	local done = prog >= def.Goal
-	local ready = done and not entry.Claimed
+	-- (2026-10-21, auto-pay) done = the progress reached the goal OR the server already paid it (entry.Claimed). A paid task
+	-- always reads full (a stat reset could drop Stats - Base under the goal after the payout).
+	local paid = entry.Claimed == true
+	local prog = paid and def.Goal or math.clamp(((data.Stats and data.Stats[def.Stat]) or 0) - (entry.Base or 0), 0, def.Goal)
+	local done = paid or prog >= def.Goal
+	local state = paid and "paid" or done and "done" or "todo"
+	local key = scope .. ":" .. tostring(period) .. ":" .. def.Id
+	local was = seen[key]
+	seen[key] = { state = state, prog = prog }
 	local card = new("Frame", {
 		Name = scope .. i, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(243, CARD_H),
-		BackgroundColor3 = ready and CARD_READY or CARD_BG, BackgroundTransparency = ready and 0.1 or 0.25, Parent = parent, -- (2026-10-21, round 3) off the navy
+		BackgroundColor3 = done and CARD_DONE or CARD_BG, BackgroundTransparency = 0.25, Parent = parent, -- (2026-10-21, round 3) off the navy
 	}, { Kit.corner(2) })
-	local br = Tac.brackets(card, ready and Tac.C.bone or Tac.C.line, 18, 3)
+	local br = Tac.brackets(card, done and Tac.C.bone or Tac.C.line, 18, 3)
 	-- (2026-10-21, RIVALS pass) the "D-01" / "W-02" id label is gone: RIVALS' cards carry no ids (clean)
-	if ready then new("Frame", { Name = "ReadyStripe", BackgroundColor3 = FIELD, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 6), ZIndex = 2, Parent = card }) end
-	if not entry.Claimed then Tac.hoverBrackets(card, br) end
+	Tac.hoverBrackets(card, br)
+	-- (2026-10-21, RIVALS pass) the card lifts on hover; (2026-10-21, auto-pay) every card now, not only a claimable one.
+	-- A position lift, not a UIScale: the pops below own their parts' UIScales.
+	card.MouseEnter:Connect(function()
+		local home = card:GetAttribute("LiftHome") or card.Position -- (Scale by now: toScale ran after the build)
+		card:SetAttribute("LiftHome", home)
+		Kit.tween(card, 0.12, { Position = home - UDim2.fromScale(0, 6 / (82 + CARD_H + 24)) })
+	end)
+	card.MouseLeave:Connect(function()
+		local home = card:GetAttribute("LiftHome")
+		if home then Kit.tween(card, 0.12, { Position = home }) end
+	end)
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' order top to bottom (t0062): title, task glyph, a wide bar, the "x / y" count
-	-- UNDER the bar (it no longer runs through it), then the reward. Done counts turn field green with a check in front.
+	-- UNDER the bar (it no longer runs through it), then the reward. Done titles and counts turn field green.
 	local title = Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 21, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(10, 12), Size = UDim2.new(1, -20, 0, 44), Parent = card })
 	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromOffset(121, 82), Size = UDim2.fromOffset(200, 50), Parent = card })
-	statIcon(art, def.Stat, card)
+	local badge
+	if done then
+		-- (2026-10-21, auto-pay) RIVALS' done tile: a big green check badge takes the task glyph's place
+		badge = new("Frame", { Name = "DoneCheck", BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(56, 56), ZIndex = 3, Parent = art },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIAspectRatioConstraint", { AspectRatio = 1 }), Kit.vgrad({ FIELD, FIELD_DARK }) })
+		new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK, ImageColor3 = C.cream or Color3.new(1, 1, 1),
+			ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.6, 0.6),
+			ZIndex = 4, Parent = badge })
+		title.TextColor3 = FIELD
+	else
+		statIcon(art, def.Stat, card)
+	end
 	bar(card, UDim2.fromOffset(16, 114), UDim2.fromOffset(211, 16), prog / def.Goal, done)
 	local count = Kit.label({ Text = prog .. " / " .. def.Goal, FontFace = F.display, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center,
 		TextColor3 = done and FIELD or C.cream or Color3.new(1, 1, 1), Position = UDim2.fromOffset(0, 132), Size = UDim2.new(1, 0, 0, 28), ZIndex = 3, Parent = card })
-	if done then
-		title.TextColor3 = FIELD
-		count.Text = "✓  " .. def.Goal .. " / " .. def.Goal -- (the check rides in the text, so long counts can't collide with it)
-	else
-		-- (2026-10-21, round 3: match RIVALS "counters that animate") the count ticks up with its bar when the screen opens
-		bars[#bars].count, bars[#bars].prog, bars[#bars].goal = count, prog, def.Goal
-	end
+	-- (2026-10-21, round 3: match RIVALS "counters that animate") the count ticks up with its bar; (auto-pay) done counts too
+	local b = bars[#bars]
+	b.count, b.prog, b.goal = count, prog, def.Goal
+	if was then b.fromFrac, b.fromProg = was.prog / def.Goal, was.prog end
 	local rewardHolder = reward(card, def.Reward, 62, UDim2.fromOffset(106, 188), card)
-	-- claim strip along the bottom
-	local strip = UDim2.fromOffset(218, 38)
-	if entry.Claimed then
-		-- (2026-10-21, round 3) the claimed state reads as finished, not just dim: a field-green "✓ CLAIMED" on a dark plate
-		Kit.label({ Text = "✓  CLAIMED", FontFace = F.display, TextSize = 24, TextColor3 = FIELD, TextXAlignment = Enum.TextXAlignment.Center,
-			BackgroundTransparency = 0.35, BackgroundColor3 = Color3.new(0, 0, 0),
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -8), Size = strip, Parent = card })
-		card.BackgroundTransparency = 0.6
-	elseif ready then
-		local b = Kit.button("key", strip, "CLAIM")
-		b.AnchorPoint = Vector2.new(0.5, 1)
-		b.Position = UDim2.new(0.5, 0, 1, -8)
-		b.Parent = card
-		-- (2026-10-21, RIVALS pass) ready cards pull the eye: the card breathes (from its centre), a sheen sweeps CLAIM on a
-		-- loop, and the card lifts on hover. A position lift, not a UIScale: one UIScale per object (the breathe owns it).
-		Kit.centreAnchor(card)
-		Kit.breathe(card, 0.03, 1.6)
-		local sheen = new("Frame", { Name = "ClaimSheen", BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 2, Parent = b },
-			{ Kit.corner(3), new("UIGradient", { Rotation = 20, Offset = Vector2.new(-1, 0), Transparency = NumberSequence.new({
-				NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.4, 1), NumberSequenceKeypoint.new(0.5, 0.55),
-				NumberSequenceKeypoint.new(0.6, 1), NumberSequenceKeypoint.new(1, 1) }) }) })
-		TweenService:Create(sheen:FindFirstChildOfClass("UIGradient"), TweenInfo.new(0.9, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, false, 1.1),
-			{ Offset = Vector2.new(1, 0) }):Play()
-		card.MouseEnter:Connect(function()
-			local home = card:GetAttribute("LiftHome") or card.Position -- (Scale by now: toScale ran after the build)
-			card:SetAttribute("LiftHome", home)
-			Kit.tween(card, 0.12, { Position = home - UDim2.fromScale(0, 6 / (82 + CARD_H + 24)) })
-		end)
-		card.MouseLeave:Connect(function()
-			local home = card:GetAttribute("LiftHome")
-			if home then Kit.tween(card, 0.12, { Position = home }) end
-		end)
-		-- (2026-10-21, RIVALS pass) the claim is a moment: squash, busy dots while the server answers, then a check pops
-		-- over the art, the reward punches, the reward sound plays, and only then the cards re-render
-		local claiming = false
-		b.Activated:Connect(function()
-			if claiming then return end
-			claiming = true
-			holdUntil = os.clock() + 15 -- no rebuild while we wait on the server
-			local sc = b:FindFirstChildOfClass("UIScale") -- bindButton's own scale (Kit.button binds it)
-			if sc then Kit.tween(sc, 0.08, { Scale = 0.88 }) end
-			local stopBusy = Kit.busy(b)
-			local r = ctx.ask("ClaimQuest", scope, i)
-			stopBusy()
-			if sc and sc.Parent then Kit.tween(sc, 0.2, { Scale = 1 }, Enum.EasingStyle.Back) end
-			if r and r.ok and card.Parent then
-				local check = new("ImageLabel", { Name = "ClaimCheck", BackgroundTransparency = 1, Image = icon("check"), ImageColor3 = C.cream or Color3.new(1, 1, 1),
-					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 82 / CARD_H), Size = UDim2.fromScale(0.42, 0.42 * 243 / CARD_H), ZIndex = 6, Parent = card },
-					{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
-				Kit.popIn(check)
-				task.delay(0.12, function() if rewardHolder.Parent then Kit.pop(rewardHolder, 1.3) end end)
-				Kit.sfx("reward")
-				holdUntil = os.clock() + 0.65
-			else
-				holdUntil = 0
-				claiming = false
-			end
-			if isOpen then renderSoon() end
-		end)
+	local paidTag
+	if paid then
+		-- (2026-10-21, auto-pay) the reward is already in your scissors: it dims and a field-green PAID sits under it
+		for _, d in rewardHolder:GetDescendants() do
+			if d:IsA("ViewportFrame") then d.ImageTransparency = 0.55
+			elseif d:IsA("TextLabel") then d.TextTransparency = 0.45
+			elseif d:IsA("UIStroke") then d.Transparency = 0.6 end
+		end
+		paidTag = Kit.label({ Text = "PAID", FontFace = F.display, TextSize = 24, TextColor3 = FIELD, TextXAlignment = Enum.TextXAlignment.Center,
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -8), Size = UDim2.fromOffset(218, 30), ZIndex = 3, Parent = card })
+	end
+	-- (2026-10-21, auto-pay) no click: a task that finished while the screen is open pops its check, one the server just paid
+	-- pops its PAID tag and the reward (the "Task Completed" banner itself is Notify's)
+	if was and was.state ~= state then
+		if was.state == "todo" and badge then
+			table.insert(pops, function() Kit.pop(badge, 1.35) end)
+		end
+		if state == "paid" and paidTag then
+			table.insert(pops, function() Kit.popIn(paidTag, 0.1); Kit.pop(rewardHolder, 1.2) end)
+		end
+		holdUntil = os.clock() + 0.5 -- let the pop play before the next refresh rebuilds the cards
 	end
 	-- (2026-10-21, RIVALS pass) no IN PROGRESS strip: the "3 / 5" count already says it (clean)
 	if ctx.tooltip then
 		ctx.tooltip(card, def.Text, function()
-			return done and (entry.Claimed and "Reward collected." or `Done! Claim your {def.Reward} scissors.`)
+			return done and (paid and "Reward collected." or `Done! Your {def.Reward} scissors are on the way.`)
 				or `{def.Goal - prog} to go. Progress comes from matches.`
 		end)
 	end
@@ -282,13 +275,13 @@ local function scopePanel(scope, order, title, iconModel)
 	end
 	for i, entry in ipairs(list) do
 		local def = questDef(scope, entry.Id)
-		if def and CARD_X[i] then taskCard(p, scope, i, entry, def, CARD_X[i], 82) end
+		if def and CARD_X[i] then taskCard(p, scope, i, entry, def, CARD_X[i], 82, q and q.Key) end
 	end
 	return p
 end
 
-function render() -- (forward-declared above renderSoon)
-	bars = {}
+function render(live) -- (forward-declared above renderSoon); live = a data refresh while open, not the open itself
+	bars, pops = {}, {}
 	Kit.restoreModifiers(column)
 	column.AutomaticCanvasSize = Enum.AutomaticSize.Y
 	column.CanvasSize = UDim2.new()
@@ -301,6 +294,17 @@ function render() -- (forward-declared above renderSoon)
 	Kit.label({ Text = "Play matches to fill these up." --[[ (2026-10-21, RIVALS pass) shorter footer ]], FontFace = F.medium, TextSize = 22,
 		TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), Parent = foot })
 	Kit.toScale(root) -- UI rule: everything in Scale
+	if not live then return end
+	-- (2026-10-21, auto-pay) progress made while open: the bar grows and the count ticks on from what was shown, then the pops
+	for _, b in ipairs(bars) do
+		if b.fromFrac and b.fromFrac ~= b.frac and b.fill.Parent then
+			b.fill.Size = UDim2.fromScale(math.clamp(b.fromFrac, 0, 1), 1)
+			Kit.fillTo(b.fill, b.frac, 0.5)
+			local goal = b.goal
+			Kit.countTo(b.count, b.fromProg, b.prog, 0.5, function(n) return math.floor(n + 0.5) .. " / " .. goal end)
+		end
+	end
+	for _, f in ipairs(pops) do f() end
 end
 
 local function build()
@@ -375,6 +379,6 @@ end
 function Screen.Open() setOpen(true) end
 function Screen.Close() if gui then setOpen(false) end end
 function Screen.IsOpen() return isOpen end
-function Screen.Refresh() if isOpen then renderSoon() end end -- (2026-10-21, RIVALS pass) waits for a claim's pop
+function Screen.Refresh() if isOpen then renderSoon() end end -- (2026-10-21, auto-pay) waits for a check / PAID pop
 
 return Screen

@@ -526,7 +526,7 @@ function LobbyHud.Start()
 	local lastRows
 	local shownKitWeapon
 	-- (2026-10-21, RIVALS pass) what the widgets showed last: the scissors count and each mission's bar / done state, so changes animate
-	local hudFx = { credits = nil, frac = {}, done = {} }
+	local hudFx = { credits = nil, frac = {}, done = {}, paid = {} } -- (2026-10-21, auto-pay) + each mission's paid (Claimed) flag
 	local function refresh()
 		if not data then return end
 		-- nav: Missions badge = missions ready to claim; the Kit icon follows your gun
@@ -565,7 +565,8 @@ function LobbyHud.Start()
 				end
 			end)
 		end
-		if call then call:SetAttribute("Want", ready > 0); call.Visible = ready > 0 end
+		-- (2026-10-21, auto-pay) tasks pay out by themselves now, so there is nothing to claim: the callout stays hidden
+		if call then call:SetAttribute("Want", false); call.Visible = false end
 		-- (2026-10-20, RIVALS "alive") the count pops when it goes up
 		local was = tonumber(mb.l.Text) or 0
 		mb.f.Visible = ready > 0; mb.l.Text = tostring(ready)
@@ -595,8 +596,10 @@ function LobbyHud.Start()
 		for i, e in (q and q.List) or {} do
 			local def = questDef("Daily", e.Id)
 			if def then
-				local prog = math.clamp(((data.Stats and data.Stats[def.Stat]) or 0) - (e.Base or 0), 0, def.Goal)
-				table.insert(entries, { def = def, prog = prog, claimed = e.Claimed })
+				-- (2026-10-21, auto-pay) the server pays a finished mission by itself and sets Claimed: a paid mission reads full
+				local claimed = e.Claimed == true
+				local prog = claimed and def.Goal or math.clamp(((data.Stats and data.Stats[def.Stat]) or 0) - (e.Base or 0), 0, def.Goal)
+				table.insert(entries, { def = def, prog = prog, claimed = claimed })
 				key ..= def.Id .. prog .. tostring(e.Claimed)
 			end
 		end
@@ -606,43 +609,42 @@ function LobbyHud.Start()
 		local holder = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(372, 196), ZIndex = 3, Parent = rows })
 		local art = {}
 		local fills = {} -- (2026-10-21, RIVALS pass) bars built at their old fraction, tweened to the new one after toScale
+		local checkPops = {} -- (2026-10-21, auto-pay) checks of missions that just finished / just got paid: popped after toScale
 		local firstBuild = next(hudFx.frac) == nil
 		for i, e in entries do
 			local y = (i - 1) * 64
-			local done = e.prog >= e.def.Goal
+			local done = e.claimed or e.prog >= e.def.Goal
 			local ic = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4, y + 2), Size = UDim2.fromOffset(42, 42), ZIndex = 4, Parent = holder })
 			table.insert(art, { ic, e.def.Stat })
-			local t = Kit.label({ Text = e.def.Short or e.def.Text, FontFace = BOLD, TextSize = 24, TextColor3 = (e.claimed or done) and hex("#D9D6DA") or Color3.new(1, 1, 1),
-				Position = UDim2.fromOffset(50, y), Size = UDim2.fromOffset((done or e.claimed) and 236 or 186, 30), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = holder })
+			local t = Kit.label({ Text = e.def.Short or e.def.Text, FontFace = BOLD, TextSize = 24, TextColor3 = done and hex("#D9D6DA") or Color3.new(1, 1, 1),
+				Position = UDim2.fromOffset(50, y), Size = UDim2.fromOffset(186, 30), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = holder })
 			-- (2026-10-21, round 3: match RIVALS t0000 Daily Tasks) the name stops short of the "n / N" count (a long name ran into it)
 			new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = t })
 			local back = new("Frame", { Position = UDim2.fromOffset(50, y + 34), Size = UDim2.fromOffset(262, 7), BackgroundColor3 = Color3.new(0, 0, 0),
 				BackgroundTransparency = 0.45, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 			local frac = math.clamp(e.prog / e.def.Goal, 0, 1)
 			local wasFrac = hudFx.frac[e.def.Id] or frac
-			local fill = new("Frame", { Size = UDim2.fromScale(wasFrac, 1), BackgroundColor3 = done and Theme.color.field or hex("#ECE8DA"), ZIndex = 5, Parent = back }, -- (2026-10-21, AI-tells cleanup) done = field green, was yellow
+			local fill = new("Frame", { Size = UDim2.fromScale(wasFrac, 1), BackgroundColor3 = done and Color3.new(1, 1, 1) or hex("#ECE8DA"), ZIndex = 5, Parent = back }, -- (2026-10-21, AI-tells cleanup) done = field green, was yellow
 				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			if done then Kit.vgrad({ Theme.color.field, Theme.color.fieldDark }).Parent = fill end -- (2026-10-21, auto-pay) #8DBF5A -> #4C7A2E like the Missions cards
 			local fx = wasFrac ~= frac and { fill, frac, up = frac > wasFrac } or nil
 			if fx then table.insert(fills, fx) end
 			hudFx.frac[e.def.Id] = frac
+			-- (2026-10-21, auto-pay) no CLAIM pill: the check pops when a mission finishes (or the server's payout flips Claimed) on screen
 			local newlyDone = done and not firstBuild and hudFx.done[e.def.Id] == false
+			local newlyPaid = e.claimed and not firstBuild and hudFx.paid[e.def.Id] == false
 			hudFx.done[e.def.Id] = done
-			if done and not e.claimed then
-				-- (2026-10-21, RIVALS pass) done but not claimed: a green CLAIM pill (solid fill on an offset block, no outline) that opens Missions
-				new("Frame", { Name = "ClaimShadow", Position = UDim2.fromOffset(292, y + 8), Size = UDim2.fromOffset(74, 34), BackgroundColor3 = Theme.color.fieldDark,
-					BorderSizePixel = 0, ZIndex = 5, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-				local claim = new("TextButton", { Name = "Claim", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(292, y + 4), Size = UDim2.fromOffset(74, 34),
-					BackgroundColor3 = Theme.color.field, BorderSizePixel = 0, ZIndex = 6, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-				local cl = Kit.label({ Text = "CLAIM", FontFace = Theme.font.chunky, TextSize = 21, TextColor3 = Theme.color.cream, TextXAlignment = Enum.TextXAlignment.Center,
-					Size = UDim2.fromOffset(74, 34), ZIndex = 7, Parent = claim })
-				new("UIStroke", { Color = Theme.color.fieldDark, Thickness = 2, Transparency = 0.1, Parent = cl }) -- text outline (legibility), not a border
-				if newlyDone then Kit.popIn(claim, 0.3) end -- (before bindButton: it reuses this UIScale)
-				Kit.bindButton(claim, { hover = 1.08 })
-				claim.Activated:Connect(function() if LobbyUI then LobbyUI.Open("Missions") end end)
-			elseif done or e.claimed then
-				-- done: a big green check instead of the count and reward (RIVALS)
+			hudFx.paid[e.def.Id] = e.claimed
+			if done then
+				-- done: "x / x" in field green, and a big green check in the reward's place (RIVALS: the task pays out by itself)
+				local cnt = Kit.label({ RichText = true, Text = e.def.Goal .. ' <font size="16">/ ' .. e.def.Goal .. '</font>', FontFace = WFONT, TextSize = 25,
+					TextColor3 = Theme.color.field, TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromOffset(196, y - 2), Size = UDim2.fromOffset(116, 32),
+					ZIndex = 4, Parent = holder })
+				new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = cnt }) -- text outline (legibility), not a border
+				if fx and fx.up then fx.count = cnt end
 				local ck = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(318, y + 2), Size = UDim2.fromOffset(44, 44), ZIndex = 4, Parent = holder })
 				table.insert(art, { ck, "_Check" })
+				if newlyDone or newlyPaid then table.insert(checkPops, ck) end
 			else
 				local cnt = Kit.label({ RichText = true, Text = e.prog .. ' <font size="16">/ ' .. e.def.Goal .. '</font>', FontFace = WFONT, TextSize = 25, TextColor3 = Color3.new(1, 1, 1),
 					TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromOffset(196, y - 2), Size = UDim2.fromOffset(116, 32), ZIndex = 4, Parent = holder })
@@ -685,6 +687,7 @@ function LobbyHud.Start()
 				else VI.Icon(h2, spec[1], { still = true }) end
 			end
 		end
+		for _, ck in checkPops do Kit.pop(ck, 1.4) end -- (after the check's viewport is in: the pop's UIScale scales it)
 	end
 	local function resetText()
 		local left = 86400 - os.time() % 86400
