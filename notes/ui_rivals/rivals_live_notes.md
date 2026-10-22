@@ -117,3 +117,20 @@ Prices there read "Free": use them for layout only. No buy prompts were opened.
   - rarity tiles with a dark corner weapon tag and price buttons.
 - **Settings** (`settings.png`): Audio tab: rows with ▲▼ + value box + slider, sub-rows indented, toggles = white pill with a black
   knob (off), right pane = icon + big title + description, preset rail 1/2/3/↓.
+
+## Profile, player menu, level badge, news (2026-10-21, live RIVALS, Halloween period)
+- **Player menu** (click a name in the top-right list): a dark card with headshot, display name, @user, then two rows "View Profile" /
+  "View Avatar". The hovered row is white with a black arrow; the other is dark with a white arrow on a blue end.
+- **Profile card** (`rivals_normal/profile_card.png`):
+  - left column: avatar headshot, gold trophy, "0 wins", "0% win rate";
+  - right: name + device icon, @user, a centred **blue starburst level badge** with a white number and grey "Level" under it;
+  - "Most Played Weapons": 4 dark tiles with weapon renders + names;
+  - red X under the card; blurred backdrop.
+- **Level badge** (nameplates, list, profile): a blue starburst seal (light-blue to blue gradient) with a white bold number.
+  Nameplates show it left of the name, then the device icon. A win-streak flame replaces it on players with a streak.
+- **News panel** (`rivals_normal/news_panel.png`): opens on join after an update. A big banner image, "UPDATE 24" tag, then rich-text
+  patch notes in one scrolling column; a red X and a blue arrow button stacked top-right outside the panel.
+- **Proximity prompt:** a white card with a black "Q" key tile, a small title ("Spooky Event") over a big bold verb ("View"), and a
+  pointer under it.
+- **"Complete your tasks for keys!"** bubble sits under the currency pill for new players. "Join the queue to start playing!" over Play
+  only shows for low-level accounts (until ~level 5, user).
