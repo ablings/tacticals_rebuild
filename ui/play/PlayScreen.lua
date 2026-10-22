@@ -593,7 +593,7 @@ local GRID_H = 556
 local CORNER = 8 -- small rounded corners (live capture; 2026-10-22 round 0: RIVALS ~8, was 6)
 local SHADE = 0.7 -- RIVALS: bright art under a 30 % black shade; hover lifts it to 0.95 (the picture brightens)
 -- (2026-10-21, port3) titles ~15 % bigger (RIVALS' "1v1" box ~7.4 % of the screen height): 100 -> 115, 88 -> 101
-local TITLE, WIDE_TITLE = 100, 100 -- (rounds 4-5, grader A vs t0016: both mode rows one size, ~0.052 H; Ranked 0.87 of that below)
+local TITLE, WIDE_TITLE = 93, 93 -- (rounds 4-5, grader A vs t0016: both mode rows one size, ~0.052 H; Ranked 0.87 of that below)
 -- the gradient behind each 3D set shows as the sky over its back wall: Theme blue (ranked: Theme key gold)
 -- (2026-10-21, port3) graders: Training / Duel Pads / Ranked must share the 1v1-3v3 cards' grade (pink highlights, purple
 -- mids; sampled from gen.play_card_*: ~#FC96F8 / #AA64E6). Every 3D tile now uses that sky, its lighting and a wash (grade()).
@@ -959,7 +959,7 @@ local function render()
 	-- the season under it, the gun render between, the rank line at the bottom: a 53 x 61 glyph at 20, 474 (shield; padlock
 	-- when locked; your emblem once placed), the rank name (italic, cap 444..471) and the progress (italic, 478..496) centred
 	local rt = tile("Ranked", RX, 0, RW, GRID_H, DUSK)
-	title(rt, "Ranked", 87, 0, 18, RW, 104)
+	title(rt, "Ranked", 81, 0, 18, RW, 104)
 	title(rt, season(), 36, 0, 116, RW, 42, 5, italic(F.bold))
 	local glyph, rankName, progress = rankLine(open)
 	-- (2026-10-21, port3) RIVALS' rank line (rivals_normal/play.png, tile-local): a big white shield-and-flame badge ~6 % of the

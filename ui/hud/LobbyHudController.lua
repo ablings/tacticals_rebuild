@@ -708,7 +708,7 @@ function LobbyHud.Start()
 	local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
 	-- (round 4, grader B: RIVALS' counter key is a solid glyph, ours a hairline 3D outline) the filled red scissors
 	new("ImageLabel", { BackgroundTransparency = 1, Image = Kit.ICONS.scissorsReward or "", ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.86, 0.86), ZIndex = 3, Parent = iconHolder })
+		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1.15, 1.15), ZIndex = 3, Parent = iconHolder }) -- (round 6: = the Shop counter's glyph size)
 
 	---------------------------------------------------------------------------------------------- data
 	local data
@@ -873,8 +873,8 @@ function LobbyHud.Start()
 				-- 21 laid over the render's bottom-right, hiding half the scissors)
 				-- (round 1, RIVALS tasks.png / hub widget) centred on the render over its lower third, like RIVALS' "×1"
 				-- (round 5, grader B) on the icon's bottom-right corner only, the handle rings stay clear
-				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 24, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Left,
-					AnchorPoint = Vector2.new(0, 0), Position = UDim2.fromOffset(326 + 31, y - 10 + 33), Size = UDim2.fromOffset(100, 26),
+				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 24, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
+					AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(326 + 25, y - 10 + 42), Size = UDim2.fromOffset(100, 26),
 					ZIndex = 6, Parent = holder })
 				RKit.textStroke(1.5).Parent = rl
 			end

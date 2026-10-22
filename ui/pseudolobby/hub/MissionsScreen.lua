@@ -161,7 +161,7 @@ end
 -- reward: the scissors render with "×N" (dark outline); paid = the render dims and the ×N turns green
 -- (2026-10-21, port3) RIVALS style: a large render (48 design px = 4.4 % of the screen height) with the "×N" laid over its
 -- bottom-right corner (right-aligned a little past the render's right edge, bottom on its bottom), not stacked under it
-local REWARD_PX = 48
+local REWARD_PX = 60 -- (round 6, grader B: the drawn glyph read 24 px, RIVALS' key ~32)
 local function reward(parent, amount, pos, paid)
 	local size = REWARD_PX
 	local holder = new("Frame", { Name = "Reward", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = UDim2.fromOffset(size, size), Parent = parent })
@@ -171,8 +171,8 @@ local function reward(parent, amount, pos, paid)
 	-- the render): it no longer hides the right half (r0), nor hangs below into the next contract row (r1)
 	-- (round 5, grader B: centred over the lower third it hid the handle rings, the glyph read as a red X) RIVALS' corner: left edge at
 	-- 0.62 of the icon, top at 0.66, so only the bottom-right corner is covered
-	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Left,
-		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0, 0), Position = UDim2.fromOffset(math.floor(size * 0.62), math.floor(size * 0.66)), Size = UDim2.fromOffset(110, 26), ZIndex = 2, Parent = holder })
+	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Center, -- (round 6: graders A + B) centred under the icon (RIVALS t0066), overlapping only its bottom ~15 % so the rings show
+		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(math.floor(size / 2), math.floor(size * 0.85)), Size = UDim2.fromOffset(110, 26), ZIndex = 2, Parent = holder })
 	RK.textStroke(2).Parent = n
 	return holder
 end
@@ -395,7 +395,7 @@ local function dailyPanel(order)
 					Position = UDim2.fromOffset(0, 26), Size = UDim2.fromOffset(D, 48), ZIndex = 2, Parent = circle })
 			else
 				new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
-					Position = UDim2.fromScale(0.5, 0.45), Size = UDim2.fromOffset(math.floor(D * 0.78), math.floor(D * 0.78)), ZIndex = 3, Parent = circle })
+					Position = UDim2.fromScale(0.5, 0.45), Size = UDim2.fromOffset(math.floor(D * 0.9), math.floor(D * 0.9)), ZIndex = 3, Parent = circle })
 				local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 20, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0),
 					Position = UDim2.fromOffset(D / 2, math.floor(D * 0.58)), Size = UDim2.fromOffset(D, 24), ZIndex = 4, Parent = circle })
 				RK.textStroke(1.5).Parent = n
@@ -446,25 +446,25 @@ local function contractsPanel(order)
 	local p = panel("Weekly", order, top + math.max(1, #rows) * ROW_H + ROW_PAD)
 	header(p, A.scroll, weaponMode and "Contracts" or "Weekly Contracts", allDone, "Weekly")
 	RK.label({ Text = "sorted by", FontFace = FM, TextSize = 27, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Right,
-		AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(573, 17), Size = UDim2.fromOffset(200, 41), Parent = p })
+		AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(593, 17), Size = UDim2.fromOffset(200, 41), Parent = p })
 	local dd = RK.dropdown(SORTS, sortBy, canvas, function(v)
 		if v == sortBy then return end
 		sortBy = v
 		render()
 	end)
 	-- (2026-10-21, port3) RIVALS-size: a 210 x 44 solid white box, the value in Rubik Bold 26 (~1.8 % h), a bigger ▼
-	dd.Size = UDim2.fromOffset(250, 44) -- (round 5, grader C: "Near Completion" ran under the arrow at 210)
+	dd.Size = UDim2.fromOffset(205, 44) -- (round 6, grader A: RIVALS' box 205; the text shrinks to fit instead)
 	dd.BackgroundColor3 = C.white
 	dd.AnchorPoint = Vector2.new(0.5, 0.5) -- grows in place on hover
 	for _, ch in ipairs(dd:GetChildren()) do
 		if ch:IsA("TextLabel") and ch.Text ~= "▼" then
 			for _, k in ipairs(ch:GetChildren()) do if k:IsA("UITextSizeConstraint") then k:Destroy() end end
-			ch.TextScaled = false; ch.TextWrapped = false; ch.TextSize = 23; ch.Position = UDim2.fromOffset(12, 0); ch.Size = UDim2.new(1, -52, 1, 0); ch.FontFace = FB -- (round 5: 23 keeps "Near Completion" clear of the arrow)
+			ch.TextScaled = false; ch.TextWrapped = false; ch.TextSize = 19; ch.Position = UDim2.fromOffset(12, 0); ch.Size = UDim2.new(1, -52, 1, 0); ch.FontFace = FB -- (round 5: 23 keeps "Near Completion" clear of the arrow)
 		elseif ch:IsA("TextLabel") then
 			ch.TextSize = 26
 		end
 	end
-	dd.Position = UDim2.fromOffset(583 + 125, 15 + 22)
+	dd.Position = UDim2.fromOffset(603 + 103, 15 + 22)
 	dd.Parent = p
 	if #rows == 0 then
 		RK.label({ Text = "Loading contracts...", FontFace = FM, TextSize = 26, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,

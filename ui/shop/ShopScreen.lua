@@ -376,7 +376,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	-- side padding (was ~5-7 %); the Robux glyph sits ~0.8 cap from its number
 	-- (round 2, grader B vs t0068 / t0084) side pad 0.06 x width so the digits get the room (yellow ones had shrunk to 0.23 h), the
 	-- currency icon ~1.25 digit caps, ~0.55 cap from the digits
-	local isz = live.isz or math.floor(h * (isRobux and 0.46 or 0.5))
+	local isz = live.isz or math.floor(h * (isRobux and 0.46 or 0.72)) -- (round 6, grader C: at 0.5 h the filled glyph still read as a pale outline)
 	local pad, gap = math.max(4, math.floor(w * 0.06)), math.max(3, math.floor(h * 0.18))
 	-- (2026-10-21, RIVALS shop layout) live.text = a word instead of a number ("FREE", RIVALS' Daily): no currency icon
 	if live.text then isz, gap = 0, 0 end
