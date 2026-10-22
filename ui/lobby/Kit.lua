@@ -1061,6 +1061,20 @@ Kit.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134680
 -- the win-streak badge: an orange flame with the streak number over it (RIVALS, next to names). Scale inside `parent`.
 -- (2026-10-20, Edward: the old flame "looks flat and bland in comp to rivals") a full-colour codex flame (ui/art/streak/streak_v2):
 -- shown in its own colours (no tint). Empty until it's uploaded under the group: the old tinted silhouette meanwhile.
+-- (2026-10-21, art batch 1: flat cream line icons, Gunsy Funsy uploads; image ids read from the decals in Studio)
+Kit.ICONS.gadget = "rbxassetid://122224655406431"
+Kit.ICONS.melee = "rbxassetid://81713790092609"
+Kit.ICONS.cover = "rbxassetid://94141250592215"
+Kit.ICONS.matches = "rbxassetid://125681613105062"
+Kit.ICONS.scissorsFlat = "rbxassetid://117873069678184"
+Kit.ICONS.lock = "rbxassetid://124085037377046"
+Kit.ICONS.eye = "rbxassetid://139964028443214"
+Kit.ICONS.live = "rbxassetid://85639052729616"
+Kit.ICONS.thumbsup = "rbxassetid://133746546608841"
+Kit.ICONS.lbStreak = "rbxassetid://139831914155940"
+Kit.ICONS.lbElims = "rbxassetid://83789042758416"
+Kit.ICONS.lbWins = "rbxassetid://120316362189428"
+Kit.ICONS.lbLevel = "rbxassetid://81711657935672"
 Kit.ICONS.streakColor = "rbxassetid://99079058513557" -- tac_streak_color (Gunsy Funsy upload 2026-10-20)
 -- (2026-10-20, Edward: "look at their levels lets get unique") our level badge: a tactical hex shield in five tiers (codex,
 -- ui/art/level). Kit.levelTier(level) -> image, the number's edge colour

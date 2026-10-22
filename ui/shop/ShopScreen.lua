@@ -16,7 +16,9 @@ local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
 local Tac = require(UIKit:WaitForChild("Tac")) -- pass 34 deployment-board look
 local C, F, new = Theme.color, Theme.font, Kit.new
 
-local SCISSORS_IMG = "rbxassetid://120480559804238" -- render of the 3D scissors (small price-tag glyph)
+-- (2026-10-21) price-tag currency glyph = the flat cream scissors (art batch 1). RIVALS' price tags use flat currency glyphs
+-- (key / Robux / token, t0070); the old render of the 3D scissors was id 120480559804238
+local SCISSORS_IMG = "rbxassetid://117873069678184"
 local ROBUX_IMG = "rbxasset://textures/ui/common/robux.png"
 
 local Screen = {}

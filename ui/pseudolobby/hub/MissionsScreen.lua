@@ -32,7 +32,28 @@ local STAT_ICON = {
 	Wins = { "Trophy" }, MatchesPlayed = { "DogTags" }, Kills = { "Weapon", "AutoRifle" }, Headshots = { "Weapon", "Sniper" },
 	CoverKills = { "Sandbags" }, MeleeKills = { "Melee", "Knife" }, GadgetsThrown = { "Grenade" },
 }
+-- (2026-10-21) RIVALS' Daily Tasks show FLAT white glyphs for the task (t0062: play / crosshair / trophy), so ours do too: the
+-- art batch 1 cream line icons (Kit.ICONS). Any stat without one keeps its 3D icon below.
+local FLAT_STAT = { Wins = "trophy", MatchesPlayed = "play", Kills = "lbElims", Headshots = "lbElims", CoverKills = "cover",
+	MeleeKills = "melee", GadgetsThrown = "gadget" }
 local function statIcon(parent, stat, hoverTarget)
+	local flat = FLAT_STAT[stat] and Kit.ICONS and Kit.ICONS[FLAT_STAT[stat]]
+	if flat then
+		local img = Instance.new("ImageLabel")
+		img.Name = "FlatIcon"
+		img.BackgroundTransparency = 1
+		img.Image = flat
+		img.ImageColor3 = Color3.fromRGB(236, 230, 210)
+		img.ScaleType = Enum.ScaleType.Fit
+		img.AnchorPoint = Vector2.new(0.5, 0.5)
+		img.Position = UDim2.fromScale(0.5, 0.5)
+		img.Size = UDim2.fromScale(1, 0.8)
+		img.Parent = parent
+		local sc = Instance.new("UIScale"); sc.Parent = img
+		hoverTarget.MouseEnter:Connect(function() Kit.tween(sc, 0.15, { Scale = 1.12 }, Enum.EasingStyle.Back) end)
+		hoverTarget.MouseLeave:Connect(function() Kit.tween(sc, 0.15, { Scale = 1 }) end)
+		return img
+	end
 	local spec = STAT_ICON[stat] or { "Medal" }
 	local vp
 	if spec[1] == "Weapon" then

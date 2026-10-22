@@ -52,3 +52,31 @@ Every icon is white / cream line art, chunky strokes, no outline glow and no tex
 | icon_live.png | a red "LIVE" tag with a dot (red fill, white letters; the only coloured one) | 256x96 | leaderboard board, Duels TV header |
 | icon_thumbsup.png | a thumbs-up | 128 | Likes board title |
 | icon_lb_streak.png, icon_lb_elims.png, icon_lb_wins.png, icon_lb_level.png | a flame, crosshair, trophy and star-in-shield | 128 | leaderboard tabs (reuse Kit.ICONS where one already exists) |
+
+## Batch 1 uploaded (2026-10-21, Gunsy Funsy group, approved by the Shadow PC user in chat)
+Decal ids → image ids (read with InsertService in Studio), all now in `Kit.ICONS` (ui/lobby/Kit.lua):
+
+| Kit.ICONS key | image id |
+|---|---|
+| gadget | 122224655406431 |
+| melee | 81713790092609 |
+| cover | 94141250592215 |
+| matches | 125681613105062 |
+| scissorsFlat | 117873069678184 |
+| lock | 124085037377046 |
+| eye | 139964028443214 |
+| live | 85639052729616 |
+| thumbsup | 133746546608841 |
+| lbStreak | 139831914155940 |
+| lbElims | 83789042758416 |
+| lbWins | 120316362189428 |
+| lbLevel | 81711657935672 |
+
+**Rule (user):** before any view model becomes an icon, check what RIVALS does there.
+- Missions task icons → flat. **Wired.** RIVALS Daily Tasks t0062 use flat white glyphs.
+- Shop price-tag scissors → flat. **Wired.** RIVALS price tags t0070 use flat currency glyphs.
+- Not swapped:
+  - Reward pictures and Shop tiles: RIVALS uses posed renders there, so ours stay live.
+  - The Ranked padlock: RIVALS' locked Ranked card t0287 has no icon, only a requirement list.
+  - The dock: flat since Phase B (Edward OK), but RIVALS uses posed renders there, flagged to the user.
+- eye / live / thumbsup / lb_*: for the Studio-only TV and leaderboard screens (next).
