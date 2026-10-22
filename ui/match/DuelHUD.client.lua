@@ -561,11 +561,12 @@ local resScore -- the winner's name on the plate (big)
 local resMode -- the score + mode, small, under the plate
 local stats = {}
 do
-	stats.plate = new("Frame", { Name = "TitlePlate", Position = UDim2.fromOffset(730, 112), Size = UDim2.fromOffset(460, 100), BackgroundColor3 = WHITE,
+	-- (2026-10-22, grader vs live RIVALS) a tighter plate (360 x 96, RIVALS ~16 % of the width) with only VICTORY and the name
+	stats.plate = new("Frame", { Name = "TitlePlate", Position = UDim2.fromOffset(780, 115), Size = UDim2.fromOffset(360, 96), BackgroundColor3 = WHITE,
 		ZIndex = 4, Parent = results }, { corner(8) })
 	stats.plateGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = stats.plate })
-	resTitle = label(stats.plate, "VICTORY", FB, 24, 0, 8, 460, 28, WHITE, nil, 5)
-	resScore = label(stats.plate, "", FX, 50, 0, 34, 460, 60, WHITE, nil, 5)
+	resTitle = label(stats.plate, "VICTORY", FB, 26, 0, 6, 360, 30, WHITE, nil, 5)
+	resScore = label(stats.plate, "", FX, 44, 0, 34, 360, 56, WHITE, nil, 5)
 	resMode = label(results, "", FB, 24, 560, 220, 800, 30, Color3.fromRGB(225, 225, 230), nil, 4)
 	-- the name plate + the stats plate under the character
 	stats.name = new("Frame", { Name = "NamePlate", Position = UDim2.fromOffset(762, 765), Size = UDim2.fromOffset(396, 66), BackgroundColor3 = WHITE,
@@ -604,14 +605,14 @@ function stats.bind(b, opts)
 end
 -- one button behaviour: the spectate arrows, Stop and Leave (built above `stats`) squash like every Kit button
 stats.bind(specPrev); stats.bind(specNext); stats.bind(specStop); stats.bind(leaveDuel)
-local resRewards = label(results, "", FX, 30, 560, 252, 800, 40, OLIVE_HI, nil, 4)
+local resRewards = label(results, "", FX, 26, 560, 1040, 800, 34, OLIVE_HI, nil, 6) -- (2026-10-22) under the stats, off the winner
 -- ranked: the rank line (promotion / demotion / shield / placements / reveal)
-local resRank = label(results, "", FX, 28, 560, 292, 800, 38, WHITE, nil, 4)
+local resRank = label(results, "", FX, 26, 560, 220, 800, 34, WHITE, nil, 6) -- ranked line: right under the plate
 -- the winner, big in the middle: a copy of their live character in its own lit viewport (RIVALS films the winner in the
 -- world; a clone over the softly blurred world reads the same). Falls back to the winner's avatar thumbnail.
 do
 	local av = new("ImageLabel", { Name = "Avatar", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
-		Position = UDim2.fromOffset(610, 215), Size = UDim2.fromOffset(700, 600), ZIndex = 3, Parent = results })
+		Position = UDim2.fromOffset(560, 236), Size = UDim2.fromOffset(800, 760), ZIndex = 3, Parent = results }) -- (2026-10-22) taller: the legs run under the name plate like RIVALS
 	local vpf = new("ViewportFrame", { Name = "Pose", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3,
 		Ambient = Color3.fromRGB(150, 150, 156), LightColor = Color3.fromRGB(255, 250, 240), LightDirection = Vector3.new(-0.6, -0.8, -0.5), Parent = av })
 	local wm = Instance.new("WorldModel"); wm.Parent = vpf
@@ -649,7 +650,7 @@ do
 		clone:PivotTo(CFrame.new(0, 0, 0))
 		clone.Parent = wm
 		local cf, size = clone:GetBoundingBox()
-		local dist = size.Y / 2 / math.tan(math.rad(cam.FieldOfView / 2)) * 1.08
+		local dist = size.Y / 2 / math.tan(math.rad(cam.FieldOfView / 2)) * 1.12 -- (2026-10-22) a bit closer than before (1.08 of a taller frame)
 		-- a little from below and to the side, like RIVALS' hero shot
 		cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(dist * 0.18, -size.Y * 0.06, -dist), cf.Position + Vector3.new(0, size.Y * 0.04, 0))
 		av.ImageTransparency = 1
@@ -731,6 +732,7 @@ local function showResults(sum)
 		end
 	end
 	resMode.Text = string.format("%d - %d", mine or 0, theirs or 0) .. "   ·   " .. (sum.Mode or st("MatchMode") or "") .. (sum.Ranked and "  ·  RANKED" or "")
+	resMode.Visible = false -- (2026-10-22, live RIVALS) no score line under the plate; the score is in the team boxes
 	-- (2026-10-21, RIVALS pass) few big numbers: a stat the server didn't send is hidden (no "-"); the shown ones are laid out
 	-- Eliminations / Deaths / Headshots big on row 1, the rest on row 2; they count up when the card shows (stats.vals)
 	stats.vals = {
