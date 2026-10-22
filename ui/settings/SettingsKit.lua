@@ -330,6 +330,9 @@ end
 -- Hover/press scale on any GuiButton (UIScale, never Size: keeps layouts intact). Grows from the centre.
 function Kit.bindButton(btn, opts)
 	opts = opts or {}
+	-- (2026-10-22) the game's legacy InterfaceController adds its own Size hover / press tweens to every button it finds (and
+	-- shrinks + hides the parent frame of any button named "Close"); our buttons animate with UIScale, so they opt out
+	btn:AddTag("Nonapplicable")
 	-- re-anchor once the button has its final position (it may be placed after this call)
 	task.defer(function()
 		local p = btn.Parent

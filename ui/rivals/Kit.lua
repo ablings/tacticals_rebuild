@@ -316,6 +316,9 @@ end
 -- Hover/press scale on any GuiButton (UIScale, never Size: keeps layouts intact). Grows from the centre.
 function Kit.bindButton(btn, opts)
 	opts = opts or {}
+	-- (2026-10-22) the game's legacy InterfaceController adds its own Size hover / press tweens to every button it finds (and
+	-- shrinks + hides the parent frame of any button named "Close"); our buttons animate with UIScale, so they opt out
+	btn:AddTag("Nonapplicable")
 	-- re-anchor once the button has its final position (it may be placed after this call)
 	task.defer(function()
 		local p = btn.Parent
@@ -369,6 +372,7 @@ function Kit.closeButton(size)
 	-- given. Screens place it 12 px outside their panel's top-right corner, top-aligned.
 	size = size or UDim2.fromOffset(Kit.CLOSE_W, Kit.CLOSE_H)
 	local btn = Kit.button("red", size, nil, { Name = "Close" })
+	btn:AddTag("Nonapplicable") -- (2026-10-22) named "Close": InterfaceController would shrink + hide its parent frame on click (Play X)
 	-- (2026-10-21, RIVALS images) the X is now one image, gen.ui_close_x (the whole white ✖ with its grey lower-arm shade, never
 	-- tinted), ~40/67 of the button height and centred. Falls back to the old two outlined bars if the id is missing.
 	local glyph = genImage("ui_close_x")
