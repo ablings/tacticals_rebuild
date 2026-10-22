@@ -131,7 +131,10 @@ local PAGE_X, PAGE_Y, PAGE_W, PAGE_H = 318, 370, 1300, 710
 -- height), ~50 px between groups, 118 px item tiles.
 local CONTENT_X = PAGE_X + 12
 local TITLE_Y = 202
-local TAB_Y, TAB_W, TAB_H, TAB_STEP = 282, 100, 40, 110
+-- (2026-10-22, live RIVALS shop at 16:9) bigger tabs (144 x 49, ~7.5 % of the width), 154 apart, row centred at y ~300; five
+-- tabs + "More" per row (TAB_PER_ROW), the rest on a second row behind More (back with "Back")
+local TAB_Y, TAB_W, TAB_H, TAB_STEP = 276, 144, 49, 154
+local TAB_PER_ROW = 5
 local PRICE_H, GAP, TILE = 52, 50, 118
 
 local function data() return ctx.getData and ctx.getData() or {} end
@@ -1249,13 +1252,18 @@ local function build()
 	-- (2026-10-21, port3) RIVALS' normal-theme header: the Bold outlined "Shop" title over the tabs, both starting at the
 	-- content's left edge (CONTENT_X), compact 100x40 tabs 110 apart; the icons are lit bright (lit) and rise ~30 px above the
 	-- tab (56 box, foot 24 px into the pill). The red X moved to the page panel's top-right corner (below).
-	stroke(RK.label({ Name = "Title", Text = "Shop", FontFace = FB, TextSize = 40, Position = UDim2.fromOffset(CONTENT_X, TITLE_Y), Size = UDim2.fromOffset(400, 46),
-		Parent = body }), 3, 0)
+	-- (2026-10-22, live RIVALS) no "Shop" title over the tabs (the live game and its copies have none)
 	local x0 = CONTENT_X
+	-- tab i sits on row 1 (i <= TAB_PER_ROW) at slot i, or on row 2 at slot i - TAB_PER_ROW + 1 (slot 1 there is "Back")
+	local function slotX(i)
+		local slot = i <= TAB_PER_ROW and i or (i - TAB_PER_ROW + 1)
+		return x0 + (slot - 1) * TAB_STEP
+	end
 	for i, t in TABS do
-		local b = new("TextButton", { Name = t[1], Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x0 + (i - 1) * TAB_STEP, TAB_Y), Size = UDim2.fromOffset(TAB_W, TAB_H),
+		local b = new("TextButton", { Name = t[1], Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotX(i), TAB_Y), Size = UDim2.fromOffset(TAB_W, TAB_H),
 			BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, BorderSizePixel = 0, Parent = body }, { RK.corner(6) })
-		local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(TAB_W / 2, 24), Size = UDim2.fromOffset(56, 56), ZIndex = 2, Parent = b })
+		b:SetAttribute("TabRow", i <= TAB_PER_ROW and 1 or 2)
+		local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(TAB_W / 2, 26), Size = UDim2.fromOffset(64, 64), ZIndex = 2, Parent = b })
 		local vp
 		if t[2] == "Weapon" then
 			vp = ViewIcons.Viewport(hold, ViewIcons.Weapon("AutoRifle"), { view = CFrame.Angles(0, 0, math.rad(-28)) * ViewIcons.GunView, zoom = t[3], zIndex = 2 })
@@ -1270,10 +1278,21 @@ local function build()
 			b.MouseEnter:Connect(function() vp.SetHover(true) end)
 			b.MouseLeave:Connect(function() vp.SetHover(tab == t[1]) end)
 		end
-		stroke(RK.label({ Name = "Label", Text = t.label or t[1], FontFace = FB, TextSize = 21, TextXAlignment = CENTER, Position = UDim2.fromOffset(-4, 16), Size = UDim2.fromOffset(TAB_W + 8, 28), ZIndex = 3, Parent = b }), 2, 0)
+		stroke(RK.label({ Name = "Label", Text = t.label or t[1], FontFace = FB, TextSize = 25, TextXAlignment = CENTER, Position = UDim2.fromOffset(-4, 18), Size = UDim2.fromOffset(TAB_W + 8, 32), ZIndex = 3, Parent = b }), 2, 0)
 		Kit.bindButton(b, { hover = 1.05 })
 		b.Activated:Connect(function() Screen.SetTab(t[1]) end)
 		tabBtns[t[1]] = { b = b, vp = vp }
+	end
+	-- "More ->" (row 1, after the last tab) and "<- Back" (row 2, first slot): text-only tabs that swap the rows
+	if #TABS > TAB_PER_ROW then
+		for _, spec in { { "More", "More →", 1, TAB_PER_ROW + 1 }, { "Back", "← Back", 2, 1 } } do
+			local b = new("TextButton", { Name = "Row" .. spec[1], Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x0 + (spec[4] - 1) * TAB_STEP, TAB_Y),
+				Size = UDim2.fromOffset(TAB_W, TAB_H), BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, BorderSizePixel = 0, Parent = body }, { RK.corner(6) })
+			b:SetAttribute("TabRow", spec[3])
+			stroke(RK.label({ Name = "Label", Text = spec[2], FontFace = FB, TextSize = 25, TextXAlignment = CENTER, Position = UDim2.fromOffset(-4, 8), Size = UDim2.fromOffset(TAB_W + 8, 32), ZIndex = 3, Parent = b }), 2, 0)
+			Kit.bindButton(b, { hover = 1.05 })
+			b.Activated:Connect(function() Screen.ShowTabRow(spec[3] == 1 and 2 or 1) end)
+		end
 	end
 	-- (2026-10-21, RIVALS shop layout) RIVALS' red "Claim your FREE reward now!" tip (valueTag: red pill, pointer down) over
 	-- the Daily tab, clear of its rising icon; only while a real free Daily item is up (freeDailyUp). Click = the Daily tab.
@@ -1289,7 +1308,7 @@ local function build()
 	-- (2026-10-22, live RIVALS shop at 16:9) the X sits IN the tab row, 10 px after the last tab, as tall as a tab (RIVALS ~0.046 of
 	-- the width); not out beside the page panel
 	local close = Kit.closeButton(UDim2.fromOffset(76, TAB_H))
-	close.Position = UDim2.fromOffset(CONTENT_X + (#TABS - 1) * TAB_STEP + TAB_W + 10, TAB_Y)
+	close.Position = UDim2.fromOffset(CONTENT_X + math.min(#TABS, TAB_PER_ROW) * TAB_STEP + TAB_W + 10, TAB_Y)
 	close.Parent = body
 	close.Activated:Connect(function() Screen.Close() end)
 
@@ -1360,7 +1379,27 @@ end
 
 -- (2026-10-21, RIVALS 1:1) the selected tab is white, the rest black at 0.35 (replica selectTab); its 3D icon stays turned
 -- toward you. The round-3 icon growth / pop and the label recolour are gone (RIVALS keeps the white label + outline).
+-- (2026-10-22) which tab row shows (1 = the first TAB_PER_ROW tabs + More, 2 = Back + the rest); the Daily tip rides row 1
+local tabRow = 1
+local function layoutTabRow()
+	if not body then return end
+	for _, c in body:GetChildren() do
+		local r = c:GetAttribute("TabRow")
+		if r then c.Visible = r == tabRow end
+	end
+	local tip = body:FindFirstChild("DailyTip")
+	if tip then tip.Visible = tabRow == 1 end
+end
+function Screen.ShowTabRow(r)
+	tabRow = r
+	layoutTabRow()
+end
 local function styleTabs()
+	-- the open tab's row is the one shown
+	for i, t in TABS do
+		if t[1] == tab then tabRow = i <= TAB_PER_ROW and 1 or 2 end
+	end
+	layoutTabRow()
 	for name, t in tabBtns do
 		local on = name == tab
 		t.b.BackgroundColor3 = on and WHITE or BLACK

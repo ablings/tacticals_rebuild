@@ -939,7 +939,8 @@ local SLOT_ORDER = { "Weapon", "Melee", "Gadget" }
 local SLOT_TITLE = { Weapon = "Weapons", Melee = "Melee", Gadget = "Gadgets" }
 local SLOT_LABEL = { Weapon = "Weapon", Melee = "Melee", Gadget = "Gadget" }
 
-local LIST_X, LIST_Y, LIST_W = 12, 640, 336 -- the list (replica: 12, 640, 336 x 440, to the bottom edge)
+local LIST_X, LIST_Y, LIST_W = 12, 574, 336 -- the list (replica: 12, 640, 336 x 440, to the bottom edge)
+-- (2026-10-22, live RIVALS Weapons at 16:9) the Career card sits at 38 % of the height (y 414, 150 tall) and the list starts at y 574
 local ROW_H, HEADER_H = 67, 74
 -- (2026-10-21, port3) the list's ScrollingFrame reaches this far past its plate on the right, so the picked row's render can
 -- overlap the panel's right edge like RIVALS' (a ScrollingFrame always clips). Table field: the chunk is at the local limit.
@@ -1827,7 +1828,7 @@ local function buildLeft()
 	-- (2026-10-21, RIVALS 1:1) RIVALS' Career card (replica: 12, 413, 336 x 217): the headshot and "Career" (it opens Duel
 	-- History, as RIVALS' Career does), then the row of class icons = our three slot icons + Duel History's clock. The replica's
 	-- "Dismiss N Notifications" pill is left out (Tacticals has no notifications), so the card is 150 tall and ends where RIVALS' does.
-	local prof = panel({ Name = "Profile", Position = UDim2.fromOffset(LIST_X, 480), Size = UDim2.fromOffset(LIST_W, 150), ZIndex = 4, Parent = leftGroup })
+	local prof = panel({ Name = "Profile", Position = UDim2.fromOffset(LIST_X, LIST_Y - 160), Size = UDim2.fromOffset(LIST_W, 150), ZIndex = 4, Parent = leftGroup })
 	local career = mk("TextButton", { Name = "Career", AutoButtonColor = false, Text = "", BackgroundTransparency = 1, Size = UDim2.fromOffset(LIST_W, 82),
 		ZIndex = 5, Parent = prof })
 	local avatar = mk("ImageLabel", { Name = "Avatar", BackgroundTransparency = 1, Position = UDim2.fromOffset(28, 0), Size = UDim2.fromOffset(78, 78), ZIndex = 6, Parent = career })

@@ -598,7 +598,10 @@ local TITLE, WIDE_TITLE = 115, 101
 -- (2026-10-21, port3) graders: Training / Duel Pads / Ranked must share the 1v1-3v3 cards' grade (pink highlights, purple
 -- mids; sampled from gen.play_card_*: ~#FC96F8 / #AA64E6). Every 3D tile now uses that sky, its lighting and a wash (grade()).
 local GRADE = { Theme.hex("#FC9AF6"), Theme.hex("#9A5CE6") }
-local SKY, DUSK = GRADE, GRADE
+-- (2026-10-22, Edward Q2 "Ranked = dark gold"; 16:9 grader: the live tiles read washed-out lavender) Ranked gets a dark-gold sky
+-- and grade; the others keep the cards' pink / purple but lighter on the models (grade() below)
+local DARK_GOLD = { Theme.hex("#9A7024"), Theme.hex("#3A2608") }
+local SKY, DUSK = GRADE, DARK_GOLD
 -- where each tile's subject sits (fractions of the tile height from the top; fit = most of the width it may take):
 -- (2026-10-21, RIVALS 1:1) figures large, filling the tile behind the centred title like RIVALS' gameplay shots
 local SQUAD_BOTTOM = { 0.98, 0.96, 0.94 }
@@ -625,15 +628,17 @@ end
 local function italic(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
 -- (2026-10-21, port3) the cards' colour grade on a live 3D tile: pink key light, purple ambient (lit faces go pink, shaded ones
 -- purple, like the art), and a soft pink -> purple wash over the picture under the tile's black shade.
-local function grade(vp, holder)
+local function grade(vp, holder, cols)
+	cols = cols or GRADE
 	if vp then
 		local f = vp.Frame
-		f.Ambient = Theme.hex("#B47CEA")
-		f.LightColor = Theme.hex("#FFC4F8")
-		f.ImageColor3 = C.white
+		-- (2026-10-22) the pink / purple grade stays (it must match the 1v1-3v3 art); Ranked gets a warm dark-gold one
+		f.Ambient = cols == GRADE and Theme.hex("#B47CEA") or Theme.hex("#A08A60")
+		f.LightColor = cols == GRADE and Theme.hex("#FFC4F8") or Theme.hex("#FFF2D6")
+		f.ImageColor3 = cols == GRADE and C.white or Theme.hex("#D8A447") -- Ranked: the render itself takes the dark-gold tint
 	end
-	new("Frame", { Name = "Grade", BackgroundColor3 = C.white, BackgroundTransparency = 0.8, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 2,
-		Parent = holder }, { Kit.vgrad(GRADE) })
+	new("Frame", { Name = "Grade", BackgroundColor3 = C.white, BackgroundTransparency = cols == GRADE and 0.8 or 0.32, BorderSizePixel = 0, -- Ranked: a strong dark-gold wash Size = UDim2.fromScale(1, 1), ZIndex = 2,
+		Parent = holder }, { Kit.vgrad(cols) })
 end
 
 -- (2026-10-21, RIVALS normal theme) the Ranked tile's data, shown the RIVALS way ("Season 3"; shield + "Unranked" + "0 / 10"):
@@ -938,7 +943,7 @@ local function render()
 	grade(duelsScene(db.Scene, db, { aspect = BW2 / BH, top = 0.04, bottom = 0.98, fit = 0.96 }), db.Scene)
 	local rvp, rscene = squadScene(rt.Scene, 1, false, { aspect = RW / GRID_H, top = 0.2, bottom = 0.97, fit = 0.98 })
 	if rvp then livenSquad(rvp, rscene, rt) else rvp = rankedScene(rt.Scene, rt, { aspect = RW / GRID_H, top = 0.27, bottom = 0.74, fit = 0.94 }) end
-	grade(rvp, rt.Scene)
+	grade(rvp, rt.Scene, DARK_GOLD)
 end
 
 -- (2026-10-21, RIVALS 1:1) status every half second while open: busy tiles dim (no chips: RIVALS writes nothing on a tile),
