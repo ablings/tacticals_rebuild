@@ -132,6 +132,7 @@ local function startDuels()
 	Players.PlayerAdded:Connect(watch)
 
 	local prevState = {}
+	local padUids = {} -- [DUELSPEC] [entry key] = occupant user ids of a pad duel started on this server
 	local lastJson
 	while true do
 		task.wait(0.5)
@@ -144,10 +145,11 @@ local function startDuels()
 		for _, b in (snap and snap.bays or {}) do
 			local key = b.mode .. "#" .. b.id
 			if b.state == "Deploying" and prevState[key] ~= "Deploying" then
-				local a, bb = {}, {}
-				for _, o in b.occupants or {} do table.insert(o.t == "A" and a or bb, nameOf(o.u)) end
+				local a, bb, us = {}, {}, {}
+				for _, o in b.occupants or {} do table.insert(o.t == "A" and a or bb, nameOf(o.u)); table.insert(us, o.u) end
 				local e = { k = game.JobId .. ":" .. key .. ":" .. os.time(), m = b.mode, r = b.ranked == true, a = a, b = bb, t = os.time(), s = "pad" }
 				addLive(e); publish(e)
+				padUids[e.k] = us -- [DUELSPEC]
 			end
 			prevState[key] = b.state
 			table.insert(pads, { m = b.mode, id = b.id, st = b.state, n = b.count, tot = b.total, cd = b.countdown, r = b.ranked == true })
@@ -165,6 +167,25 @@ local function startDuels()
 		local keep = {}
 		for _, x in live do if os.time() - x.t < cfg.MatchMinutes * 60 then table.insert(keep, x) end end
 		live = keep
+		-- [DUELSPEC] spectator count per in-hub duel: players whose DuelSpectate is that duel's id (its fighters carry DuelMatch).
+		-- Online / remote duels and finished ones get no count (sp = nil hides the eye on the Duels TV row).
+		local stillUids = {}
+		for _, x in live do
+			local id
+			for _, u in padUids[x.k] or {} do
+				local pl = Players:GetPlayerByUserId(u)
+				id = id or (pl and pl:GetAttribute("DuelMatch"))
+			end
+			if id then
+				local n = 0
+				for _, pl in Players:GetPlayers() do if pl:GetAttribute("DuelSpectate") == id then n += 1 end end
+				x.sp = n
+			else
+				x.sp = nil
+			end
+			stillUids[x.k] = padUids[x.k]
+		end
+		padUids = stillUids
 		local json = HttpService:JSONEncode({ live = live, pads = pads, modes = modes, studio = RunService:IsStudio() })
 		if json ~= lastJson then lastJson = json; ReplicatedStorage:SetAttribute("LF_LiveDuels", json) end
 	end
