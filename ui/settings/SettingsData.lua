@@ -5,6 +5,8 @@
 -- Row kinds: toggle, slider, dropdown, swatch, keybind. level 0 = full-width top row, 1 (default), 2 = indented child, 3 = grandchild.
 -- key = storage key when two rows share a label (defaults to name).
 -- A section with title = nil has no header bar.
+-- (2026-10-21, RIVALS images) gen = "<name>": a generated RIVALS row icon (UIKit.Rivals.Assets.gen, read through
+-- SettingsKit.genImage) that SettingsScreen / HotkeysPage show before the older `icon` (still the fallback). Image list #14 / #15.
 local pct = function(v) return v .. "%" end
 local hex = function(s) return Color3.fromRGB(tonumber(s:sub(2, 3), 16), tonumber(s:sub(4, 5), 16), tonumber(s:sub(6, 7), 16)) end
 local PALETTE = { hex("#FFFFFF"), hex("#E54343"), hex("#65FE32"), hex("#03BFFF"), hex("#FFD701"), hex("#C04BFF") }
@@ -17,7 +19,7 @@ return {
 		{ name = "Video", glyph = "🖥", icon = "video", sections = {
 			{ title = "Performance", rows = {
 				{ kind = "toggle", name = "Optimized Lighting", icon = "lightbulb", value = false, desc = "Uses simpler lighting so the game runs faster on older devices" },
-				{ kind = "toggle", name = "Optimized Textures", icon = "texture", value = false, desc = "Swaps detailed surface images for plain colours to save memory" },
+				{ kind = "toggle", name = "Optimized Textures", icon = "texture", gen = "row_texture", value = false, desc = "Swaps detailed surface images for plain colours to save memory" },
 			} },
 			{ title = "Camera", rows = {
 				{ kind = "slider", name = "Sensitivity", icon = "camera", min = 5, max = 400, step = 5, arrow = 50, value = 100, fmt = pct, desc = "How fast the camera turns when you move the mouse or stick" },
@@ -27,20 +29,20 @@ return {
 				{ kind = "slider", name = "Vertical", icon = "arrows_v", level = 2, min = 5, max = 400, step = 5, arrow = 40, value = 100, fmt = pct, desc = "[Advanced] Changes only your up and down camera speed" },
 				{ kind = "toggle", name = "Inverted X", icon = "arrows_h", level = 2, value = false, desc = "[Advanced] Flips left and right camera movement" },
 				{ kind = "toggle", name = "Inverted Y", icon = "arrows_v", level = 2, value = false, desc = "[Advanced] Flips up and down camera movement" },
-				{ kind = "toggle", name = "Camera Shake", icon = "damage", value = true, desc = "Shakes the camera on explosions and heavy hits" },
+				{ kind = "toggle", name = "Camera Shake", icon = "damage", gen = "row_damage", value = true, desc = "Shakes the camera on explosions and heavy hits" },
 			} },
 			{ title = "Interface", rows = {
-				{ kind = "toggle", name = "Hide HUD", icon = "eye", value = false, desc = "Hides most of the interface, for clean screenshots and clips. Can also be bound to a hotkey" },
+				{ kind = "toggle", name = "Hide HUD", icon = "eye", gen = "row_hidehud", value = false, desc = "Hides most of the interface, for clean screenshots and clips. Can also be bound to a hotkey" },
 				{ kind = "toggle", name = "Hide Missions", key = "Hide Side Tasks", icon = "checklist", value = false, desc = "Hides the daily missions on the left of the lobby" },
 				{ kind = "dropdown", name = "Padded HUD", icon = "padded", options = { "Always On", "Using Controller", "Disabled" }, value = "Using Controller", desc = "Adds space around the screen edges so nothing sits under a TV's border" },
 				{ kind = "dropdown", name = "Lobby Data", icon = "window", options = { "Level", "Wins", "Rank", "Streak" }, value = "Level", desc = "Which stat the lobby shows for players: the player list and your nameplate (Rank: their ranked emblem; Streak: their win streak)" },
 			} },
 			{ title = "Aiming", rows = {
-				{ kind = "dropdown", name = "Aim Assist", icon = "inking", options = { "50%", "25%", "Off" }, value = "50%", desc = "Helps touch and controller players track targets. Max 25% in ranked." },
+				{ kind = "dropdown", name = "Aim Assist", icon = "inking", gen = "row_weaponpicker", options = { "50%", "25%", "Off" }, value = "50%", desc = "Helps touch and controller players track targets. Max 25% in ranked." },
 			} },
 			{ title = "Social", rows = {
-				{ kind = "dropdown", name = "Challenge Requests", icon = "inking", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can challenge you to a 1v1 from the lobby (player list or double click)" },
-				{ kind = "dropdown", name = "Party Invites", icon = "inking", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can invite you to their party" },
+				{ kind = "dropdown", name = "Challenge Requests", icon = "inking", gen = "row_weaponpicker", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can challenge you to a 1v1 from the lobby (player list or double click)" },
+				{ kind = "dropdown", name = "Party Invites", icon = "inking", gen = "row_weaponpicker", options = { "Everyone", "Friends", "Nobody" }, value = "Everyone", desc = "Who can invite you to their party" },
 			} },
 			{ title = "Graphics", rows = {
 				{ kind = "toggle", name = "Hide Muzzle Flashes", icon = "muzzle", value = false, desc = "Removes the flash at the end of a gun when it fires" },
@@ -64,7 +66,7 @@ return {
 		-- captures; arrow steps and dropdown options other than the shown value are guesses.
 		{ name = "Game", glyph = "🎮", icon = "game", sections = {
 			{ title = "Gameplay", rows = {
-				{ kind = "toggle", name = "Damage Numbers", icon = "damage", value = true, desc = "Shows how much damage each hit did" },
+				{ kind = "toggle", name = "Damage Numbers", icon = "damage", gen = "row_damage", value = true, desc = "Shows how much damage each hit did" },
 				{ kind = "swatch", name = "Color", key = "Damage Color", icon = "damage", level = 2, color = hex("#FFFFFF"), palette = PALETTE, desc = "The colour of normal damage numbers" },
 				{ kind = "swatch", name = "Critical Color", icon = "damage", level = 2, color = hex("#FF3232"), palette = PALETTE, desc = "The colour of damage numbers for critical hits" },
 				{ kind = "toggle", name = "Hide Teammate Display", icon = "emote", value = false, desc = "Hides the teammate panel during matches" },
@@ -77,10 +79,10 @@ return {
 			} },
 			{ title = "Controls", rows = {
 				{ kind = "toggle", name = "Toggle Aim", icon = "aim", value = false, desc = "Tap to start and stop aiming instead of holding. Doesn't change touch controls" },
-				{ kind = "toggle", name = "Toggle Crouch", icon = "crouch", value = true, desc = "Tap to crouch and stand. Off: hold to stay crouched" },
-				{ kind = "toggle", name = "Toggle Sprint", icon = "sprint", value = false, desc = "Tap to start and stop sprinting instead of holding" },
-				{ kind = "toggle", name = "Auto Sprint", icon = "sprint", value = false, desc = "Run by default without holding the sprint button" },
-				{ kind = "toggle", name = "Easy Slide", icon = "effects2", value = true, desc = "Slide by crouching while sprinting" },
+				{ kind = "toggle", name = "Toggle Crouch", icon = "crouch", gen = "row_crouch", value = true, desc = "Tap to crouch and stand. Off: hold to stay crouched" },
+				{ kind = "toggle", name = "Toggle Sprint", icon = "sprint", gen = "row_sprint", value = false, desc = "Tap to start and stop sprinting instead of holding" },
+				{ kind = "toggle", name = "Auto Sprint", icon = "sprint", gen = "row_sprint", value = false, desc = "Run by default without holding the sprint button" },
+				{ kind = "toggle", name = "Easy Slide", icon = "effects2", gen = "row_slide", value = true, desc = "Slide by crouching while sprinting" },
 				{ kind = "toggle", name = "Scroll Equip", icon = "padding", value = true, desc = "Switch between your gun, melee and gadget with the mouse wheel" },
 				{ kind = "dropdown", name = "Gun Hand", icon = "crosshair", options = { "Right", "Left" }, value = "Right", desc = "Which hand holds your gun. Peeking from the other side of cover swaps hands while you're on it; leaving cover puts it back here" },
 			} },
@@ -89,32 +91,32 @@ return {
 		-- Default binds from Edward's captures (ref_55-58). "" = unbound.
 		{ name = "Hotkeys", glyph = "⌨", icon = "hotkeys", hotkeys = true, sections = {
 			{ title = nil, rows = {
-				{ kind = "bind", name = "Fire", key = "Attack", icon = "damage", value = { "MouseButton1", "", "ButtonR2", "" } },
+				{ kind = "bind", name = "Fire", key = "Attack", icon = "damage", gen = "tasks_elims", value = { "MouseButton1", "", "ButtonR2", "" } },
 				{ kind = "bind", name = "Aim", key = "Ability", icon = "aim", value = { "MouseButton2", "", "ButtonL2", "" } },
-				{ kind = "bind", name = "Reload", icon = "reset", value = { "R", "", "ButtonX", "" } },
+				{ kind = "bind", name = "Reload", icon = "reset", gen = "hk_reload", value = { "R", "", "ButtonX", "" } },
 				{ kind = "bind", name = "Shoulder Swap", icon = "arrows_h", value = { "V", "", "DPadDown", "" } },
-				{ kind = "bind", name = "Gun Bash", key = "Quick Melee", icon = "effects2", value = { "F", "", "ButtonR3", "" } },
-				{ kind = "bind", name = "Throw Gadget", key = "Quick Utility", icon = "particles", value = { "G", "", "ButtonY", "" } },
+				{ kind = "bind", name = "Gun Bash", key = "Quick Melee", icon = "effects2", gen = "hk_quickmelee", value = { "F", "", "ButtonR3", "" } },
+				{ kind = "bind", name = "Throw Gadget", key = "Quick Utility", icon = "particles", gen = "hk_quickutility", value = { "G", "", "ButtonY", "" } },
 			} },
 			{ title = nil, rows = {
 				{ kind = "bind", name = "Jump / Vault", key = "Jump", icon = "jump", value = { "Space", "", "ButtonA", "" } },
-				{ kind = "bind", name = "Sprint", icon = "sprint", value = { "LeftShift", "", "ButtonL3", "" } },
-				{ kind = "bind", name = "Crouch", icon = "crouch", value = { "C", "LeftControl", "ButtonB", "" } },
-				{ kind = "bind", name = "Slide", icon = "effects2", value = { "", "", "", "" } },
+				{ kind = "bind", name = "Sprint", icon = "sprint", gen = "row_sprint", value = { "LeftShift", "", "ButtonL3", "" } },
+				{ kind = "bind", name = "Crouch", icon = "crouch", gen = "row_crouch", value = { "C", "LeftControl", "ButtonB", "" } },
+				{ kind = "bind", name = "Slide", icon = "effects2", gen = "row_slide", value = { "", "", "", "" } },
 				{ kind = "bind", name = "Take Cover", icon = "padded", value = { "Q", "", "ButtonL1", "" } },
-				{ kind = "bind", name = "Dash", icon = "sprint", value = { "E", "", "DPadUp", "" } }, -- (controller: D-pad up, Edward 2026-10-21)
+				{ kind = "bind", name = "Dash", icon = "sprint", gen = "row_sprint", value = { "E", "", "DPadUp", "" } }, -- (controller: D-pad up, Edward 2026-10-21)
 			} },
 			{ title = nil, rows = {
-				{ kind = "bind", name = "Equip Gun", key = "Equip Primary", icon = "inking", value = { "One", "", "DPadLeft", "" } },
-				{ kind = "bind", name = "Equip Melee", icon = "inking", value = { "Two", "", "", "" } }, -- (D-pad up is Dash; RB cycles to it)
-				{ kind = "bind", name = "Equip Gadget", key = "Equip Utility", icon = "particles", value = { "Three", "", "DPadRight", "" } },
+				{ kind = "bind", name = "Equip Gun", key = "Equip Primary", icon = "inking", gen = "row_weaponpicker", value = { "One", "", "DPadLeft", "" } },
+				{ kind = "bind", name = "Equip Melee", icon = "inking", gen = "row_weaponpicker", value = { "Two", "", "", "" } }, -- (D-pad up is Dash; RB cycles to it)
+				{ kind = "bind", name = "Equip Gadget", key = "Equip Utility", icon = "particles", gen = "hk_quickutility", value = { "Three", "", "DPadRight", "" } },
 				{ kind = "bind", name = "Cycle Weapon", key = "Switch Weapons", icon = "reset", value = { "Z", "", "ButtonR1", "" } },
 			} },
 			{ title = nil, rows = {
 				{ kind = "bind", name = "Free Cursor", icon = "camera", value = { "LeftAlt", "", "", "" } },
 				{ kind = "bind", name = "Player List", key = "Open Scoreboard", icon = "leaderboard", value = { "Tab", "", "", "" } },
 				{ kind = "bind", name = "Leave Training", icon = "exit", value = { "M", "", "", "" } },
-				{ kind = "bind", name = "Hide HUD", icon = "eye", value = { "", "", "", "" } },
+				{ kind = "bind", name = "Hide HUD", icon = "eye", gen = "row_hidehud", value = { "", "", "", "" } },
 			} },
 		} },
 		-- Touch (2026-10-17, Edward: mobile UI the RIVALS way; ref: notes/ref_mobile 8-16). Layout Editor opens the drag/resize editor;
@@ -229,7 +231,7 @@ return {
 		-- Account: from ref_59. Dropdown option lists other than the shown value are a guess.
 		{ name = "Account", glyph = "☻", icon = "account", sections = {
 			{ title = "Notifications", rows = {
-				{ kind = "dropdown", name = "Delivery Mode", icon = "inking", options = { "Instant", "Disabled" }, value = "Instant", desc = "Whether lobby messages (rewards, matches found) pop up at the top of the screen" },
+				{ kind = "dropdown", name = "Delivery Mode", icon = "inking", gen = "row_weaponpicker", options = { "Instant", "Disabled" }, value = "Instant", desc = "Whether lobby messages (rewards, matches found) pop up at the top of the screen" },
 			} },
 		} },
 	},
@@ -237,14 +239,14 @@ return {
 	-- with sound, quick-attack variants, gamepad camera / prompts; walking is Roblox's own WASD). Not shown, not saved
 	-- (Sanitize only knows tabs). Move a row back into its tab when the system it controls exists.
 	parked = {
-		{ kind = "toggle", name = "Optimized Wraps", icon = "wraps", value = false, desc = "Hides other players' weapon wraps for better performance. You still see your own" },
+		{ kind = "toggle", name = "Optimized Wraps", icon = "wraps", gen = "row_wraps", value = false, desc = "Hides other players' weapon wraps for better performance. You still see your own" },
 		{ kind = "toggle", name = "Weapon Inking", icon = "inking", value = true, desc = "Draws a dark cartoon outline around weapons" },
 		{ kind = "slider", name = "Music Volume", icon = "music", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "Changes the volume of the lobby and match music" },
 		{ kind = "slider", name = "Finisher Volume", icon = "effects", min = 0, max = 100, step = 5, arrow = 10, value = 100, fmt = pct, desc = "Changes the volume of finishing moves" },
 		{ kind = "toggle", name = "Mute Other Finishers", icon = "mute", level = 2, value = false, desc = "Only your own finishers make a sound" },
-		{ kind = "toggle", name = "Easy Gun Bash", key = "Easy Quick Attack", icon = "effects2", value = true, desc = "Gun bash with a single press, even while aiming" },
-		{ kind = "toggle", name = "Bash Keeps Aim", key = "Quick Attack Keeping", icon = "inking", value = true, desc = "Go straight back to aiming after a gun bash" },
-		{ kind = "slider", name = "Keep Window", icon = "inking", level = 2, min = 0, max = 1, step = 0.05, arrow = 0.05, value = 0.25, fmt = function(v) return string.format("%.2f", v) end, desc = "[Advanced] How long, in seconds, after a bash you stay ready to aim again. At 0 you always do" },
+		{ kind = "toggle", name = "Easy Gun Bash", key = "Easy Quick Attack", icon = "effects2", gen = "row_quickattack", value = true, desc = "Gun bash with a single press, even while aiming" },
+		{ kind = "toggle", name = "Bash Keeps Aim", key = "Quick Attack Keeping", icon = "inking", gen = "row_weaponpicker", value = true, desc = "Go straight back to aiming after a gun bash" },
+		{ kind = "slider", name = "Keep Window", icon = "inking", gen = "row_weaponpicker", level = 2, min = 0, max = 1, step = 0.05, arrow = 0.05, value = 0.25, fmt = function(v) return string.format("%.2f", v) end, desc = "[Advanced] How long, in seconds, after a bash you stay ready to aim again. At 0 you always do" },
 		{ kind = "slider", name = "Joystick Deadzone", icon = "padded", min = 0, max = 100, step = 5, arrow = 5, value = 25, fmt = pct, desc = "How far a stick must move before it counts" },
 		{ kind = "dropdown", name = "Control Scheme", icon = "keyboard", options = { "Automatic", "Keyboard", "Controller", "Touch" }, value = "Automatic", desc = "Which button prompts the game shows. Automatic follows what you last touched" },
 		{ kind = "bind", name = "Walk Forward", icon = "tri_up", value = { "W", "Up", "", "" } },

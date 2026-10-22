@@ -152,6 +152,26 @@ local function valueTag(parent, cx, y, text, w, h, ts, z)
 	return t
 end
 -- item tile (Design System): near-black at the top -> the rarity colour at the bottom, a 2 px stroke in the rarity colour
+-- (2026-10-21, RIVALS images) the generated RIVALS shop art (UIKit.Rivals.Assets.gen): the painted bundle backdrops and the
+-- dark corner weapon tag. RIVALS tags random-weapon items "?" and all-weapon items "∞" and leaves weapon-specific skins bare.
+-- Tacticals sells no random items: melee and gadgets (they go with every gun) get the ∞ tag, guns get none.
+local GEN = Assets.gen or {}
+local BACKDROP = { founders = GEN.shop_bg_founders, Operator = GEN.shop_bg_operator }
+-- a full-bleed backdrop image under everything else on the card (the item renders sit on top, the title on its calm left)
+local function backdrop(card, img, z)
+	if not img or img == "" then return nil end
+	return new("ImageLabel", { Name = "Backdrop", BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromScale(1, 1),
+		ZIndex = z or 1, Parent = card }, { RK.corner(8) })
+end
+-- the corner tag (256x208 art, never tinted) in a card's top-right corner; returns its width (0 when the item gets none)
+local function weaponTag(card, itemId, w, z)
+	local item = ctx.Config.Items[itemId]
+	local img = item and (item.Slot == "Melee" or item.Slot == "Gadget") and GEN.shop_tag_all
+	if not img then return 0 end
+	new("ImageLabel", { Name = "WeaponTag", BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.fromScale(1, 0), Size = UDim2.fromOffset(w, math.floor(w * 208 / 256 + 0.5)), ZIndex = z or 5, Parent = card })
+	return w
+end
 local function rarityTile(parent, col, x, y, w, h, z, class)
 	local t = new(class or "Frame", { Name = "Tile", BackgroundColor3 = WHITE, BorderSizePixel = 0, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 1, Parent = parent },
 		{ RK.corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(col:Lerp(BLACK, 0.85), col) }), new("UIStroke", { Color = col:Lerp(WHITE, 0.15), Thickness = 2 }) })
@@ -486,6 +506,7 @@ local function bundleCard(pg, hover, spec, x, y, w, h, big)
 	local card = new("TextButton", { Name = spec.id or spec.title, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		BackgroundColor3 = spec.color or C.panelRaised, BorderSizePixel = 0, ClipsDescendants = true, ZIndex = 1, Parent = pg },
 		{ RK.corner(8), new("UIGradient", { Rotation = 35, Color = ColorSequence.new(BLACK, WHITE), Transparency = NumberSequence.new(0.55, 0) }) })
+	backdrop(card, big and BACKDROP.founders or BACKDROP[spec.id], 1) -- (2026-10-21, RIVALS images) Founder's hero / Operator Kit
 	local scene = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(w * (big and 0.42 or 0.3), -h * 0.12), Size = UDim2.fromOffset(w * (big and 0.6 or 0.75), h * 1.26), ZIndex = 2, Parent = card })
 	local vp = lit(sceneArt(scene, spec.items or {}, 1.3))
 	vp.Frame.ZIndex = 2
@@ -599,6 +620,8 @@ function RENDER.Featured(pg, hover)
 		local card = new("TextButton", { Name = "Hero", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(519, 6), Size = UDim2.fromOffset(w, h),
 			BackgroundColor3 = WHITE, BorderSizePixel = 0, ClipsDescendants = true, ZIndex = 1, Parent = pg },
 			{ RK.corner(6), new("UIGradient", { Rotation = 35, Color = ColorSequence.new(top, bottom) }) })
+		local bg = backdrop(card, BACKDROP.founders, 1) -- (2026-10-21, RIVALS images) the painted Founder's backdrop over the wash
+		if bg then bg:FindFirstChildOfClass("UICorner").CornerRadius = UDim.new(0, 6) end
 		local scene = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(w * 0.18, -h * 0.06), Size = UDim2.fromOffset(w * 0.74, h * 1.16), ZIndex = 2, Parent = card })
 		local vp = lit(sceneArt(scene, spec.items, 1.2))
 		vp.Frame.ZIndex = 2
@@ -635,6 +658,7 @@ function RENDER.Featured(pg, hover)
 		local sl = new("TextButton", { Name = "Slide" .. i, Text = "", AutoButtonColor = false, Size = UDim2.fromScale(1, 1), BackgroundColor3 = col, BorderSizePixel = 0,
 			ClipsDescendants = true, Visible = i == 1, ZIndex = 2, Parent = so }, { RK.corner(8),
 			new("UIGradient", { Rotation = 35, Color = ColorSequence.new(BLACK, WHITE), Transparency = NumberSequence.new(0.55, 0) }) })
+		if not isPass then backdrop(sl, BACKDROP[spec.id], 2) end -- (2026-10-21, RIVALS images) the Operator Kit slide's painted backdrop
 		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(isPass and 330 or 250, isPass and -10 or -30), Size = UDim2.fromOffset(isPass and 300 or 500, isPass and 300 or 384), ZIndex = 3, Parent = sl })
 		local vp = isPass and lit(ViewIcons.Icon(art, "Medal", { zoom = 1, zIndex = 3 })) or lit(sceneArt(art, spec.items, 1.25))
 		vp.Frame.ZIndex = 3
@@ -738,7 +762,8 @@ function RENDER.Featured(pg, hover)
 		local id = rest[i]
 		local c, r = (i - 1) % 3, (i - 1) // 3
 		local h = hold(801 + c * 162, 381 + r * 159, 126, 152, 1.06, function() ctx.openKit(id) end)
-		rarityTile(h, rarityColor(id), 0, 0, 126, 126, 1)
+		local tile = rarityTile(h, rarityColor(id), 0, 0, 126, 126, 1)
+		weaponTag(tile, id, 40, 4) -- (2026-10-21, RIVALS images) ∞ on melee / gadgets, over the render
 		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(-8, -24), Size = UDim2.fromOffset(142, 140), ZIndex = 3, Parent = h })
 		turnOnHover(h, lit(itemArt(art, id, nil, 1.1)))
 		priceTag(h, "kit", Config.Items[id].Price, 63, 108, 100, 44, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
@@ -789,7 +814,8 @@ function RENDER.Arms(pg, hover)
 		card.Name = id
 		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(w * 0.06, 8), Size = UDim2.fromOffset(w * 0.88, h - 24), ZIndex = 3, Parent = card })
 		turnOnHover(card, lit(itemArt(art, id, nil, 1.15)))
-		stroke(RK.label({ Text = item.Name, FontFace = FB, TextSize = 26, TextXAlignment = CENTER, Position = UDim2.fromOffset(8, 6), Size = UDim2.fromOffset(w - 16, 32), ZIndex = 4, Parent = card }), 2, 0.3)
+		local tagW = weaponTag(card, id, 54, 5) -- (2026-10-21, RIVALS images) ∞ on melee / gadgets; the name keeps clear of it
+		stroke(RK.label({ Text = item.Name, FontFace = FB, TextSize = 26, TextXAlignment = CENTER, Position = UDim2.fromOffset(8, 6), Size = UDim2.fromOffset(w - 16 - tagW, 32), ZIndex = 4, Parent = card }), 2, 0.3)
 		priceTag(card, "kit", item.Price, w / 2, h - 30, 130, 46, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, z = 6, noHover = true })
 		hover(card)
 		card.Activated:Connect(function() if not ctx.owns(id) then ctx.openKit(id) end end)

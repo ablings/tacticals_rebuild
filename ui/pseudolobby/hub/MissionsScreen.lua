@@ -32,10 +32,16 @@ local A = RA.tasks or {}
 local ROW = RA.rowIcon or {}
 local ICONS = Kit.ICONS or {}
 local CHECK = A.check or ICONS.check or ""
+-- (2026-10-21, RIVALS images) the generated RIVALS marks: the claw for elimination tasks, the lime check (coloured: never
+-- tinted) for done, the twisted pinwheel star on the Play button. The old stand-ins stay as fallbacks.
+local GEN = RA.gen or {}
+local CHECK_LIME = GEN.tasks_check_lime
+local STAR6 = GEN.tasks_star6 or A.star6 or ""
 -- (2026-10-21, RIVALS 1:1) solid white task glyphs (t0062: play / crosshair / trophy), the replica's art first
+-- (2026-10-21, RIVALS images) Kills and Headshots (headshot kills: it used rowIcon.aim, not the eye) show RIVALS' claw
 local GLYPH = {
-	Wins = A.trophy or ICONS.trophy, MatchesPlayed = A.play or ICONS.play, Kills = ROW.crosshair or ICONS.lbElims,
-	Headshots = ROW.aim or ICONS.eye, CoverKills = ICONS.cover, MeleeKills = ICONS.melee, GadgetsThrown = ICONS.gadget,
+	Wins = A.trophy or ICONS.trophy, MatchesPlayed = A.play or ICONS.play, Kills = GEN.tasks_elims or ROW.crosshair or ICONS.lbElims,
+	Headshots = GEN.tasks_elims or ROW.aim or ICONS.eye, CoverKills = ICONS.cover, MeleeKills = ICONS.melee, GadgetsThrown = ICONS.gadget,
 }
 local function glyph(parent, stat, pos, size, color)
 	return new("ImageLabel", { Name = "Glyph", BackgroundTransparency = 1, Image = GLYPH[stat] or A.trophy or "", ImageColor3 = color or C.white,
@@ -182,7 +188,9 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	local badge
 	if done then
 		-- done (replica): the count gives way to a green check on the bar
-		badge = new("ImageLabel", { Name = "DoneCheck", BackgroundTransparency = 1, Image = CHECK, ImageColor3 = C.green, AnchorPoint = Vector2.new(0.5, 0.5),
+		-- (2026-10-21, RIVALS images) gen.tasks_check_lime (lime with its dark outline, untinted); the tinted white tick as fallback
+		badge = new("ImageLabel", { Name = "DoneCheck", BackgroundTransparency = 1, Image = CHECK_LIME or CHECK, ImageColor3 = CHECK_LIME and C.white or C.green,
+			ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromOffset(121, 135), Size = UDim2.fromOffset(40, 40), ZIndex = 3, Parent = card })
 	else
 		local count = RK.label({ RichText = true, Text = countText(prog, def.Goal, 20), FontFace = FB, TextSize = 29, TextXAlignment = Enum.TextXAlignment.Center,
@@ -213,10 +221,16 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 	local badge
 	if done then
 		-- the check sits on the bar's right end (the bar clips, so the badge is the row's child)
-		badge = new("Frame", { Name = "DoneCheck", BackgroundColor3 = C.green, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromOffset(708, 49), Size = UDim2.fromOffset(26, 26), ZIndex = 4, Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK, ImageColor3 = BLACK, ScaleType = Enum.ScaleType.Fit,
-			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.7, 0.7), ZIndex = 5, Parent = badge })
+		-- (2026-10-21, RIVALS images) the outlined lime check image itself (no green disc); the old disc + black tick as fallback
+		if CHECK_LIME then
+			badge = new("ImageLabel", { Name = "DoneCheck", BackgroundTransparency = 1, Image = CHECK_LIME, ScaleType = Enum.ScaleType.Fit,
+				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(708, 49), Size = UDim2.fromOffset(32, 32), ZIndex = 4, Parent = row })
+		else
+			badge = new("Frame", { Name = "DoneCheck", BackgroundColor3 = C.green, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromOffset(708, 49), Size = UDim2.fromOffset(26, 26), ZIndex = 4, Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+			new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK, ImageColor3 = BLACK, ScaleType = Enum.ScaleType.Fit,
+				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.7, 0.7), ZIndex = 5, Parent = badge })
+		end
 	end
 	local rewardHolder = reward(row, def.Reward, 42, UDim2.fromOffset(771, 28), paid)
 	pending(was, state, badge, rewardHolder)
@@ -266,9 +280,9 @@ local function dailyPanel(order)
 		local row = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = go },
 			{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 				VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 9), SortOrder = Enum.SortOrder.LayoutOrder }) })
-		new("ImageLabel", { LayoutOrder = 1, BackgroundTransparency = 1, Image = A.star6 or "", Size = UDim2.fromOffset(28, 28), Parent = row })
+		new("ImageLabel", { LayoutOrder = 1, BackgroundTransparency = 1, Image = STAR6, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(28, 28), Parent = row }) -- (2026-10-21, RIVALS images) gen.tasks_star6
 		RK.label({ LayoutOrder = 2, Text = "Play", FontFace = FB, TextSize = 24, AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 41), Parent = row })
-		new("ImageLabel", { LayoutOrder = 3, BackgroundTransparency = 1, Image = A.star6 or "", Size = UDim2.fromOffset(28, 28), Parent = row })
+		new("ImageLabel", { LayoutOrder = 3, BackgroundTransparency = 1, Image = STAR6, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(28, 28), Parent = row }) -- (2026-10-21, RIVALS images) gen.tasks_star6
 		go.Activated:Connect(function()
 			Screen.Close()
 			ctx.openPlay()

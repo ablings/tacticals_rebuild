@@ -20,6 +20,8 @@ for _, tab in ipairs(Data.tabs) do -- storage key per row (labels can repeat, e.
 end
 local Assets = require(UIKit:WaitForChild("Assets"))
 local HotkeysPage = require(UIKit:WaitForChild("HotkeysPage"))
+-- (2026-10-21, RIVALS images) a row's generated RIVALS icon (SettingsData row.gen -> UIKit.Rivals.Assets.gen), else nil
+local function rowGen(row) return row.gen and Kit.genImage and Kit.genImage(row.gen) or nil end
 local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
 local TAB_MODEL = { Video = "Monitor", Audio = "Headset", Game = "Gamepad", Hotkeys = "Keyboard" }
 local SettingsConfig = require(RS:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("Config"):WaitForChild("SettingsConfig"))
@@ -265,7 +267,7 @@ local dDesc = Kit.label({
 })
 
 local function showDetail(row)
-	local img = (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
+	local img = rowGen(row) or (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
 	dImage.Image = img or ""
 	dIcon.Text = img and "" or (row.glyph or "")
 	dTitle.Text = row.name or ""
@@ -350,7 +352,7 @@ local function buildRow(tab, row, order)
 		Name = row.key, LayoutOrder = order, Size = UDim2.fromOffset(772 - plateIndent, h),
 		BackgroundColor3 = C.textDark, BackgroundTransparency = Theme.alpha.panel,
 	}, { Kit.corner(8) })
-	local img = (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
+	local img = rowGen(row) or (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
 	local icon
 	if img then
 		icon = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img, Position = UDim2.fromOffset(18 + ind, iconY), Size = UDim2.fromOffset(52, 52), Parent = frame })

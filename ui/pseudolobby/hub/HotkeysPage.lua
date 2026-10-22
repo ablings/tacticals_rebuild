@@ -17,6 +17,9 @@ local SHOULDER = { ButtonR1 = "R1", ButtonL1 = "L1", ButtonR2 = "R2", ButtonL2 =
 local STICK = { ButtonR3 = "R3", ButtonL3 = "L3" }
 local DPAD = { DPadUp = "up", DPadDown = "down", DPadLeft = "left", DPadRight = "right" }
 local MOUSE = { MouseButton1 = "l", MouseButton2 = "r", MouseButton3 = "m" }
+-- (2026-10-21, RIVALS images) input -> generated pad badge (UIKit.Rivals.Assets.gen)
+local PAD_GEN = { ButtonA = "pad_A", ButtonX = "pad_X", ButtonY = "pad_Y", ButtonR2 = "pad_R2", ButtonL2 = "pad_L2", ButtonR3 = "pad_R3",
+	DPadUp = "pad_dpad_up", DPadDown = "pad_dpad_down", DPadLeft = "pad_dpad_left", DPadRight = "pad_dpad_right" }
 
 -- name of an input as stored in a bind
 local function inputName(input)
@@ -32,6 +35,8 @@ function HotkeysPage.build(ctx)
 	local Kit, Theme, Assets, new = ctx.Kit, ctx.Theme, ctx.Assets, ctx.Kit.new
 	local C, F = Theme.color, Theme.font
 	local A = Assets.hotkeys or {}
+	-- (2026-10-21, RIVALS images) generated RIVALS images (UIKit.Rivals.Assets.gen through SettingsKit.genImage), nil if missing
+	local function genImage(name) return name and Kit.genImage and Kit.genImage(name) or nil end
 	local page = new("Frame", { Name = "HotkeysPage", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = ctx.parent })
 	local glyphs = {} -- input name -> list of {press(), release()}
 	local conns = {}
@@ -94,7 +99,12 @@ function HotkeysPage.build(ctx)
 
 	local function padGlyph(parent, name)
 		local g = new("Frame", { Name = "Pad", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(46, 46), Parent = parent })
-		if FACE[name] then
+		-- (2026-10-21, RIVALS images) the generated RIVALS badge where one exists (A / X / Y, R2 / L2, R3, the four D-pad arms);
+		-- B, R1 / L1 and L3 have none, so they keep the drawn badge below. Same 46 px box and press bounce.
+		local badge = genImage(PAD_GEN[name])
+		if badge then
+			new("ImageLabel", { Name = "Badge", BackgroundTransparency = 1, Image = badge, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), Parent = g })
+		elseif FACE[name] then
 			local c = new("Frame", { BackgroundColor3 = C.white, Size = UDim2.fromScale(1, 1), Parent = g }, { Kit.corner(23) })
 			Kit.label({ Text = FACE[name], TextColor3 = C.textDark, FontFace = F.display, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), Parent = c })
 		elseif SHOULDER[name] or STICK[name] then
@@ -142,7 +152,9 @@ function HotkeysPage.build(ctx)
 			-- faint band that fades out to the right (reference rows)
 			new("Frame", { Name = "Band", Size = UDim2.fromOffset(700, 58), BackgroundColor3 = C.white, BackgroundTransparency = 0.96, Parent = r },
 				{ new("UIGradient", { Transparency = NumberSequence.new(0, 1) }) })
-			local img = Assets.rowIcon and (Assets.rowIcon[row.icon] or A[row.icon])
+			-- (2026-10-21, RIVALS images) the generated RIVALS action icon first (SettingsData row.gen: hk_reload, hk_quickmelee,
+			-- hk_quickutility, tasks_elims for Fire, the row_* ones), the old rowIcon / hotkeys art as fallback
+			local img = genImage(row.gen) or (Assets.rowIcon and (Assets.rowIcon[row.icon] or A[row.icon]))
 			new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img or "", AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.new(0, 102, 0.5, 0), Size = UDim2.fromOffset(44, 44), Parent = r })
 			Kit.label({ Name = "Label", Text = row.name, FontFace = F.heavy, TextSize = 32, Position = UDim2.fromOffset(156, 0), Size = UDim2.fromOffset(480, 58), Parent = r })
 			for i = 1, 4 do

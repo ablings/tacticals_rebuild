@@ -1290,6 +1290,21 @@ local GLYPH_IMG = { lock = "padlock", unlock = "padlock", arrow = "arrow", check
 -- the replica's leaderboard bars and Tacticals' level-shield seal (Kit.ICONS.level), both tinted white, replace the gold trophy
 -- and the orange explosion there
 local GLYPH_ART = { trophy = true, burst = true } -- never tinted
+-- (2026-10-21, RIVALS images) the uploaded RIVALS-1:1 set (UIKit.Rivals.Assets.gen, notes/ui_rivals/image_gen_list.md) replaces
+-- the code-drawn GLYPHs and stand-ins: empty slot, Leave X, panel X, level-up arrows, reward seal, stats bars, Inspect lens,
+-- History clock, and the lime "equipped" check (a new kind; "check" stays the tintable white tick for the favourite box).
+-- leave / closex / equipped are coloured art (never tinted). A missing id falls back to the drawn GLYPH.
+for kind, name in { empty = "kit_slot_empty", leave = "kit_leave_x", closex = "ui_close_x", up = "kit_levelup", seal = "kit_reward_seal",
+	bars = "kit_stats", lens = "kit_inspect", clock = "kit_cat_clock", equipped = "tasks_check_lime" } do
+	local id = RA.gen and RA.gen[name]
+	if id then GLYPH_IMG[kind] = id end
+	if id and (kind == "leave" or kind == "closex" or kind == "equipped") then GLYPH_ART[kind] = true end
+end
+GLYPH.equipped = GLYPH.check -- (drawn fallback when the lime check id is missing)
+-- (2026-10-21, RIVALS images) category icons per slot (gen.kit_cat_*), grey #858487 (the active tab white). Table fields, not
+-- locals: the chunk is at the local limit.
+Armory._CAT_IMG = { Weapon = "kit_cat_rifle", Melee = "kit_cat_knife", Gadget = "kit_cat_grenade" }
+Armory._catGrey = H("#858487")
 
 local function glyph(parent: Instance, kind: string, size: number, color: Color3?, z: number?)
 	local h = mk("Frame", { Name = "Glyph", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
@@ -1477,6 +1492,15 @@ end
 
 -- a slot's icon centred in parent: the generated mesh as a flat silhouette, else the drawn vector
 local function slotIcon(parent: Instance, slot: string, color: Color3, mirror: boolean?, scale: number?)
+	-- (2026-10-21, RIVALS images) the career-card / list-header category icons are gen.kit_cat_rifle / knife / grenade (white,
+	-- tinted; already tilted, so no lean). mirror flips the image with a negative ImageRectSize (the uploads are 512 x 512).
+	local catId = RA.gen and RA.gen[Armory._CAT_IMG[slot] or ""]
+	if catId then
+		local px = 52 * (scale or 1)
+		return mk("ImageLabel", { Name = "CatIcon", BackgroundTransparency = 1, Image = catId, ImageColor3 = color, ScaleType = Enum.ScaleType.Fit,
+			ImageRectOffset = mirror and Vector2.new(512, 0) or Vector2.zero, ImageRectSize = mirror and Vector2.new(-512, 512) or Vector2.zero,
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(px, px), ZIndex = 6, Parent = parent })
+	end
 	local m = iconMesh(slot)
 	if not m then return slotVector(parent, slot, color, mirror, scale) end
 	local spec = VECTOR_SPEC[slot]
@@ -1489,7 +1513,10 @@ local function slotIcon(parent: Instance, slot: string, color: Color3, mirror: b
 end
 local function tintIcon(holder: Instance, color: Color3, transparency: number)
 	local v = holder:FindFirstChildOfClass("ViewportFrame")
-	if v then
+	if holder:IsA("ImageLabel") then -- (2026-10-21, RIVALS images) a gen.kit_cat_* image
+		holder.ImageColor3 = color
+		holder.ImageTransparency = transparency
+	elseif v then
 		v.ImageColor3 = color
 		v.ImageTransparency = transparency
 	else
@@ -1566,7 +1593,7 @@ local function rowLook(row, on: boolean, animate: boolean)
 		if row.eq then
 			local ck = mk("Frame", { Name = "Equipped", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = on and UDim2.fromOffset(20, ROW_H / 2) or UDim2.fromOffset(LIST_W - 26, ROW_H / 2), Size = UDim2.fromOffset(30, 30), ZIndex = 9, Parent = b })
-			glyph(ck, "check", 30, COL.Check, 9)
+			glyph(ck, "equipped", 30, COL.Check, 9) -- (2026-10-21, RIVALS images) gen.tasks_check_lime
 			if animate then
 				local sc = mk("UIScale", { Scale = 0.3, Parent = ck })
 				TweenService:Create(sc, POP, { Scale = 1 }):Play()
@@ -1674,7 +1701,7 @@ end
 local function styleTabs()
 	for slot, t in tabs do
 		local on = slot == currentTab
-		tintIcon(t.icon, on and WHITE or COL.Grey, 0)
+		tintIcon(t.icon, on and WHITE or Armory._catGrey, 0)
 		TweenService:Create(t.button, TI, { BackgroundTransparency = on and 0.2 or 0.5 }):Play()
 	end
 end
@@ -1776,7 +1803,7 @@ local function buildLeft()
 			Position = UDim2.fromOffset(16 + (i - 1) * 80, 92), Size = UDim2.fromOffset(64, 46), ZIndex = 5, Parent = prof }, { corner(6) })
 		local box = mk("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
 			Size = UDim2.fromOffset(46, 32), ZIndex = 6, Parent = t })
-		tabs[slot] = { button = t, icon = slotIcon(box, slot, COL.Grey, false, 0.76) }
+		tabs[slot] = { button = t, icon = slotIcon(box, slot, Armory._catGrey, false, 0.76) }
 		Kit.bindButton(t, { hover = 1.1, press = 0.9 })
 		-- on press (Activated never fired here: the release was lost, so the icons looked broken); touch taps too
 		t.MouseButton1Down:Connect(function() setTab(slot) end)
@@ -1784,7 +1811,7 @@ local function buildLeft()
 	end
 	local hb = mk("TextButton", { Name = "History", AutoButtonColor = false, Text = "", BackgroundColor3 = BLACK, BackgroundTransparency = 0.5,
 		Position = UDim2.fromOffset(16 + 3 * 80, 92), Size = UDim2.fromOffset(64, 46), ZIndex = 5, Parent = prof }, { corner(6) })
-	glyph(hb, "clock", 30, COL.Grey, 6)
+	glyph(hb, "clock", 40, Armory._catGrey, 6) -- (2026-10-21, RIVALS images) gen.kit_cat_clock, ~40 px
 	Armory._tip(hb, "Duel history", "up")
 	hb.Activated:Connect(function() Armory.ShowHistory(true) end)
 	Kit.bindButton(hb, { hover = 1.1, press = 0.9 })
@@ -2369,10 +2396,12 @@ end
 -------------------------------------------------------------------------------
 -- (2026-10-21, RIVALS 1:1) RIVALS' slots are Skin / Wrap / Charm / Finisher; Tacticals keeps its Skin / Wrap / Finisher (the
 -- Cutscene slot is gone: RIVALS has none)
+-- (2026-10-21, RIVALS normal theme) the slot hover bubbles use RIVALS' wording: live Skin = "Change how this weapon looks"; Wrap /
+-- Finisher are written in the same short style (RIVALS' own lines not captured)
 local COSMETICS = {
-	{ Id = "Skin", Label = "Skin", Tip = "Pick a skin for this weapon" },
-	{ Id = "Wrap", Label = "Wrap", Tip = "Apply a wrap to this weapon" },
-	{ Id = "Finisher", Label = "Finisher", Tip = "Pick a finisher for this weapon" },
+	{ Id = "Skin", Label = "Skin", Tip = "Change how this weapon looks" },
+	{ Id = "Wrap", Label = "Wrap", Tip = "Change this weapon's colours" },
+	{ Id = "Finisher", Label = "Finisher", Tip = "Change how you finish off enemies" },
 }
 local tray -- the picker (a full-canvas group)
 local openTray = nil
@@ -2381,6 +2410,7 @@ local slotRings = {} -- [slot id] = the strip's slot button
 -- (2026-10-21, RIVALS 1:1) the picker closes at once (RIVALS' does): the panels come back and the item eases back from its zoom
 local function closeTray(instant: boolean?)
 	openTray = nil
+	Armory._previewLook(nil) -- (2026-10-21, RIVALS normal theme) leaving the picker puts the equipped look back
 	if Armory._tipFrame then Armory._tipFrame.Visible = false; Armory._tipOwner = nil end -- (2026-10-21) a tile's bubble outlived the picker
 	if tray and tray.Visible then
 		tray.Visible = false
@@ -2392,6 +2422,90 @@ local function closeTray(instant: boolean?)
 	if leftGroup then
 		leftGroup.Visible, rightCol.Visible, bottomGroup.Visible, statsLayer.Visible = true, true, true, true
 	end
+end
+
+-- (2026-10-21, RIVALS normal theme) kuroko_preview.png: clicking a skin tile (locked or not) previews it ON the hero item at once.
+-- Tacticals has no skin models yet, so the showcase CLONE gets a placeholder look in the tile's rarity colour: every lit part
+-- (not the near-black details, not Neon) is tinted cc[2] keeping its relative shade, textures are lifted off; wraps take the
+-- lighter cc[3] on Foil. The clone's own values are kept on Armory._preview and put back by _previewLook(nil) (None, Back,
+-- switching trays, Leave). The source model is never touched.
+function Armory._previewLook(cc, kind: string?)
+	local pv = Armory._preview
+	if pv then
+		Armory._preview = nil
+		for part, v in pv.parts do
+			if part.Parent then
+				part.Color, part.Material, part.Reflectance, part.MaterialVariant = v[1], v[2], v[3], v[4]
+				if v[5] then part.TextureID = v[5] end
+			end
+		end
+		for inst, parent in pv.extras do
+			if parent.Parent then pcall(function() inst.Parent = parent end) else inst:Destroy() end
+		end
+	end
+	if not cc then return end
+	local entry
+	for _, e in showcase do
+		if not e.leaving and not e.locked then entry = e break end
+	end
+	if not entry or not entry.model then return end
+	pv = { parts = {}, extras = {} }
+	local tint = kind == "Wrap" and H(cc[3]) or H(cc[2])
+	local mat = kind == "Wrap" and Enum.Material.Foil or Enum.Material.SmoothPlastic
+	for _, d in entry.model:GetDescendants() do
+		if d:IsA("BasePart") then
+			local _, _, v = d.Color:ToHSV()
+			local textured = d:IsA("MeshPart") and d.TextureID ~= ""
+			if d.Material ~= Enum.Material.Neon and (v > 0.14 or textured) then
+				pv.parts[d] = { d.Color, d.Material, d.Reflectance, d.MaterialVariant, textured and d.TextureID or nil }
+				d.Color = tint:Lerp(BLACK, math.clamp(0.36 - v, 0, 0.3)) -- gunmetal 0.36 -> full colour, 0.25 a shade darker
+				d.Material, d.MaterialVariant = mat, ""
+				d.Reflectance = 0.08
+				if textured then d.TextureID = "" end
+			end
+		elseif d:IsA("SurfaceAppearance") or d:IsA("Decal") or d:IsA("Texture") then
+			pv.extras[d] = d.Parent
+			d.Parent = nil
+		end
+	end
+	Armory._preview = pv
+end
+
+-- (2026-10-21, RIVALS normal theme) kuroko_preview.png's pills, top centre: a dark pill (black 0.25, 76 tall at y 12) with the skin's
+-- icon (its rarity tile, the item's render popping out above it) and the name in ExtraBold 56; under it (y 90) a wider white
+-- pill, 48 tall, saying how to get it. Rebuilt per click in design px (widths follow the text) into `holder`, a full-canvas
+-- frame; no `it` = hidden.
+function Armory._previewPills(holder: Instance, it, cc, model: Model?)
+	for _, ch in holder:GetChildren() do ch:Destroy() end
+	-- (2026-10-21, RIVALS) the HUD hides the currency pill while a preview's name pill is up (LobbyHudController reads this)
+	game:GetService("Players").LocalPlayer:SetAttribute("KitPreview", (it and cc) and true or nil)
+	if not it or not cc then
+		if model then model:Destroy() end
+		return
+	end
+	local name, how = it.name, "Coming in a future update" -- (placeholder: RIVALS says how the skin is obtained)
+	local nameW = math.clamp(#name * 31, 120, 900) -- (Rubik ExtraBold 56 runs ~31 design px a letter, AKEY-47 = 210)
+	local w = 88 + nameW + 22
+	local tmp = Instance.new("Folder")
+	local pill = mk("Frame", { Name = "NamePill", BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, BorderSizePixel = 0,
+		Position = UDim2.fromOffset(960 - w / 2, 12), Size = UDim2.fromOffset(w, 76), ZIndex = 7, Parent = tmp }, { corner(6) })
+	mk("Frame", { Name = "Icon", BackgroundColor3 = WHITE, BorderSizePixel = 0, Position = UDim2.fromOffset(12, 8), Size = UDim2.fromOffset(60, 60),
+		ZIndex = 8, Parent = pill }, { corner(5), mk("UIGradient", { Rotation = 90, Color = ColorSequence.new(H(cc[1]), H(cc[2])) }) })
+	local r = model and itemRender(pill, "", Vector2.new(84, 84), { z = 9, fill = 0.8, model = model })
+		or itemRender(pill, selectedId, Vector2.new(84, 84), { z = 9, fill = 0.98, flat = true, color = H(cc[3]):Lerp(WHITE, 0.35) })
+	r.Position = UDim2.fromOffset(-4, -4) -- (2026-10-21) was -14: the render poked out of the pill's top edge
+	local nm = text({ Text = name, FontFace = FX, TextSize = 56, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Left,
+		Position = UDim2.fromOffset(88, 4), Size = UDim2.fromOffset(nameW, 68), ZIndex = 8, Parent = pill })
+	mk("UITextSizeConstraint", { MaxTextSize = 56, Parent = nm })
+	local subW = math.clamp(#how * 16 + 48, 300, 1500) -- (Medium 34: ~15.3 px a letter, measured)
+	local sub = mk("Frame", { Name = "HowToGet", BackgroundColor3 = WHITE, BorderSizePixel = 0, Position = UDim2.fromOffset(960 - subW / 2, 90),
+		Size = UDim2.fromOffset(subW, 48), ZIndex = 8, Parent = tmp }, { corner(4) })
+	local sl = text({ Text = how, FontFace = FM, TextSize = 34, TextColor3 = BLACK, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(16, 4), Size = UDim2.fromOffset(subW - 32, 40), ZIndex = 9, Parent = sub })
+	mk("UITextSizeConstraint", { MaxTextSize = 34, Parent = sl })
+	settle(tmp, holder)
+	Kit.popIn(pill)
+	Kit.popIn(sub, 0.04)
 end
 
 -- (2026-10-21, RIVALS 1:1) the replica's picker (t0050): the left / right panels and the strip make way and the item zooms in
@@ -2421,7 +2535,8 @@ local function openCosmeticTray(c)
 	if not currentLocked() then zoomTarget = 1.25 end
 	local PCOL = { red = { "#3A0606", "#E81818", "#FF3030" }, blue = { "#06283A", "#14C3EE", "#3FE0FF" }, purple = { "#1A0A4A", "#5A3CE0", "#7A6CFF" } }
 	local TIER_COL = { Rare = PCOL.blue, Epic = PCOL.purple, Legendary = PCOL.red }
-	local tiers = { "Rare", "Rare", "Epic", "Epic", "Legendary", "Rare", "Epic", "Legendary" }
+	-- (2026-10-21, RIVALS normal theme) kuroko_picker.png groups the tiles by colour (purple, reds, blues ...)
+	local tiers = { "Epic", "Legendary", "Legendary", "Legendary", "Rare", "Rare", "Rare", "Epic" }
 	local tmp = Instance.new("Folder")
 	local back = mk("TextButton", { Name = "Back", AutoButtonColor = false, Text = "", BackgroundColor3 = WHITE, Position = UDim2.fromOffset(192, 845),
 		Size = UDim2.fromOffset(191, 56), ZIndex = 7, Parent = tmp }, { corner(6), RK.vgrad(GRAD.red) })
@@ -2443,18 +2558,9 @@ local function openCosmeticTray(c)
 	local strip = mk("ScrollingFrame", { Name = "Tiles", BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, BorderSizePixel = 0, Position = UDim2.fromOffset(192, 908),
 		Size = UDim2.fromOffset(1535, 150), CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.X, ScrollBarThickness = 6, ScrollBarImageColor3 = COL.Grey,
 		ElasticBehavior = Enum.ElasticBehavior.Never, ZIndex = 7, Parent = tmp }, { corner(4) })
-	-- RIVALS' name pill (t0050 "Become Bat / Included in the Bat Bundle"): a dark pill with the tile and the name, a white bubble under it
-	local pill = mk("Frame", { Name = "NamePill", BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, Position = UDim2.fromOffset(680, 20), Size = UDim2.fromOffset(560, 74),
-		Visible = false, ZIndex = 7, Parent = tmp }, { corner(6) })
-	local pillTile = mk("Frame", { BackgroundColor3 = WHITE, Position = UDim2.fromOffset(12, 8), Size = UDim2.fromOffset(58, 58), ZIndex = 8, Parent = pill }, { corner(5) })
-	local pillGrad = mk("UIGradient", { Rotation = 90, Parent = pillTile })
-	local pillName = text({ Text = "", FontFace = FB, TextSize = 50, TextScaled = true, Position = UDim2.fromOffset(84, 6), Size = UDim2.fromOffset(460, 62), ZIndex = 8, Parent = pill })
-	mk("UITextSizeConstraint", { MaxTextSize = 50, Parent = pillName })
-	local pillSub = mk("Frame", { BackgroundColor3 = WHITE, Position = UDim2.fromOffset(20, 80), Size = UDim2.fromOffset(520, 48), ZIndex = 8, Parent = pill }, { corner(4) })
-	local pillSubL = text({ Text = "", FontFace = FM, TextSize = 30, TextColor3 = BLACK, TextXAlignment = Enum.TextXAlignment.Center, TextScaled = true,
-		Position = UDim2.fromOffset(12, 6), Size = UDim2.fromOffset(496, 36), ZIndex = 9, Parent = pillSub })
-	mk("UITextSizeConstraint", { MaxTextSize = 30, Parent = pillSubL })
 	settle(tmp, tray)
+	-- (2026-10-21, RIVALS normal theme) the preview pills live in their own full-canvas layer (Armory._previewPills)
+	local preview = mk("Frame", { Name = "Preview", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = tray })
 	tray.Visible = true
 	-- a wrapped cube: the wrap tiles' stand-in (RIVALS' wrap thumbnails are swatch cubes), centred, posed for a camera on +Z
 	local function wrapCube(color: Color3): Model
@@ -2498,16 +2604,24 @@ local function openCosmeticTray(c)
 					box = itemRender(view, selectedId, Vector2.new(104, 104), { z = 9, fill = 0.92, flat = true, color = H(cc[1]) })
 				end
 				Armory._sway(box, k * 1.3)
-				mk("Frame", { Name = "Wash", BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, BorderSizePixel = 0, Size = UDim2.fromOffset(118, 118), ZIndex = 10, Parent = t }, { corner(7) })
-				mark = glyph(t, "lock", 52, WHITE, 11)
-				mark.Position = UDim2.fromOffset(59, 50)
+				mk("Frame", { Name = "Wash", BackgroundColor3 = BLACK, BackgroundTransparency = 0.8, BorderSizePixel = 0, Size = UDim2.fromOffset(118, 118), ZIndex = 10, Parent = t }, { corner(7) })
+				-- (2026-10-21, RIVALS normal theme) kuroko_picker.png: bright tiles (a light wash, was 0.45), a bigger white padlock
+				-- (2026-10-21, RIVALS images) gen.kit_locked_sparkles behind the padlock, tinted a darker shade of the rarity colour
+				if RA.gen and RA.gen.kit_locked_sparkles then
+					mk("ImageLabel", { Name = "Sparkles", BackgroundTransparency = 1, Image = RA.gen.kit_locked_sparkles, ScaleType = Enum.ScaleType.Fit,
+						ImageColor3 = H(cc[2]):Lerp(Color3.new(0, 0, 0), 0.4), Position = UDim2.fromOffset(4, 2), Size = UDim2.fromOffset(110, 110), ZIndex = 10, Parent = t })
+				end
+				mark = glyph(t, "lock", 62, WHITE, 11)
+				mark.Position = UDim2.fromOffset(59, 54)
 			else
-				local g = glyph(t, "empty", 70, COL.Empty, 9)
+				-- (2026-10-21, RIVALS images) gen.kit_slot_empty at ~70 px, darker (#333333) on the black None tile like RIVALS;
+				-- the lime check is gen.tasks_check_lime
+				local g = glyph(t, "empty", 70, H("#333333"), 9)
 				g.Position = UDim2.fromOffset(59, 48)
-				mark = glyph(t, "check", 70, COL.Check, 13)
+				mark = glyph(t, "equipped", 70, COL.Check, 13)
 				mark.Position = UDim2.fromOffset(92, 92)
 			end
-			shade(text({ Text = it.name, FontFace = FB, TextSize = 24, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-9, 83),
+			shade(text({ Text = it.name, FontFace = FX, TextSize = 30, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-9, 83),
 				Size = UDim2.fromOffset(136, 33), ZIndex = 12, Parent = t }), 1.5, 0.4)
 			task.delay((k - 1) * 0.028, function()
 				if popS.Parent then TweenService:Create(popS, TweenInfo.new(0.16, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play() end
@@ -2515,15 +2629,13 @@ local function openCosmeticTray(c)
 			Kit.bindButton(t, { hover = 1.06, press = 0.92 }) -- RIVALS' tiles grow on hover
 			t.MouseEnter:Connect(function() if box then box:SetAttribute("Hover", true) end end)
 			t.MouseLeave:Connect(function() if box then box:SetAttribute("Hover", nil) end end)
+			-- (2026-10-21, RIVALS normal theme) kuroko_preview.png: a click (locked or not) previews the skin on the hero item at once
+			-- and shows the name / how-to-get pills (no shake: RIVALS just previews); None puts the equipped look back and hides
+			-- them, its check stays (what you have on). Finishers have nothing to show on the item: pills only.
 			t.Activated:Connect(function()
 				Kit.pop(mark, cc and 1.3 or 1.35)
-				pill.Visible = cc ~= nil
-				if cc then
-					Kit.shake(t) -- (locked)
-					pillGrad.Color = ColorSequence.new(H(cc[1]), H(cc[2]))
-					pillName.Text = it.name
-					pillSubL.Text = "Coming with the next update"
-				end
+				Armory._previewLook(c.Id ~= "Finisher" and cc or nil, c.Id)
+				Armory._previewPills(preview, cc and it or nil, cc, cc and c.Id == "Wrap" and wrapCube(H(cc[2])) or nil)
 			end)
 		end
 		local cw = math.max(16 + #list * 138, 1535)
@@ -2564,7 +2676,11 @@ local function renderBottom()
 		local cx = 960 + (i - (n + 1) / 2) * 121
 		local b = mk("TextButton", { Name = c.Id, AutoButtonColor = false, Text = "", BackgroundTransparency = 1, Position = UDim2.fromOffset(cx - 50, 955),
 			Size = UDim2.fromOffset(100, 100), ZIndex = 5, Parent = tmp })
-		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 84 or 66, COL.Empty, 6)
+		-- (2026-10-21, RIVALS images) weapons.png: every slot sits on a ~90 px dark disc; the empty mark is gen.kit_slot_empty at
+		-- ~46 px (grey), Leave is gen.kit_leave_x (coloured, ~84 px, it breaks out of its disc)
+		mk("Frame", { Name = "Disc", BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromOffset(50, 44), Size = UDim2.fromOffset(90, 90), ZIndex = 5, Parent = b }, { circle() })
+		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 84 or 46, COL.Empty, 6)
 		g.Position = UDim2.fromOffset(50, 44)
 		if c.Id ~= "Leave" then slotRings[c.Id] = b end
 		shade(text({ Text = c.Label, FontFace = FB, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-10, 68),
@@ -3053,6 +3169,7 @@ function Armory.Leave(after: (() -> ())?)
 	if not active or busy then return end
 	busy = true
 	game:GetService("Players").LocalPlayer:SetAttribute("InKit", nil)
+	game:GetService("Players").LocalPlayer:SetAttribute("KitPreview", nil) -- (2026-10-21) never leave the currency hidden
 	if Armory._keyLight and Armory._keyBright then Armory._keyLight.Brightness = Armory._keyBright; Armory._keyBright = nil end -- (grade3) restore the room key light
 	closeTray()
 	-- (2026-10-21, round 3: match RIVALS) a hover bubble left up would still be showing on the next visit

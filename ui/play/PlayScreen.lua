@@ -6,6 +6,11 @@
 -- ExtraBold title centred (soft shadow stroke); hover = picture brightens + white 4 px outline + 0.97 shrink. The red X
 -- (112 x 58) sits right of the column at RIVALS' 1704,136; the menu grows open with Rivals Kit.open (0.22 s).
 -- While you search, RIVALS' dark searching pill sits over the column (mode, clock, red X cancels).
+-- (2026-10-21, RIVALS normal theme) the grid above was the NEW-ACCOUNT Play (tall "Beginner 2v2" hero on the left). RIVALS'
+-- normal Play (notes/ui_rivals/rivals_normal/play.png) is now copied instead: 1v1 / 2v2 / 3v3 (323 x 274) on top, Training +
+-- Duel Pads (488 / 489 x 275) in the 4v4 / 5v5 spots below, and a TALL Ranked tile (415 x 556) on the RIGHT: "Ranked" + the
+-- season at the top, your gun as a big render, the rank line at the bottom (shield glyph, rank name, "0 / 10"; locked =
+-- padlock + "LV n / 50"). Grid 1403 x 556 at x 258, y 306; the red X outside its top-right corner.
 -- Every colour / font comes from UIKit.Rivals.Theme. Design px at 1920x1080, converted to Scale (Rivals Kit.toScale).
 --   PlayScreen.Init({ Config, getData, ask, onOpen, onClose, enterTraining, toPads, rankedOpen, level })
 --   PlayScreen.Open() / Close() / IsOpen() / Refresh()
@@ -14,6 +19,7 @@ local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local UIKit = script.Parent
 local Rivals = UIKit:WaitForChild("Rivals")
@@ -513,21 +519,41 @@ local function rankedScene(parent, target, shot, locked)
 		part(scene, Vector3.new(s[3], s[2], 3.2), CFrame.new(s[1], s[2] / 2, 0), s[1] == 0 and plate or plate:Lerp(Color3.new(1, 1, 1), 0.08), Enum.Material.Metal)
 		part(scene, Vector3.new(s[3] + 0.04, 0.2, 3.24), CFrame.new(s[1], s[2] - 0.1, 0), brass, Enum.Material.Metal)
 	end
-	local cup = ViewIcons.Build("Trophy")
-	if cup then
-		local cf = cup:GetBoundingBox()
-		cup.WorldPivot = cf
-		pcall(function() cup:ScaleTo(locked and 2.4 * 1.3 or 2.4) end) -- (2026-10-21, grade3) locked: 1.3x so the cup shows around the padlock
-		local _, size = cup:GetBoundingBox()
-		cup:PivotTo(CFrame.new(0, 2.4 + size.Y / 2, 0) * CFrame.Angles(0, math.rad(-16), 0))
-		cup.Parent = scene
+	-- (2026-10-21, RIVALS normal theme) RIVALS' tall Ranked tile shows a big gun render: your loadout gun, scaled up and
+	-- tilted diagonally (the tile is portrait) over the podium; the camera frames the gun alone (shot.top..bottom), so the
+	-- title above and the rank line below stay clear. The trophy stays as the fallback when there is no gun model.
+	local hero
+	local weapon = loadoutWeapon()
+	local gun = weapon and ViewIcons.Weapon(weapon)
+	if gun and #gun:GetChildren() > 0 then
+		local bb, size = gun:GetBoundingBox()
+		gun.WorldPivot = CFrame.new(bb.Position)
+		local turn = CFrame.identity -- the longest axis is the barrel: lay it along X
+		if size.Z >= size.X and size.Z >= size.Y then turn = CFrame.Angles(0, math.rad(90), 0)
+		elseif size.Y >= size.X and size.Y >= size.Z then turn = CFrame.Angles(0, 0, math.rad(90)) end
+		pcall(function() gun:ScaleTo(math.clamp(7 / math.max(size.X, size.Y, size.Z, 0.1), 0.3, 4)) end)
+		gun:PivotTo(CFrame.new(0, 2.4 + 3.4, 0) * CFrame.Angles(0, math.rad(-18), 0) * CFrame.Angles(0, 0, math.rad(-32)) * turn)
+		gun.Parent = scene
+		hero = gun
+	else
+		if gun then gun:Destroy() end
+		local cup = ViewIcons.Build("Trophy")
+		if cup then
+			local cf = cup:GetBoundingBox()
+			cup.WorldPivot = cf
+			pcall(function() cup:ScaleTo(2.4) end)
+			local _, size = cup:GetBoundingBox()
+			cup:PivotTo(CFrame.new(0, 2.4 + size.Y / 2, 0) * CFrame.Angles(0, math.rad(-16), 0))
+			cup.Parent = scene
+			hero = cup
+		end
 	end
 	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.identity, zoom = 1, still = true })
 	if not vp then return nil end
 	lightScene(vp)
 	local props = partsOf(scene)
 	stageSet(vp, scene, props, "ranked")
-	frameOn(vp, props, shot.aspect, shot.top, shot.bottom, -6, shot.fit)
+	frameOn(vp, hero and partsOf(hero) or props, shot.aspect, shot.top, shot.bottom, -6, shot.fit)
 	-- (2026-10-21, grade3) the greyed scene read as an empty brown box: 150 -> ~205 so the podium and cup still show
 	if locked then vp.Frame.ImageColor3 = Color3.fromRGB(205, 201, 192) end
 	liven(vp, target, 0.06)
@@ -547,17 +573,21 @@ local tickNow -- set below (status refresh)
 
 -- (2026-10-21, RIVALS 1:1) layout from the live capture (grade2/rivals_play.png, 1:1 at 1920x1080) and the replica's column:
 -- the column starts at x 258, y 139 (Screens map P1); hero 416 x 555, top tiles 323 x 274, bottom tiles 488 x 274, gutter 7.
-local COL_X, COL_Y, COL_W, COL_H = 258, 139, 1430, 941 -- the scroll column (replica: 1430 wide, runs to the screen bottom)
-local GAP = 7
-local HW = 416 -- hero (Training) width
-local MW, MH = 323, 274 -- mode tile
-local GRID_W = HW + GAP + 3 * MW + 2 * GAP -- 1406
-local GRID_H = 2 * MH + GAP -- 555
-local BW = (3 * MW + 2 * GAP - GAP) / 2 -- bottom-row tile (Duel Pads, Ranked): 488
+-- (2026-10-21, RIVALS normal theme) measured on rivals_normal/play.png (1920 x 1002 viewport: the tiles are the same px as the
+-- 1080 capture, so x / sizes carry over 1:1 and the grid's centre y 541.5 / 1002 maps to 584 / 1080 -> top 306):
+--   top row x 258 / 587 / 916, 323 x 274 (6 px gaps); bottom row 488 x 275 at x 258 and 489 x 275 at x 751, y +281;
+--   Ranked 415 x 556 at x 1246 (7 px gap), full grid height. Grid 1403 x 556.
+local COL_X, COL_Y = 258, 306
+local COL_W, COL_H = 1403, 1080 - 306 -- the column (still a ScrollingFrame) runs to the screen bottom
+local MW, MH, MPITCH = 323, 274, 329 -- mode tile, top row
+local BY, BH = 281, 275 -- bottom row: y in the grid, height
+local BW1, BX2, BW2 = 488, 493, 489 -- Training (4v4 spot) width; Duel Pads (5v5 spot) x and width
+local RX, RW = 988, 415 -- the tall Ranked tile
+local GRID_H = 556
 local CORNER = 6 -- small rounded corners (live capture)
 local SHADE = 0.7 -- RIVALS: bright art under a 30 % black shade; hover lifts it to 0.95 (the picture brightens)
 local SHADE_LOCKED = 0.35 -- the locked Ranked tile (replica)
-local TITLE, HERO_TITLE = 100, 88 -- replica: grid titles 100, the tall tile's title 88
+local TITLE, WIDE_TITLE = 100, 88 -- grid titles 100 ("1v1" cap 56 px); "Training" / "Duel Pads" / "Ranked" 88 ("Ra" cap 49 px)
 -- the gradient behind each 3D set shows as the sky over its back wall: Theme blue (ranked: Theme key gold)
 local SKY, DUSK = Theme.gradient.blue, Theme.gradient.key
 -- where each tile's subject sits (fractions of the tile height from the top; fit = most of the width it may take):
@@ -570,6 +600,37 @@ local function title(parent, text, size, x, y, w, h, z, font, align)
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 4, Parent = parent })
 	new("UIStroke", { Color = C.textDark, Thickness = 2, Transparency = 0.82, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
 	return l
+end
+-- (2026-10-21, RIVALS normal theme) the Ranked tile's season / rank lines are italic in RIVALS: the Theme font, italic style
+local function italic(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
+
+-- (2026-10-21, RIVALS normal theme) the Ranked tile's data, shown the RIVALS way ("Season 3"; shield + "Unranked" + "0 / 10"):
+-- the season from RankedCore.Config.Season, the rank from RankArt.Of (the attributes RankedScreen reads). Locked = the padlock,
+-- your rank name and the level requirement "LV n / 50"; in placements = "played / needed"; placed = "ELO / next floor".
+local function season()
+	local mod = ReplicatedStorage:FindFirstChild("Modules")
+	mod = mod and mod:FindFirstChild("Shared")
+	mod = mod and mod:FindFirstChild("RankedCore")
+	local ok, RC = pcall(function() return mod and require(mod) end)
+	local n = ok and RC and RC.Config and RC.Config.Season
+	return "Season " .. tostring(n or 1)
+end
+local function rankLine(open)
+	local okA, RankArt = pcall(require, UIKit:FindFirstChild("RankArt"))
+	local info = (okA and RankArt and RankArt.Of) and RankArt.Of(player) or { placed = false, name = "Unranked" }
+	local shield = (Assets.play and Assets.play.shield_badge) or ""
+	if not open then
+		local lv = math.max(0, (ctx.level and ctx.level()) or 0)
+		local need = math.max(1, ctx.Config.RankedLevel or 1)
+		return (Assets.play and Assets.play.padlock) or "", info.name or "Unranked", "LV " .. math.min(lv, need) .. " / " .. need
+	end
+	if not info.placed then
+		local placed, need = player:GetAttribute("RankPlaced") or 0, player:GetAttribute("RankPlacements") or 10
+		return shield, "Unranked", math.min(placed, need) .. " / " .. need
+	end
+	local nextFloor = player:GetAttribute("RankNextFloor")
+	local elo = math.floor((info.elo or 0) + 0.5)
+	return info.image or shield, info.name or "Ranked", nextFloor and (elo .. " / " .. nextFloor) or (elo .. " ELO")
 end
 
 -- (2026-10-21, RIVALS 1:1) the replica's card(): a full-bleed picture (here the sky gradient + the live 3D scene added after
@@ -699,6 +760,15 @@ end
 local function modeCard(mode, ranked, x)
 	local q = ctx.Config.QueueFor(mode.Id, ranked)
 	local card = tile(mode.Id, x, 0, MW, MH, ranked and DUSK or SKY)
+	-- (2026-10-21, RIVALS images) RIVALS' mode tiles are pictures: gen.play_card_1v1 / 2v2 / 3v3 full-bleed (Crop) in the Scene
+	-- holder instead of the live 3D squad. The cards are bright lavender, so the replica's 30 % black shade stays (the white
+	-- title would wash out without it) and hover still lifts it. render() skips the squad scene for a tile with art.
+	local n = mode.TeamSize
+	local art = Assets.gen and Assets.gen[("play_card_%dv%d"):format(n or 0, n or 0)]
+	if art then
+		new("ImageLabel", { Name = "Art", BackgroundTransparency = 1, Image = art, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromScale(1, 1),
+			ZIndex = 1, Parent = card.Scene })
+	end
 	-- (2026-10-21, RIVALS 1:1) ONE huge title, centred on the tile (replica: 100, full tile height); no tag, no subtitle
 	title(card, mode.Id, TITLE, 0, 0, MW, MH)
 	local entry = { q = q, card = card, dim = card.Dim }
@@ -717,7 +787,7 @@ local function modeCard(mode, ranked, x)
 		TK.whoops(msg)
 		tickNow()
 	end)
-	return card.Scene, mode.TeamSize, card
+	return card.Scene, mode.TeamSize, card, art ~= nil
 end
 
 local function render()
@@ -727,10 +797,9 @@ local function render()
 	local open = ctx.rankedOpen and ctx.rankedOpen()
 	if not open then tab = "Casual" end
 	local ranked = tab == "Ranked"
-	local GX = HW + GAP -- the grid right of the hero
-	-- the hero: Training, tall on the left (RIVALS' "Beginner 2v2" spot)
-	local tb = tile("Training", 0, 0, HW, GRID_H, SKY)
-	title(tb, "Training", HERO_TITLE, 0, 0, HW, GRID_H)
+	-- (2026-10-21, RIVALS normal theme) no hero: Training takes RIVALS' 4v4 spot (bottom left)
+	local tb = tile("Training", 0, BY, BW1, BH, SKY)
+	title(tb, "Training", WIDE_TITLE, 0, 0, BW1, BH)
 	table.insert(strips, { training = true, dim = tb.Dim })
 	tb.Activated:Connect(function()
 		local myQ = search()
@@ -744,27 +813,32 @@ local function render()
 	-- top row: the queues
 	local stages = {}
 	for i, mode in Config.Modes do
-		local stage, n, card = modeCard(mode, ranked, GX + (i - 1) * (MW + GAP))
-		table.insert(stages, { stage, n, card })
+		if i > 3 then break end -- (2026-10-21, RIVALS normal theme) the top row has three spots
+		local stage, n, card, hasArt = modeCard(mode, ranked, (i - 1) * MPITCH)
+		if not hasArt then table.insert(stages, { stage, n, card }) end -- (2026-10-21, RIVALS images) art tiles get no 3D squad
 	end
-	-- bottom row: Duel Pads, then Ranked (RIVALS' 4v4 / 5v5 spots)
-	local Y2 = MH + GAP
-	local db = tile("DuelPads", GX, Y2, BW, MH, SKY)
-	title(db, "Duel Pads", TITLE, 0, 0, BW, MH)
+	-- (2026-10-21, RIVALS normal theme) Duel Pads in RIVALS' 5v5 spot (bottom middle)
+	local db = tile("DuelPads", BX2, BY, BW2, BH, SKY)
+	title(db, "Duel Pads", WIDE_TITLE, 0, 0, BW2, BH)
 	db.Activated:Connect(function()
 		Screen.Close()
 		if ctx.toPads then ctx.toPads() end
 	end)
-	local rt = tile("Ranked", GX + BW + GAP, Y2, BW, MH, DUSK)
+	-- (2026-10-21, RIVALS normal theme) the TALL Ranked tile on the right (play.png, tile-local px): "Ranked" (cap 44..93),
+	-- the season under it, the gun render between, the rank line at the bottom: a 53 x 61 glyph at 20, 474 (shield; padlock
+	-- when locked; your emblem once placed), the rank name (italic, cap 444..471) and the progress (italic, 478..496) centred
+	local rt = tile("Ranked", RX, 0, RW, GRID_H, DUSK)
+	title(rt, "Ranked", WIDE_TITLE, 0, 23, RW, 90)
+	title(rt, season(), 36, 0, 106, RW, 42, 4, italic(F.bold))
+	local glyph, rankName, progress = rankLine(open)
+	new("ImageLabel", { Name = open and "RankGlyph" or "Padlock", BackgroundTransparency = 1, Image = glyph, ScaleType = Enum.ScaleType.Fit,
+		Position = UDim2.fromOffset(20, 474), Size = UDim2.fromOffset(53, 61), ZIndex = 4, Parent = rt })
+	title(rt, rankName, 48, 0, 433, RW, 50, 4, italic(F.display))
+	title(rt, progress, 32, 0, 470, RW, 34, 4, italic(F.display))
 	if not open then
-		-- (2026-10-21, RIVALS 1:1) locked = the replica's locked card: a darker shade, the padlock and the title only
+		-- (2026-10-21, RIVALS 1:1) locked = the replica's darker shade; the padlock now sits in the rank glyph's spot
 		rt:SetAttribute("Locked", true)
 		rt.Shade.BackgroundTransparency = SHADE_LOCKED
-		new("ImageLabel", { Name = "Padlock", BackgroundTransparency = 1, Image = (Assets.play and Assets.play.padlock) or "", AnchorPoint = Vector2.new(0.5, 0),
-			Position = UDim2.fromOffset(BW / 2, 22), Size = UDim2.fromOffset(110, 110), ZIndex = 4, Parent = rt })
-		title(rt, "Ranked", TITLE, 0, 128, BW, 116)
-	else
-		title(rt, "Ranked", TITLE, 0, 0, BW, MH)
 	end
 	rt.Activated:Connect(function()
 		if not open then
@@ -822,9 +896,11 @@ local function render()
 		local vp, scene = squadScene(sc[1], sc[2], ranked, { aspect = MW / MH, top = 0.06, bottom = SQUAD_BOTTOM[sc[2]] or 0.94, fit = 0.98 })
 		livenSquad(vp, scene, sc[3])
 	end
-	trainingScene(tb.Scene, tb, { aspect = HW / GRID_H, top = 0.06, bottom = 0.9, fit = 0.96 })
-	duelsScene(db.Scene, db, { aspect = BW / MH, top = 0.04, bottom = 0.98, fit = 0.96 })
-	rankedScene(rt.Scene, rt, { aspect = BW / MH, top = 0.04, bottom = 0.96, fit = 0.94 }, not open)
+	-- (2026-10-21, RIVALS normal theme) Training is a wide bottom tile now (was the tall hero); the Ranked gun fills the band
+	-- between the season line and the rank line
+	trainingScene(tb.Scene, tb, { aspect = BW1 / BH, top = 0.06, bottom = 0.96, fit = 0.9 })
+	duelsScene(db.Scene, db, { aspect = BW2 / BH, top = 0.04, bottom = 0.98, fit = 0.96 })
+	rankedScene(rt.Scene, rt, { aspect = RW / GRID_H, top = 0.27, bottom = 0.74, fit = 0.94 }, not open)
 end
 
 -- (2026-10-21, RIVALS 1:1) status every half second while open: busy tiles dim (no chips: RIVALS writes nothing on a tile),
@@ -863,9 +939,10 @@ local function build()
 	scrim = new("Frame", { Name = "Scrim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.scrim, BackgroundTransparency = 1, Parent = gui })
 	local canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
-	-- (2026-10-21, RIVALS 1:1) the replica's red X: 112 x 58 at 1704,136, right of the column, level with its top
+	-- (2026-10-21, RIVALS 1:1) the replica's red X: 112 x 58, right of the column, level with its top
+	-- (2026-10-21, RIVALS normal theme) outside the grid's top-right corner: 16 px right of x 1661, 3 px above y 306 (was 1704,136)
 	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
-	close.Position = UDim2.fromOffset(1704, 136)
+	close.Position = UDim2.fromOffset(COL_X + COL_W + 16, COL_Y - 3)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	-- the scroll column (replica): thin dark scrollbar, grows with its content
@@ -873,7 +950,8 @@ local function build()
 		ClipsDescendants = false, ScrollBarThickness = 10, ScrollBarImageColor3 = C.textDark, ScrollBarImageTransparency = 0.45,
 		CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = root })
 	-- the searching pill (replica 540 x 80, centred; here above the column so it never covers a tile)
-	pill = new("Frame", { Name = "Searching", Position = UDim2.fromOffset(692, 44), Size = UDim2.fromOffset(540, 80), BackgroundColor3 = C.textDark,
+	-- (2026-10-21, RIVALS normal theme) the grid starts lower (y 306): the pill follows it, 20 px above (was y 44)
+	pill = new("Frame", { Name = "Searching", Position = UDim2.fromOffset(692, COL_Y - 100), Size = UDim2.fromOffset(540, 80), BackgroundColor3 = C.textDark,
 		BackgroundTransparency = 0.25, Visible = false, ZIndex = 10, Parent = root }, { Kit.corner(8) })
 	new("ImageLabel", { BackgroundTransparency = 1, Image = (Assets.tasks and Assets.tasks.star6) or "", Position = UDim2.fromOffset(16, 18), Size = UDim2.fromOffset(44, 44), ZIndex = 11, Parent = pill })
 	Kit.label({ Name = "Status", Text = "Searching for players.", FontFace = F.medium, TextSize = 21, Position = UDim2.fromOffset(74, 10), Size = UDim2.fromOffset(300, 28), ZIndex = 11, Parent = pill })

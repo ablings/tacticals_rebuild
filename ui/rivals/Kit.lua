@@ -347,15 +347,38 @@ function Kit.button(kind, size, text, props)
 	return Kit.bindButton(btn)
 end
 
--- Red close button with a chunky white X built from two rotated bars.
+-- (2026-10-21, RIVALS images) gen.<name> from the sibling Assets module (required lazily)
+local genAssets
+local function genImage(name)
+	if genAssets == nil then
+		genAssets = false
+		local m = script.Parent:FindFirstChild("Assets")
+		if m then
+			local ok, A = pcall(require, m)
+			if ok and type(A) == "table" and A.gen then genAssets = A.gen end
+		end
+	end
+	return genAssets and genAssets[name] or nil
+end
+
+-- Red close button with a chunky white X (gen.ui_close_x).
 function Kit.closeButton(size)
 	local btn = Kit.button("red", size, nil, { Name = "Close" })
-	local h = math.floor(size.Y.Offset * 0.58)
-	for _, rot in ipairs({ 45, -45 }) do
-		new("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Rotation = rot,
-			Size = UDim2.fromOffset(h, math.floor(h * 0.3)), BackgroundColor3 = C.white, Parent = btn,
-		}, { Kit.corner(3), Kit.stroke(C.textDark, 1.5, 0.5) })
+	-- (2026-10-21, RIVALS images) the X is now one image, gen.ui_close_x (the whole white ✖ with its grey lower-arm shade, never
+	-- tinted), ~40/67 of the button height and centred. Falls back to the old two outlined bars if the id is missing.
+	local glyph = genImage("ui_close_x")
+	if glyph then
+		local g = math.floor(size.Y.Offset * 40 / 67)
+		new("ImageLabel", { Name = "X", BackgroundTransparency = 1, Image = glyph, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(g, g), ZIndex = 2, Parent = btn })
+	else
+		local h = math.floor(size.Y.Offset * 0.58)
+		for _, rot in ipairs({ 45, -45 }) do
+			new("Frame", {
+				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Rotation = rot,
+				Size = UDim2.fromOffset(h, math.floor(h * 0.3)), BackgroundColor3 = C.white, Parent = btn,
+			}, { Kit.corner(3), Kit.stroke(C.textDark, 1.5, 0.5) })
+		end
 	end
 	return btn
 end

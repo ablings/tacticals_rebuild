@@ -393,6 +393,21 @@ function Kit.button(kind, size, text, props)
 	return Kit.bindButton(btn)
 end
 
+-- (2026-10-21, RIVALS images) gen.<name> from UIKit.Rivals.Assets (looked up lazily, nil when this place has no Rivals folder)
+local genAssets
+local function genImage(name)
+	if genAssets == nil then
+		genAssets = false
+		local r = script.Parent:FindFirstChild("Rivals")
+		local m = r and r:FindFirstChild("Assets")
+		if m then
+			local ok, A = pcall(require, m)
+			if ok and type(A) == "table" and A.gen then genAssets = A.gen end
+		end
+	end
+	return genAssets and genAssets[name] or nil
+end
+
 -- Close button (pass 34: gunmetal + olive brackets, warms red on hover) with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
 	-- (2026-10-21, user: "whatever RIVALS is doing") RIVALS' red X again (t0062 / t0287): a red gradient block with a chunky white
@@ -404,12 +419,22 @@ function Kit.closeButton(size)
 	btn:AddTag("Nonapplicable")
 	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.7, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
 		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), ZIndex = 1, Parent = btn }, { Kit.corner(8) })
-	local len = math.floor(h * 0.62)
-	for _, rot in ipairs({ 45, -45 }) do
-		new("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.46), Rotation = rot,
-			Size = UDim2.fromOffset(len, math.max(4, math.floor(h * 0.17))), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 2, Parent = btn,
-		}, { Kit.corner(3) })
+	-- (2026-10-21, RIVALS images) the X is now one image, gen.ui_close_x (the whole white ✖ with its grey lower-arm shade, never
+	-- tinted), ~40/67 of the button height and centred (0.46: over the face, above the dark lip). Falls back to the old two
+	-- bars if UIKit.Rivals.Assets is missing in this place.
+	local glyph = genImage("ui_close_x")
+	if glyph then
+		local g = math.floor(h * 40 / 67)
+		new("ImageLabel", { Name = "X", BackgroundTransparency = 1, Image = glyph, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromScale(0.5, 0.46), Size = UDim2.fromOffset(g, g), ZIndex = 2, Parent = btn })
+	else
+		local len = math.floor(h * 0.62)
+		for _, rot in ipairs({ 45, -45 }) do
+			new("Frame", {
+				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.46), Rotation = rot,
+				Size = UDim2.fromOffset(len, math.max(4, math.floor(h * 0.17))), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 2, Parent = btn,
+			}, { Kit.corner(3) })
+		end
 	end
 	local sheen = new("Frame", { Name = "HoverSheen", BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = btn }, { Kit.corner(8) })
 	btn.MouseEnter:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.82 }) end)

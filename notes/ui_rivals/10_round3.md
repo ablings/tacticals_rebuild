@@ -965,3 +965,110 @@ parse check OK, 166 top-level locals (unchanged; new state on the Armory table).
 - **ArmoryTestHook:** new `"Equip"` (alias `"Click"`) action, `hook:Invoke("Equip", id)`, goes through `Armory.ClickItem`.
 - To check in Studio: the check sits clear of the small render on unpicked rows and of the name on the picked row; the
   checks move after a click with no full list rebuild.
+
+## Play: normal-theme layout (2026-10-21)
+File: `ui/play/PlayScreen.lua` only (parse OK, 83 top-level locals). Not deployed, not run in Studio.
+The first port copied the NEW-ACCOUNT Play (tall "Beginner 2v2" hero on the left). It now follows RIVALS' normal Play,
+`notes/ui_rivals/rivals_normal/play.png`.
+
+**Measured** (the capture's viewport is 1920 x 1002; the tiles are the same px as the 1080 capture, so x and sizes carry over 1:1;
+the grid's centre y 541.5 / 1002 maps to 584 / 1080, so the top is at 306):
+- top row: 323 x 274 at x 258 / 587 / 916 (6 px gaps);
+- bottom row: 488 x 275 at x 258 and 489 x 275 at x 751, y + 281;
+- Ranked: 415 x 556 at x 1246, full grid height. The grid is 1403 x 556 at (258, 306).
+- Ranked tile, in tile px: "Ranked" cap 44-93 (88 vs the grid's 100: "Ra" cap 49 px, "1v1" cap 56 px); rank name italic, cap
+  444-471 (48); progress italic, cap 478-496 (32); shield glyph 53 x 61 at (20, 474). All lines are centred on the tile.
+
+**Now**
+- Top row: 1v1 / 2v2 / 3v3 (a 4th mode would be dropped). Bottom row: Training in the 4v4 spot, Duel Pads in the 5v5 spot,
+  both titled at 88 (100 would crowd 488 px).
+- Ranked = the tall right tile:
+  - "Ranked" plus an italic "Season n" (from `RankedCore.Config.Season`, else 1) at the top;
+  - your loadout gun as a big render: scaled to 7 studs, tilted 32°, over the gold podium hall, framed alone between 27 % and
+    74 % of the tile height (the trophy is the fallback when there is no gun model);
+  - the rank line at the bottom, read from `RankArt.Of`:
+    - in placements: shield + "Unranked" + "played / needed" (RIVALS' "0 / 10");
+    - placed: your emblem + the rank name + "ELO / next floor" (or "ELO ELO" at the top);
+    - locked: the Rivals padlock in the glyph spot, the 0.35 shade and "LV n / 50", and a click still opens the requirement card.
+- Red X: 112 x 58 at (1677, 303), outside the grid's top right. The searching pill moves to y 206 (just above the grid). The
+  party column follows the grid's bottom on its own.
+- Kept: the titles, hover, the live scenes, the searching pill, the queue / party / training / pads behaviour, and the ranked
+  tab fallback.
+
+**Check in Studio**
+- whether the gun render reads at that tilt for long and short guns;
+- whether the italic Rubik loads (`Font.new(family, weight, Italic)` built from Theme fonts);
+- whether the emblem / shield_badge images load in Tacticals;
+- whether "Unranked" shows when RankPlacements is 0 and there is no RankTier yet (it falls back to "Unranked 0 / 10").
+
+## Kit picker: RIVALS preview (2026-10-21)
+References: `notes/ui_rivals/rivals_normal/` weapons.png, kuroko_picker.png, kuroko_preview.png (normal theme, live). Only
+`ui/lobby/Armory.lua`; parse check OK, 166 top-level locals (unchanged; new state on the Armory table). Not deployed, not run in Studio.
+
+- **Slot hover bubbles:** Skin = "Change how this weapon looks" (RIVALS live); Wrap = "Change this weapon's colours", Finisher =
+  "Change how you finish off enemies" (our wording in the same style). Tacticals still has no Charm slot (not added).
+- **Picker top row / tiles:** measured against kuroko_picker.png, the existing geometry already matched (Back 191 x 56 with the
+  undo icon, search bar 390 to 1727, Favorited + 40 px checkbox above the right end, 118 px tiles 138 apart, 17 px inset).
+  Changed: tiles are brighter (dark wash 0.8, was 0.45), the white padlock is 62 (was 52), names are ExtraBold 30 (scaled to fit),
+  and the tiles are grouped by colour (purple, reds, blues) like the reference.
+- **Click = preview** (kuroko_preview.png): a tile click (all are locked placeholders) previews at once. `Armory._previewLook(cc, kind)`
+  tints the showcase CLONE in the tile's rarity colour (lit parts only, relative shade kept, textures lifted off; wraps use the
+  lighter colour on Foil); the clone's own values are stored on `Armory._preview` and restored by `_previewLook(nil)`.
+  Finishers show the pills only. The locked tile no longer shakes (RIVALS just previews).
+- **Pills:** `Armory._previewPills` rebuilds, top centre, a dark pill (y 12, 76 tall) with the icon (rarity tile, the item's
+  render popping out above it; a wrap cube for wraps) and the name in ExtraBold 56, and a wider white pill under it (y 90, 48 tall)
+  with "Coming in a future update" (placeholder for RIVALS' how-to-get line). Widths follow the text.
+- **Restore:** None (keeps its green check), Back, switching trays, a list rebuild (`renderBottom`) and Leave all go through
+  `closeTray` / `_previewLook(nil)`: the equipped look comes back and the pills go.
+- To check in Studio: the tint reads on each weapon (parts darker than v 0.14 stay as details); textured MeshParts get their
+  TextureID back after None / Back; the pill width estimate fits long names (TextScaled guards it).
+
+## RIVALS images wired: Kit + Play (2026-10-21)
+Uploaded RIVALS-1:1 images (`UIKit.Rivals.Assets.gen`, list in `image_gen_list.md`) replace the code-drawn glyphs.
+- **Kit (Armory.lua):** a loop after `GLYPH_IMG` maps glyph kinds to gen ids (a missing id falls back to the drawn GLYPH):
+  `empty` = kit_slot_empty, `leave` = kit_leave_x, `closex` = ui_close_x, `up` = kit_levelup, `seal` = kit_reward_seal,
+  `bars` = kit_stats, `lens` = kit_inspect (row icon; the blue button keeps the eye, as weapons.png), `clock` = kit_cat_clock,
+  and a new kind `equipped` = tasks_check_lime (list rows + picker None). leave / closex / equipped are coloured (`GLYPH_ART`,
+  never tinted); `check` stays the white tick for the favourite box.
+- Strip: every slot now sits on a 90 px dark disc (black 0.45), the empty mark 46 px grey, Leave X 84 px. Picker None: 70 px,
+  tinted #333333 on the black tile.
+- Career tabs + list-header pair: `slotIcon` returns a gen.kit_cat_rifle / knife / grenade ImageLabel (52 x scale px, ~40 at 0.76),
+  grey #858487 (`Armory._catGrey`), active white via `tintIcon`; the header's left one is mirrored with a negative
+  ImageRectSize (assumes the 512 x 512 upload). History clock 40 px.
+- Locked picker tiles: gen.kit_locked_sparkles (110 px) behind the padlock, tinted the rarity's bottom colour lerped 40 % to black.
+- Top-level locals still 166 (new state on `Armory._CAT_IMG`, `Armory._catGrey`).
+- **Play (PlayScreen.lua):** 1v1 / 2v2 / 3v3 show gen.play_card_NvN full-bleed (Crop) in the tile's Scene holder; the 3D squad
+  scene is skipped for them. The cards are bright lavender, so the 30 % black shade stays for the white title; hover still
+  lifts it + white outline + 0.97. Training, Duel Pads and Ranked keep their 3D scenes.
+- To check in Studio: mirrored header icon (ImageRectSize trick), sparkles contrast on light rarity tiles, 1v1 title legibility.
+
+## RIVALS images wired (2026-10-21)
+The generated RIVALS images (`ui/rivals/Assets.lua` `gen`, list `notes/ui_rivals/image_gen_list.md`) wired into the lobby UI.
+Every use falls back to the old stand-in when the id (or the `UIKit.Rivals` folder) is missing. Not deployed, not committed.
+- **Close X** (`ui_close_x`, untinted): `ui/lobby/Kit.lua`, `ui/rivals/Kit.lua`, `ui/settings/SettingsKit.lua` `closeButton`:
+  the two white bars are one ImageLabel, 40/67 of the button height, centred (lobby Kit at y 0.46, over the face above its dark
+  lip). Each Kit gets a lazy `genImage(name)`; SettingsKit exports it as `Kit.genImage` for SettingsScreen / HotkeysPage.
+- **Missions** (`MissionsScreen.lua`): Kills and Headshots glyphs = `tasks_elims` (Headshots used `rowIcon.aim`, not the eye);
+  done check on the card bar = `tasks_check_lime` (untinted); the contract-row done badge = the lime check image itself (the green
+  disc + black tick only as fallback); header Play button stars = `tasks_star6` on both sides.
+- **Hub HUD** (`LobbyHudController.lua`): Daily Missions Kills / Headshots glyph = `tasks_elims`; done check = `tasks_check_lime`;
+  Duel Pads stars = `tasks_star6` both sides. (The "Searching for players" sparkle still uses the old `tasks.star6`.)
+- **Settings rows** (`SettingsData.lua` new `gen = "..."` field per row, read first by `SettingsScreen.lua` row + detail icon and
+  `HotkeysPage.lua`): `row_texture` Optimized Textures; `row_wraps` Optimized Wraps; `row_damage` Camera Shake, Damage Numbers;
+  `row_crouch` Toggle Crouch + hotkey Crouch; `row_sprint` Toggle / Auto Sprint + hotkeys Sprint, Dash; `row_slide` Easy Slide +
+  hotkey Slide; `row_quickattack` Easy Gun Bash; `row_hidehud` Hide HUD (Game + Hotkeys); `row_weaponpicker` the old
+  `inking` rifle stand-ins (Aim Assist, Challenge Requests, Party Invites, Delivery Mode, Equip Gun, Equip Melee, Bash Keeps Aim,
+  Keep Window; Weapon Inking keeps its own icon).
+- **Hotkeys actions**: Fire = `tasks_elims`, Reload = `hk_reload`, Gun Bash = `hk_quickmelee`, Throw Gadget + Equip Gadget =
+  `hk_quickutility`. **Pad badges** (`HotkeysPage.padGlyph`): A / X / Y, R2 / L2, R3 and the four D-pad arms are the `pad_*`
+  images in the same 46 px box with the same press bounce; B, R1 / L1 and L3 have no image and keep the drawn badges.
+- **Shop** (`ShopScreen.lua`): `shop_bg_founders` full-bleed (Crop, rounded) behind the Featured Founder's card and the Bundles
+  hero; `shop_bg_operator` behind the Operator Kit card (Bundles tab) and its Special Offer slide; renders, title and price on
+  top. Corner tag: Tacticals has no random-weapon items and no skins, so `shop_tag_all` (∞) goes on melee and gadget items (they
+  go with every gun) in the Arms grid (54 px, the name narrows to clear it) and the Featured 3x2 tiles (40 px); guns get none.
+- **Still unused**: `shop_tag_random` (no random items); `kit_cat_rifle / knife / grenade / clock`, `kit_inspect`,
+  `kit_leave_x`, `kit_levelup`, `kit_locked_sparkles`, `kit_reward_seal`, `kit_slot_empty`, `kit_stats` (Armory agent) and
+  `play_card_1v1 / 2v2 / 3v3` (PlayScreen agent).
+- Parse check OK on all nine files (top-level locals: ShopScreen 83, MissionsScreen 59, LobbyHud 42, others < 20).
+- To check in Studio: close X size vs RIVALS t0062, the lime check on the contract row (32 px), backdrop crop on the 749x321
+  hero, the ∞ tag over light rarity tiles.

@@ -296,10 +296,11 @@ function LobbyHud.Start()
 	local tpRow = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = toPads },
 		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Center,
 			Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }) })
-	local STAR = RAssets.tasks and RAssets.tasks.star6 or ""
-	new("ImageLabel", { LayoutOrder = 1, BackgroundTransparency = 1, Image = STAR, Size = UDim2.fromOffset(30, 30), ZIndex = 3, Parent = tpRow })
+	-- (2026-10-21, RIVALS images) gen.tasks_star6: RIVALS' twisted pinwheel star on both sides (the PIL star6 as fallback)
+	local STAR = (RAssets.gen and RAssets.gen.tasks_star6) or (RAssets.tasks and RAssets.tasks.star6) or ""
+	new("ImageLabel", { LayoutOrder = 1, BackgroundTransparency = 1, Image = STAR, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(30, 30), ZIndex = 3, Parent = tpRow })
 	RKit.label({ LayoutOrder = 2, Text = "Duel Pads", FontFace = WFONT, TextSize = 28, TextColor3 = RC.text, AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 48), ZIndex = 3, Parent = tpRow })
-	new("ImageLabel", { LayoutOrder = 3, BackgroundTransparency = 1, Image = STAR, Size = UDim2.fromOffset(30, 30), ZIndex = 3, Parent = tpRow })
+	new("ImageLabel", { LayoutOrder = 3, BackgroundTransparency = 1, Image = STAR, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(30, 30), ZIndex = 3, Parent = tpRow })
 	Kit.bindButton(toPads)
 	function LobbyHud.ToPads()
 		-- straight to the duel hall, in front of the first pad (not on it)
@@ -731,10 +732,14 @@ function LobbyHud.Start()
 		-- scissors (34 px) at (312, 0) with "×N" (Rubik Bold 20) stacked under it. Done: a 40 px green check in place of the count
 		-- and reward (ref_65). The cream glyphs / cream track / Oswald / separate reward column are gone.
 		local CHECK = RAssets.tasks and RAssets.tasks.check or ""
+		-- (2026-10-21, RIVALS images) RIVALS' claw for the elimination tasks (Kills, Headshots), the lime check (untinted) for done
+		local GEN = RAssets.gen or {}
+		local GEN_GLYPH = { Kills = GEN.tasks_elims, Headshots = GEN.tasks_elims }
+		local CHECK_LIME = GEN.tasks_check_lime
 		for i, e in entries do
 			local y = 6 + (i - 1) * 67
 			local done = e.claimed or e.prog >= e.def.Goal
-			new("ImageLabel", { Name = "StatIcon", BackgroundTransparency = 1, Image = Kit.ICONS[FLAT_STAT[e.def.Stat] or "trophy"], ImageColor3 = RC.white,
+			new("ImageLabel", { Name = "StatIcon", BackgroundTransparency = 1, Image = GEN_GLYPH[e.def.Stat] or Kit.ICONS[FLAT_STAT[e.def.Stat] or "trophy"], ImageColor3 = RC.white,
 				ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(8, y + 6), Size = UDim2.fromOffset(32, 32), ZIndex = 4, Parent = holder })
 			-- our names run longer than RIVALS' ("Play duels"): 28 steps down to 20 to fit the ~190 px left of the count, then truncates
 			-- (Enum.Font has no Rubik: measured with Arial Bold + 7 %)
@@ -758,7 +763,8 @@ function LobbyHud.Start()
 			hudFx.done[e.def.Id] = done
 			hudFx.paid[e.def.Id] = e.claimed
 			if done then
-				local ck = new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK, ImageColor3 = RC.green, Position = UDim2.fromOffset(306, y + 6),
+				local ck = new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK_LIME or CHECK, ImageColor3 = CHECK_LIME and RC.white or RC.green,
+					ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(306, y + 6),
 					Size = UDim2.fromOffset(40, 40), ZIndex = 4, Parent = holder })
 				if newlyDone or newlyPaid then table.insert(checkPops, ck) end
 			else
@@ -1112,6 +1118,9 @@ function LobbyHud.Start()
 			pushedAway = menuAway
 			pushAside(menuAway)
 		end
+		-- (2026-10-21, RIVALS) the Kit picker's skin-name pill takes the top centre while it previews: the currency steps aside
+		local sc = root:FindFirstChild("Scissors")
+		if sc then sc.Visible = not (kitRoom and player:GetAttribute("KitPreview") == true) end
 		local training = player:GetAttribute("InTraining") == true
 		if corner then corner.frame.Visible = not cut and (on or hide or training) end
 		if training ~= wasTraining then wasTraining = training; corner.layout() end
