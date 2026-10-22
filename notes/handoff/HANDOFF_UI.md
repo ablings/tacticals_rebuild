@@ -6,6 +6,15 @@
   (PlayerCards `fill`). Deployed to the lobby (53 files), lobby saved.
 - **Match RIVALS, no change needed:** Shop tab row (100 px tabs, 5.2% of the width, same as RIVALS; the icons are not small),
   Play grid proportions, Kit gun size, nameplate (seal, name, Premium, device), player menu.
+- **2026-10-22 later (Edward: "replace everything you can besides scissors", "use rivals level icons"):** RIVALS live check: one
+  blue starburst seal at every level (36 and 176 look the same), which we already use. The thin cream line icons get RIVALS-style solid
+  chunky white glyphs: `ui/art/rivals/_upload_glyphs/` (flame, trophy, level, eye, news, inbox, play, rank, headshot). They're
+  wired through `Kit.GLYPH` / `Kit.glyph(name, fallback)`: hub board tabs, the corner list's mode icon, News / Inbox buttons, Missions
+  Wins / Matches / Headshots (Headshots no longer reuses the claw). **Edward: upload the 9 PNGs under Gunsy Funsy, then fill
+  the ids into `Kit.GLYPH`** (empty = the old icon). The board's Elims tab already uses the uploaded claw.
+  The scissors currency art is kept, as asked. Not replaced, because they already match RIVALS: device icons, streak flame,
+  level seal, kill-feed weapon silhouettes.
+  Studio note: Studio's renderer went all white after the RIVALS player ran next to it; saving and reopening Studio fixed it.
 - **Open:**
   1. Missions: Headshots shows the same claw glyph as Eliminations (hub panel + Missions screen). It needs a codex
      `tasks_headshot` glyph; upload under Gunsy Funsy (Edward).

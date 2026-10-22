@@ -1,0 +1,42 @@
+[
+  {
+    "name": "flame",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-910ade55-ab73-4af4-a271-49c060a1f380.png",
+    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky campfire-style flame with an inner transparent cut-out tongue. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
+  },
+  {
+    "name": "trophy",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-85b5118e-3092-42fc-8f77-3bc46aac5ea4.png",
+    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky cup trophy with two handles, a short stem and broad base. Handle interiors are transparent cut-outs. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
+  },
+  {
+    "name": "level",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-961e9f8c-f744-4e94-8687-ef8f2690d7c9.png",
+    "prompt": "Create one pure white solid 12-point starburst seal UI icon, with exactly TWELVE outer tips positioned like the hours of a clock: 12,1,2,3,4,5,6,7,8,9,10,11. Twelve evenly spaced outer points, twelve inner valleys. Broad chunky silhouette with softly rounded tips. One small circular transparent hole at centre, diameter 14% of badge diameter. Flat white #FFFFFF only, no other details, text, outlines, shadows, gradient or backdrop. Genuine transparent alpha background. Centered square canvas, icon fills 80% of canvas. Roblox RIVALS bold chunky UI glyph style. Please count twelve points carefully."
+  },
+  {
+    "name": "eye",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-8bb80981-f330-4b7f-b31b-de30f4a919b9.png",
+    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky horizontal almond-shaped solid eye with a single round transparent pupil cut-out in its centre. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
+  },
+  {
+    "name": "news",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-f98fc7a0-d510-4e3b-9684-40619910d2fd.png",
+    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky folded newspaper silhouette with a few thick transparent cut-out headline lines. No actual letters. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
+  },
+  {
+    "name": "inbox",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-2c5c2590-8eb2-4093-8dfd-bb049322f9c6.png",
+    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky closed envelope silhouette with thick transparent cut-out flap lines. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
+  },
+  {
+    "name": "play",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-e3c48304-c0a2-4b5c-bcf7-1ffad0d9ece0.png",
+    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a solid rounded right-pointing play triangle, with no internal details. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
+  },
+  {
+    "name": "rank",
+    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-7dc45079-ef4b-435a-88d2-fe08bb89e105.png",
+    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky shield silhouette with a single thick transparent cut-out upward-pointing chevron. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
+  }
+]

@@ -58,11 +58,11 @@ local F_CHUNKY, F_BODY, F_HEAVY = RF.chunky, RF.medium, RF.heavy
 
 -- stat badges: the category icon with the number printed over it (white glyphs are tinted)
 local CATS = {
-	{ key = "streak", value = "LobbyTopStreak", title = "Win Streaks", tab = ICONS.lbStreak,
+	{ key = "streak", value = "LobbyTopStreak", title = "Win Streaks", tab = LKit.glyph("flame", ICONS.lbStreak),
 		badge = (ICONS.streakColor and ICONS.streakColor ~= "") and ICONS.streakColor or ICONS.streak, tint = (ICONS.streakColor and ICONS.streakColor ~= "") and RC.white or RTheme.hex("#FF8C28") },
-	{ key = "elims", value = "LobbyTopKills", title = "Most Eliminations", tab = ICONS.lbElims, badge = RAssets.gen.tasks_elims, tint = RC.red },
-	{ key = "wins", value = "LobbyTopWins", title = "Most Wins", tab = ICONS.lbWins, badge = ICONS.trophy, tint = RC.gold },
-	{ key = "level", value = "LobbyTopLevel", title = "Highest Level", tab = ICONS.lbLevel, badge = RAssets.hud.levelbadge, tint = RC.white, level = true },
+	{ key = "elims", value = "LobbyTopKills", title = "Most Eliminations", tab = RAssets.gen.tasks_elims or ICONS.lbElims, badge = RAssets.gen.tasks_elims, tint = RC.red },
+	{ key = "wins", value = "LobbyTopWins", title = "Most Wins", tab = LKit.glyph("trophy", ICONS.lbWins), badge = LKit.glyph("trophy", ICONS.trophy), tint = RC.gold },
+	{ key = "level", value = "LobbyTopLevel", title = "Highest Level", tab = LKit.glyph("level", ICONS.lbLevel), badge = RAssets.hud.levelbadge, tint = RC.white, level = true },
 }
 
 local function new(c, p, parent)

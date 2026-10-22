@@ -1100,6 +1100,14 @@ Kit.ICONS.lbElims = "rbxassetid://83789042758416"
 Kit.ICONS.lbWins = "rbxassetid://120316362189428"
 Kit.ICONS.lbLevel = "rbxassetid://81711657935672"
 Kit.ICONS.streakColor = "rbxassetid://99079058513557" -- tac_streak_color (Gunsy Funsy upload 2026-10-20)
+-- (2026-10-22, Edward: "replace everything you can besides scissors") RIVALS-style solid chunky white glyphs (codex,
+-- ui/art/rivals/_upload_glyphs) for the remaining thin cream line icons. Empty until uploaded under the group: Kit.glyph falls back
+-- to the old icon meanwhile. The scissors currency art stays ours.
+Kit.GLYPH = { flame = "", trophy = "", level = "", eye = "", news = "", inbox = "", play = "", rank = "", headshot = "" }
+function Kit.glyph(name: string, fallback: string?): string
+	local id = Kit.GLYPH[name]
+	return (id and id ~= "") and id or fallback or ""
+end
 -- (2026-10-20, Edward: "look at their levels lets get unique") the old level badge: a tactical hex shield in five tiers (codex,
 -- ui/art/level). (2026-10-21, RIVALS 1:1) retired: every level now shows RIVALS' blue starburst seal (below). Kept for a revert.
 Kit.LEVEL_TIERS_SHIELD = {

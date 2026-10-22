@@ -132,8 +132,8 @@ buildCorner = function(gui, cb)
 	local open = button("Open", ICON_GEAR, "See more")
 	local settings = button("Settings", ICON_GEAR, "Change your crosshair & hotkeys")
 	-- (2026-10-18, Edward: "keep the corner gear and add your changes to it") RIVALS' corner: News + Inbox beside Settings
-	local news = button("News", Kit.ICONS.news, "Read the latest news")
-	local inbox = button("Inbox", Kit.ICONS.inbox, "View your recent notifications")
+	local news = button("News", Kit.glyph("news", Kit.ICONS.news), "Read the latest news")
+	local inbox = button("Inbox", Kit.glyph("inbox", Kit.ICONS.inbox), "View your recent notifications")
 	-- unread notifications: a red count on the gear while the corner is shut, on the Inbox while it's open
 	local function dot(parent)
 		local d = new("Frame", { Name = "Unread", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.85, 0.15), Size = UDim2.fromScale(0.5, 0.5),
@@ -803,7 +803,7 @@ function LobbyHud.Start()
 		-- (2026-10-21, RIVALS images) RIVALS' claw for the elimination tasks (Kills, Headshots), the lime check (untinted) for done
 		local GEN = RAssets.gen or {}
 		-- (2026-10-21, port3) + the solid white gen art for cover (row_crouch), melee (kit_cat_knife) and gadgets (kit_cat_grenade)
-		local GEN_GLYPH = { Kills = GEN.tasks_elims, Headshots = GEN.tasks_elims, CoverKills = GEN.row_crouch, MeleeKills = GEN.kit_cat_knife,
+		local GEN_GLYPH = { Kills = GEN.tasks_elims, Headshots = Kit.glyph("headshot", GEN.tasks_elims), CoverKills = GEN.row_crouch, MeleeKills = GEN.kit_cat_knife,
 			GadgetsThrown = GEN.kit_cat_grenade, Wins = RAssets.tasks and RAssets.tasks.trophy, MatchesPlayed = RAssets.tasks and RAssets.tasks.play }
 		local CHECK_LIME = GEN.tasks_check_lime
 		-- (2026-10-21, port3) row layout, 67 apart: 30 px solid glyph at (14, +4), the short name (Rubik Bold 24, 1.5 stroke) at
@@ -899,7 +899,8 @@ function LobbyHud.Start()
 	local function modeIcon()
 		-- (2026-10-18, live RIVALS) the column icon is a white silhouette: flame = streak, burst = level, trophy shield = rank
 		-- (2026-10-21, RIVALS 1:1) set in place on the one ImageLabel (no destroy / recreate)
-		lbModeIcon.Image = (lbStat == "Rank" and Kit.ICONS.rank) or (lbStat == "Level" and Kit.ICONS.level) or (lbStat == "Streak" and Kit.ICONS.streak) or Kit.ICONS.trophy
+		lbModeIcon.Image = (lbStat == "Rank" and Kit.glyph("rank", Kit.ICONS.rank)) or (lbStat == "Level" and Kit.glyph("level", Kit.ICONS.level))
+			or (lbStat == "Streak" and Kit.glyph("flame", Kit.ICONS.streak)) or Kit.glyph("trophy", Kit.ICONS.trophy)
 	end
 	local lastLB
 	-- (2026-10-21, RIVALS 1:1) rows are kept by UserId and stay steady: each row's pieces (badge, name, device icon, streak flame,

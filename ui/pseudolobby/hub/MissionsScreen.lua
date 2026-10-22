@@ -42,8 +42,9 @@ local STAR6 = GEN.tasks_star6 or A.star6 or ""
 -- (2026-10-21, port3) the thin grey line-art cover / melee / gadget glyphs are swapped for the solid white gen art: the crouched
 -- figure (row_crouch) for cover, the knife (kit_cat_knife) for melee, the grenade (kit_cat_grenade) for gadgets
 local GLYPH = {
-	Wins = A.trophy or ICONS.trophy, MatchesPlayed = A.play or ICONS.play, Kills = GEN.tasks_elims or ROW.crosshair or ICONS.lbElims,
-	Headshots = GEN.tasks_elims or ROW.aim or ICONS.eye, CoverKills = GEN.row_crouch or ICONS.cover, MeleeKills = GEN.kit_cat_knife or ICONS.melee,
+	Wins = A.trophy or Kit.glyph("trophy", ICONS.trophy), MatchesPlayed = A.play or Kit.glyph("play", ICONS.play), Kills = GEN.tasks_elims or ROW.crosshair or ICONS.lbElims,
+	Headshots = Kit.glyph("headshot", GEN.tasks_elims or ROW.aim or ICONS.eye), -- (2026-10-22) its own glyph, not the claw
+	 CoverKills = GEN.row_crouch or ICONS.cover, MeleeKills = GEN.kit_cat_knife or ICONS.melee,
 	GadgetsThrown = GEN.kit_cat_grenade or ICONS.gadget,
 }
 -- (2026-10-21, port3) RIVALS' task titles are two-word stat names ("Play duels", "Eliminations", "Win duels") at one fixed size;

@@ -1,0 +1,1222 @@
+Reading additional input from stdin...
+OpenAI Codex v0.160.0
+--------
+workdir: C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+model: gpt-6-astra
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR]
+reasoning effort: low
+reasoning summaries: none
+session id: 01a16280-754d-7ba2-82ca-185da56547d3
+--------
+user
+Make 8 game UI icon files in ui/art/rivals/_gen_c/, each 512x512 PNG with a REAL transparent background (alpha; no checkerboard, no backdrop). Style for ALL: copy the first attached reference icon exactly - a solid flat pure WHITE glyph, bold chunky rounded silhouette like the Roblox game RIVALS' icons (second attachment shows RIVALS' leaderboard tab glyphs: flame, claw, trophy), soft clean edges, no outline, no gradient, no text, details only as negative-space cut-outs, glyph fills ~80% of the canvas, centred, reads instantly at 32 px. Files: 1 glyph_flame.png (a chunky campfire-style flame with an inner cut-out tongue), 2 glyph_trophy.png (a chunky cup trophy with handles and base), 3 glyph_level.png (a 12-point starburst seal badge, solid, with a small round cut-out centre), 4 glyph_eye.png (a chunky eye, almond shape with a round pupil cut-out), 5 glyph_news.png (a folded newspaper with cut-out headline lines), 6 glyph_inbox.png (a chunky closed envelope with cut-out flap lines), 7 glyph_play.png (a rounded play triangle), 8 glyph_rank.png (a chunky shield with a cut-out chevron). Use your image generation tool; if it cannot output alpha, generate on flat chroma green #00FF00 and key it to transparent with Python PIL leaving clean anti-aliased edges and no green fringe, then force the RGB of every visible pixel to pure white. Also save one contact sheet of all 8 on dark grey as _gen_c/contact.png.
+codex
+I’m using the imagegen skill to create the eight matching white glyphs, then I’ll check their alpha and assemble a dark-grey contact sheet.
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command 'Get-Content C:/Users/aroki/.codex/skills/.system/imagegen/SKILL.md' in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 108ms:
+---
+name: "imagegen"
+description: "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas."
+---
+
+# Image Generation Skill
+
+Generates or edits images for the current project (for example website assets, game assets, UI mockups, product mockups, wireframes, logo design, photorealistic images, or infographics).
+
+## Top-level modes and rules
+
+This skill has exactly two top-level modes:
+
+- **Default built-in tool mode (preferred):** built-in `image_gen` tool for image generation, editing, and transparent-image requests. Does not require `OPENAI_API_KEY`.
+- **Fallback CLI mode:** `scripts/image_gen.py` CLI. Use when the user explicitly asks for or confirms the CLI/API/model path. Requires `OPENAI_API_KEY`.
+
+Within CLI fallback, the CLI exposes three subcommands:
+
+- `generate`
+- `edit`
+- `generate-batch`
+
+Rules:
+- Use the built-in `image_gen` tool by default for normal image generation and editing requests.
+- Do not switch to CLI fallback for ordinary quality, size, or file-path control.
+- For transparent images, ask built-in `image_gen` for a transparent background and preserve the generated alpha.
+- Never silently switch from built-in `image_gen` or CLI `gpt-image-2` to CLI `gpt-image-1.5`; ask the user first unless they explicitly requested `gpt-image-1.5`.
+- The word `batch` by itself does not mean CLI fallback. If the user asks for many assets or says to batch-generate assets without explicitly asking for CLI/API/model controls, stay on the built-in path and issue one built-in call per requested asset or variant.
+- If the built-in tool fails or is unavailable, tell the user the CLI fallback exists and that it requires `OPENAI_API_KEY`. Proceed only if the user explicitly asks for that fallback.
+- If the user explicitly asks for CLI mode, use the bundled `scripts/image_gen.py` workflow. Do not create one-off SDK runners.
+- Never modify `scripts/image_gen.py`. If something is missing, ask the user before doing anything else.
+
+Built-in save-path policy:
+- In built-in tool mode, Codex saves generated images under `$CODEX_HOME/*` by default.
+- Do not describe or rely on OS temp as the default built-in destination.
+- Do not describe or rely on a destination-path argument (if any) on the built-in `image_gen` tool. If a specific location is needed, generate first and then move or copy the selected output from `$CODEX_HOME/generated_images/...`.
+- Save-path precedence in built-in mode:
+  1. If the user names a destination, move or copy the selected output there.
+  2. If the image is meant for the current project, move or copy the final selected image into the workspace before finishing.
+  3. If the image is only for preview or brainstorming, render it inline; the underlying file can remain at the default `$CODEX_HOME/*` path.
+- Never leave a project-referenced asset only at the default `$CODEX_HOME/*` path.
+- Do not overwrite an existing asset unless the user explicitly asked for replacement; otherwise create a sibling versioned filename such as `hero-v2.png` or `item-icon-edited.png`.
+
+Shared prompt guidance for both modes lives in `references/prompting.md` and `references/sample-prompts.md`.
+
+Fallback-only docs/resources for CLI mode:
+- `references/cli.md`
+- `references/image-api.md`
+- `references/codex-network.md`
+- `scripts/image_gen.py`
+
+## When to use
+- Generate a new image (concept art, product shot, cover, website hero)
+- Generate a new image using one or more reference images for style, composition, or mood
+- Edit an existing image (inpainting, lighting or weather transformations, background replacement, object removal, compositing, transparent background)
+- Produce many assets or variants for one task
+
+## When not to use
+- Extending or matching an existing SVG/vector icon set, logo system, or illustration library inside the repo
+- Creating simple shapes, diagrams, wireframes, or icons that are better produced directly in SVG, HTML/CSS, or canvas
+- Making a small project-local asset edit when the source file already exists in an editable native format
+- Any task where the user clearly wants deterministic code-native output instead of a generated bitmap
+
+## Decision tree
+
+Think about two separate questions:
+
+1. **Intent:** is this a new image or an edit of an existing image?
+2. **Execution strategy:** is this one asset or many assets/variants?
+
+Intent:
+- If the user wants to modify an existing image while preserving parts of it, treat the request as **edit**.
+- If the user provides images only as references for style, composition, mood, or subject guidance, treat the request as **generate**.
+- If the user provides no images, treat the request as **generate**.
+
+Built-in edit semantics:
+- Built-in edit mode is for images already visible in the conversation context, such as attached images or images generated earlier in the thread.
+- If the user wants to edit a local image file with the built-in tool, first load it with built-in `view_image` tool so the image is visible in the conversation context, then proceed with the built-in edit flow.
+- Do not promise arbitrary filesystem-path editing through the built-in tool.
+- If a local file still needs direct file-path control, masks, or other explicit CLI-only parameters, use the explicit CLI fallback only when the user asks for it.
+- For edits, preserve invariants aggressively and save non-destructively by default.
+
+Execution strategy:
+- In the built-in default path, produce many assets or variants by issuing one `image_gen` call per requested asset or variant.
+- In the CLI fallback path, use the CLI `generate-batch` subcommand only when the user explicitly chose CLI mode and needs many prompts/assets.
+- For many distinct assets, do not use `n` as a substitute for separate prompts. `n` is for variants of one prompt; distinct assets need distinct built-in calls or distinct CLI `generate-batch` jobs.
+
+Assume the user wants a new image unless they clearly ask to change an existing one.
+
+## Workflow
+1. Decide the top-level mode: built-in by default, including transparent-output requests; fallback CLI only if explicitly requested or confirmed.
+2. Decide the intent: `generate` or `edit`.
+3. Decide whether the output is preview-only or meant to be consumed by the current project.
+4. Decide the execution strategy: single asset vs repeated built-in calls vs CLI `generate-batch`.
+5. Collect inputs up front: prompt(s), exact text (verbatim), constraints/avoid list, and any input images.
+6. For every input image, label its role explicitly:
+   - reference image
+   - edit target
+   - supporting insert/style/compositing input
+7. If the edit target is only on the local filesystem and you are staying on the built-in path, inspect it with `view_image` first so the image is available in conversation context.
+8. If the user asked for a photo, illustration, sprite, product image, banner, or other explicitly raster-style asset, use `image_gen` rather than substituting SVG/HTML/CSS placeholders. If the request is for an icon, logo, or UI graphic that should match existing repo-native SVG/vector/code assets, prefer editing those directly instead.
+9. Augment the prompt based on specificity:
+   - If the user's prompt is already specific and detailed, normalize it into a clear spec without adding creative requirements.
+   - If the user's prompt is generic, add tasteful augmentation only when it materially improves output quality.
+10. Use the built-in `image_gen` tool by default.
+11. For transparent-output requests, ask built-in `image_gen` for a transparent background and preserve the generated alpha channel.
+12. Inspect outputs and validate: subject, style, composition, text accuracy, and invariants/avoid items.
+13. Iterate with a single targeted change, then re-check.
+14. For preview-only work, render the image inline; the underlying file may remain at the default `$CODEX_HOME/generated_images/...` path.
+15. For project-bound work, move or copy the selected artifact into the workspace and update any consuming code or references. Never leave a project-referenced asset only at the default `$CODEX_HOME/generated_images/...` path.
+16. For batches or multi-asset requests, persist every requested deliverable final in the workspace unless the user explicitly asked to keep outputs preview-only. Discarded variants do not need to be kept unless requested.
+17. If the user explicitly chooses or confirms the CLI fallback, then use the fallback-only docs for model, quality, size, `input_fidelity`, masks, output format, output paths, and network setup.
+18. Always report the final saved path(s) for any workspace-bound asset(s), plus the final prompt or prompt set and whether the built-in tool or fallback CLI mode was used.
+
+## Transparent image requests
+
+Ask built-in `image_gen` for a genuinely transparent background and preserve its alpha.
+
+## Prompt augmentation
+
+Reformat user prompts into a structured, production-oriented spec. Make the user's goal clearer and more actionable, but do not blindly add detail.
+
+Treat this as prompt-shaping guidance, not a closed schema. Use only the lines that help, and add a short extra labeled line when it materially improves clarity.
+
+### Specificity policy
+
+Use the user's prompt specificity to decide how much augmentation is appropriate:
+
+- If the prompt is already specific and detailed, preserve that specificity and only normalize/structure it.
+- If the prompt is generic, you may add tasteful augmentation when it will materially improve the result.
+
+Allowed augmentations:
+- composition or framing hints
+- polish level or intended-use hints
+- practical layout guidance
+- reasonable scene concreteness that supports the stated request
+
+Not allowed augmentations:
+- extra characters or objects that are not implied by the request
+- brand names, slogans, palettes, or narrative beats that are not implied
+- arbitrary side-specific placement unless the surrounding layout supports it
+
+## Use-case taxonomy (exact slugs)
+
+Classify each request into one of these buckets and keep the slug consistent across prompts and references.
+
+Generate:
+- photorealistic-natural — candid/editorial lifestyle scenes with real texture and natural lighting.
+- product-mockup — product/packaging shots, catalog imagery, merch concepts.
+- ui-mockup — app/web interface mockups and wireframes; specify the desired fidelity.
+- infographic-diagram — diagrams/infographics with structured layout and text.
+- scientific-educational — classroom explainers, scientific diagrams, and learning visuals with required labels and accuracy constraints.
+- ads-marketing — campaign concepts and ad creatives with audience, brand position, scene, and exact tagline/copy.
+- productivity-visual — slide, chart, workflow, and data-heavy business visuals.
+- logo-brand — logo/mark exploration, vector-friendly.
+- illustration-story — comics, children’s book art, narrative scenes.
+- stylized-concept — style-driven concept art, 3D/stylized renders.
+- historical-scene — period-accurate/world-knowledge scenes.
+
+Edit:
+- text-localization — translate/replace in-image text, preserve layout.
+- identity-preserve — try-on, person-in-scene; lock face/body/pose.
+- precise-object-edit — remove/replace a specific element (including interior swaps).
+- lighting-weather — time-of-day/season/atmosphere changes only.
+- background-extraction — transparent background / clean cutout. Ask built-in `image_gen` for actual transparency.
+- style-transfer — apply reference style while changing subject/scene.
+- compositing — multi-image insert/merge with matched lighting/perspective.
+- sketch-to-render — drawing/line art to photoreal render.
+
+## Shared prompt schema
+
+Use the following labeled spec as shared prompt scaffolding for both top-level modes:
+
+```text
+Use case: <taxonomy slug>
+Asset type: <where the asset will be used>
+Primary request: <user's main prompt>
+Input images: <Image 1: role; Image 2: role> (optional)
+Scene/backdrop: <environment>
+Subject: <main subject>
+Style/medium: <photo/illustration/3D/etc>
+Composition/framing: <wide/close/top-down; placement>
+Lighting/mood: <lighting + mood>
+Color palette: <palette notes>
+Materials/textures: <surface details>
+Text (verbatim): "<exact text>"
+Constraints: <must keep/must avoid>
+Avoid: <negative constraints>
+```
+
+Notes:
+- `Asset type` and `Input images` are prompt scaffolding, not dedicated CLI flags.
+- `Scene/backdrop` refers to the visual setting. It is not the same as the fallback CLI `background` parameter, which controls output transparency behavior.
+- Fallback-only execution notes such as `Quality:`, `Input fidelity:`, masks, output format, and output paths belong in the CLI path only. Do not treat them as built-in `image_gen` tool arguments.
+
+Augmentation rules:
+- Keep it short.
+- Add only the details needed to improve the prompt materially.
+- For edits, explicitly list invariants (`change only X; keep Y unchanged`).
+- If any critical detail is missing and blocks success, ask a question; otherwise proceed.
+
+## Examples
+
+### Generation example (hero image)
+```text
+Use case: product-mockup
+Asset type: landing page hero
+Primary request: a minimal hero image of a ceramic coffee mug
+Style/medium: clean product photography
+Composition/framing: wide composition with usable negative space for page copy if needed
+Lighting/mood: soft studio lighting
+Constraints: no logos, no text, no watermark
+```
+
+### Edit example (invariants)
+```text
+Use case: precise-object-edit
+Asset type: product photo background replacement
+Primary request: replace only the background with a warm sunset gradient
+Constraints: change only the background; keep the product and its edges unchanged; no text; no watermark
+```
+
+## Prompting best practices
+- Structure prompt as scene/backdrop -> subject -> details -> constraints.
+- Include intended use (ad, UI mock, infographic) to set the mode and polish level.
+- Use camera/composition language for photorealism.
+- Only use SVG/vector stand-ins when the user explicitly asked for vector output or a non-image placeholder.
+- Quote exact text and specify typography + placement.
+- For tricky words, spell them letter-by-letter and require verbatim rendering.
+- For multi-image inputs, reference images by index and describe how they should be used.
+- For edits, repeat invariants every iteration to reduce drift.
+- Iterate with single-change follow-ups.
+- If the prompt is generic, add only the extra detail that will materially help.
+- If the prompt is already detailed, normalize it instead of expanding it.
+- For CLI fallback only, see `references/cli.md` and `references/image-api.md` for model, `quality`, `input_fidelity`, masks, output format, and output-path guidance.
+- For transparent images, ask built-in `image_gen` for actual transparency and preserve its alpha.
+
+More principles shared by both modes: `references/prompting.md`.
+Copy/paste specs shared by both modes: `references/sample-prompts.md`.
+
+## Guidance by asset type
+Asset-type templates (website assets, game assets, wireframes, logo) are consolidated in `references/sample-prompts.md`.
+
+## gpt-image-2 guidance for CLI fallback
+
+The fallback CLI defaults to `gpt-image-2`.
+
+- Use `gpt-image-2` for new CLI/API workflows unless the user confirms a different model.
+- CLI `gpt-image-2` does not support `background=transparent`; ask before using `gpt-image-1.5` unless the user explicitly requested that model.
+- `gpt-image-2` always uses high fidelity for image inputs; do not set `input_fidelity` with this model.
+- `gpt-image-2` supports `quality` values `low`, `medium`, `high`, and `auto`.
+- Use `quality low` for fast drafts, thumbnails, and quick iterations. Use `medium`, `high`, or `auto` for final assets, dense text, diagrams, identity-sensitive edits, or high-resolution outputs.
+- Square images are typically fastest to generate. Use `1024x1024` for fast square drafts.
+- If the user asks for 4K-style output, use `3840x2160` for landscape or `2160x3840` for portrait.
+- `gpt-image-2` size may be `auto` or `WIDTHxHEIGHT` if all constraints hold: max edge `<= 3840px`, both edges multiples of `16px`, long-to-short ratio `<= 3:1`, total pixels between `655,360` and `8,294,400`.
+
+Popular `gpt-image-2` sizes:
+- `1024x1024` square
+- `1536x1024` landscape
+- `1024x1536` portrait
+- `2048x2048` 2K square
+- `2048x1152` 2K landscape
+- `3840x2160` 4K landscape
+- `2160x3840` 4K portrait
+- `auto`
+
+## Fallback CLI mode only
+
+### Temp and output conventions
+These conventions apply only to the CLI fallback. They do not describe built-in `image_gen` output behavior.
+- Use `tmp/imagegen/` for intermediate files (for example JSONL batches); delete them when done.
+- Write final artifacts under `output/imagegen/`.
+- Use `--out` or `--out-dir` to control output paths; keep filenames stable and descriptive.
+
+### Dependencies
+Prefer `uv` for dependency management in this repo.
+
+Required Python package:
+```bash
+uv pip install openai
+```
+
+Optional for image inspection and downscaling:
+```bash
+uv pip install pillow
+```
+
+Portability note:
+- If you are using the installed skill outside this repo, install dependencies into that environment with its package manager.
+- In uv-managed environments, `uv pip install ...` remains the preferred path.
+
+### Environment
+- `OPENAI_API_KEY` must be set for live API calls.
+- Do not ask the user for `OPENAI_API_KEY` when using the built-in `image_gen` tool.
+- Never ask the user to paste the full key in chat. Ask them to set it locally and confirm when ready.
+
+If the key is missing, give the user these steps:
+1. Create an API key in the OpenAI platform UI: https://platform.openai.com/api-keys
+2. Set `OPENAI_API_KEY` as an environment variable in their system.
+3. Offer to guide them through setting the environment variable for their OS/shell if needed.
+
+If installation is not possible in this environment, tell the user which dependency is missing and how to install it into their active environment.
+
+### Script-mode notes
+- CLI commands + examples: `references/cli.md`
+- API parameter quick reference: `references/image-api.md`
+- Network approvals / sandbox settings for CLI mode: `references/codex-network.md`
+
+## Reference map
+- `references/prompting.md`: shared prompting principles for both modes.
+- `references/sample-prompts.md`: shared copy/paste prompt recipes for both modes.
+- `references/cli.md`: fallback-only CLI usage via `scripts/image_gen.py`.
+- `references/image-api.md`: fallback-only API/CLI parameter reference.
+- `references/codex-network.md`: fallback-only network/sandbox troubleshooting for CLI mode.
+- `scripts/image_gen.py`: fallback-only CLI implementation. Use only when the user explicitly chooses or confirms CLI mode.
+
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command 'Get-ChildItem -Force; Get-ChildItem -Path ..,../..,../../.. -Filter AGENTS.md -Force' in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 120ms:
+
+    Directory: C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/22/2026  2:25 AM                _gen_c
+d----          10/22/2026  2:22 AM                _gen_hs
+d----          10/22/2026  2:25 AM                _refcrops
+d----          10/22/2026  1:00 AM                _upload
+-a---          10/22/2026 12:54 AM         128968 _contact_A.png
+-a---          10/22/2026  1:01 AM         660516 _contact_B.png
+-a---          10/22/2026 12:58 AM          66353 _fix_compare.png
+-a---          10/22/2026  1:00 AM          17347 _generation_B.json
+-a---          10/22/2026  1:01 AM           3801 _process_B.py
+-a---          10/22/2026 12:54 AM         258376 _side_by_side_top10.png
+-a---          10/22/2026 12:54 AM         121143 codex_A.log
+-a---          10/22/2026  1:01 AM           8936 codex_B.log
+-a---          10/22/2026 12:58 AM          31396 codex_fix.log
+-a---          10/22/2026  1:45 AM           1330 decal_ids.json
+-a---          10/22/2026  1:45 AM           2168 image_ids.json
+-a---          10/22/2026 12:42 AM            965 PROMPT_A.md
+-a---          10/22/2026 12:42 AM           1287 PROMPT_B.md
+-a---          10/22/2026 12:55 AM           1280 PROMPT_fix.md
+
+
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command "Get-ChildItem _gen_c -Force; python -c \"from PIL import Image; im=Image.open('_upload/tasks_elims.png'); print(im.mode, im.getextrema())\"" in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 205ms:
+
+    Directory: C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals\_gen_c
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/22/2026  2:25 AM              0 codex.log
+RGBA ((255, 255), (255, 255), (255, 255), (0, 255))
+
+
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command "python -c \"from PIL import Image; im=Image.open('_upload/tasks_elims.png'); bg=Image.new('RGBA',im.size,'#303030'); bg.alpha_composite(im); bg.convert('RGB').save('_gen_c/reference_preview.png')\"" in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 160ms:
+codex
+The icons are generating. I’ve also checked the reference on dark grey so its white silhouette and transparent cut-outs are visible for comparison.
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command 'Get-ChildItem C:/Users/aroki/.codex/generated_images -Recurse -Filter *.png | Sort-Object LastWriteTime -Descending | Select-Object -First 10 FullName,LastWriteTime' in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 160ms:
+
+FullName
+--------                                                                                                               
+C:\Users\aroki\.codex\generated_images\01a16280-754d-7ba2-82ca-185da56547d3\exec-5d3f48a8-224b-4c05-810a-021d7ef30209.…
+C:\Users\aroki\.codex\generated_images\01a16280-754d-7ba2-82ca-185da56547d3\exec-85b5118e-3092-42fc-8f77-3bc46aac5ea4.…
+C:\Users\aroki\.codex\generated_images\01a16280-754d-7ba2-82ca-185da56547d3\exec-910ade55-ab73-4af4-a271-49c060a1f380.…
+C:\Users\aroki\.codex\generated_images\01a1627b-5291-7cd3-810d-2d86ff94ebf6\exec-57e23b6a-3ac3-4fd5-9e5c-e4955d60093e.…
+C:\Users\aroki\.codex\generated_images\01a1627b-5291-7cd3-810d-2d86ff94ebf6\exec-968518dd-0bed-436f-8cac-3e79d9cf5e60.…
+C:\Users\aroki\.codex\generated_images\01a16221-f93b-7d42-9f8b-fb62efed39cb\exec-63bf4ded-6134-4c06-a893-7fa040760583.…
+C:\Users\aroki\.codex\generated_images\01a16221-f93b-7d42-9f8b-fb62efed39cb\exec-62f39fcd-8f15-4eeb-99aa-e8df7391a8a1.…
+C:\Users\aroki\.codex\generated_images\01a16221-f93b-7d42-9f8b-fb62efed39cb\exec-3896881a-d2a9-4949-a5b9-25bb53698b37.…
+C:\Users\aroki\.codex\generated_images\01a16221-f93b-7d42-9f8b-fb62efed39cb\exec-197be3c3-09c8-43e3-b2b1-9b455e78da8d.…
+C:\Users\aroki\.codex\generated_images\01a16221-f93b-7d42-9f8b-fb62efed39cb\exec-ddc038ba-16aa-4341-97f0-46c5fda6fd13.…
+
+
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command "python -c \"from PIL import Image,ImageDraw; from pathlib import Path; p=Path('C:/Users/aroki/.codex/generated_images/01a16280-754d-7ba2-82ca-185da56547d3'); fs=list(p.glob('*.png')); out=Image.new('RGB',(256*len(fs),280),'#303030'); d=ImageDraw.Draw(out); [(out.paste(Image.alpha_composite(Image.new('RGBA',(256,256),'#303030'),Image.open(f).convert('RGBA').resize((256,256))).convert('RGB'),(i*256,0)),d.text((i*256+5,260),f.name[:18],fill='white')) for i,f in enumerate(fs)]; out.save('_gen_c/progress.jpg')\"" in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 250ms:
+codex
+The first results have the right bold silhouette style and real transparency. I’m checking the badge’s point count and keeping the final glyph sizes consistent.
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command "python -c \"from PIL import Image; import numpy as np; from scipy.signal import find_peaks; a=np.array(Image.open('C:/Users/aroki/.codex/generated_images/01a16280-754d-7ba2-82ca-185da56547d3/exec-5d3f48a8-224b-4c05-810a-021d7ef30209.png').getchannel('A')); y,x=np.where(a>127); cx=(x.min()+x.max())/2;cy=(y.min()+y.max())/2; ang=np.arctan2(y-cy,x-cx); r=np.hypot(x-cx,y-cy); bins=((ang+np.pi)*720/(2*np.pi)).astype(int)%720; v=np.zeros(720); np.maximum.at(v,bins,r); peaks,_=find_peaks(np.tile(v,3),prominence=25,distance=30); print('Points:',sum((peaks>=720)&(peaks<1440)))\"" in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ exited 1 in 244ms:
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+ModuleNotFoundError: No module named 'scipy'
+
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command "python -c \"from PIL import Image,ImageDraw; from pathlib import Path; fs=list(Path('C:/Users/aroki/.codex/generated_images/01a16280-754d-7ba2-82ca-185da56547d3').glob('*.png')); out=Image.new('RGB',(256*4,280*3),'#303030'); d=ImageDraw.Draw(out); [(out.paste(Image.alpha_composite(Image.new('RGBA',(256,256),'#303030'),Image.open(f).convert('RGBA').resize((256,256))).convert('RGB'),((i%4)*256,(i//4)*280)),d.text(((i%4)*256+5,(i//4)*280+260),f.name[:18],fill='white')) for i,f in enumerate(fs)]; out.save('_gen_c/progress.jpg')\"" in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 322ms:
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command 'Get-ChildItem -Path C:/Users/aroki/Documents/AGENTS.md,C:/Users/aroki/Documents/tacticals_rebuild/AGENTS.md,C:/Users/aroki/AGENTS.md,C:/Users/AGENTS.md,C:/AGENTS.md -ErrorAction SilentlyContinue | ForEach-Object { Get-Content $_.FullName }' in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ exited 1 in 84ms:
+apply patch
+patch: completed
+C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals\_gen_c\finalize.py
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+codex
+The badge now has twelve points, and the cut-outs are reading clearly. I’m waiting for the remaining icons, then I’ll export all eight at 512×512 with pure-white RGB and anti-aliased alpha edges.
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+codex
+Seven icons are generated; the shield is the last one pending. The export checks will verify the dimensions, transparency, and pure-white color of every visible pixel.
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+
+apply patch
+patch: completed
+C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals\_gen_c\generation.json
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+diff --git a/ui/art/rivals/_gen_c/generation.json b/ui/art/rivals/_gen_c/generation.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..d4abf07766b67dfe3f1864c8d8989cfcfee69996
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/generation.json
+@@ -0,0 +1,42 @@
++[
++  {
++    "name": "flame",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-910ade55-ab73-4af4-a271-49c060a1f380.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky campfire-style flame with an inner transparent cut-out tongue. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "trophy",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-85b5118e-3092-42fc-8f77-3bc46aac5ea4.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky cup trophy with two handles, a short stem and broad base. Handle interiors are transparent cut-outs. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "level",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-961e9f8c-f744-4e94-8687-ef8f2690d7c9.png",
++    "prompt": "Create one pure white solid 12-point starburst seal UI icon, with exactly TWELVE outer tips positioned like the hours of a clock: 12,1,2,3,4,5,6,7,8,9,10,11. Twelve evenly spaced outer points, twelve inner valleys. Broad chunky silhouette with softly rounded tips. One small circular transparent hole at centre, diameter 14% of badge diameter. Flat white #FFFFFF only, no other details, text, outlines, shadows, gradient or backdrop. Genuine transparent alpha background. Centered square canvas, icon fills 80% of canvas. Roblox RIVALS bold chunky UI glyph style. Please count twelve points carefully."
++  },
++  {
++    "name": "eye",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-8bb80981-f330-4b7f-b31b-de30f4a919b9.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky horizontal almond-shaped solid eye with a single round transparent pupil cut-out in its centre. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "news",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-f98fc7a0-d510-4e3b-9684-40619910d2fd.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky folded newspaper silhouette with a few thick transparent cut-out headline lines. No actual letters. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "inbox",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-2c5c2590-8eb2-4093-8dfd-bb049322f9c6.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky closed envelope silhouette with thick transparent cut-out flap lines. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "play",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-e3c48304-c0a2-4b5c-bcf7-1ffad0d9ece0.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a solid rounded right-pointing play triangle, with no internal details. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "rank",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-7dc45079-ef4b-435a-88d2-fe08bb89e105.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky shield silhouette with a single thick transparent cut-out upward-pointing chevron. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  }
++]
+
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command 'python _gen_c/finalize.py' in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 489ms:
+glyph_flame.png RGBA 512x512; white RGB; real alpha (81, 51, 430, 461)
+glyph_trophy.png RGBA 512x512; white RGB; real alpha (51, 81, 461, 431)
+glyph_level.png RGBA 512x512; white RGB; real alpha (51, 58, 461, 453)
+glyph_eye.png RGBA 512x512; white RGB; real alpha (51, 139, 461, 372)
+glyph_news.png RGBA 512x512; white RGB; real alpha (51, 69, 461, 442)
+glyph_inbox.png RGBA 512x512; white RGB; real alpha (51, 103, 461, 408)
+glyph_play.png RGBA 512x512; white RGB; real alpha (72, 51, 439, 461)
+glyph_rank.png RGBA 512x512; white RGB; real alpha (62, 51, 449, 461)
+
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+diff --git a/ui/art/rivals/_gen_c/generation.json b/ui/art/rivals/_gen_c/generation.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..d4abf07766b67dfe3f1864c8d8989cfcfee69996
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/generation.json
+@@ -0,0 +1,42 @@
++[
++  {
++    "name": "flame",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-910ade55-ab73-4af4-a271-49c060a1f380.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky campfire-style flame with an inner transparent cut-out tongue. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "trophy",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-85b5118e-3092-42fc-8f77-3bc46aac5ea4.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky cup trophy with two handles, a short stem and broad base. Handle interiors are transparent cut-outs. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "level",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-961e9f8c-f744-4e94-8687-ef8f2690d7c9.png",
++    "prompt": "Create one pure white solid 12-point starburst seal UI icon, with exactly TWELVE outer tips positioned like the hours of a clock: 12,1,2,3,4,5,6,7,8,9,10,11. Twelve evenly spaced outer points, twelve inner valleys. Broad chunky silhouette with softly rounded tips. One small circular transparent hole at centre, diameter 14% of badge diameter. Flat white #FFFFFF only, no other details, text, outlines, shadows, gradient or backdrop. Genuine transparent alpha background. Centered square canvas, icon fills 80% of canvas. Roblox RIVALS bold chunky UI glyph style. Please count twelve points carefully."
++  },
++  {
++    "name": "eye",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-8bb80981-f330-4b7f-b31b-de30f4a919b9.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky horizontal almond-shaped solid eye with a single round transparent pupil cut-out in its centre. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "news",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-f98fc7a0-d510-4e3b-9684-40619910d2fd.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky folded newspaper silhouette with a few thick transparent cut-out headline lines. No actual letters. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "inbox",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-2c5c2590-8eb2-4093-8dfd-bb049322f9c6.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky closed envelope silhouette with thick transparent cut-out flap lines. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "play",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-e3c48304-c0a2-4b5c-bcf7-1ffad0d9ece0.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a solid rounded right-pointing play triangle, with no internal details. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "rank",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-7dc45079-ef4b-435a-88d2-fe08bb89e105.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky shield silhouette with a single thick transparent cut-out upward-pointing chevron. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  }
++]
+
+exec
+"C:\\Program Files\\PowerShell\\7\\pwsh.exe" -Command "Remove-Item -LiteralPath 'C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c/reference_preview.png','C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c/progress.jpg'" in C:\Users\aroki\Documents\tacticals_rebuild\ui\art\rivals
+ succeeded in 85ms:
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+diff --git a/ui/art/rivals/_gen_c/generation.json b/ui/art/rivals/_gen_c/generation.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..d4abf07766b67dfe3f1864c8d8989cfcfee69996
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/generation.json
+@@ -0,0 +1,42 @@
++[
++  {
++    "name": "flame",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-910ade55-ab73-4af4-a271-49c060a1f380.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky campfire-style flame with an inner transparent cut-out tongue. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "trophy",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-85b5118e-3092-42fc-8f77-3bc46aac5ea4.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky cup trophy with two handles, a short stem and broad base. Handle interiors are transparent cut-outs. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "level",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-961e9f8c-f744-4e94-8687-ef8f2690d7c9.png",
++    "prompt": "Create one pure white solid 12-point starburst seal UI icon, with exactly TWELVE outer tips positioned like the hours of a clock: 12,1,2,3,4,5,6,7,8,9,10,11. Twelve evenly spaced outer points, twelve inner valleys. Broad chunky silhouette with softly rounded tips. One small circular transparent hole at centre, diameter 14% of badge diameter. Flat white #FFFFFF only, no other details, text, outlines, shadows, gradient or backdrop. Genuine transparent alpha background. Centered square canvas, icon fills 80% of canvas. Roblox RIVALS bold chunky UI glyph style. Please count twelve points carefully."
++  },
++  {
++    "name": "eye",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-8bb80981-f330-4b7f-b31b-de30f4a919b9.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky horizontal almond-shaped solid eye with a single round transparent pupil cut-out in its centre. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "news",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-f98fc7a0-d510-4e3b-9684-40619910d2fd.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky folded newspaper silhouette with a few thick transparent cut-out headline lines. No actual letters. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "inbox",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-2c5c2590-8eb2-4093-8dfd-bb049322f9c6.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky closed envelope silhouette with thick transparent cut-out flap lines. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "play",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-e3c48304-c0a2-4b5c-bcf7-1ffad0d9ece0.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a solid rounded right-pointing play triangle, with no internal details. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "rank",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-7dc45079-ef4b-435a-88d2-fe08bb89e105.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky shield silhouette with a single thick transparent cut-out upward-pointing chevron. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  }
++]
+
+codex
+Created all eight icons in [_gen_c](C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c).
+
+Verified: 512×512 PNGs, real transparent alpha, pure-white visible pixels.
+
+[View contact sheet](C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c/contact.png) · [Generation prompts](C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c/generation.json)
+
+Generated with the built-in image tool.
+diff --git a/ui/art/rivals/_gen_c/finalize.py b/ui/art/rivals/_gen_c/finalize.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..d77ac34f6e640ce9df318bb9e3f4c06fcb22aad9
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/finalize.py
+@@ -0,0 +1,37 @@
++from pathlib import Path
++import json
++import numpy as np
++from PIL import Image, ImageDraw
++
++root = Path(__file__).resolve().parent
++manifest = json.loads((root / 'generation.json').read_text())
++sheet = Image.new('RGB', (1024, 576), '#303030')
++draw = ImageDraw.Draw(sheet)
++for i, item in enumerate(manifest):
++    im = Image.open(item['source']).convert('RGBA')
++    a = im.getchannel('A')
++    if a.getextrema()[0] == 255:
++        rgb = np.array(im).astype(float)
++        # White over chroma green: red/blue measure foreground coverage.
++        alpha = np.minimum(rgb[:,:,0], rgb[:,:,2])
++        a = Image.fromarray(np.uint8(np.clip(alpha, 0, 255)))
++    bbox = a.point(lambda p: 255 if p > 8 else 0).getbbox()
++    a = a.crop(bbox)
++    scale = 410 / max(a.size)
++    a = a.resize(tuple(round(v * scale) for v in a.size), Image.Resampling.LANCZOS)
++    canvas = Image.new('RGBA', (512, 512), (255,255,255,0))
++    layer = Image.new('RGBA', a.size, 'white')
++    layer.putalpha(a)
++    canvas.paste(layer, ((512-a.width)//2, (512-a.height)//2))
++    output = root / ('glyph_' + item['name'] + '.png')
++    canvas.save(output)
++    arr = np.array(canvas)
++    assert canvas.size == (512,512)
++    assert (arr[:,:,:3][arr[:,:,3]>0] == 255).all()
++    assert arr[:,:,3].min() == 0 and arr[:,:,3].max() == 255
++    x, y = (i%4)*256, (i//4)*288
++    thumb = canvas.resize((224,224), Image.Resampling.LANCZOS)
++    sheet.paste(thumb, (x+16,y+8), thumb)
++    draw.text((x+16,y+246), output.name, fill='white')
++    print(output.name, 'RGBA 512x512; white RGB; real alpha', canvas.getbbox())
++sheet.save(root / 'contact.png')
+diff --git a/ui/art/rivals/_gen_c/generation.json b/ui/art/rivals/_gen_c/generation.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..d4abf07766b67dfe3f1864c8d8989cfcfee69996
+--- /dev/null
++++ b/ui/art/rivals/_gen_c/generation.json
+@@ -0,0 +1,42 @@
++[
++  {
++    "name": "flame",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-910ade55-ab73-4af4-a271-49c060a1f380.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky campfire-style flame with an inner transparent cut-out tongue. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "trophy",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-85b5118e-3092-42fc-8f77-3bc46aac5ea4.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky cup trophy with two handles, a short stem and broad base. Handle interiors are transparent cut-outs. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "level",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-961e9f8c-f744-4e94-8687-ef8f2690d7c9.png",
++    "prompt": "Create one pure white solid 12-point starburst seal UI icon, with exactly TWELVE outer tips positioned like the hours of a clock: 12,1,2,3,4,5,6,7,8,9,10,11. Twelve evenly spaced outer points, twelve inner valleys. Broad chunky silhouette with softly rounded tips. One small circular transparent hole at centre, diameter 14% of badge diameter. Flat white #FFFFFF only, no other details, text, outlines, shadows, gradient or backdrop. Genuine transparent alpha background. Centered square canvas, icon fills 80% of canvas. Roblox RIVALS bold chunky UI glyph style. Please count twelve points carefully."
++  },
++  {
++    "name": "eye",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-8bb80981-f330-4b7f-b31b-de30f4a919b9.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky horizontal almond-shaped solid eye with a single round transparent pupil cut-out in its centre. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "news",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-f98fc7a0-d510-4e3b-9684-40619910d2fd.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky folded newspaper silhouette with a few thick transparent cut-out headline lines. No actual letters. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "inbox",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-2c5c2590-8eb2-4093-8dfd-bb049322f9c6.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky closed envelope silhouette with thick transparent cut-out flap lines. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "play",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-e3c48304-c0a2-4b5c-bcf7-1ffad0d9ece0.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a solid rounded right-pointing play triangle, with no internal details. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  },
++  {
++    "name": "rank",
++    "source": "C:\\Users\\aroki\\.codex\\generated_images\\01a16280-754d-7ba2-82ca-185da56547d3\\exec-7dc45079-ef4b-435a-88d2-fe08bb89e105.png",
++    "prompt": "Use case: logo-brand. Generate ONE game UI icon: a chunky shield silhouette with a single thick transparent cut-out upward-pointing chevron. Copy the attached first reference's flat pure WHITE bold chunky silhouette style, in the spirit of Roblox RIVALS leaderboard glyphs. Broad solid shapes, subtly rounded clean edges, sparse wide negative-space cuts, instantly readable at 32 pixels. Square canvas, centred glyph filling about 80% of canvas, generous even margin. Actual transparent alpha background. Every visible pixel must be pure white RGB 255,255,255; only edge alpha varies. No outline, no gradients, no shading, no text, no frame, no backdrop, no checkerboard, no shadow, no extra objects. Output only this single icon."
++  }
++]
+
+tokens used
+31,177
+Created all eight icons in [_gen_c](C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c).
+
+Verified: 512×512 PNGs, real transparent alpha, pure-white visible pixels.
+
+[View contact sheet](C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c/contact.png) · [Generation prompts](C:/Users/aroki/Documents/tacticals_rebuild/ui/art/rivals/_gen_c/generation.json)
+
+Generated with the built-in image tool.
