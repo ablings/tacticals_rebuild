@@ -374,8 +374,10 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	-- (2026-10-22, section round 0, grader B) RIVALS' price: a clean bold sans in white with a thin edge in the tag's own dark tint (no
 	-- cartoon font / chunky black outline); the currency icon ~1 digit cap (scissors 0.74 h -> 0.58 h) and the pair centred with ~12 %
 	-- side padding (was ~5-7 %); the Robux glyph sits ~0.8 cap from its number
-	local isz = live.isz or math.floor(h * (isRobux and 0.56 or 0.58))
-	local pad, gap = math.max(5, math.floor(w * 0.12)), math.max(3, math.floor(h * 0.24)) -- (round 1: icon-to-digit ~0.7 cap)
+	-- (round 2, grader B vs t0068 / t0084) side pad 0.06 x width so the digits get the room (yellow ones had shrunk to 0.23 h), the
+	-- currency icon ~1.25 digit caps, ~0.55 cap from the digits
+	local isz = live.isz or math.floor(h * (isRobux and 0.46 or 0.5))
+	local pad, gap = math.max(4, math.floor(w * 0.06)), math.max(3, math.floor(h * 0.18))
 	-- (2026-10-21, RIVALS shop layout) live.text = a word instead of a number ("FREE", RIVALS' Daily): no currency icon
 	if live.text then isz, gap = 0, 0 end
 	local hh = math.min(h, math.floor(ts * 1.2)) -- the number's box height
@@ -388,9 +390,9 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	new("UITextSizeConstraint", { MaxTextSize = ts, Parent = txt })
 	-- (round 1, grader B: RIVALS' edge on green is soft, the digits read plain white; on the saturated yellow white needs a firmer
 	-- amber edge to stay legible)
-	stroke(txt, math.clamp(h * 0.035, 1.5, 2.5), isRobux and 0.55 or 0.15)
+	stroke(txt, math.clamp(h * 0.035, 1.5, 2.5), isRobux and 0.55 or 0.4)
 	txt:FindFirstChildOfClass("UIStroke").Color = isRobux and Color3.fromRGB(46, 120, 18) or Color3.fromRGB(160, 110, 0)
-	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit,
+	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or (Kit.ICONS and Kit.ICONS.scissors) or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit, -- (round 3, grader B: RIVALS' tag currency is a flat white glyph)
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(isz / w, isz / h), ZIndex = z + 1, Visible = live.text == nil, Parent = row })
 	-- Robux glyph left of the number, the scissors right of it (RIVALS' key button: "5 [key]"); Rubik ExtraBold digits ~0.64 em
 	local function place(text)

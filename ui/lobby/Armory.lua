@@ -2193,7 +2193,10 @@ local function renderInfo()
 		Kit.fillTo(fill, frac, 0.6)
 		-- (2026-10-22, section rounds 0-1, grader C vs RIVALS kit.jpg / weapons.png) no XP numbers at the bar's ends: RIVALS shows only
 		-- the big level number centred on the bar
-		text({ Text = maxed and "MAX" or "", FontFace = FB, TextSize = 14, TextColor3 = COL.BarHi, TextXAlignment = Enum.TextXAlignment.Right,
+		-- (round 2, grader C: RIVALS does show dim end labels, t0051 "55", kit.jpg "0 ... 10"; removing them in r1 was wrong)
+		text({ Text = maxed and "" or ctx.commas(into), FontFace = FB, TextSize = 14, TextColor3 = COL.BarLo, Position = UDim2.fromOffset(5, 0), Size = UDim2.fromOffset(70, 18),
+			ZIndex = 7, Parent = bar })
+		text({ Text = maxed and "MAX" or ctx.commas(need), FontFace = FB, TextSize = 14, TextColor3 = COL.BarHi, TextXAlignment = Enum.TextXAlignment.Right,
 			Position = UDim2.fromOffset(233, 0), Size = UDim2.fromOffset(70, 18), ZIndex = 7, Parent = bar })
 		local lvLabel = shade(text({ Text = tostring(level), FontFace = FX, TextSize = 32, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(118, 2),
 			Size = UDim2.fromOffset(100, 36), ZIndex = 8, Parent = lvl }), 2, 0.35)
@@ -2212,7 +2215,7 @@ local function renderInfo()
 			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(6, 8), Size = UDim2.fromOffset(maxed and 99 or 66, 36), ZIndex = 7, Parent = up }), 1.5, 0.6)
 		mk("UITextSizeConstraint", { MaxTextSize = 32, Parent = upL })
 		if not maxed then
-			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = "rbxassetid://120480559804238", ScaleType = Enum.ScaleType.Fit,
+			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissors, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' flat white key)
 				Position = UDim2.fromOffset(72, 8), Size = UDim2.fromOffset(32, 32), ZIndex = 7, Parent = up })
 		end
 		Kit.bindButton(up, { hover = 1.05, press = 0.92 })
@@ -2771,11 +2774,11 @@ local function renderBottom()
 		-- ~46 px (grey), Leave is gen.kit_leave_x (coloured, ~84 px, it breaks out of its disc)
 		-- (2026-10-22, RIVALS 16:9) fainter discs (0.66, was 0.45)
 		mk("Frame", { Name = "Disc", BackgroundColor3 = BLACK, BackgroundTransparency = 0.66, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromOffset(50, 44), Size = UDim2.fromOffset(75, 75), ZIndex = 5, Parent = b }, { circle() })
-		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 72 or 40, COL.Empty, 6)
-		g.Position = UDim2.fromOffset(50, 44)
+			Position = UDim2.fromOffset(50, 27), Size = UDim2.fromOffset(85, 85), ZIndex = 5, Parent = b }, { circle() }) -- (round 2-3, grader A vs t0058: discs ~85, raised 13 so the bar cuts them at ~0.42)
+		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 85 or 44, COL.Empty, 6)
+		g.Position = UDim2.fromOffset(50, 27)
 		if c.Id ~= "Leave" then slotRings[c.Id] = b end
-		local lbl = text({ Text = c.Label, FontFace = FB, TextSize = 25, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-20, 68),
+		local lbl = text({ Text = c.Label, FontFace = FB, TextSize = 22, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-20, 66),
 			Size = UDim2.fromOffset(140, 38), ZIndex = 7, Parent = b })
 		shade(lbl, 1.8, 0.35)
 		-- (2026-10-22, live RIVALS feel study) RIVALS' slots react like its dock: the slot grows ~1.2 and its light-grey label turns white

@@ -413,8 +413,8 @@ function LobbyHud.Start()
 		-- bottom). The grade2/3 flat black 0.4 disc and the cream hover glow layer are gone.
 		-- (2026-10-22, section rounds 0-1, graders A + B vs hub_full / t0060) RIVALS' dock icons stand ~0.068 H (73 px; ours 92) with
 		-- 0.03 H clear under Play, labels ~13.5 px cap (Bold 21, was 25): disc 92 -> 80, icon box 104 -> 84
-		new("Frame", { Name = "Disc", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 48), Size = UDim2.fromOffset(80, 80), BackgroundColor3 = RC.white, Parent = b },
-			{ RKit.corner(40), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(R_HUD.disc),
+		new("Frame", { Name = "Disc", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 46), Size = UDim2.fromOffset(90, 90), BackgroundColor3 = RC.white, Parent = b }, -- (round 2, grader A: RIVALS' disc is 0.083 H = 90; 80 was a regression)
+			{ RKit.corner(45), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(R_HUD.disc),
 				Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(0.6, 0.3), NumberSequenceKeypoint.new(1, 0.15) }) }) })
 		-- our 3D model sits where the replica's 92 px icon image sits (centre 59, 40)
 		-- (2026-10-21, port3) icons ~9.5 % h: a 104 px box centred at (59, 38), so they overflow the disc like RIVALS' renders

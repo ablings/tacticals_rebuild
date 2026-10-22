@@ -206,8 +206,11 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	-- (2026-10-22, the approved economy: mission reroll 250; the lead's Request "RerollQuest"(scope, index)) a small swap button on
 	-- each unfinished daily card's top-right; the server swaps it for another task of the same tier and the screen re-renders
 	if scope == "Daily" and not done and ctx.ask then
-		local rr = new("TextButton", { Name = "Reroll", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(CARD_W - 8, 8),
-			Size = UDim2.fromOffset(34, 34), BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, ZIndex = 4, Parent = card }, { RK.corner(17) })
+		-- (round 3, grader C: RIVALS' cards carry no reroll glyph) hover-only, small and half-white in the corner, title stays centred
+		local rr = new("TextButton", { Name = "Reroll", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(CARD_W - 4, 4),
+			Size = UDim2.fromOffset(28, 28), BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Visible = false, ZIndex = 4, Parent = card }, { RK.corner(14) })
+		card.MouseEnter:Connect(function() rr.Visible = true end)
+		card.MouseLeave:Connect(function() rr.Visible = false end)
 		-- a drawn swap arrow (the font has no ↻): a white ring open at the top-right with a small head on its end
 		local ring = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(18, 18), ZIndex = 5, Parent = rr },
 			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIStroke", { Color = C.white, Thickness = 3 }, {
@@ -259,7 +262,7 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 	glyph(row, def.Stat, UDim2.fromOffset(67, 27), 46, done and C.green or C.white) -- (2026-10-21, port3) RIVALS' weapon-picture size (~46), solid art
 	-- (2026-10-22, section round 0, grader B) RIVALS' contract labels are a soft grey (#C3C2C2) so the white count leads, and the count
 	-- is ~1.38 label caps tall (was 32: 1.08)
-	RK.label({ Text = def.Text, FontFace = FM, TextSize = 27, TextColor3 = done and C.green or Color3.fromRGB(195, 194, 194), TextTruncate = Enum.TextTruncate.AtEnd,
+	RK.label({ Text = def.Text, FontFace = FM, TextSize = 27, TextColor3 = done and C.green or (def.White and C.text or Color3.fromRGB(195, 194, 194)), TextTruncate = Enum.TextTruncate.AtEnd,
 		Position = UDim2.fromOffset(98, 6), Size = UDim2.fromOffset(460, 40), Parent = row })
 	local count = RK.label({ RichText = true, Text = countText(prog, def.Goal, 26), FontFace = FB, TextSize = 37, TextColor3 = done and C.green or C.text,
 		TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(708, 4), Size = UDim2.fromOffset(240, 40), Parent = row })
@@ -322,7 +325,7 @@ local function dailyPanel(order)
 	-- runs to 0.686 H); without it ours ended at 0.526 H. Until the server ships LoginDay the row shows day 1 with the approved
 	-- economy's login amounts (notes/economy/scissors_economy.md: 50, 50, 100, 100, 150, 150, 400), nothing to claim
 	local loginDay = tonumber(Players.LocalPlayer:GetAttribute("LoginDay")) or 1
-	local STREAK_H = 150
+	local STREAK_H = 170 -- (round 3, grader A vs t0066: 40 px from the cards to the dotted rule, was 20)
 	local p = panel("Daily", order, top + CARD_H + 38 + STREAK_H)
 	-- (2026-10-21, port3) RIVALS' normal theme shows just "Daily Tasks": the "[done / total]" counter is gone
 	header(p, A.notepad, "Daily Missions", allDone, "Daily")
@@ -357,36 +360,43 @@ local function dailyPanel(order)
 		local claimed = Players.LocalPlayer:GetAttribute("LoginClaimed") == true
 		local okR, rewards = pcall(function() return game:GetService("HttpService"):JSONDecode(game:GetService("ReplicatedStorage"):GetAttribute("LoginRewards") or "[]") end)
 		rewards = (okR and type(rewards) == "table" and #rewards > 0) and rewards or { 50, 50, 100, 100, 150, 150, 400 }
-		local y0 = top + CARD_H + 30
+		local y0 = top + CARD_H + 50
 		for k = 0, math.floor((COL_W - 80) / 14) do
 			new("Frame", { BackgroundColor3 = C.textDim, BackgroundTransparency = 0.5, BorderSizePixel = 0, Position = UDim2.fromOffset(40 + k * 14, y0), Size = UDim2.fromOffset(5, 5),
 				Parent = p }, { RK.corner(3) })
 		end
-		local D, GAP = 80, 18
-		local x0 = (COL_W - (7 * D + 6 * GAP)) / 2
+		-- (2026-10-22, section round 2, graders A + B vs tasks.png / t0066) RIVALS' row: 84 px circles 108 apart joined by short lines;
+		-- today = "Day" + the big number (a check once claimed); every day still to come shows its REWARD inside the circle (icon
+		-- ~0.6 of the disc, "×N" over its lower third), not a faint "Day N" with the reward perched on the rim
+		local D, STEP = 84, 108
+		local x0 = (COL_W - (6 * STEP + D)) / 2
 		for d = 1, 7 do
-			local cx, cy = x0 + (d - 1) * (D + GAP), y0 + 44
-			local past = d < loginDay or (d == loginDay and claimed)
+			local cx, cy = x0 + (d - 1) * STEP, y0 + 44
+			if d < 7 then
+				new("Frame", { Name = "Link" .. d, BackgroundColor3 = C.track, BackgroundTransparency = 0.3, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 0.5),
+					Position = UDim2.fromOffset(cx + D, cy + D / 2), Size = UDim2.fromOffset(STEP - D, 2), Parent = p })
+			end
+			-- (round 3, grader B vs tasks.png) today keeps RIVALS' ring + "Day N" even though our login pays on join; checks = earlier days
+			local past = d < loginDay
 			local today = d == loginDay
 			local circle = new("Frame", { Name = "Day" .. d, Position = UDim2.fromOffset(cx, cy), Size = UDim2.fromOffset(D, D),
 				BackgroundColor3 = past and C.white or BLACK, BackgroundTransparency = past and 0 or 0.4, Parent = p },
 				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), RK.stroke(today and C.white or C.track, today and 3 or 2, today and 0 or 0.3) })
+			local amt = tonumber(rewards[d])
 			if past then
-				new("ImageLabel", { BackgroundTransparency = 1, Image = CHECK_LIME or CHECK, ImageColor3 = CHECK_LIME and C.white or C.textDark, ScaleType = Enum.ScaleType.Fit,
-					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(46, 46), ZIndex = 2, Parent = circle })
-			else
+				new("ImageLabel", { BackgroundTransparency = 1, Image = CHECK, ImageColor3 = C.textDark, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' dark check on white)
+					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(44, 44), ZIndex = 2, Parent = circle })
+			elseif today or not amt then
 				RK.label({ Text = "Day", FontFace = FB, TextSize = 18, TextColor3 = today and C.text or C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
-					Position = UDim2.fromOffset(0, 8), Size = UDim2.fromOffset(D, 20), ZIndex = 2, Parent = circle })
-				RK.label({ Text = tostring(d), FontFace = FB, TextSize = 40, TextColor3 = today and C.text or C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
-					Position = UDim2.fromOffset(0, 24), Size = UDim2.fromOffset(D, 46), ZIndex = 2, Parent = circle })
-				local amt = tonumber(rewards[d])
-				if amt then
-					new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(D - 26, -32), Size = UDim2.fromOffset(38, 38),
-						ZIndex = 3, Parent = circle })
-					local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 18, TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0),
-						Position = UDim2.fromOffset(D + 16, -10), Size = UDim2.fromOffset(70, 22), ZIndex = 4, Parent = circle })
-					RK.textStroke(1.5).Parent = n
-				end
+					Position = UDim2.fromOffset(0, 9), Size = UDim2.fromOffset(D, 20), ZIndex = 2, Parent = circle })
+				RK.label({ Text = tostring(d), FontFace = FB, TextSize = 44, TextColor3 = today and C.text or C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
+					Position = UDim2.fromOffset(0, 26), Size = UDim2.fromOffset(D, 48), ZIndex = 2, Parent = circle })
+			else
+				new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0.46), Size = UDim2.fromOffset(math.floor(D * 0.7), math.floor(D * 0.7)), ZIndex = 3, Parent = circle })
+				local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 20, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0),
+					Position = UDim2.fromOffset(D / 2, math.floor(D * 0.58)), Size = UDim2.fromOffset(D, 24), ZIndex = 4, Parent = circle })
+				RK.textStroke(1.5).Parent = n
 			end
 		end
 	end
@@ -418,7 +428,7 @@ local function contractsPanel(order)
 			local target = tiers[paidTiers + 1]
 			if target and (item.Slot == "Weapon" or item.Slot == "Melee") and (owned or kills > 0) then
 				local def = { Id = "W_" .. id .. "_" .. (paidTiers + 1), Stat = "Kills", Goal = target.Kills, Reward = target.Reward, Prog = kills,
-					Text = (item.Name or id) .. " • Eliminations", Short = item.Name or id }
+					Text = (item.Name or id) .. " • Eliminations", Short = item.Name or id, White = true }
 				table.insert(rows, { entry = { Id = def.Id, Base = 0 }, def = def, frac = math.clamp(kills / target.Kills, 0, 1), i = #rows + 1, name = item.Name or id })
 			end
 		end

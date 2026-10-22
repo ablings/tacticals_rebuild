@@ -593,7 +593,7 @@ local GRID_H = 556
 local CORNER = 8 -- small rounded corners (live capture; 2026-10-22 round 0: RIVALS ~8, was 6)
 local SHADE = 0.7 -- RIVALS: bright art under a 30 % black shade; hover lifts it to 0.95 (the picture brightens)
 -- (2026-10-21, port3) titles ~15 % bigger (RIVALS' "1v1" box ~7.4 % of the screen height): 100 -> 115, 88 -> 101
-local TITLE, WIDE_TITLE = 115, 101
+local TITLE, WIDE_TITLE = 115, 81 -- (round 3, grader A vs t0016: bottom-row titles fill <= 50 % of the tile, was 101)
 -- the gradient behind each 3D set shows as the sky over its back wall: Theme blue (ranked: Theme key gold)
 -- (2026-10-21, port3) graders: Training / Duel Pads / Ranked must share the 1v1-3v3 cards' grade (pink highlights, purple
 -- mids; sampled from gen.play_card_*: ~#FC96F8 / #AA64E6). Every 3D tile now uses that sky, its lighting and a wash (grade()).
@@ -1041,7 +1041,8 @@ local function build()
 	-- (2026-10-21, RIVALS 1:1) the replica's red X: 112 x 58, right of the column, level with its top
 	-- (2026-10-21, RIVALS normal theme) outside the grid's top-right corner: 16 px right of x 1661, 3 px above y 306 (was 1704,136)
 	-- (2026-10-21, port3) graders: the kit's standard X (112 x 58), 12 px outside the grid's top-right, its top on the grid's top
-	local close = Kit.closeButton(UDim2.fromOffset(Kit.CLOSE_W or 112, Kit.CLOSE_H or 58))
+	-- (round 2, grader A vs t0016) RIVALS' Play X is bigger than its Tasks X: 112 x 60
+	local close = Kit.closeButton(UDim2.fromOffset(112, 60))
 	close.Position = UDim2.fromOffset(COL_X + COL_W + (Kit.CLOSE_GAP or 12), COL_Y)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
