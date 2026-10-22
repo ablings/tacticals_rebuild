@@ -43,14 +43,18 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 -- (2026-10-21, grade1) taller (76 -> 108) and grown upward so each tab's icon sits fully above its label inside the bar; the
 -- bottom edge stays at y 147, so the list, rail and the Hotkeys page (which places itself at y 160) are unchanged
 -- (2026-10-21, grade2) 108 -> 124 tall (tabs 96 -> 112 for ~44 px icons on screen), grown upward again: bottom still at 147
+-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' bar is a thin dark strip (~77 design px) whose 3D icons rise out over its top edge; the selected tab is a
+-- cream plate inside the bar. Back to 77 tall at y 71 (bottom still 147, so the list / rail / Hotkeys page do not move).
 local tabBar = new("Frame", {
-	Name = "TabBar", Position = UDim2.fromOffset(304, 23), Size = UDim2.fromOffset(859, 124),
+	Name = "TabBar", Position = UDim2.fromOffset(304, 71), Size = UDim2.fromOffset(859, 77),
 	BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.bar, Parent = root,
 }, { Kit.corner(6) })
 
 -- S2 close
 local close = Kit.closeButton(UDim2.fromOffset(135, 68))
-close.Position = UDim2.fromOffset(1175, 51) -- (lobby revamp Phase B: square X docked at the tab bar end; grade1/grade2: centred on the taller bar)
+-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' X sits at the far right, its right edge flush with the description pane's (1095 + 520) and its top level
+-- with the tab bar's top (was docked at the tab bar's end)
+close.Position = UDim2.fromOffset(1095 + 520 - 135, 71)
 close.Parent = root
 
 -- S3 page rail (presets 1-3 + save)
@@ -187,10 +191,8 @@ for i = 1, 3 do
 	railHover(b)
 	railButtons[i] = b
 end
--- (2026-10-21, grade1) graders: the rail "1 2 3 ⇩" was unexplained. A small cream "PRESETS" caption sits above it, and hovering
--- a circle names it ("Preset 1" .. "Preset 3", "Share / import") in the same white pointer bubble the profile switch uses.
-Kit.label({ Name = "RailCaption", Text = "PRESETS", FontFace = F.display, TextSize = 20, TextColor3 = Color3.fromRGB(236, 230, 210),
-	TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(245.5, 156), Size = UDim2.fromOffset(96, 24), Parent = root })
+-- (2026-10-21, grade1) hovering a rail circle names it ("Preset 1" .. "Preset 3", "Share / import") in the same white pointer
+-- bubble the profile switch uses. (2026-10-21, grade3: copy RIVALS t0136 / t0137) the "PRESETS" caption above the rail is gone: RIVALS' rail has none.
 local function railTip(b, text, y)
 	b.MouseEnter:Connect(function()
 		local old = rail:FindFirstChild("RailTip"); if old then old:Destroy() end
@@ -243,22 +245,25 @@ if Assets.misc and Assets.misc.crosshairPreview then
 	new("ImageLabel", { Name = "Scene", BackgroundTransparency = 1, Image = Assets.misc.crosshairPreview, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromScale(1, 1), Parent = preview }, { Kit.corner(4) })
 end
 local detailTop = new("Frame", { Name = "Text", BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), Parent = detail })
-local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 50, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(14, 8), Size = UDim2.fromOffset(64, 64), Parent = detailTop })
-local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 10), Size = UDim2.fromOffset(60, 60), Parent = detailTop })
--- (2026-10-21, grade2) graders: the pane repeated the hovered row's label as a big heading ("Optimized Lighting" twice). The
--- title is gone; the icon and the description sit side by side, the description starting level with the icon's top.
+-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' pane: the setting's icon and its name as a big title on one line, the description under both (grade2 had
+-- dropped the title; it is back). Oswald title, Rubik description in cream.
+local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 50, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(13, 7), Size = UDim2.fromOffset(64, 64), Parent = detailTop })
+local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(15, 9), Size = UDim2.fromOffset(60, 60), Parent = detailTop })
+local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.display, TextSize = 50, TextTruncate = Enum.TextTruncate.AtEnd,
+	Position = UDim2.fromOffset(90, 6), Size = UDim2.fromOffset(420, 66), Parent = detailTop })
 local dDesc = Kit.label({
-	Name = "Desc", Text = "", FontFace = F.bold, TextSize = 31, TextColor3 = C.textDim, TextWrapped = true,
-	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(92, 16), Size = UDim2.fromOffset(410, 320), Parent = detailTop,
+	Name = "Desc", Text = "", FontFace = F.medium, TextSize = 26, TextColor3 = Color3.fromRGB(236, 230, 210), TextWrapped = true,
+	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 80), Size = UDim2.fromOffset(470, 300), Parent = detailTop,
 })
 
 local function showDetail(row)
 	local img = (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
 	dImage.Image = img or ""
 	dIcon.Text = img and "" or (row.glyph or "")
+	dTitle.Text = row.name or ""
 	dDesc.Text = row.desc or ""
 	dDesc.TextTransparency = 0.6
-	Kit.tween(dDesc, 0.12, { TextTransparency = 0 })
+	Kit.tween(dDesc, 0.12, { TextTransparency = 0.12 })
 end
 
 -- live crosshair in the preview (Crosshair tab)
@@ -324,26 +329,32 @@ local function buildRow(tab, row, order)
 	-- (2026-10-21, grade1) graders: the plates stair-stepped (772 / 734 / 695 / 657 wide by level). One plate level now: every row is
 	-- the list's full width and the same height for its kind (88, sliders 132); a sub-row (level 2 / 3: While Aiming, While Scoped,
 	-- Horizontal ...) only indents its icon and label by 24 px per level.
-	local ind = math.max(0, (row.level or 1) - 1) * 24
-	local h = row.kind == "slider" and 132 or 88
+	-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS stair-steps its plates: a sub-row's plate starts 38 px further right (the list is right-aligned, so the
+	-- right edges line up). Slider rows 138 tall (label line + track), toggle rows 78, the rest 88. Inside a plate everything sits
+	-- at the same offsets whatever its level (ind = 0).
+	local plateIndent = math.max(0, (row.level or 1) - 1) * 38
+	local ind = 0
+	local h = row.kind == "slider" and 138 or row.kind == "toggle" and 78 or 88
+	local lineH = row.kind == "slider" and 92 or h -- the label / icon / control line
+	local iconY = math.floor((lineH - 52) / 2)
 	local frame = new("Frame", {
-		Name = row.key, LayoutOrder = order, Size = UDim2.fromOffset(772, h),
+		Name = row.key, LayoutOrder = order, Size = UDim2.fromOffset(772 - plateIndent, h),
 		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.panel,
 	}, { Kit.corner(8) })
 	local img = (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
 	local icon
 	if img then
-		icon = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img, Position = UDim2.fromOffset(18 + ind, 18), Size = UDim2.fromOffset(52, 52), Parent = frame })
+		icon = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img, Position = UDim2.fromOffset(18 + ind, iconY), Size = UDim2.fromOffset(52, 52), Parent = frame })
 	else
-		icon = Kit.label({ Name = "Icon", Text = row.glyph or "", TextSize = 40, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(16 + ind, 16), Size = UDim2.fromOffset(56, 56), Parent = frame })
+		icon = Kit.label({ Name = "Icon", Text = row.glyph or "", TextSize = 40, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(16 + ind, iconY - 2), Size = UDim2.fromOffset(56, 56), Parent = frame })
 	end
 	local labelX = 89 + ind
-	-- (2026-10-21, grade2) graders: row labels (42) outshouted the section headers. Rubik Bold 24 now; headers are Oswald 36.
-	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = Font.new(F.heavy.Family, Enum.FontWeight.Bold), TextSize = 24, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, 88), Parent = frame })
+	-- (2026-10-21, grade2) row labels went 42 -> 24. (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' row names are big (~34 design px): Rubik Bold 34.
+	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = Font.new(F.heavy.Family, Enum.FontWeight.Bold), TextSize = 34, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, lineH), Parent = frame })
 
 	-- red per-setting reset: appears at the row start whenever the value differs from its default
 	local default = defaultOf(row)
-	local resetBtn = Kit.button("red", UDim2.fromOffset(52, 52), nil, { Name = "ResetSetting", Visible = false, Position = UDim2.fromOffset(16 + ind, 18), ZIndex = 2 })
+	local resetBtn = Kit.button("red", UDim2.fromOffset(52, 52), nil, { Name = "ResetSetting", Visible = false, Position = UDim2.fromOffset(16 + ind, iconY), ZIndex = 2 })
 	if Assets.rowIcon.reset then
 		new("ImageLabel", { BackgroundTransparency = 1, Image = Assets.rowIcon.reset, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(32, 32), ZIndex = 3, Parent = resetBtn })
 	end
@@ -362,7 +373,7 @@ local function buildRow(tab, row, order)
 		shown = on
 		-- RIVALS: no animation, the reset button simply appears and the icon/label snap across
 		resetBtn.Visible = on
-		icon.Position = on and Kit.S(frame, 80 + ind, 28) or Kit.S(frame, 18 + ind, 18)
+		icon.Position = on and Kit.S(frame, 80 + ind, iconY + 10) or Kit.S(frame, 18 + ind, iconY)
 		icon.Size = on and Kit.S(frame, 32, 32) or Kit.S(frame, 52, 52)
 		label.Position = Kit.S(frame, on and labelX + 31 or labelX, 0)
 	end
@@ -395,8 +406,8 @@ local function buildRow(tab, row, order)
 		control, api = Kit.keybind(v[row.key], changed)
 	elseif row.kind == "slider" then
 		local holder
-		-- (2026-10-21, grade1) slider + value chip only (the ▲▼ stepper is gone); the track starts under the label
-		holder, api = Kit.slider(h, { min = row.min, max = row.max, step = row.step, value = v[row.key], fmt = row.fmt, inset = labelX }, changed)
+		-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS: ▲▼ stepper + value box on the label line, a full-width track under it (grade1 had removed the stepper)
+		holder, api = Kit.slider(h, { min = row.min, max = row.max, step = row.step, arrowStep = row.arrow, value = v[row.key], fmt = row.fmt, inset = 37 }, changed)
 		holder.Parent = frame
 	elseif row.kind == "action" then
 		-- [SET] an action row (e.g. Touch > Layout Editor): the blue arrow button runs ctx.onAction(key)
@@ -406,7 +417,7 @@ local function buildRow(tab, row, order)
 	if control then
 		-- centre anchor so hover scaling grows the control in place (not from its corner)
 		control.AnchorPoint = Vector2.new(0.5, 0.5)
-		control.Position = UDim2.new(1, -19 - control.Size.X.Offset / 2, 0, 44)
+		control.Position = UDim2.new(1, -19 - control.Size.X.Offset / 2, 0, lineH / 2) -- (grade3) centred on the row's line
 		control.Parent = frame
 	end
 	resetBtn.Activated:Connect(function() if api then api.set(default) end end)
@@ -526,8 +537,10 @@ for i, tab in ipairs(Data.tabs) do
 	local view = model and ViewIcons.Views and ViewIcons.Views[model]
 	local img = model and function(holder, tabBtn) ViewIcons.Icon(holder, model, { hoverTarget = tabBtn, zoom = ((view and view[2]) or 1) * 1.35 }) end
 		or (Assets.tabIcon and Assets.tabIcon[tab.icon])
-	local t, api = Kit.imageTab(UDim2.fromOffset(136, 112), tab.name, img, tab.glyph) -- (2026-10-21, grade1) 54 -> 96 tall: icon box above the label
-	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 6)
+	-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) 100 tall with its bottom on the bar's bottom: the ~60 px icon rises 23 px out of the 77 px bar like RIVALS';
+	-- the selected cream plate (52 tall) stays inside the bar
+	local t, api = Kit.imageTab(UDim2.fromOffset(136, 100), tab.name, img, tab.glyph, 52)
+	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 77 - 100)
 	t.Parent = tabBar
 	tabApis[tab.name] = api
 	tabButtons[tab.name] = t

@@ -67,7 +67,7 @@ local MOMENTUM_DECAY = 3        -- per second (higher = stops sooner)
 local MOMENTUM_MAX = 20         -- radians per second, so a wild flick can't blur it
 local lastMove = 0              -- os.clock() of the last drag movement (for the swipe speed)
 -- scroll to zoom: the item slides towards the camera, up to WHEEL_MAX_ZOOM times bigger
-local WHEEL_MAX_ZOOM = 2.2
+local WHEEL_MAX_ZOOM = 1.6 -- (2026-10-21, grade3) was 2.2: the rest framing is 1.4x closer now, so the closest zoom stays ~2.2x
 local WHEEL_STEP = 0.15
 local zoom, zoomTarget = 1, 1
 local dragLast: Vector3? = nil -- pointer position at the last drag step
@@ -133,6 +133,11 @@ end
 
 local function makeShowcase(itemId: string, locked: boolean)
 	local model, view, zoom = ctx.Icons.Item(itemId)
+	-- (2026-10-21, grade3) the hero gun rests in a calmer 3/4 pose like RIVALS' (t0052): side-on, turned ~25 deg towards you and
+	-- pitched ~10 deg (Icons.GunView's 28 deg tilt + roll stays for the small icons)
+	if view == ctx.Icons.GunView then
+		view = CFrame.Angles(0, math.rad(25), 0) * CFrame.Angles(0, math.rad(-90), 0) * CFrame.Angles(math.rad(10), 0, 0)
+	end
 	local _, natural = model:GetBoundingBox()
 	prepModel(model, math.min(SHOW_FIT, natural.Magnitude * SHOW_MAX_ZOOM) * (zoom or 1))
 	if locked then
@@ -271,7 +276,9 @@ local function renderShowcase(dt: number)
 	Armory.UpdateShadow(d, camCF)
 	for _, e in showcase do
 		local pos = d + right * e.offset.Value + Vector3.new(0, math.sin(t * 1.3) * 0.08, 0)
-		pos += (camCF.Position - d) * (1 - 1 / zoom) -- scroll zoom: closer to the camera
+		-- scroll zoom: closer to the camera. (2026-10-21, grade3) graders: the hero filled ~25% of the screen width (RIVALS ~45-55%):
+		-- it always sits 1.4x closer along the camera ray through DisplayPoint, so it stays centred between the side panels
+		pos += (camCF.Position - d) * (1 - 1 / (zoom * 1.4))
 		if e.model and e.model.Parent then
 			-- (2026-10-21, grade1) the selection pop: scale the real model while its pop value moves (only then: ScaleTo isn't free)
 			if e.pop and e.lastPop2 ~= e.pop.Value then
@@ -375,9 +382,14 @@ function Armory.ShowcaseLook(model: Model)
 				-- (2026-10-21, grade3) any untextured grey part, plastic or metal (the pistol's 0.28-0.36 greys slipped past v > 0.3 and
 				-- the room's sun + key lights still blew them out): darken to gunmetal, keep each part's own material (Metal on every
 				-- part streaks), metal parts a shade lighter so slide and frame separate
+				-- (2026-10-21, grade3) graders saw stacked stripes on the slide / barrel: that is the Metal material's texture at this
+				-- angle and scale. Every untextured grey part is SmoothPlastic now; the metal / plastic split is kept by colour only
+				-- (formerly-Metal parts 0.36, plastic 0.25) plus a hint of sheen (Reflectance 0.08) on the formerly-Metal ones
+				local wasMetal = p.Material == Enum.Material.Metal
 				p.MaterialVariant = ""
-				p.Reflectance = 0
-				p.Color = Color3.fromHSV(0.58, 0.08, p.Material == Enum.Material.Metal and 0.36 or 0.25) -- (tuned in Studio: darker read as a locked silhouette)
+				p.Material = Enum.Material.SmoothPlastic
+				p.Reflectance = wasMetal and 0.08 or 0
+				p.Color = Color3.fromHSV(0.58, 0.08, wasMetal and 0.36 or 0.25) -- (tuned in Studio: darker read as a locked silhouette)
 			elseif p.Material == Enum.Material.Neon and sat < 0.18 then
 				p.Material = Enum.Material.SmoothPlastic -- a grey Neon part glows flat white under the key light
 			end
@@ -875,7 +887,7 @@ local COL = {
 	Text = Color3.fromRGB(236, 232, 218), -- bone (pass 34 deployment-board look)
 	Sub = Color3.fromRGB(196, 194, 182),   -- small copy
 	Grey = Color3.fromRGB(160, 164, 148),  -- profile name, dim labels
-	Dim = Color3.fromRGB(92, 97, 86),      -- locked items: (2026-10-21, live RIVALS) a readable mid grey, was 24,27,22 (darker than the panel, unreadable)
+	Dim = Color3.fromRGB(140, 142, 132),   -- locked items: greyed like RIVALS. (2026-10-21, grade3) was 92,97,86 (~1.5:1 on the panel): now ~cream at 55%
 	DimHead = Color3.fromRGB(42, 47, 36),  -- section headers
 	DimKey = Color3.fromRGB(70, 72, 80),   -- keyhole on a dark padlock
 	Empty = Color3.fromRGB(112, 114, 120), -- empty cosmetic slot mark
@@ -1187,6 +1199,11 @@ function GLYPH.empty(h, s, c) -- (2026-10-21, round 3: match RIVALS) RIVALS' emp
 	mk("Frame", { BackgroundColor3 = c or COL.Empty, BackgroundTransparency = 0.72, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(s * 0.78, s * 0.78), ZIndex = 1, Parent = h }, { corner(math.floor(s * 0.16)) })
 	seg(h, s, 0.27, 0.73, 0.73, 0.27, s * 0.1, c)
+end
+function GLYPH.clock(h, s, c) -- (2026-10-21, grade3) Duel History's slot icon: a clock face with two hands
+	ring(h, s, 0.5, 0.5, 0.8, s * 0.1, c)
+	seg(h, s, 0.5, 0.5, 0.5, 0.26, s * 0.1, c)
+	seg(h, s, 0.5, 0.5, 0.68, 0.6, s * 0.1, c)
 end
 function GLYPH.star(h, s, c) -- a rounded eight-point burst
 	for i = 0, 3 do
@@ -1509,46 +1526,26 @@ local function tintIcon(holder: Instance, color: Color3, transparency: number)
 	end
 end
 
--- a chunky two-tone button (a darker lip under the face gives it depth); blue, or grey when disabled
+-- (2026-10-21, grade3, user: "copy RIVALS") RIVALS' action button: ONE plain solid bright square with a white glyph (t0052:
+-- Contracts / Overview / Statistics). Ours is plain field green (grey when it can't be used). Removed: the darker lip under the
+-- face, the face gradient, the thin white highlight line across the top, the 2 px press drop and the EQUIPPED word chip.
+-- "equipped" = just the check in the green square (RIVALS), not clickable. A child "Face" frame stays for the price labels.
 local function bigButton(parent: Instance, kind: string?, enabled: boolean, label: string?, size: Vector2?, tone: string?)
 	local sz = size or Vector2.new(100, 50)
-	local top, bottom, edge = COL.BlueTop, COL.BlueBottom, COL.BlueEdge
-	if tone == "green" then top, bottom, edge = COL.GreenTop, COL.GreenBottom, Color3.fromRGB(60, 58, 50) end
-	if not enabled then top, bottom, edge = COL.OffTop, COL.OffBottom, COL.OffEdge end
-	-- (2026-10-21, grade1) "equipped": a positive field-green chip with a check and EQUIPPED (the grey button read as "can't
-	-- click"); still not clickable (no bindButton, no press drop)
-	if tone == "equipped" then top, bottom, edge = COL.BlueTop, COL.BlueBottom, COL.BlueEdge end
-	local b = mk("TextButton", { Name = "Button", AutoButtonColor = false, Text = "", BackgroundColor3 = edge,
+	local on = enabled or tone == "equipped"
+	local b = mk("TextButton", { Name = "Button", AutoButtonColor = false, Text = "", BackgroundColor3 = on and COL.BlueTop or COL.OffTop,
 		AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -9, 0.5, 0), Size = UDim2.fromOffset(sz.X, sz.Y), ZIndex = 5, Parent = parent }, { corner(6) })
-	local face = mk("Frame", { Name = "Face", BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, -4), ZIndex = 6, Parent = b }, {
-		corner(6), mk("UIGradient", { Rotation = 90, Color = ColorSequence.new(top, bottom) }),
-	})
-	mk("Frame", { BackgroundColor3 = WHITE, BackgroundTransparency = enabled and 0.65 or 0.88, BorderSizePixel = 0, Position = UDim2.fromOffset(6, 3),
-		Size = UDim2.new(1, -12, 0, 2), ZIndex = 7, Parent = face }, { circle() })
+	local face = mk("Frame", { Name = "Face", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 6, Parent = b })
+	if label then
+		shade(text({ Text = label, FontFace = FONT_HEAVY, TextSize = math.floor(sz.Y * 0.5), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1),
+			TextColor3 = on and COL.Text or COL.Grey, ZIndex = 8, Parent = face }), 1.5)
+	elseif kind then
+		glyph(face, kind, math.floor(sz.Y * 0.64), on and COL.Text or COL.Grey, 8)
+	end
 	if tone == "equipped" then
 		b.Active = false
-		local holder = mk("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
-			Size = UDim2.fromOffset(0, 26), AutomaticSize = Enum.AutomaticSize.X, ZIndex = 8, Parent = face }, {
-			mk("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, VerticalAlignment = Enum.VerticalAlignment.Center,
-				Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }) })
-		local ck = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(22, 22), LayoutOrder = 1, ZIndex = 8, Parent = holder })
-		GLYPH.check(ck, 22, COL.Text)
-		for _, d in ck:GetDescendants() do if d:IsA("GuiObject") then d.ZIndex = 9 end end
-		shade(text({ Text = "EQUIPPED", FontFace = FONT_HEAVY, TextSize = 19, AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 26),
-			TextColor3 = COL.Text, LayoutOrder = 2, ZIndex = 9, Parent = holder }), 1.5)
-	elseif label then
-		shade(text({ Text = label, FontFace = FONT_HEAVY, TextSize = math.floor(sz.Y * 0.5), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1),
-			TextColor3 = enabled and COL.Text or COL.Grey, ZIndex = 8, Parent = face }), 1.5)
-	elseif kind then
-		glyph(face, kind, math.floor(sz.Y * 0.64), enabled and COL.Text or COL.Grey, 8)
-	end
-	if enabled then
-		-- (2026-10-21, RIVALS pass) Kit.bindButton: chunky squash + hover / click sounds + gamepad selection grow (was a silent
-		-- 1.04 hover). The 2 px face drop stays.
-		Kit.bindButton(b, { hover = 1.06, press = 0.92 })
-		b.MouseLeave:Connect(function() face.Position = UDim2.new() end)
-		b.MouseButton1Down:Connect(function() face.Position = UDim2.fromOffset(0, 2) end)
-		b.MouseButton1Up:Connect(function() face.Position = UDim2.new() end)
+	elseif enabled then
+		Kit.bindButton(b, { hover = 1.06, press = 0.92 }) -- Kit squash + hover / click sounds + gamepad selection grow
 	end
 	return b
 end
@@ -1589,11 +1586,16 @@ local function makeLocks(row, color: Color3)
 	table.clear(row.locks)
 	if row.owned then return end
 	-- (2026-10-21, grade1) one padlock, on the left of the name (was one either side, which read twice)
+	-- (2026-10-21, grade3) graders: the padlocks wandered with each centred name. One small 20 px padlock now sits in a fixed
+	-- column at x 24 on the row (outside the centred layout), so they line up down the list
 	for _, order in { 1 } do
-		local l = mk("Frame", { Name = "Lock", BackgroundTransparency = 1, Size = UDim2.fromOffset(26, 26), ZIndex = 5, Parent = row.content })
-		if not meshIcon(l, "Lock", 26, color, false, 5) then
+		local l = mk("Frame", { Name = "Lock", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0, 34, 0.5, 0),
+			Size = UDim2.fromOffset(20, 20), ZIndex = 5, Parent = row.button })
+		if not meshIcon(l, "Lock", 20, color, false, 5) then
 			l:Destroy()
-			l = padlock(row.content, 24, color, false, color == COL.Text and COL.Ink or COL.DimKey)
+			l = padlock(row.button, 20, color, false, color == COL.Text and COL.Ink or COL.DimKey)
+			l.AnchorPoint = Vector2.new(0.5, 0.5)
+			l.Position = UDim2.new(0, 34, 0.5, 0)
 		end
 		l.LayoutOrder = order
 		table.insert(row.locks, l)
@@ -1605,12 +1607,9 @@ local function rowLook(row, on: boolean, animate: boolean)
 	TweenService:Create(row.button, info, { Size = UDim2.fromOffset(LIST_W, on and ROW_ON_H or ROW_H) }):Play()
 	row.button.ZIndex = on and 5 or 4
 	-- (2026-10-21, round 3: match RIVALS, live check) the picked row is a lighter band with bold white words and its render
-	-- popping out to the right (as live RIVALS), now stronger than the old 0.88 wash, plus a chunky field-green lip along its
-	-- bottom edge that grows out from the centre, so the pick reads at a glance
+	-- popping out to the right (as live RIVALS), now stronger than the old 0.88 wash. (2026-10-21, grade3, user: "copy RIVALS")
+	-- the field-green lip under the picked row is gone: RIVALS' band is the only mark
 	TweenService:Create(row.bg, info, { BackgroundTransparency = on and 0.8 or 1 }):Play()
-	if row.lip then
-		TweenService:Create(row.lip, animate and POP or info, { BackgroundTransparency = on and 0 or 1, Size = UDim2.new(on and 1 or 0.2, on and -16 or 0, 0, 5) }):Play()
-	end
 	if row.hs then TweenService:Create(row.hs, info, { Scale = 1 }):Play() end
 	TweenService:Create(row.name, info, { TextSize = on and 32 or 26, TextColor3 = (on or row.owned) and COL.Text or COL.Dim }):Play()
 	row.nameStroke.Enabled = on or row.owned
@@ -1642,8 +1641,6 @@ local function makeRow(id: string, order: number, parent: Instance)
 		LayoutOrder = order, ZIndex = 4, ClipsDescendants = true, Parent = parent }) -- (2026-10-21, grade2) the render stays inside its row
 	local bg = mk("Frame", { Name = "Bg", BackgroundColor3 = WHITE, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
 		ZIndex = 1, Parent = b }, { corner(6) })
-	local lip = mk("Frame", { Name = "Lip", BackgroundColor3 = COL.BlueTop, BackgroundTransparency = 1, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 1),
-		Position = UDim2.new(0.5, 0, 1, -2), Size = UDim2.new(0.2, 0, 0, 5), ZIndex = 2, Parent = b }, { corner(2) })
 	local content = mk("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = b }, {
 		mk("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }),
@@ -1651,23 +1648,21 @@ local function makeRow(id: string, order: number, parent: Instance)
 	local name = text({ Name = "Name", Text = item.Name, FontFace = FONT_HEAVY, TextSize = 26, TextColor3 = owned and COL.Text or COL.Dim,
 		AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 36), LayoutOrder = 2, ZIndex = 5, Parent = content })
 	local stroke = mk("UIStroke", { Color = BLACK, Thickness = 1.5, Transparency = 0.45, Enabled = false, Parent = name })
-	local row = { id = id, owned = owned, button = b, bg = bg, lip = lip, content = content, name = name, nameStroke = stroke, locks = {},
+	local row = { id = id, owned = owned, button = b, bg = bg, content = content, name = name, nameStroke = stroke, locks = {},
 		hs = mk("UIScale", { Name = "HoverScale", Parent = content }) }
 	rowLook(row, false, false)
-	-- (2026-10-21, round 3: match RIVALS) hover: the row's words grow a little, a faint tile and a short lip show, a locked name
-	-- lifts out of the dark so you can read it, plus the Kit hover tick; was a 0.94 white wash only
+	-- (2026-10-21, round 3: match RIVALS) hover: the row's words grow a little, a faint tile shows, a locked name lifts a little,
+	-- plus the Kit hover tick. (2026-10-21, grade3) the hover lip is gone with the picked-row lip
 	b.MouseEnter:Connect(function()
 		if selectedRowId == id then return end
 		Kit.sfx("hover")
 		TweenService:Create(bg, TI, { BackgroundTransparency = 0.92 }):Play()
-		TweenService:Create(lip, TI, { BackgroundTransparency = 0.5, Size = UDim2.new(0.4, 0, 0, 5) }):Play()
 		TweenService:Create(row.hs, TI, { Scale = 1.05 }):Play()
-		if not row.owned then TweenService:Create(name, TI, { TextColor3 = COL.Grey }):Play() end
+		if not row.owned then TweenService:Create(name, TI, { TextColor3 = COL.Sub }):Play() end
 	end)
 	b.MouseLeave:Connect(function()
 		if selectedRowId == id then return end
 		TweenService:Create(bg, TI, { BackgroundTransparency = 1 }):Play()
-		TweenService:Create(lip, TI, { BackgroundTransparency = 1, Size = UDim2.new(0.2, 0, 0, 5) }):Play()
 		TweenService:Create(row.hs, TI, { Scale = 1 }):Play()
 		if not row.owned then TweenService:Create(name, TI, { TextColor3 = COL.Dim }):Play() end
 	end)
@@ -1833,9 +1828,12 @@ local function buildLeft()
 		t.TouchTap:Connect(function() setTab(slot) end)
 	end
 	-- (2026-10-18) RIVALS' Career > Duel History, from the profile card
+	-- (2026-10-21, grade3) a text button among icon slots read odd (and its 19 px words ~10 px on screen): it is one more icon slot
+	-- like RIVALS' Career row, a drawn clock, with a "Duel history" hover bubble
 	local hb = mk("TextButton", { Name = "History", AutoButtonColor = false, Text = "", BackgroundColor3 = BLACK, BackgroundTransparency = TILE_T,
-		Size = UDim2.fromOffset(132, 52), Position = UDim2.fromOffset(192, 74), ZIndex = 4, Parent = prof }, { corner(6) })
-	shade(text({ Text = "Duel History", FontFace = FONT_HEAVY, TextSize = 19, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = hb }), 1.5)
+		Size = UDim2.fromOffset(52, 52), Position = UDim2.fromOffset(192, 74), ZIndex = 4, Parent = prof }, { corner(6) })
+	glyph(hb, "clock", 34, COL.Grey, 5)
+	Armory._tip(hb, "Duel history", "up")
 	hb.MouseEnter:Connect(function() TweenService:Create(hb, TI, { BackgroundTransparency = 0.25 }):Play() end)
 	hb.MouseLeave:Connect(function() TweenService:Create(hb, TI, { BackgroundTransparency = TILE_T }):Play() end)
 	hb.Activated:Connect(function() Armory.ShowHistory(true) end)
@@ -1885,7 +1883,7 @@ local ACTIONS_BOTTOM = 990
 -- the level and the XP to go; the "Level up" row is gone) +
 -- "Reward at level N" with a 3D placeholder (Account level moved off: it isn't about this item); actions card = one row per
 -- action (Equip / Unlock, Inspect, Next unlock, Statistics), each with a big chunky field-green icon button on the right
-local ACTIONS_H, LEVEL_H = 4 * 66 + 12, 110 -- (2026-10-21, grade1) level card: one bar + the reward row (was 176)
+local ACTIONS_H, LEVEL_H = 4 * 66 + 12, 172 -- (2026-10-21, grade1) level card: one bar + the reward row (was 176); (grade3) + RIVALS' "Level up" row
 
 local function clearCard(c)
 	for _, ch in c:GetChildren() do
@@ -1948,6 +1946,7 @@ end
 
 -- (2026-10-21, round 3: match RIVALS) a soft light sweep across a primary button face every couple of seconds (RIVALS' bright
 -- buttons glint; ours stood still). Its own Frame inside the face, so it never fights bindButton's UIScale.
+-- (2026-10-21, grade3) unused now: RIVALS' buttons don't glint (user: copy RIVALS). Kept for other callers / a later revisit.
 function Armory._shine(face: GuiObject)
 	local sweep = mk("Frame", { Name = "Shine", BackgroundColor3 = WHITE, BackgroundTransparency = 0.55, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromScale(-0.2, 0.5), Size = UDim2.new(0, 22, 1.4, 0), Rotation = 20, ZIndex = (face.ZIndex or 6) + 1, Parent = face }, {
@@ -2085,15 +2084,19 @@ local function renderInfo()
 	local nameLabel = shade(text({ Text = item.Name, FontFace = FONT_TITLE, TextSize = 34, Position = UDim2.fromOffset(52, 6), Size = UDim2.fromOffset(CARD_W - 104, 40),
 		TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 5, Parent = infoCard }), 2)
 	local fav = isFavourite(id)
-	-- (2026-10-21, AI-tells cleanup) no 2.5 px white outline: an unticked box is a faint solid white fill instead
-	local favBox = mk("TextButton", { Name = "Favourite", AutoButtonColor = false, Text = "", BackgroundColor3 = WHITE, BackgroundTransparency = fav and 0 or 0.75,
-		Position = UDim2.fromOffset(CARD_W - 38, 14), Size = UDim2.fromOffset(26, 26), ZIndex = 5, Parent = infoCard }, {
-		corner(3) })
-	local tick = glyph(favBox, "check", 22, COL.Ink, 6)
+	-- (2026-10-21, AI-tells cleanup) no 2.5 px white outline. (2026-10-21, grade3) graders: the faint grey square looked broken. Now
+	-- RIVALS' plain checkbox, drawn solid: a 28 px cream square with a dark well inside (3 px cream edge, no stroke); ticked = the
+	-- well turns field green with a cream check
+	local favBox = mk("TextButton", { Name = "Favourite", AutoButtonColor = false, Text = "", BackgroundColor3 = COL.Text, BackgroundTransparency = 0.1,
+		Position = UDim2.fromOffset(CARD_W - 40, 12), Size = UDim2.fromOffset(28, 28), ZIndex = 5, Parent = infoCard }, {
+		corner(4) })
+	local well = mk("Frame", { Name = "Well", BackgroundColor3 = fav and COL.BlueTop or COL.Ink, BorderSizePixel = 0, Position = UDim2.fromOffset(3, 3),
+		Size = UDim2.new(1, -6, 1, -6), ZIndex = 6, Parent = favBox }, { corner(2) })
+	local tick = glyph(well, "check", 20, COL.Text, 7)
 	tick.Visible = fav
 	favBox.Activated:Connect(function()
 		local on = not isFavourite(id)
-		favBox.BackgroundTransparency = on and 0 or 0.75
+		well.BackgroundColor3 = on and COL.BlueTop or COL.Ink
 		tick.Visible = on
 		-- (2026-10-21, RIVALS pass) the box itself squashes through Kit.bindButton (one UIScale only), the tick pops in
 		if on then Kit.pop(tick, 1.3) end
@@ -2120,9 +2123,9 @@ local function renderInfo()
 			-- (2026-10-21, grade1) no more mid-word cuts ("Honest…"): a bullet shows the description's first sentence only and wraps
 			-- (to 2 lines at most) instead of truncating; the whole text is still the hover bubble
 			local short = (i == 2 and line:match("^(.-[%.!%?])%s")) or line
-			local lab = text({ Text = "•  " .. short, FontFace = FONT_MED, TextSize = 19, TextColor3 = COL.Sub, Size = UDim2.fromOffset(CARD_W - 64, 22), -- (2026-10-21, grade2) 17 -> 19
+			local lab = text({ Text = "•  " .. short, FontFace = FONT_MED, TextSize = 21, TextColor3 = COL.Sub, Size = UDim2.fromOffset(CARD_W - 64, 24), -- (2026-10-21, grade2) 17 -> 19; (grade3) -> 21
 				TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = i, ZIndex = 5, Parent = notes })
-			mk("UISizeConstraint", { MaxSize = Vector2.new(CARD_W - 64, 46), Parent = lab })
+			mk("UISizeConstraint", { MaxSize = Vector2.new(CARD_W - 64, 50), Parent = lab })
 			if item.Desc and item.Desc ~= "" then Armory._tip(lab, item.Desc, "left") end
 		end
 	end
@@ -2133,14 +2136,10 @@ local function renderInfo()
 	end)
 	local ab = okA and Abilities and Abilities.Items and Abilities.Items[id]
 	if ab then
-		-- (2026-10-21, round 3: match RIVALS) a solid field-green chip with the ability's name; its sentence is the chip's hover bubble
-		local chip = mk("Frame", { Name = "Ability", BackgroundColor3 = COL.BlueBottom, BackgroundTransparency = 0.3, BorderSizePixel = 0,
-			Size = UDim2.fromOffset(0, 32), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 10, ZIndex = 5, Parent = notes }, {
-			corner(4), mk("UIPadding", { PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10) }) })
-		shade(text({ Text = (ab.perk and "PERK  ·  " or "ABILITY  ·  ") .. string.upper(ab.ability), FontFace = FONT_HEAVY, TextSize = 21, TextColor3 = COL.Text, -- (2026-10-21, grade2) 18 -> 21
-			AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 32), ZIndex = 6, Parent = chip }), 1.2)
-		chip.MouseEnter:Connect(function() TweenService:Create(chip, TI, { BackgroundTransparency = 0 }):Play() end)
-		chip.MouseLeave:Connect(function() TweenService:Create(chip, TI, { BackgroundTransparency = 0.3 }):Play() end)
+		-- (2026-10-21, grade3, user: "copy RIVALS") the green ability chip is gone (RIVALS' card has no chips): the ability is a third
+		-- plain bullet line in the same Rubik as the others; its sentence is still the line's hover bubble
+		local chip = text({ Name = "Ability", Text = "•  " .. (ab.perk and "Perk: " or "Ability: ") .. ab.ability, FontFace = FONT_MED, TextSize = 21,
+			TextColor3 = COL.Text, Size = UDim2.fromOffset(CARD_W - 64, 26), TextTruncate = Enum.TextTruncate.AtEnd, LayoutOrder = 10, ZIndex = 5, Parent = notes })
 		Armory._tip(chip, ab.desc, "left")
 		-- (2026-10-19, movement spec) Speed follows the live MoveSpeed multiplier (WeaponConfig / MeleeConfig, 0.7 .. 1.3 -> 1 .. 5)
 		-- so a retune shows here by itself; melee gets the Speed row alone. ab.speed is the fallback.
@@ -2172,8 +2171,8 @@ local function renderInfo()
 					local back = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, BorderSizePixel = 0, Position = UDim2.fromOffset(88 + (seg - 1) * 30, 6),
 						Size = UDim2.fromOffset(27, 14), ZIndex = 5, Parent = row }, { corner(3) })
 					if f > 0 then
-						local segFill = mk("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(0, 1), ZIndex = 6, Parent = back }, {
-							corner(3), mk("UIGradient", { Rotation = 90, Color = ColorSequence.new(COL.BlueTop, COL.BlueBottom) }) })
+						local segFill = mk("Frame", { BackgroundColor3 = COL.BlueTop, BorderSizePixel = 0, Size = UDim2.fromScale(0, 1), ZIndex = 6, Parent = back }, {
+							corner(3) }) -- (2026-10-21, grade3) solid field green, no gradient
 						task.delay(0.06 * seg + 0.1 * k, function()
 							if segFill.Parent then Kit.fillTo(segFill, f, 0.28) end
 						end)
@@ -2192,21 +2191,23 @@ local function renderInfo()
 	-- level 2"). Now ONE 22 px bar: "LV n" on its left, "250 XP TO LV 2" on its right (LOCKED / MAX LEVEL states the same
 	-- way), and the "Level up" row is gone; "Reward at level N" moves up under it (LEVEL_H 176 -> 110)
 	-- (2026-10-21, grade2) the bar 22 -> 28 tall so its words can be 21 / 19 px (the XP line read ~10 px on screen)
-	local track = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, BorderSizePixel = 0, Position = UDim2.fromOffset(12, 10),
+	-- (2026-10-21, grade3, user: "copy RIVALS") RIVALS' plain level bar: a cream track at 25%, a solid field-green fill (no gradient)
+	-- of at least 6 px once you own it (0 XP read as an empty bar), "LV n" on it; the XP to go moved to RIVALS' "Level up" row below
+	local track = mk("Frame", { BackgroundColor3 = COL.Text, BackgroundTransparency = 0.75, BorderSizePixel = 0, Position = UDim2.fromOffset(12, 10),
 		Size = UDim2.fromOffset(CARD_W - 24, 28), ZIndex = 5, Parent = levelCard }, { corner(5) })
 	local frac = owned and (maxed and 1 or math.clamp(into / math.max(need, 1), 0.02, 1)) or 0
 	-- (2026-10-21, round 3: match RIVALS) the bar fills on from where it last stood for this item (was from 0 on every re-render)
 	-- and the level number counts up and pops when it changes; remembered per item on Armory._lvl
 	Armory._lvl = Armory._lvl or {}
 	local prevLvl = Armory._lvl[id]
-	local fill = mk("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(prevLvl and prevLvl.frac or 0, 1), ZIndex = 6, Parent = track }, {
-		corner(5), mk("UIGradient", { Color = ColorSequence.new(COL.BlueTop, COL.BlueBottom) }) })
+	local fill = mk("Frame", { BackgroundColor3 = COL.BlueTop, BorderSizePixel = 0, Size = UDim2.fromScale(prevLvl and prevLvl.frac or 0, 1), ZIndex = 6, Parent = track }, {
+		corner(5) })
+	if owned then mk("UISizeConstraint", { MinSize = Vector2.new(6, 0), Parent = fill }) end
 	Kit.fillTo(fill, frac, 0.6)
 	local lvLabel = shade(text({ Text = owned and ("LV " .. level) or "LOCKED", FontFace = FONT_HEAVY, TextSize = 21, Position = UDim2.fromOffset(9, 0),
 		Size = UDim2.new(0, 90, 1, 0), ZIndex = 8, Parent = track }), 1.5)
-	local rightWords = not owned and ("UNLOCK TO EARN XP") or (maxed and "MAX LEVEL" or `{ctx.commas(need - into)} XP TO LV {level + 1}`)
-	shade(text({ Text = rightWords, FontFace = FONT_HEAVY, TextSize = 19, TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -9, 0, 0), Size = UDim2.new(1, -86, 1, 0), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 8, Parent = track }), 1.5)
+	cardRow(levelCard, 42, "up", maxed and "Max level" or "Level up", not owned and "Unlock it to earn XP"
+		or (maxed and "Every level reached" or `{ctx.commas(need - into)} XP to level {level + 1}`), true)
 	if owned and level ~= (prevLvl and prevLvl.level or 1) then
 		Kit.countTo(lvLabel, prevLvl and prevLvl.level or 1, level, 0.5, function(n) return "LV " .. math.floor(n + 0.5) end)
 		task.delay(0.5, function() if lvLabel.Parent then Kit.pop(lvLabel, 1.25) end end)
@@ -2215,7 +2216,7 @@ local function renderInfo()
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' "Reward at Level 50" row with a posed reward render: the next milestone (every 5
 	-- levels) with a live 3D placeholder (ViewIcons' Crate: it sways and turns to you on hover) until weapon rewards exist
 	local milestone = math.min(maxLevel, (math.floor((owned and level or 0) / 5) + 1) * 5)
-	local rewardRow = cardRow(levelCard, 42, "star", "Reward at level " .. milestone, owned and (level >= maxLevel and "All rewards reached" or "A crate for this weapon")
+	local rewardRow = cardRow(levelCard, 104, "star", "Reward at level " .. milestone, owned and (level >= maxLevel and "All rewards reached" or "A crate for this weapon")
 		or "Unlock it to start the rewards", true)
 	local rwIcon = rewardRow:FindFirstChild("Frame")
 	local okVI, VI = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit", 2):WaitForChild("ViewIcons", 2)) end)
@@ -2242,15 +2243,13 @@ local function renderInfo()
 	end
 	if owned then
 		local equipped = equippedIn(item.Slot) == id
-		-- (2026-10-21, grade1) equipped = the field-green check + EQUIPPED chip (bigButton tone "equipped"), not the grey button
+		-- (2026-10-21, grade3) equipped = RIVALS' plain green square with just the check (bigButton tone "equipped"), not clickable
 		local r = cardRow(actionCard, 6, function(h)
 			itemRender(h, id, Vector2.new(34, 34), { flat = true, z = 6, fill = 1 })
 		end, equipped and "Equipped" or "Equip", equipped and "In your loadout" or "Put it in your loadout")
 		local b = bigButton(r, "check", not equipped, nil, BTN, equipped and "equipped" or nil)
 		if not equipped then
-			local face = b:FindFirstChild("Face")
-			if face then Armory._shine(face) end
-			b.Activated:Connect(function() ctx.ask("Equip", item.Slot, id) end)
+			b.Activated:Connect(function() ctx.ask("Equip", item.Slot, id) end) -- (grade3: no glint sweep; RIVALS' buttons stand still)
 		end
 	else
 		-- (2026-10-21, RIVALS pass) the price sits on the button (number + the scissors currency icon) and ONE press buys it: no
@@ -2273,7 +2272,6 @@ local function renderInfo()
 				ZIndex = 8, Parent = face })
 		end
 		if afford then
-			if face then Armory._shine(face) end
 			b.Activated:Connect(function()
 				if Armory._unlocking or Armory._cutting then return end
 				Armory._unlocking = true
@@ -2524,14 +2522,12 @@ local function openCosmeticTray(c)
 	clearCard(tray)
 	tray.Size = UDim2.fromOffset(28 + N * (TILE + GAP) - GAP, 70 + TILE + 16)
 	Armory._popIn(tray)
-	-- BACK: RIVALS' red chunky button (the same red as Kit.closeButton), a dark lip, no hairline
-	local back = mk("TextButton", { Name = "Back", AutoButtonColor = false, Text = "", BackgroundColor3 = WHITE, Position = UDim2.fromOffset(14, 12),
-		Size = UDim2.fromOffset(150, 48), ZIndex = 5, Parent = tray }, { corner(8),
-		mk("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(255, 106, 77), Color3.fromRGB(197, 42, 26)) }) })
-	mk("Frame", { Name = "Lip", BackgroundColor3 = BLACK, BackgroundTransparency = 0.7, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 7), ZIndex = 6, Parent = back }, { corner(8) })
+	-- BACK: RIVALS' red button (the same red as Kit.closeButton), no hairline. (2026-10-21, grade3) one plain solid red: the dark lip
+	-- and the gradient are gone
+	local back = mk("TextButton", { Name = "Back", AutoButtonColor = false, Text = "", BackgroundColor3 = Color3.fromRGB(226, 62, 42), Position = UDim2.fromOffset(14, 12),
+		Size = UDim2.fromOffset(150, 48), ZIndex = 5, Parent = tray }, { corner(8) })
 	shade(text({ Text = "BACK", FontFace = FONT_TITLE, TextSize = 30, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
-		Size = UDim2.new(1, 0, 1, -4), ZIndex = 7, Parent = back }), 1.5)
+		Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = back }), 1.5)
 	Kit.bindButton(back, { hover = 1.08, press = 0.9 })
 	back.Activated:Connect(function() closeTray() end)
 	shade(text({ Text = `{c.Label}  ·  {ctx.Config.Items[selectedId].Name}`, FontFace = FONT_TITLE, TextSize = 28, Position = UDim2.fromOffset(182, 14),
@@ -2564,18 +2560,17 @@ local function openCosmeticTray(c)
 		local tile = mk("TextButton", { Name = isNone and "None" or ("Locked" .. i), AutoButtonColor = false, Text = "", BackgroundColor3 = isNone and BLACK or WHITE,
 			BackgroundTransparency = isNone and 0.3 or 0, Position = UDim2.fromOffset(14 + (i - 1) * (TILE + GAP), 70), Size = UDim2.fromOffset(TILE, TILE),
 			ZIndex = 5, Parent = tray }, { corner(6) })
-		if not isNone then -- rarity fill, lighter at the top, with a darker chunky lip
+		if not isNone then -- rarity fill, lighter at the top. (2026-10-21, grade3) the darker lip strip along the bottom is gone
 			mk("UIGradient", { Rotation = 90, Color = ColorSequence.new(col:Lerp(WHITE, 0.12), col:Lerp(BLACK, 0.3)), Parent = tile })
-			mk("Frame", { Name = "Lip", BackgroundColor3 = col:Lerp(BLACK, 0.55), BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
-				Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 6), ZIndex = 6, Parent = tile }, { corner(3) })
 		end
 		local view = mk("Frame", { Name = "View", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 4), Size = UDim2.fromOffset(TILE, TILE - 26), ZIndex = 6, Parent = tile })
 		local box, badge
 		if isNone then
 			box = glyph(view, "empty", 52, COL.Empty, 6)
-			-- RIVALS' big green tick on what you have on
+			-- RIVALS' big green tick on what you have on. (2026-10-21, grade3) it poked 4 px past the tile's right edge: now inset 6 px
+			-- (its right edge at TILE - 6)
 			badge = mk("Frame", { Name = "Check", BackgroundColor3 = COL.BlueTop, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.new(1, -16, 1, -30), Size = UDim2.fromOffset(40, 40), ZIndex = 9, Parent = tile }, { circle() })
+				Position = UDim2.new(1, -26, 1, -32), Size = UDim2.fromOffset(40, 40), ZIndex = 9, Parent = tile }, { circle() })
 			glyph(badge, "check", 28, COL.Ink, 10)
 		else
 			if c.Id == "Wrap" then
@@ -2612,7 +2607,8 @@ local function openCosmeticTray(c)
 			if home then TweenService:Create(tile, TI, { Position = home }):Play() end
 			TweenService:Create(sheen, TI, { BackgroundTransparency = 1 }):Play()
 		end)
-		Armory._tip(tile, isNone and "On now: the standard look" or `{tier} {string.lower(c.Label)}s are coming soon`, "up")
+		-- (2026-10-21, grade3) the bubble says how you'll get it, not "coming soon"
+		Armory._tip(tile, isNone and "On now: the standard look" or `{tier} {string.lower(c.Label)} · coming with the next update`, "up")
 		tile.MouseEnter:Connect(function() if box then box:SetAttribute("Hover", true) end end)
 		tile.MouseLeave:Connect(function() if box then box:SetAttribute("Hover", nil) end end)
 		tile.Activated:Connect(function()

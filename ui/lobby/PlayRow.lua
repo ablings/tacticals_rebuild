@@ -75,8 +75,35 @@ function PlayRow.Init(ctx)
 	playStroke = new("UIStroke", { Color = hex("#1F3A14"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
 	local Tac = require(UIKit:WaitForChild("Tac"))
 	Tac.hoverBrackets(play, Tac.brackets(play, Tac.C.bone, 16, 3))
-	Kit.bindButton(play, { hover = 1.08 })
-	play.Activated:Connect(function() if ctx.onPlay then ctx.onPlay() end end)
+	-- (2026-10-21, grade3) RIVALS' Play grows ~10 % and brightens on hover: UIScale 1.08 over 0.12 s (Quad) plus a white sheen at
+	-- 0.85 under the label, press 0.95. Its own handlers (not Kit.bindButton's 0.1 s tween); the "Hovered" attribute tells
+	-- LobbyHud to hide its "Join a match!" pill while PLAY is hovered. The halo (a sibling behind it) is untouched.
+	local playScale = new("UIScale", { Name = "HoverScale", Parent = play })
+	local sheen = new("Frame", { Name = "_HoverGlow", BackgroundColor3 = C.white, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
+		ZIndex = 0, Parent = play }, { Kit.corner(2) }) -- ZIndex 0: over the gradient fill, under the PLAY label
+	local playHover = false
+	local function playEnter()
+		if playHover then return end
+		playHover = true
+		play:SetAttribute("Hovered", true)
+		Kit.tween(playScale, 0.12, { Scale = 1.08 }, Enum.EasingStyle.Quad)
+		Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.85 }, Enum.EasingStyle.Quad)
+		Kit.sfx("hover")
+	end
+	local function playLeave()
+		playHover = false
+		play:SetAttribute("Hovered", false)
+		Kit.tween(playScale, 0.12, { Scale = 1 }, Enum.EasingStyle.Quad)
+		Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }, Enum.EasingStyle.Quad)
+	end
+	play.MouseEnter:Connect(playEnter)
+	play.MouseLeave:Connect(playLeave)
+	play.SelectionGained:Connect(playEnter)
+	play.SelectionLost:Connect(playLeave)
+	play.MouseButton1Down:Connect(function() Kit.tween(playScale, 0.06, { Scale = 0.95 }, Enum.EasingStyle.Quad) end)
+	play.MouseButton1Up:Connect(function() Kit.tween(playScale, 0.1, { Scale = playHover and 1.08 or 1 }, Enum.EasingStyle.Back) end)
+	task.defer(Kit.centreAnchor, play) -- grow from the centre (after toScale below has placed it)
+	play.Activated:Connect(function() Kit.sfx("click"); if ctx.onPlay then ctx.onPlay() end end)
 	PlayRow.SetState("PLAY", "play")
 
 	-- party: your avatar on a round plate, then a round "+" to invite friends
@@ -100,7 +127,8 @@ function PlayRow.Init(ctx)
 	local mates = new("Frame", { Name = "PartyMates", BackgroundTransparency = 1, Position = UDim2.fromOffset(1220, 849), Size = UDim2.fromOffset(4 * 54, 62), Parent = root })
 	local invHome -- read after Kit.bindButton has re-anchored the + (it moves it a frame later)
 	if ctx.tooltip then
-		ctx.tooltip(play, "Play", "Find a match online: 1v1, 2v2 or 3v3, casual or ranked.")
+		-- (2026-10-21, grade3) no tooltip on PLAY: it showed a two-line box on top of the "Join a match!" pill (two bubbles for
+		-- one button) and covered the party avatar / +
 		ctx.tooltip(av, Players.LocalPlayer.DisplayName, "Your squad. Invite friends with the + to play together.")
 		ctx.tooltip(inv, "Invite", "Invite a friend to your squad.")
 	end

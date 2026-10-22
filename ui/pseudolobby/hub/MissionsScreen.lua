@@ -9,7 +9,6 @@
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
-local TweenService = game:GetService("TweenService") -- (2026-10-21, grade2) the looping "next" cue
 
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -37,8 +36,11 @@ local STAT_ICON = {
 }
 -- (2026-10-21) RIVALS' Daily Tasks show FLAT white glyphs for the task (t0062: play / crosshair / trophy), so ours do too: the
 -- art batch 1 cream line icons (Kit.ICONS). Any stat without one keeps its 3D icon below.
-local FLAT_STAT = { Wins = "trophy", MatchesPlayed = "play", Kills = "lbElims", Headshots = "lbElims", CoverKills = "cover",
+-- (2026-10-21, grade3) headshots and eliminations shared the crosshair: headshots now show the eye (aimed precision)
+local FLAT_STAT = { Wins = "trophy", MatchesPlayed = "play", Kills = "lbElims", Headshots = "eye", CoverKills = "cover",
 	MeleeKills = "melee", GadgetsThrown = "gadget" }
+-- (2026-10-21, grade3) the play glyph is a solid fill, so full cream read as a white blob beside the line glyphs: tan instead
+local FLAT_TINT = { MatchesPlayed = C.tan or Color3.fromRGB(226, 210, 172) }
 local function statIcon(parent, stat, hoverTarget)
 	local flat = FLAT_STAT[stat] and Kit.ICONS and Kit.ICONS[FLAT_STAT[stat]]
 	if flat then
@@ -46,7 +48,7 @@ local function statIcon(parent, stat, hoverTarget)
 		img.Name = "FlatIcon"
 		img.BackgroundTransparency = 1
 		img.Image = flat
-		img.ImageColor3 = Color3.fromRGB(236, 230, 210)
+		img.ImageColor3 = FLAT_TINT[stat] or Color3.fromRGB(236, 230, 210)
 		img.ScaleType = Enum.ScaleType.Fit
 		img.AnchorPoint = Vector2.new(0.5, 0.5)
 		img.Position = UDim2.fromScale(0.5, 0.5)
@@ -84,7 +86,9 @@ local CARD_DONE = Color3.fromRGB(34, 52, 24) -- (2026-10-21, auto-pay) a finishe
 local FIELD, FIELD_DARK = C.field or Color3.fromRGB(141, 191, 90), C.fieldDark or Color3.fromRGB(76, 122, 46)
 
 -- (2026-10-21, grade2) the panel fill drops 0.5 -> 0.15 opacity: the cards are the dark layer, not the panel AND the cards
-local PANEL_T = 0.85
+-- (2026-10-21, grade3) the user's rule is now "as close to RIVALS as possible": RIVALS' Tasks (t0062) sit on a solid dark panel,
+-- so the panel fill comes back darker (0.85 -> 0.45) instead of being removed; the Weekly rows float on it with no plates
+local PANEL_T = 0.45
 local COL_X, COL_W = 532, 828
 local COL_Y, COL_H = 130, 830 -- (2026-10-21, grade1) the MISSIONS title is gone: the column moves up into its place
 -- (2026-10-21, grade2) the cards touched (~2 px gaps): 24 px side padding, 10 px gaps -> three 253 px cards (24 / 287 / 550)
@@ -94,6 +98,14 @@ local CARD_X = { SIDE, SIDE + CARD_W + GAP, SIDE + (CARD_W + GAP) * 2 }
 -- (2026-10-21, grade2) Weekly Contracts = a RIVALS Contracts list (t0062), not a second row of cards: one row per contract
 local ROW_H, ROW_GAP = 70, 8
 local CREAM = C.cream or Color3.fromRGB(236, 230, 210)
+-- (2026-10-21, grade3) RIVALS' close X: 72x52, 12 px outside the column's top-right, top level with the Daily panel's top
+local X_W, X_H, X_GAP = 72, 52, 12
+-- (2026-10-21, grade3) reward counts with thousands commas (1000 -> 1,000)
+local function commas(n)
+	local str = tostring(math.floor(tonumber(n) or 0))
+	local out = str:reverse():gsub("(%d%d%d)", "%1,"):reverse()
+	return (out:gsub("^,", ""))
+end
 -- (2026-10-21, auto-pay) what each task looked like at the last render ([scope:period:id] = { state, prog }), so a task that
 -- finishes or gets paid while the screen is open pops its check / PAID tag and grows its bar, with no click
 local seen = {}
@@ -163,7 +175,7 @@ local function reward(parent, amount, size, pos, hoverTarget, ts) -- (2026-10-21
 	ViewIcons.Icon(holder, "Scissors", { hoverTarget = hoverTarget, zoom = 1.15 })
 	-- (2026-10-21, grade1) "×N" bigger (32 -> 42 design px, ~20 px on a phone-ish 1436 capture) and BESIDE the scissors,
 	-- vertically centred on them (was tucked small under the corner)
-	local n = Kit.label({ Text = "×" .. amount, FontFace = F.display, TextSize = ts or 42, TextXAlignment = Enum.TextXAlignment.Left,
+	local n = Kit.label({ Text = "×" .. commas(amount), FontFace = F.display, TextSize = ts or 42, TextXAlignment = Enum.TextXAlignment.Left,
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(size * 0.86, size * 0.55), Size = UDim2.fromOffset(110, 48), ZIndex = 3, Parent = holder })
 	Kit.textStroke(2).Parent = n
 	return holder
@@ -202,7 +214,8 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	-- UNDER the bar (it no longer runs through it), then the reward. Done titles and counts turn field green.
 	-- (2026-10-21, grade2) a fixed 2-line box, bottom-aligned: one- and two-line titles end on the same line, so the glyphs and
 	-- bars line up across the cards (was centred in a 44 px box: a 2-line title sat higher than its neighbours)
-	local title = Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 21, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center,
+	-- (2026-10-21, grade3) 21 -> 24 design px (~18 px in the 1436 capture; read ~14 before)
+	local title = Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 24, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center,
 		TextYAlignment = Enum.TextYAlignment.Bottom, Position = UDim2.fromOffset(10, 6), Size = UDim2.new(1, -20, 0, 52), Parent = card })
 	-- (2026-10-21, grade1) RIVALS grows the task title on hover: ~1.1x with the lift (own UIScale; the pops own the others)
 	local titleScale = new("UIScale", { Name = "HoverScale", Parent = title })
@@ -278,7 +291,9 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 	local W = COL_W - SIDE * 2
 	local BAR_X, BAR_R = 72, W - 150 -- bar from the glyph to the count's right edge; the reward column is the last ~130 px
 	local row = new("Frame", { Name = scope .. i, Position = UDim2.fromOffset(SIDE, y), Size = UDim2.fromOffset(W, ROW_H),
-		BackgroundColor3 = done and CARD_DONE or CARD_BG, BackgroundTransparency = 0.25, BorderSizePixel = 0, Parent = parent }, { Kit.corner(4) })
+		BackgroundColor3 = done and CARD_DONE or CARD_BG, BackgroundTransparency = done and 0.5 or 1, BorderSizePixel = 0, Parent = parent }, { Kit.corner(4) })
+	-- (2026-10-21, grade3) RIVALS' Contracts rows (t0062) have no plate: glyph, name over its bar, count, reward on the dark panel.
+	-- A done row keeps a faint field-green wash.
 	Tac.hoverBrackets(row, Tac.brackets(row, Tac.C.line, 18, 3))
 	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(38, ROW_H / 2),
 		Size = UDim2.fromOffset(46, 46), Parent = row })
@@ -300,7 +315,8 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 		new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK, ImageColor3 = CREAM, ScaleType = Enum.ScaleType.Fit,
 			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.64, 0.64), ZIndex = 5, Parent = badge })
 	end
-	local rewardHolder = reward(row, def.Reward, 44, UDim2.fromOffset(W - 112, paid and 28 or ROW_H / 2), row, 32)
+	-- (2026-10-21, grade3) reward scissors 44 -> 58 design px (~24 -> ~32 px in the capture)
+	local rewardHolder = reward(row, def.Reward, 58, UDim2.fromOffset(W - 118, paid and 28 or ROW_H / 2), row, 32)
 	local paidTag
 	if paid then
 		for _, d in rewardHolder:GetDescendants() do
@@ -325,19 +341,8 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 	return row, done
 end
 
--- (2026-10-21, grade2) the "next" cue: a cream inner outline on the first unfinished daily card that pulses (alpha 0 -> 1 over
--- 1.0 s, Sine, looping), only while nothing is done yet. An inset frame carries the stroke so it reads INSIDE the card edge;
--- the tween dies with the card on the next render.
-local function nextCue(card)
-	local inset = new("Frame", { Name = "NextCue", BackgroundTransparency = 1, Position = UDim2.fromOffset(3, 3), Size = UDim2.fromOffset(CARD_W - 6, CARD_H - 6),
-		ZIndex = 6, Parent = card }, { Kit.corner(2) })
-	local stroke = new("UIStroke", { Color = CREAM, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = inset })
-	stroke:SetAttribute("NoStyle", true)
-	pcall(function() inset.Interactable = false end)
-	local tw = TweenService:Create(stroke, TweenInfo.new(1.0, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), { Transparency = 0 })
-	tw:Play()
-	inset.Destroying:Connect(function() tw:Cancel() end)
-end
+-- (2026-10-21, grade3) the grade2 "next" cue (a pulsing cream ring on the first unfinished card) is gone: in stills it read as a
+-- resting border, the user ruled out underline bars, and RIVALS' Tasks (t0062) have no cue at all
 
 local function scopePanel(scope, order, title, iconModel)
 	local data = ctx.getData() or {}
@@ -355,13 +360,8 @@ local function scopePanel(scope, order, title, iconModel)
 	timer:SetAttribute("ResetScope", scope)
 	-- (2026-10-21, grade1) the red X lives in the Daily panel's top-right corner (was floating over the column beside the old
 	-- MISSIONS title); the column is rebuilt per render, so it is made here with the panel
-	local X_W, X_H, EDGE = 72, 52, 14
-	if scope == "Daily" then
-		local close = Kit.closeButton(UDim2.fromOffset(X_W, X_H))
-		close.Position = UDim2.fromOffset(COL_W - EDGE - X_W, EDGE)
-		close.Parent = p
-		close.Activated:Connect(function() Screen.Close() end)
-	end
+	-- (2026-10-21, grade3) the X left the panel: it sits 12 px outside the column's top-right (made once in build())
+	local EDGE = 14
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' Daily Tasks header carries a bright "To Duels" button on the right (t0062): the
 	-- way to go and do the tasks. Ours is a field-green "PLAY" that opens the Play screen through ctx.openPlay. It only appears
 	-- when the controller passes that hook (LobbyUIController's MissionsScreen.Init does not yet); the reset timer moves left of it.
@@ -370,8 +370,11 @@ local function scopePanel(scope, order, title, iconModel)
 	if scope == "Daily" and ctx.openPlay then
 		local play = Kit.button("key", UDim2.fromOffset(150, 52), "GO PLAY")
 		play.Name = "ToPlay"
-		play.Position = UDim2.fromOffset(COL_W - EDGE - X_W - 20 - 150, EDGE)
+		play.Position = UDim2.fromOffset(COL_W - EDGE - 150, EDGE) -- (grade3) the X is outside now: GO PLAY takes the corner
 		play.Parent = p
+		-- (2026-10-21, grade3, user: lips look AI-made) RIVALS buttons are plain solid rounded buttons: no dark bottom lip
+		local lip = play:FindFirstChild("Lip")
+		if lip then lip:Destroy() end
 		-- (2026-10-21, grade2) same words as the rest of the buttons: Oswald with the price tags' soft drop shadow, no heavy
 		-- dark outline (Kit.button's chunky label carries a 2 px stroke)
 		local lbl = play:FindFirstChild("Label")
@@ -394,19 +397,14 @@ local function scopePanel(scope, order, title, iconModel)
 		Kit.label({ Text = "Loading missions...", FontFace = F.medium, TextSize = 26, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
 			Position = UDim2.fromOffset(0, rows and 96 or 160), Size = UDim2.new(1, 0, 0, 40), Parent = p }) -- (grade2) inside the short rows panel
 	end
-	local firstTodo, anyDone = nil, false
 	for i, entry in ipairs(list) do
 		local def = questDef(scope, entry.Id)
 		if def and rows then
 			taskRow(p, scope, i, entry, def, 82 + (i - 1) * (ROW_H + ROW_GAP), q and q.Key)
 		elseif def and CARD_X[i] then
-			local card, done = taskCard(p, scope, i, entry, def, CARD_X[i], 82, q and q.Key)
-			anyDone = anyDone or done
-			if not done and not firstTodo then firstTodo = card end
+			taskCard(p, scope, i, entry, def, CARD_X[i], 82, q and q.Key)
 		end
 	end
-	-- (2026-10-21, grade2) nothing done yet: the first unfinished daily card pulses (an attention cue, no resting border)
-	if scope == "Daily" and firstTodo and not anyDone then nextCue(firstTodo) end
 	return p
 end
 
@@ -452,6 +450,15 @@ local function build()
 		AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = root,
 	})
 	new("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 25), Parent = column })
+	-- (2026-10-21, grade3) the close X, one placement on every screen like RIVALS: 72x52, 12 px outside the panel's top-right,
+	-- its top level with the panel's top (the Daily panel starts at the column's top). In root, not the scrolling column
+	-- (which clips), so it is built once here.
+	local close = Kit.closeButton(UDim2.fromOffset(X_W, X_H))
+	close.Position = UDim2.fromOffset(COL_X + COL_W + X_GAP, COL_Y)
+	close.Parent = root
+	local cl = close:FindFirstChild("Lip") -- (grade3, user: no lips) a plain solid rounded button like RIVALS
+	if cl then cl:Destroy() end
+	close.Activated:Connect(function() Screen.Close() end)
 	render()
 	root.Visible = false
 

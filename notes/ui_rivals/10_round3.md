@@ -552,3 +552,156 @@ Source: `grade2/play.png` vs RIVALS `grade2/rivals_play.png`. Only `ui/play/Play
 - **Daily missions row:** skipped - PlayScreen's ctx has no Missions opener (LobbyUIController passes none).
 - **Look at in Studio:** frameOn convergence on real rigs (accessories widen the box), whether yaw 125 shows faces, crate
   placement at the frame edges for 1v1, sky showing over the wall, and the trophy's ScaleTo pivot.
+
+## grade3 fixes: hub + PLAY (2026-10-21)
+Files: `ui/hud/LobbyHudController.lua`, `ui/lobby/PlayRow.lua`. Code only, not run in Studio. Parse OK (luacheck.py); 115 one-tab locals in the file (under 200).
+- **PLAY hover = one bubble.** PLAY's two-line tooltip ("Play / Find a match online...") is gone; it stacked on the "Join a match!" pill and covered the party avatar / +. PLAY has its own hover now: UIScale 1.08 over 0.12 s (Quad) and a white sheen (`_HoverGlow`, 0.85) under the label. Press is 0.95. The halo and shine sweep are kept. PlayRow sets the `Hovered` attribute on Play, and LobbyHud hides the join pill while it is true.
+- **Dock hover no longer dims PLAY.** The grade2 `setPlayYield` (0.94 shrink + half fade) is removed; graders read it as disabled. The bubble just draws over PLAY (DisplayOrder 7 > 6), like RIVALS. `dockHover` stays for the join pill.
+- **Dock.**
+  - The NavShade bar behind the labels is removed (and the unused `BAR` / `navW`).
+  - Discs are plain black at 0.4 transparency (was the grey gradient).
+  - Labels are Oswald 22 with a 2 px #14170F stroke (was 28 / 2.5).
+  - `tintModel(m, c, it)` takes a per-item strength. Kit is 25 % olive with a cream LightColor (the rim feel). Codes is pulled 60 % to cream #ECE6D2, and its dark parts (luminance < 0.3, the chain stub) turn red #C8442E. Viewport Ambient is 200 (was 220).
+- **Daily Missions widget.**
+  - The CanvasGroup wash is gone; it rendered as a flat box. In its place are plain frames, each with ONE horizontal UIGradient (0.45 at x 0 -> 1 at x 0.7): a middle frame for 10-90 % of the height, plus 6 thin strips over each of the top and bottom 10 %, whose left opacity steps down to the edge.
+  - The widget is 500 x 240 (rows 182). Names are Rubik 22 (20 / 18 for the longest) in a 280 px column. Counts end at x 380, and the bars run 44-380.
+  - The reward column starts 14 px after the count: 28 px scissors at x 394 + "×175" in cream Oswald 26, with commas ("×1,000"). The done check sits in the same column.
+  - DUEL PADS is at design (19, 649): its left edge is on the glyph column, 16 px under the last bar.
+  - Row order is the saved `Daily.List` order. That is what MissionsScreen.scopePanel uses (ipairs, no sort); the grade2 pool-index sort disagreed with it.
+- **Lips / underlines removed (user rule: they read as AI-made; copy RIVALS).** The removed pieces:
+  - the currency plate's black bottom Lip (now a plain dark pill, scissors + green +);
+  - DUEL PADS' black bottom Lip;
+  - the join pill's tan Lip (its pointer is cream now).
+
+  PLAY had no lip or underline in PlayRow. Its text outline and hover brackets stay.
+- Check in Studio:
+  1. Hover PLAY: it should grow and brighten, with no tooltip, and the join pill should hide.
+  2. Hover the dock: PLAY should stay full, with the bubble over it.
+  3. The dock should show no strip. Kit should read olive / cream, and Codes cream with a red stub (if the DogTags asset has no dark parts, there is no stub).
+  4. The wash should have no edge, and the strip banding should be invisible.
+  5. "Get 3 eliminations from cover" should fit at 18-20.
+  6. DUEL PADS should sit under the bars and not overlap the widget's click area.
+
+## grade3 fixes: Kit (2026-10-21)
+File: `ui/lobby/Armory.lua` only. Not deployed, not run in Studio. Parse check OK; top-level locals 180 before and after.
+Mid-task the user's verdict ("looks terrible UI-wise"; the green underlines / lips / bars read AI-made; "just copy RIVALS") replaced
+grader item 2: the Kit now copies RIVALS' Weapons screen (t0052) instead of a charcoal button hierarchy.
+
+**Removed (shapes RIVALS' Weapons screen doesn't have)**
+- List: the 5 px field-green lip under the picked row and its half-lit hover lip (`makeRow` / `rowLook`). The band + bold text + render stays.
+- Action buttons (`bigButton`): the darker lip under the face, the face gradient, the thin white highlight line across the top, the
+  2 px press drop, the EQUIPPED word chip, and the glint sweep (`Armory._shine` calls; the function is kept, unused). Now one plain
+  solid field-green square with a cream glyph / price (grey when unusable). Equipped = the green square with just the check, not clickable.
+- Item card: the green ABILITY chip -> a third plain Rubik bullet ("Ability: Quickdraw", 21 px; the sentence is still its bubble).
+- Stat segments and the level bar: gradients -> solid field green.
+- Picker: the BACK button's dark lip and gradient (solid red now); the darker lip strip under each locked tile.
+- Kept on purpose: the section header's dotted rule (RIVALS has it under "Primary"), the rarity gradients on tiles, the hover sheen
+  (only on hover). Panel corner brackets were already a no-op (`Tac.brackets`).
+
+**Grader items**
+1. Hero: `ShowcaseLook` makes every untextured grey part SmoothPlastic (no Metal stripes); formerly-Metal 0.36 value + Reflectance
+   0.08, plastic 0.25. The item sits 1.4x closer along the camera ray through DisplayPoint (`renderShowcase`), so it stays centred;
+   `WHEEL_MAX_ZOOM` 2.2 -> 1.6 keeps the closest zoom the same. Guns rest in a 3/4 pose (yaw 25 deg off side-on, pitch 10 deg) in
+   `makeShowcase` instead of Icons.GunView's 28 deg tilt + roll (icons unchanged). Idle sway unchanged.
+2. Replaced by the RIVALS copy above.
+3. Favourite: a solid 28 px cream checkbox with a dark well (3 px edge, no stroke); ticked = field-green well + cream check. Bubble kept.
+4. Bullets 19 -> 21 (max 2 lines, 50 px). EQUIPPED chip gone (check only). Duel History is an icon now. Level bar: cream track at 25%,
+   fill min 6 px once owned, "LV n" on it; RIVALS' **"Level up"** row is back under it (XP to the next level / Unlock it to earn XP /
+   Every level reached), then "Reward at level N" (`LEVEL_H` 110 -> 172).
+5. Locked names `COL.Dim` 92,97,86 -> 140,142,132 (greyed, readable); hover lifts to `COL.Sub`. One 20 px padlock in a fixed column
+   (left edge x 24) on the row, outside the centred layout. "Duel History" text button -> a 52 px icon slot with a drawn clock
+   (`GLYPH.clock`) and a "Duel history" bubble. The list plate already ended 16 px above the bottom (grade2).
+6. Picker None check inset: right edge at TILE - 6 (was poking 4 px out).
+7. Locked tile bubble: "Rare skin · coming with the next update".
+
+Check in Studio: the 1.4x framing doesn't clip the bench or the camera on long guns (Sniper) and the 3/4 rest pose faces the right way
+(flip the 25 deg sign if the muzzle points back); "LV n" reads on the cream 25% track; the right column (62 px taller) clears the
+top bar; the clock reads at 34 px; locked padlocks don't touch long names (Pump Shotgun).
+
+## grade3 fixes: Shop (2026-10-21)
+From `notes/ui_rivals/grade3/shop.png` vs RIVALS t0070 / t0068.4 / t0074 / t0084. Mid-task the brief changed: the user said the
+Shop "looks terrible UI-wise" (random green underlines, lips, bars = AI-made), so the Shop look is now a close copy of RIVALS' Shop.
+Only `ui/shop/ShopScreen.lua`; not deployed, not seen in Studio. Parse OK, 64 top-level locals.
+- **Removed (no such shape in RIVALS):** the price-tag bottom Lip, the tag gradient and the number's offset shadow copy; every
+  RarityBar / RarityStripe (Featured tiles, Arms cards, bundle tiles, detail tiles); the Arms cards' Clip frame and diagonal stripe;
+  the bundle banners' diagonal stripe; the Scissors-tab AccentStripe; the pass cards' StateBar; the hero's BundleGlow and the offer
+  panel's OfferGlow; the detail card's offset Shadow block; the Tac corner hover brackets on every card (Tac no longer required);
+  the dark TILE_GRAD plate; grade2's tan can't-afford number (SHORT_TAN) and the red flash (flashShort).
+- **Price buttons:** one solid rounded button per currency: Robux = field green + white number, scissors = tan (#E2D2AC) + dark
+  number. The icon sits LEFT of the number; scissors use the red 3D-scissors render (rbxassetid://120480559804238, the Missions /
+  LobbyUI image) instead of the flat cream glyph that read as "✕". Owned = grey + check. Can't afford: nothing at rest, a press shakes.
+  The detail card's buy button follows the same rule.
+- **Tiles:** plain squares filled with their colour, light -> dark (`fillGrad`): rarity colour for gear, tan for scissor packs.
+  Featured tiles 124x112 with the 112x44 price button straight under (`gearTile`); renders zoomed 1.1x into the full tile and lit like
+  the hub dock (`lit`: ambient 220, white key light from the camera side). Arms cards, bundle tiles and detail tiles use the same fill.
+- **Feature cards:** Founder's hero = a light cream panel (RIVALS' Season Pass), contents line dark; the offer panel = solid deep field
+  green; pass cards light cream; Scissors-tab cards tan (RIVALS' yellow Keys cards); detail card = the bundle colour (field green
+  for packs / passes).
+- **Packs (item 3):** pile 132x90 over the tile, running off its top edge (~70 %), zoom 1.2; "+N" Oswald 28 -> 32.
+- **2X SCISSORS (item 4):** medal box 200 -> 260 (~230 px, ~70 % of the card), a "×2" badge Oswald 120 (cream, rocking, taken from
+  the pass name), description Rubik 24 in a 380 px block.
+- **Tabs (item 5):** every icon in one 48x48 box, bottom 6 px into the plate, per-icon zoom (Medal 0.95, Crate 1.1, rifle 1.35,
+  scissors 1.4); selected grow 1.3 -> 1.2; labels centred under it. Selected = white, others the dark plate (as RIVALS).
+- **Close X (item 7, rule for all screens):** 72x52 `Kit.closeButton`, 12 px outside the panel's top-right, top level with the
+  panel's top: Shop at (PAGE_X + PAGE_W + 12, 170); detail card at (W + 12, 0) on the wrap.
+- Not done: item 2's name line (RIVALS' tiles carry none) and item 6's wallet plate (not in the new brief).
+- Look at in Studio: the scissors render at 34 px on tan; green Robux buttons on the green offer panel; tab icon sizes; hero title
+  (white outlined) on cream.
+
+## grade3 fixes: Missions / Play / Settings / Codes (2026-10-21)
+Files: `ui/pseudolobby/hub/MissionsScreen.lua`, `ui/play/PlayScreen.lua`, `ui/set/SettingsScreen.lua`, `ui/settings/SettingsKit.lua`,
+`ui/lobby/CodesScreen.lua`. Two mid-task rules from the user changed the brief: (1) decorative underlines, lips and green
+bars look AI-made, so remove the ones RIVALS doesn't have (progress bars stay); (2) the target is "as close to RIVALS as
+possible", not the graders' ideas. Settings follows RIVALS t0136 / t0137 and overrides items 8-11. Missions follows t0062.
+
+**Close X**: Missions, Play and Codes use a 72x52 X placed 12 px outside the panel's (or grid's) top-right corner, its top level
+with the panel's top. On Missions it moved out of the panel into `root`, because the scrolling column clips. Settings uses
+RIVALS' own placement: 135x68 at the far right, right edge flush with the description pane, top level with the tab bar.
+Every X has lost its dark bottom lip.
+
+**Missions**
+- Panel fill: the request was to remove it, but RIVALS' Tasks sit on a solid dark panel, so it went 0.85 -> 0.45 instead.
+  The Weekly rows have no plate now (like RIVALS' Contracts); a finished row keeps a faint green wash.
+- The "next" cue is gone. RIVALS has no cue, and the user ruled out the underline bar.
+- Card titles 21 -> 24 design px (~18 px on screen). Weekly reward scissors 44 -> 58 px. Reward counts now use thousands
+  commas (`commas()`).
+- Headshots use the `eye` glyph; eliminations keep the crosshair. The solid Weekly play glyph is tinted tan instead of cream,
+  so it no longer reads as white.
+- GO PLAY moved into the panel corner the X left, and its Kit.button lip is stripped.
+
+**Play**
+- Titles in one size class: TITLE 64 for the small and wide tiles, HERO_TITLE 72 for TRAINING. Subtitles are Rubik 20.
+  Duel Pads reads "1v1 anyone in the lobby".
+- The party column is pinned 24 px left of the grid, with its bottom (the leader) level with the grid's bottom.
+- Ranked (locked): the greyed scene ImageColor went 150 -> 205, the cup is scaled 1.3x, and the gold hall gradient is ~15 %
+  lighter. The caption reads "UNLOCKS AT LV 50" and the level bar is unchanged.
+- Lock card: the PlayLip offset block is gone, and its X is now 72x52, 12 px outside the card.
+- Open: RIVALS' tiles have no subtitles and centre the title. The subtitles were kept because they were asked for explicitly.
+
+**Settings (RIVALS t0136 / t0137)**
+- Tab bar is 77 tall at y 71 again (bottom 147), with tabs 136x100 whose icons (~61 px) rise above the bar. The selected tab is
+  a 52 px cream plate inside the bar (new `plateH` argument on `Kit.imageTab`). Tab words are 25 px.
+- The PRESETS caption is gone; RIVALS' rail has none.
+- Rows stair-step like RIVALS: a sub-row's plate starts 38 px further in. Slider rows are 138 tall, toggle rows 78, the rest 88.
+  Row names are Rubik Bold 34.
+- Sliders: the ▲▼ stepper is back (one cream 56 px box, steps by `row.arrow`), next to a 108x56 value box. Under them is a thin
+  6 px track with a 32 px square knob. The chip's tan lip is gone.
+- Toggles are 96x48, with a square-ish 36 px knob, no ON/OFF word and no dark lip.
+- Description pane: icon, then a big Oswald 50 title (the setting's name, back from grade2), then a Rubik 26 cream description
+  underneath.
+
+**Codes**
+- Body text 26 -> 30 design px, with a shorter line so it still fits one row. The "None yet" line went 24 -> 30.
+- Redeem uses the field-green `key` gradient (was the lime Robux green). Off: an opaque dark plate with cream text at 50 % and no
+  stroke. Typed: the plate fades, the word turns white, and the button pops. The green glow block behind it and the button's lip
+  are gone.
+- Input focus lifts the box's fill (0.35 -> 0.12). There is no underline, per the user's no-underline rule.
+
+**Removed lips / bars**: the X lip in `Kit.closeButton` (SettingsKit) and on the Missions, Play, lock-card and Codes X buttons;
+the Kit.button lip on GO PLAY and Redeem; the toggle's dark lip; the slider chip's tan lip; Play's PlayLip block; Codes'
+RedeemGlow; and the Missions next-cue ring. `ui/lobby/Kit.lua`'s Kit.button and closeButton still create lips for every other
+screen (not in this pass's files).
+
+**Look at in Studio**: the Settings tab icons rising over the 77 px bar; the stepper box next to the chip; whether the 34 px row
+names collide with the stepper on narrow level-3 plates; the Missions X now sits outside the column; and the Ranked tile's
+brightness.

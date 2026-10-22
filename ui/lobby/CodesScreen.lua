@@ -33,8 +33,9 @@ local function renderList()
 	for code in (d.RedeemedCodes or {}) do table.insert(used, code) end
 	table.sort(used)
 	if #used == 0 then
-		local l = Kit.label({ Text = "None yet. New codes come with updates and in the group.", FontFace = FM, TextSize = 24, TextColor3 = Theme.hex("#9C98A3"), Size = UDim2.fromOffset(900, 40), Parent = list })
-		l:SetAttribute("dTS", 24)
+		-- (2026-10-21, grade3) body text read ~12 px: 24 -> 30 design px (~16 px in the 1436 capture), cream-grey instead of lilac grey
+		local l = Kit.label({ Text = "None yet. New codes come with updates and in the group.", FontFace = FM, TextSize = 30, TextColor3 = Theme.hex("#BDB8A8"), Size = UDim2.fromOffset(900, 40), Parent = list })
+		l:SetAttribute("dTS", 30)
 	end
 	for i, code in used do
 		local row = new("Frame", { Name = code, LayoutOrder = i, Size = UDim2.fromOffset(250, 50), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Parent = list },
@@ -109,37 +110,47 @@ local function build()
 		BackgroundTransparency = 0.3, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) })
 	local tagHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(30, 18), Size = UDim2.fromOffset(84, 84), Parent = panel })
 	stroke(Kit.label({ Text = "Codes", FontFace = FB, TextSize = 60, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(126, 22), Size = UDim2.fromOffset(500, 72), Parent = panel }), 2.5)
-	Kit.label({ Text = "Got a code from an update, the group or a stream? Redeem it here for free rewards.", FontFace = FM, TextSize = 26,
-		TextColor3 = Theme.hex("#CFCDD3"), Position = UDim2.fromOffset(32, 104), Size = UDim2.fromOffset(990, 34), Parent = panel })
+	-- (2026-10-21, grade3) body 26 -> 30 design px (~16 px on screen); the line is shorter so it still fits one row at the bigger size
+	Kit.label({ Text = "Got a code from an update or the group? Redeem it here for free rewards.", FontFace = FM, TextSize = 30,
+		TextColor3 = Theme.hex("#DCD6C4"), Position = UDim2.fromOffset(32, 102), Size = UDim2.fromOffset(990, 38), Parent = panel })
 	box = new("TextBox", { Name = "Code", Text = "", PlaceholderText = "Enter code", PlaceholderColor3 = Theme.hex("#77737D"), FontFace = FB, TextSize = 36,
 		TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Position = UDim2.fromOffset(32, 156),
 		Size = UDim2.fromOffset(740, 84), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, Parent = panel },
 		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }), new("UIPadding", { PaddingLeft = UDim.new(0, 24) }) })
 	box:SetAttribute("dTS", 36)
-	-- (2026-10-21, round 3: match RIVALS) a soft field-green glow block behind Redeem, lit only while a code is typed
-	local goGlow = new("Frame", { Name = "RedeemGlow", Position = UDim2.fromOffset(798, 148), Size = UDim2.fromOffset(238, 100), BackgroundColor3 = DONE,
-		BackgroundTransparency = 1, BorderSizePixel = 0, Parent = panel }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
-	local go = Kit.button("robux", UDim2.fromOffset(222, 84), "Redeem")
+	-- (2026-10-21, grade3) focus: the box's dark fill lifts (0.35 -> 0.12). The asked-for 2 px cream underline was dropped: the user ruled that
+	-- decorative underlines / lips / bars look AI-made
+	box.Focused:Connect(function() Kit.tween(box, 0.12, { BackgroundTransparency = 0.12 }) end)
+	box.FocusLost:Connect(function() Kit.tween(box, 0.12, { BackgroundTransparency = 0.35 }) end)
+	-- (2026-10-21, grade3) the round-3 green glow block behind Redeem is gone (a decorative frame RIVALS doesn't have)
+	local go = Kit.button("key", UDim2.fromOffset(222, 84), "Redeem") -- (2026-10-21, grade3) field green ("key"), was the lime Roblox-purchase green
 	go.Name = "Redeem"
 	goBtn = go
 	go.Position = UDim2.fromOffset(806, 156)
 	go.Parent = panel
+	local goLip = go:FindFirstChild("Lip") -- (2026-10-21, grade3) (user: lips look AI-made) a plain solid rounded button like RIVALS'
+	if goLip then goLip:Destroy() end
 	go.Activated:Connect(function() if (box.Text or ""):match("%S") then redeem() end end)
 	-- (lobby revamp, graders: Redeem looked live with nothing typed) dimmed and inert until there's a code in the box
 	-- (2026-10-21, round 3: match RIVALS; reviewers: "Redeem reads as disabled") two states you can tell apart at a glance: empty =
 	-- a flat charcoal plate over the green with a faded word (clearly off); typed = the full bright field-green gradient, the word
 	-- at full strength, the green glow behind it, and a little pop the moment it turns on. The plate sits under the label (Z 2).
-	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.hex("#2E312A"), BackgroundTransparency = 0.08, ZIndex = 2, Parent = go },
+	-- (2026-10-21, grade3) the off state read muddy (charcoal at 0.08 over the green + a faded white word with its dark stroke = olive mud).
+	-- Off is now an opaque dark plate with the word in cream at 50 % and no stroke; typed = the plate fades away to the full
+	-- field-green button, the word white, and a pop.
+	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.hex("#1C1E19"), BackgroundTransparency = 0, ZIndex = 2, Parent = go },
 		{ new("UICorner", { CornerRadius = UDim.new(0, 3) }) })
 	local goLabel = go:FindFirstChild("Label")
+	local goStroke = goLabel and goLabel:FindFirstChildOfClass("UIStroke")
+	local CREAM = Theme.hex("#ECE6D2")
 	local goOn
 	local function paintGo(t)
 		local on = (box.Text or ""):match("%S") ~= nil
 		if on == goOn then return end
 		goOn = on
-		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0.08 })
-		Kit.tween(goGlow, t or 0.15, { BackgroundTransparency = on and 0.6 or 1 })
-		if goLabel then Kit.tween(goLabel, t or 0.15, { TextTransparency = on and 0 or 0.55 }) end
+		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0 })
+		if goLabel then Kit.tween(goLabel, t or 0.15, { TextTransparency = on and 0 or 0.5, TextColor3 = on and Color3.new(1, 1, 1) or CREAM }) end
+		if goStroke then goStroke.Enabled = on end
 		if on and t ~= 0 then Kit.pop(go, 1.1) end
 	end
 	box:GetPropertyChangedSignal("Text"):Connect(function() paintGo() end)
@@ -150,8 +161,12 @@ local function build()
 	stroke(Kit.label({ Text = "Redeemed", FontFace = FB, TextSize = 32, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(32, 300), Size = UDim2.fromOffset(400, 40), Parent = panel }), 2)
 	list = new("Frame", { Name = "List", BackgroundTransparency = 1, Position = UDim2.fromOffset(32, 350), Size = UDim2.fromOffset(960, 80), Parent = panel },
 		{ new("UIGridLayout", { CellSize = UDim2.fromScale(250 / 960, 50 / 80), CellPadding = UDim2.fromScale(12 / 960, 12 / 80), SortOrder = Enum.SortOrder.LayoutOrder }) })
-	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
-	close.Position = UDim2.fromOffset(1420, 262) -- (lobby revamp Phase B: docked inside the panel corner)
+	-- (2026-10-21, grade3) the one X placement on every screen: 72x52, 12 px outside the panel's top-right, top level with the panel's top
+	-- (was 112x58 straddling the corner), no lip
+	local close = Kit.closeButton(UDim2.fromOffset(72, 52))
+	close.Position = UDim2.fromOffset(430 + 1060 + 12, 250)
+	local closeLip = close:FindFirstChild("Lip")
+	if closeLip then closeLip:Destroy() end
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	Kit.toScale(root)

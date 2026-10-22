@@ -519,7 +519,7 @@ local function rankedScene(parent, target, shot, locked)
 	if cup then
 		local cf = cup:GetBoundingBox()
 		cup.WorldPivot = cf
-		pcall(function() cup:ScaleTo(2.4) end)
+		pcall(function() cup:ScaleTo(locked and 2.4 * 1.3 or 2.4) end) -- (2026-10-21, grade3) locked: 1.3x so the cup shows around the padlock
 		local _, size = cup:GetBoundingBox()
 		cup:PivotTo(CFrame.new(0, 2.4 + size.Y / 2, 0) * CFrame.Angles(0, math.rad(-16), 0))
 		cup.Parent = scene
@@ -530,7 +530,8 @@ local function rankedScene(parent, target, shot, locked)
 	local props = partsOf(scene)
 	stageSet(vp, scene, props, "ranked")
 	frameOn(vp, props, shot.aspect, shot.top, shot.bottom, -6, shot.fit)
-	if locked then vp.Frame.ImageColor3 = Color3.fromRGB(150, 146, 138) end
+	-- (2026-10-21, grade3) the greyed scene read as an empty brown box: 150 -> ~205 so the podium and cup still show
+	if locked then vp.Frame.ImageColor3 = Color3.fromRGB(205, 201, 192) end
 	liven(vp, target, 0.06)
 	return vp
 end
@@ -684,17 +685,19 @@ local function showLockCard()
 	-- what to do next (kids: the card says how, not only what)
 	Kit.label({ Text = "Play matches and finish missions to level up!", FontFace = BODY, TextSize = 23, TextColor3 = Color3.fromRGB(190, 190, 196),
 		TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, CH - 52), Size = UDim2.fromOffset(W, 32), ZIndex = 22, Parent = card })
-	-- the greyed PLAY under the card (RIVALS' grey button): a chunky grey gradient on a darker offset block; it shakes when pressed
-	new("Frame", { Name = "PlayLip", Position = UDim2.fromOffset((W - PW) / 2, CH + 30), Size = UDim2.fromOffset(PW, PH), BackgroundColor3 = Color3.fromRGB(70, 72, 78),
-		BorderSizePixel = 0, ZIndex = 21, Parent = group }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	-- the greyed PLAY under the card (RIVALS' grey button): a chunky grey gradient; it shakes when pressed
+	-- (2026-10-21, grade3) (user: lips look AI-made) the darker offset block under it is gone: RIVALS buttons are plain solid rounded buttons
 	local playBtn = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset((W - PW) / 2, CH + 22), Size = UDim2.fromOffset(PW, PH),
 		BackgroundColor3 = white, BorderSizePixel = 0, ZIndex = 22, Parent = group }, {
 		new("UICorner", { CornerRadius = UDim.new(0, 8) }),
 		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Theme.gradient.grey[1], Theme.gradient.grey[2]) }),
 	})
 	big(playBtn, "PLAY", 46, 0, 0, PW, PH, white, nil, 23, Theme.font.display)
-	local x = Kit.closeButton(UDim2.fromOffset(96, 50))
-	x.Position = UDim2.fromOffset(W + 16, 0)
+	-- (2026-10-21, grade3) the one X placement: 72x52, 12 px outside the card's top-right, top level with the card's top, no lip
+	local x = Kit.closeButton(UDim2.fromOffset(72, 52))
+	x.Position = UDim2.fromOffset(W + 12, 0)
+	local xl = x:FindFirstChild("Lip")
+	if xl then xl:Destroy() end
 	x.ZIndex = 23
 	x.Parent = group
 	Kit.toScale(shade, Vector2.new(1920, 1080))
@@ -732,7 +735,10 @@ local GRID_X, GRID_Y = (1920 - GRID_W) / 2, (1080 - GRID_H) / 2
 local BW = (3 * MW + 2 * GAP - GAP) / 2 -- bottom-row tile (Duel Pads, Ranked): 500
 -- (2026-10-21, grade2) the tile gradient is now the SKY over each scene's back wall (the floor / wall cover the rest)
 local SKY_TOP, SKY_BOTTOM = Color3.fromRGB(176, 202, 208), Color3.fromRGB(224, 220, 198)
-local DUSK_TOP, DUSK_BOTTOM = Color3.fromRGB(214, 180, 112), Color3.fromRGB(120, 90, 40) -- ranked: a gold dusk
+-- (2026-10-21, grade3) the gold hall ~15 % lighter (was 214,180,112 -> 120,90,40): the locked tile read as a dark brown box
+local DUSK_TOP, DUSK_BOTTOM = Color3.fromRGB(221, 191, 133), Color3.fromRGB(140, 115, 72) -- ranked: a gold dusk
+-- (2026-10-21, grade3) one title size class: small / wide tiles 64 design px, the hero 72; every subtitle Rubik 20
+local TITLE, HERO_TITLE, SUB = 64, 72, 20
 -- where each tile's subject sits (fractions of the tile height from the top; fit = most of the width it may take). Squads: the
 -- middle ~60 % with 12 % headroom (3v3 packed tighter, >= 40 %); titles moved down so they cover <= ~10 % of the figures
 local SQUAD_BOTTOM = { 0.72, 0.66, 0.58 }
@@ -744,7 +750,7 @@ local function modeCard(mode, ranked, x)
 	-- the live squad fills the tile (the viewport is added after Kit.toScale)
 	local stage = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(MW, MH), ZIndex = 1, Parent = card })
 	-- ONE huge title, lower centre so the squad stays visible above it ((grade2) 100 px on the floor, was 128 px across the legs)
-	big(card, mode.Id, 100, 0, MH - 106, MW, 100, CREAM, nil, 4)
+	big(card, mode.Id, TITLE, 0, MH - 84, MW, 70, CREAM, nil, 4) -- (grade3) 100 -> TITLE
 	if ranked then
 		new("TextLabel", { Text = "RANKED", FontFace = HEAVY, TextSize = 18, TextColor3 = WHITE, BackgroundColor3 = Color3.fromRGB(150, 114, 52),
 			Position = UDim2.fromOffset(12, MH - 40), Size = UDim2.fromOffset(94, 26), ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
@@ -779,10 +785,10 @@ local function render()
 	-- the hero: Training, tall on the left (pops first)
 	local tb = tile(0, 0, HW, GRID_H, SKY_TOP, SKY_BOTTOM) -- (grade2) sky over the range's backstop
 	local trainHold = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(HW, GRID_H), ZIndex = 1, Parent = tb })
-	big(tb, "TRAINING", 92, 0, GRID_H - 196, HW, 110, CREAM, nil, 4)
+	big(tb, "TRAINING", HERO_TITLE, 0, GRID_H - 170, HW, 80, CREAM, nil, 4) -- (grade3) 92 -> HERO_TITLE
 	-- (kids: one short line, RIVALS keeps a tile to its title)
-	local tSub = Kit.label({ Text = "Try any gun for free!", FontFace = BOLD, TextSize = 28, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(0, GRID_H - 88), Size = UDim2.fromOffset(HW, 40), ZIndex = 4, Parent = tb })
+	local tSub = Kit.label({ Text = "Try any gun for free!", FontFace = BOLD, TextSize = SUB, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(0, GRID_H - 86), Size = UDim2.fromOffset(HW, 30), ZIndex = 4, Parent = tb }) -- (grade3) 28 -> SUB
 	new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 2, Parent = tSub })
 	table.insert(strips, { training = true, chip = chip(tb, HW), dim = dimmer(tb, HW, GRID_H) })
 	tb.Activated:Connect(function()
@@ -800,9 +806,10 @@ local function render()
 	local Y2 = MH + GAP
 	local db = tile(GX, Y2, BW, MH, SKY_TOP, SKY_BOTTOM)
 	local padHold = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(BW, MH), ZIndex = 1, Parent = db })
-	big(db, "DUEL PADS", 84, 0, MH - 140, BW, 90, CREAM, nil, 4) -- (grade2) 84 px lower down, was 96 px over the fighters
-	local dSub = Kit.label({ Text = "Fight people here", FontFace = BOLD, TextSize = 24, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(0, MH - 48), Size = UDim2.fromOffset(BW, 34), ZIndex = 4, Parent = db })
+	big(db, "DUEL PADS", TITLE, 0, MH - 116, BW, 70, CREAM, nil, 4) -- (grade2) 84 px lower down; (grade3) 84 -> TITLE
+	-- (2026-10-21, grade3) subtitle Rubik 20, and says who you fight: anyone in the lobby
+	local dSub = Kit.label({ Text = "1v1 anyone in the lobby", FontFace = BOLD, TextSize = SUB, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(0, MH - 44), Size = UDim2.fromOffset(BW, 28), ZIndex = 4, Parent = db })
 	new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 2, Parent = dSub })
 	db.Activated:Connect(function()
 		Screen.Close()
@@ -819,10 +826,13 @@ local function render()
 		-- outline) with "LV n / 50" in Oswald 20 on it ((grade2) was a 70 px lock, a 16 px bar and a 15 px count)
 		art = new("Frame", { Name = "Lock", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(BW / 2, 30),
 			Size = UDim2.fromOffset(56, 56), ZIndex = 4, Parent = rt })
-		big(rt, "RANKED", 80, 0, 104, BW, 86, CREAM, nil, 4)
+		big(rt, "RANKED", TITLE, 0, 108, BW, 70, CREAM, nil, 4) -- (grade3) 80 -> TITLE
 		local lv = math.max(1, (ctx.level and ctx.level()) or 1)
 		local need = math.max(1, Config.RankedLevel)
-		big(rt, "LEVEL " .. need, 26, 0, 192, BW, 30, Color3.fromRGB(232, 212, 168), nil, 4)
+		-- (2026-10-21, grade3) the caption says what the bar is for: "UNLOCKS AT LV 50", Rubik 20 like every subtitle
+		local cap = Kit.label({ Text = "UNLOCKS AT LV " .. need, FontFace = BOLD, TextSize = SUB, TextColor3 = Color3.fromRGB(240, 222, 182),
+			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 188), Size = UDim2.fromOffset(BW, 28), ZIndex = 4, Parent = rt })
+		new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 2, Parent = cap })
 		local BAR = math.floor(BW * 0.6)
 		local track = new("Frame", { Name = "LevelBar", Position = UDim2.fromOffset((BW - BAR) / 2, 230), Size = UDim2.fromOffset(BAR, 22), BackgroundColor3 = Color3.fromRGB(14, 12, 8),
 			BackgroundTransparency = 0.1, BorderSizePixel = 0, ZIndex = 4, Parent = rt }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
@@ -833,9 +843,11 @@ local function render()
 		new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 1.5, Parent = cnt }) -- (on the text, not the bar)
 	else
 		-- open: a normal tile (the trophy scene fills it, one title)
-		big(rt, "RANKED", 88, 0, MH - 140, BW, 96, CREAM, nil, 4)
+		big(rt, "RANKED", TITLE, 0, MH - 116, BW, 70, CREAM, nil, 4) -- (grade3) 88 -> TITLE
 		if ranked then
-			big(rt, "Ranked queues ON", 24, 0, MH - 56, BW, 32, Color3.fromRGB(232, 212, 168), nil, 4)
+			local on = Kit.label({ Text = "Ranked queues ON", FontFace = BOLD, TextSize = SUB, TextColor3 = Color3.fromRGB(240, 222, 182), TextXAlignment = Enum.TextXAlignment.Center,
+				Position = UDim2.fromOffset(0, MH - 44), Size = UDim2.fromOffset(BW, 28), ZIndex = 4, Parent = rt }) -- (grade3) Rubik SUB
+			new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 2, Parent = on })
 		end
 	end
 	rt.Activated:Connect(function()
@@ -852,13 +864,16 @@ local function render()
 	-- any of them opens Your Party
 	local old = root:FindFirstChild("PartyColumn")
 	if old then old:Destroy() end
-	local colF = new("Frame", { Name = "PartyColumn", BackgroundTransparency = 1, Position = UDim2.fromOffset(84, 560), Size = UDim2.fromOffset(110, 500), Parent = root })
+	-- (2026-10-21, grade3) the column floated in an empty band under the grid: pinned to the grid's bottom-left, 24 px left of it, its
+	-- bottom (the leader) level with the grid's bottom; members stack up beside the hero tile
+	local colF = new("Frame", { Name = "PartyColumn", BackgroundTransparency = 1, Position = UDim2.fromOffset(GRID_X - 24 - 110, GRID_Y + GRID_H - 500),
+		Size = UDim2.fromOffset(110, 500), Parent = root })
 	local list = partyList()
 	if #list == 0 then list = { player.UserId } end
 	local leader = partyLeader(list)
 	local order = { leader }
 	for _, uid in list do if uid ~= leader then table.insert(order, uid) end end
-	local y = 500
+	local y = 500 + 8 -- (grade3) + 8: the leader's bottom sits on the grid's bottom line
 	for i, uid in order do
 		local d = i == 1 and 100 or 80
 		y -= d + 8
@@ -956,8 +971,11 @@ local function build()
 	scrim = new("Frame", { Name = "Scrim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.scrim, BackgroundTransparency = 1, Parent = gui })
 	local canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
-	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
+	-- (2026-10-21, grade3) the one X placement on every screen: 72x52 (was 112x58), 12 px outside the grid's top-right, top level with it, no lip
+	local close = Kit.closeButton(UDim2.fromOffset(72, 52))
 	close.Position = UDim2.fromOffset(GRID_X + GRID_W + 12, GRID_Y) -- (grade1) just outside the grid's top-right corner, level with its top
+	local cl = close:FindFirstChild("Lip")
+	if cl then cl:Destroy() end
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	body = new("Frame", { Name = "Body", BackgroundTransparency = 1, Position = UDim2.fromOffset(GRID_X, GRID_Y), Size = UDim2.fromOffset(GRID_W, GRID_H), Parent = root }) -- (grade1) centred

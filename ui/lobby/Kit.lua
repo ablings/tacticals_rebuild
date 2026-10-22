@@ -374,9 +374,7 @@ function Kit.button(kind, size, text, props)
 		Name = (text or kind) .. "Button", Size = size, AutoButtonColor = false, Text = "",
 		BackgroundColor3 = C.white,
 	}, { Kit.corner(3), Kit.vgrad(Theme.gradient[kind]) })
-	-- (2026-10-21, AI-tells cleanup) no hairline border: a chunky darker lip along the bottom gives the button its edge
-	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.72, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.14), ZIndex = 1, Parent = btn }, { Kit.corner(3) })
+	-- (2026-10-21, user) no lip: RIVALS' buttons are a plain gradient (the darker bottom lip read as a decorative AI underline)
 	-- (2026-10-21, RIVALS "alive") the button brightens a touch on hover: a white sheen fades in over its gradient
 	local sheen = new("Frame", { Name = "HoverSheen", BackgroundColor3 = C.white, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
 		ZIndex = 2, Parent = btn }, { Kit.corner(3) })
