@@ -381,3 +381,8 @@ himself; we never publish.
   (c32 all true; PlaceKind Matchmaking / Ranked).
 - The first lobby attempt stalled: the Claude app sat topmost over Studio and took the clicks; Edward minimized it and it went through.
 - Carries: see notes/handoff/HANDOFF_LEAD.md "What shipped in ports 31-32"; UI rounds 1-3 (RIVALS pass) from the UI session.
+
+## Pending for port 33 (lobby copy a41052e)
+- [DUELSPEC] Duels TV spectator eye (dc5293b, fix/duels_tv_spectators.lua applied + saved by the UI session). Live check after the port:
+  a 2v2 pad duel with someone spectating -> the row shows the eye + count; nobody watching -> "ON A PAD".
+- UI session's hub screens pass (0c79a92) and later UI blocks: see notes/handoff/HANDOFF_UI.md.
