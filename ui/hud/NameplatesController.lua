@@ -122,7 +122,7 @@ local function build(p, character)
 	glyph.Name = "BadgeGlyph"
 	glyph.LayoutOrder = 30
 	glyph.BackgroundTransparency = 1
-	glyph.Size = UDim2.fromScale(0.08, 1.1) -- (2026-10-22) ink ~1.2 cap like RIVALS' P (was 0.62, half size)
+	glyph.Size = UDim2.fromScale(0.093, 1.28) -- (2026-10-22) ink ~1.2 cap like RIVALS' P (was 0.62, half size)
 	glyph.FontFace = BOLD
 	glyph.TextScaled = true
 	glyph.TextColor3 = WHITE
@@ -201,7 +201,7 @@ local function build(p, character)
 	gap(15, 0.02, name) -- seal / flame -> name
 	gap(25, 0.012, glyph) -- name -> Premium glyph
 	gap(35, 0.024, vip) -- -> VIP tag
-	gap(45, 0.045, dev) -- -> device
+	gap(45, 0.036, dev) -- -> device
 	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, seal = seal, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name, device = dev, glyph = glyph }
 end
 

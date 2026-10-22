@@ -945,7 +945,7 @@ function LobbyHud.Start()
 			Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(196, 40), Parent = row })
 		-- (2026-10-20, RIVALS) the device icon right after the name (UIKit.Badges.DeviceIcon)
 		parts.device = Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = "", ImageColor3 = RC.text, ScaleType = Enum.ScaleType.Fit, Visible = false,
-			Position = UDim2.fromOffset(222, 6.5), Size = UDim2.fromOffset(27, 27), Parent = row }) -- (2026-10-22, spacing grade) a 27 px slot: our wide monitor art fits by width, so the slot is big enough for ~1.45 cap of height like RIVALS
+			Position = UDim2.fromOffset(222, 2), Size = UDim2.fromOffset(36, 36), Parent = row }) -- (2026-10-22, spacing grade) the device art is a square with ~22 % clear margin round the monitor, so a 36 px square draws ~1.45 cap of ink like RIVALS
 		-- the win streak next to the name (RIVALS): a flame with the number over it
 		parts.streak = Kit.streak(row, 0, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3)
 		parts.streak.Visible = false
@@ -980,8 +980,8 @@ function LobbyHud.Start()
 			local nb = parts.name.TextBounds.X
 			local rowW = parts.name.Parent and parts.name.Parent.AbsoluteSize.X or 0
 			if nb > 0 and rowW > 0 then w = nb * LB_W / rowW end
-			-- (2026-10-22, spacing grade) 11 px after the text: ~1 cap of ink to RIVALS' PC icon (8 read tight)
-			parts.device.Position = UDim2.fromScale(math.min(44 + math.min(w, nameW) + 11, 215) / LB_W, 6.5 / 40)
+			-- (2026-10-22, spacing grade) ~1 cap of ink gap like RIVALS' PC icon: 13.5 px to the ink, minus the art's ~4 px clear margin
+			parts.device.Position = UDim2.fromScale(math.min(44 + math.min(w, nameW) + 9.5, 206) / LB_W, 2 / 40)
 		end
 		parts.streak.Visible = showStreak
 		local sn = parts.streak:FindFirstChild("N")
