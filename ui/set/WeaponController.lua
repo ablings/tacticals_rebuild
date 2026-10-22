@@ -27,6 +27,9 @@ local Shared = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared")
 local WeaponConfig = require(Shared:WaitForChild("Config"):WaitForChild("WeaponConfig"))
 local WeaponUtil = require(Shared:WaitForChild("WeaponUtil"))
 local WeaponEffects = require(script:WaitForChild("WeaponEffects"))
+local okFeel, WeaponFeel = pcall(function() return require(script:WaitForChild("WeaponFeel", 10)) end) -- [FEEL] equip bounce / sway / kick
+if not okFeel then WeaponFeel = nil end
+local lastUnequipAt = 0 -- [FEEL] a draw right after putting a gun away is a quick swap (half the bounce)
 
 -- // Repository
 local Combat = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Combat")
@@ -132,6 +135,7 @@ local function setGunHand(side: number)
 	gunHand = side
 	if character then WeaponUtil.SetGunHand(character, side) end
 	SetGunHandRemote:FireServer(side)
+	if WeaponFeel then WeaponFeel.SetGunHand(side) end -- [FEEL]
 	if equipped then equipped.activePose = nil end -- force the pose to switch hands
 	updatePose()
 end
@@ -300,6 +304,7 @@ function controller.Reload()
 	equipped.reloadId = (equipped.reloadId or 0) + 1
 	equipped.reloadEndsAt = os.clock() + config.ReloadTime
 	playAnimation("Reload")
+	if WeaponFeel then WeaponFeel.Reload(config.ReloadTime) end -- [FEEL] the gun rolls up and out mid-reload
 	do -- [ABILITY] the reload animation fits the gun's ReloadTime (the speed ladder)
 		local track = equipped and ((gunHand < 0 and equipped.tracks.ReloadLeft) or equipped.tracks.Reload)
 		if track and track.Length > 0 then track:AdjustSpeed(track.Length / config.ReloadTime) end
@@ -439,6 +444,7 @@ function controller._Shoot(config, spreadDegrees: number)
 	local scoped = Scope and Scope.IsScoped and Scope.IsScoped()
 	local k = scoped and ((config.Scope and config.Scope.RecoilScale) or 0.45) or 1
 	CameraController.AddRecoil(recoil.Pitch * k, (recoil.YawMin + math.random() * (recoil.YawMax - recoil.YawMin)) * k, recoil.Recovery)
+	if WeaponFeel then WeaponFeel.Kick(config, scoped) end -- [FEEL] the arms kick too
 	if scoped then
 		Scope.OnShot(config)
 	else
@@ -504,6 +510,8 @@ local function unequip()
 	end
 	cancelReloadFx() -- [MOVE2] switching weapons cancels the reload: no sound tail, no animation, no casings
 	equipped = nil
+	lastUnequipAt = os.clock()
+	if WeaponFeel then WeaponFeel.Unequip() end -- [FEEL]
 	triggerHeld = false
 	localReloadEnd = 0
 	clearCountdowns() -- [MOVE2]
@@ -537,6 +545,7 @@ local function equip(tool: Tool)
 	end
 	-- [MOVE2] draw time: no firing or aiming in until the gun is out (the server checks it too); the crosshair counts it down
 	equipped.drawEndsAt = os.clock() + (config.DrawTime or 0)
+	if WeaponFeel then WeaponFeel.Equip(config, os.clock() - lastUnequipAt < 0.6) end -- [FEEL] the gun swings up and settles
 	clearCountdowns()
 	setCountdown("Draw", (config.DrawTime or 0) > 0 and config.DrawTime or nil)
 	-- [MOVE2] crosshair reload countdown: ends with the server's Reloading flag; shell by shell, one shell at a time

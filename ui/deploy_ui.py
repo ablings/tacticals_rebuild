@@ -54,6 +54,7 @@ SET_FILES = [
     (C, "FlashController", "set/FlashController.lua"),
     (C, "WeaponController", "set/WeaponController.lua"),
     (C + ".WeaponController", "WeaponEffects", "set/WeaponEffects.lua"),
+    (C + ".WeaponController", "WeaponFeel", "set/WeaponFeel.lua"),  # [FEEL] (2026-10-21) equip bounce / sway / kick springs
     (C, "MovementController", "set/MovementController.lua"),
     (C, "CoverController", "set/CoverController.lua"),
     (C, "HotbarController", "set/HotbarController.lua"),
