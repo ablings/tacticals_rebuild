@@ -394,22 +394,27 @@ end
 
 -- Close button (pass 34: gunmetal + olive brackets, warms red on hover) with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
-	-- RIVALS' red X (UI session 2026-10-16). Not named "Close" and tagged Nonapplicable: the old InterfaceController hooks any
-	-- "Close" button in a new ScreenGui and shrinks its parent frame to 0 x 0, so a menu came back empty on its second open.
-	local btn = Kit.button("red", size, nil, { Name = "CloseX" })
+	-- (lobby revamp Phase B, 2026-10-21, Edward OK: no big red X floating outside the menus) a square dark plate with a tan
+	-- hairline and a cream X, as tall as the caller asked (the width follows), docked by each screen at its panel's corner.
+	-- Not named "Close" and tagged Nonapplicable: the old InterfaceController hooks any "Close" button in a new ScreenGui and
+	-- shrinks its parent frame to 0 x 0, so a menu came back empty on its second open.
+	local h = size.Y.Offset
+	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(h, h),
+		BackgroundColor3 = Color3.fromRGB(24, 26, 21), BackgroundTransparency = 0.1 }, { Kit.corner(8), Kit.stroke(Color3.fromRGB(226, 210, 172), 1.5, 0.35) })
 	btn:AddTag("Nonapplicable")
-	local Tac = require(script.Parent.Tac)
-	Tac.hoverBrackets(btn, Tac.brackets(btn, Tac.C.olive, math.floor(size.Y.Offset * 0.3), 2))
-	local cc = btn:FindFirstChildOfClass("UICorner"); if cc then cc.CornerRadius = UDim.new(0, 8) end
-	btn.MouseEnter:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(255, 205, 200) }) end)
-	btn.MouseLeave:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = C.white }) end)
-	local h = math.floor(size.Y.Offset * 0.58)
+	local cream = Color3.fromRGB(236, 230, 210)
+	local bars = {}
+	local len = math.floor(h * 0.5)
 	for _, rot in ipairs({ 45, -45 }) do
-		new("Frame", {
+		table.insert(bars, new("Frame", {
 			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Rotation = rot,
-			Size = UDim2.fromOffset(h, math.floor(h * 0.3)), BackgroundColor3 = C.white, Parent = btn,
-		}, { Kit.corner(3), Kit.stroke(C.textDark, 1.5, 0.5) })
+			Size = UDim2.fromOffset(len, math.max(3, math.floor(h * 0.09))), BackgroundColor3 = cream, BorderSizePixel = 0, Parent = btn,
+		}, { Kit.corner(2) }))
 	end
+	-- hover: the plate warms to red (closing), the X stays cream
+	btn.MouseEnter:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(176, 52, 40) }) end)
+	btn.MouseLeave:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(24, 26, 21) }) end)
+	Kit.bindButton(btn, { hover = 1.06 })
 	return btn
 end
 
@@ -904,7 +909,7 @@ function Kit.whoops(message)
 	Kit.label({ Text = message, FontFace = F.bold, TextSize = 34, TextWrapped = true, TextColor3 = Color3.fromRGB(200, 200, 204), TextXAlignment = Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(40, 96), Size = UDim2.fromOffset(440, 130), Parent = card })
 	local x = Kit.closeButton(UDim2.fromOffset(140, 64))
-	x.Position = UDim2.fromOffset(190, 252)
+	x.Position = UDim2.fromOffset(228, 252) -- (square X since the lobby revamp: centred)
 	x.Parent = card
 	Kit.toScale(root)
 	local pop = new("UIScale", { Scale = 0.85, Parent = card })

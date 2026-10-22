@@ -24,7 +24,7 @@ local Config = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("S
 local new, hex = Kit.new, Theme.hex
 local player = Players.LocalPlayer
 
-local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local OSWALD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
 local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#FFD400"), hex("#FFD400")
@@ -260,12 +260,13 @@ function LobbyHud.Start()
 	local rows = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 58), Size = UDim2.fromOffset(372, 196), ZIndex = 3, Parent = missions })
 	missions.Activated:Connect(function() if LobbyUI then LobbyUI.Open("Missions") end end)
 	Kit.bindButton(missions, { hover = 1.02, press = 0.99 })
-	-- To Pads: RIVALS' chunky "To Duels" button in our lobby colours
-	local toPads = new("TextButton", { Name = "ToPads", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(95, 686), Size = UDim2.fromOffset(204, 50), BackgroundColor3 = Color3.new(1, 1, 1), Parent = root },
-		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A9D27A"), hex("#4C7A2E")) }),
-			new("UIStroke", { Color = hex("#D8ECC0"), Thickness = 1.5, Transparency = 0.15, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
-	local tp = Kit.label({ Text = "»  To Pads  «", FontFace = WFONT, TextSize = 30, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(204, 50), ZIndex = 3, Parent = toPads })
-	new("UIStroke", { Color = hex("#10306E"), Thickness = 2, Transparency = 0.1, Parent = tp })
+	-- To Pads. (lobby revamp Phase B, Edward OK: one button system) a SECONDARY button: dark plate + field-green hairline,
+	-- so the field-green fill belongs to PLAY alone (two green "go play" buttons confused kids)
+	local toPads = new("TextButton", { Name = "ToPads", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(95, 686), Size = UDim2.fromOffset(204, 50), BackgroundColor3 = hex("#181A15"),
+		BackgroundTransparency = 0.15, Parent = root },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }),
+			new("UIStroke", { Color = hex("#8DBF5A"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	local tp = Kit.label({ Text = "TO PADS", FontFace = WFONT, TextSize = 28, TextColor3 = hex("#ECE6D2"), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(204, 50), ZIndex = 3, Parent = toPads })
 	Kit.bindButton(toPads, { hover = 1.06 })
 	function LobbyHud.ToPads()
 		-- straight to the duel hall, in front of the first pad (not on it)
@@ -420,11 +421,13 @@ function LobbyHud.Start()
 		end)
 	end
 
-	-- nav: 3D icons (after the conversion, so the viewports fill their holders), hover grow + lift + bobbing bubble
+	-- nav: (lobby revamp Phase B, 2026-10-21, Edward OK) one flat cream icon set (UIKit.FlatIcons) instead of the glossy 3D
+	-- renders; hover grow + lift + bobbing bubble as before
+	local FlatIcons = require(UIKit:WaitForChild("FlatIcons"))
 	for id, n in navIcons do
-		n.vp = Icons.Viewport(n.holder, n.it.Build(), { view = n.it.View, zoom = n.it.Zoom * 1.12 })
+		FlatIcons.Draw(n.holder, string.lower(id), { scale = 0.62 })
 	end
-	Icons.Viewport(clipHolder, Icons.Clipboard(), { view = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), zoom = 1.1 })
+	FlatIcons.Draw(clipHolder, "missions", { scale = 0.8 })
 	local navResets = {}
 	function resetNav() for _, f in navResets do f() end end
 	for _, n in navButtons do

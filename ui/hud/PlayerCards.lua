@@ -32,7 +32,7 @@ local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
 local F_NAME = Font.new(BUILDER, Enum.FontWeight.Bold)
 local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
 local F_NUM = Font.new(BUILDER, Enum.FontWeight.ExtraBold)
-local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local F_HEAD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
 local OLIVE_HI = hex("#8DBF5A")
 

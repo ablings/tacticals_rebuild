@@ -37,7 +37,7 @@ Theme.color = {
 
 -- vertical gradients, top -> bottom
 Theme.gradient = {
-	robux = { hex("#D6FF6E"), hex("#7DF632") },   -- Robux purchases keep Roblox green
+	robux = { hex("#8DBF5A"), hex("#4C7A2E") },   -- (lobby revamp Phase B, Edward OK: no neon lime) Robux buys = the field-green primary
 	key = { hex("#8DBF5A"), hex("#4C7A2E") },     -- primary: play / buy / claim (2026-10-20, Edward: field green, the lobby's olive-lime family)
 	blue = { hex("#2B3142"), hex("#161A24") },    -- secondary actions (dark navy)
 	red = { hex("#FF6A4D"), hex("#C52A1A") },
@@ -46,16 +46,16 @@ Theme.gradient = {
 	yellow = { hex("#FFE14D"), hex("#F2B600") },  -- the accent as a fill (black text on it)
 }
 
--- Headings in Oswald (condensed, stencil-like); labels and body copy in Rubik (cloud font
--- 12187365977) at the weights the practice screens were tuned to.
+-- Headings: (lobby revamp Phase B, 2026-10-21, Edward OK) Montserrat Heavy replaces the condensed outlined Oswald; labels and
+-- body copy in Rubik (cloud font 12187365977) at the weights the practice screens were tuned to.
 local RUBIK = "rbxassetid://12187365977"
-local OSWALD = "rbxasset://fonts/families/Oswald.json"
+local MONTSERRAT = "rbxasset://fonts/families/Montserrat.json"
 Theme.font = {
-	display = Font.new(OSWALD, Enum.FontWeight.Bold),
+	display = Font.new(MONTSERRAT, Enum.FontWeight.Heavy),
 	heavy = Font.new(RUBIK, Enum.FontWeight.SemiBold),
 	bold = Font.new(RUBIK, Enum.FontWeight.SemiBold),
 	medium = Font.new(RUBIK, Enum.FontWeight.Medium),
-	chunky = Font.new(OSWALD, Enum.FontWeight.Bold), -- button words
+	chunky = Font.new(MONTSERRAT, Enum.FontWeight.Heavy), -- button words
 }
 
 -- panel transparencies (the lobby shows through, blurred)

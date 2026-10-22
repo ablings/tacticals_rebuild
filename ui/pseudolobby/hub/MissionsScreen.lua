@@ -209,7 +209,7 @@ local function build()
 	new("Frame", { Name = "TacBar", BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Position = UDim2.fromOffset(COL_X - 4, 126), Size = UDim2.fromOffset(10, 60), Parent = root })
 	Kit.label({ Text = "MISSIONS", FontFace = F.display, TextSize = 64, Position = UDim2.fromOffset(COL_X + 20, 118), Size = UDim2.fromOffset(500, 76), Parent = root })
 	local close = Kit.closeButton(UDim2.fromOffset(94, 48))
-	close.Position = UDim2.fromOffset(1290, 136)
+	close.Position = UDim2.fromOffset(1312, 136) -- (lobby revamp Phase B: square X at the column edge)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	column = new("ScrollingFrame", {

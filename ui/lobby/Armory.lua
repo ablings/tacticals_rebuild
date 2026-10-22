@@ -1131,6 +1131,10 @@ function GLYPH.star(h, s, c) -- a rounded eight-point burst
 		b:FindFirstChildOfClass("UICorner").CornerRadius = UDim.new(1, 0)
 	end
 end
+function GLYPH.closex(h, s) -- the lobby close X: two cream bars
+	seg(h, s, 0.2, 0.2, 0.8, 0.8, s * 0.13, Color3.fromRGB(236, 230, 210))
+	seg(h, s, 0.2, 0.8, 0.8, 0.2, s * 0.13, Color3.fromRGB(236, 230, 210))
+end
 -- (lobby revamp, graders: four identical crossed circles read as "broken") one drawn icon per cosmetic slot
 function GLYPH.skin(h, s, c) -- a pistol silhouette: slide, grip, trigger guard
 	blob(h, s, 0.12, 0.26, 0.76, 0.2, c)
@@ -2182,7 +2186,7 @@ local function renderBottom()
 		slotRings[c.Id] = mk("UIStroke", { Color = WHITE, Thickness = 3, Transparency = 1, Parent = b })
 		local sc = mk("UIScale", { Parent = b })
 		if c.Id == "Leave" then
-			glyph(b, "leave", 76, nil, 5)
+			glyph(b, "closex", 50, nil, 5) -- (lobby revamp Phase B: the lobby's cream X, not the cartoon red one)
 		else
 			glyph(b, string.lower(c.Id), 46, COL.Text, 5)
 		end

@@ -352,16 +352,23 @@ end
 
 -- Red close button with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
-	-- not named "Close" + Nonapplicable: the old InterfaceController shrinks a "Close" button's parent to 0 x 0 (UI session 2026-10-16)
-	local btn = Kit.button("red", size, nil, { Name = "CloseX" })
+	-- (lobby revamp Phase B, Edward OK) the lobby's square dark X (same as UIKit.Kit.closeButton): a dark plate with a tan
+	-- hairline and a cream X, as tall as asked. Not named "Close" + Nonapplicable: the old InterfaceController shrinks a
+	-- "Close" button's parent to 0 x 0 (UI session 2026-10-16)
+	local h = size.Y.Offset
+	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(h, h),
+		BackgroundColor3 = Color3.fromRGB(24, 26, 21), BackgroundTransparency = 0.1 }, { Kit.corner(8), Kit.stroke(Color3.fromRGB(226, 210, 172), 1.5, 0.35) })
 	btn:AddTag("Nonapplicable")
-	local h = math.floor(size.Y.Offset * 0.58)
+	local len = math.floor(h * 0.5)
 	for _, rot in ipairs({ 45, -45 }) do
 		new("Frame", {
 			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Rotation = rot,
-			Size = UDim2.fromOffset(h, math.floor(h * 0.3)), BackgroundColor3 = C.white, Parent = btn,
-		}, { Kit.corner(3), Kit.stroke(C.textDark, 1.5, 0.5) })
+			Size = UDim2.fromOffset(len, math.max(3, math.floor(h * 0.09))), BackgroundColor3 = Color3.fromRGB(236, 230, 210), BorderSizePixel = 0, Parent = btn,
+		}, { Kit.corner(2) })
 	end
+	btn.MouseEnter:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(176, 52, 40) }) end)
+	btn.MouseLeave:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(24, 26, 21) }) end)
+	Kit.bindButton(btn, { hover = 1.06 })
 	return btn
 end
 

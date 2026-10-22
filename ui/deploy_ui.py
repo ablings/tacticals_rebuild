@@ -34,6 +34,8 @@ FILES = [
     ("ReplicatedStorage.UIKit", "PlayerCards", "ModuleScript", "hud/PlayerCards.lua"),
     ("ReplicatedStorage.UIKit", "PartyScreen", "ModuleScript", "hud/PartyScreen.lua"),
     ("ReplicatedStorage.UIKit", "PlayRow", "ModuleScript", "lobby/PlayRow.lua"),
+    ("ReplicatedStorage.UIKit", "FlatIcons", "ModuleScript", "lobby/FlatIcons.lua"),
+    ("ReplicatedStorage.UIKit", "SettingsTheme", "ModuleScript", "pseudolobby/hub/SettingsTheme.lua"),  # (2026-10-21 lobby revamp) live == this file before the font swap  # (2026-10-21 lobby revamp Phase B) flat cream dock / Settings tab icons
     ("ReplicatedStorage.UIKit", "MissionsScreen", "ModuleScript", "pseudolobby/hub/MissionsScreen.lua"),  # (2026-10-21 lobby revamp) live == this file before the revamp
     ("ReplicatedStorage.UIKit", "PseudoLobby", "ModuleScript", "pseudolobby/PseudoLobby.lua"),  # no-op in the hub; the match places' after-match lobby
     ("ReplicatedStorage.UIKit", "Notify", "ModuleScript", "hud/Notify.lua"),  # RIVALS banner + Inbox (hub + match)

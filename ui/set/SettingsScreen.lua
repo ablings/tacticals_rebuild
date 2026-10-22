@@ -47,7 +47,7 @@ local tabBar = new("Frame", {
 
 -- S2 close
 local close = Kit.closeButton(UDim2.fromOffset(135, 68))
-close.Position = UDim2.fromOffset(1481, 75)
+close.Position = UDim2.fromOffset(1175, 75) -- (lobby revamp Phase B: square X docked at the tab bar end)
 close.Parent = root
 
 -- S3 page rail (presets 1-3 + save)
@@ -479,9 +479,11 @@ function openTab(tab)
 end
 
 for i, tab in ipairs(Data.tabs) do
-	-- 3D tab icons (ViewIcons); Account shows the player's own headshot (RIVALS)
-	local model = TAB_MODEL[tab.name]
-	local img = model and function(holder, tabBtn) ViewIcons.Icon(holder, model, { hoverTarget = tabBtn }) end
+	-- (lobby revamp Phase B, Edward OK) flat cream tab icons (UIKit.FlatIcons), small and above the word instead of 3D renders
+	-- that overlapped it; Account still shows the player's own headshot (RIVALS)
+	local FlatIcons = require(UIKit:WaitForChild("FlatIcons"))
+	local flatName = ({ Video = "video", Audio = "audio", Game = "game", Hotkeys = "hotkeys", Touch = "touch" })[tab.name]
+	local img = flatName and function(holder) FlatIcons.Draw(holder, flatName, { scale = 0.46 }).Position = UDim2.fromScale(0.5, 0.36) end
 		or (Assets.tabIcon and Assets.tabIcon[tab.icon])
 	local t, api = Kit.imageTab(UDim2.fromOffset(136, 54), tab.name, img, tab.glyph)
 	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 11)

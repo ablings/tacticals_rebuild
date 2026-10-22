@@ -95,7 +95,7 @@ local function build()
 	list = new("Frame", { Name = "List", BackgroundTransparency = 1, Position = UDim2.fromOffset(32, 350), Size = UDim2.fromOffset(960, 80), Parent = panel },
 		{ new("UIGridLayout", { CellSize = UDim2.fromScale(250 / 960, 50 / 80), CellPadding = UDim2.fromScale(12 / 960, 12 / 80), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
-	close.Position = UDim2.fromOffset(1520, 250)
+	close.Position = UDim2.fromOffset(1420, 262) -- (lobby revamp Phase B: docked inside the panel corner)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	Kit.toScale(root)

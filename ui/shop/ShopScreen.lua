@@ -61,23 +61,24 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, key)
 	key = key or (kind .. tostring(amount))
 	local confirm = pending == key and os.clock() - pendingAt < 3
 	local owned = kind == "owned"
-	local STEEL = { Theme.hex("#FBFCFD"), Theme.hex("#D5DAE0"), Theme.hex("#9AA3AD") } -- (UI session) scissors are steel
+	-- (lobby revamp Phase B, Edward OK: no white pills / neon lime) scissors prices = a dark plate with cream words; Robux = field green
+	local STEEL = { Theme.hex("#30342B"), Theme.hex("#171913") }
 	local steel = not owned and kind ~= "robux" and not confirm
 	local grad = owned and Theme.gradient.grey or (kind == "robux" and Theme.gradient.robux or STEEL)
 	local tag = new("TextButton", { Name = "Price", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cx, y),
 		Size = UDim2.fromOffset(w, h), BackgroundColor3 = C.white, ZIndex = 5, Parent = parent },
-		{ Kit.corner(7), Kit.vgrad(confirm and Theme.gradient.robux or grad), Kit.stroke(Color3.new(0, 0, 0), 1.5, 0.6) })
+		{ Kit.corner(7), Kit.vgrad(confirm and Theme.gradient.robux or grad), steel and Kit.stroke(Theme.hex("#E2D2AC"), 1.5, 0.45) or Kit.stroke(Color3.new(0, 0, 0), 1.5, 0.6) })
 	local row = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = tag },
 		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
-	local text = owned and "Owned" or confirm and "Confirm" or (kind == "kit" and "Unlock " .. fmtN(amount) or fmtN(amount))
+	local text = owned and "Owned" or confirm and "Confirm" or fmtN(amount) -- (lobby revamp: no "Unlock" word, it spilled in Montserrat)
 	local ts = math.floor(h * 0.62)
 	local num = Kit.label({ LayoutOrder = 2, Text = text, FontFace = F.display, TextSize = ts, TextColor3 = Color3.new(0, 0, 0), TextTransparency = 0.75,
 		AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, h), ZIndex = 6, Parent = row })
 	-- (lobby revamp, graders: a 4,000 tag looked the same with 500 in the wallet) can't afford = the number goes red and the
 	-- tag dims; it still opens the Kit / confirm so you can see what it is
 	local short = (kind == "scissors" or kind == "kit") and not owned and amount and (data().Credits or 0) < amount
-	Kit.label({ Name = "Text", Text = text, FontFace = F.display, TextSize = ts, TextColor3 = short and Theme.hex("#C8352B") or ((owned or steel) and Theme.hex("#1C2026") or C.white),
+	Kit.label({ Name = "Text", Text = text, FontFace = F.display, TextSize = ts, TextColor3 = short and Theme.hex("#FF6A5E") or (owned and Theme.hex("#1C2026") or (steel and Theme.hex("#ECE6D2") or C.white)),
 		Position = UDim2.fromOffset(0, -2), Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = num })
 	if short then
 		new("Frame", { Name = "Short", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.6, ZIndex = 5, Parent = tag },
@@ -446,9 +447,12 @@ function RENDER.Featured()
 		local rar = Config.Rarities[item.Rarity] or Config.Rarities.Standard
 		local c, r = (i - 1) % 3, (i - 1) // 3
 		local hold = float(780 + c * 166, 352 + r * 168, 150, 160, function() ctx.openKit(id) end)
+		-- (lobby revamp Phase B, Edward OK: no purple tiles) a dark plate with the rarity on its edge and a thin bottom bar
 		local tile = new("Frame", { BackgroundColor3 = C.white, Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(114, 114), Parent = hold },
-			{ Kit.corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(rar.Color:Lerp(Color3.new(0, 0, 0), 0.75), rar.Color:Lerp(Color3.new(0, 0, 0), 0.25)) }),
-				Kit.stroke(rar.Color, 2, 0.1) })
+			{ Kit.corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }),
+				Kit.stroke(rar.Color, 2, 0.15) })
+		new("Frame", { Name = "RarityBar", BackgroundColor3 = rar.Color, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -6),
+			Size = UDim2.fromOffset(70, 5), ZIndex = 2, Parent = tile }, { Kit.corner(2) })
 		itemArt(tile, id, hold)
 		if ctx.owns(id) then priceTag(hold, "owned", 0, 75, 112, 110, 42)
 		else priceTag(hold, "kit", item.Price, 75, 112, 136, 42, function() ctx.openKit(id) end, "kit:" .. id) end

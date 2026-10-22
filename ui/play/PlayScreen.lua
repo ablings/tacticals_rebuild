@@ -22,7 +22,7 @@ local C, new = Theme.color, Kit.new
 local T = Tac.C
 local player = Players.LocalPlayer
 
-local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local OSWALD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 local BOLD = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold)
 
@@ -448,7 +448,7 @@ local function build()
 	local canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
-	close.Position = UDim2.fromOffset(1704, 140)
+	close.Position = UDim2.fromOffset(1672, 140) -- (lobby revamp Phase B: docked against the grid corner)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	body = new("Frame", { Name = "Body", BackgroundTransparency = 1, Position = UDim2.fromOffset(258, 140), Size = UDim2.fromOffset(1404, 560), Parent = root })

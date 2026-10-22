@@ -17,7 +17,7 @@ local BONE, FIELD, OLIVE, GUN, GUN2 = Color3.fromRGB(236, 232, 218), Color3.from
 local RED, BLUE, VIOLET = Color3.fromRGB(214, 52, 52), Color3.fromRGB(60, 140, 240), Color3.fromRGB(176, 120, 255)
 -- [PolishDuels] team colours match the floor: team A cream, team B olive
 local TEAM_A, TEAM_B = Color3.fromRGB(236, 232, 218), Color3.fromRGB(157, 176, 90) -- (2026-10-20, Edward) olive back
-local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local OSWALD = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
 local BODY = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium)
 local NEAR = 20 -- studs from a pad's post that shows the JOIN button
 
