@@ -54,7 +54,9 @@
     with the reduced-gravity VectorForce.
 14. [~] (white trail done + tested: fix/throw_trail.lua, on in flight, off at first landing; windup / follow-through / rise-in to do)
     Throw feel on our camera: overhand windup, white streak trail, follow-through, next item rising in from below.
-15. [ ] Weapon feel (notes/feel_brief_2026-10-21.md): equip bounce spring, sway / bob, recoil kick, reload motion, quick-switch off the
+15. [~] (ui/set/WeaponFeel.lua [FEEL], both copies, saved. Tested in a 1v1: equip bounce - shoulder from 7/34 deg to the 79/0 hold
+    with a 82/-3 overshoot, settled ~0.4 s; pistol kick +10 deg peak, settles ~0.4 s. Sway / bob / reload roll in, not measured. Open: the
+    FOV step on switching off a scoped Sniper (CameraController; ScopeController already eases the zoom).) Weapon feel (notes/feel_brief_2026-10-21.md): equip bounce spring, sway / bob, recoil kick, reload motion, quick-switch off the
     Sniper. Edward: keep OUR over-the-shoulder camera, bring the RIVALS feel to how items are used.
 16. [~] (v1 IN both copies, saved: scripts/wraps/WrapConfig + WrapManager via tools/wraps_install.py; 120 template parts tagged
     A / B / skip; 8 wraps - Beige / Blue / Salmon / Yellow / Glossy owned by default, Hazard / Woodland / Carbon locked (source TBD by

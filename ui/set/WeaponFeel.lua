@@ -73,7 +73,7 @@ function feel.Kick(config, scoped: boolean?)
 	if not active then return end
 	local pitch = (config and config.Recoil and config.Recoil.Pitch) or 1.5
 	local k = math.clamp(pitch / 2, 0.4, 2.2) * (scoped and 0.4 or 1)
-	kickS.v += 9 * k
+	kickS.v += 60 * k -- (peak ~10 deg on a pistol, ~25 on the Sniper; 9 read as ~1 deg)
 end
 
 function feel.Reload(duration: number)
@@ -100,7 +100,7 @@ local function layer(j: Instance?, off: CFrame)
 	written[j] = { cf = out, off = off }
 end
 
-local function onStep(_, dt)
+local function onStep(dt) -- (PreSimulation passes only deltaTime)
 	dt = math.min(dt, 1 / 20)
 	local character = localPlayer.Character
 	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
