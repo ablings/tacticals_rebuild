@@ -91,3 +91,17 @@ Sources: [Keys (RIVALS wiki)](https://robloxrivals.fandom.com/wiki/Keys), [Tasks
 [Contracts](https://robloxrivals.fandom.com/wiki/Contracts), [Shop](https://robloxrivals.fandom.com/wiki/Shop),
 [earnaldo RIVALS guide 2026](https://earnaldo.com/blog/rivals-free-robux-guide), [allthings.how Wildcat](https://allthings.how/roblox-rivals-wildcat-cost-stats-and-contract-rewards/),
 [rivals.wiki keys](https://www.rivals.wiki/guides/keys-and-unlocks/), [Eldorado weapons list](https://www.eldorado.gg/blog/roblox-en/roblox-rivals-all-weapons-list/).
+
+## 6. Live RIVALS check (2026-10-22 afternoon, main PC)
+- **Approved by Edward ("go on the economy proposal"); handed to the lead to apply.**
+- More key sinks seen live:
+  - **daily shop refresh** 3 keys;
+  - **weapon level-up** 9 keys (shown on the Kit's "Level up now!" button);
+  - **win-streak recovery** 5 keys ("Oh no, you lost your win streak! Recover now");
+  - **daily-shop cosmetics** (emotes / finishers / wraps) 5-100 keys each; skins in the daily shop for Robux (240-480).
+- Login Rewards live in the Shop's Daily tab as a 7-tile grid (Day 7 "Grand prize", "Claim now!" on today). The Tasks screen has its
+  own 7-circle task streak.
+- Suggested scissors equivalents (1 key ≈ 100 scissors):
+  - daily shop refresh 300;
+  - streak recovery 500 (only once a win-streak exists);
+  - cosmetics 500-10,000 when they exist.
