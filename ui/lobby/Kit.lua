@@ -858,6 +858,127 @@ function Kit.loadingDots(parent)
 	return holder
 end
 
+-------------------------------------------------------------------------------
+-- (2026-10-21, RIVALS three-qualities pass) shared motion helpers: every screen uses these instead of its own copies.
+-- They only move / scale / recolour things already built; they never change a screen's look.
+-------------------------------------------------------------------------------
+local function motionScale(g: GuiObject, name: string)
+	return g:FindFirstChild(name) or new("UIScale", { Name = name, Parent = g })
+end
+
+-- count a TextLabel's number from `from` to `to` (fmt(n) -> text; default commas); returns at once
+function Kit.countTo(label: TextLabel, from: number, to: number, dur: number?, fmt: ((number) -> string)?)
+	fmt = fmt or function(n)
+		local s = tostring(math.floor(n + 0.5))
+		while true do local k; s, k = s:gsub("^(-?%d+)(%d%d%d)", "%1,%2"); if k == 0 then break end end
+		return s
+	end
+	dur = dur or 0.5
+	local token = (label:GetAttribute("_CountToken") or 0) + 1
+	label:SetAttribute("_CountToken", token)
+	if from == to or dur <= 0 then label.Text = fmt(to) return end
+	task.spawn(function()
+		local t0 = os.clock()
+		while label.Parent and label:GetAttribute("_CountToken") == token do
+			local u = math.clamp((os.clock() - t0) / dur, 0, 1)
+			local e = 1 - (1 - u) ^ 3
+			label.Text = fmt(from + (to - from) * e)
+			if u >= 1 then break end
+			task.wait()
+		end
+	end)
+end
+
+-- tween a bar's fill width to frac (0..1) of its parent, keeping its height
+function Kit.fillTo(fill: GuiObject, frac: number, dur: number?)
+	local h = fill.Size.Y
+	return Kit.tween(fill, dur or 0.45, { Size = UDim2.new(math.clamp(frac, 0, 1), 0, h.Scale, h.Offset) }, Enum.EasingStyle.Quart)
+end
+
+-- a quick punch: grow to `amount` and settle back (a value changed, a check landed)
+function Kit.pop(g: GuiObject, amount: number?)
+	local s = motionScale(g, "PopScale")
+	s.Scale = amount or 1.18
+	Kit.tween(s, 0.28, { Scale = 1 }, Enum.EasingStyle.Back)
+end
+
+-- appear: scale up from 0.85 with a little overshoot after `delay` (stagger lists with i * 0.04)
+function Kit.popIn(g: GuiObject, delay: number?)
+	local s = motionScale(g, "PopScale")
+	s.Scale = 0.85
+	if g:IsA("CanvasGroup") then g.GroupTransparency = 1 end
+	task.delay(delay or 0, function()
+		if not g.Parent then return end
+		Kit.tween(s, 0.24, { Scale = 1 }, Enum.EasingStyle.Back)
+		if g:IsA("CanvasGroup") then Kit.tween(g, 0.18, { GroupTransparency = 0 }) end
+	end)
+end
+
+-- a slow scale breathe (something is ready / wants a tap); returns stop()
+function Kit.breathe(g: GuiObject, amount: number?, period: number?)
+	local s = motionScale(g, "BreatheScale")
+	local amp, per, alive = amount or 0.04, period or 1.4, true
+	task.spawn(function()
+		while alive and g.Parent do
+			s.Scale = 1 + amp * math.sin(os.clock() / per * math.pi * 2)
+			task.wait()
+		end
+		if s.Parent then s.Scale = 1 end
+	end)
+	return function() alive = false end
+end
+
+-- one beat of a pulse (a timer's last seconds); optional colour flash on a TextLabel
+function Kit.pulse(g: GuiObject, flash: Color3?)
+	Kit.pop(g, 1.12)
+	if flash and g:IsA("TextLabel") then
+		local base = g.TextColor3
+		g.TextColor3 = flash
+		Kit.tween(g, 0.4, { TextColor3 = base })
+	end
+end
+
+-- a short horizontal shake (wrong input, can't afford)
+function Kit.shake(g: GuiObject)
+	local base = g.Position
+	task.spawn(function()
+		for i = 1, 6 do
+			g.Position = base + UDim2.fromScale((i % 2 == 0 and 1 or -1) * 0.006 * (1 - i / 7), 0)
+			task.wait(0.03)
+		end
+		g.Position = base
+	end)
+end
+
+-- a button waiting on the server: its words hide and three dots bob inside it; returns stop()
+function Kit.busy(btn: GuiObject)
+	local hidden = {}
+	for _, d in btn:GetDescendants() do
+		if (d:IsA("TextLabel") or d:IsA("TextButton")) and d.TextTransparency < 1 then hidden[d] = d.TextTransparency; d.TextTransparency = 1 end
+	end
+	if btn:IsA("TextButton") and btn.Text ~= "" then hidden[btn] = btn.TextTransparency; btn.TextTransparency = 1 end
+	local holder = new("Frame", { Name = "Busy", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = (btn.ZIndex or 1) + 5, Parent = btn })
+	local dots = {}
+	for i = 1, 3 do
+		dots[i] = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5 + (i - 2) * 0.12, 0.5), Size = UDim2.fromScale(0.3, 0.3),
+			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = holder.ZIndex, Parent = holder },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIAspectRatioConstraint", { AspectRatio = 1, DominantAxis = Enum.DominantAxis.Height }) })
+	end
+	local alive = true
+	task.spawn(function()
+		while alive and holder.Parent do
+			local t = os.clock()
+			for i, d in dots do d.Position = UDim2.fromScale(0.5 + (i - 2) * 0.12, 0.5 - 0.12 * math.max(0, math.sin(t * 6 - i * 0.9))) end
+			task.wait()
+		end
+	end)
+	return function()
+		alive = false
+		holder:Destroy()
+		for d, tr in hidden do if d.Parent then d.TextTransparency = tr end end
+	end
+end
+
 function Kit.open(frame)
 	Kit.sfx("open")
 	Kit.centreAnchor(frame) -- scale from the centre

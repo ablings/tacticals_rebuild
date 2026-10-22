@@ -33,6 +33,14 @@ Theme.color = {
 	ink = hex("#111114"),
 	teamUs = hex("#E2D2AC"),
 	teamThem = hex("#6E8C62"),
+	-- (2026-10-21, RIVALS three-qualities pass) the lobby's own named tokens; screens move onto these instead of the
+	-- olive / gold / amber aliases (which are the comic yellow)
+	field = hex("#8DBF5A"),       -- primary / "go" / done: field green
+	fieldDark = hex("#4C7A2E"),
+	done = hex("#8DBF5A"),        -- claimed, complete, owned
+	cream = hex("#ECE6D2"),       -- flat icons, words on dark plates
+	tan = hex("#E2D2AC"),         -- secondary edges / labels (= teamUs)
+	plate = hex("#181A15"),       -- dark plate behind secondary buttons
 }
 
 -- vertical gradients, top -> bottom
