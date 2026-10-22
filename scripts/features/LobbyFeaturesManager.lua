@@ -179,7 +179,8 @@ local function startDuels()
 			if id then
 				local n = 0
 				for _, pl in Players:GetPlayers() do if pl:GetAttribute("DuelSpectate") == id then n += 1 end end
-				x.sp = n
+				-- nobody watching: no eye, the row keeps its "ON A PAD" line
+				x.sp = n > 0 and n or nil
 			else
 				x.sp = nil
 			end
