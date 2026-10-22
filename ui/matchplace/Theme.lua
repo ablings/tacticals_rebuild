@@ -54,16 +54,16 @@ Theme.gradient = {
 	yellow = { hex("#FFE14D"), hex("#F2B600") },  -- the accent as a fill (black text on it)
 }
 
--- Headings: (lobby revamp Phase B, 2026-10-21, Edward OK) Montserrat Heavy replaces the condensed outlined Oswald; labels and
--- body copy in Rubik (cloud font 12187365977) at the weights the practice screens were tuned to.
+-- Headings in Oswald (condensed, stencil-like); labels and body copy in Rubik (cloud font 12187365977). (2026-10-21, Edward:
+-- Gotham / Montserrat is THE "AI-generated UI" font, so the brief Phase B switch to Montserrat was reverted the same day.)
 local RUBIK = "rbxassetid://12187365977"
-local MONTSERRAT = "rbxasset://fonts/families/Montserrat.json"
+local OSWALD = "rbxasset://fonts/families/Oswald.json"
 Theme.font = {
-	display = Font.new(MONTSERRAT, Enum.FontWeight.Heavy),
+	display = Font.new(OSWALD, Enum.FontWeight.Bold),
 	heavy = Font.new(RUBIK, Enum.FontWeight.SemiBold),
 	bold = Font.new(RUBIK, Enum.FontWeight.SemiBold),
 	medium = Font.new(RUBIK, Enum.FontWeight.Medium),
-	chunky = Font.new(MONTSERRAT, Enum.FontWeight.Heavy), -- button words
+	chunky = Font.new(OSWALD, Enum.FontWeight.Bold), -- button words
 }
 
 -- panel transparencies (the lobby shows through, blurred)

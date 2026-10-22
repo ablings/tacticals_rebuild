@@ -41,13 +41,13 @@ Theme.gradient = {
 -- Headings in Oswald (condensed, stencil-like); labels and body copy in Rubik (cloud font
 -- 12187365977) at the weights the practice screens were tuned to.
 local RUBIK = "rbxassetid://12187365977"
-local OSWALD = "rbxasset://fonts/families/Montserrat.json" -- (lobby revamp Phase B, Edward OK: Montserrat Heavy replaces Oswald; name kept)
+local OSWALD = "rbxasset://fonts/families/Oswald.json" -- (2026-10-21: back from Montserrat, the "AI UI" font)
 Theme.font = {
-	display = Font.new(OSWALD, Enum.FontWeight.Heavy),
+	display = Font.new(OSWALD, Enum.FontWeight.Bold),
 	heavy = Font.new(RUBIK, Enum.FontWeight.SemiBold),
 	bold = Font.new(RUBIK, Enum.FontWeight.SemiBold),
 	medium = Font.new(RUBIK, Enum.FontWeight.Medium),
-	chunky = Font.new(OSWALD, Enum.FontWeight.Heavy), -- button words
+	chunky = Font.new(OSWALD, Enum.FontWeight.Bold), -- button words
 }
 
 -- panel transparencies (the lobby shows through, blurred)

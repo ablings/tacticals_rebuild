@@ -10,7 +10,7 @@ Tac.C = {
 	gunDeep = Color3.fromRGB(12, 14, 11), line = Color3.fromRGB(64, 70, 58), violet = Color3.fromRGB(176, 120, 255),
 	red = Color3.fromRGB(196, 52, 46), ink = Color3.fromRGB(10, 12, 9),
 }
-Tac.FONT = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy) -- (lobby revamp Phase B: Montserrat Heavy replaces Oswald)
+Tac.FONT = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local TS = game:GetService("TweenService")
 -- (Edward 2026-10-16: no "4 corners box" look, more like RIVALS) Tac.brackets now gives RIVALS' soft rounded corners and a
 -- faint edge (a UIStroke) instead of corner brackets. The edge keeps its colour only where colour means something (ranked

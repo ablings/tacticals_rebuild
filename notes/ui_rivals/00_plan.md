@@ -80,3 +80,22 @@ Keep our own look and ignore RIVALS' Halloween colours. Audits: 01-08 in this fo
 - Amber in the lobby (tutorial-only, per Edward).
 - The reward "fly to pill" from audit 04 (the agent's own idea, not in RIVALS).
 - The full Armory Scale migration (P3, too big for this pass; later).
+
+## AI-UI tells pass (user, 2026-10-21): applies to everything above
+Edward named the pattern people read as "AI-generated Roblox UI":
+1. **Gotham / Montserrat as the font everywhere.** Roblox now draws Gotham as Montserrat.
+2. **Rounded UICorner + a thin 1-2 px UIStroke border** on every panel, card and button.
+3. **A thin vertical accent bar down the left edge** of an element.
+
+Decision: headings in **Oswald Bold**, body in **Rubik**. The Phase B Montserrat switch was reverted in Theme, SettingsTheme, Tac and
+MatchFoundGate; the implementation agents revert it in their own files. No new corner + hairline cards and no left bars anywhere.
+
+Integrator follow-up (after the agents):
+- Kit.closeButton / SettingsKit.closeButton: drop the hairline and use a solid plate + thick offset shadow.
+- To Pads: drop the hairline.
+- Missions TacBar left bars.
+- The tutorial (later, per the user):
+  - the amber left bar on the strip;
+  - the subtitle plate;
+  - Builder Sans everywhere becomes Oswald + Rubik;
+  - corner + stroke on keycaps and plates.
