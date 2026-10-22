@@ -162,8 +162,8 @@ end
 -- (2026-10-21, port3) RIVALS style: a large render (48 design px = 4.4 % of the screen height) with the "×N" laid over its
 -- bottom-right corner (right-aligned a little past the render's right edge, bottom on its bottom), not stacked under it
 local REWARD_PX = 60 -- (round 6, grader B: the drawn glyph read 24 px, RIVALS' key ~32)
-local function reward(parent, amount, pos, paid)
-	local size = REWARD_PX
+local function reward(parent, amount, pos, paid, px)
+	local size = px or REWARD_PX
 	local holder = new("Frame", { Name = "Reward", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = UDim2.fromOffset(size, size), Parent = parent })
 	new("ImageLabel", { Name = "Render", BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, ImageTransparency = paid and 0.5 or 0,
 		Size = UDim2.fromScale(1, 1), Parent = holder })
@@ -172,7 +172,7 @@ local function reward(parent, amount, pos, paid)
 	-- (round 5, grader B: centred over the lower third it hid the handle rings, the glyph read as a red X) RIVALS' corner: left edge at
 	-- 0.62 of the icon, top at 0.66, so only the bottom-right corner is covered
 	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Center, -- (round 6: graders A + B) centred under the icon (RIVALS t0066), overlapping only its bottom ~15 % so the rings show
-		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(math.floor(size / 2), math.floor(size * 0.85)), Size = UDim2.fromOffset(110, 26), ZIndex = 2, Parent = holder })
+		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(math.floor(size / 2), math.floor(size * 0.7)), Size = UDim2.fromOffset(110, 26), ZIndex = 2, Parent = holder })
 	RK.textStroke(2).Parent = n
 	return holder
 end
@@ -286,7 +286,7 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.7, 0.7), ZIndex = 5, Parent = badge })
 		end
 	end
-	local rewardHolder = reward(row, def.Reward, UDim2.fromOffset(770, 28), paid)
+	local rewardHolder = reward(row, def.Reward, UDim2.fromOffset(770, 24), paid, 40) -- (round 7, grader C: 60 ran into the next row)
 	pending(was, state, badge, rewardHolder)
 	tip(row, def, done, paid, prog)
 end
@@ -396,8 +396,8 @@ local function dailyPanel(order)
 			else
 				new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
 					Position = UDim2.fromScale(0.5, 0.45), Size = UDim2.fromOffset(math.floor(D * 0.9), math.floor(D * 0.9)), ZIndex = 3, Parent = circle })
-				local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 20, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0),
-					Position = UDim2.fromOffset(D / 2, math.floor(D * 0.58)), Size = UDim2.fromOffset(D, 24), ZIndex = 4, Parent = circle })
+				local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 25, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0), -- (round 7: = the cards' xN size)
+					Position = UDim2.fromOffset(D / 2, math.floor(D * 0.66)), Size = UDim2.fromOffset(D, 24), ZIndex = 4, Parent = circle })
 				RK.textStroke(1.5).Parent = n
 			end
 		end

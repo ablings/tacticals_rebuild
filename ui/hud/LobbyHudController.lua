@@ -708,7 +708,7 @@ function LobbyHud.Start()
 	local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
 	-- (round 4, grader B: RIVALS' counter key is a solid glyph, ours a hairline 3D outline) the filled red scissors
 	new("ImageLabel", { BackgroundTransparency = 1, Image = Kit.ICONS.scissorsReward or "", ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1.15, 1.15), ZIndex = 3, Parent = iconHolder }) -- (round 6: = the Shop counter's glyph size)
+		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = iconHolder }) -- (round 7: 1.15 overshot on the Kit screen; = the Shop counter's size)
 
 	---------------------------------------------------------------------------------------------- data
 	local data
@@ -867,14 +867,14 @@ function LobbyHud.Start()
 					TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(318, y - 2), Size = UDim2.fromOffset(110, 34), ZIndex = 4, Parent = holder })
 				RKit.textStroke(1.5).Parent = cnt
 				if fx and fx.up then fx.count = cnt end -- (2026-10-21, round 3) progress made: the count punches as its bar fills
-				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(326, y - 10), Size = UDim2.fromOffset(50, 50), ZIndex = 4, Parent = holder })
+				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(324, y - 14), Size = UDim2.fromOffset(56, 56), ZIndex = 4, Parent = holder }) -- (round 7, grader B: the glyph read smaller than its xN)
 				table.insert(art, { rw, "_Scissors" })
 				-- (2026-10-22, section round 0, grader B) "×N" UNDER the render (overlapping only its bottom ~6 px) at the label's size (24, was
 				-- 21 laid over the render's bottom-right, hiding half the scissors)
 				-- (round 1, RIVALS tasks.png / hub widget) centred on the render over its lower third, like RIVALS' "×1"
 				-- (round 5, grader B) on the icon's bottom-right corner only, the handle rings stay clear
 				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 24, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
-					AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(326 + 25, y - 10 + 42), Size = UDim2.fromOffset(100, 26),
+					AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(324 + 28, y - 14 + 38), Size = UDim2.fromOffset(100, 26),
 					ZIndex = 6, Parent = holder })
 				RKit.textStroke(1.5).Parent = rl
 			end

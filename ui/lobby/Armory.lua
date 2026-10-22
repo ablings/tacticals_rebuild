@@ -2220,8 +2220,8 @@ local function renderInfo()
 			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(6, 8), Size = UDim2.fromOffset(maxed and 99 or 66, 36), ZIndex = 7, Parent = up }), 1.5, 0.6)
 		mk("UITextSizeConstraint", { MaxTextSize = 32, Parent = upL })
 		if not maxed then
-			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissorsWhite or Kit.ICONS.scissors, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' flat white key)
-				Position = UDim2.fromOffset(72, 8), Size = UDim2.fromOffset(32, 32), ZIndex = 7, Parent = up })
+			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissorsReward or Kit.ICONS.scissors, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' flat white key)
+				Position = UDim2.fromOffset(76, 9), Size = UDim2.fromOffset(30, 30), ZIndex = 7, Parent = up })
 		end
 		Kit.bindButton(up, { hover = 1.05, press = 0.92 })
 		up.Activated:Connect(function()
