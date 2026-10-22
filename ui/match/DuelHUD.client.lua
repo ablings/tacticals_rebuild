@@ -550,20 +550,48 @@ leaveDuel.Activated:Connect(function()
 end)
 
 ---------------------------------------------------------------------------------------------------- results
-local results = new("Frame", { Name = "Results", Position = UDim2.fromOffset(560, 230), Size = UDim2.fromOffset(800, 600), BackgroundColor3 = BLACK,
-	BackgroundTransparency = 0.25, Visible = false, Parent = root }, { corner(14) })
-local resTitle = label(results, "VICTORY", STENCIL, 110, 0, 20, 800, 130, GOOD, nil, 4)
-local resScore = label(results, "3 - 1", FX, 60, 0, 150, 800, 70, WHITE, nil, 4)
-local resMode = label(results, "", FB, 24, 0, 220, 800, 30, Color3.fromRGB(205, 205, 212), nil, 4)
+-- (2026-10-22, RIVALS 1:1 from a live RIVALS match) the result screen is a SCENE, not a card: the winner's character big in the
+-- middle (no panel behind it), a team-colour title plate at the top centre ("VICTORY" small over the winner's name), under the
+-- character a team-colour name plate (level seal, name, device) and a dark plate fading down with three stat tiles
+-- (Eliminations / Deaths / Assists) and Damage Dealt / Damage Taken under them. Measured on RIVALS at 1920x1080 design px:
+-- plate 307x94 at y 117, name plate 396x64 at y 765, stats 388 wide from y 829; the buttons stay bottom right (rcanvas).
+local results = new("Frame", { Name = "Results", Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(W, H), BackgroundTransparency = 1,
+	Visible = false, Parent = root })
+local resTitle -- the small "VICTORY" / "DEFEAT" line on the plate
+local resScore -- the winner's name on the plate (big)
+local resMode -- the score + mode, small, under the plate
 local stats = {}
--- (2026-10-20, the RIVALS mix) RIVALS' numbers: Eliminations / Deaths / Assists, then Damage Dealt / Damage Taken (+ our Headshots).
--- Assists and damage need the server's MatchResults fields Assists / DamageDealt / DamageTaken ("-" until it sends them).
+do
+	stats.plate = new("Frame", { Name = "TitlePlate", Position = UDim2.fromOffset(730, 112), Size = UDim2.fromOffset(460, 100), BackgroundColor3 = WHITE,
+		ZIndex = 4, Parent = results }, { corner(8) })
+	stats.plateGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = stats.plate })
+	resTitle = label(stats.plate, "VICTORY", FB, 24, 0, 8, 460, 28, WHITE, nil, 5)
+	resScore = label(stats.plate, "", FX, 50, 0, 34, 460, 60, WHITE, nil, 5)
+	resMode = label(results, "", FB, 24, 560, 220, 800, 30, Color3.fromRGB(225, 225, 230), nil, 4)
+	-- the name plate + the stats plate under the character
+	stats.name = new("Frame", { Name = "NamePlate", Position = UDim2.fromOffset(762, 765), Size = UDim2.fromOffset(396, 66), BackgroundColor3 = WHITE,
+		ZIndex = 6, Parent = results }, { corner(6) })
+	stats.nameGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = stats.name })
+	stats.seal = new("Frame", { Name = "SealHolder", BackgroundTransparency = 1, Position = UDim2.fromOffset(60, 9), Size = UDim2.fromOffset(48, 48), ZIndex = 7, Parent = stats.name })
+	stats.nameT = label(stats.name, "", FX, 36, 112, 0, 220, 44, WHITE, Enum.TextXAlignment.Left, 7)
+	stats.userT = label(stats.name, "", FB, 16, 114, 41, 220, 20, Color3.fromRGB(240, 236, 226), Enum.TextXAlignment.Left, 7)
+	stats.dev = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(334, 16), Size = UDim2.fromOffset(32, 32),
+		ZIndex = 7, Parent = stats.name })
+	stats.panel = new("Frame", { Name = "StatsPlate", Position = UDim2.fromOffset(766, 831), Size = UDim2.fromOffset(388, 212), BackgroundColor3 = BLACK,
+		BackgroundTransparency = 0.25, ZIndex = 4, Parent = results }, { new("UIGradient", { Rotation = 90,
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.1), NumberSequenceKeypoint.new(0.7, 0.35), NumberSequenceKeypoint.new(1, 1) }) }) })
+	stats.tiles = {}
+end
+-- RIVALS' numbers: Eliminations / Deaths / Assists in dark tiles, Damage Dealt / Damage Taken plain under them (+ our Headshots
+-- last, when the server sends it). stats.SLOTS = { centre x, top y, tile? } in results (1920x1080) design px, by display order.
+stats.SLOTS = { { 840, 864, true }, { 960, 864, true }, { 1080, 864, true }, { 894, 972, false }, { 1026, 972, false }, { 960, 1030, false } }
 for i, k in { { "Kills", "Eliminations" }, { "Deaths", "Deaths" }, { "Assists", "Assists" }, { "DamageDealt", "Damage Dealt" }, { "DamageTaken", "Damage Taken" }, { "Headshots", "Headshots" } } do
-	local x, y = 310 + ((i - 1) % 3) * 150, i <= 3 and 270 or 372
-	stats[k[1]] = label(results, "0", FX, i <= 3 and 50 or 40, x, y, 150, i <= 3 and 58 or 50, WHITE, nil, 4)
-	-- (2026-10-21, RIVALS pass) the caption is kept (stats.cap) so an empty stat can hide with its number
+	local sl = stats.SLOTS[i]
+	stats.tiles[k[1]] = new("Frame", { BackgroundColor3 = Color3.fromRGB(58, 58, 64), BackgroundTransparency = 0.15, Position = UDim2.fromOffset(sl[1] - 41, sl[2]),
+		Size = UDim2.fromOffset(82, 66), ZIndex = 5, Visible = sl[3], Parent = results }, { corner(6) })
+	stats[k[1]] = label(results, "0", FX, sl[3] and 42 or 34, sl[1] - 75, sl[2] + (sl[3] and 6 or 0), 150, sl[3] and 54 or 40, WHITE, nil, 6)
 	stats.cap = stats.cap or {}
-	stats.cap[k[1]] = label(results, k[2], FB, 20, x, y + (i <= 3 and 58 or 50), 150, 26, Color3.fromRGB(205, 205, 212), nil, 4)
+	stats.cap[k[1]] = label(results, k[2], FB, 18, sl[1] - 75, sl[2] + (sl[3] and 70 or 38), 150, 24, Color3.fromRGB(225, 225, 230), nil, 6)
 end
 -- (2026-10-21, RIVALS pass) the shared UIKit.Kit motion helpers, kept in the `stats` table (this script is at the 200-locals
 -- limit). stats.bind = Kit.bindButton when Kit loaded (hover 1.05 / press 0.93 / hover + click sfx / pad-select grow).
@@ -577,61 +605,68 @@ function stats.bind(b, opts)
 end
 -- one button behaviour: the spectate arrows, Stop and Leave (built above `stats`) squash like every Kit button
 stats.bind(specPrev); stats.bind(specNext); stats.bind(specStop); stats.bind(leaveDuel)
-local resRewards = label(results, "", FX, 32, 0, 392, 800, 44, OLIVE_HI, nil, 4)
+local resRewards = label(results, "", FX, 30, 560, 252, 800, 40, OLIVE_HI, nil, 4)
 -- ranked: the rank line (promotion / demotion / shield / placements / reveal)
-local resRank = label(results, "", FX, 30, 0, 436, 800, 40, WHITE, nil, 4)
--- (2026-10-20, the common theme of every reference end screen: Knife / Sniper / Murder Duels, RIVALS, Hood Rivals show the
--- player, not just numbers) your character on the left with your name and a line in our colour; the numbers move right
+local resRank = label(results, "", FX, 28, 560, 292, 800, 38, WHITE, nil, 4)
+-- the winner, big in the middle: a copy of their live character in its own lit viewport (RIVALS films the winner in the
+-- world; a clone over the softly blurred world reads the same). Falls back to the winner's avatar thumbnail.
 do
-	local av = new("ImageLabel", { Name = "Avatar", BackgroundColor3 = BLACK, BackgroundTransparency = 0.55, ScaleType = Enum.ScaleType.Fit,
-		Position = UDim2.fromOffset(40, 160), Size = UDim2.fromOffset(250, 250), ZIndex = 4, Parent = results }, { corner(6) })
-	new("Frame", { BorderSizePixel = 0, BackgroundColor3 = TEAM_A[1], Position = UDim2.fromOffset(40, 410), Size = UDim2.fromOffset(250, 4), ZIndex = 5, Parent = results })
-	label(results, nameOf(player.UserId), FX, 30, 40, 420, 250, 36, WHITE, nil, 4)
-	label(results, "@" .. player.Name, FB, 20, 40, 456, 250, 24, Color3.fromRGB(205, 205, 212), nil, 4)
-	for _, l in { resScore, resMode, resRewards, resRank } do
-		l.Position = UDim2.fromOffset(310, l.Position.Y.Offset)
-		l.Size = UDim2.fromOffset(450, l.Size.Y.Offset)
-	end
-	resScore.Position, resMode.Position = UDim2.fromOffset(310, 150), UDim2.fromOffset(310, 220)
-	resRewards.Position, resRank.Position = UDim2.fromOffset(310, 460), UDim2.fromOffset(310, 504)
-	task.spawn(function()
-		local ok, img = pcall(function() return Players:GetUserThumbnailAsync(math.max(player.UserId, 1), Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420) end)
-		if ok and img then av.Image = img end
-	end)
-	-- (2026-10-21, Edward: RIVALS poses your character in 3D on the result screen) a copy of your live character, standing
-	-- and slowly swaying in its own lit viewport; the flat thumbnail stays underneath as the fallback (no character / dead)
-	local vpf = new("ViewportFrame", { Name = "Pose", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5,
+	local av = new("ImageLabel", { Name = "Avatar", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
+		Position = UDim2.fromOffset(610, 215), Size = UDim2.fromOffset(700, 600), ZIndex = 3, Parent = results })
+	local vpf = new("ViewportFrame", { Name = "Pose", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3,
 		Ambient = Color3.fromRGB(150, 150, 156), LightColor = Color3.fromRGB(255, 250, 240), LightDirection = Vector3.new(-0.6, -0.8, -0.5), Parent = av })
 	local wm = Instance.new("WorldModel"); wm.Parent = vpf
 	local cam = Instance.new("Camera"); cam.FieldOfView = 30; cam.Parent = vpf; vpf.CurrentCamera = cam
 	local spin
+	-- stats.winner = { char = Model?, uid = number? } (set by showResults before the screen shows)
 	local function pose()
 		wm:ClearAllChildren()
 		if spin then spin:Disconnect(); spin = nil end
-		local char = player.Character
+		local w = stats.winner or {}
+		local char = w.char
 		local hum = char and char:FindFirstChildOfClass("Humanoid")
-		if not (char and hum and hum.Health > 0) then av.ImageTransparency = 0; return end
+		av.Image = ""
+		if not (char and hum) then
+			av.ImageTransparency = 0
+			if w.uid and w.uid > 0 then
+				task.spawn(function()
+					local ok, img = pcall(function() return Players:GetUserThumbnailAsync(w.uid, Enum.ThumbnailType.AvatarThumbnail, Enum.ThumbnailSize.Size420x420) end)
+					if ok and img then av.Image = img end
+				end)
+			end
+			return
+		end
 		local was = char.Archivable
 		char.Archivable = true
 		local okC, clone = pcall(function() return char:Clone() end)
 		char.Archivable = was
 		if not (okC and clone) then av.ImageTransparency = 0; return end
 		for _, d in clone:GetDescendants() do
-			if d:IsA("LuaSourceContainer") or d:IsA("Tool") or d:IsA("ForceField") or d:IsA("BillboardGui") or d:IsA("Sound") then d:Destroy()
-			elseif d:IsA("BasePart") then d.Anchored = true; d.CanCollide = false end
+			if d:IsA("LuaSourceContainer") or d:IsA("ForceField") or d:IsA("BillboardGui") or d:IsA("Sound") then d:Destroy()
+			elseif d:IsA("BasePart") then d.Anchored = true; d.CanCollide = false; d.LocalTransparencyModifier = 0 end
 		end
-		local root = clone:FindFirstChild("HumanoidRootPart")
-		if root then clone.PrimaryPart = root end
+		local hrp = clone:FindFirstChild("HumanoidRootPart")
+		if hrp then clone.PrimaryPart = hrp end
 		clone:PivotTo(CFrame.new(0, 0, 0))
 		clone.Parent = wm
 		local cf, size = clone:GetBoundingBox()
-		local dist = size.Y / 2 / math.tan(math.rad(cam.FieldOfView / 2)) * 1.15
-		cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(0, size.Y * 0.05, -dist), cf.Position) -- the rig faces -Z: look at its front
+		local dist = size.Y / 2 / math.tan(math.rad(cam.FieldOfView / 2)) * 1.08
+		-- a little from below and to the side, like RIVALS' hero shot
+		cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(dist * 0.18, -size.Y * 0.06, -dist), cf.Position + Vector3.new(0, size.Y * 0.04, 0))
 		av.ImageTransparency = 1
 		local t0 = os.clock()
 		spin = RunService.RenderStepped:Connect(function()
-			if not results.Visible then return end
-			clone:PivotTo(CFrame.Angles(0, math.sin((os.clock() - t0) * 0.6) * math.rad(22), 0))
+			-- RIVALS shows only the winner: our own body in the world hides while the result screen is up
+			local me = player.Character
+			if not results.Visible then
+				if stats.hidMe then
+					stats.hidMe = nil
+					if me then for _, d in me:GetDescendants() do if d:IsA("BasePart") or d:IsA("Decal") then d.LocalTransparencyModifier = 0 end end end
+				end
+				return
+			end
+			if me then for _, d in me:GetDescendants() do if d:IsA("BasePart") or d:IsA("Decal") then d.LocalTransparencyModifier = 1 end end; stats.hidMe = true end
+			clone:PivotTo(CFrame.Angles(0, math.rad(-14) + math.sin((os.clock() - t0) * 0.6) * math.rad(10), 0))
 		end)
 	end
 	results:GetPropertyChangedSignal("Visible"):Connect(function() if results.Visible then pose() end end)
@@ -654,12 +689,49 @@ local function showResults(sum)
 		else sum.Draw = true end
 	end
 	resTitle.Text = sum.Draw and "DRAW" or (sum.Won and "VICTORY" or "DEFEAT")
-	resTitle.TextColor3 = sum.Draw and WHITE or (sum.Won and TEAM_A[1] or TEAM_B[1])
 	local myTeam = sum.Team or player:GetAttribute("Team") or "A"
 	local sc = sum.Score or { A = st("ScoreA") or 0, B = st("ScoreB") or 0 }
 	local mine, theirs = myTeam == "A" and sc.A or sc.B, myTeam == "A" and sc.B or sc.A
-	resScore.Text = string.format("%d  -  %d", mine or 0, theirs or 0)
-	resMode.Text = (sum.Mode or st("MatchMode") or "") .. (sum.Ranked and "  ·  RANKED" or "")
+	-- (2026-10-22, RIVALS) the plate names the WINNER in the winner's team colour (tan = us, dark green = them); the name plate
+	-- and the posed character are the winner's too. 1v1: the opponent when you lose; a team match: its best player we can find.
+	do
+		local winTeam = sum.Draw and myTeam or (sum.Won and myTeam or (myTeam == "A" and "B" or "A"))
+		local cols = (winTeam == myTeam) and TEAM_A.fill or TEAM_B.fill
+		stats.plateGrad.Color = ColorSequence.new(cols[1], cols[2])
+		stats.nameGrad.Color = ColorSequence.new(cols[1], cols[2])
+		local wp, wchar, wname, wuid = nil, nil, nil, nil
+		if winTeam == myTeam then
+			wp = player
+		else
+			for _, p in Players:GetPlayers() do
+				if p ~= player and p:GetAttribute("Team") == winTeam then wp = p break end
+			end
+		end
+		if wp then
+			wchar, wuid, wname = wp.Character, wp.UserId, nameOf(wp.UserId)
+		else
+			-- a bot won: its rig in the world (no Player), its name from the score bar's member list
+			for _, m in workspace:GetChildren() do
+				local h = m:IsA("Model") and m:FindFirstChildOfClass("Humanoid")
+				if h and not Players:GetPlayerFromCharacter(m) and m:GetAttribute("Team") ~= myTeam and (m:GetAttribute("IsBot") or m.Name:find("Bot")) then
+					wchar, wname = m, m.Name
+					break
+				end
+			end
+		end
+		stats.winner = { char = wchar, uid = wuid }
+		resScore.Text = wname or (winTeam == myTeam and nameOf(player.UserId) or "Opponent")
+		stats.nameT.Text = wp and wp.DisplayName or (wname or "")
+		stats.userT.Text = wp and ("@" .. wp.Name) or ""
+		local okB, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
+		local dev = wp and okB and B and B.DeviceIcon and B.DeviceIcon(wp)
+		stats.dev.Image = dev or ""
+		stats.seal:ClearAllChildren()
+		if stats.Kit and stats.Kit.levelSeal then
+			pcall(function() stats.Kit.levelSeal(stats.seal, wp and tonumber(wp:GetAttribute("Level")) or 1, { ZIndex = 8 }) end)
+		end
+	end
+	resMode.Text = string.format("%d - %d", mine or 0, theirs or 0) .. "   ·   " .. (sum.Mode or st("MatchMode") or "") .. (sum.Ranked and "  ·  RANKED" or "")
 	-- (2026-10-21, RIVALS pass) few big numbers: a stat the server didn't send is hidden (no "-"); the shown ones are laid out
 	-- Eliminations / Deaths / Headshots big on row 1, the rest on row 2; they count up when the card shows (stats.vals)
 	stats.vals = {
@@ -671,18 +743,20 @@ local function showResults(sum)
 		DamageTaken = sum.DamageTaken ~= nil and math.floor(tonumber(sum.DamageTaken) or 0) or nil,
 	}
 	stats.order = {}
-	for _, key in { "Kills", "Deaths", "Headshots", "Assists", "DamageDealt", "DamageTaken" } do
-		local v, num, cap = stats.vals[key], stats[key], stats.cap[key]
-		num.Visible, cap.Visible = v ~= nil, v ~= nil
+	-- (2026-10-22, RIVALS) shown stats fill stats.SLOTS in order: the first three in tiles, the rest plain under them
+	for _, key in { "Kills", "Deaths", "Assists", "DamageDealt", "DamageTaken", "Headshots" } do
+		if key == "Headshots" and #stats.order >= 5 then stats.vals.Headshots = nil end -- (RIVALS shows five; a sixth row crowds the plate)
+		local v, num, cap, tile = stats.vals[key], stats[key], stats.cap[key], stats.tiles[key]
+		num.Visible, cap.Visible, tile.Visible = v ~= nil, v ~= nil, false
 		if v ~= nil then
 			table.insert(stats.order, key)
-			local n = #stats.order
-			local big = n <= 3
-			local x, y = 310 + ((n - 1) % 3) * 150, big and 270 or 372 -- design px in the 800 x 600 card (same grid as before)
-			local nh = big and 58 or 50
-			num.Position, num.Size = UDim2.fromScale(x / 800, y / 600), UDim2.fromScale(150 / 800, nh / 600)
-			cap.Position = UDim2.fromScale(x / 800, (y + nh) / 600)
-			num:SetAttribute("dTS", big and 50 or 40)
+			local sl = stats.SLOTS[#stats.order]
+			local big = sl[3]
+			tile.Visible = big
+			tile.Position = UDim2.fromScale((sl[1] - 41) / W, sl[2] / H)
+			num.Position, num.Size = UDim2.fromScale((sl[1] - 75) / W, (sl[2] + (big and 6 or 0)) / H), UDim2.fromScale(150 / W, (big and 54 or 40) / H)
+			cap.Position = UDim2.fromScale((sl[1] - 75) / W, (sl[2] + (big and 70 or 38)) / H)
+			num:SetAttribute("dTS", big and 42 or 34)
 			num.Text = tostring(v)
 		end
 	end
@@ -999,7 +1073,7 @@ local rHidden = {}
 function resultBackdrop(on)
 	local Lighting = game:GetService("Lighting")
 	rblur = rblur or Lighting:FindFirstChild("ResultBlur") or new("BlurEffect", { Name = "ResultBlur", Size = 0, Parent = Lighting })
-	if rblurOn ~= on then rblurOn = on; TweenService:Create(rblur, TweenInfo.new(0.3), { Size = on and 22 or 0 }):Play() end
+	if rblurOn ~= on then rblurOn = on; TweenService:Create(rblur, TweenInfo.new(0.3), { Size = on and 8 or 0 }):Play() end -- (2026-10-22, RIVALS: the world stays clear behind the winner; a light blur only seats the posed clone)
 	local pg = player.PlayerGui
 	if on then
 		for _, n in { "Hotbar", "Vitals", "HUD", "TouchControls", "TouchStick", "MainUI", "TutorialUI", "StealthUI", "RangeKitUI" } do
@@ -1013,6 +1087,7 @@ function resultBackdrop(on)
 end
 local function showResultScreen(sum)
 	lastSum = sum
+	stats.wasPseudo = player:GetAttribute("InPseudoLobby") == true -- (only the arrival AFTER the results closes them)
 	resultBackdrop(true)
 	rematchVoted = { stale = true, votes = st("RematchVotes"), vote = player:GetAttribute("RematchVote") }
 	print(string.format("[Rematch] game end: RematchAllowed=%s RematchNeeded=%s RematchReason=%s RematchVotes=%s RematchVote=%s MatchMode=%s",
@@ -1064,9 +1139,27 @@ RunService.Heartbeat:Connect(function()
 		-- in the after-match lobby the play row's big PLAY AGAIN is the Play Again: the panel keeps Rematch + To Hub
 		local lobbyRow = row ~= nil and row.Enabled
 		againP.Visible = not lobbyRow
-		-- (2026-10-21, RIVALS pass) bottom-right corner at (0.992, y) whatever its anchor (Kit.bindButton centres it)
-		local ap, sz = rematchP.AnchorPoint, rematchP.Size
-		rematchP.Position = UDim2.fromScale(0.992 - sz.X.Scale * (1 - ap.X), (lobbyRow and 0.91 or 0.835) - sz.Y.Scale * (1 - ap.Y))
+		-- (2026-10-22, live RIVALS after a match) one row at the play row's height: To Hub (left) | Play | Rematch (right), each
+		-- the Play button's size, 1.6 % of the width apart. Without the play row: the old bottom-right stack.
+		local playB = lobbyRow and row:FindFirstChild("Play", true)
+		local cs, cp = pcanvas.AbsoluteSize, pcanvas.AbsolutePosition
+		if playB and playB:IsA("GuiObject") and playB.AbsoluteSize.X > 0 and cs.X > 0 then
+			local px, py = (playB.AbsolutePosition.X - cp.X) / cs.X, (playB.AbsolutePosition.Y - cp.Y) / cs.Y
+			local pw, ph = playB.AbsoluteSize.X / cs.X, playB.AbsoluteSize.Y / cs.Y
+			for i, b in { hubP, rematchP } do
+				b.AnchorPoint = Vector2.new(0.5, 0.5)
+				b.Size = UDim2.fromScale(pw, ph)
+				b.Position = UDim2.fromScale(px + pw / 2 + (i == 1 and -1 or 1) * (pw + 0.016), py + ph / 2)
+			end
+		else
+			-- (2026-10-21, RIVALS pass) bottom-right corner at (0.992, y) whatever its anchor (Kit.bindButton centres it)
+			for _, e in { { hubP, 0.985 }, { rematchP, 0.835 } } do
+				local b = e[1]
+				b.Size = UDim2.fromScale(0.118, 0.066)
+				local ap, sz = b.AnchorPoint, b.Size
+				b.Position = UDim2.fromScale(0.992 - sz.X.Scale * (1 - ap.X), e[2] - sz.Y.Scale * (1 - ap.Y))
+			end
+		end
 	end
 end)
 RunService.Heartbeat:Connect(function()
@@ -1077,6 +1170,13 @@ RunService.Heartbeat:Connect(function()
 		banner.Visible = false
 		rtint.Visible = rankPage.Visible -- the summary card (another ScreenGui, under this one) mustn't be dimmed
 		backB.Visible = rankPage.Visible or (lastSum ~= nil and lastSum.delta ~= nil) or postMatch() -- (PostMatch may land after the results)
+		-- (2026-10-22, live RIVALS) arriving back in the lobby closes the result screen: the To Hub / Play / Rematch row takes over
+		if player:GetAttribute("InPseudoLobby") == true and stats.wasPseudo == false and not rankPage.Visible then
+			stats.wasPseudo = true
+			rgui.Enabled = false; results.Visible = false
+			resultBackdrop(false)
+			return
+		end
 		-- a rematch (or any new match) is running: the result screen goes
 		local ms = st("MatchState")
 		local running = ms ~= nil and ms ~= "MatchEnd" and ms ~= "Ended" and ms ~= "Victory" and not postMatch()
