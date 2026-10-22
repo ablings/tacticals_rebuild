@@ -208,7 +208,11 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	if scope == "Daily" and not done and ctx.ask then
 		local rr = new("TextButton", { Name = "Reroll", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(CARD_W - 8, 8),
 			Size = UDim2.fromOffset(34, 34), BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, ZIndex = 4, Parent = card }, { RK.corner(17) })
-		RK.label({ Text = "↻", FontFace = FB, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = rr })
+		-- a drawn swap arrow (the font has no ↻): a white ring open at the top-right with a small head on its end
+		local ring = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(18, 18), ZIndex = 5, Parent = rr },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIStroke", { Color = C.white, Thickness = 3 }, {
+				new("UIGradient", { Rotation = -45, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.72, 0), NumberSequenceKeypoint.new(0.73, 1), NumberSequenceKeypoint.new(1, 1) }) }) }) })
+		new("Frame", { BackgroundColor3 = C.white, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(23, 9), Size = UDim2.fromOffset(7, 7), ZIndex = 5, Parent = rr })
 		if ctx.tooltip then ctx.tooltip(rr, "Swap task", "Get a different task of the same difficulty for 250 scissors.") end
 		Kit.bindButton(rr, { hover = 1.15 })
 		local busy = false
