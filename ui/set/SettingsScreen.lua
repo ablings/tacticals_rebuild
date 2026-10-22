@@ -42,14 +42,15 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 -- S1 tab bar
 -- (2026-10-21, grade1) taller (76 -> 108) and grown upward so each tab's icon sits fully above its label inside the bar; the
 -- bottom edge stays at y 147, so the list, rail and the Hotkeys page (which places itself at y 160) are unchanged
+-- (2026-10-21, grade2) 108 -> 124 tall (tabs 96 -> 112 for ~44 px icons on screen), grown upward again: bottom still at 147
 local tabBar = new("Frame", {
-	Name = "TabBar", Position = UDim2.fromOffset(304, 39), Size = UDim2.fromOffset(859, 108),
+	Name = "TabBar", Position = UDim2.fromOffset(304, 23), Size = UDim2.fromOffset(859, 124),
 	BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.bar, Parent = root,
 }, { Kit.corner(6) })
 
 -- S2 close
 local close = Kit.closeButton(UDim2.fromOffset(135, 68))
-close.Position = UDim2.fromOffset(1175, 59) -- (lobby revamp Phase B: square X docked at the tab bar end; grade1: centred on the taller bar)
+close.Position = UDim2.fromOffset(1175, 51) -- (lobby revamp Phase B: square X docked at the tab bar end; grade1/grade2: centred on the taller bar)
 close.Parent = root
 
 -- S3 page rail (presets 1-3 + save)
@@ -244,20 +245,20 @@ end
 local detailTop = new("Frame", { Name = "Text", BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), Parent = detail })
 local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 50, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(14, 8), Size = UDim2.fromOffset(64, 64), Parent = detailTop })
 local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 10), Size = UDim2.fromOffset(60, 60), Parent = detailTop })
-local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.heavy, TextSize = 56, Position = UDim2.fromOffset(92, 8), Size = UDim2.fromOffset(420, 64), Parent = detailTop })
+-- (2026-10-21, grade2) graders: the pane repeated the hovered row's label as a big heading ("Optimized Lighting" twice). The
+-- title is gone; the icon and the description sit side by side, the description starting level with the icon's top.
 local dDesc = Kit.label({
 	Name = "Desc", Text = "", FontFace = F.bold, TextSize = 31, TextColor3 = C.textDim, TextWrapped = true,
-	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 80), Size = UDim2.fromOffset(470, 300), Parent = detailTop,
+	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(92, 16), Size = UDim2.fromOffset(410, 320), Parent = detailTop,
 })
 
 local function showDetail(row)
 	local img = (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
 	dImage.Image = img or ""
 	dIcon.Text = img and "" or (row.glyph or "")
-	dTitle.Text = row.name
 	dDesc.Text = row.desc or ""
-	dTitle.TextTransparency = 0.6
-	Kit.tween(dTitle, 0.12, { TextTransparency = 0 })
+	dDesc.TextTransparency = 0.6
+	Kit.tween(dDesc, 0.12, { TextTransparency = 0 })
 end
 
 -- live crosshair in the preview (Crosshair tab)
@@ -337,7 +338,8 @@ local function buildRow(tab, row, order)
 		icon = Kit.label({ Name = "Icon", Text = row.glyph or "", TextSize = 40, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(16 + ind, 16), Size = UDim2.fromOffset(56, 56), Parent = frame })
 	end
 	local labelX = 89 + ind
-	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = F.heavy, TextSize = 42, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, 88), Parent = frame })
+	-- (2026-10-21, grade2) graders: row labels (42) outshouted the section headers. Rubik Bold 24 now; headers are Oswald 36.
+	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = Font.new(F.heavy.Family, Enum.FontWeight.Bold), TextSize = 24, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, 88), Parent = frame })
 
 	-- red per-setting reset: appears at the row start whenever the value differs from its default
 	local default = defaultOf(row)
@@ -520,9 +522,11 @@ for i, tab in ipairs(Data.tabs) do
 	-- 3D tab icons (ViewIcons), as RIVALS' Settings tabs are posed 3D renders (t0135; 2026-10-21 user: follow RIVALS);
 	-- Account shows the player's own headshot (RIVALS)
 	local model = TAB_MODEL[tab.name]
-	local img = model and function(holder, tabBtn) ViewIcons.Icon(holder, model, { hoverTarget = tabBtn }) end
+	-- (2026-10-21, grade2) zoom the 3D icon 1.35x past its default view so the model fills its (larger) box
+	local view = model and ViewIcons.Views and ViewIcons.Views[model]
+	local img = model and function(holder, tabBtn) ViewIcons.Icon(holder, model, { hoverTarget = tabBtn, zoom = ((view and view[2]) or 1) * 1.35 }) end
 		or (Assets.tabIcon and Assets.tabIcon[tab.icon])
-	local t, api = Kit.imageTab(UDim2.fromOffset(136, 96), tab.name, img, tab.glyph) -- (2026-10-21, grade1) 54 -> 96 tall: icon box above the label
+	local t, api = Kit.imageTab(UDim2.fromOffset(136, 112), tab.name, img, tab.glyph) -- (2026-10-21, grade1) 54 -> 96 tall: icon box above the label
 	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 6)
 	t.Parent = tabBar
 	tabApis[tab.name] = api

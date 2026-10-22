@@ -83,6 +83,7 @@ local function onPad()
 end
 
 ---------------------------------------------------------------------------------------------------- 3D scenes
+local frameOn, stageSet, partsOf -- (2026-10-21, grade2) defined under part() below; the Play tiles' squads use them
 -- a stripped, anchored copy of your character; tint = nil keeps your look, else a flat mannequin of that colour
 local function rig(tint)
 	local char = player.Character
@@ -147,8 +148,12 @@ local function lightScene(vp, raise)
 end
 
 -- the scene for a mode card: you (+ mates) on the left facing right, the other team on the right facing left
--- zooms (optional) = per team size; raise = lightScene's lift (the Play tiles pass both, RankedScreen neither)
-local function squadScene(parent, teamSize, ranked, zooms, raise)
+-- shot (optional, the Play tiles) = { aspect, top, bottom, fit }: (2026-10-21, grade2: "flat colour cards with small figures")
+-- the squad stands in a place (concrete floor, olive wall with tan pillars, crates; the tile's sky gradient shows above the
+-- wall), packed tighter for 2v2 / 3v3, and the camera is aimed so the figures fill top..bottom of the tile. RankedScreen
+-- passes no shot and keeps the old auto-framed look.
+local SQUAD_X = { { 2.4, 0 }, { 1.9, 2.5 }, { 1.6, 2.1 } } -- (grade2) first offset, spacing per team size on the Play tiles
+local function squadScene(parent, teamSize, ranked, shot)
 	local scene = Instance.new("Model")
 	scene.Name = "Squad"
 	local weapon = (ctx.getData() and ctx.getData().Loadout and ctx.getData().Loadout.Weapon) or ctx.Config.DefaultLoadout.Weapon
@@ -156,7 +161,8 @@ local function squadScene(parent, teamSize, ranked, zooms, raise)
 	-- (2026-10-21, grade1: "1v1 drawn over dark silhouettes") the other team is a lit rust / gold mannequin, not near-black
 	local enemyTint = ranked and Color3.fromRGB(150, 114, 52) or Color3.fromRGB(150, 78, 58)
 	local mateTint = Color3.fromRGB(150, 156, 136)
-	local gap = 3.4
+	local first, gap = 2.6, 3.4
+	if shot then first, gap = SQUAD_X[teamSize] and SQUAD_X[teamSize][1] or 1.6, SQUAD_X[teamSize] and SQUAD_X[teamSize][2] or 2.1 end
 	-- the viewport camera looks from +Z towards -Z (screen right = -X), rigs face -Z by default:
 	-- your team at +X (screen left) turned towards the other team and the camera, theirs mirrored
 	for side = 0, 1 do
@@ -165,7 +171,7 @@ local function squadScene(parent, teamSize, ranked, zooms, raise)
 			if side == 1 then tint = enemyTint elseif i > 1 then tint = mateTint end
 			local m = rig(tint)
 			if not m then break end
-			local x = (side == 0 and 1 or -1) * (2.6 + (i - 1) * gap)
+			local x = (side == 0 and 1 or -1) * (first + (i - 1) * gap)
 			local z = -(i - 1) * 2.2 -- mates stand a step back
 			local yaw = side == 0 and math.rad(125) or math.rad(-125)
 			m:PivotTo(CFrame.new(x, 0, z) * CFrame.Angles(0, yaw, 0))
@@ -175,8 +181,16 @@ local function squadScene(parent, teamSize, ranked, zooms, raise)
 		end
 	end
 	if #scene:GetChildren() == 0 then scene:Destroy(); return nil end
-	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-6), 0, 0), zoom = (zooms or { 1.1, 1.4, 1.45 })[teamSize] or 1.6, still = true })
-	lightScene(vp, raise)
+	if not shot then
+		local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-6), 0, 0), zoom = ({ 1.1, 1.4, 1.45 })[teamSize] or 1.6, still = true })
+		lightScene(vp)
+		return vp, scene
+	end
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.identity, zoom = 1, still = true })
+	lightScene(vp)
+	local figures = partsOf(scene)
+	stageSet(vp, scene, figures, ranked and "ranked" or "squad")
+	frameOn(vp, figures, shot.aspect, shot.top, shot.bottom, -7, shot.fit)
 	return vp, scene
 end
 
@@ -188,7 +202,10 @@ local function liven(vp, target, push, step)
 	if not vp then return end
 	local cam = vp.Frame.CurrentCamera
 	local base = cam.CFrame
-	local dist = base.Position.Magnitude
+	-- (2026-10-21, grade2) an aimed shot (frameOn) leans in on / turns about its subject, not the scene's centre
+	local focus = vp.focus or Vector3.zero
+	local dist = vp.focusDist or base.Position.Magnitude
+	local around = function(a) return CFrame.new(focus) * CFrame.Angles(0, a, 0) * CFrame.new(-focus) end
 	local hover, h, kick = false, 0, -100
 	local function set(on) if on and not hover then kick = os.clock() end hover = on end
 	-- (the target can outlive the scene, e.g. RankedScreen's cards: these go when the viewport does)
@@ -208,7 +225,7 @@ local function liven(vp, target, push, step)
 		end
 		if sg and not sg.Enabled then return end
 		h += ((hover and 1 or 0) - h) * math.min(1, dt * 9)
-		cam.CFrame = CFrame.Angles(0, h * 0.07, 0) * base * CFrame.new(0, 0, -h * dist * (push or 0.1))
+		cam.CFrame = around(h * 0.07) * base * CFrame.new(0, 0, -h * dist * (push or 0.1))
 		if step then step(os.clock(), h, os.clock() - kick) end
 	end)
 end
@@ -264,17 +281,131 @@ local function loadoutWeapon()
 	return (d and d.Loadout and d.Loadout.Weapon) or (ctx.Config and ctx.Config.DefaultLoadout and ctx.Config.DefaultLoadout.Weapon)
 end
 
+-- (2026-10-21, grade2: "tiles read as flat colour cards with small figures, not pictures") every Play tile is a place now:
+-- partsOf = the visible parts of a model; frameOn aims the viewport camera so those parts span `top`..`bottom` of the tile
+-- (fractions from the top) and at most `fit` of its width; stageSet builds floor / back wall / pillars / crates around them.
+partsOf = function(model, skip)
+	local list = {}
+	for _, d in model:GetDescendants() do
+		if d:IsA("BasePart") and d.Transparency < 1 and not (skip and d:IsDescendantOf(skip)) then table.insert(list, d) end
+	end
+	return list
+end
+local CORNERS = {}
+for _, x in { -1, 1 } do for _, y in { -1, 1 } do for _, z in { -1, 1 } do table.insert(CORNERS, Vector3.new(x, y, z)) end end end
+local function cornersOf(parts)
+	local pts = {}
+	for _, p in parts do
+		local cf, half = p.CFrame, p.Size / 2
+		for _, c in CORNERS do table.insert(pts, cf * (half * c)) end
+	end
+	return pts
+end
+local function boxOf(pts)
+	local lo, hi = pts[1], pts[1]
+	for _, q in pts do lo, hi = lo:Min(q), hi:Max(q) end
+	return lo, hi
+end
+local function flatLook(vp)
+	local v = vp.Frame.CurrentCamera.CFrame.LookVector * Vector3.new(1, 0, 1)
+	return v.Magnitude > 1e-3 and v.Unit or Vector3.new(0, 0, 1)
+end
+-- a few rounds of: project every corner, move the camera back / forward so the span fits, then slide it so the top edge sits
+-- on its mark and the subject is centred left-right (perspective makes one pass inexact; 30 rounds settle it)
+frameOn = function(vp, parts, aspect, top, bottom, pitch, fit)
+	if not vp then return end
+	local pts = cornersOf(parts)
+	if #pts == 0 then return end
+	local cam = vp.Frame.CurrentCamera
+	local tanV = math.tan(math.rad(cam.FieldOfView / 2))
+	local tanH = tanV * (aspect or 1)
+	local lo, hi = boxOf(pts)
+	local centre = (lo + hi) / 2
+	local rot = CFrame.lookAt(Vector3.zero, flatLook(vp)) * CFrame.Angles(math.rad(pitch or -8), 0, 0)
+	local pos = centre - rot.LookVector * math.max((hi - lo).Magnitude, 1) * 2
+	local yT, yB = 1 - 2 * top, 1 - 2 * bottom
+	local wantH, wantW = yT - yB, 2 * (fit or 0.92)
+	for _ = 1, 30 do
+		local cf = rot + pos
+		local x0, x1, y0, y1 = math.huge, -math.huge, math.huge, -math.huge
+		for _, q in pts do
+			local c = cf:PointToObjectSpace(q)
+			local z = math.max(-c.Z, 0.05)
+			local sx, sy = c.X / (z * tanH), c.Y / (z * tanV)
+			x0, x1, y0, y1 = math.min(x0, sx), math.max(x1, sx), math.min(y0, sy), math.max(y1, sy)
+		end
+		local depth = math.max(-cf:PointToObjectSpace(centre).Z, 0.5)
+		local s = math.max((y1 - y0) / wantH, (x1 - x0) / wantW, 0.2)
+		local nd = depth * s
+		local midY = yT - (y1 - y0) / s / 2 -- a width-bound subject comes out shorter: its top still sits on the mark
+		pos = pos - rot.LookVector * (nd - depth)
+			+ rot.UpVector * (((y0 + y1) / 2 / s - midY) * nd * tanV)
+			+ rot.RightVector * (((x0 + x1) / 2 / s) * nd * tanH)
+	end
+	cam.CFrame = rot + pos
+	vp.focus, vp.focusDist = centre, (pos - centre).Magnitude
+end
+-- set dressing per tile: concrete floor under the subject's feet, a low back wall (the tile's sky gradient shows over it) with
+-- pillars and a coping, crates either side; sizes follow the subject so 1v1 and 3v3 both get crates in frame
+local SETS = {
+	squad = { floor = Color3.fromRGB(150, 144, 128), wall = Color3.fromRGB(106, 114, 74), pillar = Color3.fromRGB(176, 158, 114),
+		trim = Color3.fromRGB(198, 180, 134), crate = Color3.fromRGB(150, 112, 64), h = 6, crates = true, mat = Enum.Material.Concrete },
+	ranked = { floor = Color3.fromRGB(92, 86, 72), wall = Color3.fromRGB(72, 56, 28), pillar = Color3.fromRGB(150, 114, 52),
+		trim = Color3.fromRGB(196, 156, 70), h = 7, mat = Enum.Material.Concrete },
+	range = { floor = Color3.fromRGB(172, 156, 118), wall = Color3.fromRGB(150, 130, 92), pillar = Color3.fromRGB(98, 108, 62),
+		trim = Color3.fromRGB(120, 104, 70), crate = Color3.fromRGB(150, 112, 64), h = 6, crates = true, mat = Enum.Material.Sand },
+	pads = { floor = Color3.fromRGB(96, 100, 90), wall = Color3.fromRGB(88, 96, 70), pillar = Color3.fromRGB(150, 136, 98),
+		trim = Color3.fromRGB(176, 158, 114), crate = Color3.fromRGB(140, 104, 60), h = 6, crates = true, mat = Enum.Material.Concrete },
+}
+stageSet = function(vp, scene, parts, kind)
+	if not vp then return end
+	local pts = cornersOf(parts)
+	if #pts == 0 then return end
+	local st = SETS[kind] or SETS.squad
+	local look = flatLook(vp)
+	local lo, hi = boxOf(pts)
+	local c = (lo + hi) / 2
+	-- local frame on the floor under the subject: -Z = away from the camera, X = screen right
+	local at = Vector3.new(c.X, lo.Y, c.Z)
+	local back = CFrame.lookAt(at, at + look)
+	local halfW, halfD = 0, 0
+	for _, q in pts do
+		local o = back:PointToObjectSpace(q)
+		halfW, halfD = math.max(halfW, math.abs(o.X)), math.max(halfD, -o.Z)
+	end
+	local set = Instance.new("Model")
+	set.Name = "Set"
+	local wallZ = -(halfD + 7)
+	part(set, Vector3.new(220, 1, 160), back * CFrame.new(0, -0.5, -20), st.floor, st.mat)
+	part(set, Vector3.new(220, 0.06, 0.5), back * CFrame.new(0, 0.03, -(halfD + 1)), st.trim, Enum.Material.SmoothPlastic) -- a painted line behind them
+	part(set, Vector3.new(220, st.h, 1.5), back * CFrame.new(0, st.h / 2, wallZ), st.wall, Enum.Material.Concrete)
+	part(set, Vector3.new(220, 0.5, 2), back * CFrame.new(0, st.h + 0.25, wallZ), st.trim, Enum.Material.Concrete)
+	for i = -10, 10 do
+		part(set, Vector3.new(1.6, st.h + 0.7, 2.2), back * CFrame.new(i * 9, (st.h + 0.7) / 2, wallZ + 0.4), st.pillar, Enum.Material.Concrete)
+	end
+	if st.crates then
+		local cx, cz = halfW + 1.6, -(halfD + 2.5)
+		for _, k in { { cx, 1.5, cz, 3, 8 }, { cx - 0.2, 4.2, cz - 0.2, 2.4, -14 }, { -cx - 0.4, 1.4, cz - 0.6, 2.8, 6 } } do
+			part(set, Vector3.new(k[4], k[4], k[4]), back * CFrame.new(k[1], k[2], k[3]) * CFrame.Angles(0, math.rad(k[5]), 0), st.crate, Enum.Material.WoodPlanks)
+		end
+	end
+	set.Parent = scene
+	return set
+end
+
 -- (2026-10-21, round 3: match RIVALS) Training: RIVALS shows art here; ours is a live range scene. A straw target dummy on a
 -- post with rings on its chest, a sandbag wall in front with your gun resting on it, a round target board behind. The dummy
 -- sways, and rocks back as if hit when you hover.
-local function trainingScene(parent, target, zoom, raise)
+-- (2026-10-21, grade2: "the scene sits in the top third and the slab edge cuts diagonally") no slab: the range stands on a
+-- sand floor that runs past every edge, a tan backstop wall behind; packed narrower for the tall hero tile and aimed (frameOn)
+-- so the targets / sandbags fill the top ~60 % and the title sits on the floor in the lower third.
+local function trainingScene(parent, target, shot)
 	local scene = Instance.new("Model")
 	scene.Name = "Range"
-	part(scene, Vector3.new(14, 0.4, 9), CFrame.new(0, -0.2, 2), Color3.fromRGB(62, 66, 56), Enum.Material.Concrete) -- floor slab
 	-- sandbag wall (screen left = +X, near the camera): three staggered rows of squashed spheres
 	for r, xs in { { -1.8, -0.6, 0.6, 1.8 }, { -1.2, 0, 1.2 }, { -0.6, 0.6 } } do
 		for k, x in xs do
-			local bag = part(scene, Vector3.new(1.3, 0.75, 0.95), CFrame.new(2.6 + x, 0.35 + (r - 1) * 0.62, -1.6) * CFrame.Angles(0, 0, math.rad(k % 2 == 0 and 3 or -3)),
+			local bag = part(scene, Vector3.new(1.3, 0.75, 0.95), CFrame.new(1.8 + x, 0.35 + (r - 1) * 0.62, -1.6) * CFrame.Angles(0, 0, math.rad(k % 2 == 0 and 3 or -3)),
 				(r + k) % 2 == 0 and SAND or SAND:Lerp(OLIVE_D, 0.35), Enum.Material.Fabric)
 			local mesh = Instance.new("SpecialMesh")
 			mesh.MeshType = Enum.MeshType.Sphere
@@ -291,7 +422,7 @@ local function trainingScene(parent, target, zoom, raise)
 		if size.Z >= size.X and size.Z >= size.Y then turn = CFrame.Angles(0, math.rad(90), 0)
 		elseif size.Y >= size.X and size.Y >= size.Z then turn = CFrame.Angles(0, 0, math.rad(90)) end
 		pcall(function() gun:ScaleTo(math.clamp(3.2 / math.max(size.X, size.Y, size.Z, 0.1), 0.4, 2)) end)
-		gun:PivotTo(CFrame.new(2.6, 2.1, -1.7) * turn)
+		gun:PivotTo(CFrame.new(1.8, 2.1, -1.7) * turn)
 		gun.Parent = scene
 	elseif gun then
 		gun:Destroy()
@@ -299,7 +430,7 @@ local function trainingScene(parent, target, zoom, raise)
 	-- the target dummy on a post (screen right = -X, further back), rings facing the camera
 	local dummy = Instance.new("Model")
 	dummy.Name = "Dummy"
-	local foot = CFrame.new(-2.4, 0, 2.6)
+	local foot = CFrame.new(-1.8, 0, 1.4) -- (grade2) was (-2.4, 0, 2.6): narrower for the tall tile
 	local base = part(dummy, Vector3.new(0.5, 2.2, 2.2), foot * CFrame.new(0, 0.25, 0) * UPRIGHT, Color3.fromRGB(46, 50, 56), Enum.Material.Metal, Enum.PartType.Cylinder)
 	base.Name = "Base"
 	part(dummy, Vector3.new(1.6, 0.35, 0.35), foot * CFrame.new(0, 1.2, 0) * UPRIGHT, WOOD, Enum.Material.Wood, Enum.PartType.Cylinder)
@@ -312,15 +443,18 @@ local function trainingScene(parent, target, zoom, raise)
 	end
 	dummy.Parent = scene
 	-- a round target board on legs, back left (depth)
-	local board = CFrame.new(4.6, 0, 5.2)
+	local board = CFrame.new(0.9, 0, 5.4) -- (grade2) was (4.6, 0, 5.2)
 	for _, s in { -1, 1 } do
 		part(scene, Vector3.new(0.25, 3.2, 0.25), board * CFrame.new(s * 0.9, 1.6, 0.3) * CFrame.Angles(math.rad(-10), 0, 0), WOOD, Enum.Material.Wood)
 	end
 	for i, ring in { { 2.6, RING_CREAM }, { 1.8, RING_RED }, { 1.0, RING_CREAM }, { 0.45, RING_RED } } do
 		part(scene, Vector3.new(0.08, ring[1], ring[1]), board * CFrame.new(0, 3.2, -i * 0.02) * FACING, ring[2], Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
 	end
-	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-10), math.rad(-14), 0), zoom = zoom or 1.15, still = true })
-	lightScene(vp, raise)
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(0, math.rad(-14), 0), zoom = 1, still = true })
+	lightScene(vp)
+	local props = partsOf(scene)
+	stageSet(vp, scene, props, "range")
+	frameOn(vp, props, shot.aspect, shot.top, shot.bottom, -16, shot.fit)
 	-- the dummy rocks about its foot (read back after the viewport re-centred and turned the scene)
 	local home = base.CFrame * UPRIGHT:Inverse() * CFrame.new(0, -0.25, 0)
 	dummy.WorldPivot = home
@@ -333,7 +467,8 @@ end
 
 -- (2026-10-21, round 3: match RIVALS) Lobby Duels: two fighters squaring up on a duel pad (you with your gun, the other a
 -- dark mannequin) over a field-green glow ring that breathes; both hop when you hover.
-local function duelsScene(parent, target, raise)
+-- (2026-10-21, grade2) the pad sits on a concrete yard with a back wall and crates, aimed like the squads (frameOn)
+local function duelsScene(parent, target, shot)
 	local scene = Instance.new("Model")
 	scene.Name = "Pad"
 	local FEET = -3 -- a rig's pivot is its root, about 3 studs above its feet
@@ -355,8 +490,11 @@ local function duelsScene(parent, target, raise)
 		m.Parent = scene
 		table.insert(fighters, m)
 	end
-	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-14), 0, 0), zoom = 1.12, still = true })
-	lightScene(vp, raise)
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.identity, zoom = 1, still = true })
+	lightScene(vp)
+	local props = partsOf(scene)
+	stageSet(vp, scene, props, "pads")
+	frameOn(vp, props, shot.aspect, shot.top, shot.bottom, -14, shot.fit)
 	local homes = {}
 	for i, m in fighters do homes[i] = m:GetPivot() end
 	liven(vp, target, 0.1, function(t, _, since)
@@ -364,6 +502,36 @@ local function duelsScene(parent, target, raise)
 		if since > 1.2 then return end
 		for i, m in fighters do m:PivotTo(homes[i] + Vector3.new(0, hop(since, (i - 1) * 0.1, 0.9), 0)) end
 	end)
+	return vp
+end
+
+-- (2026-10-21, grade2: "add a scene behind the padlock") Ranked: ViewIcons' gold trophy, scaled up, on a three-step podium of
+-- dark plates with brass trims, in a dark gold hall. Locked = the same scene greyed down (the padlock sits over it).
+local function rankedScene(parent, target, shot, locked)
+	local scene = Instance.new("Model")
+	scene.Name = "Podium"
+	local plate, brass = Color3.fromRGB(40, 44, 36), Color3.fromRGB(196, 156, 70)
+	for _, s in { { 0, 2.4, 3.6 }, { 3.6, 1.6, 3.2 }, { -3.6, 1.1, 3.2 } } do
+		part(scene, Vector3.new(s[3], s[2], 3.2), CFrame.new(s[1], s[2] / 2, 0), s[1] == 0 and plate or plate:Lerp(Color3.new(1, 1, 1), 0.08), Enum.Material.Metal)
+		part(scene, Vector3.new(s[3] + 0.04, 0.2, 3.24), CFrame.new(s[1], s[2] - 0.1, 0), brass, Enum.Material.Metal)
+	end
+	local cup = ViewIcons.Build("Trophy")
+	if cup then
+		local cf = cup:GetBoundingBox()
+		cup.WorldPivot = cf
+		pcall(function() cup:ScaleTo(2.4) end)
+		local _, size = cup:GetBoundingBox()
+		cup:PivotTo(CFrame.new(0, 2.4 + size.Y / 2, 0) * CFrame.Angles(0, math.rad(-16), 0))
+		cup.Parent = scene
+	end
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.identity, zoom = 1, still = true })
+	if not vp then return nil end
+	lightScene(vp)
+	local props = partsOf(scene)
+	stageSet(vp, scene, props, "ranked")
+	frameOn(vp, props, shot.aspect, shot.top, shot.bottom, -6, shot.fit)
+	if locked then vp.Frame.ImageColor3 = Color3.fromRGB(150, 146, 138) end
+	liven(vp, target, 0.06)
 	return vp
 end
 
@@ -421,10 +589,16 @@ local function tile(x, y, w, h, top, bottom)
 		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new(1, 0.45) }) })
 	local sheen = new("Frame", { Name = "Sheen", BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromOffset(w, h),
 		ZIndex = 3, Parent = f })
-	local st = new("UIStroke", { Color = CREAM, Transparency = 1, Thickness = 4, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
+	-- (2026-10-21, grade2: "hover spills over the neighbours") the 4 px cream outline is drawn INSIDE the tile: a stroke on a
+	-- frame inset 4 px (it grows outward to the tile's edge, never into the gutter); the hovered tile is lifted (ZIndex 2) so
+	-- its scale-up draws above the others, and hover is 1.02 (was 1.03: 7.5 of the 10 px gutter on a 500 px tile)
+	local ring = new("Frame", { Name = "HoverRing", BackgroundTransparency = 1, Position = UDim2.fromOffset(4, 4), Size = UDim2.fromOffset(w - 8, h - 8),
+		ZIndex = 5, Parent = f }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
+	local st = new("UIStroke", { Color = CREAM, Transparency = 1, Thickness = 4, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = ring })
 	local hov, sel = false, false
 	local function show()
 		local on = hov or sel
+		f.ZIndex = on and 2 or 1
 		Kit.tween(sheen, 0.1, { BackgroundTransparency = on and 0.85 or 1 })
 		Kit.tween(st, 0.1, { Transparency = on and 0 or 1 })
 	end
@@ -440,7 +614,7 @@ local function tile(x, y, w, h, top, bottom)
 		popStep += 1
 		task.delay(d, function() if f.Parent then Kit.tween(s, 0.16, { Scale = 1 }, Enum.EasingStyle.Back) end end)
 	end
-	Kit.bindButton(f, { hover = 1.03, press = 0.96 })
+	Kit.bindButton(f, { hover = 1.02, press = 0.96 })
 	return f
 end
 -- a dark overlay (unavailable while you queue / stand on a pad) and a status chip at the tile's top centre
@@ -556,17 +730,21 @@ local GRID_W = HW + GAP + 3 * MW + 2 * GAP -- 1440
 local GRID_H = 2 * MH + GAP -- 590
 local GRID_X, GRID_Y = (1920 - GRID_W) / 2, (1080 - GRID_H) / 2
 local BW = (3 * MW + 2 * GAP - GAP) / 2 -- bottom-row tile (Duel Pads, Ranked): 500
-local MODE_TOP, MODE_BOTTOM = Color3.fromRGB(112, 150, 74), Color3.fromRGB(42, 68, 28) -- field green #8DBF5A -> #4C7A2E, toned for white type
-local GOLD_TOP, GOLD_BOTTOM = Color3.fromRGB(110, 84, 38), Color3.fromRGB(38, 28, 12)
+-- (2026-10-21, grade2) the tile gradient is now the SKY over each scene's back wall (the floor / wall cover the rest)
+local SKY_TOP, SKY_BOTTOM = Color3.fromRGB(176, 202, 208), Color3.fromRGB(224, 220, 198)
+local DUSK_TOP, DUSK_BOTTOM = Color3.fromRGB(214, 180, 112), Color3.fromRGB(120, 90, 40) -- ranked: a gold dusk
+-- where each tile's subject sits (fractions of the tile height from the top; fit = most of the width it may take). Squads: the
+-- middle ~60 % with 12 % headroom (3v3 packed tighter, >= 40 %); titles moved down so they cover <= ~10 % of the figures
+local SQUAD_BOTTOM = { 0.72, 0.66, 0.58 }
 local WHITE = Color3.new(1, 1, 1)
 
 local function modeCard(mode, ranked, x)
 	local q = ctx.Config.QueueFor(mode.Id, ranked)
-	local card = ranked and tile(x, 0, MW, MH, GOLD_TOP, GOLD_BOTTOM) or tile(x, 0, MW, MH, MODE_TOP, MODE_BOTTOM)
+	local card = ranked and tile(x, 0, MW, MH, DUSK_TOP, DUSK_BOTTOM) or tile(x, 0, MW, MH, SKY_TOP, SKY_BOTTOM) -- (grade2) sky over the set, was field green
 	-- the live squad fills the tile (the viewport is added after Kit.toScale)
 	local stage = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(MW, MH), ZIndex = 1, Parent = card })
-	-- ONE huge title, lower centre so the squad stays visible above it
-	big(card, mode.Id, 128, 0, MH - 172, MW, 140, CREAM, nil, 4)
+	-- ONE huge title, lower centre so the squad stays visible above it ((grade2) 100 px on the floor, was 128 px across the legs)
+	big(card, mode.Id, 100, 0, MH - 106, MW, 100, CREAM, nil, 4)
 	if ranked then
 		new("TextLabel", { Text = "RANKED", FontFace = HEAVY, TextSize = 18, TextColor3 = WHITE, BackgroundColor3 = Color3.fromRGB(150, 114, 52),
 			Position = UDim2.fromOffset(12, MH - 40), Size = UDim2.fromOffset(94, 26), ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
@@ -599,7 +777,7 @@ local function render()
 	local ranked = tab == "Ranked"
 	local GX = HW + GAP -- the grid right of the hero
 	-- the hero: Training, tall on the left (pops first)
-	local tb = tile(0, 0, HW, GRID_H, Color3.fromRGB(150, 136, 98), Color3.fromRGB(52, 46, 30))
+	local tb = tile(0, 0, HW, GRID_H, SKY_TOP, SKY_BOTTOM) -- (grade2) sky over the range's backstop
 	local trainHold = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(HW, GRID_H), ZIndex = 1, Parent = tb })
 	big(tb, "TRAINING", 92, 0, GRID_H - 196, HW, 110, CREAM, nil, 4)
 	-- (kids: one short line, RIVALS keeps a tile to its title)
@@ -620,11 +798,11 @@ local function render()
 	end
 	-- bottom row: Duel Pads, then Ranked
 	local Y2 = MH + GAP
-	local db = tile(GX, Y2, BW, MH, Color3.fromRGB(70, 78, 62), Color3.fromRGB(18, 20, 15))
+	local db = tile(GX, Y2, BW, MH, SKY_TOP, SKY_BOTTOM)
 	local padHold = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(BW, MH), ZIndex = 1, Parent = db })
-	big(db, "DUEL PADS", 96, 0, MH - 160, BW, 110, CREAM, nil, 4)
-	local dSub = Kit.label({ Text = "Fight people here", FontFace = BOLD, TextSize = 26, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(0, MH - 56), Size = UDim2.fromOffset(BW, 36), ZIndex = 4, Parent = db })
+	big(db, "DUEL PADS", 84, 0, MH - 140, BW, 90, CREAM, nil, 4) -- (grade2) 84 px lower down, was 96 px over the fighters
+	local dSub = Kit.label({ Text = "Fight people here", FontFace = BOLD, TextSize = 24, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(0, MH - 48), Size = UDim2.fromOffset(BW, 34), ZIndex = 4, Parent = db })
 	new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 2, Parent = dSub })
 	db.Activated:Connect(function()
 		Screen.Close()
@@ -632,29 +810,30 @@ local function render()
 	end)
 	-- Ranked keeps its dark gold (dimmer while locked, like RIVALS' Ranked art behind the padlock)
 	local RX = GX + BW + GAP
-	local rt = tile(RX, Y2, BW, MH, open and GOLD_TOP or Color3.fromRGB(84, 64, 30), open and GOLD_BOTTOM or Color3.fromRGB(24, 18, 8))
+	local rt = tile(RX, Y2, BW, MH, DUSK_TOP, DUSK_BOTTOM)
+	-- (2026-10-21, grade2) locked or not, the trophy-on-a-podium scene fills the tile (greyed down while locked)
+	local rankHold = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(BW, MH), ZIndex = 1, Parent = rt })
 	local art
 	if not open then
-		-- locked: a small padlock over the title, then ONE line + a chunky bar with the count on it (was "UNLOCKS AT LEVEL 50"
-		-- + a big padlock + "LV 1 / 50" under the bar: the same thing twice)
-		art = new("Frame", { Name = "Lock", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(BW / 2, 22),
-			Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = rt })
-		big(rt, "RANKED", 88, 0, 88, BW, 100, CREAM, nil, 4)
+		-- locked: a 56 px padlock over the trophy, RANKED, ONE caption "LEVEL 50", then a 22 px bar (60 % of the tile, no
+		-- outline) with "LV n / 50" in Oswald 20 on it ((grade2) was a 70 px lock, a 16 px bar and a 15 px count)
+		art = new("Frame", { Name = "Lock", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(BW / 2, 30),
+			Size = UDim2.fromOffset(56, 56), ZIndex = 4, Parent = rt })
+		big(rt, "RANKED", 80, 0, 104, BW, 86, CREAM, nil, 4)
 		local lv = math.max(1, (ctx.level and ctx.level()) or 1)
 		local need = math.max(1, Config.RankedLevel)
-		big(rt, "LEVEL " .. need, 30, 0, 190, BW, 36, Color3.fromRGB(232, 212, 168), nil, 4)
-		local BAR = 300
-		local track = new("Frame", { Position = UDim2.fromOffset((BW - BAR) / 2, 236), Size = UDim2.fromOffset(BAR, 16), BackgroundColor3 = Color3.fromRGB(10, 10, 12),
-			BackgroundTransparency = 0.15, BorderSizePixel = 0, ZIndex = 4, Parent = rt }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		new("Frame", { Size = UDim2.fromScale(math.clamp(lv / need, 0.05, 1), 1), BackgroundColor3 = Color3.fromRGB(232, 212, 168), BorderSizePixel = 0, ZIndex = 5,
+		big(rt, "LEVEL " .. need, 26, 0, 192, BW, 30, Color3.fromRGB(232, 212, 168), nil, 4)
+		local BAR = math.floor(BW * 0.6)
+		local track = new("Frame", { Name = "LevelBar", Position = UDim2.fromOffset((BW - BAR) / 2, 230), Size = UDim2.fromOffset(BAR, 22), BackgroundColor3 = Color3.fromRGB(14, 12, 8),
+			BackgroundTransparency = 0.1, BorderSizePixel = 0, ZIndex = 4, Parent = rt }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		new("Frame", { Size = UDim2.fromScale(math.clamp(lv / need, 0.05, 1), 1), BackgroundColor3 = Color3.fromRGB(176, 136, 54), BorderSizePixel = 0, ZIndex = 5,
 			Parent = track }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		local cnt = Kit.label({ Text = "LV " .. lv .. " / " .. need, FontFace = HEAVY, TextSize = 15, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
+		local cnt = Kit.label({ Text = "LV " .. lv .. " / " .. need, FontFace = HEAVY, TextSize = 20, TextColor3 = CREAM, TextXAlignment = Enum.TextXAlignment.Center,
 			Size = UDim2.fromScale(1, 1), ZIndex = 6, Parent = track })
-		new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 1.5, Parent = cnt })
+		new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 1.5, Parent = cnt }) -- (on the text, not the bar)
 	else
 		-- open: a normal tile (the trophy scene fills it, one title)
-		art = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 6), Size = UDim2.fromOffset(BW, MH - 110), ZIndex = 1, Parent = rt })
-		big(rt, "RANKED", 96, 0, MH - 160, BW, 110, CREAM, nil, 4)
+		big(rt, "RANKED", 88, 0, MH - 140, BW, 96, CREAM, nil, 4)
 		if ranked then
 			big(rt, "Ranked queues ON", 24, 0, MH - 56, BW, 32, Color3.fromRGB(232, 212, 168), nil, 4)
 		end
@@ -708,12 +887,14 @@ local function render()
 	-- 3D after the conversion (viewports fill their holders), lit and raised so the titles sit under the figures
 	-- (2026-10-21, round 3: match RIVALS) the squads react: your team hops and the camera leans in on hover
 	for _, sc in stages do
-		local vp, scene = squadScene(sc[1], sc[2], ranked, { 1.0, 1.1, 1.12 }, 0.32)
+		-- (2026-10-21, grade2) each squad stands in a set and is aimed to fill the tile (squadScene's shot)
+		local vp, scene = squadScene(sc[1], sc[2], ranked, { aspect = MW / MH, top = 0.12, bottom = SQUAD_BOTTOM[sc[2]] or 0.58, fit = 0.94 })
 		livenSquad(vp, scene, sc[3])
 	end
 	-- (2026-10-21, round 3: match RIVALS) Training / Duel Pads: live placeholder scenes where RIVALS shows art
-	trainingScene(trainHold, tb, 0.88, 0.4)
-	duelsScene(padHold, db, 0.3)
+	trainingScene(trainHold, tb, { aspect = HW / GRID_H, top = 0.05, bottom = 0.62, fit = 0.9 })
+	duelsScene(padHold, db, { aspect = BW / MH, top = 0.08, bottom = 0.56, fit = 0.9 })
+	rankedScene(rankHold, rt, { aspect = BW / MH, top = open and 0.06 or 0.04, bottom = open and 0.52 or 0.5, fit = 0.9 }, not open)
 	local icons = ReplicatedStorage:FindFirstChild("UIIcons")
 	if not open then
 		local mesh = icons and icons:FindFirstChild("Lock")
@@ -724,9 +905,7 @@ local function render()
 			rt.MouseEnter:Connect(function() lockVp.SetHover(true) end)
 			rt.MouseLeave:Connect(function() lockVp.SetHover(false) end)
 		end
-	else
-		lightScene(ViewIcons.Icon(art, "Trophy", { hoverTarget = rt }))
-	end
+	end -- (grade2) open: the podium scene above replaces the lone trophy icon
 end
 
 -- status chips only (every half second while open). (2026-10-21, grade1: "0 SEARCHING" x3 was dead noise) a mode tile shows a

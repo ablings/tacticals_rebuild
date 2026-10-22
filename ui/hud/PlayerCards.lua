@@ -484,6 +484,9 @@ function PlayerCards.StartWorld(allowed: () -> boolean)
 	RunService.RenderStepped:Connect(function()
 		-- touch has no hover: the hint only follows a mouse
 		local p = (not UserInputService.TouchEnabled or UserInputService.MouseEnabled) and ok() and playerUnder() or nil
+		-- (2026-10-21, grade2) the hint only shows over OTHER players: it sat on your own character at rest (the camera looks
+		-- through you). Double-clicking yourself still opens your own card, it just isn't advertised.
+		if p == player then p = nil end
 		hint.Visible = p ~= nil
 		if p then
 			-- GetMouseLocation counts the top bar; AbsolutePosition on an IgnoreGuiInset gui doesn't (its origin sits at -inset)

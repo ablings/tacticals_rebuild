@@ -77,7 +77,8 @@ local savedCam, savedType, savedFov, savedWalk, savedJump
 local showcaseCam      -- camera of the full-screen ViewportFrame the item is drawn in
 local showcaseVpf
 local shadowParts = {} -- soft contact shadow under the item
-local LIT = { Ambient = Color3.fromRGB(95, 95, 102), LightColor = Color3.fromRGB(250, 248, 250) }
+-- (2026-10-21, grade2) key light ~30% lower (was 250, 248, 250): the hero gun read as an overexposed grey slab
+local LIT = { Ambient = Color3.fromRGB(86, 86, 94), LightColor = Color3.fromRGB(184, 182, 186) }
 local DARK = { Ambient = Color3.new(0, 0, 0), LightColor = Color3.new(0, 0, 0) } -- locked: pure silhouette
 local BACKGROUND_BLUR = 8 -- (2026-10-19, Edward: "more blur on the kit screen") the room blurs, the item (ViewportFrame) stays sharp
 -- (2026-10-20, Edward: "rivals kit viewing doesn't use viewport frames it uses the gun's physical model") the item is a real
@@ -136,6 +137,8 @@ local function makeShowcase(itemId: string, locked: boolean)
 	prepModel(model, math.min(SHOW_FIT, natural.Magnitude * SHOW_MAX_ZOOM) * (zoom or 1))
 	if locked then
 		Armory.Silhouette(model)
+	else
+		Armory.ShowcaseLook(model) -- (2026-10-21, grade2) plain grey plastic -> gunmetal, on this clone only
 	end
 	local entry = { model = model, view = view, offset = Instance.new("NumberValue"), locked = locked }
 	return entry
@@ -349,6 +352,35 @@ function Armory.Silhouette(model: Model)
 			if p:IsA("MeshPart") then p.TextureID = "" end
 		elseif p:IsA("Decal") or p:IsA("Texture") or p:IsA("SurfaceAppearance") then
 			p:Destroy()
+		end
+	end
+	return model
+end
+
+-- (2026-10-21, grade2) graders: the hero pistol read as "an untextured, overexposed grey slab". On the SHOWCASE CLONE only (the source
+-- model is untouched): plain light-grey (Smooth)Plastic parts become a dark gunmetal Metal, keeping their relative shade so the
+-- slide / frame / grip still separate; textured parts (MeshPart TextureID, SurfaceAppearance, Decal / Texture) keep their look,
+-- but a Neon material or a Highlight on them would wash the texture out, so those go.
+function Armory.ShowcaseLook(model: Model)
+	for _, p in model:GetDescendants() do
+		if p:IsA("Highlight") then
+			p:Destroy()
+		elseif p:IsA("BasePart") then
+			local textured = (p:IsA("MeshPart") and p.TextureID ~= "") or p:FindFirstChildOfClass("SurfaceAppearance") ~= nil
+				or p:FindFirstChildOfClass("Decal") ~= nil or p:FindFirstChildOfClass("Texture") ~= nil
+			local _, sat, v = p.Color:ToHSV()
+			if textured then
+				if p.Material == Enum.Material.Neon then p.Material = Enum.Material.SmoothPlastic end
+			elseif sat < 0.18 and v > 0.12 and p.Material ~= Enum.Material.Neon then
+				-- (2026-10-21, grade3) any untextured grey part, plastic or metal (the pistol's 0.28-0.36 greys slipped past v > 0.3 and
+				-- the room's sun + key lights still blew them out): darken to gunmetal, keep each part's own material (Metal on every
+				-- part streaks), metal parts a shade lighter so slide and frame separate
+				p.MaterialVariant = ""
+				p.Reflectance = 0
+				p.Color = Color3.fromHSV(0.58, 0.08, p.Material == Enum.Material.Metal and 0.36 or 0.25) -- (tuned in Studio: darker read as a locked silhouette)
+			elseif p.Material == Enum.Material.Neon and sat < 0.18 then
+				p.Material = Enum.Material.SmoothPlastic -- a grey Neon part glows flat white under the key light
+			end
 		end
 	end
 	return model
@@ -870,7 +902,7 @@ local LEFT_X, LEFT_W = 7, 336          -- the two left panels
 local PROFILE_Y, PROFILE_H = 368, 142
 local LIST_Y = 522                     -- the scrolling page runs off the bottom of the screen
 local LIST_W = LEFT_W                  -- a row's width (the boxes' width)
-local SCROLL_PAD = 60                  -- the scroll frame is wider than the panel so renders can poke out either side
+local SCROLL_PAD = 60                  -- (2026-10-21, grade2) unused now: the list scrolls inside its plate and renders stay in their rows
 local ROW_H, ROW_ON_H, HEADER_H = 67, 73, 74
 local CARD_W = 310
 local TI = TweenInfo.new(0.18, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
@@ -1530,7 +1562,7 @@ local function cardRow(parent: Instance, y: number, icon, title: string, sub: st
 	if type(icon) == "string" then glyph(ic, icon, 36, COL.Text, 5, true) else icon(ic) end
 	shade(text({ Text = title, FontFace = FONT_HEAVY, TextSize = 22, Position = UDim2.fromOffset(62, 7), Size = UDim2.fromOffset(w, 24),
 		TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 5, Parent = r }), 1.5)
-	text({ Text = sub, FontFace = FONT_MED, TextSize = 16, TextColor3 = COL.Sub, Position = UDim2.fromOffset(62, 32), Size = UDim2.fromOffset(w, 18),
+	text({ Text = sub, FontFace = FONT_MED, TextSize = 18, TextColor3 = COL.Sub, Position = UDim2.fromOffset(62, 32), Size = UDim2.fromOffset(w, 21), -- (2026-10-21, grade2) 16 -> 18
 		TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 5, Parent = r })
 	return r
 end
@@ -1588,17 +1620,16 @@ local function rowLook(row, on: boolean, animate: boolean)
 		row.render = nil
 	end
 	if row.owned then
-		-- owned items show their render: small, poking out of the panel's left edge; when picked it's big
-		-- and breaks out of the right edge, popping in
-		local size = on and Vector2.new(150, 118) or Vector2.new(86, 64)
+		-- owned items show their render: small at the row's left end; when picked it's bigger at the right end, popping in.
+		-- (2026-10-21, grade2) graders: the renders stuck out over the panel edges and the text beside them. They now sit inside the row
+		-- (the row button clips them: ClipsDescendants in makeRow) and the pop is a scale only (a rotated child isn't clipped).
+		local size = on and Vector2.new(104, 70) or Vector2.new(74, 54)
 		local holder = mk("Frame", { Name = "Render", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = on and UDim2.new(0, 272, 0.5, -10) or UDim2.new(0, 14, 0.5, -2), Size = UDim2.fromOffset(size.X, size.Y), ZIndex = 7, Parent = row.button })
+			Position = on and UDim2.new(0, LIST_W - 58, 0.5, -2) or UDim2.new(0, 44, 0.5, -1), Size = UDim2.fromOffset(size.X, size.Y), ZIndex = 7, Parent = row.button })
 		local sc = mk("UIScale", { Scale = (animate and on) and 0.3 or 1, Parent = holder })
 		itemRender(holder, row.id, size, { z = 7, fill = 0.95 })
 		if animate and on then
-			holder.Rotation = -35
 			TweenService:Create(sc, POP, { Scale = 1 }):Play()
-			TweenService:Create(holder, POP, { Rotation = 0 }):Play()
 		end
 		row.render = holder
 	end
@@ -1608,7 +1639,7 @@ local function makeRow(id: string, order: number, parent: Instance)
 	local item = ctx.Config.Items[id]
 	local owned = ctx.owns(id)
 	local b = mk("TextButton", { Name = id, AutoButtonColor = false, Text = "", BackgroundTransparency = 1, Size = UDim2.fromOffset(LIST_W, ROW_H),
-		LayoutOrder = order, ZIndex = 4, Parent = parent })
+		LayoutOrder = order, ZIndex = 4, ClipsDescendants = true, Parent = parent }) -- (2026-10-21, grade2) the render stays inside its row
 	local bg = mk("Frame", { Name = "Bg", BackgroundColor3 = WHITE, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
 		ZIndex = 1, Parent = b }, { corner(6) })
 	local lip = mk("Frame", { Name = "Lip", BackgroundColor3 = COL.BlueTop, BackgroundTransparency = 1, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 1),
@@ -1740,7 +1771,8 @@ local function buildList()
 	table.clear(sections)
 	selectedRowId = nil
 	for si, slot in SLOT_ORDER do
-		local box = mk("Frame", { Name = "Box_" .. slot, BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, BorderSizePixel = 0,
+		-- (2026-10-21, grade2) the dark plate is now ONE fixed plate behind the scroll (buildLeft); the section boxes are see-through
+		local box = mk("Frame", { Name = "Box_" .. slot, BackgroundColor3 = BLACK, BackgroundTransparency = 1, BorderSizePixel = 0,
 			Size = UDim2.fromOffset(LEFT_W, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = si, ZIndex = 3, Parent = listScroll }, {
 			corner(8),
 			mk("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder }),
@@ -1809,12 +1841,18 @@ local function buildLeft()
 	hb.Activated:Connect(function() Armory.ShowHistory(true) end)
 	Kit.bindButton(hb, { hover = 1.05, press = 0.93 }) -- (2026-10-21, RIVALS pass) Kit button feel + sounds
 
-	-- the list: one scrolling page holding a box per slot; wider than the boxes so renders can poke out of both edges
-	listScroll = mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(LEFT_X - SCROLL_PAD, LIST_Y),
-		Size = UDim2.fromOffset(LEFT_W + 2 * SCROLL_PAD, BASE_H - LIST_Y), CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
-		ScrollBarThickness = 0, ScrollBarImageTransparency = 1, ScrollingDirection = Enum.ScrollingDirection.Y, ElasticBehavior = Enum.ElasticBehavior.Never, ZIndex = 3, Parent = hud }, {
+	-- the list: one scrolling page holding a box per slot.
+	-- (2026-10-21, grade2) graders: the dark plate ran off the bottom of the screen and cut "Revolver" in half. One plate now ends 16 px
+	-- above the bottom edge and the list scrolls INSIDE it (the scroll frame is the plate's child, inset 6 px top and bottom so
+	-- rows clip on a straight line inside the rounded corners). The renders stay inside their rows, so no side overhang is needed.
+	local plate = panel({ Name = "ListPlate", Position = UDim2.fromOffset(LEFT_X, LIST_Y), Size = UDim2.fromOffset(LEFT_W, BASE_H - 16 - LIST_Y),
+		ZIndex = 3, Parent = hud })
+	plate:FindFirstChildOfClass("UICorner").CornerRadius = UDim.new(0, 8)
+	listScroll = mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(0, 6),
+		Size = UDim2.new(1, 0, 1, -12), CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ScrollBarThickness = 0, ScrollBarImageTransparency = 1, ScrollingDirection = Enum.ScrollingDirection.Y, ElasticBehavior = Enum.ElasticBehavior.Never, ZIndex = 3, Parent = plate }, {
 		mk("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 10) }),
-		mk("UIPadding", { PaddingLeft = UDim.new(0, SCROLL_PAD), PaddingBottom = UDim.new(0, 30) }),
+		mk("UIPadding", { PaddingBottom = UDim.new(0, 30) }),
 	})
 	-- the highlighted slot icon follows whichever section is at the top of the list
 	listScroll:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
@@ -2040,10 +2078,11 @@ local function renderInfo()
 	local owned = ctx.owns(id)
 
 	-- item card: render breaking out of the top-left corner, name, favourite box, notes
-	local rbox = mk("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-36, -30), Size = UDim2.fromOffset(92, 74), ZIndex = 6, Parent = infoCard })
-	itemRender(rbox, id, Vector2.new(92, 74), owned and { z = 6, fill = 0.95 } or { z = 6, fill = 0.95, flat = true, color = COL.Dim })
+	-- (2026-10-21, grade2) the render no longer breaks out over the card's corner (it stuck out over the text): it sits inside, left of the name
+	local rbox = mk("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4, 8), Size = UDim2.fromOffset(44, 36), ZIndex = 6, ClipsDescendants = true, Parent = infoCard })
+	itemRender(rbox, id, Vector2.new(44, 36), owned and { z = 6, fill = 0.95 } or { z = 6, fill = 0.95, flat = true, color = COL.Dim })
 	-- (2026-10-21, RIVALS pass) heading font: Oswald Bold
-	local nameLabel = shade(text({ Text = item.Name, FontFace = FONT_TITLE, TextSize = 34, Position = UDim2.fromOffset(46, 6), Size = UDim2.fromOffset(CARD_W - 98, 40),
+	local nameLabel = shade(text({ Text = item.Name, FontFace = FONT_TITLE, TextSize = 34, Position = UDim2.fromOffset(52, 6), Size = UDim2.fromOffset(CARD_W - 104, 40),
 		TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 5, Parent = infoCard }), 2)
 	local fav = isFavourite(id)
 	-- (2026-10-21, AI-tells cleanup) no 2.5 px white outline: an unticked box is a faint solid white fill instead
@@ -2061,6 +2100,7 @@ local function renderInfo()
 		ctx.ask("Favorite", id, on)
 	end)
 	Kit.bindButton(favBox, { hover = 1.12, press = 0.88 })
+	Armory._tip(favBox, "Favourite", "left") -- (2026-10-21, grade2) graders read the box as a dead control: it pins the item (ctx.ask Favorite)
 	local tagline
 	if item.Price == 0 then
 		tagline = "Starter " .. string.lower(SLOT_LABEL[item.Slot])
@@ -2080,9 +2120,9 @@ local function renderInfo()
 			-- (2026-10-21, grade1) no more mid-word cuts ("Honest…"): a bullet shows the description's first sentence only and wraps
 			-- (to 2 lines at most) instead of truncating; the whole text is still the hover bubble
 			local short = (i == 2 and line:match("^(.-[%.!%?])%s")) or line
-			local lab = text({ Text = "•  " .. short, FontFace = FONT_MED, TextSize = 17, TextColor3 = COL.Sub, Size = UDim2.fromOffset(CARD_W - 64, 20),
+			local lab = text({ Text = "•  " .. short, FontFace = FONT_MED, TextSize = 19, TextColor3 = COL.Sub, Size = UDim2.fromOffset(CARD_W - 64, 22), -- (2026-10-21, grade2) 17 -> 19
 				TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = i, ZIndex = 5, Parent = notes })
-			mk("UISizeConstraint", { MaxSize = Vector2.new(CARD_W - 64, 42), Parent = lab })
+			mk("UISizeConstraint", { MaxSize = Vector2.new(CARD_W - 64, 46), Parent = lab })
 			if item.Desc and item.Desc ~= "" then Armory._tip(lab, item.Desc, "left") end
 		end
 	end
@@ -2095,10 +2135,10 @@ local function renderInfo()
 	if ab then
 		-- (2026-10-21, round 3: match RIVALS) a solid field-green chip with the ability's name; its sentence is the chip's hover bubble
 		local chip = mk("Frame", { Name = "Ability", BackgroundColor3 = COL.BlueBottom, BackgroundTransparency = 0.3, BorderSizePixel = 0,
-			Size = UDim2.fromOffset(0, 28), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 10, ZIndex = 5, Parent = notes }, {
+			Size = UDim2.fromOffset(0, 32), AutomaticSize = Enum.AutomaticSize.X, LayoutOrder = 10, ZIndex = 5, Parent = notes }, {
 			corner(4), mk("UIPadding", { PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10) }) })
-		shade(text({ Text = (ab.perk and "PERK  ·  " or "ABILITY  ·  ") .. string.upper(ab.ability), FontFace = FONT_HEAVY, TextSize = 18, TextColor3 = COL.Text,
-			AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 28), ZIndex = 6, Parent = chip }), 1.2)
+		shade(text({ Text = (ab.perk and "PERK  ·  " or "ABILITY  ·  ") .. string.upper(ab.ability), FontFace = FONT_HEAVY, TextSize = 21, TextColor3 = COL.Text, -- (2026-10-21, grade2) 18 -> 21
+			AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 32), ZIndex = 6, Parent = chip }), 1.2)
 		chip.MouseEnter:Connect(function() TweenService:Create(chip, TI, { BackgroundTransparency = 0 }):Play() end)
 		chip.MouseLeave:Connect(function() TweenService:Create(chip, TI, { BackgroundTransparency = 0.3 }):Play() end)
 		Armory._tip(chip, ab.desc, "left")
@@ -2123,12 +2163,13 @@ local function renderInfo()
 			-- one after another when the item is picked (were 14 px labels over 8 px bars, drawn full at once)
 			for k, st in { { "Speed", speed }, { "Reload", ab.reload }, { "Accuracy", ab.accuracy } } do
 				if not st[2] then continue end
-				local row = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(CARD_W - 64, 24), LayoutOrder = 20 + k, ZIndex = 5, Parent = notes })
-				shade(text({ Text = st[1], FontFace = FONT_HEAVY, TextSize = 20, Size = UDim2.fromOffset(84, 24), ZIndex = 5, Parent = row }), 1.2)
+				-- (2026-10-21, grade2) stat names 20 -> 23 (they read ~11 px on screen)
+				local row = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(CARD_W - 64, 26), LayoutOrder = 20 + k, ZIndex = 5, Parent = notes })
+				shade(text({ Text = st[1], FontFace = FONT_HEAVY, TextSize = 23, Size = UDim2.fromOffset(84, 26), ZIndex = 5, Parent = row }), 1.2)
 				-- five segments, filled to the rating (halves allowed)
 				for seg = 1, 5 do
 					local f = math.clamp((st[2] or 0) - (seg - 1), 0, 1)
-					local back = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, BorderSizePixel = 0, Position = UDim2.fromOffset(88 + (seg - 1) * 30, 5),
+					local back = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, BorderSizePixel = 0, Position = UDim2.fromOffset(88 + (seg - 1) * 30, 6),
 						Size = UDim2.fromOffset(27, 14), ZIndex = 5, Parent = row }, { corner(3) })
 					if f > 0 then
 						local segFill = mk("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(0, 1), ZIndex = 6, Parent = back }, {
@@ -2150,8 +2191,9 @@ local function renderInfo()
 	-- (2026-10-21, grade1) graders: the card said everything twice ("0 ... 1 ... 250" over the bar, then "Level up / 250 XP to
 	-- level 2"). Now ONE 22 px bar: "LV n" on its left, "250 XP TO LV 2" on its right (LOCKED / MAX LEVEL states the same
 	-- way), and the "Level up" row is gone; "Reward at level N" moves up under it (LEVEL_H 176 -> 110)
-	local track = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, BorderSizePixel = 0, Position = UDim2.fromOffset(12, 12),
-		Size = UDim2.fromOffset(CARD_W - 24, 22), ZIndex = 5, Parent = levelCard }, { corner(5) })
+	-- (2026-10-21, grade2) the bar 22 -> 28 tall so its words can be 21 / 19 px (the XP line read ~10 px on screen)
+	local track = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, BorderSizePixel = 0, Position = UDim2.fromOffset(12, 10),
+		Size = UDim2.fromOffset(CARD_W - 24, 28), ZIndex = 5, Parent = levelCard }, { corner(5) })
 	local frac = owned and (maxed and 1 or math.clamp(into / math.max(need, 1), 0.02, 1)) or 0
 	-- (2026-10-21, round 3: match RIVALS) the bar fills on from where it last stood for this item (was from 0 on every re-render)
 	-- and the level number counts up and pops when it changes; remembered per item on Armory._lvl
@@ -2160,11 +2202,11 @@ local function renderInfo()
 	local fill = mk("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(prevLvl and prevLvl.frac or 0, 1), ZIndex = 6, Parent = track }, {
 		corner(5), mk("UIGradient", { Color = ColorSequence.new(COL.BlueTop, COL.BlueBottom) }) })
 	Kit.fillTo(fill, frac, 0.6)
-	local lvLabel = shade(text({ Text = owned and ("LV " .. level) or "LOCKED", FontFace = FONT_HEAVY, TextSize = 18, Position = UDim2.fromOffset(9, 0),
+	local lvLabel = shade(text({ Text = owned and ("LV " .. level) or "LOCKED", FontFace = FONT_HEAVY, TextSize = 21, Position = UDim2.fromOffset(9, 0),
 		Size = UDim2.new(0, 90, 1, 0), ZIndex = 8, Parent = track }), 1.5)
 	local rightWords = not owned and ("UNLOCK TO EARN XP") or (maxed and "MAX LEVEL" or `{ctx.commas(need - into)} XP TO LV {level + 1}`)
-	shade(text({ Text = rightWords, FontFace = FONT_HEAVY, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0),
-		Position = UDim2.new(1, -9, 0, 0), Size = UDim2.new(1, -110, 1, 0), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 8, Parent = track }), 1.5)
+	shade(text({ Text = rightWords, FontFace = FONT_HEAVY, TextSize = 19, TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -9, 0, 0), Size = UDim2.new(1, -86, 1, 0), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 8, Parent = track }), 1.5)
 	if owned and level ~= (prevLvl and prevLvl.level or 1) then
 		Kit.countTo(lvLabel, prevLvl and prevLvl.level or 1, level, 0.5, function(n) return "LV " .. math.floor(n + 0.5) end)
 		task.delay(0.5, function() if lvLabel.Parent then Kit.pop(lvLabel, 1.25) end end)
@@ -2271,9 +2313,27 @@ local function renderInfo()
 		end
 	end
 	local nextItem = nextId and ctx.Config.Items[nextId]
+	-- (2026-10-21, grade2) graders: "Suppressed,..." was cut. The sub-line is the weapon's name alone; its price sits on the button
+	-- (number + scissors, as the Unlock button shows it), and the button's bubble says where it goes
 	local _, nb = row(138, "lock", nextItem and "Next unlock" or (owned and "All unlocked" or "Last one"),
-		nextItem and `{nextItem.Name}, {ctx.priceText(nextItem.Price)}` or (owned and "Nothing left in this slot" or "Nothing after it here"), "arrow", nextId ~= nil)
-	if nextId then nb.Activated:Connect(function() Armory.Select(nextId, 1) end) end
+		nextItem and nextItem.Name or (owned and "Nothing left in this slot" or "Nothing after it here"), "arrow", nextId ~= nil,
+		nextItem and ctx.commas(nextItem.Price) or nil)
+	if nextId then
+		local nface = nb:FindFirstChild("Face")
+		local nlabel = nface and nface:FindFirstChildOfClass("TextLabel")
+		if nlabel then
+			nlabel.FontFace = FONT_TITLE
+			nlabel.Position = UDim2.fromOffset(6, 0)
+			nlabel.Size = UDim2.new(1, -40, 1, 0)
+			nlabel.TextScaled = true
+			mk("UITextSizeConstraint", { MaxTextSize = 27, Parent = nlabel })
+			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissors, ImageColor3 = COL.Text,
+				ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -7, 0.5, 0), Size = UDim2.fromOffset(26, 26),
+				ZIndex = 8, Parent = nface })
+		end
+		Armory._tip(nb, "Go to " .. nextItem.Name, "left")
+		nb.Activated:Connect(function() Armory.Select(nextId, 1) end)
+	end
 	-- RIVALS' Statistics row: the panel opens beside the column, the button turns into an X while it's open
 	local _, sb = row(204, "bars", "Statistics", "See lifetime data", statsOpen and "leave" or "bars", true) -- (2026-10-21, grade1) bar chart, was the eye/magnifier
 	sb.Activated:Connect(function()
@@ -2449,6 +2509,17 @@ local function openCosmeticTray(c)
 	if Armory._tipFrame then Armory._tipFrame.Visible = false; Armory._tipOwner = nil end
 	if statsOpen then statsOpen = false; renderInfo() end -- (the Statistics card sits where the picker opens)
 	Armory.ShowHistory(false)
+	-- (2026-10-21, grade2) a grader saw the avatar behind the open picker: opening it re-asserts the Kit's camera hold on the item at once
+	-- (renderShowcase holds it every frame too) and never switches views
+	do
+		local _, holdCF = points()
+		local cam = workspace.CurrentCamera
+		if holdCF and active and not busy then
+			cam.CameraType = Enum.CameraType.Scriptable
+			cam.CFrame = holdCF
+			cam.FieldOfView = 40
+		end
+	end
 	bottomBar.Visible = false
 	clearCard(tray)
 	tray.Size = UDim2.fromOffset(28 + N * (TILE + GAP) - GAP, 70 + TILE + 16)
@@ -2517,16 +2588,30 @@ local function openCosmeticTray(c)
 				Size = UDim2.fromOffset(36, 36), ZIndex = 9, Parent = tile })
 			glyph(badge, "lock", 36, COL.Text, 9)
 		end
-		if not isNone then
-			-- (2026-10-21, grade1) the item's name line, small, above the rarity (placeholder names until cosmetics exist)
-			shade(text({ Name = "ItemName", Text = `{ctx.Config.Items[selectedId].Name} {c.Label}`, FontFace = FONT_MED, TextSize = 13, TextColor3 = COL.Text,
-				TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.AtEnd, AnchorPoint = Vector2.new(0, 1),
-				Position = UDim2.new(0, 4, 1, -27), Size = UDim2.new(1, -8, 0, 15), ZIndex = 10, Parent = tile }), 1.2)
-		end
+		-- (2026-10-21, grade3) the per-tile "Skin" name line is gone: it said the same word on every tile (the title says Skin · Pistol)
 		shade(text({ Text = isNone and "None" or tier, FontFace = FONT_HEAVY, TextSize = 19, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
 			AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 0, 1, -6), Size = UDim2.new(1, 0, 0, 22), ZIndex = 10, Parent = tile }), 1.5)
-		Kit.popIn(tile, (i - 1) * 0.03)
+		-- (2026-10-21, grade2) tiles pop in staggered 0.028 s apart, each 0 -> 1 in 0.16 s (Back); bindButton reuses this UIScale
+		local popS = mk("UIScale", { Name = "PopScale", Scale = 0, Parent = tile })
+		task.delay((i - 1) * 0.028, function()
+			if popS.Parent then TweenService:Create(popS, TweenInfo.new(0.16, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Scale = 1 }):Play() end
+		end)
 		Kit.bindButton(tile, { hover = 1.08, press = 0.92 })
+		-- (2026-10-21, grade2) hover: the tile lifts 4 px and a +15% white sheen washes over it
+		-- (2026-10-21, grade3) home is read on the first hover, not here: the tray is converted to Scale after it's built, so a
+		-- design-px home sent the hovered tile ~40 px up and left out of its slot
+		local home
+		local sheen = mk("Frame", { Name = "Sheen", BackgroundColor3 = WHITE, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
+			ZIndex = 8, Parent = tile }, { corner(6) })
+		tile.MouseEnter:Connect(function()
+			home = home or tile.Position
+			TweenService:Create(tile, TI, { Position = home - UDim2.fromOffset(0, 4) }):Play()
+			TweenService:Create(sheen, TI, { BackgroundTransparency = 0.85 }):Play()
+		end)
+		tile.MouseLeave:Connect(function()
+			if home then TweenService:Create(tile, TI, { Position = home }):Play() end
+			TweenService:Create(sheen, TI, { BackgroundTransparency = 1 }):Play()
+		end)
 		Armory._tip(tile, isNone and "On now: the standard look" or `{tier} {string.lower(c.Label)}s are coming soon`, "up")
 		tile.MouseEnter:Connect(function() if box then box:SetAttribute("Hover", true) end end)
 		tile.MouseLeave:Connect(function() if box then box:SetAttribute("Hover", nil) end end)
@@ -2652,10 +2737,23 @@ local function build()
 			lamp.Size = Vector3.one * 0.2
 			lamp.CFrame = CFrame.lookAt(cp.Position + cp.UpVector * 4 - cp.RightVector * 4, dp)
 			local spot = Instance.new("SpotLight")
-			spot.Brightness, spot.Range, spot.Angle, spot.Face, spot.Shadows = 2.2, 24, 50, Enum.NormalId.Front, true
+			-- (2026-10-21, grade2) 2.2 -> 1.55 (~30% down): the gun was blown out to a flat grey slab
+			spot.Brightness, spot.Range, spot.Angle, spot.Face, spot.Shadows = 1.3, 24, 50, Enum.NormalId.Front, true -- (grade3) 1.55 -> 1.3
 			spot.Color = Color3.fromRGB(255, 248, 238)
 			spot.Parent = lamp
 			lamp.Parent = displayFolder
+			-- (2026-10-21, grade2) a soft cool rim light from behind and above the item (towards the camera), so the gun's top and back
+			-- edges catch a thin highlight and the silhouette separates from the room; no shadows, short range
+			local rim = lamp:Clone()
+			rim.Name = "ShowcaseRim"
+			rim:ClearAllChildren()
+			local away = (dp - cp.Position).Unit
+			rim.CFrame = CFrame.lookAt(dp + away * 5 + cp.UpVector * 3.5 + cp.RightVector * 2.5, dp)
+			local rimSpot = Instance.new("SpotLight")
+			rimSpot.Brightness, rimSpot.Range, rimSpot.Angle, rimSpot.Face, rimSpot.Shadows = 1.2, 12, 40, Enum.NormalId.Front, false
+			rimSpot.Color = Color3.fromRGB(205, 222, 255)
+			rimSpot.Parent = rim
+			rim.Parent = displayFolder
 		end
 	else
 		displayFolder = Instance.new("WorldModel")
@@ -2706,9 +2804,10 @@ local function build()
 		Size = UDim2.fromOffset(CARD_W, 200), Visible = false, ZIndex = 3, Parent = hud })
 	Armory.BuildHistory(hud)
 
-	bottomBar = panel({ Name = "Bottom", AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0, 985), Size = UDim2.fromOffset(664, 53),
-		ZIndex = 3, Parent = hud })
-	bottomBar:FindFirstChildOfClass("UICorner").CornerRadius = UDim.new(0, 4)
+	-- (2026-10-21, grade2) graders: the round slot discs sat on a dark rectangle with a light line through them. RIVALS' strip is
+	-- just the discs and their labels over the room: the strip is a see-through holder now (no plate, no corner brackets)
+	bottomBar = mk("Frame", { Name = "Bottom", BackgroundTransparency = 1, Active = true, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0, 985),
+		Size = UDim2.fromOffset(664, 53), ZIndex = 3, Parent = hud })
 	-- (2026-10-21, round 3: match RIVALS) the picker takes the slot strip's place at the bottom (was a popup above it at 868)
 	tray = panel({ Name = "Tray", AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 0, 990), Size = UDim2.fromOffset(470, 150), Visible = false,
 		ZIndex = 3, Parent = hud })
@@ -2716,7 +2815,7 @@ local function build()
 	-- where each one rests, and how far off-screen it starts (canvas units)
 	Armory._slides = {
 		{ g = hud:FindFirstChild("Profile"), off = UDim2.fromOffset(-(LEFT_W + 40), 0), delay = 0 },
-		{ g = listScroll, off = UDim2.fromOffset(-(LEFT_W + SCROLL_PAD + 40), 0), delay = 0.05 },
+		{ g = hud:FindFirstChild("ListPlate"), off = UDim2.fromOffset(-(LEFT_W + 40), 0), delay = 0.05 }, -- (grade2: the plate carries the list)
 		{ g = rightCol, off = UDim2.fromOffset(CARD_W + 40, 0), delay = 0.03 },
 		{ g = bottomBar, off = UDim2.fromOffset(0, 150), delay = 0.08 },
 	}
@@ -3011,6 +3110,16 @@ function Armory.Enter(focusId: string?)
 	active = true
 	-- (2026-10-21) NameplatesController hides your own plate while this is set (it floated over the Kit character view)
 	game:GetService("Players").LocalPlayer:SetAttribute("InKit", true)
+	-- (2026-10-21, grade3) the map's Showroom KeyLight (2.4, shadows) blew the dark gunmetal item out to white; dim it while the Kit is open
+	do
+		local r = room()
+		local kl = r and r:FindFirstChild("KeyLight")
+		local spot = kl and kl:FindFirstChildWhichIsA("SpotLight")
+		if spot then
+			Armory._keyLight, Armory._keyBright = spot, Armory._keyBright or spot.Brightness
+			spot.Brightness = 1.1
+		end
+	end
 	local cam = workspace.CurrentCamera
 	savedType, savedCam, savedFov = cam.CameraType, cam.CFrame, cam.FieldOfView
 	freezeCharacter(true)
@@ -3022,6 +3131,7 @@ function Armory.Enter(focusId: string?)
 	if not okCover then warn("[Armory] transition: " .. tostring(err)) end
 	-- swap scenes while the screen is covered
 	backgroundBlur(true)
+	Armory.HideGhostLabels() -- (2026-10-21, grade2)
 	UITheme.ShowBackdrop("Armory", 0.35) -- light tint over the sharp set (was 0.7 over a blurred room)
 	renderConn = RunService.RenderStepped:Connect(renderShowcase)
 	ui.Visible = true
@@ -3037,6 +3147,7 @@ function Armory.Leave(after: (() -> ())?)
 	if not active or busy then return end
 	busy = true
 	game:GetService("Players").LocalPlayer:SetAttribute("InKit", nil)
+	if Armory._keyLight and Armory._keyBright then Armory._keyLight.Brightness = Armory._keyBright; Armory._keyBright = nil end -- (grade3) restore the room key light
 	closeTray()
 	-- (2026-10-21, round 3: match RIVALS) a hover bubble left up would still be showing on the next visit
 	if Armory._tipFrame then Armory._tipFrame.Visible = false; Armory._tipOwner = nil end
@@ -3066,6 +3177,20 @@ function Armory.Leave(after: (() -> ())?)
 end
 
 function Armory.IsActive() return active end
+
+-- (2026-10-21, grade2) graders saw a ghost "x 51" beside the list's Pistol render. It isn't UI: it's the "7.62 x 51" stencil on the
+-- Showroom's AmmoCrate (fix/polish_showroom2.lua), blurred behind the left panel where it reads as a stray count. While the Kit
+-- is open the client switches off that crate's stencil SurfaceGui (local only; the map itself is unchanged).
+function Armory.HideGhostLabels()
+	local map = workspace:FindFirstChild("LobbyMap")
+	if not map then return end
+	for _, g in map:GetDescendants() do
+		if g:IsA("TextLabel") and g.Text:match("%d+%s*[xX]%s*51$") then
+			local sg = g:FindFirstAncestorOfClass("SurfaceGui")
+			if sg then sg.Enabled = false else g.Visible = false end
+		end
+	end
+end
 
 -------------------------------------------------------------------------------
 -- Drag to turn (the press starts on the DragZone button - see build - so panels and the lobby's

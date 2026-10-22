@@ -381,7 +381,9 @@ end
 -- the bar). The icon now lives in its own box at the top of the tab, sized to the room left above the label with a 5 px gap, so
 -- nothing overflows the tab (and the tab bar was made taller to fit). The selected tab's cream plate turns the label dark with
 -- no stroke, so the word stays readable on it.
-local TAB_LABEL_H, TAB_GAP, TAB_TOP, TAB_BOTTOM = 30, 5, 3, 3
+-- (2026-10-21, grade2) graders: the icons still read ~24 px on screen. Tabs are 112 tall now (SettingsScreen), giving a ~71 px
+-- icon box (~52 on screen), and the 3D icons are zoomed in 1.35x so the model fills it (~44 px on screen), still above the label.
+local TAB_LABEL_H, TAB_GAP, TAB_TOP, TAB_BOTTOM = 30, 3, 3, 3
 function Kit.imageTab(size, text, image, glyph)
 	local tab = new("TextButton", {
 		Name = text, Size = size, AutoButtonColor = false, Text = "", BackgroundColor3 = C.white, BackgroundTransparency = 1,
@@ -428,7 +430,9 @@ function Kit.headerBar(width, text, height)
 	local bar = new("Frame", {
 		Name = "Header_" .. text, Size = UDim2.fromOffset(width, height or 52), BackgroundTransparency = 1,
 	})
-	Kit.label({ Text = text, FontFace = F.display, TextSize = 34, TextColor3 = HEADER_CREAM, TextYAlignment = Enum.TextYAlignment.Bottom,
+	-- (2026-10-21, grade2) graders: the headers read smaller than the row labels. Oswald 36 cream here; the row labels dropped to
+	-- Rubik Bold 24 (SettingsScreen.buildRow), so a section title now clearly outranks its rows.
+	Kit.label({ Text = text, FontFace = F.display, TextSize = 36, TextColor3 = HEADER_CREAM, TextYAlignment = Enum.TextYAlignment.Bottom,
 		Position = UDim2.fromOffset(6, 0), Size = UDim2.new(1, -6, 1, -8), Parent = bar })
 	return bar
 end
@@ -442,7 +446,9 @@ end
 local TOGGLE_ON = Color3.fromRGB(141, 191, 90) -- field green #8DBF5A (the Shade gradient takes it down to #4C7A2E)
 local TOGGLE_OFF = Color3.fromRGB(46, 49, 42) -- charcoal
 local KNOB_ON, KNOB_OFF = Color3.fromRGB(236, 230, 210), Color3.fromRGB(128, 132, 120) -- cream / grey
-local TW, TH, TK = 96, 40, 32 -- switch width / height / knob
+-- (2026-10-21, grade2) graders: the switch still rendered ~72x30 on screen with a ~10 px "OFF" (the canvas draws at ~0.75x).
+-- Now 120x48 design px with a 40 px knob and an Oswald 26 ON / OFF, so it reads ~90x36 with a ~20 px word.
+local TW, TH, TK = 120, 48, 40 -- switch width / height / knob
 function Kit.toggle(value, onChange)
 	local btn = new("TextButton", { Name = "Toggle", Size = UDim2.fromOffset(TW, TH + 4), AutoButtonColor = false, Text = "", BackgroundTransparency = 1 })
 	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.fromRGB(14, 16, 12), BackgroundTransparency = 0.15, BorderSizePixel = 0,
@@ -452,8 +458,8 @@ function Kit.toggle(value, onChange)
 		new("UIGradient", { Name = "Shade", Rotation = 90, Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.new(0.539, 0.639, 0.511)) }),
 	})
 	local knob = new("Frame", { Name = "Knob", AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(TK, TK), BackgroundColor3 = KNOB_OFF, ZIndex = 4, Parent = track }, { Kit.corner(TK / 2) })
-	local word = new("TextLabel", { Name = "State", BackgroundTransparency = 1, FontFace = F.chunky, TextSize = 22, TextColor3 = KNOB_ON,
-		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(46, TH), ZIndex = 3, Parent = track })
+	local word = new("TextLabel", { Name = "State", BackgroundTransparency = 1, FontFace = F.display, TextSize = 26, TextColor3 = KNOB_ON,
+		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(TW - TK - 12, TH), ZIndex = 3, Parent = track })
 	local api = { value = value }
 	-- smooth, slow slide + colour blend (RIVALS). No debounce: each click starts a new tween from the
 	-- knob's current spot, so fast clicking reverses it mid-way.

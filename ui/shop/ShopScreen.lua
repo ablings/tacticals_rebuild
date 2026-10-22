@@ -23,6 +23,12 @@ local SCISSORS_IMG = (Kit.ICONS and Kit.ICONS.scissorsFlat) or "rbxassetid://117
 local ROBUX_IMG = "rbxasset://textures/ui/common/robux.png"
 -- (2026-10-21, grade1) the one dark tile plate every shop card / tile uses (was the navy C.panelRaised -> C.panel)
 local TILE_GRAD = { Theme.hex("#262A21"), C.plate or Theme.hex("#181A15") }
+-- (2026-10-21, grade2) can't afford = the price number in this muted tan (RIVALS never dims a tag); a press flashes it red
+local SHORT_TAN = Theme.hex("#B8A77A")
+local function flashShort(label)
+	label.TextColor3 = C.red
+	Kit.tween(label, 0.4, { TextColor3 = SHORT_TAN })
+end
 
 local Screen = {}
 local ctx = {}
@@ -217,15 +223,8 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	Kit.label({ LayoutOrder = 2, Text = "Owned", FontFace = F.display, TextSize = ts, TextColor3 = Theme.hex("#1C2026"),
 		AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, h), ZIndex = 7, Parent = ownRow })
 	-- (lobby revamp, graders: a 4,000 tag looked the same with 500 in the wallet) can't afford; it still opens the Kit / the
-	-- detail card so you can see what it is. (2026-10-21, grade1) red text on a black overlay read as an error: now the whole tag
-	-- sits at ~50 % opacity (plate, lip, number, icon) and shakes on press (below)
-	local function setAlpha(a) -- a = extra transparency, 0 = solid
-		tag.BackgroundTransparency = a
-		lip.BackgroundTransparency = 0.72 + 0.28 * a
-		txt.TextTransparency = a
-		num.TextTransparency = 0.75 + 0.25 * a
-		ico.ImageTransparency = a
-	end
+	-- detail card so you can see what it is. (2026-10-21, grade2) the grade1 50 % tag made 12 of 15 tags look disabled with
+	-- 500 scissors: every tag stays solid; can't afford = the number in muted tan (SHORT_TAN), + shake and a 0.4 s red flash on press
 	local st = { own = nil, short = false, amount = nil }
 	local function update()
 		local own = kind == "owned" or (live.owned and live.owned()) and true or false
@@ -244,8 +243,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 		end
 		local short = (kind == "scissors" or kind == "kit") and not own and (data().Credits or 0) < amt
 		st.short = short
-		setAlpha(short and 0.5 or 0)
-		txt.TextColor3 = steel and C.cream or C.white
+		txt.TextColor3 = short and SHORT_TAN or (steel and C.cream or C.white) -- (2026-10-21, grade2) tan number, tag stays solid
 	end
 	update()
 	if curPage then table.insert(curPage.updaters, update) end
@@ -257,6 +255,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 			-- (2026-10-21, RIVALS pass) can't afford: the tag shakes, then it still shows you the item (Kit room / detail card)
 			if st.short then
 				shakeOnce(tag)
+				flashShort(txt) -- (2026-10-21, grade2) the number flashes red for 0.4 s
 				task.delay(0.25, function() onBuy(tag) end)
 				return
 			end
@@ -542,13 +541,15 @@ function RENDER.Featured(pg, hover)
 		-- floating crates over their price pills, t0072.0s); "+N" bigger, price 116x46 -> 140x54
 		-- (2026-10-21, grade1) the pack sits on the shared dark tile (was floating), price under it
 		local _, packSheen = shopTile(hold, 6, 2, 146, 94, nil)
-		local pile = new("Frame", { Name = "Pile", BackgroundTransparency = 1, Size = UDim2.fromOffset(158, 104), ZIndex = 3, Parent = hold })
+		-- (2026-10-21, grade2) the renders piled onto "+500": the pile now ends at y 56 and the number's glyphs start at ~y 65,
+		-- an 8 px gap (pile 104 -> 54 tall, "+N" moved down to the tile's bottom)
+		local pile = new("Frame", { Name = "Pile", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 4), Size = UDim2.fromOffset(158, 52), ZIndex = 3, Parent = hold })
 		for k = 1, n do
-			local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4 + (k - 1) * 10, (k - 1) * 4), Size = UDim2.fromOffset(150 - (n - 1) * 10, 100), ZIndex = 3, Parent = pile })
+			local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4 + (k - 1) * 10, (k - 1) * 3), Size = UDim2.fromOffset(150 - (n - 1) * 10, 52 - (n - 1) * 3), ZIndex = 3, Parent = pile })
 			ViewIcons.Viewport(art, ViewIcons.Scissors(), { view = CFrame.Angles(0, 0, math.rad((k - (n + 1) / 2) * 22)) * ViewIcons.Views.Scissors[1], zoom = 1, still = true })
 		end
 		reactArt(hold, pile, nil, true)
-		local plus = outlined(Kit.label({ Text = "+" .. fmtN(pr.Credits), FontFace = F.display, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 62), Size = UDim2.fromOffset(158, 34), ZIndex = 4, Parent = hold }), 2.5)
+		local plus = outlined(Kit.label({ Text = "+" .. fmtN(pr.Credits), FontFace = F.display, TextSize = 28, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 64), Size = UDim2.fromOffset(158, 30), ZIndex = 4, Parent = hold }), 2.5)
 		packHoverSwap(hold, plus, pr.Credits, packSheen, 28)
 		priceTag(hold, "robux", pr.Robux, 79, 100, 146, 50, function() openDetail(packSpec(pr)) end) -- (grade1) 146x50 like every tile tag
 	end
@@ -560,8 +561,9 @@ function RENDER.Featured(pg, hover)
 		local hold = float(4 + (i - 1) * 166, 176, 158, 152, function() ctx.openKit(id) end)
 		-- (2026-10-21, grade1) same tile as the right-hand grid: dark plate + rarity bar, price 146x50 under it (was a floating render)
 		local rar = Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard
-		local tile, sheen = shopTile(hold, 22, 0, 114, 102, rar.Color)
-		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = tile })
+		-- (2026-10-21, grade2) tile = the tag's width (146, x 6..152 like the tag centred at 79), was 114 on a 146 tag
+		local tile, sheen = shopTile(hold, 6, 0, 146, 96, rar.Color)
+		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 2), Size = UDim2.fromOffset(130, 80), ZIndex = 3, Parent = tile })
 		reactArt(hold, art, itemArt(art, id, nil), true) -- (2026-10-21, round 3: match RIVALS) lift + tilt + squash
 		hold.MouseEnter:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.85 }) end)
 		hold.MouseLeave:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }) end)
@@ -589,14 +591,26 @@ function RENDER.Featured(pg, hover)
 		-- the scissors bonus with its 3D scissors, and the biggest price button on the page (170x58 -> 250x84).
 		local scene = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(w * 0.28, -h * 0.08), Size = UDim2.fromOffset(w * 0.66, h * 1.16), ZIndex = 2, Parent = card })
 		reactArt(card, scene, sceneArt(scene, items, 1.2), false)
-		local sc = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(18, 124), Size = UDim2.fromOffset(100, 74), ZIndex = 4, Parent = card })
+		-- (2026-10-21, grade2) the bottom-left quadrant sat empty and LIMITED was a tiny sticker: LIMITED is a readable chip (Oswald 30
+		-- design px, ~22 px at 1436 wide), the bundle contents line is bigger (scissors 100x74 -> 132x96, "+1,000" 40 -> 58) and the
+		-- items it holds are named under it (Rubik, cream), so the left half reads as the bundle's contents
+		local sc = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 138), Size = UDim2.fromOffset(132, 96), ZIndex = 4, Parent = card })
 		ViewIcons.Icon(sc, "Scissors", { hoverTarget = card, zIndex = 4 })
 		outlined(Kit.label({ Text = featured.Name, FontFace = F.display, TextSize = 56, Position = UDim2.fromOffset(28, 12), Size = UDim2.fromOffset(560, 66), ZIndex = 5, Parent = card }), 3)
 		if featured.Tag then
-			wobble(new("TextLabel", { BackgroundColor3 = C.red, Text = featured.Tag, FontFace = F.display, TextSize = 24, TextColor3 = C.white, ZIndex = 5, Rotation = -3,
-				Position = UDim2.fromOffset(30, 80), Size = UDim2.fromOffset(0, 36), AutomaticSize = Enum.AutomaticSize.X, Parent = card }, { Kit.corner(4), Kit.pad(12, 0, 12, 0) }), 3)
+			wobble(new("TextLabel", { BackgroundColor3 = C.red, Text = string.upper(featured.Tag), FontFace = F.display, TextSize = 30, TextColor3 = C.white, ZIndex = 5, Rotation = -3,
+				Position = UDim2.fromOffset(30, 82), Size = UDim2.fromOffset(0, 44), AutomaticSize = Enum.AutomaticSize.X, Parent = card }, { Kit.corner(5), Kit.pad(14, 0, 14, 0) }), 2)
 		end
-		outlined(Kit.label({ Text = "+" .. fmtN(featured.Credits or 0), FontFace = F.display, TextSize = 40, Position = UDim2.fromOffset(116, 138), Size = UDim2.fromOffset(300, 46), ZIndex = 5, Parent = card }), 2.5)
+		outlined(Kit.label({ Text = "+" .. fmtN(featured.Credits or 0), FontFace = F.display, TextSize = 58, Position = UDim2.fromOffset(150, 152), Size = UDim2.fromOffset(340, 66), ZIndex = 5, Parent = card }), 2.5)
+		local names = {}
+		for _, id in items do
+			local it = Config.Items[id]
+			if it then table.insert(names, it.Name) end
+		end
+		if #names > 0 then
+			Kit.label({ Name = "Contents", Text = "+ " .. table.concat(names, ", "), FontFace = F.medium, TextSize = 26, TextColor3 = C.cream, TextWrapped = true,
+				TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(30, 238), Size = UDim2.fromOffset(440, 66), ZIndex = 5, Parent = card })
+		end
 		-- (2026-10-21, RIVALS pass) live owned state; the hero's Robux buy is unchanged (straight to Roblox's prompt)
 		local function ownedAll()
 			for _, id in items do if not ctx.owns(id) then return false end end
@@ -614,6 +628,11 @@ function RENDER.Featured(pg, hover)
 	for _, gp in Config.GamePasses do if not (d.Passes and d.Passes[gp.Key]) then table.insert(offers, { kind = "pass", p = gp }) end end
 	for _, bd in Config.Bundles or {} do table.insert(offers, { kind = "bundle", b = bd }) end
 	local so = new("Frame", { Name = "Offer", Position = UDim2.fromOffset(4, 352), Size = UDim2.fromOffset(746, 324), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.25, ClipsDescendants = true, Parent = pg }, { Kit.corner(10) })
+	-- (2026-10-21, grade2) the 2X SCISSORS card was ~60 % empty black: the same field-green glow from the right edge as the
+	-- Founder's card sits behind every slide (one panel language)
+	new("Frame", { Name = "OfferGlow", BackgroundColor3 = C.field or Theme.hex("#8DBF5A"), BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), Parent = so },
+		{ Kit.corner(10), new("UIGradient", { Rotation = 0,
+			Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.4, 1), NumberSequenceKeypoint.new(1, 0.35) }) }) })
 	local slides = {}
 	for i, of in offers do
 		local sl = new("Frame", { Name = "Slide" .. i, BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromScale(1, 1), Visible = i == 1, Parent = so })
@@ -622,8 +641,10 @@ function RENDER.Featured(pg, hover)
 		-- (was centred text, a 150 px medal and three small tiles). The medal / scene lift and turn while the panel is hovered.
 		if of.kind == "pass" then
 			local gp = of.p
-			local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(575, 175), Size = UDim2.fromOffset(330, 330), Parent = sl })
-			reactArt(so, art, ViewIcons.Icon(art, "Medal", { zoom = 1.25 }), false)
+			-- (2026-10-21, grade2) the medal was 1.25x zoom in a 330 box (huge, cropped by the panel): now a 200 box at zoom 1 =
+			-- the medal ~178 px tall, ~55 % of the 324 card, right-aligned 44 px in from the edge, over the green glow
+			local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.fromOffset(746 - 44, 162), Size = UDim2.fromOffset(200, 200), Parent = sl })
+			reactArt(so, art, ViewIcons.Icon(art, "Medal", { zoom = 1 }), false)
 			outlined(Kit.label({ Text = gp.Name, FontFace = F.display, TextSize = 60, Position = UDim2.fromOffset(28, 14), Size = UDim2.fromOffset(420, 68), ZIndex = 3, Parent = sl }), 3)
 			Kit.label({ Text = gp.Desc or "", FontFace = F.medium, TextSize = 24, TextColor3 = C.cream, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
 				Position = UDim2.fromOffset(30, 86), Size = UDim2.fromOffset(400, 110), ZIndex = 3, Parent = sl })
@@ -649,14 +670,10 @@ function RENDER.Featured(pg, hover)
 		table.insert(slides, sl)
 	end
 	if #slides > 1 then
-		local DOT, GAP = 14, 26
-		local dotsW = #slides * GAP + 22
-		local dots = new("Frame", { Name = "Dots", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(377, 690), Size = UDim2.fromOffset(dotsW, 28),
-			BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, Parent = pg }, { Kit.corner(14) })
-		local dl, cur, paused = {}, 1, false
-		-- (2026-10-21, RIVALS pass) the slides slide (out one way, in from the other, 0.25 s) and the active dot is a wider
-		-- pill. Runs after Kit.toScale, so everything moves in Scale (a slide is 1 x 1 of the clipped offer panel).
-		local dotBase
+		-- (2026-10-21, grade2) the page-dot bar is gone: only this offer panel carousels, and a dot bar under one card of a
+		-- two-card row read as misplaced. The slides still slide (out one way, in from the other, 0.25 s) every 6 s, paused
+		-- while the pointer is over the panel. Runs after Kit.toScale, so everything moves in Scale.
+		local cur, paused = 1, false
 		local function show(i, dir)
 			if i == cur then return end
 			dir = dir or (i > cur and 1 or -1)
@@ -667,23 +684,7 @@ function RENDER.Featured(pg, hover)
 			Kit.tween(nw, 0.25, { Position = UDim2.fromScale(0, 0) }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 			Kit.tween(old, 0.25, { Position = UDim2.fromScale(-dir, 0) }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 			task.delay(0.26, function() if slides[cur] ~= old then old.Visible = false end end)
-			dotBase = dotBase or dl[1].Size
-			for k, dt in dl do
-				Kit.tween(dt, 0.15, { BackgroundTransparency = k == i and 0 or 0.65,
-					Size = k == i and UDim2.fromScale(dotBase.X.Scale * 1.9, dotBase.Y.Scale) or dotBase })
-			end
 		end
-		for k = 1, #slides do
-			local dt = new("TextButton", { Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(11 + (k - 0.5) * GAP, 14), Size = UDim2.fromOffset(DOT, DOT),
-				BackgroundColor3 = C.white, BackgroundTransparency = k == 1 and 0 or 0.65, Parent = dots }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-			Kit.bindButton(dt, { hover = 1.35 })
-			dt.Activated:Connect(function() show(k) end)
-			table.insert(dl, dt)
-		end
-		if curPage then table.insert(curPage.post, function() -- after toScale: the first dot starts as the wide pill
-			dotBase = dl[1].Size
-			dl[1].Size = UDim2.fromScale(dotBase.X.Scale * 1.9, dotBase.Y.Scale)
-		end) end
 		so.MouseEnter:Connect(function() paused = true end)
 		so.MouseLeave:Connect(function() paused = false end)
 		task.spawn(function()
@@ -706,12 +707,13 @@ function RENDER.Featured(pg, hover)
 		local hold = float(780 + c * 166, 352 + r * 168, 150, 160, function() ctx.openKit(id) end)
 		-- (lobby revamp Phase B, Edward OK: no purple tiles) a dark plate with a bottom rarity bar
 		-- (2026-10-21, grade1) built by shopTile, the one tile the left row and the packs use too (was navy panelRaised)
-		local tile, sheen = shopTile(hold, 18, 0, 114, 102, rar.Color)
+		-- (2026-10-21, grade2) tile = the tag's width: 146 wide at x 2..148, the tag centred at 75 spans the same
+		local tile, sheen = shopTile(hold, 2, 0, 146, 102, rar.Color)
 		hold.MouseEnter:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.85 }) end)
 		hold.MouseLeave:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }) end)
 		-- (2026-10-21, round 3: match RIVALS) the item sits in its own Art frame so it lifts / tilts / squashes over the plate;
 		-- price 136x42 -> 146x50
-		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = tile })
+		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 2), Size = UDim2.fromOffset(130, 86), ZIndex = 3, Parent = tile }) -- (grade2) render inside the wider tile, clear of the bar
 		reactArt(hold, art, itemArt(art, id, nil), true)
 		priceTag(hold, "kit", item.Price, 75, 106, 146, 50, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end }) -- (2026-10-21, RIVALS pass) live
 	end
@@ -921,10 +923,9 @@ openDetail = function(spec)
 		local own = spec.owned and spec.owned() or false
 		row.Visible, ownedRow.Visible = not own, own
 		price.Text = fmtN(spec.amount() or 0)
-		price.TextColor3 = C.white -- (2026-10-21, grade1) can't afford dims the price instead of turning it red
-		price.TextTransparency = short() and 0.45 or 0
-		local ps = price:FindFirstChildOfClass("UIStroke")
-		if ps then ps.Transparency = short() and 0.6 or 0.2 end
+		-- (2026-10-21, grade2) can't afford = muted tan number at full opacity (was dimmed to 45 %), like the tags
+		price.TextColor3 = short() and SHORT_TAN or C.white
+		price.TextTransparency = 0
 		for _, f in updaters do f() end
 	end
 	update()
@@ -941,6 +942,7 @@ openDetail = function(spec)
 		if buying or (spec.owned and spec.owned()) then return end
 		if short() then
 			shakeOnce(buy)
+			flashShort(price) -- (2026-10-21, grade2)
 			if ctx.toast then ctx.toast("Not enough scissors", "bad") end
 			return
 		end

@@ -9,6 +9,7 @@
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
+local TweenService = game:GetService("TweenService") -- (2026-10-21, grade2) the looping "next" cue
 
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -82,10 +83,17 @@ local CARD_BG = C.plate or Color3.fromRGB(24, 26, 21) -- charcoal-green plate
 local CARD_DONE = Color3.fromRGB(34, 52, 24) -- (2026-10-21, auto-pay) a finished card is lit dark field green (was the claimable card)
 local FIELD, FIELD_DARK = C.field or Color3.fromRGB(141, 191, 90), C.fieldDark or Color3.fromRGB(76, 122, 46)
 
-local PANEL_T = 0.5
+-- (2026-10-21, grade2) the panel fill drops 0.5 -> 0.15 opacity: the cards are the dark layer, not the panel AND the cards
+local PANEL_T = 0.85
 local COL_X, COL_W = 532, 828
 local COL_Y, COL_H = 130, 830 -- (2026-10-21, grade1) the MISSIONS title is gone: the column moves up into its place
-local CARD_X = { 45, 292, 540 }
+-- (2026-10-21, grade2) the cards touched (~2 px gaps): 24 px side padding, 10 px gaps -> three 253 px cards (24 / 287 / 550)
+local SIDE, GAP = 24, 10
+local CARD_W = math.floor((COL_W - SIDE * 2 - GAP * 2) / 3)
+local CARD_X = { SIDE, SIDE + CARD_W + GAP, SIDE + (CARD_W + GAP) * 2 }
+-- (2026-10-21, grade2) Weekly Contracts = a RIVALS Contracts list (t0062), not a second row of cards: one row per contract
+local ROW_H, ROW_GAP = 70, 8
+local CREAM = C.cream or Color3.fromRGB(236, 230, 210)
 -- (2026-10-21, auto-pay) what each task looked like at the last render ([scope:period:id] = { state, prog }), so a task that
 -- finishes or gets paid while the screen is open pops its check / PAID tag and grows its bar, with no click
 local seen = {}
@@ -150,12 +158,12 @@ end
 -- (2026-10-21, round 3: match RIVALS) RIVALS' reward is a posed 3D key render with "×N" tucked under its corner (t0062-t0066).
 -- Ours is the live 3D scissors (no longer `still`: it sways and turns toward you on card hover) at about 1.4x the old size,
 -- with a big Oswald "×N" overlapping its lower right like RIVALS.
-local function reward(parent, amount, size, pos, hoverTarget)
+local function reward(parent, amount, size, pos, hoverTarget, ts) -- (2026-10-21, grade2) ts: the "×N" size (rows use a smaller one)
 	local holder = new("Frame", { Name = "Reward", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = UDim2.fromOffset(size, size), Parent = parent })
 	ViewIcons.Icon(holder, "Scissors", { hoverTarget = hoverTarget, zoom = 1.15 })
 	-- (2026-10-21, grade1) "×N" bigger (32 -> 42 design px, ~20 px on a phone-ish 1436 capture) and BESIDE the scissors,
 	-- vertically centred on them (was tucked small under the corner)
-	local n = Kit.label({ Text = "×" .. amount, FontFace = F.display, TextSize = 42, TextXAlignment = Enum.TextXAlignment.Left,
+	local n = Kit.label({ Text = "×" .. amount, FontFace = F.display, TextSize = ts or 42, TextXAlignment = Enum.TextXAlignment.Left,
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(size * 0.86, size * 0.55), Size = UDim2.fromOffset(110, 48), ZIndex = 3, Parent = holder })
 	Kit.textStroke(2).Parent = n
 	return holder
@@ -173,7 +181,7 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	local was = seen[key]
 	seen[key] = { state = state, prog = prog }
 	local card = new("Frame", {
-		Name = scope .. i, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(243, CARD_H),
+		Name = scope .. i, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(CARD_W, CARD_H), -- (grade2) 243 -> CARD_W
 		BackgroundColor3 = done and CARD_DONE or CARD_BG, BackgroundTransparency = 0.25, BorderSizePixel = 0, Parent = parent, -- (2026-10-21, round 3) off the navy
 	}, { Kit.corner(2) })
 	local br = Tac.brackets(card, done and Tac.C.bone or Tac.C.line, 18, 3)
@@ -192,14 +200,16 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	end)
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' order top to bottom (t0062): title, task glyph, a wide bar, the "x / y" count
 	-- UNDER the bar (it no longer runs through it), then the reward. Done titles and counts turn field green.
+	-- (2026-10-21, grade2) a fixed 2-line box, bottom-aligned: one- and two-line titles end on the same line, so the glyphs and
+	-- bars line up across the cards (was centred in a 44 px box: a 2-line title sat higher than its neighbours)
 	local title = Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 21, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(10, 12), Size = UDim2.new(1, -20, 0, 44), Parent = card })
+		TextYAlignment = Enum.TextYAlignment.Bottom, Position = UDim2.fromOffset(10, 6), Size = UDim2.new(1, -20, 0, 52), Parent = card })
 	-- (2026-10-21, grade1) RIVALS grows the task title on hover: ~1.1x with the lift (own UIScale; the pops own the others)
 	local titleScale = new("UIScale", { Name = "HoverScale", Parent = title })
 	card.MouseEnter:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1.1 }, Enum.EasingStyle.Back) end)
 	card.MouseLeave:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1 }) end)
 	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromOffset(121, 92), Size = UDim2.fromOffset(200, 64), Parent = card }) -- (grade1) 50 -> 64 tall: ~36 px glyph
+		Position = UDim2.fromOffset(CARD_W / 2, 94), Size = UDim2.fromOffset(200, 64), Parent = card }) -- (grade1) 50 -> 64 tall: ~36 px glyph; (grade2) centred on CARD_W
 	local badge
 	if done then
 		-- (2026-10-21, auto-pay) RIVALS' done tile: a big green check badge takes the task glyph's place
@@ -213,14 +223,14 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	else
 		statIcon(art, def.Stat, card)
 	end
-	bar(card, UDim2.fromOffset(16, 134), UDim2.fromOffset(211, 10), prog / def.Goal, done) -- (grade1) 16 -> 10 tall, under the bigger glyph
+	bar(card, UDim2.fromOffset(16, 134), UDim2.fromOffset(CARD_W - 32, 10), prog / def.Goal, done) -- (grade1) 16 -> 10 tall, under the bigger glyph
 	local count = Kit.label({ Text = prog .. " / " .. def.Goal, FontFace = F.display, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center,
 		TextColor3 = done and FIELD or C.cream or Color3.new(1, 1, 1), Position = UDim2.fromOffset(0, 150), Size = UDim2.new(1, 0, 0, 28), ZIndex = 3, Parent = card })
 	-- (2026-10-21, round 3: match RIVALS "counters that animate") the count ticks up with its bar; (auto-pay) done counts too
 	local b = bars[#bars]
 	b.count, b.prog, b.goal = count, prog, def.Goal
 	if was then b.fromFrac, b.fromProg = was.prog / def.Goal, was.prog end
-	local rewardHolder = reward(card, def.Reward, 62, UDim2.fromOffset(86, 214), card) -- (grade1) left of centre: the "×N" sits beside it
+	local rewardHolder = reward(card, def.Reward, 62, UDim2.fromOffset(CARD_W / 2 - 36, 214), card) -- (grade1) left of centre: the "×N" sits beside it
 	local paidTag
 	if paid then
 		-- (2026-10-21, auto-pay) the reward is already in your scissors: it dims and a field-green PAID sits under it
@@ -230,7 +240,7 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 			elseif d:IsA("UIStroke") then d.Transparency = 0.6 end
 		end
 		paidTag = Kit.label({ Text = "PAID", FontFace = F.display, TextSize = 24, TextColor3 = FIELD, TextXAlignment = Enum.TextXAlignment.Center,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -8), Size = UDim2.fromOffset(218, 30), ZIndex = 3, Parent = card })
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -8), Size = UDim2.fromOffset(CARD_W - 24, 30), ZIndex = 3, Parent = card })
 	end
 	-- (2026-10-21, auto-pay) no click: a task that finished while the screen is open pops its check, one the server just paid
 	-- pops its PAID tag and the reward (the "Task Completed" banner itself is Notify's)
@@ -250,14 +260,91 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 				or `{def.Goal - prog} to go. Progress comes from matches.`
 		end)
 	end
-	return card
+	return card, done
+end
+
+-- (2026-10-21, grade2) one Weekly contract as a RIVALS Contracts row (t0062): glyph | name over a wide bar | "x / y" right |
+-- reward right. Same auto-pay states as the cards: done = field-green name + full green bar + a check on the bar's end,
+-- paid = the reward dims with a small PAID under it. Rows are ROW_H tall, the full panel width minus SIDE each side.
+local function taskRow(parent, scope, i, entry, def, y, period)
+	local data = ctx.getData() or {}
+	local paid = entry.Claimed == true
+	local prog = paid and def.Goal or math.clamp(((data.Stats and data.Stats[def.Stat]) or 0) - (entry.Base or 0), 0, def.Goal)
+	local done = paid or prog >= def.Goal
+	local state = paid and "paid" or done and "done" or "todo"
+	local key = scope .. ":" .. tostring(period) .. ":" .. def.Id
+	local was = seen[key]
+	seen[key] = { state = state, prog = prog }
+	local W = COL_W - SIDE * 2
+	local BAR_X, BAR_R = 72, W - 150 -- bar from the glyph to the count's right edge; the reward column is the last ~130 px
+	local row = new("Frame", { Name = scope .. i, Position = UDim2.fromOffset(SIDE, y), Size = UDim2.fromOffset(W, ROW_H),
+		BackgroundColor3 = done and CARD_DONE or CARD_BG, BackgroundTransparency = 0.25, BorderSizePixel = 0, Parent = parent }, { Kit.corner(4) })
+	Tac.hoverBrackets(row, Tac.brackets(row, Tac.C.line, 18, 3))
+	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(38, ROW_H / 2),
+		Size = UDim2.fromOffset(46, 46), Parent = row })
+	statIcon(art, def.Stat, row)
+	Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 24, TextColor3 = done and FIELD or C.text, TextTruncate = Enum.TextTruncate.AtEnd,
+		Position = UDim2.fromOffset(BAR_X, 8), Size = UDim2.fromOffset(BAR_R - BAR_X - 130, 32), Parent = row })
+	local count = Kit.label({ Text = prog .. " / " .. def.Goal, FontFace = F.display, TextSize = 28, TextXAlignment = Enum.TextXAlignment.Right,
+		TextColor3 = done and FIELD or CREAM, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(BAR_R, 6), Size = UDim2.fromOffset(130, 34), ZIndex = 3, Parent = row })
+	bar(row, UDim2.fromOffset(BAR_X, 46), UDim2.fromOffset(BAR_R - BAR_X, 10), prog / def.Goal, done)
+	local b = bars[#bars]
+	b.count, b.prog, b.goal = count, prog, def.Goal
+	if was then b.fromFrac, b.fromProg = was.prog / def.Goal, was.prog end
+	local badge
+	if done then
+		-- the check sits on the bar's right end (the bar itself is ClipsDescendants, so the badge is the row's child)
+		badge = new("Frame", { Name = "DoneCheck", BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromOffset(BAR_R, 51), Size = UDim2.fromOffset(28, 28), ZIndex = 4, Parent = row },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), Kit.vgrad({ FIELD, FIELD_DARK }) })
+		new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK, ImageColor3 = CREAM, ScaleType = Enum.ScaleType.Fit,
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.64, 0.64), ZIndex = 5, Parent = badge })
+	end
+	local rewardHolder = reward(row, def.Reward, 44, UDim2.fromOffset(W - 112, paid and 28 or ROW_H / 2), row, 32)
+	local paidTag
+	if paid then
+		for _, d in rewardHolder:GetDescendants() do
+			if d:IsA("ViewportFrame") then d.ImageTransparency = 0.55
+			elseif d:IsA("TextLabel") then d.TextTransparency = 0.45
+			elseif d:IsA("UIStroke") then d.Transparency = 0.6 end
+		end
+		paidTag = Kit.label({ Text = "PAID", FontFace = F.display, TextSize = 18, TextColor3 = FIELD, TextXAlignment = Enum.TextXAlignment.Center,
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(W - 82, ROW_H - 2), Size = UDim2.fromOffset(110, 20), ZIndex = 3, Parent = row })
+	end
+	if was and was.state ~= state then
+		if was.state == "todo" and badge then table.insert(pops, function() Kit.pop(badge, 1.35) end) end
+		if state == "paid" and paidTag then table.insert(pops, function() Kit.popIn(paidTag, 0.1); Kit.pop(rewardHolder, 1.2) end) end
+		holdUntil = os.clock() + 0.5
+	end
+	if ctx.tooltip then
+		ctx.tooltip(row, def.Text, function()
+			return done and (paid and "Reward collected." or `Done! Your {def.Reward} scissors are on the way.`)
+				or `{def.Goal - prog} to go. Progress comes from matches.`
+		end)
+	end
+	return row, done
+end
+
+-- (2026-10-21, grade2) the "next" cue: a cream inner outline on the first unfinished daily card that pulses (alpha 0 -> 1 over
+-- 1.0 s, Sine, looping), only while nothing is done yet. An inset frame carries the stroke so it reads INSIDE the card edge;
+-- the tween dies with the card on the next render.
+local function nextCue(card)
+	local inset = new("Frame", { Name = "NextCue", BackgroundTransparency = 1, Position = UDim2.fromOffset(3, 3), Size = UDim2.fromOffset(CARD_W - 6, CARD_H - 6),
+		ZIndex = 6, Parent = card }, { Kit.corner(2) })
+	local stroke = new("UIStroke", { Color = CREAM, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = inset })
+	stroke:SetAttribute("NoStyle", true)
+	pcall(function() inset.Interactable = false end)
+	local tw = TweenService:Create(stroke, TweenInfo.new(1.0, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), { Transparency = 0 })
+	tw:Play()
+	inset.Destroying:Connect(function() tw:Cancel() end)
 end
 
 local function scopePanel(scope, order, title, iconModel)
 	local data = ctx.getData() or {}
 	local q = data.Quests and data.Quests[scope]
 	local list = (q and q.List) or {}
-	local p = panel(scope, order, 82 + CARD_H + 24)
+	local rows = scope == "Weekly" -- (2026-10-21, grade2) Weekly = a list of rows, Daily = the three cards
+	local p = panel(scope, order, rows and (82 + math.max(1, #list) * (ROW_H + ROW_GAP) - ROW_GAP + 24) or (82 + CARD_H + 24))
 	-- (2026-10-21, grade1) header = icon + title on the left, the reset timer as a small tan line UNDER the title (was a grey
 	-- line squeezed against the PLAY button on the right)
 	local head = new("Frame", { Name = "HeadIcon", BackgroundTransparency = 1, Position = UDim2.fromOffset(26, 10), Size = UDim2.fromOffset(60, 60), Parent = p })
@@ -285,6 +372,18 @@ local function scopePanel(scope, order, title, iconModel)
 		play.Name = "ToPlay"
 		play.Position = UDim2.fromOffset(COL_W - EDGE - X_W - 20 - 150, EDGE)
 		play.Parent = p
+		-- (2026-10-21, grade2) same words as the rest of the buttons: Oswald with the price tags' soft drop shadow, no heavy
+		-- dark outline (Kit.button's chunky label carries a 2 px stroke)
+		local lbl = play:FindFirstChild("Label")
+		if lbl then
+			local st = lbl:FindFirstChildOfClass("UIStroke")
+			if st then st:Destroy() end
+			lbl.FontFace, lbl.TextColor3, lbl.ZIndex = F.display, Color3.new(1, 1, 1), 4
+			local sh = lbl:Clone()
+			sh.Name, sh.TextColor3, sh.TextTransparency, sh.ZIndex = "Shadow", Color3.new(0, 0, 0), 0.75, 3
+			sh.Position = UDim2.fromOffset(0, 2)
+			sh.Parent = play
+		end
 		play.Activated:Connect(function()
 			Screen.Close()
 			ctx.openPlay()
@@ -293,12 +392,21 @@ local function scopePanel(scope, order, title, iconModel)
 	timer.Text = "new " .. string.lower(title) .. " in " .. clock(resetIn(scope))
 	if #list == 0 then
 		Kit.label({ Text = "Loading missions...", FontFace = F.medium, TextSize = 26, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
-			Position = UDim2.fromOffset(0, 160), Size = UDim2.new(1, 0, 0, 40), Parent = p })
+			Position = UDim2.fromOffset(0, rows and 96 or 160), Size = UDim2.new(1, 0, 0, 40), Parent = p }) -- (grade2) inside the short rows panel
 	end
+	local firstTodo, anyDone = nil, false
 	for i, entry in ipairs(list) do
 		local def = questDef(scope, entry.Id)
-		if def and CARD_X[i] then taskCard(p, scope, i, entry, def, CARD_X[i], 82, q and q.Key) end
+		if def and rows then
+			taskRow(p, scope, i, entry, def, 82 + (i - 1) * (ROW_H + ROW_GAP), q and q.Key)
+		elseif def and CARD_X[i] then
+			local card, done = taskCard(p, scope, i, entry, def, CARD_X[i], 82, q and q.Key)
+			anyDone = anyDone or done
+			if not done and not firstTodo then firstTodo = card end
+		end
 	end
+	-- (2026-10-21, grade2) nothing done yet: the first unfinished daily card pulses (an attention cue, no resting border)
+	if scope == "Daily" and firstTodo and not anyDone then nextCue(firstTodo) end
 	return p
 end
 

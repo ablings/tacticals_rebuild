@@ -233,14 +233,19 @@ function LobbyHud.Start()
 	---------------------------------------------------------------------------------------------- scissors pill
 	-- RIVALS' key pill, with our scissors: a small dark glass pill, the 3D scissors overlapping its left end, a rounded plus
 	local PFONT = OSWALD -- (2026-10-21, AI-tells cleanup) the count in Oswald, was Builder Sans
-	local pill = new("Frame", { Name = "Scissors", Position = UDim2.fromOffset(880, 40), Size = UDim2.fromOffset(168, 42), BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.45, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 9) }) })
-	local iconHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-46, -14), Size = UDim2.fromOffset(70, 70), ZIndex = 3, Parent = pill })
-	local count = Kit.label({ Text = "...", FontFace = PFONT, TextSize = 31, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(130, 42), ZIndex = 3, Parent = pill })
-	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = count })
-	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(174, -1), Size = UDim2.fromOffset(44, 44), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 3, Parent = pill }, -- (audit) 34 -> 44: a tappable size
-		{ new("UICorner", { CornerRadius = UDim.new(0, 7) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#A9D27A"), hex("#4C7A2E")) }) })
+	-- (2026-10-21, grade2) graders read the old dark box + a separate green + as a form field: now ONE dark plate (#262A21 ->
+	-- #14170F) with a darker bottom lip holds the 3D scissors, the count and the +, centred on the screen (design x 850-1070)
+	local pill = new("Frame", { Name = "Scissors", Position = UDim2.fromOffset(850, 34), Size = UDim2.fromOffset(220, 54), BackgroundColor3 = Color3.new(1, 1, 1),
+		Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#262A21"), hex("#14170F")),
+			Transparency = NumberSequence.new(0.12) }) })
+	new("Frame", { Name = "Lip", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 6), BackgroundColor3 = Color3.new(0, 0, 0),
+		BackgroundTransparency = 0.45, BorderSizePixel = 0, ZIndex = 2, Parent = pill }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	local iconHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, -4), Size = UDim2.fromOffset(58, 58), ZIndex = 3, Parent = pill })
+	local count = Kit.label({ Text = "...", FontFace = PFONT, TextSize = 31, TextColor3 = Theme.color.cream, TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(56, 0), Size = UDim2.fromOffset(110, 48), ZIndex = 3, Parent = pill })
+	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = count }) -- text outline, not a border
+	local plus = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(170, 3), Size = UDim2.fromOffset(44, 42), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 3, Parent = pill }, -- (audit) 44: a tappable size
+		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#8DBF5A"), hex("#4C7A2E")) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(18, 6), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 18), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 4, Parent = plus }, { new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	Kit.bindButton(plus, { hover = 1.12 })
@@ -254,8 +259,14 @@ function LobbyHud.Start()
 	-- right (legibility over bright floors) and the text carries its own outline. 460 wide (was 372) so names show in full.
 	local MW = 460
 	local missions = new("TextButton", { Name = "Missions", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(10, 405), Size = UDim2.fromOffset(MW, 255),
-		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }),
-		new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.62), NumberSequenceKeypoint.new(0.65, 0.84), NumberSequenceKeypoint.new(1, 1) }) }) })
+		BackgroundTransparency = 1, Parent = root })
+	-- (2026-10-21, grade2) the wash truly fades: black at 0.55 opacity on the left -> clear by 70 % of the width, and it fades in /
+	-- out at the top and bottom too (a CanvasGroup's vertical gradient over the horizontal one), so there's no box edge or corner
+	local wash = new("CanvasGroup", { Name = "Wash", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 1, Parent = missions },
+		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.1, 0),
+			NumberSequenceKeypoint.new(0.9, 0), NumberSequenceKeypoint.new(1, 1) }) }) })
+	new("Frame", { Name = "Shade", BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), Parent = wash },
+		{ new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.45), NumberSequenceKeypoint.new(0.35, 0.68), NumberSequenceKeypoint.new(0.7, 1), NumberSequenceKeypoint.new(1, 1) }) }) })
 	local clipHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(6, 4), Size = UDim2.fromOffset(48, 48), ZIndex = 3, Parent = missions })
 	local mt = Kit.label({ Text = "Daily Missions", FontFace = WFONT, TextSize = 34, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(58, 8), Size = UDim2.fromOffset(290, 42), ZIndex = 3, Parent = missions })
 	new("UIStroke", { Thickness = 1.5, Transparency = 0.4, Parent = mt })
@@ -274,7 +285,8 @@ function LobbyHud.Start()
 	new("Frame", { Name = "Lip", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 7), BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0.7, BorderSizePixel = 0, ZIndex = 2, Parent = toPads }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	-- (2026-10-21, grade1) "DUEL PADS": kids didn't know what "pads" meant
-	local tp = Kit.label({ Text = "»  DUEL PADS  «", FontFace = WFONT, TextSize = 28, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(236, 50), ZIndex = 3, Parent = toPads })
+	-- (2026-10-21, grade2) the » « chevrons dropped: plain "DUEL PADS"
+	local tp = Kit.label({ Text = "DUEL PADS", FontFace = WFONT, TextSize = 28, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(236, 50), ZIndex = 3, Parent = toPads })
 	Kit.bindButton(toPads, { hover = 1.06 })
 	function LobbyHud.ToPads()
 		-- straight to the duel hall, in front of the first pad (not on it)
@@ -351,11 +363,11 @@ function LobbyHud.Start()
 	local NAV = {
 		{ Id = "Kit", Label = "Kit", Tip = "Weapons & skins", Build = function()
 			local w = data and data.Loadout and data.Loadout.Weapon
-			return Icons.Weapon(w or "Pistol") end, View = Icons.GunView, Zoom = 0.95 },
+			return Icons.Weapon(w or "Pistol") end, View = Icons.GunView, Zoom = 0.95, Tint = hex("#7E8B5C") }, -- (grade2) olive / steel
 		{ Id = "Missions", Label = "Missions", Tip = "Earn scissors", Build = Icons.Clipboard, View = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), Zoom = 1.05 },
 		{ Id = "Shop", Label = "Shop", Tip = "Buy gear", Build = Icons.Crate, View = CFrame.Angles(math.rad(16), math.rad(28), 0), Zoom = 1.1 },
-		{ Id = "Codes", Label = "Codes", Tip = "Redeem codes", Build = Icons.DogTags, View = CFrame.Angles(math.rad(6), math.rad(-15), 0), Zoom = 1.05 },
-		{ Id = "Settings", Label = "Settings", Tip = "Controls & graphics", Build = Icons.Gear, View = CFrame.Angles(math.rad(10), math.rad(25), 0), Zoom = 1.1 },
+		{ Id = "Codes", Label = "Codes", Tip = "Redeem codes", Build = Icons.DogTags, View = CFrame.Angles(math.rad(6), math.rad(-15), 0), Zoom = 1.05, Tint = hex("#E2CF8E") }, -- (grade2) tan / yellowish cream
+		{ Id = "Settings", Label = "Settings", Tip = "Controls & graphics", Build = Icons.Gear, View = CFrame.Angles(math.rad(10), math.rad(25), 0), Zoom = 1.1, Tint = hex("#D9A160") }, -- (grade2) orange-ish tan
 	}
 	local STEP = 128
 	local navW = #NAV * STEP + 36
@@ -372,10 +384,14 @@ function LobbyHud.Start()
 			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#5A5E58"), hex("#2A2D29")),
 				Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.6), NumberSequenceKeypoint.new(0.6, 0.45), NumberSequenceKeypoint.new(1, 0.35) }) }) })
 		-- (2026-10-21, RIVALS pass) the disc lights up on hover (RIVALS' dock): a field-green layer over the dark disc, off until hovered
-		local glow = new("Frame", { Name = "Glow", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.color.field, BackgroundTransparency = 1, BorderSizePixel = 0, Parent = disc },
+		-- (2026-10-21, grade2) the hover light is a cream layer at 15 % (the disc brightens ~15 %), was field green at 40 %
+		local glow = new("Frame", { Name = "Glow", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.color.cream, BackgroundTransparency = 1, BorderSizePixel = 0, Parent = disc },
 			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(62, 42), Size = UDim2.fromOffset(100, 100), ZIndex = 2, Parent = b })
-		navIcons[it.Id] = { holder = holder, it = it }
+		-- (2026-10-21, grade2) anchored 3/4 down (same place as before: centre y 42) so its hover UIScale (1.10) grows mostly
+		-- upward: +7.5 px at the top, only +2.5 px towards its label
+		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.75), Position = UDim2.fromOffset(62, 67), Size = UDim2.fromOffset(100, 100), ZIndex = 2, Parent = b })
+		local iconScale = new("UIScale", { Name = "HoverScale", Parent = holder })
+		navIcons[it.Id] = { holder = holder, it = it, scale = iconScale }
 		local lbl = Kit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 28, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center,
 			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(62, 116), Size = UDim2.fromOffset(150, 32), ZIndex = 3, Parent = b })
 		new("UIStroke", { Thickness = 2.5, Transparency = 0.1, Parent = lbl })
@@ -384,19 +400,15 @@ function LobbyHud.Start()
 			BackgroundColor3 = Color3.fromRGB(235, 50, 50), ZIndex = 4, Parent = b }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) }) -- (2026-10-21, AI-tells cleanup) no white hairline ring
 		local bl = Kit.label({ Text = "", FontFace = NAV_FONT, TextSize = 18, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = badge })
 		navBadges[it.Id] = { f = badge, l = bl, order = i }
-		-- speech bubble (white, pointer down), shown on hover.
-		-- (2026-10-21, grade1) fitted to its one-line text and kept off PLAY (design x 784-1276 incl. the party avatars, y 838-922):
-		-- an item left of PLAY whose bubble fits beside it keeps the bubble just above the icon, slid left clear of PLAY; the
-		-- rest raise it above PLAY's top edge, pointer still on the icon's x
+		-- speech bubble (white, pointer down), shown on hover, fitted to its one-line text.
+		-- (2026-10-21, grade2) like RIVALS: every bubble sits over ITS OWN icon, pointer tip 8 px above the disc top (disc top =
+		-- button y 0) and centred on the icon's x. The grade1 version raised four of them ~100 px over PLAY, where they read as
+		-- PLAY's tooltip. The bubble may overlap PLAY now: PLAY yields while a dock item is hovered (playYield below), and this
+		-- ScreenGui (DisplayOrder 7) draws above PlayRowUI (6).
 		local tipW = math.ceil(game:GetService("TextService"):GetTextSize(it.Tip, 21, Enum.Font.ArialBold, Vector2.new(600, 40)).X) + 34
 		local tipH = 38
 		local tipCx = 62
-		local tipBottom = -118 -- 946 (button top) - 118 = 828: 10 px above PLAY
-		local lowRight = 780 - (cx - 62) -- PLAY's left edge, minus a gap, in button px
-		if 62 + 12 <= lowRight and lowRight - tipW <= 62 - 12 then
-			tipCx = math.min(62, lowRight - tipW / 2)
-			tipBottom = -14
-		end
+		local tipBottom = -18 -- the 14 px pointer reaches ~10 px below the body: its tip lands at y -8
 		local tip = new("Frame", { Name = "Bubble", Visible = false, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(tipCx, tipBottom), Size = UDim2.fromOffset(tipW, tipH),
 			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 10, Parent = b }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 		new("Frame", { Name = "Pointer", AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(62 - (tipCx - tipW / 2), tipH), Size = UDim2.fromOffset(14, 14),
@@ -410,8 +422,32 @@ function LobbyHud.Start()
 		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id, pad = padGlyph, glow = glow })
 		b.Activated:Connect(function() if LobbyUI then LobbyUI.Open(it.Id) end end)
 	end
+	-- (2026-10-21, grade2) RIVALS' resting "Join the queue to start playing!": a cream pill over PLAY (pointer down, darker tan
+	-- lip) for new players, until they have queued or played once; it bobs 4 px and hides while a dock bubble shows
+	local joinW = math.ceil(game:GetService("TextService"):GetTextSize("Join a match!", 26, Enum.Font.Oswald, Vector2.new(600, 40)).X) + 40
+	local joinTip = new("Frame", { Name = "JoinTip", Visible = false, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(960, 818), Size = UDim2.fromOffset(joinW, 42),
+		BackgroundColor3 = Theme.color.cream, ZIndex = 5, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	new("Frame", { Name = "Lip", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 5), BackgroundColor3 = hex("#BFAF86"),
+		BorderSizePixel = 0, ZIndex = 6, Parent = joinTip }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	new("Frame", { Name = "Pointer", AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromOffset(joinW / 2, 42), Size = UDim2.fromOffset(14, 14),
+		BackgroundColor3 = hex("#BFAF86"), BorderSizePixel = 0, ZIndex = 4, Parent = joinTip })
+	Kit.label({ Text = "Join a match!", FontFace = OSWALD, TextSize = 26, TextColor3 = GUN, TextXAlignment = Enum.TextXAlignment.Center,
+		Size = UDim2.new(1, 0, 0, 38), ZIndex = 7, Parent = joinTip })
 
 	Kit.toScale(root)
+	do -- the join pill's bob: 4 px up and back over 1.2 s, only while shown
+		local home = joinTip.Position
+		task.spawn(function()
+			while joinTip.Parent do
+				if joinTip.Visible then
+					Kit.tween(joinTip, 0.6, { Position = home - UDim2.fromScale(0, 4 / 1080) }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+					task.wait(0.6)
+					Kit.tween(joinTip, 0.6, { Position = home }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+				end
+				task.wait(0.6)
+			end
+		end)
+	end
 
 	-- [PAD] D-pad opens the nav screens from the hub (RIVALS: Weapons left, Tasks down, Shop right, Pass up). Only while the
 	-- nav is on screen (it slides away for menus, duels and training) - in a round the D-pad equips weapons.
@@ -457,9 +493,18 @@ function LobbyHud.Start()
 	-- (2026-10-21, user: "whatever RIVALS is doing") back to the glossy 3D renders RIVALS uses on its nav, not flat icons
 	-- (2026-10-21, grade1) brighter lighting than Icons' default (ambient ~+30%, white key light from the camera side; the
 	-- default light came from behind the model) so dark models like the Kit pistol read on their disc
+	-- (2026-10-21, grade2) the icons read grey-on-grey: each model is pulled ~45 % toward one saturated base colour (Kit olive /
+	-- steel, Codes tan cream, Settings orange tan; Missions' clipboard and Shop's crate already had colour) and ambient goes to 220
+	local function tintModel(m, c)
+		if not c then return m end
+		for _, d in m:GetDescendants() do
+			if d:IsA("BasePart") and d.Material ~= Enum.Material.Neon then d.Color = d.Color:Lerp(c, 0.45) end
+		end
+		return m
+	end
 	for id, n in navIcons do
-		n.vp = Icons.Viewport(n.holder, n.it.Build(), { view = n.it.View, zoom = n.it.Zoom * 1.12 })
-		n.vp.Frame.Ambient = Color3.fromRGB(196, 196, 204)
+		n.vp = Icons.Viewport(n.holder, tintModel(n.it.Build(), n.it.Tint), { view = n.it.View, zoom = n.it.Zoom * 1.12 })
+		n.vp.Frame.Ambient = Color3.fromRGB(220, 220, 226)
 		n.vp.Frame.LightColor = Color3.new(1, 1, 1)
 		n.vp.Frame.LightDirection = Vector3.new(0.45, -0.7, 0.55)
 		n.holderBase = n.holder.Position
@@ -467,17 +512,61 @@ function LobbyHud.Start()
 	Icons.Viewport(clipHolder, Icons.Clipboard(), { view = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), zoom = 1.1 })
 	local navResets = {}
 	function resetNav() for _, f in navResets do f() end end
+	-- (2026-10-21, grade2) PLAY yields while a dock item is hovered (RIVALS lets the bubble overlap Play): PLAY, your avatar, the
+	-- + and the party heads shrink to 0.94 (their own UIScale) and fade halfway in 0.12 s, and come back on leave. PlayRowUI is
+	-- another file's GUI, so it is found by name and only its transparencies / UIScale are touched (bases kept per instance).
+	local dockHover = {} -- [nav id] = true while hovered
+	local playYielded = false
+	local yieldBase = {}
+	local function setPlayYield(on)
+		if on == playYielded then return end
+		playYielded = on
+		for d in yieldBase do if not d.Parent then yieldBase[d] = nil end end
+		local rowGui = player.PlayerGui:FindFirstChild("PlayRowUI")
+		local r = rowGui and rowGui:FindFirstChild("Root", true)
+		if not r then return end
+		for _, name in { "Play", "Avatar", "Invite", "PartyMates" } do
+			local o = r:FindFirstChild(name)
+			if o then
+				local sc = o:FindFirstChildOfClass("UIScale")
+				if sc then Kit.tween(sc, 0.12, { Scale = on and 0.94 or 1 }, Enum.EasingStyle.Quad) end
+				local list = o:GetDescendants()
+				table.insert(list, o)
+				for _, d in list do
+					if d.Name == "_HoverGlow" then continue end -- PLAY's own hover glow keeps its state
+					local base = yieldBase[d]
+					if not base then
+						base = {}
+						if d:IsA("GuiObject") then base.BackgroundTransparency = d.BackgroundTransparency end
+						if d:IsA("TextLabel") or d:IsA("TextButton") then base.TextTransparency = d.TextTransparency end
+						if d:IsA("ImageLabel") or d:IsA("ImageButton") then base.ImageTransparency = d.ImageTransparency end
+						if d:IsA("UIStroke") then base.Transparency = d.Transparency end
+						yieldBase[d] = base
+					end
+					local goal = {}
+					for key, v in base do goal[key] = on and (v + (1 - v) * 0.5) or v end
+					if next(goal) then Kit.tween(d, 0.12, goal) end
+				end
+			end
+		end
+	end
+	local function setDockHover(id, on)
+		dockHover[id] = on or nil
+		setPlayYield(next(dockHover) ~= nil)
+	end
 	for _, n in navButtons do
 		local base = n.b.Position
 		local function away() return root:GetAttribute("PushedAway") == true end -- a menu is open: no hover (RIVALS)
-		local lift = UDim2.fromScale(base.X.Scale, base.Y.Scale - 14 / 1080)
+		-- (2026-10-21, grade2) hover lifts the WHOLE item 6 px (icon + label together; was 14 px plus a 10 px icon climb inside
+		-- the button, which pushed the icon into its label) and the icon alone grows to 1.10 (the button no longer scales 1.12).
+		-- Icon top at hover: button top 946 - 6 - 15.5 = 924.5 design px, below PLAY's bottom edge (922).
+		local lift = UDim2.fromScale(base.X.Scale, base.Y.Scale - 6 / 1080)
 		local tipBase = n.tip.Position
 		local icon = navIcons[n.id]
-		local iconLift = UDim2.fromScale(icon.holderBase.X.Scale, icon.holderBase.Y.Scale - 10 / 116)
 		local hovered, gen = false, 0
 		local function bob(myGen)
 			task.wait(2)
-			local up = UDim2.new(tipBase.X.Scale, 0, tipBase.Y.Scale - 18 / 116, 0)
+			local up = UDim2.new(tipBase.X.Scale, 0, tipBase.Y.Scale - 5 / 116, 0) -- (grade2) a 5 px bob (was 18) so it stays on its icon
 			while hovered and gen == myGen do
 				Kit.tween(n.tip, 0.4, { Position = up }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 				task.wait(0.4)
@@ -487,13 +576,13 @@ function LobbyHud.Start()
 			end
 		end
 		-- (2026-10-21, round 3: match RIVALS) checked the hover path end to end: MouseEnter fires on the transparent button over
-		-- its disc / viewport children; the bubble shows after a short rest. Two fixes: the hovered item now draws above its
-		-- neighbours (ZIndex 2; the bubble could slip under the next item's icon / badge), and the bubble pops in from its pointer
-		-- (Kit.popIn, it used to just appear). A controller's selection drives the same enter / leave.
+		-- its disc / viewport children; the bubble shows after a short rest. The hovered item draws above its neighbours
+		-- (ZIndex 2), and the bubble pops in from its pointer (Kit.popIn). A controller's selection drives the same enter / leave.
 		local function enter()
 			if away() or hovered then return end
 			hovered = true; gen += 1
 			n.b.ZIndex = 2
+			setDockHover(n.id, true)
 			-- (2026-10-21, grade1) the bubble waits 0.12 s (was 0.55: graders read it as laggy); a quick sweep across the dock still skips it
 			local myGen = gen
 			task.delay(0.12, function()
@@ -503,22 +592,21 @@ function LobbyHud.Start()
 					task.spawn(bob, myGen)
 				end
 			end)
-			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(true) end
-			Kit.tween(n.s, 0.15, { Scale = 1.12 }, Enum.EasingStyle.Back)
-			Kit.tween(n.b, 0.15, { Position = lift }, Enum.EasingStyle.Back)
-			-- (2026-10-21, grade1) the grown icon rose into its own label: the icon climbs a further 10 px inside the button
-			Kit.tween(icon.holder, 0.15, { Position = iconLift }, Enum.EasingStyle.Back)
-			Kit.tween(n.glow, 0.12, { BackgroundTransparency = 0.6 }) -- (2026-10-21, RIVALS pass) disc lights
+			if icon.vp then icon.vp.SetHover(true) end
+			Kit.tween(n.b, 0.12, { Position = lift }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+			Kit.tween(icon.scale, 0.12, { Scale = 1.1 }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+			Kit.tween(n.glow, 0.12, { BackgroundTransparency = 0.85 }) -- (grade2) the disc brightens ~15 %
 		end
 		local function leave()
 			hovered = false; gen += 1
 			n.b.ZIndex = 1
+			setDockHover(n.id, false)
 			n.tip.Visible = false; n.tip.Position = tipBase
 			Kit.tween(n.glow, 0.15, { BackgroundTransparency = 1 })
-			Kit.tween(icon.holder, 0.15, { Position = icon.holderBase })
-			if away() then Kit.tween(n.s, 0.15, { Scale = 1 }); return end
-			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(false) end
+			Kit.tween(icon.scale, 0.15, { Scale = 1 })
 			Kit.tween(n.s, 0.15, { Scale = 1 })
+			if away() then return end
+			if icon.vp then icon.vp.SetHover(false) end
 			Kit.tween(n.b, 0.15, { Position = base })
 		end
 		n.b.MouseEnter:Connect(enter)
@@ -528,17 +616,18 @@ function LobbyHud.Start()
 		table.insert(navResets, function()
 			hovered = false; gen += 1
 			n.b.ZIndex = 1
+			setDockHover(n.id, false)
 			n.tip.Visible = false; n.tip.Position = tipBase
-			if navIcons[n.id].vp then navIcons[n.id].vp.SetHover(false) end
+			if icon.vp then icon.vp.SetHover(false) end
 			n.s.Scale = 1
+			icon.scale.Scale = 1
 			n.glow.BackgroundTransparency = 1
-			icon.holder.Position = icon.holderBase
 			n.b.Position = base
 		end)
 		n.b.Activated:Connect(function() task.defer(resetNav) end) -- a click opens something: the bubble goes with it
-		-- (2026-10-21, RIVALS pass) a real press: squash below 1 (was 1.02), then spring back past the hover size
+		-- (2026-10-21, RIVALS pass) a real press: squash below 1, then spring back
 		n.b.MouseButton1Down:Connect(function() if not away() then Kit.tween(n.s, 0.06, { Scale = 0.94 }) end end)
-		n.b.MouseButton1Up:Connect(function() if not away() then Kit.tween(n.s, 0.16, { Scale = hovered and 1.12 or 1 }, Enum.EasingStyle.Back) end end)
+		n.b.MouseButton1Up:Connect(function() if not away() then Kit.tween(n.s, 0.16, { Scale = 1 }, Enum.EasingStyle.Back) end end)
 	end
 	-- hide the old dock's contents (the Dock frame keeps its Visible state for the Kit room / PlayRow)
 	task.spawn(function()
@@ -635,7 +724,7 @@ function LobbyHud.Start()
 		local w = data.Loadout and data.Loadout.Weapon
 		if w and w ~= shownKitWeapon and navIcons and navIcons.Kit and navIcons.Kit.vp then
 			shownKitWeapon = w
-			navIcons.Kit.vp.SetModel(Icons.Weapon(w), Icons.GunView)
+			navIcons.Kit.vp.SetModel(tintModel(Icons.Weapon(w), navIcons.Kit.it.Tint), Icons.GunView) -- (grade2) keeps its olive tint
 		end
 		-- (2026-10-21, RIVALS pass) the scissors count counts up from what was shown, and the pill pops when it rises
 		local credits = data.Credits or 0
@@ -643,7 +732,7 @@ function LobbyHud.Start()
 			count.Text = commas(credits)
 		elseif credits ~= hudFx.credits then
 			Kit.countTo(count, hudFx.credits, credits, 0.6, commas)
-			if credits > hudFx.credits then Kit.pop(pill, 1.12) end
+			if credits > hudFx.credits then Kit.pop(pill, 1.1) end -- (2026-10-21, grade2) the whole plate punches 1.1x
 		end
 		hudFx.credits = credits
 		local q = data.Quests and data.Quests.Daily
@@ -655,10 +744,19 @@ function LobbyHud.Start()
 				-- (2026-10-21, auto-pay) the server pays a finished mission by itself and sets Claimed: a paid mission reads full
 				local claimed = e.Claimed == true
 				local prog = claimed and def.Goal or math.clamp(((data.Stats and data.Stats[def.Stat]) or 0) - (e.Base or 0), 0, def.Goal)
-				table.insert(entries, { def = def, prog = prog, claimed = claimed })
-				key ..= def.Id .. prog .. tostring(e.Claimed)
+				table.insert(entries, { def = def, prog = prog, claimed = claimed, order = i })
 			end
 		end
+		-- (2026-10-21, grade2) a stable row order: by the mission's place in the daily pool (Config), then its list index, so a
+		-- refresh that reshuffles the saved list (a payout, a reroll) never swaps rows on screen
+		local poolIx = {}
+		for ix, pq in Config.Quests.Daily.Pool do poolIx[pq.Id] = ix end
+		table.sort(entries, function(a, b)
+			local pa, pb = poolIx[a.def.Id] or 1e6, poolIx[b.def.Id] or 1e6
+			if pa ~= pb then return pa < pb end
+			return a.order < b.order
+		end)
+		for _, en in entries do key ..= en.def.Id .. en.prog .. tostring(en.claimed) end
 		if key == lastRows then return end
 		lastRows = key
 		for _, c in rows:GetChildren() do c:Destroy() end
@@ -715,11 +813,12 @@ function LobbyHud.Start()
 					TextXAlignment = Enum.TextXAlignment.Right, Position = UDim2.fromOffset(300, y - 2), Size = UDim2.fromOffset(76, 32), ZIndex = 4, Parent = holder })
 				new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = cnt })
 				if fx and fx.up then fx.count = cnt end -- (2026-10-21, round 3) progress made: the count punches as its bar fills
-				-- (2026-10-21, grade1) the reward on one line at a readable size: 22 px scissors + "×150" in Oswald 18 (was ~9 px on screen)
-				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(386, y + 6), Size = UDim2.fromOffset(22, 22), ZIndex = 4, Parent = holder })
+				-- (2026-10-21, grade2) the reward in its own 70 px right column (x 386-456): 28 px scissors + "×175" in cream Oswald 22
+				-- (at 18 it still read ~9-10 px on screen and the × looked like a minus)
+				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(384, y + 2), Size = UDim2.fromOffset(28, 28), ZIndex = 4, Parent = holder })
 				table.insert(art, { rw, "_Scissors" })
-				local rl = Kit.label({ Text = "×" .. e.def.Reward, FontFace = WFONT, TextSize = 18, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Left,
-					Position = UDim2.fromOffset(410, y + 2), Size = UDim2.fromOffset(48, 30), ZIndex = 5, Parent = holder })
+				local rl = Kit.label({ Text = "×" .. e.def.Reward, FontFace = WFONT, TextSize = 22, TextColor3 = Theme.color.cream, TextXAlignment = Enum.TextXAlignment.Left,
+					Position = UDim2.fromOffset(412, y), Size = UDim2.fromOffset(48, 32), ZIndex = 5, Parent = holder })
 				new("UIStroke", { Thickness = 1.5, Transparency = 0.2, Parent = rl })
 			end
 		end
@@ -1022,6 +1121,15 @@ function LobbyHud.Start()
 	end
 	local wasTraining = false
 	local k = 0
+	-- new player = never queued this session and Stats.MatchesPlayed == 0 (no stat loaded yet: the first 60 s after join)
+	local joinT0, queuedOnce = os.clock(), false
+	local function wantJoin()
+		if player:GetAttribute("MM_Queue") ~= nil then queuedOnce = true end
+		if queuedOnce then return false end
+		local mp = data and data.Stats and data.Stats.MatchesPlayed
+		if mp ~= nil then return mp == 0 end
+		return os.clock() - joinT0 < 60
+	end
 	RunService.Heartbeat:Connect(function(dt)
 		local on = lobbyShown()
 		-- a cutscene (exfil heli etc.; ExfilFX sets InCutscene) hides everything, the corner and the fight HUD too
@@ -1081,6 +1189,8 @@ function LobbyHud.Start()
 			if row and lobby then row.Enabled = lobby.Enabled end
 			dockSaved = nil
 		end
+		-- (2026-10-21, grade2) the "Join a match!" pill over PLAY: new players only, while PLAY is up and no dock bubble shows
+		joinTip.Visible = wantJoin() and row ~= nil and row.Enabled and not kitShown and not pushedAway and next(dockHover) == nil
 		-- Hide Missions (Settings > Video > Interface)
 		local noMissions = player:GetAttribute("Setting_HideSideTasks") == true
 		missions.Visible = not noMissions and not kitShown

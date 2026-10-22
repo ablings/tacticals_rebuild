@@ -430,3 +430,125 @@ Only `ui/play/PlayScreen.lua` changed (the Ranked tile is built there; RankedScr
 - Party column, preloading, Kit.toScale, lock card unchanged. Parse OK, 81 top-level locals.
 - **Look at in Studio:** squad zooms on the squarer tiles (1.0 / 1.1 / 1.12) - 3v3 edges may clip; the training scene in the tall
   hero (zoom 0.88, raise 0.4); title vs figures overlap; chip text wrap for long flash messages; the 15 px count on the 16 px bar.
+
+## grade2 fixes: hub (2026-10-21)
+Files: `ui/hud/LobbyHudController.lua`, `ui/hud/PlayerCards.lua`. Code only, not run in Studio. Parse OK; about 97 one-tab locals in `Start` (under 200).
+- **Nav bubble (like RIVALS).** Every bubble now sits over its own icon. The pointer tip is 8 px above the disc top and on the icon's x.
+  The grade1 "raise over PLAY" placement is gone. While any dock item is hovered, PLAY yields: PLAY, your avatar, the + and the party
+  heads go to UIScale 0.94 and fade halfway (Background / Text / Image / stroke transparency) in 0.12 s, and come back on leave. They are
+  found by name in `PlayRowUI` (the base transparencies are stored per instance). The bubble draws above PLAY because LobbyHud has
+  DisplayOrder 7 and PlayRowUI has 6. The bubble's bob is 5 px (was 18).
+- **Hover lift.** The whole dock item (icon + label) moves up 6 px (Quad, no overshoot). The button no longer scales 1.12. Only the
+  icon grows, to 1.10, through its own UIScale. The icon holder is anchored 3/4 down, so most of the growth goes up: the icon top
+  ends at about 924.5 design px, below PLAY's bottom (922). The 10 px icon climb into the label is gone. The disc brightens with a
+  cream layer at 15 % (was field green at 40 %).
+- **Icon colour.** Each model's parts are pulled 45 % toward one base colour: Kit olive/steel #7E8B5C (kept when the gun changes),
+  Codes tan cream #E2CF8E, Settings orange tan #D9A160. Missions and Shop are unchanged. Viewport Ambient is 220 (was 196).
+- **Daily Missions widget.** The reward has its own column (x 384-458): 28 px scissors + "×175" in cream Oswald 22. The wash is a
+  CanvasGroup: black at 0.55 opacity on the left, clear by 70 % of the width, and faded at the top and bottom 10 %. No corner, no box
+  edge. "DUEL PADS" has no chevrons. Rows are sorted by the mission's index in `Config.Quests.Daily.Pool`, then by list index, so
+  their order is stable across refreshes. The header keeps the 3D clipboard: Kit.ICONS has no clipboard / missions glyph.
+- **"Join a match!" pill.** A cream pill with a darker tan lip and a pointer sits above PLAY (bottom at design y 818). It bobs 4 px
+  over 1.2 s. It shows while `Stats.MatchesPlayed == 0` and the player has not queued this session (`MM_Queue` set once), or for the
+  first 60 s if the stat isn't loaded. It hides while a dock item is hovered, while PLAY is off, in the Kit room and while pushed away.
+- **Currency.** One dark plate (#262A21 -> #14170F, 220x54) with a 6 px darker lip holds the 3D scissors, the cream Oswald count and
+  the field-green +. The count still counts up (Kit.countTo), and the plate punches 1.1x when it rises.
+- **PlayerCards.** "Double tap to view profile" only shows over OTHER players. Double-clicking yourself still opens your card.
+- Check in Studio: (1) hover each dock item. PLAY should shrink and fade, and the bubble should sit right over its own icon. Kit's
+  bubble should not run off the left edge. (2) The hovered icon top should stay clear of PLAY, and the label should not be covered.
+  (3) The tinted icons should read in colour and should not be muddy (Kit pistol olive). (4) The wash should fade with no visible
+  edges. Check that "×175" is legible. (5) The join pill should not touch the PLAY halo pulse (halo top ~829). (6) The plate +
+  should still open the Scissors shop.
+
+## grade2 fixes: Shop + Missions (2026-10-21)
+From `notes/ui_rivals/grade2/shop.png`, `missions.png` vs RIVALS t0070 / t0062. Code only (not deployed, not seen in Studio);
+parse OK, ShopScreen 62 / MissionsScreen 52 top-level locals.
+- `ui/shop/ShopScreen.lua`
+  - **No dimming:** the grade1 50 % tag is gone (12 of 15 tags looked disabled with 500 scissors). Tags / tiles stay solid; can't
+    afford = the price number in muted tan #B8A77A (`SHORT_TAN`), and on press the existing shake + a 0.4 s red flash of the number
+    (`flashShort`). Same on the detail card's price (was 45 % transparent).
+  - **"White specks":** not UI. The specks at (689,401-403) and (771,505) in shop.png, and the tick / specks by "Weekly Contracts" in
+    missions.png, are alpha-0 pixels in the capture PNGs (RGBA, a=0, shown white by the viewer). Nothing in either screen draws
+    there. The capture step should flatten alpha onto black before grading.
+  - **Tile = tag width:** gear tiles 114 -> 146 wide (the price tag's width), left row at x 6 (tag centred at 79), right grid at
+    x 2 (tag centred at 75); the render sits in an inset Art frame (130 x 80/86) clear of the rarity bar.
+  - **2X SCISSORS card:** the medal was a 330 box at zoom 1.25 (huge, cropped): now 200 at zoom 1 = ~178 px, ~55 % of the card,
+    right-aligned 44 px in; the offer panel gets the Founder's field-green glow from the right edge (`OfferGlow`, all slides).
+  - **Founder's card:** LIMITED is a readable chip (Oswald 30 design px, ~22 px at 1436, padded 14); scissors render 100x74 ->
+    132x96 and "+1,000" 40 -> 58; a cream Rubik line names the bundle's items under it, filling the empty bottom-left.
+  - **Pack renders vs "+500":** pile 104 -> 52 tall at y 4 (ends at 56), "+N" moved to y 64 at 28 px: ~8 px between them.
+  - **Page dots dropped:** only the offer panel carousels; the slides still auto-advance every 6 s and pause on hover.
+- `ui/pseudolobby/hub/MissionsScreen.lua`
+  - **Cards read as three:** 24 px side padding, 10 px gaps, cards 243 -> 253 wide (`CARD_W`, x 24 / 287 / 550); panel fill
+    0.5 -> 0.15 opacity (`PANEL_T` 0.85) so there is one dark layer, the cards.
+  - **Titles:** a fixed 52 px two-line box, bottom-aligned, so glyphs / bars / counts line up across cards.
+  - **Weekly = a RIVALS Contracts list** (`taskRow`): 70 px rows, 8 px apart: glyph | name over a wide bar | "x / y" right |
+    3D scissors "×N" right. Done = field-green name + full green bar + a green check badge on the bar's right end; paid = the
+    reward dims + small PAID under it; same pops / count-up / tooltips as the cards. Panel height follows the row count.
+  - **GO PLAY:** still `Kit.button("key")` (field green + lip); its label loses the 2 px chunky stroke for Oswald + the price tags'
+    soft drop shadow (black at 0.75, 2 px down).
+  - **"Next" cue:** when no daily is done, the first unfinished daily card gets a cream 3 px inner outline (inset frame) whose
+    alpha loops 0 -> 1 over 1.0 s (Sine, reversing). No resting border on the other cards.
+- Look at in Studio: the medal size / glow on the 2X card; the Founder's contents line vs the scene render (wrap at 440 px);
+  the left-row renders in the wider tiles; Weekly row widths at 1366 (the "×1000" column); the cue under the hover glow.
+
+## grade2 fixes: Kit + Settings (2026-10-21)
+Edited only `ui/lobby/Armory.lua`, `ui/set/SettingsScreen.lua`, `ui/settings/SettingsKit.lua`. Not deployed, not run in Studio.
+Parse check OK; top-level locals Armory 180 / SettingsScreen 18 / SettingsKit 20 (unchanged). New state lives on `Armory.*` or inside functions.
+
+**Kit**
+- Hero lighting: world-mode `ShowcaseKey` spot 2.2 -> 1.55 (~30% down), viewport-mode `LIT.LightColor` 250 -> 184; new `ShowcaseRim`
+  (cool spot, 1.2, range 12, no shadows) behind and above the item, aimed back at it. New `Armory.ShowcaseLook(model)` runs on the
+  showcase CLONE only (owned items): light-grey (Smooth)Plastic -> Metal gunmetal (HSV 0.58 / 0.08 / 0.16 + 0.2 * v, keeps relative
+  shade); Highlights removed; textured parts (TextureID / SurfaceAppearance / Decal / Texture) lose Neon so the texture isn't washed out.
+- Ghost "x 51": not UI. It is the "7.62 x 51" stencil on the Showroom AmmoCrate (`fix/polish_showroom2.lua`), blurred behind the
+  left panel. `Armory.HideGhostLabels()` (called in Enter) disables that SurfaceGui client-side; the map is unchanged.
+- Renders inside bounds: list row buttons `ClipsDescendants`; render 74x54 at the row's left (x 44) / picked 104x70 at the right
+  (LIST_W - 58), scale-only pop (rotated children don't clip). Info-card render 44x36 inside the card left of the name (was poking out
+  over the top-left corner).
+- Next unlock: sub-line = the weapon name only; the price + scissors sit on the button (like Unlock); bubble "Go to <name>".
+- Type: stat names 20 -> 23, bullets 17 -> 19, ability chip 18 -> 21 (chip 32 tall), level bar 22 -> 28 tall with LV 21 / XP 19,
+  cardRow sub-lines 16 -> 18.
+- Bottom strip: no plate, no brackets (see-through holder); discs + labels only.
+- Left list: one `ListPlate` (panel) ends 16 px above the bottom; the ScrollingFrame is its child (6 px inset); section boxes are
+  see-through. The slide-in now moves the plate. `SCROLL_PAD` is unused (kept so the local count doesn't change).
+- Favourite box: it does work (ctx.ask Favorite); it now has a "Favourite" hover bubble.
+- Picker: opening it re-asserts the camera hold (Scriptable, CameraPoint, FOV 40). Tile name line 13 -> 17 and just the cosmetic
+  word ("Skin"); tiles pop in staggered 0.028 s, 0.16 s Back from 0; hover lifts the tile 4 px with a white sheen at 0.85.
+
+**Settings**
+- Preview pane: the repeated title is gone; icon + description side by side (desc at x 92, fades in on change).
+- Hierarchy: section headers Oswald 36 cream; row labels Rubik Bold 24 (were 42).
+- Toggles: 120x48 on a 4 px lip, 40 px knob, Oswald 26 ON / OFF (word box TW - TK - 12 wide).
+- Tab icons: tabs 96 -> 112 tall (icon box ~71 design px, gap 5 -> 3), tab bar 108 -> 124 grown upward (y 23; bottom still 147),
+  close X re-centred (y 51); 3D ViewIcons zoomed 1.35x on top of their default view.
+
+Check in Studio: gunmetal reads as metal (not black) under the room light and the rim isn't hot on the wall behind; the 104 px
+picked render doesn't touch the centred name for long names; the ListPlate slide-in; row labels at 24 still read in 88 px rows;
+"OFF" fits; tab icons don't crop at 1.35x zoom (Keyboard is widest); Account / Touch image tabs fit the taller box.
+
+## grade2 fixes: Play (2026-10-21)
+Source: `grade2/play.png` vs RIVALS `grade2/rivals_play.png`. Only `ui/play/PlayScreen.lua` changed. Parse OK, 90 top-level locals.
+- **Gutters:** the grid already used GAP = 10 design px everywhere; the "touching" tiles in the shot were the hovered Duel Pads
+  tile (1.03 scale + a 4 px UIStroke drawn OUTSIDE the tile = the whole gutter). Ranked's top edge is the same Y as Duel Pads'.
+- **Hover inside the tile:** the cream 4 px outline is a stroke on a `HoverRing` frame inset 4 px (it grows out to the tile edge,
+  never into the gutter); the hovered / selected tile goes to ZIndex 2 so its scale-up draws above its neighbours; hover 1.02
+  (was 1.03: 7.5 of the 10 px gutter on a 500 px tile, now 5 px).
+- **Tiles are places:** new helpers `partsOf` / `frameOn` / `stageSet`. `stageSet` builds a set around the subject in camera space
+  after the viewport has re-centred it: floor under the feet (runs past every edge), a painted line, a 6-7 stud back wall with
+  pillars and a coping, crates either side (styles: squad = concrete + olive wall + tan pillars; range = sand + tan backstop;
+  pads; ranked = dark gold hall). The tile gradient is now the sky over the wall (pale blue -> cream; ranked a gold dusk).
+  `frameOn` aims the camera (iterative projection of every part corner) so the subject spans top..bottom of the tile and at
+  most `fit` of its width; the hover lean / turn now pivots on that subject (`vp.focus`).
+- **Squads:** packed tighter (first offset / spacing 2.4 / -, 1.9 / 2.5, 1.6 / 2.1), aimed to 12 % headroom and bottoms at
+  72 / 66 / 58 % of the tile (3v3 >= ~42 % even if width-bound). Titles 100 px at MH-106 (were 128 px across the legs).
+  RankedScreen's `SquadScene` (no shot) keeps the old auto-framed look.
+- **Training hero:** no slab (sand floor fills the frame), props packed narrower for the tall tile, camera pitched -16 deg and
+  aimed so targets / sandbags span 5..62 %; the title + subtitle sit on the floor in the lower third.
+- **Duel Pads:** same set + aiming (8..56 %), title 84 px at MH-140.
+- **Ranked:** `rankedScene` = ViewIcons' trophy x2.4 on a three-step podium (dark plates, brass trims) in the gold hall; locked =
+  greyed (ImageColor3 150) under a 56 px padlock, RANKED 80, one caption "LEVEL 50", a 22 px bar 60 % of the tile, no outline,
+  "LV n / 50" Oswald 20 cream on it. Open = the same scene in colour (replaces the lone trophy icon).
+- **Daily missions row:** skipped - PlayScreen's ctx has no Missions opener (LobbyUIController passes none).
+- **Look at in Studio:** frameOn convergence on real rigs (accessories widen the box), whether yaw 125 shows faces, crate
+  placement at the frame edges for 1v1, sky showing over the wall, and the trophy's ScaleTo pivot.
