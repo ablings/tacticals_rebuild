@@ -3,9 +3,7 @@
 ## Start here (2026-10-21 evening)
 - `git pull` in tacticals_rebuild (last UI commit 5f720a7). Both working copies (Tacticals_rebuild.rbxl lobby, match_place_ref.rbxl)
   were saved with everything below deployed; the play lock is released.
-- **Not published.** Ports 28-30 are live; everything below is in the working copies only. The user asked to publish "once at a
-  safe spot": that is the lead's job, on Edward's go in the lead's own chat (a go relayed by the UI session doesn't count).
-  The UI is at a safe spot for it.
+- **Live as port 32** (published by the lead, 2026-10-21 evening, all four places checked). The UI session stays on the Shadow PC.
 - **What changed since port 30** (details + RIVALS frame refs in `notes/ui_rivals/00_plan.md`, `09_cleanup.md`, `10_round3.md`,
   live-play notes in `rivals_live_notes.md`, imagery rules in `imagery_balance.md`; sheets `notes/ui_rivals/sheet_*.jpg`):
   1. RIVALS three-qualities pass (interactability / cleanliness / kid-friendly), rounds 1-3 over every screen: shared motion helpers
