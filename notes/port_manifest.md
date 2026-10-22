@@ -386,3 +386,6 @@ himself; we never publish.
 - [DUELSPEC] Duels TV spectator eye (dc5293b, fix/duels_tv_spectators.lua applied + saved by the UI session). Live check after the port:
   a 2v2 pad duel with someone spectating -> the row shows the eye + count; nobody watching -> "ON A PAD".
 - UI session's hub screens pass (0c79a92) and later UI blocks: see notes/handoff/HANDOFF_UI.md.
+- 262fd64 (UI): AI-tells pass 2 (tutorial, font sweep, tooltip, Kit bubbles). The match place also has [CALLOUTSTYLE]
+  (fix/stealth_callout_style.lua, place-only StealthController: tutorial enemy bubble with a red lip + Oswald). It's already in
+  match_place_ref, and port_prep copies match_place_ref, so the port carries it; just check it's there (StealthController source has "[CALLOUTSTYLE]").
