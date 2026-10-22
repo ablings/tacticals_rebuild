@@ -14,6 +14,11 @@
 - **For the lead (server):** in a 1v1 your death ends the round and no `SpectateTarget` / `SpectateReason = "Killer"` is set, so
   the killer card (DuelHUD `RV.kcard`, which works) never shows. RIVALS keeps the killer card up through ROUND LOST while it spectates
   the killer, and at match end replays the final kill with a Skip button (bottom right) before the results.
+- Later in the night: 398f9b6 map vote like RIVALS (one big row, green striped strips, the winner glides to the middle); a434ef8
+  Shop tabs with More / Back rows and no title, dark-gold Ranked tile, Kit Career card up, Settings pane (Parent fix in 15b15fc);
+  4004496 profile shows Level + Streak; f69bf6c a shared party column bottom left on Play / Missions / Codes / profile.
+  Killer card: it works. The lead confirmed SpectateTarget is set; my screenshots were just ~3 s late (no change).
+  Before / after sheet: `notes/overnight_ui_2026-10-22.jpg`.
 - Not done (Edward's earlier calls kept): hotbar frames and the hint strip, the bone health bar, "First to 5" / ROUND N under the
   timer, the Codes dock button.
 
