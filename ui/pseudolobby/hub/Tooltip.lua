@@ -88,9 +88,8 @@ local function build()
 		local m = UserInputService:GetMouseLocation()
 		-- (2026-10-21) MouseLeave doesn't always fire (a jump onto another button left PLAY's bubble up beside the nav bubble):
 		-- hide as soon as the pointer is off the owner
-		local sg = owner:FindFirstAncestorWhichIsA("ScreenGui")
-		local inset = (sg and sg.IgnoreGuiInset) and Vector2.zero or GuiService:GetGuiInset()
-		local op, osz = owner.AbsolutePosition + inset, owner.AbsoluteSize
+		-- (AbsolutePosition is always measured below the top bar, IgnoreGuiInset or not; GetMouseLocation is the whole screen)
+		local op, osz = owner.AbsolutePosition + GuiService:GetGuiInset(), owner.AbsoluteSize
 		if m.X < op.X or m.Y < op.Y or m.X > op.X + osz.X or m.Y > op.Y + osz.Y then Tooltip.Hide() return end
 		local view = gui.AbsoluteSize
 		local size = bubble.AbsoluteSize
