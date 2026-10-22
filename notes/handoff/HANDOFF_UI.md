@@ -1,5 +1,12 @@
 # Tacticals UI handoff (latest: 2026-10-22, main PC UI session took over from the Shadow PC)
 
+## 2026-10-22 day (Edward: "do 1 and 2; 3 and 4 if RIVALS does it; scissors economy")
+- UI shipped (deployed + saved, nothing published): d215ad9 in-match Daily Missions (MatchTasksUI), 58d2975 Shop daily free reward,
+  0bd6400 Missions 7-day login row, 36cb2d2 Rubik instead of Oswald, 7f3b85b 4:3 tablets (HUD on the edges), Switch Weapons slim.
+- **Waiting on the lead (server), spec sent:** MatchQuests (+ QuestTick) in the match place; DailyFreeAt + ClaimDailyFree; LoginDay /
+  LoginClaimed + ReplicatedStorage LoginRewards. Each UI piece hides until its attribute exists.
+- Economy proposal for Edward: `notes/economy/scissors_economy.md` (no config changed).
+
 ## 2026-10-22 night 1 (Edward asleep: juggle live RIVALS / Kuroko's copy + sub-agent grading, until he says wrap up)
 - Sources: a live RIVALS 1v1 recorded end to end (`notes/ui_rivals/night1/rv_match/`, results_full.jpg), Kuroko 16:9 refs
   (`night1/kuroko169/`), ours (`night1/ours`, `ours169` = cropped to the 16:9 canvas, `ours_match`). Sub-agent grades are
