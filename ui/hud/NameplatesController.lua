@@ -68,11 +68,13 @@ local function build(p, character)
 	list.FillDirection = Enum.FillDirection.Horizontal
 	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	list.VerticalAlignment = Enum.VerticalAlignment.Center
-	list.Padding = UDim.new(0.03, 0) -- (2026-10-22, names study vs RIVALS) a clear gap after the seal (~0.18 of its width), was 0.012
+	-- (2026-10-22, spacing grade vs RIVALS) no shared padding: each gap is its own spacer, sized to RIVALS' visible (ink) gaps in
+	-- cap heights - seal 0.65, name -> Premium 0.6, Premium -> device 0.95 (the even 8/8/8 frame gaps read uneven)
+	list.Padding = UDim.new(0, 0)
 	list.SortOrder = Enum.SortOrder.LayoutOrder
 	list.Parent = row
 	local badge = Instance.new("Frame")
-	badge.LayoutOrder = 1
+	badge.LayoutOrder = 10
 	badge.Size = UDim2.fromScale(0.2, 1) -- (2026-10-21, RIVALS 1:1) square, the row's height (aspect constraint below)
 	badge.BackgroundColor3 = PANEL
 	badge.BackgroundTransparency = 1
@@ -103,7 +105,7 @@ local function build(p, character)
 	local KitM = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
 	local seal = KitM.levelSeal(badge, p:GetAttribute("Level") or 1, { ZIndex = bt.ZIndex + 1, Visible = false })
 	local name = Instance.new("TextLabel")
-	name.LayoutOrder = 2
+	name.LayoutOrder = 20
 	name.BackgroundTransparency = 1
 	name.Size = UDim2.fromScale(0.62, 1) -- (TextScaled and AutomaticSize don't mix: fitName() sets the width from the text)
 	name.FontFace = BOLD
@@ -118,9 +120,9 @@ local function build(p, character)
 	-- the verified / Premium glyph in its own label (no stroke, cap height) instead of inside the stroked name text
 	local glyph = Instance.new("TextLabel")
 	glyph.Name = "BadgeGlyph"
-	glyph.LayoutOrder = 3
+	glyph.LayoutOrder = 30
 	glyph.BackgroundTransparency = 1
-	glyph.Size = UDim2.fromScale(0.08, 0.62)
+	glyph.Size = UDim2.fromScale(0.08, 1.1) -- (2026-10-22) ink ~1.2 cap like RIVALS' P (was 0.62, half size)
 	glyph.FontFace = BOLD
 	glyph.TextScaled = true
 	glyph.TextColor3 = WHITE
@@ -129,7 +131,7 @@ local function build(p, character)
 	glyph.Parent = row
 	local ga = Instance.new("UIAspectRatioConstraint"); ga.AspectRatio = 1; ga.DominantAxis = Enum.DominantAxis.Height; ga.Parent = glyph -- (a square box: a narrower one draws nothing, TextScaled gives up on the glyph)
 	local vip = Instance.new("TextLabel")
-	vip.LayoutOrder = 4
+	vip.LayoutOrder = 40
 	vip.Size = UDim2.fromScale(0.15, 0.7)
 	vip.BackgroundColor3 = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) tag yellow -> cream #ECE6D2
 	vip.FontFace = BOLD
@@ -176,14 +178,30 @@ local function build(p, character)
 	-- (2026-10-20, RIVALS) the device icon after the name (UIKit.Badges.DeviceIcon; hidden until the art is uploaded)
 	local dev = Instance.new("ImageLabel")
 	dev.Name = "Device"
-	dev.LayoutOrder = 5
+	dev.LayoutOrder = 50
 	dev.BackgroundTransparency = 1
 	dev.ScaleType = Enum.ScaleType.Fit
-	dev.Size = UDim2.fromScale(0.2, 0.62) -- (2026-10-22) cap height, centred like RIVALS
+	dev.Size = UDim2.fromScale(0.2, 1.28) -- (2026-10-22, spacing grade) ~1.3 cap like RIVALS' monitor (0.62 read half size)
 	dev.ImageColor3 = WHITE
 	dev.Visible = false
 	dev.Parent = row
 	local da = Instance.new("UIAspectRatioConstraint"); da.AspectRatio = 1; da.DominantAxis = Enum.DominantAxis.Height; da.Parent = dev
+	-- the spacers (share of the plate width; the row is ~247 px at a 1268 px screen): each shows only while the piece after it does
+	local function gap(order, share, after, before)
+		local f = Instance.new("Frame")
+		f.Name = "Gap" .. order
+		f.LayoutOrder = order
+		f.BackgroundTransparency = 1
+		f.Size = UDim2.fromScale(share, 1)
+		f.Parent = row
+		local function sync() f.Visible = after.Visible and (before == nil or before.Visible) end
+		after:GetPropertyChangedSignal("Visible"):Connect(sync)
+		sync()
+	end
+	gap(15, 0.02, name) -- seal / flame -> name
+	gap(25, 0.012, glyph) -- name -> Premium glyph
+	gap(35, 0.024, vip) -- -> VIP tag
+	gap(45, 0.045, dev) -- -> device
 	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, seal = seal, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name, device = dev, glyph = glyph }
 end
 
