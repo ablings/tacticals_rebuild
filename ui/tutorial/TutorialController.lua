@@ -1217,37 +1217,81 @@ local function showFinish()
 			if confirmSound then local c = confirmSound:Clone(); c.PlaybackSpeed = 1.05 + i * 0.1; c.Parent = gui; c:Play(); game:GetService("Debris"):AddItem(c, 1.5) end
 		end)
 	end
-	-- the big PLAY (flat olive, the hotbar's radius); a darker fill drains across it as the countdown runs
+	-- (2026-10-21, round 3: match RIVALS) the big PLAY is our primary button now, like RIVALS' bright filled action buttons
+	-- (rivals_rec t0113.0s, round_lost_full.jpg) and DuelHUD's Play Again: the field-green gradient (#8DBF5A -> #4C7A2E) on a
+	-- chunky darker lip block under it (no flat olive, no hard dark split, no stroke). The countdown still drains across it:
+	-- the bright gradient shrinks to the left over a muted copy of the same green (still green, just dimmer), then fills
+	-- back for the loading dots. Hover lifts it, press squashes it into its lip.
+	local function fieldGradient(parent, top, bottom)
+		local g = Instance.new("UIGradient")
+		g.Rotation = 90
+		g.Color = ColorSequence.new(top, bottom)
+		g.Parent = parent
+		return g
+	end
+	local PLAY_POS, PLAY_SIZE = UDim2.fromScale(0.07, 0.74), UDim2.fromScale(0.86, 0.19)
+	local lip = Instance.new("Frame") -- the chunky lip: a solid dark-green block peeking out under the button
+	lip.Name = "PlayLip"
+	lip.AnchorPoint = Vector2.new(0.5, 0.5)
+	lip.Position = PLAY_POS + UDim2.fromScale(0.43, 0.095 + 0.016)
+	lip.Size = PLAY_SIZE
+	lip.BackgroundColor3 = Color3.fromRGB(46, 74, 28)
+	lip.BorderSizePixel = 0
+	corner(lip, 0.14)
+	lip.Parent = side
 	local play = Instance.new("TextButton")
 	play.Name = "Play"
 	play.AutoButtonColor = false
 	play.Text = ""
-	play.Position = UDim2.fromScale(0.07, 0.74)
-	play.Size = UDim2.fromScale(0.86, 0.19)
-	play.BackgroundColor3 = Color3.fromRGB(70, 80, 38) -- (round 3: our olive pair, not a lime call-to-action)
+	play.AnchorPoint = Vector2.new(0.5, 0.5) -- (centred so hover / press grow from the middle)
+	play.Position = PLAY_POS + UDim2.fromScale(0.43, 0.095)
+	play.Size = PLAY_SIZE
+	play.BackgroundColor3 = WHITE
 	play.BorderSizePixel = 0
-	play.ClipsDescendants = true
+	play.ZIndex = 2
 	play:AddTag("Nonapplicable")
 	corner(play, 0.14)
+	fieldGradient(play, Color3.fromRGB(96, 128, 64), Color3.fromRGB(52, 82, 32)) -- the drained part: the same green, muted
 	local fill = Instance.new("Frame")
 	fill.Name = "Fill"
-	fill.BackgroundColor3 = Color3.fromRGB(107, 122, 58)
+	fill.BackgroundColor3 = WHITE
 	fill.BorderSizePixel = 0
 	fill.Size = UDim2.fromScale(1, 1)
+	fill.ZIndex = 2
+	corner(fill, 0.14)
+	fieldGradient(fill, Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)) -- #8DBF5A -> #4C7A2E
 	fill.Parent = play
-	local pl = text(play, "Label", F_HEAVY, WHITE)
+	local sheen = Instance.new("Frame") -- hover: a white sheen brightens it a touch (Kit.button's look)
+	sheen.Name = "HoverSheen"
+	sheen.BackgroundColor3 = WHITE
+	sheen.BackgroundTransparency = 1
+	sheen.BorderSizePixel = 0
+	sheen.Size = UDim2.fromScale(1, 1)
+	sheen.ZIndex = 3
+	corner(sheen, 0.14)
+	sheen.Parent = play
+	local pl = text(play, "Label", F_HEAVY, Color3.fromRGB(236, 230, 210)) -- cream words on the primary
 	pl.Position = UDim2.fromScale(0.06, 0.2)
 	pl.Size = UDim2.fromScale(0.88, 0.6)
-	pl.ZIndex = 2
-	stroke(pl, Color3.fromRGB(28, 40, 14), 1.5, 0.3)
+	pl.ZIndex = 4
+	stroke(pl, Color3.fromRGB(28, 44, 16), 3, 0.2)
 	local psc = Instance.new("UIScale"); psc.Parent = play
-	play.MouseEnter:Connect(function() TweenService:Create(psc, TweenInfo.new(0.12), { Scale = 1.04 }):Play() end)
-	play.MouseLeave:Connect(function() TweenService:Create(psc, TweenInfo.new(0.12), { Scale = 1 }):Play() end)
+	local lsc = Instance.new("UIScale"); lsc.Parent = lip
+	local function playTo(s, lift, t, style)
+		local info = TweenInfo.new(t, style or Enum.EasingStyle.Quad)
+		TweenService:Create(psc, info, { Scale = s }):Play()
+		TweenService:Create(lsc, info, { Scale = s }):Play()
+		-- the face sinks onto its lip when pressed, rises off it on hover
+		TweenService:Create(play, info, { Position = PLAY_POS + UDim2.fromScale(0.43, 0.095 + lift) }):Play()
+	end
+	local hovering = false
+	play.MouseEnter:Connect(function() hovering = true; playTo(1.04, -0.006, 0.12); TweenService:Create(sheen, TweenInfo.new(0.12), { BackgroundTransparency = 0.86 }):Play() end)
+	play.MouseLeave:Connect(function() hovering = false; playTo(1, 0, 0.12); TweenService:Create(sheen, TweenInfo.new(0.12), { BackgroundTransparency = 1 }):Play() end)
+	play.MouseButton1Down:Connect(function() playTo(0.95, 0.012, 0.06) end)
 	local pressed = false
 	play.Activated:Connect(function()
 		pressed = true
-		psc.Scale = 0.94
-		TweenService:Create(psc, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+		playTo(hovering and 1.04 or 1, 0, 0.25, Enum.EasingStyle.Back)
 		pl.Text = "LOADING"
 	end)
 	play.Parent = side
@@ -1266,9 +1310,9 @@ local function showFinish()
 	-- look: three white dots bobbing in turn) until the teleport takes us
 	play.Active = false
 	play.AutoButtonColor = false
-	fill.Visible = false
+	-- (2026-10-21, round 3: match RIVALS) the loading state stays the bright field-green gradient (the drain fills back)
+	TweenService:Create(fill, TweenInfo.new(0.2, Enum.EasingStyle.Quad), { Size = UDim2.fromScale(1, 1) }):Play()
 	pl.Visible = false
-	play.BackgroundColor3 = Color3.fromRGB(107, 122, 58)
 	local dots = {}
 	for i = 1, 3 do
 		local d = Instance.new("Frame")
@@ -1277,7 +1321,7 @@ local function showFinish()
 		d.Size = UDim2.fromScale(0.2, 0.2)
 		d.BackgroundColor3 = WHITE
 		d.BorderSizePixel = 0
-		d.ZIndex = 3
+		d.ZIndex = 5 -- (round 3: over the gradient fill + sheen)
 		corner(d, 0.5)
 		local a = Instance.new("UIAspectRatioConstraint"); a.AspectRatio = 1; a.Parent = d
 		d.Parent = play

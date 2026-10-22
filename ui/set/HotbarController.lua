@@ -905,7 +905,10 @@ local function stepKicks(dt: number)
 			k.x += k.v * dt
 			if math.abs(k.x) < 1e-4 and math.abs(k.v) < 1e-3 then k.x, k.v = 0, 0 end
 			local p = sl.icon.box.Position
-			sl.icon.box.Position = UDim2.new(p.X.Scale, p.X.Offset, 0.5 + k.x, p.Y.Offset)
+			-- (2026-10-21, round 3: match RIVALS) spring around the item's own rest height (after Kit.toScale the RENDER_LIFT is
+			-- folded into Y.Scale, so a hard-coded 0.5 dropped the item 10 design px after its first kick)
+			k.base = k.base or p.Y.Scale
+			sl.icon.box.Position = UDim2.new(p.X.Scale, p.X.Offset, k.base + k.x, p.Y.Offset)
 		end
 	end
 end
@@ -1011,8 +1014,10 @@ local function refreshUI()
 		local on = i == active
 		local empty = i == GADGET and charges <= 0
 		if sl.selected ~= on or sl.empty ~= empty then
-			sl.selected, sl.empty = on, empty
+			-- (2026-10-21, round 3: match RIVALS) read the old state BEFORE overwriting it: wasOn used to be read after the
+			-- assignment, so it always equalled `on` and RIVALS' select kick + sweep never fired on a weapon switch
 			local wasOn = sl.selected
+			sl.selected, sl.empty = on, empty
 			TweenService:Create(sl.tile, TI, { BackgroundColor3 = on and HELD_FILL or TILE_GREY, BackgroundTransparency = on and HELD_T or TILE_T }):Play()
 			-- held: pops up with a little overshoot (Back); let go: eases back down without one
 			TweenService:Create(sl.grow, on and POP or TI, { Scale = on and 1 or 0.86 }):Play()

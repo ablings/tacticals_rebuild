@@ -103,7 +103,8 @@ local function render()
 		or ("Peak " .. tostring(A("RankPeak") or elo) .. " ELO")
 	-- the ELO bar
 	local floor, nextFloor = A("RankFloor") or 100, A("RankNextFloor")
-	ui.eloNum.Text = inPlacements and "?" or tostring(elo)
+	ui.eloNum.Text = inPlacements and "?" or ui.eloNum.Text
+	if inPlacements then ui.eloShown = nil; ui.eloNum:SetAttribute("_CountToken", (ui.eloNum:GetAttribute("_CountToken") or 0) + 1) end -- (2026-10-21, round 3) stops a running count-up
 	ui.leftName.Text = inPlacements and "" or (A("RankName") or "")
 	ui.leftFloor.Text = inPlacements and "" or tostring(floor)
 	emblem(ui.leftEmblem, not inPlacements and rank or nil)
@@ -111,12 +112,17 @@ local function render()
 		local nextName = A("RankNextName") or ""
 		ui.rightName.Text, ui.rightFloor.Text = nextName, tostring(nextFloor)
 		emblem(ui.rightEmblem, nextName:match("^(%a+)"))
-		ui.fill.Size = UDim2.fromScale(math.clamp((elo - floor) / math.max(nextFloor - floor, 1), 0, 1), 1)
+		Kit.fillTo(ui.fill, math.clamp((elo - floor) / math.max(nextFloor - floor, 1), 0, 1), 0.6) -- (2026-10-21, round 3) the bar fills, was set
 	else
 		ui.rightName.Text, ui.rightFloor.Text = inPlacements and "" or "Top 200", ""
 		emblem(ui.rightEmblem, nil)
 		ui.rightEmblem:FindFirstChild("Emblem"):Destroy()
-		ui.fill.Size = UDim2.fromScale(inPlacements and placed / math.max(need, 1) or 1, 1)
+		Kit.fillTo(ui.fill, inPlacements and placed / math.max(need, 1) or 1, 0.6)
+	end
+	-- (2026-10-21, round 3: match RIVALS' counters) the ELO number counts from what was shown (from the tier floor on open)
+	if not inPlacements then
+		Kit.countTo(ui.eloNum, ui.eloShown or floor, elo, 0.6, function(n) return tostring(math.floor(n + 0.5)) end)
+		ui.eloShown = elo
 	end
 	-- banner
 	if inPlacements then
@@ -159,14 +165,22 @@ local function popup(name, w, h, title)
 	x.Position = UDim2.fromOffset(w - 116, 22)
 	x.ZIndex = 23
 	x.Parent = p
-	local function hide() shade.Visible = false end
+	-- (2026-10-21, round 3: match RIVALS t0285.4-t0286, the card pops in) the popups open / close with Kit.open / Kit.close
+	-- (was Visible on / off); the shade goes once the panel's close has finished, unless it was reopened meanwhile
+	local function hide()
+		Kit.close(p, function() if not p.Visible then shade.Visible = false end end)
+	end
+	local function show()
+		shade.Visible = true
+		Kit.open(p)
+	end
 	x.Activated:Connect(hide)
 	shade.Activated:Connect(hide)
-	return shade, p
+	return shade, p, show
 end
 
 local function buildLadder()
-	local shade, p = popup("Ladder", 1300, 760, "Ranks")
+	local shade, p, show = popup("Ladder", 1300, 760, "Ranks")
 	local names = RANKS
 	for i, r in names do
 		local x = 40 + (i - 1) * 152
@@ -190,16 +204,16 @@ local function buildLadder()
 	for i, t in rules do
 		label(p, "•  " .. t, FM, 26, 60, 400 + (i - 1) * 54, 1180, 44, GREY, Enum.TextXAlignment.Left).ZIndex = 22
 	end
-	return shade
+	return show -- (2026-10-21, round 3) opens with a pop
 end
 
 local function buildBoard()
-	local shade, p = popup("Leaderboard", 900, 820, "Warlord · Top 200")
+	local _, p, show = popup("Leaderboard", 900, 820, "Warlord · Top 200")
 	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 110), Size = UDim2.fromOffset(820, 680), BackgroundTransparency = 1,
 		BorderSizePixel = 0, ScrollBarThickness = 6, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p },
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	ui.boardList = listHold
-	return shade
+	return show
 end
 
 local function fillBoard()
@@ -279,14 +293,18 @@ local function build()
 			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Theme.hex("#3B4524"), Theme.hex("#14170F")) }),
 		})
 		local edge = new("UIStroke", { Color = WHITE, Thickness = 4, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = card })
-		stroke(label(card, "Ranked", FB, 72, 0, 90, 480, 84, WHITE), 3)
-		stroke(label(card, mode, FB, 96, 0, 170, 480, 108, WHITE), 3)
+		-- (2026-10-21, round 3: match RIVALS t0291, mode tiles = the mode name over a scene) a live 3D squad behind the words
+		-- (PlayScreen's squad: you + mates vs dark-gold silhouettes, hops on hover); built on every open (render-time character)
+		local stage = new("Frame", { Name = "Stage", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(480, 280), ZIndex = 2,
+			ClipsDescendants = true, Parent = card })
+		stroke(label(card, "Ranked", FB, 72, 0, 90, 480, 84, WHITE), 3).ZIndex = 4
+		stroke(label(card, mode, FB, 96, 0, 170, 480, 108, WHITE), 3).ZIndex = 4
 		-- (2026-10-21, RIVALS pass) a real PLAY bar (PlayScreen's field-green strip, inset as a button): solid fill on an offset
 		-- block, no outline; the queue status is written in it (render)
 		local shadow = new("Frame", { Name = "PlayShadow", Position = UDim2.fromOffset(24, 302), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = C.fieldDark,
-			BorderSizePixel = 0, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			BorderSizePixel = 0, ZIndex = 4, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 		local bar = new("Frame", { Name = "PlayBar", Position = UDim2.fromOffset(24, 296), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = WHITE,
-			BorderSizePixel = 0, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+			BorderSizePixel = 0, ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 		local green = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = bar })
 		local status = label(bar, "PLAY", Theme.font.chunky, 30, 0, 0, 432, 62, WHITE)
 		new("UIStroke", { Color = Color3.fromRGB(28, 44, 16), Thickness = 2, Transparency = 0.3, Parent = status }) -- text outline, not a border
@@ -300,7 +318,7 @@ local function build()
 			local r = ctx.ask and ctx.ask("FindMatch", mq.Id)
 			if not (r and r.ok) and ctx.toast then ctx.toast((r and r.msg) or "Couldn't join the ranked queue", "bad") end
 		end)
-		ui.cards[mode] = { card = card, status = status, edge = edge, bar = bar, green = green, shadow = shadow }
+		ui.cards[mode] = { card = card, status = status, edge = edge, bar = bar, green = green, shadow = shadow, stage = stage, i = i }
 	end
 
 	-- Warlord strip + leaderboard button
@@ -318,9 +336,9 @@ local function build()
 	local ladder = buildLadder()
 	local board = buildBoard()
 	Kit.bindButton(ranksBtn, { hover = 1.04, press = 0.97 })
-	ranksBtn.Activated:Connect(function() ladder.Visible = true end)
+	ranksBtn.Activated:Connect(function() ladder() end) -- (2026-10-21, round 3) the popups pop in (Kit.open)
 	Kit.bindButton(boardBtn, { hover = 1.04, press = 0.97 })
-	boardBtn.Activated:Connect(function() fillBoard(); board.Visible = true end)
+	boardBtn.Activated:Connect(function() fillBoard(); board() end)
 
 	Kit.toScale(root)
 	root.Visible = false
@@ -340,9 +358,20 @@ local function setOpen(on)
 	Kit.tween(scrim, 0.25, { BackgroundTransparency = on and Theme.alpha.scrim or 1 })
 	if on then
 		gui.Enabled = true
+		ui.fill.Size = UDim2.fromScale(0, 1) -- (2026-10-21, round 3) the ELO bar fills up as the screen opens
+		ui.eloShown = nil
 		render()
 		if ctx.onOpen then ctx.onOpen() end
 		Kit.open(root)
+		-- (2026-10-21, round 3: match RIVALS) the mode cards pop in one after another and get their live squads
+		local okP, PlayScreen = pcall(require, UIKit:FindFirstChild("PlayScreen"))
+		for mode, c in ui.cards do
+			Kit.popIn(c.card, 0.06 + c.i * 0.05)
+			for _, ch in c.stage:GetChildren() do ch:Destroy() end
+			if okP and PlayScreen and PlayScreen.SquadScene then
+				pcall(PlayScreen.SquadScene, c.stage, tonumber(mode:match("^(%d)")) or 1, true, c.card)
+			end
+		end
 	else
 		Kit.close(root, function() if not isOpen then gui.Enabled = false end end)
 		if ctx.onClose then ctx.onClose() end

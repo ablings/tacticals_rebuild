@@ -8,6 +8,7 @@
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
+local RunService = game:GetService("RunService") -- (2026-10-21, round 3: match RIVALS) one Heartbeat drives the bobbing callouts
 
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -90,6 +91,87 @@ local function itemArt(holder, itemId, hoverTarget)
 	return vp
 end
 
+-- (2026-10-21, round 3: match RIVALS) RIVALS' bundle banners and hero cards (t0068.4s, t0072.0s) are ONE posed render of the
+-- bundle's items, big and cropped by the card edge. Ours: one live viewport holding all the items fanned out, each scaled to
+-- the same size, zoomed in so the card (ClipsDescendants) crops them. One viewport per banner instead of one per item.
+local function sceneArt(holder, ids, zoom)
+	local scene = Instance.new("Model")
+	local n = #ids
+	for j, id in ids do
+		local ok, m, view = pcall(ctx.Icons.Item, id)
+		if ok and m and m:IsA("Model") and #m:GetChildren() > 0 then
+			local _, size = m:GetBoundingBox()
+			pcall(function() m:ScaleTo(m:GetScale() * 3.2 / math.max(size.Magnitude, 0.05)) end)
+			local o = j - (n + 1) / 2
+			m:PivotTo(CFrame.Angles(0, 0, math.rad(-o * 12)) * (view or CFrame.identity))
+			local cf = m:GetBoundingBox()
+			m:TranslateBy(Vector3.new(o * 2.1, -math.abs(o) * 0.45, math.abs(o) * 0.8) - cf.Position)
+			m.Parent = scene
+		elseif ok and m then
+			m:Destroy()
+		end
+	end
+	if #scene:GetChildren() == 0 then
+		scene:Destroy()
+		scene = ViewIcons.Build("Crate")
+	end
+	return ViewIcons.Viewport(holder, scene, { view = CFrame.Angles(math.rad(6), math.rad(-10), 0), zoom = zoom or 1.3 })
+end
+
+-- (2026-10-21, round 3: match RIVALS) every tile reacts like RIVALS' shop tiles (t0083.9s hover): on hover the 3D item lifts,
+-- grows and turns toward you (vp.SetHover), optionally tilts; on press it squashes, then springs back. `art` gets its own
+-- UIScale (the card's UIScale belongs to bindButton). Positions are read after Kit.toScale (lift in Scale of the parent).
+-- tilt = false for art inside a clipped card: Roblox does not clip rotated descendants.
+local function reactArt(target, art, vp, tilt)
+	local s = art:FindFirstChildOfClass("UIScale") or new("UIScale", { Name = "ArtScale", Parent = art })
+	local base, rot0, hov = nil, nil, false
+	local function lift(on)
+		base = base or art.Position
+		rot0 = rot0 or art.Rotation
+		hov = on
+		local dy = on and art.Size.Y.Scale * 0.06 or 0
+		local goal = { Position = UDim2.new(base.X.Scale, base.X.Offset, base.Y.Scale - dy, base.Y.Offset) }
+		if tilt ~= false then goal.Rotation = rot0 + (on and -5 or 0) end
+		Kit.tween(art, 0.2, goal, Enum.EasingStyle.Back)
+		Kit.tween(s, 0.2, { Scale = on and 1.08 or 1 }, Enum.EasingStyle.Back)
+		if vp then vp.SetHover(on) end
+	end
+	target.MouseEnter:Connect(function() lift(true) end)
+	target.MouseLeave:Connect(function() lift(false) end)
+	target.SelectionGained:Connect(function() lift(true) end)
+	target.SelectionLost:Connect(function() lift(false) end)
+	if target:IsA("GuiButton") then
+		target.MouseButton1Down:Connect(function() Kit.tween(s, 0.06, { Scale = 0.88 }) end)
+		target.MouseButton1Up:Connect(function() Kit.tween(s, 0.22, { Scale = hov and 1.08 or 1 }, Enum.EasingStyle.Back) end)
+	end
+end
+
+-- (2026-10-21, round 3: match RIVALS) RIVALS' "xN VALUE" / "Limited" stickers sit tilted and keep moving (t0072.0s, t0081.0s).
+-- Ours rock a few degrees around their own rotation; one Heartbeat for all of them, idle while the shop is closed.
+local wobbles, wobbleConn = {}, nil
+local function wobble(g, amp)
+	table.insert(wobbles, { g = g, base = g.Rotation, amp = amp or 3, t = math.random() * 6 })
+	if wobbleConn then return g end
+	wobbleConn = RunService.Heartbeat:Connect(function()
+		if not isOpen then return end
+		local now = os.clock()
+		for i = #wobbles, 1, -1 do
+			local w = wobbles[i]
+			if not w.g.Parent then table.remove(wobbles, i)
+			elseif w.g.Visible then w.g.Rotation = w.base + math.sin(now * 2.4 + w.t) * w.amp end
+		end
+	end)
+	return g
+end
+
+-- (2026-10-21, round 3: match RIVALS) the red "xN value" sticker, sat just above the price like RIVALS' bundle banners
+local function valueSticker(parent, value, cx, bottomY, ts)
+	ts = ts or 26
+	return wobble(new("TextLabel", { Name = "Value", BackgroundColor3 = C.red, Text = "x" .. value .. " VALUE", FontFace = F.display, TextSize = ts, TextColor3 = C.white,
+		AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(cx, bottomY), Size = UDim2.fromOffset(0, math.floor(ts * 1.45)), AutomaticSize = Enum.AutomaticSize.X,
+		Rotation = -3, ZIndex = 8, Parent = parent }, { Kit.corner(4), Kit.pad(12, 0, 12, 0) }), 2.5)
+end
+
 -------------------------------------------------------------------------------
 -- Price tag: amber (scissors) or green (Robux), number with a soft shadow, icon beside it (RIVALS)
 -------------------------------------------------------------------------------
@@ -110,13 +192,15 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	local row = new("Frame", { Name = "BuyRow", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = tag },
 		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
-	local ts = math.floor(h * 0.62)
+	-- (2026-10-21, round 3: match RIVALS) RIVALS' price pills are mostly number (t0068.4s: "520" fills the green button):
+	-- the number goes 0.62 -> 0.72 of the tag height (callers also made the tags taller)
+	local ts = math.floor(h * 0.72)
 	local num = Kit.label({ LayoutOrder = 2, Text = "0", FontFace = F.display, TextSize = ts, TextColor3 = Color3.new(0, 0, 0), TextTransparency = 0.75,
 		AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, h), ZIndex = 6, Parent = row })
 	local txt = Kit.label({ Name = "Text", Text = "0", FontFace = F.display, TextSize = ts, TextColor3 = C.white,
 		Position = UDim2.fromOffset(0, -2), Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = num })
 	new("ImageLabel", { LayoutOrder = kind == "robux" and 1 or 3, BackgroundTransparency = 1, Image = kind == "robux" and ROBUX_IMG or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit,
-		Size = UDim2.fromOffset(math.floor(h * 0.6), math.floor(h * 0.6)), ZIndex = 6, Parent = row })
+		Size = UDim2.fromOffset(math.floor(h * 0.66), math.floor(h * 0.66)), ZIndex = 6, Parent = row })
 	-- owned face: the old grey "Owned" plate words + the new cream check beside them
 	local ownRow = new("Frame", { Name = "OwnedRow", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5, Visible = false, Parent = tag },
 		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
@@ -271,21 +355,13 @@ local function itemCard(pg, hover, id, x, y, w, h)
 		Position = UDim2.fromOffset(w * 0.62, h * 0.35), Size = UDim2.fromOffset(w * 0.3, h * 1.6), Rotation = 24, Parent = clip })
 	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(w / 2, (h - 112) / 2 - 14),
 		Size = UDim2.fromOffset(w + 10, h - 96), ZIndex = 3, Parent = card })
-	itemArt(art, id, card)
-	local artScale = new("UIScale", { Parent = art })
-	card.MouseEnter:Connect(function()
-		Kit.tween(artScale, 0.18, { Scale = 1.08 }, Enum.EasingStyle.Back)
-		Kit.tween(art, 0.18, { Rotation = -4 }, Enum.EasingStyle.Back)
-	end)
-	card.MouseLeave:Connect(function()
-		Kit.tween(artScale, 0.18, { Scale = 1 })
-		Kit.tween(art, 0.18, { Rotation = 0 })
-	end)
+	-- (2026-10-21, round 3: match RIVALS) shared reactArt: lift + tilt + turn on hover, squash on press (was grow + tilt only)
+	reactArt(card, art, itemArt(art, id, nil), true)
 	outlined(Kit.label({ Text = item.Name, FontFace = F.display, TextSize = 34, Position = UDim2.fromOffset(16, h - 120), Size = UDim2.fromOffset(w - 32, 40), Parent = card }), 2)
 	Kit.label({ Text = string.upper(item.Rarity .. " " .. (Config.SlotNames[item.Slot] or item.Slot)), FontFace = F.bold, TextSize = 18, TextColor3 = rar.Color,
-		Position = UDim2.fromOffset(16, h - 82), Size = UDim2.fromOffset(w - 32, 22), Parent = card })
+		Position = UDim2.fromOffset(16, h - 85), Size = UDim2.fromOffset(w - 32, 22), Parent = card })
 	-- (2026-10-21, RIVALS pass) one live tag: it turns into the owned check in place when you unlock it
-	priceTag(card, "kit", item.Price, w / 2, h - 58, w - 28, 46, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end })
+	priceTag(card, "kit", item.Price, w / 2, h - 62, w - 28, 54, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end }) -- (round 3) 46 -> 54 tall
 	hover(card)
 	Tac.hoverBrackets(card, Tac.brackets(card, Tac.C.line, 20, 3))
 	card.Activated:Connect(function() if not ctx.owns(id) then ctx.openKit(id) end end)
@@ -306,39 +382,43 @@ local function bundleCard(pg, hover, bundle, x, y, w, h)
 	local col = bundle.Color or C.cream
 	-- (2026-10-21, AI-tells cleanup) no thin border and no left AccentBar; the bundle colour stays in the diagonal stripe,
 	-- tag pill cream (was the yellow accent), tiles get a rarity bar along the bottom instead of a thin stroke
+	-- (2026-10-21, round 3: match RIVALS) RIVALS' Bundles tab (t0068.4s) = full-bleed banners: a coloured backdrop, the bundle's
+	-- weapons as one big posed render cropped by the card, the title top left, "xN VALUE" sat on a big price button bottom
+	-- right. Ours: the backdrop is the bundle's own colour fading to the panel, sceneArt = the live 3D render (right ~70 %),
+	-- the 3D tiles stay small along the bottom left (they carry the OWNED marks), price 220x58 -> 260x74.
 	local card = new("TextButton", { Name = bundle.Id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
-		{ Kit.corner(2), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
+		{ Kit.corner(2), new("UIGradient", { Rotation = 20, Color = ColorSequence.new(col:Lerp(C.panel, 0.55), C.panel) }) })
 	new("Frame", { BackgroundColor3 = col, BackgroundTransparency = 0.82, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromOffset(w * 0.75, h / 2), Size = UDim2.fromOffset(w * 0.25, h * 2), Rotation = 22, Parent = card })
-	outlined(Kit.label({ Text = bundle.Name, FontFace = F.display, TextSize = 46, Position = UDim2.fromOffset(22, 12), Size = UDim2.fromOffset(w - 40, 56), Parent = card }), 2.5)
+	local scene = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(w * 0.34, -h * 0.12), Size = UDim2.fromOffset(w * 0.72, h * 1.24), ZIndex = 2, Parent = card })
+	reactArt(card, scene, sceneArt(scene, bundle.Items, 1.3), false)
+	outlined(Kit.label({ Text = bundle.Name, FontFace = F.display, TextSize = 50, Position = UDim2.fromOffset(22, 12), Size = UDim2.fromOffset(w - 40, 60), ZIndex = 5, Parent = card }), 3)
 	if bundle.Tag then
-		new("TextLabel", { BackgroundColor3 = C.cream, Text = bundle.Tag, FontFace = F.display, TextSize = 20, TextColor3 = C.textDark,
-			Position = UDim2.fromOffset(24, 70), Size = UDim2.fromOffset(0, 30), AutomaticSize = Enum.AutomaticSize.X, Parent = card },
-			{ Kit.corner(2), Kit.pad(10, 0, 10, 0) })
+		wobble(new("TextLabel", { BackgroundColor3 = C.cream, Text = bundle.Tag, FontFace = F.display, TextSize = 22, TextColor3 = C.textDark, Rotation = -2,
+			Position = UDim2.fromOffset(24, 74), Size = UDim2.fromOffset(0, 32), AutomaticSize = Enum.AutomaticSize.X, ZIndex = 5, Parent = card },
+			{ Kit.corner(2), Kit.pad(10, 0, 10, 0) }), 2)
 	end
-	local tileW = math.min(120, (w - 300) / math.max(1, #bundle.Items) - 10)
+	local tileW = math.min(96, (w * 0.45) / math.max(1, #bundle.Items) - 10)
 	for j, id in bundle.Items do
-		local tile = new("Frame", { Name = "Tile" .. j, BackgroundColor3 = C.panel, BackgroundTransparency = 0.35, Position = UDim2.fromOffset(22 + (j - 1) * (tileW + 10), h - tileW - 24),
-			Size = UDim2.fromOffset(tileW, tileW), Parent = card }, { Kit.corner(2) })
+		local tile = new("Frame", { Name = "Tile" .. j, BackgroundColor3 = C.panel, BackgroundTransparency = 0.35, Position = UDim2.fromOffset(22 + (j - 1) * (tileW + 10), h - tileW - 20),
+			Size = UDim2.fromOffset(tileW, tileW), ZIndex = 4, Parent = card }, { Kit.corner(2) })
 		new("Frame", { Name = "RarityBar", BackgroundColor3 = (Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard).Color, BorderSizePixel = 0,
-			AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 5), ZIndex = 2, Parent = tile })
-		itemArt(tile, id, card)
+			AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 5), ZIndex = 5, Parent = tile })
+		itemArt(tile, id, card).Frame.ZIndex = 5
 		-- (2026-10-21, RIVALS pass) always built, shown in place when you own the piece (no page rebuild)
 		local ownedL = Kit.label({ Text = "OWNED", FontFace = F.display, TextSize = 16, TextColor3 = C.cream, TextXAlignment = Enum.TextXAlignment.Center,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -2), Size = UDim2.fromOffset(tileW, 20), ZIndex = 3, Visible = ctx.owns(id), Parent = tile })
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -2), Size = UDim2.fromOffset(tileW, 20), ZIndex = 6, Visible = ctx.owns(id), Parent = tile })
 		if curPage then table.insert(curPage.updaters, function() ownedL.Visible = ctx.owns(id) end) end
 	end
 	if full > cost and missing > 0 then
-		local value = math.max(2, math.floor(full / math.max(cost, 1) + 0.5))
-		new("TextLabel", { BackgroundColor3 = C.red, Text = "x" .. value .. " value", FontFace = F.display, TextSize = 22, TextColor3 = C.white,
-			AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(w - 20, 20), Size = UDim2.fromOffset(0, 34), AutomaticSize = Enum.AutomaticSize.X, Parent = card },
-			{ Kit.corner(2), Kit.pad(12, 0, 12, 0) })
+		valueSticker(card, math.max(2, math.floor(full / math.max(cost, 1) + 0.5)), w - 150, h - 100, 26)
 	end
 	-- (2026-10-21, RIVALS pass) the tag opens the detail card (no Confirm-in-place); price / owned update in place
 	local live = { owned = function() local _, m = Config.BundleCost(bundle, ctx.owns) return m == 0 end, amount = function() return (Config.BundleCost(bundle, ctx.owns)) end }
 	local function view() openDetail(bundleSpec(bundle)) end
-	priceTag(card, "scissors", cost, w - 130, h - 82, 220, 58, view, live)
+	local tag = priceTag(card, "scissors", cost, w - 150, h - 92, 260, 74, view, live)
+	tag.ZIndex = 7
 	hover(card)
 	Tac.hoverBrackets(card, Tac.brackets(card, Tac.C.line, 20, 3))
 	card.Activated:Connect(function() if not live.owned() then view() end end)
@@ -404,12 +484,16 @@ function RENDER.Featured(pg, hover)
 		-- (2026-10-21, RIVALS pass) packs open the detail card first; its button makes the same ask("BuyRobux")
 		local hold = float(4 + (i - 1) * 166, 10, 158, 152, function() openDetail(packSpec(pr)) end)
 		local n = math.min(i + 1, 4)
+		-- (2026-10-21, round 3: match RIVALS) the pile sits in one Pile frame so it lifts / tilts / squashes as one (RIVALS'
+		-- floating crates over their price pills, t0072.0s); "+N" bigger, price 116x46 -> 140x54
+		local pile = new("Frame", { Name = "Pile", BackgroundTransparency = 1, Size = UDim2.fromOffset(158, 104), Parent = hold })
 		for k = 1, n do
-			local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4 + (k - 1) * 10, (k - 1) * 4), Size = UDim2.fromOffset(150 - (n - 1) * 10, 100), Parent = hold })
+			local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4 + (k - 1) * 10, (k - 1) * 4), Size = UDim2.fromOffset(150 - (n - 1) * 10, 100), Parent = pile })
 			ViewIcons.Viewport(art, ViewIcons.Scissors(), { view = CFrame.Angles(0, 0, math.rad((k - (n + 1) / 2) * 22)) * ViewIcons.Views.Scissors[1], zoom = 1, still = true })
 		end
-		outlined(Kit.label({ Text = "+" .. fmtN(pr.Credits), FontFace = F.display, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 74), Size = UDim2.fromOffset(158, 30), ZIndex = 3, Parent = hold }), 2)
-		priceTag(hold, "robux", pr.Robux, 79, 104, 116, 46, function() openDetail(packSpec(pr)) end)
+		reactArt(hold, pile, nil, true)
+		outlined(Kit.label({ Text = "+" .. fmtN(pr.Credits), FontFace = F.display, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 62), Size = UDim2.fromOffset(158, 34), ZIndex = 3, Parent = hold }), 2.5)
+		priceTag(hold, "robux", pr.Robux, 79, 98, 140, 54, function() openDetail(packSpec(pr)) end)
 	end
 	-- left, bottom: gear you don't have, floating over its steel price
 	local gear = {}
@@ -418,8 +502,8 @@ function RENDER.Featured(pg, hover)
 		local id = gear[i]
 		local hold = float(4 + (i - 1) * 166, 176, 158, 152, function() ctx.openKit(id) end)
 		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-14, -16), Size = UDim2.fromOffset(186, 124), Parent = hold })
-		itemArt(art, id, hold)
-		priceTag(hold, "kit", Config.Items[id].Price, 79, 104, 154, 46, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end })
+		reactArt(hold, art, itemArt(art, id, nil), true) -- (2026-10-21, round 3: match RIVALS) lift + tilt + squash; price 46 -> 54 tall
+		priceTag(hold, "kit", Config.Items[id].Price, 79, 98, 154, 54, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end })
 	end
 
 	-- right: hero card (the Founder's Bundle): its items fanned out large, the title, a blue-steel view button
@@ -431,25 +515,26 @@ function RENDER.Featured(pg, hover)
 			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
 			{ Kit.corner(8), new("UIGradient", { Rotation = 35, Color = ColorSequence.new(Theme.hex("#AEB49C"), Theme.hex("#2E3328")) }) })
 		local items = featured.Items or {}
-		for j, id in items do
-			local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromOffset(w * 0.5 + (j - (#items + 1) / 2) * 170, h * 0.56), Size = UDim2.fromOffset(240, 220), Parent = card })
-			itemArt(art, id, card)
-		end
-		local sc = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(w - 250, 6), Size = UDim2.fromOffset(150, 110), Parent = card })
-		ViewIcons.Icon(sc, "Scissors", { hoverTarget = card })
-		outlined(Kit.label({ Text = featured.Name, FontFace = F.display, TextSize = 46, Position = UDim2.fromOffset(28, 16), Size = UDim2.fromOffset(500, 56), ZIndex = 5, Parent = card }), 2.5)
+		-- (2026-10-21, round 3: match RIVALS) the hero is THE focus of Home, like RIVALS' Season Pass card (t0072.0s): one big
+		-- posed render cropped by the card (sceneArt, was three separate small viewports), a bigger title, the tag rocking,
+		-- the scissors bonus with its 3D scissors, and the biggest price button on the page (170x58 -> 250x84).
+		local scene = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(w * 0.28, -h * 0.08), Size = UDim2.fromOffset(w * 0.66, h * 1.16), ZIndex = 2, Parent = card })
+		reactArt(card, scene, sceneArt(scene, items, 1.2), false)
+		local sc = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(18, 124), Size = UDim2.fromOffset(100, 74), ZIndex = 4, Parent = card })
+		ViewIcons.Icon(sc, "Scissors", { hoverTarget = card, zIndex = 4 })
+		outlined(Kit.label({ Text = featured.Name, FontFace = F.display, TextSize = 56, Position = UDim2.fromOffset(28, 12), Size = UDim2.fromOffset(560, 66), ZIndex = 5, Parent = card }), 3)
 		if featured.Tag then
-			new("TextLabel", { BackgroundColor3 = C.red, Text = featured.Tag, FontFace = F.display, TextSize = 20, TextColor3 = C.white, ZIndex = 5,
-				Position = UDim2.fromOffset(30, 74), Size = UDim2.fromOffset(0, 30), AutomaticSize = Enum.AutomaticSize.X, Parent = card }, { Kit.corner(4), Kit.pad(10, 0, 10, 0) })
+			wobble(new("TextLabel", { BackgroundColor3 = C.red, Text = featured.Tag, FontFace = F.display, TextSize = 24, TextColor3 = C.white, ZIndex = 5, Rotation = -3,
+				Position = UDim2.fromOffset(30, 80), Size = UDim2.fromOffset(0, 36), AutomaticSize = Enum.AutomaticSize.X, Parent = card }, { Kit.corner(4), Kit.pad(12, 0, 12, 0) }), 3)
 		end
-		outlined(Kit.label({ Text = "+" .. fmtN(featured.Credits or 0) .. " scissors", FontFace = F.display, TextSize = 24, Position = UDim2.fromOffset(30, 108), Size = UDim2.fromOffset(300, 28), ZIndex = 5, Parent = card }), 2)
+		outlined(Kit.label({ Text = "+" .. fmtN(featured.Credits or 0), FontFace = F.display, TextSize = 40, Position = UDim2.fromOffset(116, 138), Size = UDim2.fromOffset(300, 46), ZIndex = 5, Parent = card }), 2.5)
 		-- (2026-10-21, RIVALS pass) live owned state; the hero's Robux buy is unchanged (straight to Roblox's prompt)
 		local function ownedAll()
 			for _, id in items do if not ctx.owns(id) then return false end end
 			return true
 		end
-		priceTag(card, "robux", featured.Robux, w - 105, h - 76, 170, 58, function() ctx.ask("BuyRobux", featured.Key) end, { owned = ownedAll })
+		local heroTag = priceTag(card, "robux", featured.Robux, w - 145, h - 100, 250, 84, function() ctx.ask("BuyRobux", featured.Key) end, { owned = ownedAll })
+		heroTag.ZIndex = 7
 		hover(card)
 		Kit.bindButton(card, { hover = 1.03, press = 0.99 })
 		card.Activated:Connect(function() Screen.SetTab("Bundles") end)
@@ -463,29 +548,34 @@ function RENDER.Featured(pg, hover)
 	local slides = {}
 	for i, of in offers do
 		local sl = new("Frame", { Name = "Slide" .. i, BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromScale(1, 1), Visible = i == 1, Parent = so })
+		-- (2026-10-21, round 3: match RIVALS) the offer slides are banners like RIVALS' Special Offer / Starter Bundle
+		-- (t0072.0s, t0076.0s): words and a big price on the left, a big live 3D placeholder on the right cropped by the panel
+		-- (was centred text, a 150 px medal and three small tiles). The medal / scene lift and turn while the panel is hovered.
 		if of.kind == "pass" then
 			local gp = of.p
-			outlined(Kit.label({ Text = gp.Name, FontFace = F.display, TextSize = 52, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 10), Size = UDim2.new(1, 0, 0, 58), Parent = sl }), 2)
-			Kit.label({ Text = gp.Desc or "", FontFace = F.medium, TextSize = 22, TextColor3 = Theme.hex("#CFCDD3"), TextXAlignment = Enum.TextXAlignment.Center, TextWrapped = true,
-				Position = UDim2.fromOffset(60, 66), Size = UDim2.new(1, -120, 0, 56), Parent = sl })
-			local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(373, 120), Size = UDim2.fromOffset(150, 120), Parent = sl })
-			ViewIcons.Icon(art, "Medal", { hoverTarget = so })
-			priceTag(sl, "robux", gp.Robux, 373, 246, 170, 56, function() openDetail(passSpec(gp)) end, { owned = passSpec(gp).owned }) -- (2026-10-21, RIVALS pass) detail card
+			local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(575, 175), Size = UDim2.fromOffset(330, 330), Parent = sl })
+			reactArt(so, art, ViewIcons.Icon(art, "Medal", { zoom = 1.25 }), false)
+			outlined(Kit.label({ Text = gp.Name, FontFace = F.display, TextSize = 60, Position = UDim2.fromOffset(28, 14), Size = UDim2.fromOffset(420, 68), ZIndex = 3, Parent = sl }), 3)
+			Kit.label({ Text = gp.Desc or "", FontFace = F.medium, TextSize = 24, TextColor3 = C.cream, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
+				Position = UDim2.fromOffset(30, 86), Size = UDim2.fromOffset(400, 110), ZIndex = 3, Parent = sl })
+			priceTag(sl, "robux", gp.Robux, 150, 220, 240, 76, function() openDetail(passSpec(gp)) end, { owned = passSpec(gp).owned }) -- (2026-10-21, RIVALS pass) detail card
 		else
 			local bd = of.b
 			local cost = Config.BundleCost(bd, ctx.owns)
-			outlined(Kit.label({ Text = bd.Name, FontFace = F.display, TextSize = 46, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, 12), Size = UDim2.new(1, 0, 0, 54), Parent = sl }), 2)
-			local n = #bd.Items
-			for j, id in bd.Items do
-				local tile = new("Frame", { BackgroundColor3 = C.panel, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(373 + (j - (n + 1) / 2) * 128 - 55, 84), Size = UDim2.fromOffset(110, 110), Parent = sl },
-					{ Kit.corner(8) }) -- (2026-10-21, AI-tells cleanup) thin rarity stroke -> a bottom RarityBar
-				new("Frame", { Name = "RarityBar", BackgroundColor3 = (Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard).Color, BorderSizePixel = 0,
-					AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -6), Size = UDim2.fromOffset(80, 6), ZIndex = 2, Parent = tile }, { Kit.corner(2) })
-				itemArt(tile, id, so)
+			local scene = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(300, -20), Size = UDim2.fromOffset(480, 370), Parent = sl })
+			reactArt(so, scene, sceneArt(scene, bd.Items, 1.25), false)
+			outlined(Kit.label({ Text = bd.Name, FontFace = F.display, TextSize = 52, Position = UDim2.fromOffset(28, 14), Size = UDim2.fromOffset(440, 62), ZIndex = 3, Parent = sl }), 3)
+			if bd.Tag then
+				wobble(new("TextLabel", { BackgroundColor3 = C.cream, Text = bd.Tag, FontFace = F.display, TextSize = 22, TextColor3 = C.textDark, Rotation = -2,
+					Position = UDim2.fromOffset(30, 80), Size = UDim2.fromOffset(0, 32), AutomaticSize = Enum.AutomaticSize.X, ZIndex = 3, Parent = sl },
+					{ Kit.corner(2), Kit.pad(10, 0, 10, 0) }), 2)
 			end
+			local full = 0
+			for _, id in bd.Items do full += Config.Items[id].Price end
+			if full > cost and cost > 0 then valueSticker(sl, math.max(2, math.floor(full / cost + 0.5)), 150, 212, 24) end
 			-- (2026-10-21, RIVALS pass) detail card instead of Confirm-in-place; price / owned live
 			local spec = bundleSpec(bd)
-			priceTag(sl, "scissors", cost, 373, 230, 190, 56, function() openDetail(spec) end, { owned = spec.owned, amount = spec.amount })
+			priceTag(sl, "scissors", cost, 150, 220, 240, 76, function() openDetail(spec) end, { owned = spec.owned, amount = spec.amount })
 		end
 		table.insert(slides, sl)
 	end
@@ -551,8 +641,11 @@ function RENDER.Featured(pg, hover)
 		-- (2026-10-21, AI-tells cleanup) the thin rarity edge stroke is gone; the bottom RarityBar is thicker / wider to carry it
 		new("Frame", { Name = "RarityBar", BackgroundColor3 = rar.Color, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -6),
 			Size = UDim2.fromOffset(94, 8), ZIndex = 2, Parent = tile }, { Kit.corner(2) })
-		itemArt(tile, id, hold)
-		priceTag(hold, "kit", item.Price, 75, 112, 136, 42, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end }) -- (2026-10-21, RIVALS pass) live
+		-- (2026-10-21, round 3: match RIVALS) the item sits in its own Art frame so it lifts / tilts / squashes over the plate;
+		-- price 136x42 -> 146x50
+		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = tile })
+		reactArt(hold, art, itemArt(art, id, nil), true)
+		priceTag(hold, "kit", item.Price, 75, 108, 146, 50, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end }) -- (2026-10-21, RIVALS pass) live
 	end
 	new("Frame", { Name = "End", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 722), Size = UDim2.fromOffset(10, 30), Parent = pg })
 end
@@ -591,22 +684,33 @@ function RENDER.Scissors(pg, hover)
 		local card = new("TextButton", { Name = p.Key, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
 			{ Kit.corner(2), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) }) -- (2026-10-21, AI-tells cleanup) thin border removed; the top AccentStripe stays
-		new("Frame", { Name = "AccentStripe", BackgroundColor3 = C.olive, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 6), ZIndex = 2, Parent = card })
+		new("Frame", { Name = "AccentStripe", BackgroundColor3 = C.olive, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 6), ZIndex = 4, Parent = card })
+		-- (2026-10-21, round 3: match RIVALS) RIVALS' Keys tab (t0084.0s): each tile is a giant cropped currency render as the
+		-- backdrop, the name and a huge "+40" top left, the price bottom right. Ours: a giant still 3D scissors (half see-through)
+		-- cropped by the card behind the pile; "+N" 52 -> 64 under the name; the pile lifts / turns / squashes as one (no tilt:
+		-- the card clips); the Tag rocks; price 56 -> 66 tall.
+		local back = new("Frame", { Name = "Backdrop", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(w * 0.66, h * 0.5),
+			Size = UDim2.fromOffset(w * 1.3, w * 1.3), Parent = card })
+		local bvp = ViewIcons.Viewport(back, ViewIcons.Scissors(), { view = CFrame.Angles(0, 0, math.rad(-35)) * ViewIcons.Views.Scissors[1], zoom = 1.15, still = true })
+		bvp.Frame.ImageTransparency = 0.55
 		-- a pile of scissors in 3D: more for bigger packs
 		local n = math.clamp(i, 1, 4)
+		local pile = new("Frame", { Name = "Pile", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 70), Size = UDim2.fromOffset(w, 170), ZIndex = 2, Parent = card })
 		for k = 1, n do
 			local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromOffset(w / 2 + (k - (n + 1) / 2) * 34, 130 + (k % 2) * 8), Size = UDim2.fromOffset(130, 130), Parent = card })
-			ViewIcons.Viewport(hold, ViewIcons.Scissors(), { view = CFrame.Angles(0, 0, math.rad((k - (n + 1) / 2) * 25)) * ViewIcons.Views.Scissors[1], zoom = 1 })
+				Position = UDim2.fromOffset(w / 2 + 20 + (k - (n + 1) / 2) * 34, 95 + (k % 2) * 8), Size = UDim2.fromOffset(140, 140), ZIndex = 2, Parent = pile })
+			ViewIcons.Viewport(hold, ViewIcons.Scissors(), { view = CFrame.Angles(0, 0, math.rad((k - (n + 1) / 2) * 25)) * ViewIcons.Views.Scissors[1], zoom = 1, zIndex = 2 })
 		end
-		outlined(Kit.label({ Text = p.Name, FontFace = F.display, TextSize = 30, TextColor3 = C.text, Position = UDim2.fromOffset(18, 12), Size = UDim2.fromOffset(w - 36, 36), Parent = card }), 2)
-		outlined(Kit.label({ Text = "+" .. fmtN(p.Credits or 0), FontFace = F.display, TextSize = 52, Position = UDim2.fromOffset(18, h - 140), Size = UDim2.fromOffset(w - 36, 60), Parent = card }), 2.5)
+		reactArt(card, pile, nil, false)
+		outlined(Kit.label({ Text = p.Name, FontFace = F.display, TextSize = 30, TextColor3 = C.text, Position = UDim2.fromOffset(18, 14), Size = UDim2.fromOffset(w - 36, 36), ZIndex = 5, Parent = card }), 2)
+		outlined(Kit.label({ Text = "+" .. fmtN(p.Credits or 0), FontFace = F.display, TextSize = 64, Position = UDim2.fromOffset(18, 48), Size = UDim2.fromOffset(w - 36, 70), ZIndex = 5, Parent = card }), 3)
 		if p.Tag then
-			new("TextLabel", { BackgroundColor3 = C.red, Text = p.Tag, FontFace = F.display, TextSize = 18, TextColor3 = C.white, AnchorPoint = Vector2.new(1, 0),
-				Position = UDim2.fromOffset(w - 12, 14), Size = UDim2.fromOffset(0, 28), AutomaticSize = Enum.AutomaticSize.X, Parent = card }, { Kit.corner(2), Kit.pad(8, 0, 8, 0) })
+			wobble(new("TextLabel", { BackgroundColor3 = C.red, Text = p.Tag, FontFace = F.display, TextSize = 20, TextColor3 = C.white, AnchorPoint = Vector2.new(1, 0), Rotation = 3,
+				Position = UDim2.fromOffset(w - 12, 16), Size = UDim2.fromOffset(0, 30), AutomaticSize = Enum.AutomaticSize.X, ZIndex = 5, Parent = card }, { Kit.corner(2), Kit.pad(8, 0, 8, 0) }), 2.5)
 		end
 		-- (2026-10-21, RIVALS pass) the pack opens the detail card; its button makes the same ask("BuyRobux")
-		priceTag(card, "robux", p.Robux, w / 2, h - 70, w - 30, 56, function() openDetail(packSpec(p)) end)
+		local packTag = priceTag(card, "robux", p.Robux, w / 2, h - 80, w - 30, 66, function() openDetail(packSpec(p)) end)
+		packTag.ZIndex = 6
 		hover(card)
 	Tac.hoverBrackets(card, Tac.brackets(card, Tac.C.line, 20, 3))
 		card.Activated:Connect(function() openDetail(packSpec(p)) end)
@@ -620,19 +724,22 @@ function RENDER.Scissors(pg, hover)
 		local have = d.Passes and d.Passes[p.Key]
 		local x = 4 + ((i - 1) % 2) * (pw + 20)
 		local yy = y + ((i - 1) // 2) * 170
+		-- (2026-10-21, round 3: match RIVALS) the pass card is clipped so its medal can be a big cropped render (RIVALS' Season
+		-- Pass card, t0072.0s: a huge crest cut by the card edge) instead of a 130 px icon in a corner
 		local card = new("TextButton", { Name = p.Key, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, yy), Size = UDim2.fromOffset(pw, 150),
-			BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.15, Parent = pg }, { Kit.corner(2) })
+			BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.15, ClipsDescendants = true, Parent = pg }, { Kit.corner(2) })
 		-- (2026-10-21, AI-tells cleanup) the thin owned / not-owned stroke -> a solid bottom bar: field green = owned, cream = to buy
 		new("Frame", { Name = "StateBar", BackgroundColor3 = have and C.field or C.cream, BackgroundTransparency = have and 0 or 0.6, BorderSizePixel = 0,
 			AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 6), ZIndex = 2, Parent = card })
-		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(130, 130), Parent = card })
-		ViewIcons.Icon(art, "Medal", { hoverTarget = card })
-		outlined(Kit.label({ Text = p.Name, FontFace = F.display, TextSize = 36, Position = UDim2.fromOffset(150, 14), Size = UDim2.fromOffset(pw - 400, 44), Parent = card }), 2)
-		Kit.label({ Text = p.Desc or "", FontFace = F.medium, TextSize = 20, TextColor3 = C.textDim, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
-			Position = UDim2.fromOffset(150, 60), Size = UDim2.fromOffset(pw - 400, 80), Parent = card })
+		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-34, -40), Size = UDim2.fromOffset(230, 230), Parent = card })
+		reactArt(card, art, ViewIcons.Icon(art, "Medal", { zoom = 1.2 }), false)
+		outlined(Kit.label({ Text = p.Name, FontFace = F.display, TextSize = 40, Position = UDim2.fromOffset(190, 12), Size = UDim2.fromOffset(pw - 450, 48), ZIndex = 3, Parent = card }), 2.5)
+		Kit.label({ Text = p.Desc or "", FontFace = F.medium, TextSize = 20, TextColor3 = C.cream, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
+			Position = UDim2.fromOffset(190, 62), Size = UDim2.fromOffset(pw - 450, 80), ZIndex = 3, Parent = card })
 		-- (2026-10-21, RIVALS pass) the pass opens the detail card (same ask("BuyPass")); owned flips in place
+		-- (2026-10-21, round 3: match RIVALS) price 210x56 -> 230x68
 		local spec = passSpec(p)
-		priceTag(card, "robux", p.Robux, pw - 125, 47, 210, 56, function() openDetail(spec) end, { owned = spec.owned })
+		priceTag(card, "robux", p.Robux, pw - 135, 41, 230, 68, function() openDetail(spec) end, { owned = spec.owned })
 		card.Activated:Connect(function() if not spec.owned() then openDetail(spec) end end)
 		hover(card)
 	Tac.hoverBrackets(card, Tac.brackets(card, Tac.C.line, 20, 3))
@@ -694,7 +801,7 @@ openDetail = function(spec)
 			local tile = new("Frame", { Name = "Tile" .. j, BackgroundColor3 = C.panelRaised, BorderSizePixel = 0, Position = UDim2.fromOffset(tx, 130), Size = UDim2.fromOffset(tw, tw), Parent = card }, { Kit.corner(6) })
 			new("Frame", { Name = "RarityBar", BackgroundColor3 = rar.Color, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -6),
 				Size = UDim2.fromOffset(math.floor(tw * 0.6), 6), ZIndex = 2, Parent = tile })
-			itemArt(tile, id, nil)
+			itemArt(tile, id, tile) -- (2026-10-21, round 3: match RIVALS) the item turns toward you when hovered
 			local chk = checkMark(tile, 34, { Position = UDim2.fromOffset(tw - 40, 6), Visible = ctx.owns(id) })
 			table.insert(updaters, function() chk.Visible = ctx.owns(id) end)
 			Kit.label({ Text = item.Name, FontFace = F.bold, TextSize = 22, TextColor3 = C.cream, TextXAlignment = Enum.TextXAlignment.Center, TextWrapped = true,
@@ -799,18 +906,27 @@ local function build()
 		local b = new("TextButton", { Name = t[1], Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(PAGE_X + (i - 1) * 176, 170), Size = UDim2.fromOffset(164, 56),
 			BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, Parent = root }, { Kit.corner(8) })
 		local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(82, 30), Size = UDim2.fromOffset(78, 64), ZIndex = 2, Parent = b })
+		-- (2026-10-21, round 3: match RIVALS) the selected tab keeps its 3D icon turned toward you (styleTabs); hover turns the
+		-- others and lightens their dark plate (RIVALS t0068.4s / t0084.0s: hovered tabs brighten, the selected one is white)
+		local vp
 		if t[2] == "Weapon" then
-			local vp = ViewIcons.Viewport(hold, ViewIcons.Weapon("AutoRifle"), { view = ViewIcons.GunView, zoom = 0.95 })
-			b.MouseEnter:Connect(function() vp.SetHover(true) end)
-			b.MouseLeave:Connect(function() vp.SetHover(false) end)
+			vp = ViewIcons.Viewport(hold, ViewIcons.Weapon("AutoRifle"), { view = ViewIcons.GunView, zoom = 0.95 })
 		else
-			ViewIcons.Icon(hold, t[2], { hoverTarget = b })
+			vp = ViewIcons.Icon(hold, t[2], {})
 		end
+		b.MouseEnter:Connect(function()
+			vp.SetHover(true)
+			if tab ~= t[1] then Kit.tween(b, 0.1, { BackgroundTransparency = 0.12 }) end
+		end)
+		b.MouseLeave:Connect(function()
+			vp.SetHover(tab == t[1])
+			if tab ~= t[1] then Kit.tween(b, 0.1, { BackgroundTransparency = 0.35 }) end
+		end)
 		local l = outlined(Kit.label({ Name = "Label", Text = t[1], FontFace = F.display, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center,
 			Position = UDim2.fromOffset(0, 24), Size = UDim2.new(1, 0, 0, 34), ZIndex = 3, Parent = b }), 2.5)
 		Kit.bindButton(b, { hover = 1.05 })
 		b.Activated:Connect(function() Screen.SetTab(t[1]) end)
-		tabBtns[t[1]] = { b = b, l = l, icon = hold }
+		tabBtns[t[1]] = { b = b, l = l, icon = hold, vp = vp }
 	end
 	local close = Kit.closeButton(UDim2.fromOffset(86, 52))
 	close.Position = UDim2.fromOffset(PAGE_X + PAGE_W - 86, 172)
@@ -890,6 +1006,14 @@ local function styleTabs(animate)
 		local st = t.l:FindFirstChildOfClass("UIStroke")
 		if st then st.Enabled = not on end
 		if on and animate then Kit.pop(t.icon, 1.15) end
+		-- (2026-10-21, round 3: match RIVALS) RIVALS' selected tab (t0068.4s "Bundles", t0084.0s "Keys") is white AND its icon
+		-- sits bigger, standing up out of the tab. Ours: the selected icon grows 1.3x upward from its bottom anchor (Scale,
+		-- after toScale) and stays turned toward you; the others go back to their base size and idle sway.
+		t.iconBase = t.iconBase or t.icon.Size
+		local bs = t.iconBase
+		local goalSize = on and UDim2.new(bs.X.Scale * 1.3, bs.X.Offset, bs.Y.Scale * 1.3, bs.Y.Offset) or bs
+		if animate then Kit.tween(t.icon, 0.18, { Size = goalSize }, Enum.EasingStyle.Back) else t.icon.Size = goalSize end
+		if t.vp then t.vp.SetHover(on) end
 	end
 end
 
@@ -902,6 +1026,14 @@ local function showTab(animate)
 	if animate then
 		P.pg.Position = UDim2.fromScale(24 / PAGE_W, 0)
 		Kit.tween(P.pg, 0.15, { Position = UDim2.fromScale(0, 0) }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+		-- (2026-10-21, round 3: match RIVALS) the page's tiles pop in one after another (Kit.popIn shares their bindButton UIScale)
+		local k = 0
+		for _, c in P.pg:GetChildren() do
+			if c:IsA("GuiButton") then
+				k += 1
+				Kit.popIn(c, math.min(k, 12) * 0.025)
+			end
+		end
 	else
 		P.pg.Position = UDim2.fromScale(0, 0)
 	end

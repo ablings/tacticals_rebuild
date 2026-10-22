@@ -352,29 +352,26 @@ end
 
 -- Red close button with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
-	-- (lobby revamp Phase B, Edward OK) the lobby's square dark X (same as UIKit.Kit.closeButton): a dark plate with a tan
-	-- hairline and a cream X, as tall as asked. Not named "Close" + Nonapplicable: the old InterfaceController shrinks a
-	-- "Close" button's parent to 0 x 0 (UI session 2026-10-16)
-	-- (2026-10-21, AI-tells cleanup) the tan hairline is gone: the dark plate now sits on a thicker, darker offset shadow
-	-- block (4 design px down-right, same shape). The button itself is a clear hit box holding Shadow + Plate.
-	local h = size.Y.Offset
-	local PLATE = Color3.fromRGB(24, 26, 21)
-	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(h, h),
-		BackgroundTransparency = 1 })
+	-- (2026-10-21, user: "whatever RIVALS is doing") RIVALS' red X again (t0062 / t0287): a red gradient block with a chunky white
+	-- X and a darker bottom lip (no hairline border). Not named "Close" and tagged Nonapplicable: the old InterfaceController
+	-- hooks any "Close" button in a new ScreenGui and shrinks its parent frame to 0 x 0.
+	local w, h = size.X.Offset, size.Y.Offset
+	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(w, h), BackgroundColor3 = Color3.new(1, 1, 1) },
+		{ Kit.corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(255, 106, 77), Color3.fromRGB(197, 42, 26)) }) })
 	btn:AddTag("Nonapplicable")
-	new("Frame", { Name = "Shadow", Position = UDim2.fromOffset(4, 4), Size = UDim2.fromOffset(h, h), BackgroundColor3 = Color3.fromRGB(4, 5, 3),
-		BackgroundTransparency = 0.15, BorderSizePixel = 0, ZIndex = 1, Parent = btn }, { Kit.corner(8) })
-	local plate = new("Frame", { Name = "Plate", Size = UDim2.fromOffset(h, h), BackgroundColor3 = PLATE, BorderSizePixel = 0, ZIndex = 2, Parent = btn }, { Kit.corner(8) })
-	local len = math.floor(h * 0.5)
+	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.7, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), ZIndex = 1, Parent = btn }, { Kit.corner(8) })
+	local len = math.floor(h * 0.62)
 	for _, rot in ipairs({ 45, -45 }) do
 		new("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Rotation = rot,
-			Size = UDim2.fromOffset(len, math.max(3, math.floor(h * 0.09))), BackgroundColor3 = Color3.fromRGB(236, 230, 210), BorderSizePixel = 0, ZIndex = 3, Parent = plate,
-		}, { Kit.corner(2) })
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.46), Rotation = rot,
+			Size = UDim2.fromOffset(len, math.max(4, math.floor(h * 0.17))), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 2, Parent = btn,
+		}, { Kit.corner(3) })
 	end
-	btn.MouseEnter:Connect(function() Kit.tween(plate, 0.12, { BackgroundColor3 = Color3.fromRGB(176, 52, 40) }) end)
-	btn.MouseLeave:Connect(function() Kit.tween(plate, 0.12, { BackgroundColor3 = PLATE }) end)
-	Kit.bindButton(btn, { hover = 1.06 })
+	local sheen = new("Frame", { Name = "HoverSheen", BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = btn }, { Kit.corner(8) })
+	btn.MouseEnter:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.82 }) end)
+	btn.MouseLeave:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }) end)
+	Kit.bindButton(btn, { hover = 1.08 })
 	return btn
 end
 
@@ -427,29 +424,52 @@ function Kit.headerBar(width, text, height)
 end
 
 -- Toggle 110x55: green + knob right when on, light + knob left when off.
+-- (2026-10-21, round 3: match RIVALS; reviewers: "Settings OFF toggles are hard to read") RIVALS' switch (t0135.7) has two states
+-- you can't confuse: a flat plain track with the dark knob parked left, and a filled track with the knob right. Ours now: ON = the
+-- field-green fill (#8DBF5A, a light-to-dark gradient down to #4C7A2E) with a cream knob on the right and a white "ON";
+-- OFF = a dark charcoal track with a grey knob on the left and a cream "OFF" (high contrast on the dark row, nothing lit).
+-- SettingsTheme's own `green` is the old amber, so the field greens are local here. Both states keep a chunky dark bottom lip
+-- (no hairline border), the knob squashes as it slides, and the word pops on each flip.
+local TOGGLE_ON = Color3.fromRGB(141, 191, 90) -- field green #8DBF5A
+local TOGGLE_OFF = Color3.fromRGB(46, 49, 42) -- charcoal
+local KNOB_ON, KNOB_OFF = Color3.fromRGB(236, 230, 210), Color3.fromRGB(120, 124, 112) -- cream / grey
 function Kit.toggle(value, onChange)
 	local btn = new("TextButton", {
-		Name = "Toggle", Size = UDim2.fromOffset(110, 55), AutoButtonColor = false, Text = "", BackgroundColor3 = C.control,
-	}, { Kit.corner(7) })
-	local knob = new("Frame", { Name = "Knob", AnchorPoint = Vector2.new(0, 0.5), Size = UDim2.fromOffset(41, 41), BackgroundColor3 = C.textDark, Parent = btn }, { Kit.corner(4) })
+		Name = "Toggle", Size = UDim2.fromOffset(110, 55), AutoButtonColor = false, Text = "", BackgroundColor3 = TOGGLE_OFF,
+	}, { Kit.corner(7), new("UIGradient", { Name = "Shade", Rotation = 90, Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(150, 162, 140)) }) })
+	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.6, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.14), Parent = btn }, { Kit.corner(7) })
+	local knob = new("Frame", { Name = "Knob", AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(41, 41), BackgroundColor3 = KNOB_OFF, ZIndex = 3, Parent = btn }, { Kit.corner(5) })
 	-- (lobby revamp, graders: on vs off was unreadable) the word sits on the free side of the knob
-	local word = new("TextLabel", { Name = "State", BackgroundTransparency = 1, FontFace = F.bold, TextSize = 20, TextColor3 = C.textDark,
-		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(52, 30), Parent = btn })
+	local word = new("TextLabel", { Name = "State", BackgroundTransparency = 1, FontFace = F.chunky, TextSize = 24, TextColor3 = KNOB_ON,
+		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(52, 30), ZIndex = 2, Parent = btn })
+	Kit.textStroke(1.5).Parent = word
 	local api = { value = value }
 	-- smooth, slow slide + colour blend (RIVALS). No debounce: each click starts a new tween from the
 	-- knob's current spot, so fast clicking reverses it mid-way.
 	local TOGGLE_TIME = 0.25 -- Edward: a little faster than 0.35
 	local function render(t)
-		Kit.tween(knob, t, { Position = api.value and UDim2.fromScale(62 / 110, 0.5) or UDim2.fromScale(7 / 110, 0.5) }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-		Kit.tween(btn, t, { BackgroundColor3 = api.value and C.green or C.control }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-		word.Text = api.value and "ON" or "OFF"
-		word.TextColor3 = api.value and Color3.new(1, 1, 1) or C.textDark
-		word.Position = api.value and UDim2.fromScale(32 / 110, 0.5) or UDim2.fromScale(80 / 110, 0.5)
+		local on = api.value
+		Kit.tween(knob, t, { Position = on and UDim2.fromScale(82.5 / 110, 0.5) or UDim2.fromScale(27.5 / 110, 0.5), BackgroundColor3 = on and KNOB_ON or KNOB_OFF },
+			Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+		Kit.tween(btn, t, { BackgroundColor3 = on and TOGGLE_ON or TOGGLE_OFF }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+		word.Text = on and "ON" or "OFF"
+		word.TextColor3 = on and Color3.new(1, 1, 1) or KNOB_ON
+		word.Position = on and UDim2.fromScale(32 / 110, 0.5) or UDim2.fromScale(78 / 110, 0.5)
+		if t > 0 then
+			-- the knob stretches mid-slide and settles (a squash you can feel), the word pops in
+			local ks = knob:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = knob })
+			ks.Scale = 0.82
+			Kit.tween(ks, t + 0.1, { Scale = 1 }, Enum.EasingStyle.Back)
+			local ws = word:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = word })
+			ws.Scale = 0.6
+			Kit.tween(ws, 0.22, { Scale = 1 }, Enum.EasingStyle.Back)
+		end
 	end
 	function api.set(v) api.value = v; render(TOGGLE_TIME); if onChange then onChange(v) end end
 	btn.Activated:Connect(function() api.set(not api.value) end)
 	render(0)
-	return Kit.bindButton(btn, { hover = 1.04 }), api
+	return Kit.bindButton(btn, { hover = 1.06 }), api
 end
 
 -- Stepper (arrows + value box) on the row's top line and a slider track under it.

@@ -260,6 +260,54 @@ local voteTimer = timerBox(vote)
 label(vote, "VOTE FOR A MAP", STENCIL, 40, 660, 136, 600, 50, WHITE)
 local mapHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(250, 210), Size = UDim2.fromOffset(1420, 760), Parent = vote })
 local mapTiles = {}
+-- (2026-10-21, round 3: match RIVALS) every 3D picture on these screens is live: map renders turn slowly on a camera orbit,
+-- item renders sway and spin round when hovered (RIVALS' item tiles are posed renders; ours are real models, so they move).
+-- vpf -> { cam, c (centre), r (orbit radius), h (height), a (angle), map = true | holder (item: spins on Hover) }
+local live3D = setmetatable({}, { __mode = "k" })
+
+-- (2026-10-21, round 3: match RIVALS) RIVALS' map vote shows a picture of every map. A map with no uploaded picture AND no
+-- model in this place (DuelMaps / Workspace) used to be an empty black tile: now a small arena built from Parts stands in
+-- (floor, low walls, crates, a tower, a tan and a green spawn pad), laid out from the map id so each map looks different.
+local function miniArena(id)
+	local m = Instance.new("WorldModel")
+	local seed = 0
+	for i = 1, #id do seed = (seed * 31 + string.byte(id, i)) % 2147483647 end
+	local rng = Random.new(seed)
+	local function part(size, pos, col, mat, rot)
+		local q = Instance.new("Part")
+		q.Anchored = true
+		q.Size = size
+		q.CFrame = CFrame.new(pos) * (rot or CFrame.identity)
+		q.Color = col
+		q.Material = mat or Enum.Material.SmoothPlastic
+		q.TopSurface, q.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
+		q.Parent = m
+		return q
+	end
+	local floors = { Color3.fromRGB(150, 146, 132), Color3.fromRGB(118, 128, 104), Color3.fromRGB(160, 150, 120) }
+	part(Vector3.new(60, 1, 44), Vector3.new(0, -0.5, 0), floors[rng:NextInteger(1, #floors)], Enum.Material.Concrete)
+	local wall = Color3.fromRGB(196, 190, 172)
+	part(Vector3.new(60, 6, 1.5), Vector3.new(0, 3, -22), wall)
+	part(Vector3.new(60, 6, 1.5), Vector3.new(0, 3, 22), wall)
+	part(Vector3.new(1.5, 6, 44), Vector3.new(-30, 3, 0), wall)
+	part(Vector3.new(1.5, 6, 44), Vector3.new(30, 3, 0), wall)
+	part(Vector3.new(8, 0.4, 8), Vector3.new(-23, 0.2, 0), TEAM_A[2], Enum.Material.SmoothPlastic) -- our spawn (tan)
+	part(Vector3.new(8, 0.4, 8), Vector3.new(23, 0.2, 0), TEAM_B[1], Enum.Material.SmoothPlastic) -- theirs (green)
+	local tall = rng:NextInteger(7, 12)
+	part(Vector3.new(6, tall, 6), Vector3.new(0, tall / 2, rng:NextNumber(-6, 6)), Color3.fromRGB(92, 98, 84), Enum.Material.Concrete)
+	for _ = 1, rng:NextInteger(6, 9) do
+		local s = rng:NextNumber(2.4, 4.2)
+		local x, z = rng:NextNumber(-17, 17), rng:NextNumber(-17, 17)
+		if math.abs(x) > 5 or math.abs(z) > 5 then
+			part(Vector3.new(s, s, s), Vector3.new(x, s / 2, z), Color3.fromRGB(146, 112, 70), Enum.Material.WoodPlanks, CFrame.Angles(0, rng:NextNumber(0, 1.5), 0))
+		end
+	end
+	for _ = 1, 3 do -- cover walls
+		local x, z = rng:NextNumber(-14, 14), rng:NextNumber(-15, 15)
+		part(Vector3.new(rng:NextNumber(6, 10), 3.2, 1.2), Vector3.new(x, 1.6, z), Color3.fromRGB(108, 112, 100), Enum.Material.Concrete, CFrame.Angles(0, rng:NextInteger(0, 1) * math.pi / 2, 0))
+	end
+	return m
+end
 
 local refreshVotes
 local function buildMaps(list)
@@ -278,8 +326,9 @@ local function buildMaps(list)
 		local edgeCol = Color3.fromRGB(70, 72, 78) -- (serious pass) a quiet grey edge; your vote turns it beige
 		-- (2026-10-21, AI-tells cleanup) no hairline edge at rest: the ring shows (3 px, beige) only on your vote / the winner
 		local edge = new("UIStroke", { Color = edgeCol, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
+		local randomQ
 		if m.random then
-			label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
+			randomQ = label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
 		elseif m.image and m.image ~= "" then
 			new("ImageLabel", { BackgroundTransparency = 1, Image = m.image, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromScale(1, 1), Parent = t })
 		else
@@ -287,10 +336,11 @@ local function buildMaps(list)
 			-- map's look in ReplicatedStorage.DuelMaps[id].Visual; the match place has it in Workspace[id].
 			local reg = ReplicatedStorage:FindFirstChild("DuelMaps") and ReplicatedStorage.DuelMaps:FindFirstChild(m.id)
 			local src = (reg and reg:FindFirstChild("Visual")) or workspace:FindFirstChild(m.id)
+			local vpf = new("ViewportFrame", { BackgroundColor3 = Color3.fromRGB(150, 190, 225), Size = UDim2.fromScale(1, 1),
+				Ambient = Color3.fromRGB(120, 124, 132), LightColor = Color3.new(1, 1, 1), LightDirection = Vector3.new(-0.5, -1, -0.35), Parent = t })
+			local world
 			if src then
-				local vpf = new("ViewportFrame", { BackgroundColor3 = Color3.fromRGB(150, 190, 225), Size = UDim2.fromScale(1, 1),
-					Ambient = Color3.fromRGB(120, 124, 132), LightColor = Color3.new(1, 1, 1), LightDirection = Vector3.new(-0.5, -1, -0.35), Parent = t })
-				local world = Instance.new("WorldModel")
+				world = Instance.new("WorldModel")
 				for _, d in src:GetDescendants() do
 					if d:IsA("BasePart") and d.Transparency < 0.95 then
 						local c = d:Clone()
@@ -299,15 +349,22 @@ local function buildMaps(list)
 						c.Parent = world
 					end
 				end
-				world.Parent = vpf
-				local cf, size = world:GetBoundingBox()
-				local cam = Instance.new("Camera")
-				cam.FieldOfView = 40
-				local span = math.max(size.X, size.Z)
-				cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(-0.45 * span, 0.62 * span, 0.62 * span), cf.Position)
-				cam.Parent = vpf
-				vpf.CurrentCamera = cam
 			end
+			-- (2026-10-21, round 3: match RIVALS) nothing to render (or an empty model): the Parts arena stands in
+			if not world or #world:GetChildren() == 0 then
+				if world then world:Destroy() end
+				world = miniArena(m.id)
+			end
+			world.Parent = vpf
+			local cf, size = world:GetBoundingBox()
+			local cam = Instance.new("Camera")
+			cam.FieldOfView = 40
+			local span = math.max(size.X, size.Z)
+			cam.CFrame = CFrame.lookAt(cf.Position + Vector3.new(-0.45 * span, 0.62 * span, 0.62 * span), cf.Position)
+			cam.Parent = vpf
+			vpf.CurrentCamera = cam
+			-- (2026-10-21, round 3: match RIVALS) the map turns slowly (same height and distance, orbiting from this view)
+			live3D[vpf] = { cam = cam, c = cf.Position, r = math.sqrt(0.45 ^ 2 + 0.62 ^ 2) * span, h = 0.62 * span, a = math.atan2(-0.45, 0.62), map = true }
 		end
 		-- striped name bar
 		local barH = th * 0.2
@@ -331,7 +388,9 @@ local function buildMaps(list)
 			player:SetAttribute("_MyVote", m.id) -- instant feedback before the server echoes MapVotes
 			refreshVotes()
 		end)
-		mapTiles[m.id] = { t = t, edge = edge, col = edgeCol, voters = voters, count = count, tw = tw }
+		-- (2026-10-21, round 3: match RIVALS) the tiles pop in one after another when the vote opens
+		if Kit then Kit.popIn(t, 0.08 + (i - 1) * 0.07) end
+		mapTiles[m.id] = { t = t, edge = edge, col = edgeCol, voters = voters, count = count, tw = tw, q = randomQ }
 	end
 end
 
@@ -504,6 +563,9 @@ local function viewport(holder, id)
 	local cf2, size2 = m:GetBoundingBox()
 	local r = size2.Magnitude / 2
 	cam.CFrame = CFrame.lookAt(cf2.Position + Vector3.new(0, 0, r / math.tan(math.rad(15)) * 0.95), cf2.Position)
+	-- (2026-10-21, round 3: match RIVALS) a live item: it sways a little at rest and turns round while its tile is hovered
+	-- (the holder's Hover attribute, set by optionTile). Same distance, so it never clips the frame.
+	live3D[vpf] = { cam = cam, c = cf2.Position, r = r / math.tan(math.rad(15)) * 0.95, h = 0, a = 0, holder = holder, t = math.random() * 6, spin = 0 }
 end
 local function itemName(id) return (id or "?"):gsub("(%l)(%u)", "%1 %2") end
 
@@ -650,6 +712,11 @@ local function optionTile(parent, x, y, id, text, onPick, kind)
 	else
 		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-14, -34), Size = UDim2.fromOffset(OPT + 28, OPT + 8), ZIndex = 3, Parent = t })
 		task.defer(viewport, art, id)
+		-- (2026-10-21, round 3: match RIVALS) hovered / pad-selected: the item turns round (live3D loop below)
+		t.MouseEnter:Connect(function() art:SetAttribute("Hover", true) end)
+		t.MouseLeave:Connect(function() art:SetAttribute("Hover", nil) end)
+		t.SelectionGained:Connect(function() art:SetAttribute("Hover", true) end)
+		t.SelectionLost:Connect(function() art:SetAttribute("Hover", nil) end)
 	end
 	local n = label(t, string.upper(text), FX, #text > 11 and 26 or 32, -10, OPT - 40, OPT + 20, 36, WHITE)
 	n.ZIndex = 4
@@ -699,9 +766,11 @@ function showStep(i)
 		local x = 20 + col * (OPT + OPT_GAP)
 		local y = 36 + row * rowH
 		if e.kind == "random" then
-			optionTile(content, x, y, nil, "Random", function() if #mine > 0 then pick(mine[math.random(#mine)]) end end, "random")
+			local rt = optionTile(content, x, y, nil, "Random", function() if #mine > 0 then pick(mine[math.random(#mine)]) end end, "random")
+			if Kit then Kit.popIn(rt, 0) end -- (2026-10-21, round 3: match RIVALS) the slot's tiles pop in, staggered
 		else
 			local tile = optionTile(content, x, y, e.id, nameOf(e.id), function() pick(e.id) end, e.kind)
+			if Kit then Kit.popIn(tile, math.min(k - 1, 10) * 0.03) end
 			if picks[slot] == e.id then
 				-- (2026-10-21, AI-tells cleanup) ink() no longer adds an edge: the current pick gets its own thick cream ring
 				new("UIStroke", { Color = INK_YELLOW, Thickness = 6, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = tile })
@@ -817,6 +886,17 @@ local lastChosen, lastVotes
 local function onChosen()
 	local tile = mapTiles[st(STATE.Chosen) or ""]
 	if tile and phase == "MapVote" then
+		-- (2026-10-21, round 3: match RIVALS) the result reads at a glance: the winner punches and its map spins up, the
+		-- other tiles dim under a dark wash
+		if Kit then Kit.pop(tile.t, 1.1) end
+		for _, other in mapTiles do
+			if other ~= tile then
+				local wash = new("Frame", { Name = "LostWash", BackgroundColor3 = BLACK, BackgroundTransparency = 1, BorderSizePixel = 0,
+					Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = other.t }, { new("UICorner", { CornerRadius = UDim.new(0.04, 0) }) })
+				TweenService:Create(wash, TweenInfo.new(0.3, Enum.EasingStyle.Quad), { BackgroundTransparency = 0.5 }):Play()
+			end
+		end
+		for vpf, s in live3D do if s.map and vpf:IsDescendantOf(tile.t) then s.boost = 1 end end
 		task.spawn(function()
 			-- (2026-10-21, AI-tells cleanup) the ring blinks on / off (no grey hairline at rest any more)
 			for _ = 1, 3 do tile.edge.Color = TEAM_A[1]; tile.edge.Thickness = 4; tile.edge.Transparency = 0; task.wait(0.15); tile.edge.Transparency = 1; task.wait(0.15) end
@@ -901,6 +981,35 @@ RunService.RenderStepped:Connect(function()
 		for _, e in other or {} do if e.bot or e.player then here = true break end end
 		loadWords.Text = here and "Getting the map ready" or "Waiting for opponent"
 	end
+end)
+
+-- (2026-10-21, round 3: match RIVALS) the live 3D pictures: maps orbit slowly (the winner spins up), items sway and turn
+-- round while hovered; the Random map's "?" rocks. Only runs while a vote / pick screen is up.
+RunService.RenderStepped:Connect(function(dt)
+	if phase ~= "MapVote" and phase ~= "Loadout" and phase ~= "Switch" then return end
+	dt = math.min(dt, 1 / 20)
+	for vpf, s in live3D do
+		if not vpf.Parent then live3D[vpf] = nil
+		elseif s.map then
+			if phase == "MapVote" then
+				s.boost = math.max(0, (s.boost or 0) - dt * 0.5)
+				s.a += dt * (0.07 + (s.boost or 0) * 1.6)
+				s.cam.CFrame = CFrame.lookAt(s.c + Vector3.new(math.sin(s.a) * s.r, s.h, math.cos(s.a) * s.r), s.c)
+			end
+		else
+			s.t += dt
+			if s.holder and s.holder:GetAttribute("Hover") then
+				s.spin += dt * 2.4
+			elseif s.spin ~= 0 then -- let go: ease back the short way to the posed view
+				local w = (s.spin + math.pi) % (2 * math.pi) - math.pi
+				s.spin = math.abs(w) < 0.01 and 0 or w * (1 - math.min(1, dt * 6))
+			end
+			local a = s.spin + math.sin(s.t * 1.1) * 0.16
+			s.cam.CFrame = CFrame.lookAt(s.c + Vector3.new(math.sin(a) * s.r, 0, math.cos(a) * s.r), s.c)
+		end
+	end
+	local rq = mapTiles.Random and mapTiles.Random.q
+	if rq and phase == "MapVote" then rq.Rotation = math.sin(os.clock() * 2.2) * 8 end
 end)
 
 -- (2026-10-18) DuelHUD's Switch Weapons button / M key: PlayerScripts.SwitchWeapons:Invoke("Open" | "Close" | "Toggle") -> open?

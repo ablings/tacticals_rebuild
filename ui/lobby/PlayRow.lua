@@ -39,8 +39,10 @@ local function headshot(img, uid)
 	end)
 end
 
+local stateKind = "play" -- (2026-10-21, round 3) the halo pulse reads it: on for play / found, off while busy
 function PlayRow.SetState(text, kind)
 	if not play then return end
+	stateKind = kind or "play"
 	playLabel.Text = text
 	local s, edge = seq(kind)
 	playGrad.Color = s
@@ -59,8 +61,13 @@ function PlayRow.Init(ctx)
 	-- (2026-10-21, AI-tells cleanup) no thin pale border on the button; the gradient fill carries it
 	-- (lobby revamp, graders: PLAY was barely bigger than the dock icons) 340 x 84 design px: the biggest thing on the hub,
 	-- about 30 % taller on a phone (over the 44 pt tap minimum on a 390 pt tall screen)
+	-- (2026-10-21, round 3: match RIVALS t0000 / t0254.9, PLAY is THE call to action) a field-green halo behind PLAY swells out
+	-- and fades every couple of seconds (faster when a match is found), on top of the shine sweep below. A sibling drawn
+	-- behind the button (ZIndex 1 < 2), centred on it, so the button's own hover UIScale is untouched.
+	local halo = new("Frame", { Name = "PlayHalo", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(960, 880), Size = UDim2.fromOffset(340, 84),
+		BackgroundColor3 = hex("#8DBF5A"), BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 1, Parent = root }, { Kit.corner(6) })
 	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(790, 838), Size = UDim2.fromOffset(340, 84),
-		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2) })
+		BackgroundColor3 = C.white, ZIndex = 2, Parent = root }, { Kit.corner(2) })
 	playGrad = new("UIGradient", { Rotation = 90, Parent = play })
 	playLabel = Kit.label({ Text = "PLAY", FontFace = F.display, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center,
 		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(310, 66), Parent = play })
@@ -113,6 +120,21 @@ function PlayRow.Init(ctx)
 					bar.Position = UDim2.fromScale(-0.3, 0.5)
 					Kit.tween(bar, 0.7, { Position = UDim2.fromScale(1.3, 0.5) }, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
 				end
+			end
+		end)
+	end
+	do
+		local hs = new("UIScale", { Name = "PulseScale", Parent = halo })
+		task.spawn(function()
+			while halo.Parent do
+				local found = stateKind == "found"
+				if stateKind ~= "busy" and play.Visible and gui.Enabled then
+					hs.Scale = 1
+					halo.BackgroundTransparency = found and 0.25 or 0.45
+					Kit.tween(hs, found and 0.6 or 0.9, { Scale = found and 1.3 or 1.22 }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+					Kit.tween(halo, found and 0.6 or 0.9, { BackgroundTransparency = 1 }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+				end
+				task.wait(found and 0.9 or 2.2)
 			end
 		end)
 	end

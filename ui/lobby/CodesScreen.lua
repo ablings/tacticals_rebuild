@@ -51,10 +51,32 @@ local function shakeBox()
 	if boxHome then box.Position = boxHome end -- a second shake starts from rest, not mid-swing
 	Kit.shake(box)
 end
+-- (2026-10-21, round 3: match RIVALS) the result is a pop you can't miss: a solid chip (field green "✓ Redeemed!" / red
+-- "✕ <why>") pops in where the status line sits, holds, then fades. Built after toScale, so it is sized in Scale of the panel
+-- (design 1060 x 450); its width follows the words (AutomaticSize X) and its text size follows the screen (Kit.factor).
+local resultChip
+local function popResult(ok, msg)
+	if resultChip then resultChip:Destroy() end
+	local panel = box.Parent
+	local chip = Kit.label({ Name = "ResultChip", Text = "   " .. (ok and "✓  " or "✕  ") .. msg .. "   ", FontFace = FB, TextSize = math.floor(26 * Kit.factor() + 0.5),
+		TextColor3 = ok and Theme.hex("#11140E") or Color3.new(1, 1, 1), BackgroundTransparency = 0, BackgroundColor3 = ok and DONE or Theme.hex("#C52A1A"),
+		AutomaticSize = Enum.AutomaticSize.X, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(32 / 1060, 266 / 450), Size = UDim2.fromScale(0, 44 / 450),
+		ZIndex = 5, Parent = panel })
+	new("UICorner", { CornerRadius = UDim.new(0.2, 0), Parent = chip })
+	resultChip = chip
+	status.Text = ""
+	Kit.popIn(chip)
+	if ok then Kit.sfx("reward") else task.delay(0.1, function() if chip.Parent then Kit.shake(chip) end end) end
+	task.delay(2.6, function()
+		if not chip.Parent then return end
+		Kit.tween(chip, 0.25, { BackgroundTransparency = 1, TextTransparency = 1 })
+		task.delay(0.26, function() if chip.Parent then chip:Destroy() end end)
+	end)
+end
 local function redeem()
 	if redeeming then return end
 	local code = (box.Text or ""):gsub("^%s+", ""):gsub("%s+$", "")
-	if code == "" then status.Text = "Type a code first"; status.TextColor3 = Theme.hex("#FF6A5E"); shakeBox() return end
+	if code == "" then popResult(false, "Type a code first"); shakeBox() return end
 	redeeming = true
 	status.Text = "Checking..."; status.TextColor3 = Theme.hex("#CFCDD3")
 	local stopBusy = goBtn and Kit.busy(goBtn)
@@ -63,12 +85,11 @@ local function redeem()
 	redeeming = false
 	if r and r.ok then
 		box.Text = ""
-		status.Text = r.msg or "Redeemed!"; status.TextColor3 = DONE
-		Kit.pop(status, 1.25)
+		popResult(true, r.msg or "Redeemed!") -- (2026-10-21, round 3: match RIVALS) was a plain status line
 		local sc = goBtn and goBtn:FindFirstChildOfClass("UIScale") -- bindButton's scale (one UIScale per object)
 		if sc then sc.Scale = 1.15; Kit.tween(sc, 0.28, { Scale = 1 }, Enum.EasingStyle.Back) end
 	else
-		status.Text = (r and r.msg) or "That code didn't work"; status.TextColor3 = Theme.hex("#FF6A5E")
+		popResult(false, (r and r.msg) or "That code didn't work") -- (2026-10-21, round 3: match RIVALS) red chip pop
 		shakeBox()
 	end
 	task.delay(0.3, renderList)
@@ -95,6 +116,9 @@ local function build()
 		Size = UDim2.fromOffset(740, 84), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35, Parent = panel },
 		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }), new("UIPadding", { PaddingLeft = UDim.new(0, 24) }) })
 	box:SetAttribute("dTS", 36)
+	-- (2026-10-21, round 3: match RIVALS) a soft field-green glow block behind Redeem, lit only while a code is typed
+	local goGlow = new("Frame", { Name = "RedeemGlow", Position = UDim2.fromOffset(798, 148), Size = UDim2.fromOffset(238, 100), BackgroundColor3 = DONE,
+		BackgroundTransparency = 1, BorderSizePixel = 0, Parent = panel }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
 	local go = Kit.button("robux", UDim2.fromOffset(222, 84), "Redeem")
 	go.Name = "Redeem"
 	goBtn = go
@@ -102,11 +126,24 @@ local function build()
 	go.Parent = panel
 	go.Activated:Connect(function() if (box.Text or ""):match("%S") then redeem() end end)
 	-- (lobby revamp, graders: Redeem looked live with nothing typed) dimmed and inert until there's a code in the box
-	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 20, Parent = go },
-		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
-	local function paintGo() dim.Visible = not (box.Text or ""):match("%S") end
-	box:GetPropertyChangedSignal("Text"):Connect(paintGo)
-	paintGo()
+	-- (2026-10-21, round 3: match RIVALS; reviewers: "Redeem reads as disabled") two states you can tell apart at a glance: empty =
+	-- a flat charcoal plate over the green with a faded word (clearly off); typed = the full bright field-green gradient, the word
+	-- at full strength, the green glow behind it, and a little pop the moment it turns on. The plate sits under the label (Z 2).
+	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.hex("#2E312A"), BackgroundTransparency = 0.08, ZIndex = 2, Parent = go },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 3) }) })
+	local goLabel = go:FindFirstChild("Label")
+	local goOn
+	local function paintGo(t)
+		local on = (box.Text or ""):match("%S") ~= nil
+		if on == goOn then return end
+		goOn = on
+		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0.08 })
+		Kit.tween(goGlow, t or 0.15, { BackgroundTransparency = on and 0.6 or 1 })
+		if goLabel then Kit.tween(goLabel, t or 0.15, { TextTransparency = on and 0 or 0.55 }) end
+		if on and t ~= 0 then Kit.pop(go, 1.1) end
+	end
+	box:GetPropertyChangedSignal("Text"):Connect(function() paintGo() end)
+	paintGo(0)
 	box.FocusLost:Connect(function(enter) if enter then redeem() end end)
 	status = Kit.label({ Text = "", FontFace = FB, TextSize = 24, TextColor3 = Theme.hex("#CFCDD3"), AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(34, 266), Size = UDim2.fromOffset(990, 32), Parent = panel })
 	status:SetAttribute("dTS", 24) -- (2026-10-21, RIVALS pass) anchored left-middle (same spot) so the success pop grows from the text's start

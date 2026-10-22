@@ -12,6 +12,7 @@ local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -152,11 +153,205 @@ local function squadScene(parent, teamSize, ranked)
 			local yaw = side == 0 and math.rad(125) or math.rad(-125)
 			m:PivotTo(CFrame.new(x, 0, z) * CFrame.Angles(0, yaw, 0))
 			if side == 0 and i == 1 then arm(m, weapon) end
+			m.Name = side == 0 and ("Mate" .. i) or ("Enemy" .. i) -- (2026-10-21, round 3) named so the hover hop finds your team
 			m.Parent = scene
 		end
 	end
 	if #scene:GetChildren() == 0 then scene:Destroy(); return nil end
 	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-6), 0, 0), zoom = ({ 1.1, 1.4, 1.45 })[teamSize] or 1.6, still = true })
+	return vp, scene
+end
+
+---------------------------------------------------------------------------------------------------- live scenes
+-- (2026-10-21, round 3: match RIVALS) RIVALS' play tiles are moving art; ours are live 3D scenes that react. On hover (or a
+-- controller's selection) the camera eases in and turns a touch, and the scene's step(t, h, since) runs every frame
+-- (h = 0..1 hover ease, since = seconds since the hover began: hops / hit wobbles). Runs only while its ScreenGui is on.
+local function liven(vp, target, push, step)
+	if not vp then return end
+	local cam = vp.Frame.CurrentCamera
+	local base = cam.CFrame
+	local dist = base.Position.Magnitude
+	local hover, h, kick = false, 0, -100
+	local function set(on) if on and not hover then kick = os.clock() end hover = on end
+	-- (the target can outlive the scene, e.g. RankedScreen's cards: these go when the viewport does)
+	local conns = {
+		target.MouseEnter:Connect(function() set(true) end),
+		target.MouseLeave:Connect(function() set(false) end),
+		target.SelectionGained:Connect(function() set(true) end),
+		target.SelectionLost:Connect(function() set(false) end),
+	}
+	local sg = vp.Frame:FindFirstAncestorOfClass("ScreenGui")
+	local conn
+	conn = RunService.RenderStepped:Connect(function(dt)
+		if not vp.Frame.Parent then
+			conn:Disconnect()
+			for _, c in conns do c:Disconnect() end
+			return
+		end
+		if sg and not sg.Enabled then return end
+		h += ((hover and 1 or 0) - h) * math.min(1, dt * 9)
+		cam.CFrame = CFrame.Angles(0, h * 0.07, 0) * base * CFrame.new(0, 0, -h * dist * (push or 0.1))
+		if step then step(os.clock(), h, os.clock() - kick) end
+	end)
+end
+-- a one-shot hop: 0 -> up -> 0 over 0.32 s, starting `delay` s after the hover began
+local function hop(since, delay, height)
+	local u = (since - (delay or 0)) / 0.32
+	if u <= 0 or u >= 1 then return 0 end
+	return math.sin(u * math.pi) * (height or 0.9)
+end
+-- your team hops one after another when the tile is hovered (the other team stays put)
+local function livenSquad(vp, scene, target)
+	if not (vp and scene) then return end
+	local mates = {}
+	for _, m in scene:GetChildren() do
+		local i = tonumber(m.Name:match("^Mate(%d+)$"))
+		if i and m:IsA("Model") then table.insert(mates, { m = m, base = m:GetPivot(), d = (i - 1) * 0.08 }) end
+	end
+	liven(vp, target, 0.1, function(_, _, since)
+		if since > 1.2 then return end
+		for _, e in mates do e.m:PivotTo(e.base + Vector3.new(0, hop(since, e.d, 0.9), 0)) end
+	end)
+end
+
+-- small anchored parts for the placeholder scenes (no collisions, no shadows)
+local function part(m, size, cf, color, mat, shape)
+	local p = Instance.new("Part")
+	p.Anchored, p.CanCollide, p.CastShadow = true, false, false
+	p.Size, p.CFrame, p.Color = size, cf, color
+	p.Material = mat or Enum.Material.SmoothPlastic
+	p.TopSurface, p.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
+	if shape then p.Shape = shape end
+	p.Parent = m
+	return p
+end
+local UPRIGHT = CFrame.Angles(0, 0, math.rad(90)) -- cylinder axis (X) -> vertical
+local FACING = CFrame.Angles(0, math.rad(90), 0) -- cylinder axis (X) -> toward the camera
+local SAND, OLIVE_D = Color3.fromRGB(176, 156, 112), Color3.fromRGB(98, 108, 62)
+local RING_RED, RING_CREAM, WOOD = Color3.fromRGB(200, 60, 48), Color3.fromRGB(236, 230, 210), Color3.fromRGB(110, 84, 50)
+-- a blocky stand-in figure (when there is no character to copy); pivot = the torso, feet 3 studs below it (like a rig's root)
+local function blockFigure(cf, color)
+	local m = Instance.new("Model")
+	local torso = part(m, Vector3.new(2, 2, 1), cf, color)
+	part(m, Vector3.new(1.2, 1.2, 1.2), cf * CFrame.new(0, 1.65, 0), color:Lerp(Color3.new(1, 1, 1), 0.15))
+	for _, s in { -1, 1 } do
+		part(m, Vector3.new(1, 2, 1), cf * CFrame.new(s * 1.5, 0, 0), color:Lerp(Color3.new(0, 0, 0), 0.15))
+		part(m, Vector3.new(1, 2, 1), cf * CFrame.new(s * 0.5, -2, 0), color:Lerp(Color3.new(0, 0, 0), 0.3))
+	end
+	m.PrimaryPart = torso
+	return m
+end
+local function loadoutWeapon()
+	local d = ctx.getData and ctx.getData()
+	return (d and d.Loadout and d.Loadout.Weapon) or (ctx.Config and ctx.Config.DefaultLoadout and ctx.Config.DefaultLoadout.Weapon)
+end
+
+-- (2026-10-21, round 3: match RIVALS) Training: RIVALS shows art here; ours is a live range scene. A straw target dummy on a
+-- post with rings on its chest, a sandbag wall in front with your gun resting on it, a round target board behind. The dummy
+-- sways, and rocks back as if hit when you hover.
+local function trainingScene(parent, target)
+	local scene = Instance.new("Model")
+	scene.Name = "Range"
+	part(scene, Vector3.new(14, 0.4, 9), CFrame.new(0, -0.2, 2), Color3.fromRGB(62, 66, 56), Enum.Material.Concrete) -- floor slab
+	-- sandbag wall (screen left = +X, near the camera): three staggered rows of squashed spheres
+	for r, xs in { { -1.8, -0.6, 0.6, 1.8 }, { -1.2, 0, 1.2 }, { -0.6, 0.6 } } do
+		for k, x in xs do
+			local bag = part(scene, Vector3.new(1.3, 0.75, 0.95), CFrame.new(2.6 + x, 0.35 + (r - 1) * 0.62, -1.6) * CFrame.Angles(0, 0, math.rad(k % 2 == 0 and 3 or -3)),
+				(r + k) % 2 == 0 and SAND or SAND:Lerp(OLIVE_D, 0.35), Enum.Material.Fabric)
+			local mesh = Instance.new("SpecialMesh")
+			mesh.MeshType = Enum.MeshType.Sphere
+			mesh.Parent = bag
+		end
+	end
+	-- your gun resting on the wall, laid along X (towards the dummy)
+	local weapon = loadoutWeapon()
+	local gun = weapon and ViewIcons.Weapon(weapon)
+	if gun and #gun:GetChildren() > 0 then
+		local bb, size = gun:GetBoundingBox()
+		gun.WorldPivot = CFrame.new(bb.Position)
+		local turn = CFrame.identity -- the longest axis is the barrel
+		if size.Z >= size.X and size.Z >= size.Y then turn = CFrame.Angles(0, math.rad(90), 0)
+		elseif size.Y >= size.X and size.Y >= size.Z then turn = CFrame.Angles(0, 0, math.rad(90)) end
+		pcall(function() gun:ScaleTo(math.clamp(3.2 / math.max(size.X, size.Y, size.Z, 0.1), 0.4, 2)) end)
+		gun:PivotTo(CFrame.new(2.6, 2.1, -1.7) * turn)
+		gun.Parent = scene
+	elseif gun then
+		gun:Destroy()
+	end
+	-- the target dummy on a post (screen right = -X, further back), rings facing the camera
+	local dummy = Instance.new("Model")
+	dummy.Name = "Dummy"
+	local foot = CFrame.new(-2.4, 0, 2.6)
+	local base = part(dummy, Vector3.new(0.5, 2.2, 2.2), foot * CFrame.new(0, 0.25, 0) * UPRIGHT, Color3.fromRGB(46, 50, 56), Enum.Material.Metal, Enum.PartType.Cylinder)
+	base.Name = "Base"
+	part(dummy, Vector3.new(1.6, 0.35, 0.35), foot * CFrame.new(0, 1.2, 0) * UPRIGHT, WOOD, Enum.Material.Wood, Enum.PartType.Cylinder)
+	local straw = Color3.fromRGB(196, 170, 112)
+	part(dummy, Vector3.new(2, 2.2, 1.1), foot * CFrame.new(0, 3, 0), straw, Enum.Material.Fabric)
+	part(dummy, Vector3.new(1.25, 1.25, 1.25), foot * CFrame.new(0, 4.75, 0), straw:Lerp(Color3.new(1, 1, 1), 0.1), Enum.Material.Fabric, Enum.PartType.Ball)
+	part(dummy, Vector3.new(3.6, 0.5, 0.5), foot * CFrame.new(0, 3.6, 0), straw:Lerp(Color3.new(0, 0, 0), 0.15), Enum.Material.Fabric) -- arms out
+	for i, ring in { { 1.7, RING_RED }, { 1.15, RING_CREAM }, { 0.6, RING_RED } } do
+		part(dummy, Vector3.new(0.06, ring[1], ring[1]), foot * CFrame.new(0, 3.05, -0.57 - i * 0.02) * FACING, ring[2], Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	end
+	dummy.Parent = scene
+	-- a round target board on legs, back left (depth)
+	local board = CFrame.new(4.6, 0, 5.2)
+	for _, s in { -1, 1 } do
+		part(scene, Vector3.new(0.25, 3.2, 0.25), board * CFrame.new(s * 0.9, 1.6, 0.3) * CFrame.Angles(math.rad(-10), 0, 0), WOOD, Enum.Material.Wood)
+	end
+	for i, ring in { { 2.6, RING_CREAM }, { 1.8, RING_RED }, { 1.0, RING_CREAM }, { 0.45, RING_RED } } do
+		part(scene, Vector3.new(0.08, ring[1], ring[1]), board * CFrame.new(0, 3.2, -i * 0.02) * FACING, ring[2], Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	end
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-10), math.rad(-14), 0), zoom = 1.15, still = true })
+	-- the dummy rocks about its foot (read back after the viewport re-centred and turned the scene)
+	local home = base.CFrame * UPRIGHT:Inverse() * CFrame.new(0, -0.25, 0)
+	dummy.WorldPivot = home
+	liven(vp, target, 0.08, function(t, _, since)
+		local hit = since < 1.6 and math.exp(-since * 3.5) * math.sin(since * 16) * 0.22 or 0
+		dummy:PivotTo(home * CFrame.Angles(math.sin(t * 1.7) * 0.035 + hit, 0, math.sin(t * 1.1) * 0.02))
+	end)
+	return vp
+end
+
+-- (2026-10-21, round 3: match RIVALS) Lobby Duels: two fighters squaring up on a duel pad (you with your gun, the other a
+-- dark mannequin) over a field-green glow ring that breathes; both hop when you hover.
+local function duelsScene(parent, target)
+	local scene = Instance.new("Model")
+	scene.Name = "Pad"
+	local FEET = -3 -- a rig's pivot is its root, about 3 studs above its feet
+	part(scene, Vector3.new(0.6, 11, 11), CFrame.new(0, FEET - 0.3, 0) * UPRIGHT, Color3.fromRGB(46, 50, 56), Enum.Material.Metal, Enum.PartType.Cylinder)
+	local ring = part(scene, Vector3.new(0.4, 12, 12), CFrame.new(0, FEET - 0.45, 0) * UPRIGHT, C.field, Enum.Material.Neon, Enum.PartType.Cylinder)
+	part(scene, Vector3.new(0.62, 3, 3), CFrame.new(0, FEET - 0.29, 0) * UPRIGHT, Color3.fromRGB(28, 30, 26), Enum.Material.Metal, Enum.PartType.Cylinder) -- centre mark
+	local weapon = loadoutWeapon()
+	local fighters = {}
+	for side = 0, 1 do
+		local tint = side == 1 and Color3.fromRGB(34, 38, 32) or nil
+		local cf = CFrame.new(side == 0 and 2.8 or -2.8, 0, 0) * CFrame.Angles(0, side == 0 and math.rad(115) or math.rad(-115), 0)
+		local m = rig(tint)
+		if m then
+			m:PivotTo(cf)
+			if side == 0 then arm(m, weapon) end
+		else
+			m = blockFigure(cf, tint or Color3.fromRGB(150, 140, 110))
+		end
+		m.Parent = scene
+		table.insert(fighters, m)
+	end
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-14), 0, 0), zoom = 1.12, still = true })
+	local homes = {}
+	for i, m in fighters do homes[i] = m:GetPivot() end
+	liven(vp, target, 0.1, function(t, _, since)
+		ring.Transparency = 0.15 + 0.35 * (0.5 + 0.5 * math.sin(t * 2.6))
+		if since > 1.2 then return end
+		for i, m in fighters do m:PivotTo(homes[i] + Vector3.new(0, hop(since, (i - 1) * 0.1, 0.9), 0)) end
+	end)
+	return vp
+end
+
+-- (2026-10-21, round 3) for RankedScreen's mode cards: the same live squad as the Play tiles (nil until Play is set up)
+function Screen.SquadScene(parent, teamSize, ranked, hoverTarget)
+	if not (ctx.Config and ctx.getData) then return nil end
+	local vp, scene = squadScene(parent, teamSize, ranked)
+	if hoverTarget then livenSquad(vp, scene, hoverTarget) end
 	return vp
 end
 
@@ -203,47 +398,83 @@ local function tile(x, y, w, h, top, bottom)
 	return f
 end
 
--- (2026-10-21, RIVALS pass) locked Ranked: a centred requirement card (RIVALS' checklist: the line, a bar, an "n / 50" count
--- and a greyed PLAY under it) instead of a toast. Solid plate, no outline; Oswald / Rubik (Theme.font). Built in design px
--- inside a full-screen shade, converted with Kit.toScale before it shows.
+-- (2026-10-21, RIVALS pass) locked Ranked: a centred requirement card instead of a toast.
+-- (2026-10-21, round 3: match RIVALS t0285.4-t0289) remade on RIVALS' card: a dark card with the big title, one line per
+-- requirement (the words left, an "n / N" count right that counts up, a full-width bar under it; a met line turns into a
+-- field-green bar with a green tick), a short "how" hint, the greyed PLAY BELOW the card and the red X beside its top right
+-- corner. Card, X and PLAY pop in together (one group). Solid fills, no outlines; Oswald / Rubik. Built in design px inside a
+-- full-screen shade, converted with Kit.toScale before it shows.
 local lockShade
+local function drawTick(parent, x, y, z)
+	local hold = new("Frame", { Name = "Tick", BackgroundTransparency = 1, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(40, 40), ZIndex = z, Parent = parent })
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(12, 25), Size = UDim2.fromOffset(9, 20), Rotation = -45, BackgroundColor3 = C.field,
+		BorderSizePixel = 0, ZIndex = z, Parent = hold })
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(25, 19), Size = UDim2.fromOffset(9, 36), Rotation = 40, BackgroundColor3 = C.field,
+		BorderSizePixel = 0, ZIndex = z, Parent = hold })
+	return hold
+end
 local function showLockCard()
 	local Config = ctx.Config
 	local lv = math.max(0, (ctx.level and ctx.level()) or 0)
 	local need = math.max(1, Config.RankedLevel)
 	if lockShade then lockShade:Destroy() end
-	local W, H = 640, 400
+	-- the server's only ranked gate is the account level (LobbyConfig.CanRanked), so that is the one line we list
+	local reqs = { { text = "Reach Level " .. need, cur = lv, goal = need } }
+	local W, ROW = 700, 76
+	local CH = 112 + #reqs * ROW + 58
+	local PW, PH = 300, 80
+	local GH = CH + 22 + PH + 8
 	local shade = new("TextButton", { Name = "RankedLock", Text = "", AutoButtonColor = false, Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0.45, ZIndex = 20, Parent = root })
 	lockShade = shade
-	local card = new("Frame", { Name = "Card", Active = true, Position = UDim2.fromOffset((1920 - W) / 2, (1080 - H) / 2), Size = UDim2.fromOffset(W, H), BackgroundColor3 = C.plate,
-		BorderSizePixel = 0, ZIndex = 21, Parent = shade }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) })
-	local white, grey = Color3.new(1, 1, 1), Color3.fromRGB(150, 150, 156)
-	big(card, "RANKED", 56, 0, 24, W, 64, white, nil, 22, Theme.font.display)
-	Kit.label({ Text = "Unlock it by reaching:", FontFace = Theme.font.medium, TextSize = 24, TextColor3 = Color3.fromRGB(205, 205, 212), TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(0, 94), Size = UDim2.fromOffset(W, 30), ZIndex = 22, Parent = card })
-	local line = new("Frame", { Position = UDim2.fromOffset(40, 138), Size = UDim2.fromOffset(W - 80, 100), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5,
-		BorderSizePixel = 0, ZIndex = 22, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-	big(line, "Reach Level " .. need, 34, 20, 10, 360, 46, white, Enum.TextXAlignment.Left, 23, Theme.font.display)
-	big(line, math.min(lv, need) .. " / " .. need, 34, W - 300, 10, 200, 46, C.tan, Enum.TextXAlignment.Right, 23, Theme.font.display)
-	local track = new("Frame", { Position = UDim2.fromOffset(20, 66), Size = UDim2.fromOffset(W - 120, 16), BackgroundColor3 = Color3.fromRGB(10, 10, 12), BackgroundTransparency = 0.2,
-		BorderSizePixel = 0, ZIndex = 23, Parent = line }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-	local fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = C.tan, BorderSizePixel = 0, ZIndex = 24, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-	-- the greyed PLAY: disabled, it shakes when pressed
-	local playBtn = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(40, 264), Size = UDim2.fromOffset(W - 80, 84),
-		BackgroundColor3 = Color3.fromRGB(58, 62, 54), BorderSizePixel = 0, ZIndex = 22, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-	big(playBtn, "PLAY", 44, 0, 0, W - 80, 84, grey, nil, 23, Theme.font.display)
+	local group = new("Frame", { Name = "Group", BackgroundTransparency = 1, Position = UDim2.fromOffset((1920 - W) / 2, (1080 - GH) / 2), Size = UDim2.fromOffset(W + 120, GH),
+		ZIndex = 21, Parent = shade })
+	local card = new("Frame", { Name = "Card", Active = true, Size = UDim2.fromOffset(W, CH), BackgroundColor3 = Color3.fromRGB(8, 9, 7), BackgroundTransparency = 0.08,
+		BorderSizePixel = 0, ZIndex = 21, Parent = group }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	local white = Color3.new(1, 1, 1)
+	big(card, "RANKED", 76, 0, 14, W, 90, white, nil, 22, Theme.font.display)
+	local anims = {}
+	for i, r in reqs do
+		local y = 112 + (i - 1) * ROW
+		local met = r.cur >= r.goal
+		Kit.label({ Text = r.text, FontFace = BOLD, TextSize = 30, TextColor3 = Color3.fromRGB(228, 228, 232), Position = UDim2.fromOffset(48, y), Size = UDim2.fromOffset(440, 40),
+			ZIndex = 22, Parent = card })
+		local count
+		if met then
+			drawTick(card, W - 88, y, 23)
+		else
+			count = big(card, "0 / " .. r.goal, 32, W - 268, y, 220, 40, white, Enum.TextXAlignment.Right, 22, Theme.font.display)
+		end
+		local track = new("Frame", { Position = UDim2.fromOffset(48, y + 46), Size = UDim2.fromOffset(W - 96, 9), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.3,
+			BorderSizePixel = 0, ZIndex = 22, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		local fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = met and C.field or white, BorderSizePixel = 0, ZIndex = 23, Parent = track },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		table.insert(anims, { fill = fill, frac = met and 1 or math.clamp(r.cur / r.goal, 0.03, 1), count = count, cur = math.min(r.cur, r.goal), goal = r.goal })
+	end
+	-- what to do next (kids: the card says how, not only what)
+	Kit.label({ Text = "Play matches and finish missions to level up!", FontFace = BODY, TextSize = 23, TextColor3 = Color3.fromRGB(190, 190, 196),
+		TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(0, CH - 52), Size = UDim2.fromOffset(W, 32), ZIndex = 22, Parent = card })
+	-- the greyed PLAY under the card (RIVALS' grey button): a chunky grey gradient on a darker offset block; it shakes when pressed
+	new("Frame", { Name = "PlayLip", Position = UDim2.fromOffset((W - PW) / 2, CH + 30), Size = UDim2.fromOffset(PW, PH), BackgroundColor3 = Color3.fromRGB(70, 72, 78),
+		BorderSizePixel = 0, ZIndex = 21, Parent = group }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	local playBtn = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset((W - PW) / 2, CH + 22), Size = UDim2.fromOffset(PW, PH),
+		BackgroundColor3 = white, BorderSizePixel = 0, ZIndex = 22, Parent = group }, {
+		new("UICorner", { CornerRadius = UDim.new(0, 8) }),
+		new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Theme.gradient.grey[1], Theme.gradient.grey[2]) }),
+	})
+	big(playBtn, "PLAY", 46, 0, 0, PW, PH, white, nil, 23, Theme.font.display)
 	local x = Kit.closeButton(UDim2.fromOffset(96, 50))
-	x.Position = UDim2.fromOffset(W - 68, 18) -- (closeButton is square: h x h)
+	x.Position = UDim2.fromOffset(W + 16, 0)
 	x.ZIndex = 23
-	x.Parent = card
+	x.Parent = group
 	Kit.toScale(shade, Vector2.new(1920, 1080))
 	local function hide()
 		if lockShade == shade then lockShade = nil end
-		Kit.close(card, function() shade:Destroy() end)
+		Kit.close(group, function() shade:Destroy() end)
 	end
 	x.Activated:Connect(hide)
 	shade.Activated:Connect(hide)
+	Kit.bindButton(playBtn, { hover = 1.03, press = 0.95 })
 	local shaking = false
 	playBtn.Activated:Connect(function()
 		if shaking then return end -- (a second shake mid-way would start from a moved spot)
@@ -251,8 +482,11 @@ local function showLockCard()
 		Kit.shake(playBtn)
 		task.delay(0.25, function() shaking = false end)
 	end)
-	Kit.open(card)
-	Kit.fillTo(fill, math.clamp(lv / need, 0.04, 1), 0.6)
+	Kit.open(group)
+	for _, a in anims do
+		Kit.fillTo(a.fill, a.frac, 0.6)
+		if a.count then Kit.countTo(a.count, 0, a.cur, 0.6, function(n) return math.floor(n + 0.5) .. " / " .. a.goal end) end
+	end
 end
 
 local MW, MH, GAP = 322, 272, 8
@@ -299,7 +533,7 @@ local function modeCard(i, mode, ranked, x)
 		if entry then entry.flash = { text = msg, untilT = os.clock() + 5 } end
 		tickNow()
 	end)
-	return stage, mode.TeamSize
+	return stage, mode.TeamSize, card
 end
 
 local function render()
@@ -311,14 +545,16 @@ local function render()
 	local ranked = tab == "Ranked"
 	local stages = {}
 	for i, mode in Config.Modes do
-		local stage, n = modeCard(i, mode, ranked, (i - 1) * (MW + GAP))
-		table.insert(stages, { stage, n })
+		local stage, n, card = modeCard(i, mode, ranked, (i - 1) * (MW + GAP))
+		table.insert(stages, { stage, n, card })
 	end
 	-- Ranked: the tall tile on the right
 	local RX = 3 * (MW + GAP)
 	local RW, RH = 1404 - RX, MH * 2 + GAP
 	-- (2026-10-21, AI-tells cleanup) the open Ranked tile gradient is dark gold, was violet
-	local rt = tile(RX, 0, RW, RH, open and Color3.fromRGB(110, 84, 38) or Color3.fromRGB(40, 36, 48), open and Color3.fromRGB(38, 28, 12) or Color3.fromRGB(10, 9, 13))
+	-- (2026-10-21, round 3: match RIVALS) locked = a dimmer dark gold (was purple-grey 40,36,48 -> 10,9,13): Ranked keeps its
+	-- colour while locked, like RIVALS' Ranked tile keeps its art behind the padlock (t0291)
+	local rt = tile(RX, 0, RW, RH, open and Color3.fromRGB(110, 84, 38) or Color3.fromRGB(84, 64, 30), open and Color3.fromRGB(38, 28, 12) or Color3.fromRGB(24, 18, 8))
 	big(rt, "Ranked", 72, 0, 36, RW, 84)
 	local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(RW / 2, 150), Size = UDim2.fromOffset(230, 230), ZIndex = 3, Parent = rt })
 	local rankedSub
@@ -353,7 +589,8 @@ local function render()
 	local TW = 2 * MW + GAP
 	local tb = tile(0, Y2, TW, MH)
 	big(tb, "Training", 64, 28, 26, 420, 76, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
-	Kit.label({ Text = "Practice room: cover, vaults, live targets.\nTry any weapon, gadget or melee for free.", FontFace = SEMI, TextSize = 21, TextColor3 = Color3.fromRGB(215, 215, 220),
+	-- (2026-10-21, round 3) shorter lines, bigger type (kids; RIVALS keeps a card to one short line)
+	Kit.label({ Text = "Cover, vaults, targets.\nTry any gun for free!", FontFace = SEMI, TextSize = 24, TextColor3 = Color3.fromRGB(215, 215, 220),
 		Position = UDim2.fromOffset(32, 104), Size = UDim2.fromOffset(330, 60), TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 4, Parent = tb })
 	-- (lobby revamp) the same green bottom bar as the mode tiles
 	local tBar = new("Frame", { Position = UDim2.fromOffset(0, MH - STRIP), Size = UDim2.fromOffset(TW, STRIP), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 3, Parent = tb },
@@ -368,7 +605,9 @@ local function render()
 	end)
 	table.insert(strips, { training = tStatus })
 	local db = tile(TW + GAP, Y2, MW, MH)
-	big(db, "Lobby\nDuels", 52, 0, 40, MW, 130)
+	-- (2026-10-21, round 3: match RIVALS) a live duel-pad scene behind the words, where RIVALS shows art
+	local padHold = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(MW, MH - STRIP), ZIndex = 2, Parent = db })
+	big(db, "Lobby Duels", 52, 0, 8, MW, 66) -- (round 3) one line along the top, so the fighters show under it
 	Kit.label({ Text = "Fight people in this server", FontFace = SEMI, TextSize = 19, TextColor3 = Color3.fromRGB(215, 215, 220), TextXAlignment = Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(0, 172), Size = UDim2.fromOffset(MW, 26), ZIndex = 4, Parent = db })
 	-- secondary action: a dark bar (PLAY-green is for the queues)
@@ -417,15 +656,23 @@ local function render()
 	end
 	Kit.toScale(root)
 	-- 3D after the conversion (viewports fill their holders)
-	for _, sc in stages do squadScene(sc[1], sc[2], ranked) end
-	local weapon = (ctx.getData() and ctx.getData().Loadout and ctx.getData().Loadout.Weapon) or Config.DefaultLoadout.Weapon
-	local gvp = ViewIcons.Viewport(gunHold, ViewIcons.Weapon(weapon), { view = ViewIcons.GunView, zoom = 0.9 })
-	tb.MouseEnter:Connect(function() gvp.SetHover(true) end)
-	tb.MouseLeave:Connect(function() gvp.SetHover(false) end)
+	-- (2026-10-21, round 3: match RIVALS) the squads react: your team hops and the camera leans in on hover
+	for _, sc in stages do
+		local vp, scene = squadScene(sc[1], sc[2], ranked)
+		livenSquad(vp, scene, sc[3])
+	end
+	-- (2026-10-21, round 3: match RIVALS) Training / Lobby Duels: live placeholder scenes where RIVALS shows art (was your gun alone)
+	trainingScene(gunHold, tb)
+	duelsScene(padHold, db)
 	local icons = ReplicatedStorage:FindFirstChild("UIIcons")
 	if not open then
 		local mesh = icons and icons:FindFirstChild("Lock")
-		if mesh then ViewIcons.Viewport(art, mesh:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.05 }) end
+		-- (2026-10-21, round 3) the padlock sways and turns to you on hover (it only swayed)
+		local lockVp = mesh and ViewIcons.Viewport(art, mesh:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.05 })
+		if lockVp then
+			rt.MouseEnter:Connect(function() lockVp.SetHover(true) end)
+			rt.MouseLeave:Connect(function() lockVp.SetHover(false) end)
+		end
 	else
 		ViewIcons.Icon(art, "Trophy", { hoverTarget = rt })
 	end

@@ -346,7 +346,8 @@ end
 -- "SPECTATING"), the killer's headshot, name, live health bar and how they got you; Q / E (or the arrows) still cycle.
 local specBar = new("Frame", { Name = "Spectate", Position = UDim2.fromOffset(620, 900), Size = UDim2.fromOffset(680, 120), BackgroundColor3 = BLACK,
 	BackgroundTransparency = 0.3, Visible = false, Parent = root }, { corner(14) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
-local specHead = new("ImageLabel", { BackgroundColor3 = Color3.fromRGB(30, 34, 28), Position = UDim2.fromOffset(96, 14), Size = UDim2.fromOffset(92, 92), Parent = specBar }, { corner(10) })
+-- (2026-10-21, round 3: match RIVALS) centre-anchored (same spot) so the head can pop from its middle when the target changes
+local specHead = new("ImageLabel", { BackgroundColor3 = Color3.fromRGB(30, 34, 28), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(142, 60), Size = UDim2.fromOffset(92, 92), Parent = specBar }, { corner(10) })
 local specTitle = label(specBar, "SPECTATING", STENCIL, 24, 206, 8, 380, 30, Color3.fromRGB(205, 205, 212))
 specTitle.TextXAlignment = Enum.TextXAlignment.Left
 local specName = label(specBar, "", FX, 36, 206, 34, 380, 44, WHITE)
@@ -402,6 +403,12 @@ local function setTarget(uid)
 	if uid ~= headFor then
 		headFor = uid
 		specHead.Image = ""
+		-- (2026-10-21, round 3: match RIVALS) a new spectate target lands with a pop (head 0.7 -> 1, Back), so Q / E reads as a switch
+		do
+			local hs = specHead:FindFirstChild("SwapPop") or new("UIScale", { Name = "SwapPop", Parent = specHead })
+			hs.Scale = 0.7
+			TweenService:Create(hs, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+		end
 		if uid and uid > 0 then
 			task.spawn(function()
 				local ok, img = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
@@ -812,6 +819,10 @@ do
 	againB:FindFirstChildOfClass("TextLabel").TextColor3 = Color3.fromRGB(236, 230, 210)
 	rematchB.BackgroundColor3 = WHITE -- styleRematch keeps driving its transparency (greyed when unavailable)
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = rematchB })
+	-- (2026-10-21, round 3: match RIVALS) RIVALS' action buttons are chunky (round_lost_full.jpg, t0113.0s): the primary gets
+	-- Kit.button's darker bottom lip instead of reading as a flat sticker
+	new("Frame", { Name = "Lip", BackgroundColor3 = BLACK, BackgroundTransparency = 0.7, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), Parent = againB }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) }) -- (radius = the button's 0.08 of its height)
 end
 -- (2026-10-19, Edward: "Rematch 2/2" after a rematch) the game-end snapshot: votes / own vote still left from the last game
 -- read as 0 until the server changes them (a table, not new locals: this script is at the 200-locals limit)
@@ -1035,6 +1046,13 @@ local againP, againPT = panelButton("PlayAgain", "Play Again", nil, 0.91)
 local rematchP, rematchPT, rematchPS = panelButton("Rematch", "Rematch", "0/2", 0.835)
 hubP.Activated:Connect(function() send("ToHub") end)
 againP.Activated:Connect(function() send("PlayAgain"); againPT.Text = "Searching..." end)
+-- (2026-10-21, round 3: match RIVALS) the after-match panel's Play Again matches the results card's primary: field-green
+-- gradient (#8DBF5A -> #4C7A2E), cream words, a chunky bottom lip (it was the one dark plate left of the "skipped" list)
+againP.BackgroundColor3, againP.BackgroundTransparency = WHITE, 0
+new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = againP })
+new("Frame", { Name = "Lip", BackgroundColor3 = BLACK, BackgroundTransparency = 0.7, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
+	Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), Parent = againP }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+againPT.TextColor3 = Color3.fromRGB(236, 230, 210)
 rematchP.Activated:Connect(function() if st("RematchAllowed") ~= false then send("Rematch") end end)
 RunService.Heartbeat:Connect(function()
 	-- (after-match lobby) a lobby menu / the Kit room hides the play row: the panel goes with it
@@ -1446,6 +1464,16 @@ RunService.RenderStepped:Connect(function()
 	timerL.Text = left < 60 and string.format("%.1f", math.floor(left * 10) / 10) or string.format("%d:%02d", left // 60, math.floor(left) % 60)
 	timerL.TextColor3 = (state == "Live" and left < 5) and BAD or WHITE
 	timerL.Position = UDim2.fromScale(between and 0.12 or 0, timerL.Position.Y.Scale)
+	-- (2026-10-21, round 3: match RIVALS) the clock ticks: the whole timer block punches once per second in the last 5 s of a
+	-- live round and the last 3 s of a countdown (timerL's own Position is rewritten every frame, so the block pops, centred
+	-- once; state in the stats table, no new locals)
+	if stats.Kit and ((state == "Live" and left > 0 and left < 5) or (state == "Countdown" and left > 0 and left < 3)) then
+		if stats.timerBeat ~= state .. math.ceil(left) then
+			stats.timerBeat = state .. math.ceil(left)
+			if not stats.timerCentred then stats.timerCentred = true; stats.Kit.centreAnchor(timerBox) end
+			stats.Kit.pop(timerBox, state == "Live" and 1.14 or 1.1)
+		end
+	end
 	roundL.Text = "ROUND " .. tostring(st("RoundNumber") or 1)
 	toWin.Text = st("RoundsToWin") and ("First to " .. st("RoundsToWin")) or ""
 	-- banners
@@ -1479,7 +1507,10 @@ RunService.RenderStepped:Connect(function()
 	-- + (Edward: "you should be able to change your weapon until you shoot or move") on into the live round until the server
 	-- sets KitLocked (your first move / landed shot); picks before that swap at once
 	local preRound = (state == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1) or (state == "Live" and player:GetAttribute("KitLocked") ~= true)
-	RV.switchB.Visible = preRound and not over and not spectator() and RV.switchHook() ~= nil and not picking
+	RV.switchWant = preRound and not over and not spectator() and RV.switchHook() ~= nil and not picking
+	-- (2026-10-21, round 3: match RIVALS) the one between-rounds action pops in when it appears (intermission_switch.jpg), not a cut
+	if RV.switchWant and not RV.switchB.Visible and stats.Kit then stats.Kit.popIn(RV.switchB) end
+	RV.switchB.Visible = RV.switchWant
 	if picking then RV.roundCard.Visible = false; feed.Visible = false; local el = root:FindFirstChild("Eliminated"); if el then el.Visible = false end end
 	-- spectate: spectators, and duelists while dead
 	local spec = spectator() or (player:GetAttribute("Alive") == false and (state == "Live" or state == "RoundEnd" or state == "Victory"))

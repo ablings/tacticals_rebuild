@@ -397,30 +397,26 @@ end
 
 -- Close button (pass 34: gunmetal + olive brackets, warms red on hover) with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
-	-- (lobby revamp Phase B, 2026-10-21, Edward OK: no big red X floating outside the menus) a square dark plate with a tan
-	-- hairline and a cream X, as tall as the caller asked (the width follows), docked by each screen at its panel's corner.
-	-- Not named "Close" and tagged Nonapplicable: the old InterfaceController hooks any "Close" button in a new ScreenGui and
-	-- shrinks its parent frame to 0 x 0, so a menu came back empty on its second open.
-	local h = size.Y.Offset
-	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(h, h),
-		BackgroundColor3 = Color3.fromRGB(24, 26, 21), BackgroundTransparency = 0.1 }, { Kit.corner(8) })
-	-- (2026-10-21, AI-tells cleanup) no tan hairline: a chunky darker lip along the bottom instead
-	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), ZIndex = 1, Parent = btn }, { Kit.corner(8) })
+	-- (2026-10-21, user: "whatever RIVALS is doing") RIVALS' red X again (t0062 / t0287): a red gradient block with a chunky white
+	-- X and a darker bottom lip (no hairline border). Not named "Close" and tagged Nonapplicable: the old InterfaceController
+	-- hooks any "Close" button in a new ScreenGui and shrinks its parent frame to 0 x 0.
+	local w, h = size.X.Offset, size.Y.Offset
+	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(w, h), BackgroundColor3 = Color3.new(1, 1, 1) },
+		{ Kit.corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(255, 106, 77), Color3.fromRGB(197, 42, 26)) }) })
 	btn:AddTag("Nonapplicable")
-	local cream = Color3.fromRGB(236, 230, 210)
-	local bars = {}
-	local len = math.floor(h * 0.5)
+	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.7, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), ZIndex = 1, Parent = btn }, { Kit.corner(8) })
+	local len = math.floor(h * 0.62)
 	for _, rot in ipairs({ 45, -45 }) do
-		table.insert(bars, new("Frame", {
-			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Rotation = rot,
-			Size = UDim2.fromOffset(len, math.max(3, math.floor(h * 0.09))), BackgroundColor3 = cream, BorderSizePixel = 0, Parent = btn,
-		}, { Kit.corner(2) }))
+		new("Frame", {
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.46), Rotation = rot,
+			Size = UDim2.fromOffset(len, math.max(4, math.floor(h * 0.17))), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 2, Parent = btn,
+		}, { Kit.corner(3) })
 	end
-	-- hover: the plate warms to red (closing), the X stays cream
-	btn.MouseEnter:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(176, 52, 40) }) end)
-	btn.MouseLeave:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(24, 26, 21) }) end)
-	Kit.bindButton(btn, { hover = 1.06 })
+	local sheen = new("Frame", { Name = "HoverSheen", BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = btn }, { Kit.corner(8) })
+	btn.MouseEnter:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.82 }) end)
+	btn.MouseLeave:Connect(function() Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }) end)
+	Kit.bindButton(btn, { hover = 1.08 })
 	return btn
 end
 

@@ -73,7 +73,11 @@ local ctx = {}
 local gui, root, column, blur, scrim
 local isOpen = false
 local bars = {}
-local CARD_H = 258 -- (lobby revamp) was 300
+local CARD_H = 266 -- (lobby revamp) was 300; (2026-10-21, round 3) 258 -> 266: room for the count under the bar + a bigger reward
+-- (2026-10-21, round 3: match RIVALS) the cards leave the navy-slate C.panelRaised for our dark plate / field-green family
+local CARD_BG = C.plate or Color3.fromRGB(24, 26, 21) -- charcoal-green plate
+local CARD_READY = Color3.fromRGB(34, 52, 24) -- a claimable card is lit dark field green
+local FIELD, FIELD_DARK = C.field or Color3.fromRGB(141, 191, 90), C.fieldDark or Color3.fromRGB(76, 122, 46)
 
 local PANEL_T = 0.5
 local COL_X, COL_W = 532, 828
@@ -120,19 +124,26 @@ end
 
 local function bar(parent, pos, size, frac, done)
 	-- (lobby revamp, graders: an empty bar was invisible) a lighter, rounded track so 0 / N still shows how far there is to go
-	local back = new("Frame", { Name = "Bar", Position = pos, Size = size, BackgroundColor3 = Color3.fromRGB(70, 74, 64), ClipsDescendants = true, Parent = parent },
+	-- (2026-10-21, round 3: match RIVALS) a bigger bar (RIVALS t0062: the bar is the card's centre line); in-progress fills cream,
+	-- done fills the field-green gradient
+	local back = new("Frame", { Name = "Bar", Position = pos, Size = size, BackgroundColor3 = Color3.fromRGB(52, 56, 47), ClipsDescendants = true, Parent = parent },
 		{ Kit.corner(6) })
-	local fill = new("Frame", { Name = "Fill", Size = UDim2.fromScale(math.clamp(frac, 0, 1), 1), BackgroundColor3 = done and Tac.C.oliveHi or Tac.C.bone, BorderSizePixel = 0, Parent = back })
+	local fill = new("Frame", { Name = "Fill", Size = UDim2.fromScale(math.clamp(frac, 0, 1), 1), BackgroundColor3 = done and Color3.new(1, 1, 1) or Tac.C.bone, BorderSizePixel = 0, Parent = back },
+		{ Kit.corner(6) })
+	if done then Kit.vgrad({ FIELD, FIELD_DARK }).Parent = fill end
 	table.insert(bars, { fill = fill, frac = math.clamp(frac, 0, 1) })
 	return back
 end
 
 -- reward: scissors icon + "×N" with a dark outline
-local function reward(parent, amount, size, pos)
+-- (2026-10-21, round 3: match RIVALS) RIVALS' reward is a posed 3D key render with "×N" tucked under its corner (t0062-t0066).
+-- Ours is the live 3D scissors (no longer `still`: it sways and turns toward you on card hover) at about 1.4x the old size,
+-- with a big Oswald "×N" overlapping its lower right like RIVALS.
+local function reward(parent, amount, size, pos, hoverTarget)
 	local holder = new("Frame", { Name = "Reward", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = UDim2.fromOffset(size, size), Parent = parent })
-	ViewIcons.Icon(holder, "Scissors", { still = true })
-	local n = Kit.label({ Text = "×" .. amount, FontFace = F.display, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Left,
-		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(size + 4, size / 2), Size = UDim2.fromOffset(90, 36), Parent = holder })
+	ViewIcons.Icon(holder, "Scissors", { hoverTarget = hoverTarget, zoom = 1.15 })
+	local n = Kit.label({ Text = "×" .. amount, FontFace = F.display, TextSize = 32, TextXAlignment = Enum.TextXAlignment.Left,
+		AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(size * 0.78, size + 4), Size = UDim2.fromOffset(80, 36), ZIndex = 3, Parent = holder })
 	Kit.textStroke(2).Parent = n
 	return holder
 end
@@ -144,38 +155,42 @@ local function taskCard(parent, scope, i, entry, def, x, y)
 	local ready = done and not entry.Claimed
 	local card = new("Frame", {
 		Name = scope .. i, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(243, CARD_H),
-		BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.3, Parent = parent,
+		BackgroundColor3 = ready and CARD_READY or CARD_BG, BackgroundTransparency = ready and 0.1 or 0.25, Parent = parent, -- (2026-10-21, round 3) off the navy
 	}, { Kit.corner(2) })
 	local br = Tac.brackets(card, ready and Tac.C.bone or Tac.C.line, 18, 3)
 	-- (2026-10-21, RIVALS pass) the "D-01" / "W-02" id label is gone: RIVALS' cards carry no ids (clean)
-	if ready then new("Frame", { Name = "ReadyStripe", BackgroundColor3 = Tac.C.oliveHi, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 5), ZIndex = 2, Parent = card }) end
+	if ready then new("Frame", { Name = "ReadyStripe", BackgroundColor3 = FIELD, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 6), ZIndex = 2, Parent = card }) end
 	if not entry.Claimed then Tac.hoverBrackets(card, br) end
+	-- (2026-10-21, round 3: match RIVALS) RIVALS' order top to bottom (t0062): title, task glyph, a wide bar, the "x / y" count
+	-- UNDER the bar (it no longer runs through it), then the reward. Done counts turn field green with a check in front.
 	local title = Kit.label({ Text = def.Text, FontFace = F.bold, TextSize = 21, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(10, 22), Size = UDim2.new(1, -20, 0, 48), Parent = card })
+		Position = UDim2.fromOffset(10, 12), Size = UDim2.new(1, -20, 0, 44), Parent = card })
 	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromOffset(121, 100), Size = UDim2.fromOffset(200, 60), Parent = card })
+		Position = UDim2.fromOffset(121, 82), Size = UDim2.fromOffset(200, 50), Parent = card })
 	statIcon(art, def.Stat, card)
-	bar(card, UDim2.fromOffset(18, 146), UDim2.fromOffset(206, 12), prog / def.Goal, done)
+	bar(card, UDim2.fromOffset(16, 114), UDim2.fromOffset(211, 16), prog / def.Goal, done)
+	local count = Kit.label({ Text = prog .. " / " .. def.Goal, FontFace = F.display, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center,
+		TextColor3 = done and FIELD or C.cream or Color3.new(1, 1, 1), Position = UDim2.fromOffset(0, 132), Size = UDim2.new(1, 0, 0, 28), ZIndex = 3, Parent = card })
 	if done then
-		title.TextColor3 = Tac.C.oliveHi
-		new("ImageLabel", { BackgroundTransparency = 1, Image = icon("check"), ImageColor3 = Tac.C.oliveHi, AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromOffset(121, 151), Size = UDim2.fromOffset(36, 36), ZIndex = 3, Parent = card })
+		title.TextColor3 = FIELD
+		count.Text = "✓  " .. def.Goal .. " / " .. def.Goal -- (the check rides in the text, so long counts can't collide with it)
 	else
-		local count = Kit.label({ Text = prog .. " / " .. def.Goal, FontFace = F.bold, TextSize = 27, TextXAlignment = Enum.TextXAlignment.Center,
-			Position = UDim2.fromOffset(0, 137), Size = UDim2.new(1, 0, 0, 30), ZIndex = 3, Parent = card })
-		Kit.textStroke(2).Parent = count
+		-- (2026-10-21, round 3: match RIVALS "counters that animate") the count ticks up with its bar when the screen opens
+		bars[#bars].count, bars[#bars].prog, bars[#bars].goal = count, prog, def.Goal
 	end
-	local rewardHolder = reward(card, def.Reward, 44, UDim2.fromOffset(98, 186))
+	local rewardHolder = reward(card, def.Reward, 62, UDim2.fromOffset(106, 188), card)
 	-- claim strip along the bottom
-	local strip = UDim2.fromOffset(218, 40)
+	local strip = UDim2.fromOffset(218, 38)
 	if entry.Claimed then
-		Kit.label({ Text = "CLAIMED", FontFace = F.display, TextSize = 24, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -10), Size = strip, Parent = card })
+		-- (2026-10-21, round 3) the claimed state reads as finished, not just dim: a field-green "✓ CLAIMED" on a dark plate
+		Kit.label({ Text = "✓  CLAIMED", FontFace = F.display, TextSize = 24, TextColor3 = FIELD, TextXAlignment = Enum.TextXAlignment.Center,
+			BackgroundTransparency = 0.35, BackgroundColor3 = Color3.new(0, 0, 0),
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -8), Size = strip, Parent = card })
 		card.BackgroundTransparency = 0.6
 	elseif ready then
 		local b = Kit.button("key", strip, "CLAIM")
 		b.AnchorPoint = Vector2.new(0.5, 1)
-		b.Position = UDim2.new(0.5, 0, 1, -10)
+		b.Position = UDim2.new(0.5, 0, 1, -8)
 		b.Parent = card
 		-- (2026-10-21, RIVALS pass) ready cards pull the eye: the card breathes (from its centre), a sheen sweeps CLAIM on a
 		-- loop, and the card lifts on hover. A position lift, not a UIScale: one UIScale per object (the breathe owns it).
@@ -211,7 +226,7 @@ local function taskCard(parent, scope, i, entry, def, x, y)
 			if sc and sc.Parent then Kit.tween(sc, 0.2, { Scale = 1 }, Enum.EasingStyle.Back) end
 			if r and r.ok and card.Parent then
 				local check = new("ImageLabel", { Name = "ClaimCheck", BackgroundTransparency = 1, Image = icon("check"), ImageColor3 = C.cream or Color3.new(1, 1, 1),
-					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 100 / CARD_H), Size = UDim2.fromScale(0.42, 0.42 * 243 / CARD_H), ZIndex = 6, Parent = card },
+					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 82 / CARD_H), Size = UDim2.fromScale(0.42, 0.42 * 243 / CARD_H), ZIndex = 6, Parent = card },
 					{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
 				Kit.popIn(check)
 				task.delay(0.12, function() if rewardHolder.Parent then Kit.pop(rewardHolder, 1.3) end end)
@@ -245,6 +260,21 @@ local function scopePanel(scope, order, title, iconModel)
 	local timer = Kit.label({ Text = "", FontFace = F.medium, TextSize = 24, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Right,
 		AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(COL_W - 30, 14), Size = UDim2.fromOffset(380, 40), Parent = p })
 	timer:SetAttribute("ResetScope", scope)
+	-- (2026-10-21, round 3: match RIVALS) RIVALS' Daily Tasks header carries a bright "To Duels" button on the right (t0062): the
+	-- way to go and do the tasks. Ours is a field-green "PLAY" that opens the Play screen through ctx.openPlay. It only appears
+	-- when the controller passes that hook (LobbyUIController's MissionsScreen.Init does not yet); the reset timer moves left of it.
+	if scope == "Daily" and ctx.openPlay then
+		local play = Kit.button("key", UDim2.fromOffset(170, 50), "PLAY")
+		play.Name = "ToPlay"
+		play.AnchorPoint = Vector2.new(1, 0)
+		play.Position = UDim2.fromOffset(COL_W - 24, 12)
+		play.Parent = p
+		play.Activated:Connect(function()
+			Screen.Close()
+			ctx.openPlay()
+		end)
+		timer.Position = UDim2.fromOffset(COL_W - 24 - 170 - 18, 14)
+	end
 	timer.Text = "new " .. string.lower(title) .. " in " .. clock(resetIn(scope))
 	if #list == 0 then
 		Kit.label({ Text = "Loading missions...", FontFace = F.medium, TextSize = 26, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
@@ -326,6 +356,10 @@ local function setOpen(on)
 			if b.fill.Parent then
 				b.fill.Size = UDim2.fromScale(0, 1)
 				Kit.tween(b.fill, 0.6, { Size = UDim2.fromScale(b.frac, 1) }, Enum.EasingStyle.Quart)
+				if b.count and b.count.Parent then -- (2026-10-21, round 3) counts tick up with the fill
+					local goal = b.goal
+					Kit.countTo(b.count, 0, b.prog, 0.6, function(n) return math.floor(n + 0.5) .. " / " .. goal end)
+				end
 			end
 		end
 	else

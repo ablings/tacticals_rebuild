@@ -907,6 +907,7 @@ local function openMissions(initOnly)
 			tooltip = function(obj, title, body) Tooltip.Attach(obj, title, body) end,
 			onOpen = function() if gui then gui.Enabled = false end end,
 			onClose = function() if gui then gui.Enabled = true end end,
+			openPlay = function() LobbyUI.Open("Play") end, -- (2026-10-21) the panel's PLAY button, like RIVALS' "To Duels"
 		})
 	end
 	if initOnly then return end

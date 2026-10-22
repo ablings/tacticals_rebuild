@@ -384,11 +384,23 @@ local function buildRow(tab, row, order)
 	resetBtn.Activated:Connect(function() if api then api.set(default) end end)
 	rowApis[row.key] = api
 	refreshReset(0)
+	-- (2026-10-21, round 3: match RIVALS) rows react on hover like RIVALS' (t0135.7: the hovered row's plate lifts out of the
+	-- list): the plate fills in and warms to a dark field green, the label goes full white and the row's icon tilts. Colour and
+	-- transparency only on the row (a UIScale on a list row would shove its neighbours); the icon tilts by Rotation, which turns
+	-- about its centre (its top-left anchor is owned by the reset-button shuffle above, so a UIScale would drift it).
+	local HOVER_TINT, REST_TINT = Color3.fromRGB(30, 44, 22), Color3.new(0, 0, 0)
+	local restText = label.TextColor3
 	frame.MouseEnter:Connect(function()
-		Kit.tween(frame, 0.08, { BackgroundTransparency = Theme.alpha.panel - 0.15 })
+		Kit.tween(frame, 0.08, { BackgroundTransparency = Theme.alpha.panel - 0.22, BackgroundColor3 = HOVER_TINT })
+		Kit.tween(label, 0.08, { TextColor3 = Color3.new(1, 1, 1) })
+		Kit.tween(icon, 0.14, { Rotation = -10 }, Enum.EasingStyle.Back)
 		showDetail(row)
 	end)
-	frame.MouseLeave:Connect(function() Kit.tween(frame, 0.12, { BackgroundTransparency = Theme.alpha.panel }) end)
+	frame.MouseLeave:Connect(function()
+		Kit.tween(frame, 0.12, { BackgroundTransparency = Theme.alpha.panel, BackgroundColor3 = REST_TINT })
+		Kit.tween(label, 0.12, { TextColor3 = restText })
+		Kit.tween(icon, 0.12, { Rotation = 0 })
+	end)
 	return frame
 end
 
@@ -479,11 +491,10 @@ function openTab(tab)
 end
 
 for i, tab in ipairs(Data.tabs) do
-	-- (lobby revamp Phase B, Edward OK) flat cream tab icons (UIKit.FlatIcons), small and above the word instead of 3D renders
-	-- that overlapped it; Account still shows the player's own headshot (RIVALS)
-	local FlatIcons = require(UIKit:WaitForChild("FlatIcons"))
-	local flatName = ({ Video = "video", Audio = "audio", Game = "game", Hotkeys = "hotkeys", Touch = "touch" })[tab.name]
-	local img = flatName and function(holder) FlatIcons.Draw(holder, flatName, { scale = 0.46 }).Position = UDim2.fromScale(0.5, 0.36) end
+	-- 3D tab icons (ViewIcons), as RIVALS' Settings tabs are posed 3D renders (t0135; 2026-10-21 user: follow RIVALS);
+	-- Account shows the player's own headshot (RIVALS)
+	local model = TAB_MODEL[tab.name]
+	local img = model and function(holder, tabBtn) ViewIcons.Icon(holder, model, { hoverTarget = tabBtn }) end
 		or (Assets.tabIcon and Assets.tabIcon[tab.icon])
 	local t, api = Kit.imageTab(UDim2.fromOffset(136, 54), tab.name, img, tab.glyph)
 	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 11)
