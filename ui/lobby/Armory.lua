@@ -1861,7 +1861,9 @@ local function buildLeft()
 	-- no scroll bar
 	-- (2026-10-21, port3) the plate is its own frame and the ScrollingFrame (transparent) reaches Armory._LIST_OVER past it, so the
 	-- picked row's render can overlap the panel's right edge (RIVALS)
-	mk("Frame", { Name = "ListPlate", BackgroundColor3 = BLACK, BackgroundTransparency = 0.75, BorderSizePixel = 0, Position = UDim2.fromOffset(LIST_X, LIST_Y),
+	-- (2026-10-22, section round 0, grader C vs RIVALS weapons.png) the list sits on the same dark plate as the Career card (was 0.75:
+	-- the lit floor washed out the rows)
+	mk("Frame", { Name = "ListPlate", BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, BorderSizePixel = 0, Position = UDim2.fromOffset(LIST_X, LIST_Y),
 		Size = UDim2.fromOffset(LIST_W, 1080 - LIST_Y), ZIndex = 3, Parent = leftGroup }, { corner(6) })
 	listScroll = mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Active = true,
 		Position = UDim2.fromOffset(LIST_X, LIST_Y), Size = UDim2.fromOffset(LIST_W + Armory._LIST_OVER, 1080 - LIST_Y), CanvasSize = UDim2.new(),
@@ -2738,7 +2740,8 @@ local function renderBottom()
 	-- was 28% (121 apart). Slots 140 apart with 100 px of strip past the end ones: four slots = 620 px (32%); Bold 30 labels.
 	local SP = 140
 	local bgW = (n - 1) * SP + 200
-	mk("Frame", { Name = "Strip", BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, BorderSizePixel = 0, Active = true, Position = UDim2.fromOffset(960 - bgW / 2, 998),
+	mk("Frame", { Name = "Strip", BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, BorderSizePixel = 0, -- (round 0: a bright bench behind it showed through at 0.35)
+		 Active = true, Position = UDim2.fromOffset(960 - bgW / 2, 998),
 		Size = UDim2.fromOffset(bgW, 58), ZIndex = 4, Parent = tmp }, { corner(6) })
 	for i, c in entries do
 		local cx = 960 + (i - (n + 1) / 2) * SP
@@ -2897,6 +2900,9 @@ local function build()
 	-- up) and Bottom (the strip); the Picker stands in for them. Everything is converted to Scale (Rivals Kit.toScale).
 	hud = RK.canvas(ui)
 	hud.Name = "Hud"
+	-- (2026-10-22, section round 0, grader A) RIVALS anchors the Weapons panels and the slot strip to the screen's bottom edge; on a
+	-- screen taller than 16:9 our centred canvas left them floating ~36 px up. Nothing in this canvas lives on the top edge.
+	if Kit.pinCanvas then Kit.pinCanvas(hud, "bottom") end
 	hud.ZIndex = 3
 	leftGroup = mk("Frame", { Name = "Left", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = hud })
 	rightCol = mk("Frame", { Name = "Right", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = hud })

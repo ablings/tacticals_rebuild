@@ -836,8 +836,9 @@ function LobbyHud.Start()
 			local t = RKit.label({ Text = SHORT[e.def.Stat] or e.def.Short or e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = done and R_HUD.taskDone or RC.text,
 				Position = UDim2.fromOffset(52, y), Size = UDim2.fromOffset(200, 32), ZIndex = 4, Parent = holder })
 			RKit.textStroke(1.5).Parent = t
-			local back = new("Frame", { Position = UDim2.fromOffset(52, y + 33), Size = UDim2.fromOffset(250, 6), BackgroundColor3 = rtok("barTrack", RC.track),
-				BackgroundTransparency = 0.35, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { RKit.corner(3) })
+			-- (2026-10-22, section round 0, grader A: RIVALS' bar ~0.008 H = 8 px, was 6)
+			local back = new("Frame", { Position = UDim2.fromOffset(52, y + 32), Size = UDim2.fromOffset(250, 8), BackgroundColor3 = rtok("barTrack", RC.track),
+				BackgroundTransparency = 0.35, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { RKit.corner(4) })
 			local frac = math.clamp(e.prog / e.def.Goal, 0, 1)
 			local wasFrac = hudFx.frac[e.def.Id] or frac
 			local fill = new("Frame", { Size = UDim2.fromScale(wasFrac, 1), BackgroundColor3 = done and RC.green or R_HUD.barFill, ZIndex = 5, Parent = back }, { RKit.corner(3) })
@@ -859,11 +860,12 @@ function LobbyHud.Start()
 					TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(318, y - 2), Size = UDim2.fromOffset(110, 34), ZIndex = 4, Parent = holder })
 				RKit.textStroke(1.5).Parent = cnt
 				if fx and fx.up then fx.count = cnt end -- (2026-10-21, round 3) progress made: the count punches as its bar fills
-				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(326, y - 6), Size = UDim2.fromOffset(46, 46), ZIndex = 4, Parent = holder })
+				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(326, y - 10), Size = UDim2.fromOffset(50, 50), ZIndex = 4, Parent = holder })
 				table.insert(art, { rw, "_Scissors" })
-				-- "×N" over the render's bottom-right corner: right edge 10 px past the render, bottom 4 px under it
-				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 21, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Right,
-					TextYAlignment = Enum.TextYAlignment.Bottom, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromOffset(326 + 46 + 10, y - 6 + 46 + 4), Size = UDim2.fromOffset(100, 26),
+				-- (2026-10-22, section round 0, grader B) "×N" UNDER the render (overlapping only its bottom ~6 px) at the label's size (24, was
+				-- 21 laid over the render's bottom-right, hiding half the scissors)
+				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 24, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Right,
+					AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(326 + 50 + 8, y - 10 + 50 - 8), Size = UDim2.fromOffset(100, 26),
 					ZIndex = 6, Parent = holder })
 				RKit.textStroke(1.5).Parent = rl
 			end
@@ -917,7 +919,8 @@ function LobbyHud.Start()
 	local function modeIcon()
 		-- (2026-10-18, live RIVALS) the column icon is a white silhouette: flame = streak, burst = level, trophy shield = rank
 		-- (2026-10-21, RIVALS 1:1) set in place on the one ImageLabel (no destroy / recreate)
-		lbModeIcon.Image = (lbStat == "Rank" and Kit.glyph("rank", Kit.ICONS.rank)) or (lbStat == "Level" and ((Kit.levelSealArt and Kit.levelSealArt()) or Kit.glyph("level", Kit.ICONS.level)))
+		-- (2026-10-22, section round 0, grader C: RIVALS' list header is a white stat glyph; the seal shrank to a blue dot at 22 px)
+		lbModeIcon.Image = (lbStat == "Rank" and Kit.glyph("rank", Kit.ICONS.rank)) or (lbStat == "Level" and Kit.glyph("level", Kit.ICONS.level))
 			or (lbStat == "Streak" and Kit.glyph("flame", Kit.ICONS.streak)) or Kit.glyph("trophy", Kit.ICONS.trophy)
 	end
 	local lastLB

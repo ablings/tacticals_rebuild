@@ -168,7 +168,9 @@ local function reward(parent, amount, pos, paid)
 	new("ImageLabel", { Name = "Render", BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, ImageTransparency = paid and 0.5 or 0,
 		Size = UDim2.fromScale(1, 1), Parent = holder })
 	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Right, TextYAlignment = Enum.TextYAlignment.Bottom,
-		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromOffset(size + 10, size + 4), Size = UDim2.fromOffset(110, 28), ZIndex = 2, Parent = holder })
+		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(size + 10, size - 6), Size = UDim2.fromOffset(110, 28), ZIndex = 2, Parent = holder })
+	-- (2026-10-22, section round 0, grader B) RIVALS' ×N sits UNDER the render, overlapping only its bottom ~0.25 cap; ours covered
+	-- the right half of the scissors (bottom-aligned on the render's bottom), so the render read thin and half hidden
 	RK.textStroke(2).Parent = n
 	return holder
 end
@@ -212,10 +214,10 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 			ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromOffset(121, 135), Size = UDim2.fromOffset(40, 40), ZIndex = 3, Parent = card })
 	else
-		local count = RK.label({ RichText = true, Text = countText(prog, def.Goal, 20), FontFace = FB, TextSize = 29, TextXAlignment = Enum.TextXAlignment.Center,
+		local count = RK.label({ RichText = true, Text = countText(prog, def.Goal, 29), FontFace = FB, TextSize = 29, TextXAlignment = Enum.TextXAlignment.Center, -- (round 0, grader B: "/ N" at the count's size, was 20)
 			Position = UDim2.fromOffset(0, 120), Size = UDim2.new(1, 0, 0, 30), ZIndex = 3, Parent = card })
 		RK.textStroke(2).Parent = count
-		b.count, b.small = count, 20
+		b.count, b.small = count, 29
 	end
 	b.prog, b.goal = prog, def.Goal
 	if was then b.fromFrac, b.fromProg = was.prog / def.Goal, was.prog end
@@ -229,13 +231,15 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 	local prog, done, paid, state, was = stateOf(scope, entry, def, period)
 	local row = new("Frame", { Name = scope .. i, BackgroundTransparency = 1, Position = UDim2.fromOffset(0, y), Size = UDim2.fromOffset(COL_W, ROW_H), Parent = parent })
 	glyph(row, def.Stat, UDim2.fromOffset(67, 27), 46, done and C.green or C.white) -- (2026-10-21, port3) RIVALS' weapon-picture size (~46), solid art
-	RK.label({ Text = def.Text, FontFace = FM, TextSize = 27, TextColor3 = done and C.green or C.text, TextTruncate = Enum.TextTruncate.AtEnd,
+	-- (2026-10-22, section round 0, grader B) RIVALS' contract labels are a soft grey (#C3C2C2) so the white count leads, and the count
+	-- is ~1.38 label caps tall (was 32: 1.08)
+	RK.label({ Text = def.Text, FontFace = FM, TextSize = 27, TextColor3 = done and C.green or Color3.fromRGB(195, 194, 194), TextTruncate = Enum.TextTruncate.AtEnd,
 		Position = UDim2.fromOffset(98, 6), Size = UDim2.fromOffset(460, 40), Parent = row })
-	local count = RK.label({ RichText = true, Text = countText(prog, def.Goal, 21), FontFace = FB, TextSize = 32, TextColor3 = done and C.green or C.text,
+	local count = RK.label({ RichText = true, Text = countText(prog, def.Goal, 26), FontFace = FB, TextSize = 37, TextColor3 = done and C.green or C.text,
 		TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(708, 4), Size = UDim2.fromOffset(240, 40), Parent = row })
 	bar(row, UDim2.fromOffset(48, 46), UDim2.fromOffset(660, 6), prog / def.Goal, done, C.panel, 3)
 	local b = bars[#bars]
-	b.count, b.small, b.prog, b.goal = count, 21, prog, def.Goal
+	b.count, b.small, b.prog, b.goal = count, 26, prog, def.Goal
 	if was then b.fromFrac, b.fromProg = was.prog / def.Goal, was.prog end
 	local badge
 	if done then

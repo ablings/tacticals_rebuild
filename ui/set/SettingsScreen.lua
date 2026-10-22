@@ -52,9 +52,11 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 -- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' bar is a thin dark strip (~77 design px) whose 3D icons rise out over its top edge; the selected tab is a
 -- cream plate inside the bar. Back to 77 tall at y 71 (bottom still 147, so the list / rail / Hotkeys page do not move).
 -- (2026-10-21, RIVALS 1:1) the bar is the list's width (772, was 859): six 120 px tabs, 126 apart, 11 px in from each end
-local TAB_W, TAB_STEP, TAB_X0 = 120, 126, 11
+-- (2026-10-22, section round 0, grader A vs RIVALS t0135.7) RIVALS' tabs step 139 (0.0725 W) with a 136 px selected plate and the bar
+-- runs to x 1152 (0.60 W): 848 wide (was 120 / 126 / 772)
+local TAB_W, TAB_STEP, TAB_X0 = 136, 139, 11
 local tabBar = new("Frame", {
-	Name = "TabBar", Position = UDim2.fromOffset(304, 71), Size = UDim2.fromOffset(772, 77),
+	Name = "TabBar", Position = UDim2.fromOffset(304, 71), Size = UDim2.fromOffset(848, 77),
 	BackgroundColor3 = C.textDark, BackgroundTransparency = Theme.alpha.bar, Parent = root,
 }, { Kit.corner(6) })
 

@@ -590,7 +590,7 @@ local BY, BH = 280, 276 -- bottom row: y in the grid, height
 local BW1, BX2, BW2 = 488, 494, 487 -- Training (4v4 spot) width; Duel Pads (5v5 spot) x and width
 local RX, RW = 987, 416 -- the tall Ranked tile
 local GRID_H = 556
-local CORNER = 6 -- small rounded corners (live capture)
+local CORNER = 8 -- small rounded corners (live capture; 2026-10-22 round 0: RIVALS ~8, was 6)
 local SHADE = 0.7 -- RIVALS: bright art under a 30 % black shade; hover lifts it to 0.95 (the picture brightens)
 -- (2026-10-21, port3) titles ~15 % bigger (RIVALS' "1v1" box ~7.4 % of the screen height): 100 -> 115, 88 -> 101
 local TITLE, WIDE_TITLE = 115, 101

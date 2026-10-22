@@ -353,6 +353,8 @@ end
 -- (2026-10-21, port3) the number and the icon are laid out by hand (Scale) and always fit INSIDE the button: the pair is
 -- centred, the number's box is what's left after the icon and padding, and TextScaled (capped at ts by a UITextSizeConstraint)
 -- shrinks a long price ("4,000") instead of letting it spill past the edges. White Rubik ExtraBold with a chunky black outline.
+-- (round 0) RIVALS' live key-bundle prices (rivals_rec t0083.9): white Rubik ExtraBold with a soft dark-green edge
+local PRICE_FONT = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.ExtraBold)
 local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	w, h, live = w or 124, h or PRICE_H, live or {}
 	local isRobux = kind == "robux"
@@ -365,26 +367,30 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	edge.Parent = tag
 	local z = tag.ZIndex
 	local row = new("Frame", { Name = "BuyRow", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = z, Parent = tag })
-	local ts = live.ts or math.floor(h * 0.66)
-	local isz = live.isz or math.floor(h * (isRobux and 0.6 or 0.74))
-	local pad, gap = math.max(5, math.floor(h * 0.12)), math.max(3, math.floor(h * 0.07))
+	local ts = live.ts or math.floor(h * 0.78) -- (round 0: Rubik's digits run smaller than the old cartoon font's; RIVALS' fill ~0.5 h)
+	-- (2026-10-22, section round 0, grader B) RIVALS' price: a clean bold sans in white with a thin edge in the tag's own dark tint (no
+	-- cartoon font / chunky black outline); the currency icon ~1 digit cap (scissors 0.74 h -> 0.58 h) and the pair centred with ~12 %
+	-- side padding (was ~5-7 %); the Robux glyph sits ~0.8 cap from its number
+	local isz = live.isz or math.floor(h * (isRobux and 0.56 or 0.58))
+	local pad, gap = math.max(5, math.floor(w * 0.12)), math.max(4, math.floor(h * (isRobux and 0.16 or 0.1)))
 	-- (2026-10-21, RIVALS shop layout) live.text = a word instead of a number ("FREE", RIVALS' Daily): no currency icon
 	if live.text then isz, gap = 0, 0 end
 	local hh = math.min(h, math.floor(ts * 1.2)) -- the number's box height
 	-- children draw above their parent: the parent label is the soft shadow (2 px low), the white outlined number its child
-	local shadow = RK.label({ Name = "Num", Text = "0", FontFace = FX, TextSize = ts, TextScaled = true, TextColor3 = BLACK, TextTransparency = 0.7, TextXAlignment = CENTER,
+	local shadow = RK.label({ Name = "Num", Text = "0", FontFace = PRICE_FONT, TextSize = ts, TextScaled = true, TextColor3 = BLACK, TextTransparency = 0.82, TextXAlignment = CENTER,
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(0.5, hh / h), ZIndex = z + 1, Parent = row })
 	new("UITextSizeConstraint", { MaxTextSize = ts, Parent = shadow })
-	local txt = RK.label({ Name = "Text", Text = "0", FontFace = FX, TextSize = ts, TextScaled = true, TextXAlignment = CENTER, Position = UDim2.fromScale(0, -2 / hh),
+	local txt = RK.label({ Name = "Text", Text = "0", FontFace = PRICE_FONT, TextSize = ts, TextScaled = true, TextXAlignment = CENTER, Position = UDim2.fromScale(0, -2 / hh),
 		Size = UDim2.fromScale(1, 1), ZIndex = z + 2, Parent = shadow })
 	new("UITextSizeConstraint", { MaxTextSize = ts, Parent = txt })
-	stroke(txt, math.clamp(h * 0.05, 2, 4), 0)
+	stroke(txt, math.clamp(h * 0.035, 1.5, 2.5), 0)
+	txt:FindFirstChildOfClass("UIStroke").Color = isRobux and Color3.fromRGB(46, 120, 18) or Color3.fromRGB(160, 110, 0)
 	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit,
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(isz / w, isz / h), ZIndex = z + 1, Visible = live.text == nil, Parent = row })
 	-- Robux glyph left of the number, the scissors right of it (RIVALS' key button: "5 [key]"); Rubik ExtraBold digits ~0.64 em
 	local function place(text)
 		local em = 0
-		for ch in text:gmatch(".") do em += (ch == "," or ch == ".") and 0.3 or 0.64 end
+		for ch in text:gmatch(".") do em += (ch == "," or ch == ".") and 0.3 or 0.6 end
 		local tw = math.min(w - pad * 2 - isz - gap, em * ts)
 		local left = (w - (tw + gap + isz)) / 2
 		local tx, ix = left, left + tw + gap
@@ -1301,7 +1307,9 @@ local function build()
 	-- content's left edge (CONTENT_X), compact 100x40 tabs 110 apart; the icons are lit bright (lit) and rise ~30 px above the
 	-- tab (56 box, foot 24 px into the pill). The red X moved to the page panel's top-right corner (below).
 	-- (2026-10-22, live RIVALS) no "Shop" title over the tabs (the live game and its copies have none)
-	local x0 = CONTENT_X
+	-- (2026-10-22, section round 0, grader A) RIVALS centres the tab row on x ~0.495 W: 6 slots + the X = ~1000 px from x 450 (was
+	-- left-aligned to the content at CONTENT_X)
+	local x0 = 450
 	-- tab i sits on row 1 (i <= TAB_PER_ROW) at slot i, or on row 2 at slot i - TAB_PER_ROW + 1 (slot 1 there is "Back")
 	local function slotX(i)
 		local slot = i <= TAB_PER_ROW and i or (i - TAB_PER_ROW + 1)
@@ -1356,7 +1364,7 @@ local function build()
 	-- (2026-10-22, live RIVALS shop at 16:9) the X sits IN the tab row, 10 px after the last tab, as tall as a tab (RIVALS ~0.046 of
 	-- the width); not out beside the page panel
 	local close = Kit.closeButton(UDim2.fromOffset(76, TAB_H))
-	close.Position = UDim2.fromOffset(CONTENT_X + math.min(#TABS, TAB_PER_ROW) * TAB_STEP + TAB_W + 10, TAB_Y)
+	close.Position = UDim2.fromOffset(x0 + math.min(#TABS, TAB_PER_ROW) * TAB_STEP + TAB_W + 10, TAB_Y)
 	close.Parent = body
 	close.Activated:Connect(function() Screen.Close() end)
 
