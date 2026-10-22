@@ -69,7 +69,7 @@ local bars = {}
 local PANEL_T = 0.55
 local COL_X, COL_Y, COL_W = 532, 208, 828
 local CARD_W, CARD_H = 243, 242
-local CARD_X = { 45, 292, 540 }
+local CARD_X = { 44, 293, 542 } -- (2026-10-22, section round 1, grader C vs tasks.png: 6 px gaps, were 4)
 local HEAD_H, ROW_H, ROW_PAD = 82, 62, 40
 local SORTS = { "Default", "Near Completion" }
 local sortBy = SORTS[1]
@@ -167,10 +167,10 @@ local function reward(parent, amount, pos, paid)
 	local holder = new("Frame", { Name = "Reward", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = UDim2.fromOffset(size, size), Parent = parent })
 	new("ImageLabel", { Name = "Render", BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, ImageTransparency = paid and 0.5 or 0,
 		Size = UDim2.fromScale(1, 1), Parent = holder })
-	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Right, TextYAlignment = Enum.TextYAlignment.Bottom,
-		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(size + 10, size - 6), Size = UDim2.fromOffset(110, 28), ZIndex = 2, Parent = holder })
-	-- (2026-10-22, section round 0, grader B) RIVALS' ×N sits UNDER the render, overlapping only its bottom ~0.25 cap; ours covered
-	-- the right half of the scissors (bottom-aligned on the render's bottom), so the render read thin and half hidden
+	-- (2026-10-22, section rounds 0-1, RIVALS tasks.png) RIVALS' "×1" is CENTRED on the render, over its lower third (top at ~0.62 of
+	-- the render): it no longer hides the right half (r0), nor hangs below into the next contract row (r1)
+	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Center,
+		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(size / 2, math.floor(size * 0.62)), Size = UDim2.fromOffset(110, 26), ZIndex = 2, Parent = holder })
 	RK.textStroke(2).Parent = n
 	return holder
 end
@@ -203,7 +203,7 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	local titleScale = new("UIScale", { Name = "HoverScale", Parent = title })
 	card.MouseEnter:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1.1 }, Enum.EasingStyle.Back) end)
 	card.MouseLeave:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1 }) end)
-	glyph(card, def.Stat, UDim2.fromOffset(121, 86), 44, done and C.green or C.white) -- (2026-10-21, port3) 44 px = 4 % h, solid white art
+	glyph(card, def.Stat, UDim2.fromOffset(121, 86), 52, done and C.green or C.white) -- (2026-10-21, port3) solid white art; (round 1) 44 -> 52: the art's margin left it reading ~33 vs RIVALS ~45
 	bar(card, UDim2.fromOffset(18, 130), UDim2.fromOffset(206, 10), prog / def.Goal, done, C.track, 5)
 	local b = bars[#bars]
 	local badge
@@ -292,8 +292,11 @@ local function dailyPanel(order)
 	local top = allDone and HEAD_H + 18 or HEAD_H
 	-- (2026-10-22, Edward: RIVALS' 7-day login row under the tasks) server attributes LoginDay (1-7, today's slot), LoginClaimed
 	-- (today paid) and ReplicatedStorage LoginRewards (JSON, 7 scissor amounts). No LoginDay = no row (server not shipped yet).
-	local loginDay = tonumber(Players.LocalPlayer:GetAttribute("LoginDay"))
-	local STREAK_H = loginDay and 150 or 0
+	-- (2026-10-22, section round 1, grader A vs RIVALS t0066 / tasks.png) RIVALS' Tasks screen always has the 7-circle row (the panel
+	-- runs to 0.686 H); without it ours ended at 0.526 H. Until the server ships LoginDay the row shows day 1 with the approved
+	-- economy's login amounts (notes/economy/scissors_economy.md: 50, 50, 100, 100, 150, 150, 400), nothing to claim
+	local loginDay = tonumber(Players.LocalPlayer:GetAttribute("LoginDay")) or 1
+	local STREAK_H = 150
 	local p = panel("Daily", order, top + CARD_H + 38 + STREAK_H)
 	-- (2026-10-21, port3) RIVALS' normal theme shows just "Daily Tasks": the "[done / total]" counter is gone
 	header(p, A.notepad, "Daily Missions", allDone, "Daily")
@@ -327,7 +330,7 @@ local function dailyPanel(order)
 		-- The reward (scissors + xN) sits over the top-right of every day not yet collected.
 		local claimed = Players.LocalPlayer:GetAttribute("LoginClaimed") == true
 		local okR, rewards = pcall(function() return game:GetService("HttpService"):JSONDecode(game:GetService("ReplicatedStorage"):GetAttribute("LoginRewards") or "[]") end)
-		rewards = (okR and type(rewards) == "table") and rewards or {}
+		rewards = (okR and type(rewards) == "table" and #rewards > 0) and rewards or { 50, 50, 100, 100, 150, 150, 400 }
 		local y0 = top + CARD_H + 30
 		for k = 0, math.floor((COL_W - 80) / 14) do
 			new("Frame", { BackgroundColor3 = C.textDim, BackgroundTransparency = 0.5, BorderSizePixel = 0, Position = UDim2.fromOffset(40 + k * 14, y0), Size = UDim2.fromOffset(5, 5),

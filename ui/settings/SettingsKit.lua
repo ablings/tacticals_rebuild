@@ -456,8 +456,11 @@ function Kit.imageTab(size, text, image, glyph, plateH)
 	local api = {}
 	function api.setSelected(on)
 		Kit.tween(plate or tab, 0.12, { BackgroundTransparency = on and 0 or 1 })
-		lbl.TextColor3 = on and C.textDark or C.text
-		lblStroke.Transparency = on and 1 or 0
+		-- (2026-10-22, section round 1, grader B vs settings.png "Audio" / Shop "Home") the selected word stays white with a thin black
+		-- edge on the light plate (was black, cut by the bar)
+		lbl.TextColor3 = C.text
+		lblStroke.Transparency = 0
+		lblStroke.Thickness = on and 1.5 or 2.5
 	end
 	Kit.bindButton(tab, { hover = 1.06 })
 	return tab, api

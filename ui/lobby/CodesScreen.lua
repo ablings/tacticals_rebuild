@@ -29,7 +29,7 @@ end)
 -- (2026-10-21, port3) panel layout in design px (1920x1080): tighter than round 3's 1060 x 450, centred, X 12 px outside
 -- (2026-10-22, section round 0, grader A vs RIVALS' Free rewards / Tasks panels) narrower and higher: 826 wide at x 547 (0.285-0.715 W),
 -- top at y 205 (0.19 H), the input row 68 tall (was 960 x 410 at 480, 300, rows 84)
-local PW, PH, PX, PY, PAD = 826, 384, 547, 205, 28
+local PW, PH, PX, PY, PAD = 826, 354, 547, 205, 28
 -- (2026-10-21, RIVALS 1:1) Rivals Theme faces: Rubik ExtraBold title, Rubik Bold code box / chips, Rubik Medium body
 local FB = Font.new(F.heavy.Family, Enum.FontWeight.Bold)
 local FM = F.medium
@@ -140,17 +140,18 @@ local function build()
 		BackgroundTransparency = Theme.alpha.panel, Parent = root }, { RK.corner(8) })
 	-- header (RIVALS section header: a flat white glyph + the title)
 	new("ImageLabel", { Name = "HeadIcon", BackgroundTransparency = 1, Image = (RA.rowIcon and RA.rowIcon.gift) or "", ScaleType = Enum.ScaleType.Fit,
-		Position = UDim2.fromOffset(PAD, 22), Size = UDim2.fromOffset(56, 56), Parent = panel })
+		Position = UDim2.fromOffset(PAD, 10), Size = UDim2.fromOffset(46, 46), Parent = panel }) -- (round 1: Missions' header, 46 px icon)
 	-- (2026-10-21, port3) RIVALS title size 52 (titles ~44-56)
-	RK.label({ Text = "Codes", FontFace = F.display, TextSize = 52, Position = UDim2.fromOffset(PAD + 72, 18), Size = UDim2.fromOffset(500, 64), Parent = panel })
+	-- (2026-10-22, section round 1, grader C) the Missions header's title (Rubik Bold 36, 44 tall at y 12): "Codes" read 1.4x bigger
+	RK.label({ Text = "Codes", FontFace = FB, TextSize = 36, Position = UDim2.fromOffset(PAD + 56, 12), Size = UDim2.fromOffset(500, 44), Parent = panel })
 	-- (2026-10-21, grade3) body 26 -> 30 design px (~16 px on screen); the line is shorter so it still fits one row at the bigger size
 	-- (2026-10-21, port3) RIVALS body size 28
 	RK.label({ Text = "Got a code? Redeem it here for free rewards.", FontFace = FM, TextSize = 28,
-		TextColor3 = C.textDim, Position = UDim2.fromOffset(PAD, 90), Size = UDim2.fromOffset(PW - 2 * PAD, 36), Parent = panel })
+		TextColor3 = C.textDim, Position = UDim2.fromOffset(PAD, 62), Size = UDim2.fromOffset(PW - 2 * PAD, 36), Parent = panel })
 	-- (2026-10-21, RIVALS 1:1) RIVALS' input: a box with a placeholder (the cosmetic picker's search box), Rubik Bold
 	-- (2026-10-21, port3) graders: the box read darker than the panel and the placeholder was barely visible. The box is now RIVALS'
 	-- track grey-purple (Theme.color.track) so it sits clearly lighter than the panel, placeholder in textDim (was disabled grey)
-	local REDEEM_W, ROW_Y, ROW_H, GAP = 205, 140, 68, 20
+	local REDEEM_W, ROW_Y, ROW_H, GAP = 205, 110, 68, 20
 	box = new("TextBox", { Name = "Code", Text = "", PlaceholderText = "Enter code", PlaceholderColor3 = C.textDim, FontFace = FB, TextSize = 30,
 		TextColor3 = C.text, TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Position = UDim2.fromOffset(PAD, ROW_Y), -- (TextSize 34 -> 30 below: 68 tall)
 		Size = UDim2.fromOffset(PW - 2 * PAD - GAP - REDEEM_W, ROW_H), BackgroundColor3 = C.track, BackgroundTransparency = 0.4, Parent = panel },
@@ -193,12 +194,12 @@ local function build()
 	box:GetPropertyChangedSignal("Text"):Connect(function() paintGo() end)
 	paintGo(0)
 	box.FocusLost:Connect(function(enter) if enter then redeem() end end)
-	status = RK.label({ Text = "", FontFace = FB, TextSize = 24, TextColor3 = C.textDim, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(PAD + 2, 226),
+	status = RK.label({ Text = "", FontFace = FB, TextSize = 24, TextColor3 = C.textDim, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(PAD + 2, 196),
 		Size = UDim2.fromOffset(PW - 2 * PAD, 32), Parent = panel })
 	status:SetAttribute("dTS", 24) -- anchored left-middle (same spot) so the success pop grows from the text's start
-	stroke(RK.label({ Text = "Redeemed", FontFace = FB, TextSize = 30, Position = UDim2.fromOffset(PAD, 248), Size = UDim2.fromOffset(400, 40), Parent = panel }), 2)
+	stroke(RK.label({ Text = "Redeemed", FontFace = FB, TextSize = 30, Position = UDim2.fromOffset(PAD, 218), Size = UDim2.fromOffset(400, 40), Parent = panel }), 2)
 	local LW = PW - 2 * PAD
-	list = new("Frame", { Name = "List", BackgroundTransparency = 1, Position = UDim2.fromOffset(PAD, 294), Size = UDim2.fromOffset(LW, 62), Parent = panel },
+	list = new("Frame", { Name = "List", BackgroundTransparency = 1, Position = UDim2.fromOffset(PAD, 264), Size = UDim2.fromOffset(LW, 62), Parent = panel },
 		{ new("UIGridLayout", { CellSize = UDim2.fromScale(250 / LW, 50 / 62), CellPadding = UDim2.fromScale(12 / LW, 12 / 62), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	-- (2026-10-21, RIVALS 1:1) the replica's red X outside the panel's top-right. Renamed + tagged Nonapplicable: the old
 	-- InterfaceController shrinks the parent of any new "Close" button to 0 x 0.

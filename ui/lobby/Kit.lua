@@ -428,7 +428,7 @@ local function genImage(name)
 end
 
 -- (2026-10-21, port3) RIVALS' close X size in design px (the replica's Play X); Kit.CLOSE_GAP = its gap outside a panel's top-right
-Kit.CLOSE_W, Kit.CLOSE_H, Kit.CLOSE_GAP = 112, 58, 38 -- (2026-10-22, section round 0, grader A: RIVALS' X sits ~0.02 W off the panel, was 12)
+Kit.CLOSE_W, Kit.CLOSE_H, Kit.CLOSE_GAP = 102, 53, 38 -- (2026-10-22, section rounds 0-1, grader A vs t0066: RIVALS' X is 0.053 W wide (was 112 x 58) and sits ~0.02 W off the panel (was 12))
 -- Close button (pass 34: gunmetal + olive brackets, warms red on hover) with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
 	-- (2026-10-21, port3) one X everywhere: RIVALS' size (the replica's Play X, 112x58 design px at 1920x1080) when no size is

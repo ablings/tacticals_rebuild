@@ -604,6 +604,12 @@ for i, tab in ipairs(Data.tabs) do
 	-- ~62 px on a 784 px window), bottom still on the bar's bottom, so the icon now stands ~47 px over the bar's top edge
 	local t, api = Kit.imageTab(UDim2.fromOffset(TAB_W, 124), tab.name, img, tab.glyph, 52)
 	t.Position = UDim2.fromOffset(TAB_X0 + (i - 1) * TAB_STEP, 77 - 124)
+	-- (2026-10-22, section round 1, grader A vs t0139) RIVALS' tab icons are <= 0.063 H (~64 px) with their top at ~0.059 H and their
+	-- foot over the label; ours stood ~85 px tall, poking 0.035 H above the bar
+	do
+		local ic = t:FindFirstChild("Icon")
+		if ic then ic.AnchorPoint, ic.Position, ic.Size = Vector2.new(0.5, 1), UDim2.new(0.5, 0, 1, -22), UDim2.fromOffset(64, 64) end
+	end
 	t.Parent = tabBar
 	tabApis[tab.name] = api
 	tabButtons[tab.name] = t

@@ -286,8 +286,8 @@ function LobbyHud.Start()
 	local missions = new("TextButton", { Name = "Missions", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(10, 405), Size = UDim2.fromOffset(MW, MH),
 		BackgroundColor3 = R_HUD.widgetBg, BackgroundTransparency = rtok("widgetFadeAlpha", 0.35), Parent = root }, { RKit.corner(6),
 		new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.55, 0.45), NumberSequenceKeypoint.new(1, 1) }) }) })
-	local clipHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(32, 32), ZIndex = 3, Parent = missions })
-	RKit.label({ Text = "Daily Missions", FontFace = WFONT, TextSize = 26, TextColor3 = RC.text, Position = UDim2.fromOffset(52, 10), Size = UDim2.fromOffset(280, 36), ZIndex = 3, Parent = missions })
+	local clipHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 8), Size = UDim2.fromOffset(40, 40), ZIndex = 3, Parent = missions }) -- (round 1: 32 -> 40, RIVALS' calendar ~40)
+	RKit.label({ Text = "Daily Missions", FontFace = WFONT, TextSize = 29, TextColor3 = RC.text, Position = UDim2.fromOffset(52, 9), Size = UDim2.fromOffset(300, 38), ZIndex = 3, Parent = missions }) -- (round 1, grader B: ~1.12x the task labels, was 26)
 	local reset = Kit.label({ Text = "", FontFace = WFONT, TextSize = 1, TextTransparency = 1, Size = UDim2.fromOffset(1, 1), Parent = missions }) -- (timer lives in Missions)
 	local ROWS_H = MH - 58 -- rows frame starts at y 58, so a replica row y (64 + (i - 1) * 67) is 6 + (i - 1) * 67 inside it
 	local rows = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 58), Size = UDim2.fromOffset(MW, ROWS_H), ZIndex = 3, Parent = missions })
@@ -411,17 +411,19 @@ function LobbyHud.Start()
 			Position = UDim2.fromOffset(cx, 1060), Size = UDim2.fromOffset(118, 112), Parent = root })
 		-- (2026-10-21, RIVALS 1:1) the replica's disc: 92 px at (59, 44), black with ONE fading UIGradient (0.55 top -> 0.3 -> 0.15
 		-- bottom). The grade2/3 flat black 0.4 disc and the cream hover glow layer are gone.
-		new("Frame", { Name = "Disc", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 44), Size = UDim2.fromOffset(92, 92), BackgroundColor3 = RC.white, Parent = b },
-			{ RKit.corner(46), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(R_HUD.disc),
+		-- (2026-10-22, section rounds 0-1, graders A + B vs hub_full / t0060) RIVALS' dock icons stand ~0.068 H (73 px; ours 92) with
+		-- 0.03 H clear under Play, labels ~13.5 px cap (Bold 21, was 25): disc 92 -> 80, icon box 104 -> 84
+		new("Frame", { Name = "Disc", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 48), Size = UDim2.fromOffset(80, 80), BackgroundColor3 = RC.white, Parent = b },
+			{ RKit.corner(40), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(R_HUD.disc),
 				Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(0.6, 0.3), NumberSequenceKeypoint.new(1, 0.15) }) }) })
 		-- our 3D model sits where the replica's 92 px icon image sits (centre 59, 40)
 		-- (2026-10-21, port3) icons ~9.5 % h: a 104 px box centred at (59, 38), so they overflow the disc like RIVALS' renders
-		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 38), Size = UDim2.fromOffset(104, 104), ZIndex = 2, Parent = b })
+		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 46), Size = UDim2.fromOffset(84, 84), ZIndex = 2, Parent = b })
 		local iconScale = new("UIScale", { Name = "HoverScale", Parent = holder })
 		navIcons[it.Id] = { holder = holder, it = it, scale = iconScale }
 		-- (2026-10-21, port3) label: Rubik Bold 25 with a thin 1.5 px stroke, bottom at y 104 (bar y 1052), so it sits up on the dark
 		-- strip and overlaps the icon's bottom (icon box ends at 90) like RIVALS
-		local lbl = RKit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 25, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
+		local lbl = RKit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 21, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
 			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(59, 104), Size = UDim2.fromOffset(140, 30), ZIndex = 3, Parent = b })
 		RKit.textStroke(1.5).Parent = lbl
 		-- badge: 30 px Theme badge red at (92, 10), white ring 1.5 @ 0.2, Rubik Bold 21
@@ -610,6 +612,8 @@ function LobbyHud.Start()
 		n.holderBase = n.holder.Position
 	end
 	Icons.Viewport(clipHolder, Icons.Clipboard(), { view = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), zoom = 1.1 })
+	-- (round 1, grader C) full brightness like RIVALS' calendar (the shared viewport light is dim on the see-through widget)
+	for _, v in clipHolder:GetDescendants() do if v:IsA("ViewportFrame") then v.Ambient, v.LightColor = Color3.fromRGB(225, 225, 230), Color3.new(1, 1, 1) end end
 	local navResets = {}
 	function resetNav() for _, f in navResets do f() end end
 	-- (2026-10-21, grade3) PLAY no longer yields while a dock item is hovered: the grade2 shrink to 0.94 + half fade read as
@@ -833,7 +837,8 @@ function LobbyHud.Start()
 			local done = e.claimed or e.prog >= e.def.Goal
 			new("ImageLabel", { Name = "StatIcon", BackgroundTransparency = 1, Image = GEN_GLYPH[e.def.Stat] or Kit.ICONS[FLAT_STAT[e.def.Stat] or "trophy"], ImageColor3 = RC.white,
 				ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(14, y + 4), Size = UDim2.fromOffset(30, 30), ZIndex = 4, Parent = holder })
-			local t = RKit.label({ Text = SHORT[e.def.Stat] or e.def.Short or e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = done and R_HUD.taskDone or RC.text,
+			-- (round 1, grader B vs t0000: RIVALS' task labels are a soft grey #C4C5C9 so the white counts lead)
+			local t = RKit.label({ Text = SHORT[e.def.Stat] or e.def.Short or e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = done and R_HUD.taskDone or Color3.fromRGB(196, 197, 201),
 				Position = UDim2.fromOffset(52, y), Size = UDim2.fromOffset(200, 32), ZIndex = 4, Parent = holder })
 			RKit.textStroke(1.5).Parent = t
 			-- (2026-10-22, section round 0, grader A: RIVALS' bar ~0.008 H = 8 px, was 6)
@@ -864,8 +869,9 @@ function LobbyHud.Start()
 				table.insert(art, { rw, "_Scissors" })
 				-- (2026-10-22, section round 0, grader B) "×N" UNDER the render (overlapping only its bottom ~6 px) at the label's size (24, was
 				-- 21 laid over the render's bottom-right, hiding half the scissors)
-				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 24, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Right,
-					AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(326 + 50 + 8, y - 10 + 50 - 8), Size = UDim2.fromOffset(100, 26),
+				-- (round 1, RIVALS tasks.png / hub widget) centred on the render over its lower third, like RIVALS' "×1"
+				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 24, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
+					AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(326 + 25, y - 10 + 31), Size = UDim2.fromOffset(100, 26),
 					ZIndex = 6, Parent = holder })
 				RKit.textStroke(1.5).Parent = rl
 			end
@@ -883,7 +889,10 @@ function LobbyHud.Start()
 		for _, a2 in art do
 			local h2, what = a2[1], a2[2]
 			if what == "_Scissors" then
-				VI.Icon(h2, "Scissors", { still = true })
+				-- (2026-10-22, section round 1, grader C) the bright scissors render Missions uses (RIVALS' key render); the 3D model drew ~40 %
+				-- dimmer on the see-through widget
+				new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://120480559804238", ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1),
+					ZIndex = 5, Parent = h2 })
 			elseif what == "_Check" then
 				local icons = ReplicatedStorage:FindFirstChild("UIIcons")
 				local mesh = icons and icons:FindFirstChild("Check")

@@ -361,18 +361,21 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	local tag = new("TextButton", { Name = "Price", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cx, y),
 		Size = UDim2.fromOffset(w, h), BackgroundColor3 = WHITE, BorderSizePixel = 0, ZIndex = live.z or 5, Parent = parent })
 	RK.corner(6).Parent = tag
-	local grad = RK.vgrad(isRobux and G.robux or G.key)
+	-- (round 1, grader B) the scissors tag in RIVALS' saturated key yellow (#F8EC00 -> #EFD700): Theme.key's pale #FFFDB5 top left the
+	-- white digits with no contrast
+	local grad = RK.vgrad(isRobux and G.robux or { Color3.fromRGB(248, 236, 0), Color3.fromRGB(239, 215, 0) })
 	grad.Parent = tag
 	local edge = RK.stroke(BLACK, 1.5, 0.6)
 	edge.Parent = tag
 	local z = tag.ZIndex
 	local row = new("Frame", { Name = "BuyRow", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = z, Parent = tag })
-	local ts = live.ts or math.floor(h * 0.78) -- (round 0: Rubik's digits run smaller than the old cartoon font's; RIVALS' fill ~0.5 h)
+	-- (round 1, grader B vs t0068 / t0083.9: one price size on every tag, digit cap ~0.34 x tag height = TextSize ~0.5 h)
+	local ts = live.ts or math.floor(h * 0.7) -- (0.5 measured ~0.22 h on screen: the size cap is not rescaled with the canvas)
 	-- (2026-10-22, section round 0, grader B) RIVALS' price: a clean bold sans in white with a thin edge in the tag's own dark tint (no
 	-- cartoon font / chunky black outline); the currency icon ~1 digit cap (scissors 0.74 h -> 0.58 h) and the pair centred with ~12 %
 	-- side padding (was ~5-7 %); the Robux glyph sits ~0.8 cap from its number
 	local isz = live.isz or math.floor(h * (isRobux and 0.56 or 0.58))
-	local pad, gap = math.max(5, math.floor(w * 0.12)), math.max(4, math.floor(h * (isRobux and 0.16 or 0.1)))
+	local pad, gap = math.max(5, math.floor(w * 0.12)), math.max(3, math.floor(h * 0.24)) -- (round 1: icon-to-digit ~0.7 cap)
 	-- (2026-10-21, RIVALS shop layout) live.text = a word instead of a number ("FREE", RIVALS' Daily): no currency icon
 	if live.text then isz, gap = 0, 0 end
 	local hh = math.min(h, math.floor(ts * 1.2)) -- the number's box height
@@ -383,7 +386,9 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	local txt = RK.label({ Name = "Text", Text = "0", FontFace = PRICE_FONT, TextSize = ts, TextScaled = true, TextXAlignment = CENTER, Position = UDim2.fromScale(0, -2 / hh),
 		Size = UDim2.fromScale(1, 1), ZIndex = z + 2, Parent = shadow })
 	new("UITextSizeConstraint", { MaxTextSize = ts, Parent = txt })
-	stroke(txt, math.clamp(h * 0.035, 1.5, 2.5), 0)
+	-- (round 1, grader B: RIVALS' edge on green is soft, the digits read plain white; on the saturated yellow white needs a firmer
+	-- amber edge to stay legible)
+	stroke(txt, math.clamp(h * 0.035, 1.5, 2.5), isRobux and 0.55 or 0.15)
 	txt:FindFirstChildOfClass("UIStroke").Color = isRobux and Color3.fromRGB(46, 120, 18) or Color3.fromRGB(160, 110, 0)
 	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit,
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(isz / w, isz / h), ZIndex = z + 1, Visible = live.text == nil, Parent = row })

@@ -683,6 +683,15 @@ local function tile(name, x, y, w, h, sky)
 	new("UIStroke", { Name = "HoverRing", Color = C.white, Thickness = 4, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
 	-- unavailable while you queue / stand on a pad (Tacticals behaviour): a dark overlay, nothing written on it
 	new("Frame", { Name = "Dim", BackgroundColor3 = C.textDark, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 6, Parent = f })
+	-- (2026-10-22, section round 1, grader C) ClipsDescendants ignores the tile's UICorner, so the full-bleed layers (picture, 3D scene,
+	-- shade, wash, dim) drew square corners over it: each full-size layer gets the same corner (now and when the scene is added)
+	local function round(o)
+		if o:IsA("GuiObject") and not o:IsA("TextLabel") and o.Size.X.Scale >= 0.99 and o.Size.Y.Scale >= 0.99 and not o:FindFirstChildOfClass("UICorner") then
+			Kit.corner(CORNER).Parent = o
+		end
+	end
+	for _, o in f:GetDescendants() do round(o) end
+	f.DescendantAdded:Connect(function(o) task.defer(round, o) end)
 	table.insert(tiles, f)
 	return f
 end

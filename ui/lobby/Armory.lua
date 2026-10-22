@@ -153,7 +153,9 @@ function Armory._heroFrame(natural: Vector3?): (number, number)
 	if s[1] >= 1.6 * s[2] then
 		k = math.min(0.58 * visW / (0.9 * s[1]), 0.7 * visH / (1.15 * s[2] + 0.17 * s[1]))
 	else
-		k = 0.95 * visH / math.max(natural.Magnitude, 0.01)
+		-- (2026-10-22, section round 1, grader A vs t0058) RIVALS' handgun spans ~37 % of the height (0.33-0.70 H), not ~95 %: squat items
+		-- at about half the old size (long guns keep the ~55 %-of-width rule above)
+		k = 0.5 * visH / math.max(natural.Magnitude, 0.01)
 	end
 	return k * natural.Magnitude, dist
 end
@@ -1863,7 +1865,8 @@ local function buildLeft()
 	-- picked row's render can overlap the panel's right edge (RIVALS)
 	-- (2026-10-22, section round 0, grader C vs RIVALS weapons.png) the list sits on the same dark plate as the Career card (was 0.75:
 	-- the lit floor washed out the rows)
-	mk("Frame", { Name = "ListPlate", BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, BorderSizePixel = 0, Position = UDim2.fromOffset(LIST_X, LIST_Y),
+	-- (round 1: 0.35 still let the lit floor through)
+	mk("Frame", { Name = "ListPlate", BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, BorderSizePixel = 0, Position = UDim2.fromOffset(LIST_X, LIST_Y),
 		Size = UDim2.fromOffset(LIST_W, 1080 - LIST_Y), ZIndex = 3, Parent = leftGroup }, { corner(6) })
 	listScroll = mk("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Active = true,
 		Position = UDim2.fromOffset(LIST_X, LIST_Y), Size = UDim2.fromOffset(LIST_W + Armory._LIST_OVER, 1080 - LIST_Y), CanvasSize = UDim2.new(),
@@ -2188,9 +2191,9 @@ local function renderInfo()
 		local fill = mk("Frame", { Name = "Fill", BackgroundColor3 = COL.BarFill, BorderSizePixel = 0, Size = UDim2.fromScale(prevLvl and prevLvl.frac or 0, 1),
 			ZIndex = 6, Parent = bar }, { corner(3) })
 		Kit.fillTo(fill, frac, 0.6)
-		text({ Text = maxed and "" or ctx.commas(into), FontFace = FB, TextSize = 14, TextColor3 = COL.BarLo, Position = UDim2.fromOffset(5, 0), Size = UDim2.fromOffset(70, 18),
-			ZIndex = 7, Parent = bar })
-		text({ Text = maxed and "MAX" or ctx.commas(need), FontFace = FB, TextSize = 14, TextColor3 = COL.BarHi, TextXAlignment = Enum.TextXAlignment.Right,
+		-- (2026-10-22, section rounds 0-1, grader C vs RIVALS kit.jpg / weapons.png) no XP numbers at the bar's ends: RIVALS shows only
+		-- the big level number centred on the bar
+		text({ Text = maxed and "MAX" or "", FontFace = FB, TextSize = 14, TextColor3 = COL.BarHi, TextXAlignment = Enum.TextXAlignment.Right,
 			Position = UDim2.fromOffset(233, 0), Size = UDim2.fromOffset(70, 18), ZIndex = 7, Parent = bar })
 		local lvLabel = shade(text({ Text = tostring(level), FontFace = FX, TextSize = 32, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(118, 2),
 			Size = UDim2.fromOffset(100, 36), ZIndex = 8, Parent = lvl }), 2, 0.35)
@@ -2738,8 +2741,10 @@ local function renderBottom()
 	local tmp = Instance.new("Folder")
 	-- (2026-10-21, port3) graders: RIVALS' strip is ~33% of the screen width (643-1277 of 1920) with ~2%-of-height labels; ours
 	-- was 28% (121 apart). Slots 140 apart with 100 px of strip past the end ones: four slots = 620 px (32%); Bold 30 labels.
-	local SP = 140
-	local bgW = (n - 1) * SP + 200
+	-- (2026-10-22, section rounds 0-1, grader A vs t0058 / weapons.png) RIVALS' slots step 0.063 W (121) on 0.069 H discs (75) with
+	-- ~15 px-cap labels (B): was 140 / 90 / Bold 30
+	local SP = 121
+	local bgW = (n - 1) * SP + 180
 	mk("Frame", { Name = "Strip", BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, BorderSizePixel = 0, -- (round 0: a bright bench behind it showed through at 0.35)
 		 Active = true, Position = UDim2.fromOffset(960 - bgW / 2, 998),
 		Size = UDim2.fromOffset(bgW, 58), ZIndex = 4, Parent = tmp }, { corner(6) })
@@ -2751,11 +2756,11 @@ local function renderBottom()
 		-- ~46 px (grey), Leave is gen.kit_leave_x (coloured, ~84 px, it breaks out of its disc)
 		-- (2026-10-22, RIVALS 16:9) fainter discs (0.66, was 0.45)
 		mk("Frame", { Name = "Disc", BackgroundColor3 = BLACK, BackgroundTransparency = 0.66, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromOffset(50, 44), Size = UDim2.fromOffset(90, 90), ZIndex = 5, Parent = b }, { circle() })
-		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 84 or 46, COL.Empty, 6)
+			Position = UDim2.fromOffset(50, 44), Size = UDim2.fromOffset(75, 75), ZIndex = 5, Parent = b }, { circle() })
+		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 72 or 40, COL.Empty, 6)
 		g.Position = UDim2.fromOffset(50, 44)
 		if c.Id ~= "Leave" then slotRings[c.Id] = b end
-		local lbl = text({ Text = c.Label, FontFace = FB, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-20, 66),
+		local lbl = text({ Text = c.Label, FontFace = FB, TextSize = 25, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-20, 68),
 			Size = UDim2.fromOffset(140, 38), ZIndex = 7, Parent = b })
 		shade(lbl, 1.8, 0.35)
 		-- (2026-10-22, live RIVALS feel study) RIVALS' slots react like its dock: the slot grows ~1.2 and its light-grey label turns white
@@ -2908,6 +2913,11 @@ local function build()
 	rightCol = mk("Frame", { Name = "Right", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = hud })
 	statsLayer = mk("Frame", { Name = "StatsLayer", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = hud })
 	bottomGroup = mk("Frame", { Name = "Bottom", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = hud })
+	-- (2026-10-22, section round 1, grader C) the room's bright bench framed the slot strip like a cream bezel: RIVALS' floor reads dark
+	-- under its strip, so a soft black fade rises from the screen's bottom edge (0 -> 0.45 over the bottom 16 %) behind the strip
+	mk("Frame", { Name = "FloorFade", BackgroundColor3 = BLACK, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1),
+		Size = UDim2.fromScale(1, 0.16), ZIndex = 2, Parent = hud }, { mk("UIGradient", { Rotation = 90,
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0.45) }) }) })
 	tray = mk("Frame", { Name = "Picker", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, ZIndex = 6, Parent = hud })
 	buildLeft()
 	Armory.BuildHistory(hud)
