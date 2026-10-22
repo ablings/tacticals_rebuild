@@ -1368,12 +1368,13 @@ end
 
 ---------------------------------------------------------------------------------------------------- switch weapons (RIVALS)
 -- between rounds: a blue "Switch Weapons [M]" button in the middle; it (or M) opens the loadout picker (MatchFlowUI)
-local switchB = new("TextButton", { Name = "SwitchWeapons", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(700, 770), Size = UDim2.fromOffset(470, 78),
+-- (2026-10-22, live RIVALS intermission) a slim pill: ~15 % of the width, 50 tall, centred at 72 % of the height (was 470 x 78)
+local switchB = new("TextButton", { Name = "SwitchWeapons", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(810, 752), Size = UDim2.fromOffset(300, 50),
 	BackgroundColor3 = WHITE, Visible = false, ZIndex = 6, Parent = root }, { corner(8),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(70, 180, 255), Color3.fromRGB(20, 110, 230)) }) })
-label(switchB, "Switch Weapons", FX, 40, 20, 0, 370, 78, WHITE, nil, 7)
-local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Position = UDim2.fromOffset(396, 14), Size = UDim2.fromOffset(52, 50), ZIndex = 7, Parent = switchB }, { corner(6) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
-local keyL = label(keyChip, "M", FX, 30, 0, 0, 52, 50, WHITE, nil, 8)
+label(switchB, "Switch Weapons", FX, 27, 10, 0, 236, 50, WHITE, nil, 7)
+local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Position = UDim2.fromOffset(254, 8), Size = UDim2.fromOffset(34, 34), ZIndex = 7, Parent = switchB }, { corner(6) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
+local keyL = label(keyChip, "M", FX, 22, 0, 0, 34, 34, WHITE, nil, 8)
 local switchScale = new("UIScale", { Parent = switchB })
 gloss(switchB, 8, 0.3)
 -- (2026-10-21, RIVALS pass) one button behaviour: Kit.bindButton drives switchScale (hover 1.05 / press 0.93 / sfx)

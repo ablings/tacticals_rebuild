@@ -134,6 +134,7 @@ MATCH_FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "GamepadNavController", "ModuleScript", "hud/GamepadNavController.lua"),
     ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
+    ("StarterPlayer.StarterPlayerScripts", "MatchTasksUI", "LocalScript", "match/MatchTasksUI.client.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),
     ("ReplicatedStorage.UIKit", "RankArt", "ModuleScript", "ranked/RankArt.lua"),
     ("ReplicatedStorage.UIKit", "KillIcons", "ModuleScript", "match/KillIcons.lua"),  # (2026-10-20) kill feed / killer card silhouettes
