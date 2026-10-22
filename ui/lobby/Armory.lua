@@ -2746,7 +2746,8 @@ local function renderBottom()
 			Size = UDim2.fromOffset(100, 100), ZIndex = 5, Parent = tmp })
 		-- (2026-10-21, RIVALS images) weapons.png: every slot sits on a ~90 px dark disc; the empty mark is gen.kit_slot_empty at
 		-- ~46 px (grey), Leave is gen.kit_leave_x (coloured, ~84 px, it breaks out of its disc)
-		mk("Frame", { Name = "Disc", BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+		-- (2026-10-22, RIVALS 16:9) fainter discs (0.66, was 0.45)
+		mk("Frame", { Name = "Disc", BackgroundColor3 = BLACK, BackgroundTransparency = 0.66, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromOffset(50, 44), Size = UDim2.fromOffset(90, 90), ZIndex = 5, Parent = b }, { circle() })
 		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 84 or 46, COL.Empty, 6)
 		g.Position = UDim2.fromOffset(50, 44)

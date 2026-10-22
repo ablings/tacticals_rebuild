@@ -243,7 +243,7 @@ new("UIPadding", { PaddingBottom = UDim.new(0, 160), Parent = list })
 -- S5 detail panel (shows the hovered row)
 local detail = new("Frame", {
 	Name = "Detail", Position = UDim2.fromOffset(1095, 160), Size = UDim2.fromOffset(520, 890),
-	BackgroundColor3 = C.textDark, BackgroundTransparency = 0.72, -- (2026-10-22, live RIVALS 16:9: a clearly visible dark pane, was 0.93) Parent = root,
+	BackgroundColor3 = C.textDark, BackgroundTransparency = 0.72, Parent = root, -- (2026-10-22, live RIVALS 16:9: a clearly visible dark pane, was 0.93)
 }, { Kit.corner(10) })
 local preview = new("Frame", {
 	Name = "Preview", Position = UDim2.fromOffset(13, 13), Size = UDim2.fromOffset(495, 364), BackgroundColor3 = Theme.hex("#5A6E86"),
