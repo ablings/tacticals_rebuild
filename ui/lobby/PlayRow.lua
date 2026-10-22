@@ -1,35 +1,56 @@
--- UIKit/PlayRow (ModuleScript): the lobby's PLAY button + party (your avatar and a round invite "+"),
--- RIVALS play row (ported from rivals_practice/ui/hud) in tacticals' olive (pass 34). Its own ScreenGui on the
--- design canvas, converted to Scale (no Offset). It follows the lobby HUD: hidden whenever the lobby
+-- UIKit/PlayRow (ModuleScript): the lobby's PLAY button + party (your avatar and a round invite "+").
+-- (2026-10-21, RIVALS 1:1) a 1:1 port of the replica's Play row (rivals_practice/ui/hud/HudController.client.lua, "Play row"):
+-- sizes, positions, gradient, font and hover are the replica's; every colour / font comes from UIKit.Rivals.Theme (values it has
+-- no token for yet are read from Theme.playRow[name] when present, else the replica's measured value), so a re-theme is one file.
+-- Its own ScreenGui on the design canvas, converted to Scale (no Offset). It follows the lobby HUD: hidden whenever the lobby
 -- ScreenGui is disabled (menus open) or the dock is hidden (Kit room).
 --   PlayRow.Init({ lobbyGui, dock, onPlay, onInvite, tooltip })
---   PlayRow.SetState(text, kind)   kind: "play" (field green) | "busy" (gunmetal: searching / in queue) | "found" (bright field green)
+--   PlayRow.SetState(text, kind)   kind: "play" (lime) | "busy" (grey: searching / in queue) | "found" (bright lime)
 -- (UI session 2026-10-17: now in the UI session's files) party: your party members' headshots sit right of your avatar
 -- (RIVALS), the "+" moves along after them; Player attribute PartyMembers (JSON, leader first) from LobbyParty.
 local Players = game:GetService("Players")
 local HttpService = game:GetService("HttpService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local UIKit = script.Parent
-local Theme = require(UIKit:WaitForChild("Theme"))
-local Kit = require(UIKit:WaitForChild("Kit"))
-local C, F, new = Theme.color, Theme.font, Kit.new
-local hex = Theme.hex
+local Kit = require(UIKit:WaitForChild("Kit")) -- our Kit: canvas, Scale conversion, sfx, tooltips, crown
+local new = Kit.new
+local RUI = ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("Rivals")
+local RTheme = require(RUI:WaitForChild("Theme"))
+local RKit = require(RUI:WaitForChild("Kit"))
+local RC, RH = RTheme.color, RTheme.hex
+
+local function rtok(name, default)
+	local t = RTheme.playRow
+	if t and t[name] ~= nil then return t[name] end
+	return default
+end
+-- the replica's Play gradient (measured on ref_65: pale lime top band, fast fall to bright lime, slightly greener at the bottom);
+-- 5 stops at 0 / 0.15 / 0.35 / 0.6 / 1, then the button edge and the label outline colours
+local GRADS = {
+	play = rtok("play", { "#F6FFBE", "#E9FEB7", "#BCFC4E", "#94FB24", "#79EC31", edge = "#D8FF8A", text = "#5FB51E" }),
+	-- (no live capture of a searching Play: Theme grey, same band shape)
+	busy = rtok("busy", { "#E4E4E4", "#D2D2D2", "#B5B5B5", "#999999", "#7A7A7A", edge = "#D8D8D8", text = "#5A5A5A" }),
+	-- match found: the same lime, lifted
+	found = rtok("found", { "#FCFFE0", "#F4FFCF", "#D6FF6E", "#B4FC4A", "#94F23A", edge = "#EFFFC0", text = "#5FB51E" }),
+}
+local PLAY_FONT = RTheme.font.display -- Rubik ExtraBold (the replica's FX)
+local PLAY_SIZE = 35 -- cap 20 px -> size 35
 
 local PlayRow = {}
-local gui, play, playLabel, playGrad, playStroke
+local gui, play, playLabel, playGrad, playStroke, labelStroke, labelCap
 
--- top band pale, fast fall to the main colour, slightly deeper at the bottom (RIVALS play button shape)
-local GRADS = {
-	play = { "#E3F0D2", "#BCDC96", "#8DBF5A", "#6FA544", "#4C7A2E", "#1F3A14" }, -- (2026-10-20, Edward) field-green primary: matches the lobby's olive / lime and reads apart from Robux lime
-	busy = { "#9A9E8C", "#787D69", "#525846", "#41463A", "#2C3027", "#151813" }, -- gunmetal while searching
-	found = { "#F0F8E4", "#CFE8AE", "#A6D274", "#8DBF5A", "#6FA544", "#2C4A1C" }, -- match found / ready: a brighter field green (2026-10-21, AI-tells cleanup: was the comic yellow)
-}
 local function seq(kind)
 	local g = GRADS[kind] or GRADS.play
 	return ColorSequence.new({
-		ColorSequenceKeypoint.new(0, hex(g[1])), ColorSequenceKeypoint.new(0.15, hex(g[2])), ColorSequenceKeypoint.new(0.35, hex(g[3])),
-		ColorSequenceKeypoint.new(0.6, hex(g[4])), ColorSequenceKeypoint.new(1, hex(g[5])),
-	}), hex(g[6])
+		ColorSequenceKeypoint.new(0, RH(g[1])), ColorSequenceKeypoint.new(0.15, RH(g[2])), ColorSequenceKeypoint.new(0.35, RH(g[3])),
+		ColorSequenceKeypoint.new(0.6, RH(g[4])), ColorSequenceKeypoint.new(1, RH(g[5])),
+	}), RH(g.edge), RH(g.text)
+end
+
+-- RIVALS writes its button words in title case ("Play", "To Duels"): callers pass "PLAY", "SEARCHING 0:12", "IN QUEUE · DUEL"
+local function titleCase(s)
+	return (string.lower(s):gsub("(%a)([%w']*)", function(a, b) return string.upper(a) .. b end))
 end
 
 local function headshot(img, uid)
@@ -39,14 +60,15 @@ local function headshot(img, uid)
 	end)
 end
 
-local stateKind = "play" -- (2026-10-21, round 3) the halo pulse reads it: on for play / found, off while busy
 function PlayRow.SetState(text, kind)
 	if not play then return end
-	stateKind = kind or "play"
-	playLabel.Text = text
-	local s, edge = seq(kind)
+	playLabel.Text = titleCase(text)
+	-- the label is TextScaled (long states like "Searching 0:12" must fit 222 px); its cap follows the canvas like a TextSize would
+	labelCap.MaxTextSize = math.max(1, math.floor(PLAY_SIZE * Kit.factor() + 0.5))
+	local s, edge, textEdge = seq(kind)
 	playGrad.Color = s
 	playStroke.Color = edge
+	labelStroke.Color = textEdge
 end
 
 function PlayRow.Init(ctx)
@@ -57,115 +79,76 @@ function PlayRow.Init(ctx)
 	local canvas = Kit.canvas(gui)
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
-	-- PLAY: chunky field-green button, Oswald with a darker green text outline; grows from its centre on hover
-	-- (2026-10-21, AI-tells cleanup) no thin pale border on the button; the gradient fill carries it
-	-- (lobby revamp, graders: PLAY was barely bigger than the dock icons) 340 x 84 design px: the biggest thing on the hub,
-	-- about 30 % taller on a phone (over the 44 pt tap minimum on a 390 pt tall screen)
-	-- (2026-10-21, round 3: match RIVALS t0000 / t0254.9, PLAY is THE call to action) a field-green halo behind PLAY swells out
-	-- and fades every couple of seconds (faster when a match is found), on top of the shine sweep below. A sibling drawn
-	-- behind the button (ZIndex 1 < 2), centred on it, so the button's own hover UIScale is untouched.
-	local halo = new("Frame", { Name = "PlayHalo", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(960, 880), Size = UDim2.fromOffset(340, 84),
-		BackgroundColor3 = hex("#8DBF5A"), BackgroundTransparency = 1, BorderSizePixel = 0, ZIndex = 1, Parent = root }, { Kit.corner(6) })
-	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(790, 838), Size = UDim2.fromOffset(340, 84),
-		BackgroundColor3 = C.white, ZIndex = 2, Parent = root }, { Kit.corner(2) })
+	-- (2026-10-21, RIVALS 1:1) PLAY: the replica's 222 x 62 button at (849, 859), corner 4, the measured lime gradient and a thin
+	-- pale-lime edge (#D8FF8A 1.5 @ 0.2); "Play" in Rubik ExtraBold 35 with a thin green outline (#5FB51E 1.5 @ 0.2), not black.
+	-- The 340 x 84 field-green button, the Oswald caps, the halo pulse, the shine sweep and the hover corner brackets are gone.
+	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(849, 859), Size = UDim2.fromOffset(222, 62),
+		BackgroundColor3 = RC.white, ZIndex = 2, Parent = root }, { RKit.corner(4) })
 	playGrad = new("UIGradient", { Rotation = 90, Parent = play })
-	playLabel = Kit.label({ Text = "PLAY", FontFace = F.display, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center,
-		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(310, 66), Parent = play })
-	new("UITextSizeConstraint", { MaxTextSize = 58, Parent = playLabel })
-	playStroke = new("UIStroke", { Color = hex("#1F3A14"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
-	local Tac = require(UIKit:WaitForChild("Tac"))
-	Tac.hoverBrackets(play, Tac.brackets(play, Tac.C.bone, 16, 3))
-	-- (2026-10-21, grade3) RIVALS' Play grows ~10 % and brightens on hover: UIScale 1.08 over 0.12 s (Quad) plus a white sheen at
-	-- 0.85 under the label, press 0.95. Its own handlers (not Kit.bindButton's 0.1 s tween); the "Hovered" attribute tells
-	-- LobbyHud to hide its "Join a match!" pill while PLAY is hovered. The halo (a sibling behind it) is untouched.
+	playStroke = RKit.stroke(RC.white, 1.5, 0.2)
+	playStroke.Parent = play
+	playLabel = RKit.label({ Text = "Play", FontFace = PLAY_FONT, TextSize = PLAY_SIZE, TextScaled = true, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
+		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(206, 40), ZIndex = 3, Parent = play })
+	labelCap = new("UITextSizeConstraint", { MaxTextSize = PLAY_SIZE, Parent = playLabel })
+	labelStroke = new("UIStroke", { Thickness = 1.5, Transparency = 0.2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
+	-- hover: the replica grows Play 1.08 from its centre (Kit.bindButton); live RIVALS also brightens it, so a white sheen at
+	-- 0.85 fades in under the label. Press 0.93 like every replica button. The "Hovered" attribute tells LobbyHud to hide its
+	-- "Join the queue" bubble while PLAY is hovered.
 	local playScale = new("UIScale", { Name = "HoverScale", Parent = play })
-	local sheen = new("Frame", { Name = "_HoverGlow", BackgroundColor3 = C.white, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
-		ZIndex = 0, Parent = play }, { Kit.corner(2) }) -- ZIndex 0: over the gradient fill, under the PLAY label
+	local sheen = new("Frame", { Name = "_HoverGlow", BackgroundColor3 = RC.white, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
+		ZIndex = 2, Parent = play }, { RKit.corner(4) })
 	local playHover = false
 	local function playEnter()
 		if playHover then return end
 		playHover = true
 		play:SetAttribute("Hovered", true)
-		Kit.tween(playScale, 0.12, { Scale = 1.08 }, Enum.EasingStyle.Quad)
-		Kit.tween(sheen, 0.12, { BackgroundTransparency = 0.85 }, Enum.EasingStyle.Quad)
+		Kit.tween(playScale, 0.1, { Scale = 1.08 })
+		Kit.tween(sheen, 0.1, { BackgroundTransparency = 0.85 })
 		Kit.sfx("hover")
 	end
 	local function playLeave()
 		playHover = false
 		play:SetAttribute("Hovered", false)
-		Kit.tween(playScale, 0.12, { Scale = 1 }, Enum.EasingStyle.Quad)
-		Kit.tween(sheen, 0.12, { BackgroundTransparency = 1 }, Enum.EasingStyle.Quad)
+		Kit.tween(playScale, 0.1, { Scale = 1 })
+		Kit.tween(sheen, 0.1, { BackgroundTransparency = 1 })
 	end
 	play.MouseEnter:Connect(playEnter)
 	play.MouseLeave:Connect(playLeave)
 	play.SelectionGained:Connect(playEnter)
 	play.SelectionLost:Connect(playLeave)
-	play.MouseButton1Down:Connect(function() Kit.tween(playScale, 0.06, { Scale = 0.95 }, Enum.EasingStyle.Quad) end)
+	play.MouseButton1Down:Connect(function() Kit.tween(playScale, 0.06, { Scale = 0.93 }) end)
 	play.MouseButton1Up:Connect(function() Kit.tween(playScale, 0.1, { Scale = playHover and 1.08 or 1 }, Enum.EasingStyle.Back) end)
 	task.defer(Kit.centreAnchor, play) -- grow from the centre (after toScale below has placed it)
 	play.Activated:Connect(function() Kit.sfx("click"); if ctx.onPlay then ctx.onPlay() end end)
-	PlayRow.SetState("PLAY", "play")
 
-	-- party: your avatar on a round plate, then a round "+" to invite friends
-	-- (2026-10-21, AI-tells cleanup) the thin yellow / cream ring around the avatar and the green hairlines on the + and the
-	-- party heads are gone; each sits on a solid dark disc that sets it off the floor
-	local av = new("ImageButton", { Name = "Avatar", AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromOffset(1150, 849),
-		Size = UDim2.fromOffset(62, 62), Parent = root }, { Kit.corner(31) })
+	-- (2026-10-21, RIVALS 1:1) party: the replica's 62 px round headshot at (1102, 859) on #2B2B33, then the 46 px "+" at
+	-- (1172, 876): a dark disc fading from 0.6 to 0.1 (#5A5A62 -> #1E1E24) with a light grey cross (#B9B9C0)
+	local AV_BG = rtok("avatarBg", RH("#2B2B33"))
+	local av = new("ImageButton", { Name = "Avatar", AutoButtonColor = false, BackgroundColor3 = AV_BG, Position = UDim2.fromOffset(1102, 859),
+		Size = UDim2.fromOffset(62, 62), Parent = root }, { RKit.corner(31) })
 	headshot(av)
 	av:SetAttribute("Uid", Players.LocalPlayer.UserId)
 	Kit.bindButton(av, { hover = 1.08 })
 	av.Activated:Connect(function() if ctx.onInvite then ctx.onInvite() end end) -- your avatar opens Your Party too
-	local inv = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1222, 857), Size = UDim2.fromOffset(46, 46),
-		BackgroundColor3 = C.white, Parent = root },
-		{ Kit.corner(23), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#2B3142"), hex("#161A24")),
-			Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 0.1) }) }) })
-	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(20, 6), BackgroundColor3 = C.text, Parent = inv }, { Kit.corner(2) })
-	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 20), BackgroundColor3 = C.text, Parent = inv }, { Kit.corner(2) })
+	local inv = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1172, 876), Size = UDim2.fromOffset(46, 46),
+		BackgroundColor3 = RC.white, Parent = root },
+		{ RKit.corner(23), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(rtok("inviteTop", RH("#5A5A62")), rtok("inviteBottom", RH("#1E1E24"))),
+			Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.6), NumberSequenceKeypoint.new(1, 0.1) }) }) })
+	local CROSS = rtok("inviteCross", RH("#B9B9C0"))
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(20, 6), BackgroundColor3 = CROSS, Parent = inv }, { RKit.corner(2) })
+	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 20), BackgroundColor3 = CROSS, Parent = inv }, { RKit.corner(2) })
 	Kit.bindButton(inv, { hover = 1.1 })
 	inv.Activated:Connect(function() if ctx.onInvite then ctx.onInvite() end end)
-	-- party members: up to four more heads after yours; the + slides right past them
-	local mates = new("Frame", { Name = "PartyMates", BackgroundTransparency = 1, Position = UDim2.fromOffset(1220, 849), Size = UDim2.fromOffset(4 * 54, 62), Parent = root })
+	-- party members: up to four more heads (50 px, 54 apart) after yours; the + slides right past them
+	local mates = new("Frame", { Name = "PartyMates", BackgroundTransparency = 1, Position = UDim2.fromOffset(1172, 859), Size = UDim2.fromOffset(4 * 54, 62), Parent = root })
 	local invHome -- read after Kit.bindButton has re-anchored the + (it moves it a frame later)
 	if ctx.tooltip then
-		-- (2026-10-21, grade3) no tooltip on PLAY: it showed a two-line box on top of the "Join a match!" pill (two bubbles for
-		-- one button) and covered the party avatar / +
+		-- no tooltip on PLAY (LobbyHud's "Join the queue" bubble is its only bubble)
 		ctx.tooltip(av, Players.LocalPlayer.DisplayName, "Your squad. Invite friends with the + to play together.")
 		ctx.tooltip(inv, "Invite", "Invite a friend to your squad.")
 	end
 	Kit.toScale(root)
-	-- (2026-10-20, Edward: make the lobby "feel alive" like RIVALS) a light sweeps across PLAY every few seconds (its own clipped
-	-- layer, so the hover brackets outside the button aren't cut off)
-	do
-		local clip = new("Frame", { Name = "ShineClip", BackgroundTransparency = 1, ClipsDescendants = true, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = play },
-			{ Kit.corner(2) })
-		local bar = new("Frame", { Name = "Shine", BackgroundColor3 = C.white, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 20,
-			Position = UDim2.fromScale(-0.3, 0.5), Size = UDim2.fromScale(0.16, 2.2), ZIndex = 3, Parent = clip }, {
-			new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.5, 0.55), NumberSequenceKeypoint.new(1, 1) }) }) })
-		task.spawn(function()
-			while bar.Parent do
-				task.wait(4.5)
-				if play.Visible and gui.Enabled then
-					bar.Position = UDim2.fromScale(-0.3, 0.5)
-					Kit.tween(bar, 0.7, { Position = UDim2.fromScale(1.3, 0.5) }, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
-				end
-			end
-		end)
-	end
-	do
-		local hs = new("UIScale", { Name = "PulseScale", Parent = halo })
-		task.spawn(function()
-			while halo.Parent do
-				local found = stateKind == "found"
-				if stateKind ~= "busy" and play.Visible and gui.Enabled then
-					hs.Scale = 1
-					halo.BackgroundTransparency = found and 0.25 or 0.45
-					Kit.tween(hs, found and 0.6 or 0.9, { Scale = found and 1.3 or 1.22 }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-					Kit.tween(halo, found and 0.6 or 0.9, { BackgroundTransparency = 1 }, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-				end
-				task.wait(found and 0.9 or 2.2)
-			end
-		end)
-	end
+	PlayRow.SetState("PLAY", "play")
 	local function refreshParty()
 		invHome = invHome or inv.Position
 		for _, c in mates:GetChildren() do c:Destroy() end
@@ -181,7 +164,7 @@ function PlayRow.Init(ctx)
 		local n = 0
 		for _, uid in list do
 			if uid ~= leader and n < 4 then
-				local head = new("ImageButton", { AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromScale(n * 54 / (4 * 54), 0.06),
+				local head = new("ImageButton", { AutoButtonColor = false, BackgroundColor3 = AV_BG, Position = UDim2.fromScale(n * 54 / (4 * 54), 0.06),
 					Size = UDim2.fromScale(50 / (4 * 54), 50 / 62), Parent = mates }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 				task.spawn(function()
 					local okT, id = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)

@@ -705,3 +705,245 @@ screen (not in this pass's files).
 **Look at in Studio**: the Settings tab icons rising over the 77 px bar; the stepper box next to the chip; whether the 34 px row
 names collide with the stepper on narrow level-3 plates; the Missions X now sits outside the column; and the Ranked tile's
 brightness.
+
+## RIVALS 1:1 port: Play (2026-10-21)
+File: `ui/play/PlayScreen.lua`. Sources: `rivals_practice/ui/play/PlayController.client.lua`, the Rivals kit, and the live
+capture `grade2/rivals_play.png` (which is 1:1 at 1920x1080).
+
+**Look (from the replica and the live capture)**
+- The look now comes from `UIKit.Rivals`: Theme, Kit and Assets. Tacticals' `UIKit.Kit` stays only for `whoops`, `crown`,
+  `fillTo`, `countTo` and `shake`. The `Tac` palette, Oswald and the cream colour are gone.
+- Layout: RIVALS' scroll column at x 258, y 139 (1430 x 941, thin dark scrollbar). It holds:
+  - the Training hero tile, 416 x 555, on the left;
+  - 1v1 / 2v2 / 3v3 tiles, 323 x 274;
+  - Duel Pads + Ranked tiles, 488 x 274 (the 4v4 / 5v5 spots in RIVALS).
+  The gutter is 7 and the corners are 6 px.
+- Tile = the replica card:
+  - a full-bleed picture under a 0.7 black shade, then ONE white Rubik ExtraBold title centred on the tile (100; the hero 88);
+  - the replica's soft shadow (a black stroke at 0.82 transparency);
+  - hover: the shade goes to 0.95, a white 4 px border shows and the tile shrinks to 0.97 (press 0.93 -> back);
+  - a controller selection gets the same hover.
+- Removed (RIVALS doesn't have them):
+  - the bottom shade band, the sheen and the cream inset ring;
+  - the subtitles ("Try any gun for free!", "1v1 anyone in the lobby", "Ranked queues ON") and the RANKED tag;
+  - the locked tile's caption and level bar, and the 3D padlock;
+  - the per-tile status chips ("n searching", "Searching m:ss", failure flashes) and the per-tile pop-in.
+- Locked Ranked: the replica's locked card (shade 0.35, the Rivals `padlock` image, the title "Ranked"). Clicking it still opens
+  the requirement card, now in Theme colours: panel, track, green, the grey gradient, and a FredokaOne "Play".
+- Red X: the replica's `Kit.closeButton` 112 x 58 at 1704,136. The lock card's X is the same size. Open / close use Rivals
+  `Kit.open` / `Kit.close` (grows from the centre, 0.22 s Back).
+- Searching: the replica's pill (540 x 80, black at 0.25, star6 sparkle, "Searching for players..." with the mode, a clock and a
+  76 x 52 red X that sends CancelMatch). It turns "Match found!" in green. It sits above the column at y 44, so it never covers a
+  tile, and shows only while Play is open. Clicking your own searching tile still cancels.
+- Queue failures, party blocks and "can't train while searching / on a pad" now use Whoops, not chips.
+
+**Pictures**
+- The live 3D scenes stay, now lit as action shots: a brighter, cooler ambient and a white key light from high on the camera
+  side.
+- Enemies are Theme red (ranked: Theme gold), the duel ring is Theme green, and the squad / pad sets use pale lavender arena
+  tones with taller walls.
+- Framing is aimed so the figures fill the tile behind the centred title (squads top 0.06 -> bottom 0.94-0.98).
+- Sky gradients: Theme `gradient.blue` (ranked: `gradient.key`).
+- The 3D set / prop colours are scene art, so they stay as literals. Every UI colour and font goes through `UIKit.Rivals.Theme`.
+
+**Kept**: 1v1 / 2v2 / 3v3 queueing with the party checks and messages, Training, Duel Pads, Ranked locked / open
+(`openRanked`, or the in-place ranked tab as a fallback), dimming of busy tiles, the party column (Theme panel colours), the
+hover hops and the camera lean.
+
+**Not ported**: the replica's dark-pill section headers (rotating / classic modes). Tacticals has no modes for those sections,
+so the column holds only the grid for now. It is a ScrollingFrame, so sections can be added below.
+
+**Look at in Studio**:
+- whether the 0.7 shade leaves the pale scenes bright enough;
+- whether "Training" at 88 and "Duel Pads" at 100 fit their tiles;
+- whether the Rivals padlock image loads in the Tacticals place;
+- the HUD's own "SEARCHING" seek bar shows after Play closes and is not yet RIVALS-styled (HUD session).
+
+## RIVALS 1:1 port: hub (2026-10-21)
+Source: `rivals_practice/ui/hud/HudController.client.lua` (Play row, nav, key pill, Daily Tasks, To Duels) and
+`rivals_practice/ui/play/PlayController.client.lua` (searching pill), with `UIKit.Rivals` Theme / Kit / Assets. Edited:
+`ui/hud/LobbyHudController.lua`, `ui/lobby/PlayRow.lua`. Layout, Scale conversion and tweens stay on our `UIKit.Kit` (the same
+converter); the ported pieces take shapes from `RKit` (corner, vgrad, stroke, textStroke, label, closeButton) and colours / fonts
+from `RTheme`. Values the Rivals Theme has no token for yet (the Play stops, To Duels blue, nav bar, disc, pill alpha...) are read
+from `Theme.hud[name]` / `Theme.playRow[name]` when present, else the replica's measured value. So a re-theme is one file: add
+those two tables to `UIKit.Rivals.Theme`.
+
+**Ported 1:1 (design px)**
+- PLAY: 222 x 62 at (849, 859), corner 4, the 5-stop lime gradient + `#D8FF8A` edge, "Play" Rubik ExtraBold 35 with a thin
+  `#5FB51E` outline, hover 1.08 from the centre (+ the live brighten sheen), press 0.93. Busy / found states use the same band
+  shape in Theme grey / a lifted lime; state texts are shown in title case ("Searching 0:12").
+- Party: 62 px headshot at (1102, 859) on `#2B2B33`, 46 px "+" at (1172, 876) (fading dark disc, grey cross); mates 54 apart.
+- Nav: 121 apart, 118 x 112 buttons at y 1060, the trapezoid bar (`Assets.hud.navbar`, `#141218` @ 0.25) back under the labels,
+  the black fading-gradient disc, labels Rubik Bold 28 + 2.5 stroke, 30 px badge-red counts with the white ring, white
+  self-sizing bubbles (Rubik Bold 22) shown at once, still 2 s, then 18 px hops; hover = the whole item 1.12 + 14 px lift.
+  Our 3D models stay (holder = the replica's 92 px icon box), lit neutral white.
+- Scissors pill: the key pill (122 x 38 black @ 0.45 at 893, 42; count Rubik Bold 30 white; 56 px render at 862, 30; lime +).
+- Missions widget: the Daily Tasks box (350 x 255 black @ 0.5 at 10, 405, corner 6), title Rubik Bold 34, rows 67 apart:
+  32 px white glyph, name Rubik Bold 28, 262 x 6 track with a Theme-blue fill (green when done), count "n / goal" to x 307,
+  reward = the bright 3D scissors with "×N" stacked under it; done = a 40 px green check in place of count + reward.
+- Duel Pads: the "To Duels" button (197 x 48 at 91, 688, blue gradient, cyan edge, stars, Rubik Bold 28, "Duel Pads").
+- Join bubble: "Join the queue to start playing!" as the same white pill, pointer 14 px over PLAY.
+- Searching (after Play closes): the replica's 540 x 80 pill at (692, 119) like PlayScreen's (sparkle, "Searching for
+  players...", mode, clock, red X = CancelMatch, "Match found!" in green); PLAY hides while it shows (live).
+
+**Removed** (not in RIVALS): the fading wash, the field-green Duel Pads, the cream join pill, PLAY's halo pulse, shine sweep
+and hover corner brackets, the nav's cream glow layer and icon-only grow, the cream rim light, the badge bob, the bracketed
+olive searching bar, Oswald on all of these.
+
+**Could not match / check in Studio**
+- Mission names run longer than RIVALS' ("Play duels"): Rubik 28 steps down to 20, then truncates.
+- "×1,000" does not fit the replica's 34 px reward column: the label is 60 wide on the same centre.
+- Rivals Assets images (star6, navbar, check) were uploaded for the replica place: confirm they load in Tacticals.
+- 3D viewport models can't be lit exactly like RIVALS' pre-rendered icons; the per-item tints are kept (model colour).
+- The searching pill sits at the replica's y 119 (under the scissors pill); PlayScreen draws its copy at y 44 above its column.
+- The Rivals Theme still lacks hud / playRow tokens (fallbacks are in the two files).
+
+## RIVALS 1:1 port: Missions + Settings + Codes (2026-10-21)
+
+Sources: rivals_practice/ui/tasks (TasksController, TasksData), ui/settings (SettingsController, HotkeysPage), kit/*,
+RIVALS t0062 (tasks), t0136 / t0137 (settings). Colours and fonts only from `UIKit.Rivals.Theme`; components from
+`UIKit.Rivals.Kit` (Missions / Codes) or SettingsKit's replica copies; canvas / toScale / motion still from `UIKit.Kit`.
+Not deployed, not committed, not checked in Studio.
+
+**Missions (pseudolobby/hub/MissionsScreen.lua) = the replica's Tasks screen**
+- Column 532-1360 from y 208 (scroll area 664 tall, 10 px dark bar, no clip, so the panels run on down the screen); panels
+  black @ 0.55, corner 8, 25 apart. Red X = Rivals `closeButton` 94 x 48 at (1402, 208), outside the column (renamed CloseX
+  + tagged Nonapplicable so InterfaceController leaves it alone).
+- Daily header: notepad icon 46 at (30, 10), "Daily Missions" Rubik Bold 36 + "[done / total]" Rubik Bold 30 (dim; green
+  when all done), the blue "To Duels"-style button 165 x 41 at (652, 12) (Theme blue gradient, stars, "Play") -> ctx.openPlay.
+  When every daily is done the RIVALS done-panel line "new daily missions in ..." sits under the title (same for contracts).
+- Tiles 243 x 242 at x 45 / 292 / 540: title Rubik Bold 30 (shrinks to fit), 46 px solid white glyph (replica trophy / play,
+  rowIcon crosshair / aim, Kit.ICONS cover / melee / gadget tinted white), 206 x 10 bar (Theme track, blue fill), count
+  "big / small" rich text (29 / 20) with a dark stroke over the bar, the scissors render (rbxassetid://120480559804238) 50 px
+  with "×N" under it. Done = green title + glyph, full green bar, a 40 px green check on the bar in place of the count.
+- Contracts: scroll icon, "Weekly Contracts", "sorted by" + the Rivals dropdown 207 x 41 (Default / Near Completion; the
+  choice re-renders the list). Rows 62 tall: 42 px glyph, name Rubik Medium 27, count right-aligned at 708 (32 / 21), 660 x 6
+  bar, a 42 px reward render at 771. Done = green name / count / bar + a green check disc on the bar's end.
+- Auto-pay kept: todo / done / paid states, bars and counts tick on while open, the check pops when a task finishes, the
+  reward pops when it is paid. Paid = the render dims to 0.5 and its "×N" turns green (the cream PAID tag is gone).
+- Removed (not in RIVALS): Tac corner brackets, the card lift, 3D task glyphs (ViewIcons), the field-green / cream palette,
+  Oswald, the always-on reset timers, the green check badge disc on tiles.
+
+**Settings (set/SettingsScreen.lua + settings/SettingsKit.lua)**
+- SettingsKit reads `UIKit.Rivals.Theme` (5 s wait; falls back to SettingsTheme with a warning) and exposes it as Kit.Theme
+  for SettingsScreen and HotkeysPage.
+- Replica components back: toggle 110 x 55 (white #F2F2F2, black 41 px knob left; green + knob right when on, 0.25 s Sine),
+  stepper slider (light ▲▼ 53 x 55 + value box 103 x 55 at y 17, dark 6 px track at y 100, light square knob, no fill),
+  section header bar (black @ Theme.alpha.header, 78 tall, Rubik ExtraBold 61; was plain Oswald cream text), close X
+  (Theme red gradient, outlined white bars, no sheen).
+- Rows: all 88 tall (toggles were 78), sliders 132; labels Rubik SemiBold 42 (was Bold 34); hover = plate 0.15 darker only
+  (no green tint, label change or icon tilt); 32 px gap before a section header.
+- Detail pane: title Rubik SemiBold 56 (shrinks to fit, fades in), description Rubik SemiBold 31 in Theme.textDim; the pane
+  is the faint full-height column (black @ 0.93, 890 tall).
+- Tab bar 772 wide = the list (was 859): six 120 px tabs 126 apart. The 3D tab icons are lit from the camera side
+  (ViewIcons' LightDirection had z -0.8, i.e. light from behind the model; now (-0.4, -0.7, 1), ambient 200, white light).
+- Close X y 71 -> 75 (replica 1481, 75). Import popup fonts derived from Theme.
+- Kept: profiles 1-3 + bubble, per-row reset, crosshair preview, import / export codes, showIf rows, action rows, NavTab /
+  NavPressed gamepad attributes, Reload.
+
+**Codes (lobby/CodesScreen.lua)**: the replica panel (black @ 0.45, corner 8), white gift glyph + "Codes" Rubik ExtraBold
+56, Rubik body in textDim, a dark input box (Rubik Bold 36, grey placeholder), the replica's green gradient "Redeem" button
+(FredokaOne) greyed by a Theme.disabled plate until a code is typed, result chips in Theme green / red, redeemed codes on
+the replica's tile plate, the 94 x 48 red X 42 px off the panel's top-right. 3D dog tags and Oswald removed.
+
+**Open / to check**
+- The match place deploy list ships SettingsKit + SettingsScreen but not `UIKit.Rivals`: add the four rivals/* files to
+  MATCH_FILES (deploy_ui.py, not mine) or the match-place Settings falls back to SettingsTheme (Oswald).
+- "[1 / 3]" read as the Daily header's done / total count after the title.
+- Rivals Assets images (notepad, scroll, star6, check, trophy, play, rowIcon crosshair / aim / gift) were uploaded for the
+  replica place: confirm they load in Tacticals.
+- Long Tacticals mission names: the tile title shrinks (TextScaled, max 30); contract names truncate.
+
+## RIVALS 1:1 port: Shop (2026-10-21)
+File: `ui/shop/ShopScreen.lua` only (rewritten; parse OK, 79 top-level locals). Source of truth: the replica's
+`rivals_practice/ui/shop/ShopController.client.lua` + frames t0068.4 / t0070 / t0071 / t0073.4 / t0074 / t0084 / t0099.
+
+**Kit split**: colours, gradients and fonts come from `UIKit.Rivals.Theme` (Rubik: ExtraBold numbers/titles, Bold labels,
+SemiBold tags, Medium lines); `UIKit.Rivals.Kit` gives the look primitives (label, corner, vgrad, stroke); `UIKit.Kit` stays the
+engine (toScale, canvas, bindButton, busy / shake / pop / countTo, loadingDots). The red X is `UIKit.Kit.closeButton`
+(RIVALS' X, tagged Nonapplicable): `Rivals.Kit.closeButton` is named "Close", which the old InterfaceController shrinks to 0x0.
+Robux glyph = `Rivals.Assets.shop.cur_robux`; scissors = the red render 120480559804238.
+
+**What matches RIVALS now**
+- Tabs (replica geometry): 144x48 pills 12 apart at y 275, centred, black 0.35, selected = white; a 60 px live 3D icon rises out
+  of each; Bold 27 label low with a black outline (kept on the white tab, like t0068.4s). X 86x48 at the row's end. Pages swap
+  at once (round-3 slide-in, tile pop-in and selected-icon growth removed).
+- Wallet: scissors render, black 0.45 count pill, lime "+" (replica), top centre.
+- Price buttons = the replica's priceTag: 6 px block, `Theme.gradient.robux` (lime, Robux glyph left) or `Theme.gradient.key`
+  (yellow, number then scissors render, RIVALS' key button), faint dark edge, ExtraBold white number over a soft shadow copy.
+  Owned: the button goes and RIVALS' black check sits in its place (t0099).
+- Item tiles (Design System): near-black top -> rarity colour bottom + 2 px rarity stroke; renders spill over the top; prices
+  overlap the foot.
+- Featured = the replica Home: packs row (scissor piles + "×N", lime prices) and gear row (bare renders, yellow prices) at
+  RIVALS' 163 px pitch; the Season Pass slot = Founder's Bundle (grey 35° wash, big render, heavy white title + shadow, red
+  LIMITED pill, lime price where the eye button is; hover = spotlight + shade + contents reveal); Special Offer panel
+  (750x324 at 0,363) with slides (heavy title, gold + sparkle for bundles, red "xN VALUE" badge, lime "Special Offer / VIEW")
+  and the replica's page dots under it (hover grows a dot, click jumps, 6 s auto-advance with the t0071 slide); 3x2 rarity
+  tiles at 801 + 162 / 381 + 159.
+- Bundles: Founder's Bundle as the 1242x399 hero (contents always shown), then the scissors bundles in RIVALS' 389 / 602
+  rows; bundle colour + 35° wash, gold sparkling title, value badge over the price; hover = spotlight + contents + bigger price.
+- Arms: the Daily grid (5 x 243x190, 6 px gap, name on top, yellow price over the foot, white tooltip).
+- Scissors = Keys tab: gold cards (the biggest pack red), giant cropped scissors render, name + huge "+ N", lime price,
+  pack Tag as the red badge; a "Passes" header bar (dark, fading right) then Season-Pass-grey pass cards.
+- Detail card = the replica offer popup (t0074): shop hidden behind a 0.35 dim, 818x551 tinted box, 76 px title, rarity tiles /
+  pack or pass art; red X 251x110 and the price 251x110 under the box with the value badge over the price; appears at once.
+  Buy shows Kit.busy's three dots (t0073.4s); success -> "Purchase Complete" banner via `UIKit.Notify.Push` (Rivals Toast
+  fallback). Robux buys banner when the purchase lands (Refresh: credits up / now owned, 3 min window).
+- Removed (not in RIVALS): rocking stickers (wobble), the lift / tilt / squash art reaction, the Keys hover "+N -> ×N" swap,
+  tan/field/cream colours, Oswald, the cream-check plate, the Owned words.
+
+**Open / check in Studio**
+- Scissors bundle buys: the server's RichNotify also sends one "Item Unlocked" banner per item, so they queue after
+  "Purchase Complete". RIVALS shows only the one; dropping `RN.Item` for BuyBundle (LobbyManager) would match it.
+- Notify's banner sits at y 64 (over the wallet); RIVALS' sits just under the wallet (y ~108-216).
+- A Robux pack's banner keys off the credit count rising within 3 min, so a mission reward in that window can trigger it.
+- Rarity colours (LobbyConfig) and bundle colours stay tacticals content; check gold titles on the light Ghost bundle.
+
+## RIVALS 1:1 port: Kit (2026-10-21)
+Source: `rivals_practice/ui/weapons/WeaponsController.client.lua` (+ `ui/kit/*`), checked against `rivals_rec` t0048-t0062.
+Only `ui/lobby/Armory.lua` changed; the world showcase (the big hero gun, its camera hold, drag / spin / zoom, tape and the
+scissors cut) is untouched. Not deployed, not run in Studio: parse check only (`luacheck.py`: OK, 166 top-level `local`
+statements, was 180; 201 local names, was 213).
+
+- **Canvas:** the panels now sit on `UIKit.Rivals` `Kit.canvas` (a centred 16:9 frame). Everything is built in RIVALS' 1920 x 1080
+  design px and converted with the Rivals `Kit.toScale` (the old 1008-unit canvas with a UIScale and Offset sizes is gone).
+  Runtime pieces are built inside a Folder, converted against the canvas and then moved into place (`settle`). Lists set their
+  CanvasSize in Scale of their parent. Tooltips and the Statistics move are placed in Scale.
+- **Theme:** colours come from `Theme.color` / `Theme.gradient` / `Theme.hex` with the replica's measured values (the `COL` and
+  `GRAD` tables). Fonts are Rubik ExtraBold / Bold / Medium from `Theme.font`. Removed: Oswald, the TacKit corner brackets, the
+  field-green buttons, the cream bubble, the UIIcons meshes (icons are the replica's `Assets` images: padlock, arrow, check, eye,
+  undo, trophy, burst) and the unused `_shine`.
+- **Left:** the Career card (headshot + "Career", which opens Duel History; the three slot icons + the clock, black at 0.5; no
+  "Dismiss" pill, since Tacticals has no notifications, so the card is 150 tall at y 480). The list sits at 12, 640 to the bottom
+  edge on a near-invisible plate (black at 0.75). Headers: dim Bold 30 title between two dim silhouettes over a 16-dot rule.
+  Owned rows: render at the left, name centred, Medium, dim. Locked rows: dark, with a padlock either side. The picked row is
+  left-aligned, bold white, with its render popping out on the right over a black 0.5 band.
+- **Right:** stacked up from y 1060, 11 apart.
+  - Item card 335 x 97: the render poking out of the corner, name ExtraBold 34, white checkbox (Favourite), two bullets
+    ("Starter/Standard <slot>", the first sentence of the description).
+  - Owned: level card 335 x 165, with a thick blue bar (XP so far / XP for the level at its ends, the big level number centred
+    on it); "Level up now!" with the yellow key-gradient button (shows the XP still to earn and shakes, because Tacticals has no
+    paid level-up); "Reward at Level N" with the ViewIcons crate on a white tile with a cyan edge.
+  - Locked: an "Unlock now!" card with the yellow price button (price + scissors; one press buys, then the tape cut).
+  - Action rows, 58 apart, with 111 x 52 blue gradient icon buttons: Equip (green check when equipped), Inspect, Next unlock
+    (name and price on the sub-line), Statistics. A button you can't use is grey and shakes.
+  - The column starts at about 50% of the screen height owned (RIVALS' 54% has three rows; we have four).
+- **Statistics:** the replica's panel opens at the bottom of the right column, the column slides up by its height, and the
+  row's button becomes a red X. The ability line and the Speed / Reload / Accuracy segment bars moved here from the item card.
+- **Bottom:** the replica's strip: a dark bar under 100 px slots 121 apart, centred. Leave is the red X (two plain red bars);
+  Skin / Wrap / Finisher show the grey "none" slash square, with Bold 26 labels. A locked item shows Leave alone. The slots pop
+  in one after another on opening. The Cutscene slot is removed (RIVALS has none).
+- **Picker** (t0050), which replaces the panels while the gun zooms x1.25:
+  - top row: red "Back" (undo icon, ExtraBold 36), the search bar "Search by name or tooltip" (filters the tiles), and
+    "Favorited" with a checkbox (shows favourites only; there are none yet, so just None);
+  - one row of 118 px tiles 138 apart on a dark strip. "None" comes first, dark, with the none glyph and the big green check.
+    The other tiles use the replica's rarity palette, with a dark silhouette of the weapon (a wrapped cube for wraps), a dark
+    wash, a white padlock and the name. They grow on hover;
+  - clicking a tile shows RIVALS' name pill at the top centre ("Coming with the next update"); a locked tile shakes.
+- **Duel History:** restyled (Rubik, Theme greens / reds, a red square close X), centred on the canvas.
+- Kept as before: Duel History data, ArmoryTestHook, the Cut transition and the favourite / equip / unlock / inspect / next
+  unlock behaviour.
+- To check in Studio:
+  - text sizes on first open (`Kit.rescaleText` runs on Enter);
+  - the list's CanvasSize in Scale of its parent (the Rivals Kit's measured rule);
+  - the yellow / blue buttons' `Assets` icons loading in the Tacticals place (ids uploaded for the replica).

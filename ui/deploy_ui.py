@@ -8,6 +8,11 @@ MCP = os.path.expanduser('~/Documents/rivals_practice/mcpcli.py')
 FILES = [
     ("ReplicatedStorage.UIKit", "Theme", "ModuleScript", "matchplace/Theme.lua"),  # (2026-10-20) one palette for both places (was the hub's own copy)
     ("StarterPlayer.StarterPlayerScripts", "PadUI", "LocalScript", "pads/PadUI.client.lua"),
+    # (2026-10-21, user: match RIVALS 1:1) the RIVALS replica's tokens + components (rivals_practice/ui/kit), shared by the lobby screens
+    ("ReplicatedStorage.UIKit.Rivals", "Theme", "ModuleScript", "rivals/Theme.lua"),
+    ("ReplicatedStorage.UIKit.Rivals", "Kit", "ModuleScript", "rivals/Kit.lua"),
+    ("ReplicatedStorage.UIKit.Rivals", "Assets", "ModuleScript", "rivals/Assets.lua"),
+    ("ReplicatedStorage.UIKit.Rivals", "Toast", "ModuleScript", "rivals/Toast.lua"),
     ("StarterPlayer.StarterPlayerScripts", "PadBoards", "LocalScript", "pads/PadBoards.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "LeaderboardScreen", "LocalScript", "pseudolobby/hub/LeaderboardScreen.lua"),  # (2026-10-21) hub leaderboard board, 4 categories (was Studio-only)
     # (2026-10-21) hub TVs / tickers / labels, were Studio-only (repo copies == live at 854dc1a)
@@ -146,6 +151,11 @@ UK, CC = "ReplicatedStorage.UIKit", "StarterPlayer.StarterPlayerScripts.Client.C
 PSEUDO_FILES = [
     (UK, "PseudoLobby", "ModuleScript", "pseudolobby/PseudoLobby.lua"),
     (UK, "Notify", "ModuleScript", "hud/Notify.lua"),
+    # (2026-10-21, RIVALS 1:1) the shared RIVALS tokens/components: Settings (and anything ported) reads them in the match place too
+    ("ReplicatedStorage.UIKit.Rivals", "Theme", "ModuleScript", "rivals/Theme.lua"),
+    ("ReplicatedStorage.UIKit.Rivals", "Kit", "ModuleScript", "rivals/Kit.lua"),
+    ("ReplicatedStorage.UIKit.Rivals", "Assets", "ModuleScript", "rivals/Assets.lua"),
+    ("ReplicatedStorage.UIKit.Rivals", "Toast", "ModuleScript", "rivals/Toast.lua"),
     (UK, "PlayRow", "ModuleScript", "lobby/PlayRow.lua"),
     (UK, "PlayerCards", "ModuleScript", "hud/PlayerCards.lua"),
     (UK, "PartyScreen", "ModuleScript", "hud/PartyScreen.lua"),

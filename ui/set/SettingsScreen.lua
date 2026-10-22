@@ -1,5 +1,7 @@
 -- UIKit/SettingsScreen (ModuleScript): the lobby SETTINGS screen. RIVALS-style layout ported from
--- rivals_practice (design-canvas px at 1920x1080, converted to Scale by Kit.toScale), in tacticals' theme.
+-- rivals_practice (design-canvas px at 1920x1080, converted to Scale by Kit.toScale).
+-- (2026-10-21, RIVALS 1:1) colours and fonts from UIKit.Rivals.Theme (through SettingsKit), the replica's rows / toggles /
+-- steppers / section headers / detail pane again; the tab bar is the list's width and its 3D icons are lit from the camera.
 -- Values come from the saved profile (data.Settings, see Shared/Config/SettingsConfig) and every
 -- change is saved back, so settings follow the player into every place.
 --   SettingsScreen.Init({ getSettings = fn, save = fn(settings), onOpen = fn, onClose = fn })
@@ -10,8 +12,8 @@ local UserInputService = game:GetService("UserInputService")
 local RS = game:GetService("ReplicatedStorage")
 
 local UIKit = script.Parent
-local Theme = require(UIKit:WaitForChild("SettingsTheme"))
 local Kit = require(UIKit:WaitForChild("SettingsKit"))
+local Theme = Kit.Theme -- (2026-10-21, RIVALS 1:1) UIKit.Rivals.Theme (SettingsTheme only where the Rivals folder is missing)
 local Data = require(UIKit:WaitForChild("SettingsData"))
 for _, tab in ipairs(Data.tabs) do -- storage key per row (labels can repeat, e.g. "Color" under Bars and Dot)
 	for _, sec in ipairs(tab.sections) do for _, row in ipairs(sec.rows) do row.key = row.key or row.name end end
@@ -45,22 +47,24 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 -- (2026-10-21, grade2) 108 -> 124 tall (tabs 96 -> 112 for ~44 px icons on screen), grown upward again: bottom still at 147
 -- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' bar is a thin dark strip (~77 design px) whose 3D icons rise out over its top edge; the selected tab is a
 -- cream plate inside the bar. Back to 77 tall at y 71 (bottom still 147, so the list / rail / Hotkeys page do not move).
+-- (2026-10-21, RIVALS 1:1) the bar is the list's width (772, was 859): six 120 px tabs, 126 apart, 11 px in from each end
+local TAB_W, TAB_STEP, TAB_X0 = 120, 126, 11
 local tabBar = new("Frame", {
-	Name = "TabBar", Position = UDim2.fromOffset(304, 71), Size = UDim2.fromOffset(859, 77),
-	BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.bar, Parent = root,
+	Name = "TabBar", Position = UDim2.fromOffset(304, 71), Size = UDim2.fromOffset(772, 77),
+	BackgroundColor3 = C.textDark, BackgroundTransparency = Theme.alpha.bar, Parent = root,
 }, { Kit.corner(6) })
 
 -- S2 close
 local close = Kit.closeButton(UDim2.fromOffset(135, 68))
 -- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' X sits at the far right, its right edge flush with the description pane's (1095 + 520) and its top level
 -- with the tab bar's top (was docked at the tab bar's end)
-close.Position = UDim2.fromOffset(1095 + 520 - 135, 71)
+close.Position = UDim2.fromOffset(1095 + 520 - 135, 75) -- (2026-10-21, RIVALS 1:1) the replica's y (1481, 75)
 close.Parent = root
 
 -- S3 page rail (presets 1-3 + save)
 local rail = new("Frame", {
 	Name = "PageRail", Position = UDim2.fromOffset(216, 160), Size = UDim2.fromOffset(59, 232),
-	BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.05, ZIndex = 10, Parent = root, -- above the list so the profile bubble sits over section titles
+	BackgroundColor3 = C.textDark, BackgroundTransparency = 0.05, ZIndex = 10, Parent = root, -- above the list so the profile bubble sits over section titles
 }, { Kit.corner(30) })
 -- settings profiles 1-3: each profile keeps its own values for every tab
 -- runtime values: swatches as Color3 (stored as "#rrggbb"); filled from the saved profile below
@@ -235,7 +239,7 @@ new("UIPadding", { PaddingBottom = UDim.new(0, 160), Parent = list })
 -- S5 detail panel (shows the hovered row)
 local detail = new("Frame", {
 	Name = "Detail", Position = UDim2.fromOffset(1095, 160), Size = UDim2.fromOffset(520, 890),
-	BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.93, Parent = root,
+	BackgroundColor3 = C.textDark, BackgroundTransparency = 0.93, Parent = root,
 }, { Kit.corner(10) })
 local preview = new("Frame", {
 	Name = "Preview", Position = UDim2.fromOffset(13, 13), Size = UDim2.fromOffset(495, 364), BackgroundColor3 = Theme.hex("#5A6E86"),
@@ -246,13 +250,17 @@ if Assets.misc and Assets.misc.crosshairPreview then
 end
 local detailTop = new("Frame", { Name = "Text", BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0), Parent = detail })
 -- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' pane: the setting's icon and its name as a big title on one line, the description under both (grade2 had
--- dropped the title; it is back). Oswald title, Rubik description in cream.
-local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 50, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(13, 7), Size = UDim2.fromOffset(64, 64), Parent = detailTop })
-local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(15, 9), Size = UDim2.fromOffset(60, 60), Parent = detailTop })
-local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.display, TextSize = 50, TextTruncate = Enum.TextTruncate.AtEnd,
-	Position = UDim2.fromOffset(90, 6), Size = UDim2.fromOffset(420, 66), Parent = detailTop })
+-- dropped the title; it is back).
+-- (2026-10-21, RIVALS 1:1) the replica's pane: title in RIVALS' face and weight (Rubik SemiBold 56, shrinks to fit a long name
+-- instead of the Oswald cut-off), description Rubik 31 in Theme's dim grey; the pane itself is the faint full-height backing
+-- column (black at 0.93, 890 tall)
+local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 50, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(14, 8), Size = UDim2.fromOffset(64, 64), Parent = detailTop })
+local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 10), Size = UDim2.fromOffset(60, 60), Parent = detailTop })
+local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.heavy, TextSize = 56, TextScaled = true,
+	Position = UDim2.fromOffset(92, 8), Size = UDim2.fromOffset(420, 64), Parent = detailTop })
+new("UITextSizeConstraint", { MaxTextSize = 56, Parent = dTitle })
 local dDesc = Kit.label({
-	Name = "Desc", Text = "", FontFace = F.medium, TextSize = 26, TextColor3 = Color3.fromRGB(236, 230, 210), TextWrapped = true,
+	Name = "Desc", Text = "", FontFace = F.bold, TextSize = 31, TextColor3 = C.textDim, TextWrapped = true,
 	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 80), Size = UDim2.fromOffset(470, 300), Parent = detailTop,
 })
 
@@ -262,8 +270,8 @@ local function showDetail(row)
 	dIcon.Text = img and "" or (row.glyph or "")
 	dTitle.Text = row.name or ""
 	dDesc.Text = row.desc or ""
-	dDesc.TextTransparency = 0.6
-	Kit.tween(dDesc, 0.12, { TextTransparency = 0.12 })
+	dTitle.TextTransparency = 0.6 -- (2026-10-21, RIVALS 1:1) the replica fades the title in
+	Kit.tween(dTitle, 0.12, { TextTransparency = 0 })
 end
 
 -- live crosshair in the preview (Crosshair tab)
@@ -287,7 +295,7 @@ local function drawCrosshairRaw(v)
 					Position = UDim2.fromOffset(d[1] * (gap + len / 2), d[2] * (gap + len / 2)), Parent = cross,
 				})
 				if round then Kit.corner(w).Parent = seg end
-				if v["Outline Enabled"] then Kit.stroke(Color3.new(0, 0, 0), 1, 0).Parent = seg end
+				if v["Outline Enabled"] then Kit.stroke(C.textDark, 1, 0).Parent = seg end
 			end
 		end
 	end
@@ -296,7 +304,7 @@ local function drawCrosshairRaw(v)
 		local dot = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(w, w), BackgroundColor3 = v["Dot Color"] or C.white,
 			BackgroundTransparency = (v["Dot Transparency"] or 0) / 100, BorderSizePixel = 0, Parent = cross })
 		if v["Dot Shape"] == "Round" then Kit.corner(w).Parent = dot end
-		if v["Outline Enabled"] then Kit.stroke(Color3.new(0, 0, 0), 1, 0).Parent = dot end
+		if v["Outline Enabled"] then Kit.stroke(C.textDark, 1, 0).Parent = dot end
 	end
 	if v["Circle Enabled"] then
 		local r = ((v["Spacing"] or 16) * 0.5 + 4) * k * 2
@@ -334,12 +342,13 @@ local function buildRow(tab, row, order)
 	-- at the same offsets whatever its level (ind = 0).
 	local plateIndent = math.max(0, (row.level or 1) - 1) * 38
 	local ind = 0
-	local h = row.kind == "slider" and 138 or row.kind == "toggle" and 78 or 88
-	local lineH = row.kind == "slider" and 92 or h -- the label / icon / control line
+	-- (2026-10-21, RIVALS 1:1) the replica's heights: every row 88 (toggles too), sliders 132 (an 88 label line + the track)
+	local h = row.kind == "slider" and 132 or 88
+	local lineH = 88 -- the label / icon / control line
 	local iconY = math.floor((lineH - 52) / 2)
 	local frame = new("Frame", {
 		Name = row.key, LayoutOrder = order, Size = UDim2.fromOffset(772 - plateIndent, h),
-		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.panel,
+		BackgroundColor3 = C.textDark, BackgroundTransparency = Theme.alpha.panel,
 	}, { Kit.corner(8) })
 	local img = (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
 	local icon
@@ -350,7 +359,8 @@ local function buildRow(tab, row, order)
 	end
 	local labelX = 89 + ind
 	-- (2026-10-21, grade2) row labels went 42 -> 24. (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' row names are big (~34 design px): Rubik Bold 34.
-	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = Font.new(F.heavy.Family, Enum.FontWeight.Bold), TextSize = 34, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, lineH), Parent = frame })
+	-- (2026-10-21, RIVALS 1:1) the replica's row label: Rubik SemiBold 42
+	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = F.heavy, TextSize = 42, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, lineH), Parent = frame })
 
 	-- red per-setting reset: appears at the row start whenever the value differs from its default
 	local default = defaultOf(row)
@@ -407,7 +417,7 @@ local function buildRow(tab, row, order)
 	elseif row.kind == "slider" then
 		local holder
 		-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS: ▲▼ stepper + value box on the label line, a full-width track under it (grade1 had removed the stepper)
-		holder, api = Kit.slider(h, { min = row.min, max = row.max, step = row.step, arrowStep = row.arrow, value = v[row.key], fmt = row.fmt, inset = 37 }, changed)
+		holder, api = Kit.slider(h, { min = row.min, max = row.max, step = row.step, arrowStep = row.arrow, value = v[row.key], fmt = row.fmt }, changed)
 		holder.Parent = frame
 	elseif row.kind == "action" then
 		-- [SET] an action row (e.g. Touch > Layout Editor): the blue arrow button runs ctx.onAction(key)
@@ -423,23 +433,13 @@ local function buildRow(tab, row, order)
 	resetBtn.Activated:Connect(function() if api then api.set(default) end end)
 	rowApis[row.key] = api
 	refreshReset(0)
-	-- (2026-10-21, round 3: match RIVALS) rows react on hover like RIVALS' (t0135.7: the hovered row's plate lifts out of the
-	-- list): the plate fills in and warms to a dark field green, the label goes full white and the row's icon tilts. Colour and
-	-- transparency only on the row (a UIScale on a list row would shove its neighbours); the icon tilts by Rotation, which turns
-	-- about its centre (its top-left anchor is owned by the reset-button shuffle above, so a UIScale would drift it).
-	local HOVER_TINT, REST_TINT = Color3.fromRGB(30, 44, 22), Color3.new(0, 0, 0)
-	local restText = label.TextColor3
+	-- (2026-10-21, RIVALS 1:1) the replica's row hover: the plate only darkens a step (no green tint, label change or icon tilt),
+	-- and the detail pane shows the row
 	frame.MouseEnter:Connect(function()
-		Kit.tween(frame, 0.08, { BackgroundTransparency = Theme.alpha.panel - 0.22, BackgroundColor3 = HOVER_TINT })
-		Kit.tween(label, 0.08, { TextColor3 = Color3.new(1, 1, 1) })
-		Kit.tween(icon, 0.14, { Rotation = -10 }, Enum.EasingStyle.Back)
+		Kit.tween(frame, 0.08, { BackgroundTransparency = Theme.alpha.panel - 0.15 })
 		showDetail(row)
 	end)
-	frame.MouseLeave:Connect(function()
-		Kit.tween(frame, 0.12, { BackgroundTransparency = Theme.alpha.panel, BackgroundColor3 = REST_TINT })
-		Kit.tween(label, 0.12, { TextColor3 = restText })
-		Kit.tween(icon, 0.12, { Rotation = 0 })
-	end)
+	frame.MouseLeave:Connect(function() Kit.tween(frame, 0.12, { BackgroundTransparency = Theme.alpha.panel }) end)
 	return frame
 end
 
@@ -484,7 +484,7 @@ function openTab(tab)
 			hb.LayoutOrder = order
 			if si > 1 then
 				-- breathing room before each new section (reference gap)
-				new("Frame", { Name = "Gap", BackgroundTransparency = 1, Size = UDim2.fromOffset(772, 20), LayoutOrder = order, Parent = list }) -- (grade1) 32 -> 20: the plain header brings its own air
+				new("Frame", { Name = "Gap", BackgroundTransparency = 1, Size = UDim2.fromOffset(772, 32), LayoutOrder = order, Parent = list }) -- (2026-10-21, RIVALS 1:1) the replica's 32 again (the header is a bar again)
 				order += 1
 				hb.LayoutOrder = order
 			end
@@ -501,7 +501,7 @@ function openTab(tab)
 	new("Frame", { Name = "Gap", BackgroundTransparency = 1, Size = UDim2.fromOffset(772, 60), LayoutOrder = order, Parent = list })
 	order += 1
 	local card = new("Frame", {
-		Name = "Reset", LayoutOrder = order, Size = UDim2.fromOffset(772, 93), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.header, Parent = list,
+		Name = "Reset", LayoutOrder = order, Size = UDim2.fromOffset(772, 93), BackgroundColor3 = C.textDark, BackgroundTransparency = Theme.alpha.header, Parent = list,
 	}, { Kit.corner(6) })
 	Kit.label({ Text = "Reset", FontFace = F.display, TextSize = 42, Position = UDim2.fromOffset(20, 6), Size = UDim2.fromOffset(400, 50), Parent = card })
 	Kit.label({ Text = "Double-click to put your " .. tab.name .. " settings back to default", FontFace = F.medium, TextSize = 21, TextColor3 = C.textDim, Position = UDim2.fromOffset(17, 54), Size = UDim2.fromOffset(620, 28), Parent = card })
@@ -535,12 +535,22 @@ for i, tab in ipairs(Data.tabs) do
 	local model = TAB_MODEL[tab.name]
 	-- (2026-10-21, grade2) zoom the 3D icon 1.35x past its default view so the model fills its (larger) box
 	local view = model and ViewIcons.Views and ViewIcons.Views[model]
-	local img = model and function(holder, tabBtn) ViewIcons.Icon(holder, model, { hoverTarget = tabBtn, zoom = ((view and view[2]) or 1) * 1.35 }) end
-		or (Assets.tabIcon and Assets.tabIcon[tab.icon])
+	-- (2026-10-21, RIVALS 1:1) lit so they read on the dark bar like RIVALS' bright tab renders: ViewIcons' light ran from behind
+	-- the model (LightDirection z -0.8 = away from the camera, which sits at -Z), so the faces toward you were in shade. Now
+	-- the light comes from over the camera's shoulder with a brighter ambient.
+	local img = model and function(holder, tabBtn)
+		local ctl = ViewIcons.Icon(holder, model, { hoverTarget = tabBtn, zoom = ((view and view[2]) or 1) * 1.35 })
+		local vpf = ctl and ctl.Frame
+		if vpf then
+			vpf.Ambient = Color3.fromRGB(200, 200, 200)
+			vpf.LightColor = C.white
+			vpf.LightDirection = Vector3.new(-0.4, -0.7, 1)
+		end
+	end or (Assets.tabIcon and Assets.tabIcon[tab.icon])
 	-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) 100 tall with its bottom on the bar's bottom: the ~60 px icon rises 23 px out of the 77 px bar like RIVALS';
 	-- the selected cream plate (52 tall) stays inside the bar
-	local t, api = Kit.imageTab(UDim2.fromOffset(136, 100), tab.name, img, tab.glyph, 52)
-	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 77 - 100)
+	local t, api = Kit.imageTab(UDim2.fromOffset(TAB_W, 100), tab.name, img, tab.glyph, 52)
+	t.Position = UDim2.fromOffset(TAB_X0 + (i - 1) * TAB_STEP, 77 - 100)
 	t.Parent = tabBar
 	tabApis[tab.name] = api
 	tabButtons[tab.name] = t
@@ -653,13 +663,13 @@ saveBtn.Activated:Connect(function()
 	local box = new("TextBox", {
 		Name = "Paste", BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 0), Size = UDim2.new(1, -190, 1, 0), Text = "",
 		PlaceholderText = "Paste someone else's settings here", PlaceholderColor3 = Theme.hex("#EDEDED"), TextColor3 = C.white,
-		FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold), TextSize = 30, TextXAlignment = Enum.TextXAlignment.Left,
+		FontFace = Font.new(F.heavy.Family, Enum.FontWeight.Bold), TextSize = 30, TextXAlignment = Enum.TextXAlignment.Left,
 		ClearTextOnFocus = false, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 63, Parent = field,
 	})
 	local importBtn = new("TextButton", {
 		Name = "Import", AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, 0, 0, 0), Size = UDim2.fromOffset(160, 64),
 		BackgroundColor3 = C.textDark, AutoButtonColor = false, Text = "Import", TextColor3 = C.white,
-		FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold), TextSize = 32, ZIndex = 63, Parent = field,
+		FontFace = Font.new(F.heavy.Family, Enum.FontWeight.Bold), TextSize = 32, ZIndex = 63, Parent = field,
 	}, { Kit.corner(8) })
 	Kit.bindButton(importBtn, { hover = 1.04 })
 	importBtn.Activated:Connect(function()
