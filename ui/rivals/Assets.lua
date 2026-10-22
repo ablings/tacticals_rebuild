@@ -112,7 +112,7 @@ return {
 		rank_silver = "rbxassetid://105098567440347",
 		rank_gold = "rbxassetid://94815404454685",
 		rank_star = "rbxassetid://131712415372718",
-		levelbadge = "rbxassetid://122770101267260",
+		levelbadge = "rbxassetid://140623695745815", -- (2026-10-22) RIVALS 13-point starburst (ui/art/level/starburst), was the replica badge 122770101267260
 		plus = "rbxassetid://88114512172216",
 		addfriend = "rbxassetid://109598630207191",
 		arrow = "rbxassetid://124552142293381",

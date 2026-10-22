@@ -80,7 +80,32 @@ local function build()
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
 end
 
+-- (2026-10-22, Edward's live RIVALS games: "yes") while you're dead and the camera follows your killer, the bar shows THEIR
+-- health (RIVALS: 118, then 93 as the killer took damage); a bot is found by its SpectateId attribute
+local specCache = {}
+local function spectatedHumanoid()
+	if localPlayer:GetAttribute("Alive") ~= false then return nil end
+	local uid = localPlayer:GetAttribute("SpectateTarget")
+	if type(uid) ~= "number" then return nil end
+	local m
+	if uid > 0 then
+		local p = game:GetService("Players"):GetPlayerByUserId(uid)
+		m = p and p.Character
+	elseif specCache.uid == uid and specCache.model and specCache.model.Parent then
+		m = specCache.model
+	elseif os.clock() - (specCache.at or 0) > 0.5 then -- (the bot search walks the workspace: cached, retried twice a second)
+		specCache.at = os.clock()
+		for _, d in workspace:GetDescendants() do
+			if d:IsA("Model") and d:GetAttribute("SpectateId") == uid then m = d; break end
+		end
+		specCache.uid, specCache.model = uid, m
+	end
+	return m and m:FindFirstChildOfClass("Humanoid")
+end
+
 local function current(): (number, number)
+	local spec = spectatedHumanoid()
+	if spec then return math.max(spec.Health, 0), math.max(spec.MaxHealth, 1) end
 	local character = localPlayer.Character
 	local hum = character and character:FindFirstChildOfClass("Humanoid")
 	if not hum then return 0, 100 end

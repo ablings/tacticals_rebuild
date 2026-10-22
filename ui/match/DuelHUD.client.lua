@@ -159,7 +159,7 @@ local function teamBox(x, cols, right)
 		new("Frame", { BackgroundColor3 = BLACK, Position = UDim2.fromOffset(26, 31), Size = UDim2.fromOffset(4, 5), ZIndex = 6, Parent = skull })
 		for _, tx in { 23, 28, 33 } do new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(tx - 1, 40), Size = UDim2.fromOffset(2, 6), ZIndex = 6, Parent = skull }) end
 		-- (2026-10-22, spacing grade vs live RIVALS) RIVALS' head carries the level seal bottom-left and the device bottom-right
-		local sealH = new("Frame", { Name = "Seal", BackgroundTransparency = 1, Position = UDim2.fromOffset(-7, 29), Size = UDim2.fromOffset(31, 31), ZIndex = 6, Parent = h })
+		local sealH = new("Frame", { Name = "Seal", BackgroundTransparency = 1, Position = UDim2.fromOffset(-10, 26), Size = UDim2.fromOffset(36, 36), ZIndex = 6, Parent = h })
 		local dev = new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(34, 36), Size = UDim2.fromOffset(22, 22),
 			Visible = false, ZIndex = 6, Parent = h })
 		slots[i] = { h = h, x1 = x1, x2 = x2, skull = skull, seal = sealH, dev = dev }
@@ -1298,7 +1298,7 @@ local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(11
 local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.15, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(110, 110), ZIndex = 7, Parent = kcard }, { corner(10) }) -- (2026-10-22, live RIVALS) a dark rounded square, not a disc
 local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(22, 20), Size = UDim2.fromOffset(90, 9), ZIndex = 8, Parent = kcard }, { corner(5) }) -- inside the head's top, like RIVALS
 local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1), ZIndex = 9, Parent = kHpBack }, { corner(5) })
-local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(2, 76), Size = UDim2.fromOffset(46, 46), ZIndex = 9, Parent = kcard }, { corner(23) }) -- (2026-10-22, RIVALS) the seal hangs over the banner's left edge, head bottom-left -- (2026-10-21, AI-tells cleanup) hairline ring removed
+local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(-6, 66), Size = UDim2.fromOffset(62, 62), ZIndex = 9, Parent = kcard }, { corner(31) }) -- (2026-10-22, RIVALS) the seal (~half the banner tall) hangs over the banner's left edge, head bottom-left -- (2026-10-21, AI-tells cleanup) hairline ring removed
 local kLevelL = label(kLevel, "1", FX, 24, 0, 0, 46, 46, WHITE, nil, 10)
 -- the win streak: the flame silhouette with the number over it (Kit.ICONS.streak), like RIVALS
 local kStreak = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://89001729086571", ImageColor3 = Color3.fromRGB(255, 140, 40), -- (re-pointed below to Kit.streakImage)
@@ -1364,6 +1364,11 @@ local function refreshKillerCard(uid)
 		local img, edge = K.levelTier(v)
 		shield.Image = img
 		if ls then ls.Color, ls.Transparency = edge, 0 end
+		if K.levelNumber then K.levelNumber(kLevelL) end -- (2026-10-22, Edward: level numbers like RIVALS)
+		-- the seal's number at RIVALS' size: as wide as the seal (3 digits run past it), ~0.54 of it tall, a hair below centre
+		kLevelL.TextScaled, kLevelL.AnchorPoint = true, Vector2.new(0.5, 0.5)
+		kLevelL.Position, kLevelL.Size = UDim2.fromScale(0.5, 0.55), UDim2.fromScale(1.12, 0.54)
+		shield.Size = UDim2.fromScale(1, 1)
 	elseif ls then ls.Color = BLACK end
 	local m = targetModel(uid)
 	local hum = m and m:FindFirstChildOfClass("Humanoid")
@@ -1389,6 +1394,51 @@ local function refreshKillerCard(uid)
 	wi.Image = (KI and ld and KI.Weapon(typeof(ld.weapon) == "string" and ld.kind ~= "Takedown" and ld.weapon or nil, ld.kind)) or ""
 	mk.Image = (KI and ld and ((ld.noscope and KI.Status("noscope")) or (ld.headshot and KI.Status("headshot")))) or ""
 	wi.Visible, mk.Visible = false, false
+	RV.setKillWeapon(uid, ld and ld.kind ~= "Takedown" and typeof(ld.weapon) == "string" and ld.weapon or nil)
+end
+
+-- (2026-10-22, Edward's live RIVALS games, notes/ui_rivals/killcard t0208-t0336) the kill banner carries the killer's actual weapon
+-- as a big tilted 3D model in its skin, poking out of the banner's right end (from above its top edge to the screen bottom). The
+-- model is the Repository copy, in its own colours. Built once per weapon.
+RV.kWeapon = new("ViewportFrame", { Name = "KillWeapon", BackgroundTransparency = 1, Ambient = Color3.fromRGB(215, 215, 220), LightColor = WHITE,
+	LightDirection = Vector3.new(-1, -0.6, 0.3), Position = UDim2.fromOffset(455, -150), Size = UDim2.fromOffset(340, 340), Visible = false, ZIndex = 10, Parent = kcard })
+function RV.setKillWeapon(uid, weapon)
+	local vpf = RV.kWeapon
+	if not weapon then vpf.Visible = false; RV.kWeaponKey = nil; return end
+	local key = weapon
+	vpf.Visible = true
+	if RV.kWeaponKey == key then return end
+	RV.kWeaponKey = key
+	vpf:ClearAllChildren()
+	-- the Repository model (laid out barrel along -Z, like the kill feed's); a held tool's world pose is arbitrary
+	-- (TODO once wraps ship to the match: copy the killer's wrap onto it)
+	local src
+	local repo = ReplicatedStorage:FindFirstChild("Repository")
+	for _, f in { "Weapons", "Melee" } do
+		local folder = repo and repo:FindFirstChild(f)
+		src = src or (folder and folder:FindFirstChild(weapon))
+	end
+	if not src then vpf.Visible = false; return end
+	local model = Instance.new("Model")
+	for _, bp in src:GetDescendants() do
+		if bp:IsA("BasePart") and bp.Transparency < 0.9 then
+			local c = bp:Clone()
+			for _, k in c:GetChildren() do
+				if not (k:IsA("DataModelMesh") or k:IsA("Decal") or k:IsA("Texture") or k:IsA("SurfaceAppearance")) then k:Destroy() end
+			end
+			c.Anchored = true
+			c.Parent = model
+		end
+	end
+	model.Parent = vpf
+	local cf, size = model:GetBoundingBox()
+	local cam = Instance.new("Camera")
+	cam.FieldOfView = 20
+	local reach = math.max(size.X, size.Y, size.Z) / 2 / math.tan(math.rad(10)) * 1.05
+	-- side on from +X (the Repository models' muzzle then points left), rolled so it points up-left like RIVALS' banner weapon
+	cam.CFrame = CFrame.lookAt(cf.Position + Vector3.xAxis * reach, cf.Position) * CFrame.Angles(0, 0, math.rad(-35))
+	cam.Parent = vpf
+	vpf.CurrentCamera = cam
 end
 
 ---------------------------------------------------------------------------------------------------- switch weapons (RIVALS)

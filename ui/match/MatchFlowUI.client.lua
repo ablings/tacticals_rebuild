@@ -237,6 +237,11 @@ local function fillTeams(boxes)
 					icon.Image, icon.ImageColor3 = img, tint
 				end
 				icon.Visible = isImg
+				-- (2026-10-22, Edward: level numbers like RIVALS) over the seal: the chunky white number with the deep-blue edge
+				local Kl = require(ReplicatedStorage.UIKit.Kit)
+				local lst = s.ll:FindFirstChildOfClass("UIStroke")
+				if kind == "level" and isImg and Kl.levelNumber then Kl.levelNumber(s.ll)
+				elseif lst then lst.Color = Color3.new(0, 0, 0) end
 				s.ll.Text = ready and "✓" or (p.bot and "BOT" or (kind == "rank" and "" or tostring(v or "-")))
 				s.ll.ZIndex = 6
 				s.lv.BackgroundTransparency = isImg and 1 or 0

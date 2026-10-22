@@ -275,6 +275,13 @@ local function render(full)
 			slot.wash.BackgroundTransparency = (u ~= nil and u == player.UserId) and 0.9 or 1
 			slot.badge.Image = cur.badge or ""
 			slot.badge.ImageColor3 = cur.tint or RC.white
+			-- (2026-10-22, Edward: level numbers like RIVALS) the level board's number in the seal's style, the others keep the ink edge
+			if cur.level and LKit.levelNumber then LKit.levelNumber(slot.valueLabel)
+			else
+				local vs = slot.valueLabel:FindFirstChildOfClass("UIStroke")
+				if vs then vs.Color = COL.ink end
+				slot.valueLabel.FontFace = F_CHUNKY
+			end
 			slot.prefix = ""
 			local target = tonumber(e.w) or 0
 			if full then slot.nv.Value = 0 end

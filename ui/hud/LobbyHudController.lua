@@ -940,7 +940,8 @@ function LobbyHud.Start()
 		parts.lv = Kit.new("ImageLabel", { Name = "LevelBadge", BackgroundTransparency = 1, Image = RAssets.hud.levelbadge, ScaleType = Enum.ScaleType.Fit, Visible = false,
 			Position = UDim2.fromOffset(8, 7), Size = UDim2.fromOffset(26, 26), Parent = row })
 		parts.lvN = Kit.label({ Name = "N", Text = "", FontFace = R_BOLD, TextSize = 13, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
-			Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(26, 26), Parent = parts.lv })
+			Position = UDim2.fromOffset(-3, 1), Size = UDim2.fromOffset(32, 26), Parent = parts.lv })
+		if Kit.levelNumber then Kit.levelNumber(parts.lvN) end -- (2026-10-22, Edward: level numbers like RIVALS) chunky white, deep-blue edge
 		parts.name = Kit.label({ Name = "PlayerName", Text = "", FontFace = LBF_NAME, TextSize = 21, TextColor3 = RC.text, TextTruncate = Enum.TextTruncate.AtEnd,
 			Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(196, 40), Parent = row })
 		-- (2026-10-20, RIVALS) the device icon right after the name (UIKit.Badges.DeviceIcon)

@@ -1145,9 +1145,9 @@ Kit.LEVEL_TIERS_SHIELD = {
 -- to blue); without it, the white generated seal (Assets.gen.kit_reward_seal) tinted by a vertical UIGradient #8FD8FF -> #0A7BFF.
 -- Kit.levelTier(level) keeps its old signature (image, the number's edge colour) so DuelHUD / MatchFlowUI pick the seal up too.
 --   Kit.levelSeal(parent, level, props) -> ImageLabel "LevelSeal" (square, child TextLabel "N"); Kit.setLevel(seal, level)
-local SEAL_FALLBACK = "rbxassetid://122770101267260" -- = Rivals.Assets.hud.levelbadge (2026-10-21)
+local SEAL_FALLBACK = "rbxassetid://140623695745815" -- = Rivals.Assets.hud.levelbadge (2026-10-22: the starburst, ui/art/level/starburst)
 local SEAL_TOP, SEAL_BOTTOM = Color3.fromRGB(143, 216, 255), Color3.fromRGB(10, 123, 255) -- #8FD8FF -> #0A7BFF
-Kit.LEVEL_EDGE = Color3.fromRGB(8, 70, 150) -- the number's dark-blue outline
+Kit.LEVEL_EDGE = Color3.fromRGB(14, 74, 160) -- the number's deep-blue outline (RIVALS ~#0E4AA0)
 local sealArt -- { image, white } resolved once from UIKit.Rivals.Assets
 local function rivals(name)
 	local r = script.Parent:FindFirstChild("Rivals")
@@ -1175,6 +1175,23 @@ function Kit.setLevel(seal, level)
 	local n = seal and seal:FindFirstChild("N")
 	if n then n.Text = tostring(math.floor(tonumber(level) or 1)) end
 end
+-- RIVALS' level number style on any label that prints a level over the seal: the chunky font, white, a deep-blue edge ~9 % of
+-- the glyph height that follows the label's size (TextBounds for fixed sizes, the box for TextScaled)
+function Kit.levelNumber(n)
+	local T = rivals("Theme")
+	n.FontFace = (T and T.font and T.font.chunky) or Font.new("rbxasset://fonts/families/FredokaOne.json")
+	n.TextColor3 = Color3.new(1, 1, 1)
+	local st = n:FindFirstChildOfClass("UIStroke") or new("UIStroke", { Parent = n })
+	st.Color, st.Transparency, st.LineJoinMode = Kit.LEVEL_EDGE, 0, Enum.LineJoinMode.Round
+	local function edge()
+		local h = n.TextScaled and n.AbsoluteSize.Y or (n.TextBounds.Y > 0 and n.TextBounds.Y or n.AbsoluteSize.Y)
+		st.Thickness = math.max(1, h * 0.09)
+	end
+	n:GetPropertyChangedSignal("AbsoluteSize"):Connect(edge)
+	n:GetPropertyChangedSignal("TextBounds"):Connect(edge)
+	edge()
+	return n
+end
 function Kit.levelSeal(parent, level, props)
 	local img, white = Kit.levelSealArt()
 	local T = rivals("Theme")
@@ -1184,9 +1201,13 @@ function Kit.levelSeal(parent, level, props)
 	if white then new("UIGradient", { Rotation = 90, Color = ColorSequence.new(SEAL_TOP, SEAL_BOTTOM), Parent = seal }) end
 	for k, v in pairs(props or {}) do seal[k] = v end
 	local n = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = "", FontFace = font, TextScaled = true,
-		TextColor3 = Color3.new(1, 1, 1), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.53), Size = UDim2.fromScale(0.66, 0.5),
+		TextColor3 = Color3.new(1, 1, 1), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.55), Size = UDim2.fromScale(1.12, 0.54),
 		ZIndex = seal.ZIndex + 1, Parent = seal })
-	new("UIStroke", { Color = Kit.LEVEL_EDGE, Thickness = 1.5, Transparency = 0.1, Parent = n })
+	-- (2026-10-22, Edward: "very poor inaccuracies ... numbers positioning, its stroke colour and how readable it is"; Edward's live
+	-- RIVALS games, killcard/seal) RIVALS' number is BIG: ~0.45 of the seal tall, a 3-digit level as wide as the seal and past
+	-- it (was boxed into 0.66 x 0.5, a "152" shrank to a third), sitting a hair below centre, with a thick deep-blue edge that
+	-- grows with the seal (~9 % of the number's height; UIStroke is in pixels, a fixed 1.5 vanished on big seals)
+	Kit.levelNumber(n)
 	Kit.setLevel(seal, level)
 	return seal
 end
