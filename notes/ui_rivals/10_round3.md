@@ -1217,3 +1217,114 @@ state on the Armory table. Not deployed, not committed.
 - To check in Studio: the dim plane's strength vs RIVALS (tune the gradient keypoints in `_dimRoom`) and the bench seam where
   the plane crosses the workbench behind the gun; that a pistol / grenade at the new size clears the bottom strip; the fattened
   arrow / eye images; the scaled currency pill's position (UIScale grows it from its top-left).
+
+## RIVALS 1:1: Shop organisation + placeholders (2026-10-21)
+`ui/shop/ShopScreen.lua` only (parse-checked, not run in Studio). References: `rivals_normal/shop.png` (normal-theme tab
+row), `rivals_rec/t0070` (Home), `t0094.3s` (Daily), the replica's `ShopController.client.lua` and the vault's Shop section.
+- **Tabs (RIVALS order):** Home (key `Featured`), Bundles, Arms, Skins, Daily, Emotes, Charms, Finishers, Scissors. Arms is our
+  gear and sits after Bundles, where RIVALS sells weapon items. Scissors is RIVALS' Keys. Nine 100 px tabs, 110 apart, span
+  330-1320. `SetTab` / `Open` accept `Home`, `Keys` and `Gear` as aliases (`resolveTab`). More is not a page (verified
+  replica behaviour: it swaps the tab row for Codes / Gifting links), so it is left out. Exclusive and Events are left out
+  too: there is nothing to fill them with.
+- **Home:** unchanged. It already had RIVALS' layout: packs and gear on the left, the Founder's Bundle as the pass card top
+  right, the Special Offer carousel with page dots, and the 3x2 item tiles with price buttons.
+- **Real buys unchanged:** Robux packs, gear (opens the Kit room), scissors bundles, Founder's Bundle, VIP and 2X Scissors.
+  The preload, spotlight, detail card, Purchase Complete banner and hover reveal are all unchanged.
+- **Placeholders.** Everything is in `PLACEHOLDER_ITEMS` near the top of the file. Every entry has `PLACEHOLDER = true`.
+  Tiles carry the `Placeholder` attribute. A click on a tile or its price runs `comingSoon`: a "Coming soon" toast plus a pop.
+  It never calls ctx.ask or MarketplaceService, and a placeholder price never runs the can't-afford shake.
+  - `Skins` (10): Pistol, Suppressed, Revolver, Mini Uzi, Dual Pistols, Rifle, Semi-Auto, Shotgun and Sniper Skins, plus
+    Knife Skin. Each is our own model tinted to its rarity. Prices are in scissors (600-2500).
+  - `MeleeSkins` (5): Bat, Katana and Shield Skins, Gloves (Fists) and Medkit Skin. Same stand-ins.
+  - `DailySkins` (5): Pistol, Revolver, Mini Uzi, Rifle and Sniper Skins, priced in Robux (240-480) as RIVALS' Daily skins
+    are. Same stand-ins.
+  - `DailyEmotes` (5): Shrug (FREE), Take a Knee, Round & Round, Side to Side and Holiday Jig, in scissors. The art is the
+    replica's generated `em_*` images.
+  - `Emotes` (6): the five Daily emotes plus Director's Cut (`emote_cut`).
+  - `Charms` (15): `ch_*` and `charm_cactus` art, 30-60 scissors.
+  - `Finishers` (14): the `fin_1`-`fin_14` art with the replica's names, 100-300 scissors.
+  - Daily refresh bar: a countdown to UTC midnight, which is a guess. RIVALS' "3 keys: refresh shop now" button is left out
+    because the refresh cost is a guess too.
+- **Red "Claim your FREE reward now!" tip** over the Daily tab: built only when a non-placeholder free Daily item exists
+  (`freeDailyUp`). So it is hidden for now. Set `DAILY_TIP_PREVIEW = true` to preview it over the placeholder Shrug.
+- **Where real items plug in:**
+  1. Replace a `ph(...)` entry with the real item: give it an `id`, or a `base` that is the real skin / emote model.
+  2. Drop `PLACEHOLDER`.
+  3. In `placeholderTile`, route the click to `openDetail` with a spec like `bundleSpec` / `packSpec`, whose `buy()` calls
+     `ctx.ask("BuyCosmetic", id)` (a new server ask). Give it `owned`, so the check mark and `ownedSig` dirty rebuilds work.
+     `ownedSig` also needs the cosmetics added.
+  4. For a real free Daily item, `freeDailyUp` turns the tip on by itself.
+- **To check in Studio:**
+  - The nine-tab row against the close X and the wallet.
+  - That the image tab icons (`tab_skins`, `tab_daily`, `emote_cut`, `ch_dice`, `fin_1`) read at 56 px.
+  - The rarity tint on the stand-in renders: `ImageColor3` is the rarity colour lerped 0.45 toward white.
+  - The join build time with about 20 more viewports (Skins 15, Daily 5).
+
+## RIVALS 1:1: leaderboards (2026-10-21)
+`ui/pseudolobby/hub/LeaderboardScreen.lua` (rewritten) and the player-list section of `ui/hud/LobbyHudController.lua` only
+(parse-checked, not run in Studio). References: `06_leaderboards.md`, frames t0193 (Win Streaks), t0205-t0211 (Most
+Eliminations), t0215 (Most Wins), t0219-t0225 (Highest Level), t0273 (Ranked, LIVE pill), t0166 / t0247 / t0270 (player list).
+The replica's board (`rivals_practice/ui/world/WorldController.client.lua` section 5) was read: blue sample-data mock, so the
+structure (title + LIVE, #1 big, number printed over its icon, tabs under the list) was ported, not its look.
+- **Hub board (940x580 SurfaceGui, all Scale):** dark purple-black board (`Theme.color.panelRaised -> panel`), title in
+  FredokaOne with the red gradient (`Theme.gradient.red`) and a dark outline, the red LIVE pill (`Kit.ICONS.live`) at the right
+  of the header, gently pulsing. The list sits in a rounded well with a 6 px red-gradient rim (frames, no UIStroke border).
+- **Rows:** #1 hero row (104 px headshot, gold "#1" tag over its lower-left corner, big FredokaOne name, @user, #userId, a 116 px
+  stat badge); #2-#10 even 68 px rows (54 px headshot with a white "#N" tag, name, @user, #id, 62 px badge). The badge is the
+  category icon with the number printed over it in FredokaOne + dark outline: streak `Kit.ICONS.streakColor`, elims
+  `Assets.gen.tasks_elims` tinted red, wins `Kit.ICONS.trophy` tinted gold, level `Assets.hud.levelbadge`. @user comes from the
+  player when present, else one cached `GetNameFromUserIdAsync` per id. Your own row gets a faint white wash.
+- **Scroll:** the well is a ScrollingFrame filling its CanvasGroup exactly (CanvasSize Scale is unambiguous); about five entries
+  show. Per category: hold 2.5 s at the top, glide to the bottom in 3.5 s, hold, glide back; then the next category at 11 s.
+  A mouse wheel / touch scroll holds the auto-scroll 20 s.
+- **Tabs:** four 72 px squares under the well (red-gradient rim, dark face, red outline glyph `Kit.ICONS.lbStreak/lbElims/
+  lbWins/lbLevel`; the shown tab fills red with a white glyph). Order and cycle = RIVALS: Win Streaks -> Most Eliminations ->
+  Most Wins -> Highest Level; starts on Win Streaks. A click pauses the cycle 20 s; clicking the shown tab scrolls it to the top.
+  Hover 1.06, press 0.92 Back. Data hooks unchanged (LobbyTopStreak / Kills / Wins / Level JSON {u,n,w[,x]}, tab hidden until its
+  value exists, count-up NumberValues, staggered pop on a switch, slide + fade between categories).
+- **Corner player list:** panel `Theme.color.textDark` at 0.3 transparency (token `hud.listAlpha` if added); names Rubik Medium
+  21, the number Rubik SemiBold 24, all `Theme.color.text`. Rows no longer zebra or tint your own row green: every row looks the
+  same, your own row carries your badge left of the name (Premium glyph if you have it, else the level badge with your level).
+  **Rows are steady:** each row's pieces (badge, name, device icon, streak flame, number / rank emblem) are built once per
+  player and updated in place (Text / Image / Visible / Position); only leavers are destroyed. The column icon is one ImageLabel
+  whose Image changes (was destroyed and rebuilt per switch). Kit.toScale runs once per row (Kit._scaled no longer collects
+  dead labels on every stat change). Level changes now refresh the row too.
+- To check in Studio: the badge numbers' legibility over the trophy / elims glyphs (tint may need a darker shade behind the
+  number); the auto-scroll span on the SurfaceGui (`AbsoluteCanvasSize` vs window); the `levelbadge` art at 26 px in the list;
+  the board at its MaxDistance 120.
+
+## RIVALS 1:1: levels, banners, profile (2026-10-21)
+Refs: `rivals_normal/profile_card.png`, `rivals_rec/t0000 / t0110 / t0111 / t0130 / t0135`, the replica's `HudController`
+(openProfile / openPlayerMenu) and `WorldController` (nameplate). Files: `ui/lobby/Kit.lua` (level helper only),
+`ui/hud/NameplatesController.lua`, `ui/hud/PlayerCards.lua`. Badges.lua untouched (it draws no level badge).
+- **Level seal (Kit.lua):** the tiered tactical shields are retired (kept as `Kit.LEVEL_TIERS_SHIELD` for a revert). New
+  `Kit.levelSeal(parent, level, props)` -> square ImageLabel "LevelSeal" with a white FredokaOne number (`Rivals.Theme.font.chunky`)
+  and a dark-blue edge; `Kit.setLevel(seal, n)`. Art = the replica's `Rivals.Assets.hud.levelbadge` (already light-blue -> blue,
+  same art the corner list uses); without it `gen.kit_reward_seal` tinted by a vertical UIGradient #8FD8FF -> #0A7BFF.
+  `Kit.levelTier(level)` keeps its signature but returns the seal + the blue edge for every level, so DuelHUD's killer card and
+  MatchFlowUI's match boxes show the seal too without edits.
+- **Nameplates:** RIVALS' row `[seal] Name [device]`, white Rubik Bold with a black outline, @username Rubik Medium `textDim`
+  (one-name rule kept). Seal / flame / Wins box / rank emblem / device are squares the row's height (UIAspectRatioConstraint,
+  DominantAxis Height); the name label is sized to its text (`TextService:GetTextBoundsAsync`, once per text) so the icons hug it.
+  Plate 10 x 1.6 studs like the replica (was 9 x 2), own plate still 55 %. Streak flame still replaces the seal; Rank / Wins modes,
+  VIP chip, Badges glyphs, hide rules unchanged.
+- **Player menu:** the replica's card: #1E1F24 at 0.05, 303 px, 64 px bare headshot, name Rubik Bold 21, @user 14 grey. Rows
+  297 x 52 every 55.6 px fade from the card colour into RIVALS' colour (green Invite / Add Friend, orange Challenge / Spectate,
+  blue View Profile / View Avatar, red Block) with the replica's white icon (`plus`, `addfriend`, `inking`, `eye`, `arrow`, `hide`)
+  on the coloured end; hover = solid white, black text + icon. "Invite" reads "Party Invite"; sent = grey `check` icon. Actions,
+  slide-in, stagger, bindButton unchanged.
+- **Profile card:** copy of profile_card.png in design px (capture / 0.935): card 498 x 292 at (711, 344), faded `map_arena`
+  top, headshot 92, gold trophy (`trophy_gold`), chunky gold "N" / "wins" / "N%" / "win rate"; name Rubik Bold 28 + device icon,
+  @user, the 54 px seal centred at x 316 with grey "Level", "Most Played Weapons" + four 72 px grey-to-dark tiles with live
+  ViewportFrame renders (`LobbyUIController/Icons.Item` + `Icons.Viewport`) and the item name over the foot. Red X 150 x 66
+  centred 16 px under it (+ Invite to PARTY / Challenge 1v1 for others). Backdrop = `Modules.Shared.UITheme.ShowBackdrop
+  ("PlayerCard")` when present, else the old blur + `Rivals.Theme` scrim. ELO / Rank / Career tiles left the card (RIVALS has none).
+- **Most Played data:** Player attribute `MostPlayed` ("Id,Id,Id,Id") first; your own card reads `Data.WeaponStats` (Registry
+  PlayerData replica: top 4 by Matches, then Kills); else placeholders AutoRifle / Pistol / Fists / Frag (RIVALS' starter four).
+  **Server follow-up (Tacticals session):** PublicStats should publish `MostPlayed` from `Data.WeaponStats` so other players'
+  cards show real weapons.
+- Colour tokens with no Rivals.Theme entry read `Theme.profile[name]` first (card, handle, levelLabel, mostPlayed, tileTop /
+  tileBottom, goldEdge, hint, sent, menuHandle) and `Theme.playerMenu[action]`, else the replica's measured values.
+- "Double tap to view profile" pill: see-through #3A3A40, white Rubik Bold (was bone on black).
+- To check in Studio: seal number legibility at nameplate distance; the name-width fit with the verified / Premium glyphs;
+  render framing in the 72 px tiles (Icons.Item views were tuned for the dock); the shared backdrop releasing on close.

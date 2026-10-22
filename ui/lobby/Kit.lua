@@ -1100,19 +1100,64 @@ Kit.ICONS.lbElims = "rbxassetid://83789042758416"
 Kit.ICONS.lbWins = "rbxassetid://120316362189428"
 Kit.ICONS.lbLevel = "rbxassetid://81711657935672"
 Kit.ICONS.streakColor = "rbxassetid://99079058513557" -- tac_streak_color (Gunsy Funsy upload 2026-10-20)
--- (2026-10-20, Edward: "look at their levels lets get unique") our level badge: a tactical hex shield in five tiers (codex,
--- ui/art/level). Kit.levelTier(level) -> image, the number's edge colour
-Kit.LEVEL_TIERS = {
+-- (2026-10-20, Edward: "look at their levels lets get unique") the old level badge: a tactical hex shield in five tiers (codex,
+-- ui/art/level). (2026-10-21, RIVALS 1:1) retired: every level now shows RIVALS' blue starburst seal (below). Kept for a revert.
+Kit.LEVEL_TIERS_SHIELD = {
 	{ min = 200, img = "rbxassetid://114661007103309", edge = Color3.fromRGB(148, 98, 16) },  -- gold
 	{ min = 100, img = "rbxassetid://85417993163392", edge = Color3.fromRGB(21, 68, 148) },   -- blue
 	{ min = 50, img = "rbxassetid://140385134180578", edge = Color3.fromRGB(58, 74, 38) },    -- olive
 	{ min = 25, img = "rbxassetid://71445899871171", edge = Color3.fromRGB(122, 94, 52) },    -- tan
 	{ min = 0, img = "rbxassetid://138983138877521", edge = Color3.fromRGB(74, 85, 99) },     -- steel
 }
+-- (2026-10-21, RIVALS 1:1) the level badge everywhere a level shows (nameplates, killer card, match boxes, profile): RIVALS'
+-- blue starburst seal with a white bold number. Art = the replica's seal (UIKit.Rivals.Assets.hud.levelbadge, already light-blue
+-- to blue); without it, the white generated seal (Assets.gen.kit_reward_seal) tinted by a vertical UIGradient #8FD8FF -> #0A7BFF.
+-- Kit.levelTier(level) keeps its old signature (image, the number's edge colour) so DuelHUD / MatchFlowUI pick the seal up too.
+--   Kit.levelSeal(parent, level, props) -> ImageLabel "LevelSeal" (square, child TextLabel "N"); Kit.setLevel(seal, level)
+local SEAL_FALLBACK = "rbxassetid://122770101267260" -- = Rivals.Assets.hud.levelbadge (2026-10-21)
+local SEAL_TOP, SEAL_BOTTOM = Color3.fromRGB(143, 216, 255), Color3.fromRGB(10, 123, 255) -- #8FD8FF -> #0A7BFF
+Kit.LEVEL_EDGE = Color3.fromRGB(8, 70, 150) -- the number's dark-blue outline
+local sealArt -- { image, white } resolved once from UIKit.Rivals.Assets
+local function rivals(name)
+	local r = script.Parent:FindFirstChild("Rivals")
+	local m = r and r:FindFirstChild(name)
+	if not m then return nil end
+	local ok, v = pcall(require, m)
+	return ok and v or nil
+end
+function Kit.levelSealArt()
+	if sealArt then return sealArt.image, sealArt.white end
+	local A = rivals("Assets")
+	local own = A and A.hud and A.hud.levelbadge
+	local gen = A and A.gen and A.gen.kit_reward_seal
+	if own and own ~= "" then sealArt = { image = own, white = false }
+	elseif gen and gen ~= "" then sealArt = { image = gen, white = true }
+	else sealArt = { image = SEAL_FALLBACK, white = false } end
+	return sealArt.image, sealArt.white
+end
+Kit.LEVEL_TIERS = { { min = 0, img = SEAL_FALLBACK, edge = Kit.LEVEL_EDGE } }
 function Kit.levelTier(level)
-	level = tonumber(level) or 1
-	for _, t in Kit.LEVEL_TIERS do if level >= t.min then return t.img, t.edge end end
-	return Kit.LEVEL_TIERS[#Kit.LEVEL_TIERS].img, Kit.LEVEL_TIERS[#Kit.LEVEL_TIERS].edge
+	local img = Kit.levelSealArt()
+	return img, Kit.LEVEL_EDGE
+end
+function Kit.setLevel(seal, level)
+	local n = seal and seal:FindFirstChild("N")
+	if n then n.Text = tostring(math.floor(tonumber(level) or 1)) end
+end
+function Kit.levelSeal(parent, level, props)
+	local img, white = Kit.levelSealArt()
+	local T = rivals("Theme")
+	local font = (T and T.font and T.font.chunky) or Font.new("rbxasset://fonts/families/FredokaOne.json")
+	local seal = new("ImageLabel", { Name = "LevelSeal", BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit,
+		Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = parent }, { new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
+	if white then new("UIGradient", { Rotation = 90, Color = ColorSequence.new(SEAL_TOP, SEAL_BOTTOM), Parent = seal }) end
+	for k, v in pairs(props or {}) do seal[k] = v end
+	local n = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = "", FontFace = font, TextScaled = true,
+		TextColor3 = Color3.new(1, 1, 1), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.53), Size = UDim2.fromScale(0.66, 0.5),
+		ZIndex = seal.ZIndex + 1, Parent = seal })
+	new("UIStroke", { Color = Kit.LEVEL_EDGE, Thickness = 1.5, Transparency = 0.1, Parent = n })
+	Kit.setLevel(seal, level)
+	return seal
 end
 function Kit.streakImage()
 	local full = Kit.ICONS.streakColor ~= nil and Kit.ICONS.streakColor ~= ""

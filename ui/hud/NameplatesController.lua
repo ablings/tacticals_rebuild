@@ -3,14 +3,27 @@
 -- name big and bold, @username small under it (only when it differs from the display name), and a VIP chip for VIPs. Sized in studs (shrinks with distance), not
 -- AlwaysOnTop (walls hide it: Roblox's own names were turned off because they showed through walls).
 -- Not shown in Training, during a cutscene, or when you hide the HUD. (UI session 2026-10-16)
+-- (2026-10-21, RIVALS 1:1) one row like RIVALS (notes/rivals_rec/t0000, t0135): [blue level seal] Name [device icon], the name
+-- white Rubik Bold with a dark outline (UIKit.Rivals.Theme). The win-streak flame takes the seal's place on a streak. The seal is
+-- UIKit.Kit.levelSeal (was our tiered shield). Sized like the replica's plate (10 x 1.6 studs, row 62 %), the name label sized to
+-- its text so the seal and device icon hug it.
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local TextService = game:GetService("TextService")
 
 local Nameplates = {}
 local player = Players.LocalPlayer
--- (2026-10-21, AI-tells cleanup) Builder Sans is out: the name / numbers in Oswald Bold, @username in Rubik Medium
-local BOLD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
-local MED = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
+-- (2026-10-21, RIVALS 1:1) fonts / colours from UIKit.Rivals.Theme: the name in Rubik Bold (RIVALS' plate), @username in Rubik
+-- Medium (was Oswald Bold / Rubik Medium literals)
+local RTheme
+pcall(function() RTheme = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Rivals", 10):WaitForChild("Theme", 10)) end)
+local RUBIK = (RTheme and RTheme.font.medium.Family) or "rbxassetid://12187365977"
+local BOLD = Font.new(RUBIK, Enum.FontWeight.Bold)
+local MED = (RTheme and RTheme.font.medium) or Font.new(RUBIK, Enum.FontWeight.Medium)
+local WHITE = (RTheme and RTheme.color.text) or Color3.new(1, 1, 1)
+local DIM = (RTheme and RTheme.color.textDim) or Color3.fromRGB(205, 205, 212)
+local PANEL = (RTheme and RTheme.color.panel) or Color3.fromRGB(20, 18, 24)
+local W_STUDS, H_STUDS, ROW = 10, 1.6, 0.62 -- plate size in studs, the name row's share of the height (the replica's plate)
 
 local plates = {} -- [Player] = { gui, badgeText, nameText, vip }
 
@@ -34,8 +47,9 @@ local function build(p, character)
 	g.Adornee = head
 	-- (2026-10-21, grade1) your own plate is ~55% size: over your own back it filled the middle of the hub screen
 	local mine = p == player
-	g.Size = mine and UDim2.fromScale(9 * 0.55, 2 * 0.55) or UDim2.fromScale(9, 2) -- studs
-	g.StudsOffset = Vector3.new(0, mine and 1.6 or 2.1, 0)
+	-- (2026-10-21, RIVALS 1:1) 10 x 1.6 studs like the replica (was 9 x 2: the name read a size too big next to RIVALS')
+	g.Size = mine and UDim2.fromScale(W_STUDS * 0.55, H_STUDS * 0.55) or UDim2.fromScale(W_STUDS, H_STUDS) -- studs
+	g.StudsOffset = Vector3.new(0, mine and 1.5 or 2.2, 0)
 	g.MaxDistance = 90
 	g.LightInfluence = 0
 	g.AlwaysOnTop = false
@@ -48,28 +62,29 @@ local function build(p, character)
 	local row = Instance.new("Frame")
 	row.BackgroundTransparency = 1
 	row.Position = showHandle and UDim2.fromScale(0, 0) or UDim2.fromScale(0, 0.3)
-	row.Size = UDim2.fromScale(1, 0.62)
+	row.Size = UDim2.fromScale(1, ROW)
 	row.Parent = g
 	local list = Instance.new("UIListLayout")
 	list.FillDirection = Enum.FillDirection.Horizontal
 	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	list.VerticalAlignment = Enum.VerticalAlignment.Center
-	list.Padding = UDim.new(0.015, 0)
+	list.Padding = UDim.new(0.012, 0)
 	list.SortOrder = Enum.SortOrder.LayoutOrder
 	list.Parent = row
 	local badge = Instance.new("Frame")
 	badge.LayoutOrder = 1
-	badge.Size = UDim2.fromScale(0.13, 0.82)
-	badge.BackgroundColor3 = Color3.fromRGB(20, 18, 24)
-	badge.BackgroundTransparency = 0.25
+	badge.Size = UDim2.fromScale(0.2, 1) -- (2026-10-21, RIVALS 1:1) square, the row's height (aspect constraint below)
+	badge.BackgroundColor3 = PANEL
+	badge.BackgroundTransparency = 1
 	badge.Parent = row
+	local ba = Instance.new("UIAspectRatioConstraint"); ba.AspectRatio = 1; ba.DominantAxis = Enum.DominantAxis.Height; ba.Parent = badge
 	local bc = Instance.new("UICorner"); bc.CornerRadius = UDim.new(0.25, 0); bc.Parent = badge
 	local bt = Instance.new("TextLabel")
 	bt.BackgroundTransparency = 1
 	bt.Size = UDim2.fromScale(1, 1)
 	bt.FontFace = BOLD
 	bt.TextScaled = true
-	bt.TextColor3 = Color3.new(1, 1, 1)
+	bt.TextColor3 = WHITE
 	bt.Text = "" -- (2026-10-20) never Roblox's default "Label" before the first update fills it
 	bt.Parent = badge
 	local bp = Instance.new("UIPadding"); bp.PaddingTop = UDim.new(0.12, 0); bp.PaddingBottom = UDim.new(0.12, 0); bp.Parent = bt
@@ -83,18 +98,22 @@ local function build(p, character)
 	bi.ScaleType = Enum.ScaleType.Fit
 	bi.Visible = false
 	bi.Parent = badge
-	bt.ZIndex = bi.ZIndex + 1 -- the number sits over the level shield / emblem
+	bt.ZIndex = bi.ZIndex + 1 -- the number sits over the rank emblem
+	-- (2026-10-21, RIVALS 1:1) the level: RIVALS' blue starburst seal with the white number (UIKit.Kit.levelSeal)
+	local KitM = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
+	local seal = KitM.levelSeal(badge, p:GetAttribute("Level") or 1, { ZIndex = bt.ZIndex + 1, Visible = false })
 	local name = Instance.new("TextLabel")
 	name.LayoutOrder = 2
 	name.BackgroundTransparency = 1
-	name.Size = UDim2.fromScale(0.62, 1) -- (TextScaled and AutomaticSize don't mix: a fixed share of the row)
+	name.Size = UDim2.fromScale(0.62, 1) -- (TextScaled and AutomaticSize don't mix: fitName() sets the width from the text)
 	name.FontFace = BOLD
 	name.TextScaled = true
-	name.TextColor3 = Color3.new(1, 1, 1)
+	name.TextColor3 = WHITE
 	name.Text = p.DisplayName
 	name.Name = "DisplayName" -- (2026-10-20) badges are added by the update loop (UIKit.Badges)
 	name.Parent = row
-	local ns = Instance.new("UIStroke"); ns.Thickness = 2; ns.Transparency = 0.25; ns.Parent = name
+	-- (2026-10-21, RIVALS 1:1) RIVALS' dark outline round the white name
+	local ns = Instance.new("UIStroke"); ns.Color = Color3.new(0, 0, 0); ns.Thickness = 2; ns.Transparency = 0.2; ns.Parent = name
 	local vip = Instance.new("TextLabel")
 	vip.LayoutOrder = 3
 	vip.Size = UDim2.fromScale(0.15, 0.7)
@@ -112,7 +131,7 @@ local function build(p, character)
 	user.Size = UDim2.fromScale(1, 0.3)
 	user.FontFace = MED
 	user.TextScaled = true
-	user.TextColor3 = Color3.fromRGB(205, 205, 212)
+	user.TextColor3 = DIM
 	user.Text = "@" .. p.Name
 	user.Visible = showHandle
 	user.Parent = g
@@ -126,9 +145,10 @@ local function build(p, character)
 	streak.Name = "StreakHolder"
 	streak.LayoutOrder = 0 -- (2026-10-20, Edward) the flame takes the badge's place, left of the name
 	streak.BackgroundTransparency = 1
-	streak.Size = UDim2.fromScale(0.13, 0.95)
+	streak.Size = UDim2.fromScale(0.2, 1)
 	streak.Visible = false
 	streak.Parent = row
+	local sa = Instance.new("UIAspectRatioConstraint"); sa.AspectRatio = 1; sa.DominantAxis = Enum.DominantAxis.Height; sa.Parent = streak
 	local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
 	local flame = Kit.streak(streak, 0, UDim2.fromScale(0, 0), UDim2.fromScale(1, 1), 2)
 	-- (2026-10-20, RIVALS) the device icon after the name (UIKit.Badges.DeviceIcon; hidden until the art is uploaded)
@@ -137,10 +157,28 @@ local function build(p, character)
 	dev.LayoutOrder = 5
 	dev.BackgroundTransparency = 1
 	dev.ScaleType = Enum.ScaleType.Fit
-	dev.Size = UDim2.fromScale(0.09, 0.7)
+	dev.Size = UDim2.fromScale(0.2, 0.72)
+	dev.ImageColor3 = WHITE
 	dev.Visible = false
 	dev.Parent = row
-	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name, device = dev }
+	local da = Instance.new("UIAspectRatioConstraint"); da.AspectRatio = 1; da.DominantAxis = Enum.DominantAxis.Height; da.Parent = dev
+	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, seal = seal, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name, device = dev }
+end
+
+-- (2026-10-21, RIVALS 1:1) the name label is as wide as its text (measured once per text), so the seal and the device icon sit
+-- right against the name like RIVALS' plate. Width share = row height (studs) x text aspect / plate width, capped.
+local function fitName(e)
+	local text = e.name.Text
+	if e.fitted == text then return end
+	e.fitted = text
+	task.spawn(function()
+		local params = Instance.new("GetTextBoundsParams")
+		params.Text, params.Font, params.Size, params.Width = text, BOLD, 100, 100000
+		local ok, b = pcall(TextService.GetTextBoundsAsync, TextService, params)
+		if not ok or not b or b.Y <= 0 or not e.name.Parent or e.fitted ~= text then return end
+		local share = (H_STUDS * ROW) * (b.X / b.Y) / W_STUDS
+		e.name.Size = UDim2.fromScale(math.clamp(share * 1.04, 0.08, 0.66), 1)
+	end)
 end
 
 local function hook(p)
@@ -187,21 +225,19 @@ function Nameplates.Start()
 				if e.streakN then e.streakN.Text = tostring(sn) end
 				if not flame then
 					local r = (mode == "Rank" and RankArt) and RankArt.Of(p) or nil
+					e.seal.Visible = false
 					if r and r.image then
 						e.badgeImage.Visible, e.badgeImage.Image = true, r.image
 						e.badgeText.Text = ""
 						e.badge.BackgroundTransparency = 1
 					elseif mode ~= "Wins" then
-						-- (2026-10-20) our tiered level shield (Kit.levelTier) with the number over it in the tier's edge colour
-						local K = require(game:GetService("ReplicatedStorage").UIKit.Kit)
-						local lv = tonumber(p:GetAttribute("Level")) or 1
-						local img, edge = K.levelTier(lv)
-						e.badgeImage.Visible, e.badgeImage.Image = true, img
+						-- (2026-10-21, RIVALS 1:1) RIVALS' blue seal with the white number (was our tiered shield, Kit.levelTier)
+						e.badgeImage.Visible = false
 						e.badge.BackgroundTransparency = 1
-						e.badgeText.Text = tostring(lv)
-						local st = e.badgeText:FindFirstChildOfClass("UIStroke") or Instance.new("UIStroke")
-						st.Color, st.Thickness, st.Transparency = edge, 2, 0
-						st.Parent = e.badgeText
+						e.badgeText.Text = ""
+						e.seal.Visible = true
+						local K = require(game:GetService("ReplicatedStorage").UIKit.Kit)
+						K.setLevel(e.seal, tonumber(p:GetAttribute("Level")) or 1)
 					else
 						e.badgeImage.Visible = false
 						e.badge.BackgroundTransparency = 0.25
@@ -217,6 +253,7 @@ function Nameplates.Start()
 					e.name.Text = (okB and B) and B.Name(p) or p.DisplayName
 					local dv = (okB and B and B.DeviceIcon) and B.DeviceIcon(p) or nil
 					if e.device then e.device.Visible = dv ~= nil; e.device.Image = dv or "" end
+					fitName(e)
 				end
 			end
 		end

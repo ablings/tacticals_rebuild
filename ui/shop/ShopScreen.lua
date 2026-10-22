@@ -7,6 +7,11 @@
 --   ShopScreen.Init({ Config, Icons, getData, ask, owns, openKit, getSetting, tooltip, toast, onOpen, onClose })
 --   ShopScreen.Open(tab?) / Close() / IsOpen() / Refresh() / SetTab(tab)
 -- Tabs: Featured, Bundles, Arms, Scissors ("Home" is accepted for Featured).
+-- (2026-10-21, RIVALS shop layout) tabs now run in RIVALS' order and naming: Home (key "Featured"), Bundles, Arms (our gear,
+-- where RIVALS sells weapon items), Skins, Daily, Emotes, Charms, Finishers, Scissors (RIVALS' Keys; "Keys" is accepted too).
+-- Skins / Daily / Emotes / Charms / Finishers are PLACEHOLDER pages (see PLACEHOLDER_ITEMS below): their price buttons only
+-- show a "Coming soon" toast and never reach ctx.ask / MarketplaceService. More is not a page (RIVALS: it swaps the tab row
+-- for Codes / Gifting links), so it is left out.
 local Players = game:GetService("Players")
 local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
@@ -39,6 +44,68 @@ end
 -- on the right of the number; Robux = the lime button with RIVALS' white Robux glyph on the left
 local SCISSORS_IMG = "rbxassetid://120480559804238"
 local ROBUX_IMG = asset("cur_robux") ~= "" and asset("cur_robux") or "rbxasset://textures/ui/common/robux.png"
+
+-------------------------------------------------------------------------------
+-- (2026-10-21, RIVALS shop layout) PLACEHOLDER catalogue: what RIVALS' shop sells that Tacticals has no items for yet.
+-- Every entry carries PLACEHOLDER = true: its tile and price render like a real RIVALS tile, but a click only shows the
+-- "Coming soon" toast (comingSoon below), never ctx.ask / a Robux prompt. To ship a real item: give the entry a real id
+-- (an ItemConfig / LobbyConfig id), drop PLACEHOLDER, and route its click through openDetail with a spec whose buy() asks
+-- the server (see bundleSpec / packSpec). Fields: name, rarity (a Config.Rarities key), price (0 = FREE), currency
+-- ("scissors" | "robux"), and either base (one of our item ids, rendered live in 3D and tinted to the rarity as the
+-- stand-in) or img (an Assets name: the practice replica's generated RIVALS-style art).
+-------------------------------------------------------------------------------
+local function ph(name, rarity, price, art, currency)
+	local e = { PLACEHOLDER = true, name = name, rarity = rarity, price = price, currency = currency or "scissors" }
+	if string.sub(art, 1, 4) == "img:" then e.img = string.sub(art, 5) else e.base = art end
+	return e
+end
+local PLACEHOLDER_ITEMS = {
+	-- Skins tab: one skin per gun / melee (RIVALS sells these in its Skins bundles and the Daily strip)
+	Skins = {
+		ph("Pistol Skin", "Rare", 600, "Pistol"), ph("Suppressed Skin", "Rare", 750, "SilencedPistol"),
+		ph("Revolver Skin", "Epic", 1200, "Revolver"), ph("Mini Uzi Skin", "Rare", 750, "MiniUzi"),
+		ph("Dual Pistols Skin", "Rare", 900, "DualPistols"), ph("Rifle Skin", "Epic", 1500, "AutoRifle"),
+		ph("Semi-Auto Skin", "Epic", 1500, "SemiAuto"), ph("Shotgun Skin", "Epic", 1200, "PumpShotgun"),
+		ph("Sniper Skin", "Legendary", 2500, "Sniper"), ph("Knife Skin", "Rare", 600, "Knife"),
+	},
+	MeleeSkins = {
+		ph("Bat Skin", "Rare", 600, "Bat"), ph("Katana Skin", "Legendary", 2000, "Katana"),
+		ph("Shield Skin", "Epic", 1500, "RiotShield"), ph("Gloves", "Standard", 300, "Fists"), ph("Medkit Skin", "Rare", 500, "Medkit"),
+	},
+	-- Daily tab (RIVALS t0094.3s): 5 skins for Robux, then 5 emotes for keys (ours: scissors), the first one FREE
+	DailySkins = {
+		ph("Pistol Skin", "Rare", 240, "Pistol", "robux"), ph("Revolver Skin", "Rare", 240, "Revolver", "robux"),
+		ph("Mini Uzi Skin", "Rare", 240, "MiniUzi", "robux"), ph("Rifle Skin", "Epic", 308, "AutoRifle", "robux"),
+		ph("Sniper Skin", "Legendary", 480, "Sniper", "robux"),
+	},
+	DailyEmotes = {
+		ph("Shrug", "Standard", 0, "img:em_shrug"), ph("Take a Knee", "Standard", 50, "img:em_kneel"),
+		ph("Round & Round", "Rare", 75, "img:em_round"), ph("Side to Side", "Rare", 75, "img:em_side"),
+		ph("Holiday Jig", "Epic", 100, "img:em_holly"),
+	},
+	Emotes = {
+		ph("Shrug", "Standard", 50, "img:em_shrug"), ph("Take a Knee", "Standard", 50, "img:em_kneel"),
+		ph("Round & Round", "Rare", 75, "img:em_round"), ph("Side to Side", "Rare", 75, "img:em_side"),
+		ph("Holiday Jig", "Epic", 100, "img:em_holly"), ph("Director's Cut", "Legendary", 250, "img:emote_cut"),
+	},
+	Charms = {
+		ph("Top Hat", "Standard", 30, "img:ch_tophat"), ph("Dice", "Standard", 30, "img:ch_dice"), ph("Pawn", "Standard", 30, "img:ch_pawn"),
+		ph("Hook", "Standard", 30, "img:ch_hook"), ph("Recorder", "Standard", 30, "img:ch_flute"), ph("Cupcake", "Standard", 30, "img:ch_cupcake"),
+		ph("Cactus", "Rare", 40, "img:charm_cactus"), ph("Rainbow", "Rare", 40, "img:ch_rainbow"), ph("Puffer", "Rare", 40, "img:ch_puffer"),
+		ph("Tennis Ball", "Rare", 40, "img:ch_tennis"), ph("Coconut", "Rare", 40, "img:ch_coconut"), ph("Piggy Bank", "Epic", 60, "img:ch_piggy"),
+		ph("Rubber Duck", "Epic", 60, "img:ch_duck"), ph("Rocket", "Epic", 60, "img:ch_rocket"), ph("Basketball", "Epic", 60, "img:ch_basketball"),
+	},
+	Finishers = {
+		ph("Spin Out", "Standard", 100, "img:fin_1"), ph("Slip", "Standard", 100, "img:fin_2"), ph("Party Pop", "Standard", 100, "img:fin_3"),
+		ph("Knocked Out", "Standard", 100, "img:fin_4"), ph("Freeze", "Rare", 150, "img:fin_5"), ph("Shatter", "Rare", 150, "img:fin_6"),
+		ph("Storm", "Rare", 150, "img:fin_7"), ph("Zapped", "Epic", 200, "img:fin_8"), ph("Splat", "Epic", 200, "img:fin_9"),
+		ph("Sliced", "Epic", 200, "img:fin_10"), ph("Cubed", "Epic", 200, "img:fin_11"), ph("Crystal", "Legendary", 300, "img:fin_12"),
+		ph("Rainbow", "Legendary", 300, "img:fin_13"), ph("Anvil", "Legendary", 300, "img:fin_14"),
+	},
+}
+-- (2026-10-21, RIVALS shop layout) RIVALS' red "Claim your FREE reward now!" tip over the Daily tab shows only while a REAL
+-- (non-placeholder) free Daily item is up; set true to preview it over the placeholder FREE emote
+local DAILY_TIP_PREVIEW = false
 
 local Screen = {}
 local ctx = {}
@@ -278,7 +345,7 @@ end
 -- Theme.gradient.robux / yellow Theme.gradient.key) and a faint dark edge; the number is Rubik ExtraBold white over a soft
 -- shadow copy; Robux glyph LEFT of the number, the scissors render RIGHT of it (RIVALS' key buttons: "5 [key]").
 -- Built once with both faces; update() flips it in place. Owned (RIVALS t0099): the button goes, a black check sits there.
--- live = { owned = fn, amount = fn, ts, isz, z, noHover }. onBuy(tag) runs on click (Kit prices open the Kit room).
+-- live = { owned = fn, amount = fn, ts, isz, z, noHover, text, placeholder }. onBuy(tag) runs on click (Kit prices open the Kit room).
 -------------------------------------------------------------------------------
 -- (2026-10-21, port3) the number and the icon are laid out by hand (Scale) and always fit INSIDE the button: the pair is
 -- centred, the number's box is what's left after the icon and padding, and TextScaled (capped at ts by a UITextSizeConstraint)
@@ -298,6 +365,8 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	local ts = live.ts or math.floor(h * 0.66)
 	local isz = live.isz or math.floor(h * (isRobux and 0.6 or 0.74))
 	local pad, gap = math.max(5, math.floor(h * 0.12)), math.max(3, math.floor(h * 0.07))
+	-- (2026-10-21, RIVALS shop layout) live.text = a word instead of a number ("FREE", RIVALS' Daily): no currency icon
+	if live.text then isz, gap = 0, 0 end
 	local hh = math.min(h, math.floor(ts * 1.2)) -- the number's box height
 	-- children draw above their parent: the parent label is the soft shadow (2 px low), the white outlined number its child
 	local shadow = RK.label({ Name = "Num", Text = "0", FontFace = FX, TextSize = ts, TextScaled = true, TextColor3 = BLACK, TextTransparency = 0.7, TextXAlignment = CENTER,
@@ -308,7 +377,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	new("UITextSizeConstraint", { MaxTextSize = ts, Parent = txt })
 	stroke(txt, math.clamp(h * 0.05, 2, 4), 0)
 	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit,
-		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(isz / w, isz / h), ZIndex = z + 1, Parent = row })
+		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(isz / w, isz / h), ZIndex = z + 1, Visible = live.text == nil, Parent = row })
 	-- Robux glyph left of the number, the scissors right of it (RIVALS' key button: "5 [key]"); Rubik ExtraBold digits ~0.64 em
 	local function place(text)
 		local em = 0
@@ -336,11 +405,12 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 		end
 		if amt ~= st.amount then
 			st.amount = amt
-			shadow.Text = fmtN(amt)
+			shadow.Text = live.text or fmtN(amt)
 			txt.Text = shadow.Text
 			place(shadow.Text)
 		end
-		st.short = (kind == "scissors" or kind == "kit") and not own and (data().Credits or 0) < amt
+		-- (2026-10-21, RIVALS shop layout) a PLACEHOLDER price is never "can't afford": its click only says Coming soon
+		st.short = not live.placeholder and (kind == "scissors" or kind == "kit") and not own and (data().Credits or 0) < amt
 	end
 	update()
 	if curPage then table.insert(curPage.updaters, update) end
@@ -599,8 +669,78 @@ local function headerBar(pg, text, iconName, y)
 		BackgroundTransparency = Theme.alpha.header, BorderSizePixel = 0, Parent = pg }, { RK.corner(8),
 		new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.55, 0.3), NumberSequenceKeypoint.new(1, 1) }) }) })
 	local ic = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 4), Size = UDim2.fromOffset(54, 54), ZIndex = 2, Parent = bar })
-	ViewIcons.Icon(ic, iconName, { zoom = 1, zIndex = 2 })
+	if string.sub(iconName, 1, 4) == "img:" then -- (2026-10-21, RIVALS shop layout) an Assets image instead of a 3D icon
+		new("ImageLabel", { BackgroundTransparency = 1, Image = asset(string.sub(iconName, 5)), ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), ZIndex = 2, Parent = ic })
+	else
+		ViewIcons.Icon(ic, iconName, { zoom = 1, zIndex = 2 })
+	end
 	RK.label({ Text = text, FontFace = FB, TextSize = 38, Position = UDim2.fromOffset(76, 0), Size = UDim2.fromOffset(800, 62), ZIndex = 2, Parent = bar })
+end
+
+-------------------------------------------------------------------------------
+-- (2026-10-21, RIVALS shop layout) PLACEHOLDER tiles (Skins / Daily / Emotes / Charms / Finishers). They look like RIVALS'
+-- Daily tiles (rarity gradient + stroke, the name across the top, the rarity under it, a big render, the price overlapping
+-- the foot) but every click lands in comingSoon: a toast and a pop, no ctx.ask, no MarketplaceService.
+-------------------------------------------------------------------------------
+local lastSoon = 0
+local function comingSoon(spec, tag)
+	if tag then Kit.pop(tag, 1.1) end
+	if os.clock() - lastSoon < 0.8 then return end -- one toast per burst of clicks
+	lastSoon = os.clock()
+	local ok = pcall(Toast.show, { title = "Coming soon", text = ('"%s" is not in the shop yet.'):format(spec.name), icon = "padlock",
+		reward = spec.img and asset(spec.img) or nil })
+	if not ok and ctx.toast then ctx.toast("Coming soon", "info") end
+end
+local function placeholderRarity(spec)
+	local r = ctx.Config.Rarities
+	return (r[spec.rarity] or r.Standard).Color
+end
+local function placeholderTile(pg, hover, spec, x, y, w, h)
+	local col = placeholderRarity(spec)
+	local card = rarityTile(pg, col, x, y, w, h, 1, "TextButton")
+	card.Name = "PH_" .. spec.name
+	card:SetAttribute("Placeholder", true) -- PLACEHOLDER: swap for a real item tile (see PLACEHOLDER_ITEMS)
+	local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(w * 0.08, h * 0.2), Size = UDim2.fromOffset(w * 0.84, h * 0.66), ZIndex = 3, Parent = card })
+	if spec.base then
+		-- our own model as the stand-in, tinted toward the rarity colour
+		local vp = lit(itemArt(art, spec.base, nil, 1.15))
+		vp.Frame.ImageColor3 = col:Lerp(WHITE, 0.45)
+		vp.Frame.ZIndex = 3
+		turnOnHover(card, vp)
+	else
+		new("ImageLabel", { BackgroundTransparency = 1, Image = asset(spec.img), ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = art })
+	end
+	local nts = w > 200 and 24 or 21
+	stroke(RK.label({ Name = "ItemName", Text = spec.name, FontFace = FB, TextSize = nts, TextXAlignment = CENTER, TextTruncate = Enum.TextTruncate.AtEnd,
+		Position = UDim2.fromOffset(6, 6), Size = UDim2.fromOffset(w - 12, nts + 6), ZIndex = 4, Parent = card }), 2, 0.3)
+	stroke(RK.label({ Name = "Rarity", Text = string.upper(spec.rarity), FontFace = FS, TextSize = 15, TextColor3 = col:Lerp(WHITE, 0.55), TextXAlignment = CENTER,
+		Position = UDim2.fromOffset(6, nts + 10), Size = UDim2.fromOffset(w - 12, 18), ZIndex = 4, Parent = card }), 1.5, 0.3)
+	local tag
+	tag = priceTag(card, spec.currency == "robux" and "robux" or "scissors", spec.price, w / 2, h - 30, math.min(140, w - 30), PRICE_H,
+		function() comingSoon(spec, tag) end, { placeholder = true, text = spec.price == 0 and "FREE" or nil, z = 6, noHover = true })
+	hover(card)
+	card.Activated:Connect(function() comingSoon(spec, tag) end)
+	if ctx.tooltip then ctx.tooltip(card, spec.name, function() return "Coming soon to the shop." end) end
+	return card
+end
+-- a grid of placeholder tiles across the 1242 content column; returns the y under it
+local function placeholderGrid(pg, hover, list, y, cols, h)
+	local gap = 6
+	local w = (1242 - gap * (cols - 1)) / cols
+	for i, spec in list do
+		local c, r = (i - 1) % cols, (i - 1) // cols
+		placeholderTile(pg, hover, spec, 12 + c * (w + gap), y + r * (h + 40), w, h)
+	end
+	return y + math.ceil(#list / cols) * (h + 40)
+end
+-- (2026-10-21, RIVALS shop layout) is a REAL free Daily item up? (drives the red tip over the Daily tab)
+local function freeDailyUp()
+	for _, set in { PLACEHOLDER_ITEMS.DailySkins, PLACEHOLDER_ITEMS.DailyEmotes } do
+		for _, e in set do
+			if e.price == 0 and (DAILY_TIP_PREVIEW or not e.PLACEHOLDER) then return true end
+		end
+	end
+	return false
 end
 
 local RENDER = {}
@@ -922,6 +1062,51 @@ function RENDER.Scissors(pg, hover)
 	endPad(pg, y + math.ceil(#Config.GamePasses / 2) * 300)
 end
 
+-- (2026-10-21, RIVALS shop layout) Skins (PLACEHOLDER): RIVALS sells skins in bundles + the Daily strip; until Tacticals has
+-- skins, one tile per gun and per melee / gadget: our own model tinted to the rarity, "<Item> Skin", scissors price
+function RENDER.Skins(pg, hover)
+	headerBar(pg, "Weapon Skins", "img:tab_skins", 0)
+	local y = placeholderGrid(pg, hover, PLACEHOLDER_ITEMS.Skins, 62 + 34, 5, 190)
+	headerBar(pg, "Melee & Gadget Skins", "img:tab_skins", y + 4)
+	y = placeholderGrid(pg, hover, PLACEHOLDER_ITEMS.MeleeSkins, y + 4 + 62 + 34, 5, 190)
+	endPad(pg, y)
+end
+
+-- (2026-10-21, RIVALS shop layout) Daily (PLACEHOLDER, RIVALS t0094.3s): the refresh bar (RIVALS' "3 [key] refresh shop now"
+-- button is left out: what a refresh costs is a guess; the UTC-midnight reset is a guess too), 5 skins for Robux, then 5
+-- emotes for scissors with the first one FREE
+function RENDER.Daily(pg, hover)
+	local bar = new("Frame", { Name = "Refresh", Position = UDim2.fromOffset(12, 0), Size = UDim2.fromOffset(1242, 60), BackgroundColor3 = BLACK,
+		BackgroundTransparency = Theme.alpha.panel, BorderSizePixel = 0, Parent = pg }, { RK.corner(6) })
+	stroke(RK.label({ Text = "Daily Shop", FontFace = FB, TextSize = 32, Position = UDim2.fromOffset(20, 0), Size = UDim2.fromOffset(400, 60), ZIndex = 2, Parent = bar }), 2, 0.4)
+	local cd = RK.label({ Name = "Countdown", Text = "", RichText = true, FontFace = FB, TextSize = 34, TextXAlignment = Enum.TextXAlignment.Right,
+		Position = UDim2.fromOffset(500, 0), Size = UDim2.fromOffset(720, 60), ZIndex = 2, Parent = bar })
+	local dimHex = C.textDim:ToHex()
+	task.spawn(function()
+		while cd.Parent do
+			local t = os.date("!*t")
+			local left = 86400 - (t.hour * 3600 + t.min * 60 + t.sec)
+			cd.Text = ('<font size="24" color="#%s">shop will refresh in</font>  %dh %dm %ds'):format(dimHex, left // 3600, left % 3600 // 60, left % 60)
+			task.wait(1)
+		end
+	end)
+	local y = placeholderGrid(pg, hover, PLACEHOLDER_ITEMS.DailySkins, 60 + 26, 5, 190)
+	y = placeholderGrid(pg, hover, PLACEHOLDER_ITEMS.DailyEmotes, y, 5, 190)
+	endPad(pg, y)
+end
+
+-- (2026-10-21, RIVALS shop layout) Emotes / Charms / Finishers (PLACEHOLDER): RIVALS' section header + a 6-wide tile grid of
+-- the replica's generated art
+local function cosmeticPage(title, icon, list)
+	return function(pg, hover)
+		headerBar(pg, title, icon, 0)
+		endPad(pg, placeholderGrid(pg, hover, list, 62 + 34, 6, 200))
+	end
+end
+RENDER.Emotes = cosmeticPage("Emotes", "img:emote_cut", PLACEHOLDER_ITEMS.Emotes)
+RENDER.Charms = cosmeticPage("Charms", "img:ch_dice", PLACEHOLDER_ITEMS.Charms)
+RENDER.Finishers = cosmeticPage("Finishers", "img:fin_1", PLACEHOLDER_ITEMS.Finishers)
+
 -------------------------------------------------------------------------------
 -- (2026-10-21, RIVALS 1:1) Detail card = the replica's offer popup (t0074): the shop page hides behind a 0.35 black dim
 -- (wallet dimmed under it), an 818x551 box in the item's colour (dark gradient) at 551,231 with the 76 px title top left
@@ -1034,7 +1219,19 @@ end
 -- Frame
 -------------------------------------------------------------------------------
 -- the zoom = each live 3D icon filling the same 60x60 box that rises out of its tab
-local TABS = { { "Featured", "Medal", 0.95 }, { "Bundles", "Crate", 1.1 }, { "Arms", "Weapon", 1.35 }, { "Scissors", "Scissors", 1.4 } }
+-- (2026-10-21, RIVALS shop layout) RIVALS' order and naming (normal theme: Home, Bundles, Skins, ..., Keys): { key, icon, zoom,
+-- label }. Arms (our gear) sits right after Bundles, where RIVALS sells its weapon items; Scissors = RIVALS' Keys. An icon
+-- "img:<Assets name>" is a flat image (the placeholder tabs), anything else a live 3D ViewIcons model.
+local TABS = {
+	{ "Featured", "Medal", 0.95, label = "Home" }, { "Bundles", "Crate", 1.1 }, { "Arms", "Weapon", 1.35 },
+	{ "Skins", "img:tab_skins" }, { "Daily", "img:tab_daily" }, { "Emotes", "img:emote_cut" }, { "Charms", "img:ch_dice" },
+	{ "Finishers", "img:fin_1" }, { "Scissors", "Scissors", 1.4 },
+}
+local TAB_ALIAS = { Home = "Featured", Keys = "Scissors", Gear = "Arms" }
+local function resolveTab(t)
+	t = TAB_ALIAS[t] or t
+	return RENDER[t] and t or "Featured"
+end
 
 local function build()
 	gui = new("ScreenGui", { Name = "ShopUI2", IgnoreGuiInset = true, ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
@@ -1062,16 +1259,30 @@ local function build()
 		local vp
 		if t[2] == "Weapon" then
 			vp = ViewIcons.Viewport(hold, ViewIcons.Weapon("AutoRifle"), { view = CFrame.Angles(0, 0, math.rad(-28)) * ViewIcons.GunView, zoom = t[3], zIndex = 2 })
+		elseif string.sub(t[2], 1, 4) == "img:" then
+			-- (2026-10-21, RIVALS shop layout) the placeholder tabs use the replica's flat art (no 3D model of ours fits)
+			new("ImageLabel", { BackgroundTransparency = 1, Image = asset(string.sub(t[2], 5)), ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), ZIndex = 2, Parent = hold })
 		else
 			vp = ViewIcons.Icon(hold, t[2], { zoom = t[3], zIndex = 2 })
 		end
-		lit(vp)
-		b.MouseEnter:Connect(function() vp.SetHover(true) end)
-		b.MouseLeave:Connect(function() vp.SetHover(tab == t[1]) end)
-		stroke(RK.label({ Name = "Label", Text = t[1], FontFace = FB, TextSize = 21, TextXAlignment = CENTER, Position = UDim2.fromOffset(-4, 16), Size = UDim2.fromOffset(TAB_W + 8, 28), ZIndex = 3, Parent = b }), 2, 0)
+		if vp then
+			lit(vp)
+			b.MouseEnter:Connect(function() vp.SetHover(true) end)
+			b.MouseLeave:Connect(function() vp.SetHover(tab == t[1]) end)
+		end
+		stroke(RK.label({ Name = "Label", Text = t.label or t[1], FontFace = FB, TextSize = 21, TextXAlignment = CENTER, Position = UDim2.fromOffset(-4, 16), Size = UDim2.fromOffset(TAB_W + 8, 28), ZIndex = 3, Parent = b }), 2, 0)
 		Kit.bindButton(b, { hover = 1.05 })
 		b.Activated:Connect(function() Screen.SetTab(t[1]) end)
 		tabBtns[t[1]] = { b = b, vp = vp }
+	end
+	-- (2026-10-21, RIVALS shop layout) RIVALS' red "Claim your FREE reward now!" tip (valueTag: red pill, pointer down) over
+	-- the Daily tab, clear of its rising icon; only while a real free Daily item is up (freeDailyUp). Click = the Daily tab.
+	if tabBtns.Daily and freeDailyUp() then
+		local dx = tabBtns.Daily.b.Position.X.Offset + TAB_W / 2
+		local tip = valueTag(body, dx, TAB_Y - 34 - 32, "Claim your FREE reward now!", 300, 32, 19, 6)
+		tip.Name = "DailyTip"
+		local hit = new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 8, Parent = tip })
+		hit.Activated:Connect(function() Screen.SetTab("Daily") end)
 	end
 	-- (2026-10-21, port3) the kit's default closeButton size (another pass sets it to 112x58; that size is the fallback while
 	-- Kit.closeButton still needs one), 12 px outside the page panel's top-right corner, top-aligned with it
@@ -1192,9 +1403,7 @@ function Screen.Refresh()
 end
 
 function Screen.SetTab(t)
-	if t == "Home" then t = "Featured" end
-	if not RENDER[t] then t = "Featured" end
-	tab = t
+	tab = resolveTab(t) -- (2026-10-21, RIVALS shop layout) Home / Keys / Gear aliases
 	if ready and isOpen then showTab() end
 end
 
@@ -1243,8 +1452,7 @@ function Screen.Init(context)
 end
 function Screen.Open(startTab)
 	if startTab then
-		tab = startTab == "Home" and "Featured" or startTab
-		if not RENDER[tab] then tab = "Featured" end
+		tab = resolveTab(startTab)
 	end
 	if isOpen then
 		if ready then Screen.Refresh(); showTab() end

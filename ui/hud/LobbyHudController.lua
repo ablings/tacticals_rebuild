@@ -363,15 +363,21 @@ function LobbyHud.Start()
 	-- then it scrolls; it was always 536 tall, a big dark box holding one row. buildList sets the height.
 	local LB_W, LB_H = 320, 432
 	local lbH = 78
-	local lb = new("Frame", { Name = "PlayerList", Position = UDim2.fromOffset(1590, 96), Size = UDim2.fromOffset(LB_W, lbH), BackgroundColor3 = Color3.new(0, 0, 0),
-		BackgroundTransparency = 0.25, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 4) }) })
+	-- (2026-10-21, RIVALS 1:1) RIVALS' corner list (t0166 / t0193 / t0247 / t0270): a compact translucent black panel under the
+	-- gear, colours / fonts from UIKit.Rivals.Theme (names Rubik Medium, the number Rubik SemiBold, all white).
+	local LBF_NAME, LBF_NUM = RTheme.font.medium, RTheme.font.heavy
+	local lb = new("Frame", { Name = "PlayerList", Position = UDim2.fromOffset(1590, 96), Size = UDim2.fromOffset(LB_W, lbH), BackgroundColor3 = RC.textDark,
+		BackgroundTransparency = rtok("listAlpha", 0.3), Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 4) }) })
 	-- the x and the column icon sit in a 34 px header strip, so they keep their size while the panel's height changes
 	local lbHead = new("Frame", { Name = "Header", BackgroundTransparency = 1, Size = UDim2.fromOffset(LB_W, 34), Parent = lb })
-	local lbHide = new("TextButton", { Name = "Hide", Text = "×", TextColor3 = Color3.new(1, 1, 1), FontFace = LB_NAME, TextSize = 30, BackgroundTransparency = 1,
+	local lbHide = new("TextButton", { Name = "Hide", Text = "×", TextColor3 = RC.text, FontFace = LBF_NAME, TextSize = 30, BackgroundTransparency = 1,
 		Position = UDim2.fromOffset(4, 0), Size = UDim2.fromOffset(28, 30), Parent = lbHead })
-	local lbMode = new("TextButton", { Name = "Mode", Text = "", BackgroundTransparency = 1, Position = UDim2.fromOffset(272, 1), Size = UDim2.fromOffset(34, 32), Parent = lbHead })
+	local lbMode = new("TextButton", { Name = "Mode", Text = "", BackgroundTransparency = 1, Position = UDim2.fromOffset(280, 4), Size = UDim2.fromOffset(26, 26), Parent = lbHead })
+	-- (2026-10-21, RIVALS 1:1) the column icon is one ImageLabel whose Image changes (was destroyed + rebuilt per switch)
+	local lbModeIcon = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = "", ImageColor3 = RC.text, ScaleType = Enum.ScaleType.Fit,
+		Size = UDim2.fromScale(1, 1), Parent = lbMode })
 	local lbList = new("ScrollingFrame", { Name = "Rows", Position = UDim2.fromOffset(0, 34), Size = UDim2.fromOffset(LB_W, lbH - 34), BackgroundTransparency = 1, BorderSizePixel = 0,
-		ScrollBarThickness = 5, ScrollBarImageColor3 = hex("#8E8D94"), ScrollBarImageTransparency = 0.3, CanvasSize = UDim2.new(), Parent = lb })
+		ScrollBarThickness = 5, ScrollBarImageColor3 = RC.track, ScrollBarImageTransparency = 0.3, CanvasSize = UDim2.new(), Parent = lb })
 
 
 	---------------------------------------------------------------------------------------------- bottom nav (RIVALS' HUD bar)
@@ -891,58 +897,81 @@ function LobbyHud.Start()
 		return p:GetAttribute(lbStat) or 0
 	end
 	local function modeIcon()
-		for _, c in lbMode:GetChildren() do c:Destroy() end
 		-- (2026-10-18, live RIVALS) the column icon is a white silhouette: flame = streak, burst = level, trophy shield = rank
-		local id = (lbStat == "Rank" and Kit.ICONS.rank) or (lbStat == "Level" and Kit.ICONS.level) or (lbStat == "Streak" and Kit.ICONS.streak) or Kit.ICONS.trophy
-		Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = id, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), Parent = lbMode })
+		-- (2026-10-21, RIVALS 1:1) set in place on the one ImageLabel (no destroy / recreate)
+		lbModeIcon.Image = (lbStat == "Rank" and Kit.ICONS.rank) or (lbStat == "Level" and Kit.ICONS.level) or (lbStat == "Streak" and Kit.ICONS.streak) or Kit.ICONS.trophy
 	end
 	local lastLB
-	-- (2026-10-21, RIVALS pass) rows are kept by UserId: a row's contents rebuild only when its own numbers change, a re-sort
-	-- slides rows to their new slot, newcomers pop in, leavers shrink away. Your own row has a soft field-green fill (no edge bar).
-	-- Rows hover-lift (UIScale 1.02); they are centre-anchored so the lift grows evenly.
-	local lbRows = {} -- [UserId] = { row, scale, key, p }
-	local function fillRow(row, p)
-		for _, c in row:GetChildren() do if not c:IsA("UIScale") then c:Destroy() end end
-		new("Frame", { Name = "Divider", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 40), Size = UDim2.fromOffset(LB_W, 1), BackgroundColor3 = Color3.new(1, 1, 1),
-			BackgroundTransparency = 0.92, BorderSizePixel = 0, Parent = row })
+	-- (2026-10-21, RIVALS 1:1) rows are kept by UserId and stay steady: each row's pieces (badge, name, device icon, streak flame,
+	-- number / rank emblem) are built ONCE when the player first shows and are then updated in place (Text / Image / Visible /
+	-- Position), never destroyed and rebuilt. A re-sort slides rows to their new slot, newcomers pop in, leavers shrink away.
+	-- All rows look the same (RIVALS: no zebra, no tint); your own row carries your badge left of the name: Premium if you
+	-- have it, else your level badge with your level. Rows hover-lift (UIScale 1.02) with a faint white wash.
+	local lbRows = {} -- [UserId] = { row, scale, key, p, parts }
+	local okBd, Bd = pcall(function() return require(UIKit:WaitForChild("Badges", 2)) end)
+	if not okBd then Bd = nil end
+	local TextServiceLB = game:GetService("TextService")
+	local function buildRow(row)
+		local parts = {}
+		new("Frame", { Name = "Divider", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(0, 40), Size = UDim2.fromOffset(LB_W, 1), BackgroundColor3 = RC.white,
+			BackgroundTransparency = 0.9, BorderSizePixel = 0, Parent = row })
 		-- (2026-10-20, Edward) Roblox badges: Premium before the name, verified after (UIKit.Badges; Settings > Display Badges)
-		local okBd, Bd = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
-		if (okBd and Bd and Bd.Prefix(p) ~= "") or (not okBd and p.MembershipType == Enum.MembershipType.Premium) then
-			Kit.label({ Text = utf8.char(0xE001), FontFace = LB_NUM, TextSize = 20, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
-		end
-		local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
+		parts.prem = Kit.label({ Name = "Premium", Text = utf8.char(0xE001), FontFace = LBF_NUM, TextSize = 20, TextColor3 = RC.text, Visible = false,
+			Position = UDim2.fromOffset(9, 0), Size = UDim2.fromOffset(24, 40), Parent = row })
+		parts.lv = Kit.new("ImageLabel", { Name = "LevelBadge", BackgroundTransparency = 1, Image = RAssets.hud.levelbadge, ScaleType = Enum.ScaleType.Fit, Visible = false,
+			Position = UDim2.fromOffset(8, 7), Size = UDim2.fromOffset(26, 26), Parent = row })
+		parts.lvN = Kit.label({ Name = "N", Text = "", FontFace = R_BOLD, TextSize = 13, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
+			Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(26, 26), Parent = parts.lv })
+		parts.name = Kit.label({ Name = "PlayerName", Text = "", FontFace = LBF_NAME, TextSize = 21, TextColor3 = RC.text, TextTruncate = Enum.TextTruncate.AtEnd,
+			Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(196, 40), Parent = row })
 		-- (2026-10-20, RIVALS) the device icon right after the name (UIKit.Badges.DeviceIcon)
-		local dv = (okBd and Bd and Bd.DeviceIcon) and Bd.DeviceIcon(p) or nil
-		if dv then
-			local nameText = p.DisplayName .. Bd.Suffix(p)
-			-- (2026-10-21, AI-tells cleanup) names draw in Rubik now; Enum.Font has no Rubik, so measure with Arial (close widths, no yield)
-			local w = game:GetService("TextService"):GetTextSize(nameText, 21, Enum.Font.Arial, Vector2.new(400, 40)).X
-			Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = dv, ScaleType = Enum.ScaleType.Fit,
-				Position = UDim2.fromOffset(math.min(44 + w + 6, 222), 11), Size = UDim2.fromOffset(18, 18), Parent = row })
-		end
-		Kit.label({ Text = p.DisplayName .. ((okBd and Bd) and Bd.Suffix(p) or ""), FontFace = LB_NAME, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextTruncate = Enum.TextTruncate.AtEnd,
-			Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(streakN > 0 and lbStat ~= "Streak" and 164 or 196, 40), Parent = row })
+		parts.device = Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = "", ImageColor3 = RC.text, ScaleType = Enum.ScaleType.Fit, Visible = false,
+			Position = UDim2.fromOffset(222, 11), Size = UDim2.fromOffset(18, 18), Parent = row })
 		-- the win streak next to the name (RIVALS): a flame with the number over it
-		if streakN > 0 and lbStat ~= "Streak" then Kit.streak(row, streakN, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3) end
-		if lbStat == "Rank" and RankArtLB then
-			local r = RankArtLB.Of(p)
-			if r.image then
-				Kit.new("ImageLabel", { BackgroundTransparency = 1, Image = r.image, ScaleType = Enum.ScaleType.Fit,
-					Position = UDim2.fromOffset(266, 3), Size = UDim2.fromOffset(34, 34), Parent = row })
-			else
-				Kit.label({ Text = "-", FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.fromRGB(150, 150, 156), TextXAlignment = Enum.TextXAlignment.Right,
-					Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
-			end
-		else
-			Kit.label({ Text = tostring(statValue(p)), FontFace = LB_NUM, TextSize = 22, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Right,
-				Position = UDim2.fromOffset(240, 0), Size = UDim2.fromOffset(60, 40), Parent = row })
-		end
+		parts.streak = Kit.streak(row, 0, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3)
+		parts.streak.Visible = false
+		parts.rank = Kit.new("ImageLabel", { Name = "RankEmblem", BackgroundTransparency = 1, Image = "", ScaleType = Enum.ScaleType.Fit, Visible = false,
+			Position = UDim2.fromOffset(266, 3), Size = UDim2.fromOffset(34, 34), Parent = row })
+		parts.value = Kit.label({ Name = "Value", Text = "", FontFace = LBF_NUM, TextSize = 24, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Right,
+			Position = UDim2.fromOffset(230, 0), Size = UDim2.fromOffset(70, 40), Parent = row })
 		Kit.toScale(row, Vector2.new(LB_W, 40))
+		return parts
+	end
+	local function updateRow(e, p)
+		local parts = e.parts
+		local mine = p == player
+		local premium = (Bd and Bd.Prefix(p) ~= "") or (not Bd and p.MembershipType == Enum.MembershipType.Premium)
+		parts.prem.Visible = premium
+		parts.lv.Visible = mine and not premium
+		parts.lvN.Text = tostring(tonumber(p:GetAttribute("Level")) or 1)
+		local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
+		local showStreak = streakN > 0 and lbStat ~= "Streak"
+		local nameText = p.DisplayName .. (Bd and Bd.Suffix(p) or "")
+		parts.name.Text = nameText
+		local nameW = showStreak and 164 or 196
+		parts.name.Size = UDim2.fromScale(nameW / LB_W, 1)
+		local dv = (Bd and Bd.DeviceIcon) and Bd.DeviceIcon(p) or nil
+		parts.device.Visible = dv ~= nil
+		if dv then
+			parts.device.Image = dv
+			-- (2026-10-21, AI-tells cleanup) names draw in Rubik; Enum.Font has no Rubik, so measure with Arial (close widths, no yield)
+			local w = TextServiceLB:GetTextSize(nameText, 21, Enum.Font.Arial, Vector2.new(400, 40)).X
+			parts.device.Position = UDim2.fromScale(math.min(44 + math.min(w, nameW) + 6, 222) / LB_W, 11 / 40)
+		end
+		parts.streak.Visible = showStreak
+		local sn = parts.streak:FindFirstChild("N")
+		if sn then sn.Text = tostring(streakN) end
+		local r = (lbStat == "Rank" and RankArtLB) and RankArtLB.Of(p) or nil
+		parts.rank.Visible = r ~= nil and r.image ~= nil
+		parts.rank.Image = (r and r.image) or ""
+		parts.value.Visible = not parts.rank.Visible
+		parts.value.Text = r and "-" or tostring(statValue(p))
+		parts.value.TextColor3 = r and RC.textDim or RC.text
 	end
 	local function buildList(force)
 		local ps = Players:GetPlayers()
 		local key = lbStat
-		for _, p in ps do key ..= p.UserId .. "/" .. tostring(statValue(p)) .. tostring(p:GetAttribute("RankTier")) .. "/" .. tostring(p:GetAttribute("WinStreak")) .. "/" .. tostring(p:GetAttribute("Device")) .. tostring(p:GetAttribute("Setting_DisplayBadges")) end -- (device / badges change -> rebuild)
+		for _, p in ps do key ..= p.UserId .. "/" .. tostring(statValue(p)) .. tostring(p:GetAttribute("RankTier")) .. "/" .. tostring(p:GetAttribute("WinStreak")) .. "/" .. tostring(p:GetAttribute("Device")) .. tostring(p:GetAttribute("Setting_DisplayBadges")) .. "/" .. tostring(p:GetAttribute("Level")) end -- (device / badges / level change -> update)
 		if key == lastLB and not force then return end
 		lastLB = key
 		table.sort(ps, function(a, b)
@@ -962,40 +991,37 @@ function LobbyHud.Start()
 		local present = {}
 		for i, p in ps do
 			present[p.UserId] = true
-			local mine = p == player
 			local slot = UDim2.fromScale(0.5, (i - 1) * 40 / canvasH)
-			local baseT = mine and 0.82 or (i % 2 == 0 and 0.97 or 1)
 			local e = lbRows[p.UserId]
 			if e and e.row.Parent == nil then e = nil end
 			if not e then
 				local row = new("TextButton", { Name = p.Name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0), Position = slot, Size = UDim2.fromScale(1, 40 / canvasH),
-					BackgroundColor3 = mine and Theme.color.field or Color3.new(1, 1, 1), BackgroundTransparency = baseT, Parent = lbList })
+					BackgroundColor3 = RC.white, BackgroundTransparency = 1, Parent = lbList })
 				e = { row = row, p = p }
 				lbRows[p.UserId] = e
+				e.parts = buildRow(row)
 				Kit.popIn(row, (i - 1) * 0.03) -- makes the row's PopScale, reused for the hover lift
 				e.scale = row:FindFirstChild("PopScale")
 				-- click a row: RIVALS' player menu slides out to the left of the list (UIKit.PlayerCards)
 				row.Activated:Connect(function() if PlayerCards then PlayerCards.Menu(e.p, row, 1590) end end)
 				row.MouseEnter:Connect(function()
-					row.BackgroundTransparency = math.max(0, (row:GetAttribute("BaseT") or 1) - 0.06)
+					row.BackgroundTransparency = 0.94
 					if e.scale then Kit.tween(e.scale, 0.1, { Scale = 1.02 }) end
 				end)
 				row.MouseLeave:Connect(function()
-					row.BackgroundTransparency = row:GetAttribute("BaseT") or 1
+					row.BackgroundTransparency = 1
 					if e.scale then Kit.tween(e.scale, 0.1, { Scale = 1 }) end
 				end)
 			else
 				e.p = p
 				if e.row.Position ~= slot then Kit.tween(e.row, 0.25, { Position = slot }, Enum.EasingStyle.Quad) end
 				e.row.Size = UDim2.fromScale(1, 40 / canvasH)
-				e.row.BackgroundTransparency = baseT
 			end
-			e.row:SetAttribute("BaseT", baseT)
 			local rowKey = lbStat .. "/" .. tostring(statValue(p)) .. "/" .. tostring(p:GetAttribute("RankTier")) .. "/" .. tostring(p:GetAttribute("WinStreak")) .. "/"
-				.. tostring(p:GetAttribute("Device")) .. "/" .. tostring(p:GetAttribute("Setting_DisplayBadges")) .. "/" .. p.DisplayName
+				.. tostring(p:GetAttribute("Device")) .. "/" .. tostring(p:GetAttribute("Setting_DisplayBadges")) .. "/" .. tostring(p:GetAttribute("Level")) .. "/" .. p.DisplayName
 			if rowKey ~= e.key or force then
 				e.key = rowKey
-				fillRow(e.row, p)
+				updateRow(e, p)
 			end
 		end
 		for uid, e in lbRows do

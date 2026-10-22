@@ -5,11 +5,14 @@
 --     Invite / Challenge. Yourself: View Profile / View Avatar. Challenge + Spectate only show once the Tacticals session's
 --     ReplicatedStorage.LobbySocial remote exists (contract in notes/lobby_social.md).
 --   * PlayerCards.Profile(p, world): the profile card over a blurred lobby, laid out like live RIVALS (checked 2026-10-17):
---     headshot + wins + win rate on the left, name, then Level / ELO / Rank badges, then a Career row (Matches, Kills,
---     Headshots, HS %) where RIVALS has Most Played Weapons. Red X under it, plus Invite to PARTY / Challenge 1v1 for
---     anyone else (from the list or the world).
+--     headshot + gold trophy + wins + win rate on the left; name + device, @username, the blue level seal, then Most Played
+--     Weapons (2026-10-21, RIVALS 1:1: ELO / Rank / Career tiles dropped from the card). Red X under it, plus Invite to
+--     PARTY / Challenge 1v1 for anyone else (from the list or the world).
 --   * PlayerCards.StartWorld(allowed): hovering a character shows "Double click to view profile" (touch: tap), a double
 --     click / tap opens the card. allowed() says when the lobby is up (no menu, no duel, no training).
+-- (2026-10-21, RIVALS 1:1) the menu and the profile card are now copies of RIVALS' own (notes/ui_rivals/rivals_live_notes.md,
+-- "Profile, player menu, level badge, news"): colours / fonts from UIKit.Rivals.Theme (tok(): Theme.profile[name] overrides the
+-- replica's measured values), icons / art from UIKit.Rivals.Assets, the level as UIKit.Kit.levelSeal. Behaviour unchanged.
 -- Stats come from attributes the server publishes (PublicStats: Level, Wins, StatMatches, StatKills, StatHeadshots; RankedCore:
 -- Rank*). Built in 1920x1080 design px on a 16:9 canvas, then Kit.toScale (Scale only).
 local Players = game:GetService("Players")
@@ -23,19 +26,43 @@ local Lighting = game:GetService("Lighting")
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
 local Kit = require(UIKit:WaitForChild("Kit"))
-local RankArt
-pcall(function() RankArt = require(UIKit:WaitForChild("RankArt", 10)) end)
 local new, hex = Kit.new, Theme.hex
 local player = Players.LocalPlayer
+-- (2026-10-21, RIVALS 1:1) UIKit.Rivals: Theme (colours / fonts), Assets (icons, art)
+local RIV = UIKit:WaitForChild("Rivals")
+local RTheme = require(RIV:WaitForChild("Theme"))
+local RAssets = require(RIV:WaitForChild("Assets"))
+local RC, RF = RTheme.color, RTheme.font
+local F_BOLD = Font.new(RF.medium.Family, Enum.FontWeight.Bold) -- Rubik Bold (the replica's FB)
+local function tok(name, default)
+	local t = RTheme.profile
+	if t and t[name] ~= nil then return t[name] end
+	return default
+end
+-- an asset by key from any table of UIKit.Rivals.Assets (hud.arrow, tasks.trophy_gold, ...), nil if absent
+local function rasset(key)
+	if not key then return nil end
+	for _, t in RAssets do
+		if type(t) == "table" and type(t[key]) == "string" and t[key] ~= "" then return t[key] end
+	end
+	return nil
+end
+-- the shared menu backdrop (Modules.Shared.UITheme: blur + scrim + vignette), nil in a place without it
+local function sharedTheme()
+	local ok, m = pcall(function()
+		local sh = ReplicatedStorage:FindFirstChild("Modules")
+		sh = sh and sh:FindFirstChild("Shared")
+		local u = sh and sh:FindFirstChild("UITheme")
+		return u and require(u)
+	end)
+	return ok and m or nil
+end
 
--- (2026-10-21, AI-tells cleanup) Builder Sans is out: names / body in Rubik (F_NAME bold, F_SUB medium), numbers in Oswald Bold (F_NUM)
+-- (2026-10-21, AI-tells cleanup) Builder Sans is out: names / body in Rubik (F_NAME bold, F_SUB medium)
 local RUBIK = "rbxassetid://12187365977"
 local F_NAME = Font.new(RUBIK, Enum.FontWeight.Bold)
 local F_SUB = Font.new(RUBIK, Enum.FontWeight.Medium)
-local F_NUM = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
-local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, RIVALS pass) Edward's final font decision: Oswald Bold headings (Montserrat read as AI-made)
-local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
-local OLIVE_HI = hex("#8DBF5A")
+local BONE, FIELD, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#0C0E0B") -- (2026-10-21, RIVALS 1:1) the request popups still use these; Oswald / olive / gun-grey retired with the old card + menu
 
 local PlayerCards = {}
 
@@ -120,7 +147,10 @@ local function closeProfile()
 	if not profile then return end
 	local p = profile
 	profile = nil
-	if blur then Kit.tween(blur, 0.2, { Size = 0 }) end
+	if p.backdrop then
+		local UITheme = sharedTheme()
+		if UITheme then UITheme.HideBackdrop("PlayerCard") end -- (2026-10-21, RIVALS 1:1) the shared backdrop lets go
+	elseif blur then Kit.tween(blur, 0.2, { Size = 0 }) end
 	Kit.tween(p.tint, 0.15, { BackgroundTransparency = 1 })
 	Kit.close(p.card, function() p.root:Destroy(); p.tint:Destroy() end)
 	for _, b in p.buttons do b.Visible = false end
@@ -128,89 +158,142 @@ end
 PlayerCards.CloseProfile = closeProfile
 function PlayerCards.ProfileOpen() return profile ~= nil end
 
-local function statTile(parent, x, y, value, name, accent)
-	local t = new("Frame", { Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(176, 84), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 3, Parent = parent },
-		{ Kit.corner(8) }) -- (2026-10-21, AI-tells cleanup) hairline border removed; the dark fill separates the tile
-	local v = label(t, value, F_NUM, 34, 0, 8, 176, 42, accent or BONE, Enum.TextXAlignment.Center, 4)
-	v.TextTruncate = Enum.TextTruncate.None
-	label(t, name, F_SUB, 17, 0, 52, 176, 22, FIELD, Enum.TextXAlignment.Center, 4)
-	return t
+-- (2026-10-21, RIVALS 1:1) "Most Played Weapons": the player's top 4 items by matches played (then kills). Sources, best first:
+-- the Player attribute MostPlayed ("Id,Id,Id,Id", for when PublicStats publishes it), your own Data.WeaponStats (Registry
+-- PlayerData replica), else RIVALS' starter four in our kit (Automatic Rifle / Pistol / Fists / Frag as placeholders).
+local MOST_PLAYED_FALLBACK = { "AutoRifle", "Pistol", "Fists", "Frag" }
+local function lobbyConfig()
+	local ok, cfg = pcall(function() return require(ReplicatedStorage.Modules.Shared.Config.LobbyConfig) end)
+	return ok and cfg or nil
+end
+local function itemName(id)
+	local cfg = lobbyConfig()
+	local it = cfg and cfg.Items and cfg.Items[id]
+	return (it and it.Name) or id
+end
+local function topFromStats(ws)
+	if type(ws) ~= "table" then return nil end
+	local cfg = lobbyConfig()
+	local list = {}
+	for id, r in ws do
+		if type(r) == "table" and (tonumber(r.Matches) or 0) > 0 and (not cfg or not cfg.Items or cfg.Items[id]) then
+			table.insert(list, { id = id, m = tonumber(r.Matches) or 0, k = tonumber(r.Kills) or 0 })
+		end
+	end
+	if #list == 0 then return nil end
+	table.sort(list, function(a, b) if a.m ~= b.m then return a.m > b.m end return a.k > b.k end)
+	local out = {}
+	for i = 1, math.min(4, #list) do out[i] = list[i].id end
+	return out
+end
+local function mostPlayed(p, myData)
+	local attr = p:GetAttribute("MostPlayed")
+	if type(attr) == "string" and attr ~= "" then
+		local out = {}
+		for id in attr:gmatch("[^,%s]+") do if #out < 4 then table.insert(out, id) end end
+		if #out > 0 then return out end
+	end
+	if p == player and myData then
+		local top = topFromStats(myData.WeaponStats)
+		if top then return top end
+	end
+	return MOST_PLAYED_FALLBACK
+end
+-- your own PlayerStore replica (the client Registry's PlayerData), fetched once in the background
+local myData
+task.spawn(function()
+	local ps = player:WaitForChild("PlayerScripts", 30)
+	local reg = ps and ps:FindFirstChild("Registry", true)
+	local pd = reg and reg:WaitForChild("PlayerData", 30)
+	if not pd then return end
+	local ok, replica = pcall(function() return require(pd):GetMyReplica() end)
+	if ok and replica then myData = replica.Data end
+end)
+-- the lobby's live 3D item icons (LobbyUIController/Icons): a ViewportFrame render of the item, else its name only
+local IconsMod
+local function icons()
+	if IconsMod ~= nil then return IconsMod or nil end
+	IconsMod = false
+	pcall(function()
+		local ps = player:FindFirstChild("PlayerScripts")
+		local luc = ps and ps:FindFirstChild("LobbyUIController", true)
+		local m = luc and luc:FindFirstChild("Icons")
+		if m then IconsMod = require(m) end
+	end)
+	return IconsMod or nil
 end
 
+-- (2026-10-21, RIVALS 1:1) the profile card, a copy of RIVALS' (notes/ui_rivals/rivals_normal/profile_card.png, measured on
+-- the 1920x1010 capture / 0.935 into design px; the replica's openProfile): a 498 x 292 dark card with a faded map picture at
+-- the top. Left column: headshot, gold trophy, "N wins", "N% win rate". Right: name + device icon, @user, the centred blue
+-- level seal (UIKit.Kit.levelSeal) with a grey "Level" under it, then "Most Played Weapons" with four tiles (render + name).
+-- Red X centred under it (plus our Invite to PARTY / Challenge 1v1 for anyone else). Behind: the shared menu backdrop
+-- (Modules.Shared.UITheme.ShowBackdrop) when the place has it, else our blur + scrim. Our ELO / Rank / Career numbers are
+-- gone from the card (RIVALS shows none of them); the attributes are untouched.
+local W, H, CX, CY = 498, 292, 711, 344
 function PlayerCards.Profile(p: Player, world: boolean?)
 	ensureGui()
 	PlayerCards.CloseMenu()
 	if profile then profile.root:Destroy(); profile.tint:Destroy(); profile = nil end
-	blur = Lighting:FindFirstChild("PlayerCardBlur") or new("BlurEffect", { Name = "PlayerCardBlur", Size = 0, Parent = Lighting })
+	local UITheme = sharedTheme()
+	if not UITheme then blur = Lighting:FindFirstChild("PlayerCardBlur") or new("BlurEffect", { Name = "PlayerCardBlur", Size = 0, Parent = Lighting }) end
 	-- the tint covers the whole screen (outside the 16:9 canvas too); a click on it closes
-	local tint = new("TextButton", { Name = "ProfileTint", Text = "", AutoButtonColor = false, Size = UDim2.fromScale(1, 1), BackgroundColor3 = Theme.color.scrim,
+	local tint = new("TextButton", { Name = "ProfileTint", Text = "", AutoButtonColor = false, Size = UDim2.fromScale(1, 1), BackgroundColor3 = RC.scrim,
 		BackgroundTransparency = 1, ZIndex = 1, Parent = gui })
 	local root = new("Frame", { Name = "Profile", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), ZIndex = 2, Parent = canvas })
-	-- live RIVALS layout (2026-10-17 check): left column = headshot, wins, win rate; right = name, then three badges
-	-- (RIVALS: Level / Streak / Rank; ours: Level / ELO / Rank), then a row of four tiles (RIVALS: Most Played Weapons;
-	-- ours: career numbers until per-weapon stats exist)
-	local W, H = 640, 352
-	local card = new("Frame", { Name = "Card", Position = UDim2.fromOffset((1920 - W) / 2, 320), Size = UDim2.fromOffset(W, H), BackgroundColor3 = GUN,
-		ClipsDescendants = true, ZIndex = 2, Parent = root }, { Kit.corner(12) }) -- (2026-10-21, AI-tells cleanup) no hairline border; the solid card over the blurred scrim reads on its own
-	-- olive wash fading down from the top, faint diagonal stripes (the Tacticals panel look)
-	new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = hex("#1B1F2A"), ZIndex = 2, Parent = card },
-		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(0.55, 0.92), NumberSequenceKeypoint.new(1, 1) }) }) })
-	for i = 0, 14 do
-		new("Frame", { BorderSizePixel = 0, BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.965, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
-			Position = UDim2.fromOffset(-60 + i * 56, 60), Size = UDim2.fromOffset(14, 320), ZIndex = 2, Parent = card })
+	local card = new("Frame", { Name = "Card", Position = UDim2.fromOffset(CX, CY), Size = UDim2.fromOffset(W, H), BackgroundColor3 = tok("card", hex("#1E1F24")),
+		ClipsDescendants = true, ZIndex = 2, Parent = root }, { Kit.corner(8) })
+	-- the faded map picture behind the top of the card (RIVALS: the lobby's wall), dark from the middle down
+	local mapImg = rasset("map_arena")
+	if mapImg then
+		new("ImageLabel", { BackgroundTransparency = 1, Image = mapImg, ScaleType = Enum.ScaleType.Crop, ImageTransparency = 0.55, Size = UDim2.fromScale(1, 1), ZIndex = 2, Parent = card })
 	end
+	new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = tok("card", hex("#1E1F24")), ZIndex = 2, Parent = card },
+		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.7), NumberSequenceKeypoint.new(0.45, 0.2), NumberSequenceKeypoint.new(1, 0.05) }) }) })
 	local matches, wins = p:GetAttribute("StatMatches") or 0, p:GetAttribute("Wins") or 0
-	local kills, heads = p:GetAttribute("StatKills") or 0, p:GetAttribute("StatHeadshots") or 0
-	local rate = matches > 0 and string.format("%.1f%%", 100 * wins / matches) or "-"
-	local hsr = kills > 0 and string.format("%.0f%%", 100 * heads / kills) or "-"
-	local gold = hex("#E9C46A")
-	-- left column
-	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(22, 14), Size = UDim2.fromOffset(120, 120), ZIndex = 3, Parent = card })
+	local rate = matches > 0 and math.floor(100 * wins / matches + 0.5) or 0
+	-- left column: headshot, trophy, wins, win rate (RIVALS gold, chunky numbers with a dark-brown edge)
+	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(22, 20), Size = UDim2.fromOffset(92, 92), ZIndex = 3, Parent = card })
 	headshot(hs, p)
-	local function goldNum(text, y, size)
-		local l = label(card, text, F_NUM, size, 10, y, 144, size + 6, gold, Enum.TextXAlignment.Center, 3)
+	local trophy = rasset("trophy_gold")
+	new("ImageLabel", { BackgroundTransparency = 1, Image = trophy or rasset("trophy") or "", ImageColor3 = trophy and Color3.new(1, 1, 1) or RC.gold, ScaleType = Enum.ScaleType.Fit,
+		Position = UDim2.fromOffset(47, 122), Size = UDim2.fromOffset(44, 44), ZIndex = 3, Parent = card })
+	local function goldText(text, y, size, font)
+		local l = label(card, text, font, size, 8, y, 122, size + 2, RC.gold, Enum.TextXAlignment.Center, 3)
 		l.TextTruncate = Enum.TextTruncate.None
-		new("UIStroke", { Color = hex("#4A3400"), Thickness = 2, Transparency = 0.2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+		new("UIStroke", { Color = tok("goldEdge", hex("#5A3A00")), Thickness = 2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
 	end
-	goldNum(commas(wins), 152, 38)
-	label(card, "wins", F_SUB, 17, 10, 194, 144, 20, gold, Enum.TextXAlignment.Center, 3)
-	goldNum(rate, 222, 34)
-	label(card, "win rate", F_SUB, 17, 10, 260, 144, 20, gold, Enum.TextXAlignment.Center, 3)
-	-- right: name + @username
-	local nm = label(card, badgeName(p), F_NAME, 36, 172, 14, 440, 44, BONE, nil, 3)
-	nm.TextScaled = false
-	label(card, "@" .. p.Name, F_SUB, 19, 172, 54, 440, 22, FIELD, nil, 3)
-	-- three badges: Level, ELO, Rank
-	local r = RankArt and RankArt.Of(p) or { placed = false, name = "Unranked", elo = 0 }
-	local placedN, needN = p:GetAttribute("RankPlaced") or 0, p:GetAttribute("RankPlacements") or 0
-	local cols = { 248, 392, 536 } -- centres
-	local lvl = new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cols[1], 88), Size = UDim2.fromOffset(64, 56), BackgroundColor3 = hex("#4C7A2E"), ZIndex = 3, Parent = card },
-		{ Kit.corner(12) }) -- (2026-10-21, AI-tells cleanup) thin green border dropped (the olive fill is the badge)
-	local ln = label(lvl, tostring(p:GetAttribute("Level") or 1), F_NUM, 30, 0, 0, 64, 56, BONE, Enum.TextXAlignment.Center, 4)
-	ln.TextTruncate = Enum.TextTruncate.None
-	label(card, "Level", F_SUB, 21, cols[1] - 70, 148, 140, 26, FIELD, Enum.TextXAlignment.Center, 3)
-	local elo = label(card, r.placed and commas(r.elo) or (needN > 0 and string.format("%d/%d", placedN, needN) or "-"), F_NUM, 34, cols[2] - 70, 92, 140, 50, BONE, Enum.TextXAlignment.Center, 3)
-	elo.TextTruncate = Enum.TextTruncate.None
-	label(card, r.placed and "ELO" or "Placements", F_SUB, 21, cols[2] - 70, 148, 140, 26, FIELD, Enum.TextXAlignment.Center, 3)
-	-- unranked (placements to play): a faded, greyed Bronze emblem
-	local fallback = RankArt and RankArt.EMBLEM.Bronze or ""
-	new("ImageLabel", { BackgroundTransparency = 1, Image = r.image or fallback, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cols[3], 82),
-		Size = UDim2.fromOffset(90, 66), ImageTransparency = r.image and 0 or 0.7, ImageColor3 = r.image and Color3.new(1, 1, 1) or Color3.fromRGB(150, 150, 150), ZIndex = 3, Parent = card })
-	label(card, r.placed and r.name or "Unranked", F_SUB, 21, cols[3] - 80, 148, 160, 26, FIELD, Enum.TextXAlignment.Center, 3)
-	-- career row
-	label(card, "Career", F_NAME, 19, 172, 186, 440, 22, hex("#C9C9C0"), Enum.TextXAlignment.Center, 3)
-	local tiles = { { commas(matches), "Matches" }, { commas(kills), "Kills" }, { commas(heads), "Headshots" }, { hsr, "HS %" } }
-	for i, t in tiles do
-		local x = 172 + (i - 1) * 112
-		local f = new("Frame", { Position = UDim2.fromOffset(x, 216), Size = UDim2.fromOffset(100, 100), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 3, Parent = card },
-			{ Kit.corner(8) }) -- (2026-10-21, AI-tells cleanup) hairline border removed
-		local v = label(f, t[1], F_NUM, 30, 0, 16, 100, 40, BONE, Enum.TextXAlignment.Center, 4)
-		v.TextTruncate = Enum.TextTruncate.None
-		label(f, t[2], F_SUB, 16, 0, 62, 100, 22, FIELD, Enum.TextXAlignment.Center, 4)
+	goldText(commas(wins), 172, 26, RF.chunky)
+	goldText("wins", 197, 15, F_BOLD)
+	goldText(rate .. "%", 216, 28, RF.chunky)
+	goldText("win rate", 240, 15, F_BOLD)
+	-- right: name + device icon, @username
+	local nameRow = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(136, 18), Size = UDim2.fromOffset(350, 34), ZIndex = 3, Parent = card },
+		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }) })
+	local nm = label(nameRow, badgeName(p), F_BOLD, 28, 0, 0, 0, 34, RC.text, nil, 3)
+	nm.LayoutOrder, nm.AutomaticSize, nm.TextTruncate = 1, Enum.AutomaticSize.X, Enum.TextTruncate.None
+	local okB, B = pcall(function() return require(UIKit:WaitForChild("Badges", 2)) end)
+	local dev = (okB and B and B.DeviceIcon) and B.DeviceIcon(p) or nil
+	if dev then new("ImageLabel", { LayoutOrder = 2, BackgroundTransparency = 1, Image = dev, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(24, 24), ZIndex = 3, Parent = nameRow }) end
+	label(card, "@" .. p.Name, F_SUB, 16, 136, 49, 340, 18, tok("handle", hex("#8E8D94")), nil, 3)
+	-- the level: RIVALS' blue starburst seal, centred over the right area, "Level" in grey under it
+	local seal = Kit.levelSeal(card, p:GetAttribute("Level") or 1, { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(316, 84), Size = UDim2.fromOffset(54, 54), ZIndex = 3 })
+	seal.Name = "LevelSeal"
+	label(card, "Level", F_BOLD, 20, 266, 136, 100, 24, tok("levelLabel", hex("#8E8D94")), Enum.TextXAlignment.Center, 3)
+	-- Most Played Weapons: four tiles, a grey-to-dark fill, the render filling the tile and the name over its foot
+	label(card, "Most Played Weapons", F_BOLD, 16, 146, 184, 340, 20, tok("mostPlayed", hex("#C9C9CF")), Enum.TextXAlignment.Center, 3)
+	local tiles = {}
+	for i = 1, 4 do
+		local t = new("Frame", { Name = "Weapon" .. i, Position = UDim2.fromOffset(147 + (i - 1) * 91, 211), Size = UDim2.fromOffset(72, 72), BackgroundColor3 = Color3.new(1, 1, 1),
+			ZIndex = 3, Parent = card }, { Kit.corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(tok("tileTop", hex("#6E6E78")), tok("tileBottom", hex("#26262C"))) }) })
+		local nameL = label(t, "", F_BOLD, 15, -8, 54, 88, 18, RC.text, Enum.TextXAlignment.Center, 5)
+		nameL.TextTruncate = Enum.TextTruncate.None
+		new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.5, Transparency = 0.2, Parent = nameL })
+		tiles[i] = { frame = t, name = nameL }
 	end
 	-- buttons under the card: the X, and for anyone else INVITE / CHALLENGE beside it (live RIVALS: from the list too)
 	local buttons = {}
-	local by = 320 + H + 18
+	local by = CY + H + 16
 	local close = Kit.closeButton(UDim2.fromOffset(150, 66))
 	close.ZIndex = 3
 	close.Parent = root
@@ -226,8 +309,8 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	for i, a in acts do
 		local b = Kit.button(a[3], UDim2.fromOffset(150, 66), nil, { Position = UDim2.fromOffset(x0 + i * 168, by), ZIndex = 3, Parent = root })
 		local cc = b:FindFirstChildOfClass("UICorner"); if cc then cc.CornerRadius = UDim.new(0, 8) end
-		label(b, a[2], F_SUB, 15, 0, 5, 150, 18, Color3.new(0, 0, 0), Enum.TextXAlignment.Center, 4).TextTransparency = 0.35
-		local big = label(b, a[1], F_HEAD, 32, 0, 20, 150, 40, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 4)
+		label(b, a[2], F_SUB, 15, 0, 5, 150, 18, RC.textDark, Enum.TextXAlignment.Center, 4).TextTransparency = 0.35
+		local big = label(b, a[1], RF.chunky, 32, 0, 20, 150, 40, RC.text, Enum.TextXAlignment.Center, 4)
 		new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.5, Transparency = 0.5, Parent = big })
 		b.Activated:Connect(a[4])
 		table.insert(buttons, b)
@@ -235,9 +318,44 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	close.Activated:Connect(closeProfile)
 	tint.Activated:Connect(closeProfile)
 	Kit.toScale(root)
-	profile = { root = root, tint = tint, card = card, buttons = buttons, player = p }
-	Kit.tween(blur, 0.25, { Size = Theme.blur })
-	Kit.tween(tint, 0.25, { BackgroundTransparency = Theme.alpha.scrim })
+	-- the tiles' renders go in after Kit.toScale (the ViewportFrames are Scale already); refilled once your own stats load
+	local function fill(ids)
+		local I = icons()
+		for i, t in tiles do
+			local id = ids[i]
+			local old = t.frame:FindFirstChild("Render")
+			if old then old:Destroy() end
+			t.name.Text = id and itemName(id) or ""
+			t.name:SetAttribute("dTS", #t.name.Text > 11 and 12 or 15) -- design px; long names a size down (RIVALS' "Assault Rifle")
+			if id and I and I.Item and I.Viewport then
+				local holder = new("Frame", { Name = "Render", BackgroundTransparency = 1, Position = UDim2.fromScale(0.04, 0.02), Size = UDim2.fromScale(0.92, 0.8), ZIndex = 4, Parent = t.frame })
+				pcall(function()
+					local model, view, zoom = I.Item(id)
+					local ctl = I.Viewport(holder, model, { view = view, zoom = zoom })
+					ctl.Frame.ZIndex = 4
+				end)
+			end
+		end
+		Kit.rescaleText()
+	end
+	local shown = mostPlayed(p, myData)
+	fill(shown)
+	profile = { root = root, tint = tint, card = card, buttons = buttons, player = p, backdrop = UITheme ~= nil }
+	if p == player and not myData then
+		local mine = profile
+		task.delay(1.5, function()
+			if profile == mine and myData then
+				local top = mostPlayed(p, myData)
+				if top ~= shown then fill(top) end
+			end
+		end)
+	end
+	if UITheme then
+		UITheme.ShowBackdrop("PlayerCard", 1)
+	else
+		Kit.tween(blur, 0.25, { Size = Theme.blur })
+		Kit.tween(tint, 0.25, { BackgroundTransparency = RTheme.alpha.scrim })
+	end
 	Kit.open(card)
 end
 
@@ -254,18 +372,25 @@ function PlayerCards.CloseMenu()
 end
 function PlayerCards.MenuOpen() return menu ~= nil end
 
--- RIVALS' colours, pulled toward the Tacticals palette (olive for the friendly ones)
+-- (2026-10-21, RIVALS 1:1) RIVALS' row colours (the replica's ACTION_COLOR, from Edward's captures t0110 / t0130): green for the
+-- friendly ones, orange for Challenge / Spectate, blue for View Profile / View Avatar, red for Block. Read from
+-- UIKit.Rivals.Theme.playerMenu[name] when the Theme has it. Icons = the replica's white flat icons (UIKit.Rivals.Assets).
 local ACTION_COLOR = {
-	["Invite"] = hex("#4C7A2E"), ["Add Friend"] = hex("#4C7A2E"), ["Challenge"] = hex("#9A6A1E"), ["Spectate"] = hex("#9A6A1E"),
-	["View Profile"] = hex("#2F5170"), ["View Avatar"] = hex("#2F5170"), ["Block"] = hex("#8E2A24"),
+	["Invite"] = "#3E9A1C", ["Add Friend"] = "#3E9A1C", ["Challenge"] = "#B7741B", ["Spectate"] = "#B7741B",
+	["View Profile"] = "#1A5A93", ["View Avatar"] = "#1A5A93", ["Block"] = "#9A2626",
 }
-local ACTION_GLYPH = { ["Invite"] = "+", ["Add Friend"] = "+", ["Challenge"] = "»", ["Spectate"] = "◎", ["View Profile"] = "→", ["View Avatar"] = "→", ["Block"] = "×" }
--- (2026-10-21, RIVALS pass) where UIKit.FlatIcons has a matching drawing it replaces the glyph (same bone colour, ink on hover);
--- the set has no plus / duel / eye / block art yet, so those rows keep their glyphs
-local ACTION_ICON = { ["View Profile"] = "account", ["View Avatar"] = "account" }
-local FlatIcons
-pcall(function() FlatIcons = require(UIKit:WaitForChild("FlatIcons", 5)) end)
+local ACTION_ICON = { ["Invite"] = "plus", ["Add Friend"] = "addfriend", ["Challenge"] = "inking", ["Spectate"] = "eye",
+	["View Profile"] = "arrow", ["View Avatar"] = "arrow", ["Block"] = "hide" }
+local ACTION_TEXT = { ["Invite"] = "Party Invite" } -- RIVALS' wording; the action keys stay ours
+local function actionColor(a)
+	local t = RTheme.playerMenu
+	return (t and t[a]) or hex(ACTION_COLOR[a] or "#1A5A93")
+end
 
+-- (2026-10-21, RIVALS 1:1) the player menu, RIVALS' look (t0110 / t0130 / t0111; the replica's openPlayerMenu): a dark 303 px
+-- card left of the list, headshot (bare head), display name + @username, then one row per action. A row fades from the card
+-- colour into its own colour with a white icon on that end; the hovered row is solid white with black text and a black icon.
+-- Same actions / behaviour as before (Invite, Add Friend, Challenge, View Profile, View Avatar, Block; Spectate paused).
 function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	ensureGui()
 	PlayerCards.CloseMenu()
@@ -284,59 +409,51 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	local f = 1080 / math.max(cs.Y, 1)
 	local rowY = (row.AbsolutePosition.Y - ca.Y) * f
 	local rightX = listLeft or ((row.AbsolutePosition.X - ca.X) * f)
-	local ROW, HEAD = 56, 84
+	local PW, ROW, HEAD = 303, 55.6, 80
 	local H = HEAD + #actions * ROW + 6
 	local top = math.clamp(rowY, 10, 1080 - H - 10)
+	local cardCol = tok("card", hex("#1E1F24"))
 	local root = new("Frame", { Name = "PlayerMenu", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), ZIndex = 20, Parent = canvas })
 	-- a click anywhere else closes it (the catcher covers the whole screen, under the panel)
 	local catcher = new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 4, Parent = gui })
 	catcher.Activated:Connect(PlayerCards.CloseMenu)
-	local panel = new("CanvasGroup", { Name = "Panel", Position = UDim2.fromOffset(rightX - 8 - 310, top), Size = UDim2.fromOffset(310, H),
-		BackgroundColor3 = GUN, BackgroundTransparency = 0.04, ZIndex = 21, Parent = root }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) player-menu panel: hairline border removed
-	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 2), Size = UDim2.fromOffset(78, 78), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle
+	local panel = new("CanvasGroup", { Name = "Panel", Position = UDim2.fromOffset(rightX - 4 - PW, top), Size = UDim2.fromOffset(PW, H),
+		BackgroundColor3 = cardCol, BackgroundTransparency = 0.05, ZIndex = 21, Parent = root }, { Kit.corner(8) })
+	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 8), Size = UDim2.fromOffset(64, 64), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle
 	headshot(hs, p)
-	label(panel, badgeName(p), F_NAME, 23, 92, 14, 206, 30, BONE, nil, 22)
-	label(panel, "@" .. p.Name, F_SUB, 16, 92, 44, 206, 20, FIELD, nil, 22)
-	local pendingIcons = {}
+	label(panel, badgeName(p), F_BOLD, 21, 105, 12, 190, 28, RC.text, nil, 22)
+	label(panel, "@" .. p.Name, F_SUB, 14, 105, 42, 190, 18, tok("menuHandle", hex("#C9C9CF")), nil, 22)
+	local checkImg, sentGrey = rasset("check"), tok("sent", hex("#8A8A8A"))
 	for i, a in actions do
-		local col = ACTION_COLOR[a]
-		local b = new("TextButton", { Name = a, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(4, HEAD + (i - 1) * ROW), Size = UDim2.fromOffset(302, ROW - 4),
-			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 22, Parent = panel }, { Kit.corner(6) })
-		local grad = new("UIGradient", { Color = ColorSequence.new(GUN, col), Parent = b })
-		local t = label(b, a, F_NAME, 19, 18, 0, 200, ROW - 4, BONE, nil, 23)
-		local g = label(b, ACTION_GLYPH[a], F_NUM, 30, 240, 0, 48, ROW - 4, BONE, Enum.TextXAlignment.Center, 23)
-		local iconRef = {} -- the FlatIcons stage, drawn after Kit.toScale (it is already in Scale)
-		if FlatIcons and ACTION_ICON[a] then g.Text = ""; table.insert(pendingIcons, { g = g, name = ACTION_ICON[a], ref = iconRef }) end
-		local function tintIcon(c)
-			if not iconRef.st then return end
-			for _, d in iconRef.st:GetDescendants() do if d:IsA("Frame") then d.BackgroundColor3 = c end end
-		end
+		local col = actionColor(a)
+		local b = new("TextButton", { Name = a, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(3, HEAD + (i - 1) * ROW), Size = UDim2.fromOffset(PW - 6, 52),
+			BackgroundColor3 = RC.white, ZIndex = 22, Parent = panel }, { Kit.corner(4) })
+		local grad = new("UIGradient", { Color = ColorSequence.new(cardCol, col), Parent = b })
+		local t = label(b, ACTION_TEXT[a] or a, F_BOLD, 17, 19, 0, 200, 52, RC.text, nil, 23)
+		local img = rasset(ACTION_ICON[a])
+		local ic = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img or "", ImageColor3 = RC.white, ScaleType = Enum.ScaleType.Fit,
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(250, 26), Size = UDim2.fromOffset(40, 40), ZIndex = 23, Parent = b })
 		local sent = false
-		b.MouseEnter:Connect(function() grad.Enabled = false; t.TextColor3 = DEEP; g.TextColor3 = DEEP; tintIcon(DEEP) end)
-		b.MouseLeave:Connect(function() grad.Enabled = true; t.TextColor3 = BONE; g.TextColor3 = sent and FIELD or BONE; tintIcon(BONE) end)
-		-- (2026-10-21, RIVALS pass) Kit.bindButton (hover lift + press squash) replaces the hand-made click pop. One UIScale,
-		-- named PopScale, so the stagger-in (Kit.popIn below) and the hover share it.
+		b.MouseEnter:Connect(function() grad.Enabled = false; t.TextColor3 = RC.textDark; if not sent then ic.ImageColor3 = RC.textDark end end)
+		b.MouseLeave:Connect(function() grad.Enabled = true; t.TextColor3 = RC.text; ic.ImageColor3 = sent and sentGrey or RC.white end)
+		-- (2026-10-21, RIVALS pass) Kit.bindButton (hover lift + press squash). One UIScale, named PopScale, so the stagger-in
+		-- (Kit.popIn below) and the hover share it.
 		new("UIScale", { Name = "PopScale", Parent = b })
 		Kit.bindButton(b, { hover = 1.03 })
 		b.Activated:Connect(function()
 			if a == "View Profile" then PlayerCards.Profile(p, false); return end
 			local opened = run(a, p)
-			-- sent once: the glyph turns into a grey tick (Invite / Challenge), RIVALS-style
+			-- sent once: the icon turns into RIVALS' grey check (Invite / Challenge)
 			if not sent and ((a == "Invite" and opened) or a == "Challenge") then
 				sent = true
-				g.Text = ""
-				-- a grey tick drawn from two bars (the font has no check mark glyph)
-				for _, bar in { { 0.36, 0.6, 0.32, 45 }, { 0.58, 0.48, 0.62, -50 } } do
-					new("Frame", { BorderSizePixel = 0, BackgroundColor3 = FIELD, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(bar[1], bar[2]),
-						Size = UDim2.fromScale(bar[3], 0.1), Rotation = bar[4], ZIndex = 24, Parent = g }, { Kit.corner(2) })
-				end
+				if checkImg then ic.Image = checkImg end
+				ic.ImageColor3 = sentGrey
 			end
 			if a == "Spectate" then t.Text = spectating == p and "Stop Spectating" or "Spectate" end
 		end)
 	end
 	Kit.toScale(root)
 	for _, c in panel:GetChildren() do if c:IsA("TextButton") then Kit.centreAnchor(c) end end
-	for _, pi in pendingIcons do pi.ref.st = FlatIcons.Draw(pi.g, pi.name, { color = BONE, scale = 0.62 }) end
 	-- (2026-10-21, RIVALS pass) the rows fill in one after another as the panel slides out (RIVALS t0110 -> t0111)
 	for i, a in actions do
 		local b = panel:FindFirstChild(a)
@@ -460,10 +577,12 @@ Players.PlayerRemoving:Connect(function(p) closeRequest(p, nil, "duel"); closeRe
 function PlayerCards.StartWorld(allowed: () -> boolean)
 	ensureGui()
 	local mouse = player:GetMouse()
-	local hint = new("Frame", { Name = "ProfileHint", AnchorPoint = Vector2.new(0.5, 1), Size = UDim2.fromOffset(310, 38), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
-		Visible = false, ZIndex = 30, Parent = canvas }, { Kit.corner(21) }) -- (2026-10-21, AI-tells cleanup) hint pill: thin bone border removed
+	-- (2026-10-21, RIVALS 1:1) RIVALS' pill (t0135): see-through dark grey, white Rubik Bold (was our bone-on-black)
+	local hint = new("Frame", { Name = "ProfileHint", AnchorPoint = Vector2.new(0.5, 1), Size = UDim2.fromOffset(310, 38), BackgroundColor3 = tok("hint", hex("#3A3A40")), BackgroundTransparency = 0.35,
+		Visible = false, ZIndex = 30, Parent = canvas }, { Kit.corner(19) })
 	-- live RIVALS says "Double tap" on PC too
-	label(hint, "Double tap to view profile", F_NAME, 21, 0, 0, 310, 38, BONE, Enum.TextXAlignment.Center, 31)
+	local hl = label(hint, "Double tap to view profile", F_BOLD, 21, 0, 0, 310, 38, RC.text, Enum.TextXAlignment.Center, 31)
+	new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1, Transparency = 0.6, Parent = hl })
 	Kit.toScale(hint, Vector2.new(310, 38))
 	hint.Size = UDim2.fromScale(310 / 1920, 38 / 1080)
 	-- a ray from the pointer (Mouse.Target skips your own character; RIVALS opens your own card too)

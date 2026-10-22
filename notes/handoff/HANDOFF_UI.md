@@ -1,4 +1,51 @@
-# Tacticals UI handoff (latest: 2026-10-21 evening, Shadow PC UI session → next UI session, either PC)
+# Tacticals UI handoff (latest: 2026-10-21 night, Shadow PC UI session -> main PC UI session)
+
+## Start here (2026-10-21 night): Shadow PC stops UI edits here
+- `git pull` in tacticals_rebuild (last UI commit: see `git log`, message "RIVALS 1:1 levels/banners/profile, leaderboards, Shop
+  organisation"). Both working copies (Tacticals_rebuild.rbxl, match_place_ref.rbxl) were saved with everything deployed
+  (lobby 53 files, match 65 files); play lock released.
+- **Publish:** port 32 is the last publish. NOT published yet (lead, on Edward's go): f641ec6 (44 RIVALS images wired), f08b149
+  (port3), c8e0405 (live captures/notes only), and tonight's commit.
+- **Assets.gen wiring** (the 44 RIVALS images, gunsy funsy): DONE in Kit, Missions, Settings + Hotkeys, Shop, Play, close X
+  (f641ec6 + f08b149). Nothing half-done there.
+- **Done since port 32:**
+  1. Images wired (above); Play = RIVALS normal layout (tall Ranked right, shield, "Unranked"); Kit click-to-equip (no Equipped row,
+     no check), dimmed room, gunmetal showcase; one close X size (`Kit.CLOSE_W/H`); dark purple menu backdrop + vignette (UITheme).
+  2. Join-queue bubble only for accounts below level 5 (LobbyHudController `wantJoin`), like RIVALS.
+  3. **Levels** (ui/lobby/Kit.lua): one RIVALS blue starburst seal for every level (`Kit.levelSeal`, `Kit.setLevel`; `Kit.levelTier`
+     returns the seal, so DuelHUD killer card + MatchFlow boxes show it too). Old shields kept as `Kit.LEVEL_TIERS_SHIELD`.
+  4. **Nameplates** (NameplatesController): seal, name (Rubik Bold, black outline), device icon; 10 x 1.6 studs; streak flame still
+     replaces the seal.
+  5. **Player menu + profile** (PlayerCards): RIVALS rows (green Invite/Add Friend, orange Challenge, blue Profile/Avatar, red
+     Block, hovered row white). Profile = rivals_normal/profile_card.png: wins / win rate left, name + device, seal + "Level",
+     "Most Played Weapons" 4 tiles. ELO / Rank / Career tiles removed from the card (RIVALS shows none; data untouched).
+  6. **Leaderboards**: hub board (LeaderboardScreen) rebuilt as RIVALS (red title, LIVE pill, #1 hero row, rows #2-#10 that
+     auto-scroll, 4 icon tabs, cycle Streaks > Elims > Wins > Level). Corner player list: rows updated in place, own badge
+     (Premium else level seal), no stripes.
+  7. **Shop** (ShopScreen): RIVALS tab order Home, Bundles, Arms, Skins, Daily, Emotes, Charms, Finishers, Scissors (=Keys).
+     Skins / Daily / Emotes / Charms / Finishers are **placeholders** (`PLACEHOLDER_ITEMS`, each `PLACEHOLDER = true`): a click
+     shows "Coming soon", never a purchase. Real purchases unchanged. Plug-in steps in `notes/ui_rivals/10_round3.md`.
+- **Verified in Studio (Play, lobby):** no script errors; nameplate, board (51 labels), Shop tabs, and the profile card all built
+  (`PlayerCards.Profile(lp)` showed wins / Level / Most Played Weapons). **Not verified by eye:** none of tonight's screens
+  were screenshotted. First job: capture + compare vs RIVALS (Shop tab row fit beside the X and wallet with 9 tabs, the tab image icons,
+  rarity tint on the weapon renders, the seal number at nameplate distance, the board's auto-scroll reaching #10, the level seal size in
+  the player list, the weapon renders in the 72 px profile tiles, the backdrop clearing on profile close, the killer card + match boxes with the seal).
+- **Images that may read off in place:** Shop tab icons look small (from port3); `Assets.hud.levelbadge` is the replica's seal
+  (falls back to gen.kit_reward_seal + gradient).
+- **Open questions for Edward:**
+  - Should other players' profiles show real weapons? That needs the server to publish a `MostPlayed` attribute (PublicStats.server.lua; not done).
+  - Should the level seal also replace the shields in the match (killer card / boxes)? It does now.
+  - Daily reset time: midnight UTC is a guess.
+  - Should the "Claim your FREE reward" Daily callout stay hidden until a real free item exists (`DAILY_TIP_PREVIEW`)?
+- **Still open from before:** a duplicate "Item Unlocked" banner per bundle item (server, lead); the Missions Day 1-7 streak row (no
+  data); hub TVs / tickers (Studio-only sources).
+- **Lessons (to vault into Lobby UI Kit.md, which isn't in the Shadow PC's vault copy):**
+  - Grade by putting each screen next to RIVALS' own and listing the differences. Icons / colour scheme are preference.
+  - Copy RIVALS' layout when unsure: no thin underlines, lips or accent bars.
+  - Codex-generated 1:1 images (empty-slot X, seals, close X) beat hand-built glyphs.
+  - Placeholders get a PLACEHOLDER flag and a "Coming soon" click that can never prompt a purchase.
+  - Kill TextInputHost before tools/save_studio.ps1 (it steals the foreground and the save refuses).
+
 
 ## Start here (2026-10-21 evening)
 - `git pull` in tacticals_rebuild (last UI commit 5f720a7). Both working copies (Tacticals_rebuild.rbxl lobby, match_place_ref.rbxl)
