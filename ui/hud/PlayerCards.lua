@@ -328,7 +328,9 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 			t.name.Text = id and itemName(id) or ""
 			t.name:SetAttribute("dTS", #t.name.Text > 11 and 12 or 15) -- design px; long names a size down (RIVALS' "Assault Rifle")
 			if id and I and I.Item and I.Viewport then
-				local holder = new("Frame", { Name = "Render", BackgroundTransparency = 1, Position = UDim2.fromScale(0.04, 0.02), Size = UDim2.fromScale(0.92, 0.8), ZIndex = 4, Parent = t.frame })
+				-- (2026-10-22, main PC check vs profile_card.png) RIVALS' renders fill the tile and break out of its top edge;
+				-- ours sat small inside it
+				local holder = new("Frame", { Name = "Render", BackgroundTransparency = 1, Position = UDim2.fromScale(-0.14, -0.32), Size = UDim2.fromScale(1.28, 1.2), ZIndex = 4, Parent = t.frame })
 				pcall(function()
 					local model, view, zoom = I.Item(id)
 					local ctl = I.Viewport(holder, model, { view = view, zoom = zoom })

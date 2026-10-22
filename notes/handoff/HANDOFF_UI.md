@@ -1,4 +1,19 @@
-# Tacticals UI handoff (latest: 2026-10-21 night, Shadow PC UI session -> main PC UI session)
+# Tacticals UI handoff (latest: 2026-10-22, main PC UI session took over from the Shadow PC)
+
+## 2026-10-22: main PC capture pass (sheet notes/ui_rivals/mainpc1/sheet_a.jpg, single captures beside it)
+- Captured and compared with RIVALS: hub, Shop, Missions, Settings, Play, Kit, player menu, profile card.
+- **Fixed:** profile card Most Played renders now fill the tile and break out of its top like profile_card.png
+  (PlayerCards `fill`). Deployed to the lobby (53 files), lobby saved.
+- **Match RIVALS, no change needed:** Shop tab row (100 px tabs, 5.2% of the width, same as RIVALS; the icons are not small),
+  Play grid proportions, Kit gun size, nameplate (seal, name, Premium, device), player menu.
+- **Open:**
+  1. Missions: Headshots shows the same claw glyph as Eliminations (hub panel + Missions screen). It needs a codex
+     `tasks_headshot` glyph; upload under Gunsy Funsy (Edward).
+  2. Kit: a cream rectangle under the slot strip is the world's `LobbyMap.Showroom.Rooms4.SR_Lines.SR_Lines__neon_cream`
+     floor line seen through the camera, not UI (also in port3/kit.png). It's world art, so it's the lead's or Edward's call.
+  3. Play: the Training / Duel Pads tiles look washed lavender next to the 1v1-3v3 art (RIVALS' bottom row keeps full colour).
+  4. Not captured yet: the hub board's auto-scroll to #10, the killer card / match boxes with the seal (match place), Shop
+     placeholder tabs' "Coming soon".
 
 ## Start here (2026-10-21 night): Shadow PC stops UI edits here
 - `git pull` in tacticals_rebuild (last UI commit: see `git log`, message "RIVALS 1:1 levels/banners/profile, leaderboards, Shop
