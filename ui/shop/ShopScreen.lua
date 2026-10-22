@@ -42,7 +42,7 @@ local function asset(name)
 end
 -- (2026-10-21, RIVALS 1:1) scissors = our "keys": every scissors price is RIVALS' yellow key button with the red scissors render
 -- on the right of the number; Robux = the lime button with RIVALS' white Robux glyph on the left
-local SCISSORS_IMG = "rbxassetid://120480559804238"
+local SCISSORS_IMG = (Kit.ICONS and Kit.ICONS.scissorsReward) or "rbxassetid://120480559804238" -- (round 5: the filled red scissors, as on the hub)
 local ROBUX_IMG = asset("cur_robux") ~= "" and asset("cur_robux") or "rbxasset://textures/ui/common/robux.png"
 
 -------------------------------------------------------------------------------
