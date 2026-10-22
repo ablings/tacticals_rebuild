@@ -6,7 +6,7 @@
 --   * Opening a menu fades in a dark BACKDROP behind it (Colors.Backdrop -> Backdrop2), closing
 --     fades it out.
 --   * Selected = bone. Play / buy = olive (pass 34: no amber), secondary actions = olive, close = red.
---   * Fonts: Oswald (condensed, stencil-like) for headings and buttons, Gotham SSm for body copy.
+--   * Fonts: Oswald (condensed, stencil-like) for headings and buttons, Rubik for body copy.
 
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
@@ -33,13 +33,14 @@ UITheme.Colors = {
 UITheme.GlassTransparency = 0.12 -- how see-through cards are (0 = solid)
 UITheme.Radius = 3
 
-local GOTHAM = "rbxasset://fonts/families/GothamSSm.json"
+-- (2026-10-21, AI-tells sweep) body / bold copy in Rubik (was Gotham SSm, the "AI-made" font)
+local RUBIK = "rbxassetid://12187365977"
 local OSWALD = "rbxasset://fonts/families/Oswald.json"
-UITheme.FontFamily = GOTHAM
+UITheme.FontFamily = RUBIK
 UITheme.Fonts = {
 	Display = Font.new(OSWALD, Enum.FontWeight.Bold),
-	Bold = Font.new(GOTHAM, Enum.FontWeight.Bold),
-	Body = Font.new(GOTHAM, Enum.FontWeight.Medium),
+	Bold = Font.new(RUBIK, Enum.FontWeight.Bold),
+	Body = Font.new(RUBIK, Enum.FontWeight.Medium),
 }
 
 -- Text outlines are switched off game-wide (text sits on dark glass instead). Kept so older calls

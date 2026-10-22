@@ -974,8 +974,9 @@ local function renderCodes(body)
 		label({ Text = "Nothing yet", TextColor3 = THEME.Sub, FontFace = THEME.Body, Parent = list })
 	end
 	for _, code in used do
+		-- (2026-10-21, AI-tells sweep) no 3 px olive bar down the left of each redeemed code; the green tick marks it
 		new("Frame", { BackgroundColor3 = THEME.Panel2, Parent = list }, {
-			corner(2), pad(10), new("Frame", { BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Size = UDim2.new(0, 3, 1, 20), Position = UDim2.new(0, -10, 0, -10) }),
+			corner(2), pad(10),
 			label({ Text = "✓  " .. code, FontFace = THEME.Bold, TextSize = 14, TextColor3 = THEME.Good, Size = UDim2.fromScale(1, 1) }),
 		})
 	end
@@ -1321,9 +1322,7 @@ local function build()
 
 	-- player card (top left)
 	-- (UI session 2026-10-16: the HUD's scissors pill replaces this card; it stays built, hidden, for older callers)
-	local card = new("Frame", { Name = "PlayerCard", Visible = false, BackgroundColor3 = THEME.Panel, BackgroundTransparency = 0.1, Position = UDim2.new(0, 18, 0, 18), Size = UDim2.new(0, 280, 0, 70), Parent = root }, {
-		new("Frame", { BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Size = UDim2.new(0, 4, 1, 0) }),
-	})
+	local card = new("Frame", { Name = "PlayerCard", Visible = false, BackgroundColor3 = THEME.Panel, BackgroundTransparency = 0.1, Position = UDim2.new(0, 18, 0, 18), Size = UDim2.new(0, 280, 0, 70), Parent = root }) -- (2026-10-21, AI-tells sweep) its 4 px olive left bar is gone
 	Tac.brackets(card, Tac.C.line, 12)
 	local avatar = new("ImageLabel", { BackgroundColor3 = THEME.Panel3, Size = UDim2.new(0, 54, 0, 54), Position = UDim2.new(0, 12, 0, 8), Parent = card }, { corner(2) })
 	task.spawn(function()
@@ -1378,7 +1377,7 @@ local function build()
 		if d.Id == "Missions" then
 			badge = new("TextLabel", { Text = "", Visible = false, FontFace = THEME.Title, TextSize = 15, TextColor3 = Color3.new(1, 1, 1),
 				BackgroundColor3 = Color3.fromRGB(214, 52, 44), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 32, 0, 16),
-				Size = UDim2.new(0, 26, 0, 26), ZIndex = 3, Parent = btn }, { corner(13), stroke(Color3.new(1, 1, 1), 2) })
+				Size = UDim2.new(0, 26, 0, 26), ZIndex = 3, Parent = btn }, { corner(13) }) -- (2026-10-21, AI-tells sweep) no white ring on the red badge
 		end
 		btn.MouseEnter:Connect(function()
 			icon.SetHover(true)
@@ -1489,7 +1488,7 @@ local function build()
 		BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.43),
 		Size = UDim2.new(0, 880, 0, 580), Visible = false, Parent = root,
 	})
-	new("Frame", { Name = "TacBar", BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Size = UDim2.new(0, 6, 0, 58), Position = UDim2.new(0, 8, 0, 14), Parent = panelFrame })
+	-- (2026-10-21, AI-tells sweep) no olive TacBar down the left of the title any more (a left accent bar)
 	panelTitle = label({ Text = "", FontFace = THEME.Title, TextSize = 30, Size = UDim2.new(0.6, 0, 0, 40), Position = UDim2.new(0, 24, 0, 12), Parent = panelFrame })
 	panelSub = label({ Text = "", FontFace = THEME.Bold, TextSize = 15, TextColor3 = THEME.Sub, Size = UDim2.new(0.6, 0, 0, 18), Position = UDim2.new(0, 26, 0, 52), Parent = panelFrame })
 	local closeBtn = new("TextButton", { Name = "Close", AutoButtonColor = false, Text = "", Size = UDim2.new(0, 56, 0, 40), Position = UDim2.new(1, -76, 0, 16), Parent = panelFrame }, {

@@ -75,7 +75,7 @@ function HotkeysPage.build(ctx)
 		local text = KEY_LABEL[name] or name
 		local w = math.max(40, #text * 14 + 18)
 		local cap = new("Frame", { Name = "Keycap", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(w, 46), BackgroundColor3 = Theme.hex("#1C1C1F"), Parent = parent }, { Kit.corner(8) })
-		local face = new("Frame", { Name = "Face", Size = UDim2.new(1, 0, 0, 41), BackgroundColor3 = Theme.hex("#4A4A4F"), Parent = cap }, { Kit.corner(8), Kit.stroke(Theme.hex("#5E5E64"), 1.5, 0) })
+		local face = new("Frame", { Name = "Face", Size = UDim2.new(1, 0, 0, 41), BackgroundColor3 = Theme.hex("#4A4A4F"), Parent = cap }, { Kit.corner(8) }) -- (2026-10-21, AI-tells sweep) no 1.5 px edge: the dark cap below is the lip
 		Kit.label({ Text = text, FontFace = F.display, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), Parent = face })
 		register(name, function()
 			Kit.tween(face, 0.05, { Position = Kit.S(cap, 0, 4), BackgroundColor3 = Theme.hex("#3A3A3F") })

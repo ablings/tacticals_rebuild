@@ -97,7 +97,7 @@ end
 -- the radio subtitle line and the small captions in Rubik (F_BOLD)
 local F_HEAVY = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local F_BODY = F_HEAVY -- the fade title card
-local F_BOLD = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
+local F_BOLD = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells) Rubik Bold, the house body weight
 -- (round 2, graders) one accent system: amber = do this, olive = done (never mint), red = the enemy only
 local AMBER = Color3.fromRGB(232, 174, 69)     -- the one "do this" accent
 local GOOD = Color3.fromRGB(127, 166, 80)      -- done: our olive
@@ -106,6 +106,9 @@ local DARK_GREEN = Color3.fromRGB(47, 58, 36)  -- the callsign tag plate
 local PLATE = Color3.fromRGB(14, 16, 13)       -- the HUD's dark plate
 local WHITE = Color3.new(1, 1, 1)
 local KEY_WHITE = Color3.fromRGB(240, 240, 236) -- the hotbar's key badge face
+local KEY_SIDE = 0.14 -- (2026-10-21, AI-tells) how much of a keycap's height is the darker key side under its face
+local PLATE_HI = Color3.fromRGB(24, 27, 21)     -- (2026-10-21, AI-tells) the subtitle slab, a touch above PLATE so its lip reads
+local PLATE_LIP = Color3.fromRGB(5, 6, 4)       -- (2026-10-21, AI-tells) the dark lip under the subtitle slab
 local BLUE = AMBER                              -- (old name, kept for the few references below)
 local ALERT_RED = Color3.fromRGB(255, 64, 70)
 local STRIP_H = 0.115 -- (round 4, graders: 1.25x so the words and key verbs read on a phone)
@@ -158,22 +161,28 @@ local function canvas(parentGui)
 end
 
 -- (round 2) ONE keycap component everywhere (strip, world markers, finish tiles), in the hotbar's key-badge look: a white
--- face, a dark glyph, the badge's corner radius and a soft dark drop shadow (it reads on dark walls too). Square for one
--- letter, wider for SHIFT / SPACE / touch button names; AIM / FIRE on a mouse draw a mouse with that half lit.
+-- face, a dark glyph. Square for one letter, wider for SHIFT / SPACE / touch button names; AIM / FIRE on a mouse draw a
+-- mouse with that half lit.
+-- (2026-10-21, AI-tells) a real keyboard key, not a badge with a drop shadow: the face sits on a solid darker key-side
+-- block (KEY_SIDE of its height shows under it) in the face's own colour, and a press sinks the face onto that side.
+local function paintFace(face: Frame, color: Color3)
+	face.BackgroundColor3 = color
+	local side = face.Parent
+	if side and side:IsA("Frame") then side.BackgroundColor3 = color:Lerp(Color3.new(0, 0, 0), 0.5) end
+end
 local function keycap(parent, name)
 	local cap = Instance.new("Frame")
 	cap.Name = name
-	cap.BackgroundColor3 = Color3.new(0, 0, 0)
-	cap.BackgroundTransparency = 0.45 -- the drop shadow
+	cap.BackgroundColor3 = KEY_WHITE:Lerp(Color3.new(0, 0, 0), 0.5) -- the key side
 	cap.BorderSizePixel = 0
-	corner(cap, 0.22)
+	corner(cap, 0.18)
 	local ar = Instance.new("UIAspectRatioConstraint"); ar.Name = "Aspect"; ar.AspectRatio = 1; ar.Parent = cap
 	local face = Instance.new("Frame")
 	face.Name = "Face"
 	face.BackgroundColor3 = KEY_WHITE
 	face.BorderSizePixel = 0
-	face.Size = UDim2.fromScale(1, 0.9)
-	corner(face, 0.22)
+	face.Size = UDim2.fromScale(1, 1 - KEY_SIDE)
+	corner(face, 0.18)
 	face.Parent = cap
 	local glyph = text(face, "Glyph", F_HEAVY, PLATE)
 	glyph.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -252,62 +261,89 @@ local function buildUI()
 	panel.Parent = cv
 	panelScale = Instance.new("UIScale"); panelScale.Parent = panel
 	-- (round 4, graders: the gradient band was the last generic piece) the strip's own solid plate, sized to the words
+	-- (2026-10-21, AI-tells) a chunky slab on a dark lip (the lip is the full height, the slab covers all but its bottom
+	-- KEY_SIDE), tighter corners; the hidden alert stroke only ever shows thick (3) and fades
+	local shadeLip = Instance.new("Frame")
+	shadeLip.Name = "ShadeLip"
+	shadeLip.Position = UDim2.fromScale(0.06, 0)
+	shadeLip.BackgroundColor3 = PLATE_LIP
+	shadeLip.BackgroundTransparency = 0.1
+	shadeLip.BorderSizePixel = 0
+	shadeLip.Size = UDim2.fromScale(0.88, 1)
+	corner(shadeLip, 0.12)
+	shadeLip.Parent = panel
 	local shade = Instance.new("Frame")
 	shade.Name = "Shade"
 	shade.Position = UDim2.fromScale(0.06, 0)
-	shade.BackgroundColor3 = PLATE
-	shade.BackgroundTransparency = 0.15
+	shade.BackgroundColor3 = PLATE_HI
+	shade.BackgroundTransparency = 0.08
 	shade.BorderSizePixel = 0
-	shade.Size = UDim2.fromScale(0.88, 1)
-	corner(shade, 0.18)
+	shade.Size = UDim2.fromScale(0.88, 1 - KEY_SIDE)
+	corner(shade, 0.12)
 	shade.Parent = panel
 	panelStroke = stroke(shade, WHITE, 0, 1) -- (no edge; kept for the alert code)
 	-- the callsign: a solid dark-green radio tag with tan caps (no decorative dot)
 	local tag = Instance.new("Frame")
 	tag.Name = "Callsign"
-	tag.Position = UDim2.fromScale(0.08, 0.16)
-	tag.Size = UDim2.fromScale(0.17, 0.68)
+	tag.Position = UDim2.fromScale(0.08, 0.12)
+	tag.Size = UDim2.fromScale(0.17, 0.62)
 	tag.BackgroundColor3 = DARK_GREEN
 	tag.BorderSizePixel = 0
-	corner(tag, 0.22)
+	corner(tag, 0.14)
 	tag.Parent = panel
 	local call = text(tag, "Text", F_HEAVY, TAN)
 	call.Position = UDim2.fromScale(0.08, 0.14)
 	call.Size = UDim2.fromScale(0.84, 0.72)
 	call.Text = string.upper((Config.Instructor and Config.Instructor.Callsign) or "INSTRUCTOR")
 	lineLabel = text(panel, "Line", F_BOLD, WHITE, Enum.TextXAlignment.Left) -- (round 5: one weight heavier)
-	lineLabel.Position = UDim2.fromScale(0.28, 0.12)
+	lineLabel.Position = UDim2.fromScale(0.28, 0.06)
 	lineLabel.Size = UDim2.fromScale(0.64, 0.76)
 	lineLabel.RichText = true
-	stroke(lineLabel, PLATE, 1.5, 0.35)
+	stroke(lineLabel, PLATE, 2, 0.35) -- (a text stroke for legibility over the world, not a frame edge)
 	portraitScale = Instance.new("UIScale") -- (no portrait: kept so old tweens have a target)
 	objectiveLabel = text(panel, "ObjectiveOld", F_HEAVY, AMBER) -- (unused: the strip below carries the objective)
 	objectiveLabel.Visible = false
 
 	-- // Objective strip (top centre, under the timer / score area). Round 2: bigger (9 % of the screen height), one or two
 	-- keycaps, the words, segment ticks; no outline, no repeated "PRESS X" line.
-	-- (2026-10-21, AI-tells cleanup) no left accent bar and no edge stroke: the state is a solid 5 design-px bar along the
-	-- plate's BOTTOM edge (amber = do this, olive = done), plus the keycap colour.
+	-- (2026-10-21, AI-tells cleanup) no left accent bar and no edge stroke.
+	-- (2026-10-21, AI-tells) the state colour IS the plate's lip: a solid amber (do this) / olive (done) block the full
+	-- size of the strip, with the dark plate sitting on it and leaving ~9 of the strip's ~124 design px showing below
+	-- and round its bottom corners, like the keycaps' key side. One opaque plate, nothing else.
 	local root = Instance.new("CanvasGroup")
 	root.Name = "Objective"
 	root.AnchorPoint = Vector2.new(0.5, 0)
 	root.Position = UDim2.fromScale(0.5, 0.1)
 	root.Size = UDim2.fromScale(0.4, STRIP_H)
-	root.BackgroundColor3 = PLATE
-	root.BackgroundTransparency = 0.15
+	root.BackgroundTransparency = 1
 	root.BorderSizePixel = 0
 	root.GroupTransparency = 1
 	root.Visible = false
 	corner(root, 0.14)
 	root.Parent = cv
-	local accent = Instance.new("Frame") -- the state bar along the bottom edge (5 of the strip's ~124 design px)
+	local accent = Instance.new("Frame") -- the state lip
 	accent.Name = "StateBar"
 	accent.BackgroundColor3 = AMBER
 	accent.BorderSizePixel = 0
-	accent.AnchorPoint = Vector2.new(0, 1)
-	accent.Position = UDim2.fromScale(0, 1)
-	accent.Size = UDim2.fromScale(1, 0.04)
+	accent.Size = UDim2.fromScale(1, 1)
+	corner(accent, 0.14)
 	accent.Parent = root
+	local plateTop = Instance.new("Frame")
+	plateTop.Name = "Plate"
+	plateTop.BackgroundColor3 = PLATE
+	plateTop.BorderSizePixel = 0
+	plateTop.Size = UDim2.fromScale(1, 0.93)
+	corner(plateTop, 0.14)
+	plateTop.Parent = root
+	-- a step done: a white wash over the plate for a beat (the "ding" you see)
+	local doneFlash = Instance.new("Frame")
+	doneFlash.Name = "DoneFlash"
+	doneFlash.BackgroundColor3 = WHITE
+	doneFlash.BackgroundTransparency = 1
+	doneFlash.BorderSizePixel = 0
+	doneFlash.Size = UDim2.fromScale(1, 1)
+	doneFlash.ZIndex = 5
+	doneFlash.Parent = root
 	-- the keycaps sit in a row that sizes to them (a UIListLayout; each cap keeps its own aspect)
 	local caps = Instance.new("Frame")
 	caps.Name = "Caps"
@@ -342,25 +378,27 @@ local function buildUI()
 	local k1, k2 = slot(1), slot(2)
 	-- a passive step ("spot the target"): an amber reticle, not a key you could think you must press
 	-- (round 4, graders: a bare dark ring read as an empty slot) the reticle sits on a cream keycap face like every other step
+	-- (2026-10-21, AI-tells) the same key face on a key side as the keycaps; the reticle glyph lives on the face
 	local reticle = Instance.new("Frame")
 	reticle.Name = "Reticle"
-	reticle.BackgroundColor3 = KEY_WHITE
 	reticle.BorderSizePixel = 0
-	corner(reticle, 0.22)
+	corner(reticle, 0.18)
 	reticle.Size = UDim2.fromScale(1, 1)
 	reticle.LayoutOrder = 1
 	reticle.Visible = false
 	local rar = Instance.new("UIAspectRatioConstraint"); rar.AspectRatio = 1; rar.Parent = reticle
+	local rface = Instance.new("Frame"); rface.Name = "Face"; rface.BorderSizePixel = 0
+	rface.Size = UDim2.fromScale(1, 1 - KEY_SIDE); corner(rface, 0.18); rface.Parent = reticle
+	paintFace(rface, KEY_WHITE)
 	local ring = Instance.new("Frame"); ring.AnchorPoint = Vector2.new(0.5, 0.5); ring.Position = UDim2.fromScale(0.5, 0.5)
-	ring.Size = UDim2.fromScale(0.78, 0.78); ring.BackgroundTransparency = 1; corner(ring, 0.5); ring.Parent = reticle
-	ring.Size = UDim2.fromScale(0.56, 0.56)
+	ring.Size = UDim2.fromScale(0.56, 0.56); ring.BackgroundTransparency = 1; corner(ring, 0.5); ring.Parent = rface
 	stroke(ring, PLATE, 3, 0).ApplyStrokeMode = Enum.ApplyStrokeMode.Border -- (AI-tells cleanup: the reticle glyph's ring, 3 not hairline)
 	local dot = Instance.new("Frame"); dot.AnchorPoint = Vector2.new(0.5, 0.5); dot.Position = UDim2.fromScale(0.5, 0.5)
-	dot.Size = UDim2.fromScale(0.16, 0.16); dot.BackgroundColor3 = AMBER; dot.BorderSizePixel = 0; corner(dot, 0.5); dot.Parent = reticle
+	dot.Size = UDim2.fromScale(0.16, 0.16); dot.BackgroundColor3 = AMBER; dot.BorderSizePixel = 0; corner(dot, 0.5); dot.Parent = rface
 	for _, r in { 0, 90, 180, 270 } do
 		local tick = Instance.new("Frame"); tick.AnchorPoint = Vector2.new(0.5, 0.5); tick.BackgroundColor3 = PLATE; tick.BorderSizePixel = 0
 		tick.Position = UDim2.fromScale(0.5 + math.sin(math.rad(r)) * 0.33, 0.5 - math.cos(math.rad(r)) * 0.33)
-		tick.Size = UDim2.fromScale(0.06, 0.16); tick.Rotation = r; tick.Parent = reticle
+		tick.Size = UDim2.fromScale(0.06, 0.16); tick.Rotation = r; tick.Parent = rface
 	end
 	local rcap = text(reticle, "Caption", F_BOLD, Color3.fromRGB(226, 222, 208))
 	rcap.AnchorPoint = Vector2.new(0.5, 0)
@@ -375,6 +413,7 @@ local function buildUI()
 	label.AnchorPoint = Vector2.new(0, 0.5)
 	label.Position = UDim2.fromScale(0.3, 0.5)
 	label.Size = UDim2.fromScale(0.5, 0.5)
+	local labelPop = Instance.new("UIScale"); labelPop.Name = "Pop"; labelPop.Parent = label -- (2026-10-21, AI-tells) new words pop in
 	local sub = text(root, "Sub", F_BOLD, Color3.fromRGB(214, 210, 196), Enum.TextXAlignment.Left)
 	sub.Position = UDim2.fromScale(0.3, 0.64)
 	sub.Size = UDim2.fromScale(0.5, 0.24)
@@ -398,6 +437,7 @@ local function buildUI()
 	count.Size = UDim2.fromScale(0.09, 0.34)
 	local rootScale = Instance.new("UIScale"); rootScale.Name = "Punch"; rootScale.Parent = root
 	strip = { root = root, accent = accent, keys = { k1, k2 }, plus = plus, capsRow = caps, reticle = reticle, punch = rootScale,
+		labelPop = labelPop, doneFlash = doneFlash,
 		cap = k1.cap, capFace = k1.face, capText = k1.glyph, capScale = k1.scale, check = k1.check,
 		label = label, sub = sub, pipRow = pipRow, count = count, pips = {} }
 
@@ -872,7 +912,8 @@ local function paintPips(current: number?, doneUpTo: number)
 	end
 end
 local function paintKey(k, done: boolean)
-	k.face.BackgroundColor3 = done and GOOD or KEY_WHITE
+	paintFace(k.face, done and GOOD or KEY_WHITE)
+	k.face.Position = UDim2.fromScale(0, 0) -- (2026-10-21, AI-tells) back up off its key side
 	k.check.Visible = done
 	local mouse = k.face:FindFirstChild("Mouse")
 	if done then k.glyph.Visible = false; if mouse then mouse.Visible = false end
@@ -940,7 +981,7 @@ local function markEnemy(on: boolean)
 				enemyBrackets.Size = locked and UDim2.new(3.4, 18, 5.4, 26) or UDim2.new(4.2, 40, 6.2, 56)
 			end
 			if strip and strip.reticle.Visible then
-				strip.reticle.BackgroundColor3 = locked and AMBER or KEY_WHITE
+				paintFace(strip.reticle.Face, locked and AMBER or KEY_WHITE)
 				strip.reticle.Caption.Text = locked and "SPOTTED" or "LOOK"
 			end
 			task.wait()
@@ -986,6 +1027,10 @@ local function showStrip(key: string, entry)
 	if #list >= 2 then width += 0.07 end
 	local x = 0.035 + width + (captions and 0.05 or 0.03)
 	strip.label.Text = entry.obj
+	-- (2026-10-21, AI-tells) RIVALS-style: the new words pop in (0.85 -> 1, Back) as the strip drops
+	strip.labelPop.Scale = 0.85
+	TweenService:Create(strip.labelPop, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	strip.doneFlash.BackgroundTransparency = 1
 	strip.label.Position = UDim2.fromScale(x, 0.5)
 	strip.label.Size = UDim2.fromScale(0.78 - x, 0.5)
 	strip.sub.Visible = false
@@ -1071,6 +1116,12 @@ local function stripDone()
 		end
 	end
 	strip.accent.BackgroundColor3 = GOOD
+	-- (2026-10-21, AI-tells) the done beat reads at a glance: a white wash over the plate and the words kick, while the
+	-- checked keys show (same 0.6 s before the next step)
+	strip.doneFlash.BackgroundTransparency = 0.7
+	TweenService:Create(strip.doneFlash, TweenInfo.new(0.35, Enum.EasingStyle.Quad), { BackgroundTransparency = 1 }):Play()
+	strip.labelPop.Scale = 1.12
+	TweenService:Create(strip.labelPop, TweenInfo.new(0.3, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	local idx = stripKey and table.find(STARTER_ORDER, stripKey)
 	if idx then paintPips(nil, idx) end
 	local fight = stripKey == "AimShoot"
@@ -1096,12 +1147,14 @@ RunService.RenderStepped:Connect(function(dt)
 		if not stripDoneFlag and k.cap.Visible then
 			local breathe = (i == nextKey) and (1 + 0.04 * math.sin(os.clock() * 4)) or 1
 			k.scale.Scale = breathe * (1 - s.x)
+			-- (2026-10-21, AI-tells) the same spring presses the face down onto its key side
+			k.face.Position = UDim2.fromScale(0, math.clamp(s.x * 0.6, 0, KEY_SIDE * 0.75))
 			-- (round 7, graders: the same key showed white in the strip and amber in the world) one rule everywhere: the key to
 			-- press next is amber (a look-at step waits for your eyes first). Mouse keys stay cream so their amber button reads.
 			if not keyDone[i] then
 				local isMouse = stripGlyphs[i] == "RMB" or stripGlyphs[i] == "LMB"
 				local lit = i == nextKey and not isMouse and (not stripLook or gazeReady)
-				k.face.BackgroundColor3 = lit and AMBER or KEY_WHITE
+				paintFace(k.face, lit and AMBER or KEY_WHITE)
 			end
 		end
 	end
@@ -1378,7 +1431,10 @@ local function showLine(text: string, key: string?)
 		local pw = panel.AbsoluteSize.X
 		if shade and pw > 0 then
 			local right = lineLabel.AbsolutePosition.X - panel.AbsolutePosition.X + lineLabel.TextBounds.X + panel.AbsoluteSize.Y * 0.5
-			shade.Size = UDim2.fromScale(math.clamp(right / pw - 0.06, 0.3, 0.88), 1)
+			local w = math.clamp(right / pw - 0.06, 0.3, 0.88)
+			shade.Size = UDim2.fromScale(w, 1 - KEY_SIDE)
+			local lip = panel:FindFirstChild("ShadeLip")
+			if lip then lip.Size = UDim2.fromScale(w, 1) end
 		end
 	end)
 	local hold = math.max(2.6, #say * 0.06)
@@ -1555,7 +1611,7 @@ local function setHighlight(part: BasePart)
 	chev.Position = UDim2.fromScale(0, 0.68)
 	chev.Size = UDim2.fromScale(1, 0.32)
 	chev.Text = "▼"
-	stroke(chev, PLATE, 1.5, 0.3)
+	stroke(chev, PLATE, 2.5, 0.3) -- (2026-10-21, AI-tells) a text stroke for legibility on bright walls, chunky not hairline
 	tag.Parent = workspace.CurrentCamera
 	highlightTag = tag
 	-- (round 3) one size rule for every world keycap: about 6 % of the screen height (round 8) at any distance (studs follow the
@@ -1576,7 +1632,7 @@ local function setHighlight(part: BasePart)
 			local slack = math.deg(math.atan((math.max(part.Size.X, part.Size.Z) * 0.6) / math.max(d, 1))) + 4
 			gazeReady = angle <= slack
 			-- (round 4) amber = do this, the same as the strip; only a look-at step waits for your eyes before going amber
-			if face then face.BackgroundColor3 = (gazeReady or not stripLook) and AMBER or KEY_WHITE end
+			if face then paintFace(face, (gazeReady or not stripLook) and AMBER or KEY_WHITE) end
 			task.wait()
 		end
 		gazeReady = false

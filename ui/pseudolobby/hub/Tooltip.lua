@@ -8,10 +8,12 @@ local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local GuiService = game:GetService("GuiService")
 
-local UITheme = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("UITheme"))
-local UC = UITheme.Colors
-
 local Tooltip = {}
+-- (2026-10-21, AI-tells + RIVALS) RIVALS' hover bubble: a light pill with dark words (t0024), the same cream bubble as the Kit.
+-- Was a dark glass card with a 1.5 px border, round corners and an amber bar down the left edge (all three AI-UI tells).
+local CREAM, TAN, INK = Color3.fromRGB(236, 232, 218), Color3.fromRGB(176, 164, 132), Color3.fromRGB(20, 22, 18)
+local OSWALD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local RUBIK = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
 local DELAY = 0.35
 local MAX_W = 280
 
@@ -33,21 +35,20 @@ local function build()
 	bubble.Visible = false
 	bubble.AutomaticSize = Enum.AutomaticSize.XY
 	bubble.Size = UDim2.fromOffset(0, 0)
-	bubble.BackgroundColor3 = UC.Glass
+	bubble.BackgroundColor3 = CREAM
 	bubble.BorderSizePixel = 0
 	bubble.ZIndex = 10
 	bubble.Parent = gui
-	local c = Instance.new("UICorner") c.CornerRadius = UDim.new(0, 6) c.Parent = bubble
-	local s = Instance.new("UIStroke") s.Color = UC.Line s.Thickness = 1.5 s.Transparency = 0.2 s.ApplyStrokeMode = Enum.ApplyStrokeMode.Border s.Parent = bubble
 	scale = Instance.new("UIScale") scale.Parent = bubble
 
-	-- amber bar down the left edge
+	-- a darker lip under the pill instead of a border
 	accent = Instance.new("Frame")
-	accent.BackgroundColor3 = UC.Selected
+	accent.Name = "Lip"
+	accent.BackgroundColor3 = TAN
 	accent.BorderSizePixel = 0
-	accent.Position = UDim2.new(0, 6, 0, 8)
-	accent.Size = UDim2.new(0, 3, 1, -16)
-	accent.ZIndex = 11
+	accent.Position = UDim2.new(0, 0, 1, 0)
+	accent.Size = UDim2.new(1, 0, 0, 4)
+	accent.ZIndex = 9
 	accent.Parent = bubble
 
 	-- title + body stack
@@ -58,7 +59,7 @@ local function build()
 	content.ZIndex = 11
 	content.Parent = bubble
 	local p = Instance.new("UIPadding")
-	p.PaddingLeft, p.PaddingRight, p.PaddingTop, p.PaddingBottom = UDim.new(0, 18), UDim.new(0, 12), UDim.new(0, 9), UDim.new(0, 10)
+	p.PaddingLeft, p.PaddingRight, p.PaddingTop, p.PaddingBottom = UDim.new(0, 12), UDim.new(0, 12), UDim.new(0, 8), UDim.new(0, 9)
 	p.Parent = content
 	local l = Instance.new("UIListLayout") l.Padding = UDim.new(0, 3) l.SortOrder = Enum.SortOrder.LayoutOrder l.Parent = content
 
@@ -78,13 +79,19 @@ local function build()
 		t.Parent = content
 		return t
 	end
-	titleL = text(1, UITheme.Fonts.Display, 17, UC.Selected)
-	bodyL = text(2, UITheme.Fonts.Body, 14, UC.Text)
+	titleL = text(1, OSWALD, 19, INK)
+	bodyL = text(2, RUBIK, 15, INK)
 
 	RunService.RenderStepped:Connect(function()
 		if not bubble.Visible then return end
 		if not owner or not owner.Parent or not owner.Visible then Tooltip.Hide() return end
 		local m = UserInputService:GetMouseLocation()
+		-- (2026-10-21) MouseLeave doesn't always fire (a jump onto another button left PLAY's bubble up beside the nav bubble):
+		-- hide as soon as the pointer is off the owner
+		local sg = owner:FindFirstAncestorWhichIsA("ScreenGui")
+		local inset = (sg and sg.IgnoreGuiInset) and Vector2.zero or GuiService:GetGuiInset()
+		local op, osz = owner.AbsolutePosition + inset, owner.AbsoluteSize
+		if m.X < op.X or m.Y < op.Y or m.X > op.X + osz.X or m.Y > op.Y + osz.Y then Tooltip.Hide() return end
 		local view = gui.AbsoluteSize
 		local size = bubble.AbsoluteSize
 		local x, y = m.X + 18, m.Y + 14

@@ -2379,6 +2379,7 @@ local slotRings = {} -- [slot id] = the strip's slot button
 
 local function closeTray(instant: boolean?)
 	openTray = nil
+	if Armory._tipFrame then Armory._tipFrame.Visible = false; Armory._tipOwner = nil end -- (2026-10-21) a tile's bubble outlived the picker
 	-- (2026-10-21, RIVALS pass) the tray pops out; instant when another slot's tray replaces it
 	if tray then
 		if instant then tray.Visible = false; tray:SetAttribute("Closing", nil) else Armory._popOut(tray) end
@@ -2402,6 +2403,8 @@ local function openCosmeticTray(c)
 	if openTray == c.Id then closeTray() return end
 	closeTray(true)
 	openTray = c.Id
+	-- (2026-10-21) the slot's hover bubble stayed up: its slot hides under the picker without a MouseLeave
+	if Armory._tipFrame then Armory._tipFrame.Visible = false; Armory._tipOwner = nil end
 	if statsOpen then statsOpen = false; renderInfo() end -- (the Statistics card sits where the picker opens)
 	Armory.ShowHistory(false)
 	bottomBar.Visible = false

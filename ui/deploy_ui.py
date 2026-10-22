@@ -20,6 +20,12 @@ FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyHudController", "ModuleScript", "hud/LobbyHudController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "NameplatesController", "ModuleScript", "hud/NameplatesController.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyUIController", "ModuleScript", "lobby/LobbyUIController.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers.LobbyUIController", "Tooltip", "ModuleScript", "pseudolobby/hub/Tooltip.lua"),  # (2026-10-21) hover bubble, was Studio-only
+    # (2026-10-21, AI-tells sweep) were Studio-only; repo copies == live at d7dfe99 before the sweep
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers.LobbyUIController", "Style", "ModuleScript", "pseudolobby/hub/Style.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "BillboardController", "ModuleScript", "pseudolobby/hub/BillboardController.lua"),
+    ("ReplicatedStorage.Modules.Shared", "UITheme", "ModuleScript", "pseudolobby/hub/UITheme.lua"),
+    ("ReplicatedStorage.UIKit", "HotkeysPage", "ModuleScript", "pseudolobby/hub/HotkeysPage.lua"),
     ("ServerScriptService", "PublicStats", "Script", "hud/PublicStats.server.lua"),
     ("ReplicatedStorage.UIKit", "PlayScreen", "ModuleScript", "play/PlayScreen.lua"),
     ("ReplicatedStorage.UIKit", "CodesScreen", "ModuleScript", "lobby/CodesScreen.lua"),

@@ -1852,7 +1852,7 @@ local function showCoverHint(text: string)
 		label.Position = UDim2.new(0.5, 0, 0.5, 34)
 		label.Size = UDim2.fromOffset(200, 22)
 		label.BackgroundTransparency = 1
-		label.Font = Enum.Font.GothamBold
+		label.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells sweep) Rubik Bold, was GothamBold
 		label.TextSize = 14
 		label.TextColor3 = Color3.fromRGB(255, 200, 120)
 		label.TextStrokeTransparency = 0.5

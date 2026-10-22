@@ -13,6 +13,9 @@ local Players = game:GetService("Players")
 local BillboardController = {}
 
 local PPS = 18 -- SurfaceGui pixels per stud
+-- (2026-10-21, AI-tells sweep) Oswald Bold for the big ad words, Rubik Bold for sub lines / the ticker (was GothamBlack / GothamBold)
+local HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local BODY = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 
 local SLIDES = {
 	{ title = "TACTICALS", sub = "COVER  ·  PEEK  ·  WIN", a = Color3.fromRGB(255, 150, 40), b = Color3.fromRGB(150, 30, 20) },
@@ -65,7 +68,7 @@ local function label(parent, text, size, pos, color, font)
 	t.Position = pos
 	t.Text = text
 	t.TextScaled = true
-	t.Font = font or Enum.Font.GothamBlack
+	t.FontFace = font or HEAD
 	t.TextColor3 = color or Color3.new(1, 1, 1)
 	t.Parent = parent
 	return t
@@ -90,7 +93,7 @@ local function runHero(part)
 		f.BackgroundColor3 = Color3.new(1, 1, 1)
 		gradient(f, slide.a, slide.b, 120)
 		label(f, slide.title, UDim2.fromScale(0.9, 0.42), UDim2.fromScale(0.05, 0.2))
-		label(f, slide.sub, UDim2.fromScale(0.84, 0.13), UDim2.fromScale(0.08, 0.66), Color3.fromRGB(255, 245, 225), Enum.Font.GothamBold)
+		label(f, slide.sub, UDim2.fromScale(0.84, 0.13), UDim2.fromScale(0.08, 0.66), Color3.fromRGB(255, 245, 225), BODY)
 		local bar = Instance.new("Frame")
 		bar.Size = UDim2.new(0.5, 0, 0, 6)
 		bar.Position = UDim2.fromScale(0.25, 0.85)
@@ -150,7 +153,7 @@ local function runTicker(part)
 	holder.Parent = bg
 	local t = Instance.new("TextLabel")
 	t.BackgroundTransparency = 1
-	t.Font = Enum.Font.GothamBold
+	t.FontFace = BODY
 	t.TextSize = math.floor(h * 0.7)
 	t.TextColor3 = Color3.fromRGB(255, 196, 70)
 	t.Text = TICKER
@@ -178,7 +181,7 @@ end
 local function runPromo(part, offset)
 	local _, bg = makeGui(part)
 	local big = label(bg, "", UDim2.fromScale(0.9, 0.5), UDim2.fromScale(0.05, 0.1))
-	local small = label(bg, "", UDim2.fromScale(0.86, 0.24), UDim2.fromScale(0.07, 0.64), nil, Enum.Font.GothamBold)
+	local small = label(bg, "", UDim2.fromScale(0.86, 0.24), UDim2.fromScale(0.07, 0.64), nil, BODY)
 	local i = offset
 	while part.Parent do
 		i = i % #PROMOS + 1

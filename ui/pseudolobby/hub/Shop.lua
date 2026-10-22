@@ -43,10 +43,11 @@ local C = {
 	Magenta = Color3.fromRGB(255, 90, 210),
 	Go = Color3.fromRGB(141, 191, 90),
 }
+-- (2026-10-21, AI-tells sweep) Oswald Bold titles, Rubik body (was Gotham SSm)
 local F = {
-	Title = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Heavy),
-	Bold = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Bold),
-	Body = Font.new("rbxasset://fonts/families/GothamSSm.json", Enum.FontWeight.Medium),
+	Title = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold),
+	Bold = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold),
+	Body = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium),
 }
 local IMG = {
 	Scissors = "rbxassetid://120480559804238", -- render of the 3D scissors

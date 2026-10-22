@@ -468,8 +468,8 @@ function Kit.headerBar(width, text, height)
 		Name = "Header_" .. text, Size = UDim2.fromOffset(width, height or 78),
 		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.header,
 	}, { Kit.corner(3) })
-	new("Frame", { Name = "TacBar", BackgroundColor3 = Theme.color.olive, BorderSizePixel = 0, Size = UDim2.new(0, 10, 1, -16), Position = UDim2.fromOffset(14, 8), Parent = bar })
-	Kit.label({ Text = string.upper(text), FontFace = F.display, TextSize = 61, Position = UDim2.fromOffset(40, 0), Size = UDim2.new(1, -40, 1, 0), Parent = bar })
+	-- (2026-10-21, AI-tells sweep) no olive TacBar down the left edge (as SettingsKit); the title moves in to 22
+	Kit.label({ Text = string.upper(text), FontFace = F.display, TextSize = 61, Position = UDim2.fromOffset(22, 0), Size = UDim2.new(1, -22, 1, 0), Parent = bar })
 	return bar
 end
 
@@ -733,7 +733,7 @@ function Kit.colorPicker(layer, anchor, color, wheelImage, onChange, dimTarget)
 	local chans = { { "R", Color3.fromRGB(255, 0, 0) }, { "G", Color3.fromRGB(0, 230, 0) }, { "B", Color3.fromRGB(0, 0, 255) } }
 	for i, ch in ipairs(chans) do
 		local box = new("Frame", { Name = ch[1], Position = UDim2.fromOffset(14, 15 + (i - 1) * 78), Size = UDim2.fromOffset(128, 64), BackgroundColor3 = C.white, ZIndex = 62, Parent = panel }, { Kit.corner(6) })
-		new("Frame", { Name = "Accent", Position = UDim2.fromOffset(7, 9), Size = UDim2.fromOffset(3, 46), BackgroundColor3 = ch[2], BorderSizePixel = 0, ZIndex = 63, Parent = box })
+		-- (2026-10-21, AI-tells sweep) the 3 px left accent bar is gone (as SettingsKit); the channel colour stays on the number itself
 		boxes[i] = new("TextBox", {
 			Name = "Value", BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 0), Size = UDim2.new(1, -12, 1, 0),
 			TextColor3 = ch[2], FontFace = F.heavy, TextSize = 38, ClearTextOnFocus = false, ZIndex = 63, Parent = box,

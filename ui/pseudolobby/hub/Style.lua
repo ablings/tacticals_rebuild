@@ -5,7 +5,8 @@
 --   * THEME.Panel2 (cards/buttons) -> frosted glass
 --   * THEME.Panel3 (selected)      -> brighter glass
 --   * THEME.Line borders           -> hidden (thin divider lines become faint white hairlines)
---   * every legacy font            -> the game font (UITheme.Fonts, Gotham SSm); no text outlines
+--   * other thin borders (< 3 px)  -> a 3 px state ring; strokes on a see-through frame are glyph lines, left alone
+--   * every legacy font            -> the game font (UITheme.Fonts: Oswald / Rubik); no text outlines
 --   * rounded corners everywhere, buttons squish when pressed
 -- Attribute NoFX = true on a button opts it out of the press effect; NoStyle = true skips an object.
 
@@ -68,6 +69,7 @@ local function styleSurface(f: GuiObject)
 	if f:IsA("ImageLabel") or f:IsA("ImageButton") or f:IsA("ViewportFrame") then return end
 	local c = f.BackgroundColor3
 	local h = f.Size.Y.Scale == 0 and f.Size.Y.Offset or 99
+	local hollow = f.BackgroundTransparency >= 1 -- (read before the Panel case clears it)
 	if same(c, T.Panel) then
 		f.BackgroundTransparency = 1
 	elseif same(c, T.Panel2) then
@@ -79,13 +81,15 @@ local function styleSurface(f: GuiObject)
 		f.BackgroundColor3 = Color3.new(1, 1, 1)
 		f.BackgroundTransparency = 0.85
 	end
-	-- borders: grey ones go, highlight ones stay (a touch thinner)
+	-- borders: grey ones go, highlight ones stay as a chunky ring
+	-- (2026-10-21, AI-tells sweep) highlight borders thinner than 3 px go up to 3 (they were clamped down to 2, a hairline);
+	-- NoStyle strokes (Tac's 4 px hover glow) and strokes on a see-through frame (the padlock shackle glyph) are left alone
 	for _, s in f:GetChildren() do
-		if s:IsA("UIStroke") and s.ApplyStrokeMode == Enum.ApplyStrokeMode.Border then
+		if s:IsA("UIStroke") and s.ApplyStrokeMode == Enum.ApplyStrokeMode.Border and not s:GetAttribute("NoStyle") then
 			if same(s.Color, T.Line) or same(c, T.Panel) then
 				s.Enabled = false
-			else
-				s.Thickness = math.min(s.Thickness, 2)
+			elseif not hollow then
+				s.Thickness = math.max(s.Thickness, 3)
 			end
 		end
 	end

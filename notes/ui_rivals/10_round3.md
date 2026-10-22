@@ -256,3 +256,47 @@ offset lip, field green #8DBF5A -> #4C7A2E for primary, cream / tan text, olive 
   (gadget / matches / lbElims / lbWins in gold), green gradient band at the bottom (was a thin bar); a card change pops, OPERATORS ONLINE counts up.
 - Check in Studio: header title vs LIVE pill fit on the 1000x620 TVs, Duels row widths with 3v3 names, head initials, the ticker RichText
   TextBounds (scroll wrap), bubble size in studs at 10-40 studs, label green bar under long titles, monitor glyph tint and the gold wins glyph.
+
+## Tutorial AI-tells cleanup (2026-10-21)
+- `ui/tutorial/TutorialController.lua` only, visual pass: steps, remotes, control locks and timings unchanged.
+- Fonts: Oswald Bold for words / keys / numbers (already), Rubik now Bold (was SemiBold) for the radio line and key captions. No Builder Sans left.
+- Keycaps (strip, reticle, world marker, finish tiles): a real key, the face on a solid darker key side (`KEY_SIDE` = 14 % of the height,
+  side = face colour 50 % darker via `paintFace`), was a translucent black drop shadow. The press spring now also sinks the face onto
+  its side; amber / olive / cream recolour face and side together. The passive LOOK reticle got the same face + side.
+- Objective strip: one opaque plate sitting on the state colour, which is now the plate's lip (~9 of 124 design px showing below, round the
+  bottom corners), amber = do this, olive = done. Was a 0.15-transparent plate with a thin bottom bar. No left bar, no stroke.
+- Strip motion (RIVALS): new objective words pop in (UIScale 0.85 -> 1 Back); a done step flashes a white wash over the plate and the words
+  kick (1.12 -> 1) while the olive checked keys show, inside the same 0.6 s before the next step.
+- Radio subtitle: slab (PLATE_HI) on a dark lip (PLATE_LIP), tighter corners (0.12), callsign tag and line lifted to sit on the slab; both
+  resize to the words. Text strokes on the line (2) and world chevron (2.5) are legibility strokes on text, not frame hairlines.
+- Kept: amber accent, the field-green PLAY with its lip, the thick zone ring, the hidden alert stroke (only ever 3 px, fades).
+- Look at in a tutorial run: the key side reads on the cream / amber / olive keys at phone size; press squash + sink on Q / E / SPACE; the
+  amber lip under the strip and its switch to olive with the flash; label pop not clipped by the CanvasGroup on long words (DASH TO THE
+  CRATE, RUN + SLIDE); subtitle lip width tracks the words; the world marker key over cover at 10-40 studs; finish tiles' keys.
+
+## AI-tells sweep (2026-10-21)
+Final pass over `ui/` (not `ui/tutorial/`) for the three tells after the 09_cleanup groups. Visual only, not deployed, not checked in Studio;
+each edited file passes a bracket / block balance check and stays well under 200 top-level locals.
+- `ui/pseudolobby/hub/UITheme.lua` (Modules.Shared.UITheme): `Fonts.Bold` / `Fonts.Body` Gotham SSm -> Rubik Bold / Medium (`FontFamily` too);
+  Display stays Oswald Bold. Style's legacy-font map reads these, so every old Gotham / Builder Sans label in the LobbyUIController gui lands on Rubik.
+- `ui/pseudolobby/hub/Style.lua` (LobbyUIController/Style): highlight Border strokes were clamped DOWN to 2 px (it also thinned Tac's 4 px hover
+  glow to a 2 px hairline); now grey / Panel borders still go, other Border strokes under 3 px go up to 3 (state rings), NoStyle strokes and
+  strokes on a see-through frame (the padlock shackle glyph) are left alone. Covers the old LobbyUIController cards / tabs / queue pill.
+- `ui/lobby/LobbyUIController.lua`: removed 3 left accent bars (centre-panel TacBar beside the title, 3 px olive bar on each redeemed code,
+  4 px olive bar on the hidden PlayerCard) and the 2 px white ring on the dock's red Missions badge.
+- `ui/lobby/Kit.lua`: `Kit.headerBar` TacBar (10 px left bar) removed, title moved in to 22 (as SettingsKit); colour picker R/G/B boxes lose the
+  3 px left accent bar (as SettingsKit; the number keeps the channel colour).
+- `ui/pseudolobby/hub/BillboardController.lua`: city billboards GothamBlack / GothamBold -> Oswald Bold (HEAD) / Rubik Bold (BODY) via FontFace.
+- `ui/pseudolobby/hub/HotkeysPage.lua`: keycap face's 1.5 px edge removed; the darker cap under the face already reads as the lip.
+- `ui/set/CoverController.lua`: cover hint label GothamBold -> Rubik Bold.
+- `ui/pseudolobby/hub/Shop.lua`: fonts Gotham SSm -> Oswald Bold / Rubik. Its thin `stroke()` card borders are left: the module is the old
+  LobbyUIController.Shop, no longer required anywhere (UIKit.ShopScreen replaced it), so restyling it would only churn dead UI.
+- Left on purpose:
+  - `ui/pseudolobby/UITheme_match_orig.lua` (Builder Sans / Gotham): a reference snapshot of the match place's original UITheme, not in any
+    manifest or deploy list. The live match-place UITheme lives in that place; if it is still Builder Sans it needs the same font swap there.
+  - `Style.lua` FONT_MAP keys `Enum.Font.Gotham*` / `BuilderSans*`: they are the inputs it converts to Oswald / Rubik.
+  - Comment-only hits ("was Builder Sans", "no Gotham") in the already-cleaned files.
+  - `Kit.crown` 1 px gold-edge strokes: they draw the crown icon's outline (glyph), not a card border.
+  - `ui/pseudolobby/hub/Tooltip.lua`: already restyled by the Tooltip pass this round (cream pill + tan lip, no border / left bar).
+  - Glyph / HUD strokes already reviewed in 09_cleanup (crosshair, rings, scope rim, Armory icons, FlatIcons, LoadingScreen shockwaves) and
+    every text-legibility stroke.
