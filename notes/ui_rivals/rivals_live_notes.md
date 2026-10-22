@@ -85,3 +85,35 @@ Roblox UI note: a click only registers after the mouse has *moved onto* the butt
     - event and arcade tiles are wide pictures with a huge title + one subtitle line ("Gargoyle Tower / There's.. more?", "Team
       Deathmatch / The team with the most points wins!"), a small shield glyph bottom left, an "Arcade Server" white tag top right,
       and a "SOLO" tile beside some.
+
+## Normal-theme reference (2026-10-21, user-suggested RIVALS copies with the default UI, not Halloween)
+Captures in `notes/ui_rivals/rivals_normal/`. The first set is from "MOD RIVALS FREE KEYS AND SECRET PANEL" (place 89748640089814); the user
+says it's basically 1:1 with RIVALS' default UI. The picker set is from "Kuroko's Rivals MODDED" (94211550075897, free unlocks).
+Prices there read "Free": use them for layout only. No buy prompts were opened.
+- **Play** (`play.png`): 1v1 / 2v2 / 3v3 on the top row, 4v4 / 5v5 below, and a TALL Ranked tile on the RIGHT ("Ranked / Season 3",
+  a big gun render, "Unranked 0 / 10" with the shield glyph). Red X outside the top right. The normal theme has no Beginner hero tile;
+  that was the new-account version.
+- **Weapons** (`weapons.png`): career card top left with five category icons; list with the selected weapon big, left-aligned, its
+  render popping out. Right panel: name + checkbox, 2 bullets, blue level bar with the big level number, "Level up now!" + yellow
+  key price, "Reward at Level 5" + render, then Contracts / Overview / Statistics with blue square buttons (NO Equipped row).
+  Bottom: Leave (red X) + Skin / Wrap / Charm / Finisher "none" slots.
+- **Slot hover:** bubble "Change how this weapon looks".
+- **Picker** (`kuroko_picker.png`):
+  - top row: red "↶ Back", a wide "Search by name or tooltip" bar, "Favorited" + checkbox on the right;
+  - tiles: None (black with a big green check) then rarity tiles (purple / red / teal / green / orange) with a white padlock and
+    the skin name at the bottom.
+- **Clicking a locked skin** (`kuroko_preview.png`): it previews ON the hero gun at once. A top-centre pill shows the skin icon + name
+  ("AKEY-47"), and a white pill under it says how to get it ("Used to be included in the Legendary Key Bundle"). The None tile keeps
+  its check (still equipped).
+- **Tasks** (`tasks.png`):
+  - Daily Tasks with the blue "To Duels" button;
+  - 3 tiles with white glyphs, grey bars, "0 / 5" and key rewards;
+  - a Day 1-7 streak row (Day 1 circled, gift renders between);
+  - then Contracts "sorted by Near Completion" with weapon-icon rows.
+- **Shop** (`shop.png`):
+  - tabs with 3D icons (Home white selected, Exclusive, Bundles, Skins, Emotes, Charms, Finishers, Events, Keys, Admin, More);
+  - crate renders with price buttons;
+  - the Season Pass card with the blue eye button;
+  - rarity tiles with a dark corner weapon tag and price buttons.
+- **Settings** (`settings.png`): Audio tab: rows with ▲▼ + value box + slider, sub-rows indented, toggles = white pill with a black
+  knob (off), right pane = icon + big title + description, preset rail 1/2/3/↓.
