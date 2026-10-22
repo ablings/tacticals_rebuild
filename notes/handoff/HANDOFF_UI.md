@@ -1,5 +1,22 @@
 # Tacticals UI handoff (latest: 2026-10-22, main PC UI session took over from the Shadow PC)
 
+## 2026-10-22 night 1 (Edward asleep: juggle live RIVALS / Kuroko's copy + sub-agent grading, until he says wrap up)
+- Sources: a live RIVALS 1v1 recorded end to end (`notes/ui_rivals/night1/rv_match/`, results_full.jpg), Kuroko 16:9 refs
+  (`night1/kuroko169/`), ours (`night1/ours`, `ours169` = cropped to the 16:9 canvas, `ours_match`). Sub-agent grades are
+  summarised in the vault (Lobby UI Kit.md, night 1).
+- Shipped (deployed + saved in both copies, nothing published):
+  - ff05fbb: **Play X stuck-screen fix**. The legacy InterfaceController hid the parent frame of any button named "Close"; kit
+    buttons are now tagged Nonapplicable.
+  - 57eb42e: results are a RIVALS SCENE (winner posed, title plate, name plate, stat tiles), and To Hub | Play | Rematch sit in one
+    row at the play row; the results close when you arrive back in the lobby.
+  - 447f963: loadout blurred, no tabs / team boxes, row centred; ROUND card lower and smaller; kill feed under the gear.
+  - 33e1030: team boxes as wide as the team. 213a1fa: Shop X in the tab row.
+- **For the lead (server):** in a 1v1 your death ends the round and no `SpectateTarget` / `SpectateReason = "Killer"` is set, so
+  the killer card (DuelHUD `RV.kcard`, which works) never shows. RIVALS keeps the killer card up through ROUND LOST while it spectates
+  the killer, and at match end replays the final kill with a Skip button (bottom right) before the results.
+- Not done (Edward's earlier calls kept): hotbar frames and the hint strip, the bone health bar, "First to 5" / ROUND N under the
+  timer, the Codes dock button.
+
 ## 2026-10-22: main PC capture pass (sheet notes/ui_rivals/mainpc1/sheet_a.jpg, single captures beside it)
 - Captured and compared with RIVALS: hub, Shop, Missions, Settings, Play, Kit, player menu, profile card.
 - **Fixed:** profile card Most Played renders now fill the tile and break out of its top like profile_card.png
