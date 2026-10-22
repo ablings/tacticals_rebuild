@@ -389,3 +389,18 @@ himself; we never publish.
 - 262fd64 (UI): AI-tells pass 2 (tutorial, font sweep, tooltip, Kit bubbles). The match place also has [CALLOUTSTYLE]
   (fix/stealth_callout_style.lua, place-only StealthController: tutorial enemy bubble with a red lip + Oswald). It's already in
   match_place_ref, and port_prep copies match_place_ref, so the port carries it; just check it's there (StealthController source has "[CALLOUTSTYLE]").
+
+## Live port 33 (2026-10-22 ~17:10, main PC lead; Edward in the lead's chat: "go")
+- From the saved working copies: lobby a670323, match c316dd5 (the UI session's later unsaved / uncommitted edits were NOT included:
+  port_prep's deploy_ui reads the shared working tree, so Matchmaking / Ranked were re-deployed from a clean `git worktree` at
+  c316dd5). Published on the XF243Y monitor: tacticals (lobby), Tutorial, Matchmaking, Ranked; each retitled after Grant.
+- Checked every copy with out/c33.lua (THROWNOW, COOK, RTHROW, DualGrip, Wraps, ROUNDFLOW, STATS, Device; match places also
+  REMATCHEARLY, TUTSTUDIO, CALLOUTSTYLE; lobby HubSettings + DUELSPEC) and out/pre.lua.
+- The saved match copy carried `StudioTutorialServer = true` (a test attribute; only read in Studio): cleared in all three match copies
+  before publishing (out/clear_test_attrs.lua). Also needs clearing in match_place_ref itself (UI session).
+- Carries: UI revamp (tutorial redesign, lobby Phase A + B 1-5, AI-tells passes, RIVALS spacing / nameplates / kill banner, Rubik,
+  4:3 pinning, hidden in-match missions / free-reward / login UI), DUELSPEC, CALLOUTSTYLE, hub screens.
+- Lessons: the UI session's Studio kept jumping in front of the publish window on the shared monitor (two mis-clicks into it, no
+  change); click one step at a time and zoom the title bar first. The Claude app window over Studio swallowed menu-bar clicks until
+  Edward minimised it.
+- Live check pending: the Duels TV spectator eye (2v2 pad duel + a spectator).
