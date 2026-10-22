@@ -278,12 +278,16 @@ function LobbyHud.Start()
 	-- (2026-10-21, RIVALS 1:1) the replica's Daily Tasks widget: a 350 x 255 black box at 0.5 (design 10, 405), corner 6; the
 	-- 38 px clipboard (our 3D one) at (10, 10) and "Daily Missions" in Rubik Bold 34 at (55, 8). Rows from y 64, 67 apart (built
 	-- in refresh). The grade1-3 fading wash, Oswald and the hover grow are gone (the replica's widget has none of them).
+	-- (2026-10-21, port3) RIVALS' t0000 widget: a lighter see-through black backing that fades out to the right (UIGradient
+	-- 0 -> 0.45 -> 1 on top of widgetAlpha 0.35), 430 wide so the fade runs past the rewards; the title is Rubik Bold 26
+	-- (~2.2 % h) beside a 32 px clipboard
 	local WFONT = R_BOLD
-	local MW, MH = 350, 255
+	local MW, MH = 430, 255
 	local missions = new("TextButton", { Name = "Missions", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(10, 405), Size = UDim2.fromOffset(MW, MH),
-		BackgroundColor3 = R_HUD.widgetBg, BackgroundTransparency = R_HUD.widgetAlpha, Parent = root }, { RKit.corner(6) })
-	local clipHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(38, 38), ZIndex = 3, Parent = missions })
-	RKit.label({ Text = "Daily Missions", FontFace = WFONT, TextSize = 34, TextColor3 = RC.text, Position = UDim2.fromOffset(55, 8), Size = UDim2.fromOffset(280, 42), ZIndex = 3, Parent = missions })
+		BackgroundColor3 = R_HUD.widgetBg, BackgroundTransparency = rtok("widgetFadeAlpha", 0.35), Parent = root }, { RKit.corner(6),
+		new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0), NumberSequenceKeypoint.new(0.55, 0.45), NumberSequenceKeypoint.new(1, 1) }) }) })
+	local clipHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(32, 32), ZIndex = 3, Parent = missions })
+	RKit.label({ Text = "Daily Missions", FontFace = WFONT, TextSize = 26, TextColor3 = RC.text, Position = UDim2.fromOffset(52, 10), Size = UDim2.fromOffset(280, 36), ZIndex = 3, Parent = missions })
 	local reset = Kit.label({ Text = "", FontFace = WFONT, TextSize = 1, TextTransparency = 1, Size = UDim2.fromOffset(1, 1), Parent = missions }) -- (timer lives in Missions)
 	local ROWS_H = MH - 58 -- rows frame starts at y 58, so a replica row y (64 + (i - 1) * 67) is 6 + (i - 1) * 67 inside it
 	local rows = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 58), Size = UDim2.fromOffset(MW, ROWS_H), ZIndex = 3, Parent = missions })
@@ -381,7 +385,7 @@ function LobbyHud.Start()
 	local NAV = {
 		{ Id = "Kit", Label = "Kit", Tip = "View your weapons, skins, & more", Build = function()
 			local w = data and data.Loadout and data.Loadout.Weapon
-			return Icons.Weapon(w or "Pistol") end, View = Icons.GunView, Zoom = 0.95, Tint = hex("#7E8B5C"), TintK = 0.25 }, -- (model colour, not presentation)
+			return Icons.Weapon(w or "Pistol") end, View = Icons.GunView, Zoom = 0.95, Tint = rtok("navKitTint", RC.gold), TintK = 0.3 }, -- (2026-10-21, port3) gold like RIVALS' Weapons render, was olive (read grey)
 		{ Id = "Missions", Label = "Missions", Tip = "Complete missions to earn scissors", Build = Icons.Clipboard, View = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), Zoom = 1.05 },
 		{ Id = "Shop", Label = "Shop", Tip = "Unlock gear, skins, & more", Build = Icons.Crate, View = CFrame.Angles(math.rad(16), math.rad(28), 0), Zoom = 1.1 },
 		{ Id = "Codes", Label = "Codes", Tip = "Redeem a code", Build = Icons.DogTags, View = CFrame.Angles(math.rad(6), math.rad(-15), 0), Zoom = 1.05, Tint = hex("#ECE6D2"), Stub = hex("#C8442E") },
@@ -405,13 +409,15 @@ function LobbyHud.Start()
 			{ RKit.corner(46), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(R_HUD.disc),
 				Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(0.6, 0.3), NumberSequenceKeypoint.new(1, 0.15) }) }) })
 		-- our 3D model sits where the replica's 92 px icon image sits (centre 59, 40)
-		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 40), Size = UDim2.fromOffset(92, 92), ZIndex = 2, Parent = b })
+		-- (2026-10-21, port3) icons ~9.5 % h: a 104 px box centred at (59, 38), so they overflow the disc like RIVALS' renders
+		local holder = new("Frame", { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(59, 38), Size = UDim2.fromOffset(104, 104), ZIndex = 2, Parent = b })
 		local iconScale = new("UIScale", { Name = "HoverScale", Parent = holder })
 		navIcons[it.Id] = { holder = holder, it = it, scale = iconScale }
-		-- label: Rubik Bold 28, 2.5 px black text stroke, anchored bottom-centre at (59, 112)
-		local lbl = RKit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 28, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(59, 112), Size = UDim2.fromOffset(140, 32), ZIndex = 3, Parent = b })
-		RKit.textStroke(2.5).Parent = lbl
+		-- (2026-10-21, port3) label: Rubik Bold 25 with a thin 1.5 px stroke, bottom at y 104 (bar y 1052), so it sits up on the dark
+		-- strip and overlaps the icon's bottom (icon box ends at 90) like RIVALS
+		local lbl = RKit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 25, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(59, 104), Size = UDim2.fromOffset(140, 30), ZIndex = 3, Parent = b })
+		RKit.textStroke(1.5).Parent = lbl
 		-- badge: 30 px Theme badge red at (92, 10), white ring 1.5 @ 0.2, Rubik Bold 21
 		local badge = new("Frame", { Name = "Badge", Visible = false, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(92, 10), Size = UDim2.fromOffset(30, 30),
 			BackgroundColor3 = RC.badge, ZIndex = 4, Parent = b }, { RKit.corner(15), RKit.stroke(RC.white, 1.5, 0.2) })
@@ -524,13 +530,66 @@ function LobbyHud.Start()
 		end
 		return m
 	end
+	-- (2026-10-21, port3) glossy + saturated like RIVALS' renders: every part's saturation x1.4 (+0.1) and value x1.15 (+0.06),
+	-- SmoothPlastic so the key light leaves a sheen (the Kit pistol and the Shop crate read grey / olive before)
+	local function glossModel(m)
+		local parts = m:IsA("BasePart") and { m } or {}
+		for _, d in m:GetDescendants() do if d:IsA("BasePart") then table.insert(parts, d) end end
+		for _, d in parts do
+			if d.Material ~= Enum.Material.Neon then
+				local h, s, v = d.Color:ToHSV()
+				d.Color = Color3.fromHSV(h, math.min(1, s * 1.4 + 0.1), math.min(1, v * 1.15 + 0.06))
+				d.Material = Enum.Material.SmoothPlastic
+			end
+		end
+		return m
+	end
+	-- (2026-10-21, port3) rim highlight: a white silhouette of the same model in a second ViewportFrame just behind and 6 % bigger,
+	-- following the icon's sway every frame (and its model when Kit swaps guns), so each icon gets a soft light edge
+	local function addRim(n)
+		local main = n.vp.Frame
+		main.ZIndex = 3
+		local rim = new("ViewportFrame", { Name = "Rim", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromScale(1.06, 1.06), Ambient = RC.white, LightColor = RC.white, ImageTransparency = rtok("iconRimAlpha", 0.45), ZIndex = 2, Parent = n.holder })
+		local cam = new("Camera", { Parent = rim })
+		rim.CurrentCamera = cam
+		local world = new("WorldModel", { Parent = rim })
+		local src, copy
+		local conn
+		conn = RunService.RenderStepped:Connect(function()
+			if not rim.Parent or not main.Parent then conn:Disconnect() return end
+			local w = main:FindFirstChildOfClass("WorldModel")
+			local now = w and w:FindFirstChildOfClass("Model")
+			if now ~= src then
+				src = now
+				if copy then copy:Destroy(); copy = nil end
+				if not now then return end
+				copy = now:Clone()
+				for _, d in copy:GetDescendants() do
+					if d:IsA("BasePart") then
+						d.Color = RC.white; d.Material = Enum.Material.SmoothPlastic
+						if d:IsA("MeshPart") then pcall(function() d.TextureID = "" end) end
+					elseif d:IsA("Decal") or d:IsA("Texture") or d:IsA("SurfaceAppearance") then
+						d:Destroy()
+					end
+				end
+				copy.Parent = world
+			end
+			if copy and src then
+				copy:PivotTo(src:GetPivot())
+				if main.CurrentCamera then cam.FieldOfView = main.CurrentCamera.FieldOfView; cam.CFrame = main.CurrentCamera.CFrame end
+			end
+		end)
+	end
 	for id, n in navIcons do
 		-- (2026-10-21, RIVALS 1:1) lit like the replica's bright Codex renders: neutral white key light from the camera side, ambient
 		-- ~200 (the cream rim light on Kit is gone); zoom 1.12 fills the replica's 92 px icon box
-		n.vp = Icons.Viewport(n.holder, tintModel(n.it.Build(), n.it.Tint, n.it), { view = n.it.View, zoom = n.it.Zoom * 1.12 })
-		n.vp.Frame.Ambient = rtok("iconAmbient", Color3.fromRGB(200, 200, 206))
+		n.vp = Icons.Viewport(n.holder, glossModel(tintModel(n.it.Build(), n.it.Tint, n.it)), { view = n.it.View, zoom = n.it.Zoom * 1.12 })
+		-- (2026-10-21, port3) brighter: ambient 200 -> 228, the white key light from the camera side
+		n.vp.Frame.Ambient = rtok("iconAmbient", Color3.fromRGB(228, 228, 232))
 		n.vp.Frame.LightColor = rtok("iconLight", RC.white)
 		n.vp.Frame.LightDirection = Vector3.new(0.45, -0.7, 0.55)
+		addRim(n)
 		n.holderBase = n.holder.Position
 	end
 	Icons.Viewport(clipHolder, Icons.Clipboard(), { view = CFrame.Angles(math.rad(8), math.rad(-18), math.rad(6)), zoom = 1.1 })
@@ -686,7 +745,7 @@ function LobbyHud.Start()
 		local w = data.Loadout and data.Loadout.Weapon
 		if w and w ~= shownKitWeapon and navIcons and navIcons.Kit and navIcons.Kit.vp then
 			shownKitWeapon = w
-			navIcons.Kit.vp.SetModel(tintModel(Icons.Weapon(w), navIcons.Kit.it.Tint, navIcons.Kit.it), Icons.GunView) -- (grade2) keeps its olive tint
+			navIcons.Kit.vp.SetModel(glossModel(tintModel(Icons.Weapon(w), navIcons.Kit.it.Tint, navIcons.Kit.it)), Icons.GunView) -- (2026-10-21, port3) keeps its gold tint + gloss; the rim follows the new model
 		end
 		-- (2026-10-21, RIVALS pass) the scissors count counts up from what was shown, and the pill pops when it rises
 		local credits = data.Credits or 0
@@ -724,7 +783,10 @@ function LobbyHud.Start()
 		-- (2026-10-21, grade1) the same flat cream glyphs as the Missions screen (MissionsScreen FLAT_STAT), not tiny dark 3D models
 		local FLAT_STAT = { Wins = "trophy", MatchesPlayed = "play", Kills = "lbElims", Headshots = "lbElims", CoverKills = "cover",
 			MeleeKills = "melee", GadgetsThrown = "gadget" }
-		local TextService = game:GetService("TextService")
+		-- (2026-10-21, port3) RIVALS' rows read "Play duels" / "Eliminations" / "Win duels": short stat names at ONE fixed size
+		-- (Rubik Bold 24), the same map as MissionsScreen SHORT; no measuring, no shrinking, no ellipsis
+		local SHORT = { Kills = "Eliminations", Headshots = "Headshots", MeleeKills = "Melee kills", CoverKills = "Cover kills",
+			GadgetsThrown = "Gadgets", Wins = "Win matches", MatchesPlayed = "Play matches" }
 		-- (2026-10-21, RIVALS 1:1) the replica's task rows (HudController Daily Tasks), 67 design px apart from widget y 64 (rows
 		-- frame y 58, so 6 + (i - 1) * 67 here): a 32 px white glyph (ours) at (8, +6), the name in Rubik Bold 28 with a 1.5 text
 		-- stroke at (47, 0), a 262 x 6 black-0.5 track at (45, +34) with a Theme blue fill (Theme green when done), the count
@@ -734,23 +796,24 @@ function LobbyHud.Start()
 		local CHECK = RAssets.tasks and RAssets.tasks.check or ""
 		-- (2026-10-21, RIVALS images) RIVALS' claw for the elimination tasks (Kills, Headshots), the lime check (untinted) for done
 		local GEN = RAssets.gen or {}
-		local GEN_GLYPH = { Kills = GEN.tasks_elims, Headshots = GEN.tasks_elims }
+		-- (2026-10-21, port3) + the solid white gen art for cover (row_crouch), melee (kit_cat_knife) and gadgets (kit_cat_grenade)
+		local GEN_GLYPH = { Kills = GEN.tasks_elims, Headshots = GEN.tasks_elims, CoverKills = GEN.row_crouch, MeleeKills = GEN.kit_cat_knife,
+			GadgetsThrown = GEN.kit_cat_grenade, Wins = RAssets.tasks and RAssets.tasks.trophy, MatchesPlayed = RAssets.tasks and RAssets.tasks.play }
 		local CHECK_LIME = GEN.tasks_check_lime
+		-- (2026-10-21, port3) row layout, 67 apart: 30 px solid glyph at (14, +4), the short name (Rubik Bold 24, 1.5 stroke) at
+		-- (52, 0), a 250 x 6 bar under the name (light track RC.track @ 0.35 so the blue reads on the see-through backing), the count
+		-- right-aligned to x 318, and the reward RIVALS-style: a 46 px (4.3 % h) 3D scissors at (326, -6) with "×N" laid over its
+		-- bottom-right corner. Done: the 40 px lime check where the reward sits.
 		for i, e in entries do
 			local y = 6 + (i - 1) * 67
 			local done = e.claimed or e.prog >= e.def.Goal
 			new("ImageLabel", { Name = "StatIcon", BackgroundTransparency = 1, Image = GEN_GLYPH[e.def.Stat] or Kit.ICONS[FLAT_STAT[e.def.Stat] or "trophy"], ImageColor3 = RC.white,
-				ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(8, y + 6), Size = UDim2.fromOffset(32, 32), ZIndex = 4, Parent = holder })
-			-- our names run longer than RIVALS' ("Play duels"): 28 steps down to 20 to fit the ~190 px left of the count, then truncates
-			-- (Enum.Font has no Rubik: measured with Arial Bold + 7 %)
-			local nameText = e.def.Short or e.def.Text
-			local nameSize = 28
-			while nameSize > 20 and TextService:GetTextSize(nameText, nameSize, Enum.Font.ArialBold, Vector2.new(800, 40)).X * 1.07 > (done and 255 or 190) do nameSize -= 2 end
-			local t = RKit.label({ Text = nameText, FontFace = WFONT, TextSize = nameSize, TextColor3 = done and R_HUD.taskDone or RC.text,
-				Position = UDim2.fromOffset(47, y), Size = UDim2.fromOffset(done and 255 or 200, 34), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = holder })
+				ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(14, y + 4), Size = UDim2.fromOffset(30, 30), ZIndex = 4, Parent = holder })
+			local t = RKit.label({ Text = SHORT[e.def.Stat] or e.def.Short or e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = done and R_HUD.taskDone or RC.text,
+				Position = UDim2.fromOffset(52, y), Size = UDim2.fromOffset(200, 32), ZIndex = 4, Parent = holder })
 			RKit.textStroke(1.5).Parent = t
-			local back = new("Frame", { Position = UDim2.fromOffset(45, y + 34), Size = UDim2.fromOffset(262, 6), BackgroundColor3 = R_HUD.barBack,
-				BackgroundTransparency = 0.5, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { RKit.corner(3) })
+			local back = new("Frame", { Position = UDim2.fromOffset(52, y + 33), Size = UDim2.fromOffset(250, 6), BackgroundColor3 = rtok("barTrack", RC.track),
+				BackgroundTransparency = 0.35, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { RKit.corner(3) })
 			local frac = math.clamp(e.prog / e.def.Goal, 0, 1)
 			local wasFrac = hudFx.frac[e.def.Id] or frac
 			local fill = new("Frame", { Size = UDim2.fromScale(wasFrac, 1), BackgroundColor3 = done and RC.green or R_HUD.barFill, ZIndex = 5, Parent = back }, { RKit.corner(3) })
@@ -764,19 +827,20 @@ function LobbyHud.Start()
 			hudFx.paid[e.def.Id] = e.claimed
 			if done then
 				local ck = new("ImageLabel", { Name = "Check", BackgroundTransparency = 1, Image = CHECK_LIME or CHECK, ImageColor3 = CHECK_LIME and RC.white or RC.green,
-					ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(306, y + 6),
+					ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(326, y),
 					Size = UDim2.fromOffset(40, 40), ZIndex = 4, Parent = holder })
 				if newlyDone or newlyPaid then table.insert(checkPops, ck) end
 			else
-				local cnt = RKit.label({ RichText = true, Text = e.prog .. ' <font size="17">/ ' .. e.def.Goal .. '</font>', FontFace = WFONT, TextSize = 27, TextColor3 = RC.text,
-					TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(307, y - 2), Size = UDim2.fromOffset(120, 34), ZIndex = 4, Parent = holder })
+				local cnt = RKit.label({ RichText = true, Text = e.prog .. ' <font size="17">/ ' .. e.def.Goal .. '</font>', FontFace = WFONT, TextSize = 26, TextColor3 = RC.text,
+					TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(318, y - 2), Size = UDim2.fromOffset(110, 34), ZIndex = 4, Parent = holder })
 				RKit.textStroke(1.5).Parent = cnt
 				if fx and fx.up then fx.count = cnt end -- (2026-10-21, round 3) progress made: the count punches as its bar fills
-				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(312, y), Size = UDim2.fromOffset(34, 34), ZIndex = 4, Parent = holder })
+				local rw = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(326, y - 6), Size = UDim2.fromOffset(46, 46), ZIndex = 4, Parent = holder })
 				table.insert(art, { rw, "_Scissors" })
-				-- "×N" centred under the render (replica: 34 wide; 60 here so "×1,000" fits, same centre x 329)
-				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 20, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
-					Position = UDim2.fromOffset(299, y + 22), Size = UDim2.fromOffset(60, 22), ZIndex = 5, Parent = holder })
+				-- "×N" over the render's bottom-right corner: right edge 10 px past the render, bottom 4 px under it
+				local rl = RKit.label({ Text = "×" .. commas(e.def.Reward), FontFace = WFONT, TextSize = 21, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Right,
+					TextYAlignment = Enum.TextYAlignment.Bottom, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromOffset(326 + 46 + 10, y - 6 + 46 + 4), Size = UDim2.fromOffset(100, 26),
+					ZIndex = 6, Parent = holder })
 				RKit.textStroke(1.5).Parent = rl
 			end
 		end
@@ -1079,13 +1143,15 @@ function LobbyHud.Start()
 		end
 	end
 	local wasTraining = false
-	-- new player = never queued this session and Stats.MatchesPlayed == 0 (no stat loaded yet: the first 60 s after join)
+	-- new player = never queued this session and account level < 5 (no data loaded yet: the first 60 s after join)
 	local joinT0, queuedOnce = os.clock(), false
 	local function wantJoin()
 		if player:GetAttribute("MM_Queue") ~= nil then queuedOnce = true end
 		if queuedOnce then return false end
-		local mp = data and data.Stats and data.Stats.MatchesPlayed
-		if mp ~= nil then return mp == 0 end
+		-- (2026-10-21, user) RIVALS shows the bubble to low-level accounts only, until about level 5
+		if data and data.XP ~= nil and Config.AccountLevel then
+			return (Config.AccountLevel(data.XP)) < 5
+		end
 		return os.clock() - joinT0 < 60
 	end
 	RunService.Heartbeat:Connect(function(dt)

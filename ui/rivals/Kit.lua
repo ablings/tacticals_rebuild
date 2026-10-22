@@ -361,8 +361,13 @@ local function genImage(name)
 	return genAssets and genAssets[name] or nil
 end
 
+-- (2026-10-21, port3) RIVALS' close X size in design px (the replica's Play X); Kit.CLOSE_GAP = its gap outside a panel's top-right
+Kit.CLOSE_W, Kit.CLOSE_H, Kit.CLOSE_GAP = 112, 58, 12
 -- Red close button with a chunky white X (gen.ui_close_x).
 function Kit.closeButton(size)
+	-- (2026-10-21, port3) one X everywhere: RIVALS' size (the replica's Play X, 112x58 design px at 1920x1080) when no size is
+	-- given. Screens place it 12 px outside their panel's top-right corner, top-aligned.
+	size = size or UDim2.fromOffset(Kit.CLOSE_W, Kit.CLOSE_H)
 	local btn = Kit.button("red", size, nil, { Name = "Close" })
 	-- (2026-10-21, RIVALS images) the X is now one image, gen.ui_close_x (the whole white ✖ with its grey lower-arm shade, never
 	-- tinted), ~40/67 of the button height and centred. Falls back to the old two outlined bars if the id is missing.

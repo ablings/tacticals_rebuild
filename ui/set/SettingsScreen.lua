@@ -2,6 +2,8 @@
 -- rivals_practice (design-canvas px at 1920x1080, converted to Scale by Kit.toScale).
 -- (2026-10-21, RIVALS 1:1) colours and fonts from UIKit.Rivals.Theme (through SettingsKit), the replica's rows / toggles /
 -- steppers / section headers / detail pane again; the tab bar is the list's width and its 3D icons are lit from the camera.
+-- (2026-10-21, port3) per two graders: text and controls ~15-20 % bigger (labels ExtraBold 50, value boxes / arrows / toggles /
+-- slider handles scaled up, header 70, pane title 70), near-solid header bars, taller tabs with brighter icons over the bar.
 -- Values come from the saved profile (data.Settings, see Shared/Config/SettingsConfig) and every
 -- change is saved back, so settings follow the player into every place.
 --   SettingsScreen.Init({ getSettings = fn, save = fn(settings), onOpen = fn, onClose = fn })
@@ -256,14 +258,16 @@ local detailTop = new("Frame", { Name = "Text", BackgroundTransparency = 1, Size
 -- (2026-10-21, RIVALS 1:1) the replica's pane: title in RIVALS' face and weight (Rubik SemiBold 56, shrinks to fit a long name
 -- instead of the Oswald cut-off), description Rubik 31 in Theme's dim grey; the pane itself is the faint full-height backing
 -- column (black at 0.93, 890 tall)
-local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 50, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(14, 8), Size = UDim2.fromOffset(64, 64), Parent = detailTop })
-local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 10), Size = UDim2.fromOffset(60, 60), Parent = detailTop })
-local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.heavy, TextSize = 56, TextScaled = true,
-	Position = UDim2.fromOffset(92, 8), Size = UDim2.fromOffset(420, 64), Parent = detailTop })
-new("UITextSizeConstraint", { MaxTextSize = 56, Parent = dTitle })
+-- (2026-10-21, port3) graders: the pane title ~5 % of the screen height (RIVALS' "Master Vo..." is huge): 56 -> 70 in a
+-- 80 px line, Rubik ExtraBold; icon 60 -> 72; the description 31 -> 34 and moved down under the taller title
+local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 60, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(12, 4), Size = UDim2.fromOffset(78, 78), Parent = detailTop })
+local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(14, 6), Size = UDim2.fromOffset(72, 72), Parent = detailTop })
+local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.display, TextSize = 70, TextScaled = true,
+	Position = UDim2.fromOffset(102, 2), Size = UDim2.fromOffset(412, 80), Parent = detailTop })
+new("UITextSizeConstraint", { MaxTextSize = 70, Parent = dTitle })
 local dDesc = Kit.label({
-	Name = "Desc", Text = "", FontFace = F.bold, TextSize = 31, TextColor3 = C.textDim, TextWrapped = true,
-	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 80), Size = UDim2.fromOffset(470, 300), Parent = detailTop,
+	Name = "Desc", Text = "", FontFace = F.bold, TextSize = 34, TextColor3 = C.textDim, TextWrapped = true,
+	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 92), Size = UDim2.fromOffset(480, 300), Parent = detailTop,
 })
 
 local function showDetail(row)
@@ -335,6 +339,30 @@ local function defaults(tab)
 	return v
 end
 
+-- (2026-10-21, port3) graders: the stepper and slider ~15-20 % bigger (SettingsKit is shared, so the screen resizes its parts):
+-- value box 103 x 55 -> 120 x 64 with ~24 px-on-screen bold text (Rubik ExtraBold 36), the ▲▼ box 53 x 55 -> 60 x 64 with
+-- chunky 28 px arrows, both centred on the 88 px label line; the track 6 -> 9 thick and the handle 32 x 34 -> 36 x 38
+-- (~3.5 % of the screen height)
+local function biggerSlider(holder)
+	local box, arrows, track = holder:FindFirstChild("Value"), holder:FindFirstChild("Arrows"), holder:FindFirstChild("Track")
+	if box then
+		box.Position, box.Size = UDim2.new(1, -19, 0, 12), UDim2.fromOffset(120, 64)
+		box.FontFace, box.TextSize = F.display, 36
+	end
+	if arrows then
+		arrows.Position, arrows.Size = UDim2.new(1, -147, 0, 12), UDim2.fromOffset(60, 64)
+		for _, b in ipairs(arrows:GetChildren()) do
+			if b:IsA("TextButton") then b.FontFace, b.TextSize = F.display, 28 end
+		end
+	end
+	if track then
+		track.Position = UDim2.new(track.Position.X.Scale, track.Position.X.Offset, 0, 98)
+		track.Size = UDim2.new(track.Size.X.Scale, track.Size.X.Offset, 0, 9)
+		local knob = track:FindFirstChild("Knob")
+		if knob then knob.Size = UDim2.fromOffset(36, 38) end
+	end
+end
+
 local function buildRow(tab, row, order)
 	-- (2026-10-21, grade1) graders: the plates stair-stepped (772 / 734 / 695 / 657 wide by level). One plate level now: every row is
 	-- the list's full width and the same height for its kind (88, sliders 132); a sub-row (level 2 / 3: While Aiming, While Scoped,
@@ -362,7 +390,12 @@ local function buildRow(tab, row, order)
 	local labelX = 89 + ind
 	-- (2026-10-21, grade2) row labels went 42 -> 24. (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS' row names are big (~34 design px): Rubik Bold 34.
 	-- (2026-10-21, RIVALS 1:1) the replica's row label: Rubik SemiBold 42
-	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = F.heavy, TextSize = 42, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, lineH), Parent = frame })
+	-- (2026-10-21, port3) graders: labels ~3.8 % of the screen height and very bold like RIVALS': Rubik ExtraBold 50 (was SemiBold 42)
+	-- the box runs up to the control (toggles are narrower) and a long name shrinks to fit instead of running under it
+	local reserve = row.kind == "toggle" and 165 or 245
+	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = F.display, TextSize = 50, TextScaled = true, Position = UDim2.fromOffset(labelX, 14),
+		Size = UDim2.new(1, -(labelX + reserve), 0, lineH - 28), Parent = frame })
+	new("UITextSizeConstraint", { MaxTextSize = 50, Parent = label })
 
 	-- red per-setting reset: appears at the row start whenever the value differs from its default
 	local default = defaultOf(row)
@@ -387,7 +420,7 @@ local function buildRow(tab, row, order)
 		resetBtn.Visible = on
 		icon.Position = on and Kit.S(frame, 80 + ind, iconY + 10) or Kit.S(frame, 18 + ind, iconY)
 		icon.Size = on and Kit.S(frame, 32, 32) or Kit.S(frame, 52, 52)
-		label.Position = Kit.S(frame, on and labelX + 31 or labelX, 0)
+		label.Position = Kit.S(frame, on and labelX + 31 or labelX, 14) -- (port3) the label box is 60 tall at y 14 now
 	end
 
 	local v = values[tab.name]
@@ -420,11 +453,19 @@ local function buildRow(tab, row, order)
 		local holder
 		-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) RIVALS: ▲▼ stepper + value box on the label line, a full-width track under it (grade1 had removed the stepper)
 		holder, api = Kit.slider(h, { min = row.min, max = row.max, step = row.step, arrowStep = row.arrow, value = v[row.key], fmt = row.fmt }, changed)
+		biggerSlider(holder)
 		holder.Parent = frame
 	elseif row.kind == "action" then
 		-- [SET] an action row (e.g. Touch > Layout Editor): the blue arrow button runs ctx.onAction(key)
 		control = Kit.button("robux", UDim2.fromOffset(112, 60), "→")
 		control.Activated:Connect(function() if ctx.onAction then ctx.onAction(row.key) end end)
+	end
+	if control and row.kind == "toggle" then
+		-- (2026-10-21, port3) graders: controls ~15 % bigger. Toggle 110 x 55 -> 126 x 63, knob 41 -> 47 (the kit slides the
+		-- knob by Scale 7/110 .. 62/110, which keeps an 8 px margin either side at this width)
+		control.Size = UDim2.fromOffset(126, 63)
+		local knob = control:FindFirstChild("Knob")
+		if knob then knob.Size = UDim2.fromOffset(47, 47) end
 	end
 	if control then
 		-- centre anchor so hover scaling grows the control in place (not from its corner)
@@ -482,7 +523,12 @@ function openTab(tab)
 	for si, sec in ipairs(tab.sections) do
 		order += 1
 		if sec.title then
-			local hb = Kit.headerBar(772, sec.title)
+			-- (2026-10-21, port3) graders: the header title bigger like RIVALS' (61 -> 70 in an 88 px bar, still Rubik ExtraBold),
+			-- and the bar near-solid: at 0.28 a dark gun silhouette from the GUI behind showed through at the bar's right end
+			local hb = Kit.headerBar(772, sec.title, 88)
+			hb.BackgroundTransparency = 0.04
+			local ht = hb:FindFirstChildOfClass("TextLabel")
+			if ht then ht.TextSize = 70 end
 			hb.LayoutOrder = order
 			if si > 1 then
 				-- breathing room before each new section (reference gap)
@@ -544,15 +590,18 @@ for i, tab in ipairs(Data.tabs) do
 		local ctl = ViewIcons.Icon(holder, model, { hoverTarget = tabBtn, zoom = ((view and view[2]) or 1) * 1.35 })
 		local vpf = ctl and ctl.Frame
 		if vpf then
-			vpf.Ambient = Color3.fromRGB(200, 200, 200)
+			-- (2026-10-21, port3) graders: brighter (RIVALS' tab renders are vivid): ambient 200 -> 236
+			vpf.Ambient = Theme.hex("#ECECEC")
 			vpf.LightColor = C.white
 			vpf.LightDirection = Vector3.new(-0.4, -0.7, 1)
 		end
 	end or (Assets.tabIcon and Assets.tabIcon[tab.icon])
 	-- (2026-10-21, grade3: copy RIVALS t0136 / t0137) 100 tall with its bottom on the bar's bottom: the ~60 px icon rises 23 px out of the 77 px bar like RIVALS';
 	-- the selected cream plate (52 tall) stays inside the bar
-	local t, api = Kit.imageTab(UDim2.fromOffset(TAB_W, 100), tab.name, img, tab.glyph, 52)
-	t.Position = UDim2.fromOffset(TAB_X0 + (i - 1) * TAB_STEP, 77 - 100)
+	-- (2026-10-21, port3) graders: icons ~60 px on screen, rising well above the bar: the tab 100 -> 124 tall (icon box 61 -> 85,
+	-- ~62 px on a 784 px window), bottom still on the bar's bottom, so the icon now stands ~47 px over the bar's top edge
+	local t, api = Kit.imageTab(UDim2.fromOffset(TAB_W, 124), tab.name, img, tab.glyph, 52)
+	t.Position = UDim2.fromOffset(TAB_X0 + (i - 1) * TAB_STEP, 77 - 124)
 	t.Parent = tabBar
 	tabApis[tab.name] = api
 	tabButtons[tab.name] = t

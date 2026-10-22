@@ -3,8 +3,8 @@
 --
 --   * Military skybase HUD: gunmetal panels, olive drab borders, amber signal colour. Layout and
 --     button feel follow Rivals (chunky two-tone buttons with dark outlines), recoloured to our theme.
---   * Opening a menu fades in a dark BACKDROP behind it (Colors.Backdrop -> Backdrop2), closing
---     fades it out.
+--   * Opening a menu fades in a dark BACKDROP behind it (RIVALS scrim purple + edge vignette over the blurred world,
+--     2026-10-21 port3), closing fades it out.
 --   * Selected = bone. Play / buy = olive (pass 34: no amber), secondary actions = olive, close = red.
 --   * Fonts: Oswald (condensed, stencil-like) for headings and buttons, Rubik for body copy.
 
@@ -82,10 +82,32 @@ end
 
 -------------------------------------------------------------------------------
 -- Backdrop: one full-screen coloured wash that fades in under open menus
+-- (2026-10-21, port3) graders (both): RIVALS darkens the blurred lobby behind every menu hard (to ~20-25 % brightness) with a
+-- dark purple tint (UIKit.Rivals.Theme.color.scrim, #140C1C) and darker edges; ours was a light grey blur at ~45 %. Now: a flat
+-- scrim-purple wash (0.26 transparent at full strength) + a radial-ish vignette made only of full-screen gradient layers (left/
+-- right, top/bottom and both diagonals, all transparent in the middle, so no shape ever shows), over the kept world blur with a
+-- darker, cooler grade. Match place has no UIKit.Rivals: falls back to the same hex.
 -------------------------------------------------------------------------------
-local backdrop, holders = nil, {}
+local function rivalsScrim()
+	local ok, c = pcall(function()
+		local rs = game:GetService("ReplicatedStorage")
+		local kit = rs:FindFirstChild("UIKit")
+		local r = kit and kit:FindFirstChild("Rivals")
+		local t = r and r:FindFirstChild("Theme")
+		return t and require(t).color.scrim
+	end)
+	return (ok and c) or Color3.fromRGB(20, 12, 28) -- #140C1C
+end
+local WASH_ALPHA = 0.74 -- (2026-10-21, port3) wash opacity at strength 1 (was 0.78 over a grey-navy gradient, read ~45 %)
+local VIG_ALPHA = 0.9 -- (2026-10-21, port3) vignette layer opacity at strength 1 (each layer's gradient fades it to 0 inward)
+-- (2026-10-21, port3) vignette layers: {rotation, edge transparency}. The straight pair darkens the sides, the diagonals round the
+-- corners off, so together they read as one radial falloff.
+local VIG_LAYERS = { { 0, 0.15 }, { 90, 0.3 }, { 45, 0.45 }, { -45, 0.45 } }
+
+local backdrop, holders, vigFrames = nil, {}, {}
 local function getBackdrop()
 	if backdrop and backdrop.Parent then return backdrop end
+	local scrim = rivalsScrim()
 	local gui = Instance.new("ScreenGui")
 	gui.Name = "UIBackdrop"
 	gui.IgnoreGuiInset = true
@@ -95,27 +117,32 @@ local function getBackdrop()
 	wash.Name = "Wash"
 	wash.Size = UDim2.fromScale(1, 1)
 	wash.BorderSizePixel = 0
-	wash.BackgroundColor3 = Color3.new(1, 1, 1)
+	wash.BackgroundColor3 = scrim -- (2026-10-21, port3) flat RIVALS scrim purple (was a grey-navy vertical gradient)
 	wash.BackgroundTransparency = 1
 	wash.Parent = gui
-	local g = Instance.new("UIGradient")
-	g.Rotation = 90
-	g.Color = ColorSequence.new(UITheme.Colors.Backdrop, UITheme.Colors.Backdrop2)
-	g.Parent = wash
-	-- darker edges pull the eye to the middle
-	local vignette = Instance.new("Frame")
-	vignette.Name = "Vignette"
-	vignette.Size = UDim2.fromScale(1, 1)
-	vignette.BorderSizePixel = 0
-	vignette.BackgroundColor3 = Color3.new(0, 0, 0)
-	vignette.BackgroundTransparency = 1
-	vignette.Parent = gui
-	local vg = Instance.new("UIGradient")
-	vg.Transparency = NumberSequence.new({
-		NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(0.25, 1),
-		NumberSequenceKeypoint.new(0.75, 1), NumberSequenceKeypoint.new(1, 0.35),
-	})
-	vg.Parent = vignette
+	-- (2026-10-21, port3) edge vignette: near-black purple, clear across the middle 50 % of each axis
+	local edge = scrim:Lerp(Color3.new(0, 0, 0), 0.6)
+	vigFrames = {}
+	for i, spec in VIG_LAYERS do
+		local v = Instance.new("Frame")
+		v.Name = "Vignette" .. i
+		v.Size = UDim2.fromScale(1, 1)
+		v.BorderSizePixel = 0
+		v.BackgroundColor3 = edge
+		v.BackgroundTransparency = 1
+		v.ZIndex = 2
+		v.Parent = gui
+		local e = spec[2]
+		local vg = Instance.new("UIGradient")
+		vg.Rotation = spec[1]
+		vg.Transparency = NumberSequence.new({
+			NumberSequenceKeypoint.new(0, e), NumberSequenceKeypoint.new(0.1, e + (1 - e) * 0.45),
+			NumberSequenceKeypoint.new(0.25, 1), NumberSequenceKeypoint.new(0.75, 1),
+			NumberSequenceKeypoint.new(0.9, e + (1 - e) * 0.45), NumberSequenceKeypoint.new(1, e),
+		})
+		vg.Parent = v
+		table.insert(vigFrames, v)
+	end
 	gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
 	backdrop = gui
 	return gui
@@ -138,16 +165,17 @@ function UITheme._UpdateBackdrop()
 	local s = 0
 	for _, v in holders do s = math.max(s, v) end
 	local info = TweenInfo.new(s > 0 and 0.28 or 0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	TweenService:Create(gui.Wash, info, { BackgroundTransparency = 1 - 0.78 * s }):Play()
-	TweenService:Create(gui.Vignette, info, { BackgroundTransparency = 1 - 0.6 * s }):Play()
-	-- world reacts to menus: soft blur + slightly cooler, darker grade (client-local Lighting effects)
+	TweenService:Create(gui.Wash, info, { BackgroundTransparency = 1 - WASH_ALPHA * s }):Play()
+	for _, v in vigFrames do TweenService:Create(v, info, { BackgroundTransparency = 1 - VIG_ALPHA * s }):Play() end
+	-- world reacts to menus: blur (kept) + a darker, desaturated, slightly purple grade (client-local Lighting effects)
 	local Lighting = game:GetService("Lighting")
 	local blur = Lighting:FindFirstChild("UIWorldBlur")
 	if not blur then blur = Instance.new("BlurEffect"); blur.Name = "UIWorldBlur"; blur.Size = 0; blur.Parent = Lighting end
 	local cc = Lighting:FindFirstChild("UIWorldGrade")
 	if not cc then cc = Instance.new("ColorCorrectionEffect"); cc.Name = "UIWorldGrade"; cc.Parent = Lighting end
 	TweenService:Create(blur, info, { Size = 14 * s }):Play()
-	TweenService:Create(cc, info, { Brightness = -0.06 * s, Saturation = -0.25 * s, TintColor = Color3.new(1, 1, 1):Lerp(Color3.fromRGB(236, 232, 210), s) }):Play()
+	-- (2026-10-21, port3) grade: brightness -0.06 -> -0.12, tint warm cream -> a cool lilac so the purple wash doesn't turn brown
+	TweenService:Create(cc, info, { Brightness = -0.12 * s, Saturation = -0.3 * s, TintColor = Color3.new(1, 1, 1):Lerp(Color3.fromRGB(222, 212, 236), s) }):Play()
 end
 
 -- Fade a whole menu in / out (CanvasGroup or any GuiObject tree)

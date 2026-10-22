@@ -11,6 +11,9 @@
 -- Duel Pads (488 / 489 x 275) in the 4v4 / 5v5 spots below, and a TALL Ranked tile (415 x 556) on the RIGHT: "Ranked" + the
 -- season at the top, your gun as a big render, the rank line at the bottom (shield glyph, rank name, "0 / 10"; locked =
 -- padlock + "LV n / 50"). Grid 1403 x 556 at x 258, y 306; the red X outside its top-right corner.
+-- (2026-10-21, port3) per two graders: 6 px gaps, titles +15 % with a soft drop shadow (no outline), the 3D tiles (Training,
+-- Duel Pads, Ranked) in the cards' pink / purple grade, Ranked = action art + white shield + "Unranked" + "0 / 10" (locked:
+-- "LV n / 50", no padlock), the X 12 px outside the grid's top-right.
 -- Every colour / font comes from UIKit.Rivals.Theme. Design px at 1920x1080, converted to Scale (Rivals Kit.toScale).
 --   PlayScreen.Init({ Config, getData, ask, onOpen, onClose, enterTraining, toPads, rankedOpen, level })
 --   PlayScreen.Open() / Close() / IsOpen() / Refresh()
@@ -354,10 +357,12 @@ end
 local SETS = {
 	squad = { floor = Color3.fromRGB(206, 204, 216), wall = Color3.fromRGB(196, 192, 214), pillar = Color3.fromRGB(236, 234, 242),
 		trim = Color3.fromRGB(170, 166, 188), crate = Color3.fromRGB(150, 112, 64), h = 9, crates = true, mat = Enum.Material.SmoothPlastic },
-	ranked = { floor = Color3.fromRGB(92, 86, 72), wall = Color3.fromRGB(72, 56, 28), pillar = Color3.fromRGB(150, 114, 52),
-		trim = Color3.fromRGB(196, 156, 70), h = 7, mat = Enum.Material.Concrete },
-	range = { floor = Color3.fromRGB(172, 156, 118), wall = Color3.fromRGB(150, 130, 92), pillar = Color3.fromRGB(98, 108, 62),
-		trim = Color3.fromRGB(120, 104, 70), crate = Color3.fromRGB(150, 112, 64), h = 6, crates = true, mat = Enum.Material.Sand },
+	-- (2026-10-21, port3) ranked / range were dark gold and sand / olive (graders: "flat olive and muddy"): the same pale arena
+	-- as the cards now, so the pink / purple grade reads the same on every tile
+	ranked = { floor = Color3.fromRGB(206, 204, 216), wall = Color3.fromRGB(196, 192, 214), pillar = Color3.fromRGB(236, 234, 242),
+		trim = Color3.fromRGB(170, 166, 188), h = 9, mat = Enum.Material.SmoothPlastic },
+	range = { floor = Color3.fromRGB(210, 206, 218), wall = Color3.fromRGB(196, 192, 214), pillar = Color3.fromRGB(236, 234, 242),
+		trim = Color3.fromRGB(170, 166, 188), crate = Color3.fromRGB(150, 112, 64), h = 7, crates = true, mat = Enum.Material.SmoothPlastic },
 	pads = { floor = Color3.fromRGB(190, 188, 202), wall = Color3.fromRGB(196, 192, 214), pillar = Color3.fromRGB(236, 234, 242),
 		trim = Color3.fromRGB(170, 166, 188), crate = Color3.fromRGB(140, 104, 60), h = 9, crates = true, mat = Enum.Material.SmoothPlastic },
 }
@@ -511,7 +516,8 @@ end
 
 -- (2026-10-21, grade2: "add a scene behind the padlock") Ranked: ViewIcons' gold trophy, scaled up, on a three-step podium of
 -- dark plates with brass trims, in a dark gold hall. Locked = the same scene greyed down (the padlock sits over it).
-local function rankedScene(parent, target, shot, locked)
+-- (2026-10-21, port3) now only the fallback for the Ranked tile (no character); never greyed (locked shows a requirement line)
+local function rankedScene(parent, target, shot)
 	local scene = Instance.new("Model")
 	scene.Name = "Podium"
 	local plate, brass = Color3.fromRGB(40, 44, 36), Color3.fromRGB(196, 156, 70)
@@ -554,8 +560,6 @@ local function rankedScene(parent, target, shot, locked)
 	local props = partsOf(scene)
 	stageSet(vp, scene, props, "ranked")
 	frameOn(vp, hero and partsOf(hero) or props, shot.aspect, shot.top, shot.bottom, -6, shot.fit)
-	-- (2026-10-21, grade3) the greyed scene read as an empty brown box: 150 -> ~205 so the podium and cup still show
-	if locked then vp.Frame.ImageColor3 = Color3.fromRGB(205, 201, 192) end
 	liven(vp, target, 0.06)
 	return vp
 end
@@ -580,29 +584,57 @@ local tickNow -- set below (status refresh)
 local COL_X, COL_Y = 258, 306
 local COL_W, COL_H = 1403, 1080 - 306 -- the column (still a ScrollingFrame) runs to the screen bottom
 local MW, MH, MPITCH = 323, 274, 329 -- mode tile, top row
-local BY, BH = 281, 275 -- bottom row: y in the grid, height
-local BW1, BX2, BW2 = 488, 493, 489 -- Training (4v4 spot) width; Duel Pads (5v5 spot) x and width
-local RX, RW = 988, 415 -- the tall Ranked tile
+-- (2026-10-21, port3) graders: every gap 6 px like RIVALS (the bottom row / Ranked had 5-7). Top row 0..981, the bottom row
+-- ends there too (488 + 6 + 487), Ranked 6 px right of it (987 + 416 = 1403).
+local BY, BH = 280, 276 -- bottom row: y in the grid, height
+local BW1, BX2, BW2 = 488, 494, 487 -- Training (4v4 spot) width; Duel Pads (5v5 spot) x and width
+local RX, RW = 987, 416 -- the tall Ranked tile
 local GRID_H = 556
 local CORNER = 6 -- small rounded corners (live capture)
 local SHADE = 0.7 -- RIVALS: bright art under a 30 % black shade; hover lifts it to 0.95 (the picture brightens)
-local SHADE_LOCKED = 0.35 -- the locked Ranked tile (replica)
-local TITLE, WIDE_TITLE = 100, 88 -- grid titles 100 ("1v1" cap 56 px); "Training" / "Duel Pads" / "Ranked" 88 ("Ra" cap 49 px)
+-- (2026-10-21, port3) titles ~15 % bigger (RIVALS' "1v1" box ~7.4 % of the screen height): 100 -> 115, 88 -> 101
+local TITLE, WIDE_TITLE = 115, 101
 -- the gradient behind each 3D set shows as the sky over its back wall: Theme blue (ranked: Theme key gold)
-local SKY, DUSK = Theme.gradient.blue, Theme.gradient.key
+-- (2026-10-21, port3) graders: Training / Duel Pads / Ranked must share the 1v1-3v3 cards' grade (pink highlights, purple
+-- mids; sampled from gen.play_card_*: ~#FC96F8 / #AA64E6). Every 3D tile now uses that sky, its lighting and a wash (grade()).
+local GRADE = { Theme.hex("#FC9AF6"), Theme.hex("#9A5CE6") }
+local SKY, DUSK = GRADE, GRADE
 -- where each tile's subject sits (fractions of the tile height from the top; fit = most of the width it may take):
 -- (2026-10-21, RIVALS 1:1) figures large, filling the tile behind the centred title like RIVALS' gameplay shots
 local SQUAD_BOTTOM = { 0.98, 0.96, 0.94 }
 
 -- one huge white title, RIVALS' soft shadow = a black stroke at 0.82 transparency (replica title())
+-- (2026-10-21, port3) graders: the stroke read as a hard dark outline. RIVALS' titles carry a soft drop shadow instead: two
+-- black copies under the word, nudged down-right (size-relative) at high transparency, so the edge blurs into the art. The
+-- copies follow the label's Text (the lock card's count-up changes it).
 local function title(parent, text, size, x, y, w, h, z, font, align)
-	local l = Kit.label({ Text = text, FontFace = font or F.display, TextSize = size, TextColor3 = C.text, TextXAlignment = align or CENTER,
-		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 4, Parent = parent })
-	new("UIStroke", { Color = C.textDark, Thickness = 2, Transparency = 0.82, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+	z = z or 5 -- (port3) 5, so the shadows (z - 1) still sit over the tile's Shade (3)
+	local props = { Text = text, FontFace = font or F.display, TextSize = size, TextXAlignment = align or CENTER, Size = UDim2.fromOffset(w, h), Parent = parent }
+	local shadows = {}
+	for i, k in { { 0.035, 0.72 }, { 0.06, 0.84 } } do
+		props.Name, props.TextColor3, props.TextTransparency, props.ZIndex = "TitleShadow" .. i, C.textDark, k[2], z - 1
+		props.Position = UDim2.fromOffset(x + math.max(1, math.floor(size * k[1] * 0.6)), y + math.max(2, math.floor(size * k[1])))
+		table.insert(shadows, Kit.label(props))
+	end
+	props.Name, props.TextColor3, props.TextTransparency, props.ZIndex, props.Position = "Title", C.text, 0, z, UDim2.fromOffset(x, y)
+	local l = Kit.label(props)
+	l:GetPropertyChangedSignal("Text"):Connect(function() for _, s in shadows do s.Text = l.Text end end)
 	return l
 end
 -- (2026-10-21, RIVALS normal theme) the Ranked tile's season / rank lines are italic in RIVALS: the Theme font, italic style
 local function italic(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
+-- (2026-10-21, port3) the cards' colour grade on a live 3D tile: pink key light, purple ambient (lit faces go pink, shaded ones
+-- purple, like the art), and a soft pink -> purple wash over the picture under the tile's black shade.
+local function grade(vp, holder)
+	if vp then
+		local f = vp.Frame
+		f.Ambient = Theme.hex("#B47CEA")
+		f.LightColor = Theme.hex("#FFC4F8")
+		f.ImageColor3 = C.white
+	end
+	new("Frame", { Name = "Grade", BackgroundColor3 = C.white, BackgroundTransparency = 0.8, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 2,
+		Parent = holder }, { Kit.vgrad(GRADE) })
+end
 
 -- (2026-10-21, RIVALS normal theme) the Ranked tile's data, shown the RIVALS way ("Season 3"; shield + "Unranked" + "0 / 10"):
 -- the season from RankedCore.Config.Season, the rank from RankArt.Of (the attributes RankedScreen reads). Locked = the padlock,
@@ -622,7 +654,9 @@ local function rankLine(open)
 	if not open then
 		local lv = math.max(0, (ctx.level and ctx.level()) or 0)
 		local need = math.max(1, ctx.Config.RankedLevel or 1)
-		return (Assets.play and Assets.play.padlock) or "", info.name or "Unranked", "LV " .. math.min(lv, need) .. " / " .. need
+		-- (2026-10-21, port3) graders: no padlock-on-flat look. RIVALS keeps the white shield and "Unranked"; the requirement
+		-- is the line under it
+		return shield, "Unranked", "LV " .. math.min(lv, need) .. " / " .. need
 	end
 	if not info.placed then
 		local placed, need = player:GetAttribute("RankPlaced") or 0, player:GetAttribute("RankPlacements") or 10
@@ -828,18 +862,17 @@ local function render()
 	-- the season under it, the gun render between, the rank line at the bottom: a 53 x 61 glyph at 20, 474 (shield; padlock
 	-- when locked; your emblem once placed), the rank name (italic, cap 444..471) and the progress (italic, 478..496) centred
 	local rt = tile("Ranked", RX, 0, RW, GRID_H, DUSK)
-	title(rt, "Ranked", WIDE_TITLE, 0, 23, RW, 90)
-	title(rt, season(), 36, 0, 106, RW, 42, 4, italic(F.bold))
+	title(rt, "Ranked", WIDE_TITLE, 0, 18, RW, 104)
+	title(rt, season(), 36, 0, 116, RW, 42, 5, italic(F.bold))
 	local glyph, rankName, progress = rankLine(open)
-	new("ImageLabel", { Name = open and "RankGlyph" or "Padlock", BackgroundTransparency = 1, Image = glyph, ScaleType = Enum.ScaleType.Fit,
-		Position = UDim2.fromOffset(20, 474), Size = UDim2.fromOffset(53, 61), ZIndex = 4, Parent = rt })
-	title(rt, rankName, 48, 0, 433, RW, 50, 4, italic(F.display))
-	title(rt, progress, 32, 0, 470, RW, 34, 4, italic(F.display))
-	if not open then
-		-- (2026-10-21, RIVALS 1:1) locked = the replica's darker shade; the padlock now sits in the rank glyph's spot
-		rt:SetAttribute("Locked", true)
-		rt.Shade.BackgroundTransparency = SHADE_LOCKED
-	end
+	-- (2026-10-21, port3) RIVALS' rank line (rivals_normal/play.png, tile-local): a big white shield-and-flame badge ~6 % of the
+	-- screen height (59 x 70 at 19, 466), a big italic "Unranked" (cap ~444..474) and "0 / 10" under it; locked shows the
+	-- same shield + "Unranked" with "LV n / 50" as the second line (no padlock, no darker shade)
+	new("ImageLabel", { Name = "RankGlyph", BackgroundTransparency = 1, Image = glyph, ImageColor3 = C.white, ScaleType = Enum.ScaleType.Fit,
+		Position = UDim2.fromOffset(19, 466), Size = UDim2.fromOffset(59, 70), ZIndex = 5, Parent = rt })
+	title(rt, rankName, 56, 0, 426, RW, 60, 5, italic(F.display))
+	title(rt, progress, 34, 0, 476, RW, 38, 5, italic(F.display))
+	if not open then rt:SetAttribute("Locked", true) end
 	rt.Activated:Connect(function()
 		if not open then
 			showLockCard() -- (2026-10-21, RIVALS pass) was a toast
@@ -898,9 +931,14 @@ local function render()
 	end
 	-- (2026-10-21, RIVALS normal theme) Training is a wide bottom tile now (was the tall hero); the Ranked gun fills the band
 	-- between the season line and the rank line
-	trainingScene(tb.Scene, tb, { aspect = BW1 / BH, top = 0.06, bottom = 0.96, fit = 0.9 })
-	duelsScene(db.Scene, db, { aspect = BW2 / BH, top = 0.04, bottom = 0.98, fit = 0.96 })
-	rankedScene(rt.Scene, rt, { aspect = RW / GRID_H, top = 0.27, bottom = 0.74, fit = 0.94 }, not open)
+	-- (2026-10-21, port3) all three get the cards' pink / purple grade (grade()); Ranked is action art like RIVALS' tile: you
+	-- with your gun squaring up to a red enemy, filling the tile behind the title and rank line (the gun-on-podium scene
+	-- stays as the fallback when there is no character to copy)
+	grade(trainingScene(tb.Scene, tb, { aspect = BW1 / BH, top = 0.06, bottom = 0.96, fit = 0.9 }), tb.Scene)
+	grade(duelsScene(db.Scene, db, { aspect = BW2 / BH, top = 0.04, bottom = 0.98, fit = 0.96 }), db.Scene)
+	local rvp, rscene = squadScene(rt.Scene, 1, false, { aspect = RW / GRID_H, top = 0.2, bottom = 0.97, fit = 0.98 })
+	if rvp then livenSquad(rvp, rscene, rt) else rvp = rankedScene(rt.Scene, rt, { aspect = RW / GRID_H, top = 0.27, bottom = 0.74, fit = 0.94 }) end
+	grade(rvp, rt.Scene)
 end
 
 -- (2026-10-21, RIVALS 1:1) status every half second while open: busy tiles dim (no chips: RIVALS writes nothing on a tile),
@@ -941,8 +979,9 @@ local function build()
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 	-- (2026-10-21, RIVALS 1:1) the replica's red X: 112 x 58, right of the column, level with its top
 	-- (2026-10-21, RIVALS normal theme) outside the grid's top-right corner: 16 px right of x 1661, 3 px above y 306 (was 1704,136)
-	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
-	close.Position = UDim2.fromOffset(COL_X + COL_W + 16, COL_Y - 3)
+	-- (2026-10-21, port3) graders: the kit's standard X (112 x 58), 12 px outside the grid's top-right, its top on the grid's top
+	local close = Kit.closeButton(UDim2.fromOffset(Kit.CLOSE_W or 112, Kit.CLOSE_H or 58))
+	close.Position = UDim2.fromOffset(COL_X + COL_W + (Kit.CLOSE_GAP or 12), COL_Y)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	-- the scroll column (replica): thin dark scrollbar, grows with its content

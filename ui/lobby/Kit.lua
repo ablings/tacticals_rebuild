@@ -408,8 +408,13 @@ local function genImage(name)
 	return genAssets and genAssets[name] or nil
 end
 
+-- (2026-10-21, port3) RIVALS' close X size in design px (the replica's Play X); Kit.CLOSE_GAP = its gap outside a panel's top-right
+Kit.CLOSE_W, Kit.CLOSE_H, Kit.CLOSE_GAP = 112, 58, 12
 -- Close button (pass 34: gunmetal + olive brackets, warms red on hover) with a chunky white X built from two rotated bars.
 function Kit.closeButton(size)
+	-- (2026-10-21, port3) one X everywhere: RIVALS' size (the replica's Play X, 112x58 design px at 1920x1080) when no size is
+	-- given. Screens place it 12 px outside their panel's top-right corner, top-aligned.
+	size = size or UDim2.fromOffset(Kit.CLOSE_W, Kit.CLOSE_H)
 	-- (2026-10-21, user: "whatever RIVALS is doing") RIVALS' red X again (t0062 / t0287): a red gradient block with a chunky white
 	-- X and a darker bottom lip (no hairline border). Not named "Close" and tagged Nonapplicable: the old InterfaceController
 	-- hooks any "Close" button in a new ScreenGui and shrinks its parent frame to 0 x 0.

@@ -39,10 +39,20 @@ local CHECK_LIME = GEN.tasks_check_lime
 local STAR6 = GEN.tasks_star6 or A.star6 or ""
 -- (2026-10-21, RIVALS 1:1) solid white task glyphs (t0062: play / crosshair / trophy), the replica's art first
 -- (2026-10-21, RIVALS images) Kills and Headshots (headshot kills: it used rowIcon.aim, not the eye) show RIVALS' claw
+-- (2026-10-21, port3) the thin grey line-art cover / melee / gadget glyphs are swapped for the solid white gen art: the crouched
+-- figure (row_crouch) for cover, the knife (kit_cat_knife) for melee, the grenade (kit_cat_grenade) for gadgets
 local GLYPH = {
 	Wins = A.trophy or ICONS.trophy, MatchesPlayed = A.play or ICONS.play, Kills = GEN.tasks_elims or ROW.crosshair or ICONS.lbElims,
-	Headshots = GEN.tasks_elims or ROW.aim or ICONS.eye, CoverKills = ICONS.cover, MeleeKills = ICONS.melee, GadgetsThrown = ICONS.gadget,
+	Headshots = GEN.tasks_elims or ROW.aim or ICONS.eye, CoverKills = GEN.row_crouch or ICONS.cover, MeleeKills = GEN.kit_cat_knife or ICONS.melee,
+	GadgetsThrown = GEN.kit_cat_grenade or ICONS.gadget,
 }
+-- (2026-10-21, port3) RIVALS' task titles are two-word stat names ("Play duels", "Eliminations", "Win duels") at one fixed size;
+-- ours map the quest stat the same way. The full sentence (def.Text) stays in the hover bubble (tip).
+local SHORT = {
+	Kills = "Eliminations", Headshots = "Headshots", MeleeKills = "Melee kills", CoverKills = "Cover kills",
+	GadgetsThrown = "Gadgets", Wins = "Win matches", MatchesPlayed = "Play matches",
+}
+local function shortName(def) return SHORT[def.Stat] or def.Short or def.Text end
 local function glyph(parent, stat, pos, size, color)
 	return new("ImageLabel", { Name = "Glyph", BackgroundTransparency = 1, Image = GLYPH[stat] or A.trophy or "", ImageColor3 = color or C.white,
 		ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = UDim2.fromOffset(size, size), Parent = parent })
@@ -143,13 +153,17 @@ local function bar(parent, pos, size, frac, done, track, corner)
 	return back
 end
 
--- reward: the scissors render with "×N" (dark outline) under it; paid = the render dims and the ×N turns green
-local function reward(parent, amount, size, pos, paid)
+-- reward: the scissors render with "×N" (dark outline); paid = the render dims and the ×N turns green
+-- (2026-10-21, port3) RIVALS style: a large render (48 design px = 4.4 % of the screen height) with the "×N" laid over its
+-- bottom-right corner (right-aligned a little past the render's right edge, bottom on its bottom), not stacked under it
+local REWARD_PX = 48
+local function reward(parent, amount, pos, paid)
+	local size = REWARD_PX
 	local holder = new("Frame", { Name = "Reward", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = pos, Size = UDim2.fromOffset(size, size), Parent = parent })
 	new("ImageLabel", { Name = "Render", BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, ImageTransparency = paid and 0.5 or 0,
 		Size = UDim2.fromScale(1, 1), Parent = holder })
-	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = math.floor(size * 0.6), TextXAlignment = Enum.TextXAlignment.Center,
-		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0.55, 0), Size = UDim2.new(1, 10, 0.5, 0), ZIndex = 2, Parent = holder })
+	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Right, TextYAlignment = Enum.TextYAlignment.Bottom,
+		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromOffset(size + 10, size + 4), Size = UDim2.fromOffset(110, 28), ZIndex = 2, Parent = holder })
 	RK.textStroke(2).Parent = n
 	return holder
 end
@@ -175,14 +189,14 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 		Name = scope .. i, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(CARD_W, CARD_H),
 		BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.45, BorderSizePixel = 0, Parent = parent,
 	}, { RK.corner(6), RK.stroke(C.track, 1, 0.5) })
-	local title = RK.label({ Text = def.Text, FontFace = FB, TextSize = 30, TextScaled = true, TextColor3 = done and C.green or C.text,
+	-- (2026-10-21, port3) the short stat name at one fixed size (Rubik Bold 30): no TextScaled, no size constraint, no ellipsis
+	local title = RK.label({ Text = shortName(def), FontFace = FB, TextSize = 30, TextColor3 = done and C.green or C.text,
 		TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(8, 14), Size = UDim2.new(1, -16, 0, 34), Parent = card })
-	new("UITextSizeConstraint", { MaxTextSize = 30, Parent = title })
 	-- RIVALS grows the task title on hover (~1.1x)
 	local titleScale = new("UIScale", { Name = "HoverScale", Parent = title })
 	card.MouseEnter:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1.1 }, Enum.EasingStyle.Back) end)
 	card.MouseLeave:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1 }) end)
-	glyph(card, def.Stat, UDim2.fromOffset(121, 86), 46, done and C.green or C.white)
+	glyph(card, def.Stat, UDim2.fromOffset(121, 86), 44, done and C.green or C.white) -- (2026-10-21, port3) 44 px = 4 % h, solid white art
 	bar(card, UDim2.fromOffset(18, 130), UDim2.fromOffset(206, 10), prog / def.Goal, done, C.track, 5)
 	local b = bars[#bars]
 	local badge
@@ -200,7 +214,7 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	end
 	b.prog, b.goal = prog, def.Goal
 	if was then b.fromFrac, b.fromProg = was.prog / def.Goal, was.prog end
-	local rewardHolder = reward(card, def.Reward, 50, UDim2.fromOffset(121, 190), paid)
+	local rewardHolder = reward(card, def.Reward, UDim2.fromOffset(121, 192), paid)
 	pending(was, state, badge, rewardHolder)
 	tip(card, def, done, paid, prog)
 end
@@ -209,7 +223,7 @@ end
 local function taskRow(parent, scope, i, entry, def, y, period)
 	local prog, done, paid, state, was = stateOf(scope, entry, def, period)
 	local row = new("Frame", { Name = scope .. i, BackgroundTransparency = 1, Position = UDim2.fromOffset(0, y), Size = UDim2.fromOffset(COL_W, ROW_H), Parent = parent })
-	glyph(row, def.Stat, UDim2.fromOffset(67, 27), 42, done and C.green or C.white)
+	glyph(row, def.Stat, UDim2.fromOffset(67, 27), 46, done and C.green or C.white) -- (2026-10-21, port3) RIVALS' weapon-picture size (~46), solid art
 	RK.label({ Text = def.Text, FontFace = FM, TextSize = 27, TextColor3 = done and C.green or C.text, TextTruncate = Enum.TextTruncate.AtEnd,
 		Position = UDim2.fromOffset(98, 6), Size = UDim2.fromOffset(460, 40), Parent = row })
 	local count = RK.label({ RichText = true, Text = countText(prog, def.Goal, 21), FontFace = FB, TextSize = 32, TextColor3 = done and C.green or C.text,
@@ -232,7 +246,7 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.7, 0.7), ZIndex = 5, Parent = badge })
 		end
 	end
-	local rewardHolder = reward(row, def.Reward, 42, UDim2.fromOffset(771, 28), paid)
+	local rewardHolder = reward(row, def.Reward, UDim2.fromOffset(770, 28), paid)
 	pending(was, state, badge, rewardHolder)
 	tip(row, def, done, paid, prog)
 end
@@ -268,10 +282,8 @@ local function dailyPanel(order)
 	local allDone = total > 0 and n == total
 	local top = allDone and HEAD_H + 18 or HEAD_H
 	local p = panel("Daily", order, top + CARD_H + 38)
-	local line = header(p, A.notepad, "Daily Missions", allDone, "Daily")
-	-- (2026-10-21, RIVALS 1:1) the header title carries "[done / total]"
-	if total > 0 then RK.label({ LayoutOrder = 2, Text = ("[%d / %d]"):format(n, total), FontFace = FB, TextSize = 30, TextColor3 = allDone and C.green or C.textDim,
-		AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 44), Parent = line }) end
+	-- (2026-10-21, port3) RIVALS' normal theme shows just "Daily Tasks": the "[done / total]" counter is gone
+	header(p, A.notepad, "Daily Missions", allDone, "Daily")
 	-- the blue "To Duels"-style button (replica 165x41 at 652, 12); ours opens Play through ctx.openPlay
 	if ctx.openPlay then
 		local go = new("TextButton", { Name = "ToPlay", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(652, 12), Size = UDim2.fromOffset(165, 41),
@@ -325,14 +337,19 @@ local function contractsPanel(order)
 		sortBy = v
 		render()
 	end)
-	dd.Size = UDim2.fromOffset(207, 41)
+	-- (2026-10-21, port3) RIVALS-size: a 210 x 44 solid white box, the value in Rubik Bold 26 (~1.8 % h), a bigger ▼
+	dd.Size = UDim2.fromOffset(210, 44)
+	dd.BackgroundColor3 = C.white
 	dd.AnchorPoint = Vector2.new(0.5, 0.5) -- grows in place on hover
 	for _, ch in ipairs(dd:GetChildren()) do
 		if ch:IsA("TextLabel") and ch.Text ~= "▼" then
-			ch.TextScaled = false; ch.TextWrapped = false; ch.TextSize = 21; ch.Position = UDim2.fromOffset(12, 0); ch.Size = UDim2.new(1, -46, 1, 0); ch.FontFace = F.heavy
+			for _, k in ipairs(ch:GetChildren()) do if k:IsA("UITextSizeConstraint") then k:Destroy() end end
+			ch.TextScaled = false; ch.TextWrapped = false; ch.TextSize = 26; ch.Position = UDim2.fromOffset(12, 0); ch.Size = UDim2.new(1, -46, 1, 0); ch.FontFace = FB
+		elseif ch:IsA("TextLabel") then
+			ch.TextSize = 26
 		end
 	end
-	dd.Position = UDim2.fromOffset(604 + 103.5, 17 + 20.5)
+	dd.Position = UDim2.fromOffset(603 + 105, 15 + 22)
 	dd.Parent = p
 	if #rows == 0 then
 		RK.label({ Text = "Loading contracts...", FontFace = FM, TextSize = 26, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
@@ -387,10 +404,12 @@ local function build()
 	new("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder, Padding = UDim.new(0, 25), Parent = column })
 	-- (2026-10-21, RIVALS 1:1) the red X outside the column (replica 94x48 at 1402, 208). Not named "Close" and tagged
 	-- Nonapplicable: the old InterfaceController hooks any "Close" button in a new ScreenGui and shrinks its parent to 0 x 0.
-	local close = RK.closeButton(UDim2.fromOffset(94, 48))
+	-- (2026-10-21, port3) the kit's one close size for every screen (RK.CLOSE_W x CLOSE_H = 112 x 58), CLOSE_GAP right of the
+	-- panel's right edge (column x + panel width), top-aligned with the panel
+	local close = RK.closeButton()
 	close.Name = "CloseX"
 	close:AddTag("Nonapplicable")
-	close.Position = UDim2.fromOffset(1402, COL_Y)
+	close.Position = UDim2.fromOffset(COL_X + COL_W + (RK.CLOSE_GAP or 12), COL_Y)
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
 	render()

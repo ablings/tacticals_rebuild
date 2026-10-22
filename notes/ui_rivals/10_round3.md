@@ -1072,3 +1072,148 @@ Every use falls back to the old stand-in when the id (or the `UIKit.Rivals` fold
 - Parse check OK on all nine files (top-level locals: ShopScreen 83, MissionsScreen 59, LobbyHud 42, others < 20).
 - To check in Studio: close X size vs RIVALS t0062, the lime check on the contract row (32 px), backdrop crop on the 749x321
   hero, the ∞ tag over light rarity tiles.
+
+## port3: backdrop, close X, Codes (2026-10-21)
+- **Shared backdrop** (`ui/pseudolobby/hub/UITheme.lua`, `ShowBackdrop` / `HideBackdrop` API unchanged): graders said RIVALS
+  darkens the blurred lobby to ~20-25 % with a dark purple tint and darker edges; ours was a light grey blur at ~45 %. Now a flat
+  wash in `UIKit.Rivals.Theme.color.scrim` (#140C1C, hex fallback in the match place) at 0.74 opacity, plus a radial-ish
+  vignette from four full-screen gradient layers (0 / 90 / 45 / -45 deg, near-black purple at the edges, clear across the middle
+  half, so no shape shows), over the kept `UIWorldBlur` (14). Grade: brightness -0.06 -> -0.12, saturation -0.3, tint warm cream ->
+  cool lilac. Strength still scales everything (Armory 0.35, MatchFlow 0.4-0.6). Tune `WASH_ALPHA` / `VIG_ALPHA` / `VIG_LAYERS`.
+- **Close X**: `closeButton(size)` in `ui/lobby/Kit.lua`, `ui/rivals/Kit.lua`, `ui/settings/SettingsKit.lua` now defaults to
+  RIVALS' 112 x 58 design px (the replica's Play X) when called with no size; constants `Kit.CLOSE_W / CLOSE_H / CLOSE_GAP`
+  (112, 58, 12). Rule: place it 12 px outside the panel's top-right corner, top-aligned. `gen.ui_close_x` glyph kept.
+- **Codes** (`ui/lobby/CodesScreen.lua`): uses the shared backdrop when `Modules.Shared.UITheme` exists (own scrim + blur
+  only as fallback). Panel 1060 x 450 -> 960 x 410, centred at (480, 300), 28 px margins. Title 52, body 28, Redeemed 30,
+  rows 24, input 34. Input = `Theme.color.track` at 0.4 (lifts to 0.15 on focus), clearly lighter than the black 0.45 panel;
+  placeholder `textDim` (was `disabled`). Redeem = the lime `robux` gradient with FredokaOne word; no code = a black veil at
+  0.6 over it and the word at 0.2 (stroke kept), typed = full gradient + pop (no more grey plate). X = `RK.closeButton()` at
+  panel right + 12, panel top.
+- Note: the shared backdrop sits at DisplayOrder 3, so `LobbyHud` (7) draws undimmed above it; Codes' old own scrim (order 25)
+  covered the HUD. Check in Studio whether that matches RIVALS (its left rail looked undimmed in rivals_normal/play.png).
+- Parse check OK on all five files. Not deployed.
+
+## port3: hub + Missions (2026-10-21)
+Two graders' fixes, `ui/hud/LobbyHudController.lua` + `ui/pseudolobby/hub/MissionsScreen.lua` only. Not deployed, not committed.
+- **Short labels, one size**: quest stat -> RIVALS-style name (Kills "Eliminations", Headshots "Headshots", MeleeKills "Melee kills",
+  CoverKills "Cover kills", GadgetsThrown "Gadgets", Wins "Win matches", MatchesPlayed "Play matches"; `SHORT` in both files).
+  Missions cards: Rubik Bold 30 fixed (TextScaled + UITextSizeConstraint gone); hub rows: Rubik Bold 24 fixed (the TextService
+  shrink loop and the ellipsis are gone). The full sentence stays in the Missions hover bubble (`tip`, def.Text). Contract rows keep
+  the full text.
+- **Reward**: 48 px render (4.4 % h) on cards and contract rows, 46 px 3D scissors on the hub, "×N" laid over the bottom-right
+  corner (right-aligned 10 px past the render, bottom 4 px under it), no longer stacked under it. Contract reward centre x 770.
+- **Glyphs**: solid white gen art for the thin grey ones: CoverKills `row_crouch`, MeleeKills `kit_cat_knife`, GadgetsThrown
+  `kit_cat_grenade` (hub and Missions; hub Wins / MatchesPlayed now the same `tasks.trophy` / `tasks.play` as Missions). Cards
+  44 px (4 % h), contract rows 46 px.
+- **Missions header**: the "[done / total]" counter is gone ("Daily Missions" only, like RIVALS' "Daily Tasks").
+- **Sort dropdown**: 210 x 44, solid white, value Rubik Bold 26 (~1.8 % h, size constraint removed), ▼ 26.
+- **Close X**: 135 x 67 (the size `gen.ui_close_x` was drawn for; Settings uses it), at panel right + 12 (1372, 208), top-aligned.
+- **Hub widget**: 430 wide, black at 0.35 with a UIGradient fade 0 -> 0.45 -> 1 to the right; title Rubik Bold 26 (~2.2 % h) by a
+  32 px clipboard; rows: 30 px glyph, name, a 250 x 6 bar under the name on a lighter track (`RC.track` @ 0.35) so the blue reads,
+  count right-aligned to 318, reward at 326. Theme keys read if present: `hud.widgetFadeAlpha`, `hud.barTrack`.
+- **Hub nav**: icon box 104 px (9.6 % h) centred at (59, 38); every model goes through `glossModel` (saturation x1.4 + 0.1, value
+  x1.15 + 0.06, SmoothPlastic); ambient 228; Kit tint olive -> `RC.gold` @ 0.3; a rim highlight (`addRim`: a white silhouette clone
+  in a second ViewportFrame 6 % bigger behind the icon at 0.45, synced to the icon's sway / camera each frame, re-cloned when Kit
+  swaps guns; `hud.iconRimAlpha`). Labels Rubik Bold 25 with a 1.5 stroke, bottom at y 104 so they sit on the dark strip over the
+  icon bottoms.
+- Kept: auto-pay states, badges, Play button, data, the "Join the queue to start playing!" bubble.
+- Parse check OK (top-level locals: LobbyHud 42, MissionsScreen 62).
+- To check in Studio: the rim halo (thin edge, not a blob) and the gold Kit pistol; "×1,000" over the contract-row render vs the
+  done check at x 708; the hub fade over bright lobby floors.
+
+
+## port3: Play + Settings (2026-10-21)
+Two graders on `port2/play.png` / `port2/settings.png` vs `rivals_normal/`. Only `ui/play/PlayScreen.lua` and `ui/set/SettingsScreen.lua` edited.
+
+**Play**
+- **Ranked tile**: no more olive / gold hall. Action art like RIVALS: the same live squad as the cards (you + your gun vs a red
+  enemy, `squadScene(rt.Scene, 1, false, ...)`, framed 0.2..0.97 of the portrait tile, hops on hover); the gun-on-podium scene is
+  only the no-character fallback (pale set, never greyed). Rank line: white `play.shield_badge` 59 x 70 at (19, 466) (~6 % h),
+  italic ExtraBold "Unranked" 56 at y 426, progress 34 at y 476 ("0 / 10"; placed = "ELO / next"). Locked = the same shield +
+  "Unranked" + "LV n / 50" (no padlock, no darker shade); a click still opens the requirement card.
+- **Grade**: `GRADE` = `#FC9AF6` -> `#9A5CE6` (sampled from `gen.play_card_*`: pink highlights ~#FC96F8, purple mids ~#AA64E6).
+  `grade(vp, holder)` on Training, Duel Pads and Ranked: pink key light `#FFC4F8`, purple ambient `#B47CEA`, a pink -> purple wash
+  (0.8) over the scene under the 30 % shade; tile sky = GRADE. Range / ranked sets repainted to the cards' pale arena.
+- **Titles**: 100 -> 115 (modes), 88 -> 101 (Training / Duel Pads / Ranked). Outline stroke gone: two black copies under the
+  word (offset ~3.5 % / 6 % of the size, at 0.72 / 0.84) = a soft drop shadow; they follow the label's Text. Titles default z 5.
+- **Gaps**: all 6 px. Bottom row y 280, h 276; Training 488, Duel Pads x 494 w 487 (row ends at 981 like the top row);
+  Ranked x 987 w 416.
+- **Close X**: kit default size (`Kit.CLOSE_W/H` = 112 x 58), at grid right + `Kit.CLOSE_GAP` (12), top on the grid's top (y 306).
+
+**Settings**
+- Row labels Rubik ExtraBold 50 (was SemiBold 42), TextScaled with a 50 cap in a 60 px box at y 14 that stops before the control
+  (toggles reserve 165, others 245), so long names shrink instead of running under it.
+- Stepper (screen-side resize, SettingsKit untouched): value box 120 x 64, ExtraBold 36; arrow box 60 x 64, arrows 28 ExtraBold;
+  both at y 12 (centred on the 88 line). Track 6 -> 9 at y 98, handle 32 x 34 -> 36 x 38 (~3.5 % h). Toggles 126 x 63, knob 47.
+- Section headers: 88 tall, title 70 (was 61); the bar is near-solid (0.04, was 0.28): the faint gun shape at the right end of
+  "Performance" was something behind the GUI showing through the translucent bar.
+- Detail pane: title Rubik ExtraBold 70 in an 80 px line (~5 % h, TextScaled cap 70), icon 72, description 34 at y 92.
+- Tabs 100 -> 124 tall (bottom on the bar's bottom): icon box 61 -> 85 design px (~62 px on a 784 px window), rising ~47 px over
+  the bar; 3D tab icons ambient 200 -> 236.
+- Parse check OK (top-level locals: PlayScreen 84, SettingsScreen 19; SettingsScreen build() scope ~73).
+- To check in Studio: the Ranked squad framing in the portrait tile (title / rank line over the figures); the grade on Training
+  (sandbags under pink light); whether the header gun shape is truly gone (if it was a GUI drawn above, find its ScreenGui);
+  long sub-row labels shrinking next to the bigger stepper.
+
+## port3: Shop (2026-10-21)
+Two graders on `notes/ui_rivals/port2/shop.png` vs `rivals_normal/shop.png` + `rivals_rec/t0068-t0106`. Only
+`ui/shop/ShopScreen.lua` changed (comments "(2026-10-21, port3)"). Not deployed, not committed.
+- **Price buttons** (`priceTag`): the UIListLayout + AutomaticSize row is gone. The number and the currency icon are placed by
+  hand in Scale: the pair is centred, the number's box is what's left after the icon and padding (estimated at ~0.64 em per
+  Rubik ExtraBold digit, 0.3 per comma), and TextScaled with a UITextSizeConstraint at the design size shrinks a long price
+  ("4,000") instead of spilling it. Robux glyph left, scissors right (RIVALS' key button). White number with a chunky black
+  outline (2-4 px) over the soft shadow copy. Featured / Arms buttons 52 tall (`PRICE_H`, ~4.8% of 1080), 124 / 112 / 140 wide.
+- **Header**: Bold outlined "Shop" title (40) at x 330 (`CONTENT_X` = the content's left edge), y 202; the tabs start there,
+  100x40 (`TAB_W` ~5.2% of 1920) 110 apart at y 282; the 3D icons (56 box) rise ~32 px above the tab and are lit bright
+  (`lit`); the Arms tab rifle is tilted diagonally.
+- **Spacing**: Featured laid out in the 12..1254 column with 50 px gaps (`GAP`): crates 3 x 160 (12..484, two rows to y 334),
+  hero 534..1254 x 6..334, Special Offer 12..786 x 384..654 (slide contents re-anchored to its right/bottom edges), item tiles
+  118 (`TILE`) at 836 + col*150, 384 + row*160. `endPad` 660 so the page fits the 710 window with no scroll.
+- **Renders**: `lit` ambient 242 + white key light from the camera side; guns (`Slot == "Weapon"`) tilt -28° across the slot
+  and zoom 1.1x in `itemArt`, so rifles / the sniper fill ~90% instead of reading as thin grey lines.
+- **Wallet**: render 64 (~6% of the height); the count (Bold 34, outlined) sits on a dark band (Theme panel) fading out to the
+  right, no separate plate; + 34 px.
+- **Stray pill** at the bottom centre = the Special Offer page dots (y 699, cut by the 710 window): now under the panel at
+  y 662..694.
+- **LIMITED**: the plain red pill on the Featured hero is removed (RIVALS' Season Pass card has none; its red tags are value /
+  offer tags over a price). On the Bundles hero the tag is now a `valueTag` (pointer down) over the price.
+- **Close X**: `Kit.closeButton()` with no size (the kit default another pass is setting to 112x58; falls back to 112x58 while
+  closeButton still requires a size), at x 1630 (12 px right of the 318..1618 page panel) top-aligned at y 370.
+- Parse check OK, top-level locals 86. To check in Studio: the em estimate vs the real Rubik width (the number box may leave
+  a few px of slack), tilt direction of the guns (-28° should rise to the right), title vs tab icon clearance, X vs scrollbar.
+
+## port3: Kit (2026-10-21)
+Two graders on `notes/ui_rivals/port2/kit.png` + `kit_picker.png` vs `rivals_normal/weapons.png`, `kuroko_picker.png`,
+`kuroko_preview.png`. Only `ui/lobby/Armory.lua` changed (comments "(2026-10-21, port3)"); top-level locals still 166, new
+state on the Armory table. Not deployed, not committed.
+- **Room behind**: the UITheme backdrop is no longer shown by the Kit (its screen wash + world blur darkened and softened the
+  hero gun too, since the gun is a real world model). `Armory._dimRoom` (from `backgroundBlur`) puts a camera-facing plane just
+  behind the hero (rest depth + half its largest diameter + 0.3, so a spin never cuts it) with an unlit black SurfaceGui frame:
+  ~62% black mid-screen, ~80% at the sides. Room dark, gun lit and sharp. Plus `Lighting.ArmoryGrade` (contrast +0.1,
+  saturation -0.1, brightness -0.02). DOF now focuses ON the gun (it sits 1.4x closer than DisplayPoint; the old focus at
+  DisplayPoint left the near room sharp), in-focus radius = half the item, FarIntensity 1 -> 0.35 (dim more than blur). All
+  removed on Leave.
+- **Framing**: `Armory._heroFrame(natural)` sizes the hero from the view (FOV 40, distance, aspect capped 16:9): long items
+  ~58% of the screen width (at most ~70% of its height), squat items ~95% of the height corner to corner. Replaces the
+  SHOW_FIT 7.5 / SHOW_MAX_ZOOM cap (~25% width before).
+- **List**: no green check (the picked row = equipped = RIVALS' big white row, ExtraBold up to 36, centred left of its render;
+  the render 150 x 104 overlaps 26 px past the panel's right edge: the ScrollingFrame is now transparent and
+  `Armory._LIST_OVER` (44) wider than its own `ListPlate`). Other rows: a picture at the left (owned = render, locked = flat
+  `Theme.color.disabled` silhouette), name centred Bold 26 (owned `#BDBCC2`, locked solid `#8E8D93`), ONE 18 px padlock at the
+  right end of locked rows (24 px white at the foot of the render on a picked locked row). `row.eq` still tracked for
+  `_restyleEquipped`.
+- **Action rows**: buttons use `Theme.gradient.blue`; icons in a 50 px box (was 40) fattened by four 1.5 px offset copies;
+  row title ExtraBold 26 / sub Bold 18 (shrink to fit), `cardRow(..., big)`.
+- **Bottom strip**: slots 140 apart (was 121), 100 px of strip past the end slots: 620 px for four (32% of 1920), 58 tall at
+  y 998; labels Bold 30 (was 26).
+- **Picker**: None's check 52 px centred on the tile's bottom-right corner, its word left of it (no more "No."); tile names
+  ExtraBold up to 34 with a 2.5 px dark edge; tiles: rarity colour lifted at the top -> dark at the foot, 3 px rim lifted
+  towards white, the skin silhouette black at 0.75 (~25%), wash 0.92. Back ExtraBold 40, search placeholder Bold 32 grey,
+  Favorited ExtraBold 38. Preview title: no backing plate, the render inside its 60 px rarity tile, the name with a 3 px edge.
+- **Currency**: `Armory._kitCurrency` scales LobbyHud's Scissors pill 1.16 while the Kit is open (icon ~65 px = 6%) and gives
+  its Plate a dark left end fading out to the right; restored on Leave. The glowing yellow-edged bar behind it is the map's
+  tool-board sign (left alone; the dim plane darkens it).
+- **Close X**: Duel History's X is `RK.closeButton()` (kit default 112 x 58), 12 px outside the panel's top-right, top-aligned.
+- To check in Studio: the dim plane's strength vs RIVALS (tune the gradient keypoints in `_dimRoom`) and the bench seam where
+  the plane crosses the workbench behind the gun; that a pistol / grenade at the new size clears the bottom strip; the fattened
+  arrow / eye images; the scaled currency pill's position (UIScale grows it from its top-left).
