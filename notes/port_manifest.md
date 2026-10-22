@@ -373,3 +373,11 @@ himself; we never publish.
   Live + no aim / melee before Live, gadgets in RoundEnd + cleared at each countdown, MaxHoldTime 5, dash on D-pad up (Settings = hold
   View/Select, Training picker = D-pad down), map vote on the solid backdrop, [CLIMB].
 - Pending: CoverClimb has no PublishedId (Edward's group upload): live climbs move without the animation until then.
+
+## Live port 32: weapon feel, RIVALS throws, cooking, wraps v1, hit info, streaming, auto-pay, boards, UI round 3 (2026-10-21 ~19:35-19:50, Shadow PC lead; Edward: "yes you hand off after publishing aswell")
+- From the saved working copies (lobby + match, UI 409ec47 + lead 2fed912 / 8123e14). Tacticals_main_ported + Tutorial / Matchmaking /
+  Ranked built with port_prep (Shadow paths; Ranked by hand), every copy checked with out/c32.lua (33 checks, all true), Publish As >
+  gunsy funsy > tacticals > Overwrite > Grant Permissions and Publish. Tutorial / Matchmaking / Ranked read back from the cloud
+  (c32 all true; PlaceKind Matchmaking / Ranked).
+- The first lobby attempt stalled: the Claude app sat topmost over Studio and took the clicks; Edward minimized it and it went through.
+- Carries: see notes/handoff/HANDOFF_LEAD.md "What shipped in ports 31-32"; UI rounds 1-3 (RIVALS pass) from the UI session.

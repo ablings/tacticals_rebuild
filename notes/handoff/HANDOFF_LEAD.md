@@ -1,3 +1,56 @@
+# Handoff: Tacticals lead session, Shadow PC -> main PC, 2026-10-21 ~19:50
+
+Repo `ablings/tacticals_rebuild` (master), last lead commit after port 32. `git pull` first. The UI session STAYS on the Shadow PC
+(its handoff: top of `notes/handoff/HANDOFF_UI.md`); only the lead moves. Coordinate Studio with it through the play lock
+(`tools/play_lock.py take map` as its own command) and messages ("UI session").
+
+## State
+- **Live: port 32** (2026-10-21 ~19:35-19:50, all four places: tacticals lobby, Tutorial, Matchmaking, Ranked; every copy checked with
+  `out/c32.lua`, all true; match places read back from the cloud). Details: `notes/port_manifest.md` "Live port 32".
+- **Working copies equal live** (both saved, committed). Shadow PC studio ids: lobby `2b143295-5bef-4a32-bb3e-ab91aeb7c756`,
+  match `9b3009a8-db27-4432-bd33-118ae8ac218f` (they change on every reopen).
+- Today's queue with every item's state and test notes: `notes/lead_queue_2026-10-21.md` (items 1-17 + afternoon additions).
+  Weapon-feel brief + RIVALS measurements: `notes/feel_brief_2026-10-21.md`, `notes/feel_ref/`.
+
+## What shipped in ports 31-32 (lead side)
+- Port 31: crouch/slide tracks load after the body's Ready; no Ready button (3rd pick = ready); [PREROUND] 5 s countdown, kit locks at
+  Live, no aim / melee before Live; utility in RoundEnd + cleared each countdown; MaxHoldTime 5; D-pad up = dash (Settings = hold
+  View/Select, Training picker = D-pad down); map vote on the solid backdrop; [CLIMB] (deep / blocked / head-high cover).
+- Port 32:
+  - Mobile join: phones wait <= 5 s for assets; Training picker tiles built on first InTraining; lobby **StreamingEnabled**
+    (`fix/streaming.lua`: pads / Heli / Showroom pinned, Showroom Folder -> Model; LobbyFX + SettingsEffects catch streamed parts).
+  - [HITINFO] HitConfirm 6th arg { pos, victim, dealt, source, weapon, pellet, backstab } for every source (UI draws numbers / flash).
+  - [COOK] Frag fuse starts on press (2 s), explodes in hand; CookStart / CookFuse attributes. [RTHROW] RIVALS throw math for every
+    throwable (tap = roll, hold = 100 studs/s at the crosshair, gravity x0.1875 until first touch, arc while held). [TTRAIL] white
+    trail. [THROWANIM] overhand SmokeHold / SmokeThrow / SmokeThrowLeft.
+  - Animations uploaded to gunsy funsy today (whitteguy is now group Admin): CoverClimb 137843743816822, SmokeHold 103260577057488,
+    SmokeThrow 103332896416040, SmokeThrowLeft 119020533976457 (PublishedId on the sources in both copies).
+  - [FEEL] `ui/set/WeaponFeel.lua` (child of WeaponController): equip bounce (RIVALS spring 0.625 / 12.5), camera-turn sway, bob,
+    recoil kick, reload roll - own character only, layered on Motor6D.Transform in PreSimulation.
+  - [WRAPS] v1: `scripts/wraps/WrapConfig.lua` + `WrapManager.server.lua` via `tools/wraps_install.py`; 8 static wraps (5 owned by
+    default; Hazard / Woodland / Carbon locked, "Coming soon" - Edward: not unlockable yet); template parts tagged WrapChannel A/B,
+    WrapSkip; profile data.Wraps; Equip / Favorite remotes. Textures `art/wraps/` (Python-made, uploaded under whitteguy).
+  - [TRASHCAN] the 9 Training swap bins are red cans ("Trash Can / Change Weapons", F; the crate stays invisible under it - a prompt
+    moved onto a new part stopped showing).
+  - [CALLOUT] Instructor barks on the tutorial's dark plate (UI rounds 4/6 sizes folded in). [AUTOPAY] tasks pay out by themselves
+    (~3 s, the existing "Task Completed" RN banner). [BOARDS] LobbyTopKills / LobbyTopStreak / LobbyTopLevel next to LobbyTopWins.
+
+## Needs Edward / a live check
+- Feel live: climb + throw animations (they never play in local Studio), streaming on a phone, sway / bob / reload roll (not measured).
+- Stray asset: CoverClimb uploaded to whitteguy by mistake (136099030362295) - unused, deletable.
+- Daily tasks pool unchanged (Edward: keep it). Skins: Edward builds them (keep stats from WeaponConfig, wraps work on skin models).
+- Not built: an in-hand grenade (for RIVALS' "next one rises from below"); bots-to-fill-matches is parked (Edward).
+
+## Shadow PC gotchas learned today
+- The Claude app window can sit topmost over Studio and eat computer-use clicks (screenshots hide it): ask Edward to minimize it.
+- Group asset uploads need a role that can create group assets; Studio only lists such groups in the Creator dropdown.
+- `RunService.PreSimulation` passes only deltaTime. ProximityPrompts moved onto a freshly built part may stop showing - keep them on
+  the original part. Edit-mode `require` caches (check sources, not module values). execute_luau runs in a plugin VM with its own
+  module cache (DataManager:Get is nil there - test through the game's remotes). Health goes negative on a killing TakeDamage.
+- `port_prep.sh` has aroki paths; on the Shadow PC use a copy with Shadow paths. The Ranked window lists as "Game" in MCP at first.
+
+---
+
 # Handoff: Tacticals lead session (map, mechanics, server), main PC -> Shadow PC, 2026-10-21 ~12:15
 
 Repo: GitHub `ablings/tacticals_rebuild`, branch `master`. Run `git pull` in `Documents\tacticals_rebuild` on the Shadow PC.
