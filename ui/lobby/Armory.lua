@@ -2205,16 +2205,31 @@ local function renderInfo()
 		-- "Level up now!" + the yellow button. Tacticals has no paid level-up: the button shows the XP still to earn and shakes
 		cardRow(lvl, 44, "up", maxed and "Max level!" or "Level up now!", nil)
 		local up = bigButton(lvl, 217, 42, nil, maxed and "grey" or "key")
-		local upL = shade(text({ Text = maxed and "MAX" or ctx.commas(need - into), FontFace = FX, TextSize = 32, TextScaled = true, TextColor3 = WHITE,
+		-- (2026-10-22, the approved scissors economy; the lead's Request "LevelUpItem"(itemId)) RIVALS' "Level up now!" is a real buy:
+		-- 9 keys there, 1,000 scissors here. The button shows the price + scissors; one press asks the server, a refusal shakes it.
+		local LEVEL_UP_PRICE = 1000
+		local upL = shade(text({ Text = maxed and "MAX" or ctx.commas(LEVEL_UP_PRICE), FontFace = FX, TextSize = 32, TextScaled = true, TextColor3 = WHITE,
 			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(6, 8), Size = UDim2.fromOffset(maxed and 99 or 66, 36), ZIndex = 7, Parent = up }), 1.5, 0.6)
 		mk("UITextSizeConstraint", { MaxTextSize = 32, Parent = upL })
 		if not maxed then
-			shade(text({ Text = "XP", FontFace = FX, TextSize = 20, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(70, 8),
-				Size = UDim2.fromOffset(36, 36), ZIndex = 7, Parent = up }), 1.5, 0.6)
+			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = "rbxassetid://120480559804238", ScaleType = Enum.ScaleType.Fit,
+				Position = UDim2.fromOffset(72, 8), Size = UDim2.fromOffset(32, 32), ZIndex = 7, Parent = up })
 		end
 		Kit.bindButton(up, { hover = 1.05, press = 0.92 })
-		up.Activated:Connect(function() Kit.shake(up); Kit.sfx("close") end)
-		Armory._tip(up, maxed and "Every level reached" or "Play matches with it to earn XP", "left")
+		up.Activated:Connect(function()
+			if maxed or Armory._levelling then Kit.shake(up); Kit.sfx("close"); return end
+			Armory._levelling = true
+			local okAsk, res = pcall(ctx.ask, "LevelUpItem", id)
+			Armory._levelling = nil
+			local good = okAsk and (res == true or (type(res) == "table" and (res.ok or res.Success)))
+			if good then
+				Kit.pop(up, 1.12)
+				if Armory.Refresh then task.defer(Armory.Refresh) end
+			else
+				Kit.shake(up); Kit.sfx("close")
+			end
+		end)
+		Armory._tip(up, maxed and "Every level reached" or "Level it up now for 1,000 scissors", "left")
 		-- "Reward at Level N" with the reward on a white tile with a cyan edge (replica); the next milestone every 5 levels, a live
 		-- 3D crate (ViewIcons) until weapon rewards exist
 		local milestone = math.min(maxLevel, (math.floor(level / 5) + 1) * 5)

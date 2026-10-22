@@ -133,7 +133,7 @@ local function stateOf(scope, entry, def, period)
 	local data = ctx.getData() or {}
 	-- done = the progress reached the goal OR the server already paid it (entry.Claimed); a paid task always reads full
 	local paid = entry.Claimed == true
-	local prog = paid and def.Goal or math.clamp(((data.Stats and data.Stats[def.Stat]) or 0) - (entry.Base or 0), 0, def.Goal)
+	local prog = paid and def.Goal or math.clamp(def.Prog or (((data.Stats and data.Stats[def.Stat]) or 0) - (entry.Base or 0)), 0, def.Goal)
 	local done = paid or prog >= def.Goal
 	local state = paid and "paid" or done and "done" or "todo"
 	local key = scope .. ":" .. tostring(period) .. ":" .. def.Id
@@ -203,6 +203,28 @@ local function taskCard(parent, scope, i, entry, def, x, y, period)
 	local titleScale = new("UIScale", { Name = "HoverScale", Parent = title })
 	card.MouseEnter:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1.1 }, Enum.EasingStyle.Back) end)
 	card.MouseLeave:Connect(function() Kit.tween(titleScale, 0.15, { Scale = 1 }) end)
+	-- (2026-10-22, the approved economy: mission reroll 250; the lead's Request "RerollQuest"(scope, index)) a small swap button on
+	-- each unfinished daily card's top-right; the server swaps it for another task of the same tier and the screen re-renders
+	if scope == "Daily" and not done and ctx.ask then
+		local rr = new("TextButton", { Name = "Reroll", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(CARD_W - 8, 8),
+			Size = UDim2.fromOffset(34, 34), BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, ZIndex = 4, Parent = card }, { RK.corner(17) })
+		RK.label({ Text = "↻", FontFace = FB, TextSize = 26, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = rr })
+		if ctx.tooltip then ctx.tooltip(rr, "Swap task", "Get a different task of the same difficulty for 250 scissors.") end
+		Kit.bindButton(rr, { hover = 1.15 })
+		local busy = false
+		rr.Activated:Connect(function()
+			if busy then return end
+			busy = true
+			local okA, res = pcall(ctx.ask, "RerollQuest", "Daily", i)
+			busy = false
+			if okA and (res == true or (type(res) == "table" and (res.ok or res.Success))) then
+				Kit.pop(card, 1.05)
+				task.defer(render)
+			else
+				Kit.shake(rr)
+			end
+		end)
+	end
 	glyph(card, def.Stat, UDim2.fromOffset(121, 86), 52, done and C.green or C.white) -- (2026-10-21, port3) solid white art; (round 1) 44 -> 52: the art's margin left it reading ~33 vs RIVALS ~45
 	bar(card, UDim2.fromOffset(18, 130), UDim2.fromOffset(206, 10), prog / def.Goal, done, C.track, 5)
 	local b = bars[#bars]
@@ -378,14 +400,35 @@ local function contractsPanel(order)
 			table.insert(rows, { entry = entry, def = def, frac = prog / def.Goal, i = #rows + 1 })
 		end
 	end
+	-- (2026-10-22, the approved economy, ECON2: weekly tasks -> RIVALS' per-weapon Contracts) with no weekly list, the panel lists one
+	-- contract per weapon you own or have eliminations with: "<Weapon> • Eliminations", WeaponStats[id].Kills against the next
+	-- unpaid tier of Config.WeaponContracts (profile Contracts[id] = tiers paid; the server pays automatically). All tiers paid = gone.
+	local weaponMode = #rows == 0 and ctx.Config.WeaponContracts ~= nil
+	if weaponMode then
+		local data = ctx.getData() or {}
+		local tiers = ctx.Config.WeaponContracts
+		for id, item in pairs(ctx.Config.Items or {}) do
+			local kills = (data.WeaponStats and data.WeaponStats[id] and data.WeaponStats[id].Kills) or 0
+			local owned = item.Default or (data.Owned and data.Owned[id] == true)
+			local paidTiers = (data.Contracts and tonumber(data.Contracts[id])) or 0
+			local target = tiers[paidTiers + 1]
+			if target and (item.Slot == "Weapon" or item.Slot == "Melee") and (owned or kills > 0) then
+				local def = { Id = "W_" .. id .. "_" .. (paidTiers + 1), Stat = "Kills", Goal = target.Kills, Reward = target.Reward, Prog = kills,
+					Text = (item.Name or id) .. " • Eliminations", Short = item.Name or id }
+				table.insert(rows, { entry = { Id = def.Id, Base = 0 }, def = def, frac = math.clamp(kills / target.Kills, 0, 1), i = #rows + 1, name = item.Name or id })
+			end
+		end
+		table.sort(rows, function(a, b) return a.name < b.name end)
+		for i, r in ipairs(rows) do r.i = i end
+	end
 	if sortBy == "Near Completion" then
 		table.sort(rows, function(a, b) if a.frac ~= b.frac then return a.frac > b.frac end return a.i < b.i end)
 	end
-	local allDone = #rows > 0
+	local allDone = #rows > 0 and not weaponMode
 	for _, r in ipairs(rows) do if r.frac < 1 then allDone = false end end
 	local top = allDone and 74 + 18 or 74
 	local p = panel("Weekly", order, top + math.max(1, #rows) * ROW_H + ROW_PAD)
-	header(p, A.scroll, "Weekly Contracts", allDone, "Weekly")
+	header(p, A.scroll, weaponMode and "Contracts" or "Weekly Contracts", allDone, "Weekly")
 	RK.label({ Text = "sorted by", FontFace = FM, TextSize = 27, TextColor3 = C.textDim, TextXAlignment = Enum.TextXAlignment.Right,
 		AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(593, 17), Size = UDim2.fromOffset(200, 41), Parent = p })
 	local dd = RK.dropdown(SORTS, sortBy, canvas, function(v)
@@ -412,7 +455,7 @@ local function contractsPanel(order)
 			Position = UDim2.fromOffset(0, top + 10), Size = UDim2.new(1, 0, 0, 40), Parent = p })
 	end
 	for n, r in ipairs(rows) do
-		taskRow(p, "Weekly", n, r.entry, r.def, top + (n - 1) * ROW_H, q and q.Key)
+		taskRow(p, weaponMode and "Contract" or "Weekly", n, r.entry, r.def, top + (n - 1) * ROW_H, weaponMode and "W" or (q and q.Key))
 	end
 end
 
