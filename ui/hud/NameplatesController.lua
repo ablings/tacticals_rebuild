@@ -68,7 +68,7 @@ local function build(p, character)
 	list.FillDirection = Enum.FillDirection.Horizontal
 	list.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	list.VerticalAlignment = Enum.VerticalAlignment.Center
-	list.Padding = UDim.new(0.012, 0)
+	list.Padding = UDim.new(0.03, 0) -- (2026-10-22, names study vs RIVALS) a clear gap after the seal (~0.18 of its width), was 0.012
 	list.SortOrder = Enum.SortOrder.LayoutOrder
 	list.Parent = row
 	local badge = Instance.new("Frame")
@@ -113,9 +113,23 @@ local function build(p, character)
 	name.Name = "DisplayName" -- (2026-10-20) badges are added by the update loop (UIKit.Badges)
 	name.Parent = row
 	-- (2026-10-21, RIVALS 1:1) RIVALS' dark outline round the white name
-	local ns = Instance.new("UIStroke"); ns.Color = Color3.new(0, 0, 0); ns.Thickness = 2; ns.Transparency = 0.2; ns.Parent = name
+	-- (2026-10-22, names study) a thin 1 px edge at 0.5: UIStroke is in pixels, so the old 2 px muddied a far / own (55 %) plate
+	local ns = Instance.new("UIStroke"); ns.Color = Color3.new(0, 0, 0); ns.Thickness = 1; ns.Transparency = 0.5; ns.Parent = name
+	-- the verified / Premium glyph in its own label (no stroke, cap height) instead of inside the stroked name text
+	local glyph = Instance.new("TextLabel")
+	glyph.Name = "BadgeGlyph"
+	glyph.LayoutOrder = 3
+	glyph.BackgroundTransparency = 1
+	glyph.Size = UDim2.fromScale(0.08, 0.62)
+	glyph.FontFace = BOLD
+	glyph.TextScaled = true
+	glyph.TextColor3 = WHITE
+	glyph.Text = ""
+	glyph.Visible = false
+	glyph.Parent = row
+	local ga = Instance.new("UIAspectRatioConstraint"); ga.AspectRatio = 1; ga.DominantAxis = Enum.DominantAxis.Height; ga.Parent = glyph -- (a square box: a narrower one draws nothing, TextScaled gives up on the glyph)
 	local vip = Instance.new("TextLabel")
-	vip.LayoutOrder = 3
+	vip.LayoutOrder = 4
 	vip.Size = UDim2.fromScale(0.15, 0.7)
 	vip.BackgroundColor3 = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) tag yellow -> cream #ECE6D2
 	vip.FontFace = BOLD
@@ -135,7 +149,7 @@ local function build(p, character)
 	user.Text = "@" .. p.Name
 	user.Visible = showHandle
 	user.Parent = g
-	local us = Instance.new("UIStroke"); us.Thickness = 1.5; us.Transparency = 0.4; us.Parent = user
+	local us = Instance.new("UIStroke"); us.Thickness = 1; us.Transparency = 0.65; us.Parent = user -- (2026-10-22) barely-there edge on the grey @handle
 	-- the old server VIP tag sits in the same spot: ours carries the VIP chip now
 	local oldVip = head:FindFirstChild("VipTag")
 	if oldVip and oldVip:IsA("BillboardGui") then oldVip.Enabled = false end
@@ -145,24 +159,32 @@ local function build(p, character)
 	streak.Name = "StreakHolder"
 	streak.LayoutOrder = 0 -- (2026-10-20, Edward) the flame takes the badge's place, left of the name
 	streak.BackgroundTransparency = 1
-	streak.Size = UDim2.fromScale(0.2, 1)
+	streak.Size = UDim2.fromScale(0.26, 1.3) -- (2026-10-22, RIVALS) the flame is ~1.3x the line height
 	streak.Visible = false
 	streak.Parent = row
 	local sa = Instance.new("UIAspectRatioConstraint"); sa.AspectRatio = 1; sa.DominantAxis = Enum.DominantAxis.Height; sa.Parent = streak
 	local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
 	local flame = Kit.streak(streak, 0, UDim2.fromScale(0, 0), UDim2.fromScale(1, 1), 2)
+	-- (2026-10-22, names study) a readable number: bigger, white with a thin dark edge (the orange edge sank into the flame)
+	do
+		local n = flame:FindFirstChild("N")
+		if n then
+			n.Size = UDim2.fromScale(0.8, 0.56); n.Position = UDim2.fromScale(0.5, 0.66)
+			local st = n:FindFirstChildOfClass("UIStroke"); if st then st.Color = Color3.fromRGB(60, 20, 8); st.Thickness = 1.2; st.Transparency = 0.1 end
+		end
+	end
 	-- (2026-10-20, RIVALS) the device icon after the name (UIKit.Badges.DeviceIcon; hidden until the art is uploaded)
 	local dev = Instance.new("ImageLabel")
 	dev.Name = "Device"
 	dev.LayoutOrder = 5
 	dev.BackgroundTransparency = 1
 	dev.ScaleType = Enum.ScaleType.Fit
-	dev.Size = UDim2.fromScale(0.2, 0.72)
+	dev.Size = UDim2.fromScale(0.2, 0.62) -- (2026-10-22) cap height, centred like RIVALS
 	dev.ImageColor3 = WHITE
 	dev.Visible = false
 	dev.Parent = row
 	local da = Instance.new("UIAspectRatioConstraint"); da.AspectRatio = 1; da.DominantAxis = Enum.DominantAxis.Height; da.Parent = dev
-	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, seal = seal, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name, device = dev }
+	plates[p] = { gui = g, badge = badge, badgeText = bt, badgeImage = bi, seal = seal, vip = vip, streak = streak, streakN = flame:FindFirstChild("N"), name = name, device = dev, glyph = glyph }
 end
 
 -- (2026-10-21, RIVALS 1:1) the name label is as wide as its text (measured once per text), so the seal and the device icon sit
@@ -177,7 +199,9 @@ local function fitName(e)
 		local ok, b = pcall(TextService.GetTextBoundsAsync, TextService, params)
 		if not ok or not b or b.Y <= 0 or not e.name.Parent or e.fitted ~= text then return end
 		local share = (H_STUDS * ROW) * (b.X / b.Y) / W_STUDS
-		e.name.Size = UDim2.fromScale(math.clamp(share * 1.04, 0.08, 0.66), 1)
+		-- (2026-10-22, Edward: each icon sits a precise distance from the name) the label is exactly the text's width, so the
+		-- seal / badge / device gaps all equal the row's padding (no extra 4 % after the name)
+		e.name.Size = UDim2.fromScale(math.clamp(share * 0.96, 0.08, 0.66), 1) -- (a hair under: TextScaled then fills the width exactly)
 	end)
 end
 
@@ -250,7 +274,11 @@ function Nameplates.Start()
 				-- (2026-10-20, Edward) Roblox badges with the name (UIKit.Badges: verified while Display Badges is on, else Premium)
 				if e.name then
 					local okB, B = pcall(function() return require(game:GetService("ReplicatedStorage").UIKit.Badges) end)
-					e.name.Text = (okB and B) and B.Name(p) or p.DisplayName
+					-- (2026-10-22) the name alone; the badge glyph Badges.Name appends goes into its own label
+					local full = (okB and B) and B.Name(p) or p.DisplayName
+					local suffix = full:sub(#p.DisplayName + 1):gsub("^%s+", "")
+					e.name.Text = p.DisplayName
+					if e.glyph then e.glyph.Text = suffix; e.glyph.Visible = suffix ~= "" end
 					local dv = (okB and B and B.DeviceIcon) and B.DeviceIcon(p) or nil
 					if e.device then e.device.Visible = dv ~= nil; e.device.Image = dv or "" end
 					fitName(e)

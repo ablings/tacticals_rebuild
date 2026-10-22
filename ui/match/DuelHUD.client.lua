@@ -27,8 +27,8 @@ local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) } 
 local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) } -- them: muted dark green
 -- (2026-10-20, Edward: "a mix" of RIVALS + Sniper / Murder Duels) RIVALS fills its score boxes, round card, kill feed pills and
 -- killer card with the side's colour; ours use these muted fills (tan / dark green) so white text stays readable
-TEAM_A.fill = { Color3.fromRGB(176, 156, 116), Color3.fromRGB(118, 98, 68) }
-TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
+TEAM_A.fill = { Color3.fromRGB(201, 168, 105), Color3.fromRGB(110, 86, 49) } -- (2026-10-22, colour study: RIVALS' team fills fall ~60 % top to bottom; same tan, deeper ramp)
+TEAM_B.fill = { Color3.fromRGB(78, 138, 90), Color3.fromRGB(31, 58, 39) } -- (2026-10-22, colour study: same dark green, deeper ramp)
 local GOOD, BAD = Color3.fromRGB(141, 191, 90), Color3.fromRGB(235, 70, 60) -- (2026-10-21, AI-tells cleanup) GOOD: yellow -> field green #8DBF5A
 -- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
 -- panels in a calmer dress, team colour only as an accent.
@@ -727,6 +727,12 @@ local function showResults(sum)
 		local okB, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
 		local dev = wp and okB and B and B.DeviceIcon and B.DeviceIcon(wp)
 		stats.dev.Image = dev or ""
+		-- (2026-10-22, Edward: every icon a precise distance from the name) the device follows the name 10 design px after
+		-- its text, not pinned to the plate's right edge
+		task.defer(function()
+			local tb, pw = stats.nameT.TextBounds.X, stats.name.AbsoluteSize.X
+			if tb > 0 and pw > 0 then stats.dev.Position = UDim2.fromScale(math.min(112 + tb * 396 / pw + 10, 352) / 396, 16 / 66) end
+		end)
 		stats.seal:ClearAllChildren()
 		if stats.Kit and stats.Kit.levelSeal then
 			pcall(function() stats.Kit.levelSeal(stats.seal, wp and tonumber(wp:GetAttribute("Level")) or 1, { ZIndex = 8 }) end)

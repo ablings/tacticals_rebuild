@@ -55,8 +55,8 @@ local FIELD = OLIVE
 local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) }  -- (2026-10-20, Edward: "serious", like the old bone/olive but better) us: warm beige
 local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) }     -- them: muted dark green
 -- (2026-10-20, the RIVALS mix) the muted fills RIVALS-style boxes use (same as DuelHUD)
-TEAM_A.fill = { Color3.fromRGB(176, 156, 116), Color3.fromRGB(118, 98, 68) }
-TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
+TEAM_A.fill = { Color3.fromRGB(201, 168, 105), Color3.fromRGB(110, 86, 49) } -- (2026-10-22, colour study: RIVALS' team fills fall ~60 % top to bottom; same tan, deeper ramp)
+TEAM_B.fill = { Color3.fromRGB(78, 138, 90), Color3.fromRGB(31, 58, 39) } -- (2026-10-22, colour study: same dark green, deeper ramp)
 -- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
 -- panels, calmer: Montserrat Heavy headlines, Builder Sans body, hairline white edges, no tilts or drop shadows; "selected"
 -- is a warm white; team colours (beige / green) only as accents

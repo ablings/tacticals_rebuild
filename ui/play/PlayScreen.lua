@@ -693,11 +693,23 @@ local function bindTile(b)
 	local ring, shade = b:FindFirstChild("HoverRing"), b:FindFirstChild("Shade")
 	local rest = shade.BackgroundTransparency
 	local hov, sel = false, false
+	-- (2026-10-22, live RIVALS feel study) hovered, RIVALS' tile washes out toward white under a thin white outline and its
+	-- big label fades back: a white wash (0.6), the ring at 2 px, the title + shadows to 0.35
+	ring.Thickness = 2
+	local wash = new("Frame", { Name = "HoverWash", BackgroundColor3 = C.white, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
+		ZIndex = 4, Parent = b })
 	local function show()
 		local on = hov or sel
 		Kit.tween(s, on and 0.1 or 0.12, { Scale = on and 0.97 or 1 })
 		Kit.tween(ring, on and 0.1 or 0.12, { Transparency = on and 0 or 1 })
 		Kit.tween(shade, on and 0.1 or 0.12, { BackgroundTransparency = on and 0.95 or rest })
+		Kit.tween(wash, on and 0.1 or 0.15, { BackgroundTransparency = on and 0.6 or 1 })
+		for _, d in b:GetDescendants() do
+			if d:IsA("TextLabel") and (d.Name == "Title" or string.sub(d.Name, 1, 11) == "TitleShadow") then
+				if d:GetAttribute("RestT") == nil then d:SetAttribute("RestT", d.TextTransparency) end
+				Kit.tween(d, on and 0.1 or 0.15, { TextTransparency = on and math.max(d:GetAttribute("RestT"), 0.35) or d:GetAttribute("RestT") })
+			end
+		end
 	end
 	b.MouseEnter:Connect(function() hov = true; show() end)
 	b.MouseLeave:Connect(function() hov = false; show() end)

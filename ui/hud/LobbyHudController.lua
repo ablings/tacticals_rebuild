@@ -305,7 +305,7 @@ function LobbyHud.Start()
 	new("ImageLabel", { LayoutOrder = 1, BackgroundTransparency = 1, Image = STAR, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(30, 30), ZIndex = 3, Parent = tpRow })
 	RKit.label({ LayoutOrder = 2, Text = "Duel Pads", FontFace = WFONT, TextSize = 28, TextColor3 = RC.text, AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 48), ZIndex = 3, Parent = tpRow })
 	new("ImageLabel", { LayoutOrder = 3, BackgroundTransparency = 1, Image = STAR, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(30, 30), ZIndex = 3, Parent = tpRow })
-	Kit.bindButton(toPads)
+	Kit.bindButton(toPads, { hover = 1.1 }) -- (2026-10-22, RIVALS: primary buttons grow ~1.1, like PLAY)
 	function LobbyHud.ToPads()
 		-- straight to the duel hall, in front of the first pad (not on it)
 		local duels = workspace:FindFirstChild("LobbyMap") and workspace.LobbyMap:FindFirstChild("Duels")
@@ -453,7 +453,7 @@ function LobbyHud.Start()
 		local padGlyph = new("ImageLabel", { Name = "PadGlyph", BackgroundTransparency = 1, Visible = false, AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromOffset(100, 50), Size = UDim2.fromOffset(42, 42), ZIndex = 6, Parent = b })
 		local sc = new("UIScale", { Parent = b })
-		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id, pad = padGlyph })
+		table.insert(navButtons, { b = b, s = sc, tip = tip, id = it.Id, pad = padGlyph, lbl = lbl })
 		b.Activated:Connect(function() if LobbyUI then LobbyUI.Open(it.Id) end end)
 	end
 	-- (2026-10-21, RIVALS 1:1) RIVALS' resting "Join the queue to start playing!" over PLAY for new players (until they have queued
@@ -626,7 +626,10 @@ function LobbyHud.Start()
 		-- bubble shows at once (live: "nav bubbles appear immediately"), sits still 2 s, then repeats a slow 18 px hop (0.4 s up
 		-- Quad Out, 0.6 s down Quad In) until unhovered. Press: 1.02, release: back to 1.12 (Back). The grade1-3 icon-only grow,
 		-- 6 px lift, glow layer, 0.12 s bubble delay and 5 px bob are gone.
-		local lift = UDim2.fromScale(base.X.Scale, base.Y.Scale - 14 / 1080)
+		-- (2026-10-22, live RIVALS feel study) a small 6 px lift (14 made the hovered Shop crate cover PLAY); labels rest light grey
+		local lift = UDim2.fromScale(base.X.Scale, base.Y.Scale - 6 / 1080)
+		local LBL_REST, LBL_ON = Color3.fromRGB(205, 205, 210), Color3.new(1, 1, 1)
+		if n.lbl then n.lbl.TextColor3 = LBL_REST end
 		-- (2026-10-22, 4:3) the dock is shifted onto the bottom edge by applyPins (attribute PinDy, Scale): hover / reset add it
 		local function pinned(u) return UDim2.new(u.X.Scale, u.X.Offset, u.Y.Scale + (n.b:GetAttribute("PinDy") or 0), u.Y.Offset) end
 		local tipBase = n.tip.Position
@@ -654,6 +657,7 @@ function LobbyHud.Start()
 			if icon.vp then icon.vp.SetHover(true) end
 			Kit.tween(n.s, 0.15, { Scale = 1.12 }, Enum.EasingStyle.Back)
 			Kit.tween(n.b, 0.15, { Position = pinned(lift) }, Enum.EasingStyle.Back)
+			if n.lbl then n.lbl.TextColor3 = LBL_ON end
 		end
 		local function leave()
 			hovered = false; gen += 1
@@ -664,6 +668,7 @@ function LobbyHud.Start()
 			if icon.vp then icon.vp.SetHover(false) end
 			Kit.tween(n.s, 0.15, { Scale = 1 })
 			Kit.tween(n.b, 0.15, { Position = pinned(base) })
+			if n.lbl then n.lbl.TextColor3 = LBL_REST end
 		end
 		n.b.MouseEnter:Connect(enter)
 		n.b.MouseLeave:Connect(leave)
@@ -912,7 +917,7 @@ function LobbyHud.Start()
 	local function modeIcon()
 		-- (2026-10-18, live RIVALS) the column icon is a white silhouette: flame = streak, burst = level, trophy shield = rank
 		-- (2026-10-21, RIVALS 1:1) set in place on the one ImageLabel (no destroy / recreate)
-		lbModeIcon.Image = (lbStat == "Rank" and Kit.glyph("rank", Kit.ICONS.rank)) or (lbStat == "Level" and Kit.glyph("level", Kit.ICONS.level))
+		lbModeIcon.Image = (lbStat == "Rank" and Kit.glyph("rank", Kit.ICONS.rank)) or (lbStat == "Level" and ((Kit.levelSealArt and Kit.levelSealArt()) or Kit.glyph("level", Kit.ICONS.level)))
 			or (lbStat == "Streak" and Kit.glyph("flame", Kit.ICONS.streak)) or Kit.glyph("trophy", Kit.ICONS.trophy)
 	end
 	local lastLB
@@ -940,7 +945,7 @@ function LobbyHud.Start()
 			Position = UDim2.fromOffset(44, 0), Size = UDim2.fromOffset(196, 40), Parent = row })
 		-- (2026-10-20, RIVALS) the device icon right after the name (UIKit.Badges.DeviceIcon)
 		parts.device = Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = "", ImageColor3 = RC.text, ScaleType = Enum.ScaleType.Fit, Visible = false,
-			Position = UDim2.fromOffset(222, 11), Size = UDim2.fromOffset(18, 18), Parent = row })
+			Position = UDim2.fromOffset(222, 10), Size = UDim2.fromOffset(20, 20), Parent = row })
 		-- the win streak next to the name (RIVALS): a flame with the number over it
 		parts.streak = Kit.streak(row, 0, UDim2.fromOffset(210, 4), UDim2.fromOffset(32, 32), 3)
 		parts.streak.Visible = false
@@ -970,7 +975,12 @@ function LobbyHud.Start()
 			parts.device.Image = dv
 			-- (2026-10-21, AI-tells cleanup) names draw in Rubik; Enum.Font has no Rubik, so measure with Arial (close widths, no yield)
 			local w = TextServiceLB:GetTextSize(nameText, 21, Enum.Font.Arial, Vector2.new(400, 40)).X
-			parts.device.Position = UDim2.fromScale(math.min(44 + math.min(w, nameW) + 6, 222) / LB_W, 11 / 40)
+			-- (2026-10-22, names study) Arial runs narrower than the Rubik we draw in, so the icon sat ON the name: use the label's
+			-- real TextBounds (screen px -> design px) once it has laid out, with an 8 px gap like RIVALS
+			local nb = parts.name.TextBounds.X
+			local rowW = parts.name.Parent and parts.name.Parent.AbsoluteSize.X or 0
+			if nb > 0 and rowW > 0 then w = nb * LB_W / rowW end
+			parts.device.Position = UDim2.fromScale(math.min(44 + math.min(w, nameW) + 8, 222) / LB_W, 10 / 40)
 		end
 		parts.streak.Visible = showStreak
 		local sn = parts.streak:FindFirstChild("N")

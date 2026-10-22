@@ -1327,7 +1327,7 @@ local function build()
 			b.MouseLeave:Connect(function() vp.SetHover(tab == t[1]) end)
 		end
 		stroke(RK.label({ Name = "Label", Text = t.label or t[1], FontFace = FB, TextSize = 25, TextXAlignment = CENTER, Position = UDim2.fromOffset(-4, 18), Size = UDim2.fromOffset(TAB_W + 8, 32), ZIndex = 3, Parent = b }), 2, 0)
-		Kit.bindButton(b, { hover = 1.05 })
+		Kit.bindButton(b, { hover = 1.15 }) -- (2026-10-22, RIVALS tabs grow ~1.15 on hover)
 		b.Activated:Connect(function() Screen.SetTab(t[1]) end)
 		tabBtns[t[1]] = { b = b, vp = vp }
 	end
@@ -1338,7 +1338,7 @@ local function build()
 				Size = UDim2.fromOffset(TAB_W, TAB_H), BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, BorderSizePixel = 0, Parent = body }, { RK.corner(6) })
 			b:SetAttribute("TabRow", spec[3])
 			stroke(RK.label({ Name = "Label", Text = spec[2], FontFace = FB, TextSize = 25, TextXAlignment = CENTER, Position = UDim2.fromOffset(-4, 8), Size = UDim2.fromOffset(TAB_W + 8, 32), ZIndex = 3, Parent = b }), 2, 0)
-			Kit.bindButton(b, { hover = 1.05 })
+			Kit.bindButton(b, { hover = 1.15 })
 			b.Activated:Connect(function() Screen.ShowTabRow(spec[3] == 1 and 2 or 1) end)
 		end
 	end

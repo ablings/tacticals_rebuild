@@ -2752,9 +2752,14 @@ local function renderBottom()
 		local g = glyph(b, c.Id == "Leave" and "leave" or "empty", c.Id == "Leave" and 84 or 46, COL.Empty, 6)
 		g.Position = UDim2.fromOffset(50, 44)
 		if c.Id ~= "Leave" then slotRings[c.Id] = b end
-		shade(text({ Text = c.Label, FontFace = FB, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-20, 66),
-			Size = UDim2.fromOffset(140, 38), ZIndex = 7, Parent = b }), 1.8, 0.35)
-		Kit.bindButton(b, { hover = 1.08, press = 0.92 })
+		local lbl = text({ Text = c.Label, FontFace = FB, TextSize = 30, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(-20, 66),
+			Size = UDim2.fromOffset(140, 38), ZIndex = 7, Parent = b })
+		shade(lbl, 1.8, 0.35)
+		-- (2026-10-22, live RIVALS feel study) RIVALS' slots react like its dock: the slot grows ~1.2 and its light-grey label turns white
+		lbl.TextColor3 = Color3.fromRGB(205, 205, 210)
+		b.MouseEnter:Connect(function() lbl.TextColor3 = Color3.new(1, 1, 1) end)
+		b.MouseLeave:Connect(function() lbl.TextColor3 = Color3.fromRGB(205, 205, 210) end)
+		Kit.bindButton(b, { hover = 1.2, press = 0.92 })
 		Armory._tip(b, c.Tip, "up")
 		b.Activated:Connect(function()
 			if c.Id == "Leave" then
