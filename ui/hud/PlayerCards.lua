@@ -277,9 +277,17 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	if dev then new("ImageLabel", { LayoutOrder = 2, BackgroundTransparency = 1, Image = dev, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(24, 24), ZIndex = 3, Parent = nameRow }) end
 	label(card, "@" .. p.Name, F_SUB, 16, 136, 49, 340, 18, tok("handle", hex("#8E8D94")), nil, 3)
 	-- the level: RIVALS' blue starburst seal, centred over the right area, "Level" in grey under it
-	local seal = Kit.levelSeal(card, p:GetAttribute("Level") or 1, { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(316, 84), Size = UDim2.fromOffset(54, 54), ZIndex = 3 })
+	-- (2026-10-22, live RIVALS profile at 16:9) a player on a win streak shows Level AND Streak side by side (the seal at ~51 % of
+	-- the card, the flame with its number at ~73 %); no streak = the seal alone, centred over the right area as before
+	local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
+	local levelX = streakN > 0 and 256 or 316
+	local seal = Kit.levelSeal(card, p:GetAttribute("Level") or 1, { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(levelX, 84), Size = UDim2.fromOffset(54, 54), ZIndex = 3 })
 	seal.Name = "LevelSeal"
-	label(card, "Level", F_BOLD, 20, 266, 136, 100, 24, tok("levelLabel", hex("#8E8D94")), Enum.TextXAlignment.Center, 3)
+	label(card, "Level", F_BOLD, 20, levelX - 50, 136, 100, 24, tok("levelLabel", hex("#8E8D94")), Enum.TextXAlignment.Center, 3)
+	if streakN > 0 and Kit.streak then
+		Kit.streak(card, streakN, UDim2.fromOffset(366 - 29, 80), UDim2.fromOffset(58, 58), 3)
+		label(card, "Streak", F_BOLD, 20, 316, 136, 100, 24, tok("levelLabel", hex("#8E8D94")), Enum.TextXAlignment.Center, 3)
+	end
 	-- Most Played Weapons: four tiles, a grey-to-dark fill, the render filling the tile and the name over its foot
 	label(card, "Most Played Weapons", F_BOLD, 16, 146, 184, 340, 20, tok("mostPlayed", hex("#C9C9CF")), Enum.TextXAlignment.Center, 3)
 	local tiles = {}
