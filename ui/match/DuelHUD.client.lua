@@ -160,7 +160,7 @@ local function teamBox(x, cols, right)
 		slots[i] = { h = h, x1 = x1, x2 = x2, skull = skull }
 	end
 	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, WHITE, nil, 4)
-	return { slots = slots, score = score, frame = b }
+	return { slots = slots, score = score, frame = b, right = right }
 end
 local mineBox = teamBox(580, TEAM_A, false)
 local theirBox = teamBox(1040, TEAM_B, true)
@@ -1414,6 +1414,22 @@ rescale()
 ---------------------------------------------------------------------------------------------------- headshots + score
 local heads = {}
 local function fillBox(box, ids)
+	-- (2026-10-22, live RIVALS) a box is as wide as its team: one head + the score in a 1v1 (156 design px), up to three heads
+	-- (284). The pair hugs the timer (mine ends at x 880, theirs starts at 1040); heads and score re-laid in Scale of the box.
+	local n = math.clamp(#ids, 1, 3)
+	if box.n ~= n then
+		box.n = n
+		local w = 92 + 64 * n
+		box.frame.Size = UDim2.fromScale(w / W, 84 / H)
+		box.frame.Position = UDim2.fromScale((box.right and 1040 or (880 - w)) / W, 20 / H)
+		for i = 1, 3 do
+			local hx = box.right and (86 + (i - 1) * 64) or (14 + (i - 1) * 64)
+			box.slots[i].h.Position = UDim2.fromScale(hx / w, 14 / 84)
+			box.slots[i].h.Size = UDim2.fromScale(56 / w, 56 / 84)
+		end
+		box.score.Position = UDim2.fromScale((box.right and 8 or (w - 78)) / w, 6 / 84)
+		box.score.Size = UDim2.fromScale(70 / w, 72 / 84)
+	end
 	for i = 1, 3 do
 		local s = box.slots[i]
 		local uid = ids[i]
