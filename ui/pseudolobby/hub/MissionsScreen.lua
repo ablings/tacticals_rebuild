@@ -101,6 +101,10 @@ local function renderSoon()
 		if os.clock() >= holdUntil then render(true) else renderSoon() end
 	end)
 end
+-- (2026-10-22) the login row follows the server's streak attributes live
+for _, attr in { "LoginDay", "LoginClaimed" } do
+	Players.LocalPlayer:GetAttributeChangedSignal(attr):Connect(function() if isOpen then renderSoon() end end)
+end
 
 local function resetIn(scope)
 	local t = os.time()
@@ -282,7 +286,11 @@ local function dailyPanel(order)
 	end
 	local allDone = total > 0 and n == total
 	local top = allDone and HEAD_H + 18 or HEAD_H
-	local p = panel("Daily", order, top + CARD_H + 38)
+	-- (2026-10-22, Edward: RIVALS' 7-day login row under the tasks) server attributes LoginDay (1-7, today's slot), LoginClaimed
+	-- (today paid) and ReplicatedStorage LoginRewards (JSON, 7 scissor amounts). No LoginDay = no row (server not shipped yet).
+	local loginDay = tonumber(Players.LocalPlayer:GetAttribute("LoginDay"))
+	local STREAK_H = loginDay and 150 or 0
+	local p = panel("Daily", order, top + CARD_H + 38 + STREAK_H)
 	-- (2026-10-21, port3) RIVALS' normal theme shows just "Daily Tasks": the "[done / total]" counter is gone
 	header(p, A.notepad, "Daily Missions", allDone, "Daily")
 	-- the blue "To Duels"-style button (replica 165x41 at 652, 12); ours opens Play through ctx.openPlay
@@ -308,6 +316,46 @@ local function dailyPanel(order)
 	for i, entry in ipairs(list) do
 		local def = questDef("Daily", entry.Id)
 		if def and CARD_X[i] then taskCard(p, "Daily", i, entry, def, CARD_X[i], top, q and q.Key) end
+	end
+	if loginDay then
+		-- RIVALS t0062 / live 16:9: a dotted divider, then seven 80 px circles in a row. Days already collected are white with a
+		-- dark check; today is a ring with the big day number (a white check once claimed); days to come are faint "Day N".
+		-- The reward (scissors + xN) sits over the top-right of every day not yet collected.
+		local claimed = Players.LocalPlayer:GetAttribute("LoginClaimed") == true
+		local okR, rewards = pcall(function() return game:GetService("HttpService"):JSONDecode(game:GetService("ReplicatedStorage"):GetAttribute("LoginRewards") or "[]") end)
+		rewards = (okR and type(rewards) == "table") and rewards or {}
+		local y0 = top + CARD_H + 30
+		for k = 0, math.floor((COL_W - 80) / 14) do
+			new("Frame", { BackgroundColor3 = C.textDim, BackgroundTransparency = 0.5, BorderSizePixel = 0, Position = UDim2.fromOffset(40 + k * 14, y0), Size = UDim2.fromOffset(5, 5),
+				Parent = p }, { RK.corner(3) })
+		end
+		local D, GAP = 80, 18
+		local x0 = (COL_W - (7 * D + 6 * GAP)) / 2
+		for d = 1, 7 do
+			local cx, cy = x0 + (d - 1) * (D + GAP), y0 + 44
+			local past = d < loginDay or (d == loginDay and claimed)
+			local today = d == loginDay
+			local circle = new("Frame", { Name = "Day" .. d, Position = UDim2.fromOffset(cx, cy), Size = UDim2.fromOffset(D, D),
+				BackgroundColor3 = past and C.white or BLACK, BackgroundTransparency = past and 0 or 0.4, Parent = p },
+				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), RK.stroke(today and C.white or C.track, today and 3 or 2, today and 0 or 0.3) })
+			if past then
+				new("ImageLabel", { BackgroundTransparency = 1, Image = CHECK_LIME or CHECK, ImageColor3 = CHECK_LIME and C.white or C.textDark, ScaleType = Enum.ScaleType.Fit,
+					AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(46, 46), ZIndex = 2, Parent = circle })
+			else
+				RK.label({ Text = "Day", FontFace = FB, TextSize = 18, TextColor3 = today and C.text or C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
+					Position = UDim2.fromOffset(0, 8), Size = UDim2.fromOffset(D, 20), ZIndex = 2, Parent = circle })
+				RK.label({ Text = tostring(d), FontFace = FB, TextSize = 40, TextColor3 = today and C.text or C.textDim, TextXAlignment = Enum.TextXAlignment.Center,
+					Position = UDim2.fromOffset(0, 24), Size = UDim2.fromOffset(D, 46), ZIndex = 2, Parent = circle })
+				local amt = tonumber(rewards[d])
+				if amt then
+					new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(D - 26, -32), Size = UDim2.fromOffset(38, 38),
+						ZIndex = 3, Parent = circle })
+					local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 18, TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0),
+						Position = UDim2.fromOffset(D + 16, -10), Size = UDim2.fromOffset(70, 22), ZIndex = 4, Parent = circle })
+					RK.textStroke(1.5).Parent = n
+				end
+			end
+		end
 	end
 end
 
