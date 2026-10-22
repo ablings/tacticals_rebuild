@@ -92,11 +92,12 @@ end
 --     it, squashes on the press (the hotbar kick spring), then turns green with a check, a pip fills and the next one drops in.
 --   * RADIO SUBTITLES (lower third, above the hotbar): a small INSTRUCTOR callsign + one short line, no portrait, no typewriter.
 --   * World markers in our palette: one amber "do this" accent, green = done, red = the enemy only.
---   * One font family (Builder Sans, the HUD's), every size in Scale.
-local UI_FONT = "rbxasset://fonts/families/BuilderSans.json"
-local F_BODY = Font.new(UI_FONT, Enum.FontWeight.Bold)
-local F_BOLD = Font.new(UI_FONT, Enum.FontWeight.Bold)
-local F_HEAVY = Font.new(UI_FONT, Enum.FontWeight.Heavy)
+--   * Every size in Scale.
+-- (2026-10-21, AI-tells cleanup) no Builder Sans: headings, keys, words and numbers in Oswald Bold (F_HEAVY / F_BODY);
+-- the radio subtitle line and the small captions in Rubik (F_BOLD)
+local F_HEAVY = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local F_BODY = F_HEAVY -- the fade title card
+local F_BOLD = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 -- (round 2, graders) one accent system: amber = do this, olive = done (never mint), red = the enemy only
 local AMBER = Color3.fromRGB(232, 174, 69)     -- the one "do this" accent
 local GOOD = Color3.fromRGB(127, 166, 80)      -- done: our olive
@@ -184,11 +185,11 @@ local function keycap(parent, name)
 	mouse.AnchorPoint = Vector2.new(0.5, 0.5)
 	mouse.Position = UDim2.fromScale(0.5, 0.5)
 	mouse.Size = UDim2.fromScale(0.64, 0.88)
-	mouse.BackgroundColor3 = KEY_WHITE
+	-- (2026-10-21, AI-tells cleanup) no thin outline: the mouse body is a solid grey shape on the cream face
+	mouse.BackgroundColor3 = Color3.fromRGB(190, 188, 180)
 	mouse.BorderSizePixel = 0
 	mouse.Visible = false
 	corner(mouse, 0.45)
-	local ms = stroke(mouse, PLATE, 2, 0); ms.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	for _, side in { "L", "R" } do
 		local half = Instance.new("Frame")
 		half.Name = side
@@ -284,7 +285,9 @@ local function buildUI()
 	objectiveLabel.Visible = false
 
 	-- // Objective strip (top centre, under the timer / score area). Round 2: bigger (9 % of the screen height), one or two
-	-- keycaps, the words, segment ticks; no outline (amber lives only in the left bar), no repeated "PRESS X" line.
+	-- keycaps, the words, segment ticks; no outline, no repeated "PRESS X" line.
+	-- (2026-10-21, AI-tells cleanup) no left accent bar and no edge stroke: the state is a solid 5 design-px bar along the
+	-- plate's BOTTOM edge (amber = do this, olive = done), plus the keycap colour.
 	local root = Instance.new("CanvasGroup")
 	root.Name = "Objective"
 	root.AnchorPoint = Vector2.new(0.5, 0)
@@ -296,14 +299,14 @@ local function buildUI()
 	root.GroupTransparency = 1
 	root.Visible = false
 	corner(root, 0.14)
-	local edge = stroke(root, WHITE, 1, 1) -- (kept for the done flash; invisible normally)
-	edge.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	root.Parent = cv
-	local accent = Instance.new("Frame") -- the amber bar down the left edge: "this is what to do"
-	accent.Name = "Accent"
+	local accent = Instance.new("Frame") -- the state bar along the bottom edge (5 of the strip's ~124 design px)
+	accent.Name = "StateBar"
 	accent.BackgroundColor3 = AMBER
 	accent.BorderSizePixel = 0
-	accent.Size = UDim2.fromScale(0.012, 1)
+	accent.AnchorPoint = Vector2.new(0, 1)
+	accent.Position = UDim2.fromScale(0, 1)
+	accent.Size = UDim2.fromScale(1, 0.04)
 	accent.Parent = root
 	-- the keycaps sit in a row that sizes to them (a UIListLayout; each cap keeps its own aspect)
 	local caps = Instance.new("Frame")
@@ -329,7 +332,7 @@ local function buildUI()
 		chk.Text = "✓"
 		chk.Visible = false
 		-- (round 3) the verb under the key ("HOLD", "AIM"): readable, unlike the old tiny hint line
-		local cap = text(c, "Caption", F_HEAVY, Color3.fromRGB(226, 222, 208))
+		local cap = text(c, "Caption", F_BOLD, Color3.fromRGB(226, 222, 208)) -- (small caption: Rubik)
 		cap.AnchorPoint = Vector2.new(0.5, 0)
 		cap.Position = UDim2.fromScale(0.5, 1.06)
 		cap.Size = UDim2.fromScale(2.6, 0.56) -- (round 5, graders: the verbs must read on a phone)
@@ -351,7 +354,7 @@ local function buildUI()
 	local ring = Instance.new("Frame"); ring.AnchorPoint = Vector2.new(0.5, 0.5); ring.Position = UDim2.fromScale(0.5, 0.5)
 	ring.Size = UDim2.fromScale(0.78, 0.78); ring.BackgroundTransparency = 1; corner(ring, 0.5); ring.Parent = reticle
 	ring.Size = UDim2.fromScale(0.56, 0.56)
-	stroke(ring, PLATE, 2.5, 0).ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	stroke(ring, PLATE, 3, 0).ApplyStrokeMode = Enum.ApplyStrokeMode.Border -- (AI-tells cleanup: the reticle glyph's ring, 3 not hairline)
 	local dot = Instance.new("Frame"); dot.AnchorPoint = Vector2.new(0.5, 0.5); dot.Position = UDim2.fromScale(0.5, 0.5)
 	dot.Size = UDim2.fromScale(0.16, 0.16); dot.BackgroundColor3 = AMBER; dot.BorderSizePixel = 0; corner(dot, 0.5); dot.Parent = reticle
 	for _, r in { 0, 90, 180, 270 } do
@@ -359,7 +362,7 @@ local function buildUI()
 		tick.Position = UDim2.fromScale(0.5 + math.sin(math.rad(r)) * 0.33, 0.5 - math.cos(math.rad(r)) * 0.33)
 		tick.Size = UDim2.fromScale(0.06, 0.16); tick.Rotation = r; tick.Parent = reticle
 	end
-	local rcap = text(reticle, "Caption", F_HEAVY, Color3.fromRGB(226, 222, 208))
+	local rcap = text(reticle, "Caption", F_BOLD, Color3.fromRGB(226, 222, 208))
 	rcap.AnchorPoint = Vector2.new(0.5, 0)
 	rcap.Position = UDim2.fromScale(0.5, 1.06)
 	rcap.Size = UDim2.fromScale(2.6, 0.56)
@@ -394,7 +397,7 @@ local function buildUI()
 	count.Position = UDim2.fromScale(0.79, 0.5)
 	count.Size = UDim2.fromScale(0.09, 0.34)
 	local rootScale = Instance.new("UIScale"); rootScale.Name = "Punch"; rootScale.Parent = root
-	strip = { root = root, edge = edge, accent = accent, keys = { k1, k2 }, plus = plus, capsRow = caps, reticle = reticle, punch = rootScale,
+	strip = { root = root, accent = accent, keys = { k1, k2 }, plus = plus, capsRow = caps, reticle = reticle, punch = rootScale,
 		cap = k1.cap, capFace = k1.face, capText = k1.glyph, capScale = k1.scale, check = k1.check,
 		label = label, sub = sub, pipRow = pipRow, count = count, pips = {} }
 
@@ -814,7 +817,7 @@ local function slam(text: string)
 		panelStroke.Color = ALERT_RED
 		panelStroke.Transparency = 0
 		panelStroke.Thickness = 3
-		TweenService:Create(panelStroke, TweenInfo.new(1.4, Enum.EasingStyle.Quad), { Transparency = 0.86, Thickness = 1.5 }):Play()
+		TweenService:Create(panelStroke, TweenInfo.new(1.4, Enum.EasingStyle.Quad), { Transparency = 1 }):Play() -- (2026-10-21, AI-tells cleanup: the alert ring stays thick and fades; no thin edge left)
 		task.delay(1.4, function() if token == slamToken then panelStroke.Color = Color3.new(1, 1, 1) end end)
 		-- a red/white throb while it's up
 		task.spawn(function()
@@ -1158,7 +1161,7 @@ local function showFinish()
 	finish.GroupTransparency = 1
 	finish.ZIndex = 40
 	finish.Parent = cv
-	-- (round 2, graders) an off-centre results panel in our language: a dark plate down the left third with a tan edge,
+	-- (round 2, graders) an off-centre results panel in our language: a dark plate down the left third (no edge, no stroke),
 	-- the TACTICALS logo, icon tiles with olive bars, one big flat olive PLAY; no gradient, no hairline, no outlined cards
 	local side = Instance.new("Frame")
 	side.Name = "Panel"

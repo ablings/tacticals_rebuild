@@ -101,10 +101,10 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	-- (lobby revamp Phase B, Edward OK: no white pills / neon lime) scissors prices = a dark plate with cream words; Robux = field green
 	local STEEL = { Theme.hex("#30342B"), Theme.hex("#171913") }
 	local grad = Kit.vgrad(STEEL)
-	local stroke = Kit.stroke(Color3.new(0, 0, 0), 1.5, 0.6)
+	-- (2026-10-21, AI-tells cleanup) no thin border: the solid gradient plate carries the tag on its own
 	local tag = new("TextButton", { Name = "Price", Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cx, y),
 		Size = UDim2.fromOffset(w, h), BackgroundColor3 = C.white, ZIndex = 5, Parent = parent },
-		{ Kit.corner(7), grad, stroke })
+		{ Kit.corner(7), grad })
 	local row = new("Frame", { Name = "BuyRow", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = tag },
 		{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
@@ -134,8 +134,6 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 		if own ~= st.own then
 			local pair = own and Theme.gradient.grey or (kind == "robux" and Theme.gradient.robux or STEEL)
 			grad.Color = ColorSequence.new(pair[1], pair[2])
-			stroke.Color = steel and Theme.hex("#E2D2AC") or Color3.new(0, 0, 0)
-			stroke.Transparency = steel and 0.45 or 0.6
 			row.Visible, ownRow.Visible = not own, own
 			if own and st.own == false then Kit.pop(check, 1.4) end -- just bought: the check lands
 			st.own = own
@@ -260,7 +258,7 @@ local function itemCard(pg, hover, id, x, y, w, h)
 	local rar = Config.Rarities[item.Rarity] or Config.Rarities.Standard
 	local card = new("TextButton", { Name = id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		BackgroundColor3 = C.white, ClipsDescendants = false, Parent = pg },
-		{ Kit.corner(2), Kit.stroke(rar.Color, 1, 0.75),
+		{ Kit.corner(2), -- (2026-10-21, AI-tells cleanup) thin rarity border removed: the 6 px RarityStripe on top carries it
 			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
 	-- (2026-10-21, Edward: the lobby should feel alive like RIVALS) the card's own decor stays clipped to it; the 3D item breaks
 	-- out over its top edge and tilts / grows on hover (RIVALS' shop tiles)
@@ -303,27 +301,30 @@ local function bundleCard(pg, hover, bundle, x, y, w, h)
 	local cost, missing = Config.BundleCost(bundle, ctx.owns)
 	local full = 0
 	for _, id in bundle.Items do full += Config.Items[id].Price end
-	local col = bundle.Color or C.amber
+	local col = bundle.Color or C.cream
+	-- (2026-10-21, AI-tells cleanup) no thin border and no left AccentBar; the bundle colour stays in the diagonal stripe,
+	-- tag pill cream (was the yellow accent), tiles get a rarity bar along the bottom instead of a thin stroke
 	local card = new("TextButton", { Name = bundle.Id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
-		{ Kit.corner(2), Kit.stroke(col, 1, 0.75), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
-	new("Frame", { Name = "AccentBar", BackgroundColor3 = col, BorderSizePixel = 0, Size = UDim2.new(0, 8, 1, 0), ZIndex = 2, Parent = card })
+		{ Kit.corner(2), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
 	new("Frame", { BackgroundColor3 = col, BackgroundTransparency = 0.82, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
 		Position = UDim2.fromOffset(w * 0.75, h / 2), Size = UDim2.fromOffset(w * 0.25, h * 2), Rotation = 22, Parent = card })
 	outlined(Kit.label({ Text = bundle.Name, FontFace = F.display, TextSize = 46, Position = UDim2.fromOffset(22, 12), Size = UDim2.fromOffset(w - 40, 56), Parent = card }), 2.5)
 	if bundle.Tag then
-		new("TextLabel", { BackgroundColor3 = C.amber, Text = bundle.Tag, FontFace = F.display, TextSize = 20, TextColor3 = C.textDark,
+		new("TextLabel", { BackgroundColor3 = C.cream, Text = bundle.Tag, FontFace = F.display, TextSize = 20, TextColor3 = C.textDark,
 			Position = UDim2.fromOffset(24, 70), Size = UDim2.fromOffset(0, 30), AutomaticSize = Enum.AutomaticSize.X, Parent = card },
 			{ Kit.corner(2), Kit.pad(10, 0, 10, 0) })
 	end
 	local tileW = math.min(120, (w - 300) / math.max(1, #bundle.Items) - 10)
 	for j, id in bundle.Items do
 		local tile = new("Frame", { Name = "Tile" .. j, BackgroundColor3 = C.panel, BackgroundTransparency = 0.35, Position = UDim2.fromOffset(22 + (j - 1) * (tileW + 10), h - tileW - 24),
-			Size = UDim2.fromOffset(tileW, tileW), Parent = card }, { Kit.corner(2), Kit.stroke((Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard).Color, 1.5, 0.3) })
+			Size = UDim2.fromOffset(tileW, tileW), Parent = card }, { Kit.corner(2) })
+		new("Frame", { Name = "RarityBar", BackgroundColor3 = (Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard).Color, BorderSizePixel = 0,
+			AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 5), ZIndex = 2, Parent = tile })
 		itemArt(tile, id, card)
 		-- (2026-10-21, RIVALS pass) always built, shown in place when you own the piece (no page rebuild)
-		local ownedL = Kit.label({ Text = "OWNED", FontFace = F.display, TextSize = 16, TextColor3 = C.amber, TextXAlignment = Enum.TextXAlignment.Center,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -2), Size = UDim2.fromOffset(tileW, 20), Visible = ctx.owns(id), Parent = tile })
+		local ownedL = Kit.label({ Text = "OWNED", FontFace = F.display, TextSize = 16, TextColor3 = C.cream, TextXAlignment = Enum.TextXAlignment.Center,
+			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -2), Size = UDim2.fromOffset(tileW, 20), ZIndex = 3, Visible = ctx.owns(id), Parent = tile })
 		if curPage then table.insert(curPage.updaters, function() ownedL.Visible = ctx.owns(id) end) end
 	end
 	if full > cost and missing > 0 then
@@ -475,7 +476,9 @@ function RENDER.Featured(pg, hover)
 			local n = #bd.Items
 			for j, id in bd.Items do
 				local tile = new("Frame", { BackgroundColor3 = C.panel, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(373 + (j - (n + 1) / 2) * 128 - 55, 84), Size = UDim2.fromOffset(110, 110), Parent = sl },
-					{ Kit.corner(8), Kit.stroke((Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard).Color, 2, 0.2) })
+					{ Kit.corner(8) }) -- (2026-10-21, AI-tells cleanup) thin rarity stroke -> a bottom RarityBar
+				new("Frame", { Name = "RarityBar", BackgroundColor3 = (Config.Rarities[Config.Items[id].Rarity] or Config.Rarities.Standard).Color, BorderSizePixel = 0,
+					AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -6), Size = UDim2.fromOffset(80, 6), ZIndex = 2, Parent = tile }, { Kit.corner(2) })
 				itemArt(tile, id, so)
 			end
 			-- (2026-10-21, RIVALS pass) detail card instead of Confirm-in-place; price / owned live
@@ -542,10 +545,10 @@ function RENDER.Featured(pg, hover)
 		local hold = float(780 + c * 166, 352 + r * 168, 150, 160, function() ctx.openKit(id) end)
 		-- (lobby revamp Phase B, Edward OK: no purple tiles) a dark plate with the rarity on its edge and a thin bottom bar
 		local tile = new("Frame", { BackgroundColor3 = C.white, Position = UDim2.fromOffset(18, 0), Size = UDim2.fromOffset(114, 114), Parent = hold },
-			{ Kit.corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }),
-				Kit.stroke(rar.Color, 2, 0.15) })
+			{ Kit.corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
+		-- (2026-10-21, AI-tells cleanup) the thin rarity edge stroke is gone; the bottom RarityBar is thicker / wider to carry it
 		new("Frame", { Name = "RarityBar", BackgroundColor3 = rar.Color, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -6),
-			Size = UDim2.fromOffset(70, 5), ZIndex = 2, Parent = tile }, { Kit.corner(2) })
+			Size = UDim2.fromOffset(94, 8), ZIndex = 2, Parent = tile }, { Kit.corner(2) })
 		itemArt(tile, id, hold)
 		priceTag(hold, "kit", item.Price, 75, 112, 136, 42, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end }) -- (2026-10-21, RIVALS pass) live
 	end
@@ -585,7 +588,7 @@ function RENDER.Scissors(pg, hover)
 		local y = 60 + ((i - 1) // 4) * (h + gap)
 		local card = new("TextButton", { Name = p.Key, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 			BackgroundColor3 = C.white, ClipsDescendants = true, Parent = pg },
-			{ Kit.corner(2), Kit.stroke(C.amber, 2, 0.35), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) })
+			{ Kit.corner(2), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(C.panelRaised, C.panel) }) }) -- (2026-10-21, AI-tells cleanup) thin border removed; the top AccentStripe stays
 		new("Frame", { Name = "AccentStripe", BackgroundColor3 = C.olive, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 6), ZIndex = 2, Parent = card })
 		-- a pile of scissors in 3D: more for bigger packs
 		local n = math.clamp(i, 1, 4)
@@ -616,7 +619,10 @@ function RENDER.Scissors(pg, hover)
 		local x = 4 + ((i - 1) % 2) * (pw + 20)
 		local yy = y + ((i - 1) // 2) * 170
 		local card = new("TextButton", { Name = p.Key, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, yy), Size = UDim2.fromOffset(pw, 150),
-			BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.15, Parent = pg }, { Kit.corner(2), Kit.stroke(have and C.amber or C.olive, 2, 0.35) })
+			BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.15, Parent = pg }, { Kit.corner(2) })
+		-- (2026-10-21, AI-tells cleanup) the thin owned / not-owned stroke -> a solid bottom bar: field green = owned, cream = to buy
+		new("Frame", { Name = "StateBar", BackgroundColor3 = have and C.field or C.cream, BackgroundTransparency = have and 0 or 0.6, BorderSizePixel = 0,
+			AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 6), ZIndex = 2, Parent = card })
 		local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(130, 130), Parent = card })
 		ViewIcons.Icon(art, "Medal", { hoverTarget = card })
 		outlined(Kit.label({ Text = p.Name, FontFace = F.display, TextSize = 36, Position = UDim2.fromOffset(150, 14), Size = UDim2.fromOffset(pw - 400, 44), Parent = card }), 2)
@@ -843,7 +849,7 @@ local function buildPage(t)
 	if old and old.pg then old.pg:Destroy() end
 	local pg = new("ScrollingFrame", {
 		Name = t, Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, BorderSizePixel = 0, ClipsDescendants = true, Visible = false,
-		ScrollBarThickness = 8, ScrollBarImageColor3 = C.olive, ScrollBarImageTransparency = 0.3,
+		ScrollBarThickness = 8, ScrollBarImageColor3 = C.field, -- (2026-10-21, AI-tells cleanup) field green, explicit (was C.olive) ScrollBarImageTransparency = 0.3,
 		CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = pageHolder,
 	})
 	local P = { pg = pg, updaters = {}, post = {}, sig = ownedSig(), dirty = false }

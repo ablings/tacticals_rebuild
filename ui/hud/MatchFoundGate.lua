@@ -94,7 +94,8 @@ local function build()
 	end
 	-- sits over the teleport screen's wordmark, which it covers until Teleporting
 	stamp = text("MatchFound", 0.4, 0.17, "MATCH FOUND", Color3.fromRGB(236, 232, 218), Enum.FontWeight.Bold)
-	sub = text("Mode", 0.53, 0.05, "", Color3.fromRGB(255, 212, 0), Enum.FontWeight.Bold)
+	-- (2026-10-21, AI-tells cleanup) the mode label: comic yellow -> cream #ECE6D2 (yellow is kept only for #1 / gold highlights)
+	sub = text("Mode", 0.53, 0.05, "", Color3.fromRGB(236, 230, 210), Enum.FontWeight.Bold)
 	local sc = Instance.new("UIScale"); sc.Name = "Pop"; sc.Parent = stamp
 end
 

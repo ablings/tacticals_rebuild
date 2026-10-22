@@ -3,7 +3,7 @@
 -- design canvas, converted to Scale (no Offset). It follows the lobby HUD: hidden whenever the lobby
 -- ScreenGui is disabled (menus open) or the dock is hidden (Kit room).
 --   PlayRow.Init({ lobbyGui, dock, onPlay, onInvite, tooltip })
---   PlayRow.SetState(text, kind)   kind: "play" (amber) | "busy" (olive: searching / in queue) | "found" (green)
+--   PlayRow.SetState(text, kind)   kind: "play" (field green) | "busy" (gunmetal: searching / in queue) | "found" (bright field green)
 -- (UI session 2026-10-17: now in the UI session's files) party: your party members' headshots sit right of your avatar
 -- (RIVALS), the "+" moves along after them; Player attribute PartyMembers (JSON, leader first) from LobbyParty.
 local Players = game:GetService("Players")
@@ -22,7 +22,7 @@ local gui, play, playLabel, playGrad, playStroke
 local GRADS = {
 	play = { "#E3F0D2", "#BCDC96", "#8DBF5A", "#6FA544", "#4C7A2E", "#1F3A14" }, -- (2026-10-20, Edward) field-green primary: matches the lobby's olive / lime and reads apart from Robux lime
 	busy = { "#9A9E8C", "#787D69", "#525846", "#41463A", "#2C3027", "#151813" }, -- gunmetal while searching
-	found = { "#FFF6BF", "#FFEC80", "#FFD400", "#F5C200", "#E0A800", "#7A5A00" }, -- match found: the comic-yellow accent
+	found = { "#F0F8E4", "#CFE8AE", "#A6D274", "#8DBF5A", "#6FA544", "#2C4A1C" }, -- match found / ready: a brighter field green (2026-10-21, AI-tells cleanup: was the comic yellow)
 }
 local function seq(kind)
 	local g = GRADS[kind] or GRADS.play
@@ -55,11 +55,12 @@ function PlayRow.Init(ctx)
 	local canvas = Kit.canvas(gui)
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
-	-- PLAY: chunky amber button, Oswald with a darker amber outline; grows from its centre on hover
+	-- PLAY: chunky field-green button, Oswald with a darker green text outline; grows from its centre on hover
+	-- (2026-10-21, AI-tells cleanup) no thin pale border on the button; the gradient fill carries it
 	-- (lobby revamp, graders: PLAY was barely bigger than the dock icons) 340 x 84 design px: the biggest thing on the hub,
 	-- about 30 % taller on a phone (over the 44 pt tap minimum on a 390 pt tall screen)
 	play = new("TextButton", { Name = "Play", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(790, 838), Size = UDim2.fromOffset(340, 84),
-		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2), Kit.stroke(hex("#D8ECC0"), 1.5, 0.3) })
+		BackgroundColor3 = C.white, Parent = root }, { Kit.corner(2) })
 	playGrad = new("UIGradient", { Rotation = 90, Parent = play })
 	playLabel = Kit.label({ Text = "PLAY", FontFace = F.display, TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center,
 		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(310, 66), Parent = play })
@@ -71,16 +72,18 @@ function PlayRow.Init(ctx)
 	play.Activated:Connect(function() if ctx.onPlay then ctx.onPlay() end end)
 	PlayRow.SetState("PLAY", "play")
 
-	-- party: your avatar in an amber ring, then a round "+" to invite friends
+	-- party: your avatar on a round plate, then a round "+" to invite friends
+	-- (2026-10-21, AI-tells cleanup) the thin yellow / cream ring around the avatar and the green hairlines on the + and the
+	-- party heads are gone; each sits on a solid dark disc that sets it off the floor
 	local av = new("ImageButton", { Name = "Avatar", AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromOffset(1150, 849),
-		Size = UDim2.fromOffset(62, 62), Parent = root }, { Kit.corner(31), Kit.stroke(C.amber, 2.5, 0) })
+		Size = UDim2.fromOffset(62, 62), Parent = root }, { Kit.corner(31) })
 	headshot(av)
 	av:SetAttribute("Uid", Players.LocalPlayer.UserId)
 	Kit.bindButton(av, { hover = 1.08 })
 	av.Activated:Connect(function() if ctx.onInvite then ctx.onInvite() end end) -- your avatar opens Your Party too
 	local inv = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1222, 857), Size = UDim2.fromOffset(46, 46),
 		BackgroundColor3 = C.white, Parent = root },
-		{ Kit.corner(23), Kit.stroke(C.olive, 1.5, 0.3), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#2B3142"), hex("#161A24")),
+		{ Kit.corner(23), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#2B3142"), hex("#161A24")),
 			Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 0.1) }) }) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(20, 6), BackgroundColor3 = C.text, Parent = inv }, { Kit.corner(2) })
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(6, 20), BackgroundColor3 = C.text, Parent = inv }, { Kit.corner(2) })
@@ -129,7 +132,7 @@ function PlayRow.Init(ctx)
 		for _, uid in list do
 			if uid ~= leader and n < 4 then
 				local head = new("ImageButton", { AutoButtonColor = false, BackgroundColor3 = C.panelRaised, Position = UDim2.fromScale(n * 54 / (4 * 54), 0.06),
-					Size = UDim2.fromScale(50 / (4 * 54), 50 / 62), Parent = mates }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), Kit.stroke(C.olive, 2, 0) })
+					Size = UDim2.fromScale(50 / (4 * 54), 50 / 62), Parent = mates }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 				task.spawn(function()
 					local okT, id = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 					if okT then head.Image = id end

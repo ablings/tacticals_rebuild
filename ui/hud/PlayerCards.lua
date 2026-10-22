@@ -28,10 +28,11 @@ pcall(function() RankArt = require(UIKit:WaitForChild("RankArt", 10)) end)
 local new, hex = Kit.new, Theme.hex
 local player = Players.LocalPlayer
 
-local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
-local F_NAME = Font.new(BUILDER, Enum.FontWeight.Bold)
-local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
-local F_NUM = Font.new(BUILDER, Enum.FontWeight.ExtraBold)
+-- (2026-10-21, AI-tells cleanup) Builder Sans is out: names / body in Rubik (F_NAME bold, F_SUB medium), numbers in Oswald Bold (F_NUM)
+local RUBIK = "rbxassetid://12187365977"
+local F_NAME = Font.new(RUBIK, Enum.FontWeight.Bold)
+local F_SUB = Font.new(RUBIK, Enum.FontWeight.Medium)
+local F_NUM = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, RIVALS pass) Edward's final font decision: Oswald Bold headings (Montserrat read as AI-made)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
 local OLIVE_HI = hex("#8DBF5A")
@@ -129,7 +130,7 @@ function PlayerCards.ProfileOpen() return profile ~= nil end
 
 local function statTile(parent, x, y, value, name, accent)
 	local t = new("Frame", { Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(176, 84), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 3, Parent = parent },
-		{ Kit.corner(8), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.88, Thickness = 1.5 }) })
+		{ Kit.corner(8) }) -- (2026-10-21, AI-tells cleanup) hairline border removed; the dark fill separates the tile
 	local v = label(t, value, F_NUM, 34, 0, 8, 176, 42, accent or BONE, Enum.TextXAlignment.Center, 4)
 	v.TextTruncate = Enum.TextTruncate.None
 	label(t, name, F_SUB, 17, 0, 52, 176, 22, FIELD, Enum.TextXAlignment.Center, 4)
@@ -150,7 +151,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	-- ours: career numbers until per-weapon stats exist)
 	local W, H = 640, 352
 	local card = new("Frame", { Name = "Card", Position = UDim2.fromOffset((1920 - W) / 2, 320), Size = UDim2.fromOffset(W, H), BackgroundColor3 = GUN,
-		ClipsDescendants = true, ZIndex = 2, Parent = root }, { Kit.corner(12), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.82, Thickness = 2 }) })
+		ClipsDescendants = true, ZIndex = 2, Parent = root }, { Kit.corner(12) }) -- (2026-10-21, AI-tells cleanup) no hairline border; the solid card over the blurred scrim reads on its own
 	-- olive wash fading down from the top, faint diagonal stripes (the Tacticals panel look)
 	new("Frame", { Size = UDim2.fromScale(1, 1), BackgroundColor3 = hex("#1B1F2A"), ZIndex = 2, Parent = card },
 		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.35), NumberSequenceKeypoint.new(0.55, 0.92), NumberSequenceKeypoint.new(1, 1) }) }) })
@@ -184,7 +185,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	local placedN, needN = p:GetAttribute("RankPlaced") or 0, p:GetAttribute("RankPlacements") or 0
 	local cols = { 248, 392, 536 } -- centres
 	local lvl = new("Frame", { AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(cols[1], 88), Size = UDim2.fromOffset(64, 56), BackgroundColor3 = hex("#4C7A2E"), ZIndex = 3, Parent = card },
-		{ Kit.corner(12), new("UIStroke", { Color = OLIVE_HI, Thickness = 2 }) })
+		{ Kit.corner(12) }) -- (2026-10-21, AI-tells cleanup) thin green border dropped (the olive fill is the badge)
 	local ln = label(lvl, tostring(p:GetAttribute("Level") or 1), F_NUM, 30, 0, 0, 64, 56, BONE, Enum.TextXAlignment.Center, 4)
 	ln.TextTruncate = Enum.TextTruncate.None
 	label(card, "Level", F_SUB, 21, cols[1] - 70, 148, 140, 26, FIELD, Enum.TextXAlignment.Center, 3)
@@ -202,7 +203,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	for i, t in tiles do
 		local x = 172 + (i - 1) * 112
 		local f = new("Frame", { Position = UDim2.fromOffset(x, 216), Size = UDim2.fromOffset(100, 100), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 3, Parent = card },
-			{ Kit.corner(8), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.8, Thickness = 1.5 }) })
+			{ Kit.corner(8) }) -- (2026-10-21, AI-tells cleanup) hairline border removed
 		local v = label(f, t[1], F_NUM, 30, 0, 16, 100, 40, BONE, Enum.TextXAlignment.Center, 4)
 		v.TextTruncate = Enum.TextTruncate.None
 		label(f, t[2], F_SUB, 16, 0, 62, 100, 22, FIELD, Enum.TextXAlignment.Center, 4)
@@ -291,7 +292,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	local catcher = new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 4, Parent = gui })
 	catcher.Activated:Connect(PlayerCards.CloseMenu)
 	local panel = new("CanvasGroup", { Name = "Panel", Position = UDim2.fromOffset(rightX - 8 - 310, top), Size = UDim2.fromOffset(310, H),
-		BackgroundColor3 = GUN, BackgroundTransparency = 0.04, ZIndex = 21, Parent = root }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.85, Thickness = 1.5 }) })
+		BackgroundColor3 = GUN, BackgroundTransparency = 0.04, ZIndex = 21, Parent = root }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) player-menu panel: hairline border removed
 	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 2), Size = UDim2.fromOffset(78, 78), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle
 	headshot(hs, p)
 	label(panel, badgeName(p), F_NAME, 23, 92, 14, 206, 30, BONE, nil, 22)
@@ -324,7 +325,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 			if not sent and ((a == "Invite" and opened) or a == "Challenge") then
 				sent = true
 				g.Text = ""
-				-- a grey tick drawn from two bars (BuilderSans has no check mark glyph)
+				-- a grey tick drawn from two bars (the font has no check mark glyph)
 				for _, bar in { { 0.36, 0.6, 0.32, 45 }, { 0.58, 0.48, 0.62, -50 } } do
 					new("Frame", { BorderSizePixel = 0, BackgroundColor3 = FIELD, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(bar[1], bar[2]),
 						Size = UDim2.fromScale(bar[3], 0.1), Rotation = bar[4], ZIndex = 24, Parent = g }, { Kit.corner(2) })
@@ -404,7 +405,7 @@ local function showRequest(from: Player, expiresAt: number?, kind: string?)
 		Kit.toScale(reqHolder)
 	end
 	local panel = new("Frame", { Name = from.Name, Position = UDim2.fromOffset(0, n * (REQ_H + REQ_GAP)), Size = UDim2.fromOffset(REQ_W, REQ_H), BackgroundColor3 = DEEP,
-		BackgroundTransparency = 0.15, ZIndex = 30, Parent = reqHolder }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.85, Thickness = 1.5 }) })
+		BackgroundTransparency = 0.15, ZIndex = 30, Parent = reqHolder }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) request panel: hairline border removed
 	local hs = new("ImageLabel", { BackgroundColor3 = hex("#4C7A2E"), Position = UDim2.fromOffset(10, 10), Size = UDim2.fromOffset(86, 86), ZIndex = 31, Parent = panel }, { Kit.corner(8) })
 	headshot(hs, from)
 	local barBack = new("Frame", { Position = UDim2.fromOffset(12, 108), Size = UDim2.fromOffset(82, 8), BackgroundColor3 = hex("#3A3F36"), ClipsDescendants = true, ZIndex = 31, Parent = panel }, { Kit.corner(4) })
@@ -460,7 +461,7 @@ function PlayerCards.StartWorld(allowed: () -> boolean)
 	ensureGui()
 	local mouse = player:GetMouse()
 	local hint = new("Frame", { Name = "ProfileHint", AnchorPoint = Vector2.new(0.5, 1), Size = UDim2.fromOffset(310, 38), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
-		Visible = false, ZIndex = 30, Parent = canvas }, { Kit.corner(21), new("UIStroke", { Color = BONE, Thickness = 1.5, Transparency = 0.35 }) })
+		Visible = false, ZIndex = 30, Parent = canvas }, { Kit.corner(21) }) -- (2026-10-21, AI-tells cleanup) hint pill: thin bone border removed
 	-- live RIVALS says "Double tap" on PC too
 	label(hint, "Double tap to view profile", F_NAME, 21, 0, 0, 310, 38, BONE, Enum.TextXAlignment.Center, 31)
 	Kit.toScale(hint, Vector2.new(310, 38))

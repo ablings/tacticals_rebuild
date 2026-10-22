@@ -29,7 +29,7 @@ local BOLD = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#6B7A3A"), hex("#8A9C4A") -- (2026-10-20, Edward) the lobby olive back (the palette pass had made it yellow)
 local GUN, GUN2, DEEP, LINE = hex("#1A1D1A"), hex("#262A22"), hex("#0C0E0B"), hex("#40463A")
 local TEAM = { A = hex("#ECE8DA"), B = hex("#9DB05A") } -- the pads' floor colours: team A cream, team B olive
-local VIOLET = hex("#B078FF")
+local VIOLET = Color3.fromRGB(150, 116, 52) -- (2026-10-21, AI-tells cleanup) ranked: muted dark gold (was violet #B078FF)
 
 local gui = new("ScreenGui", { Name = "PadUI", ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 8,
 	Parent = player:WaitForChild("PlayerGui") })
@@ -42,21 +42,14 @@ end
 -- corner brackets (our signature instead of RIVALS' round outlines)
 -- (Edward 2026-10-16: no "4 corners box" look) panels get RIVALS' soft rounded corners and a faint edge; the edge keeps
 -- its colour only where colour means something (team A / B, ranked violet), otherwise it's a soft white line
-local NEUTRAL_EDGE = { [Color3.fromRGB(64, 70, 58):ToHex()] = true, [Color3.fromRGB(107, 122, 58):ToHex()] = true,
-	[Color3.fromRGB(236, 232, 218):ToHex()] = true }
 local function brackets(p, color, len, th, z)
 	if not p:FindFirstChildOfClass("UICorner") then
 		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0, math.clamp(math.floor(len * 0.6), 6, 14)); c.Parent = p
 	end
-	local st = p:FindFirstChild("_Edge") or Instance.new("UIStroke")
-	st.Name = "_Edge"
-	st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	local neutral = NEUTRAL_EDGE[color:ToHex()] == true
-	st.Color = neutral and Color3.new(1, 1, 1) or color
-	st.Transparency = neutral and 0.85 or 0.25
-	st.Thickness = neutral and 1.5 or math.max(2, math.floor(th * 0.75))
-	st.Parent = p
-	return st
+	-- (2026-10-21, AI-tells cleanup) no UIStroke edge any more (it was a 1.5-3 px border): panels / slots / JOIN keep the
+	-- rounded corner only and separate by fill (slots DEEP on the GUN box); team colour stays on the bar under the slots
+	local old = p:FindFirstChild("_Edge")
+	if old then old:Destroy() end
 end
 local thumbs = {}
 local function headshot(uid, img)
@@ -157,11 +150,11 @@ local function buildPadBox(b, me)
 	local accent = b.ranked and VIOLET or OLIVE
 	-- strip above the box: SQUAD UP  ·  invite
 	local strip = new("Frame", { Position = UDim2.fromOffset(x0, y0 - 54), Size = UDim2.fromOffset(W, 46), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25, ZIndex = 2, Parent = padBox })
-	new("Frame", { Size = UDim2.fromOffset(6, 46), BackgroundColor3 = accent, BorderSizePixel = 0, ZIndex = 3, Parent = strip })
+	-- (2026-10-21, AI-tells cleanup) the 6 px left accent bar is gone (ranked still reads from the INVITE fill and the box title)
 	label(strip, "SQUAD UP", OSWALD, 24, 22, 0, 200, 46, BONE, nil, 3)
 	label(strip, "Bring a friend onto your team", BODY, 15, 140, 0, 400, 46, FIELD, nil, 3)
 	local inv = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(W - 150, 6), Size = UDim2.fromOffset(140, 34), BackgroundColor3 = accent, ZIndex = 3, Parent = strip })
-	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(b.ranked and hex("#C9A0FF") or hex("#A9D27A"), b.ranked and hex("#7A4CC0") or hex("#4C7A2E")), Parent = inv })
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(b.ranked and Color3.fromRGB(150, 116, 52) or hex("#A9D27A"), b.ranked and Color3.fromRGB(74, 56, 24) or hex("#4C7A2E")), Parent = inv }) -- (2026-10-21, AI-tells cleanup) ranked violet -> dark gold
 	label(inv, "INVITE", OSWALD, 22, 0, 0, 140, 34, BONE, Enum.TextXAlignment.Center, 4)
 	Kit.bindButton(inv, { hover = 1.06 })
 	inv.Activated:Connect(function()

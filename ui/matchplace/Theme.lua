@@ -25,11 +25,11 @@ Theme.color = {
 	red = hex("#FF4D3A"),
 	redDark = hex("#C22E1E"),
 	badge = hex("#FF4D3A"),
-	gold = hex("#FFD400"),        -- the accent: comic yellow
+	gold = hex("#FFD400"),        -- (2026-10-21, Edward Q1) the comic yellow now ONLY marks #1 / rank-1 highlights
 	blue = hex("#6FA544"),
 	disabled = hex("#4A4F5C"),
-	olive = hex("#FFD400"),       -- (name kept for old code: now the yellow accent)
-	amber = hex("#FFD400"),
+	olive = hex("#8DBF5A"),       -- (2026-10-21, Edward Q1) done / ready = field green (was the yellow accent; name kept)
+	amber = hex("#ECE6D2"),       -- (2026-10-21, Edward Q1) labels / icons = cream (was the yellow; amber is tutorial-only)
 	ink = hex("#111114"),
 	teamUs = hex("#E2D2AC"),
 	teamThem = hex("#6E8C62"),

@@ -136,7 +136,7 @@ local function squadScene(parent, teamSize, ranked)
 	local scene = Instance.new("Model")
 	scene.Name = "Squad"
 	local weapon = (ctx.getData() and ctx.getData().Loadout and ctx.getData().Loadout.Weapon) or ctx.Config.DefaultLoadout.Weapon
-	local enemyTint = ranked and Color3.fromRGB(58, 38, 88) or Color3.fromRGB(34, 38, 32)
+	local enemyTint = ranked and Color3.fromRGB(60, 46, 20) or Color3.fromRGB(34, 38, 32) -- (2026-10-21, AI-tells cleanup) ranked = dark gold, was violet
 	local mateTint = Color3.fromRGB(120, 126, 108)
 	local gap = 3.4
 	-- the viewport camera looks from +Z towards -Z (screen right = -X), rigs face -Z by default:
@@ -163,15 +163,11 @@ end
 ---------------------------------------------------------------------------------------------------- building
 local tickNow -- set below (status refresh)
 
--- (Edward 2026-10-16: no "4 corners box" look) RIVALS-style cards: rounded dark glass with a faint edge that lights on hover
+-- (Edward 2026-10-16: no "4 corners box" look) RIVALS-style cards: rounded dark glass
+-- (2026-10-21, AI-tells cleanup) the faint 2 px edge stroke is gone; the dark gradient fill separates the card (returns no stroke)
 local function edge(f, accent, radius)
 	new("UICorner", { CornerRadius = UDim.new(0, radius or 12), Parent = f })
-	local st = new("UIStroke", { Color = accent or Color3.new(1, 1, 1), Transparency = accent and 0.35 or 0.85, Thickness = 2,
-		ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
-	local base = st.Transparency
-	f.MouseEnter:Connect(function() Kit.tween(st, 0.12, { Transparency = 0.2, Color = accent or Color3.new(1, 1, 1) }) end)
-	f.MouseLeave:Connect(function() Kit.tween(st, 0.12, { Transparency = base }) end)
-	return st
+	return nil
 end
 local function plate(parent, x, y, w, h, accent)
 	local f = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
@@ -183,8 +179,9 @@ end
 -- (UI session 2026-10-16, remade on RIVALS' play screen, ref_04): a tight grid of big mode tiles (the mode name huge
 -- and centred over its 3D squad scene), a tall Ranked tile on the right (locked: padlock + "Unlocked at Level N"; open:
 -- click to switch the modes to ranked), Training and Lobby Duels under the modes, the red X top right. No header.
-local HEAVY = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local SEMI = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+-- (2026-10-21, AI-tells cleanup) was Builder Sans: big words / numbers in Oswald Bold, the small lines in Rubik SemiBold
+local HEAVY = OSWALD
+local SEMI = BOLD
 local function big(parent, text, size, x, y, w, h, color, align, z, font)
 	local l = Kit.label({ Text = text, FontFace = font or HEAVY, TextSize = size, TextColor3 = color or Color3.new(1, 1, 1), TextXAlignment = align or Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 4, Parent = parent })
@@ -263,7 +260,8 @@ local STRIP = 58 -- (lobby revamp) the bottom action bar of every tile
 local function modeCard(i, mode, ranked, x)
 	local q = ctx.Config.QueueFor(mode.Id, ranked)
 	local accent = ranked and T.violet or Color3.fromRGB(236, 232, 218)
-	local card = ranked and tile(x, 0, MW, MH, Color3.fromRGB(78, 52, 112), Color3.fromRGB(20, 12, 34)) or tile(x, 0, MW, MH)
+	-- (2026-10-21, AI-tells cleanup) the ranked tile gradient is dark gold, was violet
+	local card = ranked and tile(x, 0, MW, MH, Color3.fromRGB(110, 84, 38), Color3.fromRGB(38, 28, 12)) or tile(x, 0, MW, MH)
 	local stage = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(MW, 210), ZIndex = 2, Parent = card })
 	-- the mode name, huge and centred (RIVALS)
 	big(card, mode.Id, 96, 0, 70, MW, 110, Color3.new(1, 1, 1), nil, 4)
@@ -319,7 +317,8 @@ local function render()
 	-- Ranked: the tall tile on the right
 	local RX = 3 * (MW + GAP)
 	local RW, RH = 1404 - RX, MH * 2 + GAP
-	local rt = tile(RX, 0, RW, RH, open and Color3.fromRGB(96, 62, 140) or Color3.fromRGB(40, 36, 48), open and Color3.fromRGB(24, 14, 40) or Color3.fromRGB(10, 9, 13))
+	-- (2026-10-21, AI-tells cleanup) the open Ranked tile gradient is dark gold, was violet
+	local rt = tile(RX, 0, RW, RH, open and Color3.fromRGB(110, 84, 38) or Color3.fromRGB(40, 36, 48), open and Color3.fromRGB(38, 28, 12) or Color3.fromRGB(10, 9, 13))
 	big(rt, "Ranked", 72, 0, 36, RW, 84)
 	local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(RW / 2, 150), Size = UDim2.fromOffset(230, 230), ZIndex = 3, Parent = rt })
 	local rankedSub

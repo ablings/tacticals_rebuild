@@ -203,12 +203,12 @@ end
 -- its bottom, its item grows a little, and its name shows big beside it. The gun's tile carries the ammo
 -- (magazine big, reserve small, a bullets icon); the gadget's carries how many are left.
 -- Renders come from the real models, so a new gun gets its tile art automatically; HotbarConfig.Images
--- can still swap any item for a picture. Type and text edges match the lobby armory (Builder Sans).
+-- can still swap any item for a picture. (2026-10-21, AI-tells cleanup) Oswald Bold for numbers / names, Rubik for small text.
 local TweenService = game:GetService("TweenService")
 local HUD = require(script.Parent.Parent:WaitForChild("GUIs"):WaitForChild("HUD"))
 
-local UI_FONT = "rbxasset://fonts/families/BuilderSans.json"
-local FONT = Font.new(UI_FONT, Enum.FontWeight.Bold)
+local UI_FONT = "rbxassetid://12187365977" -- (2026-10-21, AI-tells cleanup) Rubik, was Builder Sans
+local FONT = Font.new(UI_FONT, Enum.FontWeight.SemiBold)
 local FONT_HEAVY = Font.new(UI_FONT, Enum.FontWeight.ExtraBold)
 local FONT_MED = Font.new(UI_FONT, Enum.FontWeight.Medium)
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
@@ -226,9 +226,9 @@ local RENDER_LIFT = -10                                        -- the render sit
 local TILE_GREY, TILE_T = Color3.fromRGB(0, 0, 0), 0.42       -- a tile: dark glass (2026-10-21: 0.55 went grey on white maps)
 local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in your hands: lighter glass
 local BONE = Color3.fromRGB(255, 255, 255)
--- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) Montserrat Heavy for labels, soft text edges, tiles with a
--- hairline white edge (Sniper Duels), the held tile's edge solid white
-local STENCIL = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy)
+-- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) soft text edges; the held tile is the lighter one.
+-- (2026-10-21, AI-tells cleanup) Oswald Bold (was Montserrat Heavy); no hairline tile edge, only a thick (3) white ring on the held tile
+local STENCIL = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local INK_YELLOW = Color3.fromRGB(255, 255, 255) -- (2026-10-20, Edward: the bottom HUD in white, not yellow; name kept)
 local UIKitFolder = ReplicatedStorage:WaitForChild("UIKit")
 local Kit = require(UIKitFolder:WaitForChild("Kit"))
@@ -563,9 +563,9 @@ local function makeTile(i: number)
 	round(fade, 4)
 	-- the held one gets a soft white edge
 	local edge = Instance.new("UIStroke")
-	edge.Color = WHITE -- (serious pass) a faint hairline; the held one turns solid white
-	edge.Thickness = 1.5
-	edge.Transparency = 0.82
+	edge.Color = WHITE -- (2026-10-21, AI-tells cleanup) hidden at rest (no hairline); the held one shows a thick solid white ring
+	edge.Thickness = 3
+	edge.Transparency = 1
 	edge.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	edge.Parent = tile
 
@@ -789,7 +789,7 @@ local function buildUI()
 	column.Parent = canvas
 
 	-- name of what's in your hands: big stencil type above the row, an olive bar at its right end
-	heldName = text(column, Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Heavy), 50, BONE, 10) -- (2026-10-20) RIVALS: title case in a clean heavy sans (Bangers has no lower case)
+	heldName = text(column, STENCIL, 50, BONE, 10) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Builder Sans Heavy
 	heldName.Name = "HeldName"
 	heldName.AnchorPoint = Vector2.new(1, 1)
 	heldName.Position = UDim2.new(1, -4, 0, -12)
@@ -845,7 +845,7 @@ local function buildUI()
 		-- gold as a gradient: a plain TextColor3 got reset to white by another HUD pass
 		local gold = heldName:FindFirstChild("PadGold") or Instance.new("UIGradient")
 		gold.Name = "PadGold"
-		gold.Color = ColorSequence.new(Color3.fromRGB(255, 222, 90), Color3.fromRGB(255, 176, 40))
+		gold.Color = ColorSequence.new(Color3.fromRGB(236, 230, 210), Color3.fromRGB(214, 206, 182)) -- (2026-10-21, AI-tells cleanup) yellow -> cream (disabled anyway)
 		gold.Rotation = 90
 		gold.Enabled = false -- (style D: the name is always comic yellow, below)
 		heldName.TextColor3 = INK_YELLOW
@@ -1020,7 +1020,7 @@ local function refreshUI()
 				sl.kick.v = -10
 				sweep(sl.tile)
 			end
-			TweenService:Create(sl.edge, TI, { Color = on and INK_YELLOW or WHITE, Thickness = on and 2.5 or 1.5, Transparency = on and 0 or 0.82 }):Play()
+			TweenService:Create(sl.edge, TI, { Color = on and INK_YELLOW or WHITE, Thickness = 3, Transparency = on and 0 or 1 }):Play() -- (2026-10-21, AI-tells cleanup) held only, thick
 			TweenService:Create(sl.fade, TI, { BackgroundTransparency = on and 0 or 1 }):Play()
 			TweenService:Create(sl.icon.scale, on and POP or TI, { Scale = on and 1.08 or 0.92 }):Play()
 			local tint = empty and Color3.fromRGB(90, 96, 80) or (on and Color3.fromRGB(236, 232, 218) or Color3.fromRGB(200, 198, 186))

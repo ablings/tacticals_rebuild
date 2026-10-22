@@ -42,9 +42,10 @@ local THEME = {
 	Good = UC.Go,
 	Bad = UC.Danger,
 	Robux = UC.Go,
-	Title = Enum.Font.GothamBlack,
-	Bold = Enum.Font.GothamBold,
-	Body = Enum.Font.GothamMedium,
+	-- (2026-10-21, AI-tells cleanup) Gotham -> Oswald Bold headings / Rubik body; Font objects, set as FontFace
+	Title = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold),
+	Bold = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold),
+	Body = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium),
 }
 -- SCISSORS are the only currency (stored as data.Credits). The icon is a render of the 3D scissors model.
 local SCISSOR_ICON = "rbxassetid://120480559804238"
@@ -72,7 +73,7 @@ local function pad(p) return new("UIPadding", { PaddingLeft = UDim.new(0, p), Pa
 
 local function label(props)
 	local l = new("TextLabel", {
-		BackgroundTransparency = 1, Font = THEME.Bold, TextColor3 = THEME.Text, TextSize = 16,
+		BackgroundTransparency = 1, FontFace = THEME.Bold, TextColor3 = THEME.Text, TextSize = 16,
 		TextXAlignment = Enum.TextXAlignment.Left, TextYAlignment = Enum.TextYAlignment.Center,
 		Size = UDim2.new(1, 0, 0, 20), TextWrapped = true,
 	})
@@ -108,7 +109,7 @@ local function button(props, onClick)
 	local style = STYLES[props.Style or "dark"]
 	local b = new("TextButton", {
 		AutoButtonColor = false, BackgroundColor3 = style.bg, Text = props.Text or "", TextColor3 = style.text,
-		Font = THEME.Title, TextSize = props.TextSize or 15, Size = props.Size or UDim2.new(1, 0, 0, 36),
+		FontFace = THEME.Title, TextSize = props.TextSize or 15, Size = props.Size or UDim2.new(1, 0, 0, 36),
 		Position = props.Position or UDim2.new(), AnchorPoint = props.AnchorPoint or Vector2.zero,
 		LayoutOrder = props.LayoutOrder or 0, Parent = props.Parent,
 	}, { corner(2) })
@@ -157,7 +158,8 @@ local function toast(text: string, kind: string?)
 		AutomaticSize = Enum.AutomaticSize.X, Parent = toastHost,
 	}, {
 		corner(2),
-		new("Frame", { BackgroundColor3 = color, Size = UDim2.new(0, 4, 0, 24), Position = UDim2.new(0, -14, 0.5, -12), BorderSizePixel = 0 }),
+		-- (2026-10-21, AI-tells cleanup) the kind colour was a thin left bar: now a solid bar along the bottom edge (spans the padding)
+		new("Frame", { Name = "KindBar", BackgroundColor3 = color, Size = UDim2.new(1, 40, 0, 4), Position = UDim2.new(0, -22, 1, -4), BorderSizePixel = 0 }),
 		new("UIPadding", { PaddingLeft = UDim.new(0, 22), PaddingRight = UDim.new(0, 18) }),
 		label({ Text = text, AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.new(0, 0, 1, 0), TextSize = 16, TextWrapped = false }),
 	})
@@ -278,7 +280,7 @@ local function playButton(parent, text: string, kind: string, onClick)
 	local c = colors[kind] or colors.go
 	local b = new("TextButton", { AutoButtonColor = false, Text = "", BackgroundColor3 = c[1], BackgroundTransparency = c[3],
 		Size = UDim2.new(1, 0, 0, 48), Position = UDim2.new(0, 0, 1, -48), Parent = parent }, { corner(12), stroke(c[2], kind == "go" and 1.5 or 1, kind == "off" and 0.5 or 0) })
-	local l = label({ Text = text, Font = THEME.Title, TextSize = 16, TextColor3 = c[4], TextXAlignment = Enum.TextXAlignment.Center,
+	local l = label({ Text = text, FontFace = THEME.Title, TextSize = 16, TextColor3 = c[4], TextXAlignment = Enum.TextXAlignment.Center,
 		Size = UDim2.fromScale(1, 1), Parent = b })
 	if onClick and kind ~= "off" and kind ~= "found" then
 		b.MouseEnter:Connect(function() TweenService:Create(b, TI, { BackgroundTransparency = math.max(0, c[3] - 0.15) }):Play() end)
@@ -291,7 +293,7 @@ end
 local function tabButton(parent, text: string, on: boolean, accent: Color3, x: number, onClick)
 	local b = new("TextButton", { AutoButtonColor = false, Text = "", BackgroundColor3 = on and PC.Hi or PC.Row, BackgroundTransparency = on and 0.3 or 0.35,
 		Size = UDim2.new(0, 176, 0, 40), Position = UDim2.new(0, x, 0, 0), Parent = parent }, { corner(10), stroke(on and accent or PC.Line, on and 1.5 or 1, on and 0 or 0.5) })
-	local l = label({ Text = text, Font = THEME.Title, TextSize = 15, TextColor3 = on and THEME.Text or PC.Sub, TextXAlignment = Enum.TextXAlignment.Center,
+	local l = label({ Text = text, FontFace = THEME.Title, TextSize = 15, TextColor3 = on and THEME.Text or PC.Sub, TextXAlignment = Enum.TextXAlignment.Center,
 		Size = UDim2.fromScale(1, 1), Parent = b })
 	b.Activated:Connect(onClick)
 	return b, l
@@ -339,11 +341,11 @@ local function renderPlay(body)
 	-- header: DEPLOY + operator level tag
 	local top = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 36), Parent = body })
 	new("Frame", { BackgroundColor3 = accentNow, BorderSizePixel = 0, Size = UDim2.new(0, 6, 0, 28), Position = UDim2.new(0, 0, 0.5, -14), Parent = top })
-	label({ Text = ranked and "DEPLOY  //  RANKED" or "DEPLOY", Font = THEME.Title, TextSize = 28, TextColor3 = ranked and VIOLET or BONE,
+	label({ Text = ranked and "DEPLOY  //  RANKED" or "DEPLOY", FontFace = THEME.Title, TextSize = 28, TextColor3 = ranked and VIOLET or BONE,
 		Size = UDim2.new(0.6, 0, 1, 0), Position = UDim2.new(0, 16, 0, 0), Parent = top })
 	local tag = new("Frame", { BackgroundColor3 = GUN, BackgroundTransparency = 0.05, AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, 0, 0.5, 0),
 		Size = UDim2.new(0, 250, 0, 32), Parent = top }, { corner(4) })
-	label({ Text = `OPERATOR  LV {level}`, Font = THEME.Title, TextSize = 14, Size = UDim2.new(0, 120, 1, 0), Position = UDim2.new(0, 10, 0, 0), Parent = tag })
+	label({ Text = `OPERATOR  LV {level}`, FontFace = THEME.Title, TextSize = 14, Size = UDim2.new(0, 120, 1, 0), Position = UDim2.new(0, 10, 0, 0), Parent = tag })
 	local xb = new("Frame", { BackgroundColor3 = PC.Row, BorderSizePixel = 0, Size = UDim2.new(1, -140, 0, 6), Position = UDim2.new(0, 130, 0.5, -3), Parent = tag })
 	new("Frame", { BackgroundColor3 = OLIVE, BorderSizePixel = 0, Size = UDim2.new(math.clamp(into / math.max(need, 1), 0.02, 1), 0, 1, 0), Parent = xb })
 
@@ -358,30 +360,30 @@ local function renderPlay(body)
 		local b = new("ImageButton", { AutoButtonColor = false, Image = ART[mode.Id] or "", ScaleType = Enum.ScaleType.Crop, BackgroundColor3 = GUN,
 			Size = UDim2.new(1 / 3, -8, 1, 0), LayoutOrder = i, ClipsDescendants = true, Parent = cards })
 		shade(b, 0.85, 0.05)
-		label({ Text = string.format("OP-%02d", i), Font = THEME.Bold, TextSize = 11, TextColor3 = BONE, Size = UDim2.new(0, 60, 0, 14),
+		label({ Text = string.format("OP-%02d", i), FontFace = THEME.Bold, TextSize = 11, TextColor3 = BONE, Size = UDim2.new(0, 60, 0, 14),
 			Position = UDim2.new(0, 12, 0, 10), ZIndex = 4, Parent = b })
 		if ranked then
-			label({ Text = "RANKED", Font = THEME.Title, TextSize = 12, TextColor3 = VIOLET, TextXAlignment = Enum.TextXAlignment.Right,
+			label({ Text = "RANKED", FontFace = THEME.Title, TextSize = 12, TextColor3 = VIOLET, TextXAlignment = Enum.TextXAlignment.Right,
 				Size = UDim2.new(0, 80, 0, 14), Position = UDim2.new(1, -92, 0, 10), ZIndex = 4, Parent = b })
 		end
 		-- bottom plate: big mode name, pips, status strip
 		local plate = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, -24, 0, 92), Position = UDim2.new(0, 12, 1, -100), ZIndex = 4, Parent = b })
-		local title = label({ Text = mode.Name, Font = THEME.Title, TextSize = 48, Size = UDim2.new(1, 0, 0, 48), ZIndex = 4, Parent = plate })
+		local title = label({ Text = mode.Name, FontFace = THEME.Title, TextSize = 48, Size = UDim2.new(1, 0, 0, 48), ZIndex = 4, Parent = plate })
 		new("UIStroke", { Color = Color3.fromRGB(8, 10, 8), Thickness = 2, Parent = title })
 		local pips = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 12), Position = UDim2.new(0, 2, 0, 52), ZIndex = 4, Parent = plate }, {
 			new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 4), VerticalAlignment = Enum.VerticalAlignment.Center,
 				SortOrder = Enum.SortOrder.LayoutOrder }),
 		})
 		for t = 1, mode.TeamSize do new("Frame", { BackgroundColor3 = BONE, BorderSizePixel = 0, Size = UDim2.new(0, 10, 0, 10), LayoutOrder = t, ZIndex = 4, Parent = pips }) end
-		label({ Text = "VS", Font = THEME.Title, TextSize = 10, TextColor3 = PC.Sub, Size = UDim2.new(0, 20, 0, 12), TextXAlignment = Enum.TextXAlignment.Center,
+		label({ Text = "VS", FontFace = THEME.Title, TextSize = 10, TextColor3 = PC.Sub, Size = UDim2.new(0, 20, 0, 12), TextXAlignment = Enum.TextXAlignment.Center,
 			LayoutOrder = 10, ZIndex = 4, Parent = pips })
 		for t = 1, mode.TeamSize do new("Frame", { BackgroundColor3 = PC.Dim, BorderSizePixel = 0, Size = UDim2.new(0, 10, 0, 10), LayoutOrder = 20 + t, ZIndex = 4, Parent = pips }) end
 		local strip = new("Frame", { BackgroundColor3 = accentNow, BackgroundTransparency = 0.15, BorderSizePixel = 0, Size = UDim2.new(1, 0, 0, 22),
 			Position = UDim2.new(0, 0, 1, -22), ZIndex = 4, Parent = plate })
-		local status = label({ Text = "", Font = THEME.Title, TextSize = 13, TextColor3 = BONE, Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0),
+		local status = label({ Text = "", FontFace = THEME.Title, TextSize = 13, TextColor3 = BONE, Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0),
 			ZIndex = 5, Parent = strip })
 		local n = q and counts[q.Id] or 0
-		local right = label({ Text = `{n} SEARCHING`, Font = THEME.Bold, TextSize = 11, TextColor3 = BONE, TextXAlignment = Enum.TextXAlignment.Right,
+		local right = label({ Text = `{n} SEARCHING`, FontFace = THEME.Bold, TextSize = 11, TextColor3 = BONE, TextXAlignment = Enum.TextXAlignment.Right,
 			Size = UDim2.new(1, -16, 1, 0), Position = UDim2.new(0, 8, 0, 0), ZIndex = 5, Parent = strip })
 		if ranked then
 			right.Text = `{n} SEARCHING  ·  ` .. (function()
@@ -422,11 +424,11 @@ local function renderPlay(body)
 	-- TRAINING
 	local quick = player.PlayerGui:FindFirstChild("ExfilFade") and player.PlayerGui.ExfilFade:FindFirstChild("QuickEnter")
 	local tb = banner(0, ART.Training)
-	local tt = label({ Text = "TRAINING", Font = THEME.Title, TextSize = 34, Size = UDim2.new(0.7, 0, 0, 38), Position = UDim2.new(0, 18, 0, 16), ZIndex = 4, Parent = tb })
+	local tt = label({ Text = "TRAINING", FontFace = THEME.Title, TextSize = 34, Size = UDim2.new(0.7, 0, 0, 38), Position = UDim2.new(0, 18, 0, 16), ZIndex = 4, Parent = tb })
 	new("UIStroke", { Color = Color3.fromRGB(8, 10, 8), Thickness = 2, Parent = tt })
-	label({ Text = "Practice room  ·  cover, vaults, live targets  ·  up to 10 operators", Font = THEME.Body, TextSize = 13, TextColor3 = PC.HiLine,
+	label({ Text = "Practice room  ·  cover, vaults, live targets  ·  up to 10 operators", FontFace = THEME.Body, TextSize = 13, TextColor3 = PC.HiLine,
 		Size = UDim2.new(0.8, 0, 0, 18), Position = UDim2.new(0, 18, 0, 56), ZIndex = 4, Parent = tb })
-	label({ Text = myQ and "UNAVAILABLE WHILE SEARCHING" or "ENTER  >", Font = THEME.Title, TextSize = 13, TextColor3 = OLIVE:Lerp(BONE, 0.4),
+	label({ Text = myQ and "UNAVAILABLE WHILE SEARCHING" or "ENTER  >", FontFace = THEME.Title, TextSize = 13, TextColor3 = OLIVE:Lerp(BONE, 0.4),
 		Size = UDim2.new(0.8, 0, 0, 16), Position = UDim2.new(0, 18, 1, -26), ZIndex = 4, Parent = tb })
 	brackets(tb, PC.Line, 16); tagBase(tb, PC.Line)
 	if not myQ then
@@ -435,31 +437,31 @@ local function renderPlay(body)
 	end
 	-- RANKED
 	local rb = banner(0.5, open and ART.Ranked or nil)
-	local rt = label({ Text = "RANKED", Font = THEME.Title, TextSize = 34, TextColor3 = VIOLET, Size = UDim2.new(0.7, 0, 0, 38), Position = UDim2.new(0, 18, 0, 16),
+	local rt = label({ Text = "RANKED", FontFace = THEME.Title, TextSize = 34, TextColor3 = VIOLET, Size = UDim2.new(0.7, 0, 0, 38), Position = UDim2.new(0, 18, 0, 16),
 		ZIndex = 4, Parent = rb })
 	new("UIStroke", { Color = Color3.fromRGB(8, 10, 8), Thickness = 2, Parent = rt })
 	if open then
-		label({ Text = "Rated duels  ·  win to climb, lose and you drop", Font = THEME.Body, TextSize = 13, TextColor3 = PC.HiLine,
+		label({ Text = "Rated duels  ·  win to climb, lose and you drop", FontFace = THEME.Body, TextSize = 13, TextColor3 = PC.HiLine,
 			Size = UDim2.new(0.8, 0, 0, 18), Position = UDim2.new(0, 18, 0, 56), ZIndex = 4, Parent = rb })
-		label({ Text = ranked and "BACK TO CASUAL  >" or "SHOW RANKED QUEUES  >", Font = THEME.Title, TextSize = 13, TextColor3 = VIOLET,
+		label({ Text = ranked and "BACK TO CASUAL  >" or "SHOW RANKED QUEUES  >", FontFace = THEME.Title, TextSize = 13, TextColor3 = VIOLET,
 			Size = UDim2.new(0.8, 0, 0, 16), Position = UDim2.new(0, 18, 1, -26), ZIndex = 4, Parent = rb })
 		brackets(rb, VIOLET, 16); tagBase(rb, VIOLET); hover(rb, bracketFrames(rb))
 		rb.Activated:Connect(function() playTab = ranked and "Casual" or "Ranked"; LobbyUI.Refresh() end)
 	else
 		rb.BackgroundColor3 = Color3.fromRGB(8, 9, 8)
-		label({ Text = "CLEARANCE REQUIRED", Font = THEME.Title, TextSize = 13, TextColor3 = PC.Sub, Size = UDim2.new(0.6, 0, 0, 16),
+		label({ Text = "CLEARANCE REQUIRED", FontFace = THEME.Title, TextSize = 13, TextColor3 = PC.Sub, Size = UDim2.new(0.6, 0, 0, 16),
 			Position = UDim2.new(0, 18, 0, 58), ZIndex = 4, Parent = rb })
 		local lock = Armory.LockIcon(rb, 44, VIOLET)
 		lock.AnchorPoint = Vector2.new(1, 0.5); lock.Position = UDim2.new(1, -22, 0.5, 0)
 		for _, d in lock:GetDescendants() do if d:IsA("GuiObject") then d.ZIndex += 4 end end
-		label({ Text = `UNLOCKS AT LEVEL {Config.RankedLevel}  ·  YOU ARE LV {level}`, Font = THEME.Title, TextSize = 12, TextColor3 = BONE,
+		label({ Text = `UNLOCKS AT LEVEL {Config.RankedLevel}  ·  YOU ARE LV {level}`, FontFace = THEME.Title, TextSize = 12, TextColor3 = BONE,
 			Size = UDim2.new(0.75, 0, 0, 16), Position = UDim2.new(0, 18, 1, -34), ZIndex = 4, Parent = rb })
 		local bar = new("Frame", { BackgroundColor3 = PC.Row, BorderSizePixel = 0, Size = UDim2.new(0.7, -18, 0, 5), Position = UDim2.new(0, 18, 1, -14), ZIndex = 4, Parent = rb })
 		new("Frame", { BackgroundColor3 = VIOLET, BorderSizePixel = 0, Size = UDim2.new(math.clamp(level / Config.RankedLevel, 0.02, 1), 0, 1, 0), ZIndex = 4, Parent = bar })
 		brackets(rb, PC.Line, 16)
 	end
 
-	label({ Text = "Rather play people in this lobby? Walk onto a pad in the DUELS wing.", Font = THEME.Body, TextSize = 13, TextColor3 = PC.Sub,
+	label({ Text = "Rather play people in this lobby? Walk onto a pad in the DUELS wing.", FontFace = THEME.Body, TextSize = 13, TextColor3 = PC.Sub,
 		TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 48 + CARD_H + 12 + BAN_H + 12), Parent = body })
 end
 
@@ -477,7 +479,7 @@ local function renderLoadout(body)
 			AutoButtonColor = false, Text = "", BackgroundColor3 = selected and THEME.Panel3 or THEME.Panel2,
 			Size = UDim2.new(1, 0, 0, 120), LayoutOrder = i, Parent = left,
 		}, { corner(8), stroke(selected and THEME.Accent or THEME.Line, selected and 2 or 1), pad(10) })
-		label({ Text = Config.SlotNames[slot], Font = THEME.Title, TextSize = 12, TextColor3 = selected and THEME.Accent or THEME.Sub, Size = UDim2.new(1, 0, 0, 14), Parent = tile })
+		label({ Text = Config.SlotNames[slot], FontFace = THEME.Title, TextSize = 12, TextColor3 = selected and THEME.Accent or THEME.Sub, Size = UDim2.new(1, 0, 0, 14), Parent = tile })
 		local art = itemArt(tile, id, 60)
 		art.Position = UDim2.new(0, 0, 0, 20)
 		label({ Text = Config.Items[id].Name, TextSize = 14, Size = UDim2.new(1, 0, 0, 16), Position = UDim2.new(0, 0, 1, -16), Parent = tile })
@@ -512,8 +514,8 @@ local function renderLoadout(body)
 			corner(8), stroke(equipped and THEME.Accent or THEME.Line, equipped and 2 or 1), pad(8),
 		})
 		itemArt(card, id, 92)
-		label({ Text = item.Name, Font = THEME.Title, TextSize = 15, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 98), Parent = card })
-		label({ Text = item.Desc, Font = THEME.Body, TextSize = 12, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 44),
+		label({ Text = item.Name, FontFace = THEME.Title, TextSize = 15, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 98), Parent = card })
+		label({ Text = item.Desc, FontFace = THEME.Body, TextSize = 12, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 44),
 			Position = UDim2.new(0, 0, 0, 118), TextYAlignment = Enum.TextYAlignment.Top, Parent = card })
 		local bPos, bSize = UDim2.new(0, 0, 1, -32), UDim2.new(1, 0, 0, 32)
 		if equipped then
@@ -562,8 +564,8 @@ local function renderQuests(body)
 			BackgroundTransparency = 1, Size = UDim2.new(0.5, -8, 1, -26), Position = UDim2.new(col == 1 and 0 or 0.5, col == 1 and 0 or 8, 0, 0), Parent = body,
 		}, { new("UIListLayout", { Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }) })
 		local head = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 26), LayoutOrder = 0, Parent = column })
-		label({ Text = string.upper(scope), Font = THEME.Title, TextSize = 20, Size = UDim2.new(0.5, 0, 1, 0), Parent = head })
-		local timer = label({ Text = "", Font = THEME.Bold, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(0.5, 0, 1, 0),
+		label({ Text = string.upper(scope), FontFace = THEME.Title, TextSize = 20, Size = UDim2.new(0.5, 0, 1, 0), Parent = head })
+		local timer = label({ Text = "", FontFace = THEME.Bold, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(0.5, 0, 1, 0),
 			Position = UDim2.new(0.5, 0, 0, 0), TextXAlignment = Enum.TextXAlignment.Right, Parent = head })
 		timer:SetAttribute("ResetScope", scope)
 		timer.Text = "RESETS IN " .. duration(resetIn(scope))
@@ -578,13 +580,13 @@ local function renderQuests(body)
 			local card = new("Frame", { BackgroundColor3 = THEME.Panel2, Size = UDim2.new(1, 0, 0, 100), LayoutOrder = i, Parent = column }, {
 				corner(8), stroke(ready and THEME.Good or THEME.Line, ready and 2 or 1), pad(12),
 			})
-			label({ Text = def.Text, Font = THEME.Bold, TextSize = 15, Size = UDim2.new(1, -110, 0, 20), TextTransparency = entry.Claimed and 0.5 or 0, Parent = card })
-			label({ Text = `+{def.Reward}`, Font = THEME.Title, TextSize = 15, TextColor3 = THEME.Accent, Size = UDim2.new(0, 76, 0, 20),
+			label({ Text = def.Text, FontFace = THEME.Bold, TextSize = 15, Size = UDim2.new(1, -110, 0, 20), TextTransparency = entry.Claimed and 0.5 or 0, Parent = card })
+			label({ Text = `+{def.Reward}`, FontFace = THEME.Title, TextSize = 15, TextColor3 = THEME.Accent, Size = UDim2.new(0, 76, 0, 20),
 				Position = UDim2.new(1, -100, 0, 0), TextXAlignment = Enum.TextXAlignment.Right, Parent = card })
 			scissorIcon({ Size = UDim2.fromOffset(22, 22), Position = UDim2.new(1, -22, 0, -1), Parent = card })
 			local bar = new("Frame", { BackgroundColor3 = THEME.Panel3, Size = UDim2.new(1, -110, 0, 10), Position = UDim2.new(0, 0, 0, 38), Parent = card }, { corner(5) })
 			new("Frame", { BackgroundColor3 = done and THEME.Good or THEME.Cyan, Size = UDim2.new(prog / def.Goal, 0, 1, 0), Parent = bar }, { corner(5) })
-			label({ Text = `{prog} / {def.Goal}`, Font = THEME.Bold, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(0, 100, 0, 16),
+			label({ Text = `{prog} / {def.Goal}`, FontFace = THEME.Bold, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(0, 100, 0, 16),
 				Position = UDim2.new(0, 0, 0, 54), Parent = card })
 			local bSize, bPos = UDim2.new(0, 100, 0, 34), UDim2.new(1, -100, 1, -34)
 			if entry.Claimed then
@@ -601,7 +603,7 @@ local function renderQuests(body)
 			label({ Text = "Loading quests...", TextColor3 = THEME.Sub, LayoutOrder = 1, Parent = column })
 		end
 	end
-	label({ Text = "Quest progress comes from matches. Finish one, come back here and claim it.", Font = THEME.Body, TextSize = 13,
+	label({ Text = "Quest progress comes from matches. Finish one, come back here and claim it.", FontFace = THEME.Body, TextSize = 13,
 		TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 1, -18), Parent = body })
 end
 
@@ -657,8 +659,8 @@ local function renderShop(body)
 			local item = Config.Items[id]
 			local card = new("Frame", { BackgroundColor3 = THEME.Panel2, LayoutOrder = i, Parent = list }, { corner(8), stroke(THEME.Line, 1), pad(8) })
 			itemArt(card, id, 96)
-			label({ Text = item.Name, Font = THEME.Title, TextSize = 15, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 102), Parent = card })
-			label({ Text = `{string.upper(item.Rarity)} {Config.SlotNames[item.Slot]}`, Font = THEME.Bold, TextSize = 11,
+			label({ Text = item.Name, FontFace = THEME.Title, TextSize = 15, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 102), Parent = card })
+			label({ Text = `{string.upper(item.Rarity)} {Config.SlotNames[item.Slot]}`, FontFace = THEME.Bold, TextSize = 11,
 				TextColor3 = Config.Rarities[item.Rarity].Color, Size = UDim2.new(1, 0, 0, 14), Position = UDim2.new(0, 0, 0, 122), Parent = card })
 			local bSize, bPos = UDim2.new(1, 0, 0, 32), UDim2.new(0, 0, 1, -32)
 			if owns(id) then
@@ -684,9 +686,9 @@ local function renderShop(body)
 				corner(8), stroke(bundle.Color, 1.5), pad(12),
 				new("UIGradient", { Rotation = 0, Color = ColorSequence.new(bundle.Color:Lerp(THEME.Panel2, 0.78), THEME.Panel2) }),
 			})
-			label({ Text = bundle.Name, Font = THEME.Title, TextSize = 24, Size = UDim2.new(0.6, 0, 0, 28), Parent = card })
+			label({ Text = bundle.Name, FontFace = THEME.Title, TextSize = 24, Size = UDim2.new(0.6, 0, 0, 28), Parent = card })
 			if bundle.Tag then
-				new("TextLabel", { Text = bundle.Tag, Font = THEME.Title, TextSize = 12, TextColor3 = Color3.fromRGB(20, 16, 10), BackgroundColor3 = THEME.Accent,
+				new("TextLabel", { Text = bundle.Tag, FontFace = THEME.Title, TextSize = 12, TextColor3 = Color3.fromRGB(20, 16, 10), BackgroundColor3 = THEME.Accent,
 					Size = UDim2.new(0, 80, 0, 20), Position = UDim2.new(0, 0, 0, 32), Parent = card }, { corner(4) })
 			end
 			local chips = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(0.62, 0, 0, 52), Position = UDim2.new(0, 0, 1, -52), Parent = card }, {
@@ -695,12 +697,12 @@ local function renderShop(body)
 			for j, id in bundle.Items do
 				local have = owns(id)
 				local chip = new("Frame", { BackgroundColor3 = THEME.Panel3, Size = UDim2.new(0, 124, 1, 0), LayoutOrder = j, Parent = chips }, { corner(6), pad(6) })
-				label({ Text = Config.Items[id].Name, Font = THEME.Bold, TextSize = 13, Size = UDim2.new(1, 0, 0, 18), Parent = chip })
-				label({ Text = have and "OWNED" or Config.SlotNames[Config.Items[id].Slot], Font = THEME.Bold, TextSize = 11,
+				label({ Text = Config.Items[id].Name, FontFace = THEME.Bold, TextSize = 13, Size = UDim2.new(1, 0, 0, 18), Parent = chip })
+				label({ Text = have and "OWNED" or Config.SlotNames[Config.Items[id].Slot], FontFace = THEME.Bold, TextSize = 11,
 					TextColor3 = have and THEME.Good or THEME.Sub, Size = UDim2.new(1, 0, 0, 14), Position = UDim2.new(0, 0, 0, 20), Parent = chip })
 			end
 			if full > cost and missing > 0 then
-				local was = label({ Text = priceText(full), Font = THEME.Bold, TextSize = 14, TextColor3 = THEME.Sub, Size = UDim2.new(0, 170, 0, 18),
+				local was = label({ Text = priceText(full), FontFace = THEME.Bold, TextSize = 14, TextColor3 = THEME.Sub, Size = UDim2.new(0, 170, 0, 18),
 					Position = UDim2.new(1, -170, 0, 8), TextXAlignment = Enum.TextXAlignment.Center, Parent = card })
 				new("Frame", { BackgroundColor3 = THEME.Sub, BorderSizePixel = 0, Size = UDim2.new(0, 70, 0, 2), Position = UDim2.new(0.5, -35, 0.5, -1), Parent = was })
 			end
@@ -724,7 +726,7 @@ end
 ---------------------------------------------------------------- STORE (Robux)
 local function renderStore(body)
 	clear(body)
-	label({ Text = "SCISSORS", Font = THEME.Title, TextSize = 16, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 18), Parent = body })
+	label({ Text = "SCISSORS", FontFace = THEME.Title, TextSize = 16, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 18), Parent = body })
 	local packs = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 150), Position = UDim2.new(0, 0, 0, 24), Parent = body }, {
 		new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
@@ -735,12 +737,12 @@ local function renderStore(body)
 			corner(8), stroke(THEME.Line, 1), pad(10),
 		})
 		if p.Tag then
-			new("TextLabel", { Text = p.Tag, Font = THEME.Title, TextSize = 11, TextColor3 = Color3.fromRGB(20, 16, 10), BackgroundColor3 = THEME.Accent,
+			new("TextLabel", { Text = p.Tag, FontFace = THEME.Title, TextSize = 11, TextColor3 = Color3.fromRGB(20, 16, 10), BackgroundColor3 = THEME.Accent,
 				Size = UDim2.new(0, 0, 0, 18), AutomaticSize = Enum.AutomaticSize.X, Position = UDim2.new(1, 0, 0, 0), AnchorPoint = Vector2.new(1, 0), Parent = card },
 				{ corner(4), new("UIPadding", { PaddingLeft = UDim.new(0, 6), PaddingRight = UDim.new(0, 6) }) })
 		end
-		label({ Text = p.Name, Font = THEME.Title, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 16), Parent = card })
-		label({ Text = `{commas(p.Credits)} scissors`, Font = THEME.Title, TextSize = 26, TextColor3 = THEME.Accent, Size = UDim2.new(1, 0, 0, 34),
+		label({ Text = p.Name, FontFace = THEME.Title, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 16), Parent = card })
+		label({ Text = `{commas(p.Credits)} scissors`, FontFace = THEME.Title, TextSize = 26, TextColor3 = THEME.Accent, Size = UDim2.new(1, 0, 0, 34),
 			Position = UDim2.new(0, 0, 0, 34), Parent = card })
 		button({ Text = `R$ {p.Robux}`, Style = "robux", Size = UDim2.new(1, 0, 0, 36), Position = UDim2.new(0, 0, 1, -36), Parent = card }, function()
 			ask("BuyRobux", p.Key)
@@ -753,21 +755,21 @@ local function renderStore(body)
 			corner(8), stroke(THEME.Accent, 1.5), pad(12),
 			new("UIGradient", { Color = ColorSequence.new(THEME.Accent:Lerp(THEME.Panel2, 0.8), THEME.Panel2) }),
 		})
-		label({ Text = p.Name, Font = THEME.Title, TextSize = 22, Size = UDim2.new(0.7, 0, 0, 26), Parent = card })
+		label({ Text = p.Name, FontFace = THEME.Title, TextSize = 22, Size = UDim2.new(0.7, 0, 0, 26), Parent = card })
 		local names = {}
 		local ownedAll = true
 		for _, id in p.Items or {} do
 			table.insert(names, Config.Items[id].Name)
 			if not owns(id) then ownedAll = false end
 		end
-		label({ Text = table.concat(names, "  ·  ") .. `  ·  {commas(p.Credits)} scissors`, Font = THEME.Bold, TextSize = 14, TextColor3 = THEME.Sub,
+		label({ Text = table.concat(names, "  ·  ") .. `  ·  {commas(p.Credits)} scissors`, FontFace = THEME.Bold, TextSize = 14, TextColor3 = THEME.Sub,
 			Size = UDim2.new(0.7, 0, 0, 18), Position = UDim2.new(0, 0, 0, 32), Parent = card })
-		if p.Tag then label({ Text = p.Tag, Font = THEME.Title, TextSize = 12, TextColor3 = THEME.Accent, Size = UDim2.new(0.5, 0, 0, 14), Position = UDim2.new(0, 0, 1, -14), Parent = card }) end
+		if p.Tag then label({ Text = p.Tag, FontFace = THEME.Title, TextSize = 12, TextColor3 = THEME.Accent, Size = UDim2.new(0.5, 0, 0, 14), Position = UDim2.new(0, 0, 1, -14), Parent = card }) end
 		button({ Text = ownedAll and "OWNED" or `R$ {p.Robux}`, Style = ownedAll and "disabled" or "robux", Size = UDim2.new(0, 170, 0, 40),
 			Position = UDim2.new(1, -170, 0.5, -20), Parent = card }, function() ask("BuyRobux", p.Key) end)
 	end
 
-	label({ Text = "GAME PASSES", Font = THEME.Title, TextSize = 16, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 292), Parent = body })
+	label({ Text = "GAME PASSES", FontFace = THEME.Title, TextSize = 16, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 292), Parent = body })
 	local passes = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 0, 110), Position = UDim2.new(0, 0, 0, 316), Parent = body }, {
 		new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
@@ -776,8 +778,8 @@ local function renderStore(body)
 		local card = new("Frame", { BackgroundColor3 = THEME.Panel2, Size = UDim2.new(0.5, -5, 1, 0), LayoutOrder = i, Parent = passes }, {
 			corner(8), stroke(have and THEME.Good or THEME.Line, 1), pad(12),
 		})
-		label({ Text = p.Name, Font = THEME.Title, TextSize = 22, Size = UDim2.new(1, -150, 0, 26), Parent = card })
-		label({ Text = p.Desc, Font = THEME.Body, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(1, -150, 0, 44), Position = UDim2.new(0, 0, 0, 30),
+		label({ Text = p.Name, FontFace = THEME.Title, TextSize = 22, Size = UDim2.new(1, -150, 0, 26), Parent = card })
+		label({ Text = p.Desc, FontFace = THEME.Body, TextSize = 13, TextColor3 = THEME.Sub, Size = UDim2.new(1, -150, 0, 44), Position = UDim2.new(0, 0, 0, 30),
 			TextYAlignment = Enum.TextYAlignment.Top, Parent = card })
 		button({ Text = have and "OWNED" or `R$ {p.Robux}`, Style = have and "disabled" or "robux", Size = UDim2.new(0, 136, 0, 40),
 			Position = UDim2.new(1, -136, 0.5, -20), Parent = card }, function() ask("BuyPass", p.Key) end)
@@ -942,10 +944,10 @@ end
 local codeText = ""
 local function renderCodes(body)
 	clear(body)
-	label({ Text = "Got a code from an update, the group or a stream? Redeem it here.", Font = THEME.Body, TextSize = 15,
+	label({ Text = "Got a code from an update, the group or a stream? Redeem it here.", FontFace = THEME.Body, TextSize = 15,
 		TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 22), Parent = body })
 	local box = new("TextBox", {
-		Text = codeText, PlaceholderText = "ENTER CODE", ClearTextOnFocus = false, Font = THEME.Title, TextSize = 24,
+		Text = codeText, PlaceholderText = "ENTER CODE", ClearTextOnFocus = false, FontFace = THEME.Title, TextSize = 24,
 		TextColor3 = THEME.Text, PlaceholderColor3 = Color3.fromRGB(90, 94, 98), BackgroundColor3 = THEME.Panel2,
 		TextXAlignment = Enum.TextXAlignment.Left, Size = UDim2.new(1, -200, 0, 60), Position = UDim2.new(0, 0, 0, 40), Parent = body,
 	}, { corner(2), new("UIPadding", { PaddingLeft = UDim.new(0, 18) }) })
@@ -963,17 +965,17 @@ local function renderCodes(body)
 	local used = {}
 	for code in (data.RedeemedCodes or {}) do table.insert(used, code) end
 	table.sort(used)
-	label({ Text = "REDEEMED", Font = THEME.Title, TextSize = 14, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 124), Parent = body })
+	label({ Text = "REDEEMED", FontFace = THEME.Title, TextSize = 14, TextColor3 = THEME.Sub, Size = UDim2.new(1, 0, 0, 18), Position = UDim2.new(0, 0, 0, 124), Parent = body })
 	local list = new("Frame", { BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, -150), Position = UDim2.new(0, 0, 0, 150), Parent = body }, {
 		new("UIGridLayout", { CellSize = UDim2.new(0, 190, 0, 40), CellPadding = UDim2.new(0, 8, 0, 8) }),
 	})
 	if #used == 0 then
-		label({ Text = "Nothing yet", TextColor3 = THEME.Sub, Font = THEME.Body, Parent = list })
+		label({ Text = "Nothing yet", TextColor3 = THEME.Sub, FontFace = THEME.Body, Parent = list })
 	end
 	for _, code in used do
 		new("Frame", { BackgroundColor3 = THEME.Panel2, Parent = list }, {
 			corner(2), pad(10), new("Frame", { BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Size = UDim2.new(0, 3, 1, 20), Position = UDim2.new(0, -10, 0, -10) }),
-			label({ Text = "✓  " .. code, Font = THEME.Bold, TextSize = 14, TextColor3 = THEME.Good, Size = UDim2.fromScale(1, 1) }),
+			label({ Text = "✓  " .. code, FontFace = THEME.Bold, TextSize = 14, TextColor3 = THEME.Good, Size = UDim2.fromScale(1, 1) }),
 		})
 	end
 end
@@ -1207,9 +1209,9 @@ local function buildQueuePill()
 		BackgroundColor3 = THEME.Panel, BackgroundTransparency = 0.05, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, 18),
 		Size = UDim2.new(0, 520, 0, 58), Visible = false, Parent = root,
 	}, { corner(2), stroke(THEME.Cyan, 1.5) })
-	label({ Name = "Mode", Text = "", Font = THEME.Title, TextSize = 24, Size = UDim2.new(0, 70, 1, 0), Position = UDim2.new(0, 16, 0, 0), Parent = queuePill })
-	label({ Name = "Status", Text = "", Font = THEME.Bold, TextSize = 14, TextColor3 = THEME.Sub, Size = UDim2.new(1, -250, 1, 0), Position = UDim2.new(0, 90, 0, 0), Parent = queuePill })
-	label({ Name = "Count", Text = "", Font = THEME.Title, TextSize = 30, TextColor3 = THEME.Accent, Size = UDim2.new(0, 50, 1, 0), Position = UDim2.new(1, -170, 0, 0),
+	label({ Name = "Mode", Text = "", FontFace = THEME.Title, TextSize = 24, Size = UDim2.new(0, 70, 1, 0), Position = UDim2.new(0, 16, 0, 0), Parent = queuePill })
+	label({ Name = "Status", Text = "", FontFace = THEME.Bold, TextSize = 14, TextColor3 = THEME.Sub, Size = UDim2.new(1, -250, 1, 0), Position = UDim2.new(0, 90, 0, 0), Parent = queuePill })
+	label({ Name = "Count", Text = "", FontFace = THEME.Title, TextSize = 30, TextColor3 = THEME.Accent, Size = UDim2.new(0, 50, 1, 0), Position = UDim2.new(1, -170, 0, 0),
 		TextXAlignment = Enum.TextXAlignment.Center, Parent = queuePill })
 	button({ Text = "LEAVE", Style = "dark", Size = UDim2.new(0, 100, 0, 36), Position = UDim2.new(1, -112, 0.5, -18), Parent = queuePill }, function()
 		ask(player:GetAttribute("MM_Queue") and "CancelMatch" or "LeaveQueue")
@@ -1327,11 +1329,11 @@ local function build()
 		local ok, img = pcall(Players.GetUserThumbnailAsync, Players, player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 		if ok then avatar.Image = img end
 	end)
-	label({ Text = player.DisplayName, Font = THEME.Title, TextSize = 17, Size = UDim2.new(1, -140, 0, 20), Position = UDim2.new(0, 72, 0, 10), TextTruncate = Enum.TextTruncate.AtEnd, Parent = card })
-	levelLabel = label({ Text = "LV 1", Font = THEME.Title, TextSize = 13, TextColor3 = THEME.Sub, TextXAlignment = Enum.TextXAlignment.Right,
+	label({ Text = player.DisplayName, FontFace = THEME.Title, TextSize = 17, Size = UDim2.new(1, -140, 0, 20), Position = UDim2.new(0, 72, 0, 10), TextTruncate = Enum.TextTruncate.AtEnd, Parent = card })
+	levelLabel = label({ Text = "LV 1", FontFace = THEME.Title, TextSize = 13, TextColor3 = THEME.Sub, TextXAlignment = Enum.TextXAlignment.Right,
 		Size = UDim2.new(0, 56, 0, 20), Position = UDim2.new(1, -66, 0, 10), Parent = card })
 	scissorIcon({ Size = UDim2.new(0, 24, 0, 24), Position = UDim2.new(0, 68, 0, 37), Parent = card })
-	creditLabel = label({ Text = "...", Font = THEME.Title, TextSize = 20, Size = UDim2.new(0, 120, 0, 22), Position = UDim2.new(0, 92, 0, 38), Parent = card })
+	creditLabel = label({ Text = "...", FontFace = THEME.Title, TextSize = 20, Size = UDim2.new(0, 120, 0, 22), Position = UDim2.new(0, 92, 0, 38), Parent = card })
 	button({ Text = "+", Style = "robux", TextSize = 20, Size = UDim2.new(0, 28, 0, 28), Position = UDim2.new(1, -38, 0, 35), Parent = card }, function()
 		LobbyUI.Close()
 		LobbyUI.OpenShop("Scissors")
@@ -1366,14 +1368,14 @@ local function build()
 		local iconHolder = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0, 48),
 			Size = UDim2.new(0, 100, 0, 100), Parent = btn })
 		local icon = Icons.Viewport(iconHolder, d.Build(), { view = d.View, zoom = d.Zoom })
-		local text = label({ Text = d.Label, Font = THEME.Title, TextSize = 19, TextXAlignment = Enum.TextXAlignment.Center,
+		local text = label({ Text = d.Label, FontFace = THEME.Title, TextSize = 19, TextXAlignment = Enum.TextXAlignment.Center,
 			Size = UDim2.new(1, 0, 0, 24), Position = UDim2.new(0, 0, 1, -32), Parent = btn })
 		new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 2, Transparency = 0.1, Parent = text })
 		local underline = new("Frame", { BackgroundColor3 = THEME.Accent, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0),
 			Position = UDim2.new(0.5, 0, 1, -6), Size = UDim2.new(0, 0, 0, 3), Parent = btn }, { corner(2) })
 		local badge
 		if d.Id == "Missions" then
-			badge = new("TextLabel", { Text = "", Visible = false, Font = THEME.Title, TextSize = 15, TextColor3 = Color3.new(1, 1, 1),
+			badge = new("TextLabel", { Text = "", Visible = false, FontFace = THEME.Title, TextSize = 15, TextColor3 = Color3.new(1, 1, 1),
 				BackgroundColor3 = Color3.fromRGB(214, 52, 44), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 32, 0, 16),
 				Size = UDim2.new(0, 26, 0, 26), ZIndex = 3, Parent = btn }, { corner(13), stroke(Color3.new(1, 1, 1), 2) })
 		end
@@ -1419,7 +1421,7 @@ local function build()
 	local playGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = play })
 	new("Frame", { BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.8, BorderSizePixel = 0, Size = UDim2.new(1, -12, 0.42, 0),
 		Position = UDim2.new(0, 6, 0, 4), Parent = play }, { corner(7) })
-	local playText = label({ Text = "PLAY", Font = THEME.Title, TextSize = 34, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), Parent = play })
+	local playText = label({ Text = "PLAY", FontFace = THEME.Title, TextSize = 34, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), Parent = play })
 	new("UIStroke", { Color = Color3.fromRGB(18, 34, 10), Thickness = 2.5, Parent = playText })
 	play.MouseEnter:Connect(function() TweenService:Create(playScale, TI, { Scale = 1.05 }):Play() end)
 	play.MouseLeave:Connect(function() TweenService:Create(playScale, TI, { Scale = 1 }):Play() end)
@@ -1487,8 +1489,8 @@ local function build()
 		Size = UDim2.new(0, 880, 0, 580), Visible = false, Parent = root,
 	})
 	new("Frame", { Name = "TacBar", BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Size = UDim2.new(0, 6, 0, 58), Position = UDim2.new(0, 8, 0, 14), Parent = panelFrame })
-	panelTitle = label({ Text = "", Font = THEME.Title, TextSize = 30, Size = UDim2.new(0.6, 0, 0, 40), Position = UDim2.new(0, 24, 0, 12), Parent = panelFrame })
-	panelSub = label({ Text = "", Font = THEME.Bold, TextSize = 15, TextColor3 = THEME.Sub, Size = UDim2.new(0.6, 0, 0, 18), Position = UDim2.new(0, 26, 0, 52), Parent = panelFrame })
+	panelTitle = label({ Text = "", FontFace = THEME.Title, TextSize = 30, Size = UDim2.new(0.6, 0, 0, 40), Position = UDim2.new(0, 24, 0, 12), Parent = panelFrame })
+	panelSub = label({ Text = "", FontFace = THEME.Bold, TextSize = 15, TextColor3 = THEME.Sub, Size = UDim2.new(0.6, 0, 0, 18), Position = UDim2.new(0, 26, 0, 52), Parent = panelFrame })
 	local closeBtn = new("TextButton", { Name = "Close", AutoButtonColor = false, Text = "", Size = UDim2.new(0, 56, 0, 40), Position = UDim2.new(1, -76, 0, 16), Parent = panelFrame }, {
 		new("UICorner", { CornerRadius = UDim.new(0, 2) }),
 	})
@@ -1503,7 +1505,7 @@ local function build()
 	closeBtn.Activated:Connect(LobbyUI.Close)
 	local credPill = new("Frame", { BackgroundColor3 = THEME.Panel2, Size = UDim2.new(0, 150, 0, 40), Position = UDim2.new(1, -236, 0, 16), Parent = panelFrame }, { corner(2) })
 	Tac.brackets(credPill, Tac.C.line, 8)
-	local credText = label({ Text = "", Font = THEME.Title, TextSize = 16, TextColor3 = THEME.Accent, Size = UDim2.fromScale(1, 1), TextXAlignment = Enum.TextXAlignment.Center, Parent = credPill })
+	local credText = label({ Text = "", FontFace = THEME.Title, TextSize = 16, TextColor3 = THEME.Accent, Size = UDim2.fromScale(1, 1), TextXAlignment = Enum.TextXAlignment.Center, Parent = credPill })
 	RunService.Heartbeat:Connect(function()
 		if data then credText.Text = priceText(data.Credits or 0) end
 	end)

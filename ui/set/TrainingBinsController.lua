@@ -32,10 +32,11 @@ local DW, DH = 1920, 1080
 local function S(x, y) return UDim2.fromScale(x / DW, y / DH) end                       -- design px -> Scale of the canvas
 local function R(x, y, w, h) return UDim2.fromScale(x / w, y / h) end                     -- px -> Scale of a w x h parent
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
-local OLIVE = Color3.fromRGB(255, 212, 0)                                                 -- Tac.C.oliveHi: the Kit's accent
-local AMBER = Color3.fromRGB(255, 196, 92)
-local FONT_H = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local FONT_B = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local OLIVE = Color3.fromRGB(236, 230, 210)                                               -- (2026-10-21, AI-tells cleanup) hover edge accent: yellow -> cream
+local AMBER = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) the TRIAL label: yellow-amber -> cream (name kept)
+-- (2026-10-21, AI-tells cleanup) Oswald Bold headings / names, Rubik for the small tab captions (was Builder Sans)
+local FONT_H = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FONT_B = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local TITLE = "Try out any weapon here for free!"
 local TRIAL_ATTR = { Weapon = "TrialWeapon", Gadget = "TrialGadget", Melee = "TrialMelee" }
 local SLOTS = Config.Slots or { "Weapon", "Gadget", "Melee" }
@@ -140,7 +141,7 @@ local function tileLook(b)
 	local edge = b.Bg.Edge
 	edge.Color = hover and OLIVE or WHITE
 	edge.Transparency = (hover or isHeld) and 0 or 1
-	edge.Thickness = isHeld and not hover and 3 or 2.5
+	edge.Thickness = isHeld and not hover and 4 or 3 -- (2026-10-21, AI-tells cleanup) state ring kept thick (>= 3), never a hairline
 	-- (2026-10-21, live RIVALS) hover: the name grows ~1.3x and the render tilts a little toward you; both ease back
 	local ti = TweenInfo.new(hover and 0.16 or 0.2, hover and Enum.EasingStyle.Back or Enum.EasingStyle.Quad)
 	local name = b:FindFirstChild("Name")
@@ -163,7 +164,7 @@ local function makeTile(parent, slot, id, index)
 		ZIndex = 2, Parent = parent })
 	b:SetAttribute("Slot", slot)
 	local bg = new("Frame", { Name = "Bg", Size = UDim2.fromScale(1, 1), BackgroundColor3 = WHITE, BorderSizePixel = 0, ZIndex = 2, Parent = b }, { corner(0.07) })
-	new("UIStroke", { Name = "Edge", ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = WHITE, Thickness = 2.5, Transparency = 1, Parent = bg })
+	new("UIStroke", { Name = "Edge", ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = WHITE, Thickness = 3, Transparency = 1, Parent = bg })
 	if id == "Random" then
 		bg.BackgroundColor3 = BLACK
 		-- RIVALS' shuffle mark: two crossing arrows, drawn from bars
@@ -267,7 +268,7 @@ local function build()
 	weaponsBtn = button({ Name = "WeaponsButton", AnchorPoint = Vector2.new(0.5, 0), Position = S(960, 74), Size = S(214, 50),
 		BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, Visible = false, Parent = canvas })
 	corner(0.5).Parent = weaponsBtn
-	new("UIStroke", { ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = WHITE, Transparency = 0.75, Thickness = 1.5, Parent = weaponsBtn })
+	-- (2026-10-21, AI-tells cleanup) hairline border removed: the dark pill reads on its own
 	label(weaponsBtn, "Label", UDim2.fromScale(0.08, 0.16), UDim2.fromScale(0.58, 0.68), "Weapons", FONT_H, 2).TextXAlignment = Enum.TextXAlignment.Left
 	local chip = new("Frame", { Name = "KeyChip", AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.fromScale(0.93, 0.5), Size = UDim2.fromScale(0.26, 0.64),
 		BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = weaponsBtn }, { corner(0.3) })
@@ -295,7 +296,7 @@ local function build()
 	local x = button({ Name = "CloseX", AnchorPoint = Vector2.new(0.5, 0.5), Position = S(1250, 232), Size = S(52, 52), BackgroundColor3 = WHITE, Parent = root })
 	corner(0.2).Parent = x
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(255, 86, 76), Color3.fromRGB(196, 32, 32)), Parent = x })
-	new("UIStroke", { ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = BLACK, Transparency = 0.5, Thickness = 1.5, Parent = x })
+	-- (2026-10-21, AI-tells cleanup) no hairline edge on the red X
 	for _, rot in { 45, -45 } do
 		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.6, 0.17), Rotation = rot,
 			BackgroundColor3 = WHITE, BorderSizePixel = 0, Parent = x }, { corner(0.4) })

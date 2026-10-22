@@ -12,8 +12,10 @@ local Theme = require(UIKit:WaitForChild("Theme"))
 local Kit = require(UIKit:WaitForChild("Kit"))
 local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
 local C, new = Theme.color, Kit.new
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local FM = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium)
+-- (2026-10-21, AI-tells cleanup) Builder Sans -> Oswald Bold (title, code box, buttons) / Rubik Medium (body)
+local FB = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FM = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
+local DONE = Theme.hex("#8DBF5A") -- (2026-10-21, AI-tells cleanup) redeemed / success: field green, was the #FFD400 yellow
 
 local Screen = {}
 local ctx = {}
@@ -37,7 +39,7 @@ local function renderList()
 	for i, code in used do
 		local row = new("Frame", { Name = code, LayoutOrder = i, Size = UDim2.fromOffset(250, 50), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Parent = list },
 			{ new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-		local l = Kit.label({ Text = "✓  " .. code, FontFace = FB, TextSize = 22, TextColor3 = Theme.hex("#FFD400"), Position = UDim2.fromOffset(16, 0), Size = UDim2.fromOffset(226, 50), Parent = row })
+		local l = Kit.label({ Text = "✓  " .. code, FontFace = FB, TextSize = 22, TextColor3 = DONE, Position = UDim2.fromOffset(16, 0), Size = UDim2.fromOffset(226, 50), Parent = row })
 		l:SetAttribute("dTS", 22)
 	end
 	Kit.toScale(list, Vector2.new(960, 80))
@@ -61,7 +63,7 @@ local function redeem()
 	redeeming = false
 	if r and r.ok then
 		box.Text = ""
-		status.Text = r.msg or "Redeemed!"; status.TextColor3 = Theme.hex("#FFD400")
+		status.Text = r.msg or "Redeemed!"; status.TextColor3 = DONE
 		Kit.pop(status, 1.25)
 		local sc = goBtn and goBtn:FindFirstChildOfClass("UIScale") -- bindButton's scale (one UIScale per object)
 		if sc then sc.Scale = 1.15; Kit.tween(sc, 0.28, { Scale = 1 }, Enum.EasingStyle.Back) end

@@ -338,7 +338,7 @@ function Kit.button(kind, size, text, props)
 	local btn = new("TextButton", {
 		Name = (text or kind) .. "Button", Size = size, AutoButtonColor = false, Text = "",
 		BackgroundColor3 = C.white,
-	}, { Kit.corner(6), Kit.vgrad(Theme.gradient[kind]), Kit.stroke(C.textDark, 1.5, 0.6) })
+	}, { Kit.corner(6), Kit.vgrad(Theme.gradient[kind]) }) -- (2026-10-21, AI-tells cleanup) thin 1.5 px border removed
 	if text then
 		local lbl = Kit.label({
 			Name = "Label", Text = text, Size = UDim2.fromScale(1, 1), TextXAlignment = Enum.TextXAlignment.Center,
@@ -355,19 +355,25 @@ function Kit.closeButton(size)
 	-- (lobby revamp Phase B, Edward OK) the lobby's square dark X (same as UIKit.Kit.closeButton): a dark plate with a tan
 	-- hairline and a cream X, as tall as asked. Not named "Close" + Nonapplicable: the old InterfaceController shrinks a
 	-- "Close" button's parent to 0 x 0 (UI session 2026-10-16)
+	-- (2026-10-21, AI-tells cleanup) the tan hairline is gone: the dark plate now sits on a thicker, darker offset shadow
+	-- block (4 design px down-right, same shape). The button itself is a clear hit box holding Shadow + Plate.
 	local h = size.Y.Offset
+	local PLATE = Color3.fromRGB(24, 26, 21)
 	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(h, h),
-		BackgroundColor3 = Color3.fromRGB(24, 26, 21), BackgroundTransparency = 0.1 }, { Kit.corner(8), Kit.stroke(Color3.fromRGB(226, 210, 172), 1.5, 0.35) })
+		BackgroundTransparency = 1 })
 	btn:AddTag("Nonapplicable")
+	new("Frame", { Name = "Shadow", Position = UDim2.fromOffset(4, 4), Size = UDim2.fromOffset(h, h), BackgroundColor3 = Color3.fromRGB(4, 5, 3),
+		BackgroundTransparency = 0.15, BorderSizePixel = 0, ZIndex = 1, Parent = btn }, { Kit.corner(8) })
+	local plate = new("Frame", { Name = "Plate", Size = UDim2.fromOffset(h, h), BackgroundColor3 = PLATE, BorderSizePixel = 0, ZIndex = 2, Parent = btn }, { Kit.corner(8) })
 	local len = math.floor(h * 0.5)
 	for _, rot in ipairs({ 45, -45 }) do
 		new("Frame", {
 			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Rotation = rot,
-			Size = UDim2.fromOffset(len, math.max(3, math.floor(h * 0.09))), BackgroundColor3 = Color3.fromRGB(236, 230, 210), BorderSizePixel = 0, Parent = btn,
+			Size = UDim2.fromOffset(len, math.max(3, math.floor(h * 0.09))), BackgroundColor3 = Color3.fromRGB(236, 230, 210), BorderSizePixel = 0, ZIndex = 3, Parent = plate,
 		}, { Kit.corner(2) })
 	end
-	btn.MouseEnter:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(176, 52, 40) }) end)
-	btn.MouseLeave:Connect(function() Kit.tween(btn, 0.12, { BackgroundColor3 = Color3.fromRGB(24, 26, 21) }) end)
+	btn.MouseEnter:Connect(function() Kit.tween(plate, 0.12, { BackgroundColor3 = Color3.fromRGB(176, 52, 40) }) end)
+	btn.MouseLeave:Connect(function() Kit.tween(plate, 0.12, { BackgroundColor3 = PLATE }) end)
 	Kit.bindButton(btn, { hover = 1.06 })
 	return btn
 end
@@ -680,7 +686,7 @@ function Kit.colorPicker(layer, anchor, color, wheelImage, onChange, dimTarget)
 	local chans = { { "R", Color3.fromRGB(255, 0, 0) }, { "G", Color3.fromRGB(0, 230, 0) }, { "B", Color3.fromRGB(0, 0, 255) } }
 	for i, ch in ipairs(chans) do
 		local box = new("Frame", { Name = ch[1], Position = UDim2.fromOffset(14, 15 + (i - 1) * 78), Size = UDim2.fromOffset(128, 64), BackgroundColor3 = C.white, ZIndex = 62, Parent = panel }, { Kit.corner(6) })
-		new("Frame", { Name = "Accent", Position = UDim2.fromOffset(7, 9), Size = UDim2.fromOffset(3, 46), BackgroundColor3 = ch[2], BorderSizePixel = 0, ZIndex = 63, Parent = box })
+		-- (2026-10-21, AI-tells cleanup) the 3 px left accent bar is gone; the channel colour stays on the number itself
 		boxes[i] = new("TextBox", {
 			Name = "Value", BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 0), Size = UDim2.new(1, -12, 1, 0),
 			TextColor3 = ch[2], FontFace = F.heavy, TextSize = 38, ClearTextOnFocus = false, ZIndex = 63, Parent = box,

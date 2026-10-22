@@ -28,32 +28,23 @@ local player = Players.LocalPlayer
 local OSWALD = Theme.font.display
 local BODY = Theme.font.medium
 local BOLD = Theme.font.bold
-local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#FFD400"), hex("#FFD400")
-local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
-local LB_NAME, LB_NUM = Font.new(BUILDER, Enum.FontWeight.Medium), Font.new(BUILDER, Enum.FontWeight.Bold)
+-- (2026-10-21, AI-tells cleanup) the old yellow accent is cream now; the player list drops Builder Sans: names Rubik, numbers Oswald
+local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), Theme.color.cream, Theme.color.cream
+local LB_NAME, LB_NUM = BODY, OSWALD
 local GUN, DEEP, LINE, RED = hex("#1A1D1A"), hex("#0C0E0B"), hex("#40463A"), hex("#D6403A")
 
 local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	return Kit.label({ Text = text, FontFace = font, TextSize = size, TextColor3 = color or BONE, TextXAlignment = align or Enum.TextXAlignment.Left,
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 2, Parent = parent })
 end
--- (Edward 2026-10-16: no "4 corners box" look) panels get RIVALS' soft rounded corners and a faint edge; the edge keeps
--- its colour only where colour means something (team A / B, ranked violet), otherwise it's a soft white line
-local NEUTRAL_EDGE = { [Color3.fromRGB(64, 70, 58):ToHex()] = true, [Color3.fromRGB(255, 212, 0):ToHex()] = true,
-	[Color3.fromRGB(236, 232, 218):ToHex()] = true }
+-- (Edward 2026-10-16: no "4 corners box" look) panels get RIVALS' soft rounded corners.
+-- (2026-10-21, AI-tells cleanup) no thin edge stroke any more: the panel's own dark fill separates it
 local function brackets(p, color, len, th, z)
 	if not p:FindFirstChildOfClass("UICorner") then
 		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0, math.clamp(math.floor(len * 0.6), 6, 14)); c.Parent = p
 	end
-	local st = p:FindFirstChild("_Edge") or Instance.new("UIStroke")
-	st.Name = "_Edge"
-	st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	local neutral = NEUTRAL_EDGE[color:ToHex()] == true
-	st.Color = neutral and Color3.new(1, 1, 1) or color
-	st.Transparency = neutral and 0.85 or 0.25
-	st.Thickness = neutral and 1.5 or math.max(2, math.floor(th * 0.75))
-	st.Parent = p
-	return st
+	local old = p:FindFirstChild("_Edge")
+	if old then old:Destroy() end
 end
 local function commas(n)
 	local s = tostring(math.floor(n or 0))
@@ -94,7 +85,7 @@ buildCorner = function(gui, cb)
 	new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromScale(10 / 190, 10 / 30), Rotation = 45, BackgroundColor3 = BAR_BG,
 		BackgroundTransparency = BAR_T, BorderSizePixel = 0, ZIndex = 30, Parent = bubble })
 	local bubbleText = new("TextLabel", { BackgroundTransparency = 1, Position = UDim2.fromScale(0.06, 0.15), Size = UDim2.fromScale(0.88, 0.7), TextScaled = true,
-		FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium), TextColor3 = BAR_ICON, Text = "", ZIndex = 31, Parent = bubble })
+		FontFace = BODY, TextColor3 = BAR_ICON, Text = "", ZIndex = 31, Parent = bubble }) -- (2026-10-21, AI-tells cleanup) Rubik, was Builder Sans
 	local function button(name, icon, tip)
 		local b = new("ImageButton", { Name = name, AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromScale(sx(B), sy(B)), BackgroundColor3 = Color3.new(1, 1, 1),
 			BackgroundTransparency = 1, AutoButtonColor = false, Image = "", ZIndex = 22, Visible = false, Parent = frame }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
@@ -122,7 +113,7 @@ buildCorner = function(gui, cb)
 		local d = new("Frame", { Name = "Unread", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.85, 0.15), Size = UDim2.fromScale(0.5, 0.5),
 			BackgroundColor3 = Color3.fromRGB(230, 50, 50), Visible = false, ZIndex = 25, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 		new("TextLabel", { Name = "N", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), TextScaled = true, Text = "0", TextColor3 = Color3.new(1, 1, 1),
-			FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold), ZIndex = 26, Parent = d })
+			FontFace = OSWALD, ZIndex = 26, Parent = d }) -- (2026-10-21, AI-tells cleanup) Oswald count, was Builder Sans
 		return d
 	end
 	local codes = button("Codes", ICON_CODES, "Redeem a code")
@@ -241,7 +232,7 @@ function LobbyHud.Start()
 
 	---------------------------------------------------------------------------------------------- scissors pill
 	-- RIVALS' key pill, with our scissors: a small dark glass pill, the 3D scissors overlapping its left end, a rounded plus
-	local PFONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	local PFONT = OSWALD -- (2026-10-21, AI-tells cleanup) the count in Oswald, was Builder Sans
 	local pill = new("Frame", { Name = "Scissors", Position = UDim2.fromOffset(880, 40), Size = UDim2.fromOffset(168, 42), BackgroundColor3 = Color3.new(0, 0, 0),
 		BackgroundTransparency = 0.45, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 9) }) })
 	local iconHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-46, -14), Size = UDim2.fromOffset(70, 70), ZIndex = 3, Parent = pill })
@@ -258,7 +249,7 @@ function LobbyHud.Start()
 	---------------------------------------------------------------------------------------------- missions widget
 	-- RIVALS' Daily Tasks widget (ported from the replica): dark glass, a 3D clipboard + bold title, then per mission a 3D icon,
 	-- the name, the count, a bright bar and the reward (3D scissors xN) or a green check when it's done
-	local WFONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	local WFONT = OSWALD -- (2026-10-21, AI-tells cleanup) title / counts / TO PADS in Oswald, mission names in Rubik (was Builder Sans)
 	local missions = new("TextButton", { Name = "Missions", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(10, 405), Size = UDim2.fromOffset(372, 255),
 		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.5, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	local clipHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(6, 4), Size = UDim2.fromOffset(48, 48), ZIndex = 3, Parent = missions })
@@ -268,12 +259,14 @@ function LobbyHud.Start()
 	local rows = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 58), Size = UDim2.fromOffset(372, 196), ZIndex = 3, Parent = missions })
 	missions.Activated:Connect(function() if LobbyUI then LobbyUI.Open("Missions") end end)
 	Kit.bindButton(missions, { hover = 1.02, press = 0.99 })
-	-- To Pads. (lobby revamp Phase B, Edward OK: one button system) a SECONDARY button: dark plate + field-green hairline,
+	-- To Pads. (lobby revamp Phase B, Edward OK: one button system) a SECONDARY button: dark plate + a field-green mark,
 	-- so the field-green fill belongs to PLAY alone (two green "go play" buttons confused kids)
+	-- (2026-10-21, AI-tells cleanup) the green hairline border became a solid field-green bar along the bottom edge
 	local toPads = new("TextButton", { Name = "ToPads", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(95, 686), Size = UDim2.fromOffset(204, 50), BackgroundColor3 = hex("#181A15"),
 		BackgroundTransparency = 0.15, Parent = root },
-		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }),
-			new("UIStroke", { Color = hex("#8DBF5A"), Thickness = 2, Transparency = 0.1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	new("Frame", { Name = "GoBar", Position = UDim2.fromOffset(8, 45), Size = UDim2.fromOffset(188, 5), BackgroundColor3 = hex("#8DBF5A"), BorderSizePixel = 0, ZIndex = 2, Parent = toPads },
+		{ new("UICorner", { CornerRadius = UDim.new(0, 2) }) })
 	local tp = Kit.label({ Text = "TO PADS", FontFace = WFONT, TextSize = 28, TextColor3 = hex("#ECE6D2"), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromOffset(204, 50), ZIndex = 3, Parent = toPads })
 	Kit.bindButton(toPads, { hover = 1.06 })
 	function LobbyHud.ToPads()
@@ -341,7 +334,7 @@ function LobbyHud.Start()
 	-- Replaces LobbyUI's old dock (its contents are hidden; the Dock frame stays as the "lobby is showing" signal).
 	local Icons = require(script.Parent:WaitForChild("LobbyUIController"):WaitForChild("Icons"))
 	local BAR = Color3.fromRGB(20, 18, 24)
-	local NAV_FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	local NAV_FONT = OSWALD -- (2026-10-21, AI-tells cleanup) nav words / badge counts in Oswald, the hover tip in Rubik (was Builder Sans)
 	local NAV = {
 		{ Id = "Kit", Label = "Kit", Tip = "Your gun, gadget, melee & cosmetics", Build = function()
 			local w = data and data.Loadout and data.Loadout.Weapon
@@ -372,7 +365,7 @@ function LobbyHud.Start()
 			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(62, 116), Size = UDim2.fromOffset(150, 32), ZIndex = 3, Parent = b })
 		new("UIStroke", { Thickness = 2.5, Transparency = 0.1, Parent = lbl })
 		local badge = new("Frame", { Name = "Badge", Visible = false, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(98, 12), Size = UDim2.fromOffset(30, 30),
-			BackgroundColor3 = Color3.fromRGB(235, 50, 50), ZIndex = 4, Parent = b }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 1.5, Transparency = 0.2 }) })
+			BackgroundColor3 = Color3.fromRGB(235, 50, 50), ZIndex = 4, Parent = b }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) }) -- (2026-10-21, AI-tells cleanup) no white hairline ring
 		local bl = Kit.label({ Text = "", FontFace = NAV_FONT, TextSize = 21, TextColor3 = Color3.new(1, 1, 1), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = badge })
 		navBadges[it.Id] = { f = badge, l = bl }
 		-- speech bubble (white, pointer down), shown on hover
@@ -380,7 +373,7 @@ function LobbyHud.Start()
 			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 10, Parent = b }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 		new("Frame", { Name = "Pointer", AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromScale(0.5, 1), Size = UDim2.fromOffset(16, 16),
 			BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 9, Parent = tip })
-		Kit.label({ Text = it.Tip, FontFace = NAV_FONT, TextSize = 21, TextColor3 = Color3.fromRGB(24, 24, 28), TextXAlignment = Enum.TextXAlignment.Center,
+		Kit.label({ Text = it.Tip, FontFace = BOLD, TextSize = 21, TextColor3 = Color3.fromRGB(24, 24, 28), TextXAlignment = Enum.TextXAlignment.Center,
 			Size = UDim2.fromScale(1, 1), ZIndex = 11, Parent = tip })
 		-- [PAD] (Edward 2026-10-20, RIVALS) the D-pad direction that opens it, beside the icon (shown with a controller)
 		local padGlyph = new("ImageLabel", { Name = "PadGlyph", BackgroundTransparency = 1, Visible = false, AnchorPoint = Vector2.new(0.5, 0.5),
@@ -542,7 +535,7 @@ function LobbyHud.Start()
 				BackgroundColor3 = Color3.fromRGB(235, 50, 50), Visible = false, ZIndex = 9, Parent = navM }, { new("UICorner", { CornerRadius = UDim.new(0.3, 0) }) })
 			new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, Position = UDim2.fromScale(0.5, 1), Size = UDim2.fromScale(0.07, 0.38),
 				SizeConstraint = Enum.SizeConstraint.RelativeYY, BackgroundColor3 = Color3.fromRGB(235, 50, 50), BorderSizePixel = 0, ZIndex = 8, Parent = call })
-			local t = new("TextLabel", { BackgroundTransparency = 1, Text = "Claim your reward!", FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold),
+			local t = new("TextLabel", { BackgroundTransparency = 1, Text = "Claim your reward!", FontFace = OSWALD, -- (2026-10-21, AI-tells cleanup) was Builder Sans
 				TextScaled = true, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromScale(0.06, 0.14), Size = UDim2.fromScale(0.88, 0.72), ZIndex = 10, Parent = call })
 			new("UITextSizeConstraint", { MaxTextSize = 22, Parent = t })
 			local home = call.Position
@@ -606,14 +599,14 @@ function LobbyHud.Start()
 			local done = e.prog >= e.def.Goal
 			local ic = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(4, y + 2), Size = UDim2.fromOffset(42, 42), ZIndex = 4, Parent = holder })
 			table.insert(art, { ic, e.def.Stat })
-			local t = Kit.label({ Text = e.def.Short or e.def.Text, FontFace = WFONT, TextSize = 24, TextColor3 = (e.claimed or done) and hex("#D9D6DA") or Color3.new(1, 1, 1),
+			local t = Kit.label({ Text = e.def.Short or e.def.Text, FontFace = BOLD, TextSize = 24, TextColor3 = (e.claimed or done) and hex("#D9D6DA") or Color3.new(1, 1, 1),
 				Position = UDim2.fromOffset(50, y), Size = UDim2.fromOffset(210, 30), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = holder })
 			new("UIStroke", { Thickness = 1.5, Transparency = 0.3, Parent = t })
 			local back = new("Frame", { Position = UDim2.fromOffset(50, y + 34), Size = UDim2.fromOffset(262, 7), BackgroundColor3 = Color3.new(0, 0, 0),
 				BackgroundTransparency = 0.45, ClipsDescendants = true, ZIndex = 4, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 			local frac = math.clamp(e.prog / e.def.Goal, 0, 1)
 			local wasFrac = hudFx.frac[e.def.Id] or frac
-			local fill = new("Frame", { Size = UDim2.fromScale(wasFrac, 1), BackgroundColor3 = done and hex("#FFD400") or hex("#ECE8DA"), ZIndex = 5, Parent = back },
+			local fill = new("Frame", { Size = UDim2.fromScale(wasFrac, 1), BackgroundColor3 = done and Theme.color.field or hex("#ECE8DA"), ZIndex = 5, Parent = back }, -- (2026-10-21, AI-tells cleanup) done = field green, was yellow
 				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 			if wasFrac ~= frac then table.insert(fills, { fill, frac }) end
 			hudFx.frac[e.def.Id] = frac
@@ -663,7 +656,7 @@ function LobbyHud.Start()
 				local mesh = icons and icons:FindFirstChild("Check")
 				if mesh then
 					local m = mesh:Clone()
-					for _, d in (m:IsA("BasePart") and { m } or m:GetDescendants()) do if d:IsA("BasePart") then d.Color = hex("#FFD400") end end
+					for _, d in (m:IsA("BasePart") and { m } or m:GetDescendants()) do if d:IsA("BasePart") then d.Color = Theme.color.field end end -- (2026-10-21, AI-tells cleanup) done check = field green, was yellow
 					VI.Viewport(h2, m, { zoom = 1.05, still = true })
 				end
 			else
@@ -719,7 +712,8 @@ function LobbyHud.Start()
 		local dv = (okBd and Bd and Bd.DeviceIcon) and Bd.DeviceIcon(p) or nil
 		if dv then
 			local nameText = p.DisplayName .. Bd.Suffix(p)
-			local w = game:GetService("TextService"):GetTextSize(nameText, 21, Enum.Font.BuilderSansBold, Vector2.new(400, 40)).X
+			-- (2026-10-21, AI-tells cleanup) names draw in Rubik now; Enum.Font has no Rubik, so measure with Arial (close widths, no yield)
+			local w = game:GetService("TextService"):GetTextSize(nameText, 21, Enum.Font.Arial, Vector2.new(400, 40)).X
 			Kit.new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, Image = dv, ScaleType = Enum.ScaleType.Fit,
 				Position = UDim2.fromOffset(math.min(44 + w + 6, 222), 11), Size = UDim2.fromOffset(18, 18), Parent = row })
 		end
@@ -1010,7 +1004,7 @@ function LobbyHud.Start()
 		if seek.Visible then
 			local def = Config.QueueById and Config.QueueById(q)
 			seekMode.Text = "SEARCHING  " .. (def and (string.upper(def.Mode) .. (def.Ranked and " RANKED" or "")) or "")
-			seekMode.TextColor3 = (def and def.Ranked) and hex("#B078FF") or BONE
+			seekMode.TextColor3 = (def and def.Ranked) and Color3.fromRGB(150, 116, 52) or BONE -- (2026-10-21, AI-tells cleanup) ranked = dark gold, was violet
 			k += dt
 			local step = math.floor(k / 0.25) % 3
 			for i, m in seekMarks do m.BackgroundTransparency = (i - 1) == step and 0 or 0.65 end

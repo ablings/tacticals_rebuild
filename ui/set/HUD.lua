@@ -360,7 +360,7 @@ local function abilityHud()
 		p.Position = UDim2.fromScale((i - 1) * 0.36, 0)
 		p.Size = UDim2.fromScale(0.28, 1)
 		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = p
-		local s = Instance.new("UIStroke"); s.Thickness = 1; s.Transparency = 0.5; s.Parent = p
+		-- (2026-10-21, AI-tells cleanup) no 1 px hairline round the pips; the white fill reads on its own
 		local sc = Instance.new("UIScale"); sc.Parent = p
 		p.Parent = row
 		pips[i] = { f = p, sc = sc, on = false }
@@ -386,9 +386,9 @@ local function abilityHud()
 	takedown.Position = UDim2.fromScale(0.5, 0.4)
 	takedown.Size = UDim2.fromScale(0.4, 0.09)
 	takedown.TextScaled = true
-	takedown.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+	takedown.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Builder Sans
 	takedown.Text = "TAKEDOWN"
-	takedown.TextColor3 = Color3.fromRGB(255, 205, 60)
+	takedown.TextColor3 = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) label: yellow -> cream
 	takedown.Visible = false
 	takedown.ZIndex = 16
 	local ts = Instance.new("UIStroke"); ts.Thickness = 3; ts.Transparency = 0.1; ts.Parent = takedown
@@ -423,7 +423,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 				TweenService:Create(p.sc, TweenInfo.new(0.2, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 			end
 			p.on = on
-			p.f.BackgroundColor3 = on and Color3.fromRGB(255, 205, 60) or Color3.new(1, 1, 1)
+			p.f.BackgroundColor3 = on and Color3.fromRGB(141, 191, 90) or Color3.new(1, 1, 1) -- (2026-10-21, AI-tells cleanup) stack filled: field green
 			p.f.BackgroundTransparency = on and 0 or 0.7
 		end
 		lastStacks = stacks
@@ -434,7 +434,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 	if ready ~= lastReady then
 		lastReady = ready
 		TweenService:Create(ring, TweenInfo.new(0.18, Enum.EasingStyle.Quad), { Size = UDim2.fromScale(ready and 0.045 or 0.07, ready and 0.045 or 0.07) }):Play()
-		TweenService:Create(ringStroke, TweenInfo.new(0.18), { Color = ready and Color3.fromRGB(255, 205, 60) or Color3.new(1, 1, 1), Transparency = ready and 0 or 0.6,
+		TweenService:Create(ringStroke, TweenInfo.new(0.18), { Color = ready and Color3.fromRGB(141, 191, 90) or Color3.new(1, 1, 1), Transparency = ready and 0 or 0.6, -- (2026-10-21, AI-tells cleanup) ready: field green
 			Thickness = ready and 3 or 2 }):Play()
 	end
 end)
@@ -469,8 +469,9 @@ do
 		BAT_TIME = M.Weapons.Bat.Charge.Time or BAT_TIME
 		SHIELD_MAX = M.Weapons.RiotShield.Shield.Health or SHIELD_MAX
 	end)
-	local GOLD, GREEN, RED, CYAN = Color3.fromRGB(255, 205, 60), Color3.fromRGB(90, 190, 255), Color3.fromRGB(235, 70, 60), Color3.fromRGB(120, 220, 255)
-	local FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+	-- (2026-10-21, AI-tells cleanup) GOLD (Bat fully charged = ready) is field green now, name kept; FONT is Oswald Bold
+	local GOLD, GREEN, RED, CYAN = Color3.fromRGB(141, 191, 90), Color3.fromRGB(90, 190, 255), Color3.fromRGB(235, 70, 60), Color3.fromRGB(120, 220, 255)
+	local FONT = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 	local items -- built lazily inside the ability layer
 	local function corner(o) local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = o end
 	-- a rounded labelled bar: { box, fill, label }
@@ -486,7 +487,7 @@ do
 		box.Visible = false
 		box.ZIndex = 15
 		corner(box)
-		local st = Instance.new("UIStroke"); st.Thickness = 1; st.Transparency = 0.6; st.Parent = box
+		-- (2026-10-21, AI-tells cleanup) hairline border removed; the dark track separates it
 		local fill = Instance.new("Frame")
 		fill.Name = "Fill"
 		fill.BackgroundColor3 = color

@@ -23,9 +23,11 @@ local Notify = {}
 -- white silhouette icons (rbxassetid) as they get uploaded; nil = the drawn fallback
 Notify.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134680054948193", elims = "rbxassetid://87495411854172", inbox = "rbxassetid://106780166776464", level = "rbxassetid://122349404580689", news = "rbxassetid://98784760577764", play = "rbxassetid://112398761342835", rank = "rbxassetid://127088807913977", scissors = "rbxassetid://124651407398623", settings = "rbxassetid://77423905055797", streak = "rbxassetid://89001729086571", trophy = "rbxassetid://112797256867777" } -- (Gunsy Funsy uploads of ui/art/icons, 2026-10-18)
 
-local FX = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local GREEN = Color3.fromRGB(255, 212, 0) -- (2026-10-20 palette: the accent, no green)
+-- (2026-10-21, AI-tells cleanup) Builder Sans -> Oswald Bold (titles, counts) / Rubik SemiBold (sub lines, chips, tips);
+-- the check / done colour is field green #8DBF5A (was the #FFD400 yellow), the reward icon cream #ECE6D2
+local FX = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
+local GREEN = Color3.fromRGB(141, 191, 90) -- field green: done
 local GREY = Color3.fromRGB(190, 190, 194)
 local PILL = Color3.fromRGB(18, 19, 21)
 
@@ -80,7 +82,7 @@ local function rewardBox(parent, r, x, y)
 	elseif r.kind == "Level" then
 		icon(box, "level", 8, 0, 54, Color3.fromRGB(90, 170, 255), 4)
 	else
-		icon(box, r.kind == "Scissors" and "scissors" or "check", 8, 0, 54, Color3.fromRGB(255, 205, 60), 4)
+		icon(box, r.kind == "Scissors" and "scissors" or "check", 8, 0, 54, Color3.fromRGB(236, 230, 210), 4) -- cream (was yellow)
 	end
 	if r.count then
 		local c = txt(box, (r.kind == "Level" and "" or "×") .. tostring(r.count), FX, 28, 0, 42, 70, 30, nil, nil, 5) -- (a level shows its number)

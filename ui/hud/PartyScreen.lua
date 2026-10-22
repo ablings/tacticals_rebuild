@@ -22,9 +22,10 @@ local Kit = require(UIKit:WaitForChild("Kit"))
 local new, hex = Kit.new, Theme.hex
 local player = Players.LocalPlayer
 
-local BUILDER = "rbxasset://fonts/families/BuilderSans.json"
-local F_NAME = Font.new(BUILDER, Enum.FontWeight.Bold)
-local F_SUB = Font.new(BUILDER, Enum.FontWeight.Medium)
+-- (2026-10-21, AI-tells cleanup) Builder Sans is out: names / body in Rubik (F_NAME bold, F_SUB medium); button words in Oswald (F_HEAD)
+local RUBIK = "rbxassetid://12187365977"
+local F_NAME = Font.new(RUBIK, Enum.FontWeight.Bold)
+local F_SUB = Font.new(RUBIK, Enum.FontWeight.Medium)
 local F_HEAD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold) -- (2026-10-21, RIVALS pass) Edward's final font decision: Oswald Bold headings (Montserrat read as AI-made)
 local BONE, FIELD, GUN, DEEP = hex("#ECE8DA"), hex("#969C8C"), hex("#1A1D1A"), hex("#0C0E0B")
 local OLIVE, OLIVE_HI, GOLD = hex("#4C7A2E"), hex("#8DBF5A"), hex("#E9C46A")
@@ -88,7 +89,7 @@ local function actionButton(card, x, y, text, kind, uid, colors, onPress)
 	local b = new("TextButton", { Name = kind, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(ACT_W, ACT_H),
 		BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 4, Parent = card }, { Kit.corner(6) })
 	local g = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(colors[1], colors[2]), Parent = b })
-	local l = label(b, text, F_NAME, 24, 0, 0, ACT_W, ACT_H, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
+	local l = label(b, text, F_HEAD, 24, 0, 0, ACT_W, ACT_H, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
 	new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.2, Transparency = 0.5, Parent = l })
 	local tickHolder = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(36, 36), Visible = false, ZIndex = 5, Parent = b })
 	tick(tickHolder, Color3.new(1, 1, 1))
@@ -134,20 +135,20 @@ end
 local CARD_H, CARD_H_BTN = 108, 150
 local function personCard(parent, x, y, w, pp, opts)
 	local c = new("Frame", { Name = tostring(pp.uid), Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, opts.buttons and CARD_H_BTN or CARD_H), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
-		ZIndex = 3, Parent = parent }, { Kit.corner(10), new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 0.88, Thickness = 1.5 }) })
+		ZIndex = 3, Parent = parent }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) hairline border removed; the dark fill separates the card
 	local hs = new("ImageLabel", { BackgroundColor3 = GUN, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(64, 64), ZIndex = 4, Parent = c }, { Kit.corner(8) })
 	headshot(hs, pp.uid)
 	label(c, pp.name, F_NAME, 22, 86, 10, w - 96, 28, BONE, nil, 4)
 	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 15, 86, 38, w - 96, 20, FIELD, nil, 4)
 	if opts.crown then
-		-- (2026-10-18, live RIVALS) the leader: a gold crown on the headshot's corner (drawn: BuilderSans has no crown glyph)
+		-- (2026-10-18, live RIVALS) the leader: a gold crown on the headshot's corner (drawn: the font has no crown glyph)
 		Kit.crown(hs, UDim2.fromScale(0.86, 0.1), UDim2.fromScale(0.62, 0.48), 6)
 	end
 	if opts.leave then
 		-- your own card while you're in a party: a red Leave on it (RIVALS)
 		local lb = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(w - 112, 64), Size = UDim2.fromOffset(100, 36),
 			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 5, Parent = c }, { Kit.corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#E8463A"), hex("#9C1E16")) }) })
-		label(lb, "Leave", F_NAME, 20, 0, 0, 100, 36, BONE, Enum.TextXAlignment.Center, 6)
+		label(lb, "Leave", F_HEAD, 20, 0, 0, 100, 36, BONE, Enum.TextXAlignment.Center, 6)
 		Kit.bindButton(lb, { hover = 1.06 })
 		lb.Activated:Connect(function() local r = party(); if r then r:FireServer("Leave") end end)
 	end
@@ -209,8 +210,8 @@ local function renderParty()
 		else
 			-- an empty slot: a dashed-feel dim card with "+ Invite"; clicking it jumps to the Friends tab
 			local slot = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(0, (i - 1) * 118), Size = UDim2.fromOffset(340, 108),
-				BackgroundColor3 = DEEP, BackgroundTransparency = 0.6, ZIndex = 3, Parent = col }, { Kit.corner(10), new("UIStroke", { Color = OLIVE_HI, Transparency = 0.7, Thickness = 1.5 }) })
-			label(slot, "+  Invite", F_NAME, 22, 0, 0, 340, 108, FIELD, Enum.TextXAlignment.Center, 4)
+				BackgroundColor3 = DEEP, BackgroundTransparency = 0.6, ZIndex = 3, Parent = col }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) no thin green border: the dimmer fill marks it empty
+			label(slot, "+  Invite", F_HEAD, 22, 0, 0, 340, 108, FIELD, Enum.TextXAlignment.Center, 4)
 			slot.Activated:Connect(function() PartyScreen.SetTab("Friends") end)
 		end
 	end
@@ -283,12 +284,12 @@ local function build()
 	canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), Parent = canvas })
 	-- left
-	new("Frame", { BorderSizePixel = 0, BackgroundColor3 = OLIVE, Position = UDim2.fromOffset(296, 150), Size = UDim2.fromOffset(10, 56), Parent = root })
+	-- (2026-10-21, AI-tells cleanup) the olive left-edge bar beside YOUR PARTY is gone (AI tell)
 	label(root, "YOUR PARTY", F_HEAD, 52, 318, 142, 400, 70, BONE)
 	col = new("Frame", { Name = "Members", BackgroundTransparency = 1, Position = UDim2.fromOffset(300, 230), Size = UDim2.fromOffset(340, 5 * 118), Parent = root })
 	local leave = new("TextButton", { Name = "LeaveParty", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(300, 830), Size = UDim2.fromOffset(340, 56),
 		BackgroundColor3 = hex("#8E2A24"), Visible = false, Parent = root }, { Kit.corner(10) })
-	label(leave, "Leave Party", F_NAME, 24, 0, 0, 340, 56, BONE, Enum.TextXAlignment.Center, 3)
+	label(leave, "Leave Party", F_HEAD, 24, 0, 0, 340, 56, BONE, Enum.TextXAlignment.Center, 3)
 	Kit.bindButton(leave, { hover = 1.04 })
 	leave.Activated:Connect(function() local r = party(); if r then r:FireServer("Leave") end end)
 	-- right
@@ -300,7 +301,7 @@ local function build()
 		local x = 1134 + (i == 1 and 0 or (i == 2 and 106 or 244))
 		local b = new("TextButton", { Name = t[1], Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, 156), Size = UDim2.fromOffset(t[2], 54), BackgroundColor3 = BONE,
 			Parent = root }, { Kit.corner(10) })
-		local l = label(b, t[1], F_NAME, 24, 0, 0, t[2], 54, DEEP, Enum.TextXAlignment.Center, 3)
+		local l = label(b, t[1], F_HEAD, 24, 0, 0, t[2], 54, DEEP, Enum.TextXAlignment.Center, 3)
 		tabBtns[t[1]] = { b = b, l = l }
 		Kit.bindButton(b, { hover = 1.04 }) -- (2026-10-21, RIVALS pass) the tabs answer hover / press too
 		b.Activated:Connect(function() PartyScreen.SetTab(t[1]) end)

@@ -12,7 +12,7 @@ local Request, QueueState = Lobby:WaitForChild("Request"), Lobby:WaitForChild("Q
 local Kit = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("Kit")) -- (2026-10-21, RIVALS pass) shared pop / popIn
 
 local BONE, FIELD, OLIVE, GUN, GUN2 = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(107, 122, 58), Color3.fromRGB(20, 23, 20), Color3.fromRGB(34, 38, 32)
-local VIOLET = Color3.fromRGB(176, 120, 255)
+local VIOLET = Color3.fromRGB(150, 116, 52) -- (2026-10-21, AI-tells cleanup) ranked: muted dark gold (was violet 176,120,255)
 -- [PolishDuels] team colours match the floor: team A cream, team B olive
 local TEAM_A, TEAM_B = Color3.fromRGB(236, 232, 218), Color3.fromRGB(157, 176, 90) -- (2026-10-20, Edward) olive back
 -- (2026-10-21, RIVALS pass) the game's font decision (Edward): Oswald Bold for big words / numbers (was Montserrat Heavy)

@@ -49,7 +49,9 @@ local TIPS = { "Peek from cover: you're only exposed while you aim", "Throw a sm
 
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
-local OLIVE, OLIVE_HI = Color3.fromRGB(255, 212, 0), Color3.fromRGB(255, 212, 0)
+-- (2026-10-21, AI-tells cleanup) the literal comic yellow is out: field green (Theme.color.field); selected states are field green / cream
+local OLIVE, OLIVE_HI = Color3.fromRGB(141, 191, 90), Color3.fromRGB(141, 191, 90)
+local FIELD = OLIVE
 local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) }  -- (2026-10-20, Edward: "serious", like the old bone/olive but better) us: warm beige
 local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) }     -- them: muted dark green
 -- (2026-10-20, the RIVALS mix) the muted fills RIVALS-style boxes use (same as DuelHUD)
@@ -59,12 +61,12 @@ TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
 -- panels, calmer: Montserrat Heavy headlines, Builder Sans body, hairline white edges, no tilts or drop shadows; "selected"
 -- is a warm white; team colours (beige / green) only as accents
 -- (2026-10-21, RIVALS pass) Edward's final font decision: headings / big words / numbers in Oswald Bold (was Montserrat Heavy),
--- small / body text in Rubik (FR). Builder Sans (FB) stays on the old body text until the integrator's font pass.
+-- small / body text in Rubik (FR). (2026-10-21, AI-tells cleanup) FB is Rubik Bold now (was Builder Sans).
 local FX = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local FR = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local STENCIL = FX
-local INK_YELLOW = Color3.fromRGB(240, 232, 212) -- (serious pass) selected: warm white, not comic yellow
+local INK_YELLOW = Color3.fromRGB(236, 230, 210) -- (serious pass) selected: warm white, not comic yellow ((2026-10-21, AI-tells cleanup) = cream #ECE6D2)
 local PANEL_T = 0.35 -- RIVALS-style see-through
 
 local function new(class, props, kids)
@@ -82,12 +84,10 @@ local function label(parent, text, font, size, x, y, w, h, color, align, z)
 	new("UIStroke", { Thickness = math.max(1, size / 30), Transparency = 0.55, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
 	return l
 end
--- ink (serious pass, 2026-10-20): a hairline white edge (Sniper Duels' tiles). The old drop-shadow sibling is still made
--- (callers hold it) but it draws nothing.
+-- ink (serious pass, 2026-10-20): was a hairline white edge (Sniper Duels' tiles). (2026-10-21, AI-tells cleanup) the hairline
+-- UIStroke is gone (corner + thin stroke read as AI-made); the fills alone separate the boxes. The old drop-shadow sibling
+-- is still made (callers hold it) but it draws nothing.
 local function ink(target, off, thick)
-	if (thick or 4) > 0 then
-		new("UIStroke", { Color = WHITE, Transparency = 0.82, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = target })
-	end
 	local r = target:FindFirstChildOfClass("UICorner")
 	local sh = new("Frame", { Name = target.Name .. "Shadow", BackgroundColor3 = BLACK, BackgroundTransparency = 1, BorderSizePixel = 0,
 		Position = target.Position + UDim2.fromOffset(off or 8, off or 8), Size = target.Size, Rotation = target.Rotation,
@@ -276,7 +276,8 @@ local function buildMaps(list)
 			BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ClipsDescendants = true, ZIndex = 2, Parent = mapHolder }, { corner(6) })
 		ink(t, 12, 0)
 		local edgeCol = Color3.fromRGB(70, 72, 78) -- (serious pass) a quiet grey edge; your vote turns it beige
-		local edge = new("UIStroke", { Color = edgeCol, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
+		-- (2026-10-21, AI-tells cleanup) no hairline edge at rest: the ring shows (3 px, beige) only on your vote / the winner
+		local edge = new("UIStroke", { Color = edgeCol, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
 		if m.random then
 			label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
 		elseif m.image and m.image ~= "" then
@@ -351,7 +352,7 @@ refreshVotes = function()
 			if k > 6 then break end
 			local img = new("ImageLabel", { BackgroundColor3 = WHITE, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = tile.voters },
 				{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIAspectRatioConstraint", { AspectRatio = 1, DominantAxis = Enum.DominantAxis.Height }),
-					new("UIStroke", { Color = uid == player.UserId and WHITE or BLACK, Thickness = 2 }) })
+					uid == player.UserId and new("UIStroke", { Color = WHITE, Thickness = 3 }) or nil }) -- (2026-10-21, AI-tells cleanup) only your head is ringed, thick
 			if heads[uid] then img.Image = heads[uid] else task.spawn(function()
 				local ok2, im = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
 				if ok2 then heads[uid] = im; img.Image = im end
@@ -364,7 +365,8 @@ refreshVotes = function()
 		if Kit and countText ~= tile.count.Text and countText ~= "" then Kit.pop(tile.count) end
 		tile.count.Text = countText
 		tile.edge.Color = hasMe and TEAM_A[1] or tile.col
-		tile.edge.Thickness = hasMe and 3 or 1.5
+		tile.edge.Thickness = 3
+		tile.edge.Transparency = hasMe and 0 or 1
 	end
 end
 
@@ -565,7 +567,7 @@ for i, s2 in SLOTS do
 end
 
 -- slot tabs
-local TAB_W, TAB_GAP = 250, 10 -- (2026-10-20) wide enough for "MELEE  ·  SET" in Montserrat
+local TAB_W, TAB_GAP = 250, 10 -- (2026-10-20) wide enough for "MELEE  ·  SET" (Oswald now)
 local tabX = 960 - (#SLOTS * TAB_W + (#SLOTS - 1) * TAB_GAP) / 2
 local tabs = {}
 for i, s2 in SLOTS do
@@ -583,7 +585,7 @@ local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromO
 	BorderSizePixel = 0, ScrollBarThickness = 6, ScrollBarImageColor3 = GREY, ScrollingDirection = Enum.ScrollingDirection.Y, CanvasSize = UDim2.new(), Parent = lo })
 local list = optArea
 local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1500, 900), Size = UDim2.fromOffset(300, 80),
-	BackgroundColor3 = INK_YELLOW, Visible = false, ZIndex = 2, Parent = lo }, { corner(6) })
+	BackgroundColor3 = FIELD, Visible = false, ZIndex = 2, Parent = lo }, { corner(6) }) -- (2026-10-21, AI-tells cleanup) ready = field green
 ink(ready, 10, 6)
 local readyL = label(ready, "READY!", FX, 56, 0, 0, 300, 80, BLACK)
 for _, k in readyL:GetChildren() do if k:IsA("UIStroke") then k.Color = WHITE; k.Thickness = 2 end end
@@ -616,7 +618,7 @@ local function refreshChips()
 	end
 	for i, t in tabs do
 		local on = i == step and optArea.Visible
-		t.b.BackgroundColor3 = on and INK_YELLOW or BLACK
+		t.b.BackgroundColor3 = on and FIELD or BLACK -- (2026-10-21, AI-tells cleanup) the open tab: field green fill, not the yellow
 		t.b.BackgroundTransparency = on and 0 or PANEL_T
 		t.l.TextColor3 = on and BLACK or WHITE
 		local ts = t.l:FindFirstChildOfClass("UIStroke"); if ts then ts.Color = on and WHITE or BLACK end
@@ -701,7 +703,8 @@ function showStep(i)
 		else
 			local tile = optionTile(content, x, y, e.id, nameOf(e.id), function() pick(e.id) end, e.kind)
 			if picks[slot] == e.id then
-				for _, k in tile:GetChildren() do if k:IsA("UIStroke") then k.Color = INK_YELLOW; k.Thickness = 6 end end
+				-- (2026-10-21, AI-tells cleanup) ink() no longer adds an edge: the current pick gets its own thick cream ring
+				new("UIStroke", { Color = INK_YELLOW, Thickness = 6, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = tile })
 			end
 		end
 	end
@@ -815,8 +818,9 @@ local function onChosen()
 	local tile = mapTiles[st(STATE.Chosen) or ""]
 	if tile and phase == "MapVote" then
 		task.spawn(function()
-			for _ = 1, 3 do tile.edge.Color = TEAM_A[1]; tile.edge.Thickness = 4; task.wait(0.15); tile.edge.Color = tile.col; task.wait(0.15) end
-			tile.edge.Color = TEAM_A[1]
+			-- (2026-10-21, AI-tells cleanup) the ring blinks on / off (no grey hairline at rest any more)
+			for _ = 1, 3 do tile.edge.Color = TEAM_A[1]; tile.edge.Thickness = 4; tile.edge.Transparency = 0; task.wait(0.15); tile.edge.Transparency = 1; task.wait(0.15) end
+			tile.edge.Color = TEAM_A[1]; tile.edge.Transparency = 0
 		end)
 	end
 end

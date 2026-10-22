@@ -22,19 +22,21 @@ local player = Players.LocalPlayer
 local padSettings: (() -> ())? = nil -- [PAD] hold View / Select = Settings in a match (set where Settings is built)
 local W, H = 1920, 1080
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
-local OLIVE_HI = Color3.fromRGB(255, 212, 0)
+local OLIVE_HI = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) was comic yellow; now cream (labels). The rank bar fill is field green inline
 local TEAM_A = { Color3.fromRGB(233, 220, 188), Color3.fromRGB(191, 165, 122) } -- (2026-10-20, Edward: "serious", like the old bone/olive but better) us: warm beige
 local TEAM_B = { Color3.fromRGB(110, 140, 98), Color3.fromRGB(47, 74, 55) } -- them: muted dark green
 -- (2026-10-20, Edward: "a mix" of RIVALS + Sniper / Murder Duels) RIVALS fills its score boxes, round card, kill feed pills and
 -- killer card with the side's colour; ours use these muted fills (tan / dark green) so white text stays readable
 TEAM_A.fill = { Color3.fromRGB(176, 156, 116), Color3.fromRGB(118, 98, 68) }
 TEAM_B.fill = { Color3.fromRGB(88, 114, 78), Color3.fromRGB(38, 58, 44) }
-local GOOD, BAD = Color3.fromRGB(255, 212, 0), Color3.fromRGB(235, 70, 60)
+local GOOD, BAD = Color3.fromRGB(141, 191, 90), Color3.fromRGB(235, 70, 60) -- (2026-10-21, AI-tells cleanup) GOOD: yellow -> field green #8DBF5A
 -- (2026-10-20, Edward: "a mixture of the rivals ui and sniper duels / murder duels seriousness") RIVALS' layout and see-through
--- panels in a calmer dress: Montserrat Heavy headlines, Builder Sans body, hairline edges, team colour only as an accent.
+-- panels in a calmer dress, team colour only as an accent.
+-- (2026-10-21, AI-tells cleanup) Oswald Bold headlines / numbers, Rubik body (was Montserrat Heavy + Builder Sans); no hairline
+-- panel borders, no left accent bars.
 -- The SERIOUS pass at the end of this script applies it to everything (it replaced the comic style D pass).
-local FX = Font.new("rbxasset://fonts/families/Montserrat.json", Enum.FontWeight.Heavy)
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+local FX = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local STENCIL = FX
 
 ---------------------------------------------------------------------------------------------------- state
@@ -138,10 +140,9 @@ local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UD
 
 ---------------------------------------------------------------------------------------------------- score bar
 local function teamBox(x, cols, right)
-	-- (2026-10-20, the RIVALS mix) RIVALS' box filled with the side's colour (muted tan / dark green), white score, hairline edge
+	-- (2026-10-20, the RIVALS mix) RIVALS' box filled with the side's colour (muted tan / dark green), white score
 	local b = new("Frame", { Position = UDim2.fromOffset(x, 20), Size = UDim2.fromOffset(300, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.08, Parent = root },
-		{ corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols.fill[1], cols.fill[2]) }),
-			new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.85, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		{ corner(10), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(cols.fill[1], cols.fill[2]) }) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
 	local slots = {}
 	for i = 1, 3 do
 		local hx = right and (96 + (i - 1) * 64) or (14 + (i - 1) * 64)
@@ -164,8 +165,7 @@ end
 local mineBox = teamBox(580, TEAM_A, false)
 local theirBox = teamBox(1040, TEAM_B, true)
 local timerBox = new("Frame", { Position = UDim2.fromOffset(888, 20), Size = UDim2.fromOffset(144, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = root }, { corner(10),
-	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(46, 48, 52), Color3.fromRGB(12, 13, 15)) }),
-	new("UIStroke", { Color = Color3.new(1, 1, 1), Thickness = 2, Transparency = 0.75, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(46, 48, 52), Color3.fromRGB(12, 13, 15)) }) })
 local timerL = label(timerBox, "0:00", FX, 40, 0, 4, 144, 50, WHITE)
 -- (2026-10-18) the hourglass shown left of the time between rounds: top and bottom caps, two crossing glass sides
 do local hourglass = new("Frame", { Name = "Hourglass", BackgroundTransparency = 1, Position = UDim2.fromOffset(18, 12), Size = UDim2.fromOffset(24, 36), Visible = false, ZIndex = 4, Parent = timerBox })
@@ -245,7 +245,13 @@ local function addKill(d)
 	local function sideOf(uid) return uid == player.UserId or teamOf(uid) == myTeam end
 	local ROW_W = 480 -- the feed's design width
 	local row = new("Frame", { LayoutOrder = -feedN, Size = UDim2.fromScale(1, 0.15), BackgroundTransparency = 1, Parent = feed })
-	local function textW(txt, size) return game:GetService("TextService"):GetTextSize(txt, size, Enum.Font.BuilderSansBold, Vector2.new(1000, 100)).X end
+	local function textW(txt, size) -- (2026-10-21, AI-tells cleanup) measured in the pill's own font (FB, Rubik), not Builder Sans
+		local ok, w = pcall(function()
+			local prm = Instance.new("GetTextBoundsParams"); prm.Text, prm.Font, prm.Size, prm.Width = txt, FB, size, 1000
+			return game:GetService("TextService"):GetTextBoundsAsync(prm).X
+		end)
+		return ok and w or #txt * size * 0.55
+	end
 	local verb = ({ Takedown = "took down", Melee = "bashed", Explosion = "blew up", StickyGrenade = "blew up", Landmine = "blew up", Burn = "burned" })[d.kind] or ">"
 	local tool
 	if typeof(d.weapon) == "string" and d.kind ~= "Takedown" then
@@ -282,7 +288,7 @@ local function addKill(d)
 		new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(GAP / total, 0), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	if d.killer == player.UserId or d.victim == player.UserId then
-		new("UIStroke", { Color = WHITE, Thickness = 1.5, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = pill })
+		new("UIStroke", { Color = WHITE, Thickness = 3, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = pill }) -- (2026-10-21, AI-tells cleanup) your kill: thick ring, not a hairline
 	end
 	for i, part in parts do
 		local kind, v, w = part[1], part[2], part[3] / total
@@ -339,7 +345,7 @@ end
 -- SpectateTarget = killer UserId (SpectateReason "Killer") until the next round. The card: "KILLED BY" in red (or
 -- "SPECTATING"), the killer's headshot, name, live health bar and how they got you; Q / E (or the arrows) still cycle.
 local specBar = new("Frame", { Name = "Spectate", Position = UDim2.fromOffset(620, 900), Size = UDim2.fromOffset(680, 120), BackgroundColor3 = BLACK,
-	BackgroundTransparency = 0.3, Visible = false, Parent = root }, { corner(14), new("UIStroke", { Color = WHITE, Transparency = 0.85, Thickness = 1.5 }) })
+	BackgroundTransparency = 0.3, Visible = false, Parent = root }, { corner(14) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
 local specHead = new("ImageLabel", { BackgroundColor3 = Color3.fromRGB(30, 34, 28), Position = UDim2.fromOffset(96, 14), Size = UDim2.fromOffset(92, 92), Parent = specBar }, { corner(10) })
 local specTitle = label(specBar, "SPECTATING", STENCIL, 24, 206, 8, 380, 30, Color3.fromRGB(205, 205, 212))
 specTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -762,7 +768,7 @@ local bar = new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2
 	{ new("UICorner", { CornerRadius = UDim.new(0.12, 0) }) })
 local track = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(40, 40, 44), Position = UDim2.fromScale(0.08, 0.68), Size = UDim2.fromScale(0.84, 0.12), Parent = bar },
 	{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
-local fill = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = OLIVE_HI, Size = UDim2.fromScale(0, 1), Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
+local fill = new("Frame", { BorderSizePixel = 0, BackgroundColor3 = Color3.fromRGB(141, 191, 90), Size = UDim2.fromScale(0, 1), Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }) }) -- (2026-10-21, AI-tells cleanup) progress: field green
 local leftEmb = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.05, 0.5), Size = UDim2.fromScale(1.1, 1.1),
 	SizeConstraint = Enum.SizeConstraint.RelativeYY, ZIndex = 2, Parent = bar })
 local rightEmb = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.95, 0.5), Size = UDim2.fromScale(1.1, 1.1),
@@ -779,11 +785,11 @@ local eloCap = new("TextLabel", { BackgroundTransparency = 1, Text = "Your ELO",
 	Size = UDim2.fromScale(0.2, 0.22), Parent = bar })
 local eloNum = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.4, 0.24), Size = UDim2.fromScale(0.2, 0.44), Parent = bar })
 
--- buttons (RIVALS layout; 2026-10-20 serious pass: flat dark plates with a hairline edge, Sniper / Murder Duels)
+-- buttons (RIVALS layout; 2026-10-20 serious pass: flat dark plates, Sniper / Murder Duels; no hairline edge since 2026-10-21)
 local function bigButton(name, text, sub, pos)
 	local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(0, 1), Position = pos, Size = UDim2.fromScale(0.132, 0.078),
-		BackgroundColor3 = Color3.fromRGB(18, 19, 23), BackgroundTransparency = 0.2, Parent = rcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.08, 0) }),
-		new("UIStroke", { Color = WHITE, Transparency = 0.75, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) }) -- (serious pass) flat dark plate, hairline edge
+		BackgroundColor3 = Color3.fromRGB(18, 19, 23), BackgroundTransparency = 0.2, Parent = rcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.08, 0) }) })
+		-- (2026-10-21, AI-tells cleanup) flat dark plate, hairline edge removed (Rematch gets a thick VotedEdge in styleRematch)
 	local t = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.08, sub and 0.1 or 0.18),
 		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
 	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.2, 0.62),
@@ -875,12 +881,11 @@ local function styleRematch(btn, title, sub)
 	btn.BackgroundTransparency = allowed and 0 or 0.6
 	title.TextTransparency = allowed and 0 or 0.6
 	sub.TextTransparency = allowed and 0 or 0.6
-	local stroke = btn:FindFirstChildOfClass("UIStroke")
-	if stroke then -- (serious pass) hairline white; solid beige (our colour) once voted
-		stroke.Color = (allowed and voted) and TEAM_A[1] or WHITE
-		stroke.Transparency = (allowed and voted) and 0 or 0.75
-		stroke.Thickness = (allowed and voted) and 2.5 or 1.5
-	end
+	-- (2026-10-21, AI-tells cleanup) no hairline at rest; a thick (3 px) beige ring only once voted (it carries the state)
+	local stroke = btn:FindFirstChild("VotedEdge") or new("UIStroke", { Name = "VotedEdge", ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Color = TEAM_A[1],
+		Thickness = 3, Transparency = 1, Parent = btn })
+	stroke.Color, stroke.Thickness = TEAM_A[1], 3
+	stroke.Transparency = (allowed and voted) and 0 or 1
 	local startsAt = st("RematchStartsAt")
 	if not allowed then
 		sub.Text = tostring(st("RematchReason") or "Unavailable")
@@ -1016,8 +1021,8 @@ local pcanvas = new("Frame", { Name = "Canvas", BackgroundTransparency = 1, Anch
 	{ new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
 local function panelButton(name, text, sub, y)
 	local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromScale(0.992, y), Size = UDim2.fromScale(0.118, 0.066),
-		BackgroundColor3 = Color3.fromRGB(18, 19, 23), BackgroundTransparency = 0.2, Parent = pcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.08, 0) }),
-		new("UIStroke", { Color = WHITE, Transparency = 0.75, Thickness = 1.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) }) -- (serious pass) flat dark plate, hairline edge
+		BackgroundColor3 = Color3.fromRGB(18, 19, 23), BackgroundTransparency = 0.2, Parent = pcanvas }, { new("UICorner", { CornerRadius = UDim.new(0.08, 0) }) })
+		-- (2026-10-21, AI-tells cleanup) flat dark plate, hairline edge removed
 	local t = new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = FX, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.08, sub and 0.1 or 0.18),
 		Size = UDim2.fromScale(0.84, sub and 0.52 or 0.64), Parent = b }, { new("UIStroke", { Thickness = 1.5, Transparency = 0.4 }) })
 	local st2 = sub and new("TextLabel", { BackgroundTransparency = 1, Text = sub, FontFace = FB, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.15, 0.62),
@@ -1159,8 +1164,7 @@ local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(11
 local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(20, 26), Size = UDim2.fromOffset(104, 104), ZIndex = 7, Parent = kcard }, { corner(52) })
 local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(32, 12), Size = UDim2.fromOffset(80, 10), ZIndex = 8, Parent = kcard }, { corner(5) })
 local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1), ZIndex = 9, Parent = kHpBack }, { corner(5) })
-local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(8, 92), Size = UDim2.fromOffset(44, 44), ZIndex = 9, Parent = kcard }, { corner(22),
-	new("UIStroke", { Color = WHITE, Thickness = 2 }) })
+local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(8, 92), Size = UDim2.fromOffset(44, 44), ZIndex = 9, Parent = kcard }, { corner(22) }) -- (2026-10-21, AI-tells cleanup) hairline ring removed
 local kLevelL = label(kLevel, "1", FX, 24, 0, 0, 44, 44, WHITE, nil, 10)
 -- the win streak: the flame silhouette with the number over it (Kit.ICONS.streak), like RIVALS
 local kStreak = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://89001729086571", ImageColor3 = Color3.fromRGB(255, 140, 40), -- (re-pointed below to Kit.streakImage)
@@ -1247,8 +1251,7 @@ local switchB = new("TextButton", { Name = "SwitchWeapons", Text = "", AutoButto
 	BackgroundColor3 = WHITE, Visible = false, ZIndex = 6, Parent = root }, { corner(8),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(70, 180, 255), Color3.fromRGB(20, 110, 230)) }) })
 label(switchB, "Switch Weapons", FX, 40, 20, 0, 370, 78, WHITE, nil, 7)
-local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Position = UDim2.fromOffset(396, 14), Size = UDim2.fromOffset(52, 50), ZIndex = 7, Parent = switchB }, { corner(6),
-	new("UIStroke", { Color = Color3.fromRGB(200, 200, 205), Thickness = 2 }) })
+local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Position = UDim2.fromOffset(396, 14), Size = UDim2.fromOffset(52, 50), ZIndex = 7, Parent = switchB }, { corner(6) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
 local keyL = label(keyChip, "M", FX, 30, 0, 0, 52, 50, WHITE, nil, 8)
 local switchScale = new("UIScale", { Parent = switchB })
 gloss(switchB, 8, 0.3)
@@ -1660,7 +1663,7 @@ local sgui = new("ScreenGui", { Name = "MatchScoreboard", IgnoreGuiInset = true,
 local scanvas = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), Parent = sgui },
 	{ new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
 local board = new("Frame", { Name = "Board", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0.14), Size = UDim2.fromScale(0.5, 0.6), BackgroundColor3 = BLACK,
-	BackgroundTransparency = 0.25, Parent = scanvas }, { new("UICorner", { CornerRadius = UDim.new(0.025, 0) }), new("UIStroke", { Color = WHITE, Transparency = 0.85, Thickness = 1.5 }) })
+	BackgroundTransparency = 0.25, Parent = scanvas }, { new("UICorner", { CornerRadius = UDim.new(0.025, 0) }) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
 local sbTitle = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = STENCIL, TextScaled = true, TextColor3 = WHITE, Position = UDim2.fromScale(0.04, 0.025),
 	Size = UDim2.fromScale(0.92, 0.08), Parent = board })
 local sbSub = new("TextLabel", { BackgroundTransparency = 1, Text = "", FontFace = FB, TextScaled = true, TextColor3 = Color3.fromRGB(190, 192, 182), Position = UDim2.fromScale(0.04, 0.105),
@@ -1671,7 +1674,7 @@ local sbOpenHold, sbOpenToggle = false, false
 
 local function sbHeader(order, text, color)
 	local f = new("Frame", { LayoutOrder = order, BackgroundTransparency = 1, Size = UDim2.fromScale(1, 0.07), Parent = sbList })
-	new("Frame", { BorderSizePixel = 0, BackgroundColor3 = color, Size = UDim2.fromScale(0.008, 0.8), Position = UDim2.fromScale(0, 0.1), Parent = f })
+	-- (2026-10-21, AI-tells cleanup) the thin left accent bar is gone; the header text keeps the team colour
 	new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = STENCIL, TextScaled = true, TextColor3 = color, TextXAlignment = Enum.TextXAlignment.Left,
 		Position = UDim2.fromScale(0.02, 0.1), Size = UDim2.fromScale(0.5, 0.8), Parent = f })
 	for i, c in { "K", "D", "HS" } do
@@ -1816,13 +1819,11 @@ do
 	local CS = game:GetService("CollectionService")
 	local function calmOne(d)
 		if d:IsA("UIStroke") then
-			if d.ApplyStrokeMode == Enum.ApplyStrokeMode.Border then
-				if d.Color ~= WHITE or d.Transparency < 0.4 then -- coloured / strong borders (selection, voted) keep their colour, thinner
-					d.Thickness = math.min(d.Thickness, 2)
-				else
-					d.Color = WHITE; d.Transparency = 0.82; d.Thickness = 1.5
-				end
-				d.LineJoinMode = Enum.LineJoinMode.Round
+			local p = d.Parent
+			local onText = p and (p:IsA("TextLabel") or p:IsA("TextButton") or p:IsA("TextBox")) and d.ApplyStrokeMode == Enum.ApplyStrokeMode.Contextual
+			if not onText then
+				-- (2026-10-21, AI-tells cleanup) no hairline panel borders: thin ones (< 3) go; thick state rings (voted, your kill) stay
+				if d.Thickness < 3 then d:Destroy() else d.LineJoinMode = Enum.LineJoinMode.Round end
 			elseif d.Parent and (d.Parent:IsA("TextLabel") or d.Parent:IsA("TextButton")) and not d.Parent:GetAttribute("KeepStroke") then
 				d.Color = BLACK; d.Transparency = math.max(d.Transparency, 0.55); d.Thickness = math.min(d.Thickness, 2); d.LineJoinMode = Enum.LineJoinMode.Round
 			end

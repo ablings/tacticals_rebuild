@@ -805,14 +805,16 @@ end
 -- Laid out on a canvas 1008 units tall that is scaled to the screen, so it keeps its proportions at
 -- any resolution. Lives in its own ScreenGui so the lobby's auto-styling doesn't touch it.
 -------------------------------------------------------------------------------
--- Builder Sans, heavy, for body text and labels
+-- Fonts: Oswald Bold for headings / labels / numbers, Rubik for body text
 -- (2026-10-21, RIVALS pass, Edward's font decision) headings, big words and numbers are Oswald Bold (FONT_TITLE). FONT_TITLE takes
 -- the old ARMORY_FONT local's slot (the path is inlined below) so the chunk's local count doesn't grow. Body-text fonts wait for the
 -- integrator's pass.
 local FONT_TITLE = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
-local FONT = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local FONT_HEAVY = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local FONT_MED = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium)
+-- (2026-10-21, AI-tells cleanup) Builder Sans is gone: FONT_HEAVY (labels, buttons, numbers) is Oswald Bold, FONT / FONT_MED
+-- (body and small text) are Rubik
+local FONT = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
+local FONT_HEAVY = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local FONT_MED = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
 local BASE_H = 1008
 local BLACK, WHITE = Color3.new(0, 0, 0), Color3.new(1, 1, 1)
 local TacKit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Tac"))
@@ -1870,14 +1872,15 @@ local function renderInfo()
 	shade(text({ Text = item.Name, FontFace = FONT_TITLE, TextSize = 34, Position = UDim2.fromOffset(46, 6), Size = UDim2.fromOffset(CARD_W - 98, 40),
 		TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 5, Parent = infoCard }), 2)
 	local fav = isFavourite(id)
-	local favBox = mk("TextButton", { Name = "Favourite", AutoButtonColor = false, Text = "", BackgroundColor3 = WHITE, BackgroundTransparency = fav and 0 or 1,
+	-- (2026-10-21, AI-tells cleanup) no 2.5 px white outline: an unticked box is a faint solid white fill instead
+	local favBox = mk("TextButton", { Name = "Favourite", AutoButtonColor = false, Text = "", BackgroundColor3 = WHITE, BackgroundTransparency = fav and 0 or 0.75,
 		Position = UDim2.fromOffset(CARD_W - 38, 14), Size = UDim2.fromOffset(26, 26), ZIndex = 5, Parent = infoCard }, {
-		corner(3), mk("UIStroke", { Color = WHITE, Thickness = 2.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border }) })
+		corner(3) })
 	local tick = glyph(favBox, "check", 22, COL.Ink, 6)
 	tick.Visible = fav
 	favBox.Activated:Connect(function()
 		local on = not isFavourite(id)
-		favBox.BackgroundTransparency = on and 0 or 1
+		favBox.BackgroundTransparency = on and 0 or 0.75
 		tick.Visible = on
 		-- (2026-10-21, RIVALS pass) the box itself squashes through Kit.bindButton (one UIScale only), the tick pops in
 		if on then Kit.pop(tick, 1.3) end
@@ -1913,7 +1916,7 @@ local function renderInfo()
 			mk("UIListLayout", { Padding = UDim.new(0, 2), SortOrder = Enum.SortOrder.LayoutOrder }),
 		})
 		-- (no Scale-sized accent bar inside: a Scale child of an AutomaticSize box feeds back and grows the card off the screen)
-		mk("UIStroke", { Color = COL.BlueTop, Thickness = 1, Transparency = 0.4, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = box })
+		-- (2026-10-21, AI-tells cleanup) the 1 px green outline is gone; the tinted fill alone separates the box
 		shade(text({ Text = (ab.perk and "PERK  ·  " or "ABILITY  ·  ") .. string.upper(ab.ability), FontFace = FONT_HEAVY, TextSize = 16, TextColor3 = COL.Text,
 			Size = UDim2.fromOffset(CARD_W - 84, 18), LayoutOrder = 1, ZIndex = 6, Parent = box }), 1.2)
 		text({ Text = ab.desc, FontFace = FONT_MED, TextSize = 15, TextColor3 = COL.Sub, TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y,
@@ -2457,7 +2460,8 @@ end
 -------------------------------------------------------------------------------
 -- Transition overlay (black, flash, letterbox bars, blast doors, title)
 -------------------------------------------------------------------------------
-local HAZARD_Y, HAZARD_K = Color3.fromRGB(255, 212, 0), Color3.fromRGB(22, 22, 24)
+-- (2026-10-21, AI-tells cleanup) hazard stripes cream (was comic yellow 255,212,0); door / title fonts Oswald Bold (was GothamBlack)
+local HAZARD_Y, HAZARD_K = Color3.fromRGB(236, 230, 210), Color3.fromRGB(22, 22, 24)
 function Armory.BuildOverlay()
 	local gui = ctx.new("ScreenGui", { Name = "ArmoryTransition", IgnoreGuiInset = true, DisplayOrder = 50, ResetOnSpawn = false,
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling, Parent = player:WaitForChild("PlayerGui") })
@@ -2482,7 +2486,7 @@ function Armory.BuildOverlay()
 		for i = 0, 23, 2 do
 			ctx.new("Frame", { BackgroundColor3 = HAZARD_Y, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1 / 24, 0), Position = UDim2.fromScale(0, i / 24), ZIndex = 3, Parent = band })
 		end
-		local tag = ctx.label({ Text = side < 0 and "A-07" or "TAC", Font = Enum.Font.GothamBlack, TextSize = 46, TextColor3 = Color3.fromRGB(30, 32, 34),
+		local tag = ctx.label({ Text = side < 0 and "A-07" or "TAC", FontFace = FONT_TITLE, TextSize = 46, TextColor3 = Color3.fromRGB(30, 32, 34),
 			TextTransparency = 0.35, TextScaled = true, Size = UDim2.fromScale(0.6, 0.046), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
 			TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 2, Parent = f })
 		return f
@@ -2493,7 +2497,7 @@ function Armory.BuildOverlay()
 		Position = UDim2.fromScale(0, -0.14), ZIndex = 4, Parent = gui })
 	overlay.barBot = ctx.new("Frame", { BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.13),
 		Position = UDim2.fromScale(0, 1.01), ZIndex = 4, Parent = gui })
-	overlay.title = ctx.label({ Text = "ARMORY", Font = Enum.Font.GothamBlack, TextSize = 64, TextColor3 = ctx.THEME.Accent, TextTransparency = 1,
+	overlay.title = ctx.label({ Text = "ARMORY", FontFace = FONT_TITLE, TextSize = 64, TextColor3 = ctx.THEME.Accent, TextTransparency = 1,
 		TextScaled = true, Size = UDim2.fromScale(1, 0.065), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.48), TextXAlignment = Enum.TextXAlignment.Center,
 		ZIndex = 6, Parent = gui })
 	overlay.titleStroke = ctx.new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 3, Transparency = 1, Parent = overlay.title })

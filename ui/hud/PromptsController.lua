@@ -2,7 +2,7 @@
 -- RIVALS draws its own proximity prompts: a card over the object with a key square on the left and two lines (small object
 -- text, big action text) and a little pointer under it. (2026-10-21, RIVALS pass) now a bright cream card on a dark offset
 -- shadow block, ink text with the action big, the key in an ink square (touch: TAP, gamepad: the button), a small idle bob.
--- Hold prompts fill the accent bar along the bottom (fill colour unchanged).
+-- Hold prompts fill the field-green bar along the bottom.
 -- Every ProximityPrompt is switched to Style Custom on this client (only the look changes; the server prompt is untouched).
 -- Clicking / tapping the card triggers it too (a hold prompt holds while pressed).
 -- Billboards are sized in studs (Scale), text is TextScaled inside fixed boxes.
@@ -19,7 +19,8 @@ local player = Players.LocalPlayer
 -- small object line (was Builder Sans ExtraBold / Medium)
 local F_ACTION = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 local F_OBJECT = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
-local BONE, FIELD, DEEP, OLIVE = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(12, 14, 11), Color3.fromRGB(255, 212, 0)
+local BONE, FIELD, DEEP, OLIVE = Color3.fromRGB(236, 232, 218), Color3.fromRGB(150, 156, 140), Color3.fromRGB(12, 14, 11), Color3.fromRGB(141, 191, 90)
+-- (2026-10-21, AI-tells cleanup) OLIVE = the hold-bar fill: field green #8DBF5A (was comic yellow 255,212,0, low contrast on cream)
 -- (2026-10-21, RIVALS pass) the agreed new prompt look: cream card (Theme.color.cream #ECE6D2) with ink text (Theme.color.ink #111114).
 -- Literals, not a UIKit require: this module also runs in the match places and must not wait on UIKit.
 local CREAM, INK = Color3.fromRGB(236, 230, 210), Color3.fromRGB(17, 17, 20)

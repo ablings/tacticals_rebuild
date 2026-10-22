@@ -105,7 +105,7 @@ local function selectionImage()
 	for _, corner in { Vector2.new(0, 0), Vector2.new(1, 0), Vector2.new(0, 1), Vector2.new(1, 1) } do
 		local t = Instance.new("Frame")
 		t.BorderSizePixel = 0
-		t.BackgroundColor3 = Color3.fromRGB(255, 212, 0)
+		t.BackgroundColor3 = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) accent ticks: cream (was comic yellow); the 3 px ring above is a selection ring, kept
 		t.AnchorPoint = corner
 		t.Position = UDim2.new(corner.X, corner.X == 0 and -4 or 4, corner.Y, corner.Y == 0 and -4 or 4)
 		t.Size = UDim2.fromOffset(10, 10)

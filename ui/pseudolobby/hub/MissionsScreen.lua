@@ -94,8 +94,7 @@ local function panel(name, order, height)
 	return new("Frame", {
 		Name = name, LayoutOrder = order, Size = UDim2.fromOffset(COL_W, height),
 		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = PANEL_T, Parent = column,
-	}, { Kit.corner(2), Kit.stroke(C.olive, 1, 0.8),
-		new("Frame", { Name = "TacBar", BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Position = UDim2.fromOffset(0, 0), Size = UDim2.new(0, 8, 1, 0) }) })
+	}) -- (2026-10-21, AI-tells cleanup) no thin olive border, no left TacBar: the dark fill separates the panel
 end
 
 local function bar(parent, pos, size, frac, done)
@@ -261,7 +260,7 @@ local function build()
 	scrim = new("Frame", { Name = "Scrim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.scrim, BackgroundTransparency = 1, Parent = gui })
 	local canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
-	new("Frame", { Name = "TacBar", BackgroundColor3 = Tac.C.olive, BorderSizePixel = 0, Position = UDim2.fromOffset(COL_X - 4, 126), Size = UDim2.fromOffset(10, 60), Parent = root })
+	-- (2026-10-21, AI-tells cleanup) the left TacBar beside the MISSIONS title is gone
 	Kit.label({ Text = "MISSIONS", FontFace = F.display, TextSize = 64, Position = UDim2.fromOffset(COL_X + 20, 118), Size = UDim2.fromOffset(500, 76), Parent = root })
 	local close = Kit.closeButton(UDim2.fromOffset(94, 48))
 	close.Position = UDim2.fromOffset(1312, 136) -- (lobby revamp Phase B: square X at the column edge)

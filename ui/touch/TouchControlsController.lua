@@ -153,7 +153,9 @@ local function build()
 		btn.BackgroundColor3 = DISC
 		btn.Parent = holder
 		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = btn
-		local st = Instance.new("UIStroke"); st.Color = ICONC; st.Thickness = 2; st.Transparency = 1; st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; st.Parent = btn
+		-- (2026-10-21, AI-tells cleanup) the see-through mode ring is the button's only outline (meaning): kept, thickened 2 -> 3;
+		-- every glyph / zone / pill font is Oswald Bold now (was Builder Sans ExtraBold)
+		local st = Instance.new("UIStroke"); st.Color = ICONC; st.Thickness = 3; st.Transparency = 1; st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; st.Parent = btn
 		local g = Instance.new("TextLabel")
 		g.BackgroundTransparency = 1
 		g.Size = UDim2.fromScale(0.62, 0.62)
@@ -161,7 +163,7 @@ local function build()
 		g.Position = UDim2.fromScale(0.5, 0.5)
 		g.Text = b.glyph
 		g.TextScaled = true
-		g.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+		g.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 		g.TextColor3 = ICONC
 		g.Parent = btn
 		local img
@@ -422,7 +424,7 @@ function controller.OpenEditor()
 		z.BackgroundTransparency = 1
 		z.Text = text
 		z.TextScaled = true
-		z.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+		z.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 		z.TextColor3 = Color3.new(0, 0, 0)
 		z.TextTransparency = 0.6
 		z.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -454,7 +456,8 @@ function controller.OpenEditor()
 	stick.ZIndex = 3
 	stick.Parent = holder
 	local sc = Instance.new("UICorner"); sc.CornerRadius = UDim.new(0.5, 0); sc.Parent = stick
-	local ss = Instance.new("UIStroke"); ss.Color = Color3.fromRGB(236, 232, 218); ss.Thickness = 2; ss.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; ss.Parent = stick
+	-- (2026-10-21, AI-tells cleanup) the joystick's edit-mode outline marks where it is: kept, thickened 2 -> 3
+	local ss = Instance.new("UIStroke"); ss.Color = Color3.fromRGB(236, 232, 218); ss.Thickness = 3; ss.ApplyStrokeMode = Enum.ApplyStrokeMode.Border; ss.Parent = stick
 	local sl = Instance.new("TextLabel")
 	sl.BackgroundTransparency = 1
 	sl.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -462,7 +465,7 @@ function controller.OpenEditor()
 	sl.Size = UDim2.fromScale(0.8, 0.22)
 	sl.Text = "Joystick"
 	sl.TextScaled = true
-	sl.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+	sl.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 	sl.TextColor3 = Color3.fromRGB(236, 232, 218)
 	sl.ZIndex = 3
 	sl.Parent = stick
@@ -497,7 +500,7 @@ function controller.OpenEditor()
 	local sizeName = Instance.new("TextLabel")
 	sizeName.BackgroundTransparency = 1
 	sizeName.TextScaled = true
-	sizeName.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
+	sizeName.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells cleanup) Rubik (was Builder Sans)
 	sizeName.TextColor3 = Color3.new(1, 1, 1)
 	sizeName.TextXAlignment = Enum.TextXAlignment.Left
 	sizeName.Position = UDim2.fromScale(0.04, 0.22)
@@ -654,7 +657,7 @@ function controller.OpenEditor()
 		b:AddTag("Nonapplicable") -- (the old InterfaceController would hover-tween this Offset button to 0 x 0)
 		b.Text = text
 		b.TextScaled = true
-		b.FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
+		b.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
 		b.TextColor3 = Color3.new(1, 1, 1)
 		b.BackgroundColor3 = Color3.new(1, 1, 1)
 		b.BackgroundTransparency = 1

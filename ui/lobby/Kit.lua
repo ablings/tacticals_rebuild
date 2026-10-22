@@ -373,7 +373,10 @@ function Kit.button(kind, size, text, props)
 	local btn = new("TextButton", {
 		Name = (text or kind) .. "Button", Size = size, AutoButtonColor = false, Text = "",
 		BackgroundColor3 = C.white,
-	}, { Kit.corner(3), Kit.vgrad(Theme.gradient[kind]), Kit.stroke(C.textDark, 1.5, 0.6) })
+	}, { Kit.corner(3), Kit.vgrad(Theme.gradient[kind]) })
+	-- (2026-10-21, AI-tells cleanup) no hairline border: a chunky darker lip along the bottom gives the button its edge
+	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.72, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.14), ZIndex = 1, Parent = btn }, { Kit.corner(3) })
 	-- (2026-10-21, RIVALS "alive") the button brightens a touch on hover: a white sheen fades in over its gradient
 	local sheen = new("Frame", { Name = "HoverSheen", BackgroundColor3 = C.white, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1),
 		ZIndex = 2, Parent = btn }, { Kit.corner(3) })
@@ -400,7 +403,10 @@ function Kit.closeButton(size)
 	-- shrinks its parent frame to 0 x 0, so a menu came back empty on its second open.
 	local h = size.Y.Offset
 	local btn = new("TextButton", { Name = "CloseX", Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(h, h),
-		BackgroundColor3 = Color3.fromRGB(24, 26, 21), BackgroundTransparency = 0.1 }, { Kit.corner(8), Kit.stroke(Color3.fromRGB(226, 210, 172), 1.5, 0.35) })
+		BackgroundColor3 = Color3.fromRGB(24, 26, 21), BackgroundTransparency = 0.1 }, { Kit.corner(8) })
+	-- (2026-10-21, AI-tells cleanup) no tan hairline: a chunky darker lip along the bottom instead
+	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), ZIndex = 1, Parent = btn }, { Kit.corner(8) })
 	btn:AddTag("Nonapplicable")
 	local cream = Color3.fromRGB(236, 230, 210)
 	local bars = {}
@@ -1079,7 +1085,7 @@ function Kit.streak(parent, n, pos, size, z)
 	local f = new("ImageLabel", { Name = "Streak", BackgroundTransparency = 1, Image = img, ImageColor3 = tint,
 		ScaleType = Enum.ScaleType.Fit, Position = pos or UDim2.fromScale(0, 0), Size = size or UDim2.fromScale(1, 1), ZIndex = z or 3, Parent = parent },
 		{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
-	local l = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = tostring(n or 0), FontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold),
+	local l = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = tostring(n or 0), FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold), -- (2026-10-21: no Builder Sans)
 		TextScaled = true, TextColor3 = Color3.new(1, 1, 1), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.64), Size = UDim2.fromScale(0.7, 0.5),
 		ZIndex = (z or 3) + 1, Parent = f })
 	new("UIStroke", { Thickness = 2.5, Transparency = 0, Color = Color3.fromRGB(240, 70, 30), Parent = l }) -- (2026-10-20) RIVALS: a thick orange-red edge on the number

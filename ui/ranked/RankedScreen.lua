@@ -22,9 +22,10 @@ local C, new = Theme.color, Kit.new
 local RankedCore
 pcall(function() RankedCore = require(ReplicatedStorage.Modules.Shared:WaitForChild("RankedCore", 10)) end)
 
-local FB = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local FS = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold)
-local FM = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium)
+-- (2026-10-21, AI-tells cleanup) was Builder Sans everywhere: headings / numbers in Oswald Bold, labels and body in Rubik
+local FB = Theme.font.display -- Oswald Bold
+local FS = Theme.font.bold -- Rubik SemiBold
+local FM = Theme.font.medium -- Rubik Medium
 local WHITE, BLACK = Color3.new(1, 1, 1), Color3.new(0, 0, 0)
 local GREY = Theme.hex("#CFCDD3")
 
@@ -262,7 +263,7 @@ local function build()
 	local track = new("Frame", { Position = UDim2.fromOffset(104, 88), Size = UDim2.fromOffset(1272, 10), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
 		{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 	ui.fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = WHITE, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }),
-		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#FFE14D"), Theme.hex("#FFFFFF")) }) })
+		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#8DBF5A"), Theme.hex("#FFFFFF")) }) }) -- (2026-10-21, AI-tells cleanup) progress = field green, was yellow
 
 	-- banner (white pill, RIVALS)
 	ui.banner = new("Frame", { Name = "Banner", Position = UDim2.fromOffset(220, 362), Size = UDim2.fromOffset(1480, 54), BackgroundColor3 = WHITE, Visible = false, Parent = root },

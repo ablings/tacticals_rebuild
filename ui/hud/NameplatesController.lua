@@ -8,8 +8,9 @@ local RunService = game:GetService("RunService")
 
 local Nameplates = {}
 local player = Players.LocalPlayer
-local BOLD = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.ExtraBold)
-local MED = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium)
+-- (2026-10-21, AI-tells cleanup) Builder Sans is out: the name / numbers in Oswald Bold, @username in Rubik Medium
+local BOLD = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+local MED = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
 
 local plates = {} -- [Player] = { gui, badgeText, nameText, vip }
 
@@ -91,7 +92,7 @@ local function build(p, character)
 	local vip = Instance.new("TextLabel")
 	vip.LayoutOrder = 3
 	vip.Size = UDim2.fromScale(0.15, 0.7)
-	vip.BackgroundColor3 = Color3.fromRGB(255, 205, 80)
+	vip.BackgroundColor3 = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) tag yellow -> cream #ECE6D2
 	vip.FontFace = BOLD
 	vip.TextScaled = true
 	vip.TextColor3 = Color3.fromRGB(30, 24, 8)
