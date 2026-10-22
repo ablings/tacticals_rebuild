@@ -737,7 +737,15 @@ local function placeholderGrid(pg, hover, list, y, cols, h)
 	return y + math.ceil(#list / cols) * (h + 40)
 end
 -- (2026-10-21, RIVALS shop layout) is a REAL free Daily item up? (drives the red tip over the Daily tab)
+-- (2026-10-22, Edward: "do number 2", RIVALS' daily free reward) the server's free claim: Player attribute DailyFreeAt = server
+-- time of the next free claim (<= now = ready), remote ClaimDailyFree (RemoteFunction anywhere in ReplicatedStorage) -> { ok,
+-- reward }. Until the server ships it the attribute is nil and nothing shows.
+local function dailyFreeReady()
+	local at = Players.LocalPlayer:GetAttribute("DailyFreeAt")
+	return type(at) == "number" and at <= workspace:GetServerTimeNow()
+end
 local function freeDailyUp()
+	if dailyFreeReady() then return true end
 	for _, set in { PLACEHOLDER_ITEMS.DailySkins, PLACEHOLDER_ITEMS.DailyEmotes } do
 		for _, e in set do
 			if e.price == 0 and (DAILY_TIP_PREVIEW or not e.PLACEHOLDER) then return true end
@@ -1082,18 +1090,58 @@ function RENDER.Daily(pg, hover)
 	local bar = new("Frame", { Name = "Refresh", Position = UDim2.fromOffset(12, 0), Size = UDim2.fromOffset(1242, 60), BackgroundColor3 = BLACK,
 		BackgroundTransparency = Theme.alpha.panel, BorderSizePixel = 0, Parent = pg }, { RK.corner(6) })
 	stroke(RK.label({ Text = "Daily Shop", FontFace = FB, TextSize = 32, Position = UDim2.fromOffset(20, 0), Size = UDim2.fromOffset(400, 60), ZIndex = 2, Parent = bar }), 2, 0.4)
-	local cd = RK.label({ Name = "Countdown", Text = "", RichText = true, FontFace = FB, TextSize = 34, TextXAlignment = Enum.TextXAlignment.Right,
+	local cd = RK.label({ Name = "Countdown", Text = "", RichText = true, FontFace = FB, TextSize = 28, TextXAlignment = Enum.TextXAlignment.Right,
 		Position = UDim2.fromOffset(500, 0), Size = UDim2.fromOffset(720, 60), ZIndex = 2, Parent = bar })
 	local dimHex = C.textDim:ToHex()
 	task.spawn(function()
 		while cd.Parent do
 			local t = os.date("!*t")
 			local left = 86400 - (t.hour * 3600 + t.min * 60 + t.sec)
-			cd.Text = ('<font size="24" color="#%s">shop will refresh in</font>  %dh %dm %ds'):format(dimHex, left // 3600, left % 3600 // 60, left % 60)
+			-- (2026-10-22) no <font size>: the kit rescales TextSize, not rich-text sizes (the small words rendered huge)
+			cd.Text = ('<font color="#%s">shop will refresh in</font>  %dh %dm %ds'):format(dimHex, left // 3600, left % 3600 // 60, left % 60)
 			task.wait(1)
 		end
 	end)
-	local y = placeholderGrid(pg, hover, PLACEHOLDER_ITEMS.DailySkins, 60 + 26, 5, 190)
+	local y = 60 + 26
+	-- (2026-10-22) the REAL daily free reward strip (server: DailyFreeAt + ClaimDailyFree), above the placeholder tiles
+	if Players.LocalPlayer:GetAttribute("DailyFreeAt") ~= nil then
+		local strip = new("Frame", { Name = "FreeReward", Position = UDim2.fromOffset(12, y), Size = UDim2.fromOffset(1242, 120), BackgroundColor3 = WHITE,
+			BorderSizePixel = 0, Parent = pg }, { RK.corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)) }) })
+		new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(24, 10), Size = UDim2.fromOffset(100, 100), ZIndex = 2, Parent = strip })
+		stroke(RK.label({ Text = "Daily Free Reward", FontFace = FB, TextSize = 40, Position = UDim2.fromOffset(140, 14), Size = UDim2.fromOffset(700, 48), ZIndex = 2, Parent = strip }), 2, 0.3)
+		local status = RK.label({ Name = "Status", Text = "", FontFace = FB, TextSize = 26, Position = UDim2.fromOffset(140, 64), Size = UDim2.fromOffset(700, 36), ZIndex = 2, Parent = strip })
+		stroke(status, 1.5, 0.4)
+		local busy = false
+		local claim
+		claim = priceTag(strip, "scissors", 0, 1242 - 140, 34, 220, PRICE_H, function()
+			if busy or not dailyFreeReady() then if claim then Kit.shake(claim) end return end
+			local rf = game:GetService("ReplicatedStorage"):FindFirstChild("ClaimDailyFree", true)
+			if not (rf and rf:IsA("RemoteFunction")) then return end
+			busy = true
+			local ok, res = pcall(function() return rf:InvokeServer() end)
+			busy = false
+			if ok and type(res) == "table" and res.ok then
+				pcall(Toast.show, { title = "Free reward claimed!", text = tostring(res.reward or ""), icon = "check" })
+				Kit.pop(strip, 1.05)
+			elseif claim then Kit.shake(claim) end
+		end, { text = "FREE", z = 4 })
+		task.spawn(function()
+			while strip.Parent do
+				local at = Players.LocalPlayer:GetAttribute("DailyFreeAt")
+				if type(at) == "number" and at > workspace:GetServerTimeNow() then
+					local left = math.floor(at - workspace:GetServerTimeNow())
+					status.Text = ("Next free reward in %dh %dm %ds"):format(left // 3600, left % 3600 // 60, left % 60)
+					if claim then claim.Visible = false end
+				else
+					status.Text = "Ready! Claim it now"
+					if claim then claim.Visible = true end
+				end
+				task.wait(1)
+			end
+		end)
+		y += 120 + 26
+	end
+	y = placeholderGrid(pg, hover, PLACEHOLDER_ITEMS.DailySkins, y, 5, 190)
 	y = placeholderGrid(pg, hover, PLACEHOLDER_ITEMS.DailyEmotes, y, 5, 190)
 	endPad(pg, y)
 end
@@ -1296,7 +1344,7 @@ local function build()
 	end
 	-- (2026-10-21, RIVALS shop layout) RIVALS' red "Claim your FREE reward now!" tip (valueTag: red pill, pointer down) over
 	-- the Daily tab, clear of its rising icon; only while a real free Daily item is up (freeDailyUp). Click = the Daily tab.
-	if tabBtns.Daily and freeDailyUp() then
+	if tabBtns.Daily then
 		local dx = tabBtns.Daily.b.Position.X.Offset + TAB_W / 2
 		local tip = valueTag(body, dx, TAB_Y - 34 - 32, "Claim your FREE reward now!", 300, 32, 19, 6)
 		tip.Name = "DailyTip"
@@ -1388,8 +1436,16 @@ local function layoutTabRow()
 		if r then c.Visible = r == tabRow end
 	end
 	local tip = body:FindFirstChild("DailyTip")
-	if tip then tip.Visible = tabRow == 1 end
+	if tip then tip.Visible = tabRow == 1 and freeDailyUp() end
 end
+-- (2026-10-22) the tip follows DailyFreeAt live
+Players.LocalPlayer:GetAttributeChangedSignal("DailyFreeAt"):Connect(function()
+	layoutTabRow()
+	-- the Daily page grows / drops its free strip: rebuild it (now if it's the open tab)
+	if pages.Daily then pages.Daily.dirty = true end
+	if isOpen and tab == "Daily" and ready then Screen.SetTab("Daily") end
+end)
+task.spawn(function() while true do task.wait(1); if isOpen then layoutTabRow() end end end)
 function Screen.ShowTabRow(r)
 	tabRow = r
 	layoutTabRow()

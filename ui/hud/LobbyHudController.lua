@@ -429,6 +429,17 @@ function LobbyHud.Start()
 			BackgroundColor3 = RC.badge, ZIndex = 4, Parent = b }, { RKit.corner(15), RKit.stroke(RC.white, 1.5, 0.2) })
 		local bl = RKit.label({ Text = "", FontFace = NAV_FONT, TextSize = 21, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = badge })
 		navBadges[it.Id] = { f = badge, l = bl, order = i }
+		if it.Id == "Shop" then
+			-- (2026-10-22, RIVALS) a red "1" on Shop while the daily free reward waits (server attribute DailyFreeAt <= now)
+			task.spawn(function()
+				while badge.Parent do
+					local at = player:GetAttribute("DailyFreeAt")
+					local ready = type(at) == "number" and at <= workspace:GetServerTimeNow()
+					if ready ~= badge.Visible then badge.Visible = ready; bl.Text = "1"; if ready then Kit.pop(badge, 1.4) end end
+					task.wait(1)
+				end
+			end)
+		end
 		-- bubble: the replica's white self-sizing pill (40 tall, corner 6) 14 px over the button, pointer = a Scale square locked
 		-- to 40 % of the bubble height (NoConvert), text Rubik Bold 22 black padded with spaces
 		local tip = new("Frame", { Name = "Bubble", Visible = false, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(59, -14), Size = UDim2.fromOffset(0, 40),
