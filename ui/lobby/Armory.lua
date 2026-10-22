@@ -2943,6 +2943,8 @@ function Armory.Enter(focusId: string?)
 	end
 	busy = true
 	active = true
+	-- (2026-10-21) NameplatesController hides your own plate while this is set (it floated over the Kit character view)
+	game:GetService("Players").LocalPlayer:SetAttribute("InKit", true)
 	local cam = workspace.CurrentCamera
 	savedType, savedCam, savedFov = cam.CameraType, cam.CFrame, cam.FieldOfView
 	freezeCharacter(true)
@@ -2968,6 +2970,7 @@ end
 function Armory.Leave(after: (() -> ())?)
 	if not active or busy then return end
 	busy = true
+	game:GetService("Players").LocalPlayer:SetAttribute("InKit", nil)
 	closeTray()
 	-- (2026-10-21, round 3: match RIVALS) a hover bubble left up would still be showing on the next visit
 	if Armory._tipFrame then Armory._tipFrame.Visible = false; Armory._tipOwner = nil end

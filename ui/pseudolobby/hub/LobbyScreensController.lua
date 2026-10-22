@@ -337,14 +337,17 @@ local function buildDuelsSign(part)
 		local c = plate(root, S((i - 1) / 3 + 0.012, 0.08), S(1 / 3 - 0.024, 0.84), PANEL, LIP, 0.08)
 		text(c, string.upper(m), S(0.08, 0.1), S(0.34, 0.4), GREEN_HI, TITLE)
 		local n = text(c, "0", S(0.08, 0.5), S(0.34, 0.42), CREAM, TITLE)
-		local sub = text(c, "", S(0.46, 0.2), S(0.5, 0.6), TAN, BOLD, nil, { TextWrapped = false })
-		cells[m] = { n = n, sub = sub }
+		-- (2026-10-21) two labels: one scaled label holding a line break shrank both lines to an unreadable size
+		local pads = text(c, "", S(0.46, 0.22), S(0.5, 0.26), TAN, BOLD)
+		local online = text(c, "", S(0.46, 0.52), S(0.5, 0.26), TAN, BOLD)
+		cells[m] = { n = n, pads = pads, online = online }
 	end
 	local function render()
 		for m, c in cells do
 			local q = duels.modes and duels.modes[m] or { pads = 0, online = 0 }
 			countTo(c.n, (q.pads or 0) + (q.online or 0))
-			c.sub.Text = (q.pads or 0) .. " PADS\n" .. (q.online or 0) .. " ONLINE"
+			c.pads.Text = (q.pads or 0) .. " ON PADS"
+			c.online.Text = (q.online or 0) .. " ONLINE"
 		end
 	end
 	table.insert(duelsListeners, render)
@@ -357,8 +360,9 @@ local function buildLikes(part)
 	header(root, "LIKE THE GAME", "COMMUNITY GOAL")
 	local thumb = icon(root, ICON.thumbs, S(0.1, 0.34), S(0.12, 0.22), GREEN_HI)
 	thumb.AnchorPoint = Vector2.new(0.5, 0.5)
-	local big = text(root, "0", S(0.17, 0.22), S(0.4, 0.24), CREAM, TITLE)
-	local goalT = text(root, "", S(0.57, 0.28), S(0.39, 0.13), TAN, BOLD, RIGHT)
+	-- (2026-10-21) the count right-aligned against "/ goal LIKES" so the two read as one line (was a wide gap)
+	local big = text(root, "0", S(0.18, 0.22), S(0.3, 0.24), CREAM, TITLE, RIGHT)
+	local goalT = text(root, "", S(0.5, 0.28), S(0.46, 0.13), TAN, BOLD)
 	local face = plate(root, S(0.04, 0.5), S(0.92, 0.12), INK2, LIP, 0.2)
 	local fill = box(face, S(0, 0), S(0, 1), WHITE)
 	grad(fill, GREEN_HI, GREEN_LO)

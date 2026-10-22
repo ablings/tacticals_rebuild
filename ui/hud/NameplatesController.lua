@@ -168,6 +168,7 @@ function Nameplates.Start()
 				-- only plates of people in the same place as you: same duel (or both in the lobby)
 				local sameSpace = (p:GetAttribute("DuelMatch") or false) == (player:GetAttribute("DuelMatch") or false)
 				e.gui.Enabled = Nameplates.Active() and not hideAll and not near and sameSpace and p:GetAttribute("InTraining") ~= true
+					and not (p == player and player:GetAttribute("InKit") == true) -- (2026-10-21) own plate hidden in the Kit
 				-- (2026-10-20, Edward, RIVALS) ONE icon left of the name, picked by your leaderboard mode (Lobby Data):
 				--   Level / Streak (/ Wins): their win-streak flame if they have one, else their level (Wins: their wins)
 				--   Rank: their rank emblem if they're ranked, else their level
