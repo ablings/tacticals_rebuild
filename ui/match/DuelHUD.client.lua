@@ -1289,15 +1289,17 @@ end
 ---------------------------------------------------------------------------------------------------- killer card (RIVALS)
 -- bottom right while your killer is on camera: their headshot with a health bar over it, level badge, win streak flame,
 -- name + @username, "eliminated you with <weapon>". In the killer's team colour.
-local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(1150, 640), Size = UDim2.fromOffset(740, 140), BackgroundColor3 = WHITE,
-	Visible = false, ZIndex = 6, Parent = root }, { corner(8), new("UIGradient", { Rotation = 0, Color = ColorSequence.new(TEAM_B.fill[1], TEAM_B.fill[2]),
-		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.05), NumberSequenceKeypoint.new(0.8, 0.12), NumberSequenceKeypoint.new(1, 1) }) }) })
+-- (2026-10-22, Edward: "match it with rivals") RIVALS' kill banner (rv_match r0044.6): 675 x 134 at (1143, 822), a solid
+-- top-to-bottom fill of the killer's side, no fade; the head a dark rounded square inset at the left with the health bar inside
+-- its top, the level seal hanging over the banner's left edge, the device on the head's bottom-right; no weapon picture
+local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(1143, 822), Size = UDim2.fromOffset(675, 134), BackgroundColor3 = WHITE,
+	Visible = false, ZIndex = 6, Parent = root }, { corner(8), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_B.fill[1], TEAM_B.fill[2]) }) })
 -- (2026-10-20, the RIVALS mix) RIVALS' killer card filled with the killer's side colour (muted dark green), fading to the right
-local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(20, 26), Size = UDim2.fromOffset(104, 104), ZIndex = 7, Parent = kcard }, { corner(10) }) -- (2026-10-22, live RIVALS) a rounded square, not a disc
-local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(32, 12), Size = UDim2.fromOffset(80, 10), ZIndex = 8, Parent = kcard }, { corner(5) })
+local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.15, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(110, 110), ZIndex = 7, Parent = kcard }, { corner(10) }) -- (2026-10-22, live RIVALS) a dark rounded square, not a disc
+local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(22, 20), Size = UDim2.fromOffset(90, 9), ZIndex = 8, Parent = kcard }, { corner(5) }) -- inside the head's top, like RIVALS
 local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1), ZIndex = 9, Parent = kHpBack }, { corner(5) })
-local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(12, 100), Size = UDim2.fromOffset(36, 36), ZIndex = 9, Parent = kcard }, { corner(18) }) -- (2026-10-22, spacing grade) ~1.5 cap, overhanging the head ~0.3 cap like RIVALS -- (2026-10-21, AI-tells cleanup) hairline ring removed
-local kLevelL = label(kLevel, "1", FX, 20, 0, 0, 36, 36, WHITE, nil, 10)
+local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(2, 76), Size = UDim2.fromOffset(46, 46), ZIndex = 9, Parent = kcard }, { corner(23) }) -- (2026-10-22, RIVALS) the seal hangs over the banner's left edge, head bottom-left -- (2026-10-21, AI-tells cleanup) hairline ring removed
+local kLevelL = label(kLevel, "1", FX, 24, 0, 0, 46, 46, WHITE, nil, 10)
 -- the win streak: the flame silhouette with the number over it (Kit.ICONS.streak), like RIVALS
 local kStreak = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://89001729086571", ImageColor3 = Color3.fromRGB(255, 140, 40), -- (re-pointed below to Kit.streakImage)
 	Position = UDim2.fromOffset(94, 88), Size = UDim2.fromOffset(46, 46), Visible = false, ZIndex = 9, Parent = kcard })
@@ -1309,11 +1311,12 @@ local kStreakL = label(kStreak, "3", FX, 22, 0, 16, 46, 26, WHITE, nil, 10)
 new("UIStroke", { Thickness = 2.5, Color = Color3.fromRGB(240, 70, 30), Parent = kStreakL }) -- (2026-10-20) RIVALS number edge
 new("UIGradient", { Rotation = 90, Color = ColorSequence.new(WHITE, Color3.fromRGB(255, 222, 196)), Parent = kStreakL })
 -- (2026-10-22, spacing grade vs RIVALS) the name sits ~0.45 cap off the head (was 26 design px, ~0.9 cap)
-local kName = label(kcard, "", FX, 46, 134, 10, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
-local kUser = label(kcard, "", FB, 20, 134, 60, 560, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
-local kHow = label(kcard, "", FB, 28, 142, 88, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)
+local kName = label(kcard, "", FX, 46, 137, 6, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
+local kUser = label(kcard, "", FB, 20, 138, 52, 520, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
+kUser.TextTransparency = 0.35 -- (2026-10-22, RIVALS) the @handle is faint
+local kHow = label(kcard, "", FB, 28, 145, 74, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)
 -- RIVALS: the device on the head's bottom-right corner, the level seal on its bottom-left
-RV.kDev = new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(94, 100), Size = UDim2.fromOffset(34, 34),
+RV.kDev = new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(84, 84), Size = UDim2.fromOffset(34, 34),
 	Visible = false, ZIndex = 9, Parent = kcard })
 new("UIStroke", { Thickness = 2, Transparency = 0.5, Parent = kName })
 local kFor
@@ -1329,7 +1332,7 @@ local function refreshKillerCard(uid)
 		end
 	end
 	local p = uid and uid > 0 and Players:GetPlayerByUserId(uid)
-	kName.Text = nameOf(uid)
+	kName.Text = (uid and uid > 0 and Players:GetPlayerByUserId(uid)) and Players:GetPlayerByUserId(uid).DisplayName or nameOf(uid) -- (2026-10-22, RIVALS) the name alone on the banner, no badge glyph
 	kUser.Text = p and ("@" .. p.Name) or ""
 	do
 		local okD, BD = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
@@ -1374,7 +1377,8 @@ local function refreshKillerCard(uid)
 		if w then how ..= " with " .. w end
 	end
 	kHow.Text = how
-	-- (2026-10-20) RIVALS: the weapon's silhouette on the card's right, a headshot / no-scope mark under it
+	-- (2026-10-22, Edward: match RIVALS) RIVALS' banner names the weapon in the text only: no silhouette, no headshot mark
+	-- (kept built but hidden, in case the separate kill card wants them)
 	local KI = nil
 	pcall(function() KI = require(ReplicatedStorage.UIKit.KillIcons) end)
 	local wi = kcard:FindFirstChild("WeaponIcon") or new("ImageLabel", { Name = "WeaponIcon", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit,
@@ -1384,6 +1388,7 @@ local function refreshKillerCard(uid)
 	local ld = (lastDeath and lastDeath.killer == uid) and lastDeath or nil
 	wi.Image = (KI and ld and KI.Weapon(typeof(ld.weapon) == "string" and ld.kind ~= "Takedown" and ld.weapon or nil, ld.kind)) or ""
 	mk.Image = (KI and ld and ((ld.noscope and KI.Status("noscope")) or (ld.headshot and KI.Status("headshot")))) or ""
+	wi.Visible, mk.Visible = false, false
 end
 
 ---------------------------------------------------------------------------------------------------- switch weapons (RIVALS)
@@ -1677,6 +1682,14 @@ RunService.RenderStepped:Connect(function()
 		TweenService:Create(RV.kcard, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Position = home }):Play()
 	end
 	RV.kcard.Visible = onKiller
+	-- (2026-10-22, RIVALS) the weapon HUD is gone while the kill banner is up (it sat under the banner, bottom right)
+	do
+		local hb = player.PlayerGui:FindFirstChild("Hotbar")
+		if hb and hb:IsA("ScreenGui") then
+			if onKiller and hb.Enabled then RV.hbHidden = true; hb.Enabled = false
+			elseif not onKiller and RV.hbHidden then RV.hbHidden = nil; if rblurOn then rHidden[hb] = true else hb.Enabled = true end end -- (the results screen restores it)
+		end
+	end
 	if onKiller then RV.refreshKillerCard(killerUid) end
 	specStop.Visible = spectator()
 	if spec then
