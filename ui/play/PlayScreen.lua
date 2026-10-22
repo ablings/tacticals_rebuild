@@ -829,6 +829,77 @@ local function modeCard(mode, ranked, x)
 	return card.Scene, mode.TeamSize, card, art ~= nil
 end
 
+-- (2026-10-22, live RIVALS) the party column (the leader at the bottom with the crown, the others above, a + on top; any
+-- of them opens Your Party) is ONE shared column at RIVALS' spot, bottom left (avatar centre 7 % of the width, 86 % of the
+-- height), shown over Play, Missions, Codes and the profile card (RIVALS shows it on every such menu). Built in design px.
+local function buildPartyColumn(parent, x, bottomY)
+	local colF = new("Frame", { Name = "PartyColumn", BackgroundTransparency = 1, Position = UDim2.fromOffset(x, bottomY - 500),
+		Size = UDim2.fromOffset(110, 500), Parent = parent })
+	local list = partyList()
+	if #list == 0 then list = { player.UserId } end
+	local leader = partyLeader(list)
+	local order = { leader }
+	for _, uid in list do if uid ~= leader then table.insert(order, uid) end end
+	local y = 500 + 8
+	for i, uid in order do
+		local d = i == 1 and 108 or 80
+		y -= d + 8
+		local h = new("ImageButton", { Name = "Head" .. i, AutoButtonColor = false, BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.2,
+			Position = UDim2.fromOffset((110 - d) / 2, y), Size = UDim2.fromOffset(d, d), ZIndex = 4, Parent = colF }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		h:AddTag("Nonapplicable")
+		task.spawn(function()
+			local ok, im = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
+			if ok then h.Image = im end
+		end)
+		if i == 1 and #list > 1 then TK.crown(h, UDim2.fromScale(0.78, 0.12), UDim2.fromScale(0.55, 0.42), 6) end
+		Kit.bindButton(h, { hover = 1.06 })
+		h.Activated:Connect(openParty)
+	end
+	if #list < 5 then
+		y -= 81 + 8
+		local plus = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.3,
+			Position = UDim2.fromOffset(14, y), Size = UDim2.fromOffset(81, 81), ZIndex = 4, Parent = colF }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		plus:AddTag("Nonapplicable")
+		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(30, 8), BackgroundColor3 = C.textDim, BorderSizePixel = 0, ZIndex = 5, Parent = plus })
+		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(8, 30), BackgroundColor3 = C.textDim, BorderSizePixel = 0, ZIndex = 5, Parent = plus })
+		Kit.bindButton(plus, { hover = 1.08 })
+		plus.Activated:Connect(openParty)
+	end
+end
+local partyGui
+local function refreshPartyColumn()
+	if not partyGui then
+		partyGui = new("ScreenGui", { Name = "MenuParty", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 40, Enabled = false,
+			Parent = player:WaitForChild("PlayerGui") })
+		local canvas = Kit.canvas(partyGui)
+		partyGui:SetAttribute("Built", true)
+		new("Frame", { Name = "Holder", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas }):SetAttribute("DesignCanvas", true)
+	end
+	local holder = partyGui:FindFirstChild("Holder", true)
+	for _, c in holder:GetChildren() do c:Destroy() end
+	local tmp = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), Parent = holder })
+	buildPartyColumn(tmp, 134 - 55, 983)
+	Kit.toScale(tmp)
+end
+local function menuWithParty()
+	local pg = player:FindFirstChild("PlayerGui")
+	if not pg then return false end
+	for _, n in { "PlayUI", "MissionsUI", "CodesUI" } do
+		local g = pg:FindFirstChild(n)
+		if g and g.Enabled then return true end
+	end
+	local pc = pg:FindFirstChild("PlayerCards")
+	return pc ~= nil and pc:FindFirstChild("Profile", true) ~= nil
+end
+task.defer(function()
+	refreshPartyColumn()
+	for _, a in { "PartyMembers", "PartyLeader" } do player:GetAttributeChangedSignal(a):Connect(refreshPartyColumn) end
+	game:GetService("RunService").Heartbeat:Connect(function()
+		local on = menuWithParty()
+		if partyGui and partyGui.Enabled ~= on then partyGui.Enabled = on end
+	end)
+end)
+
 local function render()
 	strips, tiles = {}, {}
 	for _, ch in col:GetChildren() do if ch:IsA("GuiObject") then ch:Destroy() end end
@@ -889,42 +960,6 @@ local function render()
 		render()
 	end)
 	for _, b in tiles do bindTile(b) end
-	-- the party column, bottom left (RIVALS): the leader at the bottom with the crown, the others stacked above, a + on top;
-	-- any of them opens Your Party. Pinned 24 px left of the column, its bottom level with the grid's bottom.
-	local old = root:FindFirstChild("PartyColumn")
-	if old then old:Destroy() end
-	local colF = new("Frame", { Name = "PartyColumn", BackgroundTransparency = 1, Position = UDim2.fromOffset(COL_X - 24 - 110, COL_Y + GRID_H - 500),
-		Size = UDim2.fromOffset(110, 500), Parent = root })
-	local list = partyList()
-	if #list == 0 then list = { player.UserId } end
-	local leader = partyLeader(list)
-	local order = { leader }
-	for _, uid in list do if uid ~= leader then table.insert(order, uid) end end
-	local y = 500 + 8
-	for i, uid in order do
-		local d = i == 1 and 100 or 80
-		y -= d + 8
-		local h = new("ImageButton", { Name = "Head" .. i, AutoButtonColor = false, BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.2,
-			Position = UDim2.fromOffset((110 - d) / 2, y), Size = UDim2.fromOffset(d, d), ZIndex = 4, Parent = colF }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		h:AddTag("Nonapplicable")
-		task.spawn(function()
-			local ok, im = pcall(Players.GetUserThumbnailAsync, Players, uid, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
-			if ok then h.Image = im end
-		end)
-		if i == 1 and #list > 1 then TK.crown(h, UDim2.fromScale(0.78, 0.12), UDim2.fromScale(0.55, 0.42), 6) end
-		Kit.bindButton(h, { hover = 1.06 })
-		h.Activated:Connect(openParty)
-	end
-	if #list < 5 then
-		y -= 72
-		local plus = new("TextButton", { Name = "Invite", Text = "", AutoButtonColor = false, BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.3,
-			Position = UDim2.fromOffset(19, y), Size = UDim2.fromOffset(72, 72), ZIndex = 4, Parent = colF }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		plus:AddTag("Nonapplicable")
-		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(30, 8), BackgroundColor3 = C.textDim, BorderSizePixel = 0, ZIndex = 5, Parent = plus })
-		new("Frame", { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(8, 30), BackgroundColor3 = C.textDim, BorderSizePixel = 0, ZIndex = 5, Parent = plus })
-		Kit.bindButton(plus, { hover = 1.08 })
-		plus.Activated:Connect(openParty)
-	end
 	-- the column scrolls (RIVALS): a little end padding under the grid
 	new("Frame", { Name = "EndPad", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, GRID_H), Size = UDim2.fromOffset(10, 60), Parent = col })
 	Kit.toScale(root)
