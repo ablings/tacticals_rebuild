@@ -10,6 +10,11 @@ FILES = [
     ("StarterPlayer.StarterPlayerScripts", "PadUI", "LocalScript", "pads/PadUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "PadBoards", "LocalScript", "pads/PadBoards.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "LeaderboardScreen", "LocalScript", "pseudolobby/hub/LeaderboardScreen.lua"),  # (2026-10-21) hub leaderboard board, 4 categories (was Studio-only)
+    # (2026-10-21) hub TVs / tickers / labels, were Studio-only (repo copies == live at 854dc1a)
+    ("StarterPlayer.StarterPlayerScripts", "LobbyScreensFX", "LocalScript", "pseudolobby/hub/LobbyScreensFX.lua"),
+    ("StarterPlayer.StarterPlayerScripts", "LobbyLabels", "LocalScript", "pseudolobby/hub/LobbyLabels.lua"),
+    ("StarterPlayer.StarterPlayerScripts", "LobbyTickers", "LocalScript", "pseudolobby/hub/LobbyTickers.lua"),
+    ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyScreensController", "ModuleScript", "pseudolobby/hub/LobbyScreensController.lua"),
     ("StarterPlayer.StarterPlayerScripts", "MatchFlowUI", "LocalScript", "match/MatchFlowUI.client.lua"),
     ("StarterPlayer.StarterPlayerScripts", "DuelHUD", "LocalScript", "match/DuelHUD.client.lua"),
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "LobbyHudController", "ModuleScript", "hud/LobbyHudController.lua"),

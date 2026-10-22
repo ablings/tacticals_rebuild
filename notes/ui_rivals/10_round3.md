@@ -225,3 +225,34 @@ File: `ui/lobby/Armory.lua` only. Not run in Studio; checked by block / bracket 
   flash for up to ~3 s before the payout; LobbyUIController's rail badge (`claimableCount`) likewise. Candidates to remove next.
 - Check in Studio: the check badge reads at 56 px over the card, the PAID tag + dimmed scissors, the pop when a task completes with Missions open
   (raise a stat with the admin tools), and that the widget's "x / x" fits beside the shortened (186 px) name.
+
+## Hub screens (2026-10-21)
+RIVALS pass on the in-world lobby screens (feel alive, clean, kid-friendly; our palette). Not deployed; the four files are the Studio copies.
+Shared look: Oswald Bold headings / Rubik body (no Gotham), no UIStroke on panels, no vertical accent bars, chunky plates with a darker
+offset lip, field green #8DBF5A -> #4C7A2E for primary, cream / tan text, olive for ranked, LIVE red kept, #FFD400 only for "most wins".
+- `LobbyScreensController.lua` (Training, DuelsTV, DuelsSign, Likes, Ad; 1000x620 canvas TVs, 900x240 sign; Brightness 1.4 -> 1.25):
+  - Helpers: `plate` (face + lip, centre-anchored holder), `pop` (UIScale 0.8 -> 1 Back), `countTo` (one NumberValue per label, ticks from the
+    last value), `livePill` (red LIVE pill image, UIScale breathe 1 -> 1.07), `header` (green gradient plate + dark-green lip, shadowed cream
+    title, tag and/or LIVE pill; replaces the yellow tab bar + blinking dot), `footer` (green call-to-action or dark info strip), `head`/`setHead`
+    (round headshot chip, initial letter when the player is not in this server).
+  - Training: LIVE pill; big count that counts up + "OPERATORS TRAINING NOW"; cards pooled per Player (only new players pop in, leavers removed,
+    no full rebuild); own card on dark field green; green "BOARD THE HELI AT EXFIL" foot.
+  - DuelsTV: rows pooled (maxRows built once; the 1 s clock only rewrites text). Row = green mode badge (olive + "RANKED" for ranked, else
+    "CASUAL"), headshot + names per side, VS in tan, clock top-right, source under it (ON A PAD / ONLINE / OTHER LOBBY); pad countdowns read
+    MATCH FOUND in red with the red strip. A row pops when its duel key is new. Eye + spectator count shows only if an entry carries `sp`
+    (LobbyFeaturesManager does not publish it yet, so it stays hidden today). Foot: matches glyph, IN QUEUE, per-mode counts that count up.
+  - DuelsSign: one lipped plate per mode (no thin yellow dividers), green mode, big count-up number, tan pads/online.
+  - Likes: thumbs-up glyph (bumps when likes go up), count-up current, "/ goal LIKES" in tan, lipped bar with a green gradient fill that tweens,
+    count-up %, reward line turns cream and pops on GOAL REACHED.
+  - Ad: gadget glyph beside the reward text; status green when an ad is available. LF_AdReady / AdService check / LF_WatchAd prompt unchanged.
+- `LobbyScreensFX.lua` (Signs.Screen_Brief_*/GunWall_*/Ranked): LIVE dot field green with a soft sine breathe (was a hard yellow blink);
+  Ranked ticker in Rubik cream on a near-black strip (was Gotham violet), bullet separators.
+- `LobbyLabels.lua`: station labels in Oswald / Rubik with a thick dark text stroke (title 3, sub 2.5), chunky green bar on a lip (was a thin
+  accent line); Accent attr remap Teal -> field green, Magenta -> cream, Violet -> tan. NPC bubbles: square near-black plate + lip + tail
+  (no UICorner, no stroke), sized in studs (6.5 x 1.9, was 260x70 px Offset), Rubik cream text, pop in, all parts fade out.
+- `LobbyTickers.lua` (LobbyMap.Screens): LED tickers Rubik cream with RichText field-green keys and the top-wins name in #FFD400; the ticker
+  countdown is "5H 12M" so the text changes once a minute (was every second, which nudged the scroll); seamless wrap (both halves end with the
+  separator); scroll in Scale and now runs right-to-left (it ran left-to-right). Monitors: tan label, big Oswald value, tinted flat glyph
+  (gadget / matches / lbElims / lbWins in gold), green gradient band at the bottom (was a thin bar); a card change pops, OPERATORS ONLINE counts up.
+- Check in Studio: header title vs LIVE pill fit on the 1000x620 TVs, Duels row widths with 3v3 names, head initials, the ticker RichText
+  TextBounds (scroll wrap), bubble size in studs at 10-40 studs, label green bar under long titles, monitor glyph tint and the gold wins glyph.
