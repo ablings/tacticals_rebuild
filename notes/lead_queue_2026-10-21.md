@@ -77,3 +77,9 @@
     sounds / FX and identical gameplay. Stats only from WeaponConfig[weaponId] (keep WeaponId on the tool); one lookup (weapon id + skin
     id -> template) for tools / holsters / Kit models / DualGrip; animations / sounds / muzzle FX per (weapon, skin) with fallback; wraps
     apply to skin models via the same WrapChannel / WrapSkip tags. Wraps v1 = static only (Edward); Inverted = swap the two looks.
+
+## Animation uploads (2026-10-21 18:10, whitteguy now gunsy funsy Admin; Save to Roblox, Creator gunsy funsy; owner checked Group:102028987)
+- CoverClimb 137843743816822, SmokeHold 103260577057488, SmokeThrow 103332896416040, SmokeThrowLeft 119020533976457.
+  PublishedId set in BOTH copies (match saved; lobby set but saved by the UI session with its RIVALS pass). They read length 0 in local
+  Studio (group animations never load in a local file) - they play once published. Re-running fix/climb.lua / fix/throw_anim.lua keeps them.
+- Stray: an earlier try uploaded CoverClimb to whitteguy's own account (136099030362295) - unused, can be deleted.
