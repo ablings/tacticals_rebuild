@@ -257,8 +257,11 @@ end
 local vote = new("Frame", { Name = "MapVote", BackgroundTransparency = 1, Size = UDim2.fromOffset(W, H), Visible = false, Parent = canvas })
 local voteBoxes = { teamBox(vote, 588, TEAM_A, false), teamBox(vote, 1042, TEAM_B, true) }
 local voteTimer = timerBox(vote)
-label(vote, "VOTE FOR A MAP", STENCIL, 40, 660, 136, 600, 50, WHITE)
-local mapHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(250, 210), Size = UDim2.fromOffset(1420, 760), Parent = vote })
+-- (2026-10-22, live RIVALS map vote) no title; the map cards are one big row right under the team boxes (top at 11 % of the
+-- height, 12.8-87.2 % of the width, ~24.4 % wide each, 8 px apart), like RIVALS' three featured maps
+local mapHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(250, 95), Size = UDim2.fromOffset(1420, 760), Parent = vote })
+local MAP_GAP = 8
+local STRIPE_TOP, STRIPE_BOTTOM = Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46) -- field green: the name strip + the card edge
 local mapTiles = {}
 -- (2026-10-21, round 3: match RIVALS) every 3D picture on these screens is live: map renders turn slowly on a camera orbit,
 -- item renders sway and spin round when hovered (RIVALS' item tiles are posed renders; ours are real models, so they move).
@@ -316,16 +319,16 @@ local function buildMaps(list)
 	local all = table.clone(list)
 	table.insert(all, { id = "Random", name = "Random", random = true })
 	local n = #all
-	local tw = math.min(560, (1420 - (n - 1) * 30) / n)
-	local th = math.floor(tw * 0.62)
-	local x0 = (1420 - (n * tw + (n - 1) * 30)) / 2
+	local tw = math.min(560, (1420 - (n - 1) * MAP_GAP) / n)
+	local th = math.floor(tw * 0.613)
+	local x0 = (1420 - (n * tw + (n - 1) * MAP_GAP)) / 2
 	for i, m in all do
-		local t = new("TextButton", { Name = m.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x0 + (i - 1) * (tw + 30), 40), Size = UDim2.fromOffset(tw, th),
+		local t = new("TextButton", { Name = m.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x0 + (i - 1) * (tw + MAP_GAP), 40), Size = UDim2.fromOffset(tw, th),
 			BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ClipsDescendants = true, ZIndex = 2, Parent = mapHolder }, { corner(6) })
 		ink(t, 12, 0)
-		local edgeCol = Color3.fromRGB(70, 72, 78) -- (serious pass) a quiet grey edge; your vote turns it beige
-		-- (2026-10-21, AI-tells cleanup) no hairline edge at rest: the ring shows (3 px, beige) only on your vote / the winner
-		local edge = new("UIStroke", { Color = edgeCol, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
+		-- (2026-10-22, live RIVALS) every card carries its strip colour as a 3 px edge; your vote turns it beige
+		local edgeCol = STRIPE_BOTTOM
+		local edge = new("UIStroke", { Color = edgeCol, Thickness = 3, Transparency = 0, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
 		local randomQ
 		if m.random then
 			randomQ = label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
@@ -367,11 +370,16 @@ local function buildMaps(list)
 			live3D[vpf] = { cam = cam, c = cf.Position, r = math.sqrt(0.45 ^ 2 + 0.62 ^ 2) * span, h = 0.62 * span, a = math.atan2(-0.45, 0.62), map = true }
 		end
 		-- striped name bar
-		local barH = th * 0.2
-		-- (serious pass, Sniper / Murder Duels) the name in white on a dark see-through caption strip
-		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = BLACK, BackgroundTransparency = 0.3,
-			BorderSizePixel = 0, ZIndex = 2, Parent = t })
-		label(bar, string.upper(m.name), FX, 40, 0, 0, tw, barH, WHITE, nil, 3)
+		local barH = math.floor(th * 0.17)
+		-- (2026-10-22, live RIVALS) the name sits on a field-green strip with faint diagonal stripes (RIVALS' map strips), white
+		-- Bold, not upper-case
+		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = WHITE, BackgroundTransparency = 0,
+			BorderSizePixel = 0, ClipsDescendants = true, ZIndex = 2, Parent = t }, { new("UIGradient", { Rotation = 90, Color = ColorSequence.new(STRIPE_TOP, STRIPE_BOTTOM) }) })
+		for k = -2, math.ceil(tw / 22) + 2 do
+			new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.82, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
+				Position = UDim2.fromOffset(k * 22, barH / 2), Size = UDim2.fromOffset(7, barH * 2.2), ZIndex = 2, Parent = bar })
+		end
+		label(bar, m.name, FB, 34, 0, 0, tw, barH, WHITE, nil, 3)
 		-- voters (headshots along the top)
 		local voters = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(tw - 24, 56), ZIndex = 4, Parent = t },
 			{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 6) }) })
@@ -424,8 +432,8 @@ refreshVotes = function()
 		if Kit and countText ~= tile.count.Text and countText ~= "" then Kit.pop(tile.count) end
 		tile.count.Text = countText
 		tile.edge.Color = hasMe and TEAM_A[1] or tile.col
-		tile.edge.Thickness = 3
-		tile.edge.Transparency = hasMe and 0 or 1
+		tile.edge.Thickness = hasMe and 5 or 3
+		tile.edge.Transparency = 0
 	end
 end
 
@@ -897,12 +905,20 @@ local function onChosen()
 		-- (2026-10-21, round 3: match RIVALS) the result reads at a glance: the winner punches and its map spins up, the
 		-- other tiles dim under a dark wash
 		if Kit then Kit.pop(tile.t, 1.1) end
+		-- (2026-10-22, live RIVALS) the other cards go and the winner glides to the middle, a little lower, on its own
 		for _, other in mapTiles do
 			if other ~= tile then
 				local wash = new("Frame", { Name = "LostWash", BackgroundColor3 = BLACK, BackgroundTransparency = 1, BorderSizePixel = 0,
 					Size = UDim2.fromScale(1, 1), ZIndex = 7, Parent = other.t }, { new("UICorner", { CornerRadius = UDim.new(0.04, 0) }) })
-				TweenService:Create(wash, TweenInfo.new(0.3, Enum.EasingStyle.Quad), { BackgroundTransparency = 0.5 }):Play()
+				TweenService:Create(wash, TweenInfo.new(0.25, Enum.EasingStyle.Quad), { BackgroundTransparency = 0 }):Play()
+				task.delay(0.25, function() if other.t.Parent then other.t.Visible = false end end)
 			end
+		end
+		do
+			local sx, sy = tile.t.Size.X.Scale, tile.t.Size.Y.Scale
+			local ap = tile.t.AnchorPoint
+			local y = tile.t.Position.Y.Scale + 120 / 760
+			TweenService:Create(tile.t, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Position = UDim2.fromScale((1 - sx) / 2 + sx * ap.X, y) }):Play()
 		end
 		for vpf, s in live3D do if s.map and vpf:IsDescendantOf(tile.t) then s.boost = 1 end end
 		task.spawn(function()
