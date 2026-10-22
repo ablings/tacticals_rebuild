@@ -1,4 +1,36 @@
-# Tacticals UI handoff → Shadow PC (2026-10-21, from the main PC UI session)
+# Tacticals UI handoff (latest: 2026-10-21 evening, Shadow PC UI session → next UI session, either PC)
+
+## Start here (2026-10-21 evening)
+- `git pull` in tacticals_rebuild (last UI commit 5f720a7). Both working copies (Tacticals_rebuild.rbxl lobby, match_place_ref.rbxl)
+  were saved with everything below deployed; the play lock is released.
+- **Not published.** Ports 28-30 are live; everything below is in the working copies only. The user asked to publish "once at a
+  safe spot": that is the lead's job, on Edward's go in the lead's own chat (a go relayed by the UI session doesn't count).
+  The UI is at a safe spot for it.
+- **What changed since port 30** (details + RIVALS frame refs in `notes/ui_rivals/00_plan.md`, `09_cleanup.md`, `10_round3.md`,
+  live-play notes in `rivals_live_notes.md`, imagery rules in `imagery_balance.md`; sheets `notes/ui_rivals/sheet_*.jpg`):
+  1. RIVALS three-qualities pass (interactability / cleanliness / kid-friendly), rounds 1-3 over every screen: shared motion helpers
+     in `ui/lobby/Kit.lua` (countTo, fillTo, pop, popIn, breathe, pulse, shake, busy), hover/press on everything.
+  2. AI-UI tells removed everywhere: fonts are now **Oswald Bold headings + Rubik body** (no Gotham/Montserrat/Builder Sans), no
+     UICorner + thin UIStroke hairline cards, no left accent bars. Close buttons are RIVALS' red X (Kit/SettingsKit.closeButton).
+  3. Edward's Q1-Q3: yellow #FFD400 only for #1; Ranked dark gold; no corner brackets. Field green #8DBF5A -> #4C7A2E for done/primary.
+  4. Imagery = "whatever RIVALS does": flat icons only where RIVALS uses flat glyphs (Missions task icons, price scissors; 13 icons in
+     Kit.ICONS, uploaded to Gunsy Funsy); everywhere RIVALS uses a posed render we show a live 3D placeholder (Shop bundles, Play
+     mode cards, rewards, Kit crate). The dock + Settings tabs are back to 3D icons.
+  5. Kit: none-glyph empty cosmetic slots, cosmetic picker (None + rarity tiles + BACK), denser right panel, readable locked rows.
+  6. **Missions auto-pay** (lead's [AUTOPAY] server change): no CLAIM button; done = full green bar + check + PAID, pops live; the
+     "Task Completed" banner comes from RichNotify. The nav "Claim your reward!" callout is hidden.
+  7. **Hub leaderboard board** (`ui/pseudolobby/hub/LeaderboardScreen.lua`, now in deploy_ui.py): Wins / Elims / Streak / Level tabs
+     from the lead's LobbyTop* StringValues, auto-cycles 8 s, #1 hero row, own row green.
+- **Not verified by hand** (Studio clicks weren't granted): the Kit cosmetic picker and hover states. Tutorial got only the PLAY
+  restyle; no fresh tutorial run this evening.
+- **Next for UI:** the TVs / tickers / labels in the hub (Studio-only sources: LobbyScreensController, Tickers, Labels) with
+  Kit.ICONS eye / live / thumbsup; the own nameplate still shows over the Kit character view; LobbyUITestHook "Close" only closes
+  the legacy panel (newer screens need their own close for captures); Missions nav badge can show ~3 s before auto-pay lands.
+- Roblox Player is installed on the Shadow PC (used to study RIVALS live; never pay Robux prompts).
+
+---
+
+# Earlier state (port 30, 2026-10-21 midday, from the main PC UI session)
 
 ## Get the project
 ```
@@ -11,7 +43,7 @@ git clone https://github.com/ablings/<private repo>.git "%USERPROFILE%\Documents
 ## State: everything is LIVE (port 30, published by the lead on Edward's go)
 Nothing of the UI session is pending deploy or publish. What shipped across ports 28-30:
 - **Look**: "the RIVALS mix" = RIVALS layout and shapes, filled with muted team colours (tan = us, dark green = them), Montserrat Heavy
-  + Builder Sans, hairline edges, no comic ink. Field-green primary buttons (#8DBF5A -> #4C7A2E) in the lobby. Intro / pads olive.
+  + Builder Sans, hairline edges, no comic ink. (Superseded 10-21 evening: Oswald + Rubik, no hairlines.) Field-green primary buttons (#8DBF5A -> #4C7A2E) in the lobby. Intro / pads olive.
   The in-match HUD was tested over pure white / black / green backdrops for readability (hint strip on a dark pill, darker tiles).
 - **Match HUD**: content-sized kill-feed pills, ROUND WON/LOST card + MATCH POINT, round fade, kill-type line, RIVALS health bar
   (bottom left, bone -> amber -> red), killer card, Switch Weapons from the countdown until KitLocked (lead), Settings gear (D-pad up),
