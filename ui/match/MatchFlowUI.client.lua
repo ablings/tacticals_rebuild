@@ -638,12 +638,16 @@ for i, s2 in SLOTS do
 	ink(t, 6, 4)
 	local tl = label(t, string.upper(s2.label), FX, 26, 0, 0, TAB_W, 48, WHITE)
 	tabs[i] = { b = t, l = tl }
+	-- (2026-10-22, live RIVALS loadout) no slot tabs: the framed slot square above says which pick is next, and a pick moves on
+	-- by itself (the tabs stay built for the gamepad / old flow, just hidden)
+	t.Visible = false
 end
 
 -- the grid: 5 per row in a scroll area
 local OPT, OPT_GAP, PER_ROW = 122, 36, 5
 local GRID_W, GRID_H = 5 * OPT + 4 * OPT_GAP + 40, 560
-local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromOffset(960 - GRID_W / 2, 368), Size = UDim2.fromOffset(GRID_W, GRID_H), BackgroundTransparency = 1,
+-- (2026-10-22) the grid moves up into the hidden tabs' place (y 296, was 368)
+local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromOffset(960 - GRID_W / 2, 296), Size = UDim2.fromOffset(GRID_W, GRID_H), BackgroundTransparency = 1,
 	BorderSizePixel = 0, ScrollBarThickness = 6, ScrollBarImageColor3 = GREY, ScrollingDirection = Enum.ScrollingDirection.Y, CanvasSize = UDim2.new(), Parent = lo })
 local list = optArea
 local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1500, 900), Size = UDim2.fromOffset(300, 80),
@@ -760,10 +764,13 @@ function showStep(i)
 	local rowH = OPT + 40
 	local contentH = math.max(GRID_H, 40 + rows * rowH)
 	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(GRID_W, contentH), Parent = optArea })
+	-- (2026-10-22, live RIVALS) a short row is centred under the slots, not packed left
+	local rowStart = 20
+	if #entries < PER_ROW then rowStart = (GRID_W - (#entries * OPT + (#entries - 1) * OPT_GAP)) / 2 end
 	for k, e in entries do
 		local row = (k - 1) // PER_ROW
 		local col = (k - 1) % PER_ROW
-		local x = 20 + col * (OPT + OPT_GAP)
+		local x = rowStart + col * (OPT + OPT_GAP)
 		local y = 36 + row * rowH
 		if e.kind == "random" then
 			local rt = optionTile(content, x, y, nil, "Random", function() if #mine > 0 then pick(mine[math.random(#mine)]) end end, "random")
@@ -842,14 +849,15 @@ local function setPhase(p)
 	-- RIVALS: the gun pick sits over the world, see-through; the loading screen AND the map vote stay solid (Edward 2026-10-21:
 	-- "rivals uses a background overlay ... to hide the player from seeing what map they are on" during map selection)
 	-- (2026-10-21, RIVALS pass) the backdrop fades to its level (and away when the flow ends) instead of snapping
-	local backT = not on and 1 or (sw and 0.55 or ((p == "Loading" or p == "MapVote") and 0 or 0.3))
+	-- (2026-10-22, live RIVALS) the gun pick: the world heavily blurred (blur below), only a light shade, no team boxes
+	local backT = not on and 1 or (sw and 0.55 or ((p == "Loading" or p == "MapVote") and 0 or 0.7))
 	if Kit then
 		if back.BackgroundTransparency ~= backT then TweenService:Create(back, TweenInfo.new(0.18), { BackgroundTransparency = backT }):Play() end
 	else back.BackgroundTransparency = backT end
-	for _, bx in loBoxes do local f = type(bx) == "table" and (bx.frame or (bx[1] and bx[1].h and bx[1].h.Parent)) or bx; if typeof(f) == "Instance" then f.Visible = not sw end end
+	for _, bx in loBoxes do local f = type(bx) == "table" and (bx.frame or (bx[1] and bx[1].h and bx[1].h.Parent)) or bx; if typeof(f) == "Instance" then f.Visible = not (sw or p == "Loadout") end end
 	local Lighting = game:GetService("Lighting")
 	local blur = Lighting:FindFirstChild("SwitchWeaponsBlur") or new("BlurEffect", { Name = "SwitchWeaponsBlur", Size = 0, Parent = Lighting })
-	TweenService:Create(blur, TweenInfo.new(0.2), { Size = sw and 16 or 0 }):Play()
+	TweenService:Create(blur, TweenInfo.new(0.2), { Size = (on and ((sw and 16) or (p == "Loadout" and 24))) or 0 }):Play()
 	-- the match HUD steps out while the picker is up (RIVALS keeps only the score bar); back on when it closes
 	local pg = player:FindFirstChild("PlayerGui")
 	for _, n in { "HUD", "Hotbar", "Vitals", "StealthUI", "TutorialUI", "NearMissUI", "TouchControls" } do

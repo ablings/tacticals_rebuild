@@ -204,7 +204,8 @@ local function showBanner(title, sub, color, seconds)
 end
 
 ---------------------------------------------------------------------------------------------------- kill feed
-local feed = new("Frame", { Name = "KillFeed", BackgroundTransparency = 1, Position = UDim2.fromOffset(1420, 130), Size = UDim2.fromOffset(480, 300), Parent = root },
+-- (2026-10-22, live RIVALS) the feed starts right under the settings gear (y ~0.1), not a third of the way down
+local feed = new("Frame", { Name = "KillFeed", BackgroundTransparency = 1, Position = UDim2.fromOffset(1420, 108), Size = UDim2.fromOffset(480, 300), Parent = root },
 	{ new("UIListLayout", { Padding = UDim.new(0.02, 0), SortOrder = Enum.SortOrder.LayoutOrder, HorizontalAlignment = Enum.HorizontalAlignment.Right }) })
 local feedN = 0
 local function botModel(uid)
@@ -287,9 +288,7 @@ local function addKill(d)
 		new("UIPadding", { PaddingLeft = UDim.new(PADX / total, 0), PaddingRight = UDim.new(PADX / total, 0) }),
 		new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(GAP / total, 0), SortOrder = Enum.SortOrder.LayoutOrder }) })
-	if d.killer == player.UserId or d.victim == player.UserId then
-		new("UIStroke", { Color = WHITE, Thickness = 3, Transparency = 0.3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = pill }) -- (2026-10-21, AI-tells cleanup) your kill: thick ring, not a hairline
-	end
+	-- (2026-10-22, live RIVALS) no ring on your own kills: RIVALS' pills are plain fills (the side colour already says whose)
 	for i, part in parts do
 		local kind, v, w = part[1], part[2], part[3] / total
 		if kind == "name" or kind == "text" or kind == "glyph" then
@@ -1202,13 +1201,15 @@ do
 -- the timer with a white flash, and stays until the next round goes live.
 -- (2026-10-20, the RIVALS mix) back to RIVALS' small card under the timer: "ROUND" over "WON" / "LOST", filled with the side's
 -- muted colour (tan ours, dark green theirs). Through a deciding round's countdown it reads MATCH POINT (RV.showMatchPoint).
-local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(810, 132), Size = UDim2.fromOffset(300, 96), BackgroundColor3 = WHITE, BackgroundTransparency = 0.06,
+-- (2026-10-22, live RIVALS ROUND LOST) 246 x 95 at y 147: a clear gap under the timer, narrower, a heavier word
+local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(837, 147), Size = UDim2.fromOffset(246, 95), BackgroundColor3 = WHITE, BackgroundTransparency = 0.06,
 	Visible = false, ZIndex = 6, Parent = root }, { corner(8) })
 local roundGrad = new("UIGradient", { Rotation = 90, Parent = roundCard })
-local roundSmall = label(roundCard, "ROUND", FB, 22, 0, 6, 300, 26, WHITE, nil, 7)
-local roundBig = label(roundCard, "WON", FX, 50, 0, 28, 300, 60, WHITE, nil, 7)
-local roundMP = label(roundCard, "MATCH POINT", FX, 34, 0, 8, 300, 44, WHITE, nil, 7)
-local roundMPSub = label(roundCard, "", FB, 19, 0, 54, 300, 30, WHITE, nil, 7)
+local roundSmall = label(roundCard, "ROUND", FB, 22, 0, 4, 246, 26, WHITE, nil, 7)
+local roundBig = label(roundCard, "WON", FX, 56, 0, 26, 246, 64, WHITE, nil, 7)
+roundBig:FindFirstChildOfClass("UIStroke").Thickness, roundBig:FindFirstChildOfClass("UIStroke").Transparency = 2.5, 0.2
+local roundMP = label(roundCard, "MATCH POINT", FX, 32, 0, 8, 246, 44, WHITE, nil, 7)
+local roundMPSub = label(roundCard, "", FB, 19, 0, 54, 246, 30, WHITE, nil, 7)
 roundMP.Visible, roundMPSub.Visible = false, false
 local roundPop = new("UIScale", { Parent = roundCard })
 local function showRoundCard(won)
