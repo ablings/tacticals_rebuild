@@ -158,7 +158,11 @@ local function teamBox(x, cols, right)
 		for _, ex in { 16, 30 } do new("Frame", { BackgroundColor3 = BLACK, Position = UDim2.fromOffset(ex, 20), Size = UDim2.fromOffset(10, 10), ZIndex = 6, Parent = skull }, { corner(5) }) end
 		new("Frame", { BackgroundColor3 = BLACK, Position = UDim2.fromOffset(26, 31), Size = UDim2.fromOffset(4, 5), ZIndex = 6, Parent = skull })
 		for _, tx in { 23, 28, 33 } do new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, Position = UDim2.fromOffset(tx - 1, 40), Size = UDim2.fromOffset(2, 6), ZIndex = 6, Parent = skull }) end
-		slots[i] = { h = h, x1 = x1, x2 = x2, skull = skull }
+		-- (2026-10-22, spacing grade vs live RIVALS) RIVALS' head carries the level seal bottom-left and the device bottom-right
+		local sealH = new("Frame", { Name = "Seal", BackgroundTransparency = 1, Position = UDim2.fromOffset(-7, 29), Size = UDim2.fromOffset(31, 31), ZIndex = 6, Parent = h })
+		local dev = new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(34, 36), Size = UDim2.fromOffset(22, 22),
+			Visible = false, ZIndex = 6, Parent = h })
+		slots[i] = { h = h, x1 = x1, x2 = x2, skull = skull, seal = sealH, dev = dev }
 	end
 	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, WHITE, nil, 4)
 	return { slots = slots, score = score, frame = b, right = right }
@@ -272,7 +276,7 @@ local function addKill(d)
 	-- the parts, each { kind, value, design width }
 	local parts = {}
 	if d.killer then table.insert(parts, { "name", nameOf(d.killer), math.clamp(textW(nameOf(d.killer), 22) + 6, 24, 170) }) end
-	if wIcon then table.insert(parts, { "icon", wIcon, 66 })
+	if wIcon then table.insert(parts, { "icon", wIcon, 46 }) -- (2026-10-22, spacing grade) was 66 at 0.8 tall: ~2 cap, uneven gaps
 	elseif tool then table.insert(parts, { "vpf", tool, 66 })
 	else table.insert(parts, { "text", verb, textW(verb, 20) + 6 }) end
 	if d.headshot and #marks == 0 then table.insert(parts, { "glyph", "◉", 22 }) end
@@ -298,7 +302,7 @@ local function addKill(d)
 			new("UITextSizeConstraint", { MaxTextSize = kind == "text" and 20 or 22, Parent = t })
 			new("UIStroke", { Thickness = 1, Transparency = 0.6, Parent = t })
 		elseif kind == "icon" or kind == "mark" then
-			new("ImageLabel", { LayoutOrder = i, BackgroundTransparency = 1, Image = v, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(w, kind == "icon" and 0.8 or 0.7), Parent = pill })
+			new("ImageLabel", { LayoutOrder = i, BackgroundTransparency = 1, Image = v, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(w, kind == "icon" and 0.6 or 0.7), Parent = pill })
 		elseif kind == "vpf" then
 			local vpf = new("ViewportFrame", { LayoutOrder = i, BackgroundTransparency = 1, Ambient = WHITE, LightColor = Color3.new(0, 0, 0), Size = UDim2.fromScale(w, 1), Parent = pill })
 			local m = Instance.new("Model")
@@ -573,11 +577,11 @@ do
 	stats.name = new("Frame", { Name = "NamePlate", Position = UDim2.fromOffset(762, 765), Size = UDim2.fromOffset(396, 66), BackgroundColor3 = WHITE,
 		ZIndex = 6, Parent = results }, { corner(6) })
 	stats.nameGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = stats.name })
-	stats.seal = new("Frame", { Name = "SealHolder", BackgroundTransparency = 1, Position = UDim2.fromOffset(60, 9), Size = UDim2.fromOffset(48, 48), ZIndex = 7, Parent = stats.name })
+	stats.seal = new("Frame", { Name = "SealHolder", BackgroundTransparency = 1, Position = UDim2.fromOffset(78, 16), Size = UDim2.fromOffset(33, 33), ZIndex = 7, Parent = stats.name }) -- (2026-10-22, spacing grade) RIVALS' seal ~1.6 cap, against the name
 	stats.nameT = label(stats.name, "", FX, 36, 112, 0, 220, 44, WHITE, Enum.TextXAlignment.Left, 7)
 	stats.userT = label(stats.name, "", FB, 16, 114, 41, 220, 20, Color3.fromRGB(240, 236, 226), Enum.TextXAlignment.Left, 7)
-	stats.dev = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(334, 16), Size = UDim2.fromOffset(32, 32),
-		ZIndex = 7, Parent = stats.name })
+	stats.dev = new("ImageLabel", { BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(334, 1), Size = UDim2.fromOffset(46, 46),
+		ZIndex = 7, Parent = stats.name }) -- (2026-10-22) ink ~1.2 cap, centred on the name line (the art has a clear margin)
 	stats.panel = new("Frame", { Name = "StatsPlate", Position = UDim2.fromOffset(766, 831), Size = UDim2.fromOffset(388, 212), BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.25, ZIndex = 4, Parent = results }, { new("UIGradient", { Rotation = 90,
 		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.1), NumberSequenceKeypoint.new(0.7, 0.35), NumberSequenceKeypoint.new(1, 1) }) }) })
@@ -721,7 +725,7 @@ local function showResults(sum)
 			end
 		end
 		stats.winner = { char = wchar, uid = wuid }
-		resScore.Text = wname or (winTeam == myTeam and nameOf(player.UserId) or "Opponent")
+		resScore.Text = (wp and wp.DisplayName) or wname or (winTeam == myTeam and player.DisplayName or "Opponent") -- (2026-10-22) no badge glyph: RIVALS' plate is the name alone
 		stats.nameT.Text = wp and wp.DisplayName or (wname or "")
 		stats.userT.Text = wp and ("@" .. wp.Name) or ""
 		local okB, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
@@ -731,7 +735,7 @@ local function showResults(sum)
 		-- its text, not pinned to the plate's right edge
 		task.defer(function()
 			local tb, pw = stats.nameT.TextBounds.X, stats.name.AbsoluteSize.X
-			if tb > 0 and pw > 0 then stats.dev.Position = UDim2.fromScale(math.min(112 + tb * 396 / pw + 10, 352) / 396, 16 / 66) end
+			if tb > 0 and pw > 0 then stats.dev.Position = UDim2.fromScale(math.min(112 + tb * 396 / pw + 8, 346) / 396, 1 / 66) end
 		end)
 		stats.seal:ClearAllChildren()
 		if stats.Kit and stats.Kit.levelSeal then
@@ -1289,11 +1293,11 @@ local kcard = new("Frame", { Name = "KillerCard", Position = UDim2.fromOffset(11
 	Visible = false, ZIndex = 6, Parent = root }, { corner(8), new("UIGradient", { Rotation = 0, Color = ColorSequence.new(TEAM_B.fill[1], TEAM_B.fill[2]),
 		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.05), NumberSequenceKeypoint.new(0.8, 0.12), NumberSequenceKeypoint.new(1, 1) }) }) })
 -- (2026-10-20, the RIVALS mix) RIVALS' killer card filled with the killer's side colour (muted dark green), fading to the right
-local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(20, 26), Size = UDim2.fromOffset(104, 104), ZIndex = 7, Parent = kcard }, { corner(52) })
+local kHead = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(20, 26), Size = UDim2.fromOffset(104, 104), ZIndex = 7, Parent = kcard }, { corner(10) }) -- (2026-10-22, live RIVALS) a rounded square, not a disc
 local kHpBack = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.4, Position = UDim2.fromOffset(32, 12), Size = UDim2.fromOffset(80, 10), ZIndex = 8, Parent = kcard }, { corner(5) })
 local kHp = new("Frame", { BackgroundColor3 = GOOD, Size = UDim2.fromScale(1, 1), ZIndex = 9, Parent = kHpBack }, { corner(5) })
-local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(8, 92), Size = UDim2.fromOffset(44, 44), ZIndex = 9, Parent = kcard }, { corner(22) }) -- (2026-10-21, AI-tells cleanup) hairline ring removed
-local kLevelL = label(kLevel, "1", FX, 24, 0, 0, 44, 44, WHITE, nil, 10)
+local kLevel = new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 150, 230), Position = UDim2.fromOffset(12, 100), Size = UDim2.fromOffset(36, 36), ZIndex = 9, Parent = kcard }, { corner(18) }) -- (2026-10-22, spacing grade) ~1.5 cap, overhanging the head ~0.3 cap like RIVALS -- (2026-10-21, AI-tells cleanup) hairline ring removed
+local kLevelL = label(kLevel, "1", FX, 20, 0, 0, 36, 36, WHITE, nil, 10)
 -- the win streak: the flame silhouette with the number over it (Kit.ICONS.streak), like RIVALS
 local kStreak = new("ImageLabel", { BackgroundTransparency = 1, Image = "rbxassetid://89001729086571", ImageColor3 = Color3.fromRGB(255, 140, 40), -- (re-pointed below to Kit.streakImage)
 	Position = UDim2.fromOffset(94, 88), Size = UDim2.fromOffset(46, 46), Visible = false, ZIndex = 9, Parent = kcard })
@@ -1304,9 +1308,13 @@ end)
 local kStreakL = label(kStreak, "3", FX, 22, 0, 16, 46, 26, WHITE, nil, 10)
 new("UIStroke", { Thickness = 2.5, Color = Color3.fromRGB(240, 70, 30), Parent = kStreakL }) -- (2026-10-20) RIVALS number edge
 new("UIGradient", { Rotation = 90, Color = ColorSequence.new(WHITE, Color3.fromRGB(255, 222, 196)), Parent = kStreakL })
-local kName = label(kcard, "", FX, 46, 150, 10, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
-local kUser = label(kcard, "", FB, 20, 150, 60, 560, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
-local kHow = label(kcard, "", FB, 28, 158, 88, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)
+-- (2026-10-22, spacing grade vs RIVALS) the name sits ~0.45 cap off the head (was 26 design px, ~0.9 cap)
+local kName = label(kcard, "", FX, 46, 134, 10, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
+local kUser = label(kcard, "", FB, 20, 134, 60, 560, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
+local kHow = label(kcard, "", FB, 28, 142, 88, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)
+-- RIVALS: the device on the head's bottom-right corner, the level seal on its bottom-left
+RV.kDev = new("ImageLabel", { Name = "Device", BackgroundTransparency = 1, ScaleType = Enum.ScaleType.Fit, Position = UDim2.fromOffset(94, 100), Size = UDim2.fromOffset(34, 34),
+	Visible = false, ZIndex = 9, Parent = kcard })
 new("UIStroke", { Thickness = 2, Transparency = 0.5, Parent = kName })
 local kFor
 local function refreshKillerCard(uid)
@@ -1323,6 +1331,11 @@ local function refreshKillerCard(uid)
 	local p = uid and uid > 0 and Players:GetPlayerByUserId(uid)
 	kName.Text = nameOf(uid)
 	kUser.Text = p and ("@" .. p.Name) or ""
+	do
+		local okD, BD = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
+		local dv = p and okD and BD and BD.DeviceIcon and BD.DeviceIcon(p) or nil
+		RV.kDev.Visible, RV.kDev.Image = dv ~= nil, dv or ""
+	end
 	-- (2026-10-20, Edward) ONE icon (UIKit.Badges.Icon): their streak flame, else their rank emblem (Rank mode), else their level
 	local okB, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
 	local kind, v = "level", p and p:GetAttribute("Level") or 1
@@ -1429,16 +1442,16 @@ local function fillBox(box, ids)
 	local n = math.clamp(#ids, 1, 3)
 	if box.n ~= n then
 		box.n = n
-		local w = 92 + 64 * n
+		local w = 64 + 64 * n -- (2026-10-22, spacing grade) the score hugs the heads (~0.35 cap like RIVALS; was ~1.15)
 		box.frame.Size = UDim2.fromScale(w / W, 84 / H)
 		box.frame.Position = UDim2.fromScale((box.right and 1040 or (880 - w)) / W, 20 / H)
 		for i = 1, 3 do
-			local hx = box.right and (86 + (i - 1) * 64) or (14 + (i - 1) * 64)
+			local hx = box.right and (58 + (i - 1) * 64) or (14 + (i - 1) * 64)
 			box.slots[i].h.Position = UDim2.fromScale(hx / w, 14 / 84)
 			box.slots[i].h.Size = UDim2.fromScale(56 / w, 56 / 84)
 		end
-		box.score.Position = UDim2.fromScale((box.right and 8 or (w - 78)) / w, 6 / 84)
-		box.score.Size = UDim2.fromScale(70 / w, 72 / 84)
+		box.score.Position = UDim2.fromScale((box.right and 10 or (w - 60)) / w, 6 / 84) -- (the digit sits ~11 px off the head)
+		box.score.Size = UDim2.fromScale(50 / w, 72 / 84)
 	end
 	for i = 1, 3 do
 		local s = box.slots[i]
@@ -1461,6 +1474,17 @@ local function fillBox(box, ids)
 				stats.Kit.pop(s.skull, 1.6)
 			end
 			s.dead = dead and true or false
+			local lv = p and tonumber(p:GetAttribute("Level")) or nil
+			if s.lv ~= lv then
+				s.lv = lv
+				s.seal:ClearAllChildren()
+				if lv and stats.Kit and stats.Kit.levelSeal then pcall(function() stats.Kit.levelSeal(s.seal, lv, { ZIndex = 7 }) end) end
+			end
+			local okB, B = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
+			local dv = p and okB and B and B.DeviceIcon and B.DeviceIcon(p) or nil
+			s.dev.Visible = dv ~= nil and not dead
+			s.dev.Image = dv or ""
+			s.seal.Visible = not dead
 			if uid < 0 then s.h.Image = ""
 			elseif heads[uid] then s.h.Image = heads[uid]
 			elseif heads[uid] == nil then
