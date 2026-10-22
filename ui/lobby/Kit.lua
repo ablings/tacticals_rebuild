@@ -1101,9 +1101,13 @@ Kit.ICONS.lbWins = "rbxassetid://120316362189428"
 Kit.ICONS.lbLevel = "rbxassetid://81711657935672"
 Kit.ICONS.streakColor = "rbxassetid://99079058513557" -- tac_streak_color (Gunsy Funsy upload 2026-10-20)
 -- (2026-10-22, Edward: "replace everything you can besides scissors") RIVALS-style solid chunky white glyphs (codex,
--- ui/art/rivals/_upload_glyphs) for the remaining thin cream line icons. Empty until uploaded under the group: Kit.glyph falls back
+-- ui/art/rivals/_upload_glyphs) for the remaining thin cream line icons. An empty id makes Kit.glyph fall back
 -- to the old icon meanwhile. The scissors currency art stays ours.
-Kit.GLYPH = { flame = "", trophy = "", level = "", eye = "", news = "", inbox = "", play = "", rank = "", headshot = "" }
+Kit.GLYPH = { -- Gunsy Funsy uploads 2026-10-22 (image ids read from the decals in Studio)
+	flame = "rbxassetid://127770268382067", trophy = "rbxassetid://119086843411943", level = "rbxassetid://98436302565944",
+	eye = "rbxassetid://97319730751990", news = "rbxassetid://107411115541536", inbox = "rbxassetid://118698333723394",
+	play = "rbxassetid://131171605595484", rank = "rbxassetid://84539899641756", headshot = "rbxassetid://135098094527220",
+}
 function Kit.glyph(name: string, fallback: string?): string
 	local id = Kit.GLYPH[name]
 	return (id and id ~= "") and id or fallback or ""
