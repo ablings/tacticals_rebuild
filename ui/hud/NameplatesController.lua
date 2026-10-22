@@ -1,6 +1,6 @@
 -- Client/Controllers/NameplatesController (ModuleScript, auto-loaded): RIVALS' lobby nameplates in our look.
 -- Over every player in the lobby: a stat badge (Level or Wins: Settings > Video > Interface > Lobby Data), the display
--- name big and bold, @username small under it, and a VIP chip for VIPs. Sized in studs (shrinks with distance), not
+-- name big and bold, @username small under it (only when it differs from the display name), and a VIP chip for VIPs. Sized in studs (shrinks with distance), not
 -- AlwaysOnTop (walls hide it: Roblox's own names were turned off because they showed through walls).
 -- Not shown in Training, during a cutscene, or when you hide the HUD. (UI session 2026-10-16)
 local Players = game:GetService("Players")
@@ -32,16 +32,22 @@ local function build(p, character)
 	g.Name = "Nameplate_" .. p.UserId
 	g.Enabled = false -- (2026-10-20) starts hidden: the 0.25 s update decides (a respawn mid-duel flashed a blank plate)
 	g.Adornee = head
-	g.Size = UDim2.fromScale(9, 2) -- studs
-	g.StudsOffset = Vector3.new(0, 2.1, 0)
+	-- (2026-10-21, grade1) your own plate is ~55% size: over your own back it filled the middle of the hub screen
+	local mine = p == player
+	g.Size = mine and UDim2.fromScale(9 * 0.55, 2 * 0.55) or UDim2.fromScale(9, 2) -- studs
+	g.StudsOffset = Vector3.new(0, mine and 1.6 or 2.1, 0)
 	g.MaxDistance = 90
 	g.LightInfluence = 0
 	g.AlwaysOnTop = false
 	g.ResetOnSpawn = false
 	g.Parent = player:WaitForChild("PlayerGui")
 	-- row: [badge] Name [VIP]
+	-- (2026-10-21, grade1) one name like RIVALS: the @username line only when it differs from the display name
+	-- ("whitteguy / @whitteguy" said it twice); without it the name row sits low, on the head
+	local showHandle = p.DisplayName:lower() ~= p.Name:lower()
 	local row = Instance.new("Frame")
 	row.BackgroundTransparency = 1
+	row.Position = showHandle and UDim2.fromScale(0, 0) or UDim2.fromScale(0, 0.3)
 	row.Size = UDim2.fromScale(1, 0.62)
 	row.Parent = g
 	local list = Instance.new("UIListLayout")
@@ -108,6 +114,7 @@ local function build(p, character)
 	user.TextScaled = true
 	user.TextColor3 = Color3.fromRGB(205, 205, 212)
 	user.Text = "@" .. p.Name
+	user.Visible = showHandle
 	user.Parent = g
 	local us = Instance.new("UIStroke"); us.Thickness = 1.5; us.Transparency = 0.4; us.Parent = user
 	-- the old server VIP tag sits in the same spot: ours carries the VIP chip now

@@ -157,11 +157,15 @@ end
 local function showItem(itemId: string, direction: number)
 	local owned = ctx.owns(itemId)
 	local entry = makeShowcase(itemId, not owned)
-	-- the current item leaves frame to the left
+	-- (2026-10-21, grade1) RIVALS pops the new gun in where it stands: the current item shrinks away (0.15 s, drifting a little
+	-- left) and the new one punches in from 0.6 to full size with a Back ease (0.25 s). Was a 0.55 s slide across the room.
 	for _, old in showcase do
 		if not old.leaving then
 			old.leaving = true
-			local t = TweenService:Create(old.offset, TweenInfo.new(0.32, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Value = -16 * direction })
+			old.pop = old.pop or Instance.new("NumberValue")
+			if old.pop.Value == 0 then old.pop.Value = 1 end
+			TweenService:Create(old.pop, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Value = 0.05 }):Play()
+			local t = TweenService:Create(old.offset, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Value = -3 * direction })
 			t:Play()
 			t.Completed:Connect(function()
 				if old.model then old.model:Destroy() end
@@ -171,10 +175,12 @@ local function showItem(itemId: string, direction: number)
 			end)
 		end
 	end
-	-- the new one slides in from the right and settles
-	entry.offset.Value = 16 * direction
+	-- the new one pops in where it stands
+	entry.offset.Value = 0
+	entry.pop = Instance.new("NumberValue")
+	entry.pop.Value = 0.6
 	table.insert(showcase, entry)
-	TweenService:Create(entry.offset, TweenInfo.new(0.55, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Value = 0 }):Play()
+	TweenService:Create(entry.pop, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), { Value = 1 }):Play()
 	Armory.SetTape(not owned)
 	if showcaseVpf then
 		TweenService:Create(showcaseVpf, TweenInfo.new(0.25), owned and LIT or DARK):Play()
@@ -190,6 +196,15 @@ local function renderShowcase(dt: number)
 	local d, camCF = points()
 	if not d then return end
 	local cam = workspace.CurrentCamera
+	-- (2026-10-21, grade1) the gun is THE hero: graders saw the player's avatar filling the centre instead. There is no character
+	-- view in this screen; the camera had been handed back to Roblox's Custom camera (behind / in front of your character in the
+	-- lobby; Studio's MCP calls do this when they return, see notes/ui_shadow_deploy.md) while the Kit stayed open. So once the
+	-- reveal is done the Kit holds its camera on the showcase every frame.
+	if active and not busy and camCF then
+		if cam.CameraType ~= Enum.CameraType.Scriptable then cam.CameraType = Enum.CameraType.Scriptable end
+		if cam.CFrame ~= camCF then cam.CFrame = camCF end
+		if cam.FieldOfView ~= 40 then cam.FieldOfView = 40 end
+	end
 	if showcaseCam then
 		showcaseCam.CFrame = cam.CFrame
 		showcaseCam.FieldOfView = cam.FieldOfView
@@ -255,6 +270,12 @@ local function renderShowcase(dt: number)
 		local pos = d + right * e.offset.Value + Vector3.new(0, math.sin(t * 1.3) * 0.08, 0)
 		pos += (camCF.Position - d) * (1 - 1 / zoom) -- scroll zoom: closer to the camera
 		if e.model and e.model.Parent then
+			-- (2026-10-21, grade1) the selection pop: scale the real model while its pop value moves (only then: ScaleTo isn't free)
+			if e.pop and e.lastPop2 ~= e.pop.Value then
+				e.baseScale = e.baseScale or e.model:GetScale()
+				e.lastPop2 = e.pop.Value
+				e.model:ScaleTo(e.baseScale * math.max(0.05, e.pop.Value))
+			end
 			e.model:PivotTo(CFrame.new(pos) * idle * spin * basis * (e.view or CFrame.identity))
 		end
 		if e.lock and e.lock.Parent then
@@ -798,7 +819,7 @@ end
 --           a WEAPONS section, then MELEE, then GADGETS, each under its own header. The slot icons
 --           jump the list to that section. Owned items show a small 3D render poking out of the
 --           panel's left edge; the picked item sits in a lighter band, big and white, with its render
---           breaking out of the right edge. Locked items are dim with a padlock either side.
+--           breaking out of the right edge. Locked items are dim with one padlock on the left.
 --   Right : stacked up from the bottom - actions (equip / unlock, inspect, next unlock), level card
 --           (XP bar, level up, account level), and the item card (render, name, favourite box, notes).
 --   Bottom: round slots on a strip - LEAVE and the cosmetic slots.
@@ -1200,8 +1221,10 @@ end
 
 -- Icon meshes made with Studio's mesh generator, kept in ReplicatedStorage.UIIcons (stored facing +Z, up +Y;
 -- UI only, never placed in the world). A glyph uses its mesh when there is one, else the drawn shape above.
-local GLYPH_MESH = { leave = "X", lock = "Lock", unlock = "LockOpen", lens = "Magnifier", eye = "Magnifier",
+local GLYPH_MESH = { leave = "X", lock = "Lock", unlock = "LockOpen", lens = "Magnifier",
 	arrow = "Arrow", check = "Check", star = "Badge", up = "LevelUp", none = "None" }
+-- (2026-10-21, grade1) Inspect and Statistics both drew the Magnifier mesh ("eye" mapped to it): "eye" is now Kit.ICONS.eye
+-- (an image, see glyph) and Statistics uses the drawn bar chart its row already shows on the left
 
 -- a fresh, centred copy of a UIIcons mesh (nil when it isn't there)
 local function iconModel(name: string): Model?
@@ -1243,6 +1266,11 @@ end
 local function glyph(parent: Instance, kind: string, size: number, color: Color3?, z: number?, lit: boolean?)
 	local h = mk("Frame", { Name = "Glyph", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromOffset(size, size), ZIndex = z or 6, Parent = parent })
+	if kind == "eye" and Kit.ICONS and Kit.ICONS.eye then
+		mk("ImageLabel", { Name = "Eye", BackgroundTransparency = 1, Image = Kit.ICONS.eye, ImageColor3 = color or COL.Text, ScaleType = Enum.ScaleType.Fit,
+			Size = UDim2.fromScale(1, 1), ZIndex = z or 6, Parent = h })
+		return h
+	end
 	local meshName = GLYPH_MESH[kind]
 	local box = meshName and meshIcon(h, meshName, size, color or COL.Text, (lit and kind ~= "star") or kind == "leave", z)
 	if box then
@@ -1455,6 +1483,9 @@ local function bigButton(parent: Instance, kind: string?, enabled: boolean, labe
 	local top, bottom, edge = COL.BlueTop, COL.BlueBottom, COL.BlueEdge
 	if tone == "green" then top, bottom, edge = COL.GreenTop, COL.GreenBottom, Color3.fromRGB(60, 58, 50) end
 	if not enabled then top, bottom, edge = COL.OffTop, COL.OffBottom, COL.OffEdge end
+	-- (2026-10-21, grade1) "equipped": a positive field-green chip with a check and EQUIPPED (the grey button read as "can't
+	-- click"); still not clickable (no bindButton, no press drop)
+	if tone == "equipped" then top, bottom, edge = COL.BlueTop, COL.BlueBottom, COL.BlueEdge end
 	local b = mk("TextButton", { Name = "Button", AutoButtonColor = false, Text = "", BackgroundColor3 = edge,
 		AnchorPoint = Vector2.new(1, 0.5), Position = UDim2.new(1, -9, 0.5, 0), Size = UDim2.fromOffset(sz.X, sz.Y), ZIndex = 5, Parent = parent }, { corner(6) })
 	local face = mk("Frame", { Name = "Face", BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.new(1, 0, 1, -4), ZIndex = 6, Parent = b }, {
@@ -1462,7 +1493,18 @@ local function bigButton(parent: Instance, kind: string?, enabled: boolean, labe
 	})
 	mk("Frame", { BackgroundColor3 = WHITE, BackgroundTransparency = enabled and 0.65 or 0.88, BorderSizePixel = 0, Position = UDim2.fromOffset(6, 3),
 		Size = UDim2.new(1, -12, 0, 2), ZIndex = 7, Parent = face }, { circle() })
-	if label then
+	if tone == "equipped" then
+		b.Active = false
+		local holder = mk("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+			Size = UDim2.fromOffset(0, 26), AutomaticSize = Enum.AutomaticSize.X, ZIndex = 8, Parent = face }, {
+			mk("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, VerticalAlignment = Enum.VerticalAlignment.Center,
+				Padding = UDim.new(0, 4), SortOrder = Enum.SortOrder.LayoutOrder }) })
+		local ck = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(22, 22), LayoutOrder = 1, ZIndex = 8, Parent = holder })
+		GLYPH.check(ck, 22, COL.Text)
+		for _, d in ck:GetDescendants() do if d:IsA("GuiObject") then d.ZIndex = 9 end end
+		shade(text({ Text = "EQUIPPED", FontFace = FONT_HEAVY, TextSize = 19, AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 26),
+			TextColor3 = COL.Text, LayoutOrder = 2, ZIndex = 9, Parent = holder }), 1.5)
+	elseif label then
 		shade(text({ Text = label, FontFace = FONT_HEAVY, TextSize = math.floor(sz.Y * 0.5), TextXAlignment = Enum.TextXAlignment.Center, Size = UDim2.fromScale(1, 1),
 			TextColor3 = enabled and COL.Text or COL.Grey, ZIndex = 8, Parent = face }), 1.5)
 	elseif kind then
@@ -1514,7 +1556,8 @@ local function makeLocks(row, color: Color3)
 	for _, l in row.locks do l:Destroy() end
 	table.clear(row.locks)
 	if row.owned then return end
-	for _, order in { 1, 3 } do
+	-- (2026-10-21, grade1) one padlock, on the left of the name (was one either side, which read twice)
+	for _, order in { 1 } do
 		local l = mk("Frame", { Name = "Lock", BackgroundTransparency = 1, Size = UDim2.fromOffset(26, 26), ZIndex = 5, Parent = row.content })
 		if not meshIcon(l, "Lock", 26, color, false, 5) then
 			l:Destroy()
@@ -1614,13 +1657,10 @@ local function makeHeader(slot: string, order: number, parent: Instance)
 		mk("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 10), SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
-	for _, side in { 1, 3 } do -- the slot's icon either side, leaning in towards the title like crossed rifles
-		local box = mk("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(60, 40), LayoutOrder = side, ZIndex = 4, Parent = row })
-		slotIcon(box, slot, COL.DimHead, side == 3)
-	end
-	-- (2026-10-21, RIVALS pass) heading font: Oswald Bold
-	text({ Text = SLOT_TITLE[slot], FontFace = FONT_TITLE, TextSize = 30, TextColor3 = COL.DimHead, AutomaticSize = Enum.AutomaticSize.X,
-		Size = UDim2.fromOffset(0, 36), LayoutOrder = 2, ZIndex = 4, Parent = row })
+	-- (2026-10-21, grade1) the faded title between two ghost guns read as disabled: now a full-strength cream Oswald title on its
+	-- own, the ghost guns are gone (the dotted rule stays)
+	shade(text({ Text = SLOT_TITLE[slot], FontFace = FONT_TITLE, TextSize = 30, TextColor3 = COL.Text, AutomaticSize = Enum.AutomaticSize.X,
+		Size = UDim2.fromOffset(0, 36), LayoutOrder = 2, ZIndex = 4, Parent = row }), 1.5)
 	for i = 0, 21 do
 		mk("Frame", { BackgroundColor3 = COL.DimHead, BorderSizePixel = 0, Position = UDim2.fromOffset(34 + i * 12, 64), Size = UDim2.fromOffset(5, 3), ZIndex = 4, Parent = h })
 	end
@@ -1731,16 +1771,18 @@ end
 local function buildLeft()
 	-- (no currency display yet: the currency hasn't been decided)
 
-	-- profile: avatar bust poking over the top, name, slot icons
+	-- profile: headshot, name, slot icons
 	local prof = panel({ Name = "Profile", Position = UDim2.fromOffset(LEFT_X, PROFILE_Y), Size = UDim2.fromOffset(LEFT_W, PROFILE_H), ZIndex = 3, Parent = hud })
-	local avatar = mk("ImageLabel", { Name = "Avatar", BackgroundTransparency = 1, Size = UDim2.fromOffset(104, 104), Position = UDim2.fromOffset(8, -38),
+	-- (2026-10-21, grade1) graders saw the avatar twice (the bust's head floated over the card, its body sat in it): now ONE
+	-- headshot inside the card's top-left, the name beside it (RIVALS' Career card)
+	local avatar = mk("ImageLabel", { Name = "Avatar", BackgroundTransparency = 1, Size = UDim2.fromOffset(56, 56), Position = UDim2.fromOffset(12, 10),
 		ZIndex = 5, Parent = prof })
 	task.spawn(function()
-		local ok, img = pcall(Players.GetUserThumbnailAsync, Players, player.UserId, Enum.ThumbnailType.AvatarBust, Enum.ThumbnailSize.Size150x150)
+		local ok, img = pcall(Players.GetUserThumbnailAsync, Players, player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 		if ok then avatar.Image = img end
 	end)
-	text({ Text = player.DisplayName, FontFace = FONT_HEAVY, TextSize = 26, TextColor3 = COL.Grey, Size = UDim2.fromOffset(200, 30),
-		Position = UDim2.fromOffset(124, 18), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = prof })
+	text({ Text = player.DisplayName, FontFace = FONT_HEAVY, TextSize = 26, TextColor3 = COL.Grey, Size = UDim2.fromOffset(240, 30),
+		Position = UDim2.fromOffset(80, 23), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 4, Parent = prof })
 	for i, slot in SLOT_ORDER do
 		local t = mk("TextButton", { Name = slot, AutoButtonColor = false, Text = "", BackgroundColor3 = BLACK, BackgroundTransparency = TILE_T,
 			Size = UDim2.fromOffset(52, 52), Position = UDim2.fromOffset(12 + (i - 1) * 60, 74), ZIndex = 4, Parent = prof }, { corner(6) })
@@ -1801,10 +1843,11 @@ end
 -------------------------------------------------------------------------------
 local infoCard, levelCard, actionCard
 local ACTIONS_BOTTOM = 990
--- (2026-10-21, round 3: match RIVALS, live check) the right column keeps RIVALS' density: level card = bar + "Level up" +
+-- (2026-10-21, round 3: match RIVALS, live check) the right column keeps RIVALS' density: level card = bar (grade1: the bar carries
+-- the level and the XP to go; the "Level up" row is gone) +
 -- "Reward at level N" with a 3D placeholder (Account level moved off: it isn't about this item); actions card = one row per
 -- action (Equip / Unlock, Inspect, Next unlock, Statistics), each with a big chunky field-green icon button on the right
-local ACTIONS_H, LEVEL_H = 4 * 66 + 12, 176
+local ACTIONS_H, LEVEL_H = 4 * 66 + 12, 110 -- (2026-10-21, grade1) level card: one bar + the reward row (was 176)
 
 local function clearCard(c)
 	for _, ch in c:GetChildren() do
@@ -2034,8 +2077,12 @@ local function renderInfo()
 		mk("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	for i, line in { tagline, item.Desc } do
 		if line and line ~= "" then
-			local lab = text({ Text = "•  " .. line, FontFace = FONT_MED, TextSize = 17, TextColor3 = COL.Sub, Size = UDim2.fromOffset(CARD_W - 64, 20),
-				TextTruncate = Enum.TextTruncate.AtEnd, LayoutOrder = i, ZIndex = 5, Parent = notes })
+			-- (2026-10-21, grade1) no more mid-word cuts ("Honest…"): a bullet shows the description's first sentence only and wraps
+			-- (to 2 lines at most) instead of truncating; the whole text is still the hover bubble
+			local short = (i == 2 and line:match("^(.-[%.!%?])%s")) or line
+			local lab = text({ Text = "•  " .. short, FontFace = FONT_MED, TextSize = 17, TextColor3 = COL.Sub, Size = UDim2.fromOffset(CARD_W - 64, 20),
+				TextWrapped = true, AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = i, ZIndex = 5, Parent = notes })
+			mk("UISizeConstraint", { MaxSize = Vector2.new(CARD_W - 64, 42), Parent = lab })
 			if item.Desc and item.Desc ~= "" then Armory._tip(lab, item.Desc, "left") end
 		end
 	end
@@ -2100,8 +2147,11 @@ local function renderInfo()
 	local level, into, need = ctx.Config.ItemLevel(xp)
 	local maxLevel = (ctx.Config.ItemLevels and ctx.Config.ItemLevels.Max) or 50
 	local maxed = owned and (level >= maxLevel or not need or need <= 0)
+	-- (2026-10-21, grade1) graders: the card said everything twice ("0 ... 1 ... 250" over the bar, then "Level up / 250 XP to
+	-- level 2"). Now ONE 22 px bar: "LV n" on its left, "250 XP TO LV 2" on its right (LOCKED / MAX LEVEL states the same
+	-- way), and the "Level up" row is gone; "Reward at level N" moves up under it (LEVEL_H 176 -> 110)
 	local track = mk("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.3, BorderSizePixel = 0, Position = UDim2.fromOffset(12, 12),
-		Size = UDim2.fromOffset(CARD_W - 24, 30), ZIndex = 5, Parent = levelCard }, { corner(5) })
+		Size = UDim2.fromOffset(CARD_W - 24, 22), ZIndex = 5, Parent = levelCard }, { corner(5) })
 	local frac = owned and (maxed and 1 or math.clamp(into / math.max(need, 1), 0.02, 1)) or 0
 	-- (2026-10-21, round 3: match RIVALS) the bar fills on from where it last stood for this item (was from 0 on every re-render)
 	-- and the level number counts up and pops when it changes; remembered per item on Armory._lvl
@@ -2110,30 +2160,20 @@ local function renderInfo()
 	local fill = mk("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(prevLvl and prevLvl.frac or 0, 1), ZIndex = 6, Parent = track }, {
 		corner(5), mk("UIGradient", { Color = ColorSequence.new(COL.BlueTop, COL.BlueBottom) }) })
 	Kit.fillTo(fill, frac, 0.6)
-	if owned and not maxed then
-		text({ Text = tostring(into), FontFace = FONT_HEAVY, TextSize = 15, TextColor3 = COL.BlueText, Position = UDim2.fromOffset(8, 0),
-			Size = UDim2.new(0, 60, 1, 0), ZIndex = 7, Parent = track })
-		text({ Text = tostring(need), FontFace = FONT_HEAVY, TextSize = 15, TextColor3 = COL.BlueText, TextXAlignment = Enum.TextXAlignment.Right,
-			AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -8, 0, 0), Size = UDim2.new(0, 60, 1, 0), ZIndex = 7, Parent = track })
-	end
-	local lvLabel = shade(text({ Text = owned and tostring(level) or "LOCKED", FontFace = FONT_HEAVY, TextSize = owned and 34 or 19, TextXAlignment = Enum.TextXAlignment.Center,
-		Size = UDim2.fromScale(1, 1), ZIndex = 8, Parent = track }), 2)
+	local lvLabel = shade(text({ Text = owned and ("LV " .. level) or "LOCKED", FontFace = FONT_HEAVY, TextSize = 18, Position = UDim2.fromOffset(9, 0),
+		Size = UDim2.new(0, 90, 1, 0), ZIndex = 8, Parent = track }), 1.5)
+	local rightWords = not owned and ("UNLOCK TO EARN XP") or (maxed and "MAX LEVEL" or `{ctx.commas(need - into)} XP TO LV {level + 1}`)
+	shade(text({ Text = rightWords, FontFace = FONT_HEAVY, TextSize = 16, TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, -9, 0, 0), Size = UDim2.new(1, -110, 1, 0), TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 8, Parent = track }), 1.5)
 	if owned and level ~= (prevLvl and prevLvl.level or 1) then
-		Kit.countTo(lvLabel, prevLvl and prevLvl.level or 1, level, 0.5, function(n) return tostring(math.floor(n + 0.5)) end)
+		Kit.countTo(lvLabel, prevLvl and prevLvl.level or 1, level, 0.5, function(n) return "LV " .. math.floor(n + 0.5) end)
 		task.delay(0.5, function() if lvLabel.Parent then Kit.pop(lvLabel, 1.25) end end)
 	end
 	Armory._lvl[id] = { frac = frac, level = level }
-	if not owned then
-		cardRow(levelCard, 48, "up", "Level 1 to " .. maxLevel, "Unlock it to start earning XP", true)
-	elseif maxed then
-		cardRow(levelCard, 48, "up", "Max level", "Nothing left to earn on this one", true)
-	else
-		cardRow(levelCard, 48, "up", "Level up", `{ctx.commas(need - into)} XP to level {level + 1}`, true)
-	end
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' "Reward at Level 50" row with a posed reward render: the next milestone (every 5
 	-- levels) with a live 3D placeholder (ViewIcons' Crate: it sways and turns to you on hover) until weapon rewards exist
 	local milestone = math.min(maxLevel, (math.floor((owned and level or 0) / 5) + 1) * 5)
-	local rewardRow = cardRow(levelCard, 108, "star", "Reward at level " .. milestone, owned and (level >= maxLevel and "All rewards reached" or "A crate for this weapon")
+	local rewardRow = cardRow(levelCard, 42, "star", "Reward at level " .. milestone, owned and (level >= maxLevel and "All rewards reached" or "A crate for this weapon")
 		or "Unlock it to start the rewards", true)
 	local rwIcon = rewardRow:FindFirstChild("Frame")
 	local okVI, VI = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit", 2):WaitForChild("ViewIcons", 2)) end)
@@ -2160,9 +2200,11 @@ local function renderInfo()
 	end
 	if owned then
 		local equipped = equippedIn(item.Slot) == id
-		local _, b = row(6, function(h)
+		-- (2026-10-21, grade1) equipped = the field-green check + EQUIPPED chip (bigButton tone "equipped"), not the grey button
+		local r = cardRow(actionCard, 6, function(h)
 			itemRender(h, id, Vector2.new(34, 34), { flat = true, z = 6, fill = 1 })
-		end, equipped and "Equipped" or "Equip", equipped and "In your loadout" or "Put it in your loadout", "check", not equipped)
+		end, equipped and "Equipped" or "Equip", equipped and "In your loadout" or "Put it in your loadout")
+		local b = bigButton(r, "check", not equipped, nil, BTN, equipped and "equipped" or nil)
 		if not equipped then
 			local face = b:FindFirstChild("Face")
 			if face then Armory._shine(face) end
@@ -2233,7 +2275,7 @@ local function renderInfo()
 		nextItem and `{nextItem.Name}, {ctx.priceText(nextItem.Price)}` or (owned and "Nothing left in this slot" or "Nothing after it here"), "arrow", nextId ~= nil)
 	if nextId then nb.Activated:Connect(function() Armory.Select(nextId, 1) end) end
 	-- RIVALS' Statistics row: the panel opens beside the column, the button turns into an X while it's open
-	local _, sb = row(204, "bars", "Statistics", "See lifetime data", statsOpen and "leave" or "eye", true)
+	local _, sb = row(204, "bars", "Statistics", "See lifetime data", statsOpen and "leave" or "bars", true) -- (2026-10-21, grade1) bar chart, was the eye/magnifier
 	sb.Activated:Connect(function()
 		statsOpen = not statsOpen
 		if statsOpen then Armory.ShowHistory(false) end
@@ -2474,6 +2516,12 @@ local function openCosmeticTray(c)
 			badge = mk("Frame", { Name = "Lock", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0, 4 + (TILE - 26) / 2),
 				Size = UDim2.fromOffset(36, 36), ZIndex = 9, Parent = tile })
 			glyph(badge, "lock", 36, COL.Text, 9)
+		end
+		if not isNone then
+			-- (2026-10-21, grade1) the item's name line, small, above the rarity (placeholder names until cosmetics exist)
+			shade(text({ Name = "ItemName", Text = `{ctx.Config.Items[selectedId].Name} {c.Label}`, FontFace = FONT_MED, TextSize = 13, TextColor3 = COL.Text,
+				TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.AtEnd, AnchorPoint = Vector2.new(0, 1),
+				Position = UDim2.new(0, 4, 1, -27), Size = UDim2.new(1, -8, 0, 15), ZIndex = 10, Parent = tile }), 1.2)
 		end
 		shade(text({ Text = isNone and "None" or tier, FontFace = FONT_HEAVY, TextSize = 19, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
 			AnchorPoint = Vector2.new(0, 1), Position = UDim2.new(0, 0, 1, -6), Size = UDim2.new(1, 0, 0, 22), ZIndex = 10, Parent = tile }), 1.5)
@@ -2889,11 +2937,26 @@ TRANSITIONS.Rise = {
 	end,
 }
 
-Armory.TransitionNames = { "Doors", "Cinematic", "WhipPan", "PunchIn", "Rise" }
+-- (2026-10-21, grade1) Cut: RIVALS' cut to black and reveal, 0.33 s in all (0.08 to black, 0.07 held, 0.18 back). The default
+-- now: the configured WhipPan (0.74 s) and Doors (~1.7 s) were too slow for a menu you open all the time. The others stay
+-- reachable through the player's ArmoryTransition attribute (Studio / testing).
+TRANSITIONS.Cut = {
+	cover = function(cam, from, opts)
+		tw(overlay.black, 0.08, { BackgroundTransparency = 0 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In).Completed:Wait()
+		task.wait(0.07)
+	end,
+	reveal = function(cam, to, opts)
+		cam.FieldOfView = opts.fov
+		cam.CFrame = to
+		tw(overlay.black, 0.18, { BackgroundTransparency = 1 }).Completed:Wait()
+	end,
+}
+
+Armory.TransitionNames = { "Cut", "Doors", "Cinematic", "WhipPan", "PunchIn", "Rise" }
 
 local function transition()
-	local name = player:GetAttribute("ArmoryTransition") or ctx.Config.ArmoryTransition or "Doors"
-	return TRANSITIONS[name] or TRANSITIONS.Doors
+	local name = player:GetAttribute("ArmoryTransition") or "Cut"
+	return TRANSITIONS[name] or TRANSITIONS.Cut
 end
 
 local function backgroundBlur(on: boolean)

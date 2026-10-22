@@ -40,14 +40,16 @@ local canvas = Kit.canvas(gui)
 local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
 -- S1 tab bar
+-- (2026-10-21, grade1) taller (76 -> 108) and grown upward so each tab's icon sits fully above its label inside the bar; the
+-- bottom edge stays at y 147, so the list, rail and the Hotkeys page (which places itself at y 160) are unchanged
 local tabBar = new("Frame", {
-	Name = "TabBar", Position = UDim2.fromOffset(304, 71), Size = UDim2.fromOffset(859, 76),
+	Name = "TabBar", Position = UDim2.fromOffset(304, 39), Size = UDim2.fromOffset(859, 108),
 	BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.bar, Parent = root,
 }, { Kit.corner(6) })
 
 -- S2 close
 local close = Kit.closeButton(UDim2.fromOffset(135, 68))
-close.Position = UDim2.fromOffset(1175, 75) -- (lobby revamp Phase B: square X docked at the tab bar end)
+close.Position = UDim2.fromOffset(1175, 59) -- (lobby revamp Phase B: square X docked at the tab bar end; grade1: centred on the taller bar)
 close.Parent = root
 
 -- S3 page rail (presets 1-3 + save)
@@ -145,6 +147,7 @@ local function selectPreset(n)
 	if changed and currentTab then applyProfile(currentTab) end
 	if changed then
 		-- white chat bubble pointing at the circle (RIVALS)
+		local hov = rail:FindFirstChild("RailTip"); if hov then hov:Destroy() end
 		local old = rail:FindFirstChild("ProfileBubble")
 		if old then old:Destroy() end
 		local tip = Kit.tooltip("Switched to profile #" .. n, 290, "left")
@@ -183,6 +186,25 @@ for i = 1, 3 do
 	railHover(b)
 	railButtons[i] = b
 end
+-- (2026-10-21, grade1) graders: the rail "1 2 3 ⇩" was unexplained. A small cream "PRESETS" caption sits above it, and hovering
+-- a circle names it ("Preset 1" .. "Preset 3", "Share / import") in the same white pointer bubble the profile switch uses.
+Kit.label({ Name = "RailCaption", Text = "PRESETS", FontFace = F.display, TextSize = 20, TextColor3 = Color3.fromRGB(236, 230, 210),
+	TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(245.5, 156), Size = UDim2.fromOffset(96, 24), Parent = root })
+local function railTip(b, text, y)
+	b.MouseEnter:Connect(function()
+		local old = rail:FindFirstChild("RailTip"); if old then old:Destroy() end
+		if rail:FindFirstChild("ProfileBubble") then return end -- the switch bubble already speaks for this spot
+		local tip = Kit.tooltip(text, 190, "left")
+		tip.Name = "RailTip"
+		tip.AnchorPoint = Vector2.new(0, 0.5)
+		tip.Position = UDim2.fromOffset(72, y)
+		tip.ZIndex = 30
+		tip.Parent = rail
+		Kit.toScale(tip)
+	end)
+	b.MouseLeave:Connect(function() local old = rail:FindFirstChild("RailTip"); if old then old:Destroy() end end)
+end
+for i, b in ipairs(railButtons) do railTip(b, "Preset " .. i, 30 + (i - 1) * 58) end
 local saveBtn = new("TextButton", {
 	Name = "Save", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(29.5, 202), Size = UDim2.fromOffset(44, 44),
 	BackgroundTransparency = 1, Text = "", AutoButtonColor = false, Parent = rail,
@@ -195,6 +217,7 @@ end
 saveBtn.BackgroundColor3 = C.white
 Kit.corner(22).Parent = saveBtn
 railHover(saveBtn)
+railTip(saveBtn, "Share / import", 202)
 selectPreset(1)
 
 -- S4 settings list
@@ -297,26 +320,28 @@ local function defaults(tab)
 end
 
 local function buildRow(tab, row, order)
-	local level2 = row.level == 2
-	local level0 = row.level == 0
+	-- (2026-10-21, grade1) graders: the plates stair-stepped (772 / 734 / 695 / 657 wide by level). One plate level now: every row is
+	-- the list's full width and the same height for its kind (88, sliders 132); a sub-row (level 2 / 3: While Aiming, While Scoped,
+	-- Horizontal ...) only indents its icon and label by 24 px per level.
+	local ind = math.max(0, (row.level or 1) - 1) * 24
 	local h = row.kind == "slider" and 132 or 88
 	local frame = new("Frame", {
-		Name = row.key, LayoutOrder = order, Size = UDim2.fromOffset(level0 and 772 or row.level == 3 and 657 or level2 and 695 or 734, h),
+		Name = row.key, LayoutOrder = order, Size = UDim2.fromOffset(772, h),
 		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.panel,
 	}, { Kit.corner(8) })
 	local img = (Assets.rowIcon and Assets.rowIcon[row.icon]) or (Assets.hotkeys and Assets.hotkeys[row.icon])
 	local icon
 	if img then
-		icon = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img, Position = UDim2.fromOffset(18, 18), Size = UDim2.fromOffset(52, 52), Parent = frame })
+		icon = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img, Position = UDim2.fromOffset(18 + ind, 18), Size = UDim2.fromOffset(52, 52), Parent = frame })
 	else
-		icon = Kit.label({ Name = "Icon", Text = row.glyph or "", TextSize = 40, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(16, 16), Size = UDim2.fromOffset(56, 56), Parent = frame })
+		icon = Kit.label({ Name = "Icon", Text = row.glyph or "", TextSize = 40, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(16 + ind, 16), Size = UDim2.fromOffset(56, 56), Parent = frame })
 	end
-	local labelX = (level2 or row.level == 3) and 84 or level0 and 93 or 89
+	local labelX = 89 + ind
 	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = F.heavy, TextSize = 42, Position = UDim2.fromOffset(labelX, 0), Size = UDim2.new(1, -330, 0, 88), Parent = frame })
 
 	-- red per-setting reset: appears at the row start whenever the value differs from its default
 	local default = defaultOf(row)
-	local resetBtn = Kit.button("red", UDim2.fromOffset(52, 52), nil, { Name = "ResetSetting", Visible = false, Position = UDim2.fromOffset(16, 18), ZIndex = 2 })
+	local resetBtn = Kit.button("red", UDim2.fromOffset(52, 52), nil, { Name = "ResetSetting", Visible = false, Position = UDim2.fromOffset(16 + ind, 18), ZIndex = 2 })
 	if Assets.rowIcon.reset then
 		new("ImageLabel", { BackgroundTransparency = 1, Image = Assets.rowIcon.reset, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(32, 32), ZIndex = 3, Parent = resetBtn })
 	end
@@ -335,7 +360,7 @@ local function buildRow(tab, row, order)
 		shown = on
 		-- RIVALS: no animation, the reset button simply appears and the icon/label snap across
 		resetBtn.Visible = on
-		icon.Position = on and Kit.S(frame, 80, 28) or Kit.S(frame, 18, 18)
+		icon.Position = on and Kit.S(frame, 80 + ind, 28) or Kit.S(frame, 18 + ind, 18)
 		icon.Size = on and Kit.S(frame, 32, 32) or Kit.S(frame, 52, 52)
 		label.Position = Kit.S(frame, on and labelX + 31 or labelX, 0)
 	end
@@ -368,7 +393,8 @@ local function buildRow(tab, row, order)
 		control, api = Kit.keybind(v[row.key], changed)
 	elseif row.kind == "slider" then
 		local holder
-		holder, api = Kit.stepperSlider(h, { min = row.min, max = row.max, step = row.step, arrowStep = row.arrow, value = v[row.key], fmt = row.fmt }, changed)
+		-- (2026-10-21, grade1) slider + value chip only (the ▲▼ stepper is gone); the track starts under the label
+		holder, api = Kit.slider(h, { min = row.min, max = row.max, step = row.step, value = v[row.key], fmt = row.fmt, inset = labelX }, changed)
 		holder.Parent = frame
 	elseif row.kind == "action" then
 		-- [SET] an action row (e.g. Touch > Layout Editor): the blue arrow button runs ctx.onAction(key)
@@ -445,7 +471,7 @@ function openTab(tab)
 			hb.LayoutOrder = order
 			if si > 1 then
 				-- breathing room before each new section (reference gap)
-				new("Frame", { Name = "Gap", BackgroundTransparency = 1, Size = UDim2.fromOffset(772, 32), LayoutOrder = order, Parent = list })
+				new("Frame", { Name = "Gap", BackgroundTransparency = 1, Size = UDim2.fromOffset(772, 20), LayoutOrder = order, Parent = list }) -- (grade1) 32 -> 20: the plain header brings its own air
 				order += 1
 				hb.LayoutOrder = order
 			end
@@ -496,8 +522,8 @@ for i, tab in ipairs(Data.tabs) do
 	local model = TAB_MODEL[tab.name]
 	local img = model and function(holder, tabBtn) ViewIcons.Icon(holder, model, { hoverTarget = tabBtn }) end
 		or (Assets.tabIcon and Assets.tabIcon[tab.icon])
-	local t, api = Kit.imageTab(UDim2.fromOffset(136, 54), tab.name, img, tab.glyph)
-	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 11)
+	local t, api = Kit.imageTab(UDim2.fromOffset(136, 96), tab.name, img, tab.glyph) -- (2026-10-21, grade1) 54 -> 96 tall: icon box above the label
+	t.Position = UDim2.fromOffset(12 + (i - 1) * 140, 6)
 	t.Parent = tabBar
 	tabApis[tab.name] = api
 	tabButtons[tab.name] = t

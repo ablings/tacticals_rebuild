@@ -300,3 +300,133 @@ each edited file passes a bracket / block balance check and stays well under 200
   - `ui/pseudolobby/hub/Tooltip.lua`: already restyled by the Tooltip pass this round (cream pill + tan lip, no border / left bar).
   - Glyph / HUD strokes already reviewed in 09_cleanup (crosshair, rings, scope rim, Armory icons, FlatIcons, LoadingScreen shockwaves) and
     every text-legibility stroke.
+
+## grade1 fixes: Settings (2026-10-21)
+Graders compared `notes/ui_rivals/grade1/settings.png` with RIVALS' cleanliness. Edited only `ui/set/SettingsScreen.lua` and
+`ui/settings/SettingsKit.lua`; not deployed, not checked in Studio. Both pass the bracket / block balance check (18 / 20 top-level locals).
+- Sliders: one number, two controls. The ▲▼ stepper is gone (`Kit.stepperSlider` is now `Kit.slider`, old name kept as an alias;
+  `row.arrow` is ignored). The value chip stays a TextBox (click it to type; rounded to the step on FocusLost), cream on a tan lip.
+  Track 6 -> 10 px, charcoal with a field-green fill up to a round 28 px cream knob; the track starts under the row label. While
+  dragging the chip pops to UIScale 1.08 and the number ticks live; it settles back on release. Still knob-only drag (RIVALS).
+- Flattened the boxes: section headers are plain Oswald 34 px cream text, no bar (`Kit.headerBar`, 52 tall, gap before a section
+  32 -> 20). Every row plate is the full 772 width (was 772 / 734 / 695 / 657 by level); sub-rows (level 2 / 3) only indent icon,
+  label, reset button and slider track by 24 px per level. Row heights: 88, sliders 132, regardless of level.
+- Tab icons: `Kit.imageTab` puts the icon in its own box at the top of the tab (3 px top pad, 30 px label at the bottom, 5 px gap),
+  so nothing overflows. Tabs 136x54 -> 136x96; the tab bar grew upward (y 71 / 76 tall -> y 39 / 108 tall) so its bottom stays at 147
+  and the list, rail and HotkeysPage (fixed at y 160) don't move; the red X re-centred on it (y 59). Selected tab: dark label, no
+  stroke, on the cream plate.
+- Toggles: the screen did use the round-3 SettingsKit toggle; its square grey knob on charcoal read as "a grey square". Now a 96x40
+  pill on a 4 px dark lip (sibling, no stroke): round 32 px knob, Oswald 22 ON / OFF on the free side, field green #8DBF5A -> #4C7A2E
+  with a cream knob when on, charcoal with a grey knob when off. Slide / squash / word pop kept.
+- Page rail: a cream "PRESETS" caption (Oswald 20) above the rail, and hover bubbles "Preset 1/2/3" and "Share / import" (same white
+  left-pointer bubble as the profile-switch one; it yields to that bubble). Function unchanged.
+- Look at in Studio: tab icons at 56 px (3D ViewIcons fill the box; the Account headshot fits), slider chip pop while dragging,
+  sub-row indent reads as hierarchy without plates, toggle word fits "OFF" at small screens, PRESETS caption clear of the top bar.
+
+## grade1 fixes: Kit (2026-10-21)
+File: `ui/lobby/Armory.lua` only. Not run in Studio. Bracket balance OK; top-level locals 180 before and after (new state lives on
+the showcase entries / `Armory` table / inside functions).
+- **Hero.** There is no "character view" in the Kit. The screen always shows the real item model in the Showroom
+  (`SHOWCASE_WORLD`, `showItem` -> `renderShowcase`, LIT / DARK silhouettes). The avatar in `grade1/kit.png` (and `r3/kit.png`, a lobby
+  background with your own nameplate) came from the camera being handed back to Roblox's Custom camera while the Kit stayed open.
+  Studio MCP `execute_luau` calls do this when they return (`notes/ui_shadow_deploy.md`). Fix: once the reveal ends, `renderShowcase` holds
+  the camera on `CameraPoint` every frame (Scriptable, FOV 40), so the gun is the centre hero whatever touches the camera. Re-capture
+  with a real window screenshot.
+- **Selection pop.** The new item pops in where it stands (scale 0.6 -> 1, Back, 0.25 s, the real model `ScaleTo`'d only while the
+  value moves). The old item shrinks away in 0.15 s. This replaces the 0.55 s slide across the room. The idle sway and bob are unchanged.
+- **Open transition.** The configured `WhipPan` (0.74 s) and the `Doors` fallback (~1.7 s) were too slow. New `TRANSITIONS.Cut`
+  is the default: 0.08 s to black, 0.07 s held, 0.18 s reveal (0.33 s). `LobbyConfig.ArmoryTransition` is no longer read. The
+  other transitions stay reachable through the player's `ArmoryTransition` attribute.
+- **List.** One padlock, on the left of a locked name (was one either side). Section headers are a full-strength cream Oswald title
+  with a text outline. The two ghost guns are gone. The dotted rule stays.
+- **Right panel.** The Inspect button uses `Kit.ICONS.eye` (the "eye" glyph used to map to the Magnifier mesh). The Statistics button uses
+  the drawn bar chart its row shows on the left. Equipped is a field-green chip with a check and "EQUIPPED" (bigButton tone
+  `equipped`). It still can't be clicked and has no hover or press.
+- **Level card.** One 22 px bar shows "LV n" on the left and "250 XP TO LV 2" on the right (LOCKED / UNLOCK TO EARN XP and LV n / MAX
+  LEVEL states too). The "Level up" row and the 0 / 250 ends are gone. "Reward at level N" moved up, and `LEVEL_H` went from 176 to 110.
+- **Profile card.** One headshot inside the card's top-left (56 px), with the name beside it. This replaces the AvatarBust whose head floated over the card.
+- **Description bullet.** It shows the first sentence only and wraps to at most 2 lines, with no mid-word cut. The full text is still the hover bubble.
+- **Picker tiles.** A small Rubik name line ("Pistol Skin" etc., placeholder) sits above the rarity.
+- Check in Studio: the camera hold doesn't fight the Inspect / zoom feel. The EQUIPPED chip fits 112 px. The eye image reads at
+  34 px on green. The name line clears the padlock on 100 px tiles.
+
+## grade1 fixes: hub (2026-10-21)
+Files: `ui/hud/LobbyHudController.lua`, `ui/hud/NameplatesController.lua`. Not run in Studio. Bracket balance OK; `Start` is ~80
+one-tab locals (well under 200).
+- **Nav bubble.** It now shows after 0.12 s (was 0.55 s). Tips are one line: "Weapons & skins", "Earn scissors", "Buy gear",
+  "Redeem codes", "Controls & graphics". The width is measured from the text (TextService, Arial Bold 21 + 34). Placement keeps clear of
+  PLAY (design x 784-1276 incl. the party avatars, y 838-922). Kit's bubble stays just above its icon, slid left so its right edge is at
+  x 780. Missions / Shop / Codes / Settings raise theirs to sit 10 px above PLAY's top edge (bottom at y 828), with the pointer on the
+  icon's x. The hovered icon now climbs 10 px more inside its button, so the 1.12x icon no longer runs into its own label.
+- **Nav icons.** Each dock viewport's Ambient went from 150 to 196, the LightColor is white, and the key light comes from the camera
+  side. The default light direction lit the models from behind, which caused the black-on-black pistol. Discs are a translucent mid
+  grey (#5A5E58 -> #2A2D29, 0.6-0.35) instead of black.
+- **Badges.** The Missions badge counts daily missions not finished yet. It used to count claimable missions, which is always 0 with
+  auto-pay. The badge is a 26 px red circle with white Oswald 18 at the icon's top-right. It pops in 0.8 -> 1 (Back) after 0.15 s + slot
+  stagger and bobs 3 px (Sine 0.9 s). It punches when the count changes. Kit has no badge: there is no "new unlock" signal in the code.
+- **Daily Missions widget.** The box is gone. It is now a black wash that fades out to the right (0.62 -> 1) behind outlined text,
+  and it is 460 wide (was 372). Names show in full: a 262 px column at Rubik 20, stepping down to 18 / 16 for long names ("Get 3
+  eliminations from cover"). Icons are the flat cream glyphs from the Missions screen (FLAT_STAT -> Kit.ICONS) at 26 px. The reward
+  sits on one line: a 22 px 3D scissors + "×150" in Oswald 18. The bar track is cream at 33% opacity, 8 px tall. The 3D stat-icon
+  code is gone. TO PADS is renamed "» DUEL PADS «", and the button is 236 wide.
+- **Player list.** Its height is 34 + rows×40 + 4 (78 for one player), up to 432 (40%), then it scrolls. The x and the column icon
+  moved into a fixed 34 px Header strip, so they don't stretch when the height changes.
+- **Nameplates.** The @username line only shows when it differs from the display name (case-insensitive), for everyone. Without it
+  the name row sits lower (0.3). Your own plate is 55% size (4.95 x 1.1 studs, offset 1.6).
+- Check in Studio: (1) hover each dock item. Each bubble should appear almost at once and never cover the PLAY label. Kit's should sit
+  left of PLAY. Check whether the raised bubbles read as belonging to their icon. (2) The Kit pistol should read on its disc, and no
+  icon should look washed out. (3) The Missions badge should show 3 on join, pop in and bob. (4) Check the widget's legibility over the
+  bright hub floor without the box. Check that "Get 3 eliminations from cover" fits, and the flat glyphs (cover / lbElims) at 26 px.
+  (5) The player list should be one row tall in solo; Tab hide / show should still slide it. (6) Your own nameplate should be small
+  and show one name.
+
+## grade1 fixes: Shop + Missions (2026-10-21)
+From the grade1 sheets (`notes/ui_rivals/grade1/shop.png`, `missions.png`) vs RIVALS t0070 (shop) / t0062 (tasks). Code only, not deployed,
+not checked in Studio; both files pass the balance check (ShopScreen 60 / MissionsScreen 45 top-level locals).
+- `ui/shop/ShopScreen.lua`
+  - Scissors price tags: same shape / height as the Robux tags, dark field-green plate (#3F6527 -> #22381A) with a cream Oswald number
+    and the cream flat scissors (`Kit.ICONS.scissorsFlat`); every tag has a dark bottom lip. Can't afford = the whole tag at ~50 %
+    opacity + the existing shake on press (the red number and black overlay are gone). The detail card's price dims instead of going red.
+  - One card language: the Founder's hero is the offer panel's dark plate (black 0.25, corner 10) with the bundle colour as a glow from
+    the right edge (field green: the Founder's product has no Color in LobbyConfig). New `shopTile` = one dark plate (#262A21 -> plate)
+    + rarity bar along the bottom; used by the scissor packs, the left gear row (was floating renders) and the right gear grid
+    (was navy), price tag 146x50 under each. Arms cards, scissor cards, pass cards and detail tiles left navy `panelRaised` for the
+    same dark plate; Arms cards' rarity stripe moved to the bottom edge.
+  - RIVALS Keys hover (`packHoverSwap`): over a scissors pack (Featured row and Scissors tab) "+500" swaps to scissors icon + "×500"
+    and the tile brightens ~15 % (white sheen at 0.85); restores on leave / selection lost.
+  - Fixed a pre-existing slip: the page ScrollBarImageTransparency had slid into a comment.
+- `ui/pseudolobby/hub/MissionsScreen.lua`
+  - Big "MISSIONS" title and the "Play matches to fill these up." footer removed; the column moves up (y 204 -> 130). The red X sits
+    in the Daily panel's top-right corner (72x52, 14 px in).
+  - Header: icon + "Daily Missions" left, the reset timer a small tan Rubik line under the title; PLAY -> `Kit.button` 150x52
+    "GO PLAY" left of the X with a 20 px gap (still only when `ctx.openPlay` is passed).
+  - The faint 1 px panel edge was the Frame's default border (no UICorner on the panel): `BorderSizePixel = 0`.
+  - Task glyph ~20 -> ~36 px (Art 50 -> 64 tall, flat icon fills it); bar track cream at 35 % opacity, 10 px tall, so 0 / N still reads;
+    the title grows 1.1x on hover with the lift; reward "×N" 32 -> 42 design px, beside the 3D scissors. CARD_H 266 -> 286.
+- Look at in Studio: tag legibility at phone size (cream on dark green), the 50 % short tag over the blurred lobby, the hero glow vs
+  its green price button, the swap row width on the Featured packs (158 px hold), the X / GO PLAY spacing at 1366 px wide.
+
+## grade1 fixes: Play screen like RIVALS (2026-10-21)
+Source: the RIVALS Play screen seen live tonight (`rivals_live_notes.md`, "Second live session") vs `grade1/play.png`.
+Only `ui/play/PlayScreen.lua` changed (the Ranked tile is built there; RankedScreen untouched).
+- **Layout:** a tall hero tile on the left = TRAINING (our beginner mode, 420 x 590), then 1v1 / 2v2 / 3v3 on the top row
+  (330 x 290) and DUEL PADS + RANKED (500 x 290 each) below. The 1440 x 590 block is centred on the 1920 x 1080 canvas
+  (was hugging the top with empty space under it). The red X sits 12 px outside the block's top-right corner, level with its top.
+- **The tile is the button:** the PLAY x3 / ENTER / TO PADS strips are gone; clicks unchanged (queue with the party checks + Whoops,
+  cancel while searching, Training -> enterTraining, Duel Pads -> toPads, Ranked -> lock card / openRanked).
+- **Status:** no more "0 SEARCHING" pills. A chip at the tile's top centre only when it has news: "Searching m:ss - tap to cancel",
+  "Match found!" (green), the failed-queue flash (red, 5 s), or "N searching" when N > 0. While you queue / stand on a pad the
+  tiles you can't use dim (Training says "Not while searching" / "Not while on a pad").
+- **Scenes:** every scene fills its tile and is lit like a picture (`lightScene`: ambient 196, warm key light from the camera side;
+  ViewIcons' default light came from behind the scene, which is why squads read as black silhouettes). The other team is a rust
+  mannequin (ranked: gold), was near-black. The camera is lowered (raise 0.3-0.4) so figures sit above the title.
+- **Titles:** ONE huge cream (#ECE6D2) Oswald Bold title per tile, lower centre, solid dark stroke (size / 22). Subtitles only
+  where they help a kid: Training "Try any gun for free!", Duel Pads "Fight people here". "Lobby Duels" renamed DUEL PADS.
+- **Hover / select:** white sheen to ~15 % (brighter tile) + a 4 px cream UIStroke, only on hover or a controller's selection
+  (no resting border); scale 1.03, press 0.96; the squad hop / dummy wobble / pad glow stay.
+- **Open:** tiles pop in 0.028 s apart with a 0.16 s Back tween (six tiles <= 0.30 s; Kit.popIn's 0.24 s x 0.04 s took ~0.44 s).
+- **Ranked locked:** dark gold kept; a 70 px padlock over "RANKED", one line "LEVEL 50", a 16 px bar with "LV n / 50" on it
+  (was UNLOCKS AT LEVEL 50 + a big padlock + LV 1 / 50: the same thing twice). Unlocked: a normal tile (trophy scene + RANKED).
+- Party column, preloading, Kit.toScale, lock card unchanged. Parse OK, 81 top-level locals.
+- **Look at in Studio:** squad zooms on the squarer tiles (1.0 / 1.1 / 1.12) - 3v3 edges may clip; the training scene in the tall
+  hero (zoom 0.88, raise 0.4); title vs figures overlap; chip text wrap for long flash messages; the 15 px count on the 16 px bar.

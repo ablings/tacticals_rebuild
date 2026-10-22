@@ -51,3 +51,37 @@ Roblox UI note: a click only registers after the mouse has *moved onto* the butt
 - **Top centre:** a team score box with avatars + a big score, a dark timer box, and the enemy score box.
 - **Bottom right:** the weapon name big, then the hotbar tiles with 3D items and a key hint strip (Scoreboard Tab, Quick Melee F, Quick Utility G).
 - **Health:** a green bar bottom left with the number.
+
+## Second live session (2026-10-21 evening): beginner matches, results, the real Play screen
+- **New account: Play doesn't open a menu.** It queues straight into "Beginner 2v2". A dark pill drops at top centre
+  ("Searching for players... / Beginner 2v2", a clock and a red X) and PLAY hides. The full Play screen unlocks after the beginner
+  matches (3 played here). The Ranked card we compared before (t0287) is the Ranked *podium's* requirement list, not this screen.
+- **Hover bubbles:** plain white pills, dark text, no border ("Join the queue to start playing!", "View your weapons, career, emotes, &
+  more"). The PLAY bubble is shown at rest for new players; nav bubbles appear immediately.
+- **Done task (Tasks panel):** green title, full green bar with the green check sitting ON the bar, the icon unchanged, no extra label.
+- **Match HUD:**
+  - team score boxes with avatars, a dark timer box (counts tenths in the last seconds);
+  - a compact green "ROUND WON" pill under the score;
+  - dead players' portraits turn to skulls; a kill-feed pill top right;
+  - a killer card bottom right ("X eliminated you with Assault Rifle") while it spectates the killer;
+  - an eye + count bottom left when someone spectates you.
+- **Match end:**
+  - a close-up of the winner with a "Skip" button;
+  - then the results: a team banner ("VICTORY / team"), the winner(s) posed with a name bar and 5 stats;
+  - white chunky buttons Rematch (greyed) / Play Again / Leave at the right.
+- **Teleport:** three big white dots in the middle, a mascot with a tip bubble bottom left, "Teleporting 0" bottom right.
+- **Full lobby (after beginners):**
+  - a red "To Hub" button left of Play;
+  - the Shop nav with a red "Claim your FREE reward now!" callout;
+  - a "Complete your tasks for keys!" bubble on the currency;
+  - a tasks widget with a blue "To Shooting Range" button.
+- **The real Play screen** (opens in <0.25 s, blurred lobby behind, red X just outside the top-right corner):
+  - **Mode grid:** a tall hero tile "Beginner 2v2" on the left, then 1v1 / 2v2 / 3v3 on top and 4v4 / 5v5 below.
+  - **Tiles:** every tile is a full-bleed picture (gameplay shot: a gun + red enemies) with one huge white bold title centred. No
+    PLAY strips, no "searching" counts, no extra words. The tile is the button. Hover: the tile brightens and gets a white outline.
+  - **Below, one scrolling column of sections:**
+    - each section header is a dark pill with an icon + title ("Here for a limited time only!" with a row of item icons, "New
+      gamemodes in 23h 51m 57s", "Try out these fun, classic gamemodes" with an i);
+    - event and arcade tiles are wide pictures with a huge title + one subtitle line ("Gargoyle Tower / There's.. more?", "Team
+      Deathmatch / The team with the most points wins!"), a small shield glyph bottom left, an "Arcade Server" white tag top right,
+      and a "SOLO" tile beside some.

@@ -375,87 +375,101 @@ function Kit.closeButton(size)
 	return btn
 end
 
--- Image tab: icon overflows the top, label at the bottom with a black stroke; :setSelected(bool).
+-- Image tab: icon on top, label under it with a black stroke; :setSelected(bool).
 -- image = asset id, or a function(holder, tab) that draws a live 3D icon into the holder.
+-- (2026-10-21, grade1) graders: the icons overlapped their labels (the monitor sat over "Video", the account avatar overflowed
+-- the bar). The icon now lives in its own box at the top of the tab, sized to the room left above the label with a 5 px gap, so
+-- nothing overflows the tab (and the tab bar was made taller to fit). The selected tab's cream plate turns the label dark with
+-- no stroke, so the word stays readable on it.
+local TAB_LABEL_H, TAB_GAP, TAB_TOP, TAB_BOTTOM = 30, 5, 3, 3
 function Kit.imageTab(size, text, image, glyph)
 	local tab = new("TextButton", {
 		Name = text, Size = size, AutoButtonColor = false, Text = "", BackgroundColor3 = C.white, BackgroundTransparency = 1,
 	}, { Kit.corner(6) })
-	local iconSize = math.floor(size.Y.Offset * 1.55)
+	local h = size.Y.Offset
+	local iconSize = math.max(24, h - TAB_TOP - TAB_LABEL_H - TAB_BOTTOM - TAB_GAP)
+	local iconProps = { Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.new(0.5, 0, 0, TAB_TOP),
+		Size = UDim2.fromOffset(iconSize, iconSize), Parent = tab }
 	if type(image) == "function" then
 		-- live 3D icon: image(holder, tab) fills the holder (e.g. a ViewIcons viewport)
-		local holder = new("Frame", {
-			Name = "Icon", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -size.Y.Offset * 0.22),
-			Size = UDim2.fromOffset(iconSize, iconSize), Parent = tab,
-		})
+		local holder = new("Frame", iconProps)
 		image(holder, tab)
 	elseif image and image ~= "" then
-		new("ImageLabel", {
-			Name = "Icon", BackgroundTransparency = 1, Image = image, ScaleType = Enum.ScaleType.Fit,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -size.Y.Offset * 0.22),
-			Size = UDim2.fromOffset(iconSize, iconSize), Parent = tab,
-		})
+		iconProps.Image = image
+		iconProps.ScaleType = Enum.ScaleType.Fit
+		new("ImageLabel", iconProps)
 	else
-		Kit.label({ Name = "Icon", Text = glyph or "?", TextSize = 44, TextXAlignment = Enum.TextXAlignment.Center,
-			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -size.Y.Offset * 0.3),
-			Size = UDim2.fromOffset(iconSize, iconSize * 0.8), Parent = tab })
+		iconProps.Text = glyph or "?"
+		iconProps.TextSize = math.floor(iconSize * 0.8)
+		iconProps.TextXAlignment = Enum.TextXAlignment.Center
+		Kit.label(iconProps)
 	end
 	local lbl = Kit.label({
-		Name = "Label", Text = text, FontFace = F.heavy, TextSize = 31, TextXAlignment = Enum.TextXAlignment.Center,
-		AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, 6), Size = UDim2.new(1, 0, 0, 30), ZIndex = 3, Parent = tab,
+		Name = "Label", Text = text, FontFace = F.heavy, TextSize = 28, TextXAlignment = Enum.TextXAlignment.Center,
+		AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -TAB_BOTTOM), Size = UDim2.new(1, 0, 0, TAB_LABEL_H), ZIndex = 3, Parent = tab,
 	})
-	Kit.textStroke(2.5).Parent = lbl
+	local lblStroke = Kit.textStroke(2.5)
+	lblStroke.Parent = lbl
 	local api = {}
 	function api.setSelected(on)
 		Kit.tween(tab, 0.12, { BackgroundTransparency = on and 0 or 1 })
+		lbl.TextColor3 = on and C.textDark or C.text
+		lblStroke.Transparency = on and 1 or 0
 	end
 	Kit.bindButton(tab, { hover = 1.06 })
 	return tab, api
 end
 
--- Section header bar (settings style): dark bar + display title.
+-- Section header (settings style).
+-- (2026-10-21, grade1) graders: boxes nested three deep (header bar -> row plate -> indented sub-row plate). The header is now
+-- plain Oswald text in cream (~34 px) on no bar at all, so the row plates are the only boxes in the list.
+local HEADER_CREAM = Color3.fromRGB(236, 230, 210) -- #ECE6D2
 function Kit.headerBar(width, text, height)
 	local bar = new("Frame", {
-		Name = "Header_" .. text, Size = UDim2.fromOffset(width, height or 78),
-		BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = Theme.alpha.header,
-	}, { Kit.corner(8) })
-	Kit.label({ Text = text, FontFace = F.display, TextSize = 61, Position = UDim2.fromOffset(22, 0), Size = UDim2.new(1, -22, 1, 0), Parent = bar })
+		Name = "Header_" .. text, Size = UDim2.fromOffset(width, height or 52), BackgroundTransparency = 1,
+	})
+	Kit.label({ Text = text, FontFace = F.display, TextSize = 34, TextColor3 = HEADER_CREAM, TextYAlignment = Enum.TextYAlignment.Bottom,
+		Position = UDim2.fromOffset(6, 0), Size = UDim2.new(1, -6, 1, -8), Parent = bar })
 	return bar
 end
 
--- Toggle 110x55: green + knob right when on, light + knob left when off.
--- (2026-10-21, round 3: match RIVALS; reviewers: "Settings OFF toggles are hard to read") RIVALS' switch (t0135.7) has two states
--- you can't confuse: a flat plain track with the dark knob parked left, and a filled track with the knob right. Ours now: ON = the
--- field-green fill (#8DBF5A, a light-to-dark gradient down to #4C7A2E) with a cream knob on the right and a white "ON";
--- OFF = a dark charcoal track with a grey knob on the left and a cream "OFF" (high contrast on the dark row, nothing lit).
--- SettingsTheme's own `green` is the old amber, so the field greens are local here. Both states keep a chunky dark bottom lip
--- (no hairline border), the knob squashes as it slides, and the word pops on each flip.
-local TOGGLE_ON = Color3.fromRGB(141, 191, 90) -- field green #8DBF5A
+-- Toggle 96x44 (a 96x40 switch on a 4 px lip).
+-- (2026-10-21, round 3: match RIVALS; reviewers: "Settings OFF toggles are hard to read") ON = field green, OFF = charcoal.
+-- (2026-10-21, grade1) graders still saw "a small grey square with tiny OFF": the round-3 switch was what the screen used, but its
+-- square grey knob on the charcoal track read as a box. Now a 96x40 pill: a round 32 px knob (cream when on, grey when off) that
+-- slides end to end, a big Oswald ON / OFF on the free side, field green #8DBF5A -> #4C7A2E when on, charcoal when off, standing on
+-- a dark lip (a sibling under the track, no hairline border). The knob squashes as it slides and the word pops on each flip.
+local TOGGLE_ON = Color3.fromRGB(141, 191, 90) -- field green #8DBF5A (the Shade gradient takes it down to #4C7A2E)
 local TOGGLE_OFF = Color3.fromRGB(46, 49, 42) -- charcoal
-local KNOB_ON, KNOB_OFF = Color3.fromRGB(236, 230, 210), Color3.fromRGB(120, 124, 112) -- cream / grey
+local KNOB_ON, KNOB_OFF = Color3.fromRGB(236, 230, 210), Color3.fromRGB(128, 132, 120) -- cream / grey
+local TW, TH, TK = 96, 40, 32 -- switch width / height / knob
 function Kit.toggle(value, onChange)
-	local btn = new("TextButton", {
-		Name = "Toggle", Size = UDim2.fromOffset(110, 55), AutoButtonColor = false, Text = "", BackgroundColor3 = TOGGLE_OFF,
-	}, { Kit.corner(7), new("UIGradient", { Name = "Shade", Rotation = 90, Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(150, 162, 140)) }) })
-	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.6, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.14), Parent = btn }, { Kit.corner(7) })
-	local knob = new("Frame", { Name = "Knob", AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(41, 41), BackgroundColor3 = KNOB_OFF, ZIndex = 3, Parent = btn }, { Kit.corner(5) })
-	-- (lobby revamp, graders: on vs off was unreadable) the word sits on the free side of the knob
-	local word = new("TextLabel", { Name = "State", BackgroundTransparency = 1, FontFace = F.chunky, TextSize = 24, TextColor3 = KNOB_ON,
-		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(52, 30), ZIndex = 2, Parent = btn })
-	Kit.textStroke(1.5).Parent = word
+	local btn = new("TextButton", { Name = "Toggle", Size = UDim2.fromOffset(TW, TH + 4), AutoButtonColor = false, Text = "", BackgroundTransparency = 1 })
+	new("Frame", { Name = "Lip", BackgroundColor3 = Color3.fromRGB(14, 16, 12), BackgroundTransparency = 0.15, BorderSizePixel = 0,
+		Position = UDim2.fromOffset(0, 4), Size = UDim2.fromOffset(TW, TH), Parent = btn }, { Kit.corner(TH / 2) })
+	local track = new("Frame", { Name = "Track", BackgroundColor3 = TOGGLE_OFF, BorderSizePixel = 0, Size = UDim2.fromOffset(TW, TH), ZIndex = 2, Parent = btn }, {
+		Kit.corner(TH / 2),
+		new("UIGradient", { Name = "Shade", Rotation = 90, Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.new(0.539, 0.639, 0.511)) }),
+	})
+	local knob = new("Frame", { Name = "Knob", AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(TK, TK), BackgroundColor3 = KNOB_OFF, ZIndex = 4, Parent = track }, { Kit.corner(TK / 2) })
+	local word = new("TextLabel", { Name = "State", BackgroundTransparency = 1, FontFace = F.chunky, TextSize = 22, TextColor3 = KNOB_ON,
+		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(46, TH), ZIndex = 3, Parent = track })
 	local api = { value = value }
 	-- smooth, slow slide + colour blend (RIVALS). No debounce: each click starts a new tween from the
 	-- knob's current spot, so fast clicking reverses it mid-way.
 	local TOGGLE_TIME = 0.25 -- Edward: a little faster than 0.35
+	local inset = (TH - TK) / 2 + TK / 2 -- knob centre distance from either end
 	local function render(t)
 		local on = api.value
-		Kit.tween(knob, t, { Position = on and UDim2.fromScale(82.5 / 110, 0.5) or UDim2.fromScale(27.5 / 110, 0.5), BackgroundColor3 = on and KNOB_ON or KNOB_OFF },
+		Kit.tween(knob, t, { Position = on and UDim2.fromScale((TW - inset) / TW, 0.5) or UDim2.fromScale(inset / TW, 0.5), BackgroundColor3 = on and KNOB_ON or KNOB_OFF },
 			Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-		Kit.tween(btn, t, { BackgroundColor3 = on and TOGGLE_ON or TOGGLE_OFF }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+		Kit.tween(track, t, { BackgroundColor3 = on and TOGGLE_ON or TOGGLE_OFF }, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
 		word.Text = on and "ON" or "OFF"
 		word.TextColor3 = on and Color3.new(1, 1, 1) or KNOB_ON
-		word.Position = on and UDim2.fromScale(32 / 110, 0.5) or UDim2.fromScale(78 / 110, 0.5)
+		word.TextTransparency = on and 0 or 0.15
+		-- the word sits centred in the free part of the track (the side the knob isn't on)
+		local free = (TW - TK - (TH - TK)) / 2
+		word.Position = on and UDim2.fromScale((4 + free / 2 + 2) / TW, 0.5) or UDim2.fromScale((TW - 4 - free / 2 - 2) / TW, 0.5)
 		if t > 0 then
 			-- the knob stretches mid-slide and settles (a squash you can feel), the word pops in
 			local ks = knob:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = knob })
@@ -472,34 +486,44 @@ function Kit.toggle(value, onChange)
 	return Kit.bindButton(btn, { hover = 1.06 }), api
 end
 
--- Stepper (arrows + value box) on the row's top line and a slider track under it.
--- spec: {min, max, step (rounding for drag/typing), arrowStep (per arrow click, default step), value, fmt}
-function Kit.stepperSlider(rowWidth, spec, onChange)
-	local holder = new("Frame", { Name = "StepperSlider", BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0) })
+-- Slider: value chip on the row's top line and a slider track under it.
+-- spec: {min, max, step (rounding for drag/typing), value, fmt, inset (track's left edge, design px)}
+-- (2026-10-21, grade1) graders: three controls for one number (▲▼ stepper + % box + slider). The ▲▼ stepper is gone; the chip
+-- stays and is still a TextBox, so clicking it types a value (rounded to the step on FocusLost). The track is 10 px (was 6) with
+-- a field-green fill up to a round 28 px cream knob; while dragging, the chip pops to 1.08 and its number ticks live.
+local SLIDER_TRACK_BG = Color3.fromRGB(46, 49, 42) -- charcoal, as the toggle's OFF
+local CHIP_CREAM, CHIP_LIP = Color3.fromRGB(236, 230, 210), Color3.fromRGB(176, 158, 118) -- cream chip on a tan lip
+function Kit.slider(rowWidth, spec, onChange)
+	local holder = new("Frame", { Name = "Slider", BackgroundTransparency = 1, Size = UDim2.new(1, 0, 1, 0) })
 	local api = { value = spec.value }
 	local fmt = spec.fmt or function(v) return tostring(v) end
+	local CHIP_W, CHIP_H = 100, 48
 
-	local arrows = new("Frame", {
-		Name = "Arrows", AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -132, 0, 17), Size = UDim2.fromOffset(53, 55),
-		BackgroundColor3 = C.control, Parent = holder,
-	}, { Kit.corner(6) })
-	-- two real buttons (top/bottom halves): click coordinates include the top-bar inset, so don't split by y
-	local upBtn = new("TextButton", { Name = "Up", Text = "▲", TextColor3 = C.textDark, TextSize = 19, FontFace = F.bold, BackgroundTransparency = 1, AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.25, 1), Size = UDim2.new(1, 0, 0.5, -3), Parent = arrows }) -- centre anchor: UIScale grows from the anchor
-	local downBtn = new("TextButton", { Name = "Down", Text = "▼", TextColor3 = C.textDark, TextSize = 19, FontFace = F.bold, BackgroundTransparency = 1, AutoButtonColor = false, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(0.5, 0, 0.75, -1), Size = UDim2.new(1, 0, 0.5, -3), Parent = arrows })
-	-- value box is typeable: the typed number is rounded to the nearest step on FocusLost
+	-- value chip: tan lip under a cream face, centre-anchored so the drag pop grows in place
+	local chipLip = new("Frame", {
+		Name = "ValueLip", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(1, -22 - CHIP_W / 2, 0, 48), Size = UDim2.fromOffset(CHIP_W, CHIP_H),
+		BackgroundColor3 = CHIP_LIP, BorderSizePixel = 0, Parent = holder,
+	}, { Kit.corner(8) })
 	local box = new("TextBox", {
-		Name = "Value", AnchorPoint = Vector2.new(1, 0), Position = UDim2.new(1, -22, 0, 17), Size = UDim2.fromOffset(103, 55),
-		BackgroundColor3 = C.control, Text = "", TextColor3 = C.textDark, FontFace = F.heavy, TextSize = 30,
-		ClearTextOnFocus = false, Parent = holder,
-	}, { Kit.corner(6) })
+		Name = "Value", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.new(1, -22 - CHIP_W / 2, 0, 44), Size = UDim2.fromOffset(CHIP_W, CHIP_H),
+		BackgroundColor3 = CHIP_CREAM, Text = "", TextColor3 = C.textDark, FontFace = F.heavy, TextSize = 28,
+		ClearTextOnFocus = false, ZIndex = 2, Parent = holder,
+	}, { Kit.corner(8) })
+	local boxScale = new("UIScale", { Parent = box })
+	local lipScale = new("UIScale", { Parent = chipLip })
 
+	local inset = spec.inset or 35
 	local track = new("Frame", {
-		Name = "Track", Position = UDim2.new(0, 35, 0, 100), Size = UDim2.new(1, -70, 0, 6), BackgroundColor3 = C.track, Parent = holder,
-	}, { Kit.corner(3) })
+		Name = "Track", Position = UDim2.new(0, inset, 0, 98), Size = UDim2.new(1, -(inset + 30), 0, 10), BackgroundColor3 = SLIDER_TRACK_BG,
+		BorderSizePixel = 0, Parent = holder,
+	}, { Kit.corner(5) })
+	local fill = new("Frame", {
+		Name = "Fill", Size = UDim2.fromScale(0, 1), BackgroundColor3 = Color3.fromRGB(141, 191, 90), BorderSizePixel = 0, ZIndex = 2, Parent = track,
+	}, { Kit.corner(5), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.new(0.539, 0.639, 0.511)) }) })
 	local knob = new("TextButton", {
-		Name = "Knob", AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(32, 34), BackgroundColor3 = C.control,
-		AutoButtonColor = false, Text = "", Position = UDim2.fromScale(0, 0.5), Parent = track,
-	}, { Kit.corner(7) })
+		Name = "Knob", AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromOffset(28, 28), BackgroundColor3 = CHIP_CREAM,
+		AutoButtonColor = false, Text = "", Position = UDim2.fromScale(0, 0.5), ZIndex = 3, Parent = track,
+	}, { Kit.corner(14) })
 
 	local dragging = false
 	local function frac(v) return (v - spec.min) / (spec.max - spec.min) end
@@ -509,7 +533,11 @@ function Kit.stepperSlider(rowWidth, spec, onChange)
 	end
 	local function render(t)
 		box.Text = fmt(api.value)
-		if not dragging then Kit.tween(knob, t or 0.12, { Position = UDim2.fromScale(frac(api.value), 0.5) }, (t and t > 0.3) and Enum.EasingStyle.Quart or (t and t > 0.2) and Enum.EasingStyle.Sine or Enum.EasingStyle.Quad) end
+		if not dragging then
+			local style = (t and t > 0.3) and Enum.EasingStyle.Quart or (t and t > 0.2) and Enum.EasingStyle.Sine or Enum.EasingStyle.Quad
+			Kit.tween(knob, t or 0.12, { Position = UDim2.fromScale(frac(api.value), 0.5) }, style)
+			Kit.tween(fill, t or 0.12, { Size = UDim2.fromScale(frac(api.value), 1) }, style)
+		end
 	end
 	function api.set(v, t)
 		v = round(v)
@@ -519,23 +547,12 @@ function Kit.stepperSlider(rowWidth, spec, onChange)
 	box.Focused:Connect(function() box.Text = tostring(api.value) end)
 	box.FocusLost:Connect(function()
 		local n = tonumber((box.Text:gsub("[^%d%.%-]", "")))
-		if n then api.set(n) else render() end
+		if n then api.set(n, 0.25) else render() end
 	end)
-	local d = spec.arrowStep or spec.step -- arrows can move further than the rounding step
-	-- arrow motion (RIVALS): small glyphs that grow on hover; every click pulses them smaller then back
-	-- up to the hover size (played on Activated, so fast clicks each get a pulse)
-	local ARROW_HOVER = 1.35
-	for _, pair in ipairs({ { upBtn, d }, { downBtn, -d } }) do
-		local b, delta = pair[1], pair[2]
-		local sc = new("UIScale", { Parent = b })
-		local hovering = false
-		b.MouseEnter:Connect(function() hovering = true; Kit.tween(sc, 0.12, { Scale = ARROW_HOVER }) end)
-		b.MouseLeave:Connect(function() hovering = false; Kit.tween(sc, 0.12, { Scale = 1 }) end)
-		b.Activated:Connect(function()
-			api.set(api.value + delta, 0.25) -- knob eases to the new value instead of snapping
-			Kit.tween(sc, 0.06, { Scale = 0.88 })
-			task.delay(0.06, function() Kit.tween(sc, 0.2, { Scale = hovering and ARROW_HOVER or 1 }, Enum.EasingStyle.Sine) end)
-		end)
+
+	local function pop(on)
+		Kit.tween(boxScale, 0.1, { Scale = on and 1.08 or 1 }, on and Enum.EasingStyle.Back or Enum.EasingStyle.Quad)
+		Kit.tween(lipScale, 0.1, { Scale = on and 1.08 or 1 }, on and Enum.EasingStyle.Back or Enum.EasingStyle.Quad)
 	end
 
 	-- smooth drag: the knob follows the pointer exactly, only the value snaps to the step.
@@ -546,12 +563,14 @@ function Kit.stepperSlider(rowWidth, spec, onChange)
 		local a, w = track.AbsolutePosition.X, track.AbsoluteSize.X
 		local f = math.clamp((x - grab - a) / w, 0, 1)
 		knob.Position = UDim2.fromScale(f, 0.5)
-		api.set(spec.min + f * (spec.max - spec.min))
+		fill.Size = UDim2.fromScale(f, 1)
+		api.set(spec.min + f * (spec.max - spec.min)) -- render() writes the chip text: the number ticks live
 	end
 	knob.InputBegan:Connect(function(i)
 		if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
 			dragging = true
 			grab = i.Position.X - (knob.AbsolutePosition.X + knob.AbsoluteSize.X / 2)
+			pop(true)
 		end
 	end)
 	UserInputService.InputChanged:Connect(function(i)
@@ -560,6 +579,7 @@ function Kit.stepperSlider(rowWidth, spec, onChange)
 	UserInputService.InputEnded:Connect(function(i)
 		if dragging and (i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch) then
 			dragging = false
+			pop(false)
 			render(0.1) -- settle onto the snapped value
 		end
 	end)
@@ -567,6 +587,7 @@ function Kit.stepperSlider(rowWidth, spec, onChange)
 	render(0)
 	return holder, api
 end
+Kit.stepperSlider = Kit.slider -- old name (spec.arrowStep is now ignored)
 
 -- Dropdown 208x55: light box, black text, ▼; opens a list under itself (parented to popupLayer).
 function Kit.dropdown(options, value, popupLayer, onChange)

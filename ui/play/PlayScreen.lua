@@ -1,9 +1,7 @@
 -- UIKit/PlayScreen (ModuleScript): the lobby PLAY screen, full screen like Missions / Settings (one menu at a time).
--- RIVALS' play screen as a TACTICALS deployment board: no AI art, every card is a 3D scene.
---   * DEPLOY header with your operator level, CASUAL / RANKED tabs (ranked shows a 3D lock until Config.RankedLevel).
---   * Three mode cards (1V1 / 2V2 / 3V3): your avatar holding your one gun, squad mates beside you, the other team as
---     dark silhouettes opposite. Click = search online; while searching that card says SEARCHING m:ss and click cancels.
---   * TRAINING (your gun on the rack, ENTER) and LOBBY DUELS (TO PADS) below.
+-- RIVALS' real Play screen (2026-10-21, grade1): a tall hero tile on the left (TRAINING) beside a 3 + 2 grid (1V1 / 2V2 / 3V3,
+-- then DUEL PADS + RANKED), centred, the red X just outside its top-right corner. Every tile IS the button: a lit, full-bleed live
+-- 3D scene with ONE huge title; no action strips. Click a mode = search online (Searching m:ss chip, click again cancels).
 -- Design px at 1920x1080, converted to Scale (Kit.toScale).
 --   PlayScreen.Init({ Config, getData, ask, onOpen, onClose, enterTraining, toPads, rankedOpen, level })
 --   PlayScreen.Open() / Close() / IsOpen() / Refresh()
@@ -132,13 +130,32 @@ local function arm(m, weaponId)
 	gun.Parent = m
 end
 
+-- (2026-10-21, grade1: tiles read as dark silhouettes) a tile scene is lit like a picture: bright ambient and a warm key light
+-- from the camera side (ViewIcons' default light comes from behind the scene: the camera sits at -Z looking +Z, its light
+-- travels -Z). raise (0..1) moves the camera down so the scene sits higher and the big title below it leaves the figures visible.
+local function lightScene(vp, raise)
+	if not vp then return end
+	local f = vp.Frame
+	f.Ambient = Color3.fromRGB(196, 192, 182)
+	f.LightColor = Color3.fromRGB(255, 244, 222)
+	f.LightDirection = Vector3.new(-0.45, -0.8, 0.55)
+	if raise and raise ~= 0 then
+		local cam = f.CurrentCamera
+		local d = cam.CFrame.Position.Magnitude
+		cam.CFrame = cam.CFrame * CFrame.new(0, -d * math.tan(math.rad(cam.FieldOfView / 2)) * raise, 0)
+	end
+end
+
 -- the scene for a mode card: you (+ mates) on the left facing right, the other team on the right facing left
-local function squadScene(parent, teamSize, ranked)
+-- zooms (optional) = per team size; raise = lightScene's lift (the Play tiles pass both, RankedScreen neither)
+local function squadScene(parent, teamSize, ranked, zooms, raise)
 	local scene = Instance.new("Model")
 	scene.Name = "Squad"
 	local weapon = (ctx.getData() and ctx.getData().Loadout and ctx.getData().Loadout.Weapon) or ctx.Config.DefaultLoadout.Weapon
-	local enemyTint = ranked and Color3.fromRGB(60, 46, 20) or Color3.fromRGB(34, 38, 32) -- (2026-10-21, AI-tells cleanup) ranked = dark gold, was violet
-	local mateTint = Color3.fromRGB(120, 126, 108)
+	-- (2026-10-21, AI-tells cleanup) ranked = dark gold, was violet
+	-- (2026-10-21, grade1: "1v1 drawn over dark silhouettes") the other team is a lit rust / gold mannequin, not near-black
+	local enemyTint = ranked and Color3.fromRGB(150, 114, 52) or Color3.fromRGB(150, 78, 58)
+	local mateTint = Color3.fromRGB(150, 156, 136)
 	local gap = 3.4
 	-- the viewport camera looks from +Z towards -Z (screen right = -X), rigs face -Z by default:
 	-- your team at +X (screen left) turned towards the other team and the camera, theirs mirrored
@@ -158,7 +175,8 @@ local function squadScene(parent, teamSize, ranked)
 		end
 	end
 	if #scene:GetChildren() == 0 then scene:Destroy(); return nil end
-	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-6), 0, 0), zoom = ({ 1.1, 1.4, 1.45 })[teamSize] or 1.6, still = true })
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-6), 0, 0), zoom = (zooms or { 1.1, 1.4, 1.45 })[teamSize] or 1.6, still = true })
+	lightScene(vp, raise)
 	return vp, scene
 end
 
@@ -249,7 +267,7 @@ end
 -- (2026-10-21, round 3: match RIVALS) Training: RIVALS shows art here; ours is a live range scene. A straw target dummy on a
 -- post with rings on its chest, a sandbag wall in front with your gun resting on it, a round target board behind. The dummy
 -- sways, and rocks back as if hit when you hover.
-local function trainingScene(parent, target)
+local function trainingScene(parent, target, zoom, raise)
 	local scene = Instance.new("Model")
 	scene.Name = "Range"
 	part(scene, Vector3.new(14, 0.4, 9), CFrame.new(0, -0.2, 2), Color3.fromRGB(62, 66, 56), Enum.Material.Concrete) -- floor slab
@@ -301,7 +319,8 @@ local function trainingScene(parent, target)
 	for i, ring in { { 2.6, RING_CREAM }, { 1.8, RING_RED }, { 1.0, RING_CREAM }, { 0.45, RING_RED } } do
 		part(scene, Vector3.new(0.08, ring[1], ring[1]), board * CFrame.new(0, 3.2, -i * 0.02) * FACING, ring[2], Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
 	end
-	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-10), math.rad(-14), 0), zoom = 1.15, still = true })
+	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-10), math.rad(-14), 0), zoom = zoom or 1.15, still = true })
+	lightScene(vp, raise)
 	-- the dummy rocks about its foot (read back after the viewport re-centred and turned the scene)
 	local home = base.CFrame * UPRIGHT:Inverse() * CFrame.new(0, -0.25, 0)
 	dummy.WorldPivot = home
@@ -314,7 +333,7 @@ end
 
 -- (2026-10-21, round 3: match RIVALS) Lobby Duels: two fighters squaring up on a duel pad (you with your gun, the other a
 -- dark mannequin) over a field-green glow ring that breathes; both hop when you hover.
-local function duelsScene(parent, target)
+local function duelsScene(parent, target, raise)
 	local scene = Instance.new("Model")
 	scene.Name = "Pad"
 	local FEET = -3 -- a rig's pivot is its root, about 3 studs above its feet
@@ -324,7 +343,7 @@ local function duelsScene(parent, target)
 	local weapon = loadoutWeapon()
 	local fighters = {}
 	for side = 0, 1 do
-		local tint = side == 1 and Color3.fromRGB(34, 38, 32) or nil
+		local tint = side == 1 and Color3.fromRGB(150, 78, 58) or nil -- (grade1) lit rust, was near-black
 		local cf = CFrame.new(side == 0 and 2.8 or -2.8, 0, 0) * CFrame.Angles(0, side == 0 and math.rad(115) or math.rad(-115), 0)
 		local m = rig(tint)
 		if m then
@@ -337,6 +356,7 @@ local function duelsScene(parent, target)
 		table.insert(fighters, m)
 	end
 	local vp = ViewIcons.Viewport(parent, scene, { view = CFrame.Angles(math.rad(-14), 0, 0), zoom = 1.12, still = true })
+	lightScene(vp, raise)
 	local homes = {}
 	for i, m in fighters do homes[i] = m:GetPivot() end
 	liven(vp, target, 0.1, function(t, _, since)
@@ -380,22 +400,58 @@ local SEMI = BOLD
 local function big(parent, text, size, x, y, w, h, color, align, z, font)
 	local l = Kit.label({ Text = text, FontFace = font or HEAVY, TextSize = size, TextColor3 = color or Color3.new(1, 1, 1), TextXAlignment = align or Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), ZIndex = z or 4, Parent = parent })
-	new("UIStroke", { Color = Color3.fromRGB(10, 10, 12), Thickness = math.max(2, math.floor(size / 28)), Transparency = 0.15, Parent = l })
+	-- (2026-10-21, grade1) a chunkier, solid stroke: the huge tile titles sit straight on the lit 3D scenes
+	new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = math.max(2, math.floor(size / 22)), Transparency = 0, Parent = l })
 	return l
 end
 -- (2026-10-21, RIVALS pass) tiles pop in one after another when the screen opens (setOpen sets popStep = 0; nil = no pop,
 -- so a tab switch / party change re-render stays still). popIn runs before bindButton, which then reuses its UIScale.
 local popStep
+-- (2026-10-21, grade1: Play screen like RIVALS) the tile IS the button: a full-bleed 3D scene over a palette gradient, a soft
+-- dark shade along the bottom under the title, a white sheen that fades in on hover (~15 % brighter) and a chunky 4 px cream
+-- outline that shows only on hover / a controller's selection (no resting border). Pop-in is fast (6 tiles in <= 0.3 s).
+local CREAM = Color3.fromRGB(236, 230, 210)
 local function tile(x, y, w, h, top, bottom)
 	local f = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		BackgroundColor3 = Color3.new(1, 1, 1), ClipsDescendants = true, Parent = body })
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(top or Color3.fromRGB(58, 64, 54), bottom or Color3.fromRGB(14, 16, 13)), Parent = f })
-	new("UICorner", { CornerRadius = UDim.new(0, 8), Parent = f })
-	local st = new("UIStroke", { Color = Color3.new(1, 1, 1), Transparency = 1, Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
-	f.MouseEnter:Connect(function() Kit.tween(st, 0.1, { Transparency = 0.15 }) end)
-	f.MouseLeave:Connect(function() Kit.tween(st, 0.1, { Transparency = 1 }) end)
-	if popStep then Kit.popIn(f, popStep * 0.04); popStep += 1 end
+	new("UICorner", { CornerRadius = UDim.new(0, 10), Parent = f })
+	new("Frame", { Name = "Shade", BackgroundColor3 = Color3.new(0, 0, 0), BorderSizePixel = 0, Position = UDim2.fromOffset(0, math.floor(h * 0.45)),
+		Size = UDim2.fromOffset(w, h - math.floor(h * 0.45)), ZIndex = 2, Parent = f },
+		{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new(1, 0.45) }) })
+	local sheen = new("Frame", { Name = "Sheen", BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromOffset(w, h),
+		ZIndex = 3, Parent = f })
+	local st = new("UIStroke", { Color = CREAM, Transparency = 1, Thickness = 4, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = f })
+	local hov, sel = false, false
+	local function show()
+		local on = hov or sel
+		Kit.tween(sheen, 0.1, { BackgroundTransparency = on and 0.85 or 1 })
+		Kit.tween(st, 0.1, { Transparency = on and 0 or 1 })
+	end
+	f.MouseEnter:Connect(function() hov = true; show() end)
+	f.MouseLeave:Connect(function() hov = false; show() end)
+	f.SelectionGained:Connect(function() sel = true; show() end)
+	f.SelectionLost:Connect(function() sel = false; show() end)
+	if popStep then
+		-- (Kit.popIn's 0.24 s Back tween x 0.04 s steps took ~0.44 s for six tiles) own pop: 0.16 s, 0.028 s apart; the
+		-- UIScale is created first so bindButton reuses it for hover 1.03 / press 0.96
+		local s = new("UIScale", { Name = "PopScale", Scale = 0.85, Parent = f })
+		local d = popStep * 0.028
+		popStep += 1
+		task.delay(d, function() if f.Parent then Kit.tween(s, 0.16, { Scale = 1 }, Enum.EasingStyle.Back) end end)
+	end
+	Kit.bindButton(f, { hover = 1.03, press = 0.96 })
 	return f
+end
+-- a dark overlay (unavailable while you queue / stand on a pad) and a status chip at the tile's top centre
+local function dimmer(f, w, h)
+	return new("Frame", { Name = "Dim", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromOffset(w, h),
+		ZIndex = 6, Parent = f })
+end
+local function chip(f, w)
+	return new("TextLabel", { Name = "Chip", Text = "", FontFace = BOLD, TextSize = 20, TextWrapped = true, TextColor3 = Color3.new(1, 1, 1),
+		BackgroundColor3 = Color3.fromRGB(12, 14, 10), BackgroundTransparency = 0.12, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(w / 2, 14),
+		Size = UDim2.fromOffset(math.min(w - 32, 300), 46), Visible = false, ZIndex = 7, Parent = f }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) })
 end
 
 -- (2026-10-21, RIVALS pass) locked Ranked: a centred requirement card instead of a toast.
@@ -489,34 +545,34 @@ local function showLockCard()
 	end
 end
 
-local MW, MH, GAP = 322, 272, 8
-local STRIP = 58 -- (lobby revamp) the bottom action bar of every tile
-local function modeCard(i, mode, ranked, x)
+-- (2026-10-21, grade1: Play screen like RIVALS) RIVALS' real Play screen: a tall hero tile on the left beside a 3 + 2 grid, every
+-- tile a full-bleed picture with ONE huge title, no buttons. Ours: Training is the hero (our beginner mode), 1v1 / 2v2 / 3v3 on
+-- the top row, Duel Pads + Ranked below. The block is centred on the 1920 x 1080 design canvas; the red X sits just outside
+-- its top-right corner, level with its top edge. Design px, converted with Kit.toScale.
+local GAP = 10
+local HW = 420 -- hero (Training) width
+local MW, MH = 330, 290 -- mode tile
+local GRID_W = HW + GAP + 3 * MW + 2 * GAP -- 1440
+local GRID_H = 2 * MH + GAP -- 590
+local GRID_X, GRID_Y = (1920 - GRID_W) / 2, (1080 - GRID_H) / 2
+local BW = (3 * MW + 2 * GAP - GAP) / 2 -- bottom-row tile (Duel Pads, Ranked): 500
+local MODE_TOP, MODE_BOTTOM = Color3.fromRGB(112, 150, 74), Color3.fromRGB(42, 68, 28) -- field green #8DBF5A -> #4C7A2E, toned for white type
+local GOLD_TOP, GOLD_BOTTOM = Color3.fromRGB(110, 84, 38), Color3.fromRGB(38, 28, 12)
+local WHITE = Color3.new(1, 1, 1)
+
+local function modeCard(mode, ranked, x)
 	local q = ctx.Config.QueueFor(mode.Id, ranked)
-	local accent = ranked and T.violet or Color3.fromRGB(236, 232, 218)
-	-- (2026-10-21, AI-tells cleanup) the ranked tile gradient is dark gold, was violet
-	local card = ranked and tile(x, 0, MW, MH, Color3.fromRGB(110, 84, 38), Color3.fromRGB(38, 28, 12)) or tile(x, 0, MW, MH)
-	local stage = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(MW, 210), ZIndex = 2, Parent = card })
-	-- the mode name, huge and centred (RIVALS)
-	big(card, mode.Id, 96, 0, 70, MW, 110, Color3.new(1, 1, 1), nil, 4)
+	local card = ranked and tile(x, 0, MW, MH, GOLD_TOP, GOLD_BOTTOM) or tile(x, 0, MW, MH, MODE_TOP, MODE_BOTTOM)
+	-- the live squad fills the tile (the viewport is added after Kit.toScale)
+	local stage = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(MW, MH), ZIndex = 1, Parent = card })
+	-- ONE huge title, lower centre so the squad stays visible above it
+	big(card, mode.Id, 128, 0, MH - 172, MW, 140, CREAM, nil, 4)
 	if ranked then
-		local chip = new("TextLabel", { Text = "RANKED", FontFace = HEAVY, TextSize = 18, TextColor3 = Color3.new(1, 1, 1), BackgroundColor3 = T.violet,
-			Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(94, 26), ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
+		new("TextLabel", { Text = "RANKED", FontFace = HEAVY, TextSize = 18, TextColor3 = WHITE, BackgroundColor3 = Color3.fromRGB(150, 114, 52),
+			Position = UDim2.fromOffset(12, MH - 40), Size = UDim2.fromOffset(94, 26), ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 6) }) })
 	end
-	-- status strip along the bottom. (lobby revamp, graders: "Play >" in 22 px read as a small link, not the button) idle = a
-	-- full-width field-green PLAY bar, so the whole card reads as one big button; the queue count is a pill top right
-	local strip = new("Frame", { Position = UDim2.fromOffset(0, MH - STRIP), Size = UDim2.fromOffset(MW, STRIP), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35,
-		BorderSizePixel = 0, ZIndex = 3, Parent = card })
-	local green = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Enabled = false, Parent = strip })
-	local left = Kit.label({ Text = "", FontFace = HEAVY, TextSize = 30, TextColor3 = Color3.new(1, 1, 1), Position = UDim2.fromOffset(14, 0), Size = UDim2.fromOffset(MW - 28, STRIP), ZIndex = 4, Parent = strip })
-	new("UIStroke", { Color = Color3.fromRGB(28, 44, 16), Thickness = 2, Transparency = 0.3, Parent = left })
-	local right = Kit.label({ Text = "", FontFace = SEMI, TextSize = 20, TextColor3 = Color3.fromRGB(225, 225, 228), TextXAlignment = Enum.TextXAlignment.Right,
-		Position = UDim2.fromOffset(MW - 214, 0), Size = UDim2.fromOffset(200, STRIP), ZIndex = 4, Parent = strip })
-	local pill = new("TextLabel", { Text = "", FontFace = HEAVY, TextSize = 19, TextColor3 = Color3.fromRGB(225, 225, 228), BackgroundColor3 = Color3.fromRGB(10, 12, 9),
-		BackgroundTransparency = 0.25, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(MW - 12, 12), Size = UDim2.fromOffset(150, 30), ZIndex = 5, Parent = card },
-		{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-	table.insert(strips, { q = q, left = left, right = right, strip = strip, green = green, pill = pill, card = card, ranked = ranked, mode = mode, accent = accent })
-	Kit.bindButton(card, { hover = 1.03, press = 0.985 })
+	local entry = { q = q, card = card, chip = chip(card, MW), dim = dimmer(card, MW, MH) }
+	table.insert(strips, entry)
 	card.Activated:Connect(function()
 		local myQ, st = search()
 		if myQ and q and myQ.Id == q.Id and st == "Searching" then ctx.ask("CancelMatch"); return end
@@ -528,9 +584,7 @@ local function modeCard(i, mode, ranked, x)
 		-- say why on the tile itself (the lobby toasts sit under this menu)
 		local msg = r and r.msg or "No answer from the server"
 		if msg == "Unknown action" then msg = "Online matchmaking is offline here" end
-		local entry
-		for _, e in strips do if e.card == card then entry = e end end
-		if entry then entry.flash = { text = msg, untilT = os.clock() + 5 } end
+		entry.flash = { text = msg, untilT = os.clock() + 5 }
 		tickNow()
 	end)
 	return stage, mode.TeamSize, card
@@ -543,37 +597,68 @@ local function render()
 	local open = ctx.rankedOpen and ctx.rankedOpen()
 	if not open then tab = "Casual" end
 	local ranked = tab == "Ranked"
+	local GX = HW + GAP -- the grid right of the hero
+	-- the hero: Training, tall on the left (pops first)
+	local tb = tile(0, 0, HW, GRID_H, Color3.fromRGB(150, 136, 98), Color3.fromRGB(52, 46, 30))
+	local trainHold = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(HW, GRID_H), ZIndex = 1, Parent = tb })
+	big(tb, "TRAINING", 92, 0, GRID_H - 196, HW, 110, CREAM, nil, 4)
+	-- (kids: one short line, RIVALS keeps a tile to its title)
+	local tSub = Kit.label({ Text = "Try any gun for free!", FontFace = BOLD, TextSize = 28, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(0, GRID_H - 88), Size = UDim2.fromOffset(HW, 40), ZIndex = 4, Parent = tb })
+	new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 2, Parent = tSub })
+	table.insert(strips, { training = true, chip = chip(tb, HW), dim = dimmer(tb, HW, GRID_H) })
+	tb.Activated:Connect(function()
+		if search() or onPad() then return end
+		Screen.Close()
+		if ctx.enterTraining then ctx.enterTraining() end
+	end)
+	-- top row: the queues
 	local stages = {}
 	for i, mode in Config.Modes do
-		local stage, n, card = modeCard(i, mode, ranked, (i - 1) * (MW + GAP))
+		local stage, n, card = modeCard(mode, ranked, GX + (i - 1) * (MW + GAP))
 		table.insert(stages, { stage, n, card })
 	end
-	-- Ranked: the tall tile on the right
-	local RX = 3 * (MW + GAP)
-	local RW, RH = 1404 - RX, MH * 2 + GAP
-	-- (2026-10-21, AI-tells cleanup) the open Ranked tile gradient is dark gold, was violet
-	-- (2026-10-21, round 3: match RIVALS) locked = a dimmer dark gold (was purple-grey 40,36,48 -> 10,9,13): Ranked keeps its
-	-- colour while locked, like RIVALS' Ranked tile keeps its art behind the padlock (t0291)
-	local rt = tile(RX, 0, RW, RH, open and Color3.fromRGB(110, 84, 38) or Color3.fromRGB(84, 64, 30), open and Color3.fromRGB(38, 28, 12) or Color3.fromRGB(24, 18, 8))
-	big(rt, "Ranked", 72, 0, 36, RW, 84)
-	local art = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(RW / 2, 150), Size = UDim2.fromOffset(230, 230), ZIndex = 3, Parent = rt })
-	local rankedSub
+	-- bottom row: Duel Pads, then Ranked
+	local Y2 = MH + GAP
+	local db = tile(GX, Y2, BW, MH, Color3.fromRGB(70, 78, 62), Color3.fromRGB(18, 20, 15))
+	local padHold = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Size = UDim2.fromOffset(BW, MH), ZIndex = 1, Parent = db })
+	big(db, "DUEL PADS", 96, 0, MH - 160, BW, 110, CREAM, nil, 4)
+	local dSub = Kit.label({ Text = "Fight people here", FontFace = BOLD, TextSize = 26, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
+		Position = UDim2.fromOffset(0, MH - 56), Size = UDim2.fromOffset(BW, 36), ZIndex = 4, Parent = db })
+	new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 2, Parent = dSub })
+	db.Activated:Connect(function()
+		Screen.Close()
+		if ctx.toPads then ctx.toPads() end
+	end)
+	-- Ranked keeps its dark gold (dimmer while locked, like RIVALS' Ranked art behind the padlock)
+	local RX = GX + BW + GAP
+	local rt = tile(RX, Y2, BW, MH, open and GOLD_TOP or Color3.fromRGB(84, 64, 30), open and GOLD_BOTTOM or Color3.fromRGB(24, 18, 8))
+	local art
 	if not open then
-		big(rt, "UNLOCKS AT LEVEL " .. Config.RankedLevel, 30, 20, 392, RW - 40, 40, Color3.fromRGB(225, 225, 230))
-		-- (lobby revamp, graders: a bare lock gives no sense of distance) how far you are: LV n / 50 on a bar
+		-- locked: a small padlock over the title, then ONE line + a chunky bar with the count on it (was "UNLOCKS AT LEVEL 50"
+		-- + a big padlock + "LV 1 / 50" under the bar: the same thing twice)
+		art = new("Frame", { Name = "Lock", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(BW / 2, 22),
+			Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = rt })
+		big(rt, "RANKED", 88, 0, 88, BW, 100, CREAM, nil, 4)
 		local lv = math.max(1, (ctx.level and ctx.level()) or 1)
 		local need = math.max(1, Config.RankedLevel)
-		local track = new("Frame", { Position = UDim2.fromOffset(30, 446), Size = UDim2.fromOffset(RW - 60, 18), BackgroundColor3 = Color3.fromRGB(10, 10, 12),
-			BackgroundTransparency = 0.2, BorderSizePixel = 0, ZIndex = 4, Parent = rt }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		new("Frame", { Size = UDim2.fromScale(math.clamp(lv / need, 0.04, 1), 1), BackgroundColor3 = Color3.fromRGB(232, 212, 168), BorderSizePixel = 0, ZIndex = 5, Parent = track },
-			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		big(rt, "LV " .. lv .. " / " .. need, 24, 20, 470, RW - 40, 30, Color3.fromRGB(232, 212, 168))
+		big(rt, "LEVEL " .. need, 30, 0, 190, BW, 36, Color3.fromRGB(232, 212, 168), nil, 4)
+		local BAR = 300
+		local track = new("Frame", { Position = UDim2.fromOffset((BW - BAR) / 2, 236), Size = UDim2.fromOffset(BAR, 16), BackgroundColor3 = Color3.fromRGB(10, 10, 12),
+			BackgroundTransparency = 0.15, BorderSizePixel = 0, ZIndex = 4, Parent = rt }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		new("Frame", { Size = UDim2.fromScale(math.clamp(lv / need, 0.05, 1), 1), BackgroundColor3 = Color3.fromRGB(232, 212, 168), BorderSizePixel = 0, ZIndex = 5,
+			Parent = track }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		local cnt = Kit.label({ Text = "LV " .. lv .. " / " .. need, FontFace = HEAVY, TextSize = 15, TextColor3 = WHITE, TextXAlignment = Enum.TextXAlignment.Center,
+			Size = UDim2.fromScale(1, 1), ZIndex = 6, Parent = track })
+		new("UIStroke", { Color = Color3.fromRGB(14, 16, 12), Thickness = 1.5, Parent = cnt })
 	else
-		rankedSub = big(rt, ranked and "Ranked queues: ON" or "Ranked queues: OFF", 34, 20, 392, RW - 40, 44, ranked and T.violet:Lerp(Color3.new(1, 1, 1), 0.4) or Color3.new(1, 1, 1))
-		Kit.label({ Text = ranked and "Click to go back to casual" or "Click to play rated duels", FontFace = SEMI, TextSize = 20, TextColor3 = Color3.fromRGB(205, 205, 212),
-			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(20, 440), Size = UDim2.fromOffset(RW - 40, 28), ZIndex = 4, Parent = rt })
+		-- open: a normal tile (the trophy scene fills it, one title)
+		art = new("Frame", { Name = "Scene", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 6), Size = UDim2.fromOffset(BW, MH - 110), ZIndex = 1, Parent = rt })
+		big(rt, "RANKED", 96, 0, MH - 160, BW, 110, CREAM, nil, 4)
+		if ranked then
+			big(rt, "Ranked queues ON", 24, 0, MH - 56, BW, 32, Color3.fromRGB(232, 212, 168), nil, 4)
+		end
 	end
-	Kit.bindButton(rt, { hover = 1.02, press = 0.985 })
 	rt.Activated:Connect(function()
 		if not open then
 			showLockCard() -- (2026-10-21, RIVALS pass) was a toast
@@ -583,41 +668,6 @@ local function render()
 		if ctx.openRanked then ctx.openRanked() return end
 		tab = ranked and "Casual" or "Ranked"
 		render()
-	end)
-	-- row 2: Training (wide) + Lobby Duels
-	local Y2 = MH + GAP
-	local TW = 2 * MW + GAP
-	local tb = tile(0, Y2, TW, MH)
-	big(tb, "Training", 64, 28, 26, 420, 76, Color3.new(1, 1, 1), Enum.TextXAlignment.Left)
-	-- (2026-10-21, round 3) shorter lines, bigger type (kids; RIVALS keeps a card to one short line)
-	Kit.label({ Text = "Cover, vaults, targets.\nTry any gun for free!", FontFace = SEMI, TextSize = 24, TextColor3 = Color3.fromRGB(215, 215, 220),
-		Position = UDim2.fromOffset(32, 104), Size = UDim2.fromOffset(330, 60), TextYAlignment = Enum.TextYAlignment.Top, ZIndex = 4, Parent = tb })
-	-- (lobby revamp) the same green bottom bar as the mode tiles
-	local tBar = new("Frame", { Position = UDim2.fromOffset(0, MH - STRIP), Size = UDim2.fromOffset(TW, STRIP), BackgroundColor3 = Color3.new(1, 1, 1), BorderSizePixel = 0, ZIndex = 3, Parent = tb },
-		{ new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)) }) })
-	local tStatus = big(tBar, "ENTER", 30, 0, 0, TW, STRIP, Color3.new(1, 1, 1))
-	local gunHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(330, 20), Size = UDim2.fromOffset(320, 232), ZIndex = 2, Parent = tb })
-	Kit.bindButton(tb, { hover = 1.02, press = 0.985 })
-	tb.Activated:Connect(function()
-		if search() or onPad() then return end
-		Screen.Close()
-		if ctx.enterTraining then ctx.enterTraining() end
-	end)
-	table.insert(strips, { training = tStatus })
-	local db = tile(TW + GAP, Y2, MW, MH)
-	-- (2026-10-21, round 3: match RIVALS) a live duel-pad scene behind the words, where RIVALS shows art
-	local padHold = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(MW, MH - STRIP), ZIndex = 2, Parent = db })
-	big(db, "Lobby Duels", 52, 0, 8, MW, 66) -- (round 3) one line along the top, so the fighters show under it
-	Kit.label({ Text = "Fight people in this server", FontFace = SEMI, TextSize = 19, TextColor3 = Color3.fromRGB(215, 215, 220), TextXAlignment = Enum.TextXAlignment.Center,
-		Position = UDim2.fromOffset(0, 172), Size = UDim2.fromOffset(MW, 26), ZIndex = 4, Parent = db })
-	-- secondary action: a dark bar (PLAY-green is for the queues)
-	local dBar = new("Frame", { Position = UDim2.fromOffset(0, MH - STRIP), Size = UDim2.fromOffset(MW, STRIP), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.35,
-		BorderSizePixel = 0, ZIndex = 3, Parent = db })
-	big(dBar, "TO PADS", 28, 0, 0, MW, STRIP)
-	Kit.bindButton(db, { hover = 1.03, press = 0.985 })
-	db.Activated:Connect(function()
-		Screen.Close()
-		if ctx.toPads then ctx.toPads() end
 	end)
 	-- the party column, bottom left (RIVALS): the leader at the bottom with the crown, the others stacked above, a + on top;
 	-- any of them opens Your Party
@@ -655,83 +705,61 @@ local function render()
 		plus.Activated:Connect(openParty)
 	end
 	Kit.toScale(root)
-	-- 3D after the conversion (viewports fill their holders)
+	-- 3D after the conversion (viewports fill their holders), lit and raised so the titles sit under the figures
 	-- (2026-10-21, round 3: match RIVALS) the squads react: your team hops and the camera leans in on hover
 	for _, sc in stages do
-		local vp, scene = squadScene(sc[1], sc[2], ranked)
+		local vp, scene = squadScene(sc[1], sc[2], ranked, { 1.0, 1.1, 1.12 }, 0.32)
 		livenSquad(vp, scene, sc[3])
 	end
-	-- (2026-10-21, round 3: match RIVALS) Training / Lobby Duels: live placeholder scenes where RIVALS shows art (was your gun alone)
-	trainingScene(gunHold, tb)
-	duelsScene(padHold, db)
+	-- (2026-10-21, round 3: match RIVALS) Training / Duel Pads: live placeholder scenes where RIVALS shows art
+	trainingScene(trainHold, tb, 0.88, 0.4)
+	duelsScene(padHold, db, 0.3)
 	local icons = ReplicatedStorage:FindFirstChild("UIIcons")
 	if not open then
 		local mesh = icons and icons:FindFirstChild("Lock")
-		-- (2026-10-21, round 3) the padlock sways and turns to you on hover (it only swayed)
+		-- (2026-10-21, round 3) the padlock sways and turns to you on hover
 		local lockVp = mesh and ViewIcons.Viewport(art, mesh:Clone(), { view = CFrame.Angles(math.rad(8), math.rad(-20), 0), zoom = 1.05 })
 		if lockVp then
+			lightScene(lockVp)
 			rt.MouseEnter:Connect(function() lockVp.SetHover(true) end)
 			rt.MouseLeave:Connect(function() lockVp.SetHover(false) end)
 		end
 	else
-		ViewIcons.Icon(art, "Trophy", { hoverTarget = rt })
+		lightScene(ViewIcons.Icon(art, "Trophy", { hoverTarget = rt }))
 	end
 end
 
--- status lines only (every half second while open)
+-- status chips only (every half second while open). (2026-10-21, grade1: "0 SEARCHING" x3 was dead noise) a mode tile shows a
+-- chip only while it has something to say: your search (Searching m:ss, tap to cancel), a match found, a failed-queue flash,
+-- or N > 0 people searching. While you queue / stand on a pad, the tiles you can't use dim.
+local CHIP_DARK, CHIP_RED, CHIP_GREEN = Color3.fromRGB(12, 14, 10), Color3.fromRGB(196, 52, 40), Color3.fromRGB(76, 122, 46)
+local function setChip(c, text, color)
+	c.Visible = text ~= nil
+	if text then c.Text = text; c.BackgroundColor3 = color or CHIP_DARK end
+end
 local function tick()
 	local cnt = counts()
 	local myQ, st, since = search()
 	local pad = onPad()
 	for _, s in strips do
 		if s.training then
-			s.training.Text = (myQ or pad) and "UNAVAILABLE WHILE QUEUED" or "ENTER"
+			local busy = myQ or pad
+			s.dim.BackgroundTransparency = busy and 0.45 or 1
+			setChip(s.chip, busy and (myQ and "Not while searching" or "Not while on a pad") or nil)
 		else
 			local n = s.q and cnt[s.q.Id] or 0
 			local mine = myQ and s.q and myQ.Id == s.q.Id
-			s.green.Enabled = false
-			s.left.TextXAlignment = Enum.TextXAlignment.Left
-			s.pill.Visible = false
+			s.dim.BackgroundTransparency = ((myQ and not mine) or (pad and not mine)) and 0.45 or 1
 			if s.flash and os.clock() < s.flash.untilT then
-				s.left.Text = s.flash.text
-				s.right.Text = ""
-				s.strip.BackgroundColor3 = T.red
-				s.strip.BackgroundTransparency = 0.1
+				setChip(s.chip, s.flash.text, CHIP_RED)
 			elseif mine and st == "Searching" then
-				s.left.Text = "Searching  " .. clockText(workspace:GetServerTimeNow() - since)
-				s.right.Text = "Click to cancel"
-				s.strip.BackgroundColor3 = Color3.new(0, 0, 0)
-				s.strip.BackgroundTransparency = 0.1
+				setChip(s.chip, "Searching " .. clockText(workspace:GetServerTimeNow() - since) .. " - tap to cancel")
 			elseif mine then
-				s.left.Text = "Match found!"
-				s.right.Text = ""
-				s.strip.BackgroundColor3 = Color3.fromRGB(141, 191, 90)
-				s.strip.BackgroundTransparency = 0.1
-			elseif myQ or pad then
-				s.left.Text = myQ and ("Searching " .. myQ.Mode) or "On a lobby pad"
-				s.right.Text = ""
-				s.strip.BackgroundColor3 = Color3.new(0, 0, 0)
-				s.strip.BackgroundTransparency = 0.35
+				setChip(s.chip, "Match found!", CHIP_GREEN)
+			elseif not (myQ or pad) and n > 0 then
+				setChip(s.chip, n .. " searching")
 			else
-				s.left.Text = "PLAY"
-				s.left.TextXAlignment = Enum.TextXAlignment.Center
-				s.green.Enabled = not s.ranked
-				s.pill.Visible = true
-				s.pill.Text = n .. " SEARCHING"
-				s.pill.TextColor3 = n > 0 and Color3.fromRGB(170, 220, 120) or Color3.fromRGB(225, 225, 228)
-				local extra = ""
-				if s.ranked then
-					local player = game:GetService("Players").LocalPlayer
-					extra = "  ·  " .. (function()
-				local placed, need = player:GetAttribute("RankPlaced") or 0, player:GetAttribute("RankPlacements") or 0
-				if need > 0 and placed < need then return "Placements " .. placed .. "/" .. need end
-				return (player:GetAttribute("RankName") or "Bronze 1") .. "  " .. tostring(player:GetAttribute("RankElo") or 100) .. " ELO"
-			end)()
-				end
-				s.right.Text = s.ranked and (extra:gsub("^  ·  ", "")) or ""
-				if s.ranked then s.left.TextXAlignment = Enum.TextXAlignment.Left end
-				s.strip.BackgroundColor3 = s.ranked and T.violet or Color3.new(1, 1, 1)
-				s.strip.BackgroundTransparency = s.ranked and 0.25 or 0
+				setChip(s.chip, nil)
 			end
 		end
 	end
@@ -750,10 +778,10 @@ local function build()
 	local canvas = Kit.canvas(gui)
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 	local close = Kit.closeButton(UDim2.fromOffset(112, 58))
-	close.Position = UDim2.fromOffset(1672, 140) -- (lobby revamp Phase B: docked against the grid corner)
+	close.Position = UDim2.fromOffset(GRID_X + GRID_W + 12, GRID_Y) -- (grade1) just outside the grid's top-right corner, level with its top
 	close.Parent = root
 	close.Activated:Connect(function() Screen.Close() end)
-	body = new("Frame", { Name = "Body", BackgroundTransparency = 1, Position = UDim2.fromOffset(258, 140), Size = UDim2.fromOffset(1404, 560), Parent = root })
+	body = new("Frame", { Name = "Body", BackgroundTransparency = 1, Position = UDim2.fromOffset(GRID_X, GRID_Y), Size = UDim2.fromOffset(GRID_W, GRID_H), Parent = root }) -- (grade1) centred
 	root.Visible = false
 	GuiService.MenuOpened:Connect(function() if isOpen then root.Visible = false end end)
 	GuiService.MenuClosed:Connect(function() if isOpen then Kit.open(root) end end)
