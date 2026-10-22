@@ -1285,13 +1285,17 @@ end
 -- key) and full-colour art (trophy, burst); the Studio-generated UIIcons meshes are gone. Kinds without an image are drawn
 -- (GLYPH above).
 local GLYPH_IMG = { lock = "padlock", unlock = "padlock", arrow = "arrow", check = "check", eye = "eye", undo = "undo", key = "cur_key",
-	trophy = "trophy_gold", burst = "skin_explosion" }
+	trophy = "trophy_gold", burst = "skin_explosion", bars = "leaderboard", seal = "rbxassetid://122349404580689" }
+-- (2026-10-21, image list #7/#8) RIVALS' Statistics row is white podium bars and "Reward at Level N" a white starburst seal:
+-- the replica's leaderboard bars and Tacticals' level-shield seal (Kit.ICONS.level), both tinted white, replace the gold trophy
+-- and the orange explosion there
 local GLYPH_ART = { trophy = true, burst = true } -- never tinted
 
 local function glyph(parent: Instance, kind: string, size: number, color: Color3?, z: number?)
 	local h = mk("Frame", { Name = "Glyph", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromOffset(size, size), ZIndex = z or 6, Parent = parent })
-	local img = GLYPH_IMG[kind] and Armory._icon(GLYPH_IMG[kind]) or ""
+	local g = GLYPH_IMG[kind]
+	local img = g and (g:sub(1, 13) == "rbxassetid://" and g or Armory._icon(g)) or ""
 	if img ~= "" then
 		mk("ImageLabel", { Name = "Image", BackgroundTransparency = 1, Image = img, ImageColor3 = GLYPH_ART[kind] and WHITE or (color or COL.Text),
 			ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), ZIndex = z or 6, Parent = h })
@@ -2137,7 +2141,7 @@ local function renderInfo()
 		-- "Reward at Level N" with the reward on a white tile with a cyan edge (replica); the next milestone every 5 levels, a live
 		-- 3D crate (ViewIcons) until weapon rewards exist
 		local milestone = math.min(maxLevel, (math.floor(level / 5) + 1) * 5)
-		cardRow(lvl, 105, "burst", "Reward at Level " .. milestone, nil, 215)
+		cardRow(lvl, 105, "seal", "Reward at Level " .. milestone, nil, 215)
 		local rw = mk("Frame", { Name = "Reward", BackgroundColor3 = WHITE, Position = UDim2.fromOffset(280, 105), Size = UDim2.fromOffset(48, 48), ZIndex = 5, Parent = lvl },
 			{ corner(5), mk("UIStroke", { Color = COL.Reward, Thickness = 2 }) })
 		local okVI, VI = pcall(function() return require(ReplicatedStorage:WaitForChild("UIKit", 2):WaitForChild("ViewIcons", 2)) end)
@@ -2228,7 +2232,7 @@ local function renderInfo()
 		nb.Activated:Connect(function() Armory.Select(nextId, 1) end)
 	end
 	-- Statistics: the panel opens under the column, and while it's open this button is RIVALS' red X
-	local sb = row("trophy", "Statistics", "See lifetime data", (not statsOpen) and "eye" or nil, statsOpen and "red" or "blue")
+	local sb = row("bars", "Statistics", "See lifetime data", (not statsOpen) and "eye" or nil, statsOpen and "red" or "blue")
 	if statsOpen then glyph(sb, "closex", 30, WHITE, 6) end
 	sb.Activated:Connect(function()
 		statsOpen = not statsOpen
