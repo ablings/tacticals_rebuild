@@ -77,6 +77,7 @@ function PlayRow.Init(ctx)
 		DisplayOrder = 6, Parent = Players.LocalPlayer:WaitForChild("PlayerGui") })
 	gui:SetAttribute("NoStyle", true)
 	local canvas = Kit.canvas(gui)
+	if Kit.pinCanvas then Kit.pinCanvas(canvas, "bottom") end -- (2026-10-22) 4:3 tablets: the PLAY row stays down with the dock
 	local root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
 	-- (2026-10-21, RIVALS 1:1) PLAY: the replica's 222 x 62 button at (849, 859), corner 4, the measured lime gradient and a thin

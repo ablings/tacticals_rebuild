@@ -124,7 +124,8 @@ end
 
 local gui = new("ScreenGui", { Name = "DuelHUD", IgnoreGuiInset = true, ResetOnSpawn = false, ZIndexBehavior = Enum.ZIndexBehavior.Sibling, DisplayOrder = 12,
 	Enabled = false, Parent = player:WaitForChild("PlayerGui") })
-local canvas = new("Frame", { Name = "Canvas", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
+-- (2026-10-22, 4:3 tablets like RIVALS) the match HUD lives at the top edge: the 16:9 canvas is pinned to the top, not centred
+local canvas = new("Frame", { Name = "Canvas", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0),
 	Size = UDim2.fromScale(1, 1), Parent = gui }, { new("UIAspectRatioConstraint", { AspectRatio = W / H }) })
 local function rescale()
 	local f = canvas.AbsoluteSize.Y / H

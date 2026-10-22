@@ -98,6 +98,22 @@ function Kit.canvas(screenGui)
 	end)
 	return canvas
 end
+-- (2026-10-22, Edward: "4:3 tablets ... if rivals does it") RIVALS keeps its HUD on the screen edges on a 4:3 tablet. Our 16:9 design
+-- canvas sits centred in a band there, so a HUD whose pieces all live at one edge pins the whole canvas to that edge instead
+-- ("top" / "bottom"); on 16:9 and wider nothing changes (the canvas fills the height).
+function Kit.pinCanvas(canvas, edge)
+	if edge == "bottom" then canvas.AnchorPoint, canvas.Position = Vector2.new(0.5, 1), UDim2.fromScale(0.5, 1)
+	elseif edge == "top" then canvas.AnchorPoint, canvas.Position = Vector2.new(0.5, 0), UDim2.fromScale(0.5, 0) end
+	return canvas
+end
+-- the band above / below a centred 16:9 canvas, as a fraction of the canvas height (0 on 16:9 or wider)
+function Kit.canvasBand(canvas)
+	local p = canvas and canvas.Parent
+	local ph = p and p:IsA("GuiBase2d") and p.AbsoluteSize.Y or 0
+	local ch = canvas and canvas.AbsoluteSize.Y or 0
+	if ch <= 0 or ph <= ch + 1 then return 0 end
+	return (ph - ch) / 2 / ch
+end
 
 -- design px per screen px: canvas height / 1080 (all canvases share it)
 function Kit.factor()

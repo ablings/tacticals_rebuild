@@ -42,6 +42,7 @@ local function build()
 	gui.ResetOnSpawn = false
 	gui.IgnoreGuiInset = true
 	local canvas = Kit.canvas(gui)
+	if Kit.pinCanvas then Kit.pinCanvas(canvas, "bottom") end -- (2026-10-22) 4:3 tablets: the health bar sits on the bottom edge
 	local root = box(canvas, { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1) })
 	-- (2026-10-20, Edward: "a mix" of RIVALS + Sniper / Murder Duels) back to RIVALS' bar: bottom left, one thick rounded bar
 	-- with the number and a cross inside its right end; the fill runs bone -> amber -> red as health drops (RIVALS: green ->

@@ -627,6 +627,8 @@ function LobbyHud.Start()
 		-- Quad Out, 0.6 s down Quad In) until unhovered. Press: 1.02, release: back to 1.12 (Back). The grade1-3 icon-only grow,
 		-- 6 px lift, glow layer, 0.12 s bubble delay and 5 px bob are gone.
 		local lift = UDim2.fromScale(base.X.Scale, base.Y.Scale - 14 / 1080)
+		-- (2026-10-22, 4:3) the dock is shifted onto the bottom edge by applyPins (attribute PinDy, Scale): hover / reset add it
+		local function pinned(u) return UDim2.new(u.X.Scale, u.X.Offset, u.Y.Scale + (n.b:GetAttribute("PinDy") or 0), u.Y.Offset) end
 		local tipBase = n.tip.Position
 		local icon = navIcons[n.id]
 		local hovered, gen = false, 0
@@ -651,7 +653,7 @@ function LobbyHud.Start()
 			task.spawn(bob, gen)
 			if icon.vp then icon.vp.SetHover(true) end
 			Kit.tween(n.s, 0.15, { Scale = 1.12 }, Enum.EasingStyle.Back)
-			Kit.tween(n.b, 0.15, { Position = lift }, Enum.EasingStyle.Back)
+			Kit.tween(n.b, 0.15, { Position = pinned(lift) }, Enum.EasingStyle.Back)
 		end
 		local function leave()
 			hovered = false; gen += 1
@@ -661,7 +663,7 @@ function LobbyHud.Start()
 			if away() then return end
 			if icon.vp then icon.vp.SetHover(false) end
 			Kit.tween(n.s, 0.15, { Scale = 1 })
-			Kit.tween(n.b, 0.15, { Position = base })
+			Kit.tween(n.b, 0.15, { Position = pinned(base) })
 		end
 		n.b.MouseEnter:Connect(enter)
 		n.b.MouseLeave:Connect(leave)
@@ -675,7 +677,7 @@ function LobbyHud.Start()
 			if icon.vp then icon.vp.SetHover(false) end
 			n.s.Scale = 1
 			icon.scale.Scale = 1
-			n.b.Position = base
+			n.b.Position = pinned(base)
 		end)
 		n.b.Activated:Connect(function() task.defer(resetNav) end) -- a click opens something: the bubble goes with it
 		n.b.MouseButton1Down:Connect(function() if not away() then Kit.tween(n.s, 0.06, { Scale = 1.02 }) end end)
@@ -1159,6 +1161,21 @@ function LobbyHud.Start()
 		{ dx = 0, dy = 0.3, fast = true, names = { "NavShade", "NavKit", "NavMissions", "NavShop", "NavCodes", "NavSettings" } },
 	}
 	local homes = {}
+	-- (2026-10-22, Edward: "4:3 tablets ... if rivals does it") on a screen taller than 16:9 the design canvas sits in a band; RIVALS
+	-- keeps the currency / player list on the top edge and the dock on the bottom edge. Those pieces move by the band height
+	-- (Scale of the canvas): PIN_DY(o) = -band for the top ones, +band for the bottom ones, 0 for the rest (missions panel etc.).
+	local PIN_TOP = { Scissors = true, Searching = true, PlayerList = true }
+	local PIN_BOTTOM = { NavShade = true, NavKit = true, NavMissions = true, NavShop = true, NavCodes = true, NavSettings = true, JoinTip = true }
+	local function pinDy(o)
+		local band = Kit.canvasBand and Kit.canvasBand(canvas) or 0
+		if band <= 0 then return 0 end
+		-- pad mode shrinks root to 0.92 of the canvas height: the band is measured on the canvas, root's scale follows
+		local rs = root.Size.Y.Scale > 0 and root.Size.Y.Scale or 1
+		if PIN_TOP[o.Name] then return -band / rs end
+		if PIN_BOTTOM[o.Name] then return band / rs end
+		return 0
+	end
+	local function plus(u, dy) return UDim2.new(u.X.Scale, u.X.Offset, u.Y.Scale + dy, u.Y.Offset) end
 	-- recorded a moment later: Kit.bindButton re-anchors buttons to their centre on the next frame, which moves their Position
 	-- (recording first sent Missions / To Pads back to the wrong spot after a menu closed)
 	task.delay(0.2, function()
@@ -1168,6 +1185,20 @@ function LobbyHud.Start()
 				if o then homes[o] = { home = o.Position, away = UDim2.fromScale(o.Position.X.Scale + g.dx, o.Position.Y.Scale + g.dy), t = g.fast and 0.08 or 0.18 } end
 			end
 		end
+		-- the join tip is no push group but sits on the bottom edge too
+		local jt = root:FindFirstChild("JoinTip")
+		if jt then homes[jt] = homes[jt] or { home = jt.Position, away = jt.Position, t = 0.08, still = true } end
+		-- 4:3: put the pinned pieces on their edge now, and again whenever the screen shape changes
+		local function applyPins()
+			for o, h in homes do
+				if o.Parent and (PIN_TOP[o.Name] or PIN_BOTTOM[o.Name]) then
+					o:SetAttribute("PinDy", pinDy(o))
+					o.Position = plus((root:GetAttribute("PushedAway") and not h.still) and h.away or h.home, pinDy(o))
+				end
+			end
+		end
+		applyPins()
+		canvas:GetPropertyChangedSignal("AbsoluteSize"):Connect(applyPins)
 	end)
 	local pushedAway = false
 	local kitShown = false
@@ -1176,7 +1207,8 @@ function LobbyHud.Start()
 		resetNav()
 		for o, h in homes do
 			if o.Name == "PlayerList" and not lbOn then continue end -- hidden by Tab: leave it off screen
-			Kit.tween(o, away and h.t or 0.25, { Position = away and h.away or h.home }, away and Enum.EasingStyle.Quad or Enum.EasingStyle.Back,
+			if h.still then continue end
+			Kit.tween(o, away and h.t or 0.25, { Position = plus(away and h.away or h.home, pinDy(o)) }, away and Enum.EasingStyle.Quad or Enum.EasingStyle.Back,
 				away and Enum.EasingDirection.In or Enum.EasingDirection.Out)
 		end
 	end

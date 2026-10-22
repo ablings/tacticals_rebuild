@@ -681,6 +681,7 @@ local function buildUI()
 	gui.IgnoreGuiInset = true
 	gui.ZIndexBehavior = Enum.ZIndexBehavior.Global -- every item draws over every tile, so they can spill onto the next one
 	local canvas = Kit.canvas(gui) -- [UI] 1920x1080 design canvas
+	if Kit.pinCanvas then Kit.pinCanvas(canvas, "bottom") end -- (2026-10-22) 4:3 tablets: the hotbar sits on the bottom edge
 
 	-- quick controls (very bottom right). (2026-10-21, Edward: the in-match HUD must read on ANY map colour) RIVALS' hint strip:
 	-- a dark see-through pill behind the labels + keycaps, so white walls or a black sky never swallow them
