@@ -19,6 +19,14 @@
   4004496 profile shows Level + Streak; f69bf6c a shared party column bottom left on Play / Missions / Codes / profile.
   Killer card: it works. The lead confirmed SpectateTarget is set; my screenshots were just ~3 s late (no change).
   Before / after sheet: `notes/overnight_ui_2026-10-22.jpg`.
+- **Open, need Edward / the server** (from the last grader pass; e75c2b6 did its results item):
+  1. RIVALS keeps the Daily Tasks panel on screen during matches (left, y 37-61 %), ticking on kills. Ours shows it only in the
+     lobby. Needs mission progress in the match place (server).
+  2. The Shop "Claim your FREE reward now!" hook and FREE tiles need a daily free grant (server). The UI is ready
+     (`DAILY_TIP_PREVIEW` / freeDailyUp).
+  3. HUD clutter vs RIVALS: the permanent top-left "Leave" (RIVALS keeps leave in the menu), the big Switch Weapons bar, and the 44 px
+     hint strip. All were built to Edward's earlier asks, so they're his call.
+  4. RIVALS' bright green menu glow is the Halloween season theme: ignored, per Edward.
 - Not done (Edward's earlier calls kept): hotbar frames and the hint strip, the bone health bar, "First to 5" / ROUND N under the
   timer, the Codes dock button.
 
