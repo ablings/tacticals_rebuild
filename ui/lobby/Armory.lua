@@ -8,7 +8,8 @@
 --   * Centre: the selected item, big, on the workbench (a real model in the room). Click and drag to turn it.
 --   * Locked items are wrapped in hazard tape with a padlock.
 --   * Right: item card (name, favourite box, two bullets), level card (blue bar, Level up now!, Reward at
---     Level N) or Unlock now!, then Equip / Inspect / Next unlock / Statistics rows with big blue buttons.
+--     Level N) or Unlock now!, then Inspect / Next unlock / Statistics rows with big blue buttons.
+--     (2026-10-21, user) no Equip row: clicking an owned row in the list equips it, like RIVALS (green check on the row).
 --   * Bottom: the slot strip - Leave and the Skin / Wrap / Finisher slots; a slot opens RIVALS' picker
 --     (placeholder tiles until cosmetics exist).
 
@@ -1555,6 +1556,18 @@ local function rowLook(row, on: boolean, animate: boolean)
 			mk("UITextSizeConstraint", { MaxTextSize = 34, Parent = nm })
 			shade(nm, 2, 0.3)
 		end
+		-- (2026-10-21, user) what's in your loadout gets RIVALS' green check: at the left edge of the picked row (its render is on
+		-- the right), at the right edge of the others (their render is on the left)
+		row.eq = equippedIn(item.Slot) == row.id
+		if row.eq then
+			local ck = mk("Frame", { Name = "Equipped", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = on and UDim2.fromOffset(20, ROW_H / 2) or UDim2.fromOffset(LIST_W - 26, ROW_H / 2), Size = UDim2.fromOffset(30, 30), ZIndex = 9, Parent = b })
+			glyph(ck, "check", 30, COL.Check, 9)
+			if animate then
+				local sc = mk("UIScale", { Scale = 0.3, Parent = ck })
+				TweenService:Create(sc, POP, { Scale = 1 }):Play()
+			end
+		end
 	else
 		mk("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center, Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder, Parent = content })
@@ -1587,12 +1600,8 @@ local function makeRow(id: string, y: number, parent: Instance)
 		if row.hs then TweenService:Create(row.hs, TI, { Scale = 1 }):Play() end
 	end)
 	b.MouseButton1Down:Connect(function() if row.hs then TweenService:Create(row.hs, TI, { Scale = 0.95 }):Play() end end)
-	b.Activated:Connect(function()
-		if id ~= selectedId then
-			Kit.sfx("click")
-			Armory.Select(id, 1)
-		end
-	end)
+	-- (2026-10-21, user) like RIVALS: a click on an owned row picks AND equips it; a locked row is only picked (its price shows)
+	b.Activated:Connect(function() Armory.ClickItem(id) end)
 	return row
 end
 
@@ -1629,6 +1638,32 @@ local function setSelectedRow(id: string?, animate: boolean)
 	if new then
 		new.styled = true
 		rowLook(new, true, animate)
+	end
+end
+
+-- (2026-10-21, user) restyle only the rows whose equipped state changed (the check comes or goes)
+function Armory._restyleEquipped()
+	for rid, row in rows do
+		if row.owned and row.eq ~= (equippedIn(ctx.Config.Items[rid].Slot) == rid) then
+			rowLook(row, selectedRowId == rid, true)
+		end
+	end
+end
+
+-- (2026-10-21, user) click-to-equip (replaces the Equip button): pick the item; if you own it and it isn't in its slot yet,
+-- ask the server to equip it (the old button's path), then the checks move. Locked: only picked.
+function Armory.ClickItem(id: string)
+	local item = ctx.Config.Items[id]
+	if not item then return end
+	if id ~= selectedId then
+		Kit.sfx("click")
+		Armory.Select(id, 1)
+	end
+	if ctx.owns(id) and equippedIn(item.Slot) ~= id then
+		task.spawn(function()
+			pcall(ctx.ask, "Equip", item.Slot, id)
+			if active then Armory._restyleEquipped() end
+		end)
 	end
 end
 
@@ -2000,10 +2035,10 @@ local function renderStats(id)
 end
 
 -- (2026-10-21, RIVALS 1:1) the right column, rebuilt for the picked item. Stacked up from RIVALS' bottom edge (1060), 11 apart:
---   owned : item card 97 + level card 165 + action card (Equip, Inspect, Next unlock, Statistics)
+--   owned : item card 97 + level card 165 + action card (Inspect, Next unlock, Statistics)
 --   locked: item card 97 + the "Unlock now!" card + action card (Inspect, Next unlock, Statistics) - no level for a weapon you
 --           don't have, as RIVALS (t0056)
--- Action rows are 58 apart (RIVALS 62: four rows instead of three), so the column starts about half-way down the screen.
+-- Action rows are 62 apart, three of them, as RIVALS. (2026-10-21, user) the Equip row is gone (a click on the list row equips).
 local function renderInfo()
 	if not rightCol then return end
 	for _, ch in rightCol:GetChildren() do
@@ -2014,8 +2049,8 @@ local function renderInfo()
 	local item = ctx.Config.Items[id]
 	local data = ctx.getData()
 	local owned = ctx.owns(id)
-	local ROW = 58
-	local actH = 12 + (owned and 4 or 3) * ROW
+	local ROW = 62
+	local actH = 12 + 3 * ROW
 	local lvlH = owned and 165 or 74
 	local actY = 1060 - actH
 	local lvlY = actY - 11 - lvlH
@@ -2158,22 +2193,11 @@ local function renderInfo()
 		local b = bigButton(act, 217, y0 + 2, btnIcon, tone)
 		if tone == "grey" then
 			b.Activated:Connect(function() Kit.shake(b); Kit.sfx("close") end)
-		elseif tone ~= "green" then
+		else
 			Kit.bindButton(b, { hover = 1.05, press = 0.92 })
 		end
 		y0 += ROW
 		return b
-	end
-	if owned then
-		-- equipped = the green square with the check, not clickable
-		local equipped = equippedIn(item.Slot) == id
-		local eb = row(function(h) itemRender(h, id, Vector2.new(38, 38), { flat = true, z = 6, fill = 1 }) end, equipped and "Equipped" or "Equip",
-			equipped and "In your loadout" or "Put it in your loadout", "check", equipped and "green" or "blue")
-		if equipped then
-			eb.Active = false
-		else
-			eb.Activated:Connect(function() ctx.ask("Equip", item.Slot, id) end)
-		end
 	end
 	local ib = row("lens", "Inspect", owned and "Give it a spin" or "Unlock it to inspect", "eye", owned and "blue" or "grey")
 	if owned then
@@ -2567,6 +2591,8 @@ function Armory.Refresh()
 		ownedKey = key
 		buildList()
 		setSelectedRow(selectedId, false)
+	else
+		Armory._restyleEquipped() -- (2026-10-21, user) the loadout may have changed
 	end
 	renderInfo()
 	local owned = selectedId and ctx.owns(selectedId)
@@ -3141,6 +3167,8 @@ function Armory.Init(c)
 				Armory.Select(a1, a2 or 1)
 			elseif action == "Tab" then
 				setTab(a1)
+			elseif action == "Equip" or action == "Click" then -- (2026-10-21, user) the list row's click-to-equip
+				Armory.ClickItem(a1)
 			end
 			return { active = active, busy = busy, selected = selectedId, tab = currentTab, yaw = yaw, pitch = pitch, turn = math.deg((select(2, rot:ToAxisAngle()))), returning = returning, dragging = dragging, dragStarts = dragStarts }
 		end

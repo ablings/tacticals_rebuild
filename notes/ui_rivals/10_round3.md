@@ -947,3 +947,21 @@ statements, was 180; 201 local names, was 213).
   - text sizes on first open (`Kit.rescaleText` runs on Enter);
   - the list's CanvasSize in Scale of its parent (the Rivals Kit's measured rule);
   - the yellow / blue buttons' `Assets` icons loading in the Tacticals place (ids uploaded for the replica).
+
+## Kit: click to equip (2026-10-21)
+User: "remove equipped from the kit section and make it so clicking the item equips it like rivals does". Only `ui/lobby/Armory.lua`;
+parse check OK, 166 top-level locals (unchanged; new state on the Armory table). Not deployed, not run in Studio.
+
+- **List click = equip:** `Armory.ClickItem(id)` replaces the row's Select-only click. An owned row is picked and, if it isn't in
+  its slot yet, `ctx.ask("Equip", slot, id)` (the old Equip button's path) runs in the background. A locked row is only picked
+  (the Unlock now! card shows its price). Buying still equips straight away, as before.
+- **Equipped mark:** the replica's green check (`COL.Check`, as the picker's) on every owned row that's in your loadout, one
+  per slot: at the left edge of the picked row (its render is on the right), at the right edge of the others. It pops in
+  when it moves. `Armory._restyleEquipped()` restyles only the rows whose state changed, after the Equip reply and on
+  every `Refresh` (when the list isn't rebuilt).
+- **Right panel:** the "Equipped / In your loadout" row and its green / blue button are gone. Inspect, Next unlock and
+  Statistics are 62 apart (RIVALS' spacing for three rows) for owned and locked items alike (was 58 with four rows).
+  The `tone ~= "green"` special case in `row()` went with it.
+- **ArmoryTestHook:** new `"Equip"` (alias `"Click"`) action, `hook:Invoke("Equip", id)`, goes through `Armory.ClickItem`.
+- To check in Studio: the check sits clear of the small render on unpicked rows and of the name on the picked row; the
+  checks move after a click with no full list rebuild.
