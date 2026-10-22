@@ -1286,9 +1286,10 @@ local function build()
 	end
 	-- (2026-10-21, port3) the kit's default closeButton size (another pass sets it to 112x58; that size is the fallback while
 	-- Kit.closeButton still needs one), 12 px outside the page panel's top-right corner, top-aligned with it
-	local okX, close = pcall(Kit.closeButton)
-	if not okX or typeof(close) ~= "Instance" then close = Kit.closeButton(UDim2.fromOffset(112, 58)) end
-	close.Position = UDim2.fromOffset(PAGE_X + PAGE_W + 12, PAGE_Y)
+	-- (2026-10-22, live RIVALS shop at 16:9) the X sits IN the tab row, 10 px after the last tab, as tall as a tab (RIVALS ~0.046 of
+	-- the width); not out beside the page panel
+	local close = Kit.closeButton(UDim2.fromOffset(76, TAB_H))
+	close.Position = UDim2.fromOffset(CONTENT_X + (#TABS - 1) * TAB_STEP + TAB_W + 10, TAB_Y)
 	close.Parent = body
 	close.Activated:Connect(function() Screen.Close() end)
 
