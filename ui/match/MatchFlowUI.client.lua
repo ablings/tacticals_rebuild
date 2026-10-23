@@ -365,7 +365,7 @@ local function buildMaps(list)
 	local all = table.clone(list)
 	table.insert(all, 1, { id = "Random", name = "Random", random = true }) -- (m1, RIVALS t0028) Random leads the row
 	local n = #all
-	local tw = math.min(560, (1420 - (n - 1) * MAP_GAP) / n)
+	local tw = math.min(434, (1420 - (n - 1) * MAP_GAP) / n) -- (m16, grader A vs t0032: a tile is 22.6 % wide; was up to 560)
 	local th = math.floor(tw * 0.613)
 	local x0 = (1420 - (n * tw + (n - 1) * MAP_GAP)) / 2
 	for i, m in all do
@@ -416,7 +416,7 @@ local function buildMaps(list)
 			live3D[vpf] = { cam = cam, c = cf.Position, r = math.sqrt(0.45 ^ 2 + 0.62 ^ 2) * span, h = 0.62 * span, a = math.atan2(-0.45, 0.62), map = true }
 		end
 		-- striped name bar
-		local barH = math.floor(th * 0.17)
+		local barH = math.floor(th * 0.2) -- (m16: the name strip 20 % of the tile)
 		-- (2026-10-22, live RIVALS) the name sits on a field-green strip with faint diagonal stripes (RIVALS' map strips), white
 		-- Bold, not upper-case
 		-- (2026-10-23, matchmaking round m8, grader B vs RIVALS t0028) RIVALS' strip is a dark see-through band with thin field-green

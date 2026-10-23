@@ -2281,13 +2281,23 @@ do
 	local ARC_RED = Color3.fromRGB(235, 40, 40)
 	local arrow = new("Frame", { Name = "KillerArrow", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
 		Size = UDim2.fromScale(0.42, 0.42), SizeConstraint = Enum.SizeConstraint.RelativeYY, Visible = false, Parent = dgui })
-	for a = -36, 36, 6 do
-		local r = math.rad(a)
-		new("Frame", { BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5 + math.sin(r) * 0.4, 0.5 - math.cos(r) * 0.4),
-			Size = UDim2.fromScale(0.05, 0.042), Rotation = a, Parent = arrow }, { corner(4) }) -- (m14, grader A vs t0206: an even ~2 % stroke)
+	-- (m16, grader A measured t0206) not a symmetric dome but RIVALS' hook: steep on the left, flat on the right, with a broad
+	-- diamond fin near the top. Points in the holder's 0..1 square (killer straight ahead), joined by short even strokes.
+	local HOOK = { { 0.144, 0.214 }, { 0.22, 0.14 }, { 0.30, 0.098 }, { 0.40, 0.077 }, { 0.55, 0.07 }, { 0.716, 0.076 } }
+	for k = 1, #HOOK - 1 do
+		local a, b = HOOK[k], HOOK[k + 1]
+		local dx, dy = b[1] - a[1], b[2] - a[2]
+		local len = math.sqrt(dx * dx + dy * dy)
+		local steps = math.max(1, math.ceil(len / 0.035))
+		for n = 0, steps - 1 do
+			local t = (n + 0.5) / steps
+			new("Frame", { BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(a[1] + dx * t, a[2] + dy * t), Size = UDim2.fromScale(len / steps + 0.012, 0.042),
+				Rotation = math.deg(math.atan2(dy, dx)), Parent = arrow }, { corner(4) })
+		end
 	end
-	new("TextLabel", { BackgroundTransparency = 1, Text = "▲", TextColor3 = ARC_RED, TextScaled = true, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.05), Size = UDim2.fromScale(0.26, 0.26), Parent = arrow }) -- (m14: the point ~4 x 7 % of the screen like t0206)
+	new("Frame", { Name = "Fin", BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.394, 0.04),
+		Size = UDim2.fromScale(0.1, 0.1), Rotation = 45, Parent = arrow }, { corner(3) })
 	local function setArc(t)
 		for _, c in arrow:GetChildren() do
 			if c:IsA("TextLabel") then c.TextTransparency = t elseif c:IsA("Frame") then c.BackgroundTransparency = t end

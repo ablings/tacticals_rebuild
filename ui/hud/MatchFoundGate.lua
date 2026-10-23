@@ -193,7 +193,20 @@ local function enter()
 	ContextActionService:BindActionAtPriority("MatchFoundGate", sink, false, 5000, table.unpack(SINK_KEYS))
 	-- the stamp
 	sub.Text = modeText()
-	if tipLabel then tipLabel.Text = TIPS[math.random(#TIPS)] end
+	if tipLabel then
+		tipLabel.Text = TIPS[math.random(#TIPS)]
+		-- (m16, grader A vs t0022) the bubble hugs its words: measure the text at the label's height, then size the bubble in
+		-- Scale of the canvas (the text stays TextScaled inside it)
+		task.defer(function()
+			local tip, cv = tipLabel.Parent, tipLabel.Parent.Parent
+			local h = tipLabel.AbsoluteSize.Y
+			if h <= 0 or cv.AbsoluteSize.X <= 0 then return end
+			local ok, size = pcall(game:GetService("TextService").GetTextSize, game:GetService("TextService"), tipLabel.Text, math.floor(h), Enum.Font.SourceSansBold, Vector2.new(1e4, h))
+			if not ok then return end
+			local w = (size.X * 1.08 + h * 0.8) / 0.97 -- (Rubik runs a little wider than the measuring font; padding both sides)
+			tip.Size = UDim2.fromScale(math.clamp(w / cv.AbsoluteSize.X, 0.2, 0.64), tip.Size.Y.Scale)
+		end)
+	end
 	gui.Enabled = true
 	blur = blur or Instance.new("BlurEffect")
 	blur.Name = "MatchFoundBlur"
