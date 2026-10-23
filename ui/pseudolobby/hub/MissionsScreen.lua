@@ -261,7 +261,14 @@ end
 local function taskRow(parent, scope, i, entry, def, y, period)
 	local prog, done, paid, state, was = stateOf(scope, entry, def, period)
 	local row = new("Frame", { Name = scope .. i, BackgroundTransparency = 1, Position = UDim2.fromOffset(0, y), Size = UDim2.fromOffset(COL_W, ROW_H), Parent = parent })
-	glyph(row, def.Stat, UDim2.fromOffset(67, 27), 46, done and C.green or C.white) -- (2026-10-21, port3) RIVALS' weapon-picture size (~46), solid art
+	if def.Image then
+		-- (2026-10-22, section rounds 3-10, graders B + C vs tasks.png) a weapon contract shows that weapon's own silhouette (the kill-feed
+		-- art, 2:1, pointing right), not the eliminations claw
+		new("ImageLabel", { Name = "Glyph", BackgroundTransparency = 1, Image = def.Image, ImageColor3 = done and C.green or C.white, ScaleType = Enum.ScaleType.Fit,
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(62, 27), Size = UDim2.fromOffset(56, 28), Parent = row })
+	else
+		glyph(row, def.Stat, UDim2.fromOffset(67, 27), 46, done and C.green or C.white) -- (2026-10-21, port3) RIVALS' weapon-picture size (~46), solid art
+	end
 	-- (2026-10-22, section round 0, grader B) RIVALS' contract labels are a soft grey (#C3C2C2) so the white count leads, and the count
 	-- is ~1.38 label caps tall (was 32: 1.08)
 	RK.label({ Text = def.Text, FontFace = FM, TextSize = 27, TextColor3 = done and C.green or (def.White and C.text or Color3.fromRGB(195, 194, 194)), TextTruncate = Enum.TextTruncate.AtEnd,
@@ -420,6 +427,8 @@ local function contractsPanel(order)
 	-- contract per weapon you own or have eliminations with: "<Weapon> • Eliminations", WeaponStats[id].Kills against the next
 	-- unpaid tier of Config.WeaponContracts (profile Contracts[id] = tiers paid; the server pays automatically). All tiers paid = gone.
 	local weaponMode = #rows == 0 and ctx.Config.WeaponContracts ~= nil
+	local okKI, KI = pcall(function() return require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("KillIcons", 2)) end)
+	if not okKI then KI = nil end
 	if weaponMode then
 		local data = ctx.getData() or {}
 		local tiers = ctx.Config.WeaponContracts
@@ -430,7 +439,7 @@ local function contractsPanel(order)
 			local target = tiers[paidTiers + 1]
 			if target and (item.Slot == "Weapon" or item.Slot == "Melee") and (owned or kills > 0) then
 				local def = { Id = "W_" .. id .. "_" .. (paidTiers + 1), Stat = "Kills", Goal = target.Kills, Reward = target.Reward, Prog = kills,
-					Text = (item.Name or id) .. "  •  Eliminations", Short = item.Name or id, White = true }
+					Text = (item.Name or id) .. "  •  Eliminations", Short = item.Name or id, White = true, Image = KI and KI.Weapon(id) }
 				table.insert(rows, { entry = { Id = def.Id, Base = 0 }, def = def, frac = math.clamp(kills / target.Kills, 0, 1), i = #rows + 1, name = item.Name or id })
 			end
 		end

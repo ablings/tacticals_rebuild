@@ -36,6 +36,7 @@ local FM = F.medium
 local DONE = C.green -- redeemed / success: RIVALS' #65FE32
 local BLACK = C.textDark
 
+local GIFT = "rbxassetid://111704452645001" -- colour gift (Gunsy Funsy upload, ui/art/icons/gift)
 local Screen = {}
 local ctx = {}
 local gui, root, blur, scrim, box, list, status
@@ -59,8 +60,10 @@ local function renderList()
 		local grid = list:FindFirstChildOfClass("UIGridLayout"); if grid then grid.Parent = nil; list:SetAttribute("GridOff", true); Screen._grid = grid end
 		local card = new("Frame", { Name = "Empty", Size = UDim2.fromOffset(PW - 2 * PAD, 62), BackgroundColor3 = C.panelRaised, BackgroundTransparency = 0.45, Parent = list },
 			{ new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-		local l = RK.label({ Text = "None yet. New codes come with updates and in the group.", FontFace = FM, TextSize = 26, TextColor3 = C.textDim, Position = UDim2.fromOffset(20, 0),
-			Size = UDim2.fromOffset(PW - 2 * PAD - 40, 62), Parent = card })
+		new("ImageLabel", { BackgroundTransparency = 1, Image = GIFT, ScaleType = Enum.ScaleType.Fit, ImageTransparency = 0.35, AnchorPoint = Vector2.new(0, 0.5),
+			Position = UDim2.fromOffset(16, 31), Size = UDim2.fromOffset(36, 36), Parent = card }) -- (grader C: the empty card carries an icon like the Tasks cards)
+		local l = RK.label({ Text = "None yet. New codes come with updates and in the group.", FontFace = FM, TextSize = 26, TextColor3 = C.textDim, Position = UDim2.fromOffset(64, 0),
+			Size = UDim2.fromOffset(PW - 2 * PAD - 84, 62), Parent = card })
 		l:SetAttribute("dTS", 26)
 	elseif Screen._grid and not Screen._grid.Parent then
 		Screen._grid.Parent = list
@@ -139,7 +142,8 @@ local function build()
 	local panel = new("Frame", { Name = "Panel", Position = UDim2.fromOffset(PX, PY), Size = UDim2.fromOffset(PW, PH), BackgroundColor3 = BLACK,
 		BackgroundTransparency = Theme.alpha.panel, Parent = root }, { RK.corner(8) })
 	-- header (RIVALS section header: a flat white glyph + the title)
-	new("ImageLabel", { Name = "HeadIcon", BackgroundTransparency = 1, Image = (RA.rowIcon and RA.rowIcon.gift) or "", ScaleType = Enum.ScaleType.Fit,
+	-- (2026-10-22, section rounds 1-10, grader C: Missions' header icons are colour art, ours was a flat white gift) ui/art/icons/gift
+	new("ImageLabel", { Name = "HeadIcon", BackgroundTransparency = 1, Image = GIFT, ScaleType = Enum.ScaleType.Fit,
 		Position = UDim2.fromOffset(PAD, 10), Size = UDim2.fromOffset(46, 46), Parent = panel }) -- (round 1: Missions' header, 46 px icon)
 	-- (2026-10-21, port3) RIVALS title size 52 (titles ~44-56)
 	-- (2026-10-22, section round 1, grader C) the Missions header's title (Rubik Bold 36, 44 tall at y 12): "Codes" read 1.4x bigger

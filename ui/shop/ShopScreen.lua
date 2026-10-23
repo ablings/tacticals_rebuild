@@ -803,8 +803,12 @@ function RENDER.Featured(pg, hover)
 	for i = 1, math.min(3, #gear) do
 		local id = gear[i]
 		local h = hold(12 + (i - 1) * 160, 178, 152, 104 + PRICE_H, 1.08, function() ctx.openKit(id) end)
-		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(4, -6), Size = UDim2.fromOffset(144, 112), ZIndex = 2, Parent = h })
-		turnOnHover(h, lit(itemArt(art, id, nil, 1.15)))
+		-- (2026-10-22, section rounds 0-10, grader C) the same rarity tile + type tag as the item grid, the render kept inside it (was
+		-- a bare render floating over the price)
+		local tile = rarityTile(h, rarityColor(id), 4, 0, 144, 104, 1)
+		weaponTag(tile, id, 34, 4)
+		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 2), Size = UDim2.fromOffset(132, 94), ZIndex = 3, Parent = h })
+		turnOnHover(h, lit(itemArt(art, id, nil, 0.95)))
 		priceTag(h, "kit", Config.Items[id].Price, 76, 104, 100, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
 	end
 
@@ -964,8 +968,9 @@ function RENDER.Featured(pg, hover)
 		local h = hold(1254 - 2 * 150 - TILE + c * 150, 334 + GAP + r * 160, TILE, TILE + PRICE_H / 2, 1.06, function() ctx.openKit(id) end)
 		local tile = rarityTile(h, rarityColor(id), 0, 0, TILE, TILE, 1)
 		weaponTag(tile, id, 38, 4) -- (2026-10-21, RIVALS images) ∞ on melee / gadgets, over the render
-		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(-6, -14), Size = UDim2.fromOffset(TILE + 12, TILE + 4), ZIndex = 3, Parent = h })
-		turnOnHover(h, lit(itemArt(art, id, nil, 1.15)))
+		-- (round 10, grader C: the revolver ran past its tile) the render stays inside the tile, <= ~90 % of its width
+		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(6, -4), Size = UDim2.fromOffset(TILE - 12, TILE - 4), ZIndex = 3, Parent = h })
+		turnOnHover(h, lit(itemArt(art, id, nil, 1.0)))
 		priceTag(h, "kit", Config.Items[id].Price, TILE / 2, TILE - PRICE_H / 2, 112, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
 		if ctx.tooltip then
 			local item = Config.Items[id]
