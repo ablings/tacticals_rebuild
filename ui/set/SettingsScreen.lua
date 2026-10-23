@@ -536,7 +536,7 @@ function openTab(tab)
 			local hb = Kit.headerBar(772, sec.title, 88)
 			hb.BackgroundTransparency = 0.04
 			local ht = hb:FindFirstChildOfClass("TextLabel")
-			if ht then ht.TextSize = 70 end
+			if ht then ht.TextSize = 55; ht:SetAttribute("dTS", 55) end -- (lobby r15, grader B: this override, not Kit.headerBar's size, set the headers; 70 -> 55)
 			hb.LayoutOrder = order
 			if si > 1 then
 				-- breathing room before each new section (reference gap)

@@ -174,6 +174,14 @@ end
 -- feature-card title: heavy white (Rubik ExtraBold) with a dark outline and a soft drop shadow under it
 local function heavyTitle(parent, text, ts, x, y, w, h, z, align)
 	z = z or 5
+	-- (2026-10-23, lobby r15, grader B vs rec t0068-t0070) RIVALS' banner titles are Title Case; LobbyConfig keeps ours in caps,
+	-- so an all-caps title is re-cased here (short all-caps words such as VIP / 2X stay as they are)
+	if type(text) == "string" and text == string.upper(text) and text:find("%a") then
+		text = text:gsub("[%w']+", function(word)
+			if #word <= 3 or word:find("%d") then return word end
+			return word:sub(1, 1) .. string.lower(word:sub(2))
+		end)
+	end
 	RK.label({ Name = "TitleShadow", Text = text, FontFace = FX, TextSize = ts, TextColor3 = BLACK, TextTransparency = 0.55, TextXAlignment = align,
 		Position = UDim2.fromOffset(x, y + math.max(2, math.floor(ts * 0.07))), Size = UDim2.fromOffset(w, h), ZIndex = z, Parent = parent })
 	return stroke(RK.label({ Name = "Title", Text = text, FontFace = FX, TextSize = ts, TextXAlignment = align,

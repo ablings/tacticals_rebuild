@@ -2283,7 +2283,7 @@ do
 		Size = UDim2.fromScale(0.42, 0.42), SizeConstraint = Enum.SizeConstraint.RelativeYY, Visible = false, Parent = dgui })
 	-- (m16, grader A measured t0206) not a symmetric dome but RIVALS' hook: steep on the left, flat on the right, with a broad
 	-- diamond fin near the top. Points in the holder's 0..1 square (killer straight ahead), joined by short even strokes.
-	local HOOK = { { 0.178, 0.183 }, { 0.254, 0.109 }, { 0.334, 0.067 }, { 0.434, 0.046 }, { 0.584, 0.058 }, { 0.716, 0.116 } } -- (m17: +0.8 % right, 1.3 % up; m18: the tail curves down to 32.7 %)
+	local HOOK = { { 0.178, 0.183 }, { 0.254, 0.109 }, { 0.334, 0.067 }, { 0.434, 0.046 }, { 0.584, 0.088 }, { 0.759, 0.13 } } -- (m17: +0.8 % right, 1.3 % up; m18: the tail curves down to 32.7 %)
 	for k = 1, #HOOK - 1 do
 		local a, b = HOOK[k], HOOK[k + 1]
 		local dx, dy = b[1] - a[1], b[2] - a[2]
@@ -2297,7 +2297,7 @@ do
 				Rotation = math.deg(math.atan2(dy, dx)), Parent = arrow }, { corner(4) })
 		end
 	end
-	new("Frame", { Name = "Fin", BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.428, 0.04),
+	new("Frame", { Name = "Fin", BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.448, 0.023),
 		Size = UDim2.fromScale(0.14, 0.14), Rotation = 45, Parent = arrow }, { corner(3) }) -- (m17: the fin ~105 px)
 	local function setArc(t)
 		for _, c in arrow:GetChildren() do
