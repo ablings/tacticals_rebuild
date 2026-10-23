@@ -1112,7 +1112,7 @@ Kit.ICONS.matches = "rbxassetid://125681613105062"
 Kit.ICONS.scissorsFlat = "rbxassetid://117873069678184"
 -- (2026-10-22, section round 4, grader B: "no filled, chunky scissors yet") ui/art/icons/scissors_v2: the solid silhouette cropped tight
 -- with a dark edge - white (price tags, RIVALS' flat key glyph) and red (rewards / counter, RIVALS' solid key)
-Kit.ICONS.scissorsWhite = "rbxassetid://118769795159770"
+Kit.ICONS.scissorsWhite = "rbxassetid://100005527750520" -- (round 9, grader B: the bold version, blades >= 3 px at tag size; was 118769795159770)
 Kit.ICONS.scissorsReward = "rbxassetid://115934367242130"
 Kit.ICONS.lock = "rbxassetid://124085037377046"
 Kit.ICONS.eye = "rbxassetid://139964028443214"

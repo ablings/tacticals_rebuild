@@ -248,7 +248,7 @@ local detail = new("Frame", {
 	BackgroundColor3 = C.textDark, BackgroundTransparency = 0.72, Parent = root, -- (2026-10-22, live RIVALS 16:9: a clearly visible dark pane, was 0.93)
 }, { Kit.corner(10) })
 -- (2026-10-22, section rounds 0-7, grader C vs t0138) RIVALS' small grey build label in the pane's bottom-right corner
-Kit.label({ Name = "Version", Text = "v" .. tostring(game.PlaceVersion), FontFace = F.medium, TextSize = 22, TextColor3 = Theme.hex("#8E8D94"),
+Kit.label({ Name = "Version", Text = "Version " .. tostring(game.PlaceVersion), FontFace = F.medium, TextSize = 22, TextColor3 = Theme.hex("#8E8D94"), TextTransparency = 0.45,
 	TextXAlignment = Enum.TextXAlignment.Right, AnchorPoint = Vector2.new(1, 1), Position = UDim2.fromOffset(508, 880), Size = UDim2.fromOffset(300, 28), Parent = detail })
 local preview = new("Frame", {
 	Name = "Preview", Position = UDim2.fromOffset(13, 13), Size = UDim2.fromOffset(495, 364), BackgroundColor3 = Theme.hex("#5A6E86"),

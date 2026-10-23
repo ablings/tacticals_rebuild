@@ -1319,7 +1319,8 @@ end
 -- key) and full-colour art (trophy, burst); the Studio-generated UIIcons meshes are gone. Kinds without an image are drawn
 -- (GLYPH above).
 local GLYPH_IMG = { lock = "padlock", unlock = "padlock", arrow = "arrow", check = "check", eye = "eye", undo = "undo", key = "cur_key",
-	trophy = "trophy_gold", burst = "skin_explosion", bars = "leaderboard", seal = "rbxassetid://122349404580689" }
+	trophy = "trophy_gold", burst = "skin_explosion", bars = "leaderboard", seal = "rbxassetid://122349404580689",
+	contract = Kit.glyph("trophy", "rbxassetid://122349404580689") } -- (round 9: the Contracts row's own white trophy, not the Reward seal again)
 -- (2026-10-21, image list #7/#8) RIVALS' Statistics row is white podium bars and "Reward at Level N" a white starburst seal:
 -- the replica's leaderboard bars and Tacticals' level-shield seal (Kit.ICONS.level), both tinted white, replace the gold trophy
 -- and the orange explosion there
@@ -2334,7 +2335,7 @@ local function renderInfo()
 		local paid = (data.Contracts and tonumber(data.Contracts[id])) or 0
 		local target = tiers[paid + 1]
 		local kills = (data.WeaponStats and data.WeaponStats[id] and data.WeaponStats[id].Kills) or 0
-		local cb = row("seal", "Contracts", target and (math.min(kills, target.Kills) .. " / " .. target.Kills .. " eliminations") or "All contracts done",
+		local cb = row("contract", "Contracts", target and (math.min(kills, target.Kills) .. " / " .. target.Kills .. " eliminations") or "All contracts done",
 			"arrow", "blue")
 		Armory._tip(cb, "Earn free rewards with this weapon", "left")
 		cb.Activated:Connect(function()
