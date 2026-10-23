@@ -103,13 +103,21 @@ local function render()
 	emblem(ui.topEmblem, not inPlacements and rank or nil)
 	ui.rankName.Text = inPlacements and (placed .. "/" .. need) or (A("RankName") or "Bronze 1")
 	ui.rankUnit.Text = inPlacements and "Placed" or ""
-	-- the unit sits right after the count, measured from the live label (e15, grader C: GothamBold drifted from our font)
-	task.defer(function()
-		local st = ui.rankName.Parent
-		if not (inPlacements and st and st.AbsoluteSize.X > 0) then return end
-		local right = ui.rankName.AbsolutePosition.X - st.AbsolutePosition.X + ui.rankName.TextBounds.X
-		ui.rankUnit.Position = UDim2.fromScale((right + 10 * st.AbsoluteSize.X / 330) / st.AbsoluteSize.X, ui.rankUnit.Position.Y.Scale)
-	end)
+	-- the unit sits right after the count, measured from the live label (e15, grader C: GothamBold drifted from our font;
+	-- e16: re-placed whenever the label's text bounds change, so a late layout can't leave it on top of the count)
+	if not ui.unitHooked then
+		ui.unitHooked = true
+		local function place()
+			local st = ui.rankName.Parent
+			if not (st and st.AbsoluteSize.X > 0 and ui.rankUnit.Text ~= "") then return end
+			local right = ui.rankName.AbsolutePosition.X - st.AbsolutePosition.X + ui.rankName.TextBounds.X
+			ui.rankUnit.Position = UDim2.fromScale((right + 10 * st.AbsoluteSize.X / 330) / st.AbsoluteSize.X, ui.rankUnit.Position.Y.Scale)
+		end
+		ui.rankName:GetPropertyChangedSignal("TextBounds"):Connect(place)
+		ui.rankName.Parent:GetPropertyChangedSignal("AbsoluteSize"):Connect(place)
+		ui.placeUnit = place
+	end
+	task.defer(ui.placeUnit)
 	-- banner shields hug the words (e15)
 	task.defer(function()
 		local b = ui.banner
@@ -297,10 +305,17 @@ local function buildBoard()
 		h.ZIndex = 23
 		h.TextTransparency = 0.4
 	end
-	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(802, 464), BackgroundTransparency = 1,
+	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(802, 388), BackgroundTransparency = 1,
 		BorderSizePixel = 0, ScrollBarThickness = 10, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p }, -- (e4: one scrollbar style, 10 px white)
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	ui.boardList = listHold
+	-- (menus e16, grader B) your own row pinned at the foot, so you always see where you stand
+	local own = new("Frame", { Name = "Own", Position = UDim2.fromOffset(40, 629 - 12 - 64), Size = UDim2.fromOffset(792, 64), BackgroundColor3 = WHITE, BackgroundTransparency = 0.82,
+		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	ui.ownRank = label(own, "#-", FB, 26, 20, 0, 120, 64, WHITE, Enum.TextXAlignment.Left)
+	ui.ownName = label(own, player.DisplayName, FS, 26, 150, 0, 420, 64, WHITE, Enum.TextXAlignment.Left)
+	ui.ownElo = label(own, "", FB, 26, 600, 0, 172, 64, WHITE, Enum.TextXAlignment.Right)
+	for _, l in { ui.ownRank, ui.ownName, ui.ownElo } do l.ZIndex = 23 end
 	return show
 end
 
@@ -308,6 +323,11 @@ local function fillBoard()
 	local holder = ui.boardList
 	for _, c in holder:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
 	local top = leaderboard()
+	local myPos
+	for i, e in top do if e.userId == player.UserId then myPos = i end end
+	local placing = (A("RankPlacements") or 0) > 0 and (A("RankPlaced") or 0) < (A("RankPlacements") or 0)
+	ui.ownRank.Text = myPos and ("#" .. myPos) or "#-"
+	ui.ownElo.Text = placing and "? ELO" or (tostring(A("RankElo") or 0) .. " ELO")
 	if #top == 0 then
 		-- (menus e4, grader A) the empty state sits in the middle of the list, and an idle list shows no scrollbar;
 		-- (menus e12, grader B) with the Warlord crest above it
@@ -322,16 +342,20 @@ local function fillBoard()
 		-- (menus e14, grader B) a quieter hint under it
 		local hint = new("TextLabel", { BackgroundTransparency = 1, Text = "Reach 2200 ELO, then climb into the top 200.", FontFace = FM, TextScaled = true,
 			TextColor3 = WHITE, TextTransparency = 0.4, LayoutOrder = 3, Size = UDim2.new(1, 0, 0.058, 0), ZIndex = 23, Parent = holder }) -- (e15: 22 px)
+		-- (menus e16, grader C) the empty state arrives with motion: the crest pops, then the line and the hint fade in
+		if Kit.popIn then pcall(Kit.popIn, cHold, 0.08) end
+		l.TextTransparency, hint.TextTransparency = 1, 1
+		task.delay(0.12, function() Kit.tween(l, 0.2, { TextTransparency = 0 }) end)
+		task.delay(0.16, function() Kit.tween(hint, 0.2, { TextTransparency = 0.4 }) end)
 		return
 	end
 	holder.ScrollBarImageTransparency = #top > 9 and 0.4 or 1
 	for i, e in top do
 		local mine = e.userId == player.UserId
 		-- (menus e15, grader C) CanvasGroup rows, so they fade as they pop
-		local row = new("CanvasGroup", { LayoutOrder = i, GroupTransparency = 1, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = mine and C.white or BLACK, BackgroundTransparency = mine and 0.75 or 0.5,
+		local row = new("CanvasGroup", { LayoutOrder = i, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = mine and C.white or BLACK, BackgroundTransparency = mine and 0.75 or 0.5,
 			ZIndex = 22, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.2, 0) }) })
 		if Kit.popIn and i <= 12 then pcall(Kit.popIn, row, 0.04 + i * 0.02) end -- (menus e10, grader C: the rows stagger in)
-		task.delay(i <= 12 and (0.04 + i * 0.02) or 0, function() Kit.tween(row, 0.2, { GroupTransparency = 0 }) end)
 		local function cell(text, x, w, align, font)
 			new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font or FS, TextScaled = true, TextColor3 = WHITE, TextXAlignment = align,
 				Position = UDim2.fromScale(x, 0.18), Size = UDim2.fromScale(w, 0.64), ZIndex = 23, Parent = row })

@@ -196,7 +196,8 @@ local function renderParty()
 		if uid then
 			local p = Players:GetPlayerByUserId(uid)
 			local card = personCard(col, 0, (i - 1) * 105, 340, { uid = uid, name = p and p.DisplayName or "...", user = p and p.Name or "...", where = not p and "elsewhere" or nil },
-				{ crown = #list > 1 and uid == leader, kick = amLeader and uid ~= player.UserId and party() ~= nil, leave = #list > 1 and uid == player.UserId })
+				{ crown = uid == leader, -- (e16, grader B: your own slot carries the leader crown even alone, like RIVALS)
+				 kick = amLeader and uid ~= player.UserId and party() ~= nil, leave = #list > 1 and uid == player.UserId })
 			if not p then
 				-- a member in another server (a party survives the teleport): look their name up
 				task.spawn(function()
@@ -265,7 +266,7 @@ local function renderGrid(animate)
 	end
 	-- (menus e6-e14, grader A) the empty state is a plate from the grid's top down to the party column's foot (y 742): a fixed
 	-- sibling of the grid (inside the grid's auto-sized canvas its height came out different every round)
-	if k == 0 and (animate or not emptyPlate.Visible) then
+	if k == 0 and not emptyPlate.Visible then -- (e16, grader C: no blink when switching between two empty tabs)
 		-- (menus e15, grader C) the empty state fades in instead of appearing
 		emptyPlate.BackgroundTransparency, emptyLabel.TextTransparency = 1, 1
 		Kit.tween(emptyPlate, 0.2, { BackgroundTransparency = 0.35 })

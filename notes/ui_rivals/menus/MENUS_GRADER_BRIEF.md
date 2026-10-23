@@ -37,6 +37,8 @@ which ours already is (top 101, pitch 55.6, avatar 64). Don't re-flag its top / 
 News has a single article (no pages yet), so there is no next-page arrow to add.
 Body text weight is settled (e11): our UI font (Rubik, rbxassetid 12187365977) has no Regular weight in Roblox (asking for it
 falls back to Source Sans), so body copy is Medium on purpose. No thin (<3 px) outlines on slots or panels (house AI-tells rule).
+The player card in Studio is your own (View Profile / View Avatar only): Invite / Add Friend / Challenge / Block rows with icons
+exist for other players (PlayerCards.Menu) but Studio has one player, so don't ask to add them.
 
 ## Report
 Write `menus\<round>_grade_<LETTER>.md`, under 500 words: per menu a score /10 on your lens and at most 3 concrete fixes

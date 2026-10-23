@@ -193,7 +193,7 @@ local function buildInbox()
 		-- (menus e15, graders A + C) the age chip belongs to its row (it pops with it) and sits 24 in from the row's right end
 		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(828 - 24 - 118, 31), Size = UDim2.fromOffset(118, 40), ZIndex = 5,
 			Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 40, GREY, nil, 6)
+		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 40, GREY, Enum.TextXAlignment.Right, 6) -- (e16, grader A: the text ends 24 in from the row's end)
 		-- (2026-10-21, RIVALS pass) the first rows pop in one after another (0.03 s apart) instead of all at once
 		if Kit.popIn and i <= 10 then
 			row.AnchorPoint = Vector2.new(0.5, 0.5); row.Position = UDim2.fromOffset(414, y + 51)
@@ -294,8 +294,9 @@ function Notify.OpenNews()
 		body.TextWrapped = true
 		body.TextYAlignment = Enum.TextYAlignment.Top
 	end
-	local x = Kit.closeButton(UDim2.fromOffset(84, 50))
-	x.Position = UDim2.fromOffset(544 + W + 34, TOP)
+	-- (menus e16, grader A vs news_panel) RIVALS' news close is a small 67x36 at (1402,119)
+	local x = Kit.closeButton(UDim2.fromOffset(67, 36))
+	x.Position = UDim2.fromOffset(1402, TOP)
 	x.Parent = inboxRoot
 	x.Activated:Connect(function() Notify.CloseInbox() end)
 	Kit.toScale(inboxRoot)
