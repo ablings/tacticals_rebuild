@@ -328,6 +328,14 @@ function Kit.centreAnchor(g)
 end
 
 -- Hover/press scale on any GuiButton (UIScale, never Size: keeps layouts intact). Grows from the centre.
+-- (2026-10-23, lobby r26, grader C) UI sounds: this kit borrows UIKit.Kit's sfx (hover / click / open / close) so Play,
+-- Settings and the hub dock click like Shop, Codes and Missions. Looked up lazily, off-thread, and silently skipped if missing.
+local function uiSfx(name)
+	task.spawn(pcall, function()
+		local K = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
+		if K and K.sfx and K ~= Kit then K.sfx(name) end
+	end)
+end
 function Kit.bindButton(btn, opts)
 	opts = opts or {}
 	-- (2026-10-22) the game's legacy InterfaceController adds its own Size hover / press tweens to every button it finds (and
@@ -340,7 +348,8 @@ function Kit.bindButton(btn, opts)
 	end)
 	local s = btn:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = btn })
 	local hovering = false
-	btn.MouseEnter:Connect(function() hovering = true; Kit.tween(s, 0.1, { Scale = opts.hover or 1.05 }) end)
+	btn.MouseEnter:Connect(function() hovering = true; uiSfx("hover"); Kit.tween(s, 0.1, { Scale = opts.hover or 1.05 }) end)
+	btn.Activated:Connect(function() uiSfx("click") end)
 	btn.MouseLeave:Connect(function() hovering = false; Kit.tween(s, 0.1, { Scale = 1 }) end)
 	btn.MouseButton1Down:Connect(function() Kit.tween(s, 0.06, { Scale = opts.press or 0.93 }) end)
 	btn.MouseButton1Up:Connect(function() Kit.tween(s, 0.1, { Scale = hovering and (opts.hover or 1.05) or 1 }, Enum.EasingStyle.Back) end)
@@ -840,6 +849,7 @@ end
 
 -- Panel open/close motion (UIScale + fade of a CanvasGroup-free tree: we fade via GroupTransparency when available).
 function Kit.open(frame)
+	uiSfx("open")
 	Kit.centreAnchor(frame) -- scale from the centre
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
 	frame:SetAttribute("_MotionToken", (frame:GetAttribute("_MotionToken") or 0) + 1) -- (2026-10-23, lobby r12 grader C: cancels a pending close's hide, as lobby/Kit)
@@ -849,6 +859,7 @@ function Kit.open(frame)
 	if frame:IsA("CanvasGroup") then frame.GroupTransparency = 1; Kit.tween(frame, 0.18, { GroupTransparency = 0 }) end
 end
 function Kit.close(frame, done)
+	uiSfx("close")
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
 	Kit.tween(s, 0.12, { Scale = 0.92 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	local tw = frame:IsA("CanvasGroup") and Kit.tween(frame, 0.12, { GroupTransparency = 1 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)

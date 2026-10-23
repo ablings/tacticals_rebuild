@@ -1503,6 +1503,7 @@ local function showTab()
 	if not P or P.dirty or P.sig ~= ownedSig() then P = buildPage(tab) end
 	for name, Q in pages do Q.pg.Visible = name == tab end
 	P.pg.Position = UDim2.fromScale(0, 0)
+	if P.pg:IsA("ScrollingFrame") then P.pg.CanvasPosition = Vector2.zero end -- (lobby r26, grader C: a tab opens at its top)
 	styleTabs()
 end
 

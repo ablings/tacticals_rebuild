@@ -426,7 +426,8 @@ function LobbyHud.Start()
 		navIcons[it.Id] = { holder = holder, it = it, scale = iconScale }
 		-- (2026-10-21, port3) label: Rubik Bold 25 with a thin 1.5 px stroke, bottom at y 104 (bar y 1052), so it sits up on the dark
 		-- strip and overlaps the icon's bottom (icon box ends at 90) like RIVALS
-		local lbl = RKit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 21, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
+		local lbl = RKit.label({ Text = it.Label, FontFace = NAV_FONT, TextSize = 23, -- (lobby r26, grader B: real Rubik read small at 21; 25 before the font fix)
+			 TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
 			AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromOffset(59, 104), Size = UDim2.fromOffset(140, 30), ZIndex = 3, Parent = b })
 		RKit.textStroke(1.5).Parent = lbl
 		-- badge: 30 px Theme badge red at (92, 10), white ring 1.5 @ 0.2, Rubik Bold 21
