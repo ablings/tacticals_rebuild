@@ -1539,8 +1539,8 @@ end
 local function setOpen(on)
 	if on == isOpen then return end
 	isOpen = on
-	Kit.tween(blur, 0.25, { Size = on and Theme.blur or 0 })
-	Kit.tween(scrim, 0.25, { BackgroundTransparency = on and Theme.alpha.scrim or 1 })
+	Kit.tween(blur, on and 0.25 or 0.12, { Size = on and Theme.blur or 0 }) -- (lobby r29, grader C: on close the dim goes with the panel, 0.12 s)
+	Kit.tween(scrim, on and 0.25 or 0.12, { BackgroundTransparency = on and Theme.alpha.scrim or 1 })
 	if on then
 		gui.Enabled = true
 		if ctx.onOpen then ctx.onOpen() end
