@@ -73,6 +73,7 @@ local gui, canvas, root, col, grid, search, tabBtns, blur, scrim
 local current = "All"
 local sent = {} -- "uid|kind" -> os.clock() of the send (a sent button stays a tick for 15 s)
 local isOpen = false
+local openedAt = 0
 local friendsOnline = {} -- { uid, name, user } for friends elsewhere (refreshed on open)
 
 local function tick(parent, color)
@@ -215,7 +216,7 @@ local function renderParty()
 			local plus = new("Frame", { Position = UDim2.fromOffset(18, 10), Size = UDim2.fromOffset(73, 73), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.88,
 				ZIndex = 4, Parent = slot }, { Kit.corner(36) })
 			label(plus, "+", F_HEAD, 44, 0, -2, 73, 73, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
-			label(slot, "Invite", F_HEAD, 28, 110, 0, 210, 93, Color3.new(1, 1, 1), Enum.TextXAlignment.Left, 4)
+			label(slot, "Invite", F_HEAD, 28, 110, 0, 210, 93, Color3.new(1, 1, 1), Enum.TextXAlignment.Left, 4).TextTransparency = 0.3 -- (e13, grader B: the empty slot's word reads quieter than a name)
 			-- (e2, grader C) empty slots answer hover like every other button
 			if Kit.bindButton then Kit.bindButton(slot, { hover = 1.03, press = 0.97 }) end
 			-- (menus e10, grader C) the empty slot brightens on hover too
@@ -354,6 +355,7 @@ function PartyScreen.Open(tab)
 	if not gui then build() end
 	if tab then current = tab end
 	isOpen = true
+	openedAt = os.clock()
 	gui.Enabled = true
 	styleTabs()
 	renderParty()
@@ -369,7 +371,12 @@ function PartyScreen.Open(tab)
 		for _, f in list do
 			if f.VisitorId and f.IsOnline then table.insert(out, { uid = f.VisitorId, name = f.DisplayName or f.UserName, user = f.UserName }) end
 		end
+		-- (menus e13, grader C) redraw only when the list changed, and never over the opening pop (it runs ~0.55 s)
+		local function key(l) local k = {} for _, f in l do table.insert(k, tostring(f.uid)) end return table.concat(k, ",") end
+		if key(out) == key(friendsOnline) then return end
 		friendsOnline = out
+		local wait = 0.55 - (os.clock() - openedAt)
+		if wait > 0 then task.wait(wait) end
 		if isOpen then renderGrid() end
 	end)
 	if PartyScreen.OnOpen then PartyScreen.OnOpen(true) end

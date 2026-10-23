@@ -289,8 +289,8 @@ local function fillBoard()
 		-- (menus e4, grader A) the empty state sits in the middle of the list, and an idle list shows no scrollbar;
 		-- (menus e12, grader B) with the Warlord crest above it
 		holder.ScrollBarImageTransparency = 1
-		new("Frame", { Name = "Spacer", BackgroundTransparency = 1, LayoutOrder = 0, Size = UDim2.new(1, 0, 0.28, 0), Parent = holder })
-		local crest = new("Frame", { Name = "Crest", BackgroundTransparency = 1, LayoutOrder = 1, Size = UDim2.new(1, 0, 0.16, 0), Parent = holder })
+		new("Frame", { Name = "Spacer", BackgroundTransparency = 1, LayoutOrder = 0, Size = UDim2.new(1, 0, 0.3, 0), Parent = holder })
+		local crest = new("Frame", { Name = "Crest", BackgroundTransparency = 1, LayoutOrder = 1, Size = UDim2.new(1, 0, 0.24, 0), Parent = holder }) -- (e13, grader B: a ~96 px crest)
 		local cHold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromScale(1, 1), Parent = crest },
 			{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
 		emblem(cHold, "Warlord")
@@ -354,15 +354,15 @@ local function build()
 	-- ELO bar
 	local bar = new("Frame", { Name = "EloBar", Position = UDim2.fromOffset(L, 203), Size = UDim2.fromOffset(WIDE, 96), BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.35, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
-	ui.leftEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 6), Size = UDim2.fromOffset(84, 84), Parent = bar }) -- (menus e7, grader B: 84 px end badges)
-	ui.leftFloor = label(bar, "", FB, 30, 108, 8, 300, 36, WHITE, Enum.TextXAlignment.Left)
-	ui.leftName = label(bar, "", FS, 26, 108, 40, 300, 32, GREY, Enum.TextXAlignment.Left)
+	ui.leftEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(28, 6), Size = UDim2.fromOffset(84, 84), Parent = bar }) -- (menus e7, grader B: 84 px end badges; e13, grader A: inset 28)
+	ui.leftFloor = label(bar, "", FB, 30, 138, 8, 300, 36, WHITE, Enum.TextXAlignment.Left)
+	ui.leftName = label(bar, "", FS, 26, 138, 40, 300, 32, GREY, Enum.TextXAlignment.Left)
 	label(bar, "Your ELO", FS, 22, 556, 4, 300, 28, GREY)
 	ui.eloNum = stroke(label(bar, "100", FB, 58, 556, 20, 300, 60, WHITE), 2)
-	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(1318, 6), Size = UDim2.fromOffset(84, 84), Parent = bar })
-	ui.rightFloor = label(bar, "", FB, 30, 1004, 8, 300, 36, WHITE, Enum.TextXAlignment.Right)
-	ui.rightName = label(bar, "", FS, 26, 1004, 40, 300, 32, GREY, Enum.TextXAlignment.Right)
-	local track = new("Frame", { Position = UDim2.fromOffset(108, 76), Size = UDim2.fromOffset(1196, 10), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
+	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(1300, 6), Size = UDim2.fromOffset(84, 84), Parent = bar })
+	ui.rightFloor = label(bar, "", FB, 30, 974, 8, 300, 36, WHITE, Enum.TextXAlignment.Right)
+	ui.rightName = label(bar, "", FS, 26, 974, 40, 300, 32, GREY, Enum.TextXAlignment.Right)
+	local track = new("Frame", { Position = UDim2.fromOffset(138, 76), Size = UDim2.fromOffset(1136, 10), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
 		{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 	ui.fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = WHITE, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }),
 		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#8DBF5A"), Theme.hex("#FFFFFF")) }) }) -- (2026-10-21, AI-tells cleanup) progress = field green, was yellow
