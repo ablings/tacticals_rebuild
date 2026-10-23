@@ -376,8 +376,8 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	-- side padding (was ~5-7 %); the Robux glyph sits ~0.8 cap from its number
 	-- (round 2, grader B vs t0068 / t0084) side pad 0.06 x width so the digits get the room (yellow ones had shrunk to 0.23 h), the
 	-- currency icon ~1.25 digit caps, ~0.55 cap from the digits
-	local isz = live.isz or math.floor(h * (isRobux and 0.46 or 0.62)) -- (round 8, grader B vs t0068: RIVALS' tag key is WHITE like the digits, drawn ~0.45 of the tag)
-	local pad, gap = math.max(4, math.floor(w * 0.06)), math.max(3, math.floor(h * 0.18))
+	local isz = live.isz or math.floor(h * (isRobux and 0.46 or 0.5)) -- (rounds 8-11 vs t0068: RIVALS' tag key is WHITE, ~0.45 of the tag; the digits lead)
+	local pad, gap = math.max(3, math.floor(w * 0.04)), math.max(3, math.floor(h * 0.14))
 	-- (2026-10-21, RIVALS shop layout) live.text = a word instead of a number ("FREE", RIVALS' Daily): no currency icon
 	if live.text then isz, gap = 0, 0 end
 	local hh = math.min(h, math.floor(ts * 1.2)) -- the number's box height
