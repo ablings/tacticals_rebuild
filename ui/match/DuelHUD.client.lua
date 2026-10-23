@@ -1320,6 +1320,7 @@ function RV.endElim()
 	if not elimL.Visible then return end
 	elimToken += 1
 	local ti = TweenInfo.new(0.3)
+	if RV.elimFade then for _, tw in RV.elimFade do tw:Cancel() end end
 	RV.elimFade = { TweenService:Create(elimL, ti, { TextTransparency = 1 }), TweenService:Create(elimSub, ti, { TextTransparency = 1 }) } -- (m14: cancellable too)
 	for _, tw in RV.elimFade do tw:Play() end
 	local my = elimToken
@@ -1330,7 +1331,7 @@ showEliminated = function(uid, d)
 	local my = elimToken
 	if RV.elimFade then for _, tw in RV.elimFade do tw:Cancel() end; RV.elimFade = nil end -- (m13: a new kill stops an old fade-out)
 	-- (serious pass) the name in their side's colour (light green), not the old purple
-	elimL.Text = 'Eliminated  <font color="#C4EBB4">' .. nameOf(uid) .. '</font>' -- (m13, grader B: the name as bright as the word)
+	elimL.Text = '<font weight="regular">Eliminated</font>  <font color="#C4EBB4">' .. nameOf(uid) .. '</font>' -- (m13: name as bright as the word; m15: the word regular, the name bold)
 	elimL.TextTransparency = 0
 	elimL.Visible = true
 	local how = {}
@@ -1378,7 +1379,7 @@ new("UIStroke", { Thickness = 2.5, Color = Color3.fromRGB(240, 70, 30), Parent =
 new("UIGradient", { Rotation = 90, Color = ColorSequence.new(WHITE, Color3.fromRGB(255, 222, 196)), Parent = kStreakL })
 -- (2026-10-22, spacing grade vs RIVALS) the name sits ~0.45 cap off the head (was 26 design px, ~0.9 cap)
 local kName = label(kcard, "", FX, 46, 137, 6, 560, 52, WHITE, Enum.TextXAlignment.Left, 7)
-local kUser = label(kcard, "", FB, 20, 138, 52, 520, 24, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7)
+local kUser = label(kcard, "", FB, 23, 138, 51, 520, 26, Color3.fromRGB(235, 225, 225), Enum.TextXAlignment.Left, 7) -- (m15, grader B: 20 -> 23)
 kUser.TextTransparency = 0.35 -- (2026-10-22, RIVALS) the @handle is faint
 local kHow = label(kcard, "", FB, 28, 145, 74, 560, 34, WHITE, Enum.TextXAlignment.Left, 7)
 -- RIVALS: the device on the head's bottom-right corner, the level seal on its bottom-left
@@ -1548,7 +1549,7 @@ RV.ribbon = new("Frame", { Name = "MatchPointRibbon", AnchorPoint = Vector2.new(
 	BackgroundColor3 = WHITE, Visible = false, ZIndex = 9, Parent = root }, { corner(4),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(236, 64, 60)), ColorSequenceKeypoint.new(0.55, Color3.fromRGB(205, 36, 36)),
 		ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 18, 22)) }) }) })
-RV.ribbonText = label(RV.ribbon, "MATCH POINT", Font.new("rbxassetid://12187365977", Enum.FontWeight.ExtraBold), 88, -60, -50, 834, 104, WHITE, nil, 10)
+RV.ribbonText = label(RV.ribbon, "MATCH POINT", Font.new("rbxassetid://12187365977", Enum.FontWeight.ExtraBold), 98, -70, -56, 854, 112, WHITE, nil, 10) -- (m15, grader B: a size up)
 do
 	local st2 = RV.ribbonText:FindFirstChildOfClass("UIStroke")
 	if st2 then st2.Thickness, st2.Transparency, st2.Color = 2, 0.45, Color3.fromRGB(60, 8, 10) end
@@ -2273,7 +2274,7 @@ do
 	for _, e in { { 0, 0, 1, 0.2, 90 }, { 0, 0.8, 1, 0.2, -90 }, { 0, 0, 0.2, 1, 0 }, { 0.8, 0, 0.2, 1, 180 } } do -- (m10, grader B: the outer ~20 %, softer)
 		new("Frame", { BackgroundColor3 = Color3.fromRGB(235, 40, 40), BorderSizePixel = 0, Position = UDim2.fromScale(e[1], e[2]), -- (m13, grader B: bright red, not maroon)
 			 Size = UDim2.fromScale(e[3], e[4]), Parent = vig },
-			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.7, 1) }) }) -- (m12, grader B: the scene shows through the edge)
+			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.5, 1) }) }) -- (m15, grader B: bright red at the very edge; 0.7 read maroon on dark maps)
 	end
 	-- (m12, grader C vs RIVALS t0206) RIVALS draws a curved red arc (~270 x 90) with a point, not a glyph: a square holder centred
 	-- on screen, rotated toward the killer, carrying a ring of short segments (-36..36 deg) and the point at the top
@@ -2312,7 +2313,6 @@ do
 		if not root or not cam then setArc(1) return end -- (m11: stays armed; the killer may resolve next frame)
 		local rel = cam.CFrame:PointToObjectSpace(root.Position)
 		local ang = math.atan2(rel.X, -rel.Z) -- 0 = straight ahead, + = to the right
-		local ar = dgui.AbsoluteSize.X / math.max(1, dgui.AbsoluteSize.Y)
 		-- (m13, grader C) eases toward the killer instead of jumping a frame at a time (shortest way round)
 		local d = ((math.deg(ang) - arrow.Rotation + 180) % 360) - 180
 		if RV.arcSnap then RV.arcSnap = false; arrow.Rotation = math.deg(ang) -- (m14: a new death starts on its own killer)

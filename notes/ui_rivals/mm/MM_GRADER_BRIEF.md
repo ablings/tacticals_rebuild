@@ -69,3 +69,5 @@ Rules:
 - Round-end / kill-cam durations are server timing (another session); note them on a separate unscored line.
 - No gloss / sheen overlays: the house "AI-tells" style rule (notes\ui_rivals\09_cleanup.md) removes them on purpose, even where
   RIVALS has one (results buttons, killer card).
+- Match found -> Teleporting: at Teleporting our screen hands over to the pads' teleport/loading screen (the GUI TeleportService
+  shows during the real teleport), so there is no "Teleporting / N" on our screen.
