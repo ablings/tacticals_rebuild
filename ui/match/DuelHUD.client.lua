@@ -585,11 +585,12 @@ local resMode -- the score + mode, small, under the plate
 local stats = {}
 do
 	-- (2026-10-22, grader vs live RIVALS) a tighter plate (360 x 96, RIVALS ~16 % of the width) with only VICTORY and the name
-	stats.plate = new("Frame", { Name = "TitlePlate", Position = UDim2.fromOffset(780, 115), Size = UDim2.fromOffset(360, 96), BackgroundColor3 = WHITE,
+	-- (m11, grader B vs t0140: 307 x 96)
+	stats.plate = new("Frame", { Name = "TitlePlate", Position = UDim2.fromOffset(806, 115), Size = UDim2.fromOffset(307, 96), BackgroundColor3 = WHITE,
 		ZIndex = 4, Parent = results }, { corner(8) })
 	stats.plateGrad = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = stats.plate })
-	resTitle = label(stats.plate, "VICTORY", FB, 26, 0, 6, 360, 30, WHITE, nil, 5)
-	resScore = label(stats.plate, "", FX, 44, 0, 34, 360, 56, WHITE, nil, 5)
+	resTitle = label(stats.plate, "VICTORY", FB, 26, 0, 6, 307, 30, WHITE, nil, 5)
+	resScore = label(stats.plate, "", FX, 44, 0, 34, 307, 56, WHITE, nil, 5)
 	resMode = label(results, "", FB, 24, 560, 220, 800, 30, Color3.fromRGB(225, 225, 230), nil, 4)
 	-- the name plate + the stats plate under the character
 	stats.name = new("Frame", { Name = "NamePlate", Position = UDim2.fromOffset(762, 765), Size = UDim2.fromOffset(396, 66), BackgroundColor3 = WHITE,
@@ -928,8 +929,9 @@ do
 		local words = b:FindFirstChildOfClass("TextLabel")
 		words.TextColor3, words.ZIndex = WHITE, b.ZIndex + 1 -- (over the gloss)
 	end
-	rematchB.BackgroundColor3 = WHITE -- styleRematch keeps driving its transparency (greyed when unavailable)
-	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = rematchB })
+	-- (m11, grader B vs RIVALS t0140) Rematch is a dim dark button with a 2 px stroke, so Play Again leads (was a tan fill)
+	rematchB.BackgroundColor3 = Color3.fromRGB(24, 25, 29) -- styleRematch keeps driving its transparency (greyed when unavailable)
+	new("UIStroke", { Name = "RivalsEdge", Color = WHITE, Thickness = 2, Transparency = 0.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = rematchB })
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' action buttons are chunky (round_lost_full.jpg, t0113.0s): the primary gets
 	-- Kit.button's darker bottom lip instead of reading as a flat sticker
 end
@@ -1396,7 +1398,7 @@ local function refreshKillerCard(uid)
 	end
 	local p = uid and uid > 0 and Players:GetPlayerByUserId(uid)
 	kName.Text = (uid and uid > 0 and Players:GetPlayerByUserId(uid)) and Players:GetPlayerByUserId(uid).DisplayName or nameOf(uid) -- (2026-10-22, RIVALS) the name alone on the banner, no badge glyph
-	kUser.Text = p and ("@" .. p.Name) or ""
+	kUser.Text = p and ("@" .. p.Name) or ("@" .. string.lower(nameOf(uid))) -- (m11: bots get one too, like RIVALS' line)
 	do
 		local okD, BD = pcall(function() return require(ReplicatedStorage.UIKit.Badges) end)
 		local dv = p and okD and BD and BD.DeviceIcon and BD.DeviceIcon(p) or nil
@@ -1812,11 +1814,13 @@ RunService.RenderStepped:Connect(function()
 			if mine ~= lastScoreMine and mine > (lastScoreMine or 0) then RV.showRoundCard(true)
 			elseif theirs ~= lastScoreTheirs and theirs > (lastScoreTheirs or 0) then RV.showRoundCard(false) end
 			-- (m1, RIVALS t0118-t0122) the WON / LOST card stands alone here; the ribbon only comes in at the countdown
-		elseif state ~= "RoundEnd" then
-			RV.roundCard.Visible = false
 		elseif state == "MatchEnd" and not resultsShown then
 			-- the fallback card only when the server's summary never came (it often lands first, during Victory)
+			-- (m11, grader C: this branch sat after `state ~= "RoundEnd"`, which caught MatchEnd first, so it could never run)
+			RV.roundCard.Visible = false
 			task.delay(1.5, function() if not resultsShown and not gotSummary and inMatch() then resultsShown = true; showResults(nil) end end)
+		elseif state ~= "RoundEnd" then
+			RV.roundCard.Visible = false
 		end
 		if state == "Victory" or state == "MatchEnd" then RV.endElim() end -- (m10: and when the match ends)
 		lastState = state
@@ -2267,7 +2271,7 @@ do
 	local vig = new("CanvasGroup", { Name = "DeathVignette", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, Parent = dgui })
 	for _, e in { { 0, 0, 1, 0.2, 90 }, { 0, 0.8, 1, 0.2, -90 }, { 0, 0, 0.2, 1, 0 }, { 0.8, 0, 0.2, 1, 180 } } do -- (m10, grader B: the outer ~20 %, softer)
 		new("Frame", { BackgroundColor3 = Color3.fromRGB(190, 16, 20), BorderSizePixel = 0, Position = UDim2.fromScale(e[1], e[2]), Size = UDim2.fromScale(e[3], e[4]), Parent = vig },
-			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.5, 1) }) })
+			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.55, 1) }) }) -- (m11: alpha 0.45 at the edge)
 	end
 	local arrow = new("TextLabel", { Name = "KillerArrow", BackgroundTransparency = 1, Text = "▲", TextColor3 = Color3.fromRGB(235, 40, 40), TextScaled = true,
 		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromScale(0.08, 0.12), Visible = false, Parent = dgui }) -- (m9: 2x, RIVALS' arc is big)
@@ -2281,9 +2285,14 @@ do
 		arrow.TextTransparency = fadeT
 		if not (arrow.Visible and dead) then arrow.Visible = false return end
 		local m = RV.killerModel
+		if not (m and m.Parent) then -- (m11, grader C: the kill event can arrive after Alive flips; look again each frame)
+			local k = (lastDeath and lastDeath.killer) or player:GetAttribute("SpectateTarget")
+			m = k and (k < 0 and botModel(k) or (Players:GetPlayerByUserId(k) and Players:GetPlayerByUserId(k).Character)) or nil
+			RV.killerModel = m
+		end
 		local root = m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart)
 		local cam = workspace.CurrentCamera
-		if not root or not cam then arrow.Visible = false return end
+		if not root or not cam then arrow.TextTransparency = 1 return end -- (m11: stays armed; the killer may resolve next frame)
 		local rel = cam.CFrame:PointToObjectSpace(root.Position)
 		local ang = math.atan2(rel.X, -rel.Z) -- 0 = straight ahead, + = to the right
 		local ar = dgui.AbsoluteSize.X / math.max(1, dgui.AbsoluteSize.Y)
@@ -2294,7 +2303,7 @@ do
 		if player:GetAttribute("Alive") ~= false or not inMatch() then return end
 		local k = lastDeath and lastDeath.killer
 		RV.killerModel = k and (k < 0 and botModel(k) or (Players:GetPlayerByUserId(k) and Players:GetPlayerByUserId(k).Character)) or nil
-		arrow.Visible = RV.killerModel ~= nil
+		arrow.Visible = true -- (m11: the RenderStepped above finds the killer, hides it if there is none)
 		RV.deathFlashLen = slow(1.5)
 		RV.deathFlashUntil = os.clock() + RV.deathFlashLen
 		task.delay(RV.deathFlashLen, function() arrow.Visible = false end)

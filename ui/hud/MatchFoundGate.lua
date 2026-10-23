@@ -34,6 +34,14 @@ local wanted = {}          -- [LayerCollector] = Enabled it should have when the
 local conns = {}
 local gui, stamp, sub
 local dots = {}            -- (2026-10-23, m1) RIVALS' three pulsing dots (t0020)
+local tipLabel
+local TIPS = { -- (the pads' loading tips)
+	"Cover wins duels: peek, shoot, get back down.",
+	"Headshots end fights. Aim for the visor.",
+	"Smoke a lane before you cross it.",
+	"Your gadget recharges between rounds.",
+	"Reload behind cover, never in the open.",
+}
 local blur: BlurEffect? = nil
 local promptsWas, listWas
 local failedAt = nil       -- a TeleportInitFailed: stay down until MM_Status changes again
@@ -98,7 +106,28 @@ local function build()
 		l.Parent = canvas
 		return l
 	end
-	stamp = text("MatchFound", 0.888, 0.05, "Match found", Color3.new(1, 1, 1), Enum.FontWeight.Bold)
+	stamp = text("MatchFound", 0.888, 0.05, "Match found", Color3.new(1, 1, 1), Enum.FontWeight.ExtraBold) -- (m11: heavier, t0020)
+	-- (2026-10-23, matchmaking round m11, graders A + B vs RIVALS t0020) the white tip bubble bottom left, dark Rubik words
+	local tip = Instance.new("Frame")
+	tip.Name = "Tip"
+	tip.AnchorPoint = Vector2.new(0, 1)
+	tip.Position = UDim2.fromScale(0.125, 0.975)
+	tip.Size = UDim2.fromScale(0.64, 0.05)
+	tip.BackgroundColor3 = Color3.new(1, 1, 1)
+	tip.BorderSizePixel = 0
+	tip.Parent = canvas
+	local tc = Instance.new("UICorner"); tc.CornerRadius = UDim.new(0.2, 0); tc.Parent = tip
+	local tl = Instance.new("TextLabel")
+	tl.Name = "Text"
+	tl.BackgroundTransparency = 1
+	tl.Position = UDim2.fromScale(0.015, 0.12)
+	tl.Size = UDim2.fromScale(0.97, 0.76)
+	tl.TextScaled = true
+	tl.TextXAlignment = Enum.TextXAlignment.Left
+	tl.TextColor3 = Color3.fromRGB(20, 20, 24)
+	tl.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
+	tl.Parent = tip
+	tipLabel = tl
 	sub = text("Mode", 0.95, 0.042, "", Color3.new(1, 1, 1), Enum.FontWeight.Bold)
 	local sc = Instance.new("UIScale"); sc.Name = "Pop"; sc.Parent = stamp
 	-- the three dots: 56 px on the 1080 canvas, 8 px apart, centred
@@ -164,6 +193,7 @@ local function enter()
 	ContextActionService:BindActionAtPriority("MatchFoundGate", sink, false, 5000, table.unpack(SINK_KEYS))
 	-- the stamp
 	sub.Text = modeText()
+	if tipLabel then tipLabel.Text = TIPS[math.random(#TIPS)] end
 	gui.Enabled = true
 	blur = blur or Instance.new("BlurEffect")
 	blur.Name = "MatchFoundBlur"
@@ -208,7 +238,9 @@ local function update()
 			TweenService:Create(stamp, ti, { TextTransparency = 1 }):Play()
 			TweenService:Create(sub, ti, { TextTransparency = 1 }):Play()
 			TweenService:Create(gui.Backdrop, ti, { BackgroundTransparency = 1 }):Play()
+			if tipLabel then tipLabel.Parent.Visible = false end -- (PadUI's teleport screen has its own tip)
 		elseif gui then
+			if tipLabel then tipLabel.Parent.Visible = true end
 			stamp.TextTransparency, sub.TextTransparency = 0, 0
 			sub.Text = modeText()
 		end
