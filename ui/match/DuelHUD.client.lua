@@ -2283,7 +2283,7 @@ do
 		Size = UDim2.fromScale(0.42, 0.42), SizeConstraint = Enum.SizeConstraint.RelativeYY, Visible = false, Parent = dgui })
 	-- (m16, grader A measured t0206) not a symmetric dome but RIVALS' hook: steep on the left, flat on the right, with a broad
 	-- diamond fin near the top. Points in the holder's 0..1 square (killer straight ahead), joined by short even strokes.
-	local HOOK = { { 0.144, 0.214 }, { 0.22, 0.14 }, { 0.30, 0.098 }, { 0.40, 0.077 }, { 0.55, 0.07 }, { 0.716, 0.076 } }
+	local HOOK = { { 0.178, 0.183 }, { 0.254, 0.109 }, { 0.334, 0.067 }, { 0.434, 0.046 }, { 0.584, 0.039 }, { 0.75, 0.045 } } -- (m17: +0.8 % right, 1.3 % up)
 	for k = 1, #HOOK - 1 do
 		local a, b = HOOK[k], HOOK[k + 1]
 		local dx, dy = b[1] - a[1], b[2] - a[2]
@@ -2292,12 +2292,13 @@ do
 		for n = 0, steps - 1 do
 			local t = (n + 0.5) / steps
 			new("Frame", { BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(a[1] + dx * t, a[2] + dy * t), Size = UDim2.fromScale(len / steps + 0.012, 0.042),
+				Position = UDim2.fromScale(a[1] + dx * t, a[2] + dy * t), Size = UDim2.fromScale(len / steps + 0.012, 0.056), -- (m17: ~24 px stroke)
+				
 				Rotation = math.deg(math.atan2(dy, dx)), Parent = arrow }, { corner(4) })
 		end
 	end
-	new("Frame", { Name = "Fin", BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.394, 0.04),
-		Size = UDim2.fromScale(0.1, 0.1), Rotation = 45, Parent = arrow }, { corner(3) })
+	new("Frame", { Name = "Fin", BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.428, 0.0),
+		Size = UDim2.fromScale(0.16, 0.16), Rotation = 45, Parent = arrow }, { corner(3) }) -- (m17: the fin ~105 px)
 	local function setArc(t)
 		for _, c in arrow:GetChildren() do
 			if c:IsA("TextLabel") then c.TextTransparency = t elseif c:IsA("Frame") then c.BackgroundTransparency = t end

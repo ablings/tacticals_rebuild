@@ -400,6 +400,8 @@ local function buildRow(tab, row, order)
 	local reserve = row.kind == "toggle" and 165 or 245
 	local label = Kit.label({ Name = "Label", Text = row.name, FontFace = F.display, TextSize = 50, TextScaled = true, Position = UDim2.fromOffset(labelX, 14),
 		Size = UDim2.new(1, -(labelX + reserve), 0, lineH - 28), Parent = frame })
+	-- (2026-10-23, lobby r12 graders A + B) with real Rubik (the font fix) the labels ran ~15 % over RIVALS': capped at 43 design px
+	local cap = Instance.new("UITextSizeConstraint"); cap.MaxTextSize = 43; cap:SetAttribute("dMax", 43); cap.Parent = label -- (rescaled with the canvas)
 	new("UITextSizeConstraint", { MaxTextSize = 50, Parent = label })
 
 	-- red per-setting reset: appears at the row start whenever the value differs from its default

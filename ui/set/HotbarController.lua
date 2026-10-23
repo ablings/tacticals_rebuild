@@ -223,7 +223,7 @@ local TILE = Vector2.new(186, 124)                             -- one tile (desi
 local GAP = 14                                                 -- between tiles
 local RENDER = Vector2.new(244, 160)                           -- the item's render box: bigger than the tile, so it spills out
 local RENDER_LIFT = -10                                        -- the render sits this far above the tile's centre
-local TILE_GREY, TILE_T = Color3.fromRGB(78, 80, 88), 0.45 -- (m16, grader B vs t0054: clearly lighter grey glass; 38,40,46 @ 0.5 vanished on dark maps)       -- a tile: dark glass (2026-10-21: 0.55 went grey on white maps)
+local TILE_GREY, TILE_T = Color3.fromRGB(58, 60, 68), 0.4 -- (m17: a step darker than the scene, t0054)
 local HELD_FILL, HELD_T = Color3.fromRGB(150, 150, 156), 0.3   -- the one in your hands: lighter glass (m2: lighter, it carries the held state alone)
 local BONE = Color3.fromRGB(255, 255, 255)
 -- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) soft text edges; the held tile is the lighter one.

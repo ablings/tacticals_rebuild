@@ -877,7 +877,7 @@ function RENDER.Featured(pg, hover)
 		local viewBtn = new("TextButton", { Name = "View", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(SO_W - 24 - 250, SO_H - 96), Size = UDim2.fromOffset(250, 80), BackgroundColor3 = WHITE,
 			BorderSizePixel = 0, ZIndex = 7, Parent = sl }, { RK.corner(6), RK.vgrad(G.robux), RK.stroke(G.robux[2]:Lerp(BLACK, 0.55), 1.5, 0.4) })
 		RK.label({ Text = "Special Offer", FontFace = FB, TextSize = 19, TextColor3 = G.robux[2]:Lerp(BLACK, 0.6), TextXAlignment = CENTER, Position = UDim2.fromOffset(0, 6), Size = UDim2.fromOffset(250, 22), ZIndex = 8, Parent = viewBtn })
-		stroke(RK.label({ Text = "VIEW", FontFace = FX, TextSize = 48, TextXAlignment = CENTER, Position = UDim2.fromOffset(0, 24), Size = UDim2.fromOffset(250, 52), ZIndex = 8, Parent = viewBtn }), 2, 0.4)
+		stroke(RK.label({ Text = "View", FontFace = FX, TextSize = 48, TextXAlignment = CENTER, Position = UDim2.fromOffset(0, 24), Size = UDim2.fromOffset(250, 52), ZIndex = 8, Parent = viewBtn }), 2, 0.4)
 		Kit.bindButton(viewBtn, { hover = 1.05 })
 		viewBtn.Activated:Connect(function() openDetail(spec) end)
 		sl.Activated:Connect(function() openDetail(spec) end)

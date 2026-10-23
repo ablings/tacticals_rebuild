@@ -842,6 +842,7 @@ end
 function Kit.open(frame)
 	Kit.centreAnchor(frame) -- scale from the centre
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
+	frame:SetAttribute("_MotionToken", (frame:GetAttribute("_MotionToken") or 0) + 1) -- (2026-10-23, lobby r12 grader C: cancels a pending close's hide, as lobby/Kit)
 	frame.Visible = true
 	s.Scale = 0.9
 	Kit.tween(s, 0.22, { Scale = 1 }, Enum.EasingStyle.Back)
@@ -851,7 +852,11 @@ function Kit.close(frame, done)
 	local s = frame:FindFirstChild("MotionScale") or new("UIScale", { Name = "MotionScale", Parent = frame })
 	Kit.tween(s, 0.12, { Scale = 0.92 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
 	local tw = frame:IsA("CanvasGroup") and Kit.tween(frame, 0.12, { GroupTransparency = 1 }, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
-	task.delay(0.12, function() frame.Visible = false; if done then done() end end)
+	local token = (frame:GetAttribute("_MotionToken") or 0) + 1
+	frame:SetAttribute("_MotionToken", token)
+	-- an open() straight after this close wins: only hide if nothing re-opened it meanwhile (r12: reopening within 0.12 s left
+	-- the blur up with no panel)
+	task.delay(0.12, function() if frame:GetAttribute("_MotionToken") == token then frame.Visible = false; if done then done() end end end) -- (the done-hook too: it drops the blur / gui)
 	return tw
 end
 
