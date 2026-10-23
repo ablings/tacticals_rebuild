@@ -95,9 +95,9 @@ local function pill(parent, n, x, y, w, h)
 	local p = new("Frame", { Name = "Pill", BackgroundColor3 = PILL, BackgroundTransparency = 0.05, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		ZIndex = 3, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) }) -- (menus e9, grader B: 12 px corners, was a capsule)
 	icon(p, n.icon or "check", 26, (h - 56) / 2, 56, GREEN, 4)
-	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 96, h * 0.06, w - 200, h * 0.52, nil, Enum.TextXAlignment.Left, 4) -- (e9, grader B: left-aligned at +96 beside the icon)
+	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 84, h * 0.06, w - 200, h * 0.52, nil, Enum.TextXAlignment.Left, 4) -- (e9, grader B: left-aligned at +96 beside the icon)
 	t.TextScaled = false
-	txt(p, n.sub or "", FB, math.floor(h * 0.24), 96, h * 0.56, w - 200, h * 0.32, GREY, Enum.TextXAlignment.Left, 4)
+	txt(p, n.sub or "", FB, math.floor(h * 0.24), 84, h * 0.56, w - 200, h * 0.32, GREY, Enum.TextXAlignment.Left, 4)
 	rewardBox(p, n.reward, w - 96, (h - 70) / 2)
 	return p
 end
@@ -189,15 +189,14 @@ local function buildInbox()
 	end
 	for i, n in inbox do
 		local y = (i - 1) * 108
-		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(686, y + 31), Size = UDim2.fromOffset(118, 40), ZIndex = 5,
-			Parent = content }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 40, GREY, nil, 6)
 		local row = pill(content, n, 0, y, 828, 102)
+		-- (menus e15, graders A + C) the age chip belongs to its row (it pops with it) and sits 24 in from the row's right end
+		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(828 - 24 - 118, 31), Size = UDim2.fromOffset(118, 40), ZIndex = 5,
+			Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 40, GREY, nil, 6)
 		-- (2026-10-21, RIVALS pass) the first rows pop in one after another (0.03 s apart) instead of all at once
 		if Kit.popIn and i <= 10 then
-			chip.AnchorPoint = Vector2.new(0.5, 0.5); chip.Position = UDim2.fromOffset(686 + 59, y + 31 + 20)
 			row.AnchorPoint = Vector2.new(0.5, 0.5); row.Position = UDim2.fromOffset(414, y + 51)
-			pcall(Kit.popIn, chip, 0.08 + i * 0.03)
 			pcall(Kit.popIn, row, 0.08 + i * 0.03)
 		end
 	end

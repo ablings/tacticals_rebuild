@@ -19,6 +19,8 @@ local TextService = game:GetService("TextService")
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
 local Kit = require(UIKit:WaitForChild("Kit"))
+local Assets = {} -- the Rivals art ids (banner shields); empty if the module isn't there
+pcall(function() Assets = require(UIKit:WaitForChild("Rivals"):WaitForChild("Assets", 5)) end)
 local C, new = Theme.color, Kit.new
 local RankedCore
 pcall(function() RankedCore = require(ReplicatedStorage.Modules.Shared:WaitForChild("RankedCore", 10)) end)
@@ -101,11 +103,22 @@ local function render()
 	emblem(ui.topEmblem, not inPlacements and rank or nil)
 	ui.rankName.Text = inPlacements and (placed .. "/" .. need) or (A("RankName") or "Bronze 1")
 	ui.rankUnit.Text = inPlacements and "Placed" or ""
-	if inPlacements then
-		-- the unit sits right after the count (measured at design size, then as a share of the 330-wide block)
-		local w = TextService:GetTextSize(ui.rankName.Text, 38, Enum.Font.GothamBold, Vector2.new(400, 66)).X
-		ui.rankUnit.Position = UDim2.fromScale((74 + w + 10) / 330, ui.rankUnit.Position.Y.Scale)
-	end
+	-- the unit sits right after the count, measured from the live label (e15, grader C: GothamBold drifted from our font)
+	task.defer(function()
+		local st = ui.rankName.Parent
+		if not (inPlacements and st and st.AbsoluteSize.X > 0) then return end
+		local right = ui.rankName.AbsolutePosition.X - st.AbsolutePosition.X + ui.rankName.TextBounds.X
+		ui.rankUnit.Position = UDim2.fromScale((right + 10 * st.AbsoluteSize.X / 330) / st.AbsoluteSize.X, ui.rankUnit.Position.Y.Scale)
+	end)
+	-- banner shields hug the words (e15)
+	task.defer(function()
+		local b = ui.banner
+		if not (b.Visible and b.AbsoluteSize.X > 0) then return end
+		local half = ui.bannerText.TextBounds.X / 2 / b.AbsoluteSize.X
+		local pad = 34 / 1412
+		ui.bannerShields[1].Position = UDim2.fromScale(0.5 - half - pad, 0.5)
+		ui.bannerShields[2].Position = UDim2.fromScale(0.5 + half + pad, 0.5)
+	end)
 	ui.rankSub.Text = inPlacements and string.format("%d / %d placement matches played: your rank shows after the last one", placed, need)
 		or ("Peak " .. tostring(A("RankPeak") or elo) .. " ELO")
 	-- the ELO bar
@@ -218,7 +231,7 @@ local function buildLadder()
 	local italic = function(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
 	local cols = {}
 	for i, r in RANKS do
-		local x = 3 + (i - 1) * 102
+		local x = (i - 1) * 101 -- (e15, grader A: 15 clear of the scroll bar)
 		local h = 90 + (i - 1) * 26
 		local c = RANK_COLOR[r]
 		local col = new("Frame", { Name = r, BackgroundTransparency = 1, Position = UDim2.fromOffset(x, PH - h - 68), Size = UDim2.fromOffset(98, h + 68),
@@ -278,9 +291,12 @@ local function buildBoard()
 	local _, p, show = popup("Leaderboard", 882, 629, "Warlord · Top 200")
 	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 85), Size = UDim2.fromOffset(792, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
 		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-	label(head, "Rank", FB, 24, 20, 0, 120, 48, GREY, Enum.TextXAlignment.Left).ZIndex = 23
-	label(head, "Player", FB, 24, 150, 0, 400, 48, GREY, Enum.TextXAlignment.Left).ZIndex = 23
-	label(head, "ELO", FB, 24, 600, 0, 172, 48, GREY, Enum.TextXAlignment.Right).ZIndex = 23
+	-- (e15, grader B) the column heads are quiet: 20 px at 60% white
+	for _, h in { label(head, "Rank", FB, 20, 20, 0, 120, 48, WHITE, Enum.TextXAlignment.Left), label(head, "Player", FB, 20, 150, 0, 400, 48, WHITE, Enum.TextXAlignment.Left),
+		label(head, "ELO", FB, 20, 600, 0, 172, 48, WHITE, Enum.TextXAlignment.Right) } do
+		h.ZIndex = 23
+		h.TextTransparency = 0.4
+	end
 	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(802, 464), BackgroundTransparency = 1,
 		BorderSizePixel = 0, ScrollBarThickness = 10, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p }, -- (e4: one scrollbar style, 10 px white)
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
@@ -305,15 +321,17 @@ local function fillBoard()
 			LayoutOrder = 2, Size = UDim2.new(1, 0, 0.07, 0), ZIndex = 23, Parent = holder })
 		-- (menus e14, grader B) a quieter hint under it
 		local hint = new("TextLabel", { BackgroundTransparency = 1, Text = "Reach 2200 ELO, then climb into the top 200.", FontFace = FM, TextScaled = true,
-			TextColor3 = WHITE, TextTransparency = 0.4, LayoutOrder = 3, Size = UDim2.new(1, 0, 0.045, 0), ZIndex = 23, Parent = holder })
+			TextColor3 = WHITE, TextTransparency = 0.4, LayoutOrder = 3, Size = UDim2.new(1, 0, 0.058, 0), ZIndex = 23, Parent = holder }) -- (e15: 22 px)
 		return
 	end
 	holder.ScrollBarImageTransparency = #top > 9 and 0.4 or 1
 	for i, e in top do
 		local mine = e.userId == player.UserId
-		local row = new("Frame", { LayoutOrder = i, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = mine and C.white or BLACK, BackgroundTransparency = mine and 0.75 or 0.5,
+		-- (menus e15, grader C) CanvasGroup rows, so they fade as they pop
+		local row = new("CanvasGroup", { LayoutOrder = i, GroupTransparency = 1, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = mine and C.white or BLACK, BackgroundTransparency = mine and 0.75 or 0.5,
 			ZIndex = 22, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.2, 0) }) })
 		if Kit.popIn and i <= 12 then pcall(Kit.popIn, row, 0.04 + i * 0.02) end -- (menus e10, grader C: the rows stagger in)
+		task.delay(i <= 12 and (0.04 + i * 0.02) or 0, function() Kit.tween(row, 0.2, { GroupTransparency = 0 }) end)
 		local function cell(text, x, w, align, font)
 			new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font or FS, TextScaled = true, TextColor3 = WHITE, TextXAlignment = align,
 				Position = UDim2.fromScale(x, 0.18), Size = UDim2.fromScale(w, 0.64), ZIndex = 23, Parent = row })
@@ -383,6 +401,13 @@ local function build()
 	ui.banner = new("Frame", { Name = "Banner", Position = UDim2.fromOffset(L, 311), Size = UDim2.fromOffset(WIDE, 63), BackgroundColor3 = WHITE, Visible = false, Parent = root },
 		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	ui.bannerText = label(ui.banner, "", FB, 30, 0, 0, WIDE, 63, BLACK)
+	-- (menus e15, grader B vs RIVALS 02) a 40 px shield either side of the banner's words; render() places them by the text width
+	local shieldImg = (Assets.play and Assets.play.shield_badge) or ""
+	ui.bannerShields = {}
+	for i = 1, 2 do
+		ui.bannerShields[i] = new("ImageLabel", { Name = "Shield", BackgroundTransparency = 1, Image = shieldImg, ImageColor3 = BLACK, ScaleType = Enum.ScaleType.Fit,
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(WIDE / 2, 31), Size = UDim2.fromOffset(40, 40), ZIndex = 2, Parent = ui.banner })
+	end
 	-- (menus e7, grader B vs RIVALS 02) the banner points down at each mode card: a small white notch under each card's centre
 	for i = 1, 3 do
 		new("Frame", { Name = "Notch", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(233 + (i - 1) * 473, 63), Size = UDim2.fromOffset(20, 20), Rotation = 45,

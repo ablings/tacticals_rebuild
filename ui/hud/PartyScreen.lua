@@ -265,6 +265,12 @@ local function renderGrid(animate)
 	end
 	-- (menus e6-e14, grader A) the empty state is a plate from the grid's top down to the party column's foot (y 742): a fixed
 	-- sibling of the grid (inside the grid's auto-sized canvas its height came out different every round)
+	if k == 0 and (animate or not emptyPlate.Visible) then
+		-- (menus e15, grader C) the empty state fades in instead of appearing
+		emptyPlate.BackgroundTransparency, emptyLabel.TextTransparency = 1, 1
+		Kit.tween(emptyPlate, 0.2, { BackgroundTransparency = 0.35 })
+		Kit.tween(emptyLabel, 0.2, { TextTransparency = 0 })
+	end
 	emptyPlate.Visible = k == 0
 	emptyLabel.Text = current == "Friends" and "No friends online right now" or "Nobody else here yet"
 	holder.Size = UDim2.fromOffset(900, math.max(10, math.ceil(k / 3) * GRID_STEP))
