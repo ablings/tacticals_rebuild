@@ -224,7 +224,7 @@ local GAP = 14                                                 -- between tiles
 local RENDER = Vector2.new(244, 160)                           -- the item's render box: bigger than the tile, so it spills out
 local RENDER_LIFT = -10                                        -- the render sits this far above the tile's centre
 local TILE_GREY, TILE_T = Color3.fromRGB(0, 0, 0), 0.42       -- a tile: dark glass (2026-10-21: 0.55 went grey on white maps)
-local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in your hands: lighter glass
+local HELD_FILL, HELD_T = Color3.fromRGB(150, 150, 156), 0.3   -- the one in your hands: lighter glass (m2: lighter, it carries the held state alone)
 local BONE = Color3.fromRGB(255, 255, 255)
 -- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) soft text edges; the held tile is the lighter one.
 -- (2026-10-21, AI-tells cleanup) Oswald Bold (was Montserrat Heavy); no hairline tile edge, only a thick (3) white ring on the held tile
@@ -694,6 +694,9 @@ local function buildUI()
 	hints.BackgroundColor3 = BLACK
 	hints.BackgroundTransparency = 0.45
 	round(hints, 15)
+	-- (2026-10-23, matchmaking round m2, grader A vs RIVALS t0046) RIVALS' strip spans ~23 % of the width, ours 37 %: the whole
+	-- strip shrinks around its bottom-right anchor
+	local hs = Instance.new("UIScale"); hs.Name = "RivalsSize"; hs.Scale = 0.65; hs.Parent = hints
 	local hpad = Instance.new("UIPadding") hpad.PaddingLeft = UDim.new(0, 12) hpad.PaddingRight = UDim.new(0, 6) hpad.Parent = hints
 	local hlist = Instance.new("UIListLayout")
 	hlist.FillDirection = Enum.FillDirection.Horizontal
@@ -1031,7 +1034,8 @@ local function refreshUI()
 				sl.kick.v = -10
 				sweep(sl.tile)
 			end
-			TweenService:Create(sl.edge, TI, { Color = on and INK_YELLOW or WHITE, Thickness = 3, Transparency = on and 0 or 1 }):Play() -- (2026-10-21, AI-tells cleanup) held only, thick
+			-- (2026-10-23, matchmaking round m2, RIVALS t0046) no ring: the held tile reads by its lighter glass alone
+			TweenService:Create(sl.edge, TI, { Transparency = 1 }):Play()
 			TweenService:Create(sl.fade, TI, { BackgroundTransparency = on and 0 or 1 }):Play()
 			TweenService:Create(sl.icon.scale, on and POP or TI, { Scale = on and 1.08 or 0.92 }):Play()
 			local tint = empty and Color3.fromRGB(90, 96, 80) or (on and Color3.fromRGB(236, 232, 218) or Color3.fromRGB(200, 198, 186))

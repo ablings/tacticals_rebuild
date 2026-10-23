@@ -456,6 +456,10 @@ refreshVotes = function()
 		tile.edge.Color = hasMe and TEAM_A[1] or tile.col
 		tile.edge.Thickness = hasMe and 5 or 3
 		tile.edge.Transparency = 0
+		-- (2026-10-23, matchmaking round m2, RIVALS t0026-t0030) a tile with votes washes pale, so the leading map reads at a glance
+		local wash = tile.t:FindFirstChild("VotedWash") or new("Frame", { Name = "VotedWash", BackgroundColor3 = WHITE, BackgroundTransparency = 1, BorderSizePixel = 0,
+			Size = UDim2.fromScale(1, 1), ZIndex = 2, Parent = tile.t }, { corner(6) }) -- (over the art, under the name and heads)
+		TweenService:Create(wash, TweenInfo.new(0.2), { BackgroundTransparency = #ids > 0 and 0.62 or 1 }):Play()
 	end
 end
 
@@ -752,7 +756,7 @@ local function optionTile(parent, x, y, id, text, onPick, kind)
 		t.SelectionGained:Connect(function() art:SetAttribute("Hover", true) end)
 		t.SelectionLost:Connect(function() art:SetAttribute("Hover", nil) end)
 	end
-	local n = label(t, string.upper(text), FX, #text > 11 and 26 or 32, -10, OPT - 40, OPT + 20, 36, WHITE)
+	local n = label(t, text, FX, #text > 11 and 26 or 32, -10, OPT - 40, OPT + 20, 36, WHITE) -- (m2, RIVALS t0036: Title case, not upper)
 	n.ZIndex = 4
 	if kind == "locked" then
 		t.BackgroundTransparency = 0.5

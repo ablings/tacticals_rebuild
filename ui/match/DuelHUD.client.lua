@@ -171,15 +171,17 @@ local mineBox = teamBox(580, TEAM_A, false)
 local theirBox = teamBox(1040, TEAM_B, true)
 local timerBox = new("Frame", { Position = UDim2.fromOffset(888, 20), Size = UDim2.fromOffset(144, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = root }, { corner(10),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(46, 48, 52), Color3.fromRGB(12, 13, 15)) }) })
-local timerL = label(timerBox, "0:00", FX, 40, 0, 4, 144, 50, WHITE)
+-- (2026-10-23, matchmaking round m2, RIVALS t0046) one line: hourglass + clock, centred in the block; no ROUND / First to lines
+local timerL = label(timerBox, "0:00", FX, 44, 0, 17, 144, 50, WHITE)
 -- (2026-10-18) the hourglass shown left of the time between rounds: top and bottom caps, two crossing glass sides
-do local hourglass = new("Frame", { Name = "Hourglass", BackgroundTransparency = 1, Position = UDim2.fromOffset(18, 12), Size = UDim2.fromOffset(24, 36), Visible = false, ZIndex = 4, Parent = timerBox })
+do local hourglass = new("Frame", { Name = "Hourglass", BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 24), Size = UDim2.fromOffset(24, 36), Visible = false, ZIndex = 4, Parent = timerBox })
 new("Frame", { BackgroundColor3 = WHITE, Position = UDim2.fromOffset(0, 0), Size = UDim2.fromOffset(24, 5), ZIndex = 4, Parent = hourglass }, { corner(2) })
 new("Frame", { BackgroundColor3 = WHITE, Position = UDim2.fromOffset(0, 31), Size = UDim2.fromOffset(24, 5), ZIndex = 4, Parent = hourglass }, { corner(2) })
 for _, rot in { 33, -33 } do
 	new("Frame", { BackgroundColor3 = WHITE, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(12, 18), Size = UDim2.fromOffset(4, 32), Rotation = rot, ZIndex = 4, Parent = hourglass })
 end end
 local roundL = label(timerBox, "ROUND 1", STENCIL, 18, 0, 52, 144, 26, Color3.fromRGB(205, 205, 212))
+roundL.Visible = false -- (m2) RIVALS shows no round line
 local toWin = label(root, "", FB, 18, 760, 108, 400, 24, Color3.fromRGB(205, 205, 212))
 -- (2026-10-21, any-map readability) "First to 5" sat bare under the timer and vanished on white maps: a solid dark edge
 do local st = toWin:FindFirstChildOfClass("UIStroke"); if st then st.Thickness, st.Transparency, st.Color = 1.3, 0.15, BLACK end; toWin.TextColor3 = Color3.fromRGB(235, 235, 240); toWin:SetAttribute("KeepStroke", true) end
@@ -1499,18 +1501,16 @@ RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.s
 -- t0358) RIVALS' ribbon: a big red banner across the top centre (0.31-0.69 W, over the score boxes) with a huge white "MATCH POINT",
 -- or "SUDDEN DEATH" when both sides are one round from winning; the ROUND WON / LOST card stays under it. It pops in as the round
 -- ends and fades out once the next round is live.
-RV.ribbon = new("Frame", { Name = "MatchPointRibbon", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(960, 14), Size = UDim2.fromOffset(720, 86),
+-- (2026-10-23, matchmaking round m2, RIVALS t0122) a thin red bar (714 x 50, top at y 50) with oversized ExtraBold words that
+-- spill above and past it; no folded tabs
+RV.ribbon = new("Frame", { Name = "MatchPointRibbon", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(960, 50), Size = UDim2.fromOffset(714, 50),
 	BackgroundColor3 = WHITE, Visible = false, ZIndex = 9, Parent = root }, { corner(4),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(236, 64, 60)), ColorSequenceKeypoint.new(0.55, Color3.fromRGB(205, 36, 36)),
 		ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 18, 22)) }) }) })
-for _, side in { 0, 1 } do -- the darker folded tabs at both ends
-	new("Frame", { BackgroundColor3 = Color3.fromRGB(120, 14, 18), BorderSizePixel = 0, AnchorPoint = Vector2.new(side, 0), Position = UDim2.fromScale(side, 0.18),
-		Size = UDim2.fromOffset(26, 70), ZIndex = 8, Parent = RV.ribbon })
-end
-RV.ribbonText = label(RV.ribbon, "MATCH POINT", FX, 84, 0, -14, 720, 100, WHITE, nil, 10)
+RV.ribbonText = label(RV.ribbon, "MATCH POINT", Font.new("rbxassetid://12187365977", Enum.FontWeight.ExtraBold), 88, -60, -50, 834, 104, WHITE, nil, 10)
 do
 	local st2 = RV.ribbonText:FindFirstChildOfClass("UIStroke")
-	if st2 then st2.Thickness, st2.Transparency, st2.Color = 3, 0.15, Color3.fromRGB(60, 8, 10) end
+	if st2 then st2.Thickness, st2.Transparency, st2.Color = 2, 0.45, Color3.fromRGB(60, 8, 10) end
 end
 RV.ribbonScale = new("UIScale", { Parent = RV.ribbon })
 function RV.showRibbon(text)
@@ -1712,7 +1712,7 @@ RunService.RenderStepped:Connect(function()
 	end
 	local minimal = player:GetAttribute("Setting_GameplayHUD") == "Minimal"
 	local resUp = rgui ~= nil and rgui.Enabled
-	mineBox.frame.Visible, theirBox.frame.Visible, timerBox.Visible, toWin.Visible, feed.Visible = not minimal and not resUp, not minimal and not resUp, not minimal and not resUp, not minimal and not resUp, not minimal and not resUp
+	mineBox.frame.Visible, theirBox.frame.Visible, timerBox.Visible, toWin.Visible, feed.Visible = not minimal and not resUp, not minimal and not resUp, not minimal and not resUp, false, not minimal and not resUp -- (m2: no "First to N" line, as RIVALS)
 	fillBox(mineBox, myIds)
 	fillBox(theirBox, myTeam == "A" and ids.B or ids.A)
 	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
@@ -1728,11 +1728,11 @@ RunService.RenderStepped:Connect(function()
 	end
 	local left = math.max(0, (st("StateEndsAt") or st("PhaseEndsAt") or 0) - workspace:GetServerTimeNow())
 	local between = state == "RoundEnd" or state == "Countdown"
-	timerBox.Hourglass.Visible = between
+	timerBox.Hourglass.Visible = true -- (m2, RIVALS t0046: the hourglass stays through the live round too)
 	-- (RIVALS, Edward 2026-10-19) under a minute the clock counts tenths (59.9, ... 4.9, 4.8); under 5 s of a live round it turns red
 	timerL.Text = left < 60 and string.format("%.1f", math.floor(left * 10) / 10) or string.format("%d:%02d", left // 60, math.floor(left) % 60)
 	timerL.TextColor3 = (state == "Live" and left < 5) and BAD or WHITE
-	timerL.Position = UDim2.fromScale(between and 0.12 or 0, timerL.Position.Y.Scale)
+	timerL.Position = UDim2.fromScale(0.12, timerL.Position.Y.Scale)
 	-- (2026-10-21, round 3: match RIVALS) the clock ticks: the whole timer block punches once per second in the last 5 s of a
 	-- live round and the last 3 s of a countdown (timerL's own Position is rewritten every frame, so the block pops, centred
 	-- once; state in the stats table, no new locals)
@@ -1790,6 +1790,9 @@ RunService.RenderStepped:Connect(function()
 	local killerUid = player:GetAttribute("SpectateTarget")
 	local onKiller = spec and not spectator() and killerUid ~= nil and target == killerUid and player:GetAttribute("SpectateReason") == "Killer"
 	specBar.Visible = spec and not onKiller
+	-- (2026-10-23, matchmaking round m2, RIVALS t0212-t0214) the killer card stays ~1.5 s into the next countdown
+	if onKiller then RV.kcardUntil = os.clock() + 1.5 end
+	local keepCard = not onKiller and RV.kcard.Visible and state == "Countdown" and RV.kcardUntil ~= nil and os.clock() < RV.kcardUntil
 	if onKiller and not RV.kcard.Visible then
 		-- slide in from the right edge
 		local home = RV.kcardHome or RV.kcard.Position
@@ -1797,13 +1800,13 @@ RunService.RenderStepped:Connect(function()
 		RV.kcard.Position = home + UDim2.fromScale(0.25, 0)
 		TweenService:Create(RV.kcard, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Position = home }):Play()
 	end
-	RV.kcard.Visible = onKiller
+	RV.kcard.Visible = onKiller or keepCard
 	-- (2026-10-22, RIVALS) the weapon HUD is gone while the kill banner is up (it sat under the banner, bottom right)
 	do
 		local hb = player.PlayerGui:FindFirstChild("Hotbar")
 		if hb and hb:IsA("ScreenGui") then
-			if onKiller and hb.Enabled then RV.hbHidden = true; hb.Enabled = false
-			elseif not onKiller and RV.hbHidden then RV.hbHidden = nil; if rblurOn then rHidden[hb] = true else hb.Enabled = true end end -- (the results screen restores it)
+			if (onKiller or keepCard) and hb.Enabled then RV.hbHidden = true; hb.Enabled = false
+			elseif not (onKiller or keepCard) and RV.hbHidden then RV.hbHidden = nil; if rblurOn then rHidden[hb] = true else hb.Enabled = true end end -- (the results screen restores it)
 		end
 	end
 	if onKiller then RV.refreshKillerCard(killerUid) end
@@ -2156,4 +2159,28 @@ do
 	end
 	calmTree(gui)
 	calmTree(rgui)
+end
+
+-- (2026-10-23, matchmaking round m2, grader C vs RIVALS t0118-t0122 / t0206) under the HUD: the world dims ~40 % from 1.5 s
+-- into a round end through the countdown, and a red wash flashes when you die in a match
+do
+	local dgui = new("ScreenGui", { Name = "RoundDim", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = -1, Parent = player:WaitForChild("PlayerGui") })
+	local dim = new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), Parent = dgui })
+	local red = new("Frame", { BackgroundColor3 = Color3.fromRGB(200, 20, 24), BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), Parent = dgui })
+	local lastState, since, dimOn, afterRound = nil, 0, false, false
+	RunService.RenderStepped:Connect(function()
+		local o = stateObject()
+		local state = o and o:GetAttribute("MatchState")
+		if state ~= lastState then afterRound = lastState == "RoundEnd" or (state == "Countdown" and afterRound); lastState, since = state, os.clock() end
+		local want = inMatch() and ((state == "RoundEnd" and os.clock() - since > 1.5) or (state == "Countdown" and afterRound)) -- (not round 1's countdown)
+		if want ~= dimOn then
+			dimOn = want
+			TweenService:Create(dim, TweenInfo.new(want and 0.5 or 0.25), { BackgroundTransparency = want and 0.6 or 1 }):Play()
+		end
+	end)
+	player:GetAttributeChangedSignal("Alive"):Connect(function()
+		if player:GetAttribute("Alive") ~= false or not inMatch() then return end
+		red.BackgroundTransparency = 0.55
+		TweenService:Create(red, TweenInfo.new(0.8, Enum.EasingStyle.Quad), { BackgroundTransparency = 1 }):Play()
+	end)
 end
