@@ -533,7 +533,7 @@ function openTab(tab)
 		if sec.title then
 			-- (2026-10-21, port3) graders: the header title bigger like RIVALS' (61 -> 70 in an 88 px bar, still Rubik ExtraBold),
 			-- and the bar near-solid: at 0.28 a dark gun silhouette from the GUI behind showed through at the bar's right end
-			local hb = Kit.headerBar(772, sec.title, 88)
+			local hb = Kit.headerBar(772, sec.title, 71) -- (lobby r16, grader B: the bars 86 -> 70 design px)
 			hb.BackgroundTransparency = 0.04
 			local ht = hb:FindFirstChildOfClass("TextLabel")
 			if ht then ht.TextSize = 55; ht:SetAttribute("dTS", 55) end -- (lobby r15, grader B: this override, not Kit.headerBar's size, set the headers; 70 -> 55)

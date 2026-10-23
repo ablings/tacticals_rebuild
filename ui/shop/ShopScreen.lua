@@ -175,10 +175,11 @@ end
 local function heavyTitle(parent, text, ts, x, y, w, h, z, align)
 	z = z or 5
 	-- (2026-10-23, lobby r15, grader B vs rec t0068-t0070) RIVALS' banner titles are Title Case; LobbyConfig keeps ours in caps,
-	-- so an all-caps title is re-cased here (short all-caps words such as VIP / 2X stay as they are)
+	-- so an all-caps title is re-cased here (acronyms such as VIP stay caps; 2X becomes 2x)
 	if type(text) == "string" and text == string.upper(text) and text:find("%a") then
 		text = text:gsub("[%w']+", function(word)
-			if #word <= 3 or word:find("%d") then return word end
+			if word:find("%d") then return string.lower(word) end -- (r16: "2X" -> "2x", RIVALS' multiplier)
+			if ({ VIP = true, XP = true, MVP = true })[word] then return word end -- (r16: "KIT" read "Operator KIT"; only real acronyms stay caps)
 			return word:sub(1, 1) .. string.lower(word:sub(2))
 		end)
 	end
@@ -859,7 +860,7 @@ function RENDER.Featured(pg, hover)
 	local offers = {}
 	for _, gp in Config.GamePasses do if not (d.Passes and d.Passes[gp.Key]) then table.insert(offers, passSpec(gp)) end end
 	for _, bd in Config.Bundles or {} do table.insert(offers, bundleSpec(bd)) end
-	local SO_X, SO_Y, SO_W, SO_H = 12, 334 + GAP, 747, 323 -- (2026-10-21, port3) 12..786 x 384..654; (lobby r14, grader A vs rec t0070: 747 x 323)
+	local SO_X, SO_Y, SO_W, SO_H = 1, 334 + GAP - 18, 747, 323 -- (lobby r16, grader A: 11 left, 18 up) -- -- (2026-10-21, port3) 12..786 x 384..654; (lobby r14, grader A vs rec t0070: 747 x 323)
 	local so = new("Frame", { Name = "SpecialOffer", Position = UDim2.fromOffset(SO_X, SO_Y), Size = UDim2.fromOffset(SO_W, SO_H), BackgroundColor3 = C.panel,
 		BackgroundTransparency = 0.25, BorderSizePixel = 0, ClipsDescendants = true, Parent = pg }, { RK.corner(8) })
 	local slides = {}
