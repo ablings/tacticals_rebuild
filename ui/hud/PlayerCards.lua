@@ -371,9 +371,10 @@ end
 
 ---------------------------------------------------------------------------------------------------- player menu
 local menu
-function PlayerCards.CloseMenu()
+-- silent: Menu() closes the previous menu without the close sound (menus e5, grader C: switching players played both sounds)
+function PlayerCards.CloseMenu(silent: any)
 	if not menu then return end
-	if Kit.sfx then Kit.sfx("close") end -- (menus e4, grader C: the player menu opens / closes with the UI sounds)
+	if Kit.sfx and silent ~= true then Kit.sfx("close") end -- (menus e4, grader C: the player menu opens / closes with the UI sounds)
 	local m = menu
 	menu = nil
 	m.catcher.Visible = false
@@ -405,7 +406,7 @@ end
 function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	if Kit.sfx then Kit.sfx("open") end
 	ensureGui()
-	PlayerCards.CloseMenu()
+	PlayerCards.CloseMenu(true)
 	local actions
 	if p == player then
 		actions = { "View Profile", "View Avatar" }
@@ -428,7 +429,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	local root = new("Frame", { Name = "PlayerMenu", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), ZIndex = 20, Parent = canvas })
 	-- a click anywhere else closes it (the catcher covers the whole screen, under the panel)
 	local catcher = new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 4, Parent = gui })
-	catcher.Activated:Connect(PlayerCards.CloseMenu)
+	catcher.Activated:Connect(function() PlayerCards.CloseMenu() end) -- (a wrapper: Activated passes the input, which would read as silent)
 	local panel = new("CanvasGroup", { Name = "Panel", Position = UDim2.fromOffset(rightX - 4 - PW, top), Size = UDim2.fromOffset(PW, H),
 		BackgroundColor3 = cardCol, BackgroundTransparency = 0.05, ZIndex = 21, Parent = root }, { Kit.corner(8) })
 	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 8), Size = UDim2.fromOffset(64, 64), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle

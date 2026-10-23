@@ -91,6 +91,13 @@ local function build()
 		-- (AbsolutePosition is always measured below the top bar, IgnoreGuiInset or not; GetMouseLocation is the whole screen)
 		local op, osz = owner.AbsolutePosition + GuiService:GetGuiInset(), owner.AbsoluteSize
 		if m.X < op.X or m.Y < op.Y or m.X > op.X + osz.X or m.Y > op.Y + osz.Y then Tooltip.Hide() return end
+		-- (menus e4, grader A) a menu opened over the owner (Invite -> the party screen) hides its bubble: the top object under
+		-- the pointer belongs to a gui drawn above the owner's
+		local hit = gui.Parent and gui.Parent:GetGuiObjectsAtPosition(m.X, m.Y - GuiService:GetGuiInset().Y)[1]
+		if hit and hit ~= owner and not hit:IsDescendantOf(owner) then
+			local hg, og = hit:FindFirstAncestorWhichIsA("LayerCollector"), owner:FindFirstAncestorWhichIsA("LayerCollector")
+			if hg and og and hg ~= og and hg:IsA("ScreenGui") and og:IsA("ScreenGui") and hg.DisplayOrder > og.DisplayOrder then Tooltip.Hide() return end
+		end
 		local view = gui.AbsoluteSize
 		local size = bubble.AbsoluteSize
 		local x, y = m.X + 18, m.Y + 14

@@ -205,7 +205,12 @@ local function buildInbox()
 	-- the list's canvas: as tall as the rows (Scale is relative to the list's parent)
 	list.CanvasSize = UDim2.fromScale(0, math.max(768, #inbox * 108) / 1080)
 	content.Size = UDim2.fromScale(1, math.max(768, #inbox * 108) / 768)
-	if #inbox * 108 <= 768 then list.ScrollBarImageTransparency = 1 end -- (menus e4, grader A) no idle scrollbar while the rows fit
+	-- (menus e4-e5, graders A + C) no idle scrollbar while the rows fit
+	if #inbox * 108 <= 768 then
+		list.ScrollBarImageTransparency = 1
+		list.ScrollBarThickness = 0
+		list.ScrollingEnabled = false
+	end
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
 	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 18 }):Play()
 	if Kit.open then pcall(Kit.open, inboxRoot) end

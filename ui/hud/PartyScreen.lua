@@ -208,10 +208,14 @@ local function renderParty()
 				end)
 			end
 		else
-			-- an empty slot: a dashed-feel dim card with "+ Invite"; clicking it jumps to the Friends tab
+			-- an empty slot: a dim card built like a filled row (menus e4, grader A vs rivals_rec t0152): a 72 px "+" circle where
+			-- the avatar sits, "Invite" left-aligned where the name sits; clicking it jumps to the Friends tab
 			local slot = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(0, (i - 1) * 118), Size = UDim2.fromOffset(340, 108),
 				BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = col }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) no thin green border; (menus e2, grader B: 0.6 read disabled -> 0.35)
-			label(slot, "+  Invite", F_HEAD, 28, 0, 0, 340, 108, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 4) -- (e2: white, a size up, like RIVALS' "+ Invite")
+			local plus = new("Frame", { Position = UDim2.fromOffset(18, 18), Size = UDim2.fromOffset(72, 72), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.88,
+				ZIndex = 4, Parent = slot }, { Kit.corner(36) })
+			label(plus, "+", F_HEAD, 44, 0, -2, 72, 72, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
+			label(slot, "Invite", F_HEAD, 28, 110, 0, 210, 108, Color3.new(1, 1, 1), Enum.TextXAlignment.Left, 4)
 			-- (e2, grader C) empty slots answer hover like every other button
 			if Kit.bindButton then Kit.bindButton(slot, { hover = 1.03, press = 0.97 }) end
 			slot.Activated:Connect(function() PartyScreen.SetTab("Friends") end)
