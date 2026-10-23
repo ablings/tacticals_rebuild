@@ -372,6 +372,9 @@ local function fillBoard()
 		-- (menus e4, grader A) the empty state sits in the middle of the list, and an idle list shows no scrollbar;
 		-- (menus e12, grader B) with the Warlord crest above it
 		holder.ScrollBarImageTransparency = 1
+		holder.AutomaticCanvasSize = Enum.AutomaticSize.Y
+		local lay = holder:FindFirstChildOfClass("UIListLayout")
+		if lay then lay.Padding = UDim.new(0, 6) end
 		new("Frame", { Name = "Spacer", BackgroundTransparency = 1, LayoutOrder = 0, Size = UDim2.new(1, 0, 0.3, 0), Parent = holder })
 		local crest = new("Frame", { Name = "Crest", BackgroundTransparency = 1, LayoutOrder = 1, Size = UDim2.new(1, 0, 0.24, 0), Parent = holder }) -- (e13, grader B: a ~96 px crest)
 		local cHold = new("CanvasGroup", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromScale(1, 1), Parent = crest },
@@ -393,16 +396,31 @@ local function fillBoard()
 	for i, e in top do
 		local mine = e.userId == player.UserId
 		-- (menus e15, grader C) CanvasGroup rows, so they fade as they pop
-		local row = new("CanvasGroup", { LayoutOrder = i, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = mine and C.white or BLACK, BackgroundTransparency = mine and 0.75 or 0.5,
+		local row = new("CanvasGroup", { LayoutOrder = i, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = WHITE, BackgroundTransparency = mine and 0.75 or 0.93, -- (rd2: a faint plate per row, like the pinned row)
+			
 			ZIndex = 22, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.2, 0) }) })
 		if Kit.popIn and i <= 12 then pcall(Kit.popIn, row, 0.04 + i * 0.02) end -- (menus e10, grader C: the rows stagger in)
-		local function cell(text, x, w, align, font)
-			new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font or FS, TextScaled = true, TextColor3 = WHITE, TextXAlignment = align,
-				Position = UDim2.fromScale(x, 0.18), Size = UDim2.fromScale(w, 0.64), ZIndex = 23, Parent = row })
+		local function cell(text, x, w, align, font, col)
+			new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font or FS, TextScaled = true, TextColor3 = col or WHITE, TextXAlignment = align,
+				Position = UDim2.fromScale(x, 0.25), Size = UDim2.fromScale(w, 0.5), ZIndex = 23, Parent = row })
 		end
-		cell("#" .. i, 0.03, 0.12, Enum.TextXAlignment.Left, FB)
+		-- (rd2) the top three read gold / silver / bronze
+		local medal = ({ Theme.hex("#F2C14E"), Theme.hex("#D6D9E0"), Theme.hex("#D98C4A") })[i]
+		cell("#" .. i, 0.03, 0.12, Enum.TextXAlignment.Left, FB, medal)
 		cell(tostring(e.name or "?"), 0.17, 0.55, Enum.TextXAlignment.Left)
 		cell(tostring(e.elo or 0) .. " ELO", 0.72, 0.25, Enum.TextXAlignment.Right, FB)
+	end
+	-- (live-like data round rd1) with a real board the rows came out tiny (Scale 0.07 of an auto canvas that grows with them):
+	-- 56-tall rows (6 gap) at design scale on a fixed canvas from the row count, rows and gap as shares of it
+	local layout = holder:FindFirstChildOfClass("UIListLayout")
+	local gy = holder.AbsoluteSize.Y
+	if gy > 0 then
+		local rowPx, padPx = 56 * gy / 360, 6 * gy / 360
+		local canvas = math.max(gy, #top * (rowPx + padPx))
+		holder.AutomaticCanvasSize = Enum.AutomaticSize.None
+		holder.CanvasSize = UDim2.new(0, 0, 0, canvas)
+		for _, r in holder:GetChildren() do if r:IsA("CanvasGroup") then r.Size = UDim2.new(1, -10, rowPx / canvas, 0) end end
+		if layout then layout.Padding = UDim.new(padPx / canvas, 0) end
 	end
 end
 
