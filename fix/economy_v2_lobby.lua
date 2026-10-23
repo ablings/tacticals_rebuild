@@ -18,7 +18,9 @@ local LM = SSS:FindFirstChild("LobbyManager", true)
 local TP = SSS:FindFirstChild("Template", true)
 local LDM = SSS:FindFirstChild("LobbyDuelManager", true)
 local LB = SSS:FindFirstChild("LobbyLeaderboard", true)
-assert(LM and TP and LDM and LB, "a lobby script is missing")
+-- (2026-10-23) also run in the MATCH places: their after-match lobby runs the hub's LobbyManager copy and the same Missions /
+-- Kit / Shop UI. Pad duels (LobbyDuelManager) and the hub leaderboard (LobbyLeaderboard) only exist in the hub: skipped there.
+assert(LM and TP, "LobbyManager / Template missing")
 
 local ROLL_OLD = [==[	local pool = table.clone(Config.Quests[scope].Pool)
 	local rng = Random.new()
@@ -286,17 +288,18 @@ local LB_NEW = [==[	if not list or #list == 0 then
 local edits = {
 	{ LM, ROLL_OLD, ROLL_NEW }, { LM, ENSURE_OLD, ENSURE_NEW }, { LM, BLOCK_ANCHOR, BLOCK },
 	{ LM, JOIN_OLD, JOIN_NEW }, { LM, LOOP_OLD, LOOP_NEW },
-	{ TP, TP_OLD, TP_NEW },
+	{ TP, TP_OLD, TP_NEW, "DailyFreeKey" }, -- skip if fix/economy_v2_match.lua already added the keys (match places)
 	{ LDM, DUEL_OLD, DUEL_NEW }, { LDM, DUEL2_OLD, DUEL2_NEW },
 	{ LB, LB_OLD, LB_NEW },
 }
 local sources, out = {}, {}
 for i, e in edits do
 	local inst, old, new = e[1], e[2], e[3]
+	if not inst then table.insert(out, i .. "-") continue end -- a hub-only script (match places)
 	local s = sources[inst] or inst.Source:gsub("\r\n", "\n")
 	if UNDO then old, new = new, old end
 	local done
-	if UNDO then done = not s:find(old, 1, true) else done = s:find(new, 1, true) ~= nil end
+	if UNDO then done = not s:find(old, 1, true) else done = s:find(new, 1, true) ~= nil or (e[4] ~= nil and s:find(e[4], 1, true) ~= nil) end
 	if done then
 		table.insert(out, i .. "=")
 	else
