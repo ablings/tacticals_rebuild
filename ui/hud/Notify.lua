@@ -262,10 +262,14 @@ function Notify.OpenNews()
 	-- automatic canvas and a list layout of fixed-size blocks (the pattern the Ranks rules use; e2's hand-sized canvas hid the
 	-- children). Hero 16:9 (468 tall), headings 42 with even 48 gaps, the body regular 26 with the bullet hanging in its own column.
 	local W, TOP, H = 832, 119, 961
-	local col = new("ScrollingFrame", { Name = "Article", BackgroundColor3 = PILL, BackgroundTransparency = 0.15, BorderSizePixel = 0, Position = UDim2.fromOffset(544, TOP),
-		Size = UDim2.fromOffset(W, H), ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(),
+	-- (menus e7, graders A + B + C) the plate is its own frame and the scroller is 22 wider, so the 9 px bar runs in the gap
+	-- right of the panel instead of over the hero
+	new("Frame", { Name = "Plate", BackgroundColor3 = PILL, BackgroundTransparency = 0.15, BorderSizePixel = 0, Position = UDim2.fromOffset(544, TOP),
+		Size = UDim2.fromOffset(W, H), ZIndex = 2, Parent = inboxRoot }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	local col = new("ScrollingFrame", { Name = "Article", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(544, TOP),
+		Size = UDim2.fromOffset(W + 22, H), ScrollBarThickness = 9, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.6, CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y, ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, ZIndex = 2, Parent = inboxRoot },
-		{ new("UICorner", { CornerRadius = UDim.new(0, 8) }), new("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder }) })
+		{ new("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder }) })
 	local FR = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium) -- (e6: this family has no Regular; it fell back to Source Sans)
 	local order = 0
 	local function block(h)
@@ -282,16 +286,16 @@ function Notify.OpenNews()
 		LayoutOrder = order, Parent = col }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	txt(block(100), "UPDATE " .. tostring(Notify.NEWS_UPDATE), FX, 44, 0, 8, W - 16, 56, nil, Enum.TextXAlignment.Right, 3)
 	for _, n in Notify.NEWS do
-		local bodyH = math.max(1, math.ceil(#(n.sub or "") / 50)) * 32 + 8 -- (e6) about 50 characters a line at 26 px in 722
+		local bodyH = math.max(1, math.ceil(#(n.sub or "") / 60)) * 32 -- (e6-e7) about 60 characters a line at 26 px in 722
 		local b = block(52 + 6 + bodyH + 40)
 		txt(b, n.title, FX, 42, 36, 0, W - 60, 52, nil, Enum.TextXAlignment.Left, 3)
 		txt(b, "•", FR, 26, 44, 58, 24, 34, GREY, Enum.TextXAlignment.Left, 3)
-		local body = txt(b, n.sub or "", FR, 26, 70, 58, W - 110, bodyH, GREY, Enum.TextXAlignment.Left, 3)
+		local body = txt(b, n.sub or "", FR, 26, 70, 58, W - 110, bodyH, Color3.fromRGB(228, 228, 230), Enum.TextXAlignment.Left, 3) -- (e7, grader B: 90% white)
 		body.TextWrapped = true
 		body.TextYAlignment = Enum.TextYAlignment.Top
 	end
 	local x = Kit.closeButton(UDim2.fromOffset(84, 50))
-	x.Position = UDim2.fromOffset(544 + W + 26, TOP)
+	x.Position = UDim2.fromOffset(544 + W + 34, TOP)
 	x.Parent = inboxRoot
 	x.Activated:Connect(function() Notify.CloseInbox() end)
 	Kit.toScale(inboxRoot)

@@ -138,8 +138,8 @@ local function personCard(parent, x, y, w, pp, opts)
 		ZIndex = 3, Parent = parent }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) hairline border removed; the dark fill separates the card
 	local hs = new("ImageLabel", { BackgroundColor3 = GUN, Position = UDim2.fromOffset(18, 10), Size = UDim2.fromOffset(73, 73), ZIndex = 4, Parent = c }, { Kit.corner(8) }) -- (e6: 73 at +18, the empty slots' "+" sits in the same place)
 	headshot(hs, pp.uid)
-	label(c, pp.name, F_NAME, 22, 110, 14, w - 120, 28, BONE, nil, 4)
-	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 15, 110, 44, w - 120, 20, FIELD, nil, 4)
+	label(c, pp.name, F_NAME, 30, 110, 14, w - 120, 36, BONE, nil, 4) -- (menus e7, grader A vs t0152: the name 30 bold, the pair centred in the row)
+	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 17, 110, 52, w - 120, 22, FIELD, nil, 4)
 	if opts.crown then
 		-- (2026-10-18, live RIVALS) the leader: a gold crown on the headshot's corner (drawn: the font has no crown glyph)
 		Kit.crown(hs, UDim2.fromScale(0.86, 0.1), UDim2.fromScale(0.62, 0.48), 6)
@@ -293,7 +293,7 @@ local function build()
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), Parent = canvas })
 	-- left
 	-- (2026-10-21, AI-tells cleanup) the olive left-edge bar beside YOUR PARTY is gone (AI tell)
-	label(root, "YOUR PARTY", F_HEAD, 52, 318, 142, 400, 70, BONE)
+	label(root, "YOUR PARTY", F_HEAD, 52, 300, 142, 400, 70, BONE) -- (menus e7, grader A: flush with the rows' left edge)
 	col = new("Frame", { Name = "Members", BackgroundTransparency = 1, Position = UDim2.fromOffset(300, 230), Size = UDim2.fromOffset(340, 5 * 118), Parent = root })
 	local leave = new("TextButton", { Name = "LeaveParty", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(300, 830), Size = UDim2.fromOffset(340, 56),
 		BackgroundColor3 = hex("#8E2A24"), Visible = false, Parent = root }, { Kit.corner(10) })

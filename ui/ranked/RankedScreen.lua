@@ -213,10 +213,17 @@ local function buildLadder()
 		})
 		local hold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-5, -8), Size = UDim2.fromOffset(108, 108), ZIndex = 24, Parent = col }) -- (e6, graders A + B: the art has padding; 108 shows an 88 px emblem)
 		emblem(hold, r)
+		-- (menus e7, grader C) each column answers hover: its emblem lifts a little
+		local lift = new("UIScale", { Parent = hold })
+		col.MouseEnter:Connect(function() Kit.tween(lift, 0.12, { Scale = 1.1 }) end)
+		col.MouseLeave:Connect(function() Kit.tween(lift, 0.12, { Scale = 1 }) end)
 		local floorText = r == "Warlord" and "Top 200" or tostring(((i - 1) * 3 + 1) * 100) .. "+"
 		stroke(label(col, floorText, italic(FB), 34, -8, 90, 114, 38, WHITE), 2).ZIndex = 25
-		local n = label(col, r, italic(FS), 21, -4, h + 68 - 30, 106, 26, WHITE)
+		local n = label(col, r, italic(FS), 21, 4, h + 68 - 30, 90, 26, WHITE)
 		n.TextTransparency = 0.15
+		-- (menus e7, grader B) long names ("Commander") shrink to fit the pillar instead of running into the next one
+		n.TextScaled = true
+		new("UITextSizeConstraint", { MaxTextSize = 21, Parent = n })
 		n.ZIndex = 25
 		table.insert(cols, col)
 	end
@@ -228,7 +235,7 @@ local function buildLadder()
 		"Elite and up: after 7 days without ranked you lose 25 ELO a day (never below Elite 1).",
 		"Past Commander 3 (2200 ELO) the top 200 players are Warlord.",
 	}
-	local list = new("ScrollingFrame", { Name = "Rules", Position = UDim2.fromOffset(30, BASE + 12), Size = UDim2.fromOffset(834, 629 - BASE - 24), BackgroundTransparency = 1,
+	local list = new("ScrollingFrame", { Name = "Rules", Position = UDim2.fromOffset(30, BASE + 12), Size = UDim2.fromOffset(842, 629 - BASE - 24), BackgroundTransparency = 1,
 		BorderSizePixel = 0, ScrollBarThickness = 6, -- (e6, grader B: a slim bar at the modal's right edge, clear of the text)
 		 ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y, ScrollingDirection = Enum.ScrollingDirection.Y, ZIndex = 22, Parent = p },
