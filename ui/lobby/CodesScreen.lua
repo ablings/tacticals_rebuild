@@ -29,7 +29,7 @@ end)
 -- (2026-10-21, port3) panel layout in design px (1920x1080): tighter than round 3's 1060 x 450, centred, X 12 px outside
 -- (2026-10-22, section round 0, grader A vs RIVALS' Free rewards / Tasks panels) narrower and higher: 826 wide at x 547 (0.285-0.715 W),
 -- top at y 205 (0.19 H), the input row 68 tall (was 960 x 410 at 480, 300, rows 84)
-local PW, PH, PX, PY, PAD = 826, 354, 547, 205, 28
+local PW, PH, PX, PY, PAD = 826, 354, 531, 205, 42 -- (lobby r21, grader A: lined up with Missions at x 531, its 42 inset)
 -- (2026-10-21, RIVALS 1:1) Rivals Theme faces: Rubik ExtraBold title, Rubik Bold code box / chips, Rubik Medium body
 local FB = Font.new(F.heavy.Family, Enum.FontWeight.Bold)
 local FM = F.medium

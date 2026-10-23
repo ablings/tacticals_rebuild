@@ -819,7 +819,7 @@ function RENDER.Featured(pg, hover)
 		weaponTag(tile, id, 34, 4)
 		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 2), Size = UDim2.fromOffset(132, 94), ZIndex = 3, Parent = h })
 		turnOnHover(h, lit(itemArt(art, id, nil, 0.95)))
-		priceTag(h, "kit", Config.Items[id].Price, 76, 104, 100, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
+		priceTag(h, "kit", Config.Items[id].Price, 76, 104, 112, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true }) -- (r21, grader B: 112 like the right grid; the digits read small at 100)
 	end
 
 	-- the Season Pass card (749x321 at 519,6): our Founder's Bundle. Grey 35° wash (or the bundle colour), one big render

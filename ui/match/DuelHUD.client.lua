@@ -1306,13 +1306,13 @@ end
 ---------------------------------------------------------------------------------------------------- eliminated
 -- (2026-10-23, matchmaking round m7, grader A vs RIVALS t0054 / t0118: y 69-73 %, ~24 % wide, ~3.9 % tall) lower and bigger
 local elimL = new("TextLabel", { Name = "Eliminated", BackgroundTransparency = 1, RichText = true, Text = "", FontFace = FB, TextSize = 44, TextColor3 = WHITE,
-	Position = UDim2.fromOffset(460, 718), Size = UDim2.fromOffset(1000, 56), Visible = false, ZIndex = 6, Parent = root }) -- (m24: centre at 69.1 %, t0054)
+	Position = UDim2.fromOffset(460, 738), Size = UDim2.fromOffset(1000, 56), Visible = false, ZIndex = 6, Parent = root }) -- (m25: centre at 70.9 % (69.1 % was the cap top), t0054)
 elimL:SetAttribute("dTS", 44); table.insert(scaled, elimL)
 new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = elimL })
 -- (2026-10-20, the common theme of every duel game Edward showed: Knife / Murder Duels' "+XP HEADSHOT / KILL", Redliner's
 -- "Killed X!", Hood Rivals' ELIMINATED) what the kill was, in small grey caps under the name
 local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 22, TextColor3 = Color3.fromRGB(232, 232, 236),
-	Position = UDim2.fromOffset(560, 774), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
+	Position = UDim2.fromOffset(560, 794), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
 elimSub:SetAttribute("dTS", 22); table.insert(scaled, elimSub)
 new("UIStroke", { Thickness = 2, Transparency = 0.25, Parent = elimSub }) -- (live check) readable over the bright Practice Range walls
 local elimToken = 0
