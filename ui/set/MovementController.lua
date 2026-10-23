@@ -43,8 +43,14 @@ end
 local PAD_CROUCH = Enum.KeyCode.ButtonB -- [PAD] B = crouch / slide
 local sprintBlockedAt = 0
 -- [SET] Shift (your Sprint bind) held, or Toggle Sprint / Auto Sprint asking to run
+-- [TOUCH] (2026-10-23, Edward) on a touch screen Auto Sprint is the default (Settings > Touch "Mobile Auto Sprint"): you run on your
+-- own and HOLDING the Sprint button walks; switched off it's the other way round (hold to run)
+local touchSprintHeld = false
 local function wantsSprint(): boolean
 	if padSprint then return true end -- [PAD]
+	if UserInputService.TouchEnabled or localPlayer:GetAttribute("_ForceTouch") == true then
+		return (localPlayer:GetAttribute("Setting_MobileAutoSprint") ~= false) ~= touchSprintHeld
+	end
 	if localPlayer:GetAttribute("Setting_AutoSprint") == true then return true end
 	if localPlayer:GetAttribute("Setting_ToggleSprint") == true then return sprintToggled end
 	return isDown(Binds.Key(localPlayer, "Sprint", Config.Keybinds.Sprint))
@@ -535,6 +541,7 @@ function controller.Start()
 		IA.Bind("Crouch", function(state)
 			if state == Enum.UserInputState.Begin then onInputBegan(crouchInput(state), false) else onInputEnded(crouchInput(state)) end
 		end)
+		IA.Bind("Sprint", function(state) touchSprintHeld = state == Enum.UserInputState.Begin end)
 		IA.Bind("Slide", function(state)
 			if state ~= Enum.UserInputState.Begin or not isAlive() or crouched or sliding or os.clock() - lastSlide <= Config.Slide.Cooldown then return end
 			if CoverController and (CoverController.IsInCover() or CoverController.IsMoving()) then return end

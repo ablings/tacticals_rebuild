@@ -430,7 +430,7 @@ game:GetService("RunService").RenderStepped:Connect(function()
 	end
 	-- Knockback Shot ring
 	local ready = Players.LocalPlayer:GetAttribute("RevolverReady") == true
-	ring.Visible = showing and name == "Revolver"
+	ring.Visible = false -- (2026-10-23, Edward: "remove the ring around the cursor"; the Revolver ability is now the 2nd consecutive hit)
 	if ready ~= lastReady then
 		lastReady = ready
 		TweenService:Create(ring, TweenInfo.new(0.18, Enum.EasingStyle.Quad), { Size = UDim2.fromScale(ready and 0.045 or 0.07, ready and 0.045 or 0.07) }):Play()

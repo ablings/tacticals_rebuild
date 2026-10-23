@@ -131,11 +131,15 @@ return {
 				{ kind = "slider", name = "Buttons Transparency", glyph = "◐", min = 0, max = 100, step = 5, arrow = 10, value = 50, fmt = pct, desc = "How see-through the touch buttons are" },
 				{ kind = "toggle", name = "Buttons Camera Sinking", glyph = "⇩", value = true, desc = "Dragging from a button also turns the camera, so you can aim while you hold it" },
 				{ kind = "toggle", name = "Show Weapon Ammo", glyph = "⁞", value = true, desc = "Shows your ammo on the gun button" },
+				{ kind = "toggle", name = "Mobile Auto Sprint", glyph = "»", value = true, desc = "Run on your own; hold the Walk button to walk. Off: hold Run to sprint" },
 				{ kind = "data", name = "Touch Layout 1" }, { kind = "data", name = "Touch Layout 2" }, { kind = "data", name = "Touch Layout 3" },
 				{ kind = "dropdown", name = "Touch Layout Slot", glyph = "▦", options = { "1", "2", "3" }, value = "1", desc = "Which saved button layout you use" },
 			} },
 			{ title = "Fire", rows = {
-				{ kind = "toggle", name = "Double Tap To Attack", glyph = "»", value = true, desc = "Double tap anywhere on the right side of the screen to fire" },
+				-- (2026-10-23, Edward: mobile needs auto shoot (25-100 ms) and the double tap off: the Fire button shoots)
+				{ kind = "toggle", name = "Auto Shoot", glyph = "◎", value = true, desc = "Fires on its own while your crosshair is on an enemy" },
+				{ kind = "slider", name = "Auto Shoot Delay", glyph = "◎", level = 2, showIf = "Auto Shoot", min = 25, max = 100, step = 5, arrow = 5, value = 50, fmt = function(v) return string.format("%d ms", v) end, desc = "How long the crosshair stays on an enemy before it fires" },
+				{ kind = "toggle", name = "Double Tap To Attack", glyph = "»", value = false, desc = "Double tap anywhere on the right side of the screen to fire" },
 				{ kind = "slider", name = "Double Tap Window", glyph = "»", level = 2, min = 0.1, max = 0.6, step = 0.05, arrow = 0.05, value = 0.25, fmt = function(v) return string.format("%.2f", v) end, desc = "How quick the two taps must be, in seconds" },
 				{ kind = "toggle", name = "Enabled", key = "Fire Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
 				{ kind = "toggle", name = "Custom", key = "Fire Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },

@@ -259,9 +259,13 @@ function Nameplates.Start()
 				-- (2026-10-20, Edward, RIVALS) ONE icon left of the name, picked by your leaderboard mode (Lobby Data):
 				--   Level / Streak (/ Wins): their win-streak flame if they have one, else their level (Wins: their wins)
 				--   Rank: their rank emblem if they're ranked, else their level
-				local mode = player:GetAttribute("Setting_LobbyData") or "Level"
+				-- (2026-10-23, Edward) the icon follows the leaderboard YOU are on (LeaderboardStat, set by the lobby HUD's list; Lobby Data
+				-- otherwise), for every plate in your lobby: Level = their level; Streak = their flame if they have a streak, else their level;
+				-- Rank = their rank emblem if ranked, else their level; anything else (Wins) = their level
+				local mode = player:GetAttribute("LeaderboardStat") or player:GetAttribute("Setting_LobbyData") or "Level"
+				if mode == "Wins" then mode = "Level" end
 				local sn = tonumber(p:GetAttribute("WinStreak")) or 0
-				local flame = sn > 0 and mode ~= "Rank"
+				local flame = sn > 0 and mode == "Streak"
 				e.streak.Visible = flame
 				e.badge.Visible = not flame
 				if e.streakN then e.streakN.Text = tostring(sn) end

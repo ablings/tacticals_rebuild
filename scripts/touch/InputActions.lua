@@ -19,7 +19,7 @@ local InputActions = {}
 InputActions.Names = {
 	"Fire", "Aim", "Reload", "Inspect", "Jump", "Crouch", "Slide", "Dash", "Cover",
 	"QuickMelee", "QuickUtility", "ThrowGadget", "Equip1", "Equip2", "Equip3",
-	"Scoreboard", "CameraSwap",
+	"Scoreboard", "CameraSwap", "Sprint",
 }
 local known = {}
 for _, n in InputActions.Names do known[n] = true end

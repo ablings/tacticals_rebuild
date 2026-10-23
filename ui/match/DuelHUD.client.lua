@@ -1106,6 +1106,10 @@ local function showResultScreen(sum)
 		tostring(st("RematchAllowed")), tostring(st("RematchNeeded")), tostring(st("RematchReason")), tostring(st("RematchVotes")),
 		tostring(player:GetAttribute("RematchVote")), tostring(st("MatchMode"))))
 	againB:FindFirstChildOfClass("TextLabel").Text = "Play Again"
+	-- (2026-10-23, Edward: "play again should not be an option in lobby duels" - it queues you against the whole server) a hub pad
+	-- duel (the lobby's LobbyMap + a DuelMatch / InDuel player) shows Rematch and Leave only
+	againB.Visible = not (workspace:FindFirstChild("LobbyMap") ~= nil and (player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("InDuel") == true
+		or tostring(st("MatchMode") or ""):find("Lobby") ~= nil))
 	rgui.Enabled = true
 	refreshRematch()
 	if sum.delta ~= nil then showRankPage(sum) else rankPage.Visible = false; backB.Visible = postMatch() end
@@ -1472,8 +1476,48 @@ chipText()
 RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.switchHook = roundCard, showRoundCard, kcard, refreshKillerCard, switchB, switchHook
 -- (2026-10-20, Knife Duels / Murder Duels / RIVALS) MATCH POINT on the same banner, through the countdown of a round that can
 -- end the match: "You need 1 point to win!" (ours, beige) / "They need 1 point to win" (theirs, green) / both: "Next round wins"
+-- (2026-10-23, Edward: "match point screens and sudden death being 4-4 ... add these aesthetics", his RIVALS recording t0122 / t0338 /
+-- t0358) RIVALS' ribbon: a big red banner across the top centre (0.31-0.69 W, over the score boxes) with a huge white "MATCH POINT",
+-- or "SUDDEN DEATH" when both sides are one round from winning; the ROUND WON / LOST card stays under it. It pops in as the round
+-- ends and fades out once the next round is live.
+RV.ribbon = new("Frame", { Name = "MatchPointRibbon", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(960, 14), Size = UDim2.fromOffset(720, 86),
+	BackgroundColor3 = WHITE, Visible = false, ZIndex = 9, Parent = root }, { corner(4),
+	new("UIGradient", { Rotation = 90, Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(236, 64, 60)), ColorSequenceKeypoint.new(0.55, Color3.fromRGB(205, 36, 36)),
+		ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 18, 22)) }) }) })
+for _, side in { 0, 1 } do -- the darker folded tabs at both ends
+	new("Frame", { BackgroundColor3 = Color3.fromRGB(120, 14, 18), BorderSizePixel = 0, AnchorPoint = Vector2.new(side, 0), Position = UDim2.fromScale(side, 0.18),
+		Size = UDim2.fromOffset(26, 70), ZIndex = 8, Parent = RV.ribbon })
+end
+RV.ribbonText = label(RV.ribbon, "MATCH POINT", FX, 84, 0, -14, 720, 100, WHITE, nil, 10)
+do
+	local st2 = RV.ribbonText:FindFirstChildOfClass("UIStroke")
+	if st2 then st2.Thickness, st2.Transparency, st2.Color = 3, 0.15, Color3.fromRGB(60, 8, 10) end
+end
+RV.ribbonScale = new("UIScale", { Parent = RV.ribbon })
+function RV.showRibbon(text)
+	RV.ribbonText.Text = text
+	RV.ribbon.BackgroundTransparency = 0
+	RV.ribbonText.TextTransparency = 0
+	for _, f in RV.ribbon:GetChildren() do if f:IsA("Frame") then f.BackgroundTransparency = 0 end end
+	if not RV.ribbon.Visible then
+		RV.ribbon.Visible = true
+		RV.ribbonScale.Scale = 1.35
+		TweenService:Create(RV.ribbonScale, TweenInfo.new(0.32, Enum.EasingStyle.Back), { Scale = 1 }):Play()
+	end
+end
+function RV.fadeRibbon()
+	if not RV.ribbon.Visible then return end
+	local ti = TweenInfo.new(0.6)
+	TweenService:Create(RV.ribbon, ti, { BackgroundTransparency = 1 }):Play()
+	TweenService:Create(RV.ribbonText, ti, { TextTransparency = 1 }):Play()
+	for _, f in RV.ribbon:GetChildren() do if f:IsA("Frame") then TweenService:Create(f, ti, { BackgroundTransparency = 1 }):Play() end end
+	task.delay(0.65, function() RV.ribbon.Visible = false end)
+end
 RV.showMatchPoint = function(mine, theirs, toWin)
 	if not toWin or (mine < toWin - 1 and theirs < toWin - 1) then return end
+	if mine >= toWin or theirs >= toWin then return end -- the match is over: no ribbon
+	RV.showRibbon((mine >= toWin - 1 and theirs >= toWin - 1) and "SUDDEN DEATH" or "MATCH POINT")
+	do return end -- (the old in-card MATCH POINT below is kept for reference; the ribbon replaces it)
 	local us, them = mine >= toWin - 1, theirs >= toWin - 1
 	local f = (us and not them) and TEAM_A.fill or ((them and not us) and TEAM_B.fill or { Color3.fromRGB(40, 42, 48), Color3.fromRGB(16, 17, 20) })
 	roundGrad.Color = ColorSequence.new(f[1], f[2])
@@ -1688,13 +1732,15 @@ RunService.RenderStepped:Connect(function()
 		if state == "Countdown" then
 			-- (Edward 2026-10-19) no 3-2-1 / FIGHT: the top clock counts the countdown down in tenths instead
 			-- the round's WIN / LOSS banner stays through the countdown, unless the next round can end the match (MATCH POINT)
-			if not spectator() then RV.showMatchPoint(mine, theirs, st("RoundsToWin")) end
+			RV.showMatchPoint(mine, theirs, st("RoundsToWin")) -- (2026-10-23: spectators see the ribbon too, like RIVALS)
 		elseif state == "Live" then
 			RV.roundCard.Visible = false
+			task.delay(1.2, RV.fadeRibbon)
 			table.clear(botDown)
 		elseif state == "RoundEnd" and not spectator() then
 			if mine ~= lastScoreMine and mine > (lastScoreMine or 0) then RV.showRoundCard(true)
 			elseif theirs ~= lastScoreTheirs and theirs > (lastScoreTheirs or 0) then RV.showRoundCard(false) end
+			RV.showMatchPoint(mine, theirs, st("RoundsToWin")) -- RIVALS shows the ribbon with the WON / LOST card
 		elseif state ~= "RoundEnd" then
 			RV.roundCard.Visible = false
 		elseif state == "MatchEnd" and not resultsShown then

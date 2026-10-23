@@ -34,7 +34,7 @@ local InputActions = {}
 InputActions.Names = {
 	"Fire", "Aim", "Reload", "Inspect", "Jump", "Crouch", "Slide", "Dash", "Cover",
 	"QuickMelee", "QuickUtility", "ThrowGadget", "Equip1", "Equip2", "Equip3",
-	"Scoreboard", "CameraSwap",
+	"Scoreboard", "CameraSwap", "Sprint",
 }
 local known = {}
 for _, n in InputActions.Names do known[n] = true end
@@ -208,7 +208,8 @@ local playerGui = player:WaitForChild("PlayerGui")
 local function sync()
 	local cfg = InputActions.Config
 	local dt = player:GetAttribute("Setting_DoubleTapToAttack")
-	cfg.DoubleTapAttack = dt ~= false
+	-- (2026-10-23, Edward: "tapping on the screen twice shot my gun ... mobile has their own shoot button") off unless switched on
+	cfg.DoubleTapAttack = dt == true
 	local w = tonumber(player:GetAttribute("Setting_DoubleTapWindow"))
 	cfg.DoubleTapWindow = w and math.clamp(w, 0.1, 0.6) or 0.25
 	cfg.LeftHanded = player:GetAttribute("Setting_LeftHandedMode") == true
@@ -264,6 +265,58 @@ UIS.TouchEnded:Connect(function(input)
 		InputActions.Release("Fire")
 	end
 end)
+
+-- 4. (2026-10-23, Edward: "auto shoot ... a minimum of 25 ms and a maximum of 100 ms ... needed for mobile devices") Auto Shoot:
+--    on a touch screen in combat, with a gun out, the crosshair (screen centre) resting on an enemy for Setting_AutoShootDelay ms
+--    (25-100, default 50) presses Fire; it lets go the moment the crosshair leaves them. Setting_AutoShoot (default on) turns it off.
+local RunService = game:GetService("RunService")
+local autoFiring, onSince = false, nil
+local params = RaycastParams.new()
+params.FilterType = Enum.RaycastFilterType.Exclude
+local function touchOn() return UIS.TouchEnabled or player:GetAttribute("_ForceTouch") == true end
+local function inCombat()
+	if player:GetAttribute("InDuel") or player:GetAttribute("DuelMatch") ~= nil then return true end
+	local ok, on = pcall(function() return require(RS.Modules.Shared.TrainingGate).On() end)
+	return ok and on == true
+end
+local function enemyModel(part)
+	local m = part and part:FindFirstAncestorOfClass("Model")
+	while m and not m:FindFirstChildOfClass("Humanoid") do m = m:FindFirstAncestorOfClass("Model") end
+	if not m or m == player.Character then return nil end
+	local hum = m:FindFirstChildOfClass("Humanoid")
+	if not hum or hum.Health <= 0 then return nil end
+	local other = Players:GetPlayerFromCharacter(m)
+	local myTeam = player:GetAttribute("Team")
+	local theirTeam = other and other:GetAttribute("Team") or m:GetAttribute("Team")
+	if myTeam ~= nil and theirTeam ~= nil and myTeam == theirTeam then return nil end -- a teammate
+	if not other and m:GetAttribute("Team") == nil and not m:GetAttribute("IsBot") and not m.Name:find("Bot") then return nil end -- props / NPCs
+	return m
+end
+local function stopAuto()
+	if autoFiring then autoFiring = false; InputActions.Release("Fire") end
+	onSince = nil
+end
+RunService.Heartbeat:Connect(function()
+	local want = false
+	local char = player.Character
+	local tool = char and char:FindFirstChildOfClass("Tool")
+	if touchOn() and player:GetAttribute("Setting_AutoShoot") ~= false and tool and tool:GetAttribute("Ammo") ~= nil and inCombat()
+		and player:GetAttribute("InCutscene") ~= true then
+		local cam = workspace.CurrentCamera
+		local ray = cam:ViewportPointToRay(cam.ViewportSize.X / 2, cam.ViewportSize.Y / 2)
+		params.FilterDescendantsInstances = { char, cam }
+		local hit = workspace:Raycast(ray.Origin, ray.Direction * 600, params)
+		want = hit ~= nil and enemyModel(hit.Instance) ~= nil
+	end
+	if not want then stopAuto() return end
+	local delayMs = math.clamp(tonumber(player:GetAttribute("Setting_AutoShootDelay")) or 50, 25, 100)
+	onSince = onSince or os.clock()
+	if not autoFiring and os.clock() - onSince >= delayMs / 1000 then
+		autoFiring = true
+		InputActions.Press("Fire")
+	end
+end)
+player.CharacterRemoving:Connect(stopAuto)
 ]=]
 SOURCES.TouchStick = [=[-- StarterPlayer.StarterPlayerScripts.TouchStick [TOUCH] (2026-10-17): our own dynamic thumbstick, so Left Handed Mode can
 -- move it to the right half (Roblox's DynamicThumbstick is fixed to the left). The installer sets
@@ -382,7 +435,9 @@ player.CharacterAdded:Connect(function() if stickInput then release() end end)
 
 -- after the ControlModule (it binds at Input priority), so a keyboard controller's zero vector can't overwrite the stick
 RunService:BindToRenderStep("TouchStickMove", Enum.RenderPriority.Input.Value + 1, function()
-	if stickInput then
+	-- the match opening run (MatchCore RunIn: RunInClient drives the character) ignores the stick
+	-- (2026-10-23) and a cover dash / vault (CoverMoving, CoverController) runs you to the spot: the stick can't steer it
+	if stickInput and player:GetAttribute("RunInRoute") == nil and player:GetAttribute("CoverMoving") == nil then
 		player:Move(Vector3.new(move.X, 0, move.Y), true)
 	end
 end)

@@ -55,16 +55,17 @@ end
 --   Badges.Icon(player) -> "streak", n | "rank", imageId | "level", n | "wins", n
 function Badges.Icon(p)
 	local viewer = game:GetService("Players").LocalPlayer
-	local mode = (viewer and viewer:GetAttribute("Setting_LobbyData")) or "Level"
+	-- (2026-10-23, Edward) one rule everywhere: the viewer's leaderboard picks it - Streak: flame if they have one; Rank: emblem if
+	-- ranked; else (Level, Wins, none) their level
+	local mode = (viewer and (viewer:GetAttribute("LeaderboardStat") or viewer:GetAttribute("Setting_LobbyData"))) or "Level"
 	if not isPlayer(p) then return "level", 1 end
 	local sn = tonumber(p:GetAttribute("WinStreak")) or 0
-	if sn > 0 and mode ~= "Rank" then return "streak", sn end
+	if sn > 0 and mode == "Streak" then return "streak", sn end
 	if mode == "Rank" then
 		local ok, RankArt = pcall(function() return require(script.Parent:WaitForChild("RankArt", 2)) end)
 		local r = ok and RankArt and RankArt.Of and RankArt.Of(p)
 		if r and r.image then return "rank", r.image end
 	end
-	if mode == "Wins" then return "wins", tonumber(p:GetAttribute("Wins")) or 0 end
 	return "level", tonumber(p:GetAttribute("Level")) or 1
 end
 

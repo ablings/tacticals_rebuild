@@ -23,22 +23,28 @@ local controller = {}
 
 -- id, action (InputActions), glyph, default { x, y, size } (x/y = Scale of the screen, size = share of the screen height),
 -- lobby = shown outside combat too
+-- (2026-10-23, Edward: "how jumbled up and disorganized our keybinds look compared to rivals", RIVALS' default mobile layout
+-- screenshot) the defaults now copy RIVALS: Aim (crosshair) and Fire (claw) stacked bottom right with Jump under Aim, Crouch under
+-- Fire, Reload left of them; the weapon slots in a row top right with Gun Bash / Throw Gadget under them; the eye top left. Our
+-- extras sit around that cluster: Sprint (hold = the opposite of Auto Sprint) left of Crouch, Take Cover and Dash above Reload.
+-- Slide is no button any more: Crouch slides while you run (its icon switches), like RIVALS.
 local BUTTONS = {
-	{ id = "Fire", action = "Fire", glyph = "◉", x = 0.905, y = 0.58, s = 0.17 },
-	{ id = "Aim", action = "Aim", glyph = "◎", x = 0.815, y = 0.64, s = 0.14 },
-	{ id = "Jump", action = "Jump", glyph = "⬆", x = 0.905, y = 0.82, s = 0.17, lobby = true },
-	{ id = "Crouch", action = "Crouch", glyph = "⇩", x = 0.80, y = 0.85, s = 0.14, lobby = true },
-	{ id = "Slide", action = "Slide", glyph = "↘", x = 0.715, y = 0.85, s = 0.13 },
-	{ id = "Take Cover", action = "Cover", glyph = "▣", x = 0.735, y = 0.71, s = 0.11 },
-	{ id = "Dash", action = "Dash", glyph = "»", x = 0.70, y = 0.58, s = 0.10 },
-	{ id = "Reload", action = "Reload", glyph = "R", x = 0.765, y = 0.535, s = 0.09 },
-	{ id = "Gun Bash", action = "QuickMelee", glyph = "✊", x = 0.905, y = 0.235, s = 0.075 },
-	{ id = "Throw Gadget", action = "QuickUtility", glyph = "●", x = 0.955, y = 0.235, s = 0.075 },
-	{ id = "Equip Gun", action = "Equip1", glyph = "1", x = 0.855, y = 0.115, s = 0.095 },
-	{ id = "Equip Melee", action = "Equip2", glyph = "2", x = 0.905, y = 0.115, s = 0.095 },
-	{ id = "Equip Gadget", action = "Equip3", glyph = "3", x = 0.955, y = 0.115, s = 0.095 },
-	{ id = "Shoulder Swap", action = "CameraSwap", glyph = "⇄", x = 0.04, y = 0.19, s = 0.085 },
-	{ id = "Open Scoreboard", action = "Scoreboard", glyph = "≡", x = 0.095, y = 0.19, s = 0.085, lobby = true },
+	{ id = "Fire", action = "Fire", glyph = "◉", x = 0.832, y = 0.659, s = 0.158 },
+	{ id = "Aim", action = "Aim", glyph = "◎", x = 0.906, y = 0.579, s = 0.158 },
+	{ id = "Jump", action = "Jump", glyph = "⬆", x = 0.906, y = 0.80, s = 0.18, lobby = true },
+	{ id = "Crouch", action = "Crouch", glyph = "⇩", x = 0.806, y = 0.83, s = 0.158, lobby = true },
+	{ id = "Sprint", action = "Sprint", glyph = "»", x = 0.715, y = 0.86, s = 0.12, lobby = true },
+	{ id = "Slide", action = "Slide", glyph = "↘", x = 0.715, y = 0.86, s = 0.12 }, -- (kept for old layouts; off by default)
+	{ id = "Take Cover", action = "Cover", glyph = "▣", x = 0.70, y = 0.585, s = 0.105 },
+	{ id = "Dash", action = "Dash", glyph = "»", x = 0.752, y = 0.515, s = 0.10 },
+	{ id = "Reload", action = "Reload", glyph = "R", x = 0.7595, y = 0.704, s = 0.113 },
+	{ id = "Gun Bash", action = "QuickMelee", glyph = "✊", x = 0.911, y = 0.228, s = 0.067 },
+	{ id = "Throw Gadget", action = "QuickUtility", glyph = "●", x = 0.9575, y = 0.228, s = 0.067 },
+	{ id = "Equip Gun", action = "Equip1", glyph = "1", x = 0.8635, y = 0.136, s = 0.092 },
+	{ id = "Equip Melee", action = "Equip2", glyph = "2", x = 0.911, y = 0.136, s = 0.092 },
+	{ id = "Equip Gadget", action = "Equip3", glyph = "3", x = 0.9575, y = 0.136, s = 0.092 },
+	{ id = "Shoulder Swap", action = "CameraSwap", glyph = "⇄", x = 0.093, y = 0.181, s = 0.09 },
+	{ id = "Open Scoreboard", action = "Scoreboard", glyph = "≡", x = 0.041, y = 0.181, s = 0.09, lobby = true },
 }
 local BY_ID = {}
 for _, b in BUTTONS do BY_ID[b.id] = b end
@@ -84,6 +90,14 @@ local function lobbySlide()
 	return lm and lm:FindFirstChild("SlideRequest")
 end
 local function touchOn() return UserInputService.TouchEnabled or player:GetAttribute("_ForceTouch") == true end
+-- moving at running speed (the Crouch button slides then, and shows the slide icon)
+local function running()
+	local char = player.Character
+	local root = char and char:FindFirstChild("HumanoidRootPart")
+	return root ~= nil and (root.AssemblyLinearVelocity * Vector3.new(1, 0, 1)).Magnitude > 12
+end
+-- in a fight: the match places / training (TrainingGate) and the hub's pad duels
+local function fighting() return combat() or player:GetAttribute("InDuel") == true or player:GetAttribute("DuelMatch") ~= nil end
 
 -- the saved layout of the chosen slot, merged over the defaults
 local function layout()
@@ -200,7 +214,9 @@ local function build()
 			if editing then return end
 			if input.UserInputType ~= Enum.UserInputType.Touch and input.UserInputType ~= Enum.UserInputType.MouseButton1 then return end
 			local ia = actions()
-			local hubSlide = b.id == "Slide" and not combat() and lobbySlide()
+			-- (2026-10-23) Crouch while running = a slide (the hub's own slide outside combat; in combat MovementController's crouch key
+			-- already slides when you sprint)
+			local hubSlide = (b.id == "Slide" or (b.id == "Crouch" and running())) and not combat() and lobbySlide()
 			if hubSlide then
 				if ia and ia.Consume then ia.Consume(input, false) end
 				hubSlide:Fire() -- the hub slide (LobbyMovement)
@@ -256,12 +272,17 @@ local wasShown = false
 local function refresh()
 	if not gui then return end
 	-- a lobby menu (Settings, Shop, Play...) or the profile card covers the screen: the buttons go, like RIVALS
-	local lobbyGui = player.PlayerGui:FindFirstChild("LobbyUI")
-	local menuUp = lobbyGui ~= nil and not lobbyGui.Enabled and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
-	-- the Kit room (Armory): LobbyUI stays on with its dock hidden; its panels sit where Jump / Crouch are
-	local dock = lobbyGui and lobbyGui:FindFirstChild("Dock", true)
-	if lobbyGui and lobbyGui.Enabled and dock and not dock.Visible and not player:GetAttribute("InTraining") and not player:GetAttribute("Deploying")
-		and not player:GetAttribute("InDuel") and player:GetAttribute("DuelMatch") == nil and player:GetAttribute("InCutscene") ~= true then menuUp = true end -- (lobby duels hide the dock too)
+	-- (2026-10-23, Edward: no buttons in the lobby until you die, none on the duel pads, gone after Play Again) the old rule read the
+	-- legacy LobbyUI ScreenGui (off = "a menu is open"), but the new lobby HUD leaves it off, and pad duels / the after-match lobby
+	-- switch it too. A menu is open when the lobby HUD is pushed aside (LobbyHud Root PushedAway, set while any screen is open) or
+	-- the Kit room (ArmoryUI) is up; never while you're fighting.
+	local menuUp = false
+	local hudGui = player.PlayerGui:FindFirstChild("LobbyHud")
+	local hudRoot = hudGui and hudGui.Enabled and hudGui:FindFirstChild("Root", true)
+	if hudRoot and hudRoot:GetAttribute("PushedAway") == true then menuUp = true end
+	local armory = player.PlayerGui:FindFirstChild("ArmoryUI")
+	if armory and armory.Enabled then menuUp = true end
+	if fighting() and not (player:GetAttribute("Alive") == false) then menuUp = false end
 	local cards = player.PlayerGui:FindFirstChild("PlayerCards")
 	if cards and cards:FindFirstChild("ProfileTint") then menuUp = true end
 	local partyUI = player.PlayerGui:FindFirstChild("PartyUI")
@@ -288,14 +309,23 @@ local function refresh()
 	if not gui.Enabled then return end
 	local l = layout()
 	applyStick(l.Joystick)
-	local inCombat = combat()
+	local inCombat = fighting()
 	for id, m in made do
 		local b = BY_ID[id]
 		place(id, m, l)
 		styleButton(id, m)
 		-- (the hub has its own slide: the Slide button always shows there; in combat it stays opt-in via Settings > Touch)
-		local hubSlide = id == "Slide" and not inCombat and lobbySlide() ~= nil
-		m.btn.Visible = editing or hubSlide or ((inCombat or b.lobby) and setting(id .. " Enabled", b.id ~= "Slide"))
+		m.btn.Visible = editing or ((inCombat or b.lobby) and setting(id .. " Enabled", b.id ~= "Slide"))
+	end
+	-- (2026-10-23) Crouch shows the slide icon while you run (pressing it slides then); Sprint says what holding it does: with Auto
+	-- Sprint (Settings > Touch, on by default) you run on your own and holding it walks, without it holding it runs
+	local cm = made["Crouch"]
+	if cm and cm.icon then cm.icon.Image = (running() and ICON["Slide"]) or ICON["Crouch"] end
+	local sm = made["Sprint"]
+	if sm then
+		local auto = setting("Mobile Auto Sprint", true)
+		sm.glyph.Text = auto and "Walk" or "Run"
+		sm.glyph.Size = UDim2.fromScale(0.78, 0.4)
 	end
 	-- ammo on the gun button (Show Weapon Ammo)
 	local gun = made["Equip Gun"]

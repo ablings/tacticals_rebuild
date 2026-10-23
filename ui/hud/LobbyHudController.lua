@@ -932,6 +932,8 @@ function LobbyHud.Start()
 		-- (2026-10-18, live RIVALS) the column icon is a white silhouette: flame = streak, burst = level, trophy shield = rank
 		-- (2026-10-21, RIVALS 1:1) set in place on the one ImageLabel (no destroy / recreate)
 		-- (2026-10-22, section round 0, grader C: RIVALS' list header is a white stat glyph; the seal shrank to a blue dot at 22 px)
+		-- (2026-10-23) the nameplates follow the board you're on (NameplatesController reads LeaderboardStat)
+		player:SetAttribute("LeaderboardStat", lbStat)
 		lbModeIcon.Image = (lbStat == "Rank" and Kit.glyph("rank", Kit.ICONS.rank)) or (lbStat == "Level" and Kit.glyph("level", Kit.ICONS.level))
 			or (lbStat == "Streak" and Kit.glyph("flame", Kit.ICONS.streak)) or Kit.glyph("trophy", Kit.ICONS.trophy)
 	end
@@ -977,10 +979,12 @@ function LobbyHud.Start()
 		local mine = p == player
 		local premium = (Bd and Bd.Prefix(p) ~= "") or (not Bd and p.MembershipType == Enum.MembershipType.Premium)
 		parts.prem.Visible = premium
-		parts.lv.Visible = mine and not premium
+		-- (2026-10-23, Edward: "it shouldn't show your streak icon on the leaderboard ... the level icon shouldn't be on your leaderboard
+		-- either, only your roblox badge on the left and device on the right") those icons live on the nameplates now
+		parts.lv.Visible = false
 		parts.lvN.Text = tostring(tonumber(p:GetAttribute("Level")) or 1)
 		local streakN = tonumber(p:GetAttribute("WinStreak")) or 0
-		local showStreak = streakN > 0 and lbStat ~= "Streak"
+		local showStreak = false
 		local nameText = p.DisplayName .. (Bd and Bd.Suffix(p) or "")
 		parts.name.Text = nameText
 		local nameW = showStreak and 164 or 196

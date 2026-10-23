@@ -1215,6 +1215,10 @@ local function computeFreeRange(c, standY: number, startT: number)
 end
 
 local function update(dt: number)
+	-- [TOUCH] (2026-10-23, Edward: "dashing on mobile you can just run around at full dash speed") getControls():Disable() doesn't
+	-- reach the touch stick (TouchStick calls player:Move itself): while a cover move / vault / dive runs, CoverMoving tells it to let go
+	local busy = (move ~= nil or vault ~= nil or dive ~= nil) or nil
+	if localPlayer:GetAttribute("CoverMoving") ~= busy then localPlayer:SetAttribute("CoverMoving", busy) end
 	-- a buffered Space from just before a move/vault ended
 	if pendingJump and not move and not vault then
 		local p = pendingJump
