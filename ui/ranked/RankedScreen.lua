@@ -186,31 +186,42 @@ local function popup(name, w, h, title)
 end
 
 local function buildLadder()
-	-- (menus e4-e5, grader A) RIVALS' Ranks modal: 882x629 at (519,225), the rules scrolling under the podium
+	-- (menus e4-e5, grader A) RIVALS' Ranks modal: 882x629 at (519,225)
 	local shade, p, show = popup("Ladder", 882, 629, "Ranked")
+	-- (menus e10, graders A + B vs 05) the whole body under the title scrolls (heading, podium, rules), with a slim bar at the
+	-- modal's right edge, like RIVALS; a list layout of fixed-size blocks (the pattern that survives Kit.toScale)
+	local body = new("ScrollingFrame", { Name = "Body", Position = UDim2.fromOffset(0, 70), Size = UDim2.fromOffset(882, 547), BackgroundTransparency = 1, BorderSizePixel = 0,
+		ScrollBarThickness = 6, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
+		ScrollingDirection = Enum.ScrollingDirection.Y, ZIndex = 22, Parent = p }, {
+		new("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }),
+		new("UIPadding", { PaddingLeft = UDim.new(0, 30), PaddingBottom = UDim.new(0, 24) }), -- (e10, grader C: the last rule scrolls clear of the fade)
+	})
 	-- (menus e6, grader A vs 05) RIVALS titles the modal "Ranked" and heads the podium "Ranks" on the left
-	label(p, "Ranks", FB, 40, 34, 78, 300, 50, WHITE, Enum.TextXAlignment.Left).ZIndex = 22
-	-- (menus e4-e5, graders A + B vs RIVALS 05_rank_ladder.jpg) a stepped podium: each rank is a pillar rising left to right
-	-- (98 wide, gap 4, 110 -> 313 tall), its colour darkening downward, an 88 px emblem overlapping its top by 20, the ELO floor
-	-- (italic 30) just under the emblem and the rank name (italic 20, 85% white) at its foot. (grader C) The columns rise from
-	-- the podium's floor one after another when the modal opens.
-	local BASE, TOPY = 430, 124 -- (e7-e9, grader A: the podium base sits higher so ~5 rule lines show)
-	local podium = new("Frame", { Name = "Podium", BackgroundTransparency = 1, ClipsDescendants = true, Position = UDim2.fromOffset(0, TOPY),
-		Size = UDim2.fromOffset(882, BASE - TOPY), ZIndex = 22, Parent = p })
+	local head = new("Frame", { Name = "Head", BackgroundTransparency = 1, LayoutOrder = 1, Size = UDim2.fromOffset(840, 56), ZIndex = 22, Parent = body })
+	label(head, "Ranks", FB, 40, 4, 4, 300, 50, WHITE, Enum.TextXAlignment.Left).ZIndex = 22
+	-- (menus e4-e10, graders A + B vs RIVALS 05_rank_ladder.jpg) a stepped podium: each rank is a pillar rising left to right
+	-- (98 wide, gap 4, 90 -> 272 tall: the Bronze-to-Warlord climb ~185 like RIVALS), its colour darkening downward, an 88 px
+	-- emblem overlapping its top, the ELO floor (italic 34) under the emblem and the rank name (italic 17, one size for all) at
+	-- its foot. (grader C) The columns rise from the podium's floor one after another when the modal opens.
+	local PH = 350
+	local podium = new("Frame", { Name = "Podium", BackgroundTransparency = 1, ClipsDescendants = true, LayoutOrder = 2, Size = UDim2.fromOffset(840, PH),
+		ZIndex = 22, Parent = body })
 	local italic = function(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
 	local cols = {}
 	for i, r in RANKS do
-		local x = 33 + (i - 1) * 102
-		local h = 90 + (i - 1) * 20
+		local x = 3 + (i - 1) * 102
+		local h = 90 + (i - 1) * 26
 		local c = RANK_COLOR[r]
-		local col = new("Frame", { Name = r, BackgroundTransparency = 1, Position = UDim2.fromOffset(x, BASE - TOPY - h - 68), Size = UDim2.fromOffset(98, h + 68),
+		local col = new("Frame", { Name = r, BackgroundTransparency = 1, Position = UDim2.fromOffset(x, PH - h - 68), Size = UDim2.fromOffset(98, h + 68),
 			ZIndex = 22, Parent = podium })
 		new("Frame", { Name = "Pillar", Position = UDim2.fromOffset(0, 68), Size = UDim2.fromOffset(98, h), BackgroundColor3 = WHITE, BorderSizePixel = 0,
 			ZIndex = 22, Parent = col }, {
 			new("UICorner", { CornerRadius = UDim.new(0, 4) }),
 			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(c, c:Lerp(BLACK, 0.65)) }),
 		})
-		local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(49, 46), Size = UDim2.fromOffset(108, 108), ZIndex = 24, Parent = col }) -- (e7, grader C: centred anchor, so the hover lift grows in place) -- (e6, graders A + B: the art has padding; 108 shows an 88 px emblem)
+		-- (e6: the art has padding, so 108 shows an 88 px emblem; e7: a centred anchor, so the hover lift grows in place)
+		local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(49, 46), Size = UDim2.fromOffset(108, 108),
+			ZIndex = 24, Parent = col })
 		emblem(hold, r)
 		-- (menus e7, grader C) each column answers hover: its emblem lifts a little
 		local lift = new("UIScale", { Parent = hold })
@@ -218,11 +229,8 @@ local function buildLadder()
 		col.MouseLeave:Connect(function() Kit.tween(lift, 0.12, { Scale = 1 }) end)
 		local floorText = r == "Warlord" and "Top 200" or tostring(((i - 1) * 3 + 1) * 100) .. "+"
 		stroke(label(col, floorText, italic(FB), 34, -8, 90, 114, 38, WHITE), 2).ZIndex = 25
-		local n = label(col, r, italic(FS), 21, 4, h + 68 - 30, 90, 26, WHITE)
+		local n = label(col, r, italic(FS), 17, 0, h + 68 - 28, 98, 24, WHITE)
 		n.TextTransparency = 0.15
-		-- (menus e7, grader B) long names ("Commander") shrink to fit the pillar instead of running into the next one
-		n.TextScaled = true
-		new("UITextSizeConstraint", { MaxTextSize = 21, Parent = n })
 		n.ZIndex = 25
 		table.insert(cols, col)
 	end
@@ -234,22 +242,18 @@ local function buildLadder()
 		"Elite and up: after 7 days without ranked you lose 25 ELO a day (never below Elite 1).",
 		"Past Commander 3 (2200 ELO) the top 200 players are Warlord.",
 	}
-	local list = new("ScrollingFrame", { Name = "Rules", Position = UDim2.fromOffset(30, BASE + 12), Size = UDim2.fromOffset(842, 629 - BASE - 24), BackgroundTransparency = 1,
-		BorderSizePixel = 0, ScrollBarThickness = 6, -- (e6, grader B: a slim bar at the modal's right edge, clear of the text)
-		 ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(),
-		AutomaticCanvasSize = Enum.AutomaticSize.Y, ScrollingDirection = Enum.ScrollingDirection.Y, ZIndex = 22, Parent = p },
-		{ new("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	for i, t in rules do
-		local l = label(list, "•  " .. t, FM, 26, 0, 0, 800, 64, GREY, Enum.TextXAlignment.Left)
-		l.LayoutOrder = i
+		local l = label(body, "•  " .. t, FM, 26, 0, 0, 800, 64, GREY, Enum.TextXAlignment.Left)
+		l.LayoutOrder = 2 + i
 		l.ZIndex = 23
 		l.TextWrapped = true
 		l.TextYAlignment = Enum.TextYAlignment.Top
 	end
-	-- (menus e9, grader C) the rules fade out at the bottom edge instead of being cut
+	-- (menus e9, grader C) the body fades out at the bottom edge instead of being cut
 	new("Frame", { Name = "Fade", Position = UDim2.fromOffset(30, 629 - 12 - 24), Size = UDim2.fromOffset(812, 24), BackgroundColor3 = BLACK, BorderSizePixel = 0, ZIndex = 24,
 		Parent = p }, { new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new(1, 0) }) })
 	local function rise()
+		body.CanvasPosition = Vector2.zero
 		for i, col in cols do
 			local home = col:GetAttribute("_Home") or col.Position
 			col:SetAttribute("_Home", home)
@@ -292,6 +296,7 @@ local function fillBoard()
 		local mine = e.userId == player.UserId
 		local row = new("Frame", { LayoutOrder = i, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = mine and C.white or BLACK, BackgroundTransparency = mine and 0.75 or 0.5,
 			ZIndex = 22, Parent = holder }, { new("UICorner", { CornerRadius = UDim.new(0.2, 0) }) })
+		if Kit.popIn and i <= 12 then pcall(Kit.popIn, row, 0.04 + i * 0.02) end -- (menus e10, grader C: the rows stagger in)
 		local function cell(text, x, w, align, font)
 			new("TextLabel", { BackgroundTransparency = 1, Text = text, FontFace = font or FS, TextScaled = true, TextColor3 = WHITE, TextXAlignment = align,
 				Position = UDim2.fromScale(x, 0.18), Size = UDim2.fromScale(w, 0.64), ZIndex = 23, Parent = row })

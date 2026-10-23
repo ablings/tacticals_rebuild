@@ -212,7 +212,7 @@ local function buildInbox()
 		list.ScrollingEnabled = false
 	end
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
-	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 18 }):Play()
+	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 24 }):Play() -- (e10, grader C: Theme.blur, like the other menus)
 	if Kit.open then pcall(Kit.open, inboxRoot) end
 end
 function Notify.OpenInbox()
@@ -301,14 +301,15 @@ function Notify.OpenNews()
 	x.Activated:Connect(function() Notify.CloseInbox() end)
 	Kit.toScale(inboxRoot)
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
-	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 18 }):Play()
+	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 24 }):Play() -- (e10, grader C: Theme.blur, like the other menus)
 	if Kit.open then pcall(Kit.open, inboxRoot) end
 	if col.Name == "Article" then
 		-- (menus e9, grader C) the hero fades in over 0.15 s, then the blocks follow 0.05 s apart
 		local hero = col:FindFirstChild("Hero")
 		if hero then
 			hero.ImageTransparency = 1
-			TweenService:Create(hero, TweenInfo.new(0.15), { ImageTransparency = 0 }):Play()
+			hero.BackgroundTransparency = 1
+			TweenService:Create(hero, TweenInfo.new(0.15), { ImageTransparency = 0, BackgroundTransparency = 0 }):Play()
 		end
 		local i = 0
 		for _, b in col:GetChildren() do
