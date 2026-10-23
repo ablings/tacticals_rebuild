@@ -692,7 +692,8 @@ function LobbyHud.Start()
 			icon.scale.Scale = 1
 			n.b.Position = pinned(base)
 		end)
-		n.b.Activated:Connect(function() task.defer(resetNav) end) -- a click opens something: the bubble goes with it
+		n.b.Activated:Connect(function() if Kit.sfx then Kit.sfx("click") end; task.defer(resetNav) end) -- a click opens something: the bubble goes with it (r27: + click sound)
+		n.b.MouseEnter:Connect(function() if Kit.sfx then Kit.sfx("hover") end end) -- (lobby r27, grader C: the dock was silent)
 		n.b.MouseButton1Down:Connect(function() if not away() then Kit.tween(n.s, 0.06, { Scale = 1.02 }) end end)
 		n.b.MouseButton1Up:Connect(function() if not away() then Kit.tween(n.s, 0.12, { Scale = hovered and 1.12 or 1 }, Enum.EasingStyle.Back) end end)
 	end

@@ -722,12 +722,13 @@ local function bindTile(b)
 			end
 		end
 	end
-	b.MouseEnter:Connect(function() hov = true; show() end)
+	b.MouseEnter:Connect(function() hov = true; show(); if Kit.sfx then Kit.sfx("hover") end end) -- (lobby r27, grader C: the tiles were silent)
 	b.MouseLeave:Connect(function() hov = false; show() end)
 	b.SelectionGained:Connect(function() sel = true; show() end)
 	b.SelectionLost:Connect(function() sel = false; show() end)
 	b.Activated:Connect(function()
 		if b:GetAttribute("Locked") then return end
+		if Kit.sfx then Kit.sfx("click") end
 		s.Scale = 0.93
 		Kit.tween(s, 0.15, { Scale = (hov or sel) and 0.97 or 1 }, Enum.EasingStyle.Back)
 	end)

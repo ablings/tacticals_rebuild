@@ -322,6 +322,7 @@ local function uiSfx(name)
 		if K and K.sfx and K ~= Kit then K.sfx(name) end
 	end)
 end
+Kit.sfx = Kit.sfx or uiSfx -- (r27: screens built on this kit can play the shared UI sounds too)
 function Kit.bindButton(btn, opts)
 	opts = opts or {}
 	-- (2026-10-22) the game's legacy InterfaceController adds its own Size hover / press tweens to every button it finds (and
