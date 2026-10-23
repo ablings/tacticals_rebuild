@@ -92,7 +92,8 @@ end
 
 -- one pill (banner or inbox row), design px
 local function pill(parent, n, x, y, w, h)
-	local p = new("Frame", { Name = "Pill", BackgroundColor3 = PILL, BackgroundTransparency = 0.05, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
+	local p = new("CanvasGroup", { Name = "Pill", BackgroundColor3 = PILL, -- (e17, grader C: a CanvasGroup, so its pop fades too)
+		 BackgroundTransparency = 0.05, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		ZIndex = 3, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) }) -- (menus e9, grader B: 12 px corners, was a capsule)
 	icon(p, n.icon or "check", 26, (h - 56) / 2, 56, GREEN, 4)
 	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 84, h * 0.06, w - 200, h * 0.52, nil, Enum.TextXAlignment.Left, 4) -- (e9, grader B: left-aligned at +96 beside the icon)

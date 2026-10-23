@@ -272,9 +272,11 @@ local function buildLadder()
 		"Elite and up: after 7 days without ranked you lose 25 ELO a day (never below Elite 1).",
 		"Past Commander 3 (2200 ELO) the top 200 players are Warlord.",
 	}
+	-- (e17, grader A vs 05) ~36 from the pillar base to the first rule
+	new("Frame", { Name = "Gap", BackgroundTransparency = 1, LayoutOrder = 3, Size = UDim2.fromOffset(10, 14), Parent = body })
 	for i, t in rules do
 		local l = label(body, "•  " .. t, FM, 26, 0, 0, 800, 64, GREY, Enum.TextXAlignment.Left)
-		l.LayoutOrder = 2 + i
+		l.LayoutOrder = 3 + i
 		l.ZIndex = 23
 		l.TextWrapped = true
 		l.TextYAlignment = Enum.TextYAlignment.Top
@@ -297,24 +299,33 @@ end
 local function buildBoard()
 	-- (menus e4, grader A) the Leaderboard shares the Ranks modal's frame (882 wide), with a column-header row over the list
 	local _, p, show = popup("Leaderboard", 882, 629, "Warlord · Top 200")
-	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 85), Size = UDim2.fromOffset(792, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
+	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 85), Size = UDim2.fromOffset(803, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
 		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	-- (e15, grader B) the column heads are quiet: 20 px at 60% white
 	for _, h in { label(head, "Rank", FB, 20, 20, 0, 120, 48, WHITE, Enum.TextXAlignment.Left), label(head, "Player", FB, 20, 150, 0, 400, 48, WHITE, Enum.TextXAlignment.Left),
-		label(head, "ELO", FB, 20, 600, 0, 172, 48, WHITE, Enum.TextXAlignment.Right) } do
+		label(head, "ELO", FB, 20, 611, 0, 172, 48, WHITE, Enum.TextXAlignment.Right) } do
 		h.ZIndex = 23
 		h.TextTransparency = 0.4
 	end
-	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(802, 388), BackgroundTransparency = 1,
+	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(803, 360), BackgroundTransparency = 1,
 		BorderSizePixel = 0, ScrollBarThickness = 10, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p }, -- (e4: one scrollbar style, 10 px white)
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	ui.boardList = listHold
 	-- (menus e16, grader B) your own row pinned at the foot, so you always see where you stand
-	local own = new("Frame", { Name = "Own", Position = UDim2.fromOffset(40, 629 - 12 - 64), Size = UDim2.fromOffset(792, 64), BackgroundColor3 = WHITE, BackgroundTransparency = 0.82,
+	local own = new("Frame", { Name = "Own", Position = UDim2.fromOffset(40, 629 - 39 - 64), Size = UDim2.fromOffset(803, 64), -- (e17, grader A: 39 in on every side)
+		 BackgroundColor3 = WHITE, BackgroundTransparency = 0.82,
 		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
-	ui.ownRank = label(own, "#-", FB, 26, 20, 0, 120, 64, WHITE, Enum.TextXAlignment.Left)
-	ui.ownName = label(own, player.DisplayName, FS, 26, 150, 0, 420, 64, WHITE, Enum.TextXAlignment.Left)
-	ui.ownElo = label(own, "", FB, 26, 600, 0, 172, 64, WHITE, Enum.TextXAlignment.Right)
+	ui.ownRow = own
+	ui.ownRank = label(own, "#-", FB, 28, 20, 0, 120, 64, WHITE, Enum.TextXAlignment.Left)
+	-- (e17, grader B) your headshot before the name
+	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(150, 12), Size = UDim2.fromOffset(40, 40), ZIndex = 23, Parent = own },
+		{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+	task.spawn(function()
+		local ok, img = pcall(Players.GetUserThumbnailAsync, Players, player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size100x100)
+		if ok then hs.Image = img end
+	end)
+	ui.ownName = label(own, player.DisplayName, FS, 26, 202, 0, 380, 64, WHITE, Enum.TextXAlignment.Left)
+	ui.ownElo = label(own, "", FB, 26, 611, 0, 172, 64, WHITE, Enum.TextXAlignment.Right)
 	for _, l in { ui.ownRank, ui.ownName, ui.ownElo } do l.ZIndex = 23 end
 	return show
 end
@@ -328,13 +339,14 @@ local function fillBoard()
 	local placing = (A("RankPlacements") or 0) > 0 and (A("RankPlaced") or 0) < (A("RankPlacements") or 0)
 	ui.ownRank.Text = myPos and ("#" .. myPos) or "#-"
 	ui.ownElo.Text = placing and "? ELO" or (tostring(A("RankElo") or 0) .. " ELO")
+	if Kit.popIn and ui.ownRow then pcall(Kit.popIn, ui.ownRow, 0.2) end -- (e17, grader C: the pinned row arrives too)
 	if #top == 0 then
 		-- (menus e4, grader A) the empty state sits in the middle of the list, and an idle list shows no scrollbar;
 		-- (menus e12, grader B) with the Warlord crest above it
 		holder.ScrollBarImageTransparency = 1
 		new("Frame", { Name = "Spacer", BackgroundTransparency = 1, LayoutOrder = 0, Size = UDim2.new(1, 0, 0.3, 0), Parent = holder })
 		local crest = new("Frame", { Name = "Crest", BackgroundTransparency = 1, LayoutOrder = 1, Size = UDim2.new(1, 0, 0.24, 0), Parent = holder }) -- (e13, grader B: a ~96 px crest)
-		local cHold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromScale(1, 1), Parent = crest },
+		local cHold = new("CanvasGroup", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromScale(1, 1), Parent = crest },
 			{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
 		emblem(cHold, "Warlord")
 		local l = new("TextLabel", { BackgroundTransparency = 1, Text = "Nobody has reached 2200 ELO yet.", FontFace = FM, TextScaled = true, TextColor3 = GREY,

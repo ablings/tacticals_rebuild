@@ -136,7 +136,8 @@ end
 -- (2026-10-21, RIVALS pass) cards with buttons are 150 tall (was 108) so the 52 px buttons sit under the name line
 local CARD_H, CARD_H_BTN = 93, 150 -- (menus e6, grader A vs rivals_rec t0152: rows 93 tall, was 108)
 local function personCard(parent, x, y, w, pp, opts)
-	local c = new("Frame", { Name = tostring(pp.uid), Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, opts.buttons and CARD_H_BTN or CARD_H), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
+	local c = new("CanvasGroup", { Name = tostring(pp.uid), Position = UDim2.fromOffset(x, y), -- (e17, grader C: fades as it pops)
+		 Size = UDim2.fromOffset(w, opts.buttons and CARD_H_BTN or CARD_H), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
 		ZIndex = 3, Parent = parent }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) hairline border removed; the dark fill separates the card
 	local hs = new("ImageLabel", { BackgroundColor3 = GUN, Position = UDim2.fromOffset(18, 10), Size = UDim2.fromOffset(73, 73), ZIndex = 4, Parent = c }, { Kit.corner(8) }) -- (e6: 73 at +18, the empty slots' "+" sits in the same place)
 	headshot(hs, pp.uid)
@@ -281,7 +282,7 @@ local function renderGrid(animate)
 	if animate and Kit.popIn then
 		local n = 0
 		for _, c in holder:GetChildren() do
-			if c:IsA("Frame") and c.Name ~= "Empty" and n < 9 then
+			if c:IsA("GuiObject") and c.Name ~= "Empty" and n < 9 then
 				n += 1
 				Kit.centreAnchor(c)
 				pcall(Kit.popIn, c, 0.02 + n * 0.03)

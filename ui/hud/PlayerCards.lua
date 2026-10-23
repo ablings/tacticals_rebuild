@@ -426,7 +426,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	local f = 1080 / math.max(cs.Y, 1)
 	local rowY = (row.AbsolutePosition.Y - ca.Y) * f
 	local rightX = listLeft or ((row.AbsolutePosition.X - ca.X) * f)
-	local PW, ROW, HEAD = 303, 55.6, 80
+	local PW, ROW, HEAD = 303, 55.6, 88 -- (e17, grader B: an 8 gap between the name row and the first action)
 	local H = HEAD + #actions * ROW + 6
 	local top = math.clamp(rowY, 10, 1080 - H - 10)
 	local cardCol = tok("card", hex("#1E1F24"))
@@ -465,7 +465,7 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 		local t = label(b, ACTION_TEXT[a] or a, F_BOLD, 21, 19, 0, 210, 52, RC.text, nil, 23)
 		local img = rasset(ACTION_ICON[a])
 		local ic = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img or "", ImageColor3 = RC.white, ScaleType = Enum.ScaleType.Fit,
-			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(250, 26), Size = UDim2.fromOffset(40, 40), ZIndex = 23, Parent = b })
+			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(250, 26), Size = UDim2.fromOffset(48, 48), ZIndex = 23, Parent = b }) -- (e17: the art is padded; 48 draws a ~40 arrow)
 		local sent = false
 		b.MouseEnter:Connect(function() grad.Enabled = false; t.TextColor3 = RC.textDark; if not sent then ic.ImageColor3 = RC.textDark end end)
 		b.MouseLeave:Connect(function() grad.Enabled = true; t.TextColor3 = RC.text; ic.ImageColor3 = sent and sentGrey or RC.white end)
