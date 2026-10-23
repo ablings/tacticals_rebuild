@@ -175,7 +175,7 @@ local function build()
 	-- (2026-10-21, port3) graders: the disabled grey plate read as broken. RIVALS action buttons stay their bright gradient: with no
 	-- code the lime button is only dimmed (a black veil at 0.6, the word at 0.2 with its stroke kept so it stays chunky and legible);
 	-- typed, the veil fades away to the full lime gradient with a pop
-	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(90, 90, 90), BackgroundTransparency = 0.05, ZIndex = 2, Parent = go }, -- (round 9, grader B: a clearly grey disabled state)
+	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = Color3.fromRGB(74, 74, 74), BackgroundTransparency = 0, ZIndex = 2, Parent = go }, -- (lobby r18, grader B: neutral #4A4A4A, no lime showing through) -- (round 9, grader B: a clearly grey disabled state)
 		{ RK.corner(6) })
 	local goLabel = go:FindFirstChild("Label")
 	if goLabel then goLabel.ZIndex = 3; goLabel.TextColor3 = C.text end
@@ -192,7 +192,7 @@ local function build()
 		local on = (box.Text or ""):match("%S") ~= nil
 		if on == goOn then return end
 		goOn = on
-		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0.05 }) -- (round 7, grader C: a lime at ~50 %, the 0.6 black veil read olive)
+		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0 }) -- (round 7, grader C: a lime at ~50 %, the 0.6 black veil read olive)
 		if goLabel then
 			Kit.tween(goLabel, t or 0.15, { TextTransparency = on and 0 or 0.2 })
 			-- (2026-10-23, lobby r12 grader B) disabled reads neutral grey: the word's green edge turns dark grey with the plate

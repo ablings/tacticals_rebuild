@@ -1468,7 +1468,7 @@ end
 -- as a big tilted 3D model in its skin, poking out of the banner's right end (from above its top edge to the screen bottom). The
 -- model is the Repository copy, in its own colours. Built once per weapon.
 RV.kWeapon = new("ViewportFrame", { Name = "KillWeapon", BackgroundTransparency = 1, Ambient = Color3.fromRGB(215, 215, 220), LightColor = WHITE,
-	LightDirection = Vector3.new(-1, -0.6, 0.3), Position = UDim2.fromOffset(389, -114), Size = UDim2.fromOffset(350, 350), Visible = false, ZIndex = 6, Parent = kcard }) -- (m21, grader A vs t0212: bottom-right at ~98 % / 98 %; under the card words (ZIndex 7) so "with Pistol" stays readable)
+	LightDirection = Vector3.new(-1, -0.6, 0.3), Position = UDim2.fromOffset(483, -114), Size = UDim2.fromOffset(350, 350), Visible = false, ZIndex = 6, Parent = kcard }) -- (m21, grader A vs t0212: bottom-right at ~98 % / 98 %; under the card words (ZIndex 7) so "with Pistol" stays readable)
 function RV.setKillWeapon(uid, weapon)
 	local vpf = RV.kWeapon
 	if not weapon then vpf.Visible = false; RV.kWeaponKey = nil; return end

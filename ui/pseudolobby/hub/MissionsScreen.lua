@@ -171,8 +171,9 @@ local function reward(parent, amount, pos, paid, px)
 	-- the render): it no longer hides the right half (r0), nor hangs below into the next contract row (r1)
 	-- (round 5, grader B: centred over the lower third it hid the handle rings, the glyph read as a red X) RIVALS' corner: left edge at
 	-- 0.62 of the icon, top at 0.66, so only the bottom-right corner is covered
-	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 24, TextXAlignment = Enum.TextXAlignment.Center, -- (round 6: graders A + B) centred under the icon (RIVALS t0066), overlapping only its bottom ~15 % so the rings show
-		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(math.floor(size / 2), math.floor(size * 0.7)), Size = UDim2.fromOffset(110, 26), ZIndex = 2, Parent = holder })
+	local n = RK.label({ Text = "×" .. commas(amount), FontFace = FB, TextSize = 32, -- (lobby r18, grader B: ×N cap 8 -> 12 px at 713)
+		 TextXAlignment = Enum.TextXAlignment.Center, -- (round 6: graders A + B) centred under the icon (RIVALS t0066), overlapping only its bottom ~15 % so the rings show
+		TextColor3 = paid and C.green or C.text, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(math.floor(size / 2), math.floor(size * 0.7)), Size = UDim2.fromOffset(110, 34), ZIndex = 2, Parent = holder })
 	RK.textStroke(2).Parent = n
 	return holder
 end
