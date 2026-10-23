@@ -418,3 +418,13 @@ himself; we never publish.
 - Live checks: weapon contracts paying (needs real weapon kills), the +100 level-up scissors (bot matches never pay), the Duels
   TV spectator eye. Known gap: the match places' after-match lobby has no RerollQuest / LevelUpItem / ClaimDailyFree handlers
   (those live in the hub's LobbyManager); its UI should hide or route those buttons to the hub.
+
+## Live port 35 (2026-10-23, main PC lead; Edward pre-approved in the lead's chat: "you have the greenlight to publish as soon as he's done")
+- From the saved working copies at f5fb645 (UI session: "done f5fb645", Studios minimised). Published on XF243Y: tacticals,
+  Tutorial, Matchmaking, Ranked; each retitled after Grant; Matchmaking / Ranked UI from a clean worktree at f5fb645.
+- Every copy: out/c35.lua (c34 + ARENAFIRST / REVOLVER2 / BESTOF3) all present where expected, "compile all ok"; out/pre.lua clean.
+- Carries: lead ARENAFIRST (pad-duel map clones before the preload: the mobile / fresh-account void), REVOLVER2 (knockback on the 2nd
+  consecutive Revolver hit, no aim), BESTOF3 (Rematch off once a side has 2 series wins: RematchAllowed false, "Series decided"),
+  ECON2 handlers in the after-match lobby; UI mobile fixes (touch buttons, Sprint, auto sprint, auto shoot, double tap on), RIVALS
+  layout, MATCH POINT / SUDDEN DEATH ribbon, pad-duel results (no Rematch / Play Again), nameplate rules, Revolver ring removed.
+- Live checks: the pad-duel map on a phone (no void), Revolver knockback only on the 2nd hit, Rematch after a 2-0 / 2-1 series.
