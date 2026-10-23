@@ -919,14 +919,11 @@ local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UD
 -- (2026-10-21, RIVALS pass) a clear order: Play Again is THE primary (field-green #8DBF5A -> #4C7A2E fill, cream words, no hairline
 -- border), Rematch the tan secondary (the file's own TEAM_A.fill tan), Leave and Back stay dark plates
 do
-	-- (2026-10-23, matchmaking round m1, RIVALS t0140) Play Again / Leave / Back are RIVALS' dark buttons: a 3 px white outline,
-	-- a soft gloss across the top half and white words. Play Again is no longer a green fill (RIVALS has none).
+	-- (2026-10-23, matchmaking round m1, RIVALS t0140) Play Again / Leave / Back are RIVALS' dark buttons: a 3 px white outline
+	-- and white words (no gloss: the house AI-tells rule, calmOne hides any "Gloss"). Play Again is no longer a green fill (RIVALS has none).
 	for _, b in { againB, leaveB, backB } do
 		b.BackgroundColor3, b.BackgroundTransparency = Color3.fromRGB(24, 25, 29), 0.08
 		new("UIStroke", { Color = WHITE, Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = b })
-		new("Frame", { Name = "Gloss", BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.45), ZIndex = b.ZIndex, Parent = b }, {
-			new("UICorner", { CornerRadius = UDim.new(0.18, 0) }),
-			new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(1, 1) }) }) })
 		local words = b:FindFirstChildOfClass("TextLabel")
 		words.TextColor3, words.ZIndex = WHITE, b.ZIndex + 1 -- (over the gloss)
 	end
@@ -1323,8 +1320,8 @@ function RV.endElim()
 	if not elimL.Visible then return end
 	elimToken += 1
 	local ti = TweenInfo.new(0.3)
-	TweenService:Create(elimL, ti, { TextTransparency = 1 }):Play()
-	TweenService:Create(elimSub, ti, { TextTransparency = 1 }):Play()
+	RV.elimFade = { TweenService:Create(elimL, ti, { TextTransparency = 1 }), TweenService:Create(elimSub, ti, { TextTransparency = 1 }) } -- (m14: cancellable too)
+	for _, tw in RV.elimFade do tw:Play() end
 	local my = elimToken
 	task.delay(0.32, function() if elimToken == my then elimL.Visible = false; elimSub.Visible = false end end) -- (m12: a new kill in between keeps its line)
 end
@@ -1539,9 +1536,6 @@ UserInputService.LastInputTypeChanged:Connect(chipText)
 chipText()
 
 RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.switchHook = roundCard, showRoundCard, kcard, refreshKillerCard, switchB, switchHook
--- (m12, grader B vs RIVALS t0210) the killer card's soft top gloss
-new("Frame", { Name = "Gloss", BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.5), ZIndex = kcard.ZIndex, Parent = kcard },
-	{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new(0.55, 1) }) }) -- (m13: 0.72 read as nothing)
 -- (2026-10-20, Knife Duels / Murder Duels / RIVALS) MATCH POINT on the same banner, through the countdown of a round that can
 -- end the match: "You need 1 point to win!" (ours, beige) / "They need 1 point to win" (theirs, green) / both: "Next round wins"
 -- (2026-10-23, Edward: "match point screens and sudden death being 4-4 ... add these aesthetics", his RIVALS recording t0122 / t0338 /
@@ -2289,16 +2283,16 @@ do
 	for a = -36, 36, 6 do
 		local r = math.rad(a)
 		new("Frame", { BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5 + math.sin(r) * 0.4, 0.5 - math.cos(r) * 0.4),
-			Size = UDim2.fromScale(0.05, 0.045 - math.abs(a) / 36 * 0.03), Rotation = a, Parent = arrow }, { corner(4) }) -- (m13: thick in the middle, tapering, t0206)
+			Size = UDim2.fromScale(0.05, 0.042), Rotation = a, Parent = arrow }, { corner(4) }) -- (m14, grader A vs t0206: an even ~2 % stroke)
 	end
 	new("TextLabel", { BackgroundTransparency = 1, Text = "▲", TextColor3 = ARC_RED, TextScaled = true, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.03), Size = UDim2.fromScale(0.16, 0.16), Parent = arrow }) -- (m13: the point ~2x, RIVALS' big head)
+		Position = UDim2.fromScale(0.5, 0.05), Size = UDim2.fromScale(0.26, 0.26), Parent = arrow }) -- (m14: the point ~4 x 7 % of the screen like t0206)
 	local function setArc(t)
 		for _, c in arrow:GetChildren() do
 			if c:IsA("TextLabel") then c.TextTransparency = t elseif c:IsA("Frame") then c.BackgroundTransparency = t end
 		end
 	end
-	RunService.RenderStepped:Connect(function()
+	RunService.RenderStepped:Connect(function(dt)
 		local dead = player:GetAttribute("Alive") == false and inMatch()
 		local flash = dead and RV.deathFlashUntil ~= nil and os.clock() < RV.deathFlashUntil -- (RIVALS t0206 -> t0208: only the death moment)
 		vig.Visible = flash
@@ -2321,13 +2315,15 @@ do
 		local ar = dgui.AbsoluteSize.X / math.max(1, dgui.AbsoluteSize.Y)
 		-- (m13, grader C) eases toward the killer instead of jumping a frame at a time (shortest way round)
 		local d = ((math.deg(ang) - arrow.Rotation + 180) % 360) - 180
-		arrow.Rotation += d * 0.25
+		if RV.arcSnap then RV.arcSnap = false; arrow.Rotation = math.deg(ang) -- (m14: a new death starts on its own killer)
+		else arrow.Rotation += d * (1 - math.exp(-17 * dt)) end -- (m14: the same ease at any frame rate)
 	end)
 	player:GetAttributeChangedSignal("Alive"):Connect(function()
 		if player:GetAttribute("Alive") ~= false or not inMatch() then return end
 		local k = lastDeath and lastDeath.killer
 		RV.killerModel = k and (k < 0 and botModel(k) or (Players:GetPlayerByUserId(k) and Players:GetPlayerByUserId(k).Character)) or nil
 		arrow.Visible = true -- (m11: the RenderStepped above finds the killer, hides it if there is none)
+		RV.arcSnap = true
 		RV.deathFlashLen = slow(1.5)
 		RV.deathFlashUntil = os.clock() + RV.deathFlashLen
 		task.delay(RV.deathFlashLen, function() arrow.Visible = false end)

@@ -67,3 +67,5 @@ Rules:
 - Leave button top-left and the in-match Daily Missions panel are our own features.
 - The victory cutscene (letterbox + VICTORY) is Edward's request.
 - Round-end / kill-cam durations are server timing (another session); note them on a separate unscored line.
+- No gloss / sheen overlays: the house "AI-tells" style rule (notes\ui_rivals\09_cleanup.md) removes them on purpose, even where
+  RIVALS has one (results buttons, killer card).

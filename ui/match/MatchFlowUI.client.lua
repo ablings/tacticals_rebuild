@@ -454,10 +454,11 @@ refreshVotes = function()
 	local ok, votes = pcall(function() return HttpService:JSONDecode(st(STATE.Votes) or "{}") end)
 	votes = ok and votes or {}
 	-- (m13, grader C vs RIVALS t0028 "Arena [100%]") each voted map shows its share of the votes after its name
-	local total = 0
-	for _, ids in votes do if type(ids) == "table" then total += #ids end end
-	local mineV = player:GetAttribute("_MyVote")
-	if mineV and not (votes[mineV] and table.find(votes[mineV], player.UserId)) then total += 1 end
+	-- (m14, grader C: count each voter once; while your change is in flight you sat on two tiles, 67 % in a 1v1)
+	local voters, total = {}, 0
+	for _, ids in votes do if type(ids) == "table" then for _, uid in ids do voters[uid] = true end end end
+	if player:GetAttribute("_MyVote") then voters[player.UserId] = true end
+	for _ in voters do total += 1 end
 	local mine = player:GetAttribute("_MyVote")
 	for id, tile in mapTiles do
 		local ids = table.clone(votes[id] or {})
