@@ -60,3 +60,10 @@ Rules:
 - If a change from last round moved us away from RIVALS, say so first.
 - Only list what you can see (or, for feel, what the code does). Say "can't judge" when a crop is too small.
 - Don't edit any files other than your report.
+
+## Settled (don't re-flag)
+- Play menu grid top at y 306: it matches `ui_rivals\rivals_normal\play.png` (RIVALS without the featured row, like ours). The live
+  t0016 grid sits higher only because its "limited time" featured row fills the space below.
+- Leave button top-left and the in-match Daily Missions panel are our own features.
+- The victory cutscene (letterbox + VICTORY) is Edward's request.
+- Round-end / kill-cam durations are server timing (another session); note them on a separate unscored line.

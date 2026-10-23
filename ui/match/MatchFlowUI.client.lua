@@ -668,7 +668,10 @@ end
 -- don't own sit dimmed under a padlock. Still guided: a pick jumps to the next empty tab; READY once all three are set.
 titleL.Visible = false
 mapChip.Visible = false
-local mapBar = new("Frame", { Name = "MapBar", Position = UDim2.fromOffset(660, 120), Size = UDim2.fromOffset(600, 50), BackgroundColor3 = BLACK, BorderSizePixel = 0, Parent = lo },
+-- (2026-10-23, matchmaking round m4, graders A + B vs RIVALS t0036) the whole pick block sits 97 px (9 %) lower: map bar, slots,
+-- tabs and the options grid
+local LO_DROP = 97
+local mapBar = new("Frame", { Name = "MapBar", Position = UDim2.fromOffset(660, 120 + LO_DROP), Size = UDim2.fromOffset(600, 50), BackgroundColor3 = BLACK, BorderSizePixel = 0, Parent = lo },
 	{ new("UIGradient", { Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.2, 0.2), NumberSequenceKeypoint.new(0.8, 0.2), NumberSequenceKeypoint.new(1, 1) }) }) })
 local mapBarL = label(mapBar, "Map", FX, 32, 0, 0, 600, 50, WHITE)
 
@@ -677,10 +680,10 @@ local SLOT_W, SLOT_GAP = 86, 12
 local slotRowX = 960 - (#SLOTS * SLOT_W + (#SLOTS - 1) * SLOT_GAP) / 2
 local chips = {}
 for i, s2 in SLOTS do
-	local chip = new("TextButton", { Name = "Slot" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotRowX + (i - 1) * (SLOT_W + SLOT_GAP), 186),
+	local chip = new("TextButton", { Name = "Slot" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotRowX + (i - 1) * (SLOT_W + SLOT_GAP), 186 + LO_DROP),
 		Size = UDim2.fromOffset(SLOT_W, SLOT_W), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ZIndex = 2, Parent = lo }, { corner(6) })
 	ink(chip, 6, 4)
-	local edge = new("UIStroke", { Color = INK_YELLOW, Thickness = 3, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip })
+	local edge = new("UIStroke", { Color = INK_YELLOW, Thickness = 5, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip }) -- (m4: 3 -> 5, RIVALS' bold active ring)
 	local art = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-8, -12), Size = UDim2.fromOffset(SLOT_W + 16, SLOT_W + 8), ZIndex = 3, Parent = chip })
 	local q = label(chip, string.upper(s2.label), STENCIL, 18, 0, 0, SLOT_W, SLOT_W, Color3.fromRGB(110, 112, 108))
 	chips[s2.id] = { chip = chip, edge = edge, art = art, q = q, index = i }
@@ -691,7 +694,7 @@ local TAB_W, TAB_GAP = 250, 10 -- (2026-10-20) wide enough for "MELEE  ·  SET" 
 local tabX = 960 - (#SLOTS * TAB_W + (#SLOTS - 1) * TAB_GAP) / 2
 local tabs = {}
 for i, s2 in SLOTS do
-	local t = new("TextButton", { Name = "Tab" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(tabX + (i - 1) * (TAB_W + TAB_GAP), 300),
+	local t = new("TextButton", { Name = "Tab" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(tabX + (i - 1) * (TAB_W + TAB_GAP), 300 + LO_DROP),
 		Size = UDim2.fromOffset(TAB_W, 48), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ZIndex = 2, Parent = lo }, { corner(4) })
 	ink(t, 6, 4)
 	local tl = label(t, string.upper(s2.label), FX, 26, 0, 0, TAB_W, 48, WHITE)
@@ -705,7 +708,7 @@ end
 local OPT, OPT_GAP, PER_ROW = 122, 36, 5
 local GRID_W, GRID_H = 5 * OPT + 4 * OPT_GAP + 40, 560
 -- (2026-10-22) the grid moves up into the hidden tabs' place (y 296, was 368)
-local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromOffset(960 - GRID_W / 2, 296), Size = UDim2.fromOffset(GRID_W, GRID_H), BackgroundTransparency = 1,
+local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromOffset(960 - GRID_W / 2, 296 + LO_DROP), Size = UDim2.fromOffset(GRID_W, GRID_H), BackgroundTransparency = 1,
 	BorderSizePixel = 0, ScrollBarThickness = 6, ScrollBarImageColor3 = GREY, ScrollingDirection = Enum.ScrollingDirection.Y, CanvasSize = UDim2.new(), Parent = lo })
 local list = optArea
 local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1500, 900), Size = UDim2.fromOffset(300, 80),

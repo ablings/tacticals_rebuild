@@ -167,8 +167,9 @@ local function teamBox(x, cols, right)
 	local score = label(b, "0", FX, 54, right and 8 or 222, 6, 70, 72, WHITE, nil, 4)
 	return { slots = slots, score = score, frame = b, right = right }
 end
-local mineBox = teamBox(580, TEAM_A, false)
-local theirBox = teamBox(1040, TEAM_B, true)
+-- (2026-10-23, matchmaking round m4, graders A + B vs RIVALS t0040) 31 px gaps either side of the timer (were 8)
+local mineBox = teamBox(557, TEAM_A, false)
+local theirBox = teamBox(1063, TEAM_B, true)
 local timerBox = new("Frame", { Position = UDim2.fromOffset(888, 20), Size = UDim2.fromOffset(144, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = root }, { corner(10),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(46, 48, 52), Color3.fromRGB(12, 13, 15)) }) })
 -- (2026-10-23, matchmaking round m2, RIVALS t0046) one line: hourglass + clock, centred in the block; no ROUND / First to lines
@@ -1801,9 +1802,11 @@ RunService.RenderStepped:Connect(function()
 	local onKiller = spec and not spectator() and killerUid ~= nil and target == killerUid and player:GetAttribute("SpectateReason") == "Killer"
 	specBar.Visible = spec and not onKiller
 	-- (2026-10-23, matchmaking round m2, RIVALS t0212-t0214) the killer card stays ~1.5 s into the next countdown
-	if onKiller then RV.kcardUntil = os.clock() + 1.5 end
-	-- (m3: a timer latch; the server clears SpectateTarget before the Countdown starts, so the state can't gate the re-arm)
-	local keepCard = not onKiller and RV.kcardUntil ~= nil and os.clock() < RV.kcardUntil and (state == "RoundEnd" or state == "Countdown")
+	-- (m4: once the card has shown it holds through the whole round end and 1.5 s into the countdown; the server clears
+	-- SpectateTarget early in the round end, so neither it nor a timer from that moment can carry the card that far)
+	if state ~= RV.kcState then RV.kcState, RV.kcSince = state, os.clock() end
+	if onKiller then RV.kcardShown = true elseif state == "Live" or state == "MatchEnd" or state == "Victory" then RV.kcardShown = false end
+	local keepCard = not onKiller and RV.kcardShown and (state == "RoundEnd" or (state == "Countdown" and os.clock() - (RV.kcSince or 0) < 1.5))
 	if onKiller and not RV.kcard.Visible then
 		-- slide in from the right edge
 		local home = RV.kcardHome or RV.kcard.Position
