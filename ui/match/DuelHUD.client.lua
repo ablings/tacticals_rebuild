@@ -49,6 +49,9 @@ local function stateObject()
 	return ReplicatedStorage, nil
 end
 local function st(name) local o = stateObject(); return o and o:GetAttribute(name) end
+-- (2026-10-23, matchmaking rounds) Studio only: the player attribute _UISlowMo stretches the short UI holds (death flash, killer
+-- card, round card fade, Eliminated) so a screenshot that takes seconds can still catch them. Live: always 1.
+local function slow(t) return t * ((RunService:IsStudio() and tonumber(player:GetAttribute("_UISlowMo"))) or 1) end
 local function send(...)
 	local ev = ReplicatedStorage:FindFirstChild("MatchFlow")
 	if not ev then return end
@@ -170,7 +173,8 @@ end
 -- (2026-10-23, matchmaking round m4, graders A + B vs RIVALS t0040) 31 px gaps either side of the timer (were 8)
 local mineBox = teamBox(557, TEAM_A, false)
 local theirBox = teamBox(1063, TEAM_B, true)
-local timerBox = new("Frame", { Position = UDim2.fromOffset(888, 20), Size = UDim2.fromOffset(144, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = root }, { corner(10),
+local timerBox = new("Frame", { Position = UDim2.fromOffset(888, 11), -- (m9: the bar's top at y 1 %, RIVALS t0040)
+	 Size = UDim2.fromOffset(144, 84), BackgroundColor3 = WHITE, BackgroundTransparency = 0.1, Parent = root }, { corner(10),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(46, 48, 52), Color3.fromRGB(12, 13, 15)) }) })
 -- (2026-10-23, matchmaking round m2, RIVALS t0046) one line: hourglass + clock, centred in the block; no ROUND / First to lines
 local timerL = label(timerBox, "0:00", FX, 44, 0, 17, 144, 50, WHITE)
@@ -1329,7 +1333,7 @@ showEliminated = function(uid, d)
 	local pop = elimL:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = elimL })
 	pop.Scale = 1.4
 	TweenService:Create(pop, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	task.delay(4, function() -- (m5, RIVALS t0118-t0122: "Eliminated X" holds ~4 s, through the round end; was 2.2)
+	task.delay(slow(4), function() -- (m5, RIVALS t0118-t0122: "Eliminated X" holds ~4 s, through the round end; was 2.2)
 		if elimToken ~= my then return end
 		TweenService:Create(elimL, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
 		TweenService:Create(elimSub, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
@@ -1586,9 +1590,9 @@ local function fillBox(box, ids)
 	local n = math.clamp(#ids, 1, 3)
 	if box.n ~= n then
 		box.n = n
-		local w = 64 + 64 * n -- (2026-10-22, spacing grade) the score hugs the heads (~0.35 cap like RIVALS; was ~1.15)
+		local w = 75 + 64 * n -- (m9, grader A vs RIVALS t0040: a 1v1 plate is 139 px; was 128)
 		box.frame.Size = UDim2.fromScale(w / W, 84 / H)
-		box.frame.Position = UDim2.fromScale((box.right and 1063 or (857 - w)) / W, 20 / H) -- (m5: 31 px gaps to the timer, RIVALS t0040; were 8)
+		box.frame.Position = UDim2.fromScale((box.right and 1063 or (857 - w)) / W, 11 / H) -- (m5: 31 px gaps to the timer, RIVALS t0040; m9: top at y 11 = 1 %)
 		for i = 1, 3 do
 			local hx = box.right and (58 + (i - 1) * 64) or (14 + (i - 1) * 64)
 			box.slots[i].h.Position = UDim2.fromScale(hx / w, 14 / 84)
@@ -1782,11 +1786,19 @@ RunService.RenderStepped:Connect(function()
 			-- (Edward 2026-10-19) no 3-2-1 / FIGHT: the top clock counts the countdown down in tenths instead
 			-- the round's WIN / LOSS banner stays through the countdown, unless the next round can end the match (MATCH POINT)
 			RV.showMatchPoint(mine, theirs, st("RoundsToWin")) -- (2026-10-23: spectators see the ribbon too, like RIVALS)
+			-- (m10, RIVALS t0122) "Eliminated X" ends when the countdown starts
+			if elimL.Visible then
+				elimToken += 1
+				local ti = TweenInfo.new(0.3)
+				TweenService:Create(elimL, ti, { TextTransparency = 1 }):Play()
+				TweenService:Create(elimSub, ti, { TextTransparency = 1 }):Play()
+				task.delay(0.32, function() elimL.Visible = false; elimSub.Visible = false end)
+			end
 			if RV.ribbon.Visible and RV.roundCard.Visible then RV.dimRoundCard(true)
 			elseif RV.roundCard.Visible then
 				-- (m8, RIVALS t0214) without a ribbon the card fades out ~2 s into the countdown
 				local card = RV.roundCard
-				task.delay(2, function()
+				task.delay(slow(2), function()
 					local o = stateObject()
 					if card.Visible and o and o:GetAttribute("MatchState") == "Countdown" and not RV.ribbon.Visible then RV.fadeRoundCard() end
 				end)
@@ -1842,7 +1854,7 @@ RunService.RenderStepped:Connect(function()
 	-- SpectateTarget early in the round end, so neither it nor a timer from that moment can carry the card that far)
 	if state ~= RV.kcState then RV.kcState, RV.kcSince = state, os.clock() end
 	if onKiller then RV.kcardShown = true elseif state == "Live" or state == "MatchEnd" or state == "Victory" then RV.kcardShown = false end
-	local keepCard = not onKiller and RV.kcardShown and (state == "RoundEnd" or (state == "Countdown" and os.clock() - (RV.kcSince or 0) < 2.0)) -- (m8: RIVALS t0212 -> t0214, ~2 s in)
+	local keepCard = not onKiller and RV.kcardShown and (state == "RoundEnd" or (state == "Countdown" and os.clock() - (RV.kcSince or 0) < slow(2.0))) -- (m8: RIVALS t0212 -> t0214, ~2 s in)
 	if onKiller and not RV.kcard.Visible then
 		-- slide in from the right edge
 		local home = RV.kcardHome or RV.kcard.Position
@@ -2249,16 +2261,19 @@ do
 	end)
 	-- (m8, grader C vs RIVALS t0206) at the death moment (1.5 s): a red vignette round the edges (four soft gradient strips) and a
 	-- red chevron on a ring round the centre pointing at the killer
-	local vig = new("Frame", { Name = "DeathVignette", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, Parent = dgui })
-	for _, e in { { 0, 0, 1, 0.22, 90 }, { 0, 0.78, 1, 0.22, -90 }, { 0, 0, 0.14, 1, 0 }, { 0.86, 0, 0.14, 1, 180 } } do
+	-- (m9: a CanvasGroup so the whole vignette fades out; the sides reach ~30 % in like RIVALS)
+	local vig = new("CanvasGroup", { Name = "DeathVignette", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, Parent = dgui })
+	for _, e in { { 0, 0, 1, 0.32, 90 }, { 0, 0.68, 1, 0.32, -90 }, { 0, 0, 0.3, 1, 0 }, { 0.7, 0, 0.3, 1, 180 } } do
 		new("Frame", { BackgroundColor3 = Color3.fromRGB(190, 16, 20), BorderSizePixel = 0, Position = UDim2.fromScale(e[1], e[2]), Size = UDim2.fromScale(e[3], e[4]), Parent = vig },
 			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.35, 1) }) })
 	end
 	local arrow = new("TextLabel", { Name = "KillerArrow", BackgroundTransparency = 1, Text = "▲", TextColor3 = Color3.fromRGB(235, 40, 40), TextScaled = true,
-		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromScale(0.04, 0.07), Visible = false, Parent = dgui })
+		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromScale(0.08, 0.12), Visible = false, Parent = dgui }) -- (m9: 2x, RIVALS' arc is big)
 	RunService.RenderStepped:Connect(function()
 		local dead = player:GetAttribute("Alive") == false and inMatch()
-		vig.Visible = dead and RV.deathFlashUntil ~= nil and os.clock() < RV.deathFlashUntil -- (m9, RIVALS t0206 -> t0208: only the death moment, gone in the kill-cam)
+		local flash = dead and RV.deathFlashUntil ~= nil and os.clock() < RV.deathFlashUntil -- (RIVALS t0206 -> t0208: only the death moment)
+		vig.Visible = flash
+		if flash then vig.GroupTransparency = math.clamp(1 - (RV.deathFlashUntil - os.clock()) / (RV.deathFlashLen or 1.5), 0, 1) ^ 2 end -- (m9: eases out)
 		if not (arrow.Visible and dead) then arrow.Visible = false return end
 		local m = RV.killerModel
 		local root = m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart)
@@ -2275,8 +2290,9 @@ do
 		local k = lastDeath and lastDeath.killer
 		RV.killerModel = k and (k < 0 and botModel(k) or (Players:GetPlayerByUserId(k) and Players:GetPlayerByUserId(k).Character)) or nil
 		arrow.Visible = RV.killerModel ~= nil
-		RV.deathFlashUntil = os.clock() + 1.5
-		task.delay(1.5, function() arrow.Visible = false end)
+		RV.deathFlashLen = slow(1.5)
+		RV.deathFlashUntil = os.clock() + RV.deathFlashLen
+		task.delay(RV.deathFlashLen, function() arrow.Visible = false end)
 		red.BackgroundTransparency = 0.5 -- (m3, RIVALS t0206: the red holds ~1.5 s)
 		TweenService:Create(red, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()
 	end)

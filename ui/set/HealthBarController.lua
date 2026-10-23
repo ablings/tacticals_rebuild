@@ -48,7 +48,8 @@ local function build()
 	-- with the number and a cross inside its right end; the fill runs bone -> amber -> red as health drops (RIVALS: green ->
 	-- yellow -> orange). With a controller it mirrors to the bottom right (the hotbar column takes the left).
 	local W, H = WIDTH, HEIGHT
-	frame = box(root, { Name = "Health", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(40, 1080 - 34), Size = UDim2.fromOffset(W, H),
+	frame = box(root, { Name = "Health", AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromOffset(12, 1080 - 14), Size = UDim2.fromOffset(W, H), -- (m9, RIVALS t0054: x 0.6 %, bottom 98.7 %; was 40 / 34)
+		
 		BackgroundTransparency = 1 })
 	local back = box(frame, { Name = "Bar", Size = UDim2.fromOffset(W, H), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, ZIndex = 3 })
 	local rc = Instance.new("UICorner") rc.CornerRadius = UDim.new(0.5, 0) rc.Parent = back

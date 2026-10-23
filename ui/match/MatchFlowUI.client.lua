@@ -424,7 +424,7 @@ local function buildMaps(list)
 		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = BLACK, BackgroundTransparency = 0.3,
 			BorderSizePixel = 0, ClipsDescendants = true, ZIndex = 2, Parent = t })
 		for k = -2, math.ceil(tw / 22) + 2 do
-			new("Frame", { BackgroundColor3 = STRIPE_TOP, BackgroundTransparency = 0.45, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
+			new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 72, 76), BackgroundTransparency = 0.35, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35, -- (m9, grader B: RIVALS' stripes are dark grey; only the edge is green)
 				Position = UDim2.fromOffset(k * 22, barH / 2), Size = UDim2.fromOffset(6, barH * 2.2), ZIndex = 2, Parent = bar })
 		end
 		label(bar, m.name, FB, 38, 0, 0, tw, barH, WHITE, nil, 3)
