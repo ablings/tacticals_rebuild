@@ -450,3 +450,10 @@ himself; we never publish.
   boxes; weekly-contract check vs wide rewards; Ranked tile badges = fire shield in every state), e23 inbox / toast icon tile.
 - Blocker hit + workaround: computer use was held by the UI session (Obsidian sync / closing the player). The lock cleared ~30 s
   after it ended its turn; the minimised Studio window was restored with user32 ShowWindow(9) (bring_primary alone didn't).
+
+## Live port 38 (2026-10-23, main PC lead; Edward: "keep going") - LOBBY ONLY
+- Lobby from pinned 12ff656 (UI "Live-like data round": Warlord leaderboard rows 56 px on a fixed canvas, row plates, top-3 colours).
+  match_place_ref unchanged since 4bffcd0 (port 37), so Tutorial / Matchmaking / Ranked were not republished.
+- Lobby copy: c35 all present + compile all ok; pre.lua clean. Published tacticals; retitled after Grant.
+- Note: once the File menu closed before the Publish As click (the click hit the Toolbox, no change); clicking File and Publish As in
+  one batch avoids it.
