@@ -3296,7 +3296,7 @@ function Armory._kitCurrency(on: boolean)
 	local plate = pill:FindFirstChild("Plate")
 	local sc = pill:FindFirstChild("KitScale")
 	if on then
-		if not sc and not pill:FindFirstChildOfClass("UIScale") then mk("UIScale", { Name = "KitScale", Scale = 1, Parent = pill }) -- (rounds 8-10, graders A + B vs t0058 / t0285: RIVALS keeps one counter size; was 1.16) end
+		if not sc and not pill:FindFirstChildOfClass("UIScale") then mk("UIScale", { Name = "KitScale", Scale = 1, Parent = pill }) end -- (rounds 8-10, graders A + B vs t0058 / t0285: RIVALS keeps one counter size; was 1.16)
 		if plate and plate:IsA("GuiObject") and not plate:FindFirstChild("KitFade") then
 			plate:SetAttribute("KitT", plate.BackgroundTransparency)
 			plate.BackgroundTransparency = 0.1
