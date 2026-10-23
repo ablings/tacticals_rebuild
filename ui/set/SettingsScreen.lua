@@ -351,11 +351,11 @@ end
 local function biggerSlider(holder)
 	local box, arrows, track = holder:FindFirstChild("Value"), holder:FindFirstChild("Arrows"), holder:FindFirstChild("Track")
 	if box then
-		box.Position, box.Size = UDim2.new(1, -19, 0, 12), UDim2.fromOffset(120, 64)
+		box.Position, box.Size = UDim2.new(1, -19, 0, 12), UDim2.fromOffset(110, 57) -- (lobby r14, grader A vs t0136: was 120 x 64)
 		box.FontFace, box.TextSize = F.display, 36
 	end
 	if arrows then
-		arrows.Position, arrows.Size = UDim2.new(1, -147, 0, 12), UDim2.fromOffset(60, 64)
+		arrows.Position, arrows.Size = UDim2.new(1, -135, 0, 12), UDim2.fromOffset(57, 57) -- (r14: was 60 x 64 at -147)
 		for _, b in ipairs(arrows:GetChildren()) do
 			if b:IsA("TextButton") then b.FontFace, b.TextSize = F.display, 28 end
 		end
@@ -378,8 +378,9 @@ local function buildRow(tab, row, order)
 	local plateIndent = math.max(0, (row.level or 1) - 1) * 38
 	local ind = 0
 	-- (2026-10-21, RIVALS 1:1) the replica's heights: every row 88 (toggles too), sliders 132 (an 88 label line + the track)
-	local h = row.kind == "slider" and 132 or 88
-	local lineH = 88 -- the label / icon / control line
+	-- (lobby r14, grader A vs t0136) toggle-only rows are shorter: 73 (the row step 95 -> 79 design px)
+	local lineH = row.kind == "toggle" and 73 or 88 -- the label / icon / control line
+	local h = row.kind == "slider" and 132 or lineH
 	local iconY = math.floor((lineH - 52) / 2)
 	local frame = new("Frame", {
 		Name = row.key, LayoutOrder = order, Size = UDim2.fromOffset(772 - plateIndent, h),
@@ -470,9 +471,9 @@ local function buildRow(tab, row, order)
 	if control and row.kind == "toggle" then
 		-- (2026-10-21, port3) graders: controls ~15 % bigger. Toggle 110 x 55 -> 126 x 63, knob 41 -> 47 (the kit slides the
 		-- knob by Scale 7/110 .. 62/110, which keeps an 8 px margin either side at this width)
-		control.Size = UDim2.fromOffset(126, 63)
+		control.Size = UDim2.fromOffset(104, 54) -- (lobby r14, grader A vs t0136: 126 x 63 ran big)
 		local knob = control:FindFirstChild("Knob")
-		if knob then knob.Size = UDim2.fromOffset(47, 47) end
+		if knob then knob.Size = UDim2.fromOffset(40, 40) end
 	end
 	if control then
 		-- centre anchor so hover scaling grows the control in place (not from its corner)

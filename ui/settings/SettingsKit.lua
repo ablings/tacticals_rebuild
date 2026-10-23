@@ -473,7 +473,7 @@ function Kit.headerBar(width, text, height)
 		Name = "Header_" .. text, Size = UDim2.fromOffset(width, height or 78),
 		BackgroundColor3 = C.textDark, BackgroundTransparency = Theme.alpha.header,
 	}, { Kit.corner(8) })
-	Kit.label({ Text = text, FontFace = F.display, TextSize = 61, Position = UDim2.fromOffset(22, 0), Size = UDim2.new(1, -22, 1, 0), Parent = bar })
+	Kit.label({ Text = text, FontFace = F.display, TextSize = 48, Position = UDim2.fromOffset(22, 0), Size = UDim2.new(1, -22, 1, 0), Parent = bar }) -- (lobby r14, grader B: section headers cap 28 -> 22)
 	return bar
 end
 

@@ -367,7 +367,8 @@ function LobbyHud.Start()
 	-- (2026-10-21, RIVALS 1:1) RIVALS' corner list (t0166 / t0193 / t0247 / t0270): a compact translucent black panel under the
 	-- gear, colours / fonts from UIKit.Rivals.Theme (names Rubik Medium, the number Rubik SemiBold, all white).
 	local LBF_NAME, LBF_NUM = RTheme.font.medium, RTheme.font.heavy
-	local lb = new("Frame", { Name = "PlayerList", Position = UDim2.fromOffset(1590, 96), Size = UDim2.fromOffset(LB_W, lbH), BackgroundColor3 = RC.textDark,
+	local lb = new("Frame", { Name = "PlayerList", Position = UDim2.fromOffset(1590, 68), -- (lobby r14, grader A vs rec t0177: 28 px up)
+		 Size = UDim2.fromOffset(LB_W, lbH), BackgroundColor3 = RC.textDark,
 		BackgroundTransparency = rtok("listAlpha", 0.3), Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 4) }) })
 	-- the x and the column icon sit in a 34 px header strip, so they keep their size while the panel's height changes
 	local lbHead = new("Frame", { Name = "Header", BackgroundTransparency = 1, Size = UDim2.fromOffset(LB_W, 34), Parent = lb })

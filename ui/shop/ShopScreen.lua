@@ -851,7 +851,7 @@ function RENDER.Featured(pg, hover)
 	local offers = {}
 	for _, gp in Config.GamePasses do if not (d.Passes and d.Passes[gp.Key]) then table.insert(offers, passSpec(gp)) end end
 	for _, bd in Config.Bundles or {} do table.insert(offers, bundleSpec(bd)) end
-	local SO_X, SO_Y, SO_W, SO_H = 12, 334 + GAP, 774, 270 -- (2026-10-21, port3) 12..786 x 384..654
+	local SO_X, SO_Y, SO_W, SO_H = 12, 334 + GAP, 747, 323 -- (2026-10-21, port3) 12..786 x 384..654; (lobby r14, grader A vs rec t0070: 747 x 323)
 	local so = new("Frame", { Name = "SpecialOffer", Position = UDim2.fromOffset(SO_X, SO_Y), Size = UDim2.fromOffset(SO_W, SO_H), BackgroundColor3 = C.panel,
 		BackgroundTransparency = 0.25, BorderSizePixel = 0, ClipsDescendants = true, Parent = pg }, { RK.corner(8) })
 	local slides = {}
