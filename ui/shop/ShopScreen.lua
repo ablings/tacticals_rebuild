@@ -898,7 +898,8 @@ function RENDER.Featured(pg, hover)
 		local N, PADX, GAP, DH = #slides, 12, 26.5, 32
 		local W0 = PADX * 2 + GAP * (N - 1) + 16 + 11 * (N - 1)
 		-- (2026-10-21, port3) under the panel's centre at y 662..694, inside the 710 page window (it sat at 699 and was cut off)
-		local dots = new("Frame", { Name = "Dots", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(SO_X + SO_W / 2, SO_Y + SO_H + 8), Size = UDim2.fromOffset(W0, DH),
+		local dots = new("Frame", { Name = "Dots", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(SO_X + SO_W / 2, SO_Y + SO_H - DH - 6), -- (lobby r17: inside the taller banner; below it they fell off the screen)
+			 Size = UDim2.fromOffset(W0, DH),
 			BackgroundColor3 = BLACK, BackgroundTransparency = 0.45, BorderSizePixel = 0, Parent = pg }, { RK.corner(16) })
 		local ds, sel, kx, paused = {}, 1, nil, false
 		for k = 1, N do
