@@ -1675,6 +1675,7 @@ local function makeRow(id: string, y: number, parent: Instance)
 		if row.hs then TweenService:Create(row.hs, TI, { Scale = 1 }):Play() end
 	end)
 	b.MouseButton1Down:Connect(function() if row.hs then TweenService:Create(row.hs, TI, { Scale = 0.95 }):Play() end end)
+	b.MouseButton1Up:Connect(function() if row.hs then TweenService:Create(row.hs, TI, { Scale = selectedRowId == id and 1 or 1.05 }):Play() end end) -- (lobby r28, grader C: a press springs back on release)
 	-- (2026-10-21, user) like RIVALS: a click on an owned row picks AND equips it; a locked row is only picked (its price shows)
 	b.Activated:Connect(function() Armory.ClickItem(id) end)
 	return row
