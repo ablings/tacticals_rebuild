@@ -104,7 +104,16 @@ local function spectatedHumanoid()
 	return m and m:FindFirstChildOfClass("Humanoid")
 end
 
+local deadAt: number? = nil
 local function current(): (number, number)
+	-- (2026-10-23, matchmaking round m12, RIVALS t0206 -> t0208) your own bar reads 0 for the death moment, then the kill-cam
+	-- shows your killer's health
+	if localPlayer:GetAttribute("Alive") == false then
+		deadAt = deadAt or os.clock()
+		if os.clock() - deadAt < 1.5 then return 0, 100 end
+	else
+		deadAt = nil
+	end
 	local spec = spectatedHumanoid()
 	if spec then return math.max(spec.Health, 0), math.max(spec.MaxHealth, 1) end
 	local character = localPlayer.Character
