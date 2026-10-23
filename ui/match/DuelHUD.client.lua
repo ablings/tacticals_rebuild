@@ -217,7 +217,7 @@ end
 -- ~21 px names); anchored at its right edge so the UIScale grows it leftwards
 local feed = new("Frame", { Name = "KillFeed", BackgroundTransparency = 1, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(1900, 68), Size = UDim2.fromOffset(480, 300), Parent = root },
 	{ new("UIListLayout", { Padding = UDim.new(0.02, 0), SortOrder = Enum.SortOrder.LayoutOrder, HorizontalAlignment = Enum.HorizontalAlignment.Right }),
-		new("UIScale", { Name = "RivalsSize", Scale = 1.3 }) })
+		new("UIScale", { Name = "RivalsSize", Scale = 1.12 }) }) -- (m6: 1.3 overshot the pill height, 48 vs RIVALS' 38 px)
 local feedN = 0
 local function botModel(uid)
 	for _, m in workspace:GetDescendants() do
@@ -333,7 +333,7 @@ local function addKill(d)
 	end
 	local ins = new("UIScale", { Scale = 0.6, Parent = row })
 	TweenService:Create(ins, TweenInfo.new(0.22, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	task.delay(5, function()
+	task.delay(7, function() -- (m6, RIVALS: a feed pill stays ~7 s; was 5)
 		if row.Parent then
 			local fade = TweenInfo.new(0.4)
 			for _, v in row:GetDescendants() do
@@ -1822,15 +1822,20 @@ RunService.RenderStepped:Connect(function()
 	end
 	-- (m5, grader C) it slides back out to the right instead of cutting
 	if onKiller or keepCard then
-		if RV.kcardLeaving then RV.kcardLeaving = nil; if RV.kcardHome then RV.kcard.Position = RV.kcardHome end end
+		if RV.kcardLeaving then
+			RV.kcardLeaving = nil
+			if RV.kcardExit then RV.kcardExit:Cancel(); RV.kcardExit = nil end -- (m6: a card that comes back mid-exit stops sliding away)
+			if RV.kcardHome then RV.kcard.Position = RV.kcardHome end
+		end
 		RV.kcard.Visible = true
 	elseif RV.kcard.Visible and not RV.kcardLeaving then
 		RV.kcardLeaving = true
 		local home = RV.kcardHome or RV.kcard.Position
 		RV.kcardHome = home
-		TweenService:Create(RV.kcard, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Position = home + UDim2.fromScale(0.25, 0) }):Play()
+		RV.kcardExit = TweenService:Create(RV.kcard, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Position = home + UDim2.fromScale(0.25, 0) })
+		RV.kcardExit:Play()
 		task.delay(0.3, function()
-			if RV.kcardLeaving then RV.kcardLeaving = nil; RV.kcard.Visible = false; RV.kcard.Position = home end
+			if RV.kcardLeaving then RV.kcardLeaving = nil; RV.kcardExit = nil; RV.kcard.Visible = false; RV.kcard.Position = home end
 		end)
 	end
 	-- (2026-10-22, RIVALS) the weapon HUD is gone while the kill banner is up (it sat under the banner, bottom right)
