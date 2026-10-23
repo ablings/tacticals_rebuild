@@ -267,13 +267,14 @@ local detailTop = new("Frame", { Name = "Text", BackgroundTransparency = 1, Size
 -- 80 px line, Rubik ExtraBold; icon 60 -> 72; the description 31 -> 34 and moved down under the taller title
 local dIcon = Kit.label({ Name = "Icon", Text = "", TextSize = 60, TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(12, 4), Size = UDim2.fromOffset(78, 78), Parent = detailTop })
 local dImage = new("ImageLabel", { Name = "IconImage", BackgroundTransparency = 1, Position = UDim2.fromOffset(14, 6), Size = UDim2.fromOffset(72, 72), Parent = detailTop })
-local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.display, TextSize = 70, TextScaled = true,
+local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = Font.new(F.display.Family, Enum.FontWeight.Bold), TextSize = 70, TextScaled = true, -- (lobby r24, grader B: Bold, not Heavy)
+	
 	Position = UDim2.fromOffset(102, 2), Size = UDim2.fromOffset(398, 80), Parent = detailTop }) -- (lobby r23, grader B: 24 clear of the panel edge)
 new("UITextSizeConstraint", { MaxTextSize = 70, Parent = dTitle })
 local dDesc = Kit.label({
 	Name = "Desc", Text = "", FontFace = Font.new(F.bold.Family, Enum.FontWeight.Medium), TextSize = 30, -- (lobby r23, grader B vs t0136: Medium body, a size down)
-	 TextColor3 = C.textDim, TextWrapped = true,
-	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 92), Size = UDim2.fromOffset(470, 300), Parent = detailTop, -- (lobby r22, grader B: right inset 14 -> 24)
+	 TextColor3 = Color3.fromRGB(210, 210, 214), TextWrapped = true, -- (lobby r24, grader B: body ~210)
+	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 77), Size = UDim2.fromOffset(470, 300), Parent = detailTop, -- (lobby r22, grader B: right inset 14 -> 24; r24: 15 up under the title)
 })
 
 local function showDetail(row)

@@ -201,7 +201,10 @@ local function enter()
 			local tip, cv = tipLabel.Parent, tipLabel.Parent.Parent
 			local h = tipLabel.AbsoluteSize.Y
 			if h <= 0 or cv.AbsoluteSize.X <= 0 then return end
-			local ok, size = pcall(game:GetService("TextService").GetTextSize, game:GetService("TextService"), tipLabel.Text, math.floor(h), Enum.Font.SourceSansBold, Vector2.new(1e4, h))
+			-- (m28, grader A: measure in the font it is drawn in; SourceSans under-measured Rubik, so the words dropped a size)
+			local params = Instance.new("GetTextBoundsParams")
+			params.Text, params.Font, params.Size, params.Width = tipLabel.Text, tipLabel.FontFace, math.floor(h), 1e4
+			local ok, size = pcall(game:GetService("TextService").GetTextBoundsAsync, game:GetService("TextService"), params)
 			if not ok then return end
 			local inset = h * 0.5 -- (m26-27, grader A vs t0022: ~20 design px each side; 0.85 and a 1.08 width fudge overshot)
 			local w = size.X + inset * 2

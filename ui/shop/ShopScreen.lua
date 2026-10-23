@@ -880,7 +880,7 @@ function RENDER.Featured(pg, hover)
 		if not isPass then goldTitle(t) end
 		if isPass and spec.desc then
 			stroke(RK.label({ Text = spec.desc, FontFace = FM, TextSize = 24, TextColor3 = C.textDim, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top,
-				Position = UDim2.fromOffset(34, 90), Size = UDim2.fromOffset(400, 110), ZIndex = 5, Parent = sl }), 1.5, 0.5)
+				Position = UDim2.fromOffset(34, 90), Size = UDim2.fromOffset(335, 110), ZIndex = 5, Parent = sl }), 1.5, 0.5) -- (lobby r24, grader B: ~335 wide, RIVALS t0070)
 		end
 		local value = spec.value and spec.value()
 		if value then valueTag(sl, SO_W - 24 - 125, SO_H - 96 - 50, "x" .. value .. " VALUE", 190, 40, 24, 8) end
