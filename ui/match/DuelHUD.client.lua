@@ -1315,6 +1315,14 @@ local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparenc
 elimSub:SetAttribute("dTS", 22); table.insert(scaled, elimSub)
 new("UIStroke", { Thickness = 2, Transparency = 0.25, Parent = elimSub }) -- (live check) readable over the bright Practice Range walls
 local elimToken = 0
+function RV.endElim()
+	if not elimL.Visible then return end
+	elimToken += 1
+	local ti = TweenInfo.new(0.3)
+	TweenService:Create(elimL, ti, { TextTransparency = 1 }):Play()
+	TweenService:Create(elimSub, ti, { TextTransparency = 1 }):Play()
+	task.delay(0.32, function() elimL.Visible = false; elimSub.Visible = false end)
+end
 showEliminated = function(uid, d)
 	elimToken += 1
 	local my = elimToken
@@ -1786,14 +1794,7 @@ RunService.RenderStepped:Connect(function()
 			-- (Edward 2026-10-19) no 3-2-1 / FIGHT: the top clock counts the countdown down in tenths instead
 			-- the round's WIN / LOSS banner stays through the countdown, unless the next round can end the match (MATCH POINT)
 			RV.showMatchPoint(mine, theirs, st("RoundsToWin")) -- (2026-10-23: spectators see the ribbon too, like RIVALS)
-			-- (m10, RIVALS t0122) "Eliminated X" ends when the countdown starts
-			if elimL.Visible then
-				elimToken += 1
-				local ti = TweenInfo.new(0.3)
-				TweenService:Create(elimL, ti, { TextTransparency = 1 }):Play()
-				TweenService:Create(elimSub, ti, { TextTransparency = 1 }):Play()
-				task.delay(0.32, function() elimL.Visible = false; elimSub.Visible = false end)
-			end
+			RV.endElim() -- (m10, RIVALS t0122) "Eliminated X" ends when the countdown starts
 			if RV.ribbon.Visible and RV.roundCard.Visible then RV.dimRoundCard(true)
 			elseif RV.roundCard.Visible then
 				-- (m8, RIVALS t0214) without a ribbon the card fades out ~2 s into the countdown
@@ -1817,6 +1818,7 @@ RunService.RenderStepped:Connect(function()
 			-- the fallback card only when the server's summary never came (it often lands first, during Victory)
 			task.delay(1.5, function() if not resultsShown and not gotSummary and inMatch() then resultsShown = true; showResults(nil) end end)
 		end
+		if state == "Victory" or state == "MatchEnd" then RV.endElim() end -- (m10: and when the match ends)
 		lastState = state
 		lastScoreMine, lastScoreTheirs = mine, theirs
 	end
@@ -2263,9 +2265,9 @@ do
 	-- red chevron on a ring round the centre pointing at the killer
 	-- (m9: a CanvasGroup so the whole vignette fades out; the sides reach ~30 % in like RIVALS)
 	local vig = new("CanvasGroup", { Name = "DeathVignette", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, Parent = dgui })
-	for _, e in { { 0, 0, 1, 0.32, 90 }, { 0, 0.68, 1, 0.32, -90 }, { 0, 0, 0.3, 1, 0 }, { 0.7, 0, 0.3, 1, 180 } } do
+	for _, e in { { 0, 0, 1, 0.2, 90 }, { 0, 0.8, 1, 0.2, -90 }, { 0, 0, 0.2, 1, 0 }, { 0.8, 0, 0.2, 1, 180 } } do -- (m10, grader B: the outer ~20 %, softer)
 		new("Frame", { BackgroundColor3 = Color3.fromRGB(190, 16, 20), BorderSizePixel = 0, Position = UDim2.fromScale(e[1], e[2]), Size = UDim2.fromScale(e[3], e[4]), Parent = vig },
-			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.35, 1) }) })
+			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.5, 1) }) })
 	end
 	local arrow = new("TextLabel", { Name = "KillerArrow", BackgroundTransparency = 1, Text = "▲", TextColor3 = Color3.fromRGB(235, 40, 40), TextScaled = true,
 		AnchorPoint = Vector2.new(0.5, 0.5), Size = UDim2.fromScale(0.08, 0.12), Visible = false, Parent = dgui }) -- (m9: 2x, RIVALS' arc is big)
@@ -2273,7 +2275,10 @@ do
 		local dead = player:GetAttribute("Alive") == false and inMatch()
 		local flash = dead and RV.deathFlashUntil ~= nil and os.clock() < RV.deathFlashUntil -- (RIVALS t0206 -> t0208: only the death moment)
 		vig.Visible = flash
-		if flash then vig.GroupTransparency = math.clamp(1 - (RV.deathFlashUntil - os.clock()) / (RV.deathFlashLen or 1.5), 0, 1) ^ 2 end -- (m9: eases out)
+		-- (m10, grader C) full strength for the first 2/3 (1.0 s live), then a 0.5 s fade; the chevron fades with it
+		local fadeT = flash and math.clamp(1 - (RV.deathFlashUntil - os.clock()) / ((RV.deathFlashLen or 1.5) / 3), 0, 1) or 1
+		if flash then vig.GroupTransparency = fadeT end
+		arrow.TextTransparency = fadeT
 		if not (arrow.Visible and dead) then arrow.Visible = false return end
 		local m = RV.killerModel
 		local root = m and (m:FindFirstChild("HumanoidRootPart") or m.PrimaryPart)
@@ -2293,7 +2298,7 @@ do
 		RV.deathFlashLen = slow(1.5)
 		RV.deathFlashUntil = os.clock() + RV.deathFlashLen
 		task.delay(RV.deathFlashLen, function() arrow.Visible = false end)
-		red.BackgroundTransparency = 0.5 -- (m3, RIVALS t0206: the red holds ~1.5 s)
+		red.BackgroundTransparency = 0.65 -- (m3, RIVALS t0206: the red holds ~1.5 s; m10: 0.5 -> 0.65 with the edge vignette on top)
 		TweenService:Create(red, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()
 	end)
 end

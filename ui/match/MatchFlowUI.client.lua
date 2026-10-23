@@ -172,7 +172,7 @@ local function teamBox(parent, x, cols, right)
 	ink(b, 7, 4)
 	local slots = {}
 	for i = 1, 3 do
-		local hx = right and (90 + (i - 1) * 64) or (14 + (i - 1) * 64)
+		local hx = right and (75 + (i - 1) * 64) or (14 + (i - 1) * 64) -- (m10: the 139 px plate fits digit + head)
 		local h = new("ImageLabel", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, Position = UDim2.fromOffset(hx, 14), Size = UDim2.fromOffset(56, 56), Visible = false, ZIndex = 3, Parent = b }, { corner(28) })
 		local lv = new("Frame", { Position = UDim2.fromOffset(hx - 8, 50), Size = UDim2.fromOffset(30, 26), BackgroundColor3 = Color3.fromRGB(20, 18, 24), Visible = false, ZIndex = 4, Parent = b }, { corner(7) })
 		local ll = label(lv, "", FX, 17, 0, 0, 30, 26, WHITE, nil, 5)
@@ -182,7 +182,7 @@ local function teamBox(parent, x, cols, right)
 	end
 	-- (2026-10-23, matchmaking round m3, RIVALS t0028) the side's score digit, and the plate hugs its heads (see fitBoxes)
 	local score = label(b, "0", FX, 50, 0, 6, 70, 72, WHITE, nil, 3)
-	score:SetAttribute("dw", 70)
+	score:SetAttribute("dw", 62)
 	slots.frame, slots.score, slots.right, slots.x = b, score, right, x
 	return slots
 end
@@ -190,13 +190,13 @@ end
 -- left edge. Runs after toScale, so children are re-placed from the design px kept in their dx / dw attributes.
 local function fitBox(slots, n)
 	local b = slots.frame
-	local w = 96 + 64 * math.max(1, n)
+	local w = 75 + 64 * math.max(1, n) -- (m10: 139 px for one head, as the match HUD)
 	local x0 = slots.right and 1063 or (857 - w) -- (m5: 31 px gaps to the 888-1032 timer, as the match HUD)
-	b.Position = UDim2.new(x0 / W, 0, b.Position.Y.Scale, 0)
+	b.Position = UDim2.new(x0 / W, 0, 11 / H, 0) -- (m10: the bar's top at y 11 = 1 %, as the match HUD)
 	b.Size = UDim2.new(w / W, 0, b.Size.Y.Scale, 0)
 	for _, c in b:GetChildren() do
 		local dx, dw = c:GetAttribute("dx"), c:GetAttribute("dw")
-		if c == slots.score then dx = slots.right and 8 or (w - 78) end
+		if c == slots.score then dx = slots.right and 10 or (w - 70) end
 		if dx and dw then
 			c.Position = UDim2.new(dx / w, 0, c.Position.Y.Scale, 0)
 			c.Size = UDim2.new(dw / w, 0, c.Size.Y.Scale, 0)
@@ -207,7 +207,7 @@ end
 -- digits, and both go red at 0.0
 local TIMER_RED = Color3.fromRGB(235, 64, 64)
 local function timerBox(parent, glass)
-	local t = new("Frame", { Position = UDim2.fromOffset(888, 34), Size = UDim2.fromOffset(144, 76), BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, ZIndex = 2, Parent = parent }, { corner(6) })
+	local t = new("Frame", { Position = UDim2.fromOffset(888, 11), Size = UDim2.fromOffset(144, 76), BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, ZIndex = 2, Parent = parent }, { corner(6) }) -- (m10: y 34 -> 11 with the plates)
 	ink(t, 7, 4)
 	if not glass then return label(t, "10.0", FX, 42, 0, 0, 144, 76, WHITE) end
 	local hg = new("Frame", { Name = "Hourglass", BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 20), Size = UDim2.fromOffset(24, 36), ZIndex = 3, Parent = t })
@@ -972,7 +972,13 @@ local function onChosen()
 		do
 			local sx, sy = tile.t.Size.X.Scale, tile.t.Size.Y.Scale
 			local ap = tile.t.AnchorPoint
+			-- (m10, graders A + C vs RIVALS t0032) the winner lands centred on the screen (was 120 px below its row)
 			local y = tile.t.Position.Y.Scale + 120 / 760
+			local par, sg = tile.t.Parent, tile.t:FindFirstAncestorWhichIsA("LayerCollector")
+			if par and sg and par.AbsoluteSize.Y > 0 then
+				local midAbs = sg.AbsolutePosition.Y + sg.AbsoluteSize.Y / 2
+				y = (midAbs - par.AbsolutePosition.Y) / par.AbsoluteSize.Y - (0.5 - tile.t.AnchorPoint.Y) * sy
+			end
 			TweenService:Create(tile.t, TweenInfo.new(0.4, Enum.EasingStyle.Quart), { Position = UDim2.fromScale((1 - sx) / 2 + sx * ap.X, y) }):Play()
 		end
 		for vpf, s in live3D do if s.map and vpf:IsDescendantOf(tile.t) then s.boost = 1 end end
