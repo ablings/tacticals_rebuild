@@ -72,3 +72,4 @@ Rules:
 - Match found -> Teleporting: at Teleporting our screen hands over to the pads' teleport/loading screen (the GUI TeleportService
   shows during the real teleport), so there is no "Teleporting / N" on our screen.
 - The killer arc's shape is settled (m19): it is within a few px of t0206 and further nudges were trading pixels back and forth.
+- Match found tip bubble width is settled (m29): within ~6 design px of t0022; trimming further drops the text a size.

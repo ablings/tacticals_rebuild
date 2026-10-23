@@ -608,14 +608,14 @@ do
 end
 -- RIVALS' numbers: Eliminations / Deaths / Assists in dark tiles, Damage Dealt / Damage Taken plain under them (+ our Headshots
 -- last, when the server sends it). stats.SLOTS = { centre x, top y, tile? } in results (1920x1080) design px, by display order.
-stats.SLOTS = { { 840, 858, true }, { 960, 858, true }, { 1080, 858, true }, { 894, 958, false }, { 1026, 958, false }, { 960, 1016, false } } -- (m29, grader A vs t0140: rows 6 / 14 px up)
+stats.SLOTS = { { 840, 864, true }, { 960, 864, true }, { 1080, 864, true }, { 894, 958, false }, { 1026, 958, false }, { 960, 1016, false } } -- (m29-30, grader A vs t0140: the box row stays, its labels 6 up; the damage row 14 up)
 for i, k in { { "Kills", "Eliminations" }, { "Deaths", "Deaths" }, { "Assists", "Assists" }, { "DamageDealt", "Damage Dealt" }, { "DamageTaken", "Damage Taken" }, { "Headshots", "Headshots" } } do
 	local sl = stats.SLOTS[i]
 	stats.tiles[k[1]] = new("Frame", { BackgroundColor3 = Color3.fromRGB(58, 58, 64), BackgroundTransparency = 0.15, Position = UDim2.fromOffset(sl[1] - 41, sl[2]),
 		Size = UDim2.fromOffset(82, 66), ZIndex = 5, Visible = sl[3], Parent = results }, { corner(6) })
 	stats[k[1]] = label(results, "0", FX, sl[3] and 42 or 34, sl[1] - 75, sl[2] + (sl[3] and 6 or 0), 150, sl[3] and 54 or 40, WHITE, nil, 6)
 	stats.cap = stats.cap or {}
-	stats.cap[k[1]] = label(results, k[2], FB, 18, sl[1] - 75, sl[2] + (sl[3] and 70 or 38), 150, 24, Color3.fromRGB(225, 225, 230), nil, 6)
+	stats.cap[k[1]] = label(results, k[2], FB, 18, sl[1] - 75, sl[2] + (sl[3] and 64 or 38), 150, 24, Color3.fromRGB(225, 225, 230), nil, 6)
 end
 -- (2026-10-21, RIVALS pass) the shared UIKit.Kit motion helpers, kept in the `stats` table (this script is at the 200-locals
 -- limit). stats.bind = Kit.bindButton when Kit loaded (hover 1.05 / press 0.93 / hover + click sfx / pad-select grow).
