@@ -267,7 +267,7 @@ function Notify.OpenNews()
 	new("Frame", { Name = "Plate", BackgroundColor3 = PILL, BackgroundTransparency = 0.15, BorderSizePixel = 0, Position = UDim2.fromOffset(544, TOP),
 		Size = UDim2.fromOffset(W, H), ZIndex = 2, Parent = inboxRoot }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	local col = new("ScrollingFrame", { Name = "Article", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(544, TOP),
-		Size = UDim2.fromOffset(W + 22, H), ScrollBarThickness = 9, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.6, CanvasSize = UDim2.new(),
+		Size = UDim2.fromOffset(W + 22, H), ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y, ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, ZIndex = 2, Parent = inboxRoot },
 		{ new("UIListLayout", { SortOrder = Enum.SortOrder.LayoutOrder }) })
 	local FR = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium) -- (e6: this family has no Regular; it fell back to Source Sans)

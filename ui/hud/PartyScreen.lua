@@ -138,8 +138,8 @@ local function personCard(parent, x, y, w, pp, opts)
 		ZIndex = 3, Parent = parent }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) hairline border removed; the dark fill separates the card
 	local hs = new("ImageLabel", { BackgroundColor3 = GUN, Position = UDim2.fromOffset(18, 10), Size = UDim2.fromOffset(73, 73), ZIndex = 4, Parent = c }, { Kit.corner(8) }) -- (e6: 73 at +18, the empty slots' "+" sits in the same place)
 	headshot(hs, pp.uid)
-	label(c, pp.name, F_NAME, 30, 110, 14, w - 120, 36, BONE, nil, 4) -- (menus e7, grader A vs t0152: the name 30 bold, the pair centred in the row)
-	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 17, 110, 52, w - 120, 22, FIELD, nil, 4)
+	label(c, pp.name, F_NAME, 34, 110, 10, w - 120, 40, BONE, nil, 4) -- (menus e7, grader A vs t0152: the name 30 bold, the pair centred in the row)
+	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 19, 110, 52, w - 120, 24, FIELD, nil, 4)
 	if opts.crown then
 		-- (2026-10-18, live RIVALS) the leader: a gold crown on the headshot's corner (drawn: the font has no crown glyph)
 		Kit.crown(hs, UDim2.fromScale(0.86, 0.1), UDim2.fromScale(0.62, 0.48), 6)

@@ -1059,7 +1059,7 @@ function LobbyHud.Start()
 					if e.scale then Kit.tween(e.scale, 0.1, { Scale = 1.02 }) end
 				end)
 				row.MouseLeave:Connect(function()
-					row.BackgroundTransparency = 1
+					row.BackgroundTransparency = row:GetAttribute("_MenuOpen") and 0.94 or 1 -- (menus e7: lit while its player menu is open)
 					if e.scale then Kit.tween(e.scale, 0.1, { Scale = 1 }) end
 				end)
 			else

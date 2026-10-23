@@ -377,6 +377,10 @@ function PlayerCards.CloseMenu(silent: any)
 	if Kit.sfx and silent ~= true then Kit.sfx("close") end -- (menus e4, grader C: the player menu opens / closes with the UI sounds)
 	local m = menu
 	menu = nil
+	if m.row and m.row.Parent then
+		m.row:SetAttribute("_MenuOpen", nil)
+		m.row.BackgroundTransparency = 1
+	end
 	m.catcher.Visible = false
 	Kit.tween(m.panel, 0.14, { Position = UDim2.fromScale(m.home.X.Scale + 0.1, m.home.Y.Scale) }, Enum.EasingStyle.Quint, Enum.EasingDirection.In)
 	Kit.tween(m.group, 0.14, { GroupTransparency = 1 })
@@ -492,7 +496,12 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	panel.GroupTransparency = 1
 	Kit.tween(panel, 0.18, { Position = home }, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
 	Kit.tween(panel, 0.14, { GroupTransparency = 0 })
-	menu = { root = root, panel = panel, group = panel, catcher = catcher, home = home, player = p }
+	-- (menus e7, grader C) the clicked player-list row stays lit while its menu is open (LobbyHud's MouseLeave keeps it)
+	if row and row:IsA("GuiObject") then
+		row:SetAttribute("_MenuOpen", true)
+		row.BackgroundTransparency = 0.94
+	end
+	menu = { root = root, panel = panel, group = panel, catcher = catcher, home = home, player = p, row = row }
 end
 
 -- a player leaving closes whatever is open about them

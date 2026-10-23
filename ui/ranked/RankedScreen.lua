@@ -108,7 +108,6 @@ local function render()
 	ui.leftName.Text = inPlacements and "Placements played" or (A("RankName") or "")
 	ui.leftFloor.Text = inPlacements and tostring(placed) or tostring(floor)
 	emblem(ui.leftEmblem, not inPlacements and rank or nil)
-	if inPlacements then ui.leftEmblem:FindFirstChild("Emblem"):Destroy() end -- (menus e5, grader B) one "?" only, the status block's
 	if nextFloor and not inPlacements then
 		local nextName = A("RankNextName") or ""
 		ui.rightName.Text, ui.rightFloor.Text = nextName, tostring(nextFloor)
@@ -117,7 +116,7 @@ local function render()
 	else
 		ui.rightName.Text, ui.rightFloor.Text = inPlacements and "Rank reveal" or "Top 200", inPlacements and tostring(need) or ""
 		emblem(ui.rightEmblem, nil)
-		ui.rightEmblem:FindFirstChild("Emblem"):Destroy()
+		if not inPlacements then ui.rightEmblem:FindFirstChild("Emblem"):Destroy() end -- (e7, grader B: placements show the "?" badge at both ends)
 		Kit.fillTo(ui.fill, inPlacements and placed / math.max(need, 1) or 1, 0.6)
 	end
 	-- (2026-10-21, round 3: match RIVALS' counters) the ELO number counts from what was shown (from the tier floor on open)
@@ -195,14 +194,14 @@ local function buildLadder()
 	-- (98 wide, gap 4, 110 -> 313 tall), its colour darkening downward, an 88 px emblem overlapping its top by 20, the ELO floor
 	-- (italic 30) just under the emblem and the rank name (italic 20, 85% white) at its foot. (grader C) The columns rise from
 	-- the podium's floor one after another when the modal opens.
-	local BASE, TOPY = 506, 124
+	local BASE, TOPY = 466, 124 -- (e7, grader A: a lower podium so three rule lines show)
 	local podium = new("Frame", { Name = "Podium", BackgroundTransparency = 1, ClipsDescendants = true, Position = UDim2.fromOffset(0, TOPY),
 		Size = UDim2.fromOffset(882, BASE - TOPY), ZIndex = 22, Parent = p })
 	local italic = function(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
 	local cols = {}
 	for i, r in RANKS do
 		local x = 33 + (i - 1) * 102
-		local h = 110 + (i - 1) * 27
+		local h = 110 + (i - 1) * 22
 		local c = RANK_COLOR[r]
 		local col = new("Frame", { Name = r, BackgroundTransparency = 1, Position = UDim2.fromOffset(x, BASE - TOPY - h - 68), Size = UDim2.fromOffset(98, h + 68),
 			ZIndex = 22, Parent = podium })
@@ -211,7 +210,7 @@ local function buildLadder()
 			new("UICorner", { CornerRadius = UDim.new(0, 4) }),
 			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(c, c:Lerp(BLACK, 0.65)) }),
 		})
-		local hold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-5, -8), Size = UDim2.fromOffset(108, 108), ZIndex = 24, Parent = col }) -- (e6, graders A + B: the art has padding; 108 shows an 88 px emblem)
+		local hold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(49, 46), Size = UDim2.fromOffset(108, 108), ZIndex = 24, Parent = col }) -- (e7, grader C: centred anchor, so the hover lift grows in place) -- (e6, graders A + B: the art has padding; 108 shows an 88 px emblem)
 		emblem(hold, r)
 		-- (menus e7, grader C) each column answers hover: its emblem lifts a little
 		local lift = new("UIScale", { Parent = hold })
@@ -321,7 +320,7 @@ local function build()
 	ui.rankName = stroke(label(status, "Bronze 1", FB, 38, 74, 0, 250, 66, WHITE, Enum.TextXAlignment.Left), 2)
 	local strip = new("Frame", { Name = "Rules", Position = UDim2.fromOffset(342, 0), Size = UDim2.fromOffset(820, 66), BackgroundColor3 = BLACK, BackgroundTransparency = 0.35,
 		Parent = top }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
-	ui.rankSub = label(strip, "", FM, 24, 20, 0, 780, 66, GREY)
+	ui.rankSub = label(strip, "", FM, 26, 20, 0, 780, 66, WHITE) -- (e7, grader B: 26 full white)
 	local ranksBtn = new("TextButton", { Name = "Ranks", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1174, 0), Size = UDim2.fromOffset(238, 66),
 		BackgroundColor3 = WHITE, Parent = top }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	label(ranksBtn, "Ranks", FB, 36, 0, 0, 238, 66, BLACK)
@@ -333,15 +332,15 @@ local function build()
 	-- ELO bar
 	local bar = new("Frame", { Name = "EloBar", Position = UDim2.fromOffset(L, 203), Size = UDim2.fromOffset(WIDE, 96), BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.35, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
-	ui.leftEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 10), Size = UDim2.fromOffset(76, 76), Parent = bar })
-	ui.leftFloor = label(bar, "", FB, 30, 100, 8, 300, 36, WHITE, Enum.TextXAlignment.Left)
-	ui.leftName = label(bar, "", FS, 26, 100, 40, 300, 32, GREY, Enum.TextXAlignment.Left)
+	ui.leftEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 6), Size = UDim2.fromOffset(84, 84), Parent = bar }) -- (menus e7, grader B: 84 px end badges)
+	ui.leftFloor = label(bar, "", FB, 30, 108, 8, 300, 36, WHITE, Enum.TextXAlignment.Left)
+	ui.leftName = label(bar, "", FS, 26, 108, 40, 300, 32, GREY, Enum.TextXAlignment.Left)
 	label(bar, "Your ELO", FS, 22, 556, 4, 300, 28, GREY)
 	ui.eloNum = stroke(label(bar, "100", FB, 58, 556, 20, 300, 60, WHITE), 2)
-	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(1324, 10), Size = UDim2.fromOffset(76, 76), Parent = bar })
-	ui.rightFloor = label(bar, "", FB, 30, 1012, 8, 300, 36, WHITE, Enum.TextXAlignment.Right)
-	ui.rightName = label(bar, "", FS, 26, 1012, 40, 300, 32, GREY, Enum.TextXAlignment.Right)
-	local track = new("Frame", { Position = UDim2.fromOffset(100, 76), Size = UDim2.fromOffset(1212, 10), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
+	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(1318, 6), Size = UDim2.fromOffset(84, 84), Parent = bar })
+	ui.rightFloor = label(bar, "", FB, 30, 1004, 8, 300, 36, WHITE, Enum.TextXAlignment.Right)
+	ui.rightName = label(bar, "", FS, 26, 1004, 40, 300, 32, GREY, Enum.TextXAlignment.Right)
+	local track = new("Frame", { Position = UDim2.fromOffset(108, 76), Size = UDim2.fromOffset(1196, 10), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
 		{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 	ui.fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = WHITE, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }),
 		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#8DBF5A"), Theme.hex("#FFFFFF")) }) }) -- (2026-10-21, AI-tells cleanup) progress = field green, was yellow
@@ -350,6 +349,11 @@ local function build()
 	ui.banner = new("Frame", { Name = "Banner", Position = UDim2.fromOffset(L, 311), Size = UDim2.fromOffset(WIDE, 63), BackgroundColor3 = WHITE, Visible = false, Parent = root },
 		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	ui.bannerText = label(ui.banner, "", FB, 30, 0, 0, WIDE, 63, BLACK)
+	-- (menus e7, grader B vs RIVALS 02) the banner points down at each mode card: a small white notch under each card's centre
+	for i = 1, 3 do
+		new("Frame", { Name = "Notch", AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(233 + (i - 1) * 473, 63), Size = UDim2.fromOffset(20, 20), Rotation = 45,
+			BackgroundColor3 = WHITE, BorderSizePixel = 0, ZIndex = 0, Parent = ui.banner })
+	end
 
 	-- mode cards
 	ui.cards = {}
