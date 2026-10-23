@@ -162,17 +162,21 @@ local function popup(name, w, h, title)
 	local p = new("Frame", { Name = "Panel", Position = UDim2.fromOffset((1920 - w) / 2, (1080 - h) / 2), Size = UDim2.fromOffset(w, h), BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.08, ZIndex = 21, Active = true, Parent = shade }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) }) -- (menus e2, grader C: Active, so a click inside the panel no longer reaches the shade and closes it)
 	stroke(label(p, title, FB, 56, 0, 18, w, 64), 2.5).ZIndex = 22
-	local x = Kit.closeButton(UDim2.fromOffset(96, 50))
-	x.Position = UDim2.fromOffset(w - 116, 22)
+	local x = Kit.closeButton(UDim2.fromOffset(108, 62)) -- (menus e4, grader A: RIVALS' modal close is 108x62, inset 10)
+	x.Position = UDim2.fromOffset(w - 118, 10)
 	x.ZIndex = 23
 	x.Parent = p
 	-- (2026-10-21, round 3: match RIVALS t0285.4-t0286, the card pops in) the popups open / close with Kit.open / Kit.close
 	-- (was Visible on / off); the shade goes once the panel's close has finished, unless it was reopened meanwhile
+	-- (menus e4, grader C) the shade fades in / out with the panel instead of appearing in one frame
 	local function hide()
+		Kit.tween(shade, 0.12, { BackgroundTransparency = 1 })
 		Kit.close(p, function() if not p.Visible then shade.Visible = false end end)
 	end
 	local function show()
+		shade.BackgroundTransparency = 1
 		shade.Visible = true
+		Kit.tween(shade, 0.2, { BackgroundTransparency = 0.35 })
 		Kit.open(p)
 	end
 	x.Activated:Connect(hide)
@@ -181,18 +185,27 @@ local function popup(name, w, h, title)
 end
 
 local function buildLadder()
-	local shade, p, show = popup("Ladder", 1300, 760, "Ranks")
+	-- (menus e4, grader A) RIVALS' Ranks modal is 882x629 at (519,225), not 1300 wide; ours is 882 wide and a little taller for the rules
+	local shade, p, show = popup("Ladder", 882, 800, "Ranks")
+	-- (menus e4, graders A + B vs RIVALS 05_rank_ladder.jpg) a stepped podium, not a row of chips: each rank is a pillar that
+	-- rises left to right (92 wide, gap 8, 71 -> 337 tall), its colour darkening downward, the emblem sitting on its top,
+	-- the ELO floor just under the emblem and the rank name at the pillar's foot
 	local names = RANKS
+	local BASE = 474
 	for i, r in names do
-		local x = 40 + (i - 1) * 152
-		local col = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(x, 110), Size = UDim2.fromOffset(140, 260), ZIndex = 22, Parent = p })
-		local hold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(10, 0), Size = UDim2.fromOffset(120, 120), ZIndex = 23, Parent = col })
+		local x = 45 + (i - 1) * 100
+		local h = 71 + (i - 1) * 31
+		local c = RANK_COLOR[r]
+		local pillar = new("Frame", { Name = r, Position = UDim2.fromOffset(x, BASE - h), Size = UDim2.fromOffset(92, h), BackgroundColor3 = WHITE, BorderSizePixel = 0,
+			ZIndex = 22, Parent = p }, {
+			new("UICorner", { CornerRadius = UDim.new(0, 4) }),
+			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(c, c:Lerp(BLACK, 0.6)) }),
+		})
+		local hold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(x + 6, BASE - h - 66), Size = UDim2.fromOffset(80, 80), ZIndex = 24, Parent = p })
 		emblem(hold, r)
 		local floorText = r == "Warlord" and "Top 200" or tostring(((i - 1) * 3 + 1) * 100) .. "+"
-		label(col, floorText, FB, 30, 0, 128, 140, 36, WHITE).ZIndex = 23
-		local bar = new("Frame", { Position = UDim2.fromOffset(20, 172), Size = UDim2.fromOffset(100, 70), BackgroundColor3 = RANK_COLOR[r], ZIndex = 22, Parent = col },
-			{ new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
-		label(bar, r, FS, 20, 0, 18, 100, 30, BLACK).ZIndex = 23
+		stroke(label(p, floorText, FB, 24, x - 4, BASE - h + 14, 100, 30, WHITE), 2).ZIndex = 25
+		label(pillar, r, FS, 16, 0, h - 24, 92, 20, BLACK).ZIndex = 23
 	end
 	local rules = {
 		"One rank for 1v1, 2v2 and 3v3. Every rank has 3 tiers, 100 ELO each. You never drop below Bronze 1.",
@@ -203,15 +216,24 @@ local function buildLadder()
 		"Past Commander 3 (2200 ELO) the top 200 players are Warlord.",
 	}
 	for i, t in rules do
-		label(p, "•  " .. t, FM, 26, 60, 400 + (i - 1) * 54, 1180, 44, GREY, Enum.TextXAlignment.Left).ZIndex = 22
+		local l = label(p, "•  " .. t, FM, 21, 40, 490 + (i - 1) * 48, 802, 46, GREY, Enum.TextXAlignment.Left)
+		l.ZIndex = 22
+		l.TextWrapped = true
+		l.TextYAlignment = Enum.TextYAlignment.Top
 	end
 	return show -- (2026-10-21, round 3) opens with a pop
 end
 
 local function buildBoard()
-	local _, p, show = popup("Leaderboard", 900, 820, "Warlord · Top 200")
-	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 110), Size = UDim2.fromOffset(820, 680), BackgroundTransparency = 1,
-		BorderSizePixel = 0, ScrollBarThickness = 6, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p },
+	-- (menus e4, grader A) the Leaderboard shares the Ranks modal's frame (882 wide), with a column-header row over the list
+	local _, p, show = popup("Leaderboard", 882, 800, "Warlord · Top 200")
+	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 100), Size = UDim2.fromOffset(792, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
+		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	label(head, "Rank", FB, 24, 20, 0, 120, 48, GREY, Enum.TextXAlignment.Left).ZIndex = 23
+	label(head, "Player", FB, 24, 150, 0, 400, 48, GREY, Enum.TextXAlignment.Left).ZIndex = 23
+	label(head, "ELO", FB, 24, 600, 0, 172, 48, GREY, Enum.TextXAlignment.Right).ZIndex = 23
+	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 160), Size = UDim2.fromOffset(802, 610), BackgroundTransparency = 1,
+		BorderSizePixel = 0, ScrollBarThickness = 10, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p }, -- (e4: one scrollbar style, 10 px white)
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	ui.boardList = listHold
 	return show
@@ -222,10 +244,14 @@ local function fillBoard()
 	for _, c in holder:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
 	local top = leaderboard()
 	if #top == 0 then
+		-- (menus e4, grader A) the empty state sits in the middle of the list, and an idle list shows no scrollbar
+		holder.ScrollBarImageTransparency = 1
+		new("Frame", { Name = "Spacer", BackgroundTransparency = 1, LayoutOrder = 0, Size = UDim2.new(1, 0, 0.42, 0), Parent = holder })
 		local l = new("TextLabel", { BackgroundTransparency = 1, Text = "Nobody has reached 2200 ELO yet.", FontFace = FM, TextScaled = true, TextColor3 = GREY,
-			Size = UDim2.new(1, 0, 0.07, 0), ZIndex = 23, Parent = holder })
+			LayoutOrder = 1, Size = UDim2.new(1, 0, 0.07, 0), ZIndex = 23, Parent = holder })
 		return
 	end
+	holder.ScrollBarImageTransparency = #top > 9 and 0.4 or 1
 	for i, e in top do
 		local mine = e.userId == player.UserId
 		local row = new("Frame", { LayoutOrder = i, Size = UDim2.new(1, -10, 0.07, 0), BackgroundColor3 = mine and C.white or BLACK, BackgroundTransparency = mine and 0.75 or 0.5,

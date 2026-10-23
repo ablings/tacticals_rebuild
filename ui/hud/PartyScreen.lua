@@ -315,7 +315,7 @@ local function build()
 	close.Parent = root
 	close.Activated:Connect(function() PartyScreen.Close() end)
 	grid = new("ScrollingFrame", { Name = "Grid", Position = UDim2.fromOffset(700, 230), Size = UDim2.fromOffset(912, 760), BackgroundTransparency = 1, BorderSizePixel = 0,
-		ScrollBarThickness = 6, ScrollBarImageColor3 = FIELD, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = root })
+		ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = root }) -- (e4: one scrollbar style)
 	Kit.toScale(root)
 	search:GetPropertyChangedSignal("Text"):Connect(function() if isOpen then renderGrid() end end)
 	-- party changes redraw while open

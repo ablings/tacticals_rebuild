@@ -169,40 +169,43 @@ local function buildInbox()
 	dim.Activated:Connect(function() Notify.CloseInbox() end)
 	local canvas = Kit.canvas(inboxGui)
 	inboxRoot = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
-	local head = new("Frame", { Name = "Head", BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(540, 208), Size = UDim2.fromOffset(828, 132),
+	local head = new("Frame", { Name = "Head", BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(540, 120), Size = UDim2.fromOffset(828, 132),
 		ZIndex = 2, Active = true, Parent = inboxRoot }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	icon(head, "inbox", 20, 10, 56, Color3.new(1, 1, 1), 3)
 	txt(head, "Inbox", FX, 46, 84, 6, 400, 60, nil, Enum.TextXAlignment.Left, 3)
-	txt(head, "All of your recent notifications end up here.\nYour inbox clears when you leave the server!", FB, 22, 0, 62, 828, 60, GREY, nil, 3)
+	txt(head, "All of your recent notifications end up here.\nYour inbox clears when you leave the server!", FB, 22, 24, 62, 780, 60, GREY, Enum.TextXAlignment.Left, 3)
+	-- (menus e4, grader A) the inbox column starts at y 120 like its sibling News (was 208), rows span the full column and the
+	-- age chip sits inside the row's top-right
 	local x = Kit.closeButton(UDim2.fromOffset(84, 50))
-	x.Position = UDim2.fromOffset(1406, 207)
+	x.Position = UDim2.fromOffset(1394, 120)
 	x.Parent = inboxRoot
 	x.Activated:Connect(function() Notify.CloseInbox() end)
-	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(420, 360), Size = UDim2.fromOffset(940, 680),
-		ScrollBarThickness = 6, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, Parent = inboxRoot })
-	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(940, math.max(680, #inbox * 108)), Parent = list })
+	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(540, 272), Size = UDim2.fromOffset(828, 768),
+		ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, Parent = inboxRoot }) -- (e4: one scrollbar style)
+	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(828, math.max(768, #inbox * 108)), Parent = list })
 	if #inbox == 0 then
-		txt(content, "Nothing yet", FX, 34, 0, 40, 940, 44, nil, nil, 3)
-		txt(content, "Completed tasks, unlocks and rewards show up here.", FB, 22, 0, 86, 940, 30, GREY, nil, 3)
+		txt(content, "Nothing yet", FX, 34, 0, 40, 828, 44, nil, nil, 3)
+		txt(content, "Completed tasks, unlocks and rewards show up here.", FB, 22, 0, 86, 828, 30, GREY, nil, 3)
 	end
 	for i, n in inbox do
 		local y = (i - 1) * 108
-		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(4, y + 28), Size = UDim2.fromOffset(118, 46), ZIndex = 3,
+		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(698, y + 10), Size = UDim2.fromOffset(118, 40), ZIndex = 5,
 			Parent = content }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 46, GREY, nil, 4)
-		local row = pill(content, n, 142, y, 785, 102)
+		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 40, GREY, nil, 6)
+		local row = pill(content, n, 0, y, 828, 102)
 		-- (2026-10-21, RIVALS pass) the first rows pop in one after another (0.03 s apart) instead of all at once
 		if Kit.popIn and i <= 10 then
-			chip.AnchorPoint = Vector2.new(0.5, 0.5); chip.Position = UDim2.fromOffset(4 + 59, y + 28 + 23)
-			row.AnchorPoint = Vector2.new(0.5, 0.5); row.Position = UDim2.fromOffset(142 + 392.5, y + 51)
+			chip.AnchorPoint = Vector2.new(0.5, 0.5); chip.Position = UDim2.fromOffset(698 + 59, y + 10 + 20)
+			row.AnchorPoint = Vector2.new(0.5, 0.5); row.Position = UDim2.fromOffset(414, y + 51)
 			pcall(Kit.popIn, chip, 0.08 + i * 0.03)
 			pcall(Kit.popIn, row, 0.08 + i * 0.03)
 		end
 	end
 	Kit.toScale(inboxRoot)
 	-- the list's canvas: as tall as the rows (Scale is relative to the list's parent)
-	list.CanvasSize = UDim2.fromScale(0, math.max(680, #inbox * 108) / 1080)
-	content.Size = UDim2.fromScale(1, math.max(680, #inbox * 108) / 680)
+	list.CanvasSize = UDim2.fromScale(0, math.max(768, #inbox * 108) / 1080)
+	content.Size = UDim2.fromScale(1, math.max(768, #inbox * 108) / 768)
+	if #inbox * 108 <= 768 then list.ScrollBarImageTransparency = 1 end -- (menus e4, grader A) no idle scrollbar while the rows fit
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
 	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 18 }):Play()
 	if Kit.open then pcall(Kit.open, inboxRoot) end

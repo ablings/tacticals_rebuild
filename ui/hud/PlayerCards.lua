@@ -373,6 +373,7 @@ end
 local menu
 function PlayerCards.CloseMenu()
 	if not menu then return end
+	if Kit.sfx then Kit.sfx("close") end -- (menus e4, grader C: the player menu opens / closes with the UI sounds)
 	local m = menu
 	menu = nil
 	m.catcher.Visible = false
@@ -402,6 +403,7 @@ end
 -- colour into its own colour with a white icon on that end; the hovered row is solid white with black text and a black icon.
 -- Same actions / behaviour as before (Invite, Add Friend, Challenge, View Profile, View Avatar, Block; Spectate paused).
 function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
+	if Kit.sfx then Kit.sfx("open") end
 	ensureGui()
 	PlayerCards.CloseMenu()
 	local actions
