@@ -298,7 +298,7 @@ function Notify.OpenNews()
 		local bodyH = math.max(1, math.ceil(#(n.sub or "") / 60)) * 32 -- (e6-e7) about 60 characters a line at 26 px in 722
 		local b = block(52 + 6 + bodyH + 16) -- (e14, grader A vs news_panel: ~60 from the last bullet to the next heading)
 		-- (menus e20, grader B) a 40 px icon before each section head
-		if n.icon and Notify.ICONS[n.icon] then icon(b, n.icon, 34, 4, 44, nil, 4) end
+		if n.icon and Notify.ICONS[n.icon] then local s = n.icon == "play" and 52 or 44 icon(b, n.icon, 34 - (s - 44) / 2, 4 - (s - 44) / 2, s, nil, 4) end -- (e22: the play glyph's art is smaller, drawn larger to match)
 		txt(b, n.title, FX, 42, (n.icon and Notify.ICONS[n.icon]) and 86 or 36, 0, W - 110, 52, nil, Enum.TextXAlignment.Left, 3)
 		txt(b, "•", FR, 26, 44, 58, 24, 34, GREY, Enum.TextXAlignment.Left, 3)
 		local body = txt(b, n.sub or "", FR, 26, 70, 58, W - 110, bodyH, Color3.fromRGB(228, 228, 230), Enum.TextXAlignment.Left, 3) -- (e7, grader B: 90% white)

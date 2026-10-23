@@ -362,7 +362,7 @@ local function build()
 	emptyLabel = label(emptyPlate, "Nobody else here yet", F_SUB, 28, 0, 30, 900, 512, FIELD, Enum.TextXAlignment.Center, 3)
 	-- (menus e20, grader B) a 64 px people glyph above the empty text
 	new("ImageLabel", { Name = "People", BackgroundTransparency = 1, Image = (RAssets and RAssets.play and RAssets.play.people) or "", ImageColor3 = FIELD,
-		Position = UDim2.fromOffset(450 - 46, 256 - 92), Size = UDim2.fromOffset(92, 92), ZIndex = 3, Parent = emptyPlate }) -- (e21: padded art; 92 draws ~64)
+		Position = UDim2.fromOffset(450 - 46, 256 - 74), Size = UDim2.fromOffset(92, 92), ZIndex = 3, Parent = emptyPlate }) -- (e21: padded art; 92 draws ~64)
 	Kit.toScale(root)
 	search:GetPropertyChangedSignal("Text"):Connect(function() if isOpen then renderGrid() end end)
 	-- party changes redraw while open
