@@ -218,10 +218,49 @@ local function keycap(parent, name)
 	return cap, glyph, sc, face
 end
 -- put a glyph on a keycap: the shape follows (square / wide / mouse)
+-- [TOUCH] (2026-10-23, Edward: the mobile tutorial should teach the actual buttons) touch glyph -> the TouchControls
+-- button (its id) and the InputActions action it fires
+local TOUCH_BTN = {
+	COVER = { "Take Cover", "Cover" }, DASH = { "Dash", "Dash" }, RUN = { "Sprint", "Sprint" }, CROUCH = { "Crouch", "Crouch" },
+	JUMP = { "Jump", "Jump" }, AIM = { "Aim", "Aim" }, FIRE = { "Fire", "Fire" },
+}
+local function touchButton(glyph: string?): GuiObject?
+	local m = glyph and TOUCH_BTN[glyph]
+	local pg = localPlayer:FindFirstChild("PlayerGui")
+	local tc = m and pg and pg:FindFirstChild("TouchControls")
+	local holder = tc and tc:FindFirstChildWhichIsA("Frame")
+	return holder and holder:FindFirstChild(m[1]) or nil
+end
 local function setGlyph(cap: Frame, glyph: string?)
 	local face = cap:FindFirstChild("Face")
 	local t, mouse = face and face:FindFirstChild("Glyph"), face and face:FindFirstChild("Mouse")
 	if not (t and mouse) then return end
+	-- a touch glyph: a round cap with the button's own icon (falls back to the word when the button has none)
+	local btn = touchButton(glyph)
+	local icon = btn and btn:FindFirstChild("Icon")
+	local ti = face:FindFirstChild("TouchIcon")
+	if not ti then
+		ti = Instance.new("ImageLabel")
+		ti.Name = "TouchIcon"
+		ti.BackgroundTransparency = 1
+		ti.ScaleType = Enum.ScaleType.Fit
+		ti.AnchorPoint = Vector2.new(0.5, 0.5)
+		ti.Position = UDim2.fromScale(0.5, 0.5)
+		ti.Size = UDim2.fromScale(0.74, 0.74)
+		ti.ImageColor3 = PLATE
+		ti.Parent = face
+	end
+	local round = icon ~= nil and icon:IsA("ImageLabel")
+	ti.Visible = round
+	if round then ti.Image = icon.Image end
+	for _, c in { cap:FindFirstChildOfClass("UICorner"), face:FindFirstChildOfClass("UICorner") } do
+		c.CornerRadius = UDim.new(if round then 0.5 else 0.18, 0)
+	end
+	if round then
+		mouse.Visible, t.Visible, t.Text = false, false, ""
+		cap.Aspect.AspectRatio = 1
+		return
+	end
 	local isMouse = glyph == "RMB" or glyph == "LMB"
 	mouse.Visible = isMouse
 	t.Visible = not isMouse
@@ -505,6 +544,7 @@ local STEP = {
 	Rush = { obj = "DASH TO THE CRATE", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, caps = { "DASH" }, look = true,
 		sub = "Get to that crate." },
 	Slide = { obj = "RUN + SLIDE", kb = { "SHIFT", "C" }, pad = { "L3", "B" }, touch = { "RUN", "CROUCH" }, caps = { "HOLD", "SLIDE" },
+		touchAuto = { "CROUCH" }, touchAutoCaps = { "SLIDE" }, -- [TOUCH] Mobile Auto Sprint (default on): you're already running
 		sub = "Hold run, then slide!" },
 	ToWall = { obj = "DASH TO THE WALL", kb = { "E" }, pad = { "LB" }, touch = { "DASH" }, caps = { "DASH" }, look = true,
 		sub = "The low wall's next. Go!" },
@@ -881,6 +921,7 @@ end
 local stripKey: string? = nil      -- the step it shows
 local stripGlyph: string? = nil    -- the first keycap's glyph (the world marker shows it too)
 local stripGlyphs: { string } = {}
+local stripCaps: { string } = {}
 local stripDoneFlag = false
 local keyDone = {}                 -- [i] = that keycap was pressed (a two-key step ticks them one by one)
 local gazeReady = false            -- you're looking at the marked target (set by the world marker loop)
@@ -916,7 +957,8 @@ local function paintKey(k, done: boolean)
 	k.face.Position = UDim2.fromScale(0, 0) -- (2026-10-21, AI-tells) back up off its key side
 	k.check.Visible = done
 	local mouse = k.face:FindFirstChild("Mouse")
-	if done then k.glyph.Visible = false; if mouse then mouse.Visible = false end
+	local ti = k.face:FindFirstChild("TouchIcon")
+	if done then k.glyph.Visible = false; if mouse then mouse.Visible = false end; if ti then ti.Visible = false end
 	else setGlyph(k.cap, k.cap:GetAttribute("Glyph")) end
 end
 -- a red marker over the enemy while you're asked to spot him (red = enemy only)
@@ -993,12 +1035,16 @@ local function showStrip(key: string, entry)
 	local dev = device()
 	stripKey, stripDoneFlag = key, false
 	local list = entry.passive and {} or (entry[dev] or entry.kb or {})
+	local captions = entry.caps
+	if dev == "touch" and entry.touchAuto and localPlayer:GetAttribute("Setting_MobileAutoSprint") ~= false then
+		list, captions = entry.touchAuto, entry.touchAutoCaps
+	end
 	if typeof(list) == "string" then list = { list } end
 	stripGlyphs = list
 	stripGlyph = list[1]
+	stripCaps = captions or {}
 	stripLook = entry.look == true
 	keyDone = {}
-	local captions = entry.caps
 	-- width hugs the content: keys + words, between 26 % and 42 % of the screen
 	local words = #(entry.obj or "")
 	local W = math.clamp((0.16 + words * 0.0098 + (#list >= 2 and 0.06 or 0)) * 1.25, 0.3, 0.52)
@@ -1180,19 +1226,115 @@ local function notReady()
 		TweenService:Create(highlightBox, TweenInfo.new(0.4), { OutlineColor = AMBER }):Play()
 	end
 end
+local function glyphPressed(i: number)
+	press[i].v += 6
+	if stripLook and i == 1 and not gazeReady then notReady() return end
+	if #stripGlyphs > 1 and i < #stripGlyphs and not keyDone[i] then
+		keyDone[i] = true
+		paintKey(strip.keys[i], true) -- the first of two keys ticks on its own (e.g. aimed: now fire)
+	end
+end
 UserInputService.InputBegan:Connect(function(input)
 	if not strip or not strip.root.Visible or stripDoneFlag then return end
 	for i, g in stripGlyphs do
 		for _, want in GLYPH_INPUTS[g] or {} do
-			if input.KeyCode == want or input.UserInputType == want then
-				press[i].v += 6
-				if stripLook and i == 1 and not gazeReady then notReady() return end
-				if #stripGlyphs > 1 and i < #stripGlyphs and not keyDone[i] then
-					keyDone[i] = true
-					paintKey(strip.keys[i], true) -- the first of two keys ticks on its own (e.g. aimed: now fire)
-				end
-				return
+			if input.KeyCode == want or input.UserInputType == want then glyphPressed(i) return end
+		end
+	end
+end)
+-- [TOUCH] the on-screen buttons fire InputActions, not key codes: the same press
+task.spawn(function()
+	local mod = ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("InputActions", 30)
+	if not mod then return end
+	local IA = require(mod)
+	for glyph, m in TOUCH_BTN do
+		IA.Bind(m[2], function(state)
+			if state ~= Enum.UserInputState.Begin or not strip or not strip.root.Visible or stripDoneFlag then return end
+			local i = table.find(stripGlyphs, glyph)
+			if i then glyphPressed(i) end
+		end)
+	end
+end)
+-- [TOUCH] the strip follows the device you're on (a phone that also has a keyboard, or Studio's _ForceTouch)
+local shownDev
+local function redrawForDevice()
+	local dev = device()
+	if dev == shownDev then return end
+	shownDev = dev
+	if strip and strip.root.Visible and not stripDoneFlag and stripKey and STEP[stripKey] then showStrip(stripKey, STEP[stripKey]) end
+end
+UserInputService.LastInputTypeChanged:Connect(redrawForDevice)
+localPlayer:GetAttributeChangedSignal("_ForceTouch"):Connect(redrawForDevice)
+-- [TOUCH] (2026-10-23, Edward: make the mobile tutorial interactive) the real button to press gets a ring with a ripple
+-- and its verb above it; the strip's next key and the ring light amber together, a pressed one goes olive
+local hintGui: ScreenGui? = nil
+local rings = {}
+local function ring(i: number)
+	if rings[i] then return rings[i] end
+	if not hintGui then
+		hintGui = Instance.new("ScreenGui")
+		hintGui.Name = "TutorialTouchHint"
+		hintGui.ResetOnSpawn = false
+		hintGui.IgnoreGuiInset = true -- the same space as TouchControls
+		hintGui.DisplayOrder = 9
+		hintGui.Parent = localPlayer:WaitForChild("PlayerGui")
+	end
+	local r = Instance.new("Frame")
+	r.Name = "Ring" .. i
+	r.AnchorPoint = Vector2.new(0.5, 0.5)
+	r.BackgroundTransparency = 1
+	r.Visible = false
+	corner(r, 0.5)
+	local st = stroke(r, AMBER, 4, 0)
+	st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	local ripple = Instance.new("Frame")
+	ripple.Name = "Ripple"
+	ripple.AnchorPoint = Vector2.new(0.5, 0.5)
+	ripple.Position = UDim2.fromScale(0.5, 0.5)
+	ripple.BackgroundTransparency = 1
+	corner(ripple, 0.5)
+	local rst = stroke(ripple, AMBER, 3, 0)
+	rst.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	ripple.Parent = r
+	local verb = text(r, "Verb", F_HEAVY, WHITE)
+	verb.AnchorPoint = Vector2.new(0.5, 1)
+	verb.Position = UDim2.fromScale(0.5, -0.06)
+	verb.Size = UDim2.fromScale(1.6, 0.3)
+	stroke(verb, PLATE, 2, 0.2)
+	r.Parent = hintGui
+	rings[i] = { frame = r, stroke = st, ripple = ripple, rstroke = rst, verb = verb }
+	return rings[i]
+end
+RunService.RenderStepped:Connect(function()
+	local on = strip ~= nil and strip.root.Visible and not stripDoneFlag and device() == "touch"
+	local nextKey
+	for i = 1, #stripGlyphs do if not keyDone[i] then nextKey = i break end end
+	for i = 1, math.max(#stripGlyphs, #rings) do
+		local btn = if on then touchButton(stripGlyphs[i]) else nil
+		if btn and btn.Visible and btn.AbsoluteSize.X > 0 then
+			local r = ring(i)
+			local scr = hintGui.AbsoluteSize
+			if scr.X > 0 then
+				local c = btn.AbsolutePosition - hintGui.AbsolutePosition + btn.AbsoluteSize / 2 -- (AbsolutePosition is inset-relative: an IgnoreGuiInset gui sits at y -58)
+				local d = btn.AbsoluteSize.Y * 1.12
+				r.frame.Position = UDim2.fromScale(c.X / scr.X, c.Y / scr.Y)
+				r.frame.Size = UDim2.fromScale(d / scr.X, d / scr.Y)
+				local done = keyDone[i] == true
+				local lit = i == nextKey and (not stripLook or gazeReady)
+				local col = if done then GOOD elseif lit then AMBER else WHITE
+				local t = (os.clock() * 1.1) % 1
+				r.stroke.Color, r.rstroke.Color = col, col
+				r.stroke.Transparency = if done or lit then 0 else 0.45
+				r.ripple.Visible = lit and not done
+				r.ripple.Size = UDim2.fromScale(1 + t * 0.6, 1 + t * 0.6)
+				r.rstroke.Transparency = t
+				r.verb.Text = stripCaps[i] or ""
+				r.verb.TextColor3 = if lit then AMBER else WHITE
+				r.verb.Visible = not done
+				r.frame.Visible = true
 			end
+		elseif rings[i] then
+			rings[i].frame.Visible = false
 		end
 	end
 end)
