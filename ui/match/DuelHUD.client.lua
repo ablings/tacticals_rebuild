@@ -608,7 +608,7 @@ do
 end
 -- RIVALS' numbers: Eliminations / Deaths / Assists in dark tiles, Damage Dealt / Damage Taken plain under them (+ our Headshots
 -- last, when the server sends it). stats.SLOTS = { centre x, top y, tile? } in results (1920x1080) design px, by display order.
-stats.SLOTS = { { 840, 864, true }, { 960, 864, true }, { 1080, 864, true }, { 894, 972, false }, { 1026, 972, false }, { 960, 1030, false } }
+stats.SLOTS = { { 840, 858, true }, { 960, 858, true }, { 1080, 858, true }, { 894, 958, false }, { 1026, 958, false }, { 960, 1016, false } } -- (m29, grader A vs t0140: rows 6 / 14 px up)
 for i, k in { { "Kills", "Eliminations" }, { "Deaths", "Deaths" }, { "Assists", "Assists" }, { "DamageDealt", "Damage Dealt" }, { "DamageTaken", "Damage Taken" }, { "Headshots", "Headshots" } } do
 	local sl = stats.SLOTS[i]
 	stats.tiles[k[1]] = new("Frame", { BackgroundColor3 = Color3.fromRGB(58, 58, 64), BackgroundTransparency = 0.15, Position = UDim2.fromOffset(sl[1] - 41, sl[2]),
