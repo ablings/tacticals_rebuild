@@ -203,7 +203,7 @@ local function buildInbox()
 		local y = (i - 1) * 108
 		local row = pill(content, n, 0, y, 828, 102)
 		-- (menus e15, graders A + C) the age chip belongs to its row (it pops with it) and sits 24 in from the row's right end
-		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(828 - 24 - 90, 37), Size = UDim2.fromOffset(90, 28), ZIndex = 5, -- (e23: a small 28 chip)
+		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(n.reward and (828 - 96 - 12 - 90) or (828 - 24 - 90), 37), Size = UDim2.fromOffset(90, 28), ZIndex = 5, -- (e23: a small 28 chip; live port 36: left of a reward box, it sat on top of it)
 			
 			Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 		txt(chip, ago(n.t), FB, 16, 0, 0, 90, 28, GREY, Enum.TextXAlignment.Right, 6) -- (e16, grader A: the text ends 24 in from the row's end)

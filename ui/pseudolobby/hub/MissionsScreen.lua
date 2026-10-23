@@ -286,7 +286,7 @@ local function taskRow(parent, scope, i, entry, def, y, period)
 		-- (2026-10-21, RIVALS images) the outlined lime check image itself (no green disc); the old disc + black tick as fallback
 		if CHECK_LIME then
 			badge = new("ImageLabel", { Name = "DoneCheck", BackgroundTransparency = 1, Image = CHECK_LIME, ScaleType = Enum.ScaleType.Fit,
-				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(708, 49), Size = UDim2.fromOffset(32, 32), ZIndex = 4, Parent = row })
+				AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(694, 49), Size = UDim2.fromOffset(28, 28), ZIndex = 4, Parent = row }) -- (live port 36: at 708 it ran into a wide "×1,000")
 		else
 			badge = new("Frame", { Name = "DoneCheck", BackgroundColor3 = C.green, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.fromOffset(708, 49), Size = UDim2.fromOffset(26, 26), ZIndex = 4, Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })

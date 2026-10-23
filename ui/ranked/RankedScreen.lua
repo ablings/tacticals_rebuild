@@ -174,8 +174,9 @@ local function render()
 		c.shadow.Visible = false
 		c.bar.Visible = not idle -- (menus e2, RIVALS: no PLAY bar at rest; the bar only carries a queue state)
 		c.edge.Transparency = mine and 0.05 or 1
-		if inPlacements and Assets.play and Assets.play.shield_flame then
-			-- (menus e20, graders A + B vs RIVALS 02) while placing, each tile's foot badge is RIVALS' white fire shield, not a "?"
+		if Assets.play and Assets.play.shield_flame then
+			-- (menus e20, graders A + B vs RIVALS 02; live port 36) each tile's foot badge is RIVALS' white fire shield in every state
+			-- (RIVALS 02 is a Bronze 2 player and still shows the shield; ours showed the rank emblem once placed)
 			for _, ch in c.badge:GetChildren() do if ch.Name == "Emblem" then ch:Destroy() end end
 			if not c.badge:FindFirstChild("Shield") then
 				new("ImageLabel", { Name = "Shield", BackgroundTransparency = 1, Image = Assets.play.shield_flame, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.45), Size = UDim2.fromScale(1.42, 1.42), ZIndex = 5, Parent = c.badge }) -- (e21-e22: the padded art at 1.42x draws ~64x74)
