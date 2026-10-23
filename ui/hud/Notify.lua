@@ -248,9 +248,9 @@ function Notify.InboxOpen() return inboxGui ~= nil and inboxGui.Parent ~= nil en
 ---------------------------------------------------------------------------------------------------- news
 -- "Read the latest news": the update notes, newest first (edit NEWS when a port goes out)
 Notify.NEWS = {
-	{ title = "After-match lobby", sub = "Walk around after a match: To Hub, Play Again or Rematch (best of three)." },
-	{ title = "Weapon stats + Duel History", sub = "Kit > Statistics for each weapon, and your last 20 duels." },
-	{ title = "Switch Weapons", sub = "Press M between rounds to change your loadout." },
+	{ title = "After-match lobby", sub = "Walk around after a match: To Hub, Play Again or Rematch (best of three).", icon = "play" },
+	{ title = "Weapon stats + Duel History", sub = "Kit > Statistics for each weapon, and your last 20 duels.", icon = "elims" },
+	{ title = "Switch Weapons", sub = "Press M between rounds to change your loadout.", icon = "settings" },
 }
 -- (2026-10-23, menus e2, graders A + B + C vs RIVALS news_panel.png) News is RIVALS' article, not a stack of inbox pills: one
 -- 832-wide column at y 119 that scrolls, a hero picture across its top, "UPDATE N" right-aligned under it, then each item as a
@@ -297,7 +297,9 @@ function Notify.OpenNews()
 	for _, n in Notify.NEWS do
 		local bodyH = math.max(1, math.ceil(#(n.sub or "") / 60)) * 32 -- (e6-e7) about 60 characters a line at 26 px in 722
 		local b = block(52 + 6 + bodyH + 16) -- (e14, grader A vs news_panel: ~60 from the last bullet to the next heading)
-		txt(b, n.title, FX, 42, 36, 0, W - 60, 52, nil, Enum.TextXAlignment.Left, 3)
+		-- (menus e20, grader B) a 40 px icon before each section head
+		if n.icon and Notify.ICONS[n.icon] then icon(b, n.icon, 36, 6, 40, nil, 4) end
+		txt(b, n.title, FX, 42, (n.icon and Notify.ICONS[n.icon]) and 86 or 36, 0, W - 110, 52, nil, Enum.TextXAlignment.Left, 3)
 		txt(b, "•", FR, 26, 44, 58, 24, 34, GREY, Enum.TextXAlignment.Left, 3)
 		local body = txt(b, n.sub or "", FR, 26, 70, 58, W - 110, bodyH, Color3.fromRGB(228, 228, 230), Enum.TextXAlignment.Left, 3) -- (e7, grader B: 90% white)
 		body.TextWrapped = true
