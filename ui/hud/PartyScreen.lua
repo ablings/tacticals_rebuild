@@ -263,12 +263,22 @@ local function renderGrid()
 	end
 	if k == 0 then
 		-- (menus e6, grader A) the empty state is a row-shaped plate at the top of the list, not words floating in the pane
-		local empty = new("Frame", { Name = "Empty", Size = UDim2.fromOffset(900, 93), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = holder }, { Kit.corner(10) })
-		label(empty, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 24, 0, 0, 900, 93, FIELD, Enum.TextXAlignment.Center, 4)
-		k = 1
+		-- (menus e11, grader A) the plate runs down to the party column's foot (y 742), so both panes end on one line
+		local empty = new("Frame", { Name = "Empty", Size = UDim2.fromOffset(900, 512), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = holder }, { Kit.corner(10) })
+		label(empty, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 24, 0, 0, 900, 512, FIELD, Enum.TextXAlignment.Center, 4)
 	end
-	holder.Size = UDim2.fromOffset(900, math.max(10, math.ceil(k / 3) * GRID_STEP))
+	holder.Size = UDim2.fromOffset(900, k == 0 and 512 or math.max(10, math.ceil(k / 3) * GRID_STEP))
 	Kit.toScale(grid)
+	-- (menus e11, grader C) the cards pop in one after another on a tab change or search, like the other grids
+	if Kit.popIn then
+		local n = 0
+		for _, c in holder:GetChildren() do
+			if c:IsA("Frame") and c.Name ~= "Empty" and n < 9 then
+				n += 1
+				pcall(Kit.popIn, c, 0.02 + n * 0.03)
+			end
+		end
+	end
 end
 
 local function styleTabs()
@@ -283,6 +293,7 @@ end
 function PartyScreen.SetTab(name)
 	current = name
 	if not gui then return end
+	grid.CanvasPosition = Vector2.zero -- (menus e11, grader C) a new tab starts at the top
 	styleTabs()
 	renderGrid()
 end

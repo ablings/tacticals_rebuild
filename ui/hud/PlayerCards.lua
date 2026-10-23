@@ -454,15 +454,15 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 		BackgroundColor3 = cardCol, BackgroundTransparency = 0.05, ZIndex = 21, Parent = root }, { Kit.corner(8) })
 	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 8), Size = UDim2.fromOffset(64, 64), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle
 	headshot(hs, p)
-	label(panel, badgeName(p), F_BOLD, 21, 105, 12, 190, 28, RC.text, nil, 22)
-	label(panel, "@" .. p.Name, F_SUB, 14, 105, 42, 190, 18, tok("menuHandle", hex("#C9C9CF")), nil, 22)
+	label(panel, badgeName(p), F_BOLD, 28, 100, 10, 196, 34, RC.text, nil, 22) -- (menus e11, grader B: name 28, labels 21)
+	label(panel, "@" .. p.Name, F_SUB, 16, 100, 46, 196, 20, tok("menuHandle", hex("#C9C9CF")), nil, 22)
 	local checkImg, sentGrey = rasset("check"), tok("sent", hex("#8A8A8A"))
 	for i, a in actions do
 		local col = actionColor(a)
 		local b = new("TextButton", { Name = a, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(3, HEAD + (i - 1) * ROW), Size = UDim2.fromOffset(PW - 6, 52),
 			BackgroundColor3 = RC.white, ZIndex = 22, Parent = panel }, { Kit.corner(4) })
 		local grad = new("UIGradient", { Color = ColorSequence.new(cardCol, col), Parent = b })
-		local t = label(b, ACTION_TEXT[a] or a, F_BOLD, 17, 19, 0, 200, 52, RC.text, nil, 23)
+		local t = label(b, ACTION_TEXT[a] or a, F_BOLD, 21, 19, 0, 210, 52, RC.text, nil, 23)
 		local img = rasset(ACTION_ICON[a])
 		local ic = new("ImageLabel", { Name = "Icon", BackgroundTransparency = 1, Image = img or "", ImageColor3 = RC.white, ScaleType = Enum.ScaleType.Fit,
 			AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(250, 26), Size = UDim2.fromOffset(40, 40), ZIndex = 23, Parent = b })

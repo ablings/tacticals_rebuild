@@ -35,6 +35,8 @@ No gloss / sheen overlays (house rule). The Leaderboard is empty in Studio (no p
 Player menu geometry is settled (e5): measured on rv_playermenu.jpg (874x491 -> x 2.2) its top is ~105 and its row pitch ~55,
 which ours already is (top 101, pitch 55.6, avatar 64). Don't re-flag its top / row height / avatar size.
 News has a single article (no pages yet), so there is no next-page arrow to add.
+Body text weight is settled (e11): our UI font (Rubik, rbxassetid 12187365977) has no Regular weight in Roblox (asking for it
+falls back to Source Sans), so body copy is Medium on purpose. No thin (<3 px) outlines on slots or panels (house AI-tells rule).
 
 ## Report
 Write `menus\<round>_grade_<LETTER>.md`, under 500 words: per menu a score /10 on your lens and at most 3 concrete fixes

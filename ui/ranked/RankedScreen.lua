@@ -190,22 +190,24 @@ local function buildLadder()
 	local shade, p, show = popup("Ladder", 882, 629, "Ranked")
 	-- (menus e10, graders A + B vs 05) the whole body under the title scrolls (heading, podium, rules), with a slim bar at the
 	-- modal's right edge, like RIVALS; a list layout of fixed-size blocks (the pattern that survives Kit.toScale)
-	local body = new("ScrollingFrame", { Name = "Body", Position = UDim2.fromOffset(0, 70), Size = UDim2.fromOffset(882, 547), BackgroundTransparency = 1, BorderSizePixel = 0,
+	-- (e11, grader A: the body is 858 wide, so its bar sits 24 in from the modal's edge)
+	local body = new("ScrollingFrame", { Name = "Body", Position = UDim2.fromOffset(0, 70), Size = UDim2.fromOffset(858, 547), BackgroundTransparency = 1, BorderSizePixel = 0,
 		ScrollBarThickness = 6, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		ScrollingDirection = Enum.ScrollingDirection.Y, ZIndex = 22, Parent = p }, {
 		new("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }),
 		new("UIPadding", { PaddingLeft = UDim.new(0, 30), PaddingBottom = UDim.new(0, 24) }), -- (e10, grader C: the last rule scrolls clear of the fade)
 	})
 	-- (menus e6, grader A vs 05) RIVALS titles the modal "Ranked" and heads the podium "Ranks" on the left
-	local head = new("Frame", { Name = "Head", BackgroundTransparency = 1, LayoutOrder = 1, Size = UDim2.fromOffset(840, 56), ZIndex = 22, Parent = body })
-	label(head, "Ranks", FB, 40, 4, 4, 300, 50, WHITE, Enum.TextXAlignment.Left).ZIndex = 22
 	-- (menus e4-e10, graders A + B vs RIVALS 05_rank_ladder.jpg) a stepped podium: each rank is a pillar rising left to right
 	-- (98 wide, gap 4, 90 -> 272 tall: the Bronze-to-Warlord climb ~185 like RIVALS), its colour darkening downward, an 88 px
 	-- emblem overlapping its top, the ELO floor (italic 34) under the emblem and the rank name (italic 17, one size for all) at
 	-- its foot. (grader C) The columns rise from the podium's floor one after another when the modal opens.
-	local PH = 350
-	local podium = new("Frame", { Name = "Podium", BackgroundTransparency = 1, ClipsDescendants = true, LayoutOrder = 2, Size = UDim2.fromOffset(840, PH),
+	-- (e11, graders A + C) the "Ranks" heading sits inside the podium's top-left (the short pillars leave room), so the Top 200
+	-- emblem is level with it like RIVALS; 20 px of headroom keeps the hover lift from being clipped
+	local PH = 370
+	local podium = new("Frame", { Name = "Podium", BackgroundTransparency = 1, ClipsDescendants = true, LayoutOrder = 2, Size = UDim2.fromOffset(828, PH),
 		ZIndex = 22, Parent = body })
+	label(podium, "Ranks", FB, 40, 4, 4, 300, 50, WHITE, Enum.TextXAlignment.Left).ZIndex = 22
 	local italic = function(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
 	local cols = {}
 	for i, r in RANKS do
