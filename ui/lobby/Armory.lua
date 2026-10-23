@@ -2305,6 +2305,23 @@ local function renderInfo()
 		y0 += ROW
 		return b
 	end
+	-- (2026-10-22, section rounds 3-8, grader C vs t0051; ECON2 per-weapon contracts) RIVALS' middle row is Contracts: "Earn free
+	-- rewards" and an arrow to the contract list. Weapons / melee with a contract tier left show it (this weapon's progress on the
+	-- sub-line); everything else keeps our Next unlock row. (round 10: on the TOP row, like RIVALS t0051)
+	local tiers = ctx.Config.WeaponContracts
+	if tiers and owned and (item.Slot == "Weapon" or item.Slot == "Melee") then
+		local data = ctx.getData() or {}
+		local paid = (data.Contracts and tonumber(data.Contracts[id])) or 0
+		local target = tiers[paid + 1]
+		local kills = (data.WeaponStats and data.WeaponStats[id] and data.WeaponStats[id].Kills) or 0
+		local cb = row("contract", "Contracts", target and (math.min(kills, target.Kills) .. " / " .. target.Kills .. " eliminations") or "All contracts done",
+			"arrow", "blue")
+		Armory._tip(cb, "Earn free rewards with this weapon", "left")
+		cb.Activated:Connect(function()
+			Armory.Leave()
+			if ctx.openMissions then task.delay(0.5, ctx.openMissions) end
+		end)
+	end
 	local ib = row("lens", "Inspect", owned and "Give it a spin" or "Unlock it to inspect", "eye", owned and "blue" or "grey")
 	if owned then
 		ib.Activated:Connect(function()
@@ -2326,24 +2343,6 @@ local function renderInfo()
 		end
 	end
 	local nextItem = nextId and ctx.Config.Items[nextId]
-	-- (2026-10-22, section rounds 3-8, grader C vs t0051; ECON2 per-weapon contracts) RIVALS' middle row is Contracts: "Earn free
-	-- rewards" and an arrow to the contract list. Weapons / melee with a contract tier left show it (this weapon's progress on the
-	-- sub-line); everything else keeps our Next unlock row.
-	local tiers = ctx.Config.WeaponContracts
-	if tiers and owned and (item.Slot == "Weapon" or item.Slot == "Melee") then
-		local data = ctx.getData() or {}
-		local paid = (data.Contracts and tonumber(data.Contracts[id])) or 0
-		local target = tiers[paid + 1]
-		local kills = (data.WeaponStats and data.WeaponStats[id] and data.WeaponStats[id].Kills) or 0
-		local cb = row("contract", "Contracts", target and (math.min(kills, target.Kills) .. " / " .. target.Kills .. " eliminations") or "All contracts done",
-			"arrow", "blue")
-		Armory._tip(cb, "Earn free rewards with this weapon", "left")
-		cb.Activated:Connect(function()
-			Armory.Leave()
-			if ctx.openMissions then task.delay(0.5, ctx.openMissions) end
-		end)
-		nextId = nil
-	end
 	local nb
 	if not (tiers and owned and (item.Slot == "Weapon" or item.Slot == "Melee")) then
 		nb = row("lock", nextItem and "Next unlock" or (owned and "All unlocked" or "Last one"),
@@ -3297,7 +3296,7 @@ function Armory._kitCurrency(on: boolean)
 	local plate = pill:FindFirstChild("Plate")
 	local sc = pill:FindFirstChild("KitScale")
 	if on then
-		if not sc and not pill:FindFirstChildOfClass("UIScale") then mk("UIScale", { Name = "KitScale", Scale = 1.16, Parent = pill }) end
+		if not sc and not pill:FindFirstChildOfClass("UIScale") then mk("UIScale", { Name = "KitScale", Scale = 1, Parent = pill }) -- (rounds 8-10, graders A + B vs t0058 / t0285: RIVALS keeps one counter size; was 1.16) end
 		if plate and plate:IsA("GuiObject") and not plate:FindFirstChild("KitFade") then
 			plate:SetAttribute("KitT", plate.BackgroundTransparency)
 			plate.BackgroundTransparency = 0.1

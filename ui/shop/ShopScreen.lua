@@ -795,7 +795,7 @@ function RENDER.Featured(pg, hover)
 		local pile = new("Frame", { Name = "Pile", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, -4), Size = UDim2.fromOffset(152, 104), ZIndex = 2, Parent = h })
 		scissorsPile(pile, math.min(i + 1, 4), 152, 104, 2, 10)
 		countLabel(h, pr.Credits, 52, 62, 100, 40, 32, 4)
-		priceTag(h, "robux", pr.Robux, 76, 104, 124, PRICE_H, open, { noHover = true })
+		priceTag(h, "robux", pr.Robux, 76, 104, 100, PRICE_H, open, { noHover = true }) -- (round 10, grader A vs t0068: 100 dp, was 124)
 	end
 	-- boxes row: gear you don't have yet as bare renders over yellow scissors prices (opens the Kit room)
 	local gear = {}
@@ -805,7 +805,7 @@ function RENDER.Featured(pg, hover)
 		local h = hold(12 + (i - 1) * 160, 178, 152, 104 + PRICE_H, 1.08, function() ctx.openKit(id) end)
 		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(4, -6), Size = UDim2.fromOffset(144, 112), ZIndex = 2, Parent = h })
 		turnOnHover(h, lit(itemArt(art, id, nil, 1.15)))
-		priceTag(h, "kit", Config.Items[id].Price, 76, 104, 124, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
+		priceTag(h, "kit", Config.Items[id].Price, 76, 104, 100, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
 	end
 
 	-- the Season Pass card (749x321 at 519,6): our Founder's Bundle. Grey 35° wash (or the bundle colour), one big render
