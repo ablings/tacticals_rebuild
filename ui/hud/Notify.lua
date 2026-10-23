@@ -161,11 +161,16 @@ local function buildInbox()
 	if inboxGui and inboxGui.Parent then inboxGui:Destroy() end
 	inboxGui = new("ScreenGui", { Name = "InboxUI", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 26, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		Parent = player:WaitForChild("PlayerGui") })
-	new("Frame", { Name = "Dim", BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.45, Size = UDim2.fromScale(1, 1), Parent = inboxGui }) -- (2026-10-21, RIVALS pass) named: CloseInbox fades it
+	-- (2026-10-21, RIVALS pass) named: CloseInbox fades it. (menus e2, grader C) a button: a click outside the panel closes it,
+	-- and it fades in instead of popping
+	local dim = new("TextButton", { Name = "Dim", Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 1,
+		Size = UDim2.fromScale(1, 1), Parent = inboxGui })
+	TweenService:Create(dim, TweenInfo.new(0.2), { BackgroundTransparency = 0.45 }):Play()
+	dim.Activated:Connect(function() Notify.CloseInbox() end)
 	local canvas = Kit.canvas(inboxGui)
 	inboxRoot = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 	local head = new("Frame", { Name = "Head", BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(540, 208), Size = UDim2.fromOffset(828, 132),
-		ZIndex = 2, Parent = inboxRoot }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+		ZIndex = 2, Active = true, Parent = inboxRoot }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	icon(head, "inbox", 20, 10, 56, Color3.new(1, 1, 1), 3)
 	txt(head, "Inbox", FX, 46, 84, 6, 400, 60, nil, Enum.TextXAlignment.Left, 3)
 	txt(head, "All of your recent notifications end up here.\nYour inbox clears when you leave the server!", FB, 22, 0, 62, 828, 60, GREY, nil, 3)
@@ -174,7 +179,7 @@ local function buildInbox()
 	x.Parent = inboxRoot
 	x.Activated:Connect(function() Notify.CloseInbox() end)
 	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(420, 360), Size = UDim2.fromOffset(940, 680),
-		ScrollBarThickness = 6, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Parent = inboxRoot })
+		ScrollBarThickness = 6, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, Parent = inboxRoot })
 	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(940, math.max(680, #inbox * 108)), Parent = list })
 	if #inbox == 0 then
 		txt(content, "Nothing yet", FX, 34, 0, 40, 940, 44, nil, nil, 3)
@@ -231,25 +236,49 @@ Notify.NEWS = {
 	{ title = "Weapon stats + Duel History", sub = "Kit > Statistics for each weapon, and your last 20 duels." },
 	{ title = "Switch Weapons", sub = "Press M between rounds to change your loadout." },
 }
+-- (2026-10-23, menus e2, graders A + B + C vs RIVALS news_panel.png) News is RIVALS' article, not a stack of inbox pills: one
+-- 832-wide column at y 119 that scrolls, a hero picture across its top, "UPDATE N" right-aligned under it, then each item as a
+-- heading with its bullet line. Same gui variables as the inbox, so CloseInbox / the dim close it.
+Notify.NEWS_UPDATE = Notify.NEWS_UPDATE or 36
 function Notify.OpenNews()
-	local saved = inbox
-	inbox = {}
-	for i, n in Notify.NEWS do inbox[i] = { t = os.time(), title = n.title, sub = n.sub, icon = "news" } end
-	buildInbox()
-	inbox = saved
-	-- the header says News instead of Inbox
-	local head = inboxRoot and inboxRoot:FindFirstChild("Head")
-	if head then
-		for _, l in head:GetDescendants() do
-			if l:IsA("TextLabel") and l.Text == "Inbox" then l.Text = "News" end
-			if l:IsA("TextLabel") and l.Text:find("notifications end up here", 1, true) then l.Text = "What's new in Tacticals." end
-		end
+	if inboxGui and inboxGui.Parent then inboxGui:Destroy() end
+	inboxGui = new("ScreenGui", { Name = "InboxUI", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 26, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = player:WaitForChild("PlayerGui") })
+	local dim = new("TextButton", { Name = "Dim", Text = "", AutoButtonColor = false, BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 1,
+		Size = UDim2.fromScale(1, 1), Parent = inboxGui })
+	TweenService:Create(dim, TweenInfo.new(0.2), { BackgroundTransparency = 0.45 }):Play()
+	dim.Activated:Connect(function() Notify.CloseInbox() end)
+	local canvas = Kit.canvas(inboxGui)
+	inboxRoot = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
+	local W, TOP, H = 832, 119, 900
+	-- (a plain clipped panel: the article fits; a ScrollingFrame's canvas maths hid its children)
+	local col = new("Frame", { Name = "Article", BackgroundColor3 = PILL, BackgroundTransparency = 0.15, BorderSizePixel = 0, Position = UDim2.fromOffset(544, TOP),
+		Size = UDim2.fromOffset(W, H), ClipsDescendants = true, Active = true, ZIndex = 2, Parent = inboxRoot }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	local heroImg = ""
+	pcall(function()
+		local A = require(ReplicatedStorage:WaitForChild("UIKit"):WaitForChild("Rivals"):WaitForChild("Assets"))
+		heroImg = (A.gen and (A.gen.shop_bg_operator or A.gen.play_card_1v1)) or ""
+	end)
+	new("ImageLabel", { Name = "Hero", BackgroundColor3 = Color3.new(0, 0, 0), Image = heroImg, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromOffset(W, 400), ZIndex = 3,
+		Parent = col }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	txt(col, "UPDATE " .. tostring(Notify.NEWS_UPDATE), FX, 44, 0, 410, W - 16, 56, nil, Enum.TextXAlignment.Right, 3)
+	local y = 490
+	for _, n in Notify.NEWS do
+		txt(col, n.title, FX, 42, 36, y, W - 60, 52, nil, Enum.TextXAlignment.Left, 3)
+		y += 56
+		local body = txt(col, "• " .. (n.sub or ""), FB, 28, 70, y, W - 100, 70, GREY, Enum.TextXAlignment.Left, 3)
+		body.TextWrapped = true
+		body.TextYAlignment = Enum.TextYAlignment.Top
+		y += 84
 	end
-	-- the time chips make no sense for news: hide them
-	local list = inboxRoot and inboxRoot:FindFirstChild("List")
-	for _, f in list and list:GetDescendants() or {} do
-		if f:IsA("TextLabel") and f.Text == "now" and f.Parent then f.Parent.Visible = false end
-	end
+	local x = Kit.closeButton(UDim2.fromOffset(84, 50))
+	x.Position = UDim2.fromOffset(544 + W + 26, TOP)
+	x.Parent = inboxRoot
+	x.Activated:Connect(function() Notify.CloseInbox() end)
+	Kit.toScale(inboxRoot)
+	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
+	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 18 }):Play()
+	if Kit.open then pcall(Kit.open, inboxRoot) end
 end
 
 ---------------------------------------------------------------------------------------------------- top-right buttons (hub)

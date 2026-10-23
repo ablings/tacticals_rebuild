@@ -143,7 +143,8 @@ local function render()
 		c.green.Enabled = idle
 		c.bar.BackgroundColor3 = idle and WHITE or BLACK
 		c.bar.BackgroundTransparency = idle and 0 or (mine and 0.1 or 0.35)
-		c.shadow.Visible = idle
+		c.shadow.Visible = false
+		c.bar.Visible = not idle -- (menus e2, RIVALS: no PLAY bar at rest; the bar only carries a queue state)
 		c.edge.Transparency = mine and 0.05 or 1
 	end
 	-- Warlord strip
@@ -159,7 +160,7 @@ local function popup(name, w, h, title)
 	local shade = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(1920, 1080), BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.35, Visible = false, ZIndex = 20, Parent = root })
 	local p = new("Frame", { Name = "Panel", Position = UDim2.fromOffset((1920 - w) / 2, (1080 - h) / 2), Size = UDim2.fromOffset(w, h), BackgroundColor3 = BLACK,
-		BackgroundTransparency = 0.08, ZIndex = 21, Parent = shade }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
+		BackgroundTransparency = 0.08, ZIndex = 21, Active = true, Parent = shade }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) }) -- (menus e2, grader C: Active, so a click inside the panel no longer reaches the shade and closes it)
 	stroke(label(p, title, FB, 56, 0, 18, w, 64), 2.5).ZIndex = 22
 	local x = Kit.closeButton(UDim2.fromOffset(96, 50))
 	x.Position = UDim2.fromOffset(w - 116, 22)
@@ -288,22 +289,22 @@ local function build()
 	ui.cards = {}
 	for i, mode in MODES do
 		local card = new("TextButton", { Name = "Ranked" .. mode, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(220 + (i - 1) * 500, 432),
-			Size = UDim2.fromOffset(480, 380), BackgroundColor3 = WHITE, Parent = root }, {
+			Size = UDim2.fromOffset(480, 480), BackgroundColor3 = WHITE, Parent = root }, { -- (menus e2, graders A + B vs RIVALS 02_ranked_screen: tall cards, the whole card is the button)
 			new("UICorner", { CornerRadius = UDim.new(0, 14) }),
 			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Theme.hex("#3B4524"), Theme.hex("#14170F")) }),
 		})
 		local edge = new("UIStroke", { Color = WHITE, Thickness = 4, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = card })
 		-- (2026-10-21, round 3: match RIVALS t0291, mode tiles = the mode name over a scene) a live 3D squad behind the words
 		-- (PlayScreen's squad: you + mates vs dark-gold silhouettes, hops on hover); built on every open (render-time character)
-		local stage = new("Frame", { Name = "Stage", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(480, 280), ZIndex = 2,
+		local stage = new("Frame", { Name = "Stage", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(480, 460), ZIndex = 2,
 			ClipsDescendants = true, Parent = card })
-		stroke(label(card, "Ranked", FB, 72, 0, 90, 480, 84, WHITE), 3).ZIndex = 4
-		stroke(label(card, mode, FB, 96, 0, 170, 480, 108, WHITE), 3).ZIndex = 4
+		stroke(label(card, "Ranked", FB, 80, 0, 130, 480, 90, WHITE), 3).ZIndex = 4 -- (e2: centred on the taller card, RIVALS' size)
+		stroke(label(card, mode, FB, 104, 0, 216, 480, 116, WHITE), 3).ZIndex = 4
 		-- (2026-10-21, RIVALS pass) a real PLAY bar (PlayScreen's field-green strip, inset as a button): solid fill on an offset
 		-- block, no outline; the queue status is written in it (render)
-		local shadow = new("Frame", { Name = "PlayShadow", Position = UDim2.fromOffset(24, 302), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = C.fieldDark,
+		local shadow = new("Frame", { Name = "PlayShadow", Position = UDim2.fromOffset(24, 402), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = C.fieldDark,
 			BorderSizePixel = 0, ZIndex = 4, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
-		local bar = new("Frame", { Name = "PlayBar", Position = UDim2.fromOffset(24, 296), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = WHITE,
+		local bar = new("Frame", { Name = "PlayBar", Position = UDim2.fromOffset(24, 396), Size = UDim2.fromOffset(432, 62), BackgroundColor3 = WHITE,
 			BorderSizePixel = 0, ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 		local green = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = bar })
 		local status = label(bar, "PLAY", Theme.font.chunky, 30, 0, 0, 432, 62, WHITE)
@@ -322,7 +323,8 @@ local function build()
 	end
 
 	-- Warlord strip + leaderboard button
-	local strip = new("Frame", { Name = "Warlord", Position = UDim2.fromOffset(220, 830), Size = UDim2.fromOffset(1480, 100), BackgroundColor3 = BLACK,
+	local strip = new("Frame", { Name = "Warlord", Position = UDim2.fromOffset(220, 926), -- (e2: below the taller cards)
+		 Size = UDim2.fromOffset(1480, 100), BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.35, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
 	local wHold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(14, 8), Size = UDim2.fromOffset(84, 84), Parent = strip })
 	emblem(wHold, "Warlord")
