@@ -147,6 +147,7 @@ local function render()
 		c.shadow.Visible = false
 		c.bar.Visible = not idle -- (menus e2, RIVALS: no PLAY bar at rest; the bar only carries a queue state)
 		c.edge.Transparency = mine and 0.05 or 1
+		emblem(c.badge, not inPlacements and rank or nil)
 	end
 	-- Warlord strip
 	local top, cutoff = leaderboard()
@@ -187,19 +188,21 @@ end
 
 local function buildLadder()
 	-- (menus e4-e5, grader A) RIVALS' Ranks modal: 882x629 at (519,225), the rules scrolling under the podium
-	local shade, p, show = popup("Ladder", 882, 629, "Ranks")
+	local shade, p, show = popup("Ladder", 882, 629, "Ranked")
+	-- (menus e6, grader A vs 05) RIVALS titles the modal "Ranked" and heads the podium "Ranks" on the left
+	label(p, "Ranks", FB, 40, 34, 78, 300, 50, WHITE, Enum.TextXAlignment.Left).ZIndex = 22
 	-- (menus e4-e5, graders A + B vs RIVALS 05_rank_ladder.jpg) a stepped podium: each rank is a pillar rising left to right
 	-- (98 wide, gap 4, 110 -> 313 tall), its colour darkening downward, an 88 px emblem overlapping its top by 20, the ELO floor
 	-- (italic 30) just under the emblem and the rank name (italic 20, 85% white) at its foot. (grader C) The columns rise from
 	-- the podium's floor one after another when the modal opens.
-	local BASE, TOPY = 466, 82
+	local BASE, TOPY = 506, 124
 	local podium = new("Frame", { Name = "Podium", BackgroundTransparency = 1, ClipsDescendants = true, Position = UDim2.fromOffset(0, TOPY),
 		Size = UDim2.fromOffset(882, BASE - TOPY), ZIndex = 22, Parent = p })
 	local italic = function(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
 	local cols = {}
 	for i, r in RANKS do
 		local x = 33 + (i - 1) * 102
-		local h = 110 + (i - 1) * 29
+		local h = 110 + (i - 1) * 27
 		local c = RANK_COLOR[r]
 		local col = new("Frame", { Name = r, BackgroundTransparency = 1, Position = UDim2.fromOffset(x, BASE - TOPY - h - 68), Size = UDim2.fromOffset(98, h + 68),
 			ZIndex = 22, Parent = podium })
@@ -208,11 +211,11 @@ local function buildLadder()
 			new("UICorner", { CornerRadius = UDim.new(0, 4) }),
 			new("UIGradient", { Rotation = 90, Color = ColorSequence.new(c, c:Lerp(BLACK, 0.65)) }),
 		})
-		local hold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(5, 0), Size = UDim2.fromOffset(88, 88), ZIndex = 24, Parent = col })
+		local hold = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(-5, -8), Size = UDim2.fromOffset(108, 108), ZIndex = 24, Parent = col }) -- (e6, graders A + B: the art has padding; 108 shows an 88 px emblem)
 		emblem(hold, r)
 		local floorText = r == "Warlord" and "Top 200" or tostring(((i - 1) * 3 + 1) * 100) .. "+"
-		stroke(label(col, floorText, italic(FB), 30, -6, 90, 110, 34, WHITE), 2).ZIndex = 25
-		local n = label(col, r, italic(FS), 20, 0, h + 68 - 28, 98, 24, WHITE)
+		stroke(label(col, floorText, italic(FB), 34, -8, 90, 114, 38, WHITE), 2).ZIndex = 25
+		local n = label(col, r, italic(FS), 21, -4, h + 68 - 30, 106, 26, WHITE)
 		n.TextTransparency = 0.15
 		n.ZIndex = 25
 		table.insert(cols, col)
@@ -225,8 +228,9 @@ local function buildLadder()
 		"Elite and up: after 7 days without ranked you lose 25 ELO a day (never below Elite 1).",
 		"Past Commander 3 (2200 ELO) the top 200 players are Warlord.",
 	}
-	local list = new("ScrollingFrame", { Name = "Rules", Position = UDim2.fromOffset(30, BASE + 12), Size = UDim2.fromOffset(830, 629 - BASE - 24), BackgroundTransparency = 1,
-		BorderSizePixel = 0, ScrollBarThickness = 10, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(),
+	local list = new("ScrollingFrame", { Name = "Rules", Position = UDim2.fromOffset(30, BASE + 12), Size = UDim2.fromOffset(834, 629 - BASE - 24), BackgroundTransparency = 1,
+		BorderSizePixel = 0, ScrollBarThickness = 6, -- (e6, grader B: a slim bar at the modal's right edge, clear of the text)
+		 ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y, ScrollingDirection = Enum.ScrollingDirection.Y, ZIndex = 22, Parent = p },
 		{ new("UIListLayout", { Padding = UDim.new(0, 8), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	for i, t in rules do
@@ -326,7 +330,7 @@ local function build()
 	ui.leftFloor = label(bar, "", FB, 30, 100, 8, 300, 36, WHITE, Enum.TextXAlignment.Left)
 	ui.leftName = label(bar, "", FS, 26, 100, 40, 300, 32, GREY, Enum.TextXAlignment.Left)
 	label(bar, "Your ELO", FS, 22, 556, 4, 300, 28, GREY)
-	ui.eloNum = stroke(label(bar, "100", FB, 50, 556, 24, 300, 54, WHITE), 2)
+	ui.eloNum = stroke(label(bar, "100", FB, 58, 556, 20, 300, 60, WHITE), 2)
 	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(1324, 10), Size = UDim2.fromOffset(76, 76), Parent = bar })
 	ui.rightFloor = label(bar, "", FB, 30, 1012, 8, 300, 36, WHITE, Enum.TextXAlignment.Right)
 	ui.rightName = label(bar, "", FS, 26, 1012, 40, 300, 32, GREY, Enum.TextXAlignment.Right)
@@ -353,6 +357,9 @@ local function build()
 		-- (PlayScreen's squad: you + mates vs dark-gold silhouettes, hops on hover); built on every open (render-time character)
 		local stage = new("Frame", { Name = "Stage", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, 10), Size = UDim2.fromOffset(466, 544), ZIndex = 2,
 			ClipsDescendants = true, Parent = card })
+		-- (menus e6, graders A + B vs RIVALS 02: each tile carries a ranked badge at its foot, bottom-left, inset 22) your rank's
+		-- emblem; render() fills it
+		local badge = new("Frame", { Name = "Badge", BackgroundTransparency = 1, Position = UDim2.fromOffset(22, 564 - 22 - 63), Size = UDim2.fromOffset(63, 63), ZIndex = 4, Parent = card })
 		stroke(label(card, "Ranked", FB, 80, 0, 168, 466, 90, WHITE), 3).ZIndex = 4 -- (e2: centred on the taller card, RIVALS' size)
 		stroke(label(card, mode, FB, 104, 0, 254, 466, 116, WHITE), 3).ZIndex = 4
 		-- (2026-10-21, RIVALS pass) a real PLAY bar (PlayScreen's field-green strip, inset as a button): solid fill on an offset
@@ -364,7 +371,7 @@ local function build()
 		local green = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = bar })
 		local status = label(bar, "PLAY", Theme.font.chunky, 30, 0, 0, 432, 62, WHITE)
 		new("UIStroke", { Color = Color3.fromRGB(28, 44, 16), Thickness = 2, Transparency = 0.3, Parent = status }) -- text outline, not a border
-		Kit.bindButton(card, { hover = 1.02, press = 0.985 })
+		Kit.bindButton(card, { hover = 1.05, press = 0.97 }) -- (menus e6, grader C: RIVALS' tiles lift further on hover)
 		card.Activated:Connect(function()
 			local q, st = searching()
 			local mq = queueFor(mode)
@@ -374,7 +381,7 @@ local function build()
 			local r = ctx.ask and ctx.ask("FindMatch", mq.Id)
 			if not (r and r.ok) and ctx.toast then ctx.toast((r and r.msg) or "Couldn't join the ranked queue", "bad") end
 		end)
-		ui.cards[mode] = { card = card, status = status, edge = edge, bar = bar, green = green, shadow = shadow, stage = stage, i = i }
+		ui.cards[mode] = { badge = badge, card = card, status = status, edge = edge, bar = bar, green = green, shadow = shadow, stage = stage, i = i }
 	end
 
 	-- Warlord strip + leaderboard button

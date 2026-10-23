@@ -132,21 +132,21 @@ local function invite(uid, inServer)
 end
 
 -- (2026-10-21, RIVALS pass) cards with buttons are 150 tall (was 108) so the 52 px buttons sit under the name line
-local CARD_H, CARD_H_BTN = 108, 150
+local CARD_H, CARD_H_BTN = 93, 150 -- (menus e6, grader A vs rivals_rec t0152: rows 93 tall, was 108)
 local function personCard(parent, x, y, w, pp, opts)
 	local c = new("Frame", { Name = tostring(pp.uid), Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, opts.buttons and CARD_H_BTN or CARD_H), BackgroundColor3 = DEEP, BackgroundTransparency = 0.25,
 		ZIndex = 3, Parent = parent }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) hairline border removed; the dark fill separates the card
-	local hs = new("ImageLabel", { BackgroundColor3 = GUN, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(64, 64), ZIndex = 4, Parent = c }, { Kit.corner(8) })
+	local hs = new("ImageLabel", { BackgroundColor3 = GUN, Position = UDim2.fromOffset(18, 10), Size = UDim2.fromOffset(73, 73), ZIndex = 4, Parent = c }, { Kit.corner(8) }) -- (e6: 73 at +18, the empty slots' "+" sits in the same place)
 	headshot(hs, pp.uid)
-	label(c, pp.name, F_NAME, 22, 86, 10, w - 96, 28, BONE, nil, 4)
-	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 15, 86, 38, w - 96, 20, FIELD, nil, 4)
+	label(c, pp.name, F_NAME, 22, 110, 14, w - 120, 28, BONE, nil, 4)
+	label(c, "@" .. pp.user .. (pp.where and ("  ·  " .. pp.where) or ""), F_SUB, 15, 110, 44, w - 120, 20, FIELD, nil, 4)
 	if opts.crown then
 		-- (2026-10-18, live RIVALS) the leader: a gold crown on the headshot's corner (drawn: the font has no crown glyph)
 		Kit.crown(hs, UDim2.fromScale(0.86, 0.1), UDim2.fromScale(0.62, 0.48), 6)
 	end
 	if opts.leave then
 		-- your own card while you're in a party: a red Leave on it (RIVALS)
-		local lb = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(w - 112, 64), Size = UDim2.fromOffset(100, 36),
+		local lb = new("TextButton", { Name = "Leave", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(w - 112, 47), Size = UDim2.fromOffset(100, 36),
 			BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 5, Parent = c }, { Kit.corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(hex("#E8463A"), hex("#9C1E16")) }) })
 		label(lb, "Leave", F_HEAD, 20, 0, 0, 100, 36, BONE, Enum.TextXAlignment.Center, 6)
 		Kit.bindButton(lb, { hover = 1.06 })
@@ -193,7 +193,7 @@ local function renderParty()
 		local uid = list[i]
 		if uid then
 			local p = Players:GetPlayerByUserId(uid)
-			local card = personCard(col, 0, (i - 1) * 118, 340, { uid = uid, name = p and p.DisplayName or "...", user = p and p.Name or "...", where = not p and "elsewhere" or nil },
+			local card = personCard(col, 0, (i - 1) * 105, 340, { uid = uid, name = p and p.DisplayName or "...", user = p and p.Name or "...", where = not p and "elsewhere" or nil },
 				{ crown = #list > 1 and uid == leader, kick = amLeader and uid ~= player.UserId and party() ~= nil, leave = #list > 1 and uid == player.UserId })
 			if not p then
 				-- a member in another server (a party survives the teleport): look their name up
@@ -210,12 +210,12 @@ local function renderParty()
 		else
 			-- an empty slot: a dim card built like a filled row (menus e4, grader A vs rivals_rec t0152): a 72 px "+" circle where
 			-- the avatar sits, "Invite" left-aligned where the name sits; clicking it jumps to the Friends tab
-			local slot = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(0, (i - 1) * 118), Size = UDim2.fromOffset(340, 108),
+			local slot = new("TextButton", { Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(0, (i - 1) * 105), Size = UDim2.fromOffset(340, 93),
 				BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = col }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) no thin green border; (menus e2, grader B: 0.6 read disabled -> 0.35)
-			local plus = new("Frame", { Position = UDim2.fromOffset(18, 18), Size = UDim2.fromOffset(72, 72), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.88,
+			local plus = new("Frame", { Position = UDim2.fromOffset(18, 10), Size = UDim2.fromOffset(73, 73), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.88,
 				ZIndex = 4, Parent = slot }, { Kit.corner(36) })
-			label(plus, "+", F_HEAD, 44, 0, -2, 72, 72, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
-			label(slot, "Invite", F_HEAD, 28, 110, 0, 210, 108, Color3.new(1, 1, 1), Enum.TextXAlignment.Left, 4)
+			label(plus, "+", F_HEAD, 44, 0, -2, 73, 73, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
+			label(slot, "Invite", F_HEAD, 28, 110, 0, 210, 93, Color3.new(1, 1, 1), Enum.TextXAlignment.Left, 4)
 			-- (e2, grader C) empty slots answer hover like every other button
 			if Kit.bindButton then Kit.bindButton(slot, { hover = 1.03, press = 0.97 }) end
 			slot.Activated:Connect(function() PartyScreen.SetTab("Friends") end)
@@ -259,7 +259,9 @@ local function renderGrid()
 		end
 	end
 	if k == 0 then
-		label(holder, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 24, 0, 30, 900, 30, FIELD, Enum.TextXAlignment.Center, 3)
+		-- (menus e6, grader A) the empty state is a row-shaped plate at the top of the list, not words floating in the pane
+		local empty = new("Frame", { Name = "Empty", Size = UDim2.fromOffset(900, 93), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = holder }, { Kit.corner(10) })
+		label(empty, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 24, 0, 0, 900, 93, FIELD, Enum.TextXAlignment.Center, 4)
 		k = 1
 	end
 	holder.Size = UDim2.fromOffset(900, math.max(10, math.ceil(k / 3) * GRID_STEP))

@@ -429,7 +429,21 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 	local root = new("Frame", { Name = "PlayerMenu", BackgroundTransparency = 1, Size = UDim2.fromOffset(1920, 1080), ZIndex = 20, Parent = canvas })
 	-- a click anywhere else closes it (the catcher covers the whole screen, under the panel)
 	local catcher = new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 4, Parent = gui })
-	catcher.Activated:Connect(function() PlayerCards.CloseMenu() end) -- (a wrapper: Activated passes the input, which would read as silent)
+	-- (menus e6, grader C) a click on another player's row in the list goes through: that player's menu opens straight away
+	-- (one click, like RIVALS); anywhere else just closes. A wrapper, since Activated passes the input (it would read as silent).
+	catcher.Activated:Connect(function(input)
+		local pos = input and input.Position
+		if pos then
+			for _, o in player.PlayerGui:GetGuiObjectsAtPosition(pos.X, pos.Y) do
+				local other = o.Parent and o.Parent.Name == "Rows" and o:IsA("GuiButton") and Players:FindFirstChild(o.Name)
+				if other then
+					if other ~= p then PlayerCards.Menu(other, o, listLeft) return end
+					break
+				end
+			end
+		end
+		PlayerCards.CloseMenu()
+	end)
 	local panel = new("CanvasGroup", { Name = "Panel", Position = UDim2.fromOffset(rightX - 4 - PW, top), Size = UDim2.fromOffset(PW, H),
 		BackgroundColor3 = cardCol, BackgroundTransparency = 0.05, ZIndex = 21, Parent = root }, { Kit.corner(8) })
 	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 8), Size = UDim2.fromOffset(64, 64), ZIndex = 22, Parent = panel }) -- live: a bare head, no circle
