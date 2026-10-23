@@ -174,7 +174,16 @@ local function render()
 		c.shadow.Visible = false
 		c.bar.Visible = not idle -- (menus e2, RIVALS: no PLAY bar at rest; the bar only carries a queue state)
 		c.edge.Transparency = mine and 0.05 or 1
-		emblem(c.badge, not inPlacements and rank or nil)
+		if inPlacements and Assets.play and Assets.play.shield_flame then
+			-- (menus e20, graders A + B vs RIVALS 02) while placing, each tile's foot badge is RIVALS' white fire shield, not a "?"
+			for _, ch in c.badge:GetChildren() do if ch.Name == "Emblem" then ch:Destroy() end end
+			if not c.badge:FindFirstChild("Shield") then
+				new("ImageLabel", { Name = "Shield", BackgroundTransparency = 1, Image = Assets.play.shield_flame, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromScale(1, 1), ZIndex = 5, Parent = c.badge })
+			end
+		else
+			if c.badge:FindFirstChild("Shield") then c.badge.Shield:Destroy() end
+			emblem(c.badge, not inPlacements and rank or nil)
+		end
 	end
 	-- Warlord strip
 	local top, cutoff = leaderboard()

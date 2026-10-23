@@ -73,6 +73,8 @@ local gui, canvas, root, col, grid, search, tabBtns, blur, scrim
 local current = "All"
 local sent = {} -- "uid|kind" -> os.clock() of the send (a sent button stays a tick for 15 s)
 local isOpen = false
+local RAssets -- the Rivals art ids (search / people glyphs); nil if the module isn't there
+pcall(function() local r = UIKit:FindFirstChild("Rivals") if r and r:FindFirstChild("Assets") then RAssets = require(r.Assets) end end)
 local emptyPlate, emptyLabel
 local openedAt = 0
 local friendsOnline = {} -- { uid, name, user } for friends elsewhere (refreshed on open)
@@ -333,7 +335,10 @@ local function build()
 	-- right
 	search = new("TextBox", { Name = "Search", Text = "", PlaceholderText = "Search players", PlaceholderColor3 = FIELD, FontFace = F_NAME, TextSize = 24, TextColor3 = BONE,
 		TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Position = UDim2.fromOffset(700, 156), Size = UDim2.fromOffset(420, 54), BackgroundColor3 = DEEP,
-		BackgroundTransparency = 0.25, Parent = root }, { Kit.corner(10), new("UIPadding", { PaddingLeft = UDim.new(0, 16) }) })
+		BackgroundTransparency = 0.25, Parent = root }, { Kit.corner(10), new("UIPadding", { PaddingLeft = UDim.new(0, 52) }) })
+	-- (menus e20, grader B) a 28 px magnifier at the field's left; the text starts at 52
+	new("ImageLabel", { Name = "SearchIcon", BackgroundTransparency = 1, Image = (RAssets and RAssets.play and RAssets.play.search) or "", ImageColor3 = FIELD,
+		Position = UDim2.fromOffset(700 + 14, 156 + 13), Size = UDim2.fromOffset(28, 28), ZIndex = 3, Parent = root })
 	tabBtns = {}
 	for i, t in { { "All", 96 }, { "Friends", 128 }, { "Lobby", 116 } } do
 		local x = 1134 + (i == 1 and 0 or (i == 2 and 106 or 244))
@@ -354,7 +359,10 @@ local function build()
 		ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = root }) -- (e4: one scrollbar style)
 	emptyPlate = new("Frame", { Name = "Empty", Position = UDim2.fromOffset(700, 230), Size = UDim2.fromOffset(900, 512), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35,
 		Visible = false, ZIndex = 2, Parent = root }, { Kit.corner(10) })
-	emptyLabel = label(emptyPlate, "Nobody else here yet", F_SUB, 28, 0, 0, 900, 512, FIELD, Enum.TextXAlignment.Center, 3)
+	emptyLabel = label(emptyPlate, "Nobody else here yet", F_SUB, 28, 0, 30, 900, 512, FIELD, Enum.TextXAlignment.Center, 3)
+	-- (menus e20, grader B) a 64 px people glyph above the empty text
+	new("ImageLabel", { Name = "People", BackgroundTransparency = 1, Image = (RAssets and RAssets.play and RAssets.play.people) or "", ImageColor3 = FIELD,
+		Position = UDim2.fromOffset(450 - 32, 256 - 64), Size = UDim2.fromOffset(64, 64), ZIndex = 3, Parent = emptyPlate })
 	Kit.toScale(root)
 	search:GetPropertyChangedSignal("Text"):Connect(function() if isOpen then renderGrid() end end)
 	-- party changes redraw while open

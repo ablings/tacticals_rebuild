@@ -657,7 +657,7 @@ end
 local function rankLine(open)
 	local okA, RankArt = pcall(require, UIKit:FindFirstChild("RankArt"))
 	local info = (okA and RankArt and RankArt.Of) and RankArt.Of(player) or { placed = false, name = "Unranked" }
-	local shield = (Assets.play and Assets.play.shield_badge) or ""
+	local shield = (Assets.play and (Assets.play.shield_flame or Assets.play.shield_badge)) or "" -- (menus e20: the white fire shield, was the red badge)
 	if not open then
 		local lv = math.max(0, (ctx.level and ctx.level()) or 0)
 		local need = math.max(1, ctx.Config.RankedLevel or 1)

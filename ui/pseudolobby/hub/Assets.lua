@@ -134,6 +134,9 @@ return {
 		person_podium = "rbxassetid://138777233971751",
 		info = "rbxassetid://124234325148952",
 		shield_badge = "rbxassetid://129894684641139",
+		shield_flame = "rbxassetid://108085993876624", -- (2026-10-23, menus; decal 100410262817770) white fire shield like RIVALS' ranked tile foot (gunsy funsy)
+		people = "rbxassetid://102544343421430", -- (2026-10-23, menus; decal 116176063745690) party empty state glyph (gunsy funsy)
+		search = "rbxassetid://108097161842918", -- (2026-10-23, menus; decal 99581810717555) search field magnifier (gunsy funsy)
 		padlock = "rbxassetid://91561399003891",
 		-- Codex card art (ui/art/play)
 		arena_a = "rbxassetid://80497628041764",
