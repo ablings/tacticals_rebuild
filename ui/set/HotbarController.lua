@@ -753,7 +753,7 @@ local function buildUI()
 		return short[k.Name] or k.Name
 	end
 	local function buildHints()
-		for _, c in hints:GetChildren() do if not c:IsA("UIListLayout") then c:Destroy() end end
+		for _, c in hints:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end -- (m3: only the labels / caps; the scale, corner and padding stay)
 		for i, entry in HINTS do
 			if entry[2] == "LeaveTraining" and localPlayer:GetAttribute("InTraining") ~= true then continue end -- only in Training
 			local padCode = padState.on and PAD[entry[2]]

@@ -1713,6 +1713,7 @@ RunService.RenderStepped:Connect(function()
 	local minimal = player:GetAttribute("Setting_GameplayHUD") == "Minimal"
 	local resUp = rgui ~= nil and rgui.Enabled
 	mineBox.frame.Visible, theirBox.frame.Visible, timerBox.Visible, toWin.Visible, feed.Visible = not minimal and not resUp, not minimal and not resUp, not minimal and not resUp, false, not minimal and not resUp -- (m2: no "First to N" line, as RIVALS)
+	if RV.ribbon and RV.ribbon.Visible then mineBox.frame.Visible, theirBox.frame.Visible, timerBox.Visible = false, false, false end -- (m3, RIVALS t0122: the ribbon replaces the score bar)
 	fillBox(mineBox, myIds)
 	fillBox(theirBox, myTeam == "A" and ids.B or ids.A)
 	local sa, sb = st("ScoreA") or 0, st("ScoreB") or 0
@@ -1781,8 +1782,17 @@ RunService.RenderStepped:Connect(function()
 	local preRound = (state == "Countdown" and (tonumber(st("RoundNumber")) or 1) > 1) or (state == "Live" and player:GetAttribute("KitLocked") ~= true)
 	RV.switchWant = preRound and not over and not spectator() and RV.switchHook() ~= nil and not picking
 	-- (2026-10-21, round 3: match RIVALS) the one between-rounds action pops in when it appears (intermission_switch.jpg), not a cut
-	if RV.switchWant and not RV.switchB.Visible and stats.Kit then stats.Kit.popIn(RV.switchB) end
-	RV.switchB.Visible = RV.switchWant
+	-- (m3, RIVALS t0056 -> t0058) Switch Weapons follows the ribbon by 0.4 s instead of landing with it
+	if RV.switchWant and not RV.switchB.Visible then
+		RV.switchAt = RV.switchAt or (os.clock() + 0.4)
+		if os.clock() >= RV.switchAt then
+			RV.switchB.Visible = true
+			if stats.Kit then stats.Kit.popIn(RV.switchB) end
+		end
+	elseif not RV.switchWant then
+		RV.switchAt = nil
+		RV.switchB.Visible = false
+	end
 	if picking then RV.roundCard.Visible = false; feed.Visible = false; local el = root:FindFirstChild("Eliminated"); if el then el.Visible = false end end
 	-- spectate: spectators, and duelists while dead
 	local spec = spectator() or (player:GetAttribute("Alive") == false and (state == "Live" or state == "RoundEnd" or state == "Victory"))
@@ -1792,7 +1802,8 @@ RunService.RenderStepped:Connect(function()
 	specBar.Visible = spec and not onKiller
 	-- (2026-10-23, matchmaking round m2, RIVALS t0212-t0214) the killer card stays ~1.5 s into the next countdown
 	if onKiller then RV.kcardUntil = os.clock() + 1.5 end
-	local keepCard = not onKiller and RV.kcard.Visible and state == "Countdown" and RV.kcardUntil ~= nil and os.clock() < RV.kcardUntil
+	-- (m3: a timer latch; the server clears SpectateTarget before the Countdown starts, so the state can't gate the re-arm)
+	local keepCard = not onKiller and RV.kcardUntil ~= nil and os.clock() < RV.kcardUntil and (state == "RoundEnd" or state == "Countdown")
 	if onKiller and not RV.kcard.Visible then
 		-- slide in from the right edge
 		local home = RV.kcardHome or RV.kcard.Position
@@ -2180,7 +2191,7 @@ do
 	end)
 	player:GetAttributeChangedSignal("Alive"):Connect(function()
 		if player:GetAttribute("Alive") ~= false or not inMatch() then return end
-		red.BackgroundTransparency = 0.55
-		TweenService:Create(red, TweenInfo.new(0.8, Enum.EasingStyle.Quad), { BackgroundTransparency = 1 }):Play()
+		red.BackgroundTransparency = 0.5 -- (m3, RIVALS t0206: the red holds ~1.5 s)
+		TweenService:Create(red, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { BackgroundTransparency = 1 }):Play()
 	end)
 end

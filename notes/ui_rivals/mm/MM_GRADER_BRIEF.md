@@ -6,8 +6,8 @@ deliberate choice. Judge layout, proportions, position, typography, readability,
 elements, motion and finish, not the palette. Ignore RIVALS' seasonal Halloween colours. Scissors is our currency.
 
 ## Our captures (this round)
-`C:\Users\aroki\Documents\tacticals_rebuild\notes\ui_rivals\mm\<round>_<screen>.png`, 1268x785 Studio viewport (16:10-ish,
-full bleed). Some shots carry Studio artefacts: the bot is an empty placeholder, the map is a grey test map, and "Test match:
+`C:\Users\aroki\Documents\tacticals_rebuild\notes\ui_rivals\mm\<round>_<screen>.png`. From m2 on the Studio viewport is 1268x713, exactly 16:9
+like RIVALS' frames, so screen ratios compare directly. m0 and m1 were 1268x785, so their ratios are skewed. Some shots carry Studio artefacts: the bot is an empty placeholder, the map is a grey test map, and "Test match:
 no rewards" shows. Don't grade those.
 
 | Screen | What it is |
@@ -19,7 +19,8 @@ no rewards" shows. Don't grade those.
 | loadout | loadout pick (the timer, map name, slots, weapon choices) |
 | countdown | round 1 pre-round |
 | live | HUD mid-round |
-| kill | you eliminated the enemy (round won card + MATCH POINT ribbon) |
+| kill | you eliminated the enemy (ROUND WON card) |
+| matchpoint | the next countdown (MATCH POINT / SUDDEN DEATH ribbon); the shot may miss it, so check death2 too |
 | death / death2 | you died (killer card / kill-cam, 0.0 s and 2.5 s after) |
 | victory | the match-won screen |
 | results | the after-match screen with buttons |

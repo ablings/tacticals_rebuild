@@ -177,8 +177,31 @@ local function teamBox(parent, x, cols, right)
 		local lv = new("Frame", { Position = UDim2.fromOffset(hx - 8, 50), Size = UDim2.fromOffset(30, 26), BackgroundColor3 = Color3.fromRGB(20, 18, 24), Visible = false, ZIndex = 4, Parent = b }, { corner(7) })
 		local ll = label(lv, "", FX, 17, 0, 0, 30, 26, WHITE, nil, 5)
 		slots[i] = { h = h, lv = lv, ll = ll }
+		h:SetAttribute("dx", hx); h:SetAttribute("dw", 56)
+		lv:SetAttribute("dx", hx - 8); lv:SetAttribute("dw", 30)
 	end
+	-- (2026-10-23, matchmaking round m3, RIVALS t0028) the side's score digit, and the plate hugs its heads (see fitBoxes)
+	local score = label(b, "0", FX, 50, 0, 6, 70, 72, WHITE, nil, 3)
+	score:SetAttribute("dw", 70)
+	slots.frame, slots.score, slots.right, slots.x = b, score, right, x
 	return slots
+end
+-- a plate is 96 + 64 per head wide (the 290 design px fit three); the ours plate keeps its right edge by the timer, theirs its
+-- left edge. Runs after toScale, so children are re-placed from the design px kept in their dx / dw attributes.
+local function fitBox(slots, n)
+	local b = slots.frame
+	local w = 96 + 64 * math.max(1, n)
+	local x0 = slots.right and slots.x or (slots.x + 290 - w)
+	b.Position = UDim2.new(x0 / W, 0, b.Position.Y.Scale, 0)
+	b.Size = UDim2.new(w / W, 0, b.Size.Y.Scale, 0)
+	for _, c in b:GetChildren() do
+		local dx, dw = c:GetAttribute("dx"), c:GetAttribute("dw")
+		if c == slots.score then dx = slots.right and 8 or (w - 78) end
+		if dx and dw then
+			c.Position = UDim2.new(dx / w, 0, c.Position.Y.Scale, 0)
+			c.Size = UDim2.new(dw / w, 0, c.Size.Y.Scale, 0)
+		end
+	end
 end
 -- (2026-10-23, matchmaking round m1, RIVALS t0026-t0032) the vote clock carries the match HUD's drawn hourglass left of the
 -- digits, and both go red at 0.0
@@ -272,6 +295,7 @@ local function fillTeams(boxes)
 				end) end
 			end
 		end
+		fitBox(boxes[side], #list) -- (m3) the plate hugs its heads
 	end
 end
 
@@ -456,10 +480,10 @@ refreshVotes = function()
 		tile.edge.Color = hasMe and TEAM_A[1] or tile.col
 		tile.edge.Thickness = hasMe and 5 or 3
 		tile.edge.Transparency = 0
-		-- (2026-10-23, matchmaking round m2, RIVALS t0026-t0030) a tile with votes washes pale, so the leading map reads at a glance
+		-- (2026-10-23, matchmaking round m2, RIVALS t0026-t0030) the tile you voted for washes pale
 		local wash = tile.t:FindFirstChild("VotedWash") or new("Frame", { Name = "VotedWash", BackgroundColor3 = WHITE, BackgroundTransparency = 1, BorderSizePixel = 0,
 			Size = UDim2.fromScale(1, 1), ZIndex = 2, Parent = tile.t }, { corner(6) }) -- (over the art, under the name and heads)
-		TweenService:Create(wash, TweenInfo.new(0.2), { BackgroundTransparency = #ids > 0 and 0.62 or 1 }):Play()
+		TweenService:Create(wash, TweenInfo.new(0.2), { BackgroundTransparency = hasMe and 0.62 or 1 }):Play() -- (m3: your vote only)
 	end
 end
 
