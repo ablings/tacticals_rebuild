@@ -976,7 +976,7 @@ function RENDER.Featured(pg, hover)
 	for i = 1, math.min(6, #rest) do
 		local id = rest[i]
 		local c, r = (i - 1) % 3, (i - 1) // 3
-		local h = hold(1254 - 2 * 150 - TILE + c * 150, 334 + GAP + r * 160, TILE, TILE + PRICE_H / 2, 1.06, function() ctx.openKit(id) end)
+		local h = hold(801 + c * 160, 334 + GAP + r * 160, TILE, TILE + PRICE_H / 2, 1.06, function() ctx.openKit(id) end) -- (lobby r20, grader A vs rec t0070: start 35 px left, step 150 -> 160)
 		local tile = rarityTile(h, rarityColor(id), 0, 0, TILE, TILE, 1)
 		weaponTag(tile, id, 38, 4) -- (2026-10-21, RIVALS images) ∞ on melee / gadgets, over the render
 		-- (round 10, grader C: the revolver ran past its tile) the render stays inside the tile, <= ~90 % of its width

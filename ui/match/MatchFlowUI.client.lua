@@ -689,7 +689,8 @@ local SLOT_W, SLOT_GAP = 86, 12
 local slotRowX = 960 - (#SLOTS * SLOT_W + (#SLOTS - 1) * SLOT_GAP) / 2
 local chips = {}
 for i, s2 in SLOTS do
-	local chip = new("TextButton", { Name = "Slot" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotRowX + (i - 1) * (SLOT_W + SLOT_GAP), 186 + LO_DROP),
+	local chip = new("TextButton", { Name = "Slot" .. s2.id, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(slotRowX + (i - 1) * (SLOT_W + SLOT_GAP), 193 + LO_DROP), -- (m24: the row at 26.9 %)
+		
 		Size = UDim2.fromOffset(SLOT_W, SLOT_W), BackgroundColor3 = BLACK, BackgroundTransparency = PANEL_T, ZIndex = 2, Parent = lo }, { corner(6) })
 	ink(chip, 6, 4)
 	local edge = new("UIStroke", { Color = INK_YELLOW, Thickness = 5, Transparency = 1, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = chip }) -- (m4: 3 -> 5, RIVALS' bold active ring)

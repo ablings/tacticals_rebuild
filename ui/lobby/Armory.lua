@@ -1840,7 +1840,8 @@ local function buildLeft()
 		local ok, img = pcall(Players.GetUserThumbnailAsync, Players, player.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size150x150)
 		if ok then avatar.Image = img end
 	end)
-	text({ Text = "Career", FontFace = FM, TextSize = 30, TextColor3 = COL.Career, Position = UDim2.fromOffset(130, 14), Size = UDim2.fromOffset(180, 40), ZIndex = 6, Parent = career })
+	text({ Text = "Career", FontFace = FB, TextSize = 30, -- (lobby r20, grader B: Bold like RIVALS)
+		 TextColor3 = COL.Career, Position = UDim2.fromOffset(130, 14), Size = UDim2.fromOffset(180, 40), ZIndex = 6, Parent = career })
 	career.Activated:Connect(function() Armory.ShowHistory(true) end)
 	Armory._tip(career, "Duel history", "up")
 	for i, slot in SLOT_ORDER do

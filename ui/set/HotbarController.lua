@@ -787,7 +787,7 @@ local function buildUI()
 	column = Instance.new("Frame")
 	column.Name = "Tiles"
 	column.AnchorPoint = Vector2.new(1, 1)
-	column.Position = UDim2.fromOffset(1920 - 30, 1080 - 64)
+	column.Position = UDim2.fromOffset(1920 - 3, 1080 - 64) -- (m24, grader A vs t0054: 27 px right)
 	column.Size = UDim2.fromOffset(3 * TILE.X + 2 * GAP, TILE.Y)
 	column.BackgroundTransparency = 1
 	column.Parent = canvas
@@ -824,7 +824,7 @@ local function buildUI()
 		padState.chips[key] = chip
 	end
 	Kit.toScale(column, Vector2.new(3 * TILE.X + 2 * GAP, TILE.Y)) -- [UI] Scale only
-	column.Position = UDim2.fromScale((1920 - 30) / 1920, (1080 - 64) / 1080)
+	column.Position = UDim2.fromScale((1920 - 3) / 1920, (1080 - 64) / 1080)
 	column.Size = UDim2.fromScale((3 * TILE.X + 2 * GAP) / 1920, TILE.Y / 1080)
 	-- (2026-10-23, matchmaking round m1, graders A + B vs RIVALS t0046) RIVALS' slots are ~half ours: the whole row (tiles,
 	-- renders, counts, keys) shrinks around its bottom-right anchor, so everything inside keeps its proportions
@@ -847,7 +847,7 @@ local function buildUI()
 		padState.orig = padState.orig or { held = { heldName.AnchorPoint, heldName.Position }, hints = { hints.AnchorPoint, hints.Position } }
 		local o = padState.orig
 		column.AnchorPoint = pad and Vector2.new(0, 1) or Vector2.new(1, 1)
-		column.Position = UDim2.fromScale((pad and 30 or 1920 - 30) / 1920, (1080 - 64) / 1080)
+		column.Position = UDim2.fromScale((pad and 3 or 1920 - 3) / 1920, (1080 - 64) / 1080)
 		heldName.AnchorPoint = pad and Vector2.new(1 - o.held[1].X, o.held[1].Y) or o.held[1]
 		heldName.Position = pad and UDim2.fromScale(1 - o.held[2].X.Scale, o.held[2].Y.Scale) or o.held[2]
 		heldName.TextXAlignment = pad and Enum.TextXAlignment.Left or Enum.TextXAlignment.Right

@@ -1306,13 +1306,13 @@ end
 ---------------------------------------------------------------------------------------------------- eliminated
 -- (2026-10-23, matchmaking round m7, grader A vs RIVALS t0054 / t0118: y 69-73 %, ~24 % wide, ~3.9 % tall) lower and bigger
 local elimL = new("TextLabel", { Name = "Eliminated", BackgroundTransparency = 1, RichText = true, Text = "", FontFace = FB, TextSize = 44, TextColor3 = WHITE,
-	Position = UDim2.fromOffset(460, 748), Size = UDim2.fromOffset(1000, 56), Visible = false, ZIndex = 6, Parent = root })
+	Position = UDim2.fromOffset(460, 718), Size = UDim2.fromOffset(1000, 56), Visible = false, ZIndex = 6, Parent = root }) -- (m24: centre at 69.1 %, t0054)
 elimL:SetAttribute("dTS", 44); table.insert(scaled, elimL)
 new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = elimL })
 -- (2026-10-20, the common theme of every duel game Edward showed: Knife / Murder Duels' "+XP HEADSHOT / KILL", Redliner's
 -- "Killed X!", Hood Rivals' ELIMINATED) what the kill was, in small grey caps under the name
 local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 22, TextColor3 = Color3.fromRGB(232, 232, 236),
-	Position = UDim2.fromOffset(560, 804), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
+	Position = UDim2.fromOffset(560, 774), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
 elimSub:SetAttribute("dTS", 22); table.insert(scaled, elimSub)
 new("UIStroke", { Thickness = 2, Transparency = 0.25, Parent = elimSub }) -- (live check) readable over the bright Practice Range walls
 local elimToken = 0
@@ -1468,7 +1468,7 @@ end
 -- as a big tilted 3D model in its skin, poking out of the banner's right end (from above its top edge to the screen bottom). The
 -- model is the Repository copy, in its own colours. Built once per weapon.
 RV.kWeapon = new("ViewportFrame", { Name = "KillWeapon", BackgroundTransparency = 1, Ambient = Color3.fromRGB(215, 215, 220), LightColor = WHITE,
-	LightDirection = Vector3.new(-1, -0.6, 0.3), Position = UDim2.fromOffset(441, -156), Size = UDim2.fromOffset(392, 392), Visible = false, ZIndex = 6, Parent = kcard }) -- (m23: x1.12 from the bottom-right, RIVALS' 15 % width) -- (m21, grader A vs t0212: bottom-right at ~98 % / 98 %; under the card words (ZIndex 7) so "with Pistol" stays readable)
+	LightDirection = Vector3.new(-1, -0.6, 0.3), Position = UDim2.fromOffset(453, -156), Size = UDim2.fromOffset(392, 392), Visible = false, ZIndex = 6, Parent = kcard }) -- (m23: x1.12 from the bottom-right, RIVALS' 15 % width) -- (m21, grader A vs t0212: bottom-right at ~98 % / 98 %; under the card words (ZIndex 7) so "with Pistol" stays readable)
 function RV.setKillWeapon(uid, weapon)
 	local vpf = RV.kWeapon
 	if not weapon then vpf.Visible = false; RV.kWeaponKey = nil; return end
@@ -1515,7 +1515,8 @@ local switchB = new("TextButton", { Name = "SwitchWeapons", Text = "", AutoButto
 	BackgroundColor3 = WHITE, Visible = false, ZIndex = 6, Parent = root }, { corner(8),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(70, 180, 255), Color3.fromRGB(20, 110, 230)) }) })
 label(switchB, "Switch Weapons", FX, 27, 10, 0, 236, 50, WHITE, nil, 7)
-local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Position = UDim2.fromOffset(254, 8), Size = UDim2.fromOffset(34, 34), ZIndex = 7, Parent = switchB }, { corner(6) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
+local keyChip = new("Frame", { BackgroundColor3 = Color3.fromRGB(60, 62, 66), Position = UDim2.fromOffset(283, 8), -- (m24, t0212: the M key straddles the right edge)
+	 Size = UDim2.fromOffset(34, 34), ZIndex = 7, Parent = switchB }, { corner(6) }) -- (2026-10-21, AI-tells cleanup) hairline edge removed
 local keyL = label(keyChip, "M", FX, 22, 0, 0, 34, 34, WHITE, nil, 8)
 local switchScale = new("UIScale", { Parent = switchB })
 gloss(switchB, 8, 0.3)
