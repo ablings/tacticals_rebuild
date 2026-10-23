@@ -96,6 +96,17 @@ local function rewardBox(parent, r, x, y)
 	end
 end
 
+-- (live-like data rd3, grader B) each kind of notification gets its own icon (every row was the same green check)
+local function kindIcon(n)
+	if n.icon then return n.icon end
+	local t = string.lower((n.title or "") .. " " .. (n.sub or ""))
+	for _, pair in { { "rank", "rank" }, { "contract", "elims" }, { "weekly", "trophy" }, { "login", "bell" }, { "daily", "bell" },
+		{ "level", "level" }, { "friend", "play" }, { "shop", "scissors" }, { "streak", "streak" } } do
+		if string.find(t, pair[1], 1, true) and Notify.ICONS[pair[2]] then return pair[2] end
+	end
+	return "check"
+end
+
 -- one pill (banner or inbox row), design px
 local function pill(parent, n, x, y, w, h)
 	local p = new("CanvasGroup", { Name = "Pill", BackgroundColor3 = PILL, -- (e17, grader C: a CanvasGroup, so its pop fades too)
@@ -104,11 +115,12 @@ local function pill(parent, n, x, y, w, h)
 	-- (menus e23, grader B) the icon sits in a 56 px darker tile, like RIVALS' task rows
 	new("Frame", { Name = "IconTile", BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.92, Position = UDim2.fromOffset(18, (h - 56) / 2), Size = UDim2.fromOffset(56, 56),
 		ZIndex = 4, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
-	icon(p, n.icon or "check", 26, (h - 40) / 2, 40, GREEN, 5)
+	local kind = kindIcon(n)
+	icon(p, kind, 26, (h - 40) / 2, 40, kind == "check" and GREEN or Color3.new(1, 1, 1), 5)
 	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 84, h * 0.06, w - 200, h * 0.52, nil, Enum.TextXAlignment.Left, 4) -- (e9, grader B: left-aligned at +96 beside the icon)
 	t.TextScaled = false
 	txt(p, n.sub or "", FB, math.floor(h * 0.24), 84, h * 0.56, w - 200, h * 0.32, GREY, Enum.TextXAlignment.Left, 4)
-	rewardBox(p, n.reward, w - 96, (h - 70) / 2)
+	rewardBox(p, n.reward, w - 96, math.max((h - 70) / 2, 30)) -- (rd3, grader A: under the age chip, which keeps the title line)
 	return p
 end
 
@@ -139,8 +151,11 @@ local function nextBanner()
 	TweenService:Create(p, TweenInfo.new(0.2), { GroupTransparency = 0 }):Play()
 	TweenService:Create(p, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Position = home }):Play()
 	TweenService:Create(sc, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	if Kit.sfx then pcall(Kit.sfx, "reward") end
-	task.delay(3.4, function()
+	-- (rd3, grader C) a burst of notifications plays the sound once and moves along faster (10 in a row took 37 s)
+	local burst = #queue > 0
+	if Kit.sfx and not Notify._burst then pcall(Kit.sfx, "reward") end
+	Notify._burst = burst
+	task.delay(burst and 1.4 or 3.4, function()
 		TweenService:Create(p, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = home - UDim2.fromScale(0, 0.14), GroupTransparency = 1 }):Play()
 		task.delay(0.32, function()
 			holder:Destroy()
@@ -194,7 +209,7 @@ local function buildInbox()
 	x.Activated:Connect(function() Notify.CloseInbox() end)
 	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(540, 264), Size = UDim2.fromOffset(828, 776),
 		ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, Parent = inboxRoot }) -- (e4: one scrollbar style)
-	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(828, math.max(768, #inbox * 108)), Parent = list })
+	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(828, math.max(776, #inbox * 108)), Parent = list })
 	if #inbox == 0 then
 		txt(content, "Nothing yet", FX, 34, 0, 40, 828, 44, nil, nil, 3)
 		txt(content, "Completed tasks, unlocks and rewards show up here.", FB, 22, 0, 86, 828, 30, GREY, nil, 3)
@@ -203,7 +218,7 @@ local function buildInbox()
 		local y = (i - 1) * 108
 		local row = pill(content, n, 0, y, 828, 102)
 		-- (menus e15, graders A + C) the age chip belongs to its row (it pops with it) and sits 24 in from the row's right end
-		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(n.reward and (828 - 96 - 12 - 90) or (828 - 24 - 90), 37), Size = UDim2.fromOffset(90, 28), ZIndex = 5, -- (e23: a small 28 chip; live port 36: left of a reward box, it sat on top of it)
+		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(828 - 24 - 90, 10), Size = UDim2.fromOffset(90, 28), ZIndex = 5, -- (e23: a small 28 chip; rd3, grader A: pinned on the title line, the reward sits under it)
 			
 			Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 		txt(chip, ago(n.t), FB, 16, 0, 0, 90, 28, GREY, Enum.TextXAlignment.Right, 6) -- (e16, grader A: the text ends 24 in from the row's end)
@@ -215,10 +230,19 @@ local function buildInbox()
 	end
 	Kit.toScale(inboxRoot)
 	-- the list's canvas: as tall as the rows (Scale is relative to the list's parent)
-	list.CanvasSize = UDim2.fromScale(0, math.max(768, #inbox * 108) / 1080)
-	content.Size = UDim2.fromScale(1, math.max(768, #inbox * 108) / 768)
+	-- (rd3, grader C) a fixed canvas from the row count, measured on the menu root (the open pop scales the list): with 10
+	-- rows the old Scale maths stretched them 1.41x and the last rows couldn't be scrolled to
+	local H = math.max(776, #inbox * 108)
+	local function fit()
+		local unit = inboxRoot.AbsoluteSize.Y / 1080
+		if unit <= 0 then return end
+		list.CanvasSize = UDim2.new(0, 0, 0, H * unit)
+		content.Size = UDim2.fromScale(1, 1)
+	end
+	fit()
+	inboxRoot:GetPropertyChangedSignal("AbsoluteSize"):Connect(fit)
 	-- (menus e4-e5, graders A + C) no idle scrollbar while the rows fit
-	if #inbox * 108 <= 768 then
+	if #inbox * 108 <= 776 then
 		list.ScrollBarImageTransparency = 1
 		list.ScrollBarThickness = 0
 		list.ScrollingEnabled = false

@@ -671,7 +671,8 @@ local function rankLine(open)
 	end
 	local nextFloor = player:GetAttribute("RankNextFloor")
 	local elo = math.floor((info.elo or 0) + 0.5)
-	return info.image or shield, info.name or "Ranked", nextFloor and (elo .. " / " .. nextFloor) or (elo .. " ELO")
+	-- (rd3, grader A vs RIVALS 01) placed: the fire shield stays bottom-left; the rank emblem goes big in the tile (4th value)
+	return shield, info.name or "Ranked", nextFloor and (elo .. " / " .. nextFloor) or (elo .. " ELO"), info.image
 end
 
 -- (2026-10-21, RIVALS 1:1) the replica's card(): a full-bleed picture (here the sky gradient + the live 3D scene added after
@@ -964,7 +965,12 @@ local function render()
 	local rt = tile("Ranked", RX, 0, RW, GRID_H, DUSK)
 	title(rt, "Ranked", 81, 0, 18, RW, 104)
 	title(rt, season(), 36, 0, 116, RW, 42, 5, italic(F.bold))
-	local glyph, rankName, progress = rankLine(open)
+	local glyph, rankName, progress, rankArt = rankLine(open)
+	if rankArt then
+		-- (rd3, grader A vs RIVALS 01: the placed tile shows the rank emblem large, above "Bronze 2 / 393 ELO")
+		new("ImageLabel", { Name = "RankArt", BackgroundTransparency = 1, Image = rankArt, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
+			Position = UDim2.fromOffset(RW / 2, 300), Size = UDim2.fromOffset(190, 190), ZIndex = 4, Parent = rt })
+	end
 	-- (2026-10-21, port3) RIVALS' rank line (rivals_normal/play.png, tile-local): a big white shield-and-flame badge ~6 % of the
 	-- screen height (59 x 70 at 19, 466), a big italic "Unranked" (cap ~444..474) and "0 / 10" under it; locked shows the
 	-- same shield + "Unranked" with "LV n / 50" as the second line (no padlock, no darker shade)

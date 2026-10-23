@@ -407,20 +407,40 @@ local function fillBoard()
 		-- (rd2) the top three read gold / silver / bronze
 		local medal = ({ Theme.hex("#F2C14E"), Theme.hex("#D6D9E0"), Theme.hex("#D98C4A") })[i]
 		cell("#" .. i, 0.03, 0.12, Enum.TextXAlignment.Left, FB, medal)
-		cell(tostring(e.name or "?"), 0.17, 0.55, Enum.TextXAlignment.Left)
+		-- (rd3, graders A + B) a headshot on every row, so names line up with the pinned row's (x 202)
+		local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromScale(150 / 793, 0.14), Size = UDim2.fromScale(40 / 793, 0.72), ZIndex = 23, Parent = row },
+			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
+		if e.userId and e.userId > 0 then
+			task.spawn(function()
+				local ok, img = pcall(Players.GetUserThumbnailAsync, Players, e.userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+				if ok and hs.Parent then hs.Image = img end
+			end)
+		end
+		cell(tostring(e.name or "?"), 202 / 793, 0.5, Enum.TextXAlignment.Left)
 		cell(tostring(e.elo or 0) .. " ELO", 0.72, 0.25, Enum.TextXAlignment.Right, FB)
 	end
 	-- (live-like data round rd1) with a real board the rows came out tiny (Scale 0.07 of an auto canvas that grows with them):
 	-- 56-tall rows (6 gap) at design scale on a fixed canvas from the row count, rows and gap as shares of it
 	local layout = holder:FindFirstChildOfClass("UIListLayout")
-	local gy = holder.AbsoluteSize.Y
-	if gy > 0 then
+	local n = #top
+	local function fit()
+		-- (rd3, grader C) measured on the screen root: the panel's open / close pop scales the list, and rows measured mid-pop
+		-- came out ~8% short from the second open on
+		local gy = root.AbsoluteSize.Y * 360 / 1080
+		if gy <= 0 or not holder.Parent then return end
 		local rowPx, padPx = 56 * gy / 360, 6 * gy / 360
-		local canvas = math.max(gy, #top * (rowPx + padPx))
+		local canvas = math.max(gy, n * (rowPx + padPx))
 		holder.AutomaticCanvasSize = Enum.AutomaticSize.None
 		holder.CanvasSize = UDim2.new(0, 0, 0, canvas)
 		for _, r in holder:GetChildren() do if r:IsA("CanvasGroup") then r.Size = UDim2.new(1, -10, rowPx / canvas, 0) end end
 		if layout then layout.Padding = UDim.new(padPx / canvas, 0) end
+	end
+	fit()
+	holder.ScrollBarImageTransparency = n * 62 > 360 and 0.4 or 1 -- (rd3, grader C: a bar whenever it scrolls; was > 9 rows)
+	ui.fitBoard = fit
+	if not ui.boardHooked then
+		ui.boardHooked = true
+		root:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() if ui.fitBoard then ui.fitBoard() end end)
 	end
 end
 

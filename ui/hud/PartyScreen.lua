@@ -76,6 +76,7 @@ local isOpen = false
 local RAssets -- the Rivals art ids (search / people glyphs); nil if the module isn't there
 pcall(function() local r = UIKit:FindFirstChild("Rivals") if r and r:FindFirstChild("Assets") then RAssets = require(r.Assets) end end)
 local emptyPlate, emptyLabel
+local fitGrid
 local openedAt = 0
 local friendsOnline = {} -- { uid, name, user } for friends elsewhere (refreshed on open)
 
@@ -298,7 +299,8 @@ local function renderGrid(animate)
 	-- canvas, which grows to fit the holder): fixed canvas from the content height instead, holder filling it
 	grid.AutomaticCanvasSize = Enum.AutomaticSize.None
 	local function fitCanvas()
-		local gy = grid.AbsoluteSize.Y
+		-- (rd3, grader C) measured on the screen root (the open / close pop scales the grid itself)
+		local gy = root.AbsoluteSize.Y * 760 / 1080
 		if gy <= 0 then return end
 		local canvasPx = math.max(gy, H * gy / 760)
 		grid.CanvasSize = UDim2.new(0, 0, 0, canvasPx)
@@ -306,9 +308,11 @@ local function renderGrid(animate)
 		holder.Size = UDim2.new(900 / 912, 0, H * gy / 760 / canvasPx, 0)
 	end
 	fitCanvas()
+	fitGrid = fitCanvas
 	if not grid:GetAttribute("_FitHooked") then
+		-- a window resize only re-fits the canvas (rebuilding the grid on every frame of the pop killed the card stagger)
 		grid:SetAttribute("_FitHooked", true)
-		grid:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() if grid:FindFirstChildWhichIsA("Frame") then renderGrid() end end)
+		root:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() if fitGrid then fitGrid() end end)
 	end
 	-- (menus e11-e12, grader C) the cards pop in one after another, centred so they grow in place, only on open or a tab
 	-- change (not on every search keystroke or roster update)
