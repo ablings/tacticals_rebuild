@@ -208,7 +208,7 @@ local function enter()
 			if not ok then return end
 			local inset = h * 0.5 -- (m26-27, grader A vs t0022: ~20 design px each side)
 			-- (m31, grader A) the words at one fixed size (no TextScaled guessing), the bubble sized from what is really drawn
-			tipLabel.TextScaled, tipLabel.TextSize = false, math.floor(h * 0.9)
+			tipLabel.TextScaled, tipLabel.TextSize = false, math.floor(h * 0.94 + 0.5) -- (m32: 0.9 dropped the words a size)
 			local function fit()
 				local tb = tipLabel.TextBounds.X
 				if tb <= 0 then tb = size.X end
