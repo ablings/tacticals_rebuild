@@ -1108,8 +1108,10 @@ local function showResultScreen(sum)
 	againB:FindFirstChildOfClass("TextLabel").Text = "Play Again"
 	-- (2026-10-23, Edward: "play again should not be an option in lobby duels" - it queues you against the whole server) a hub pad
 	-- duel (the lobby's LobbyMap + a DuelMatch / InDuel player) shows Rematch and Leave only
-	againB.Visible = not (workspace:FindFirstChild("LobbyMap") ~= nil and (player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("InDuel") == true
-		or tostring(st("MatchMode") or ""):find("Lobby") ~= nil))
+	local padDuel = workspace:FindFirstChild("LobbyMap") ~= nil and (player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("InDuel") == true
+		or tostring(st("MatchMode") or ""):find("Lobby") ~= nil)
+	againB.Visible = not padDuel
+	rematchB.Visible = not padDuel -- (the lead: pad duels never had a rematch; the button is simply absent there)
 	rgui.Enabled = true
 	refreshRematch()
 	if sum.delta ~= nil then showRankPage(sum) else rankPage.Visible = false; backB.Visible = postMatch() end
