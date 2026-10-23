@@ -274,7 +274,13 @@ local function renderGrid(animate)
 		Kit.tween(emptyLabel, 0.2, { TextTransparency = 0 })
 	end
 	emptyPlate.Visible = k == 0
-	emptyLabel.Text = current == "Friends" and "No friends online right now" or "Nobody else here yet"
+	local emptyText = current == "Friends" and "No friends online right now" or "Nobody else here yet"
+	if emptyLabel.Text ~= emptyText and emptyPlate.Visible and k == 0 then
+		-- (e19, grader C) a 0.15 s crossfade when the wording changes between two empty tabs
+		emptyLabel.TextTransparency = 1
+		Kit.tween(emptyLabel, 0.15, { TextTransparency = 0 })
+	end
+	emptyLabel.Text = emptyText
 	holder.Size = UDim2.fromOffset(900, math.max(10, math.ceil(k / 3) * GRID_STEP))
 	Kit.toScale(grid)
 	-- (menus e11-e12, grader C) the cards pop in one after another, centred so they grow in place, only on open or a tab

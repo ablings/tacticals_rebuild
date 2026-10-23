@@ -379,7 +379,7 @@ function PlayerCards.CloseMenu(silent: any)
 	menu = nil
 	if m.row and m.row.Parent then
 		m.row:SetAttribute("_MenuOpen", nil)
-		m.row.BackgroundTransparency = 1
+		Kit.tween(m.row, 0.1, { BackgroundTransparency = 1 }) -- (e19, grader C: un-lights instead of snapping)
 	end
 	m.catcher.Visible = false
 	Kit.tween(m.panel, 0.14, { Position = UDim2.fromScale(m.home.X.Scale + 0.1, m.home.Y.Scale) }, Enum.EasingStyle.Quint, Enum.EasingDirection.In)

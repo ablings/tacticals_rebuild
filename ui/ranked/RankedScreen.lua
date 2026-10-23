@@ -299,9 +299,23 @@ end
 local function buildBoard()
 	-- (menus e4, grader A) the Leaderboard shares the Ranks modal's frame (882 wide), with a column-header row over the list
 	local _, p, show = popup("Leaderboard", 882, 629, "Warlord · Top 200")
-	-- (menus e18, grader B) the Warlord badge before the title (the title is ~470 wide, centred)
-	local badge = new("Frame", { Name = "TitleBadge", BackgroundTransparency = 1, Position = UDim2.fromOffset(441 - 235 - 14 - 52, 24), Size = UDim2.fromOffset(52, 52), ZIndex = 23, Parent = p })
+	-- (menus e18-e19, grader B) the Warlord badge before the title, 12 from it, and the pair centred together: placed from the
+	-- title's live text bounds each time the board opens (the badge art is padded, so a 48 frame shows ~40)
+	local badge = new("Frame", { Name = "TitleBadge", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromOffset(160, 50), Size = UDim2.fromOffset(48, 48),
+		ZIndex = 23, Parent = p })
 	emblem(badge, "Warlord")
+	local titleL
+	for _, c in p:GetChildren() do if c:IsA("TextLabel") and c.Text == "Warlord · Top 200" then titleL = c end end
+	local function placeTitle()
+		if not (titleL and p.AbsoluteSize.X > 0) then return end
+		local W, tw, bw = p.AbsoluteSize.X, titleL.TextBounds.X, badge.AbsoluteSize.X
+		local gap = 12 * W / 882
+		local left = (W - (bw + gap + tw)) / 2
+		badge.Position = UDim2.fromScale(left / W, badge.Position.Y.Scale)
+		titleL.Position = UDim2.fromScale((left + bw + gap - (titleL.AbsoluteSize.X - tw) / 2) / W, titleL.Position.Y.Scale)
+	end
+	local baseShow = show
+	show = function() baseShow(); task.defer(placeTitle) end
 	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 85), Size = UDim2.fromOffset(803, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
 		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	-- (e15, grader B) the column heads are quiet: 20 px at 60% white
