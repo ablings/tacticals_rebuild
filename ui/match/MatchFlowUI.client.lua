@@ -427,7 +427,7 @@ local function buildMaps(list)
 			new("Frame", { BackgroundColor3 = Color3.fromRGB(70, 72, 76), BackgroundTransparency = 0.35, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35, -- (m9, grader B: RIVALS' stripes are dark grey; only the edge is green)
 				Position = UDim2.fromOffset(k * 22, barH / 2), Size = UDim2.fromOffset(6, barH * 2.2), ZIndex = 2, Parent = bar })
 		end
-		label(bar, m.name, FB, 38, 0, 0, tw, barH, WHITE, nil, 3)
+		local nameL = label(bar, m.name, FB, 38, 0, 0, tw, barH, WHITE, nil, 3)
 		-- voters (headshots along the top)
 		local voters = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(tw - 24, 56), ZIndex = 4, Parent = t },
 			{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 6) }) })
@@ -446,13 +446,18 @@ local function buildMaps(list)
 		end)
 		-- (2026-10-21, round 3: match RIVALS) the tiles pop in one after another when the vote opens
 		if Kit then Kit.popIn(t, 0.08 + (i - 1) * 0.07) end
-		mapTiles[m.id] = { t = t, edge = edge, col = edgeCol, voters = voters, count = count, tw = tw, q = randomQ }
+		mapTiles[m.id] = { t = t, edge = edge, col = edgeCol, voters = voters, count = count, tw = tw, q = randomQ, nameL = nameL, name = m.name }
 	end
 end
 
 refreshVotes = function()
 	local ok, votes = pcall(function() return HttpService:JSONDecode(st(STATE.Votes) or "{}") end)
 	votes = ok and votes or {}
+	-- (m13, grader C vs RIVALS t0028 "Arena [100%]") each voted map shows its share of the votes after its name
+	local total = 0
+	for _, ids in votes do if type(ids) == "table" then total += #ids end end
+	local mineV = player:GetAttribute("_MyVote")
+	if mineV and not (votes[mineV] and table.find(votes[mineV], player.UserId)) then total += 1 end
 	local mine = player:GetAttribute("_MyVote")
 	for id, tile in mapTiles do
 		local ids = table.clone(votes[id] or {})
@@ -479,6 +484,7 @@ refreshVotes = function()
 		local countText = #ids > 0 and tostring(#ids) or ""
 		if Kit and countText ~= tile.count.Text and countText ~= "" then Kit.pop(tile.count) end
 		tile.count.Text = countText
+		if tile.nameL then tile.nameL.Text = (#ids > 0 and total > 0) and string.format("%s [%d%%]", tile.name, math.floor(#ids / total * 100 + 0.5)) or tile.name end
 		tile.edge.Color = hasMe and TEAM_A[1] or tile.col
 		tile.edge.Thickness = hasMe and 5 or 3
 		tile.edge.Transparency = 0

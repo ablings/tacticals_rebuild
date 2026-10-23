@@ -932,7 +932,8 @@ do
 	end
 	-- (m11, grader B vs RIVALS t0140) Rematch is a dim dark button with a 2 px stroke, so Play Again leads (was a tan fill)
 	rematchB.BackgroundColor3 = Color3.fromRGB(24, 25, 29) -- styleRematch keeps driving its transparency (greyed when unavailable)
-	new("UIStroke", { Name = "RivalsEdge", Color = WHITE, Thickness = 2, Transparency = 0.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = rematchB })
+	new("UIStroke", { Name = "RivalsEdge", Color = WHITE, Thickness = 3, Transparency = 0.55, -- (m13: 3 px; calmOne deletes panel strokes under 3)
+		 ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = rematchB })
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' action buttons are chunky (round_lost_full.jpg, t0113.0s): the primary gets
 	-- Kit.button's darker bottom lip instead of reading as a flat sticker
 end
@@ -1330,8 +1331,9 @@ end
 showEliminated = function(uid, d)
 	elimToken += 1
 	local my = elimToken
+	if RV.elimFade then for _, tw in RV.elimFade do tw:Cancel() end; RV.elimFade = nil end -- (m13: a new kill stops an old fade-out)
 	-- (serious pass) the name in their side's colour (light green), not the old purple
-	elimL.Text = 'Eliminated  <font color="#96B288">' .. nameOf(uid) .. '</font>'
+	elimL.Text = 'Eliminated  <font color="#C4EBB4">' .. nameOf(uid) .. '</font>' -- (m13, grader B: the name as bright as the word)
 	elimL.TextTransparency = 0
 	elimL.Visible = true
 	local how = {}
@@ -1347,8 +1349,8 @@ showEliminated = function(uid, d)
 	TweenService:Create(pop, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	task.delay(slow(4), function() -- (m5, RIVALS t0118-t0122: "Eliminated X" holds ~4 s, through the round end; was 2.2)
 		if elimToken ~= my then return end
-		TweenService:Create(elimL, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
-		TweenService:Create(elimSub, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
+		RV.elimFade = { TweenService:Create(elimL, TweenInfo.new(0.4), { TextTransparency = 1 }), TweenService:Create(elimSub, TweenInfo.new(0.4), { TextTransparency = 1 }) }
+		for _, tw in RV.elimFade do tw:Play() end
 		task.delay(0.45, function() if elimToken == my then elimL.Visible = false; elimSub.Visible = false end end)
 	end)
 end
@@ -1539,7 +1541,7 @@ chipText()
 RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.switchHook = roundCard, showRoundCard, kcard, refreshKillerCard, switchB, switchHook
 -- (m12, grader B vs RIVALS t0210) the killer card's soft top gloss
 new("Frame", { Name = "Gloss", BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.5), ZIndex = kcard.ZIndex, Parent = kcard },
-	{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new(0.72, 1) }) })
+	{ new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new(0.55, 1) }) }) -- (m13: 0.72 read as nothing)
 -- (2026-10-20, Knife Duels / Murder Duels / RIVALS) MATCH POINT on the same banner, through the countdown of a round that can
 -- end the match: "You need 1 point to win!" (ours, beige) / "They need 1 point to win" (theirs, green) / both: "Next round wins"
 -- (2026-10-23, Edward: "match point screens and sudden death being 4-4 ... add these aesthetics", his RIVALS recording t0122 / t0338 /
@@ -2275,7 +2277,8 @@ do
 	-- (m9: a CanvasGroup so the whole vignette fades out; the sides reach ~30 % in like RIVALS)
 	local vig = new("CanvasGroup", { Name = "DeathVignette", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, Parent = dgui })
 	for _, e in { { 0, 0, 1, 0.2, 90 }, { 0, 0.8, 1, 0.2, -90 }, { 0, 0, 0.2, 1, 0 }, { 0.8, 0, 0.2, 1, 180 } } do -- (m10, grader B: the outer ~20 %, softer)
-		new("Frame", { BackgroundColor3 = Color3.fromRGB(190, 16, 20), BorderSizePixel = 0, Position = UDim2.fromScale(e[1], e[2]), Size = UDim2.fromScale(e[3], e[4]), Parent = vig },
+		new("Frame", { BackgroundColor3 = Color3.fromRGB(235, 40, 40), BorderSizePixel = 0, Position = UDim2.fromScale(e[1], e[2]), -- (m13, grader B: bright red, not maroon)
+			 Size = UDim2.fromScale(e[3], e[4]), Parent = vig },
 			{ new("UIGradient", { Rotation = e[5], Transparency = NumberSequence.new(0.7, 1) }) }) -- (m12, grader B: the scene shows through the edge)
 	end
 	-- (m12, grader C vs RIVALS t0206) RIVALS draws a curved red arc (~270 x 90) with a point, not a glyph: a square holder centred
@@ -2286,10 +2289,10 @@ do
 	for a = -36, 36, 6 do
 		local r = math.rad(a)
 		new("Frame", { BackgroundColor3 = ARC_RED, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5 + math.sin(r) * 0.4, 0.5 - math.cos(r) * 0.4),
-			Size = UDim2.fromScale(0.05, 0.022), Rotation = a, Parent = arrow }, { corner(4) })
+			Size = UDim2.fromScale(0.05, 0.045 - math.abs(a) / 36 * 0.03), Rotation = a, Parent = arrow }, { corner(4) }) -- (m13: thick in the middle, tapering, t0206)
 	end
 	new("TextLabel", { BackgroundTransparency = 1, Text = "▲", TextColor3 = ARC_RED, TextScaled = true, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.06), Size = UDim2.fromScale(0.09, 0.09), Parent = arrow })
+		Position = UDim2.fromScale(0.5, 0.03), Size = UDim2.fromScale(0.16, 0.16), Parent = arrow }) -- (m13: the point ~2x, RIVALS' big head)
 	local function setArc(t)
 		for _, c in arrow:GetChildren() do
 			if c:IsA("TextLabel") then c.TextTransparency = t elseif c:IsA("Frame") then c.BackgroundTransparency = t end
@@ -2316,7 +2319,9 @@ do
 		local rel = cam.CFrame:PointToObjectSpace(root.Position)
 		local ang = math.atan2(rel.X, -rel.Z) -- 0 = straight ahead, + = to the right
 		local ar = dgui.AbsoluteSize.X / math.max(1, dgui.AbsoluteSize.Y)
-		arrow.Rotation = math.deg(ang) -- (m12: the arc holder turns about the screen centre)
+		-- (m13, grader C) eases toward the killer instead of jumping a frame at a time (shortest way round)
+		local d = ((math.deg(ang) - arrow.Rotation + 180) % 360) - 180
+		arrow.Rotation += d * 0.25
 	end)
 	player:GetAttributeChangedSignal("Alive"):Connect(function()
 		if player:GetAttribute("Alive") ~= false or not inMatch() then return end

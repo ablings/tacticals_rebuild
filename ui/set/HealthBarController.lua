@@ -110,7 +110,8 @@ local function current(): (number, number)
 	-- shows your killer's health
 	if localPlayer:GetAttribute("Alive") == false then
 		deadAt = deadAt or os.clock()
-		if os.clock() - deadAt < 1.5 then return 0, 100 end
+		local slowMo = (game:GetService("RunService"):IsStudio() and tonumber(localPlayer:GetAttribute("_UISlowMo"))) or 1 -- (Studio screenshots only, like DuelHUD)
+		if os.clock() - deadAt < 1.5 * slowMo then return 0, 100 end
 	else
 		deadAt = nil
 	end

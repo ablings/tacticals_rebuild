@@ -238,9 +238,12 @@ local function update()
 			TweenService:Create(stamp, ti, { TextTransparency = 1 }):Play()
 			TweenService:Create(sub, ti, { TextTransparency = 1 }):Play()
 			TweenService:Create(gui.Backdrop, ti, { BackgroundTransparency = 1 }):Play()
-			if tipLabel then tipLabel.Parent.Visible = false end -- (PadUI's teleport screen has its own tip)
+			if tipLabel then -- (PadUI's teleport screen has its own tip; m13: it fades with the caption)
+				TweenService:Create(tipLabel.Parent, ti, { BackgroundTransparency = 1 }):Play()
+				TweenService:Create(tipLabel, ti, { TextTransparency = 1 }):Play()
+			end
 		elseif gui then
-			if tipLabel then tipLabel.Parent.Visible = true end
+			if tipLabel then tipLabel.Parent.Visible, tipLabel.Parent.BackgroundTransparency, tipLabel.TextTransparency = true, 0, 0 end
 			stamp.TextTransparency, sub.TextTransparency = 0, 0
 			sub.Text = modeText()
 		end
