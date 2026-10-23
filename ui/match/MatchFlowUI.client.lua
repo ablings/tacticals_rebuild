@@ -191,7 +191,7 @@ end
 local function fitBox(slots, n)
 	local b = slots.frame
 	local w = 96 + 64 * math.max(1, n)
-	local x0 = slots.right and slots.x or (slots.x + 290 - w)
+	local x0 = slots.right and 1063 or (857 - w) -- (m5: 31 px gaps to the 888-1032 timer, as the match HUD)
 	b.Position = UDim2.new(x0 / W, 0, b.Position.Y.Scale, 0)
 	b.Size = UDim2.new(w / W, 0, b.Size.Y.Scale, 0)
 	for _, c in b:GetChildren() do

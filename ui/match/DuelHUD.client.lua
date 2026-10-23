@@ -213,8 +213,11 @@ end
 
 ---------------------------------------------------------------------------------------------------- kill feed
 -- (2026-10-22, live RIVALS) the feed starts right under the settings gear (y ~0.1), not a third of the way down
-local feed = new("Frame", { Name = "KillFeed", BackgroundTransparency = 1, Position = UDim2.fromOffset(1420, 108), Size = UDim2.fromOffset(480, 300), Parent = root },
-	{ new("UIListLayout", { Padding = UDim.new(0.02, 0), SortOrder = Enum.SortOrder.LayoutOrder, HorizontalAlignment = Enum.HorizontalAlignment.Right }) })
+-- (2026-10-23, matchmaking round m5, graders A + B vs RIVALS t0054) the feed starts at y 68 and reads ~1.3x bigger (pills ~367 x 38,
+-- ~21 px names); anchored at its right edge so the UIScale grows it leftwards
+local feed = new("Frame", { Name = "KillFeed", BackgroundTransparency = 1, AnchorPoint = Vector2.new(1, 0), Position = UDim2.fromOffset(1900, 68), Size = UDim2.fromOffset(480, 300), Parent = root },
+	{ new("UIListLayout", { Padding = UDim.new(0.02, 0), SortOrder = Enum.SortOrder.LayoutOrder, HorizontalAlignment = Enum.HorizontalAlignment.Right }),
+		new("UIScale", { Name = "RivalsSize", Scale = 1.3 }) })
 local feedN = 0
 local function botModel(uid)
 	for _, m in workspace:GetDescendants() do
@@ -1304,7 +1307,7 @@ showEliminated = function(uid, d)
 	local pop = elimL:FindFirstChildOfClass("UIScale") or new("UIScale", { Parent = elimL })
 	pop.Scale = 1.4
 	TweenService:Create(pop, TweenInfo.new(0.25, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	task.delay(2.2, function()
+	task.delay(4, function() -- (m5, RIVALS t0118-t0122: "Eliminated X" holds ~4 s, through the round end; was 2.2)
 		if elimToken ~= my then return end
 		TweenService:Create(elimL, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
 		TweenService:Create(elimSub, TweenInfo.new(0.4), { TextTransparency = 1 }):Play()
@@ -1563,7 +1566,7 @@ local function fillBox(box, ids)
 		box.n = n
 		local w = 64 + 64 * n -- (2026-10-22, spacing grade) the score hugs the heads (~0.35 cap like RIVALS; was ~1.15)
 		box.frame.Size = UDim2.fromScale(w / W, 84 / H)
-		box.frame.Position = UDim2.fromScale((box.right and 1040 or (880 - w)) / W, 20 / H)
+		box.frame.Position = UDim2.fromScale((box.right and 1063 or (857 - w)) / W, 20 / H) -- (m5: 31 px gaps to the timer, RIVALS t0040; were 8)
 		for i = 1, 3 do
 			local hx = box.right and (58 + (i - 1) * 64) or (14 + (i - 1) * 64)
 			box.slots[i].h.Position = UDim2.fromScale(hx / w, 14 / 84)
@@ -1733,6 +1736,9 @@ RunService.RenderStepped:Connect(function()
 	timerBox.Hourglass.Visible = true -- (m2, RIVALS t0046: the hourglass stays through the live round too)
 	-- (RIVALS, Edward 2026-10-19) under a minute the clock counts tenths (59.9, ... 4.9, 4.8); under 5 s of a live round it turns red
 	timerL.Text = left < 60 and string.format("%.1f", math.floor(left * 10) / 10) or string.format("%d:%02d", left // 60, math.floor(left) % 60)
+	-- (m5, RIVALS t0118-t0120) the round clock freezes where the round ended instead of counting the round end down
+	if state == "Live" then RV.liveClock = timerL.Text elseif state == "RoundEnd" and RV.liveClock then timerL.Text = RV.liveClock end
+	if state == "Countdown" then RV.liveClock = nil end
 	timerL.TextColor3 = (state == "Live" and left < 5) and BAD or WHITE
 	timerL.Position = UDim2.fromScale(0.12, timerL.Position.Y.Scale)
 	-- (2026-10-21, round 3: match RIVALS) the clock ticks: the whole timer block punches once per second in the last 5 s of a
@@ -1814,7 +1820,19 @@ RunService.RenderStepped:Connect(function()
 		RV.kcard.Position = home + UDim2.fromScale(0.25, 0)
 		TweenService:Create(RV.kcard, TweenInfo.new(0.35, Enum.EasingStyle.Quart), { Position = home }):Play()
 	end
-	RV.kcard.Visible = onKiller or keepCard
+	-- (m5, grader C) it slides back out to the right instead of cutting
+	if onKiller or keepCard then
+		if RV.kcardLeaving then RV.kcardLeaving = nil; if RV.kcardHome then RV.kcard.Position = RV.kcardHome end end
+		RV.kcard.Visible = true
+	elseif RV.kcard.Visible and not RV.kcardLeaving then
+		RV.kcardLeaving = true
+		local home = RV.kcardHome or RV.kcard.Position
+		RV.kcardHome = home
+		TweenService:Create(RV.kcard, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Position = home + UDim2.fromScale(0.25, 0) }):Play()
+		task.delay(0.3, function()
+			if RV.kcardLeaving then RV.kcardLeaving = nil; RV.kcard.Visible = false; RV.kcard.Position = home end
+		end)
+	end
 	-- (2026-10-22, RIVALS) the weapon HUD is gone while the kill banner is up (it sat under the banner, bottom right)
 	do
 		local hb = player.PlayerGui:FindFirstChild("Hotbar")
