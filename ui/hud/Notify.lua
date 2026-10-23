@@ -101,7 +101,10 @@ local function pill(parent, n, x, y, w, h)
 	local p = new("CanvasGroup", { Name = "Pill", BackgroundColor3 = PILL, -- (e17, grader C: a CanvasGroup, so its pop fades too)
 		 BackgroundTransparency = 0.05, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
 		ZIndex = 3, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) }) -- (menus e9, grader B: 12 px corners, was a capsule)
-	icon(p, n.icon or "check", 26, (h - 56) / 2, 56, GREEN, 4)
+	-- (menus e23, grader B) the icon sits in a 56 px darker tile, like RIVALS' task rows
+	new("Frame", { Name = "IconTile", BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.92, Position = UDim2.fromOffset(18, (h - 56) / 2), Size = UDim2.fromOffset(56, 56),
+		ZIndex = 4, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
+	icon(p, n.icon or "check", 26, (h - 40) / 2, 40, GREEN, 5)
 	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 84, h * 0.06, w - 200, h * 0.52, nil, Enum.TextXAlignment.Left, 4) -- (e9, grader B: left-aligned at +96 beside the icon)
 	t.TextScaled = false
 	txt(p, n.sub or "", FB, math.floor(h * 0.24), 84, h * 0.56, w - 200, h * 0.32, GREY, Enum.TextXAlignment.Left, 4)
@@ -200,9 +203,10 @@ local function buildInbox()
 		local y = (i - 1) * 108
 		local row = pill(content, n, 0, y, 828, 102)
 		-- (menus e15, graders A + C) the age chip belongs to its row (it pops with it) and sits 24 in from the row's right end
-		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(828 - 24 - 118, 31), Size = UDim2.fromOffset(118, 40), ZIndex = 5,
+		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(828 - 24 - 90, 37), Size = UDim2.fromOffset(90, 28), ZIndex = 5, -- (e23: a small 28 chip)
+			
 			Parent = row }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
-		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 40, GREY, Enum.TextXAlignment.Right, 6) -- (e16, grader A: the text ends 24 in from the row's end)
+		txt(chip, ago(n.t), FB, 16, 0, 0, 90, 28, GREY, Enum.TextXAlignment.Right, 6) -- (e16, grader A: the text ends 24 in from the row's end)
 		-- (2026-10-21, RIVALS pass) the first rows pop in one after another (0.03 s apart) instead of all at once
 		if Kit.popIn and i <= 10 then
 			row.AnchorPoint = Vector2.new(0.5, 0.5); row.Position = UDim2.fromOffset(414, y + 51)
