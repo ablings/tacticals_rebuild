@@ -37,7 +37,7 @@ local GLYPH = {
 local SHORT = { Kills = "Eliminations", Headshots = "Headshots", MeleeKills = "Melee kills", CoverKills = "Cover kills",
 	GadgetsThrown = "Gadgets", Wins = "Win matches", MatchesPlayed = "Play matches" }
 local CHECK_LIME = GEN.tasks_check_lime
-local SCISSORS = "rbxassetid://120480559804238" -- the bright scissors render (MissionsScreen / Shop), RIVALS' key render
+local SCISSORS = "rbxassetid://115934367242130" -- (m7, grader B: the lobby widget's bold red reward scissors; the old render read faint)
 local BAR_FILL = RC.blue or Color3.fromRGB(40, 150, 255)
 
 local gui = new("ScreenGui", { Name = "MatchTasks", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 11, Enabled = false,
@@ -81,7 +81,7 @@ local function build(list)
 			Position = UDim2.fromOffset(52, y), Size = UDim2.fromOffset(200, 32), ZIndex = 4, Parent = panel })
 		RKit.textStroke(1.5).Parent = name
 		local back = new("Frame", { Position = UDim2.fromOffset(52, y + 33), Size = UDim2.fromOffset(250, 6), BackgroundColor3 = RC.track or Color3.fromRGB(80, 80, 86),
-			BackgroundTransparency = 0.35, ClipsDescendants = true, ZIndex = 4, Parent = panel }, { new("UICorner", { CornerRadius = UDim.new(0, 3) }) })
+			BackgroundTransparency = 0.15, ClipsDescendants = true, ZIndex = 4, Parent = panel }, { new("UICorner", { CornerRadius = UDim.new(0, 3) }) }) -- (m7: track 0.35 -> 0.15, RIVALS' bars read solid)
 		local was = last[q.Id]
 		local frac = prog / goal
 		local fill = new("Frame", { Size = UDim2.fromScale((was and math.clamp(was / goal, 0, 1)) or frac, 1), BackgroundColor3 = done and RC.green or BAR_FILL,

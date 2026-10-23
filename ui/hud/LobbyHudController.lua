@@ -342,7 +342,7 @@ function LobbyHud.Start()
 	-- 27), the clock (Rubik Bold 30, right-aligned to x 430) and the red X (Rivals Kit.closeButton 76 x 52) that cancels. Live
 	-- RIVALS hides PLAY while it shows (the Heartbeat below). The bracketed olive box over PLAY and its blinking marks are gone.
 	local seek = new("Frame", { Name = "Searching", Position = UDim2.fromOffset(692, 119), Size = UDim2.fromOffset(540, 80), BackgroundColor3 = RC.textDark,
-		BackgroundTransparency = 0.25, Visible = false, ZIndex = 10, Parent = root }, { RKit.corner(8) })
+		BackgroundTransparency = 0.1, Visible = false, ZIndex = 10, Parent = root }, { RKit.corner(8) }) -- (m7, grader B vs t0018: 0.25 let the lobby signs show through)
 	new("ImageLabel", { BackgroundTransparency = 1, Image = RAssets.tasks and RAssets.tasks.star6 or "", Position = UDim2.fromOffset(16, 18), Size = UDim2.fromOffset(44, 44), ZIndex = 11, Parent = seek })
 	local seekStatus = RKit.label({ Name = "Status", Text = "Searching for players.", FontFace = RTheme.font.medium, TextSize = 21, TextColor3 = RC.text,
 		Position = UDim2.fromOffset(74, 10), Size = UDim2.fromOffset(300, 28), ZIndex = 11, Parent = seek })

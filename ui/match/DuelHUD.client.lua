@@ -334,6 +334,14 @@ local function addKill(d)
 	local ins = new("UIScale", { Scale = 0.6, Parent = row })
 	TweenService:Create(ins, TweenInfo.new(0.22, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	task.delay(7, function() -- (m6, RIVALS: a feed pill stays ~7 s; was 5)
+		-- (m7, RIVALS t0214) a kill that ended the round stays up until the next round is live
+		local t0 = os.clock()
+		while row.Parent and os.clock() - t0 < 12 do
+			local o = stateObject()
+			local ms = o and o:GetAttribute("MatchState")
+			if ms ~= "RoundEnd" and ms ~= "Countdown" then break end
+			task.wait(0.25)
+		end
 		if row.Parent then
 			local fade = TweenInfo.new(0.4)
 			for _, v in row:GetDescendants() do
@@ -1232,7 +1240,8 @@ do
 -- (2026-10-20, the RIVALS mix) back to RIVALS' small card under the timer: "ROUND" over "WON" / "LOST", filled with the side's
 -- muted colour (tan ours, dark green theirs). Through a deciding round's countdown it reads MATCH POINT (RV.showMatchPoint).
 -- (2026-10-22, live RIVALS ROUND LOST) 246 x 95 at y 147: a clear gap under the timer, narrower, a heavier word
-local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(837, 147), Size = UDim2.fromOffset(246, 95), BackgroundColor3 = WHITE, BackgroundTransparency = 0.06,
+-- (m7, RIVALS t0118: the round card sits right under the score bar, y 10.8 %; was 147)
+local roundCard = new("Frame", { Name = "RoundCard", Position = UDim2.fromOffset(837, 117), Size = UDim2.fromOffset(246, 95), BackgroundColor3 = WHITE, BackgroundTransparency = 0.06,
 	Visible = false, ZIndex = 6, Parent = root }, { corner(8) })
 local roundGrad = new("UIGradient", { Rotation = 90, Parent = roundCard })
 local roundSmall = label(roundCard, "ROUND", FB, 22, 0, 4, 246, 26, WHITE, nil, 7)
@@ -1258,7 +1267,7 @@ end
 -- under it fades to about half
 function RV.dimRoundCard(on)
 	local ti = TweenInfo.new(on and 0.3 or 0)
-	TweenService:Create(roundCard, ti, { BackgroundTransparency = on and 0.5 or 0.06 }):Play()
+	TweenService:Create(roundCard, ti, { BackgroundTransparency = on and 0.3 or 0.06 }):Play() -- (m7: 0.5 went grey; RIVALS keeps the colour)
 	for _, l in { roundBig, roundSmall } do
 		TweenService:Create(l, ti, { TextTransparency = on and 0.5 or 0 }):Play()
 		local st = l:FindFirstChildOfClass("UIStroke")
@@ -1278,14 +1287,15 @@ function RV.flashRoundCard()
 end
 
 ---------------------------------------------------------------------------------------------------- eliminated
-local elimL = new("TextLabel", { Name = "Eliminated", BackgroundTransparency = 1, RichText = true, Text = "", FontFace = FB, TextSize = 34, TextColor3 = WHITE,
-	Position = UDim2.fromOffset(560, 690), Size = UDim2.fromOffset(800, 46), Visible = false, ZIndex = 6, Parent = root }) -- (2026-10-20) lower, off the character (RIVALS ~0.65-0.73)
-elimL:SetAttribute("dTS", 34); table.insert(scaled, elimL)
+-- (2026-10-23, matchmaking round m7, grader A vs RIVALS t0054 / t0118: y 69-73 %, ~24 % wide, ~3.9 % tall) lower and bigger
+local elimL = new("TextLabel", { Name = "Eliminated", BackgroundTransparency = 1, RichText = true, Text = "", FontFace = FB, TextSize = 44, TextColor3 = WHITE,
+	Position = UDim2.fromOffset(460, 748), Size = UDim2.fromOffset(1000, 56), Visible = false, ZIndex = 6, Parent = root })
+elimL:SetAttribute("dTS", 44); table.insert(scaled, elimL)
 new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = elimL })
 -- (2026-10-20, the common theme of every duel game Edward showed: Knife / Murder Duels' "+XP HEADSHOT / KILL", Redliner's
 -- "Killed X!", Hood Rivals' ELIMINATED) what the kill was, in small grey caps under the name
 local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 22, TextColor3 = Color3.fromRGB(232, 232, 236),
-	Position = UDim2.fromOffset(560, 736), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
+	Position = UDim2.fromOffset(560, 804), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
 elimSub:SetAttribute("dTS", 22); table.insert(scaled, elimSub)
 new("UIStroke", { Thickness = 2, Transparency = 0.25, Parent = elimSub }) -- (live check) readable over the bright Practice Range walls
 local elimToken = 0
@@ -1812,7 +1822,7 @@ RunService.RenderStepped:Connect(function()
 	-- SpectateTarget early in the round end, so neither it nor a timer from that moment can carry the card that far)
 	if state ~= RV.kcState then RV.kcState, RV.kcSince = state, os.clock() end
 	if onKiller then RV.kcardShown = true elseif state == "Live" or state == "MatchEnd" or state == "Victory" then RV.kcardShown = false end
-	local keepCard = not onKiller and RV.kcardShown and (state == "RoundEnd" or (state == "Countdown" and os.clock() - (RV.kcSince or 0) < 1.5))
+	local keepCard = not onKiller and RV.kcardShown and (state == "RoundEnd" or (state == "Countdown" and os.clock() - (RV.kcSince or 0) < 2.5)) -- (m7: RIVALS t0212 still shows it ~2 s in)
 	if onKiller and not RV.kcard.Visible then
 		-- slide in from the right edge
 		local home = RV.kcardHome or RV.kcard.Position
@@ -1832,10 +1842,12 @@ RunService.RenderStepped:Connect(function()
 		RV.kcardLeaving = true
 		local home = RV.kcardHome or RV.kcard.Position
 		RV.kcardHome = home
+		RV.kcardExitN = (RV.kcardExitN or 0) + 1
+		local exitN = RV.kcardExitN
 		RV.kcardExit = TweenService:Create(RV.kcard, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.In), { Position = home + UDim2.fromScale(0.25, 0) })
 		RV.kcardExit:Play()
 		task.delay(0.3, function()
-			if RV.kcardLeaving then RV.kcardLeaving = nil; RV.kcardExit = nil; RV.kcard.Visible = false; RV.kcard.Position = home end
+			if RV.kcardLeaving and RV.kcardExitN == exitN then RV.kcardLeaving = nil; RV.kcardExit = nil; RV.kcard.Visible = false; RV.kcard.Position = home end -- (m7: only this exit's own timer)
 		end)
 	end
 	-- (2026-10-22, RIVALS) the weapon HUD is gone while the kill banner is up (it sat under the banner, bottom right)
