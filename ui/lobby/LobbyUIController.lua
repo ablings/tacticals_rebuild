@@ -1534,6 +1534,7 @@ local function build()
 		openRobux = function()
 			LobbyUI.OpenShop("Scissors")
 		end,
+		openMissions = function() LobbyUI.Open("Missions") end, -- (the Kit's Contracts row)
 		scissorIcon = SCISSOR_ICON,
 	})
 end

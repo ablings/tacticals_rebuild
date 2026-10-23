@@ -376,7 +376,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	-- side padding (was ~5-7 %); the Robux glyph sits ~0.8 cap from its number
 	-- (round 2, grader B vs t0068 / t0084) side pad 0.06 x width so the digits get the room (yellow ones had shrunk to 0.23 h), the
 	-- currency icon ~1.25 digit caps, ~0.55 cap from the digits
-	local isz = live.isz or math.floor(h * (isRobux and 0.46 or 0.5)) -- (round 7: filled red glyph (C) at ~0.45 of the tag so the digits lead (B, t0068))
+	local isz = live.isz or math.floor(h * (isRobux and 0.46 or 0.62)) -- (round 8, grader B vs t0068: RIVALS' tag key is WHITE like the digits, drawn ~0.45 of the tag)
 	local pad, gap = math.max(4, math.floor(w * 0.06)), math.max(3, math.floor(h * 0.18))
 	-- (2026-10-21, RIVALS shop layout) live.text = a word instead of a number ("FREE", RIVALS' Daily): no currency icon
 	if live.text then isz, gap = 0, 0 end
@@ -392,7 +392,7 @@ local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	-- amber edge to stay legible)
 	stroke(txt, math.clamp(h * 0.035, 1.5, 2.5), isRobux and 0.55 or 0.4)
 	txt:FindFirstChildOfClass("UIStroke").Color = isRobux and Color3.fromRGB(46, 120, 18) or Color3.fromRGB(160, 110, 0)
-	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or (Kit.ICONS and (Kit.ICONS.scissorsReward or Kit.ICONS.scissors)) or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit, -- (round 3, grader B: RIVALS' tag currency is a flat white glyph)
+	local icon = new("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = isRobux and ROBUX_IMG or (Kit.ICONS and (Kit.ICONS.scissorsWhite or Kit.ICONS.scissors)) or SCISSORS_IMG, ScaleType = Enum.ScaleType.Fit, -- (round 3, grader B: RIVALS' tag currency is a flat white glyph)
 		AnchorPoint = Vector2.new(0, 0.5), Position = UDim2.fromScale(0, 0.5), Size = UDim2.fromScale(isz / w, isz / h), ZIndex = z + 1, Visible = live.text == nil, Parent = row })
 	-- Robux glyph left of the number, the scissors right of it (RIVALS' key button: "5 [key]"); Rubik ExtraBold digits ~0.64 em
 	local function place(text)

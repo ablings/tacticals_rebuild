@@ -708,7 +708,7 @@ function LobbyHud.Start()
 	local ViewIcons = require(UIKit:WaitForChild("ViewIcons"))
 	-- (round 4, grader B: RIVALS' counter key is a solid glyph, ours a hairline 3D outline) the filled red scissors
 	new("ImageLabel", { BackgroundTransparency = 1, Image = Kit.ICONS.scissorsReward or "", ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1, 1), ZIndex = 3, Parent = iconHolder }) -- (round 7: 1.15 overshot on the Kit screen; = the Shop counter's size)
+		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(1.1, 1.1), ZIndex = 3, Parent = iconHolder }) -- (round 8: = the Shop counter's ~30 px glyph)
 
 	---------------------------------------------------------------------------------------------- data
 	local data

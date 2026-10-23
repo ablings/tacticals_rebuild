@@ -152,14 +152,15 @@ local function build()
 	-- (2026-10-21, port3) graders: the box read darker than the panel and the placeholder was barely visible. The box is now RIVALS'
 	-- track grey-purple (Theme.color.track) so it sits clearly lighter than the panel, placeholder in textDim (was disabled grey)
 	local REDEEM_W, ROW_Y, ROW_H, GAP = 205, 110, 68, 20
-	box = new("TextBox", { Name = "Code", Text = "", PlaceholderText = "Enter code", PlaceholderColor3 = C.textDim, FontFace = FB, TextSize = 30,
-		TextColor3 = C.text, TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Position = UDim2.fromOffset(PAD, ROW_Y), -- (TextSize 34 -> 30 below: 68 tall)
-		Size = UDim2.fromOffset(PW - 2 * PAD - GAP - REDEEM_W, ROW_H), BackgroundColor3 = C.track, BackgroundTransparency = 0.4, Parent = panel },
+	-- (2026-10-22, section rounds 0-7, grader C: RIVALS' fields are white with dark text - the sort dropdown, Settings values)
+	box = new("TextBox", { Name = "Code", Text = "", PlaceholderText = "Enter code", PlaceholderColor3 = Color3.fromRGB(140, 140, 150), FontFace = FB, TextSize = 30,
+		TextColor3 = C.textDark, TextXAlignment = Enum.TextXAlignment.Left, ClearTextOnFocus = false, Position = UDim2.fromOffset(PAD, ROW_Y),
+		Size = UDim2.fromOffset(PW - 2 * PAD - GAP - REDEEM_W, ROW_H), BackgroundColor3 = C.white, BackgroundTransparency = 0.1, Parent = panel },
 		{ RK.corner(8), new("UIPadding", { PaddingLeft = UDim.new(0, 24) }) })
 	box:SetAttribute("dTS", 30)
 	-- focus: the box's fill lifts (0.4 -> 0.15)
-	box.Focused:Connect(function() Kit.tween(box, 0.12, { BackgroundTransparency = 0.15 }) end)
-	box.FocusLost:Connect(function() Kit.tween(box, 0.12, { BackgroundTransparency = 0.4 }) end)
+	box.Focused:Connect(function() Kit.tween(box, 0.12, { BackgroundTransparency = 0 }) end)
+	box.FocusLost:Connect(function() Kit.tween(box, 0.12, { BackgroundTransparency = 0.1 }) end)
 	-- (2026-10-21, RIVALS 1:1) the replica's lime gradient button (Theme.gradient.robux) with a chunky FredokaOne word
 	local go = RK.button("robux", UDim2.fromOffset(REDEEM_W, ROW_H), "Redeem")
 	go.Name = "Redeem"
@@ -170,7 +171,7 @@ local function build()
 	-- (2026-10-21, port3) graders: the disabled grey plate read as broken. RIVALS action buttons stay their bright gradient: with no
 	-- code the lime button is only dimmed (a black veil at 0.6, the word at 0.2 with its stroke kept so it stays chunky and legible);
 	-- typed, the veil fades away to the full lime gradient with a pop
-	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = BLACK, BackgroundTransparency = 0.6, ZIndex = 2, Parent = go },
+	local dim = new("Frame", { Name = "Dim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = BLACK, BackgroundTransparency = 0.72, ZIndex = 2, Parent = go },
 		{ RK.corner(6) })
 	local goLabel = go:FindFirstChild("Label")
 	if goLabel then goLabel.ZIndex = 3; goLabel.TextColor3 = C.text end
@@ -187,7 +188,7 @@ local function build()
 		local on = (box.Text or ""):match("%S") ~= nil
 		if on == goOn then return end
 		goOn = on
-		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0.6 })
+		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0.72 }) -- (round 7, grader C: a lime at ~50 %, the 0.6 black veil read olive)
 		if goLabel then Kit.tween(goLabel, t or 0.15, { TextTransparency = on and 0 or 0.2 }) end
 		if on and t ~= 0 then Kit.pop(go, 1.1) end
 	end

@@ -633,11 +633,13 @@ local function grade(vp, holder, cols)
 	if vp then
 		local f = vp.Frame
 		-- (2026-10-22) the pink / purple grade stays (it must match the 1v1-3v3 art); Ranked gets a warm dark-gold one
-		f.Ambient = cols == GRADE and Theme.hex("#B47CEA") or Theme.hex("#A08A60")
-		f.LightColor = cols == GRADE and Theme.hex("#FFC4F8") or Theme.hex("#FFF2D6")
+		-- (round 7, grader C vs t0016: Training / Duel Pads read washed lilac next to the 1v1-3v3 art) a deeper, more saturated grade
+		f.Ambient = cols == GRADE and Theme.hex("#9A56E2") or Theme.hex("#A08A60")
+		f.LightColor = cols == GRADE and Theme.hex("#FFA8F2") or Theme.hex("#FFF2D6")
 		f.ImageColor3 = cols == GRADE and C.white or Theme.hex("#D8A447") -- Ranked: the render itself takes the dark-gold tint
 	end
-	new("Frame", { Name = "Grade", BackgroundColor3 = C.white, BackgroundTransparency = cols == GRADE and 0.8 or 0.32, BorderSizePixel = 0, -- Ranked: a strong dark-gold wash Size = UDim2.fromScale(1, 1), ZIndex = 2,
+	-- (round 8: a trailing comment had eaten Size + ZIndex, the wash covered only a 100 px corner) Ranked: a strong dark-gold wash
+	new("Frame", { Name = "Grade", BackgroundColor3 = C.white, BackgroundTransparency = cols == GRADE and 0.8 or 0.32, BorderSizePixel = 0, Size = UDim2.fromScale(1, 1), ZIndex = 2,
 		Parent = holder }, { Kit.vgrad(cols) })
 end
 

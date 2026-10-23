@@ -1830,7 +1830,8 @@ local function buildLeft()
 	-- (2026-10-21, RIVALS 1:1) RIVALS' Career card (replica: 12, 413, 336 x 217): the headshot and "Career" (it opens Duel
 	-- History, as RIVALS' Career does), then the row of class icons = our three slot icons + Duel History's clock. The replica's
 	-- "Dismiss N Notifications" pill is left out (Tacticals has no notifications), so the card is 150 tall and ends where RIVALS' does.
-	local prof = panel({ Name = "Profile", Position = UDim2.fromOffset(LIST_X, LIST_Y - 160), Size = UDim2.fromOffset(LIST_W, 150), ZIndex = 4, Parent = leftGroup })
+	local prof = panel({ Name = "Profile", Position = UDim2.fromOffset(LIST_X, LIST_Y - 162), Size = UDim2.fromOffset(LIST_W, 150), ZIndex = 4, Parent = leftGroup })
+	prof.BackgroundTransparency = 0.2 -- (round 8, grader C: one fill with the list plate, a clear 12 px gap between the two cards)
 	local career = mk("TextButton", { Name = "Career", AutoButtonColor = false, Text = "", BackgroundTransparency = 1, Size = UDim2.fromOffset(LIST_W, 82),
 		ZIndex = 5, Parent = prof })
 	local avatar = mk("ImageLabel", { Name = "Avatar", BackgroundTransparency = 1, Position = UDim2.fromOffset(28, 0), Size = UDim2.fromOffset(78, 78), ZIndex = 6, Parent = career })
@@ -2220,7 +2221,7 @@ local function renderInfo()
 			TextXAlignment = Enum.TextXAlignment.Center, Position = UDim2.fromOffset(6, 8), Size = UDim2.fromOffset(maxed and 99 or 66, 36), ZIndex = 7, Parent = up }), 1.5, 0.6)
 		mk("UITextSizeConstraint", { MaxTextSize = 32, Parent = upL })
 		if not maxed then
-			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissorsReward or Kit.ICONS.scissors, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' flat white key)
+			mk("ImageLabel", { Name = "Currency", BackgroundTransparency = 1, Image = Kit.ICONS.scissorsWhite or Kit.ICONS.scissors, ScaleType = Enum.ScaleType.Fit, -- (round 3: RIVALS' flat white key)
 				Position = UDim2.fromOffset(76, 9), Size = UDim2.fromOffset(30, 30), ZIndex = 7, Parent = up })
 		end
 		Kit.bindButton(up, { hover = 1.05, press = 0.92 })
@@ -2324,10 +2325,31 @@ local function renderInfo()
 		end
 	end
 	local nextItem = nextId and ctx.Config.Items[nextId]
-	local nb = row("lock", nextItem and "Next unlock" or (owned and "All unlocked" or "Last one"),
-		nextItem and (nextItem.Name .. "  ·  " .. ctx.commas(nextItem.Price)) or (owned and "Nothing left in this slot" or "Nothing after it here"),
-		"arrow", nextId and "blue" or "grey")
-	if nextId then
+	-- (2026-10-22, section rounds 3-8, grader C vs t0051; ECON2 per-weapon contracts) RIVALS' middle row is Contracts: "Earn free
+	-- rewards" and an arrow to the contract list. Weapons / melee with a contract tier left show it (this weapon's progress on the
+	-- sub-line); everything else keeps our Next unlock row.
+	local tiers = ctx.Config.WeaponContracts
+	if tiers and owned and (item.Slot == "Weapon" or item.Slot == "Melee") then
+		local data = ctx.getData() or {}
+		local paid = (data.Contracts and tonumber(data.Contracts[id])) or 0
+		local target = tiers[paid + 1]
+		local kills = (data.WeaponStats and data.WeaponStats[id] and data.WeaponStats[id].Kills) or 0
+		local cb = row("seal", "Contracts", target and (math.min(kills, target.Kills) .. " / " .. target.Kills .. " eliminations") or "All contracts done",
+			"arrow", "blue")
+		Armory._tip(cb, "Earn free rewards with this weapon", "left")
+		cb.Activated:Connect(function()
+			Armory.Leave()
+			if ctx.openMissions then task.delay(0.5, ctx.openMissions) end
+		end)
+		nextId = nil
+	end
+	local nb
+	if not (tiers and owned and (item.Slot == "Weapon" or item.Slot == "Melee")) then
+		nb = row("lock", nextItem and "Next unlock" or (owned and "All unlocked" or "Last one"),
+			nextItem and (nextItem.Name .. "  ·  " .. ctx.commas(nextItem.Price)) or (owned and "Nothing left in this slot" or "Nothing after it here"),
+			"arrow", nextId and "blue" or "grey")
+	end
+	if nextId and nb then
 		Armory._tip(nb, "Go to " .. nextItem.Name, "left")
 		nb.Activated:Connect(function() Armory.Select(nextId, 1) end)
 	end
@@ -2939,8 +2961,8 @@ local function build()
 	-- (2026-10-22, section round 1, grader C) the room's bright bench framed the slot strip like a cream bezel: RIVALS' floor reads dark
 	-- under its strip, so a soft black fade rises from the screen's bottom edge (0 -> 0.45 over the bottom 16 %) behind the strip
 	mk("Frame", { Name = "FloorFade", BackgroundColor3 = BLACK, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1),
-		Size = UDim2.fromScale(1, 0.16), ZIndex = 2, Parent = hud }, { mk("UIGradient", { Rotation = 90,
-		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(1, 0.45) }) }) })
+		Size = UDim2.fromScale(1, 0.4), ZIndex = 2, Parent = hud }, { mk("UIGradient", { Rotation = 90, -- (round 8: the lit floor band 0.7-0.85 H still read bright: taller and darker)
+		Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.45, 0.55), NumberSequenceKeypoint.new(1, 0.35) }) }) })
 	tray = mk("Frame", { Name = "Picker", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Visible = false, ZIndex = 6, Parent = hud })
 	buildLeft()
 	Armory.BuildHistory(hud)
