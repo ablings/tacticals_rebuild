@@ -208,8 +208,8 @@ local playerGui = player:WaitForChild("PlayerGui")
 local function sync()
 	local cfg = InputActions.Config
 	local dt = player:GetAttribute("Setting_DoubleTapToAttack")
-	-- (2026-10-23, Edward: "tapping on the screen twice shot my gun ... mobile has their own shoot button") off unless switched on
-	cfg.DoubleTapAttack = dt == true
+	-- (2026-10-23, Edward: "ours should be on by default", like RIVALS) on unless switched off
+	cfg.DoubleTapAttack = dt ~= false
 	local w = tonumber(player:GetAttribute("Setting_DoubleTapWindow"))
 	cfg.DoubleTapWindow = w and math.clamp(w, 0.1, 0.6) or 0.25
 	cfg.LeftHanded = player:GetAttribute("Setting_LeftHandedMode") == true

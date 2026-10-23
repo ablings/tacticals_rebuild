@@ -139,7 +139,7 @@ return {
 				-- (2026-10-23, Edward: mobile needs auto shoot (25-100 ms) and the double tap off: the Fire button shoots)
 				{ kind = "toggle", name = "Auto Shoot", glyph = "◎", value = true, desc = "Fires on its own while your crosshair is on an enemy" },
 				{ kind = "slider", name = "Auto Shoot Delay", glyph = "◎", level = 2, showIf = "Auto Shoot", min = 25, max = 100, step = 5, arrow = 5, value = 50, fmt = function(v) return string.format("%d ms", v) end, desc = "How long the crosshair stays on an enemy before it fires" },
-				{ kind = "toggle", name = "Double Tap To Attack", glyph = "»", value = false, desc = "Double tap anywhere on the right side of the screen to fire" },
+				{ kind = "toggle", name = "Double Tap To Attack", glyph = "»", value = true, desc = "Double tap anywhere on the right side of the screen to fire" },
 				{ kind = "slider", name = "Double Tap Window", glyph = "»", level = 2, min = 0.1, max = 0.6, step = 0.05, arrow = 0.05, value = 0.25, fmt = function(v) return string.format("%.2f", v) end, desc = "How quick the two taps must be, in seconds" },
 				{ kind = "toggle", name = "Enabled", key = "Fire Enabled", glyph = "👁", value = true, desc = "Show this button on your screen" },
 				{ kind = "toggle", name = "Custom", key = "Fire Custom", glyph = "⚙", value = false, desc = "[Advanced] Give this button its own transparency instead of the global one" },

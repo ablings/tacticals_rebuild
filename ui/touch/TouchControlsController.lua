@@ -275,13 +275,12 @@ local function refresh()
 	-- (2026-10-23, Edward: no buttons in the lobby until you die, none on the duel pads, gone after Play Again) the old rule read the
 	-- legacy LobbyUI ScreenGui (off = "a menu is open"), but the new lobby HUD leaves it off, and pad duels / the after-match lobby
 	-- switch it too. A menu is open when the lobby HUD is pushed aside (LobbyHud Root PushedAway, set while any screen is open) or
-	-- the Kit room (ArmoryUI) is up; never while you're fighting.
+	-- the Kit room is up (InKit); never while you're fighting.
 	local menuUp = false
 	local hudGui = player.PlayerGui:FindFirstChild("LobbyHud")
 	local hudRoot = hudGui and hudGui.Enabled and hudGui:FindFirstChild("Root", true)
 	if hudRoot and hudRoot:GetAttribute("PushedAway") == true then menuUp = true end
-	local armory = player.PlayerGui:FindFirstChild("ArmoryUI")
-	if armory and armory.Enabled then menuUp = true end
+	if player:GetAttribute("InKit") == true then menuUp = true end -- the Kit room (ArmoryUI itself stays Enabled)
 	if fighting() and not (player:GetAttribute("Alive") == false) then menuUp = false end
 	local cards = player.PlayerGui:FindFirstChild("PlayerCards")
 	if cards and cards:FindFirstChild("ProfileTint") then menuUp = true end
