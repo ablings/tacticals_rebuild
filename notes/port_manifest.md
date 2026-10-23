@@ -404,3 +404,17 @@ himself; we never publish.
   change); click one step at a time and zoom the title bar first. The Claude app window over Studio swallowed menu-bar clicks until
   Edward minimised it.
 - Live check pending: the Duels TV spectator eye (2v2 pad duel + a spectator).
+
+## Live port 34 (2026-10-23 ~02:30, main PC lead; Edward in the lead's chat: "push changes" / "go")
+- From the saved working copies: lobby 5fb3a68, match 35ea957 (UI session minimised its Studios and held its saves during the
+  publish; Matchmaking / Ranked UI re-deployed from a clean worktree at 5fb3a68). Published on XF243Y: tacticals, Tutorial,
+  Matchmaking, Ranked; each retitled after Grant; no stray clicks this time.
+- Checked every copy with out/c34.lua (= c33 + ECON2 config / lobby / match + MatchQuestFeed + a loadstring compile of every
+  script: "compile all ok" in all four) and out/pre.lua (no test attributes).
+- Carries: ECON2 (scissors economy v2: match 10/5/15, daily tiers 100/200/300, weekly -> per-weapon contracts, Legendary 7,500,
+  Robux packs 1,000-12,500, +100 per level; login streak; free daily claim; reroll 250; level-up skip 1,000; in-match task feed;
+  leaderboard live level) + the UI session's rounds (Kit contracts / level-up buy, Missions streak / reroll / contracts, Shop,
+  Codes, Settings, hub polish, new scissors glyphs, contract weapon icons, Shop gear tiles, Codes gift).
+- Live checks: weapon contracts paying (needs real weapon kills), the +100 level-up scissors (bot matches never pay), the Duels
+  TV spectator eye. Known gap: the match places' after-match lobby has no RerollQuest / LevelUpItem / ClaimDailyFree handlers
+  (those live in the hub's LobbyManager); its UI should hide or route those buttons to the hub.
