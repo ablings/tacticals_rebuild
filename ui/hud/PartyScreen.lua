@@ -338,7 +338,7 @@ local function build()
 		BackgroundTransparency = 0.25, Parent = root }, { Kit.corner(10), new("UIPadding", { PaddingLeft = UDim.new(0, 52) }) })
 	-- (menus e20, grader B) a 28 px magnifier at the field's left; the text starts at 52
 	new("ImageLabel", { Name = "SearchIcon", BackgroundTransparency = 1, Image = (RAssets and RAssets.play and RAssets.play.search) or "", ImageColor3 = FIELD,
-		Position = UDim2.fromOffset(700 + 14, 156 + 13), Size = UDim2.fromOffset(28, 28), ZIndex = 3, Parent = root })
+		Position = UDim2.fromOffset(700 + 9, 156 + 7), Size = UDim2.fromOffset(40, 40), ZIndex = 3, Parent = root }) -- (e21: padded art; 40 draws ~28)
 	tabBtns = {}
 	for i, t in { { "All", 96 }, { "Friends", 128 }, { "Lobby", 116 } } do
 		local x = 1134 + (i == 1 and 0 or (i == 2 and 106 or 244))
@@ -362,7 +362,7 @@ local function build()
 	emptyLabel = label(emptyPlate, "Nobody else here yet", F_SUB, 28, 0, 30, 900, 512, FIELD, Enum.TextXAlignment.Center, 3)
 	-- (menus e20, grader B) a 64 px people glyph above the empty text
 	new("ImageLabel", { Name = "People", BackgroundTransparency = 1, Image = (RAssets and RAssets.play and RAssets.play.people) or "", ImageColor3 = FIELD,
-		Position = UDim2.fromOffset(450 - 32, 256 - 64), Size = UDim2.fromOffset(64, 64), ZIndex = 3, Parent = emptyPlate })
+		Position = UDim2.fromOffset(450 - 46, 256 - 92), Size = UDim2.fromOffset(92, 92), ZIndex = 3, Parent = emptyPlate }) -- (e21: padded art; 92 draws ~64)
 	Kit.toScale(root)
 	search:GetPropertyChangedSignal("Text"):Connect(function() if isOpen then renderGrid() end end)
 	-- party changes redraw while open

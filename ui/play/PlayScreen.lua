@@ -969,7 +969,7 @@ local function render()
 	-- screen height (59 x 70 at 19, 466), a big italic "Unranked" (cap ~444..474) and "0 / 10" under it; locked shows the
 	-- same shield + "Unranked" with "LV n / 50" as the second line (no padlock, no darker shade)
 	new("ImageLabel", { Name = "RankGlyph", BackgroundTransparency = 1, Image = glyph, ImageColor3 = C.white, ScaleType = Enum.ScaleType.Fit,
-		Position = UDim2.fromOffset(19, 466), Size = UDim2.fromOffset(59, 70), ZIndex = 5, Parent = rt })
+		Position = UDim2.fromOffset(9, 454), Size = UDim2.fromOffset(78, 92), ZIndex = 5, Parent = rt }) -- (e21, grader B: the art is padded; 78x92 draws the ~56x66 shield)
 	title(rt, rankName, 56, 0, 426, RW, 60, 5, italic(F.display))
 	title(rt, progress, 34, 0, 476, RW, 38, 5, italic(F.display))
 	if not open then rt:SetAttribute("Locked", true) end
