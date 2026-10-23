@@ -266,11 +266,9 @@ local function load(id: string, state: Instance)
 	for _, d in template:GetDescendants() do
 		if d:IsA("MeshPart") or d:IsA("SurfaceAppearance") then table.insert(assets, d) end
 	end
-	local done = false
-	task.spawn(function() pcall(ContentProvider.PreloadAsync, ContentProvider, assets); done = true end)
-	local t0 = os.clock()
-	while not done and os.clock() - t0 < 8 do task.wait(0.1) end
-	if matchId() ~= id or not state.Parent then busy = false; return end
+	-- [ARENAFIRST] 2026-10-23 (Edward, mobile / fresh account: "the other player stands in an empty void instead of the picked
+	-- map"): the map goes in at once and the meshes / textures stream in behind the loadout screen; "Loaded" still waits for the
+	-- preload (capped at 8 s). Before, the clone waited for the preload, which on a cold phone cache took most of the loadout.
 	local clone = template:Clone()
 	clone.Name = info.WorkspaceName or info.Id
 	clone:PivotTo(CFrame.new(origin))
@@ -279,6 +277,11 @@ local function load(id: string, state: Instance)
 	loaded = { id = id, map = mapId, clone = clone, saved = swapLighting(info.Folder:FindFirstChild("Lighting")) }
 	loaded.conns = bindDynamic(id, info, clone)
 	busy = false
+	local done = false
+	task.spawn(function() pcall(ContentProvider.PreloadAsync, ContentProvider, assets); done = true end)
+	local t0 = os.clock()
+	while not done and os.clock() - t0 < 8 do task.wait(0.1) end
+	if matchId() ~= id or not state.Parent then return end
 	local flow = ReplicatedStorage:FindFirstChild("MatchFlow")
 	if flow then flow:FireServer(id, "Loaded") end
 	print(`[ArenaLoader] {mapId} loaded for {id} ({#clone:GetDescendants()} instances, preload {string.format("%.1f", os.clock() - t0)} s)`)

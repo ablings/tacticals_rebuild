@@ -3,7 +3,7 @@
 -- number in a config. CombatManager / MeleeManager / GadgetManager call in here (fix/abilities_install.lua adds the calls);
 -- the victim's client does the movement part (Client.Controllers.AbilityController) through RemoteEvent Combat.AbilityFx.
 --
---   guns   Revolver Knockback Shot   a fully aimed-in hit sends the target dashing into the nearest cover (aim cancelled)
+--   guns   Revolver Knockback Shot   2 Revolver hits in a row on one target send it dashing into the nearest cover [REVOLVER2]
 --          Pump Shotgun Door Breaker a hit within DoorBreaker.Range knocks the target out of their cover
 --          (pellets / shell-by-shell reload: CombatManager + WeaponController; Dual Pistols: WeaponController + config)
 --   melee  Fists Vault Takedown      vault into an enemy: 50 damage, ~1 s topple/stun, per-target cooldown
@@ -158,6 +158,13 @@ end
 local parryWindows = setmetatable({}, { __mode = "k" }) -- [Model] = { from, to, cos }
 local breachAt = setmetatable({}, { __mode = "k" })     -- [Model] = os.clock() of the last breach (one per shotgun blast)
 local knockAt = setmetatable({}, { __mode = "k" })
+-- [REVOLVER2] 2026-10-23: Revolver shots fired per shooter (CombatManager calls A.ShotFired for every accepted shot) and each
+-- shooter's last Revolver hit { victim, shot }: the Knockback needs two hits in a row on the same target
+local revShots = setmetatable({}, { __mode = "k" })
+local revLast = setmetatable({}, { __mode = "k" })
+function A.ShotFired(shooter: Player, config)
+	if config and config.Knockback then revShots[shooter] = (revShots[shooter] or 0) + 1 end
+end
 
 -- Called by CombatManager for a validated hit, after the damage is worked out and before it's applied.
 -- Returns a reason string if the bullet was stopped (no damage), else nil (and the on-hit abilities have fired).
@@ -197,12 +204,19 @@ function A.BulletHit(shooter: Player, config, victim: Model, origin: Vector3, hi
 
 	if hum.Health - damage <= 0 then return nil end -- it kills: nothing else to do
 
-	-- Revolver Knockback Shot: a fully aimed-in hit sends the target dashing into the nearest cover
-	local aimed = type(extra) == "table" and extra.aimed == true
-	local raised = shooter.Character and shooter.Character:GetAttribute("AimRaised")
-	if config.Knockback and aimed and raised ~= false and now - (knockAt[victim] or 0) > 0.3 then
-		knockAt[victim] = now
-		push(victim, "ForceCover", { from = origin, lockout = config.Knockback.Lockout })
+	-- Revolver Knockback Shot [REVOLVER2] (Edward 2026-10-23: it kept dropping people into cover they didn't want): the SECOND
+	-- CONSECUTIVE Revolver hit on the same target sends it dashing into the nearest cover; no aim needed. A miss in between (every
+	-- shot counts through A.ShotFired) or a hit on someone else starts the count again. Was: any fully aimed-in hit.
+	if config.Knockback then
+		local shot = revShots[shooter] or 0
+		local last = revLast[shooter]
+		if last and last.victim == victim and last.shot == shot - 1 and now - (knockAt[victim] or 0) > 0.3 then
+			knockAt[victim] = now
+			revLast[shooter] = nil
+			push(victim, "ForceCover", { from = origin, lockout = config.Knockback.Lockout })
+		else
+			revLast[shooter] = { victim = victim, shot = shot }
+		end
 	end
 
 	-- Pump Shotgun Door Breaker: point blank knocks them out of their cover (once per blast, not per pellet)
