@@ -442,7 +442,9 @@ function PlayerCards.Menu(p: Player, row: GuiObject, listLeft: number?)
 				local other = o.Parent and o.Parent.Name == "Rows" and o:IsA("GuiButton") and Players:FindFirstChild(o.Name)
 				if other then
 					if other ~= p then PlayerCards.Menu(other, o, listLeft) return end
-					break
+					PlayerCards.CloseMenu()
+					o.BackgroundTransparency = 0.94 -- (e9, grader C: the pointer is still on the row, so it keeps its hover light, no blink)
+					return
 				end
 			end
 		end

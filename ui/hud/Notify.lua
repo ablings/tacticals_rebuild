@@ -93,11 +93,11 @@ end
 -- one pill (banner or inbox row), design px
 local function pill(parent, n, x, y, w, h)
 	local p = new("Frame", { Name = "Pill", BackgroundColor3 = PILL, BackgroundTransparency = 0.05, Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h),
-		ZIndex = 3, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
+		ZIndex = 3, Parent = parent }, { new("UICorner", { CornerRadius = UDim.new(0, 12) }) }) -- (menus e9, grader B: 12 px corners, was a capsule)
 	icon(p, n.icon or "check", 26, (h - 56) / 2, 56, GREEN, 4)
-	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 96, h * 0.06, w - 200, h * 0.52, nil, nil, 4)
+	local t = txt(p, n.title or "", FX, math.floor(h * 0.42), 96, h * 0.06, w - 200, h * 0.52, nil, Enum.TextXAlignment.Left, 4) -- (e9, grader B: left-aligned at +96 beside the icon)
 	t.TextScaled = false
-	txt(p, n.sub or "", FB, math.floor(h * 0.24), 96, h * 0.56, w - 200, h * 0.32, GREY, nil, 4)
+	txt(p, n.sub or "", FB, math.floor(h * 0.24), 96, h * 0.56, w - 200, h * 0.32, GREY, Enum.TextXAlignment.Left, 4)
 	rewardBox(p, n.reward, w - 96, (h - 70) / 2)
 	return p
 end
@@ -180,7 +180,7 @@ local function buildInbox()
 	x.Position = UDim2.fromOffset(1394, 120)
 	x.Parent = inboxRoot
 	x.Activated:Connect(function() Notify.CloseInbox() end)
-	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(540, 272), Size = UDim2.fromOffset(828, 768),
+	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(540, 264), Size = UDim2.fromOffset(828, 776),
 		ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, Parent = inboxRoot }) -- (e4: one scrollbar style)
 	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(828, math.max(768, #inbox * 108)), Parent = list })
 	if #inbox == 0 then
@@ -189,13 +189,13 @@ local function buildInbox()
 	end
 	for i, n in inbox do
 		local y = (i - 1) * 108
-		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(698, y + 10), Size = UDim2.fromOffset(118, 40), ZIndex = 5,
+		local chip = new("Frame", { BackgroundColor3 = PILL, BackgroundTransparency = 0.1, Position = UDim2.fromOffset(686, y + 31), Size = UDim2.fromOffset(118, 40), ZIndex = 5,
 			Parent = content }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
 		txt(chip, ago(n.t), FB, 18, 0, 0, 118, 40, GREY, nil, 6)
 		local row = pill(content, n, 0, y, 828, 102)
 		-- (2026-10-21, RIVALS pass) the first rows pop in one after another (0.03 s apart) instead of all at once
 		if Kit.popIn and i <= 10 then
-			chip.AnchorPoint = Vector2.new(0.5, 0.5); chip.Position = UDim2.fromOffset(698 + 59, y + 10 + 20)
+			chip.AnchorPoint = Vector2.new(0.5, 0.5); chip.Position = UDim2.fromOffset(686 + 59, y + 31 + 20)
 			row.AnchorPoint = Vector2.new(0.5, 0.5); row.Position = UDim2.fromOffset(414, y + 51)
 			pcall(Kit.popIn, chip, 0.08 + i * 0.03)
 			pcall(Kit.popIn, row, 0.08 + i * 0.03)
@@ -274,7 +274,8 @@ function Notify.OpenNews()
 	local order = 0
 	local function block(h)
 		order += 1
-		return new("Frame", { BackgroundTransparency = 1, LayoutOrder = order, Size = UDim2.fromOffset(W - 12, h), ZIndex = 3, Parent = col })
+		-- (menus e9, grader C) CanvasGroups, so each block can fade in after the hero
+		return new("CanvasGroup", { BackgroundTransparency = 1, GroupTransparency = 1, LayoutOrder = order, Size = UDim2.fromOffset(W - 12, h), ZIndex = 3, Parent = col })
 	end
 	local heroImg = ""
 	pcall(function()
@@ -302,6 +303,21 @@ function Notify.OpenNews()
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
 	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 18 }):Play()
 	if Kit.open then pcall(Kit.open, inboxRoot) end
+	if col.Name == "Article" then
+		-- (menus e9, grader C) the hero fades in over 0.15 s, then the blocks follow 0.05 s apart
+		local hero = col:FindFirstChild("Hero")
+		if hero then
+			hero.ImageTransparency = 1
+			TweenService:Create(hero, TweenInfo.new(0.15), { ImageTransparency = 0 }):Play()
+		end
+		local i = 0
+		for _, b in col:GetChildren() do
+			if b:IsA("CanvasGroup") then
+				i += 1
+				task.delay(0.15 + (b.LayoutOrder - 1) * 0.05, function() TweenService:Create(b, TweenInfo.new(0.2), { GroupTransparency = 0 }):Play() end)
+			end
+		end
+	end
 end
 
 ---------------------------------------------------------------------------------------------------- top-right buttons (hub)

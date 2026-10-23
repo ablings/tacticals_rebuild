@@ -194,14 +194,14 @@ local function buildLadder()
 	-- (98 wide, gap 4, 110 -> 313 tall), its colour darkening downward, an 88 px emblem overlapping its top by 20, the ELO floor
 	-- (italic 30) just under the emblem and the rank name (italic 20, 85% white) at its foot. (grader C) The columns rise from
 	-- the podium's floor one after another when the modal opens.
-	local BASE, TOPY = 466, 124 -- (e7, grader A: a lower podium so three rule lines show)
+	local BASE, TOPY = 430, 124 -- (e7-e9, grader A: the podium base sits higher so ~5 rule lines show)
 	local podium = new("Frame", { Name = "Podium", BackgroundTransparency = 1, ClipsDescendants = true, Position = UDim2.fromOffset(0, TOPY),
 		Size = UDim2.fromOffset(882, BASE - TOPY), ZIndex = 22, Parent = p })
 	local italic = function(f) return Font.new(f.Family, f.Weight, Enum.FontStyle.Italic) end
 	local cols = {}
 	for i, r in RANKS do
 		local x = 33 + (i - 1) * 102
-		local h = 110 + (i - 1) * 22
+		local h = 90 + (i - 1) * 20
 		local c = RANK_COLOR[r]
 		local col = new("Frame", { Name = r, BackgroundTransparency = 1, Position = UDim2.fromOffset(x, BASE - TOPY - h - 68), Size = UDim2.fromOffset(98, h + 68),
 			ZIndex = 22, Parent = podium })
@@ -246,6 +246,9 @@ local function buildLadder()
 		l.TextWrapped = true
 		l.TextYAlignment = Enum.TextYAlignment.Top
 	end
+	-- (menus e9, grader C) the rules fade out at the bottom edge instead of being cut
+	new("Frame", { Name = "Fade", Position = UDim2.fromOffset(30, 629 - 12 - 24), Size = UDim2.fromOffset(812, 24), BackgroundColor3 = BLACK, BorderSizePixel = 0, ZIndex = 24,
+		Parent = p }, { new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new(1, 0) }) })
 	local function rise()
 		for i, col in cols do
 			local home = col:GetAttribute("_Home") or col.Position
