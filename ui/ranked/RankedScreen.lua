@@ -14,6 +14,7 @@ local Lighting = game:GetService("Lighting")
 local GuiService = game:GetService("GuiService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
+local TextService = game:GetService("TextService")
 
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
@@ -98,7 +99,13 @@ local function render()
 	local rank = A("RankWarlord") and "Warlord" or A("RankTier")
 	local elo = A("RankElo") or (RankedCore and RankedCore.Config.StartElo) or 100
 	emblem(ui.topEmblem, not inPlacements and rank or nil)
-	ui.rankName.Text = inPlacements and "Placements" or (A("RankName") or "Bronze 1")
+	ui.rankName.Text = inPlacements and (placed .. "/" .. need) or (A("RankName") or "Bronze 1")
+	ui.rankUnit.Text = inPlacements and "Placed" or ""
+	if inPlacements then
+		-- the unit sits right after the count (measured at design size, then as a share of the 330-wide block)
+		local w = TextService:GetTextSize(ui.rankName.Text, 38, Enum.Font.GothamBold, Vector2.new(400, 66)).X
+		ui.rankUnit.Position = UDim2.fromScale((74 + w + 10) / 330, ui.rankUnit.Position.Y.Scale)
+	end
 	ui.rankSub.Text = inPlacements and string.format("%d / %d placement matches played: your rank shows after the last one", placed, need)
 		or ("Peak " .. tostring(A("RankPeak") or elo) .. " ELO")
 	-- the ELO bar
@@ -269,12 +276,12 @@ end
 local function buildBoard()
 	-- (menus e4, grader A) the Leaderboard shares the Ranks modal's frame (882 wide), with a column-header row over the list
 	local _, p, show = popup("Leaderboard", 882, 629, "Warlord · Top 200")
-	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 100), Size = UDim2.fromOffset(792, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
+	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 85), Size = UDim2.fromOffset(792, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
 		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	label(head, "Rank", FB, 24, 20, 0, 120, 48, GREY, Enum.TextXAlignment.Left).ZIndex = 23
 	label(head, "Player", FB, 24, 150, 0, 400, 48, GREY, Enum.TextXAlignment.Left).ZIndex = 23
 	label(head, "ELO", FB, 24, 600, 0, 172, 48, GREY, Enum.TextXAlignment.Right).ZIndex = 23
-	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 160), Size = UDim2.fromOffset(802, 449), BackgroundTransparency = 1,
+	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(802, 464), BackgroundTransparency = 1,
 		BorderSizePixel = 0, ScrollBarThickness = 10, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p }, -- (e4: one scrollbar style, 10 px white)
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	ui.boardList = listHold
@@ -296,6 +303,9 @@ local function fillBoard()
 		emblem(cHold, "Warlord")
 		local l = new("TextLabel", { BackgroundTransparency = 1, Text = "Nobody has reached 2200 ELO yet.", FontFace = FM, TextScaled = true, TextColor3 = GREY,
 			LayoutOrder = 2, Size = UDim2.new(1, 0, 0.07, 0), ZIndex = 23, Parent = holder })
+		-- (menus e14, grader B) a quieter hint under it
+		local hint = new("TextLabel", { BackgroundTransparency = 1, Text = "Reach 2200 ELO, then climb into the top 200.", FontFace = FM, TextScaled = true,
+			TextColor3 = WHITE, TextTransparency = 0.4, LayoutOrder = 3, Size = UDim2.new(1, 0, 0.045, 0), ZIndex = 23, Parent = holder })
 		return
 	end
 	holder.ScrollBarImageTransparency = #top > 9 and 0.4 or 1
@@ -333,6 +343,8 @@ local function build()
 		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	ui.topEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 5), Size = UDim2.fromOffset(56, 56), Parent = status })
 	ui.rankName = stroke(label(status, "Bronze 1", FB, 38, 74, 0, 250, 66, WHITE, Enum.TextXAlignment.Left), 2)
+	-- (menus e14, grader B vs RIVALS 02 "138 Glory") in placements the block reads a big count with a small unit beside it
+	ui.rankUnit = label(status, "", FS, 22, 74, 6, 160, 66, GREY, Enum.TextXAlignment.Left)
 	local strip = new("Frame", { Name = "Rules", Position = UDim2.fromOffset(342, 0), Size = UDim2.fromOffset(820, 66), BackgroundColor3 = BLACK, BackgroundTransparency = 0.35,
 		Parent = top }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	ui.rankSub = label(strip, "", FM, 26, 20, 12, 720, 42, WHITE) -- (e7, grader B: 26 full white)

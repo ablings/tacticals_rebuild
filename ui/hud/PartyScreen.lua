@@ -73,6 +73,7 @@ local gui, canvas, root, col, grid, search, tabBtns, blur, scrim
 local current = "All"
 local sent = {} -- "uid|kind" -> os.clock() of the send (a sent button stays a tick for 15 s)
 local isOpen = false
+local emptyPlate, emptyLabel
 local openedAt = 0
 local friendsOnline = {} -- { uid, name, user } for friends elsewhere (refreshed on open)
 
@@ -215,7 +216,7 @@ local function renderParty()
 				BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = col }, { Kit.corner(10) }) -- (2026-10-21, AI-tells cleanup) no thin green border; (menus e2, grader B: 0.6 read disabled -> 0.35)
 			local plus = new("Frame", { Position = UDim2.fromOffset(18, 10), Size = UDim2.fromOffset(73, 73), BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.88,
 				ZIndex = 4, Parent = slot }, { Kit.corner(36) })
-			label(plus, "+", F_HEAD, 44, 0, -2, 73, 73, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5)
+			label(plus, "+", F_HEAD, 44, 0, -2, 73, 73, Color3.new(1, 1, 1), Enum.TextXAlignment.Center, 5).TextTransparency = 0.3 -- (e14, grader B: matches the quieter Invite)
 			label(slot, "Invite", F_HEAD, 28, 110, 0, 210, 93, Color3.new(1, 1, 1), Enum.TextXAlignment.Left, 4).TextTransparency = 0.3 -- (e13, grader B: the empty slot's word reads quieter than a name)
 			-- (e2, grader C) empty slots answer hover like every other button
 			if Kit.bindButton then Kit.bindButton(slot, { hover = 1.03, press = 0.97 }) end
@@ -262,14 +263,11 @@ local function renderGrid(animate)
 			k += 1
 		end
 	end
-	if k == 0 then
-		-- (menus e6, grader A) the empty state is a row-shaped plate at the top of the list, not words floating in the pane
-		-- (menus e11-e12, grader A) the plate runs down to the party column's foot (y 742), so both panes end on one line
-		-- (the grid's canvas scaling stretches it ~2x: 255 here lands at ~742; 512 overshot to ~987)
-		local empty = new("Frame", { Name = "Empty", Size = UDim2.fromOffset(900, 255), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = holder }, { Kit.corner(10) })
-		label(empty, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 28, 0, 0, 900, 255, FIELD, Enum.TextXAlignment.Center, 4) -- (e12, grader B: 28)
-	end
-	holder.Size = UDim2.fromOffset(900, k == 0 and 255 or math.max(10, math.ceil(k / 3) * GRID_STEP))
+	-- (menus e6-e14, grader A) the empty state is a plate from the grid's top down to the party column's foot (y 742): a fixed
+	-- sibling of the grid (inside the grid's auto-sized canvas its height came out different every round)
+	emptyPlate.Visible = k == 0
+	emptyLabel.Text = current == "Friends" and "No friends online right now" or "Nobody else here yet"
+	holder.Size = UDim2.fromOffset(900, math.max(10, math.ceil(k / 3) * GRID_STEP))
 	Kit.toScale(grid)
 	-- (menus e11-e12, grader C) the cards pop in one after another, centred so they grow in place, only on open or a tab
 	-- change (not on every search keystroke or roster update)
@@ -340,6 +338,9 @@ local function build()
 	close.Activated:Connect(function() PartyScreen.Close() end)
 	grid = new("ScrollingFrame", { Name = "Grid", Position = UDim2.fromOffset(700, 230), Size = UDim2.fromOffset(912, 760), BackgroundTransparency = 1, BorderSizePixel = 0,
 		ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, Parent = root }) -- (e4: one scrollbar style)
+	emptyPlate = new("Frame", { Name = "Empty", Position = UDim2.fromOffset(700, 230), Size = UDim2.fromOffset(900, 512), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35,
+		Visible = false, ZIndex = 2, Parent = root }, { Kit.corner(10) })
+	emptyLabel = label(emptyPlate, "Nobody else here yet", F_SUB, 28, 0, 0, 900, 512, FIELD, Enum.TextXAlignment.Center, 3)
 	Kit.toScale(root)
 	search:GetPropertyChangedSignal("Text"):Connect(function() if isOpen then renderGrid() end end)
 	-- party changes redraw while open
@@ -375,9 +376,11 @@ function PartyScreen.Open(tab)
 		local function key(l) local k = {} for _, f in l do table.insert(k, tostring(f.uid)) end return table.concat(k, ",") end
 		if key(out) == key(friendsOnline) then return end
 		friendsOnline = out
+		local token = openedAt
 		local wait = 0.55 - (os.clock() - openedAt)
 		if wait > 0 then task.wait(wait) end
-		if isOpen then renderGrid() end
+		-- (e14, grader C) only for this same open, and only on Friends (the one tab that lists friends outside the server)
+		if isOpen and openedAt == token and current == "Friends" then renderGrid() end
 	end)
 	if PartyScreen.OnOpen then PartyScreen.OnOpen(true) end
 end

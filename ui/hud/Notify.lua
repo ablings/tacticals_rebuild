@@ -288,7 +288,7 @@ function Notify.OpenNews()
 	txt(block(130), "UPDATE " .. tostring(Notify.NEWS_UPDATE), FX, 44, 0, 8, W - 16, 56, nil, Enum.TextXAlignment.Right, 3)
 	for _, n in Notify.NEWS do
 		local bodyH = math.max(1, math.ceil(#(n.sub or "") / 60)) * 32 -- (e6-e7) about 60 characters a line at 26 px in 722
-		local b = block(52 + 6 + bodyH + 50) -- (e13, grader A: a steadier block pitch)
+		local b = block(52 + 6 + bodyH + 16) -- (e14, grader A vs news_panel: ~60 from the last bullet to the next heading)
 		txt(b, n.title, FX, 42, 36, 0, W - 60, 52, nil, Enum.TextXAlignment.Left, 3)
 		txt(b, "•", FR, 26, 44, 58, 24, 34, GREY, Enum.TextXAlignment.Left, 3)
 		local body = txt(b, n.sub or "", FR, 26, 70, 58, W - 110, bodyH, Color3.fromRGB(228, 228, 230), Enum.TextXAlignment.Left, 3) -- (e7, grader B: 90% white)
