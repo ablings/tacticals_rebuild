@@ -25,6 +25,12 @@ Notify.ICONS = { bell = "rbxassetid://93058069459479", check = "rbxassetid://134
 
 -- (2026-10-21, AI-tells cleanup) Builder Sans -> Oswald Bold (titles, counts) / Rubik SemiBold (sub lines, chips, tips);
 -- the check / done colour is field green #8DBF5A (was the #FFD400 yellow), the reward icon cream #ECE6D2
+local BLUR = 24 -- the menus' blur (rivals Theme.blur)
+pcall(function() -- FindFirstChild: the match place's UIKit may have no Rivals folder (WaitForChild would hang the module)
+	local r = script.Parent:FindFirstChild("Rivals")
+	local t = r and r:FindFirstChild("Theme")
+	if t then BLUR = require(t).blur or BLUR end
+end)
 local FX = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local GREEN = Color3.fromRGB(141, 191, 90) -- field green: done
@@ -126,11 +132,13 @@ local function nextBanner()
 	local home = p.Position
 	p.Position = home - UDim2.fromScale(0, 0.14)
 	local sc = new("UIScale", { Scale = 0.9, Parent = p })
+	p.GroupTransparency = 1 -- (e18, grader C: the banner fades in 0.2 s and out 0.3 s as it slides)
+	TweenService:Create(p, TweenInfo.new(0.2), { GroupTransparency = 0 }):Play()
 	TweenService:Create(p, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Position = home }):Play()
 	TweenService:Create(sc, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	if Kit.sfx then pcall(Kit.sfx, "reward") end
 	task.delay(3.4, function()
-		TweenService:Create(p, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = home - UDim2.fromScale(0, 0.14) }):Play()
+		TweenService:Create(p, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = home - UDim2.fromScale(0, 0.14), GroupTransparency = 1 }):Play()
 		task.delay(0.32, function()
 			holder:Destroy()
 			showing = false
@@ -212,7 +220,7 @@ local function buildInbox()
 		list.ScrollingEnabled = false
 	end
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
-	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 24 }):Play() -- (e10, grader C: Theme.blur, like the other menus)
+	TweenService:Create(blur, TweenInfo.new(0.25), { Size = BLUR }):Play() -- (e10-e18, grader C: the shared menu blur)
 	if Kit.open then pcall(Kit.open, inboxRoot) end
 end
 function Notify.OpenInbox()
@@ -302,7 +310,7 @@ function Notify.OpenNews()
 	x.Activated:Connect(function() Notify.CloseInbox() end)
 	Kit.toScale(inboxRoot)
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
-	TweenService:Create(blur, TweenInfo.new(0.25), { Size = 24 }):Play() -- (e10, grader C: Theme.blur, like the other menus)
+	TweenService:Create(blur, TweenInfo.new(0.25), { Size = BLUR }):Play() -- (e10-e18, grader C: the shared menu blur)
 	if Kit.open then pcall(Kit.open, inboxRoot) end
 	if col.Name == "Article" then
 		-- (menus e9, grader C) the hero fades in over 0.15 s, then the blocks follow 0.05 s apart

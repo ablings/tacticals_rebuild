@@ -20,7 +20,7 @@ local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
 local Kit = require(UIKit:WaitForChild("Kit"))
 local Assets = {} -- the Rivals art ids (banner shields); empty if the module isn't there
-pcall(function() Assets = require(UIKit:WaitForChild("Rivals"):WaitForChild("Assets", 5)) end)
+pcall(function() local r = UIKit:FindFirstChild("Rivals") if r and r:FindFirstChild("Assets") then Assets = require(r.Assets) end end)
 local C, new = Theme.color, Kit.new
 local RankedCore
 pcall(function() RankedCore = require(ReplicatedStorage.Modules.Shared:WaitForChild("RankedCore", 10)) end)
@@ -273,7 +273,7 @@ local function buildLadder()
 		"Past Commander 3 (2200 ELO) the top 200 players are Warlord.",
 	}
 	-- (e17, grader A vs 05) ~36 from the pillar base to the first rule
-	new("Frame", { Name = "Gap", BackgroundTransparency = 1, LayoutOrder = 3, Size = UDim2.fromOffset(10, 14), Parent = body })
+	new("Frame", { Name = "Gap", BackgroundTransparency = 1, LayoutOrder = 3, Size = UDim2.fromOffset(10, 6), Parent = body })
 	for i, t in rules do
 		local l = label(body, "•  " .. t, FM, 26, 0, 0, 800, 64, GREY, Enum.TextXAlignment.Left)
 		l.LayoutOrder = 3 + i
@@ -299,6 +299,9 @@ end
 local function buildBoard()
 	-- (menus e4, grader A) the Leaderboard shares the Ranks modal's frame (882 wide), with a column-header row over the list
 	local _, p, show = popup("Leaderboard", 882, 629, "Warlord · Top 200")
+	-- (menus e18, grader B) the Warlord badge before the title (the title is ~470 wide, centred)
+	local badge = new("Frame", { Name = "TitleBadge", BackgroundTransparency = 1, Position = UDim2.fromOffset(441 - 235 - 14 - 52, 24), Size = UDim2.fromOffset(52, 52), ZIndex = 23, Parent = p })
+	emblem(badge, "Warlord")
 	local head = new("Frame", { Name = "Head", Position = UDim2.fromOffset(40, 85), Size = UDim2.fromOffset(803, 48), BackgroundColor3 = WHITE, BackgroundTransparency = 0.9,
 		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
 	-- (e15, grader B) the column heads are quiet: 20 px at 60% white
@@ -312,11 +315,12 @@ local function buildBoard()
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	ui.boardList = listHold
 	-- (menus e16, grader B) your own row pinned at the foot, so you always see where you stand
-	local own = new("Frame", { Name = "Own", Position = UDim2.fromOffset(40, 629 - 39 - 64), Size = UDim2.fromOffset(803, 64), -- (e17, grader A: 39 in on every side)
+	local own = new("CanvasGroup", { Name = "Own", Position = UDim2.fromOffset(40, 629 - 39 - 64), Size = UDim2.fromOffset(803, 64), -- (e17, grader A: 39 in on every side)
 		 BackgroundColor3 = WHITE, BackgroundTransparency = 0.82,
 		ZIndex = 22, Parent = p }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	ui.ownRow = own
-	ui.ownRank = label(own, "#-", FB, 28, 20, 0, 120, 64, WHITE, Enum.TextXAlignment.Left)
+	Kit.centreAnchor(own) -- (e18, grader C: a CanvasGroup grown from its centre, so it fades and pops in place)
+	ui.ownRank = label(own, "#-", FB, 32, 20, 0, 120, 64, WHITE, Enum.TextXAlignment.Left)
 	-- (e17, grader B) your headshot before the name
 	local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromOffset(150, 12), Size = UDim2.fromOffset(40, 40), ZIndex = 23, Parent = own },
 		{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) })
