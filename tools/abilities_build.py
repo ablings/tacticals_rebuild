@@ -3,7 +3,7 @@ Usage (from tacticals_rebuild): python tools/abilities_build.py [--run lobby|mat
 Run fix/weapon_abilities.lua first (phase 1). Studio ids change on reload (list_roblox_studios)."""
 import json, os, re, subprocess, sys, tempfile
 
-SIDS = {"lobby": "835403f5-1c18-4451-b6da-d25ee5c2f672", "match": "221cdf09-8c72-40c3-83ef-afb3ad146aac"}
+SIDS = {"lobby": "0feeb66a-34af-4635-b3fc-13973643e725", "match": "6da690bb-77bb-4c48-b43a-9ffd3efdf1d0"}
 CLI = r"C:\Users\aroki\Documents\rivals_practice\mcpcli.py"
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.join(HERE, "..")
