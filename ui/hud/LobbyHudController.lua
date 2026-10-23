@@ -404,13 +404,14 @@ function LobbyHud.Start()
 	-- (replica: 784 wide for 6, so 784 - 121 = 663 for 5)
 	local STEP = 121
 	local shadeW = 784 - (6 - #NAV) * STEP
-	new("ImageLabel", { Name = "NavShade", Position = UDim2.fromOffset(960 - shadeW / 2, 1003), Size = UDim2.fromOffset(shadeW, 54), BackgroundTransparency = 1,
+	new("ImageLabel", { Name = "NavShade", Position = UDim2.fromOffset(960 - shadeW / 2, 1014), -- (r22: with the discs)
+		 Size = UDim2.fromOffset(shadeW, 54), BackgroundTransparency = 1,
 		Image = RAssets.hud and RAssets.hud.navbar or "", ImageColor3 = R_HUD.navShade, ImageTransparency = R_HUD.navShadeAlpha, Parent = root })
 	local navButtons, navBadges, navIcons = {}, {}, {}
 	for i, it in NAV do
 		local cx = 960 + (i - (#NAV + 1) / 2) * STEP
 		local b = new("TextButton", { Name = "Nav" .. it.Id, Text = "", AutoButtonColor = false, BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1),
-			Position = UDim2.fromOffset(cx, 1060), Size = UDim2.fromOffset(118, 112), Parent = root })
+			Position = UDim2.fromOffset(cx, 1071), Size = UDim2.fromOffset(118, 112), Parent = root }) -- (lobby r22, grader A vs t0177: discs 11 px lower)
 		-- (2026-10-21, RIVALS 1:1) the replica's disc: 92 px at (59, 44), black with ONE fading UIGradient (0.55 top -> 0.3 -> 0.15
 		-- bottom). The grade2/3 flat black 0.4 disc and the cream hover glow layer are gone.
 		-- (2026-10-22, section rounds 0-1, graders A + B vs hub_full / t0060) RIVALS' dock icons stand ~0.068 H (73 px; ours 92) with

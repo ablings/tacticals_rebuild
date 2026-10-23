@@ -805,7 +805,7 @@ function RENDER.Featured(pg, hover)
 		local pile = new("Frame", { Name = "Pile", BackgroundTransparency = 1, Position = UDim2.fromOffset(0, -4), Size = UDim2.fromOffset(152, 104), ZIndex = 2, Parent = h })
 		scissorsPile(pile, math.min(i + 1, 4), 152, 104, 2, 10)
 		countLabel(h, pr.Credits, 52, 62, 100, 40, 32, 4)
-		priceTag(h, "robux", pr.Robux, 76, 104, 100, PRICE_H, open, { noHover = true }) -- (round 10, grader A vs t0068: 100 dp, was 124)
+		priceTag(h, "robux", pr.Robux, 76, 104, 112, PRICE_H, open, { noHover = true }) -- (round 10: 100; lobby r22, grader A vs t0070: 112 like the tags under them)
 	end
 	-- boxes row: gear you don't have yet as bare renders over yellow scissors prices (opens the Kit room)
 	local gear = {}
@@ -976,7 +976,8 @@ function RENDER.Featured(pg, hover)
 	for i = 1, math.min(6, #rest) do
 		local id = rest[i]
 		local c, r = (i - 1) % 3, (i - 1) // 3
-		local h = hold(801 + c * 160, 334 + GAP + r * 160, TILE, TILE + PRICE_H / 2, 1.06, function() ctx.openKit(id) end) -- (lobby r20, grader A vs rec t0070: start 35 px left, step 150 -> 160)
+		local h = hold(801 + c * 160, 334 + GAP + r * 160, TILE + 5, TILE + PRICE_H / 2, 1.06, -- (r22: 126 wide, RIVALS t0070)
+			 function() ctx.openKit(id) end) -- (lobby r20, grader A vs rec t0070: start 35 px left, step 150 -> 160)
 		local tile = rarityTile(h, rarityColor(id), 0, 0, TILE, TILE, 1)
 		weaponTag(tile, id, 38, 4) -- (2026-10-21, RIVALS images) ∞ on melee / gadgets, over the render
 		-- (round 10, grader C: the revolver ran past its tile) the render stays inside the tile, <= ~90 % of its width

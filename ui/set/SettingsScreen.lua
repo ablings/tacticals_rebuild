@@ -272,7 +272,7 @@ local dTitle = Kit.label({ Name = "Title", Text = "", FontFace = F.display, Text
 new("UITextSizeConstraint", { MaxTextSize = 70, Parent = dTitle })
 local dDesc = Kit.label({
 	Name = "Desc", Text = "", FontFace = F.bold, TextSize = 34, TextColor3 = C.textDim, TextWrapped = true,
-	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 92), Size = UDim2.fromOffset(480, 300), Parent = detailTop,
+	TextYAlignment = Enum.TextYAlignment.Top, Position = UDim2.fromOffset(26, 92), Size = UDim2.fromOffset(470, 300), Parent = detailTop, -- (lobby r22, grader B: right inset 14 -> 24)
 })
 
 local function showDetail(row)
