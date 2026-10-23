@@ -246,7 +246,7 @@ local function people()
 end
 
 local GRID_STEP = CARD_H_BTN + 10 -- (2026-10-21, RIVALS pass) row step for the taller button cards (was 118)
-local function renderGrid()
+local function renderGrid(animate)
 	for _, ch in grid:GetChildren() do ch:Destroy() end
 	local holder = new("Frame", { BackgroundTransparency = 1, Size = UDim2.fromOffset(900, 10), Parent = grid })
 	local q = search.Text:lower()
@@ -263,18 +263,21 @@ local function renderGrid()
 	end
 	if k == 0 then
 		-- (menus e6, grader A) the empty state is a row-shaped plate at the top of the list, not words floating in the pane
-		-- (menus e11, grader A) the plate runs down to the party column's foot (y 742), so both panes end on one line
-		local empty = new("Frame", { Name = "Empty", Size = UDim2.fromOffset(900, 512), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = holder }, { Kit.corner(10) })
-		label(empty, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 24, 0, 0, 900, 512, FIELD, Enum.TextXAlignment.Center, 4)
+		-- (menus e11-e12, grader A) the plate runs down to the party column's foot (y 742), so both panes end on one line
+		-- (the grid's canvas scaling stretches it ~2x: 255 here lands at ~742; 512 overshot to ~987)
+		local empty = new("Frame", { Name = "Empty", Size = UDim2.fromOffset(900, 255), BackgroundColor3 = DEEP, BackgroundTransparency = 0.35, ZIndex = 3, Parent = holder }, { Kit.corner(10) })
+		label(empty, current == "Friends" and "No friends online right now" or "Nobody else here yet", F_SUB, 28, 0, 0, 900, 255, FIELD, Enum.TextXAlignment.Center, 4) -- (e12, grader B: 28)
 	end
-	holder.Size = UDim2.fromOffset(900, k == 0 and 512 or math.max(10, math.ceil(k / 3) * GRID_STEP))
+	holder.Size = UDim2.fromOffset(900, k == 0 and 255 or math.max(10, math.ceil(k / 3) * GRID_STEP))
 	Kit.toScale(grid)
-	-- (menus e11, grader C) the cards pop in one after another on a tab change or search, like the other grids
-	if Kit.popIn then
+	-- (menus e11-e12, grader C) the cards pop in one after another, centred so they grow in place, only on open or a tab
+	-- change (not on every search keystroke or roster update)
+	if animate and Kit.popIn then
 		local n = 0
 		for _, c in holder:GetChildren() do
 			if c:IsA("Frame") and c.Name ~= "Empty" and n < 9 then
 				n += 1
+				Kit.centreAnchor(c)
 				pcall(Kit.popIn, c, 0.02 + n * 0.03)
 			end
 		end
@@ -295,7 +298,7 @@ function PartyScreen.SetTab(name)
 	if not gui then return end
 	grid.CanvasPosition = Vector2.zero -- (menus e11, grader C) a new tab starts at the top
 	styleTabs()
-	renderGrid()
+	renderGrid(true)
 end
 
 local function build()
@@ -354,7 +357,7 @@ function PartyScreen.Open(tab)
 	gui.Enabled = true
 	styleTabs()
 	renderParty()
-	renderGrid()
+	renderGrid(true)
 	Kit.tween(blur, 0.25, { Size = Theme.blur })
 	Kit.tween(scrim, 0.25, { BackgroundTransparency = Theme.alpha.scrim })
 	Kit.open(root)

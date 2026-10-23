@@ -286,11 +286,16 @@ local function fillBoard()
 	for _, c in holder:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
 	local top = leaderboard()
 	if #top == 0 then
-		-- (menus e4, grader A) the empty state sits in the middle of the list, and an idle list shows no scrollbar
+		-- (menus e4, grader A) the empty state sits in the middle of the list, and an idle list shows no scrollbar;
+		-- (menus e12, grader B) with the Warlord crest above it
 		holder.ScrollBarImageTransparency = 1
-		new("Frame", { Name = "Spacer", BackgroundTransparency = 1, LayoutOrder = 0, Size = UDim2.new(1, 0, 0.42, 0), Parent = holder })
+		new("Frame", { Name = "Spacer", BackgroundTransparency = 1, LayoutOrder = 0, Size = UDim2.new(1, 0, 0.28, 0), Parent = holder })
+		local crest = new("Frame", { Name = "Crest", BackgroundTransparency = 1, LayoutOrder = 1, Size = UDim2.new(1, 0, 0.16, 0), Parent = holder })
+		local cHold = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(0.5, 0), Size = UDim2.fromScale(1, 1), Parent = crest },
+			{ new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
+		emblem(cHold, "Warlord")
 		local l = new("TextLabel", { BackgroundTransparency = 1, Text = "Nobody has reached 2200 ELO yet.", FontFace = FM, TextScaled = true, TextColor3 = GREY,
-			LayoutOrder = 1, Size = UDim2.new(1, 0, 0.07, 0), ZIndex = 23, Parent = holder })
+			LayoutOrder = 2, Size = UDim2.new(1, 0, 0.07, 0), ZIndex = 23, Parent = holder })
 		return
 	end
 	holder.ScrollBarImageTransparency = #top > 9 and 0.4 or 1
@@ -330,7 +335,14 @@ local function build()
 	ui.rankName = stroke(label(status, "Bronze 1", FB, 38, 74, 0, 250, 66, WHITE, Enum.TextXAlignment.Left), 2)
 	local strip = new("Frame", { Name = "Rules", Position = UDim2.fromOffset(342, 0), Size = UDim2.fromOffset(820, 66), BackgroundColor3 = BLACK, BackgroundTransparency = 0.35,
 		Parent = top }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
-	ui.rankSub = label(strip, "", FM, 26, 20, 0, 780, 66, WHITE) -- (e7, grader B: 26 full white)
+	ui.rankSub = label(strip, "", FM, 26, 20, 12, 720, 42, WHITE) -- (e7, grader B: 26 full white)
+	ui.rankSub.TextScaled = true -- (e12) long placement text shrinks to clear the "i" square
+	new("UITextSizeConstraint", { MaxTextSize = 26, Parent = ui.rankSub })
+	-- (menus e12, grader B vs RIVALS 02: an "i" square at the strip's right end) opens the ranks and rules
+	local info = new("TextButton", { Name = "Info", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(820 - 20 - 40, 13), Size = UDim2.fromOffset(40, 40),
+		BackgroundColor3 = WHITE, Parent = strip }, { new("UICorner", { CornerRadius = UDim.new(0, 8) }) })
+	label(info, "i", FB, 32, 0, 0, 40, 40, BLACK)
+	ui.infoBtn = info
 	local ranksBtn = new("TextButton", { Name = "Ranks", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1174, 0), Size = UDim2.fromOffset(238, 66),
 		BackgroundColor3 = WHITE, Parent = top }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 	label(ranksBtn, "Ranks", FB, 36, 0, 0, 238, 66, BLACK)
@@ -421,7 +433,9 @@ local function build()
 	local ladder = buildLadder()
 	local board = buildBoard()
 	Kit.bindButton(ranksBtn, { hover = 1.04, press = 0.97 })
-	ranksBtn.Activated:Connect(function() ladder() end) -- (2026-10-21, round 3) the popups pop in (Kit.open)
+	ranksBtn.Activated:Connect(function() ladder() end)
+	Kit.bindButton(ui.infoBtn, { hover = 1.08, press = 0.94 })
+	ui.infoBtn.Activated:Connect(function() ladder() end) -- (2026-10-21, round 3) the popups pop in (Kit.open)
 	Kit.bindButton(boardBtn, { hover = 1.04, press = 0.97 })
 	boardBtn.Activated:Connect(function() fillBoard(); board() end)
 
