@@ -441,3 +441,12 @@ himself; we never publish.
   hint strip, vote plates, m9 runtime-error fix), lobby rounds r12-r24 + menus e4-e22 (Ranked / Party / Notify / PlayerCards /
   Tooltip), Notify blur no-hang. Lead: none new (RoundEndDelay kept at 3; RIVALS ~5 is Edward's call).
 - Live checks: the 3 new images show for a non-group account; the mobile tutorial on a phone.
+
+## Live port 37 (2026-10-23, main PC lead; Edward: "go and keep going")
+- From pinned 4bffcd0 (both .rbxl; includes e23). Published on XF243Y: tacticals, Tutorial, Matchmaking, Ranked; each retitled.
+- Every copy: c35 all present where expected + compile all ok; pre.lua clean; bot match in the Matchmaking copy ran to the
+  post-match lobby with a clean console (51 lines, MCP proxy only).
+- Carries (UI): live port 36 check fixes (Party Friends grid not stretched, handles / online lines; inbox age chip off the reward
+  boxes; weekly-contract check vs wide rewards; Ranked tile badges = fire shield in every state), e23 inbox / toast icon tile.
+- Blocker hit + workaround: computer use was held by the UI session (Obsidian sync / closing the player). The lock cleared ~30 s
+  after it ended its turn; the minimised Studio window was restored with user32 ShowWindow(9) (bring_primary alone didn't).
