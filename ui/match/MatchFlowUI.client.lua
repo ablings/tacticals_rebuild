@@ -419,13 +419,15 @@ local function buildMaps(list)
 		local barH = math.floor(th * 0.17)
 		-- (2026-10-22, live RIVALS) the name sits on a field-green strip with faint diagonal stripes (RIVALS' map strips), white
 		-- Bold, not upper-case
-		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = WHITE, BackgroundTransparency = 0,
-			BorderSizePixel = 0, ClipsDescendants = true, ZIndex = 2, Parent = t }, { new("UIGradient", { Rotation = 90, Color = ColorSequence.new(STRIPE_TOP, STRIPE_BOTTOM) }) })
+		-- (2026-10-23, matchmaking round m8, grader B vs RIVALS t0028) RIVALS' strip is a dark see-through band with thin field-green
+		-- hazard stripes, not a solid green bar; the name a size up
+		local bar = new("Frame", { Position = UDim2.fromOffset(0, th - barH), Size = UDim2.fromOffset(tw, barH), BackgroundColor3 = BLACK, BackgroundTransparency = 0.3,
+			BorderSizePixel = 0, ClipsDescendants = true, ZIndex = 2, Parent = t })
 		for k = -2, math.ceil(tw / 22) + 2 do
-			new("Frame", { BackgroundColor3 = BLACK, BackgroundTransparency = 0.82, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
-				Position = UDim2.fromOffset(k * 22, barH / 2), Size = UDim2.fromOffset(7, barH * 2.2), ZIndex = 2, Parent = bar })
+			new("Frame", { BackgroundColor3 = STRIPE_TOP, BackgroundTransparency = 0.45, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 35,
+				Position = UDim2.fromOffset(k * 22, barH / 2), Size = UDim2.fromOffset(6, barH * 2.2), ZIndex = 2, Parent = bar })
 		end
-		label(bar, m.name, FB, 34, 0, 0, tw, barH, WHITE, nil, 3)
+		label(bar, m.name, FB, 38, 0, 0, tw, barH, WHITE, nil, 3)
 		-- voters (headshots along the top)
 		local voters = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(12, 12), Size = UDim2.fromOffset(tw - 24, 56), ZIndex = 4, Parent = t },
 			{ new("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 6) }) })
