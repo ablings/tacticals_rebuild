@@ -177,7 +177,7 @@ local function build()
 		g.Position = UDim2.fromScale(0.5, 0.5)
 		g.Text = b.glyph
 		g.TextScaled = true
-		g.FontFace = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+		g.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 		g.TextColor3 = ICONC
 		g.Parent = btn
 		local img
@@ -453,7 +453,7 @@ function controller.OpenEditor()
 		z.BackgroundTransparency = 1
 		z.Text = text
 		z.TextScaled = true
-		z.FontFace = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+		z.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 		z.TextColor3 = Color3.new(0, 0, 0)
 		z.TextTransparency = 0.6
 		z.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -494,7 +494,7 @@ function controller.OpenEditor()
 	sl.Size = UDim2.fromScale(0.8, 0.22)
 	sl.Text = "Joystick"
 	sl.TextScaled = true
-	sl.FontFace = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+	sl.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 	sl.TextColor3 = Color3.fromRGB(236, 232, 218)
 	sl.ZIndex = 3
 	sl.Parent = stick
@@ -686,7 +686,7 @@ function controller.OpenEditor()
 		b:AddTag("Nonapplicable") -- (the old InterfaceController would hover-tween this Offset button to 0 x 0)
 		b.Text = text
 		b.TextScaled = true
-		b.FontFace = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+		b.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 		b.TextColor3 = Color3.new(1, 1, 1)
 		b.BackgroundColor3 = Color3.new(1, 1, 1)
 		b.BackgroundTransparency = 1

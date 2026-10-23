@@ -8,7 +8,8 @@
 --     remembered (and kept up to date if a script turns one on while the gate is up, or a new one appears), then put back
 --     exactly when the gate drops. ProximityPromptService is off and the Roblox player list hidden too.
 --   * only PadUI's teleport screen (TACTICALS wordmark, mode, tip, Loading counter; handed to TeleportService) stays, with a
---     big centred MATCH FOUND (+ RANKED / mode) on top of it here, which steps aside once Teleporting starts.
+--     RIVALS' teleport look on top of it here (2026-10-23: blurred world, three dots, "Match found" + mode bottom right),
+--     which steps aside once Teleporting starts.
 --   * our hotkeys (letters, numbers, Tab, Esc, the gamepad buttons) are sunk at a high ContextAction priority, so no menu opens.
 -- Falls through (MM_Status leaves Found / Teleporting without a teleport, or TeleportInitFailed): everything is restored and a
 -- Whoops says so, with the server's MM_FailReason when set (fix/mm_failreason.lua; set just before MM_Status -> nil).
@@ -32,6 +33,8 @@ local active = false
 local wanted = {}          -- [LayerCollector] = Enabled it should have when the gate drops
 local conns = {}
 local gui, stamp, sub
+local dots = {}            -- (2026-10-23, m1) RIVALS' three pulsing dots (t0020)
+local blur: BlurEffect? = nil
 local promptsWas, listWas
 local failedAt = nil       -- a TeleportInitFailed: stay down until MM_Status changes again
 
@@ -42,16 +45,17 @@ local function modeText()
 	local q = player:GetAttribute("MM_Queue")
 	if q == nil then return "" end
 	local oq = okCfg and Config.QueueById and Config.QueueById(q)
-	if oq then return (oq.Ranked and "RANKED  ·  " or "") .. string.upper(tostring(oq.Mode or "")) end
+	if oq then return (oq.Ranked and "Ranked " or "") .. tostring(oq.Mode or "") end -- (m1) RIVALS casing: "Ranked 1v1"
 	-- (2026-10-20 review: the line was blank) unknown to QueueById: read the id itself. Ranked ids start with "R" ("R1v1"),
 	-- a bare "Ranked" is just RANKED
 	local s = tostring(q)
-	if s:lower() == "ranked" then return "RANKED" end
+	if s:lower() == "ranked" then return "Ranked" end
 	local ranked = s:match("^R%d") ~= nil
 	local mode = ranked and s:sub(2) or s
-	return (ranked and "RANKED  ·  " or "") .. string.upper(mode)
+	return (ranked and "Ranked " or "") .. mode
 end
 
+local BACK_T = 0.35
 local function build()
 	if gui and gui.Parent then return end
 	gui = Instance.new("ScreenGui")
@@ -62,14 +66,15 @@ local function build()
 	gui.Enabled = false
 	gui.Parent = player:WaitForChild("PlayerGui")
 	-- its own backdrop (the teleport screen's colours) while Found; it fades at Teleporting to show PadUI's loading screen
+	-- (2026-10-23, matchmaking round m1, RIVALS t0020) the world stays visible behind: blurred (BlurEffect, on in enter()) and
+	-- dimmed by a dark wash, darker at the centre where the dots sit
 	local back = Instance.new("Frame")
 	back.Name = "Backdrop"
-	back.BackgroundColor3 = Color3.new(1, 1, 1)
+	back.BackgroundColor3 = Color3.fromRGB(8, 9, 7)
+	back.BackgroundTransparency = BACK_T
 	back.BorderSizePixel = 0
 	back.Size = UDim2.fromScale(1, 1)
 	back.Parent = gui
-	local bg = Instance.new("UIGradient"); bg.Rotation = 90
-	bg.Color = ColorSequence.new(Color3.fromRGB(32, 37, 27), Color3.fromRGB(8, 9, 7)); bg.Parent = back
 	local canvas = Instance.new("Frame")
 	canvas.BackgroundTransparency = 1
 	canvas.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -77,26 +82,39 @@ local function build()
 	canvas.Size = UDim2.fromScale(1, 1)
 	canvas.Parent = gui
 	local ar = Instance.new("UIAspectRatioConstraint"); ar.AspectRatio = 16 / 9; ar.Parent = canvas
+	-- (m1) RIVALS' status block, bottom right and right-aligned (t0020 "Teleporting / 0"): Rubik Bold white, no stroke
 	local function text(name, y, h, str, color, weight)
 		local l = Instance.new("TextLabel")
 		l.Name = name
 		l.BackgroundTransparency = 1
-		l.AnchorPoint = Vector2.new(0.5, 0.5)
-		l.Position = UDim2.fromScale(0.5, y)
-		l.Size = UDim2.fromScale(0.8, h)
+		l.AnchorPoint = Vector2.new(1, 0.5)
+		l.Position = UDim2.fromScale(0.98, y)
+		l.Size = UDim2.fromScale(0.4, h)
 		l.Text = str
 		l.TextScaled = true
+		l.TextXAlignment = Enum.TextXAlignment.Right
 		l.TextColor3 = color
-		l.FontFace = Font.new("rbxasset://fonts/families/Rubik.json", weight)
-		local st = Instance.new("UIStroke"); st.Thickness = 3; st.Transparency = 0.2; st.Parent = l
+		l.FontFace = Font.new("rbxassetid://12187365977", weight)
 		l.Parent = canvas
 		return l
 	end
-	-- sits over the teleport screen's wordmark, which it covers until Teleporting
-	stamp = text("MatchFound", 0.4, 0.17, "MATCH FOUND", Color3.fromRGB(236, 232, 218), Enum.FontWeight.Bold)
-	-- (2026-10-21, AI-tells cleanup) the mode label: comic yellow -> cream #ECE6D2 (yellow is kept only for #1 / gold highlights)
-	sub = text("Mode", 0.53, 0.05, "", Color3.fromRGB(236, 230, 210), Enum.FontWeight.Bold)
+	stamp = text("MatchFound", 0.888, 0.05, "Match found", Color3.new(1, 1, 1), Enum.FontWeight.Bold)
+	sub = text("Mode", 0.95, 0.042, "", Color3.new(1, 1, 1), Enum.FontWeight.Bold)
 	local sc = Instance.new("UIScale"); sc.Name = "Pop"; sc.Parent = stamp
+	-- the three dots: 56 px on the 1080 canvas, 8 px apart, centred
+	for i = 1, 3 do
+		local d = Instance.new("Frame")
+		d.Name = "Dot" .. i
+		d.AnchorPoint = Vector2.new(0.5, 0.5)
+		d.Position = UDim2.fromScale(0.5 + (i - 2) * 0.0365, 0.5)
+		d.Size = UDim2.fromScale(0.029, 0.052)
+		d.BackgroundColor3 = Color3.new(1, 1, 1)
+		d.BorderSizePixel = 0
+		local c = Instance.new("UICorner"); c.CornerRadius = UDim.new(0.5, 0); c.Parent = d
+		local ds = Instance.new("UIScale"); ds.Parent = d
+		d.Parent = canvas
+		dots[i] = ds
+	end
 end
 
 local function sink() return Enum.ContextActionResult.Sink end
@@ -108,12 +126,17 @@ local EXTRA = { "Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "
 for c = string.byte("A"), string.byte("Z") do table.insert(SINK_KEYS, Enum.KeyCode[string.char(c)]) end
 for _, n in EXTRA do table.insert(SINK_KEYS, Enum.KeyCode[n]) end
 
+-- (2026-10-23, m1) RIVALS shows only the dots while a match is found (t0020): PadUI's teleport screen (wordmark, mode line)
+-- waits under the gate until Teleporting, then comes back as it was
+local LATE = { PadUI = true }
+local teleporting = false
 local function hold(g)
-	if KEEP[g.Name] or wanted[g] ~= nil then return end
+	if (KEEP[g.Name] and not LATE[g.Name]) or wanted[g] ~= nil then return end
+	if LATE[g.Name] and teleporting then return end
 	wanted[g] = g.Enabled
 	g.Enabled = false
 	table.insert(conns, g:GetPropertyChangedSignal("Enabled"):Connect(function()
-		if active and g.Enabled then wanted[g] = true; g.Enabled = false end   -- a script asked for it: remember, keep it off
+		if active and g.Enabled and not (teleporting and LATE[g.Name]) then wanted[g] = true; g.Enabled = false end   -- a script asked for it: remember, keep it off
 	end))
 end
 
@@ -142,16 +165,21 @@ local function enter()
 	-- the stamp
 	sub.Text = modeText()
 	gui.Enabled = true
-	local pop = stamp.Pop
-	pop.Scale = 1.25
+	blur = blur or Instance.new("BlurEffect")
+	blur.Name = "MatchFoundBlur"
+	blur.Size = 0
+	blur.Parent = game:GetService("Lighting")
+	TweenService:Create(blur, TweenInfo.new(0.3), { Size = 24 }):Play()
+	gui.Backdrop.BackgroundTransparency = 1
+	TweenService:Create(gui.Backdrop, TweenInfo.new(0.3), { BackgroundTransparency = BACK_T }):Play()
 	stamp.TextTransparency = 1
-	TweenService:Create(pop, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
-	TweenService:Create(stamp, TweenInfo.new(0.2), { TextTransparency = 0 }):Play()
+	TweenService:Create(stamp, TweenInfo.new(0.25), { TextTransparency = 0 }):Play()
 end
 
 local function exit(fellThrough)
 	if not active then return end
 	active = false
+	teleporting = false
 	ContextActionService:UnbindAction("MatchFoundGate")
 	for _, c in conns do c:Disconnect() end
 	table.clear(conns)
@@ -160,6 +188,7 @@ local function exit(fellThrough)
 	if promptsWas ~= nil then ProximityPromptService.Enabled = promptsWas end
 	if listWas ~= nil then pcall(StarterGui.SetCoreGuiEnabled, StarterGui, Enum.CoreGuiType.PlayerList, listWas) end
 	if gui then gui.Enabled = false end
+	if blur then blur.Parent = nil end
 	if fellThrough and okKit and Kit.whoops then
 		Kit.whoops(type(fellThrough) == "string" and fellThrough or "The match fell through. You're back in the lobby.")
 	end
@@ -170,19 +199,17 @@ local function update()
 	if ON[st] and not failedAt then
 		enter()
 		-- Teleporting: the teleport screen's own wordmark + Loading take over
+		if st == "Teleporting" and not teleporting then
+			teleporting = true
+			for g, en in wanted do if LATE[g.Name] then wanted[g] = nil; g.Enabled = en end end
+		end
 		if gui and st == "Teleporting" then
 			local ti = TweenInfo.new(0.3)
 			TweenService:Create(stamp, ti, { TextTransparency = 1 }):Play()
 			TweenService:Create(sub, ti, { TextTransparency = 1 }):Play()
 			TweenService:Create(gui.Backdrop, ti, { BackgroundTransparency = 1 }):Play()
-			for _, s in { stamp, sub } do
-				local st2 = s:FindFirstChildOfClass("UIStroke"); if st2 then TweenService:Create(st2, ti, { Transparency = 1 }):Play() end
-			end
 		elseif gui then
-			stamp.TextTransparency, sub.TextTransparency, gui.Backdrop.BackgroundTransparency = 0, 0, 0
-			for _, s in { stamp, sub } do
-				local st2 = s:FindFirstChildOfClass("UIStroke"); if st2 then st2.Transparency = 0.2 end
-			end
+			stamp.TextTransparency, sub.TextTransparency = 0, 0
 			sub.Text = modeText()
 		end
 	elseif active then
@@ -190,6 +217,12 @@ local function update()
 		exit(type(reason) == "string" and reason ~= "" and reason or true)
 	end
 end
+
+RunService.RenderStepped:Connect(function()
+	if not active then return end
+	local t = os.clock() * 2.4
+	for i, ds in dots do ds.Scale = 1 + 0.14 * math.max(0, math.sin(t - i * 0.7)) end
+end)
 
 function controller.IsActive() return active end
 -- Studio test hook: MatchFoundGate.Test("Found" | "Teleporting" | nil) drives the gate without a real match

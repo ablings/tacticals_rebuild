@@ -35,7 +35,7 @@ UITheme.Radius = 3
 
 -- (2026-10-21, AI-tells sweep) body / bold copy in Rubik (was Gotham SSm, the "AI-made" font)
 local RUBIK = "rbxassetid://12187365977"
-local OSWALD = "rbxasset://fonts/families/Rubik.json"
+local OSWALD = "rbxassetid://12187365977"
 UITheme.FontFamily = RUBIK
 UITheme.Fonts = {
 	Display = Font.new(OSWALD, Enum.FontWeight.Bold),

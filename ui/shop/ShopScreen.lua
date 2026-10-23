@@ -354,7 +354,7 @@ end
 -- centred, the number's box is what's left after the icon and padding, and TextScaled (capped at ts by a UITextSizeConstraint)
 -- shrinks a long price ("4,000") instead of letting it spill past the edges. White Rubik ExtraBold with a chunky black outline.
 -- (round 0) RIVALS' live key-bundle prices (rivals_rec t0083.9): white Rubik ExtraBold with a soft dark-green edge
-local PRICE_FONT = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.ExtraBold)
+local PRICE_FONT = Font.new("rbxassetid://12187365977", Enum.FontWeight.ExtraBold)
 local function priceTag(parent, kind, amount, cx, y, w, h, onBuy, live)
 	w, h, live = w or 124, h or PRICE_H, live or {}
 	local isRobux = kind == "robux"

@@ -81,7 +81,7 @@ local AMBER, OLIVE = Color3.fromRGB(138, 156, 74), Color3.fromRGB(107, 122, 58) 
 local GLOW_L, GLOW_R = AMBER, OLIVE
 -- (2026-10-21, RIVALS pass) Edward's final font decision: Gotham (drawn as Montserrat) is out. Big words / numbers in
 -- Oswald Bold (FONT), the small status line in Rubik (FONT_BODY). The logo art is untouched.
-local FONT = "rbxasset://fonts/families/Rubik.json"
+local FONT = "rbxassetid://12187365977"
 local FONT_BODY = "rbxassetid://12187365977"
 local UI_READY = { "LobbyUI", "HUD" }
 local MAX_LOAD_TIME = 40

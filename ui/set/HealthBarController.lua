@@ -20,7 +20,7 @@ local LOW_AT = 0.3 -- fraction of max health
 -- no plate, just the big white number with a cross and a rounded quartered bar on dark glass, like RIVALS.
 -- Built in 1920x1080 design px on a UIKit canvas, then Kit.toScale (Scale only).
 local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
-local STENCIL = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Montserrat Heavy
+local STENCIL = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Montserrat Heavy
 local FIELD = Color3.fromRGB(200, 200, 206)
 
 local gui, fill, trail, number, frame

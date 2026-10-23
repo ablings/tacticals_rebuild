@@ -62,7 +62,7 @@ TEAM_B.fill = { Color3.fromRGB(78, 138, 90), Color3.fromRGB(31, 58, 39) } -- (20
 -- is a warm white; team colours (beige / green) only as accents
 -- (2026-10-21, RIVALS pass) Edward's final font decision: headings / big words / numbers in Oswald Bold (was Montserrat Heavy),
 -- small / body text in Rubik (FR). (2026-10-21, AI-tells cleanup) FB is Rubik Bold now (was Builder Sans).
-local FX = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+local FX = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local FR = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local STENCIL = FX
@@ -180,10 +180,27 @@ local function teamBox(parent, x, cols, right)
 	end
 	return slots
 end
-local function timerBox(parent)
+-- (2026-10-23, matchmaking round m1, RIVALS t0026-t0032) the vote clock carries the match HUD's drawn hourglass left of the
+-- digits, and both go red at 0.0
+local TIMER_RED = Color3.fromRGB(235, 64, 64)
+local function timerBox(parent, glass)
 	local t = new("Frame", { Position = UDim2.fromOffset(888, 34), Size = UDim2.fromOffset(144, 76), BackgroundColor3 = BLACK, BackgroundTransparency = 0.2, ZIndex = 2, Parent = parent }, { corner(6) })
 	ink(t, 7, 4)
-	return label(t, "10.0", FX, 42, 0, 0, 144, 76, WHITE)
+	if not glass then return label(t, "10.0", FX, 42, 0, 0, 144, 76, WHITE) end
+	local hg = new("Frame", { Name = "Hourglass", BackgroundTransparency = 1, Position = UDim2.fromOffset(16, 20), Size = UDim2.fromOffset(24, 36), ZIndex = 3, Parent = t })
+	new("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromOffset(24, 5), ZIndex = 3, Parent = hg }, { corner(2) })
+	new("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, Position = UDim2.fromOffset(0, 31), Size = UDim2.fromOffset(24, 5), ZIndex = 3, Parent = hg }, { corner(2) })
+	for _, rot in { 28, -28 } do
+		new("Frame", { BackgroundColor3 = WHITE, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(12, 18), Size = UDim2.fromOffset(4, 32), Rotation = rot, ZIndex = 3, Parent = hg })
+	end
+	return label(t, "10.0", FX, 42, 40, 0, 96, 76, WHITE)
+end
+local function tintTimer(l, red)
+	local col = red and TIMER_RED or WHITE
+	if l.TextColor3 == col then return end
+	l.TextColor3 = col
+	local hg = l.Parent:FindFirstChild("Hourglass")
+	if hg then for _, f in hg:GetDescendants() do if f:IsA("Frame") then f.BackgroundColor3 = col end end end
 end
 local heads = {}
 local function teamList(key)
@@ -261,7 +278,7 @@ end
 ---------------------------------------------------------------------------------------------------- 2. Map vote
 local vote = new("Frame", { Name = "MapVote", BackgroundTransparency = 1, Size = UDim2.fromOffset(W, H), Visible = false, Parent = canvas })
 local voteBoxes = { teamBox(vote, 588, TEAM_A, false), teamBox(vote, 1042, TEAM_B, true) }
-local voteTimer = timerBox(vote)
+local voteTimer = timerBox(vote, true)
 -- (2026-10-22, live RIVALS map vote) no title; the map cards are one big row right under the team boxes (top at 11 % of the
 -- height, 12.8-87.2 % of the width, ~24.4 % wide each, 8 px apart), like RIVALS' three featured maps
 local mapHolder = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(250, 95), Size = UDim2.fromOffset(1420, 760), Parent = vote })
@@ -322,7 +339,7 @@ local function buildMaps(list)
 	for _, c in mapHolder:GetChildren() do c:Destroy() end
 	mapTiles = {}
 	local all = table.clone(list)
-	table.insert(all, { id = "Random", name = "Random", random = true })
+	table.insert(all, 1, { id = "Random", name = "Random", random = true }) -- (m1, RIVALS t0028) Random leads the row
 	local n = #all
 	local tw = math.min(560, (1420 - (n - 1) * MAP_GAP) / n)
 	local th = math.floor(tw * 0.613)
@@ -336,7 +353,7 @@ local function buildMaps(list)
 		local edge = new("UIStroke", { Color = edgeCol, Thickness = 3, Transparency = 0, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = t })
 		local randomQ
 		if m.random then
-			randomQ = label(t, "?", FX, 160, 0, th * 0.1, tw, th * 0.6, Color3.fromRGB(200, 200, 206))
+			randomQ = label(t, "⇄", FB, 150, 0, th * 0.08, tw, th * 0.62, WHITE) -- (m1) RIVALS' shuffle, not a "?"
 		elseif m.image and m.image ~= "" then
 			new("ImageLabel", { BackgroundTransparency = 1, Image = m.image, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromScale(1, 1), Parent = t })
 		else
@@ -856,7 +873,7 @@ local function setPhase(p)
 	showFrame(loading, p == "Loading")
 	showFrame(vote, p == "MapVote")
 	showFrame(lo, p == "Loadout" or p == "Switch")
-	loTimer.Parent.Visible = p ~= "Switch" -- (between rounds the match HUD's timer counts down)
+	loTimer.Parent.Visible = false -- (m1, RIVALS t0034-t0038: no clock during the pick; between rounds the match HUD's timer counts down)
 	-- Switch Weapons (RIVALS): the picker over the blurred match instead of the dark backdrop, no team boxes
 	local sw = p == "Switch"
 	-- RIVALS: the gun pick sits over the world, see-through; the loading screen AND the map vote stay solid (Edward 2026-10-21:
@@ -992,6 +1009,7 @@ RunService.RenderStepped:Connect(function()
 	end
 	if phase == "MapVote" then
 		voteTimer.Text = string.format("%.1f", left)
+		tintTimer(voteTimer, left <= 0.05)
 		local v, c = st(STATE.Votes), st(STATE.Chosen)
 		if v ~= lastVotes then lastVotes = v; refreshVotes() end
 		if c ~= lastChosen then lastChosen = c; if c then onChosen() end end

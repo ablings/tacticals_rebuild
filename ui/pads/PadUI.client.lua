@@ -23,7 +23,7 @@ local Request, QueueState = Lobby:WaitForChild("Request"), Lobby:WaitForChild("Q
 
 -- (2026-10-21, RIVALS pass) the game's font decision (Edward): Oswald Bold for headings / big words / numbers, Rubik for
 -- small and body text (was Montserrat Heavy / Gotham SSm)
-local OSWALD = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+local OSWALD = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local BODY = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
 local BOLD = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local BONE, FIELD, OLIVE, OLIVE_HI = hex("#ECE8DA"), hex("#969C8C"), hex("#6B7A3A"), hex("#8A9C4A") -- (2026-10-20, Edward) the lobby olive back (the palette pass had made it yellow)

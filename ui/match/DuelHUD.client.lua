@@ -35,7 +35,7 @@ local GOOD, BAD = Color3.fromRGB(141, 191, 90), Color3.fromRGB(235, 70, 60) -- (
 -- (2026-10-21, AI-tells cleanup) Oswald Bold headlines / numbers, Rubik body (was Montserrat Heavy + Builder Sans); no hairline
 -- panel borders, no left accent bars.
 -- The SERIOUS pass at the end of this script applies it to everything (it replaced the comic style D pass).
-local FX = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+local FX = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local FB = Font.new("rbxassetid://12187365977", Enum.FontWeight.SemiBold)
 local STENCIL = FX
 
@@ -366,7 +366,7 @@ specHow.TextXAlignment = Enum.TextXAlignment.Left
 -- block (no hairline border), a big chevron and a cream key badge like the hotbar's. Built in a function (200-locals limit);
 -- clicks are wired to cycle() below it and Kit.bindButton gives them the press squash (after `stats`).
 local specPrev, specNext = (function()
-	local OSW = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+	local OSW = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 	local function arrow(name, x, chev, key, badgeX)
 		local b = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(x, 16), Size = UDim2.fromOffset(78, 88),
 			BackgroundColor3 = BLACK, BackgroundTransparency = 0.25, ZIndex = 3, Parent = specBar }, { corner(10) })
@@ -899,16 +899,21 @@ local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UD
 -- (2026-10-21, RIVALS pass) a clear order: Play Again is THE primary (field-green #8DBF5A -> #4C7A2E fill, cream words, no hairline
 -- border), Rematch the tan secondary (the file's own TEAM_A.fill tan), Leave and Back stay dark plates
 do
-	againB.BackgroundColor3, againB.BackgroundTransparency = WHITE, 0
-	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = againB })
-	local s = againB:FindFirstChildOfClass("UIStroke"); if s then s:Destroy() end
-	againB:FindFirstChildOfClass("TextLabel").TextColor3 = Color3.fromRGB(236, 230, 210)
+	-- (2026-10-23, matchmaking round m1, RIVALS t0140) Play Again / Leave / Back are RIVALS' dark buttons: a 3 px white outline,
+	-- a soft gloss across the top half and white words. Play Again is no longer a green fill (RIVALS has none).
+	for _, b in { againB, leaveB, backB } do
+		b.BackgroundColor3, b.BackgroundTransparency = Color3.fromRGB(24, 25, 29), 0.08
+		new("UIStroke", { Color = WHITE, Thickness = 3, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = b })
+		new("Frame", { Name = "Gloss", BackgroundColor3 = WHITE, BorderSizePixel = 0, Size = UDim2.fromScale(1, 0.45), ZIndex = b.ZIndex, Parent = b }, {
+			new("UICorner", { CornerRadius = UDim.new(0.18, 0) }),
+			new("UIGradient", { Rotation = 90, Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.55), NumberSequenceKeypoint.new(1, 1) }) }) })
+		local words = b:FindFirstChildOfClass("TextLabel")
+		words.TextColor3, words.ZIndex = WHITE, b.ZIndex + 1 -- (over the gloss)
+	end
 	rematchB.BackgroundColor3 = WHITE -- styleRematch keeps driving its transparency (greyed when unavailable)
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(TEAM_A.fill[1], TEAM_A.fill[2]), Parent = rematchB })
 	-- (2026-10-21, round 3: match RIVALS) RIVALS' action buttons are chunky (round_lost_full.jpg, t0113.0s): the primary gets
 	-- Kit.button's darker bottom lip instead of reading as a flat sticker
-	new("Frame", { Name = "Lip", BackgroundColor3 = BLACK, BackgroundTransparency = 0.7, BorderSizePixel = 0, AnchorPoint = Vector2.new(0, 1),
-		Position = UDim2.fromScale(0, 1), Size = UDim2.fromScale(1, 0.16), Parent = againB }, { new("UICorner", { CornerRadius = UDim.new(0.5, 0) }) }) -- (radius = the button's 0.08 of its height)
 end
 -- (2026-10-19, Edward: "Rematch 2/2" after a rematch) the game-end snapshot: votes / own vote still left from the last game
 -- read as 0 until the server changes them (a table, not new locals: this script is at the 200-locals limit)
@@ -1238,9 +1243,21 @@ local function showRoundCard(won)
 	roundSmall.Text = "ROUND"
 	roundBig.Visible, roundSmall.Visible, roundMP.Visible, roundMPSub.Visible = true, true, false, false
 	roundCard.Visible = true
+	RV.dimRoundCard(false)
 	roundPop.Scale = 1.25
 	TweenService:Create(roundPop, TweenInfo.new(0.28, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	RV.flashRoundCard()
+end
+-- (2026-10-23, matchmaking round m1, RIVALS t0122) when MATCH POINT / SUDDEN DEATH lands at the countdown, the WON / LOST card
+-- under it fades to about half
+function RV.dimRoundCard(on)
+	local ti = TweenInfo.new(on and 0.3 or 0)
+	TweenService:Create(roundCard, ti, { BackgroundTransparency = on and 0.5 or 0.06 }):Play()
+	for _, l in { roundBig, roundSmall } do
+		TweenService:Create(l, ti, { TextTransparency = on and 0.5 or 0 }):Play()
+		local st = l:FindFirstChildOfClass("UIStroke")
+		if st then TweenService:Create(st, ti, { Transparency = on and 0.75 or 0.2 }):Play() end
+	end
 end
 -- (2026-10-21, RIVALS pass) the flash the header comment promises: a cream wash fades off the card (0.3 -> 1 over 0.25 s) and the
 -- existing sweep() bar crosses it once. In RV (200-locals limit); MATCH POINT uses it too.
@@ -1735,6 +1752,7 @@ RunService.RenderStepped:Connect(function()
 			-- (Edward 2026-10-19) no 3-2-1 / FIGHT: the top clock counts the countdown down in tenths instead
 			-- the round's WIN / LOSS banner stays through the countdown, unless the next round can end the match (MATCH POINT)
 			RV.showMatchPoint(mine, theirs, st("RoundsToWin")) -- (2026-10-23: spectators see the ribbon too, like RIVALS)
+			if RV.ribbon.Visible and RV.roundCard.Visible then RV.dimRoundCard(true) end
 		elseif state == "Live" then
 			RV.roundCard.Visible = false
 			task.delay(1.2, RV.fadeRibbon)
@@ -1742,7 +1760,7 @@ RunService.RenderStepped:Connect(function()
 		elseif state == "RoundEnd" and not spectator() then
 			if mine ~= lastScoreMine and mine > (lastScoreMine or 0) then RV.showRoundCard(true)
 			elseif theirs ~= lastScoreTheirs and theirs > (lastScoreTheirs or 0) then RV.showRoundCard(false) end
-			RV.showMatchPoint(mine, theirs, st("RoundsToWin")) -- RIVALS shows the ribbon with the WON / LOST card
+			-- (m1, RIVALS t0118-t0122) the WON / LOST card stands alone here; the ribbon only comes in at the countdown
 		elseif state ~= "RoundEnd" then
 			RV.roundCard.Visible = false
 		elseif state == "MatchEnd" and not resultsShown then

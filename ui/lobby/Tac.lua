@@ -13,7 +13,7 @@ Tac.C = {
 	gold = Color3.fromRGB(255, 212, 0), cream = Color3.fromRGB(236, 230, 210),
 	red = Color3.fromRGB(196, 52, 46), ink = Color3.fromRGB(10, 12, 9),
 }
-Tac.FONT = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+Tac.FONT = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local TS = game:GetService("TweenService")
 -- (2026-10-21, Edward Q3 + the "AI-generated UI" tells) Tac.brackets no longer draws anything: no corner brackets, and no
 -- rounded corner + faint hairline edge (that combo is exactly what reads as AI-made). It returns {} so callers keep working,

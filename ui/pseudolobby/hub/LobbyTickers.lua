@@ -6,7 +6,7 @@
 local Players=game:GetService("Players") local RS=game:GetService("ReplicatedStorage") local HttpService=game:GetService("HttpService") local RunService=game:GetService("RunService") local TS=game:GetService("TweenService")
 local folder=workspace:WaitForChild("LobbyMap"):WaitForChild("Screens",30) if not folder then return end
 local CREAM=Color3.fromRGB(236,230,210) local TAN=Color3.fromRGB(226,210,172) local GREEN=Color3.fromRGB(141,191,90) local GOLD=Color3.fromRGB(255,212,0) local INK=Color3.fromRGB(10,12,10)
-local TITLE=Font.new("rbxasset://fonts/families/Rubik.json",Enum.FontWeight.Bold) local BOLD=Font.new("rbxassetid://12187365977",Enum.FontWeight.Bold)
+local TITLE=Font.new("rbxassetid://12187365977",Enum.FontWeight.Bold) local BOLD=Font.new("rbxassetid://12187365977",Enum.FontWeight.Bold)
 local ICON={gadget="rbxassetid://122224655406431",matches="rbxassetid://125681613105062",elims="rbxassetid://83789042758416",wins="rbxassetid://120316362189428"}
 local SEP="      •      "
 local POP=TweenInfo.new(0.35,Enum.EasingStyle.Back,Enum.EasingDirection.Out) local COUNT=TweenInfo.new(0.6,Enum.EasingStyle.Quad,Enum.EasingDirection.Out)

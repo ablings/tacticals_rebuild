@@ -228,7 +228,7 @@ local HELD_FILL, HELD_T = Color3.fromRGB(120, 120, 126), 0.45  -- the one in you
 local BONE = Color3.fromRGB(255, 255, 255)
 -- (2026-10-20, Edward: RIVALS + Sniper / Murder Duels' seriousness) soft text edges; the held tile is the lighter one.
 -- (2026-10-21, AI-tells cleanup) Oswald Bold (was Montserrat Heavy); no hairline tile edge, only a thick (3) white ring on the held tile
-local STENCIL = Font.new("rbxasset://fonts/families/Rubik.json", Enum.FontWeight.Bold)
+local STENCIL = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 local INK_YELLOW = Color3.fromRGB(255, 255, 255) -- (2026-10-20, Edward: the bottom HUD in white, not yellow; name kept)
 local UIKitFolder = ReplicatedStorage:WaitForChild("UIKit")
 local Kit = require(UIKitFolder:WaitForChild("Kit"))
@@ -790,11 +790,12 @@ local function buildUI()
 	column.Parent = canvas
 
 	-- name of what's in your hands: big stencil type above the row, an olive bar at its right end
-	heldName = text(column, STENCIL, 50, BONE, 10) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Builder Sans Heavy
+	-- (2026-10-23, matchmaking round m1) sized against COLUMN_SCALE below: on screen it reads ~1.3x the old name (RIVALS t0046)
+	heldName = text(column, STENCIL, 110, BONE, 10) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Builder Sans Heavy
 	heldName.Name = "HeldName"
 	heldName.AnchorPoint = Vector2.new(1, 1)
-	heldName.Position = UDim2.new(1, -4, 0, -12)
-	heldName.Size = UDim2.fromOffset(520, 62)
+	heldName.Position = UDim2.new(1, -4, 0, -16)
+	heldName.Size = UDim2.fromOffset(1144, 136)
 	heldName.TextXAlignment = Enum.TextXAlignment.Right
 	heldName.TextTransparency = 1
 	heldStroke = shade(heldName, 2)
@@ -822,6 +823,10 @@ local function buildUI()
 	Kit.toScale(column, Vector2.new(3 * TILE.X + 2 * GAP, TILE.Y)) -- [UI] Scale only
 	column.Position = UDim2.fromScale((1920 - 30) / 1920, (1080 - 64) / 1080)
 	column.Size = UDim2.fromScale((3 * TILE.X + 2 * GAP) / 1920, TILE.Y / 1080)
+	-- (2026-10-23, matchmaking round m1, graders A + B vs RIVALS t0046) RIVALS' slots are ~half ours: the whole row (tiles,
+	-- renders, counts, keys) shrinks around its bottom-right anchor, so everything inside keeps its proportions
+	local COLUMN_SCALE = 0.6
+	local cs = Instance.new("UIScale"); cs.Name = "RivalsSize"; cs.Scale = COLUMN_SCALE; cs.Parent = column
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
 	-- [PAD] follow the last input: controller glyphs / chips on, the slot numbers off (and back for keyboard + mouse)
 	local function applyPad()
