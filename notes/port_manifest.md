@@ -428,3 +428,16 @@ himself; we never publish.
   ECON2 handlers in the after-match lobby; UI mobile fixes (touch buttons, Sprint, auto sprint, auto shoot, double tap on), RIVALS
   layout, MATCH POINT / SUDDEN DEATH ribbon, pad-duel results (no Rematch / Play Again), nameplate rules, Revolver ring removed.
 - Live checks: the pad-duel map on a phone (no void), Revolver knockback only on the 2nd hit, Rematch after a 2-0 / 2-1 series.
+
+## Live port 36 (2026-10-23, main PC lead; Edward in the lead's chat: "go and keep going")
+- From the pinned working copies: lobby b3086ba, match 38f58a5 (UI session minimised its Studios; Matchmaking / Ranked UI from a
+  clean worktree at b3086ba). Published on XF243Y: tacticals, Tutorial, Matchmaking, Ranked; each retitled after Grant
+  ("Grant Permissions and Publish" also granted the 3 new gunsy funsy images under Asset Privacy).
+- Every copy: out/c35.lua all present where expected, compile all ok; out/pre.lua clean. NEW: a full bot match in the Matchmaking copy
+  (Loading -> Live -> kill -> results -> post-match lobby) with the console read: no game errors (51 lines; the only "error" is the
+  MCP proxy's own connect message). StudioTeleportData cleared before saving.
+- Carries (UI): mobile tutorial redo (real touch buttons ringed), Rubik font fix (Rubik.json never existed: 34 labels were Source
+  Sans), matchmaking rounds m1-m28 (Match found screen, MATCH POINT bar, timer, killer card linger, death wash, smaller hotbar /
+  hint strip, vote plates, m9 runtime-error fix), lobby rounds r12-r24 + menus e4-e22 (Ranked / Party / Notify / PlayerCards /
+  Tooltip), Notify blur no-hang. Lead: none new (RoundEndDelay kept at 3; RIVALS ~5 is Edward's call).
+- Live checks: the 3 new images show for a non-group account; the mobile tutorial on a phone.
