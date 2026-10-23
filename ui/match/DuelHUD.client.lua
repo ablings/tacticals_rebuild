@@ -1468,7 +1468,7 @@ end
 -- as a big tilted 3D model in its skin, poking out of the banner's right end (from above its top edge to the screen bottom). The
 -- model is the Repository copy, in its own colours. Built once per weapon.
 RV.kWeapon = new("ViewportFrame", { Name = "KillWeapon", BackgroundTransparency = 1, Ambient = Color3.fromRGB(215, 215, 220), LightColor = WHITE,
-	LightDirection = Vector3.new(-1, -0.6, 0.3), Position = UDim2.fromOffset(483, -114), Size = UDim2.fromOffset(350, 350), Visible = false, ZIndex = 6, Parent = kcard }) -- (m21, grader A vs t0212: bottom-right at ~98 % / 98 %; under the card words (ZIndex 7) so "with Pistol" stays readable)
+	LightDirection = Vector3.new(-1, -0.6, 0.3), Position = UDim2.fromOffset(441, -156), Size = UDim2.fromOffset(392, 392), Visible = false, ZIndex = 6, Parent = kcard }) -- (m23: x1.12 from the bottom-right, RIVALS' 15 % width) -- (m21, grader A vs t0212: bottom-right at ~98 % / 98 %; under the card words (ZIndex 7) so "with Pistol" stays readable)
 function RV.setKillWeapon(uid, weapon)
 	local vpf = RV.kWeapon
 	if not weapon then vpf.Visible = false; RV.kWeaponKey = nil; return end
@@ -1545,7 +1545,8 @@ RV.roundCard, RV.showRoundCard, RV.kcard, RV.refreshKillerCard, RV.switchB, RV.s
 -- ends and fades out once the next round is live.
 -- (2026-10-23, matchmaking round m2, RIVALS t0122) a thin red bar (714 x 50, top at y 50) with oversized ExtraBold words that
 -- spill above and past it; no folded tabs
-RV.ribbon = new("Frame", { Name = "MatchPointRibbon", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(960, 50), Size = UDim2.fromOffset(714, 50),
+RV.ribbon = new("Frame", { Name = "MatchPointRibbon", AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromOffset(960, 60), -- (m23, grader A vs t0122: 10 px lower)
+	 Size = UDim2.fromOffset(714, 50),
 	BackgroundColor3 = WHITE, Visible = false, ZIndex = 9, Parent = root }, { corner(4),
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(236, 64, 60)), ColorSequenceKeypoint.new(0.55, Color3.fromRGB(205, 36, 36)),
 		ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 18, 22)) }) }) })

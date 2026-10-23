@@ -404,7 +404,8 @@ local function dailyPanel(order)
 			else
 				new("ImageLabel", { BackgroundTransparency = 1, Image = SCISSORS, ScaleType = Enum.ScaleType.Fit, AnchorPoint = Vector2.new(0.5, 0.5),
 					Position = UDim2.fromScale(0.5, 0.45), Size = UDim2.fromOffset(math.floor(D * 0.9), math.floor(D * 0.9)), ZIndex = 3, Parent = circle })
-				local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 20, TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0), -- (round 8, grader A vs t0066: ~0.15 of the disc)
+				local n = RK.label({ Text = "×" .. commas(amt), FontFace = FB, TextSize = 27, -- (lobby r19, grader B: the day ×N a size up, like the cards)
+				 TextXAlignment = Enum.TextXAlignment.Center, AnchorPoint = Vector2.new(0.5, 0), -- (round 8, grader A vs t0066: ~0.15 of the disc)
 					Position = UDim2.fromOffset(D / 2, math.floor(D * 0.6)), Size = UDim2.fromOffset(D, 24), ZIndex = 4, Parent = circle })
 				RK.textStroke(1.5).Parent = n
 			end

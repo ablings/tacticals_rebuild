@@ -194,7 +194,7 @@ local function build()
 		goOn = on
 		Kit.tween(dim, t or 0.15, { BackgroundTransparency = on and 1 or 0 }) -- (round 7, grader C: a lime at ~50 %, the 0.6 black veil read olive)
 		if goLabel then
-			Kit.tween(goLabel, t or 0.15, { TextTransparency = on and 0 or 0.2 })
+			Kit.tween(goLabel, t or 0.15, { TextTransparency = on and 0 or 0.4 }) -- (r19: ~60 % white disabled)
 			-- (2026-10-23, lobby r12 grader B) disabled reads neutral grey: the word's green edge turns dark grey with the plate
 			local gs = goLabel:FindFirstChildOfClass("UIStroke")
 			if gs then gs.Color = Color3.fromRGB(40, 110, 20); gs.Transparency = on and 0.2 or 1 end -- (r17, grader B: disabled has no edge at all)

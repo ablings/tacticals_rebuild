@@ -1805,7 +1805,7 @@ local function buildList()
 	for _, slot in SLOT_ORDER do
 		local h = makeHeader(slot, y, listScroll)
 		sections[slot] = { header = h, box = h }
-		y += HEADER_H + 21 -- (lobby r18, grader A vs rec t0058: the first name sits 15 px further below its header; was + 6)
+		y += HEADER_H + 30 -- (lobby r18-19, grader A vs rec t0058: 15 capture px = ~23 design px further below its header; was + 6)
 		for _, id in itemsInSlot(slot) do
 			rows[id] = makeRow(id, y, listScroll)
 			y += ROW_H

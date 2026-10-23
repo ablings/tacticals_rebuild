@@ -741,7 +741,8 @@ local function placeholderTile(pg, hover, spec, x, y, w, h)
 	stroke(RK.label({ Name = "Rarity", Text = string.upper(spec.rarity), FontFace = FS, TextSize = 15, TextColor3 = col:Lerp(WHITE, 0.55), TextXAlignment = CENTER,
 		Position = UDim2.fromOffset(6, nts + 10), Size = UDim2.fromOffset(w - 12, 18), ZIndex = 4, Parent = card }), 1.5, 0.3)
 	local tag
-	tag = priceTag(card, spec.currency == "robux" and "robux" or "scissors", spec.price, w / 2, h - 30, math.min(140, w - 30), PRICE_H,
+	tag = priceTag(card, spec.currency == "robux" and "robux" or "scissors", spec.price, w / 2, h - 30, math.min(150, w - 14), PRICE_H, -- (lobby r19, grader B: wider tags so the digits aren't squeezed small)
+		
 		function() comingSoon(spec, tag) end, { placeholder = true, text = spec.price == 0 and "FREE" or nil, z = 6, noHover = true })
 	hover(card)
 	card.Activated:Connect(function() comingSoon(spec, tag) end)
