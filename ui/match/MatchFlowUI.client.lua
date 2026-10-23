@@ -718,7 +718,7 @@ end
 local OPT, OPT_GAP, PER_ROW = 122, 36, 5
 local GRID_W, GRID_H = 5 * OPT + 4 * OPT_GAP + 40, 560
 -- (2026-10-22) the grid moves up into the hidden tabs' place (y 296, was 368)
-local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromOffset(960 - GRID_W / 2, 296 + LO_DROP), Size = UDim2.fromOffset(GRID_W, GRID_H), BackgroundTransparency = 1,
+local optArea = new("ScrollingFrame", { Name = "Options", Position = UDim2.fromOffset(960 - GRID_W / 2, 292 + LO_DROP), Size = UDim2.fromOffset(GRID_W, GRID_H), BackgroundTransparency = 1,
 	BorderSizePixel = 0, ScrollBarThickness = 6, ScrollBarImageColor3 = GREY, ScrollingDirection = Enum.ScrollingDirection.Y, CanvasSize = UDim2.new(), Parent = lo })
 local list = optArea
 local ready = new("TextButton", { Name = "Ready", Text = "", AutoButtonColor = false, Position = UDim2.fromOffset(1500, 900), Size = UDim2.fromOffset(300, 80),

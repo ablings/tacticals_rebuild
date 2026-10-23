@@ -203,8 +203,8 @@ local function enter()
 			if h <= 0 or cv.AbsoluteSize.X <= 0 then return end
 			local ok, size = pcall(game:GetService("TextService").GetTextSize, game:GetService("TextService"), tipLabel.Text, math.floor(h), Enum.Font.SourceSansBold, Vector2.new(1e4, h))
 			if not ok then return end
-			local inset = h * 0.85 -- (m26, grader A vs t0022: ~20 design px each side)
-			local w = size.X * 1.08 + inset * 2 -- (Rubik runs a little wider than the measuring font)
+			local inset = h * 0.5 -- (m26-27, grader A vs t0022: ~20 design px each side; 0.85 and a 1.08 width fudge overshot)
+			local w = size.X + inset * 2
 			tip.Size = UDim2.fromScale(math.clamp(w / cv.AbsoluteSize.X, 0.2, 0.64), tip.Size.Y.Scale)
 			local tw = math.max(1, tip.Size.X.Scale * cv.AbsoluteSize.X)
 			tipLabel.Position = UDim2.fromScale(inset / tw, tipLabel.Position.Y.Scale)

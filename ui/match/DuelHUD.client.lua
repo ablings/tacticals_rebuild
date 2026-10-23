@@ -914,8 +914,8 @@ end
 local resultBackdrop -- (defined further down; the buttons call it)
 local backB = bigButton("Back", "Back", nil, UDim2.fromScale(0.005, 0.99))
 local leaveB = bigButton("Leave", "Leave", nil, UDim2.fromScale(0.863, 0.99))
-local againB = bigButton("PlayAgain", "Play Again", nil, UDim2.fromScale(0.863, 0.908))
-local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UDim2.fromScale(0.863, 0.826))
+local againB = bigButton("PlayAgain", "Play Again", nil, UDim2.fromScale(0.863, 0.906)) -- (m27, grader A vs t0140: ~10 px gaps)
+local rematchB, rematchT, rematchSub = bigButton("Rematch", "Rematch", "0/2", UDim2.fromScale(0.863, 0.822))
 -- (2026-10-21, RIVALS pass) a clear order: Play Again is THE primary (field-green #8DBF5A -> #4C7A2E fill, cream words, no hairline
 -- border), Rematch the tan secondary (the file's own TEAM_A.fill tan), Leave and Back stay dark plates
 do

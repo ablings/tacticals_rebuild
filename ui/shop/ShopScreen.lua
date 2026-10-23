@@ -978,12 +978,12 @@ function RENDER.Featured(pg, hover)
 		local c, r = (i - 1) % 3, (i - 1) // 3
 		local h = hold(801 + c * 160, 334 + GAP + r * 160, TILE + 5, TILE + PRICE_H / 2, 1.06, -- (r22: 126 wide, RIVALS t0070)
 			 function() ctx.openKit(id) end) -- (lobby r20, grader A vs rec t0070: start 35 px left, step 150 -> 160)
-		local tile = rarityTile(h, rarityColor(id), 0, 0, TILE, TILE, 1)
+		local tile = rarityTile(h, rarityColor(id), 0, 0, TILE + 5, TILE, 1) -- (lobby r23: the drawn tile is 126 wide, RIVALS t0070)
 		weaponTag(tile, id, 38, 4) -- (2026-10-21, RIVALS images) ∞ on melee / gadgets, over the render
 		-- (round 10, grader C: the revolver ran past its tile) the render stays inside the tile, <= ~90 % of its width
 		local art = new("Frame", { Name = "Art", BackgroundTransparency = 1, Position = UDim2.fromOffset(6, -4), Size = UDim2.fromOffset(TILE - 12, TILE - 4), ZIndex = 3, Parent = h })
 		turnOnHover(h, lit(itemArt(art, id, nil, 1.0)))
-		priceTag(h, "kit", Config.Items[id].Price, TILE / 2, TILE - PRICE_H / 2, 112, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
+		priceTag(h, "kit", Config.Items[id].Price, (TILE + 5) / 2, TILE - PRICE_H / 2, 112, PRICE_H, function() ctx.openKit(id) end, { owned = function() return ctx.owns(id) end, noHover = true })
 		if ctx.tooltip then
 			local item = Config.Items[id]
 			ctx.tooltip(h, item.Name, function() return item.Desc or "" end)
