@@ -786,7 +786,7 @@ local function showResults(sum)
 			tile.Visible = big
 			tile.Position = UDim2.fromScale((sl[1] - 41) / W, sl[2] / H)
 			num.Position, num.Size = UDim2.fromScale((sl[1] - 75) / W, (sl[2] + (big and 6 or 0)) / H), UDim2.fromScale(150 / W, (big and 54 or 40) / H)
-			cap.Position = UDim2.fromScale((sl[1] - 75) / W, (sl[2] + (big and 70 or 38)) / H)
+			cap.Position = UDim2.fromScale((sl[1] - 75) / W, (sl[2] + (big and 64 or 38)) / H) -- (m31: this show pass also places the labels; 70 -> 64 like the build)
 			num:SetAttribute("dTS", big and 42 or 34)
 			num.Text = tostring(v)
 		end

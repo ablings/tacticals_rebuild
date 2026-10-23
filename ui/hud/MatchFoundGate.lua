@@ -206,12 +206,21 @@ local function enter()
 			params.Text, params.Font, params.Size, params.Width = tipLabel.Text, tipLabel.FontFace, math.floor(h), 1e4
 			local ok, size = pcall(game:GetService("TextService").GetTextBoundsAsync, game:GetService("TextService"), params)
 			if not ok then return end
-			local inset = h * 0.5 -- (m26-27, grader A vs t0022: ~20 design px each side; 0.85 and a 1.08 width fudge overshot)
-			local w = size.X * 0.97 + inset * 2 -- (m29, grader A: the bounds run ~3 % wider than the drawn words)
-			tip.Size = UDim2.fromScale(math.clamp(w / cv.AbsoluteSize.X, 0.2, 0.64), tip.Size.Y.Scale)
-			local tw = math.max(1, tip.Size.X.Scale * cv.AbsoluteSize.X)
-			tipLabel.Position = UDim2.fromScale(inset / tw, tipLabel.Position.Y.Scale)
-			tipLabel.Size = UDim2.fromScale(1 - 2 * inset / tw, tipLabel.Size.Y.Scale)
+			local inset = h * 0.5 -- (m26-27, grader A vs t0022: ~20 design px each side)
+			-- (m31, grader A) the words at one fixed size (no TextScaled guessing), the bubble sized from what is really drawn
+			tipLabel.TextScaled, tipLabel.TextSize = false, math.floor(h * 0.9)
+			local function fit()
+				local tb = tipLabel.TextBounds.X
+				if tb <= 0 then tb = size.X end
+				local w = tb + inset * 2
+				tip.Size = UDim2.fromScale(math.clamp(w / cv.AbsoluteSize.X, 0.2, 0.64), tip.Size.Y.Scale)
+				local tw = math.max(1, tip.Size.X.Scale * cv.AbsoluteSize.X)
+				tipLabel.Position = UDim2.fromScale(inset / tw, tipLabel.Position.Y.Scale)
+				tipLabel.Size = UDim2.fromScale(1 - 2 * inset / tw, tipLabel.Size.Y.Scale)
+			end
+			fit()
+			task.wait() -- (TextBounds settles a frame after the size change)
+			fit()
 		end)
 	end
 	gui.Enabled = true
