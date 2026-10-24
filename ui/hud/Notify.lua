@@ -92,12 +92,13 @@ local function rewardBox(parent, r, x, y)
 	if img then
 		new("ImageLabel", { BackgroundTransparency = 1, Image = img, ScaleType = Enum.ScaleType.Fit, Size = UDim2.fromOffset(70, 70), ZIndex = 4, Parent = box })
 	elseif r.kind == "Level" then
-		icon(box, "level", 8, 0, 54, Color3.fromRGB(90, 170, 255), 4)
+		icon(box, "level", 15, 0, 40, Color3.fromRGB(90, 170, 255), 4)
 	else
-		icon(box, r.kind == "Scissors" and "scissors" or "check", 8, 0, 54, Color3.fromRGB(236, 230, 210), 4) -- cream (was yellow)
+		icon(box, r.kind == "Scissors" and "scissors" or "check", 15, 0, 40, Color3.fromRGB(236, 230, 210), 4) -- cream (was yellow); (rd6, grader B: 40, so the count sits under it, not on it)
 	end
 	if r.count then
-		local c = txt(box, (r.kind == "Level" and "" or "×") .. tostring(r.count), FX, 28, 0, 42, 70, 30, nil, nil, 5) -- (a level shows its number)
+		local function commas(v) local t = tostring(math.floor(tonumber(v) or 0)) local out = t:reverse():gsub("(%d%d%d)", "%1,"):reverse() return (out:gsub("^,", "")) end
+		local c = txt(box, (r.kind == "Level" and tostring(r.count) or ("×" .. commas(r.count))), FX, 24, -10, 40, 90, 28, nil, nil, 5) -- (a level shows its number)
 		new("UIStroke", { Thickness = 2, Transparency = 0.2, Parent = c })
 	end
 end
