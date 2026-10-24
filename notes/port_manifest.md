@@ -463,3 +463,10 @@ himself; we never publish.
 - Every copy: c35 + compile all ok; pre.lua clean; Matchmaking bot match to the post-match lobby, console clean (52 lines, MCP only).
 - Carries (UI): real-data fixes (inbox fixed canvas, rows reachable; leaderboard no shrink on reopen; party grid no rebuild mid-pop;
   toast bursts no longer 37 s; placed Ranked tile emblem); match Notify (toast burst + inbox canvas).
+
+## Live port 40 (2026-10-23, main PC lead; Edward: "keep going")
+- From pinned e80af80 (UI rd5, both .rbxl): inbox close no longer errors (local canvas ref), refits on the unscaled canvas, toast
+  burst timing, leaderboard reset to #1 + cached headshots, Ranked rules strip / peak by ELO, opaque modals; match Notify.
+- Published tacticals, Tutorial, Matchmaking, Ranked; each retitled. Matchmaking / Ranked UI deployed from a clean worktree at e80af80.
+- Every copy: c35 + compile all ok; pre.lua clean; test attrs none. Matchmaking bot match to post-match, OpenInbox/CloseInbox true,
+  console clean (51 lines, MCP only).
