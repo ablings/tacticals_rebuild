@@ -470,3 +470,9 @@ himself; we never publish.
 - Published tacticals, Tutorial, Matchmaking, Ranked; each retitled. Matchmaking / Ranked UI deployed from a clean worktree at e80af80.
 - Every copy: c35 + compile all ok; pre.lua clean; test attrs none. Matchmaking bot match to post-match, OpenInbox/CloseInbox true,
   console clean (51 lines, MCP only).
+
+## Live port 41 (2026-10-23, main PC lead; Edward: "keep going")
+- From pinned 321f03d (UI rd6, both .rbxl; Notify only): inbox / toast reward count under its icon, thousands commas.
+- Published tacticals, Tutorial, Matchmaking, Ranked; each retitled. Matchmaking / Ranked UI deployed from a clean worktree at 321f03d.
+- Every copy: c35 + compile all ok; pre.lua clean; test attrs none. Matchmaking bot match (bo3 data) to Victory / MatchEnd,
+  console clean (53 lines, MCP only).
