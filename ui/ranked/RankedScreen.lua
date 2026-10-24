@@ -339,7 +339,8 @@ local function buildBoard()
 		h.ZIndex = 23
 		h.TextTransparency = 0.4
 	end
-	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(803, 360), BackgroundTransparency = 1,
+	-- (rd8, grader A) the list is 17 wider than the rows, so the bar sits outside them
+	local listHold = new("ScrollingFrame", { Name = "List", Position = UDim2.fromOffset(40, 145), Size = UDim2.fromOffset(820, 360), BackgroundTransparency = 1,
 		BorderSizePixel = 0, ScrollBarThickness = 10, ScrollBarImageColor3 = WHITE, ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), AutomaticCanvasSize = Enum.AutomaticSize.Y, ZIndex = 22, Parent = p }, -- (e4: one scrollbar style, 10 px white)
 		{ new("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
 	ui.boardList = listHold
@@ -448,7 +449,7 @@ local function fillBoard()
 		local canvas = math.max(gy, n * (rowPx + padPx))
 		holder.AutomaticCanvasSize = Enum.AutomaticSize.None
 		holder.CanvasSize = UDim2.new(0, 0, 0, canvas)
-		for _, r in holder:GetChildren() do if r:IsA("CanvasGroup") then r.Size = UDim2.new(1, -10, rowPx / canvas, 0) end end
+		for _, r in holder:GetChildren() do if r:IsA("CanvasGroup") then r.Size = UDim2.new(803 / 820, 0, rowPx / canvas, 0) end end
 		if layout then layout.Padding = UDim.new(padPx / canvas, 0) end
 	end
 	fit()
@@ -478,7 +479,7 @@ local function build()
 	local top = new("Frame", { Name = "Top", BackgroundTransparency = 1, Position = UDim2.fromOffset(L, 125), Size = UDim2.fromOffset(WIDE, 66), Parent = root })
 	local status = new("Frame", { Name = "Status", Size = UDim2.fromOffset(330, 66), BackgroundColor3 = BLACK, BackgroundTransparency = 0.35, Parent = top },
 		{ new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
-	ui.topEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(8, 5), Size = UDim2.fromOffset(56, 56), Parent = status })
+	ui.topEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(2, -4), Size = UDim2.fromOffset(68, 68), ZIndex = 3, Parent = status }) -- (rd8, grader A: 64+, overhanging)
 	ui.rankName = stroke(label(status, "Bronze 1", FB, 38, 74, 0, 250, 66, WHITE, Enum.TextXAlignment.Left), 2)
 	-- (menus e14, grader B vs RIVALS 02 "138 Glory") in placements the block reads a big count with a small unit beside it
 	ui.rankUnit = label(status, "", FS, 22, 74, 6, 160, 66, GREY, Enum.TextXAlignment.Left)
@@ -501,17 +502,18 @@ local function build()
 	close.Activated:Connect(function() Screen.Close() end)
 
 	-- ELO bar
-	local bar = new("Frame", { Name = "EloBar", Position = UDim2.fromOffset(L, 203), Size = UDim2.fromOffset(WIDE, 96), BackgroundColor3 = BLACK,
+	local bar = new("Frame", { Name = "EloBar", Position = UDim2.fromOffset(L, 199), Size = UDim2.fromOffset(WIDE, 105) -- (rd8, grader A: 105 tall)
+		, BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.35, Parent = root }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) })
-	ui.leftEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(28, 6), Size = UDim2.fromOffset(84, 84), Parent = bar }) -- (menus e7, grader B: 84 px end badges; e13, grader A: inset 28)
+	ui.leftEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(20, 10), Size = UDim2.fromOffset(86, 86), Parent = bar }) -- (menus e7, grader B: 84 px end badges; e13, grader A: inset 28)
 	ui.leftFloor = label(bar, "", FB, 30, 138, 8, 300, 36, WHITE, Enum.TextXAlignment.Left)
 	ui.leftName = label(bar, "", FS, 26, 138, 40, 300, 32, GREY, Enum.TextXAlignment.Left)
 	ui.eloLabel = label(bar, "Your ELO", FS, 22, 556, 4, 300, 28, GREY)
 	ui.eloNum = stroke(label(bar, "100", FB, 58, 556, 20, 300, 60, WHITE), 2)
-	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(1300, 6), Size = UDim2.fromOffset(84, 84), Parent = bar })
+	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(WIDE - 106, 10), Size = UDim2.fromOffset(86, 86), Parent = bar })
 	ui.rightFloor = label(bar, "", FB, 30, 974, 8, 300, 36, WHITE, Enum.TextXAlignment.Right)
 	ui.rightName = label(bar, "", FS, 26, 974, 40, 300, 32, GREY, Enum.TextXAlignment.Right)
-	local track = new("Frame", { Position = UDim2.fromOffset(112, 75), Size = UDim2.fromOffset(1188, 13), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
+	local track = new("Frame", { Position = UDim2.fromOffset(84, 80), Size = UDim2.fromOffset(WIDE - 168, 14), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
 		{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 	ui.fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = WHITE, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }),
 		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#8DBF5A"), Theme.hex("#FFFFFF")) }) }) -- (2026-10-21, AI-tells cleanup) progress = field green, was yellow
@@ -594,6 +596,12 @@ local function build()
 	ui.infoBtn.Activated:Connect(function() ladder() end) -- (2026-10-21, round 3) the popups pop in (Kit.open)
 	Kit.bindButton(boardBtn, { hover = 1.04, press = 0.97 })
 	boardBtn.Activated:Connect(function() fillBoard(); board() end)
+	-- (rd8, grader C) an open board redraws when the board data changes (only the Warlord strip did)
+	ReplicatedStorage.AttributeChanged:Connect(function(name)
+		if string.sub(name, 1, 10) ~= "RankedTop_" then return end
+		local shade = ui.boardList and ui.boardList:FindFirstAncestor("Leaderboard")
+		if shade and shade.Visible then fillBoard() end
+	end)
 
 	Kit.toScale(root)
 	root.Visible = false

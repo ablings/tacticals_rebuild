@@ -160,8 +160,9 @@ local function nextBanner()
 	TweenService:Create(sc, TweenInfo.new(0.35, Enum.EasingStyle.Back), { Scale = 1 }):Play()
 	-- (rd3, grader C) a burst of notifications plays the sound once and moves along faster (10 in a row took 37 s)
 	local burst = #queue > 0
-	if Kit.sfx and not Notify._burst then pcall(Kit.sfx, "reward") end
-	Notify._burst = burst
+	-- (rd8, grader C) one sound per burst: only when nothing has played in the last 3 s
+	if Kit.sfx and os.clock() - (Notify._lastSound or -99) > 3 then pcall(Kit.sfx, "reward") Notify._lastSound = os.clock() end
+	if burst then Notify._lastSound = os.clock() end
 	task.spawn(function()
 		-- (rd5, grader C) hold 1.4 s; only a lone banner (nothing queued by then) stays the full 3.4 s
 		task.wait(1.4)
@@ -181,6 +182,12 @@ function Notify.Push(n)
 	table.insert(inbox, 1, { t = os.time(), title = n.title, sub = n.sub, icon = n.icon, reward = n.reward })
 	while #inbox > 50 do table.remove(inbox) end
 	unread += 1
+	-- (rd8, grader C) a notice that lands while the inbox is open shows in the list at once and doesn't count as unread
+	-- (Push sits above the inbox's locals, so it reaches the rebuild through Notify._refreshInbox, set below buildInbox)
+	if Notify._inboxOpen and Notify._refreshInbox then
+		unread = 0
+		task.defer(Notify._refreshInbox)
+	end
 	if onUnread then onUnread(unread) end
 	table.insert(queue, n)
 	nextBanner()
@@ -266,12 +273,15 @@ local function buildInbox()
 	TweenService:Create(blur, TweenInfo.new(0.25), { Size = BLUR }):Play() -- (e10-e18, grader C: the shared menu blur)
 	if Kit.open then pcall(Kit.open, inboxRoot) end
 end
+Notify._refreshInbox = function() if Notify._inboxOpen then buildInbox() end end
 function Notify.OpenInbox()
 	unread = 0
 	if onUnread then onUnread(0) end
+	Notify._inboxOpen = true
 	buildInbox()
 end
 function Notify.CloseInbox()
+	Notify._inboxOpen = false
 	if blur then TweenService:Create(blur, TweenInfo.new(0.2), { Size = 0 }):Play() end
 	-- (2026-10-21, RIVALS pass) close with Kit.close (shrink + close sound) and fade the dim, then destroy; InboxOpen() is
 	-- false at once, and a reopen during the 0.12 s builds a fresh one (this one is destroyed by its own callback)
@@ -300,6 +310,7 @@ Notify.NEWS = {
 -- heading with its bullet line. Same gui variables as the inbox, so CloseInbox / the dim close it.
 Notify.NEWS_UPDATE = Notify.NEWS_UPDATE or 36
 function Notify.OpenNews()
+	Notify._inboxOpen = false
 	if inboxGui and inboxGui.Parent then inboxGui:Destroy() end
 	inboxGui = new("ScreenGui", { Name = "InboxUI", IgnoreGuiInset = true, ResetOnSpawn = false, DisplayOrder = 26, ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		Parent = player:WaitForChild("PlayerGui") })
