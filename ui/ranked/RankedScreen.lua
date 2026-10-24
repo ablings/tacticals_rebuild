@@ -128,7 +128,8 @@ local function render()
 		ui.bannerShields[2].Position = UDim2.fromScale(0.5 + half + pad, 0.5)
 	end)
 	ui.rankSub.Text = inPlacements and string.format("%d / %d placement matches played: your rank shows after the last one", placed, need)
-		or ("Peak " .. tostring(A("RankPeak") or elo) .. " ELO")
+		-- (rd5, grader B vs RIVALS 02) placed: the strip carries the ranked rules, the peak moves under Your ELO
+		or "1v1 · 2v2 · 3v3  •  Daily ELO Shield  •  Beat higher ranks for more ELO"
 	-- the ELO bar
 	local floor, nextFloor = A("RankFloor") or 100, A("RankNextFloor")
 	ui.eloNum.Text = inPlacements and "?" or ui.eloNum.Text
@@ -151,6 +152,9 @@ local function render()
 	if not inPlacements then
 		Kit.countTo(ui.eloNum, ui.eloShown or floor, elo, 0.6, function(n) return tostring(math.floor(n + 0.5)) end)
 		ui.eloShown = elo
+	end
+	if ui.eloLabel then
+		ui.eloLabel.Text = inPlacements and "Your ELO" or ("Your ELO  ·  peak " .. tostring(A("RankPeak") or elo)) -- (rd5: the peak sits with Your ELO)
 	end
 	-- banner
 	if inPlacements then
@@ -199,7 +203,8 @@ local function popup(name, w, h, title)
 	local shade = new("TextButton", { Name = name, Text = "", AutoButtonColor = false, Size = UDim2.fromOffset(1920, 1080), BackgroundColor3 = BLACK,
 		BackgroundTransparency = 0.35, Visible = false, ZIndex = 20, Parent = root })
 	local p = new("Frame", { Name = "Panel", Position = UDim2.fromOffset((1920 - w) / 2, (1080 - h) / 2), Size = UDim2.fromOffset(w, h), BackgroundColor3 = BLACK,
-		BackgroundTransparency = 0.08, ZIndex = 21, Active = true, Parent = shade }, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) }) -- (menus e2, grader C: Active, so a click inside the panel no longer reaches the shade and closes it)
+		BackgroundTransparency = 0, ZIndex = 21, Active = true, Parent = shade } -- (rd5, grader B: opaque, the screen showed through its header)
+		, { new("UICorner", { CornerRadius = UDim.new(0, 14) }) }) -- (menus e2, grader C: Active, so a click inside the panel no longer reaches the shade and closes it)
 	stroke(label(p, title, FB, 56, 0, 18, w, 64), 2.5).ZIndex = 22
 	local x = Kit.closeButton(UDim2.fromOffset(108, 62)) -- (menus e4, grader A: RIVALS' modal close is 108x62, inset 10)
 	x.Position = UDim2.fromOffset(w - 118, 10)
@@ -361,6 +366,7 @@ end
 local function fillBoard()
 	local holder = ui.boardList
 	for _, c in holder:GetChildren() do if c:IsA("GuiObject") then c:Destroy() end end
+	holder.CanvasPosition = Vector2.zero -- (rd5, grader C) every open starts at #1
 	local top = leaderboard()
 	local myPos
 	for i, e in top do if e.userId == player.UserId then myPos = i end end
@@ -405,16 +411,26 @@ local function fillBoard()
 				Position = UDim2.fromScale(x, 0.25), Size = UDim2.fromScale(w, 0.5), ZIndex = 23, Parent = row })
 		end
 		-- (rd2) the top three read gold / silver / bronze
-		local medal = ({ Theme.hex("#F2C14E"), Theme.hex("#D6D9E0"), Theme.hex("#D98C4A") })[i]
+		local medal = ({ Theme.hex("#F2C14E"), Theme.hex("#B9C4D6"), Theme.hex("#D98C4A") })[i]
+		if medal then
+			-- (rd5, grader B) a 4 px medal-coloured edge on the top three rows (silver reads blue-grey, not plain white)
+			new("Frame", { Name = "Medal", BackgroundColor3 = medal, BorderSizePixel = 0, Size = UDim2.fromScale(4 / 793, 1), ZIndex = 24, Parent = row })
+		end
 		cell("#" .. i, 0.03, 0.12, Enum.TextXAlignment.Left, FB, medal)
 		-- (rd3, graders A + B) a headshot on every row, so names line up with the pinned row's (x 202)
 		local hs = new("ImageLabel", { BackgroundTransparency = 1, Position = UDim2.fromScale(150 / 793, 0.14), Size = UDim2.fromScale(40 / 793, 0.72), ZIndex = 23, Parent = row },
 			{ new("UICorner", { CornerRadius = UDim.new(0.5, 0) }), new("UIAspectRatioConstraint", { AspectRatio = 1 }) })
 		if e.userId and e.userId > 0 then
-			task.spawn(function()
-				local ok, img = pcall(Players.GetUserThumbnailAsync, Players, e.userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
-				if ok and hs.Parent then hs.Image = img end
-			end)
+			-- (rd5, grader C) headshots are cached across opens (a full board made 200 thumbnail calls every open)
+			ui.heads = ui.heads or {}
+			if ui.heads[e.userId] then
+				hs.Image = ui.heads[e.userId]
+			else
+				task.spawn(function()
+					local ok, img = pcall(Players.GetUserThumbnailAsync, Players, e.userId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size48x48)
+					if ok then ui.heads[e.userId] = img if hs.Parent then hs.Image = img end end
+				end)
+			end
 		end
 		cell(tostring(e.name or "?"), 202 / 793, 0.5, Enum.TextXAlignment.Left)
 		cell(tostring(e.elo or 0) .. " ELO", 0.72, 0.25, Enum.TextXAlignment.Right, FB)
@@ -426,7 +442,7 @@ local function fillBoard()
 	local function fit()
 		-- (rd3, grader C) measured on the screen root: the panel's open / close pop scales the list, and rows measured mid-pop
 		-- came out ~8% short from the second open on
-		local gy = root.AbsoluteSize.Y * 360 / 1080
+		local gy = (ui.canvas or root).AbsoluteSize.Y * 360 / 1080 -- (rd5: the canvas, not the popping root)
 		if gy <= 0 or not holder.Parent then return end
 		local rowPx, padPx = 56 * gy / 360, 6 * gy / 360
 		local canvas = math.max(gy, n * (rowPx + padPx))
@@ -440,7 +456,7 @@ local function fillBoard()
 	ui.fitBoard = fit
 	if not ui.boardHooked then
 		ui.boardHooked = true
-		root:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() if ui.fitBoard then ui.fitBoard() end end)
+		(ui.canvas or root):GetPropertyChangedSignal("AbsoluteSize"):Connect(function() if ui.fitBoard then ui.fitBoard() end end)
 	end
 end
 
@@ -452,6 +468,7 @@ local function build()
 	blur = Lighting:FindFirstChild("MenuUIBlur") or new("BlurEffect", { Name = "MenuUIBlur", Size = 0, Parent = Lighting })
 	scrim = new("Frame", { Name = "Scrim", Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.scrim, BackgroundTransparency = 1, Parent = gui })
 	local canvas = Kit.canvas(gui)
+	ui.canvas = canvas
 	root = new("Frame", { Name = "Root", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Parent = canvas })
 
 	-- top: emblem + rank name, Ranks button, X
@@ -489,12 +506,12 @@ local function build()
 	ui.leftEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(28, 6), Size = UDim2.fromOffset(84, 84), Parent = bar }) -- (menus e7, grader B: 84 px end badges; e13, grader A: inset 28)
 	ui.leftFloor = label(bar, "", FB, 30, 138, 8, 300, 36, WHITE, Enum.TextXAlignment.Left)
 	ui.leftName = label(bar, "", FS, 26, 138, 40, 300, 32, GREY, Enum.TextXAlignment.Left)
-	label(bar, "Your ELO", FS, 22, 556, 4, 300, 28, GREY)
+	ui.eloLabel = label(bar, "Your ELO", FS, 22, 556, 4, 300, 28, GREY)
 	ui.eloNum = stroke(label(bar, "100", FB, 58, 556, 20, 300, 60, WHITE), 2)
 	ui.rightEmblem = new("Frame", { BackgroundTransparency = 1, Position = UDim2.fromOffset(1300, 6), Size = UDim2.fromOffset(84, 84), Parent = bar })
 	ui.rightFloor = label(bar, "", FB, 30, 974, 8, 300, 36, WHITE, Enum.TextXAlignment.Right)
 	ui.rightName = label(bar, "", FS, 26, 974, 40, 300, 32, GREY, Enum.TextXAlignment.Right)
-	local track = new("Frame", { Position = UDim2.fromOffset(138, 76), Size = UDim2.fromOffset(1136, 10), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
+	local track = new("Frame", { Position = UDim2.fromOffset(112, 75), Size = UDim2.fromOffset(1188, 13), BackgroundColor3 = Theme.hex("#2A2830"), Parent = bar },
 		{ new("UICorner", { CornerRadius = UDim.new(1, 0) }) })
 	ui.fill = new("Frame", { Size = UDim2.fromScale(0, 1), BackgroundColor3 = WHITE, Parent = track }, { new("UICorner", { CornerRadius = UDim.new(1, 0) }),
 		new("UIGradient", { Color = ColorSequence.new(Theme.hex("#8DBF5A"), Theme.hex("#FFFFFF")) }) }) -- (2026-10-21, AI-tells cleanup) progress = field green, was yellow

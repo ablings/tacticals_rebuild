@@ -300,7 +300,7 @@ local function renderGrid(animate)
 	grid.AutomaticCanvasSize = Enum.AutomaticSize.None
 	local function fitCanvas()
 		-- (rd3, grader C) measured on the screen root (the open / close pop scales the grid itself)
-		local gy = root.AbsoluteSize.Y * 760 / 1080
+		local gy = canvas.AbsoluteSize.Y * 760 / 1080 -- (rd5: the canvas, not the popping root)
 		if gy <= 0 then return end
 		local canvasPx = math.max(gy, H * gy / 760)
 		grid.CanvasSize = UDim2.new(0, 0, 0, canvasPx)
@@ -312,7 +312,7 @@ local function renderGrid(animate)
 	if not grid:GetAttribute("_FitHooked") then
 		-- a window resize only re-fits the canvas (rebuilding the grid on every frame of the pop killed the card stagger)
 		grid:SetAttribute("_FitHooked", true)
-		root:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() if fitGrid then fitGrid() end end)
+		canvas:GetPropertyChangedSignal("AbsoluteSize"):Connect(function() if fitGrid then fitGrid() end end)
 	end
 	-- (menus e11-e12, grader C) the cards pop in one after another, centred so they grow in place, only on open or a tab
 	-- change (not on every search keystroke or roster update)

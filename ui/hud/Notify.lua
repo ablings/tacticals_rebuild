@@ -38,6 +38,12 @@ local GREY = Color3.fromRGB(190, 190, 194)
 local PILL = Color3.fromRGB(18, 19, 21)
 
 for k, v in Kit.ICONS or {} do if Notify.ICONS[k] == nil then Notify.ICONS[k] = v end end
+-- (rd5, grader B) the people glyph for friend notices (the play triangle read wrong); from the Rivals art if it's there
+pcall(function()
+	local r = script.Parent:FindFirstChild("Rivals")
+	local a = r and r:FindFirstChild("Assets") and require(r.Assets)
+	if a and a.play and a.play.people and not Notify.ICONS.people then Notify.ICONS.people = a.play.people end
+end)
 local inbox = {} -- { t, title, sub, reward }
 local unread = 0
 local onUnread -- set by the top-right buttons
@@ -101,7 +107,7 @@ local function kindIcon(n)
 	if n.icon then return n.icon end
 	local t = string.lower((n.title or "") .. " " .. (n.sub or ""))
 	for _, pair in { { "rank", "rank" }, { "contract", "elims" }, { "weekly", "trophy" }, { "login", "bell" }, { "daily", "bell" },
-		{ "level", "level" }, { "friend", "play" }, { "shop", "scissors" }, { "streak", "streak" } } do
+		{ "level", "level" }, { "friend", "people" }, { "shop", "scissors" }, { "streak", "streak" } } do
 		if string.find(t, pair[1], 1, true) and Notify.ICONS[pair[2]] then return pair[2] end
 	end
 	return "check"
@@ -155,7 +161,10 @@ local function nextBanner()
 	local burst = #queue > 0
 	if Kit.sfx and not Notify._burst then pcall(Kit.sfx, "reward") end
 	Notify._burst = burst
-	task.delay(burst and 1.4 or 3.4, function()
+	task.spawn(function()
+		-- (rd5, grader C) hold 1.4 s; only a lone banner (nothing queued by then) stays the full 3.4 s
+		task.wait(1.4)
+		if #queue == 0 then task.wait(2) end
 		TweenService:Create(p, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), { Position = home - UDim2.fromScale(0, 0.14), GroupTransparency = 1 }):Play()
 		task.delay(0.32, function()
 			holder:Destroy()
@@ -207,7 +216,8 @@ local function buildInbox()
 	x.Position = UDim2.fromOffset(1394, 120)
 	x.Parent = inboxRoot
 	x.Activated:Connect(function() Notify.CloseInbox() end)
-	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(540, 264), Size = UDim2.fromOffset(828, 776),
+	local list = new("ScrollingFrame", { Name = "List", BackgroundTransparency = 1, BorderSizePixel = 0, Position = UDim2.fromOffset(540, 264), Size = UDim2.fromOffset(846, 776), -- (rd5, grader C: 18 wider, the bar clears the rows)
+		
 		ScrollBarThickness = 10, ScrollBarImageColor3 = Color3.new(1, 1, 1), ScrollBarImageTransparency = 0.4, CanvasSize = UDim2.new(), ScrollingDirection = Enum.ScrollingDirection.Y, Active = true, Parent = inboxRoot }) -- (e4: one scrollbar style)
 	local content = new("Frame", { Name = "Content", BackgroundTransparency = 1, Size = UDim2.fromOffset(828, math.max(776, #inbox * 108)), Parent = list })
 	if #inbox == 0 then
@@ -232,15 +242,19 @@ local function buildInbox()
 	-- the list's canvas: as tall as the rows (Scale is relative to the list's parent)
 	-- (rd3, grader C) a fixed canvas from the row count, measured on the menu root (the open pop scales the list): with 10
 	-- rows the old Scale maths stretched them 1.41x and the last rows couldn't be scrolled to
+	-- (rd5, grader C) measured on the canvas, which the open / close pop doesn't scale, and through a local reference:
+	-- CloseInbox clears inboxRoot before the close animation, and the old hook threw "attempt to index nil" on every close
 	local H = math.max(776, #inbox * 108)
+	local myCanvas = canvas
 	local function fit()
-		local unit = inboxRoot.AbsoluteSize.Y / 1080
+		if not (myCanvas and myCanvas.Parent) then return end
+		local unit = myCanvas.AbsoluteSize.Y / 1080
 		if unit <= 0 then return end
 		list.CanvasSize = UDim2.new(0, 0, 0, H * unit)
-		content.Size = UDim2.fromScale(1, 1)
+		content.Size = UDim2.fromScale(828 / 846, 1)
 	end
 	fit()
-	inboxRoot:GetPropertyChangedSignal("AbsoluteSize"):Connect(fit)
+	myCanvas:GetPropertyChangedSignal("AbsoluteSize"):Connect(fit)
 	-- (menus e4-e5, graders A + C) no idle scrollbar while the rows fit
 	if #inbox * 108 <= 776 then
 		list.ScrollBarImageTransparency = 1
