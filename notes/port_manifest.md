@@ -457,3 +457,9 @@ himself; we never publish.
 - Lobby copy: c35 all present + compile all ok; pre.lua clean. Published tacticals; retitled after Grant.
 - Note: once the File menu closed before the Publish As click (the click hit the Toolbox, no change); clicking File and Publish As in
   one batch avoids it.
+
+## Live port 39 (2026-10-23, main PC lead; Edward: "keep going")
+- From pinned 81e1f10 (UI "Live-like data rd4", both .rbxl). Published tacticals, Tutorial, Matchmaking, Ranked; each retitled.
+- Every copy: c35 + compile all ok; pre.lua clean; Matchmaking bot match to the post-match lobby, console clean (52 lines, MCP only).
+- Carries (UI): real-data fixes (inbox fixed canvas, rows reachable; leaderboard no shrink on reopen; party grid no rebuild mid-pop;
+  toast bursts no longer 37 s; placed Ranked tile emblem); match Notify (toast burst + inbox canvas).
