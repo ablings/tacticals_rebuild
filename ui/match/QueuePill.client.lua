@@ -61,17 +61,19 @@ end
 
 RunService.Heartbeat:Connect(function()
 	local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
-	seek.Visible = q ~= nil and st ~= nil
+	-- (round 3) PQ_Waiting: Play Again pressed during the Victory beat, the search starts once the match results are saved
+	local saving = player:GetAttribute("PQ_Waiting") == true and st == nil
+	seek.Visible = (q ~= nil and st ~= nil) or saving
 	if not seek.Visible then return end
 	local want = resultsUp() and CORNER or HOME
 	if seek.Position ~= want then seek.Position = want end
 	local def = Config.QueueById and Config.QueueById(q)
 	local e = workspace:GetServerTimeNow() - (player:GetAttribute("MM_Since") or workspace:GetServerTimeNow())
 	local searching = st == "Searching"
-	status.Text = searching and ("Searching for players" .. string.rep(".", 1 + math.floor(e) % 3)) or "Match found!"
-	status.TextColor3 = searching and RC.text or RC.green
+	status.Text = saving and "Saving match results..." or (searching and ("Searching for players" .. string.rep(".", 1 + math.floor(e) % 3)) or "Match found!")
+	status.TextColor3 = (searching or saving) and RC.text or RC.green
 	mode.Text = def and ((def.Ranked and "Ranked " or "") .. tostring(def.Mode or def.Id or "")) or ""
 	local sec = math.max(0, math.floor(e))
 	clock.Text = string.format("%d:%02d", sec // 60, sec % 60)
-	x.Visible = searching
+	x.Visible = searching and not saving
 end)

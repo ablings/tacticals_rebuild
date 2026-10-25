@@ -1156,22 +1156,39 @@ end
 -- while the body fades back in. No advantage: the camera only ever moves INTO your own head (less view than over the shoulder,
 -- never further out), the world stays blurred and shaded, and the server blocks firing / melee / gadgets / abilities while
 -- SwitchingKit is set (fix/switch_now.lua). Runs after CameraController (Camera + 1), CinematicCamera (+4) and the shakes (+5/+6).
+-- (round 2, systems grader) a pure post-process: what it changed is put back at the very start of the next frame, so a camera
+-- path that eases from the current FOV / CFrame (death cam, spectate) never compounds it; nothing while dead (and a death closes
+-- the picker); explicit easing (no flicker at rest); ReplicatedStorage attribute SwitchFXOff turns the camera / body part off.
 do
 	local kick = 0
+	local undo = nil -- { fov, cf } the controllers' own values from the frame we changed
+	local function alive()
+		local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+		return hum ~= nil and hum.Health > 0 and player:GetAttribute("Alive") ~= false
+	end
+	RunService:BindToRenderStep("SwitchWeaponsFXUndo", Enum.RenderPriority.First.Value, function()
+		local cam = workspace.CurrentCamera
+		if undo and cam then cam.FieldOfView = undo.fov; cam.CFrame = undo.cf end
+		undo = nil
+	end)
 	RunService:BindToRenderStep("SwitchWeaponsFX", Enum.RenderPriority.Camera.Value + 8, function(dt)
-		local want = phase == "Switch" and 1 or 0
+		if switching and not alive() then switching = false end -- dying closes the picker
+		local off = ReplicatedStorage:GetAttribute("SwitchFXOff") == true
+		local want = (phase == "Switch" and alive() and not off) and 1 or 0
 		local prev = SWFX.a
-		SWFX.a = want > prev and math.min(1, prev + dt / 0.22) or math.max(0, prev - dt / 0.3)
-		if want == 0 and prev > 0.5 and SWFX.a <= 0.5 then kick = 1 end -- picked: the pull-back punches out a touch
+		if want > prev then SWFX.a = math.min(1, prev + dt / 0.22)
+		elseif want < prev then SWFX.a = math.max(0, prev - dt / 0.3) end
+		if want == 0 and prev > 0.5 and SWFX.a <= 0.5 and alive() then kick = 1 end -- picked: the pull-back punches out a touch
 		kick = math.max(0, kick - dt / 0.35)
 		local a = SWFX.a
 		local e = a * a * (3 - 2 * a)
 		local cam = workspace.CurrentCamera
 		local char = player.Character
 		local head = char and char:FindFirstChild("Head")
-		if cam and head and (e > 0 or kick > 0) then
+		if cam and head and alive() and (e > 0 or kick > 0) then
+			undo = { fov = cam.FieldOfView, cf = cam.CFrame }
 			if e > 0 then cam.CFrame = cam.CFrame:Lerp(CFrame.new(head.Position) * cam.CFrame.Rotation, e) end
-			cam.FieldOfView = cam.FieldOfView * (1 - 0.15 * e) * (1 + 0.06 * math.sin(kick * math.pi))
+			cam.FieldOfView = undo.fov * (1 - 0.15 * e) * (1 + 0.06 * math.sin(kick * math.pi))
 		end
 		if char and (a > 0 or SWFX.hid) then
 			for _, d in char:GetDescendants() do

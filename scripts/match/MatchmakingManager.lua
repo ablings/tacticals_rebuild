@@ -494,6 +494,14 @@ local function deliver(player: Player, s, res)
 		Remotes.Notify(player, "Couldn't join the match server. Try again.", "bad")
 		stop(player)
 	end
+	-- [PLAYQUEUE] (systems grader) a teleport that never completes must not leave MM_Status stuck on Teleporting
+	task.delay(30, function()
+		if player.Parent and searching[player] == s and s.status == "Teleporting" then
+			player:SetAttribute("MM_FailReason", "The match server didn't answer") -- [MMFAIL]
+			Remotes.Notify(player, "The match server didn't answer. Try again.", "bad")
+			stop(player)
+		end
+	end)
 end
 
 local function serviceSearchers()

@@ -93,16 +93,19 @@ local function pqPartyOf(player: Player)
 	return PS, party
 end
 local function pqAwarded(player: Player): boolean
-	if player:GetAttribute("PQ_Awarded") ~= true then return false end
+	-- (round 3) stamped with the game number, so a slow award from the last game never counts for this one
+	local gameNo = ReplicatedStorage:GetAttribute("SeriesGames") or 0
+	if player:GetAttribute("PQ_Awarded") ~= gameNo then return false end
 	local _, party = pqPartyOf(player)
 	if party and party.leader == player then
-		for _, m in party.members do if m.Parent and m:GetAttribute("PQ_Awarded") ~= true then return false end end
+		for _, m in party.members do if m.Parent and m:GetAttribute("PQ_Awarded") ~= gameNo then return false end end
 	end
 	return true
 end
 local function pqWindowOpen(): boolean
 	local ms = ReplicatedStorage:GetAttribute("MatchState")
-	return series ~= nil and (series.inPost or ms == "Victory" or ms == "MatchEnd")
+	-- (round 3) series.closed: the after-match flow is over (timeout / hub) even though MatchState still reads MatchEnd
+	return series ~= nil and not series.closed and (series.inPost or ms == "Victory" or ms == "MatchEnd")
 end
 local function startSearch(player: Player, qid: string)
 	local MM = pqApi()
@@ -117,6 +120,7 @@ local function startSearch(player: Player, qid: string)
 end
 local function queueAgain(player: Player, qid: string)
 	if not pqRateOk(player) then return end
+	if not pqWindowOpen() or (series.sentHome and series.sentHome[player]) then return end -- (round 3) only in the after-match window
 	local MM, R = pqApi()
 	if not MM then playAgain(player, qid) return end
 	local mmSt = player:GetAttribute("MM_Status")
@@ -136,7 +140,8 @@ local function queueAgain(player: Player, qid: string)
 		local t0 = os.clock()
 		while player.Parent and not pqAwarded(player) and os.clock() - t0 < 20 do task.wait(0.2) end
 		player:SetAttribute("PQ_Waiting", nil)
-		if player.Parent and pqAwarded(player) and pqWindowOpen() and player:GetAttribute("MM_Status") == nil then startSearch(player, qid) end
+		if player.Parent and pqAwarded(player) and pqWindowOpen() and player:GetAttribute("MM_Status") == nil then startSearch(player, qid)
+		elseif player.Parent and not pqAwarded(player) then pqNotify(player, "Your match results are still saving. Press Play Again in a moment.", "bad") end
 	end)
 end
 ]==]
@@ -172,7 +177,8 @@ local edits = {
 		"\t\t\tif still then\n"
 		.. "\t\t\t\t-- [PLAYQUEUE] a rematch takes everyone out of the online queue; if a match already claimed someone, no rematch\n"
 		.. "\t\t\t\tlocal free = true\n"
-		.. "\t\t\t\tfor _, p in Players:GetPlayers() do if not mmCancel(p) then free = false end end\n"
+		.. "\t\t\t\tfor _, p in Players:GetPlayers() do local ms = p:GetAttribute(\"MM_Status\") if ms ~= nil and ms ~= \"Searching\" then free = false end end\n"
+		.. "\t\t\t\tif free then for _, p in Players:GetPlayers() do if not mmCancel(p) then free = false end end end\n"
 		.. "\t\t\t\tif free then\n"
 		.. "\t\t\t\t\tresult = \"rematch\"\n"
 		.. "\t\t\t\t\tbreak\n"
@@ -188,11 +194,13 @@ local edits = {
 		.. "\t\t\t\t\ttask.spawn(function()\n"
 		.. "\t\t\t\t\t\tlocal okA, errA = pcall(award, match, m, side, winner, forfeit, ratings)\n"
 		.. "\t\t\t\t\t\tif not okA then warn(\"[RoundManager] award failed: \" .. tostring(errA)) end\n"
-		.. "\t\t\t\t\t\tif m.player and m.player.Parent then m.player:SetAttribute(\"PQ_Awarded\", true) end\n"
+		.. "\t\t\t\t\t\tif m.player and m.player.Parent then m.player:SetAttribute(\"PQ_Awarded\", ReplicatedStorage:GetAttribute(\"SeriesGames\") or 0) end\n"
 		.. "\t\t\t\t\tend)\n"
 		.. "\t\t\t\tend\n" },
 	{ "\t\tfor _, p in Players:GetPlayers() do p:SetAttribute(\"RematchVote\", nil) end\n\t\tseriesUpdate()\n",
 		"\t\tfor _, p in Players:GetPlayers() do p:SetAttribute(\"RematchVote\", nil); p:SetAttribute(\"PQ_Awarded\", nil) end -- [PLAYQUEUE] a new game: rewards not written yet\n\t\tseriesUpdate()\n" },
+	{ "\t\tlocal r = postMatch()\n\t\tif r ~= \"rematch\" then return end\n",
+		"\t\tlocal r = postMatch()\n\t\tif r ~= \"rematch\" then series.closed = true return end -- [PLAYQUEUE] the after-match window is over\n" },
 }
 local s = RM.Source:gsub("\r\n", "\n")
 for i, e in edits do
