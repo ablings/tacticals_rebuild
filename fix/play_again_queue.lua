@@ -807,13 +807,20 @@ local function queueAgain(player: Player, qid: string)
 	elseif mmSt ~= nil then
 		return -- Found / Teleporting: already on the way
 	end
+	-- (round 4) a press while it waits for the results to save cancels the wait, like a press while searching
+	if player:GetAttribute("PQ_Waiting") then
+		player:SetAttribute("PQ_Waiting", nil)
+		pqNotify(player, "Search cancelled", "info")
+		return
+	end
 	if pqAwarded(player) then startSearch(player, qid) return end
 	-- rewards still being written (the Victory beat): start the search the moment they are
-	if player:GetAttribute("PQ_Waiting") then return end
-	player:SetAttribute("PQ_Waiting", true)
+	local token = os.clock()
+	player:SetAttribute("PQ_Waiting", token)
 	task.spawn(function()
 		local t0 = os.clock()
-		while player.Parent and not pqAwarded(player) and os.clock() - t0 < 20 do task.wait(0.2) end
+		while player.Parent and player:GetAttribute("PQ_Waiting") == token and not pqAwarded(player) and os.clock() - t0 < 20 do task.wait(0.2) end
+		if player:GetAttribute("PQ_Waiting") ~= token then return end -- cancelled
 		player:SetAttribute("PQ_Waiting", nil)
 		if player.Parent and pqAwarded(player) and pqWindowOpen() and player:GetAttribute("MM_Status") == nil then startSearch(player, qid)
 		elseif player.Parent and not pqAwarded(player) then pqNotify(player, "Your match results are still saving. Press Play Again in a moment.", "bad") end
@@ -866,10 +873,12 @@ local edits = {
 	{ "\t\t\t\tif not m.left then task.spawn(award, match, m, side, winner, forfeit, ratings) end\n",
 		"\t\t\t\tif not m.left then\n"
 		.. "\t\t\t\t\t-- [PLAYQUEUE] PQ_Awarded once this player's rewards are written (Play Again's teleport releases the profile)\n"
+		.. "\t\t\t\t\t-- stamped with THIS game's number, taken before the award starts (a rematch bumps it)\n"
+		.. "\t\t\t\t\tlocal gameNo = ReplicatedStorage:GetAttribute(\"SeriesGames\") or 0\n"
 		.. "\t\t\t\t\ttask.spawn(function()\n"
 		.. "\t\t\t\t\t\tlocal okA, errA = pcall(award, match, m, side, winner, forfeit, ratings)\n"
 		.. "\t\t\t\t\t\tif not okA then warn(\"[RoundManager] award failed: \" .. tostring(errA)) end\n"
-		.. "\t\t\t\t\t\tif m.player and m.player.Parent then m.player:SetAttribute(\"PQ_Awarded\", ReplicatedStorage:GetAttribute(\"SeriesGames\") or 0) end\n"
+		.. "\t\t\t\t\t\tif m.player and m.player.Parent then m.player:SetAttribute(\"PQ_Awarded\", gameNo) end\n"
 		.. "\t\t\t\t\tend)\n"
 		.. "\t\t\t\tend\n" },
 	{ "\t\tfor _, p in Players:GetPlayers() do p:SetAttribute(\"RematchVote\", nil) end\n\t\tseriesUpdate()\n",

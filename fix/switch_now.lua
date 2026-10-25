@@ -74,7 +74,8 @@ local READY = "\telseif kind == \"Ready\" and phase == \"Loadout\" then\n"
 local function session(stateExpr)
 	return "\telseif kind == \"SwitchOpen\" then -- [SWITCHNOW] the picker opened: every pick swaps at once until SwitchDone\n"
 		.. "\t\tlocal liveAt = " .. stateExpr .. ":GetAttribute(\"LiveAt\") or 0\n"
-		.. "\t\tlocal grace = phase == \"Live\" and workspace:GetServerTimeNow() - liveAt < 1.5 -- a press that crossed the round start in flight\n"
+		.. "\t\t-- a press that crossed the round start in flight, from a player who hasn't fired or thrown since (round 3: no free reload / refill)\n"
+		.. "\t\tlocal grace = phase == \"Live\" and workspace:GetServerTimeNow() - liveAt < 1.5 and (player:GetAttribute(\"ActedAt\") or 0) < liveAt\n"
 		.. "\t\tif phase == \"RoundEnd\" or phase == \"Countdown\" or grace or (phase == \"Live\" and not player:GetAttribute(\"KitLocked\")) then\n"
 		.. "\t\t\tplayer:SetAttribute(\"SwitchingKit\", true)\n"
 		.. "\t\tend\n"
@@ -84,10 +85,13 @@ end
 if IS_HUB then
 	local LDM = find("LobbyDuelManager")
 	local FLOW_OLD = "local function onFlow(player: Player, matchId: any, kind: any, a: any, b: any)\n\tlocal rec = byPlayer[player]\n"
-	local FLOW_NEW = LIMITER .. "local function onFlow(player: Player, matchId: any, kind: any, a: any, b: any)\n"
+	local FLOW_NEW = LIMITER .. "local FLOW_KINDS = { Vote = true, Pick = true, Ready = true, Loaded = true, Leave = true, SwitchOpen = true, SwitchDone = true } -- [SWITCHNOW]\n"
+		.. "local function onFlow(player: Player, matchId: any, kind: any, a: any, b: any)\n"
 		.. "\t-- [SWITCHNOW] a SwitchDone always lands, even after the duel forgot you; every kind is rate limited\n"
 		.. "\tif kind == \"SwitchDone\" or matchId == \"SwitchDone\" then player:SetAttribute(\"SwitchingKit\", nil) end\n"
-		.. "\tif not flowRateOk(player, type(matchId) == \"string\" and kind or matchId) then return end\n"
+		.. "\tlocal flowKind = kind\n"
+		.. "\tif type(matchId) ~= \"string\" then flowKind = matchId end\n"
+		.. "\tif not FLOW_KINDS[flowKind] or not flowRateOk(player, flowKind) then return end -- (round 3) known kinds only: bounded buckets\n"
 		.. "\tlocal rec = byPlayer[player]\n"
 	local CLEAR_OLD = "\"Deploying\" } do\n\t\tplayer:SetAttribute(k, nil)\n"
 	local CLEAR_NEW = "\"Deploying\", \"SwitchingKit\" } do -- [SWITCHNOW] leaving a duel ends a Switch Weapons session\n\t\tplayer:SetAttribute(k, nil)\n"
@@ -98,7 +102,9 @@ else
 	local K_NEW = "local KINDS = { Vote = true, Pick = true, Ready = true, Leave = true, Loaded = true, Rematch = true, PlayAgain = true, ToHub = true, SwitchOpen = true, SwitchDone = true }"
 	local F_OLD = "local function onFlow(player: Player, kind: any, a: any, b: any, c: any)\n\tif not KINDS[kind] and KINDS[a] then kind, a, b = a, b, c end\n"
 	local F_NEW = LIMITER .. "local function onFlow(player: Player, kind: any, a: any, b: any, c: any)\n\tif not KINDS[kind] and KINDS[a] then kind, a, b = a, b, c end\n"
-		.. "\tif not flowRateOk(player, kind) then return end -- [SWITCHNOW]\n"
+		.. "\t-- [SWITCHNOW] SwitchDone only lifts a restriction: never rate limited (round 3); every other kind must be known, then limited\n"
+		.. "\tif kind == \"SwitchDone\" then player:SetAttribute(\"SwitchingKit\", nil) return end\n"
+		.. "\tif not KINDS[kind] or not flowRateOk(player, kind) then return end\n"
 	table.insert(res, patch(RM, { { Q_MATCH, qNew(Q_MATCH) }, { READY, session("ReplicatedStorage") .. READY }, { K_OLD, K_NEW }, { F_OLD, F_NEW } }))
 end
 
@@ -118,7 +124,9 @@ table.insert(res, patch(find("MatchCore"), {
 local CM_MATCH = "\tif ReplicatedStorage:GetAttribute(\"CombatEnabled\") == false and not roundOver then return finish(\"combat disabled (countdown / round over)\") end\n"
 local CM_HUB = "\tif MatchState.Get(player, \"CombatEnabled\") == false and not roundOver then return finish(\"combat disabled (countdown / round over)\") end\n"
 local CM_ADD = "\tif player:GetAttribute(\"SwitchingKit\") then return finish(\"switching weapons\") end -- [SWITCHNOW]\n"
-local cmRes = patch(find("CombatManager"), { { CM_MATCH, CM_MATCH .. CM_ADD, true }, { CM_HUB, CM_HUB .. CM_ADD, true } })
+local SHOT_LOCK = "\t\tstate.lastFire = now\n\t\tplayer:SetAttribute(\"KitLocked\", true) -- [ROUNDFLOW] the first shot locks this round's kit\n"
+local SHOT_ACT = SHOT_LOCK .. "\t\tplayer:SetAttribute(\"ActedAt\", workspace:GetServerTimeNow()) -- [SWITCHNOW] no SwitchOpen grace after a shot\n"
+local cmRes = patch(find("CombatManager"), { { CM_MATCH, CM_MATCH .. CM_ADD, true }, { CM_HUB, CM_HUB .. CM_ADD, true }, { SHOT_LOCK, SHOT_ACT } })
 assert(UNDO or cmRes:find("[12][+=]"), "CombatManager: no fire gate anchor matched (" .. cmRes .. ")")
 table.insert(res, cmRes)
 local MM_MATCH = "\tif ReplicatedStorage:GetAttribute(\"CombatEnabled\") == false then return end\n\tlocal character = player.Character\n"
@@ -134,8 +142,10 @@ table.insert(res, patch(find("MeleeManager"), IS_HUB and { { MM_HUB, MM_HUB .. M
 local GM_MATCH = "\tif ReplicatedStorage:GetAttribute(\"CombatEnabled\") == false and ReplicatedStorage:GetAttribute(\"MatchState\") ~= \"RoundEnd\" then return end\n"
 local GM_HUB = "\tif MatchState.Get(player, \"CombatEnabled\") == false and MatchState.Get(player, \"MatchState\") ~= \"RoundEnd\" then return end\n"
 local GM_ADD_MATCH = "\tif player:GetAttribute(\"SwitchingKit\") then return end -- [SWITCHNOW] no throws while switching weapons\n"
+	.. "\tplayer:SetAttribute(\"ActedAt\", workspace:GetServerTimeNow()) -- [SWITCHNOW] no SwitchOpen grace after a throw\n"
 	.. "\tif ReplicatedStorage:GetAttribute(\"MatchState\") == \"Live\" then player:SetAttribute(\"KitLocked\", true) end -- [SWITCHNOW] a live throw locks the kit (no refill by switching)\n"
 local GM_ADD_HUB = "\tif player:GetAttribute(\"SwitchingKit\") then return end -- [SWITCHNOW] no throws while switching weapons\n"
+	.. "\tplayer:SetAttribute(\"ActedAt\", workspace:GetServerTimeNow()) -- [SWITCHNOW] no SwitchOpen grace after a throw\n"
 	.. "\tif MatchState.Get(player, \"MatchState\") == \"Live\" then player:SetAttribute(\"KitLocked\", true) end -- [SWITCHNOW] a live throw locks the kit (no refill by switching)\n"
 table.insert(res, patch(find("GadgetManager"), IS_HUB and { { GM_HUB, GM_HUB .. GM_ADD_HUB } } or { { GM_MATCH, GM_MATCH .. GM_ADD_MATCH } }))
 local AB_OLD = "local function combatOn(player: Player): boolean\n\treturn stateOf(player, \"CombatEnabled\") ~= false\nend\n"

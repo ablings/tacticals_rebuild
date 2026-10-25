@@ -45,7 +45,15 @@ local x = RKit.closeButton(UDim2.fromOffset(76, 52))
 x.Position = UDim2.fromOffset(448, 14)
 x.ZIndex = 11
 x.Parent = seek
-x.Activated:Connect(function() pcall(Request.InvokeServer, Request, "CancelMatch") end)
+x.Activated:Connect(function()
+	-- (round 4) while the results save there's no queue entry yet: Play Again again cancels that wait (the server's toggle)
+	if player:GetAttribute("PQ_Waiting") ~= nil and player:GetAttribute("MM_Status") == nil then
+		local ev = ReplicatedStorage:FindFirstChild("MatchFlow")
+		if ev then ev:FireServer("PlayAgain") end
+		return
+	end
+	pcall(Request.InvokeServer, Request, "CancelMatch")
+end)
 Kit.toScale(root)
 -- top centre (the lobby spot) normally; the top-left corner while Victory / Defeat or the results card is up, so it never covers
 -- their DEFEAT / VICTORY header (top centre)
@@ -62,7 +70,7 @@ end
 RunService.Heartbeat:Connect(function()
 	local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
 	-- (round 3) PQ_Waiting: Play Again pressed during the Victory beat, the search starts once the match results are saved
-	local saving = player:GetAttribute("PQ_Waiting") == true and st == nil
+	local saving = player:GetAttribute("PQ_Waiting") ~= nil and st == nil
 	seek.Visible = (q ~= nil and st ~= nil) or saving
 	if not seek.Visible then return end
 	local want = resultsUp() and CORNER or HOME
@@ -75,5 +83,5 @@ RunService.Heartbeat:Connect(function()
 	mode.Text = def and ((def.Ranked and "Ranked " or "") .. tostring(def.Mode or def.Id or "")) or ""
 	local sec = math.max(0, math.floor(e))
 	clock.Text = string.format("%d:%02d", sec // 60, sec % 60)
-	x.Visible = searching and not saving
+	x.Visible = searching or saving -- (round 4) the X cancels the wait too
 end)

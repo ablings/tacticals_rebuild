@@ -1021,6 +1021,8 @@ RunService.RenderStepped:Connect(function()
 	-- [SWITCHNOW] tell the server the session opened / closed: while it is open every pick swaps at once (never queued for the
 	-- next round) and you can't fight
 	if SWFX.sent ~= switching then SWFX.sent = switching; send(switching and "SwitchOpen" or "SwitchDone") end
+	-- (round 3) the server still thinks you're switching while the picker is closed (a lost / dropped Done): say it again
+	if not switching and player:GetAttribute("SwitchingKit") and os.clock() - (SWFX.resent or 0) > 1 then SWFX.resent = os.clock(); send("SwitchDone") end
 	setPhase(switching and "Switch" or st(STATE.Phase))
 	-- (2026-10-20, live check with Edward) the hotbar / health came back behind the map vote and gun pick: their controllers
 	-- switch them on after the phase began, so keep them off every frame while one of these screens is up
