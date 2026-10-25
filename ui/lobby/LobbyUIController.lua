@@ -1462,8 +1462,9 @@ local function build()
 				player:SetAttribute("PlayAgainSent", true)
 				PseudoLobby.PlayAgain()
 				updatePlayButton()
-				-- a failed teleport leaves you here: let PLAY AGAIN be pressed again
-				task.delay(15, function() player:SetAttribute("PlayAgainSent", nil); updatePlayButton() end)
+				-- [PLAYQUEUE] (lead 2026-10-25) PLAY AGAIN now queues from this server: the row steps aside for the search pill, and a
+				-- cancelled search can be restarted at once (3 s debounce, was 15 s for the old hub teleport)
+				task.delay(3, function() player:SetAttribute("PlayAgainSent", nil); updatePlayButton() end)
 				return
 			end
 			LobbyUI.Open("Play")

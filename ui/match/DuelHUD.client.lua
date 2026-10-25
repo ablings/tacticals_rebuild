@@ -946,7 +946,8 @@ function resultActs.leave()
 	rgui.Enabled = false; results.Visible = false
 	if resultBackdrop then resultBackdrop(false) end
 end
-function resultActs.again() send("PlayAgain"); againB:FindFirstChildOfClass("TextLabel").Text = "Searching..." end
+-- [PLAYQUEUE] (lead 2026-10-25) Play Again queues from this server; pressing it again while searching cancels (resultActs.label)
+function resultActs.again() send("PlayAgain") end
 function resultActs.rematch()
 	if st("RematchAllowed") == false then return end
 	send("Rematch") -- toggles your vote on the server (player attribute RematchVote shows it)
@@ -1130,6 +1131,7 @@ local function showResultScreen(sum)
 		tostring(st("RematchAllowed")), tostring(st("RematchNeeded")), tostring(st("RematchReason")), tostring(st("RematchVotes")),
 		tostring(player:GetAttribute("RematchVote")), tostring(st("MatchMode"))))
 	againB:FindFirstChildOfClass("TextLabel").Text = "Play Again"
+	if resultActs.label then resultActs.label() end -- [PLAYQUEUE] a search already running keeps its label
 	-- (2026-10-23, Edward: "play again should not be an option in lobby duels" - it queues you against the whole server) a hub pad
 	-- duel (the lobby's LobbyMap + a DuelMatch / InDuel player) shows Rematch and Leave only
 	local padDuel = workspace:FindFirstChild("LobbyMap") ~= nil and (player:GetAttribute("DuelMatch") ~= nil or player:GetAttribute("InDuel") == true
@@ -1162,7 +1164,16 @@ local hubP = panelButton("ToHub", "To Hub", nil, 0.985)
 local againP, againPT = panelButton("PlayAgain", "Play Again", nil, 0.91)
 local rematchP, rematchPT, rematchPS = panelButton("Rematch", "Rematch", "0/2", 0.835)
 hubP.Activated:Connect(function() send("ToHub") end)
-againP.Activated:Connect(function() send("PlayAgain"); againPT.Text = "Searching..." end)
+againP.Activated:Connect(function() send("PlayAgain") end) -- [PLAYQUEUE] the label follows MM_Status (resultActs.label)
+-- [PLAYQUEUE] (Edward 2026-10-25) Play Again joins the online queue from this server (the QueuePill shows the search over every
+-- screen): both Play Again buttons read "Cancel Search" while searching (press again to stop) and "Match found!" once matched
+function resultActs.label()
+	local mm = player:GetAttribute("MM_Status")
+	local text = mm == "Searching" and "Cancel Search" or ((mm == "Found" or mm == "Teleporting") and "Match found!" or "Play Again")
+	againB:FindFirstChildOfClass("TextLabel").Text = text
+	againPT.Text = text
+end
+player:GetAttributeChangedSignal("MM_Status"):Connect(resultActs.label)
 -- (2026-10-21, round 3: match RIVALS) the after-match panel's Play Again matches the results card's primary: field-green
 -- gradient (#8DBF5A -> #4C7A2E), cream words, a chunky bottom lip (it was the one dark plate left of the "skipped" list)
 againP.BackgroundColor3, againP.BackgroundTransparency = WHITE, 0
@@ -1175,7 +1186,7 @@ RunService.Heartbeat:Connect(function()
 	-- (after-match lobby) a lobby menu / the Kit room hides the play row: the panel goes with it
 	local row = player.PlayerGui:FindFirstChild("PlayRowUI")
 	local on = postMatch() and not rgui.Enabled and not (row ~= nil and not row.Enabled)
-	if on ~= pgui.Enabled then pgui.Enabled = on; if on then againPT.Text = "Play Again" end end
+	if on ~= pgui.Enabled then pgui.Enabled = on; if on then resultActs.label() end end -- [PLAYQUEUE] (was "Play Again")
 	if on then
 		styleRematch(rematchP, rematchPT, rematchPS)
 		-- in the after-match lobby the play row's big PLAY AGAIN is the Play Again: the panel keeps Rematch + To Hub

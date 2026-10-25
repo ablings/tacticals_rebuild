@@ -1334,7 +1334,10 @@ function LobbyHud.Start()
 		local q, st = player:GetAttribute("MM_Queue"), player:GetAttribute("MM_Status")
 		-- (2026-10-21, RIVALS 1:1) the pill's texts the way PlayScreen fills its copy: status dots cycle once a second, "Match
 		-- found!" in Theme green (X hidden) once found, the mode as "[Ranked ]<Mode>", the clock from MM_Since
-		seek.Visible = q ~= nil and st ~= nil and not kitShown
+		-- [PLAYQUEUE] (lead 2026-10-25) match places: QueuePill (match/QueuePill.client.lua) shows the search over every match screen,
+		-- so this one stays off there; PLAY still steps aside while a search runs
+		local seeking = q ~= nil and st ~= nil
+		seek.Visible = seeking and not kitShown and not PseudoLobby.MatchPlace()
 		if seek.Visible then
 			local def = Config.QueueById and Config.QueueById(q)
 			local e = workspace:GetServerTimeNow() - (player:GetAttribute("MM_Since") or workspace:GetServerTimeNow())
@@ -1347,7 +1350,7 @@ function LobbyHud.Start()
 			seekX.Visible = searching
 		end
 		-- live RIVALS: PLAY hides while the searching pill is up (put back as soon as it goes)
-		if rowPlay and rowPlay.Visible == seek.Visible then rowPlay.Visible = not seek.Visible end
+		if rowPlay and rowPlay.Visible == seeking then rowPlay.Visible = not seeking end -- [PLAYQUEUE] seeking (was seek.Visible)
 	end)
 
 	task.spawn(function()

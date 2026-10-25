@@ -21,6 +21,10 @@ case "$KIND" in
   Matchmaking) PYTHONIOENCODING=utf-8 python ui/deploy_ui.py "$ID" --matchmaking 2>&1 | tail -1 ;;
   Ranked) PYTHONIOENCODING=utf-8 python ui/deploy_ui.py "$ID" --ranked 2>&1 | tail -1 ;;
 esac
+# [PLAYQUEUE] (2026-10-25) Play Again queues from the match server (MatchmakingManager in the match places + RoundManager edits)
+case "$KIND" in
+  Matchmaking|Ranked) python tools/run_luau_at.py "$ID" fix/play_again_queue.lua ;;
+esac
 python tools/run_luau_at.py "$ID" out/v.lua
 python tools/run_luau_at.py "$ID" out/v2.lua
 $PS -File tools/save_studio.ps1 "\\${KIND}_place.rbxl"
