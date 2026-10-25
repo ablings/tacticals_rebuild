@@ -43,6 +43,9 @@ local function send(...)
 	local _, id = stateObject()
 	if id then ev:FireServer(id, ...) else ev:FireServer(...) end
 end
+-- [SWITCHNOW] (lead 2026-10-25) Switch Weapons session: a = the switch effect 0..1, sent = the session state the server has,
+-- hid = your body was hidden by the effect (see the SwitchWeaponsFX render step at the end)
+local SWFX = { a = 0, sent = false, hid = nil }
 local SLOTS = { { id = "Weapon", label = "Gun" }, { id = "Melee", label = "Melee" }, { id = "Gadget", label = "Gadget" } }
 local TIPS = { "Peek from cover: you're only exposed while you aim", "Throw a smoke to cross open ground", "Gun bash is lethal from behind",
 	"Headshots end duels fast", "Scissors unlock new gear in the Kit room" }
@@ -928,7 +931,7 @@ local function setPhase(p)
 	for _, bx in loBoxes do local f = type(bx) == "table" and (bx.frame or (bx[1] and bx[1].h and bx[1].h.Parent)) or bx; if typeof(f) == "Instance" then f.Visible = not (sw or p == "Loadout") end end
 	local Lighting = game:GetService("Lighting")
 	local blur = Lighting:FindFirstChild("SwitchWeaponsBlur") or new("BlurEffect", { Name = "SwitchWeaponsBlur", Size = 0, Parent = Lighting })
-	TweenService:Create(blur, TweenInfo.new(0.2), { Size = (on and ((sw and 16) or (p == "Loadout" and 24))) or 0 }):Play()
+	TweenService:Create(blur, TweenInfo.new(0.2), { Size = (on and ((sw and 20) or (p == "Loadout" and 24))) or 0 }):Play()
 	-- the match HUD steps out while the picker is up (RIVALS keeps only the score bar); back on when it closes
 	local pg = player:FindFirstChild("PlayerGui")
 	for _, n in { "HUD", "Hotbar", "Vitals", "StealthUI", "TutorialUI", "NearMissUI", "TouchControls" } do
@@ -1015,6 +1018,9 @@ RunService.RenderStepped:Connect(function()
 		if ms ~= "RoundEnd" and ms ~= "Countdown" and ms ~= "Live" then switching = false end
 	end
 	if player:GetAttribute("SwitchingWeapons") ~= (switching or nil) then player:SetAttribute("SwitchingWeapons", switching or nil) end
+	-- [SWITCHNOW] tell the server the session opened / closed: while it is open every pick swaps at once (never queued for the
+	-- next round) and you can't fight
+	if SWFX.sent ~= switching then SWFX.sent = switching; send(switching and "SwitchOpen" or "SwitchDone") end
 	setPhase(switching and "Switch" or st(STATE.Phase))
 	-- (2026-10-20, live check with Edward) the hotbar / health came back behind the map vote and gun pick: their controllers
 	-- switch them on after the phase began, so keep them off every frame while one of these screens is up
@@ -1044,8 +1050,8 @@ RunService.RenderStepped:Connect(function()
 			local v = player:GetAttribute(k)
 			if v then table.insert(q, tostring(v)) end
 		end
-		local txt = st("MatchState") == "Live" and (#q > 0 and ("Next round: " .. table.concat(q, ", ")) or "Changes apply next round")
-			or ("Map: " .. itemName(st(STATE.Chosen) or "?"))
+		-- [SWITCHNOW] picks in a Switch Weapons session swap at once, live round or not (a queue only shows if one is left over)
+		local txt = #q > 0 and ("Next round: " .. table.concat(q, ", ")) or ("Map: " .. itemName(st(STATE.Chosen) or "?"))
 		if mapBarL.Text ~= txt then mapBarL.Text = txt end
 	end
 	local left = math.max(0, (st(STATE.EndsAt) or 0) - workspace:GetServerTimeNow())
@@ -1142,4 +1148,36 @@ if RunService:IsStudio() then
 		return true
 	end
 	hook.Parent = player:WaitForChild("PlayerScripts")
+end
+
+-- [SWITCHNOW] (Edward 2026-10-25) RIVALS drops the HUD and blurs the view while you switch weapons, so the new gun doesn't pop in
+-- out of thin air. Third person here, so on YOUR screen only: your body (and whatever it holds) fades out, the camera glides into
+-- your head (first person) with the FOV pulled in under the blur, then comes back out with a small FOV kick once you've picked
+-- while the body fades back in. No advantage: the camera only ever moves INTO your own head (less view than over the shoulder,
+-- never further out), the world stays blurred and shaded, and the server blocks firing / melee / gadgets / abilities while
+-- SwitchingKit is set (fix/switch_now.lua). Runs after CameraController (Camera + 1), CinematicCamera (+4) and the shakes (+5/+6).
+do
+	local kick = 0
+	RunService:BindToRenderStep("SwitchWeaponsFX", Enum.RenderPriority.Camera.Value + 8, function(dt)
+		local want = phase == "Switch" and 1 or 0
+		local prev = SWFX.a
+		SWFX.a = want > prev and math.min(1, prev + dt / 0.22) or math.max(0, prev - dt / 0.3)
+		if want == 0 and prev > 0.5 and SWFX.a <= 0.5 then kick = 1 end -- picked: the pull-back punches out a touch
+		kick = math.max(0, kick - dt / 0.35)
+		local a = SWFX.a
+		local e = a * a * (3 - 2 * a)
+		local cam = workspace.CurrentCamera
+		local char = player.Character
+		local head = char and char:FindFirstChild("Head")
+		if cam and head and (e > 0 or kick > 0) then
+			if e > 0 then cam.CFrame = cam.CFrame:Lerp(CFrame.new(head.Position) * cam.CFrame.Rotation, e) end
+			cam.FieldOfView = cam.FieldOfView * (1 - 0.15 * e) * (1 + 0.06 * math.sin(kick * math.pi))
+		end
+		if char and (a > 0 or SWFX.hid) then
+			for _, d in char:GetDescendants() do
+				if d:IsA("BasePart") or d:IsA("Decal") then d.LocalTransparencyModifier = a end
+			end
+			SWFX.hid = a > 0 or nil
+		end
+	end)
 end

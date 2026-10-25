@@ -25,6 +25,8 @@ esac
 case "$KIND" in
   Matchmaking|Ranked) python tools/run_luau_at.py "$ID" fix/play_again_queue.lua ;;
 esac
+# [SWITCHNOW] (2026-10-25) Switch Weapons sessions: picks always swap at once, no fighting while switching (every match kind)
+python tools/run_luau_at.py "$ID" fix/switch_now.lua
 python tools/run_luau_at.py "$ID" out/v.lua
 python tools/run_luau_at.py "$ID" out/v2.lua
 $PS -File tools/save_studio.ps1 "\\${KIND}_place.rbxl"

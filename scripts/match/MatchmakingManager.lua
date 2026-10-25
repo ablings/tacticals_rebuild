@@ -38,6 +38,10 @@ local RankedServer = require(ServerScriptService.Shared.RankedServer)
 local PartyService = require(ServerScriptService.Shared.PartyService)
 
 local MatchmakingManager = {}
+-- [PLAYQUEUE] (lead 2026-10-25) THIS COPY is the match places' one (fix/play_again_queue.lua installs it; the hub keeps its own):
+-- in a match place FindMatch is not on the shared Request remote (only RoundManager's Play Again calls it, after the match's
+-- rewards are written and only in the after-match window), arrival TeleportData never auto-queues, and the pad watch is off.
+local IS_MATCH_PLACE = ReplicatedStorage:FindFirstChild("PlaceKind") ~= nil
 
 local IS_STUDIO = RunService:IsStudio()
 local PREFIX = IS_STUDIO and "Studio_" or "" -- testing in Studio never touches the live queues
@@ -125,7 +129,7 @@ local function leaveQueue(s): boolean
 	return true
 end
 
-Remotes.Handlers.FindMatch = function(player, queueId)
+local function findMatch(player, queueId) -- [PLAYQUEUE] (was Remotes.Handlers.FindMatch; registered below)
 	local q = Config.QueueById(queueId)
 	if not q then return { ok = false, msg = "Unknown queue" } end
 	-- [PARTY] RIVALS' "Whoops!" cases first, with the Play menu's exact strings (fix/party_queue_msgs.lua)
@@ -188,9 +192,18 @@ Remotes.Handlers.FindMatch = function(player, queueId)
 	return { ok = true }
 end
 
+MatchmakingManager.FindMatch = findMatch
+if not IS_MATCH_PLACE then Remotes.Handlers.FindMatch = findMatch end -- [PLAYQUEUE]
+MatchmakingManager.IsSearching = function(player: Player): boolean return searching[player] ~= nil end -- [PLAYQUEUE]
+
 Remotes.Handlers.CancelMatch = function(player)
 	local s = searching[player]
-	if not s then return { ok = false, msg = "You're not searching" } end
+	if not s then
+		-- [PLAYQUEUE] a party member sees the leader's search: say who can stop it
+		local party = PartyService.Of(player)
+		if party and party.leader ~= player and searching[party.leader] then return { ok = false, msg = "Only the party leader can cancel the search" } end
+		return { ok = false, msg = "You're not searching" }
+	end
 	if s.status ~= "Searching" then return { ok = false, msg = "Match found! Too late to cancel." } end
 	if not leaveQueue(s) then return { ok = false, msg = "Match found! Hold on..." } end
 	stop(player)
@@ -528,6 +541,7 @@ local function readCounts()
 end
 
 local function watch(player: Player)
+	if IS_MATCH_PLACE then return end -- [PLAYQUEUE] no lobby pads here
 	-- stepping onto a lobby pad takes you out of the online queue
 	player:GetAttributeChangedSignal("QueueMode"):Connect(function()
 		local s = searching[player]
@@ -544,6 +558,7 @@ function MatchmakingManager.Start()
 	-- [POSTMATCH] Play Again from a match place: TeleportData AutoQueue = <queue id> queues the player on arrival
 	local partyClaims = {} -- [PSEUDOLOBBY] [leaderId] = the leader's own TeleportData.Party (members check against it)
 	local function autoQueue(player: Player)
+		if IS_MATCH_PLACE then return end -- [PLAYQUEUE] never queue from arrival TeleportData in a match place
 		local ok, td = pcall(function() return player:GetJoinData().TeleportData end)
 		local qid = ok and type(td) == "table" and td.AutoQueue
 		if type(qid) ~= "string" or not Config.QueueById(qid) then return end
@@ -580,7 +595,7 @@ function MatchmakingManager.Start()
 			end
 			task.wait(3)
 			if player.Parent and not searching[player] then
-				local res = Remotes.Handlers.FindMatch(player, qid)
+				local res = findMatch(player, qid)
 				if type(res) == "table" and res.msg then Remotes.Notify(player, res.msg, res.ok and "info" or "bad") end
 			end
 		end)
