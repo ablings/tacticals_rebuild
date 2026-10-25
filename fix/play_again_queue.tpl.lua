@@ -119,7 +119,7 @@ local function startSearch(player: Player, qid: string)
 	if type(res) == "table" and not res.ok and res.msg then pqNotify(player, res.msg, "bad") end
 end
 local function queueAgain(player: Player, qid: string)
-	if not pqRateOk(player) then return end
+	-- (round 5) the limiter guards STARTING a search (each start writes to the queue); a cancel is never dropped (one per start)
 	if not pqWindowOpen() or (series.sentHome and series.sentHome[player]) then return end -- (round 3) only in the after-match window
 	local MM, R = pqApi()
 	if not MM then playAgain(player, qid) return end
@@ -138,6 +138,7 @@ local function queueAgain(player: Player, qid: string)
 		pqNotify(player, "Search cancelled", "info")
 		return
 	end
+	if not pqRateOk(player) then pqNotify(player, "Slow down a moment", "info") return end
 	if pqAwarded(player) then startSearch(player, qid) return end
 	-- rewards still being written (the Victory beat): start the search the moment they are
 	local token = os.clock()
@@ -185,7 +186,13 @@ local edits = {
 		.. "\t\t\t\t-- [PLAYQUEUE] a rematch takes everyone out of the online queue; if a match already claimed someone, no rematch\n"
 		.. "\t\t\t\tlocal free = true\n"
 		.. "\t\t\t\tfor _, p in Players:GetPlayers() do local ms = p:GetAttribute(\"MM_Status\") if ms ~= nil and ms ~= \"Searching\" then free = false end end\n"
-		.. "\t\t\t\tif free then for _, p in Players:GetPlayers() do if not mmCancel(p) then free = false end end end\n"
+		.. "\t\t\t\tif free then\n"
+		.. "\t\t\t\t\tfor _, p in Players:GetPlayers() do\n"
+		.. "\t\t\t\t\t\tlocal was = p:GetAttribute(\"MM_Status\") == \"Searching\" or p:GetAttribute(\"PQ_Waiting\") ~= nil\n"
+		.. "\t\t\t\t\t\tp:SetAttribute(\"PQ_Waiting\", nil)\n"
+		.. "\t\t\t\t\t\tif not mmCancel(p) then free = false elseif was then pqNotify(p, \"Rematch starting: search cancelled\", \"info\") end\n"
+		.. "\t\t\t\t\tend\n"
+		.. "\t\t\t\tend\n"
 		.. "\t\t\t\tif free then\n"
 		.. "\t\t\t\t\tresult = \"rematch\"\n"
 		.. "\t\t\t\t\tbreak\n"

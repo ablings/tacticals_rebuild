@@ -1169,11 +1169,14 @@ againP.Activated:Connect(function() send("PlayAgain") end) -- [PLAYQUEUE] the la
 -- screen): both Play Again buttons read "Cancel Search" while searching (press again to stop) and "Match found!" once matched
 function resultActs.label()
 	local mm = player:GetAttribute("MM_Status")
-	local text = mm == "Searching" and "Cancel Search" or ((mm == "Found" or mm == "Teleporting") and "Match found!" or "Play Again")
+	-- (round 4) PQ_Waiting: the search is armed while the results save; pressing again cancels it, so say so
+	local text = (mm == "Searching" or (mm == nil and player:GetAttribute("PQ_Waiting") ~= nil)) and "Cancel Search"
+		or ((mm == "Found" or mm == "Teleporting") and "Match found!" or "Play Again")
 	againB:FindFirstChildOfClass("TextLabel").Text = text
 	againPT.Text = text
 end
 player:GetAttributeChangedSignal("MM_Status"):Connect(resultActs.label)
+player:GetAttributeChangedSignal("PQ_Waiting"):Connect(resultActs.label)
 -- (2026-10-21, round 3: match RIVALS) the after-match panel's Play Again matches the results card's primary: field-green
 -- gradient (#8DBF5A -> #4C7A2E), cream words, a chunky bottom lip (it was the one dark plate left of the "skipped" list)
 againP.BackgroundColor3, againP.BackgroundTransparency = WHITE, 0

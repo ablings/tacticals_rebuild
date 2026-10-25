@@ -43,6 +43,16 @@ local function patch(inst, edits)
 end
 local function find(name) local i = SSS:FindFirstChild(name, true); assert(i, "no " .. name); return i end
 local res = {}
+-- (round 4, grader) an older SWITCHNOW round in the place would make this one install twice (its anchors still match inside
+-- the old output): refuse, UNDO it with that round's installer first
+do
+	local flow = IS_HUB and find("LobbyDuelManager") or SSS.ServerScripts["[Server] Init"].GameManager.Managers.RoundManager
+	local src = flow.Source
+	for _, old in { "type(matchId) == \"string\" and kind or matchId", "liveAt < 1.5 -- a press that crossed the round start in flight",
+		"if phase == \"RoundEnd\" or phase == \"Countdown\" or (phase == \"Live\" and not player:GetAttribute(\"KitLocked\")) then" } do
+		assert(UNDO or not src:find(old, 1, true), "an older SWITCHNOW round is installed in " .. flow.Name .. ": UNDO it with that round's fix first")
+	end
+end
 
 -- the per-player MatchFlow limiter (both places)
 local LIMITER = "-- [SWITCHNOW] (systems grader) one per-player limiter for every MatchFlow kind (a Pick re-gives a Tool, To Hub teleports)\n"
@@ -91,7 +101,8 @@ if IS_HUB then
 		.. "\tif kind == \"SwitchDone\" or matchId == \"SwitchDone\" then player:SetAttribute(\"SwitchingKit\", nil) end\n"
 		.. "\tlocal flowKind = kind\n"
 		.. "\tif type(matchId) ~= \"string\" then flowKind = matchId end\n"
-		.. "\tif not FLOW_KINDS[flowKind] or not flowRateOk(player, flowKind) then return end -- (round 3) known kinds only: bounded buckets\n"
+		.. "\t-- (round 3) known kinds only: bounded buckets; (round 4) SwitchOpen / SwitchDone only set an attribute: never dropped\n"
+		.. "\tif not FLOW_KINDS[flowKind] or (flowKind ~= \"SwitchOpen\" and flowKind ~= \"SwitchDone\" and not flowRateOk(player, flowKind)) then return end\n"
 		.. "\tlocal rec = byPlayer[player]\n"
 	local CLEAR_OLD = "\"Deploying\" } do\n\t\tplayer:SetAttribute(k, nil)\n"
 	local CLEAR_NEW = "\"Deploying\", \"SwitchingKit\" } do -- [SWITCHNOW] leaving a duel ends a Switch Weapons session\n\t\tplayer:SetAttribute(k, nil)\n"
@@ -104,7 +115,8 @@ else
 	local F_NEW = LIMITER .. "local function onFlow(player: Player, kind: any, a: any, b: any, c: any)\n\tif not KINDS[kind] and KINDS[a] then kind, a, b = a, b, c end\n"
 		.. "\t-- [SWITCHNOW] SwitchDone only lifts a restriction: never rate limited (round 3); every other kind must be known, then limited\n"
 		.. "\tif kind == \"SwitchDone\" then player:SetAttribute(\"SwitchingKit\", nil) return end\n"
-		.. "\tif not KINDS[kind] or not flowRateOk(player, kind) then return end\n"
+		.. "\t-- (round 4) SwitchOpen only sets an attribute after its own gate: never dropped by the limiter either\n"
+		.. "\tif not KINDS[kind] or (kind ~= \"SwitchOpen\" and not flowRateOk(player, kind)) then return end\n"
 	table.insert(res, patch(RM, { { Q_MATCH, qNew(Q_MATCH) }, { READY, session("ReplicatedStorage") .. READY }, { K_OLD, K_NEW }, { F_OLD, F_NEW } }))
 end
 

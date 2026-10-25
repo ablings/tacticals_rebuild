@@ -1336,7 +1336,7 @@ function LobbyHud.Start()
 		-- found!" in Theme green (X hidden) once found, the mode as "[Ranked ]<Mode>", the clock from MM_Since
 		-- [PLAYQUEUE] (lead 2026-10-25) match places: QueuePill (match/QueuePill.client.lua) shows the search over every match screen,
 		-- so this one stays off there; PLAY still steps aside while a search runs
-		local seeking = q ~= nil and st ~= nil
+		local seeking = (q ~= nil and st ~= nil) or player:GetAttribute("PQ_Waiting") ~= nil -- (round 4) also while a Play Again waits for the results to save
 		seek.Visible = seeking and not kitShown and not PseudoLobby.MatchPlace()
 		if seek.Visible then
 			local def = Config.QueueById and Config.QueueById(q)
