@@ -25,6 +25,197 @@ local RM = M:FindFirstChild("RoundManager")
 assert(RM, "no RoundManager")
 local out = {}
 
+-- 2. RoundManager
+local HELPERS = [==[
+-- [PLAYQUEUE] (Edward 2026-10-25) Play Again queues you from THIS server with the lobby's online queue (MatchmakingManager is
+-- installed in the match places): the Searching pill shows over the results and the after-match lobby, and a match found
+-- teleports you straight into a new reserved match server with the players you were matched with (no hub hop). Pressing it
+-- again while searching cancels. No online queue here (an offline place): the old hub AutoQueue hop (playAgain).
+-- (round 2, systems grader) presses are rate limited; a search only starts once this match's rewards are written for you and
+-- your party (PQ_Awarded: the queue's teleport releases the profile); Leave / To Hub / a rematch refuse while a match has
+-- already claimed you (the cancel can fail), so nobody is stranded or teleported twice.
+local pqRate = {} -- [Player] = { t0, n, last }
+Players.PlayerRemoving:Connect(function(p) pqRate[p] = nil end)
+local function pqRateOk(player: Player): boolean
+	local now, r = os.clock(), pqRate[player]
+	if not r or now - r.t0 > 60 then r = { t0 = now, n = 0, last = -1 }; pqRate[player] = r end
+	if now - r.last < 0.75 or r.n >= 20 then return false end
+	r.last = now; r.n += 1
+	return true
+end
+local function pqApi()
+	local okM, MM = pcall(function() return require(ServerScriptService.ServerScripts["[Server] Init"].GameManager.Managers.MatchmakingManager) end)
+	local okR, R = pcall(function() return require(ServerScriptService.Lobby.LobbyRemotes) end)
+	if okM and type(MM) == "table" and MM.FindMatch and okR and R and R.Handlers then return MM, R end
+	return nil, (okR and R or nil)
+end
+local function pqNotify(player: Player, text: string, kind: string?)
+	local _, R = pqApi()
+	if R and R.Notify then R.Notify(player, text, kind or "info") end
+end
+-- true = not (or no longer) in the online queue; false = a match already claimed them (they're on their way)
+local function mmCancel(player: Player): boolean
+	local mmSt = player:GetAttribute("MM_Status")
+	if mmSt == nil then return true end
+	if mmSt ~= "Searching" then return false end
+	local MM, R = pqApi()
+	if not (MM and R.Handlers.CancelMatch) then return true end
+	if MM.IsSearching and not MM.IsSearching(player) then return true end -- a party member mirroring the leader's search
+	local ok, res = pcall(R.Handlers.CancelMatch, player)
+	return ok and type(res) == "table" and res.ok == true
+end
+local function pqPartyOf(player: Player)
+	local PS = partyService()
+	local party = PS and PS.Of(player)
+	return PS, party
+end
+local function pqAwarded(player: Player): boolean
+	-- (round 3) stamped with the game number, so a slow award from the last game never counts for this one
+	local gameNo = ReplicatedStorage:GetAttribute("SeriesGames") or 0
+	if player:GetAttribute("PQ_Awarded") ~= gameNo then return false end
+	local _, party = pqPartyOf(player)
+	if party and party.leader == player then
+		for _, m in party.members do if m.Parent and m:GetAttribute("PQ_Awarded") ~= gameNo then return false end end
+	end
+	return true
+end
+local function pqWindowOpen(): boolean
+	local ms = ReplicatedStorage:GetAttribute("MatchState")
+	-- (round 3) series.closed: the after-match flow is over (timeout / hub) even though MatchState still reads MatchEnd
+	return series ~= nil and not series.closed and (series.inPost or ms == "Victory" or ms == "MatchEnd")
+end
+local function startSearch(player: Player, qid: string)
+	local MM = pqApi()
+	if not MM then playAgain(player, qid) return end
+	-- a party member who isn't the leader goes alone (as the hub Play Again did); the leader queues the whole party
+	local PS, party = pqPartyOf(player)
+	if party and #party.members > 1 and party.leader ~= player then PS.Leave(player, "left") end
+	local ok, res = pcall(MM.FindMatch, player, qid)
+	if ok and type(res) == "table" and res.offline then playAgain(player, qid) return end
+	if not ok then warn("[RoundManager] [PLAYQUEUE] FindMatch failed: " .. tostring(res)) playAgain(player, qid) return end
+	if type(res) == "table" and not res.ok and res.msg then pqNotify(player, res.msg, "bad") end
+end
+local function queueAgain(player: Player, qid: string)
+	-- (round 5) the limiter guards STARTING a search (each start writes to the queue); a cancel is never dropped (one per start)
+	if not pqWindowOpen() or (series.sentHome and series.sentHome[player]) then return end -- (round 3) only in the after-match window
+	local MM, R = pqApi()
+	if not MM then playAgain(player, qid) return end
+	local mmSt = player:GetAttribute("MM_Status")
+	if mmSt == "Searching" then
+		if MM.IsSearching and not MM.IsSearching(player) then pqNotify(player, "Only the party leader can cancel the search", "info") return end
+		local ok, res = pcall(R.Handlers.CancelMatch, player)
+		if ok and type(res) == "table" and res.msg then pqNotify(player, res.msg, res.ok and "info" or "bad") end
+		return
+	elseif mmSt ~= nil then
+		return -- Found / Teleporting: already on the way
+	end
+	-- (round 4) a press while it waits for the results to save cancels the wait, like a press while searching
+	if player:GetAttribute("PQ_Waiting") then
+		player:SetAttribute("PQ_Waiting", nil)
+		pqNotify(player, "Search cancelled", "info")
+		return
+	end
+	if not pqRateOk(player) then pqNotify(player, "Slow down a moment", "info") return end
+	if pqAwarded(player) then startSearch(player, qid) return end
+	-- rewards still being written (the Victory beat): start the search the moment they are
+	local token = os.clock()
+	player:SetAttribute("PQ_Waiting", token)
+	task.spawn(function()
+		local t0 = os.clock()
+		while player.Parent and player:GetAttribute("PQ_Waiting") == token and not pqAwarded(player) and os.clock() - t0 < 20 do task.wait(0.2) end
+		if player:GetAttribute("PQ_Waiting") ~= token then return end -- cancelled
+		player:SetAttribute("PQ_Waiting", nil)
+		if player.Parent and pqAwarded(player) and pqWindowOpen() and player:GetAttribute("MM_Status") == nil then startSearch(player, qid)
+		elseif player.Parent and not pqAwarded(player) then pqNotify(player, "Your match results are still saving. Press Play Again in a moment.", "bad") end
+	end)
+end
+]==]
+
+local edits = {
+	{ "local function postMatchFlow(player: Player, kind: string)\n",
+		HELPERS .. "\nlocal function postMatchFlow(player: Player, kind: string)\n" },
+	{ "\tif not (s and (s.inPost or (kind == \"Rematch\" and ended))) then return end\n",
+		"\t-- [PLAYQUEUE] Play Again works while the results show too (the search pill rides over Victory / Defeat)\n"
+		.. "\tif not (s and (s.inPost or ((kind == \"Rematch\" or kind == \"PlayAgain\") and ended))) then return end\n" },
+	{ "\telseif kind == \"ToHub\" then\n\t\tplayer:SetAttribute(\"InPseudoLobby\", nil)\n",
+		"\telseif kind == \"ToHub\" then\n"
+		.. "\t\tif not mmCancel(player) then pqNotify(player, \"Match found! Hold on...\", \"info\") return end -- [PLAYQUEUE] leave the queue first\n"
+		.. "\t\tplayer:SetAttribute(\"InPseudoLobby\", nil)\n" },
+	{ "\t\tplayAgain(player, queueIdOf(s.first)) -- [PSEUDOLOBBY] parties go together\n",
+		"\t\tqueueAgain(player, queueIdOf(s.first)) -- [PLAYQUEUE] queue from here (was playAgain: the hub hop)\n" },
+	{ "\t\tif os.clock() - t0 > (C.PostMatchTime or 300) then\n\t\t\tbackToLobby(Players:GetPlayers())\n\t\t\tresult = \"timeout\"\n\t\t\tbreak\n\t\tend\n",
+		"\t\tif os.clock() - t0 > (C.PostMatchTime or 300) then\n"
+		.. "\t\t\t-- [PLAYQUEUE] players still in the online queue stay until they're matched (or cancel); everyone else goes to the hub\n"
+		.. "\t\t\ts.sentHome = s.sentHome or {}\n"
+		.. "\t\t\tlocal home, waiting = {}, 0\n"
+		.. "\t\t\tfor _, p in Players:GetPlayers() do\n"
+		.. "\t\t\t\tif p:GetAttribute(\"MM_Status\") ~= nil or p:GetAttribute(\"PQ_Waiting\") then waiting += 1\n"
+		.. "\t\t\t\telseif not s.sentHome[p] then s.sentHome[p] = true; table.insert(home, p) end\n"
+		.. "\t\t\tend\n"
+		.. "\t\t\tif #home > 0 then backToLobby(home) end\n"
+		.. "\t\t\tif waiting == 0 then\n"
+		.. "\t\t\t\tresult = \"timeout\"\n"
+		.. "\t\t\t\tbreak\n"
+		.. "\t\t\tend\n"
+		.. "\t\tend\n" },
+	{ "\t\t\tif still then result = \"rematch\" break end\n",
+		"\t\t\tif still then\n"
+		.. "\t\t\t\t-- [PLAYQUEUE] a rematch takes everyone out of the online queue; if a match already claimed someone, no rematch\n"
+		.. "\t\t\t\tlocal free = true\n"
+		.. "\t\t\t\tfor _, p in Players:GetPlayers() do local ms = p:GetAttribute(\"MM_Status\") if ms ~= nil and ms ~= \"Searching\" then free = false end end\n"
+		.. "\t\t\t\tlocal told = {}\n"
+		.. "\t\t\t\tif free then\n"
+		.. "\t\t\t\t\tfor _, p in Players:GetPlayers() do\n"
+		.. "\t\t\t\t\t\tif p:GetAttribute(\"MM_Status\") == \"Searching\" or p:GetAttribute(\"PQ_Waiting\") ~= nil then table.insert(told, p) end\n"
+		.. "\t\t\t\t\t\tp:SetAttribute(\"PQ_Waiting\", nil)\n"
+		.. "\t\t\t\t\t\tif not mmCancel(p) then free = false end\n"
+		.. "\t\t\t\t\tend\n"
+		.. "\t\t\t\tend\n"
+		.. "\t\t\t\tif free then for _, p in told do pqNotify(p, \"Rematch starting: search cancelled\", \"info\") end end -- (round 6) only once it's certain\n"
+		.. "\t\t\t\tif free then\n"
+		.. "\t\t\t\t\tresult = \"rematch\"\n"
+		.. "\t\t\t\t\tbreak\n"
+		.. "\t\t\t\tend\n"
+		.. "\t\t\tend\n" },
+	{ "\tif kind == \"Leave\" then\n\t\tlocal phase = ReplicatedStorage:GetAttribute(\"MatchState\")\n",
+		"\tif kind == \"Leave\" then\n"
+		.. "\t\tif not mmCancel(player) then pqNotify(player, \"Match found! Hold on...\", \"info\") return end -- [PLAYQUEUE] leave the queue first\n"
+		.. "\t\tlocal phase = ReplicatedStorage:GetAttribute(\"MatchState\")\n" },
+	{ "\t\t\t\tif not m.left then task.spawn(award, match, m, side, winner, forfeit, ratings) end\n",
+		"\t\t\t\tif not m.left then\n"
+		.. "\t\t\t\t\t-- [PLAYQUEUE] PQ_Awarded once this player's rewards are written (Play Again's teleport releases the profile)\n"
+		.. "\t\t\t\t\t-- stamped with THIS game's number, taken before the award starts (a rematch bumps it)\n"
+		.. "\t\t\t\t\tlocal gameNo = ReplicatedStorage:GetAttribute(\"SeriesGames\") or 0\n"
+		.. "\t\t\t\t\ttask.spawn(function()\n"
+		.. "\t\t\t\t\t\tlocal okA, errA = pcall(award, match, m, side, winner, forfeit, ratings)\n"
+		.. "\t\t\t\t\t\tif not okA then warn(\"[RoundManager] award failed: \" .. tostring(errA)) end\n"
+		.. "\t\t\t\t\t\tif m.player and m.player.Parent then m.player:SetAttribute(\"PQ_Awarded\", gameNo) end\n"
+		.. "\t\t\t\t\tend)\n"
+		.. "\t\t\t\tend\n" },
+	{ "\t\tfor _, p in Players:GetPlayers() do p:SetAttribute(\"RematchVote\", nil) end\n\t\tseriesUpdate()\n",
+		"\t\tfor _, p in Players:GetPlayers() do p:SetAttribute(\"RematchVote\", nil); p:SetAttribute(\"PQ_Awarded\", nil) end -- [PLAYQUEUE] a new game: rewards not written yet\n\t\tseriesUpdate()\n" },
+	{ "\t\tlocal r = postMatch()\n\t\tif r ~= \"rematch\" then return end\n",
+		"\t\tlocal r = postMatch()\n\t\tif r ~= \"rematch\" then series.closed = true return end -- [PLAYQUEUE] the after-match window is over\n" },
+}
+local s = RM.Source:gsub("\r\n", "\n")
+for i, e in edits do
+	local o, n = e[1], e[2]
+	if UNDO then o, n = n, o end
+	local done
+	if UNDO then done = not s:find(o, 1, true) else done = s:find(n, 1, true) ~= nil end
+	if done then
+		table.insert(out, i .. "=")
+	else
+		local a, b = s:find(o, 1, true)
+		assert(a, "RoundManager edit " .. i .. " anchor not found")
+		assert(not s:find(o, b + 1, true), "RoundManager edit " .. i .. " anchor not unique")
+		s = s:sub(1, a - 1) .. n .. s:sub(b + 1)
+		table.insert(out, i .. "+")
+	end
+end
+local f, err = loadstring(s)
+assert(f, "RoundManager would not parse: " .. tostring(err))
+-- (round 6) every RoundManager anchor checked above before anything is written; now the module, then RoundManager
 -- 1. the matchmaker module
 local MM_SRC = [=====[-- ServerScripts/[Server] Init/GameManager/Managers/MatchmakingManager (ModuleScript)
 -- ONLINE matchmaking: the queues behind the PLAY button. Every lobby server shares them
@@ -723,193 +914,5 @@ else
 	end
 end
 
--- 2. RoundManager
-local HELPERS = [==[
--- [PLAYQUEUE] (Edward 2026-10-25) Play Again queues you from THIS server with the lobby's online queue (MatchmakingManager is
--- installed in the match places): the Searching pill shows over the results and the after-match lobby, and a match found
--- teleports you straight into a new reserved match server with the players you were matched with (no hub hop). Pressing it
--- again while searching cancels. No online queue here (an offline place): the old hub AutoQueue hop (playAgain).
--- (round 2, systems grader) presses are rate limited; a search only starts once this match's rewards are written for you and
--- your party (PQ_Awarded: the queue's teleport releases the profile); Leave / To Hub / a rematch refuse while a match has
--- already claimed you (the cancel can fail), so nobody is stranded or teleported twice.
-local pqRate = {} -- [Player] = { t0, n, last }
-Players.PlayerRemoving:Connect(function(p) pqRate[p] = nil end)
-local function pqRateOk(player: Player): boolean
-	local now, r = os.clock(), pqRate[player]
-	if not r or now - r.t0 > 60 then r = { t0 = now, n = 0, last = -1 }; pqRate[player] = r end
-	if now - r.last < 0.75 or r.n >= 20 then return false end
-	r.last = now; r.n += 1
-	return true
-end
-local function pqApi()
-	local okM, MM = pcall(function() return require(ServerScriptService.ServerScripts["[Server] Init"].GameManager.Managers.MatchmakingManager) end)
-	local okR, R = pcall(function() return require(ServerScriptService.Lobby.LobbyRemotes) end)
-	if okM and type(MM) == "table" and MM.FindMatch and okR and R and R.Handlers then return MM, R end
-	return nil, (okR and R or nil)
-end
-local function pqNotify(player: Player, text: string, kind: string?)
-	local _, R = pqApi()
-	if R and R.Notify then R.Notify(player, text, kind or "info") end
-end
--- true = not (or no longer) in the online queue; false = a match already claimed them (they're on their way)
-local function mmCancel(player: Player): boolean
-	local mmSt = player:GetAttribute("MM_Status")
-	if mmSt == nil then return true end
-	if mmSt ~= "Searching" then return false end
-	local MM, R = pqApi()
-	if not (MM and R.Handlers.CancelMatch) then return true end
-	if MM.IsSearching and not MM.IsSearching(player) then return true end -- a party member mirroring the leader's search
-	local ok, res = pcall(R.Handlers.CancelMatch, player)
-	return ok and type(res) == "table" and res.ok == true
-end
-local function pqPartyOf(player: Player)
-	local PS = partyService()
-	local party = PS and PS.Of(player)
-	return PS, party
-end
-local function pqAwarded(player: Player): boolean
-	-- (round 3) stamped with the game number, so a slow award from the last game never counts for this one
-	local gameNo = ReplicatedStorage:GetAttribute("SeriesGames") or 0
-	if player:GetAttribute("PQ_Awarded") ~= gameNo then return false end
-	local _, party = pqPartyOf(player)
-	if party and party.leader == player then
-		for _, m in party.members do if m.Parent and m:GetAttribute("PQ_Awarded") ~= gameNo then return false end end
-	end
-	return true
-end
-local function pqWindowOpen(): boolean
-	local ms = ReplicatedStorage:GetAttribute("MatchState")
-	-- (round 3) series.closed: the after-match flow is over (timeout / hub) even though MatchState still reads MatchEnd
-	return series ~= nil and not series.closed and (series.inPost or ms == "Victory" or ms == "MatchEnd")
-end
-local function startSearch(player: Player, qid: string)
-	local MM = pqApi()
-	if not MM then playAgain(player, qid) return end
-	-- a party member who isn't the leader goes alone (as the hub Play Again did); the leader queues the whole party
-	local PS, party = pqPartyOf(player)
-	if party and #party.members > 1 and party.leader ~= player then PS.Leave(player, "left") end
-	local ok, res = pcall(MM.FindMatch, player, qid)
-	if ok and type(res) == "table" and res.offline then playAgain(player, qid) return end
-	if not ok then warn("[RoundManager] [PLAYQUEUE] FindMatch failed: " .. tostring(res)) playAgain(player, qid) return end
-	if type(res) == "table" and not res.ok and res.msg then pqNotify(player, res.msg, "bad") end
-end
-local function queueAgain(player: Player, qid: string)
-	-- (round 5) the limiter guards STARTING a search (each start writes to the queue); a cancel is never dropped (one per start)
-	if not pqWindowOpen() or (series.sentHome and series.sentHome[player]) then return end -- (round 3) only in the after-match window
-	local MM, R = pqApi()
-	if not MM then playAgain(player, qid) return end
-	local mmSt = player:GetAttribute("MM_Status")
-	if mmSt == "Searching" then
-		if MM.IsSearching and not MM.IsSearching(player) then pqNotify(player, "Only the party leader can cancel the search", "info") return end
-		local ok, res = pcall(R.Handlers.CancelMatch, player)
-		if ok and type(res) == "table" and res.msg then pqNotify(player, res.msg, res.ok and "info" or "bad") end
-		return
-	elseif mmSt ~= nil then
-		return -- Found / Teleporting: already on the way
-	end
-	-- (round 4) a press while it waits for the results to save cancels the wait, like a press while searching
-	if player:GetAttribute("PQ_Waiting") then
-		player:SetAttribute("PQ_Waiting", nil)
-		pqNotify(player, "Search cancelled", "info")
-		return
-	end
-	if not pqRateOk(player) then pqNotify(player, "Slow down a moment", "info") return end
-	if pqAwarded(player) then startSearch(player, qid) return end
-	-- rewards still being written (the Victory beat): start the search the moment they are
-	local token = os.clock()
-	player:SetAttribute("PQ_Waiting", token)
-	task.spawn(function()
-		local t0 = os.clock()
-		while player.Parent and player:GetAttribute("PQ_Waiting") == token and not pqAwarded(player) and os.clock() - t0 < 20 do task.wait(0.2) end
-		if player:GetAttribute("PQ_Waiting") ~= token then return end -- cancelled
-		player:SetAttribute("PQ_Waiting", nil)
-		if player.Parent and pqAwarded(player) and pqWindowOpen() and player:GetAttribute("MM_Status") == nil then startSearch(player, qid)
-		elseif player.Parent and not pqAwarded(player) then pqNotify(player, "Your match results are still saving. Press Play Again in a moment.", "bad") end
-	end)
-end
-]==]
-
-local edits = {
-	{ "local function postMatchFlow(player: Player, kind: string)\n",
-		HELPERS .. "\nlocal function postMatchFlow(player: Player, kind: string)\n" },
-	{ "\tif not (s and (s.inPost or (kind == \"Rematch\" and ended))) then return end\n",
-		"\t-- [PLAYQUEUE] Play Again works while the results show too (the search pill rides over Victory / Defeat)\n"
-		.. "\tif not (s and (s.inPost or ((kind == \"Rematch\" or kind == \"PlayAgain\") and ended))) then return end\n" },
-	{ "\telseif kind == \"ToHub\" then\n\t\tplayer:SetAttribute(\"InPseudoLobby\", nil)\n",
-		"\telseif kind == \"ToHub\" then\n"
-		.. "\t\tif not mmCancel(player) then pqNotify(player, \"Match found! Hold on...\", \"info\") return end -- [PLAYQUEUE] leave the queue first\n"
-		.. "\t\tplayer:SetAttribute(\"InPseudoLobby\", nil)\n" },
-	{ "\t\tplayAgain(player, queueIdOf(s.first)) -- [PSEUDOLOBBY] parties go together\n",
-		"\t\tqueueAgain(player, queueIdOf(s.first)) -- [PLAYQUEUE] queue from here (was playAgain: the hub hop)\n" },
-	{ "\t\tif os.clock() - t0 > (C.PostMatchTime or 300) then\n\t\t\tbackToLobby(Players:GetPlayers())\n\t\t\tresult = \"timeout\"\n\t\t\tbreak\n\t\tend\n",
-		"\t\tif os.clock() - t0 > (C.PostMatchTime or 300) then\n"
-		.. "\t\t\t-- [PLAYQUEUE] players still in the online queue stay until they're matched (or cancel); everyone else goes to the hub\n"
-		.. "\t\t\ts.sentHome = s.sentHome or {}\n"
-		.. "\t\t\tlocal home, waiting = {}, 0\n"
-		.. "\t\t\tfor _, p in Players:GetPlayers() do\n"
-		.. "\t\t\t\tif p:GetAttribute(\"MM_Status\") ~= nil or p:GetAttribute(\"PQ_Waiting\") then waiting += 1\n"
-		.. "\t\t\t\telseif not s.sentHome[p] then s.sentHome[p] = true; table.insert(home, p) end\n"
-		.. "\t\t\tend\n"
-		.. "\t\t\tif #home > 0 then backToLobby(home) end\n"
-		.. "\t\t\tif waiting == 0 then\n"
-		.. "\t\t\t\tresult = \"timeout\"\n"
-		.. "\t\t\t\tbreak\n"
-		.. "\t\t\tend\n"
-		.. "\t\tend\n" },
-	{ "\t\t\tif still then result = \"rematch\" break end\n",
-		"\t\t\tif still then\n"
-		.. "\t\t\t\t-- [PLAYQUEUE] a rematch takes everyone out of the online queue; if a match already claimed someone, no rematch\n"
-		.. "\t\t\t\tlocal free = true\n"
-		.. "\t\t\t\tfor _, p in Players:GetPlayers() do local ms = p:GetAttribute(\"MM_Status\") if ms ~= nil and ms ~= \"Searching\" then free = false end end\n"
-		.. "\t\t\t\tif free then\n"
-		.. "\t\t\t\t\tfor _, p in Players:GetPlayers() do\n"
-		.. "\t\t\t\t\t\tlocal was = p:GetAttribute(\"MM_Status\") == \"Searching\" or p:GetAttribute(\"PQ_Waiting\") ~= nil\n"
-		.. "\t\t\t\t\t\tp:SetAttribute(\"PQ_Waiting\", nil)\n"
-		.. "\t\t\t\t\t\tif not mmCancel(p) then free = false elseif was then pqNotify(p, \"Rematch starting: search cancelled\", \"info\") end\n"
-		.. "\t\t\t\t\tend\n"
-		.. "\t\t\t\tend\n"
-		.. "\t\t\t\tif free then\n"
-		.. "\t\t\t\t\tresult = \"rematch\"\n"
-		.. "\t\t\t\t\tbreak\n"
-		.. "\t\t\t\tend\n"
-		.. "\t\t\tend\n" },
-	{ "\tif kind == \"Leave\" then\n\t\tlocal phase = ReplicatedStorage:GetAttribute(\"MatchState\")\n",
-		"\tif kind == \"Leave\" then\n"
-		.. "\t\tif not mmCancel(player) then pqNotify(player, \"Match found! Hold on...\", \"info\") return end -- [PLAYQUEUE] leave the queue first\n"
-		.. "\t\tlocal phase = ReplicatedStorage:GetAttribute(\"MatchState\")\n" },
-	{ "\t\t\t\tif not m.left then task.spawn(award, match, m, side, winner, forfeit, ratings) end\n",
-		"\t\t\t\tif not m.left then\n"
-		.. "\t\t\t\t\t-- [PLAYQUEUE] PQ_Awarded once this player's rewards are written (Play Again's teleport releases the profile)\n"
-		.. "\t\t\t\t\t-- stamped with THIS game's number, taken before the award starts (a rematch bumps it)\n"
-		.. "\t\t\t\t\tlocal gameNo = ReplicatedStorage:GetAttribute(\"SeriesGames\") or 0\n"
-		.. "\t\t\t\t\ttask.spawn(function()\n"
-		.. "\t\t\t\t\t\tlocal okA, errA = pcall(award, match, m, side, winner, forfeit, ratings)\n"
-		.. "\t\t\t\t\t\tif not okA then warn(\"[RoundManager] award failed: \" .. tostring(errA)) end\n"
-		.. "\t\t\t\t\t\tif m.player and m.player.Parent then m.player:SetAttribute(\"PQ_Awarded\", gameNo) end\n"
-		.. "\t\t\t\t\tend)\n"
-		.. "\t\t\t\tend\n" },
-	{ "\t\tfor _, p in Players:GetPlayers() do p:SetAttribute(\"RematchVote\", nil) end\n\t\tseriesUpdate()\n",
-		"\t\tfor _, p in Players:GetPlayers() do p:SetAttribute(\"RematchVote\", nil); p:SetAttribute(\"PQ_Awarded\", nil) end -- [PLAYQUEUE] a new game: rewards not written yet\n\t\tseriesUpdate()\n" },
-	{ "\t\tlocal r = postMatch()\n\t\tif r ~= \"rematch\" then return end\n",
-		"\t\tlocal r = postMatch()\n\t\tif r ~= \"rematch\" then series.closed = true return end -- [PLAYQUEUE] the after-match window is over\n" },
-}
-local s = RM.Source:gsub("\r\n", "\n")
-for i, e in edits do
-	local o, n = e[1], e[2]
-	if UNDO then o, n = n, o end
-	local done
-	if UNDO then done = not s:find(o, 1, true) else done = s:find(n, 1, true) ~= nil end
-	if done then
-		table.insert(out, i .. "=")
-	else
-		local a, b = s:find(o, 1, true)
-		assert(a, "RoundManager edit " .. i .. " anchor not found")
-		assert(not s:find(o, b + 1, true), "RoundManager edit " .. i .. " anchor not unique")
-		s = s:sub(1, a - 1) .. n .. s:sub(b + 1)
-		table.insert(out, i .. "+")
-	end
-end
-local f, err = loadstring(s)
-assert(f, "RoundManager would not parse: " .. tostring(err))
 if RM.Source ~= s then RM.Source = s end
 return "PLAYQUEUE " .. table.concat(out, " ")

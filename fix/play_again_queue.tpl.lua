@@ -25,29 +25,6 @@ local RM = M:FindFirstChild("RoundManager")
 assert(RM, "no RoundManager")
 local out = {}
 
--- 1. the matchmaker module
-local MM_SRC = [=====[__MMSRC__]=====]
-local mm = M:FindFirstChild("MatchmakingManager")
-if UNDO then
-	if mm and mm:GetAttribute("PlayQueue") then mm:Destroy(); table.insert(out, "module -") else table.insert(out, "module =") end
-else
-	assert(loadstring(MM_SRC), "MatchmakingManager source would not parse")
-	if not mm then
-		mm = Instance.new("ModuleScript")
-		mm.Name = "MatchmakingManager"
-		mm:SetAttribute("PlayQueue", true)
-		mm.Source = MM_SRC
-		mm.Parent = M
-		table.insert(out, "module +")
-	elseif mm.Source ~= MM_SRC then
-		assert(mm:GetAttribute("PlayQueue"), "a MatchmakingManager that PLAYQUEUE didn't install is already here")
-		mm.Source = MM_SRC
-		table.insert(out, "module ~")
-	else
-		table.insert(out, "module =")
-	end
-end
-
 -- 2. RoundManager
 local HELPERS = [==[
 -- [PLAYQUEUE] (Edward 2026-10-25) Play Again queues you from THIS server with the lobby's online queue (MatchmakingManager is
@@ -186,13 +163,15 @@ local edits = {
 		.. "\t\t\t\t-- [PLAYQUEUE] a rematch takes everyone out of the online queue; if a match already claimed someone, no rematch\n"
 		.. "\t\t\t\tlocal free = true\n"
 		.. "\t\t\t\tfor _, p in Players:GetPlayers() do local ms = p:GetAttribute(\"MM_Status\") if ms ~= nil and ms ~= \"Searching\" then free = false end end\n"
+		.. "\t\t\t\tlocal told = {}\n"
 		.. "\t\t\t\tif free then\n"
 		.. "\t\t\t\t\tfor _, p in Players:GetPlayers() do\n"
-		.. "\t\t\t\t\t\tlocal was = p:GetAttribute(\"MM_Status\") == \"Searching\" or p:GetAttribute(\"PQ_Waiting\") ~= nil\n"
+		.. "\t\t\t\t\t\tif p:GetAttribute(\"MM_Status\") == \"Searching\" or p:GetAttribute(\"PQ_Waiting\") ~= nil then table.insert(told, p) end\n"
 		.. "\t\t\t\t\t\tp:SetAttribute(\"PQ_Waiting\", nil)\n"
-		.. "\t\t\t\t\t\tif not mmCancel(p) then free = false elseif was then pqNotify(p, \"Rematch starting: search cancelled\", \"info\") end\n"
+		.. "\t\t\t\t\t\tif not mmCancel(p) then free = false end\n"
 		.. "\t\t\t\t\tend\n"
 		.. "\t\t\t\tend\n"
+		.. "\t\t\t\tif free then for _, p in told do pqNotify(p, \"Rematch starting: search cancelled\", \"info\") end end -- (round 6) only once it's certain\n"
 		.. "\t\t\t\tif free then\n"
 		.. "\t\t\t\t\tresult = \"rematch\"\n"
 		.. "\t\t\t\t\tbreak\n"
@@ -236,5 +215,29 @@ for i, e in edits do
 end
 local f, err = loadstring(s)
 assert(f, "RoundManager would not parse: " .. tostring(err))
+-- (round 6) every RoundManager anchor checked above before anything is written; now the module, then RoundManager
+-- 1. the matchmaker module
+local MM_SRC = [=====[__MMSRC__]=====]
+local mm = M:FindFirstChild("MatchmakingManager")
+if UNDO then
+	if mm and mm:GetAttribute("PlayQueue") then mm:Destroy(); table.insert(out, "module -") else table.insert(out, "module =") end
+else
+	assert(loadstring(MM_SRC), "MatchmakingManager source would not parse")
+	if not mm then
+		mm = Instance.new("ModuleScript")
+		mm.Name = "MatchmakingManager"
+		mm:SetAttribute("PlayQueue", true)
+		mm.Source = MM_SRC
+		mm.Parent = M
+		table.insert(out, "module +")
+	elseif mm.Source ~= MM_SRC then
+		assert(mm:GetAttribute("PlayQueue"), "a MatchmakingManager that PLAYQUEUE didn't install is already here")
+		mm.Source = MM_SRC
+		table.insert(out, "module ~")
+	else
+		table.insert(out, "module =")
+	end
+end
+
 if RM.Source ~= s then RM.Source = s end
 return "PLAYQUEUE " .. table.concat(out, " ")

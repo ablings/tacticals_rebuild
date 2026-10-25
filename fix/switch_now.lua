@@ -52,6 +52,11 @@ do
 		"if phase == \"RoundEnd\" or phase == \"Countdown\" or (phase == \"Live\" and not player:GetAttribute(\"KitLocked\")) then" } do
 		assert(UNDO or not src:find(old, 1, true), "an older SWITCHNOW round is installed in " .. flow.Name .. ": UNDO it with that round's fix first")
 	end
+	-- (round 5) from now on the installed round is stamped on the script; any other stamp, or the tag without a stamp, is refused
+	local stamp = flow:GetAttribute("SwitchNowRound")
+	assert(UNDO or stamp == nil or stamp == 5, "SWITCHNOW round " .. tostring(stamp) .. " is installed: UNDO it with that round's fix first")
+	assert(UNDO or stamp == 5 or not src:find("[SWITCHNOW]", 1, true), "an unstamped SWITCHNOW round is installed in " .. flow.Name .. ": UNDO it first")
+	if not UNDO then task.defer(function() flow:SetAttribute("SwitchNowRound", 5) end) else flow:SetAttribute("SwitchNowRound", nil) end
 end
 
 -- the per-player MatchFlow limiter (both places)
@@ -116,7 +121,8 @@ else
 		.. "\t-- [SWITCHNOW] SwitchDone only lifts a restriction: never rate limited (round 3); every other kind must be known, then limited\n"
 		.. "\tif kind == \"SwitchDone\" then player:SetAttribute(\"SwitchingKit\", nil) return end\n"
 		.. "\t-- (round 4) SwitchOpen only sets an attribute after its own gate: never dropped by the limiter either\n"
-		.. "\tif not KINDS[kind] or (kind ~= \"SwitchOpen\" and not flowRateOk(player, kind)) then return end\n"
+		.. "\t-- (round 5) PlayAgain has its own limiter (queueAgain: starts only, cancels always land), so not this one too\n"
+		.. "\tif not KINDS[kind] or (kind ~= \"SwitchOpen\" and kind ~= \"PlayAgain\" and not flowRateOk(player, kind)) then return end\n"
 	table.insert(res, patch(RM, { { Q_MATCH, qNew(Q_MATCH) }, { READY, session("ReplicatedStorage") .. READY }, { K_OLD, K_NEW }, { F_OLD, F_NEW } }))
 end
 
