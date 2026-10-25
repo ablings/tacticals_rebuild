@@ -476,3 +476,12 @@ himself; we never publish.
 - Published tacticals, Tutorial, Matchmaking, Ranked; each retitled. Matchmaking / Ranked UI deployed from a clean worktree at 321f03d.
 - Every copy: c35 + compile all ok; pre.lua clean; test attrs none. Matchmaking bot match (bo3 data) to Victory / MatchEnd,
   console clean (53 lines, MCP only).
+
+## Live port 42 (2026-10-23 / 25, main PC lead; Edward: "keep going", then "publish it now")
+- Lobby + Tutorial from pinned ba2b83c (UI rd8: live inbox refresh, one toast sound per burst, leaderboard / ELO plate polish),
+  published 2026-10-23 20:00. Matchmaking / Ranked held while Edward was gaming (publishing takes the mouse), then published
+  2026-10-25 with rd8 + PLAYQUEUE (8e951ba): Play Again queues from the match server (MatchmakingManager installed by
+  fix/play_again_queue.lua, now run by port_prep), the search pill over Victory / Defeat, a match found = a new match server.
+- Every copy: c35 (+ PLAYQUEUE true / mm / pill, test false) + compile all ok; pre.lua clean. Matchmaking bot match (rd8) to
+  MatchEnd, console clean (52 lines). PLAYQUEUE Studio-tested on out/pq copies with an in-memory MemoryStore stand-in.
+- Live check for Edward: two accounts, finish a match, Play Again on both -> matched into a new Matchmaking server.
