@@ -524,3 +524,23 @@ himself; we never publish.
   the slot. Saved 2026-10-26 22:52.
 - Port checks: Workspace.Arena:GetAttribute("LayoutVersion") == 2, 105 parts; ServerStorage._ArenaV1_Backup present (can be dropped
   from the published copies once Edward is happy); no StudioTeleportData.
+
+## Live port 43 (2026-10-27, Shadow PC, Edward: publish now)
+- Edward ~00:47: "Shadow PC now: start straight away and stop cleanly by 01:50 if it isn't finished". Systems session on the Shadow PC,
+  account whitteguy, group gunsy funsy. Source: the working copies as committed at b183b90 (match_place_ref.rbxl saved 22:45 = 9daafeb,
+  Tacticals_rebuild.rbxl saved 22:52 = 4ba8475).
+- What the copies carry since port 42 (git log 4ca70e6..b183b90, place files): only [ARENANAME] (a466ec4) and [ARENAV2] (9daafeb / 4ba8475).
+  The match-place build also installs, as port_prep.sh does today: PLAYQUEUE round 6 (fix/play_again_queue.lua, rounds 2-6 = systems grader
+  fixes since port 42's round 1) + SWITCHNOW round 5 (fix/switch_now.lua, Edward's Switch Weapons request) + the UI at b183b90 (its
+  MatchFlowUI carries the SWITCHNOW client). NOT installed: SURVEY1025 (fix/survey1025_*.lua, 503ee89: security + data fixes "for port 43"
+  in notes/survey_fix_1025.md, but not marked pending here and not named in this publish order) -> still to port, lead's call.
+- Shadow PC tooling: helper copies in out/port43 (split_build / run_luau_at / deploy_ui with Shadow paths, an MCP client that lists tools
+  before calling: the stdio proxy answered "Unable to reach Roblox Studio" until tools/list had run). Repo tools unchanged.
+- Checks per copy (out/port43/check.lua, the stand-in for out/c35.lua / pre.lua, which live only on the main PC): DuelMaps = Arena,
+  Warehouse; Workspace.Arena LayoutVersion 2 with 105 parts; no PracticeRange outside the ServerStorage archives; no StudioTeleportData /
+  Studio / Test attributes; compile all ok.
+- **Matchmaking** (97339328188402), published 01:07: match_place_ref copy -> split_build Matchmaking -> deploy_ui --matchmaking (67 + 16 [SET])
+  -> PLAYQUEUE 1-10+ module + -> SWITCHNOW (RoundManager=5) -> checks all ok (345 scripts). Bot match (StudioTeleportData me + bot, Arena
+  voted in MapVote): map Arena, 5 rounds to Victory 5-0 -> MatchEnd; console clean (58 lines: the known sound "Asset type does not match"
+  preload lines, KitGuard / Rematch / MenuPrewarm logs, no errors). StudioTeleportData cleared, saved, Publish As > gunsy funsy > tacticals
+  > Matchmaking > Overwrite > Grant Permissions and Publish; window retitled "Matchmaking". Read back from the cloud window: same checks.
