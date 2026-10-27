@@ -1,8 +1,29 @@
-# Warehouse 2 props (modeler, 2026-10-27, round 5)
+# Warehouse 2 props (modeler, 2026-10-27, round 6: less green)
 
 Grounded, GTA-style military warehouse props for the new map "Warehouse 2". Own models, own baked textures, no sci-fi
 panels, no neon, no yellow (hazard paint is black/cream). Sheet: `notes/warehouse2_props_sheet.jpg` (stand-in of the old
 piece | 5-stud human | new model).
+
+**Round 6 (Edward: "too much green", the same note as before).** Olive was on nearly every crate, the tarp, a drum, the
+lamp, the toolbox, the forklift and the scale figure. Olive drab is now an accent on two pieces only:
+
+| Piece | Was | Now |
+|---|---|---|
+| W2_Cover_Low (rifle crates, the most-placed cover, 14x) | olive wood | weathered pine, black stencils |
+| W2_Cover_Tall (engine crate) | olive wood | dark stained wood, cream stencils |
+| W2_SupplyCrate (also in the wall stack) | olive wood | grey-painted wood, cream stencils |
+| W2_SteelCrate (also in the wall stack) | olive steel | gunmetal grey steel |
+| W2_LongCrate (top of the wall stack) | olive wood | **olive kept** (greyer: 78,82,56) |
+| W2_AmmoCan | olive steel | **olive kept** (70,74,52), like a real ammo can |
+| W2_OilDrum_Olive | olive | renamed **W2_OilDrum_Grey**, grey-blue paint |
+| PalletSacks tarp | olive canvas | grey canvas |
+| HighBayLamp shade, workbench vice/toolbox/cabinet | olive-green | grey |
+| Forklift body and wheel rims | olive | warm charcoal grey |
+| Fire barrel bung | olive | grey steel |
+| 5-stud figure on the sheet | lime shirt | slate-blue shirt |
+
+Geometry, sizes, pivots and collision are unchanged; only the baked colours changed.
+Map builder: `notes/warehouse2_build.md` still names `W2_OilDrum_Olive`; use `W2_OilDrum_Grey`.
 
 Round 2 reconciles the work order with the map builder's kit brief (`briefs/kit-warehouse2.json`) and the map script
 (`fix/map_warehouse2.lua`):
@@ -41,7 +62,7 @@ Round 5 fixes the fourth grade:
 ## Files (all under `art/warehouse2/`)
 | What | Path |
 |---|---|
-| Generator (one run rebuilds everything, about 2 min on the RTX GPU) | `tools/build_props.py` (Blender 4.5, headless); stencils `tools/make_decals.py` (PIL) |
+| Generator (one run rebuilds everything, about 2 min on the RTX GPU) | `tools/build_props.py` (Blender 4.5 or 5.2, headless; about 2 min on the main PC, about 25 min on the Shadow PC); stencils `tools/make_decals.py` (PIL) |
 | Kit file | `warehouse2_props.blend`: collection `Kit` holds the assemblies below, `Markers` holds the scale cube and marker |
 | FBX, whole kit | `fbx/W2_Props_kit.fbx`: all assemblies in a row, plus `K_ScaleCube` (10 studs) and `K_Marker` (long arm +X, upright +Z, short arm +Y). **Import this one once.** |
 | FBX, one per assembly | `fbx/<assembly>.fbx`: the pivot (below) at the origin. Each re-embeds its atlas, so use these only for single re-imports. |
@@ -76,9 +97,9 @@ For every visual mesh, set **CanCollide, CanQuery and CanTouch off** (art only).
 |---|---|---|---|---|
 | W2_FireBarrel (barrel + fuel puddle) | barrel **2.1 x 3.4 x 2.1** on the pivot; the puddle spreads 1.5-2.1 around it | 1,476 | `Shootables/FireBarrel_F1-F4.Look` | keep the existing `Body` cylinder Part (2.1 x 3.0, the shootable hit part) centred on the pivot |
 | W2_FireBarrel_Burnt (torn drum + blown lid) | drum about 2.5 x 3.0 x 2.5 (petals, one tear); the lid lies 2.6 away | 1,952 | the FireBarrel's Look after it blows (same pivot) | none, or the Body cylinder if it should stay low cover |
-| W2_OilDrum_Olive / _Black | 2.1 x **3.0** x 2.1 | 1,192 | new clutter (kit brief OilDrum), not shootable | none |
-| W2_Cover_Low (2 stacked rifle crates) | **6 x 3.37 x 2**: the top crate is 0.035 smaller per side and sunk 0.03, within the brief's 0.1 | 1,112 | `Visuals/Arena_L01-L14` | existing `COLP_Lxx` 6 x 3.4 x 2 |
-| W2_Cover_Tall (olive engine crate) | **5 x 7 x 4** | 348 | `Visuals/Arena_C01-C10` | existing `COLP_Cxx` 5 x 7 x 4 |
+| W2_OilDrum_Grey / _Black | 2.1 x **3.0** x 2.1 | 1,192 | new clutter (kit brief OilDrum), not shootable | none |
+| W2_Cover_Low (2 stacked pine rifle crates) | **6 x 3.37 x 2**: the top crate is 0.035 smaller per side and sunk 0.03, within the brief's 0.1 | 1,112 | `Visuals/Arena_L01-L14` | existing `COLP_Lxx` 6 x 3.4 x 2 |
+| W2_Cover_Tall (dark wood engine crate) | **5 x 7 x 4** | 348 | `Visuals/Arena_C01-C10` | existing `COLP_Cxx` 5 x 7 x 4 |
 | W2_Cover_TallPly (plywood crate on skids, ends closed) | **5 x 7 x 4** | 396 | `Arena_C` variant 2 (kit brief TallCrate) | existing `COLP_Cxx` |
 | W2_Cover_Wall (the stacked set: supply + steel crate under a long crate, plus the dark joint block) | **10 x 6.97 x 3** | 1,356 | `Visuals/Arena_W01-W04` | existing `COLP_Wxx` 10 x 7 x 3 |
 | W2_SupplyCrate / W2_SteelCrate / W2_LongCrate (loose) | 5 x 3.5 x 3 / 5 x 3.5 x 3 / 10 x 3.5 x 3 | 532 / 256 / 556 | dressing | a box of the same size if placed in the play area |
@@ -86,7 +107,7 @@ For every visual mesh, set **CanCollide, CanQuery and CanTouch off** (art only).
 | W2_RollDoor_Open (guides, drum housing, bottom bar, control box) | 23.6 x 16.3 x 2.6 around a **20 x 14** opening; back faces 0.02-0.11 into the wall | 420 | the end openings (kit brief RollUpDoor; the old Warehouse Shutter was 16 x 9) | none: walls, headers and OutOfBounds collide |
 | W2_RollDoor_HalfOpen (curtain down to 7.0) | same | 992 | same | optional box 20.6 x 7.6 x 0.5 at the curtain, else none |
 | W2_Pallet | 4 x 0.6 x 3.4 | 240 | `Props/Pallet` | none |
-| W2_PalletSacks (pallet, 18 sacks, olive tarp) | 4.06 x 2.1 x 3.52 | 3,384 | `Props/Pallet` + `Cardboard` piles | a box of that size in the play area |
+| W2_PalletSacks (pallet, 18 sacks, grey tarp) | 4.06 x 2.1 x 3.52 | 3,384 | `Props/Pallet` + `Cardboard` piles | a box of that size in the play area |
 | W2_Tyre / W2_TyreStack (3) | 2.4 x 0.86 x 2.4 / 2.5 x 2.5 x 2.5 | 784 / 2,352 | new clutter | none / a cylinder 2.5 x 2.5 |
 | W2_ShelfRack (rack + boxes as a separate mesh) | 8 x 8 x 2.5 | 600 | new wall storage for the yards or hall walls | box 8 x 8 x 2.5; **keep it out of the play area** (the old cabinet was 0.65 x 3 x 2; the hall metrics would drift) |
 | W2_Workbench (vice, toolbox, pegboard tools, clamp lamp) | 6 x 4.75 x 2.4 | 688 | `Props/Workbench` | box 6 x 2.86 x 2.4 in the play area; the `WorkLight` SpotLight goes at the clamp lamp head |

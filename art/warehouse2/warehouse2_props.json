@@ -240,18 +240,18 @@
    "fbx": "fbx/W2_FireBarrel_Burnt.fbx"
   },
   {
-   "assembly": "W2_OilDrum_Olive",
+   "assembly": "W2_OilDrum_Grey",
    "replaces": "new clutter, not shootable (kit brief OilDrum 2.1 x 3.0 x 2.1)",
    "collision": "none (kit brief: clutter, no collision); art CanCollide/CanQuery/CanTouch off",
    "objects": [
-    "W2_OilDrum_Olive"
+    "W2_OilDrum_Grey"
    ],
    "pivot_blender_in_kit": [
     21.258,
     0.0,
     0.0
    ],
-   "pivot": "bottom centre of W2_OilDrum_Olive (the per-assembly FBX has this point at the origin)",
+   "pivot": "bottom centre of W2_OilDrum_Grey (the per-assembly FBX has this point at the origin)",
    "bbox_centre_blender": [
     21.258,
     -0.005,
@@ -280,8 +280,8 @@
    "bottom_centre_studio_offset": "art bottom = floor top; size_studio is X, Y(up), Z",
    "parts": [
     {
-     "object": "W2_OilDrum_Olive",
-     "mesh": "W2_OilDrum_Olive",
+     "object": "W2_OilDrum_Grey",
+     "mesh": "W2_OilDrum_Grey",
      "atlas": "Barrels",
      "tris": 1192,
      "centre_studio_rel_pivot": [
@@ -304,7 +304,7 @@
     "tex/W2_Barrels_normal.png",
     "tex/W2_Barrels_rough.png"
    ],
-   "fbx": "fbx/W2_OilDrum_Olive.fbx"
+   "fbx": "fbx/W2_OilDrum_Grey.fbx"
   },
   {
    "assembly": "W2_OilDrum_Black",

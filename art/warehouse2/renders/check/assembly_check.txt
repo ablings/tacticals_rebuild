@@ -9,7 +9,7 @@ ASM W2_Forklift            LAYER 0.010  GAPIN 2.825  SEE 0 | L [(0.002, 0.013, (
 ASM W2_HighBayLamp         LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
 ASM W2_LongCrate           LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
 ASM W2_OilDrum_Black       LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
-ASM W2_OilDrum_Olive       LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_OilDrum_Grey        LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
 ASM W2_Pallet              LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
 ASM W2_PalletSacks         LAYER 0.003  GAPIN 0.310  SEE 0 | L [(0.003, 0.02, (0.46, 0.93, 1.09))] | G [(0.038, 0.023, (1.11, -0.54, 0.84)), (0.038, 0.023, (0.9, -0.56, 0.8)), (0.022, 0.023, (-0.9, -0.54, 0.84)), (0.022, 0.023, (-1.1, 0.56, 0.8))] | S []
 ASM W2_RollDoor_HalfOpen   LAYER 0.000  GAPIN 0.830  SEE 0 | L [] | G [(0.4, 0.02, (3.42, -0.28, 7.42)), (0.251, 0.02, (-3.43, -0.3, 7.42)), (0.16, 0.02, (-3.43, -0.3, 7.42)), (0.011, 0.02, (3.42, -0.28, 7.42))] | S []

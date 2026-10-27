@@ -107,7 +107,7 @@ def old_standin(kind, coll):
 OLD = {
     "W2_FireBarrel": ("barrel", "FireBarrel (Look 2.1 x 3.4 x 2.1)"),
     "W2_FireBarrel_Burnt": (None, "none (old barrel had no burnt state)"),
-    "W2_OilDrum_Olive": (None, "none (new clutter, 3.0 high: not shootable)"), "W2_OilDrum_Black": (None, "none (new clutter, 3.0 high: not shootable)"),
+    "W2_OilDrum_Grey": (None, "none (new clutter, 3.0 high: not shootable)"), "W2_OilDrum_Black": (None, "none (new clutter, 3.0 high: not shootable)"),
     "W2_Cover_Low": ("low", "Arena_L low cover 6 x 3.4 x 2"),
     "W2_Cover_Tall": ("tall", "Arena_C tall cover 5 x 7 x 4"),
     "W2_Cover_TallPly": ("tall", "Arena_C tall cover 5 x 7 x 4 (variant 2)"),
@@ -131,7 +131,7 @@ CAMDIR = {"W2_Forklift": Vector((1.0, -0.55, 0.42))}   # long along Y: shoot it 
 
 
 def human(coll):
-    skin = mat("hskin", (200, 196, 186), 0.6); shirt = mat("hshirt", (107, 122, 58), 0.7); pants = mat("hpants", (60, 62, 60), 0.7)
+    skin = mat("hskin", (200, 196, 186), 0.6); shirt = mat("hshirt", (78, 98, 128), 0.7); pants = mat("hpants", (60, 62, 60), 0.7)
     parts = [((-0.5, -0.25, 0.0), (-0.04, 0.25, 2.0), pants), ((0.04, -0.25, 0.0), (0.5, 0.25, 2.0), pants),
              ((-0.75, -0.3, 2.0), (0.75, 0.3, 3.8), shirt), ((-1.2, -0.25, 2.1), (-0.78, 0.25, 3.8), shirt),
              ((0.78, -0.25, 2.1), (1.2, 0.25, 3.8), shirt), ((-0.42, -0.4, 3.82), (0.42, 0.4, 5.0), skin)]
@@ -149,8 +149,9 @@ def setup_scene():
     sc.render.engine = "CYCLES"
     try:
         pr = bpy.context.preferences.addons["cycles"].preferences
-        pr.compute_device_type = "OPTIX"; pr.get_devices()
-        for d in pr.devices: d.use = d.type == "OPTIX"
+        dt = ARGV[ARGV.index("--device") + 1] if "--device" in ARGV else "OPTIX"   # --device CUDA where OptiX fails
+        pr.compute_device_type = dt; pr.get_devices()
+        for d in pr.devices: d.use = d.type == dt
         sc.cycles.device = "GPU"
     except Exception as ex:
         print("GPU fail", ex)

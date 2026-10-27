@@ -1,5 +1,5 @@
-"""Warehouse 2 prop kit: one-run generator. Runs inside Blender 4.5 (headless):
-  "C:/Program Files/Blender Foundation/Blender 4.5/blender.exe" -b --factory-startup --python art/warehouse2/tools/build_props.py -- [--nobake] [--res 1024] [--samples 16]
+"""Warehouse 2 prop kit: one-run generator. Runs inside Blender 4.5 or 5.2 (headless):
+  "C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --factory-startup --python art/warehouse2/tools/build_props.py -- [--nobake] [--res 1024] [--samples 16]
 
 Builds every prop as low-poly closed meshes (1 unit = 1 stud, Z up, front = -Y), gives each a layered procedural material
 (paint, wood planks, chips, rust, streaks, dirt, stencils from tex/decals), bakes them into one atlas per prop family
@@ -27,6 +27,7 @@ def arg(k, d):
 RES = arg("--res", 1024)
 SAMPLES = arg("--samples", 16)
 NOBAKE = "--nobake" in ARGV
+DEVICES = arg("--device", "OPTIX,CUDA").split(",")   # OptiX fails silently on some driver/Blender pairs (black bakes): --device CUDA
 T0 = time.time()
 def log(*a):
     print(f"[{time.time() - T0:6.1f}s]", *a, flush=True)
@@ -266,12 +267,22 @@ DEF = dict(paint=None, under=(130, 130, 126), rust_col=((78, 40, 20), (128, 66, 
            dust=0.25, mottle=0.1, spangle=False, weave=False, bleach=0.0, tape=False, holes=False, tread=False, rope=False,
            heat=0.0, paintable=False, bump=0.5, slats=0.0)
 K = {
-    "wood_olive": dict(paint=(80, 88, 50), under=(120, 92, 60), wood=True, groove=True, chip=0.55, stain=0.3, rough=0.8,
+    "wood_olive": dict(paint=(78, 82, 56), under=(120, 92, 60), wood=True, groove=True, chip=0.55, stain=0.3, rough=0.8,
                        under_rough=0.85, dirt=0.55, dust=0.15, mottle=0.09, paintable=True),
     "wood_raw": dict(under=(140, 118, 88), wood=True, groove=True, stain=0.45, rough=0.85, dirt=0.5, dust=0.3, mottle=0.16),
     "wood_top": dict(under=(104, 76, 50), wood=True, groove=True, stain=0.5, rough=0.62, dirt=0.6, mottle=0.12),
+    "wood_pine": dict(under=(138, 108, 74), wood=True, groove=True, stain=0.45, rough=0.85, dirt=0.55, dust=0.2, mottle=0.14,
+                      paintable=True),
+    "wood_dark": dict(under=(96, 70, 46), wood=True, groove=True, stain=0.5, rough=0.82, dirt=0.55, dust=0.25, mottle=0.12,
+                      paintable=True),
+    "wood_grey": dict(paint=(104, 106, 104), under=(120, 92, 60), wood=True, groove=True, chip=0.55, stain=0.3, rough=0.8,
+                      under_rough=0.85, dirt=0.55, dust=0.2, mottle=0.1, paintable=True),
+    "steel_grey": dict(paint=(76, 79, 82), under=(140, 140, 136), chip=0.5, rust=0.32, streak=0.35, rough=0.58,
+                       metal_under=1.0, dirt=0.5, dust=0.3, paintable=True),
+    "fork_paint": dict(paint=(70, 68, 64), under=(140, 140, 136), chip=0.55, rust=0.35, streak=0.4, rough=0.55,
+                       metal_under=1.0, dirt=0.55, dust=0.35, paintable=True),
     "plywood": dict(under=(150, 124, 88), wood=True, groove=False, stain=0.35, rough=0.8, dirt=0.4, dust=0.45),
-    "steel_olive": dict(paint=(70, 78, 50), under=(140, 140, 136), chip=0.5, rust=0.3, streak=0.35, rough=0.6,
+    "steel_olive": dict(paint=(70, 74, 52), under=(140, 140, 136), chip=0.5, rust=0.3, streak=0.35, rough=0.6,
                         metal_under=1.0, dirt=0.5, dust=0.3, paintable=True),
     "steel_cap": dict(paint=(92, 92, 88), under=(152, 152, 148), chip=0.6, rust=0.45, streak=0.3, rough=0.5, metal_paint=0.6,
                       metal_under=1.0, dirt=0.5),
@@ -293,10 +304,10 @@ K = {
                        metal_under=1.0, dirt=0.5, mottle=0.15),
     "rubber": dict(paint=(26, 26, 26), under=(26, 26, 26), rough=0.88, dirt=0.2, dust=0.6, tread=True, mottle=0.06, bump=0.8),
     "rope": dict(paint=(150, 126, 86), rope=True, rough=0.95, dirt=0.5, mottle=0.1, bump=0.8),
-    "canvas": dict(paint=(84, 88, 55), weave=True, bleach=0.35, rough=0.9, dirt=0.55, dust=0.3, mottle=0.16, paintable=True),
+    "canvas": dict(paint=(98, 100, 98), weave=True, bleach=0.35, rough=0.9, dirt=0.55, dust=0.3, mottle=0.16, paintable=True),
     "burlap": dict(paint=(146, 124, 86), weave=True, rough=0.95, dirt=0.5, dust=0.2, mottle=0.12, paintable=True),
     "cardboard": dict(paint=(150, 112, 70), tape=True, rough=0.8, dirt=0.4, mottle=0.1, dust=0.3),
-    "enamel_out": dict(paint=(60, 68, 54), under=(130, 130, 126), chip=0.45, rust=0.2, rough=0.35, metal_under=1.0, dirt=0.4, dust=0.5),
+    "enamel_out": dict(paint=(64, 66, 68), under=(130, 130, 126), chip=0.45, rust=0.2, rough=0.35, metal_under=1.0, dirt=0.4, dust=0.5),
     "enamel_in": dict(paint=(214, 208, 192), under=(130, 130, 126), chip=0.2, rust=0.05, rough=0.3, dirt=0.75, dust=0.0),
     "black_drum": dict(paint=(34, 34, 33), under=(130, 128, 124), chip=0.55, rust=0.4, streak=0.4, rough=0.55,
                        metal_under=1.0, dirt=0.45, dust=0.45, paintable=True),
@@ -702,8 +713,8 @@ def fire_barrel():
     prof = drum_profile()
     mb.lathe(prof, 24, "red_drum", deform=dents([(0.9, 1.75, 0.2, 0.32, 0.3), (-2.4, 0.8, 0.15, 0.3, 0.25), (2.6, 2.75, 0.12, 0.3, 0.2),
                                                  (-0.6, 2.9, 0.1, 0.25, 0.15)]),
-             kindfn=lambda f: "steel_olive" if f.calc_center_median().z > 3.2 else "red_drum")
-    mb.lathe([(0.0, 3.26), (0.19, 3.26), (0.19, 3.38), (0.0, 3.38)], 10, "steel_olive", M=Matrix.Translation((0.42, -0.42, 0)))
+             kindfn=lambda f: "steel_cap" if f.calc_center_median().z > 3.2 else "red_drum")
+    mb.lathe([(0.0, 3.26), (0.19, 3.26), (0.19, 3.38), (0.0, 3.38)], 10, "steel_cap", M=Matrix.Translation((0.42, -0.42, 0)))
     mb.decal_cyl("lbl_flammable", FRONT, 1.75, 1.0, 0.95, 0.95, rough=0.4)
     mb.decal_cyl("lbl_flammable", math.pi / 2, 1.75, 1.0, 0.95, 0.95, rough=0.4)
     mb.decal_cyl("st_fuel", 0.0, 1.75, 1.0, 1.5, 0.62, col=(236, 232, 218))
@@ -896,12 +907,12 @@ def steel_crate(name, L, D, H):
     mb = MB(name, "CratesSteel", H)
     X, Y = L / 2, D / 2
     lid = 0.58
-    mb.boxr((-X + 0.1, -Y + 0.1, 0.14), (X - 0.1, Y - 0.1, H - lid + 0.05), "steel_olive", grain=0)
-    mb.boxr((-X, -Y, H - lid), (X, Y, H), "steel_olive", grain=0)
+    mb.boxr((-X + 0.1, -Y + 0.1, 0.14), (X - 0.1, Y - 0.1, H - lid + 0.05), "steel_grey", grain=0)
+    mb.boxr((-X, -Y, H - lid), (X, Y, H), "steel_grey", grain=0)
     for sy in (-1, 1):   # skids
         mb.boxr((-X + 0.06, sy * Y * 0.55 - 0.22, 0.0), (X - 0.06, sy * Y * 0.55 + 0.22, 0.18), "gunmetal", grain=0)
     for z in (1.0, H - lid - 0.95):   # pressed stiffening ribs all round
-        mb.boxr((-X + 0.06, -Y + 0.06, z - 0.09), (X - 0.06, Y - 0.06, z + 0.09), "steel_olive", grain=0)
+        mb.boxr((-X + 0.06, -Y + 0.06, z - 0.09), (X - 0.06, Y - 0.06, z + 0.09), "steel_grey", grain=0)
     for sx in (-1, 1):   # corner posts
         for sy in (-1, 1):
             x0, x1 = sorted((sx * (X - 0.3), sx * (X - 0.03)))
@@ -1193,8 +1204,8 @@ def workbench():
     mb.tube([(-2.425, -0.98, 3.15), (-2.425, -1.18, 3.15)], 0.06, "steel_bare", segs=6)
     mb.tube([(-2.75, -1.16, 3.15), (-2.1, -1.16, 3.15)], 0.035, "steel_bare", segs=5)
     # toolbox
-    mb.boxr((-0.2, -0.45, 2.84), (1.1, 0.25, 3.36), "steel_olive", grain=0)
-    mb.boxr((-0.23, -0.48, 3.32), (1.13, 0.28, 3.48), "steel_olive", grain=0)
+    mb.boxr((-0.2, -0.45, 2.84), (1.1, 0.25, 3.36), "steel_grey", grain=0)
+    mb.boxr((-0.23, -0.48, 3.32), (1.13, 0.28, 3.48), "steel_grey", grain=0)
     mb.tube([(0.2, -0.1, 3.46), (0.25, -0.1, 3.6), (0.65, -0.1, 3.6), (0.7, -0.1, 3.46)], 0.04, "gunmetal")
     # tools hanging on the pegboard
     wrench = [(-0.06, 0.0), (0.06, 0.0), (0.06, 1.05), (0.17, 1.12), (0.15, 1.32), (0.075, 1.22), (-0.075, 1.22), (-0.15, 1.32), (-0.17, 1.12), (-0.06, 1.05)]
@@ -1202,7 +1213,7 @@ def workbench():
         mb.prism([(x0 + x * sc, z0 + z * sc) for x, z in wrench], "Y", 0.84, 0.98, "steel_bare", grain=2)
     mb.boxr((-0.75, 0.87, 3.2), (-0.62, 0.98, 4.25), "wood_raw", grain=2)
     mb.boxr((-0.95, 0.84, 4.12), (-0.42, 0.98, 4.35), "steel_bare", grain=0)
-    mb.boxr((0.2, 0.86, 3.55), (1.6, 0.98, 4.4), "steel_olive", grain=0)  # a hanging tool cabinet: two doors, two handles
+    mb.boxr((0.2, 0.86, 3.55), (1.6, 0.98, 4.4), "steel_grey", grain=0)  # a hanging tool cabinet: two doors, two handles
     for hx in (0.82, 0.98):
         mb.boxr((hx - 0.03, 0.8, 3.85), (hx + 0.03, 0.89, 4.1), "steel_bare", grain=2)
     mb.boxr((0.88, 0.83, 3.58), (0.92, 0.89, 4.37), "gunmetal", grain=2)
@@ -1212,7 +1223,7 @@ def workbench():
     M = Matrix.Translation((1.85, -0.1, 4.3)) @ Matrix.Rotation(math.radians(140), 4, "X")
     mb.lathe([(0.0, 0.0), (0.12, 0.0), (0.2, 0.15), (0.38, 0.5), (0.34, 0.5), (0.17, 0.18), (0.0, 0.18)], 12, "enamel_out", M=M,
              kindfn=lambda f: "enamel_out")
-    mb.decal("st_tacsupply", (0, -1, 0), (0.9, -0.48, 3.12), 1.25, 0.2, col=(236, 232, 218), kinds=["steel_olive"], depth=0.1)
+    mb.decal("st_tacsupply", (0, -1, 0), (0.9, -0.48, 3.12), 1.25, 0.2, col=(236, 232, 218), kinds=["steel_grey"], depth=0.1)
     return finish(mb)
 
 def hang_lamp():
@@ -1252,12 +1263,12 @@ def forklift():
     mb = MB("W2_Forklift_Body", "Forklift", 6.05)
     chassis = [(-2.95, 0.45), (3.2, 0.45), (3.2, 2.95), (0.45, 2.95), (0.25, 2.75), (0.1, 1.55), (-1.85, 1.55),
                (-2.1, 2.75), (-2.95, 2.75)]
-    mb.prism(chassis, "X", -1.05, 1.05, "steel_olive", grain=1)
+    mb.prism(chassis, "X", -1.05, 1.05, "fork_paint", grain=1)
     cw = [(2.0, 1.78), (3.32, 1.78), (3.32, 0.45), (3.5, 0.45), (3.62, 0.8), (3.62, 3.0), (3.35, 3.3), (2.0, 3.3)]
-    mb.prism(cw, "X", -1.55, 1.55, "steel_olive", grain=0)
+    mb.prism(cw, "X", -1.55, 1.55, "fork_paint", grain=0)
     for sx in (-1, 1):
         x0, x1 = sorted((sx * 1.0, sx * 1.72))
-        mb.boxr((x0, FY - 0.85, 2.06), (x1, FY + 0.85, 2.2), "steel_olive", grain=1)
+        mb.boxr((x0, FY - 0.85, 2.06), (x1, FY + 0.85, 2.2), "fork_paint", grain=1)
     mb.boxr((-1.38, -1.2, 0.95), (-1.0, -0.5, 1.06), "steel_bare", grain=1)
     mb.boxr((-0.62, 0.55, 2.93), (0.62, 1.5, 3.18), "vinyl", grain=0)
     mb.boxr((-0.59, 1.4, 3.1), (0.59, 1.62, 4.15), "vinyl", grain=2)
@@ -1270,10 +1281,10 @@ def forklift():
         mb.boxr((sx * 1.02 - 0.12, -2.68, 5.33), (sx * 1.02 + 0.12, -2.6, 5.52), "lens")
     for y in (-2.2, -1.1, 0.0, 1.1, 2.0):
         mb.boxr((-1.08, y - 0.07, 5.92), (1.08, y + 0.07, 6.01), "gunmetal", grain=0)
-    mb.decal("hz_stripes", (0, 1, 0), (0, 3.62, 1.9), 2.9, 0.7, rough=0.5, kinds=["steel_olive"], depth=0.2)
+    mb.decal("hz_stripes", (0, 1, 0), (0, 3.62, 1.9), 2.9, 0.7, rough=0.5, kinds=["fork_paint"], depth=0.2)
     # stencils clipped to the one flat side panel behind the cab opening (y 0.45-2.0), so no letters fall into the cab
-    mb.decal("st_motorpool", (1, 0, 0), (1.05, 1.22, 2.05), 1.45, 0.36, col=(236, 232, 218), kinds=["steel_olive"], depth=0.1)
-    mb.decal("st_motorpool", (-1, 0, 0), (-1.05, 1.22, 2.05), 1.45, 0.36, col=(236, 232, 218), kinds=["steel_olive"], depth=0.1)
+    mb.decal("st_motorpool", (1, 0, 0), (1.05, 1.22, 2.05), 1.45, 0.36, col=(236, 232, 218), kinds=["fork_paint"], depth=0.1)
+    mb.decal("st_motorpool", (-1, 0, 0), (-1.05, 1.22, 2.05), 1.45, 0.36, col=(236, 232, 218), kinds=["fork_paint"], depth=0.1)
     obs.append(finish(mb))
 
     mb = MB("W2_Forklift_Mast", "Forklift", 5.75)
@@ -1315,7 +1326,7 @@ def forklift():
         loop = [(r * sc, z * hw / 0.43) for r, z in TYRE]
         M = Matrix.Translation((0, 0, ro)) @ Matrix.Rotation(math.pi / 2, 4, "Y")
         mb.revolve(loop, 18, "rubber", M=M, r_ref=ro, groovefn=lambda f, ro=ro: 1.0 if math.hypot(f.calc_center_median().y, f.calc_center_median().z - ro) > ro * 0.96 else 0.0)
-        mb.lathe([(0.0, -hw * 0.75), (ri * 1.05, -hw * 0.75), (ri * 1.05, hw * 0.75), (0.17, hw * 0.75), (0.17, hw * 0.95), (0.0, hw * 0.95)], 16, "steel_olive", M=M)
+        mb.lathe([(0.0, -hw * 0.75), (ri * 1.05, -hw * 0.75), (ri * 1.05, hw * 0.75), (0.17, hw * 0.75), (0.17, hw * 0.95), (0.0, hw * 0.95)], 16, "fork_paint", M=M)
         mb.lathe([(0.0, -hw * 0.75 - 0.3), (0.15, -hw * 0.75 - 0.3), (0.15, -hw * 0.6), (0.0, -hw * 0.6)], 8, "gunmetal", M=M)
         obs.append(finish(mb))
     return obs
@@ -1324,8 +1335,8 @@ def human():
     """5-stud R15-proportioned stand-in for scale (not exported)."""
     mb = MB("R15_Human_5stud", "None", 5.0)
     mb.boxr((-0.5, -0.25, 0.0), (-0.05, 0.25, 2.0), "gunmetal"); mb.boxr((0.05, -0.25, 0.0), (0.5, 0.25, 2.0), "gunmetal")
-    mb.boxr((-0.75, -0.3, 2.0), (0.75, 0.3, 3.8), "steel_olive")
-    mb.boxr((-1.2, -0.25, 2.1), (-0.78, 0.25, 3.8), "steel_olive"); mb.boxr((0.78, -0.25, 2.1), (1.2, 0.25, 3.8), "steel_olive")
+    mb.boxr((-0.75, -0.3, 2.0), (0.75, 0.3, 3.8), "steel_grey")
+    mb.boxr((-1.2, -0.25, 2.1), (-0.78, 0.25, 3.8), "steel_grey"); mb.boxr((0.78, -0.25, 2.1), (1.2, 0.25, 3.8), "steel_grey")
     mb.boxr((-0.4, -0.38, 3.82), (0.4, 0.38, 5.0), "enamel_in")
     return mb
 
@@ -1336,7 +1347,7 @@ def setup_cycles():
     sc.render.engine = "CYCLES"
     try:
         pr = bpy.context.preferences.addons["cycles"].preferences
-        for dt in ("OPTIX", "CUDA"):
+        for dt in DEVICES:
             try:
                 pr.compute_device_type = dt
                 pr.get_devices()
@@ -1404,6 +1415,10 @@ def bake_atlas(atl, objs):
         t0 = time.time()
         bpy.ops.object.bake(type=typ, use_clear=True, margin=6, **kw)
         log("  ", atl, p, f"{time.time() - t0:.1f}s")
+        if p in ("color", "normal", "ao"):   # a failed GPU kernel bakes black without raising: stop instead of shipping it
+            px = np.empty(RES * RES * 4, np.float32); imgs[p].pixels.foreach_get(px)
+            if float(px.reshape(-1, 4)[:, :3].max()) < 0.02:
+                raise RuntimeError(f"bake {atl} {p} is black: the render device failed (try --device CUDA)")
     run("color", "DIFFUSE", pass_filter={"COLOR"})
     run("rough", "ROUGHNESS")
     run("metal", "EMIT")
@@ -1474,7 +1489,7 @@ ASM = [
      "keep the existing Body cylinder Part (2.1 dia x 3.0, the shootable hit part, centred on the pivot); " + ART),
     ("W2_FireBarrel_Burnt", [("W2_FireBarrel_Burnt", (0, 0, 0), 0), ("W2_FireBarrel_BurntLid", (2.6, -1.1, 0.0), 25)],
      "the FireBarrel after it explodes (swap the Look; same pivot)", "none, or the Body cylinder 2.1 x 3.0 if it should stay low cover; " + ART),
-    ("W2_OilDrum_Olive", [("W2_OilDrum_Olive", (0, 0, 0), 0)], "new clutter, not shootable (kit brief OilDrum 2.1 x 3.0 x 2.1)", "none (kit brief: clutter, no collision); " + ART),
+    ("W2_OilDrum_Grey", [("W2_OilDrum_Grey", (0, 0, 0), 0)], "new clutter, not shootable (kit brief OilDrum 2.1 x 3.0 x 2.1)", "none (kit brief: clutter, no collision); " + ART),
     ("W2_OilDrum_Black", [("W2_OilDrum_Black", (0, 0, 0), 0)], "new clutter, not shootable (kit brief OilDrum)", "none; " + ART),
     ("W2_Cover_Low", [("W2_RifleCrate", (0, 0, 0), 0), ("W2_RifleCrate", (0, 0, 1.67), 180, (0.98833, 0.965, 1.0))],
      "Visuals/Arena_L01-L14 (6 x 3.4 x 2), cover proxy COLP_Lxx", "existing COLP_Lxx box 6 x 3.4 x 2 (unchanged); " + ART),
@@ -1611,7 +1626,7 @@ def main():
     sc.unit_settings.system = "METRIC"; sc.unit_settings.scale_length = 1.0
     builders = [
         fire_barrel, puddle, burnt_barrel, burnt_lid,
-        lambda: oil_drum("W2_OilDrum_Olive", "olive_drum", [(1.4, 1.6, 0.1, 0.3, 0.3), (-0.4, 2.7, 0.06, 0.3, 0.2)],
+        lambda: oil_drum("W2_OilDrum_Grey", "grey_drum", [(1.4, 1.6, 0.1, 0.3, 0.3), (-0.4, 2.7, 0.06, 0.3, 0.2)],
                          [((("st_id044", FRONT, 1.55, 1.0, 1.4, 0.36), dict(col=(236, 232, 218)))),
                           ((("st_emblem", math.pi / 2, 1.5, 1.0, 0.75, 0.75), dict(col=(236, 232, 218))))]),
         lambda: oil_drum("W2_OilDrum_Black", "black_drum", [(-1.0, 2.1, 0.11, 0.35, 0.3), (2.0, 0.7, 0.07, 0.3, 0.2)],
@@ -1619,13 +1634,13 @@ def main():
     ]
     obs = [b() for b in builders]
     # crates
-    mb = wood_crate("W2_RifleCrate", 6.0, 2.0, 1.7, cleats_x=(-1.55, 1.55), rope_z=0.95, atlas="CratesCover")
-    mb.decal("st_rifle", (0, -1, 0), (0, -1.0, 0.85), 2.7, 0.68, col=(236, 232, 218))
-    mb.decal("st_tacsupply", (0, 1, 0), (0, 1.0, 0.85), 2.6, 0.4, col=(236, 232, 218))
+    mb = wood_crate("W2_RifleCrate", 6.0, 2.0, 1.7, cleats_x=(-1.55, 1.55), rope_z=0.95, atlas="CratesCover", wood="wood_pine")
+    mb.decal("st_rifle", (0, -1, 0), (0, -1.0, 0.85), 2.7, 0.68, col=(22, 22, 20))
+    mb.decal("st_tacsupply", (0, 1, 0), (0, 1.0, 0.85), 2.6, 0.4, col=(22, 22, 20))
     mb.decal("st_handle", (0, 0, 1), (0, 0, 1.7), 3.0, 0.38, col=(22, 22, 20), depth=0.4)
     mb.decal("st_id017", (0, -1, 0), (-2.35, -1.0, 0.88), 0.62, 0.17, col=(22, 22, 20))
     obs.append(finish(mb))
-    mb = wood_crate("W2_SupplyCrate", 5.0, 3.0, 3.5, diagonals=True, rope_z=2.4)
+    mb = wood_crate("W2_SupplyCrate", 5.0, 3.0, 3.5, diagonals=True, rope_z=2.4, wood="wood_grey")
     mb.decal("st_tacsupply", (0, -1, 0), (0, -1.5, 2.6), 3.6, 0.55, col=(236, 232, 218))
     mb.decal("st_weight", (0, -1, 0), (0.6, -1.5, 1.05), 2.2, 0.72, col=(22, 22, 20))
     mb.decal("st_rations", (0, 1, 0), (0, 1.5, 1.8), 3.6, 0.9, col=(236, 232, 218))
@@ -1633,12 +1648,12 @@ def main():
     mb.decal("st_upright", (-1, 0, 0), (-2.5, 0, 1.25), 1.3, 1.3, col=(236, 232, 218))
     mb.decal("st_id103", (0, 0, 1), (0, 0, 3.5), 2.0, 0.5, col=(236, 232, 218), depth=0.4)
     obs.append(finish(mb))
-    mb = wood_crate("W2_TallCrate", 5.0, 4.0, 7.0, band_z=(3.5,), diagonals=True, rope_z=None, atlas="CratesCover")
+    mb = wood_crate("W2_TallCrate", 5.0, 4.0, 7.0, band_z=(3.5,), diagonals=True, rope_z=None, atlas="CratesCover", wood="wood_dark")
     mb.decal("st_engine", (0, -1, 0), (0, -2.0, 5.2), 3.8, 1.2, col=(236, 232, 218))
     mb.decal("st_emblem", (0, -1, 0), (0, -2.0, 1.75), 1.9, 1.9, col=(236, 232, 218))
     mb.decal("st_id017", (0, 1, 0), (0, 2.0, 5.2), 2.6, 0.65, col=(236, 232, 218))
-    mb.decal("st_upright", (0, 1, 0), (0, 2.0, 1.75), 1.8, 1.8, col=(22, 22, 20))
-    mb.decal("st_handle", (1, 0, 0), (2.5, 0, 3.5), 3.2, 0.36, col=(22, 22, 20))
+    mb.decal("st_upright", (0, 1, 0), (0, 2.0, 1.75), 1.8, 1.8, col=(236, 232, 218))
+    mb.decal("st_handle", (1, 0, 0), (2.5, 0, 3.5), 3.2, 0.36, col=(236, 232, 218))
     mb.decal("st_weight", (-1, 0, 0), (-2.5, 0, 5.2), 2.6, 0.85, col=(236, 232, 218))
     obs.append(finish(mb))
     mb = wood_crate("W2_TallCrate_Ply", 5.0, 4.0, 7.0, band_z=(3.7,), diagonals=False, cleats_x=(-0.8, 0.8), rope_z=None,
