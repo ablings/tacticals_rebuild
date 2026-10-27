@@ -36,7 +36,7 @@ for i, b in enumerate(rows):
         m = MET.get(f"{b}_{c}")
         if m:
             txt = f"mean {m['mean']:.0f}  top5% {m['p95']:.0f}"
-            if "line_pct_10" in m: txt += f"  lines {m['line_pct_10']:.0f}% darker"
+            if "line_pct_10" in m: txt += f"  lines {m['line_pct_10']:.1f}% darker"
             if "line_pct_40" in m: txt += f"  lines {m['line_pct_40']:.1f}% darker"
             tw = d.textlength(txt, font=small)
             d.rectangle((LW + j * TW + 6, y + TH - 26, LW + j * TW + 14 + tw, y + TH - 8), fill=(0, 0, 0))

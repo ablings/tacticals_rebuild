@@ -14,14 +14,14 @@ into the sun, aerial, a close seam shot (sill and post on the floor). Every shot
   RIVALS' greys only look light under RIVALS' brighter lighting.
 - **C (our warm grey):** calm and warm (average 134-144, top 5% 161-164, 15% under A), but the grid fades at 40 studs.
 - **D (C with darker lines):** the lines read at 40 studs, but they are harsh up close (38% darker).
-- **E (C with a soft, wider line), recommended:** looks like C, with lines soft up close (16%) that still read at 40 studs (11%).
+- **E (C with a soft, wider line), recommended:** looks like C, with lines soft up close (16.5%) that still read at 40 studs (10.8%). Up close (about 7 studs) its grid corners show a small hatch.
   That is the closest to RIVALS, which is 11% near and 11% far. It uses our same grid image three times side by side, so no new
   upload is needed.
 
 ## Recommendation: E (D if the Texture count turns out heavy)
 E has warm palette greys and a world-aligned grid made of three centred copies of our own image, each black at 0.85.
 - It drops A's glare: average brightness 161 → 144 at 40 studs, the brightest 5% from 190 → 161, and line harshness up close
-  from 69% to 16%.
+  from 69% to 16.5%.
 - It keeps RIVALS' craft:
   - two tones, solid cover 13% darker;
   - Plastic only;
@@ -32,7 +32,8 @@ E has warm palette greys and a world-aligned grid made of three centred copies o
 - Its lines carry as far as RIVALS' (10.8% vs 10.8% darker at 40 studs) and much further than C's (6.9%).
 - **Cost:**
   - 3 Textures per face: about 1,300 in the Arena, against about 430 for C/D and about 485 for A today.
-  - In a bay the extra Textures add triangles (about +190 per view), not draw calls (cost table below).
+  - In a bay the extra Textures add triangles (+24 at 10 studs, about +190 at 40 studs and aerial), not draw calls (cost
+    table below).
   - Not measured on a whole Arena copy or a phone. If that turns out heavy, take **D**: the same look at 430 Textures, with the
     harsher near line.
 - The clean long-term fix is a second own grid image with a 4-6 px soft line. That gives E's look at C's Texture count without
@@ -87,8 +88,10 @@ How they were measured:
 | E | 134 / 163 | **16.5%** | 144 / 161 | **10.8%** | 77 / 153 | 142 / 158 | 141 / 164 |
 | RIVALS Arena (own file lighting) | 153 / 185 | 10.9% | 127 / 188 | 10.8% | 99 (≈95 without the sun halo) / 109 | 141 / 188 | 101 / 180 |
 
-**Cost per camera** (triangles / draw calls, Stats.RenderBreakdown in Edit at level 21; measured by the round-2 grader, before
-the unseen ramp-back Texture was dropped):
+**Cost per camera** (triangles / draw calls, Stats.RenderBreakdown in Edit at level 21, measured by the round-2 grader with the
+other bays parked, before the unseen ramp-back Texture was dropped). With all five bays present, the round-3 grader read
+different absolute numbers (e.g. C 342 / E 148 tris at 40 studs, 10 draws each), so only the relative result holds: E adds no
+draw calls. The real check is port step 5.
 
 | View | A | B | C | D | E |
 |---|---|---|---|---|---|
@@ -115,8 +118,8 @@ the unseen ramp-back Texture was dropped):
 - **Studio EditQualityLevel 21 (PC look) for every capture.** It is written on the sheet and in `cams.json`.
   - Round 1 was shot at the session's default level 1: no sun cast shadows, and lighting that only settled around the editor
     camera.
-  - The level is set per Studio process (this place and the RIVALS copy only). Both are set back to level 1 at the very end
-    (after the last grade), so the saved Studio settings stay as they were.
+  - The level is set per Studio process (this place and the RIVALS copy only). Both were set back to level 1 after the
+    round-3 grade (PASS), so the saved Studio settings stay as they were.
 - **Technology ShadowMap, LightingStyle Realistic, PrioritizeLightingQuality on.** These are the match place's values (read
   offline from `match_place_ref.rbxl` with `tools/read_technology.py` / `tools/rbxl_lighting_dump.py`). The saved file was
   re-read after saving.
@@ -197,10 +200,11 @@ the unseen ramp-back Texture was dropped):
 - **Pick greys by the render.**
   - RIVALS' 151 renders at ~100 under a darker match lighting.
   - With an open blue sky the floor lost ~10 points of R − B and the walls ~3, against the palette at the same brightness.
+  - The walls' +3 R / −3 B lands them about 3 points warm (accepted). +1.5 / −1.5 would be exact.
   - Correct the floor separately, and check G − B as well as R − B: the render passes nominal shifts through about 1:1.
 - **Line width sets the far read; transparency sets the near read.** A hairline (4 texels of a 512 tile) at 0.65 is 38% → 9%
-  from 10 to 40 studs. Three centred copies at 0.85 give 16% → 11%. RIVALS' wide line gives 11% → 11%.
-- **A line-dip measure needs a median window ≥ 4× the widest line.** Re-run at twice the window: the number must not move.
+  from 10 to 40 studs. Three centred copies at 0.85 give 16.5% → 11%. RIVALS' wide line gives 11% → 11%.
+- **A line-dip measure needs a median window ≥ 4× the widest line.** Re-run at twice the window: the number must move less than 0.5 points.
 - **Rigs floating in the void:** mask surfaces with an empty-scene background frame, not a sky colour test.
 - **Capture pitfalls:**
   - A save that restores the window shrank the viewport (1452 × 793 → 812 × 675): check every frame's size.

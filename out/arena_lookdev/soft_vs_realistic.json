@@ -11,5 +11,6 @@
    "soft_vs_realistic_mean_abs": 0.23004665478585,
    "share_pixels_diff_gt8_pct": 0.6021177034589851
   }
- }
+ },
+ "realistic_frames": "D_c10.png / D_c40.png (force-added)"
 }
