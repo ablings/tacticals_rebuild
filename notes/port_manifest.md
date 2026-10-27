@@ -506,3 +506,18 @@ himself; we never publish.
   a string the pad UI and boards show) and the Studio test-server button "BACK TO ARENA" (RangeKitController; goes to the chosen
   map's spawns). Both use "arena" as the generic word for a duel slot / the match, which can now read like the map's name.
 - Graded: roblox-systems-grader round 1 FIX 9.1 (builder fallback could hit ArenaLoader's clone; fixed e9a1024), round 2 PASS 9.2.
+
+## Pending for the next port: Arena v2 layout [ARENAV2] (2026-10-26, Shadow PC map builder; layout approved by Edward 2026-10-26)
+- What: the Arena rebuilt to the approved v2 layout (notes/arena_v2_plan.md): 3 lanes, 3 twin windows (centre + 2 lane gates),
+  A's 5-high perch + B's 5-high ledge with 22.6° ramps, 25 pillars / 15 walls / 21 low walls; look E surfaces (warm greys, solid
+  cover 13 % darker, soft world-aligned grid from our image 86361987736184). Plain Studio Blocks + 2 Wedges, collision = what you see.
+- How: fix/map_arena.lua (layout block generated from notes/maps/arena_v2_layout.json by tools/arena_v2_lua.py). Idempotent. First
+  run moves v1 + its DuelMaps entry to ServerStorage._ArenaV1_Backup; UNDO = true puts them back.
+- Names kept: Workspace.Arena (Floor / Box / Cover / MatchSpawns), MatchSpawns.SpawnA (-670, 0.6, 0) / SpawnB (-530, 0.6, -2.5) facing
+  the middle, ReplicatedStorage.DuelMaps.Arena + MapInfo (same Lighting, Size, KillDepth, modes 1v1/2v2/3v3).
+  Cover hooks: NotCover on floor, box, decks, curbs, ramps; sills / parapets / pillars / walls / low walls are normal cover.
+- Match copy (match_place_ref.rbxl): built + saved 2026-10-26 22:45. Checks: read-back = plan exactly; arena_v2_check on the built
+  geometry 0 errors / 0 warnings; MapAudit 0 FAIL / 0 WARN; Play lap passed (see the report in notes/arena_v2_build.md).
+- Lobby copy (Tacticals_rebuild.rbxl): see below.
+- Port checks: Workspace.Arena:GetAttribute("LayoutVersion") == 2, 105 parts; ServerStorage._ArenaV1_Backup present (can be dropped
+  from the published copies once Edward is happy); no StudioTeleportData.

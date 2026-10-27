@@ -1,72 +1,186 @@
--- fix/map_arena.lua [PRANGE] 2026-10-20, Edward's floor plan "PRACTICE RANGE (LARGE)" (150 x 110 studs, 1v1 / 2v2 / 3v3).
--- History: built as the "Practice Range" (file fix/map_practice_range.lua, ids PracticeRange); renamed to the Arena on 2026-10-26
--- (Edward: "so the confusion disappears in all code and labels" - the lobby's Training room was also called the practice range).
--- The [PRANGE] tags stay: port checks and the map_env anchors look for them. Instance name / registry id = "Arena" is safe:
--- every other "Arena" in the code is a prefix (ArenaLoader, ArenaMap, DuelArena), a keyword (MatchFlow kind "Arena", the test
--- Teleport "Arena"), or LobbyMap.Training.Arena, which is only looked up inside Training (fix/place_training.lua); nothing
--- finds an "Arena" by a recursive name search. fix/rename_arena.lua migrated the existing copies in place.
--- Builds Workspace.Arena in the match place (and its registry entry ReplicatedStorage.DuelMaps.Arena) as a
--- whitebox: an open-roofed box under daylight, no doors, no props, no shootables. A completely different feel from the dark,
--- enclosed Warehouse: bright, clean, colour-coded cover read at a glance.
--- Edward's calls: "fully whiteboxed or a blockout, no effects no special items", "a large box shaped whitebox map with an open
--- roof", "it shouldnt have doors", "whatever you disagree with on the floor plan just do".
--- Changes from the plan (lead's calls):
---   * no doors: the perimeter is closed, 16 tall (the box), with a pale accent band so the walls read as walls in the white
---   * ramps lead to platforms 6 high (the plan's "~20" would put players level with the box rim; 6 = over a head, under the
---     rim) with 3.4 parapets; each spawn has its own ramp up from the spawn side (the plan's rule), and the B corner gets a
---     second ramp facing the middle so its platform isn't a one-way perch
---   * windows = two tall posts with a 3.4 sill between (vaultable), no lintel (a lintel would clip the vault arc)
---   * plan doodles smaller than a stud or overlapping their neighbours are merged / dropped; everything sits on a 0.5 grid
--- Layout: the plan's px rectangles are converted to studs (plan x -75..75 -> world X, plan y 55..-55 -> world Z north..south)
--- around ORIGIN. Idempotent: rebuilds the model each run. UNDO removes the model and the registry entry.
+-- fix/map_arena.lua [PRANGE] Arena v2 (2026-10-26). Builds Tacticals' second match map, the Arena, from Studio Parts.
+-- Layout: notes/arena_v2_plan.md, approved by Edward 2026-10-26 (asymmetry as planned, decks 5 high, "yes studio parts"). The
+-- layout block below is GENERATED from notes/maps/arena_v2_layout.json by tools/arena_v2_lua.py: change the JSON (via
+-- tools/arena_v2_layout.py), re-run the checker, then the generator; never hand-edit the block.
+-- History: v1 (2026-10-20) was Edward's floor plan "PRACTICE RANGE (LARGE)" (file fix/map_practice_range.lua, ids PracticeRange);
+-- renamed to the Arena on 2026-10-26. The [PRANGE] tags stay: port checks and the map_env anchors look for them.
+--
+-- What it builds (match place): Workspace.Arena + its registry entry ReplicatedStorage.DuelMaps.Arena (MapInfo + Lighting).
+-- Lobby (has ServerStorage._DuelSource): the map goes in as a duel source (_DuelSource.Arena.Arena); run fix/duel_split_map.lua next.
+-- Edward's calls kept: an open-roofed box, no doors, no props, no effects, no shootables; 150 x 110 inside, walls 16.
+-- Construction: plain axis-aligned Blocks + Wedges on the 0.5 grid, collision = what you see (every part collides, nothing
+-- else is in the model but the invisible spawn markers).
+-- Cover hooks (CoverController finds cover by raycast + the NotCover attribute; no folder name is read by any script):
+--   pillars / walls / low walls / parapets / window posts, sills and lintels / the wall on B's ledge: normal cover
+--     (a window sill is a separate 3.4-high part, so it reads as LOW cover and Space vaults it through the opening);
+--   NotCover = true: the box walls + rims, the floor, the decks, the kick-curbs and the ramps. A deck is 5 high, between
+--     low (<= 4) and tall (>= 7) cover, and NotCover also means Space can never climb it from the floor (the climb only
+--     targets cover): the ramp is the only way up, as the plan requires; the curbs and parapets stay as a second guard.
+-- Surfaces: look E of notes/arena_lookdev.md, all in SURFACE below (one place to swap the grid tile).
+-- Idempotent: each run rebuilds the v2 model. The first run moves v1 (and its registry entry) to ServerStorage._ArenaV1_Backup;
+-- UNDO removes v2 and puts v1 back from there.
 local UNDO = false --@UNDO
 local ORIGIN = Vector3.new(-600, 0, 0) -- clear of the Warehouse (x -126..-42), the range (x -37..190), the pseudo-lobby (x >= -200)
 local FLOOR_TOP = 0.6
 local RS = game:GetService("ReplicatedStorage")
-
--- Lobby (has ServerStorage._DuelSource): the map goes in as a duel source (_DuelSource.Arena.Arena) for
--- fix/duel_split_map.lua to split into arena layers. Match place: Workspace.Arena + its registry entry here.
 local SS = game:GetService("ServerStorage")
+
+-- ====================================================================================================== SURFACES (look E)
+-- Everything that decides how the Arena looks. A new grid tile = change GRID.image (and GRID.tile if its repeat isn't 5);
+-- GRID.copies / GRID.widen soften the current image's 4-texel hairline (3 copies one line width apart at 0.85): set copies = 1
+-- for a tile that draws its own line width.
+local SURFACE = {
+	material = Enum.Material.Plastic,
+	color = {
+		floor = Color3.fromRGB(205, 199, 181),
+		structure = Color3.fromRGB(203, 196, 183), -- box walls + rims, window posts / sills / lintels, decks, curbs, ramps
+		cover = Color3.fromRGB(177, 171, 160), -- solid cover, 13 % darker: pillars, walls, low walls, parapets, the ledge wall
+		spawnA = Color3.fromRGB(193, 199, 199), -- faint team tints on the pocket floor, in the warm family
+		spawnB = Color3.fromRGB(214, 194, 183),
+	},
+	GRID = {
+		image = "rbxassetid://86361987736184", -- our own greybox grid (the training room's)
+		tile = 5, -- studs per tile, U and V; lines on the world lattice x, z = ORIGIN + 5k, y = FLOOR_TOP + 5k
+		color = Color3.new(0, 0, 0),
+		alpha = 0.85,
+		copies = 3,
+		widen = 0.04, -- the image's line = 4 texels of 512 on a 5-stud tile = 0.039 studs
+	},
+}
+-- which faces get the grid, by part role
+local FACES5 = { "Top", "Front", "Back", "Left", "Right" }
+local GRID_FACES = { floor = { "Top" }, pad = { "Top" }, rim = {}, ramp = { "Top", "Left", "Right" } } -- box walls: their inner face (below)
+
+-- ====================================================================================================== LAYOUT
+-- @LAYOUT BEGIN
+local LAYOUT = { -- generated by tools/arena_v2_lua.py from notes/maps/arena_v2_layout.json (version 2)
+	box = { x0 = -75, x1 = 75, y0 = -55, y1 = 55, h = 16, t = 2 },
+	pieces = {
+		{ id = "CentreWindows", kind = "window", side = "C", parts = { { "solid", -1.5, 1.5, -17.5, -12.5, 0, 12 }, { "sill", -1.5, 1.5, -12.5, -2.5, 0, 3.4 }, { "lintel", -1.5, 1.5, -12.5, -2.5, 10, 12 }, { "solid", -1.5, 1.5, -2.5, 2.5, 0, 12 }, { "sill", -1.5, 1.5, 2.5, 12.5, 0, 3.4 }, { "lintel", -1.5, 1.5, 2.5, 12.5, 10, 12 }, { "solid", -1.5, 1.5, 12.5, 17.5, 0, 12 } } },
+		{ id = "A_C_P", kind = "pillar", side = "A", parts = { { "solid", -15, -10, 7.5, 12.5, 0, 10 } } },
+		{ id = "A_C_L", kind = "low", side = "A", parts = { { "low", -13.5, -11.5, 1.5, 7.5, 0, 3.4 } } },
+		{ id = "A_C_L2", kind = "low", side = "A", parts = { { "low", -13.5, -11.5, -9, -3, 0, 3.4 } } },
+		{ id = "A_C_P2", kind = "pillar", side = "A", parts = { { "solid", -15, -10, -14, -9, 0, 10 } } },
+		{ id = "B_C_W", kind = "wall", side = "B", parts = { { "solid", 10.5, 13.5, -13, -3, 0, 7 } } },
+		{ id = "B_C_L", kind = "low", side = "B", parts = { { "low", 11, 13, 3, 9, 0, 3.4 } } },
+		{ id = "B_C_P", kind = "pillar", side = "B", parts = { { "solid", 9.5, 14.5, 9.5, 14.5, 0, 10 } } },
+		{ id = "B_NorthGate", kind = "window", side = "B", parts = { { "solid", 21.5, 24.5, 20, 25, 0, 12 }, { "sill", 21.5, 24.5, 25, 35, 0, 3.4 }, { "lintel", 21.5, 24.5, 25, 35, 10, 12 }, { "solid", 21.5, 24.5, 35, 40, 0, 12 }, { "sill", 21.5, 24.5, 40, 50, 0, 3.4 }, { "lintel", 21.5, 24.5, 40, 50, 10, 12 }, { "solid", 21.5, 24.5, 50, 55, 0, 12 } } },
+		{ id = "A_SouthGate", kind = "window", side = "A", parts = { { "solid", -24.5, -21.5, -55, -50, 0, 12 }, { "sill", -24.5, -21.5, -50, -40, 0, 3.4 }, { "lintel", -24.5, -21.5, -50, -40, 10, 12 }, { "solid", -24.5, -21.5, -40, -35, 0, 12 }, { "sill", -24.5, -21.5, -35, -25, 0, 3.4 }, { "lintel", -24.5, -21.5, -35, -25, 10, 12 }, { "solid", -24.5, -21.5, -25, -20, 0, 12 } } },
+		{ id = "A_Shield_N", kind = "wall", side = "A", parts = { { "solid", -63, -60, 0, 10, 0, 7 } } },
+		{ id = "A_Shield_S", kind = "wall", side = "A", parts = { { "solid", -63, -60, -10, 0, 0, 7 } } },
+		{ id = "A_Perch", kind = "deck", side = "A", parts = { { "deck", -40, -28, 45, 55, 0, 5 }, { "parapet", -30, -28, 45, 55, 5, 8.4 }, { "curb", -40, -30, 45, 45.5, 5, 6 }, { "curb", -40, -39.5, 45.5, 47, 5, 6 } }, ramp = { foot = { -52, 51 }, top = { -40, 51 }, width = 8, rise = 5 } },
+		{ id = "A_NStage_P", kind = "pillar", side = "A", parts = { { "solid", -52.5, -47.5, 22.5, 27.5, 0, 10 } } },
+		{ id = "A_NStage_L", kind = "low", side = "A", parts = { { "low", -47.5, -41.5, 24, 26, 0, 3.4 } } },
+		{ id = "A_NW_W", kind = "wall", side = "A", parts = { { "solid", -71, -61, 30.5, 33.5, 0, 7 } } },
+		{ id = "A_NW_W2", kind = "wall", side = "A", parts = { { "solid", -71, -61, 44.5, 47.5, 0, 7 } } },
+		{ id = "A_N_P", kind = "pillar", side = "A", parts = { { "solid", -20.5, -15.5, 30, 35, 0, 10 } } },
+		{ id = "A_N_L", kind = "low", side = "A", parts = { { "low", -19, -17, 23.5, 29.5, 0, 3.4 } } },
+		{ id = "A_PerchFront_L", kind = "low", side = "A", parts = { { "low", -34, -28, 36.5, 38.5, 0, 3.4 } } },
+		{ id = "A_PerchFoot_P", kind = "pillar", side = "A", parts = { { "solid", -47.5, -42.5, 35.5, 40.5, 0, 10 } } },
+		{ id = "A_Mid_W", kind = "wall", side = "A", parts = { { "solid", -42, -39, 2.5, 12.5, 0, 7 } } },
+		{ id = "A_Mid_P", kind = "pillar", side = "A", parts = { { "solid", -42.5, -37.5, -8.5, -3.5, 0, 10 } } },
+		{ id = "A_Fwd_P", kind = "pillar", side = "A", parts = { { "solid", -29.5, -24.5, 9.5, 14.5, 0, 10 } } },
+		{ id = "A_Fwd_L", kind = "low", side = "A", parts = { { "low", -28, -26, 3.5, 9.5, 0, 3.4 } } },
+		{ id = "A_Fwd_W", kind = "wall", side = "A", parts = { { "solid", -32, -22, -11.5, -8.5, 0, 7 } } },
+		{ id = "A_S_L", kind = "low", side = "A", parts = { { "low", -35, -29, -23, -21, 0, 3.4 } } },
+		{ id = "A_S_P", kind = "pillar", side = "A", parts = { { "solid", -40, -35, -24.5, -19.5, 0, 10 } } },
+		{ id = "A_SW_W", kind = "wall", side = "A", parts = { { "solid", -56.5, -53.5, -41, -31, 0, 7 } } },
+		{ id = "A_SW_P", kind = "pillar", side = "A", parts = { { "solid", -70, -65, -48.5, -43.5, 0, 10 } } },
+		{ id = "A_SW_L", kind = "low", side = "A", parts = { { "low", -68.5, -66.5, -43.5, -37.5, 0, 3.4 } } },
+		{ id = "A_SStage_L", kind = "low", side = "A", parts = { { "low", -47, -45, -49, -43, 0, 3.4 } } },
+		{ id = "A_SExit_P", kind = "pillar", side = "A", parts = { { "solid", -70.5, -65.5, -26.5, -21.5, 0, 10 } } },
+		{ id = "A_PocketN_P", kind = "pillar", side = "A", parts = { { "solid", -47.5, -42.5, 13.5, 18.5, 0, 10 } } },
+		{ id = "A_NWall_L", kind = "low", side = "A", parts = { { "low", -15, -9, 49, 51, 0, 3.4 } } },
+		{ id = "B_Shield_S", kind = "pillar", side = "B", parts = { { "solid", 59, 64, -7.5, -2.5, 0, 10 } } },
+		{ id = "B_Shield_W", kind = "wall", side = "B", parts = { { "solid", 60, 63, -2.5, 7.5, 0, 7 } } },
+		{ id = "B_Shield_N", kind = "pillar", side = "B", parts = { { "solid", 59, 64, 7.5, 12.5, 0, 10 } } },
+		{ id = "B_Ledge", kind = "deck", side = "B", parts = { { "deck", 26, 46, -55, -47, 0, 5 }, { "curb", 26, 46, -47.5, -47, 5, 6 }, { "curb", 26, 26.5, -55, -47.5, 5, 6 }, { "solid", 31, 41, -50.5, -47.5, 5, 12 } }, ramp = { foot = { 58, -51 }, top = { 46, -51 }, width = 8, rise = 5 } },
+		{ id = "B_SStage_P", kind = "pillar", side = "B", parts = { { "solid", 47.5, 52.5, -27.5, -22.5, 0, 10 } } },
+		{ id = "B_SStage_L", kind = "low", side = "B", parts = { { "low", 49, 51, -34, -28, 0, 3.4 } } },
+		{ id = "B_SE_W", kind = "wall", side = "B", parts = { { "solid", 61, 71, -33.5, -30.5, 0, 7 } } },
+		{ id = "B_SE_W2", kind = "wall", side = "B", parts = { { "solid", 66.5, 69.5, -49, -39, 0, 7 } } },
+		{ id = "B_S_P", kind = "pillar", side = "B", parts = { { "solid", 14.5, 19.5, -33.5, -28.5, 0, 10 } } },
+		{ id = "B_S_L", kind = "low", side = "B", parts = { { "low", 16, 18, -28, -22, 0, 3.4 } } },
+		{ id = "B_LedgeFront_L", kind = "low", side = "B", parts = { { "low", 33, 39, -41, -39, 0, 3.4 } } },
+		{ id = "B_LedgeFoot_W", kind = "wall", side = "B", parts = { { "solid", 10, 20, -48.5, -45.5, 0, 7 } } },
+		{ id = "B_Mid_P", kind = "pillar", side = "B", parts = { { "solid", 37.5, 42.5, 5.5, 10.5, 0, 10 } } },
+		{ id = "B_Mid_W", kind = "wall", side = "B", parts = { { "solid", 38.5, 41.5, -10, 0, 0, 7 } } },
+		{ id = "B_Fwd_W", kind = "wall", side = "B", parts = { { "solid", 22, 32, 8.5, 11.5, 0, 7 } } },
+		{ id = "B_Fwd_L", kind = "low", side = "B", parts = { { "low", 26, 28, -10, -4, 0, 3.4 } } },
+		{ id = "B_Fwd_P", kind = "pillar", side = "B", parts = { { "solid", 24.5, 29.5, -15, -10, 0, 10 } } },
+		{ id = "B_N_L", kind = "low", side = "B", parts = { { "low", 29, 35, 21, 23, 0, 3.4 } } },
+		{ id = "B_N_P", kind = "pillar", side = "B", parts = { { "solid", 35, 40, 19.5, 24.5, 0, 10 } } },
+		{ id = "B_NE_W", kind = "wall", side = "B", parts = { { "solid", 53.5, 56.5, 33, 43, 0, 7 } } },
+		{ id = "B_NE_P", kind = "pillar", side = "B", parts = { { "solid", 65, 70, 44.5, 49.5, 0, 10 } } },
+		{ id = "B_NE_L", kind = "low", side = "B", parts = { { "low", 66.5, 68.5, 38.5, 44.5, 0, 3.4 } } },
+		{ id = "B_NStage_L", kind = "low", side = "B", parts = { { "low", 45, 47, 44, 50, 0, 3.4 } } },
+		{ id = "B_NExit_L", kind = "low", side = "B", parts = { { "low", 65, 71, 20, 22, 0, 3.4 } } },
+		{ id = "B_SExit_P", kind = "pillar", side = "B", parts = { { "solid", 65.5, 70.5, -22.5, -17.5, 0, 10 } } },
+		{ id = "B_PocketS_P", kind = "pillar", side = "B", parts = { { "solid", 41.5, 46.5, -15, -10, 0, 10 } } },
+		{ id = "B_PocketS_P2", kind = "pillar", side = "B", parts = { { "solid", 50.5, 55.5, -16, -11, 0, 10 } } },
+		{ id = "N_Mid_P", kind = "pillar", side = "C", parts = { { "solid", -2.5, 2.5, 37.5, 42.5, 0, 10 } } },
+		{ id = "N_Mid_L", kind = "low", side = "C", parts = { { "low", -1, 1, 31.5, 37.5, 0, 3.4 } } },
+		{ id = "S_Mid_P1", kind = "pillar", side = "C", parts = { { "solid", -9, -4, -42.5, -37.5, 0, 10 } } },
+		{ id = "S_Mid_L", kind = "low", side = "C", parts = { { "low", -4, 2, -41, -39, 0, 3.4 } } },
+	},
+	spawns = {
+		A = { pocket = { -75, -63, -10, 10 }, spot = { -70, 0 }, face = { 1, 0 } },
+		B = { pocket = { 63, 75, -7.5, 12.5 }, spot = { 70, 2.5 }, face = { -1, 0 } },
+	},
+}
+-- @LAYOUT END
+
+-- ====================================================================================================== find / back up / undo
 local LOBBY = SS:FindFirstChild("_DuelSource") ~= nil
 local sourceFolder = LOBBY and SS._DuelSource:FindFirstChild("Arena")
--- (2026-10-26) explicit branches: the old `LOBBY and (...) or workspace:FindFirstChild(...)` fell through to Workspace in the lobby
--- when the source model was missing, and a top-level "Arena" there is ArenaLoader's client clone, not this map's source
 local old
 if LOBBY then
 	old = sourceFolder and sourceFolder:FindFirstChild("Arena")
 else
-	old = workspace:FindFirstChild("Arena")
+	old = workspace:FindFirstChild("Arena") -- (lobby: a top-level "Arena" is ArenaLoader's client clone, never this map)
+end
+local entry0 = not LOBBY and RS:FindFirstChild("DuelMaps") and RS.DuelMaps:FindFirstChild("Arena")
+local backup = SS:FindFirstChild("_ArenaV1_Backup")
+
+if UNDO then
+	if not backup then return "UNDO: no _ArenaV1_Backup here, nothing restored" end
+	if old then old:Destroy() end
+	if entry0 then entry0:Destroy() end
+	local v1 = backup:FindFirstChild("Arena")
+	if LOBBY then
+		if v1 then
+			if not sourceFolder then sourceFolder = Instance.new("Folder"); sourceFolder.Name = "Arena"; sourceFolder.Parent = SS._DuelSource end
+			v1.Parent = sourceFolder
+		end
+		backup:Destroy()
+		return "UNDO: v1 duel source restored (run fix/duel_split_map.lua next)"
+	end
+	if v1 then v1.Parent = workspace end
+	local e1 = backup:FindFirstChild("DuelMapsEntry")
+	if e1 then e1.Name = "Arena"; e1.Parent = RS:FindFirstChild("DuelMaps") end
+	backup:Destroy()
+	return "UNDO: v1 Arena + registry entry restored"
+end
+
+if old and old:GetAttribute("LayoutVersion") ~= 2 then
+	-- v1 (or anything that isn't this builder's v2): keep it, never delete it
+	if backup and backup:FindFirstChild("Arena") then
+		old.Name = "Arena_" .. os.time()
+		old.Parent = backup
+	else
+		backup = backup or Instance.new("Folder")
+		backup.Name = "_ArenaV1_Backup"
+		backup:SetAttribute("Note", "Arena v1 before fix/map_arena.lua v2 (2026-10-26). UNDO: run fix/map_arena.lua with UNDO = true")
+		backup.Parent = SS
+		old.Parent = backup
+	end
+	if entry0 then entry0.Name = "DuelMapsEntry"; entry0.Parent = backup end
+	old, entry0 = nil, nil
 end
 if old then old:Destroy() end
-local oldEntry = not LOBBY and RS:FindFirstChild("DuelMaps") and RS.DuelMaps:FindFirstChild("Arena")
-if oldEntry then oldEntry:Destroy() end
-if UNDO then
-	if sourceFolder then sourceFolder:Destroy() end
-	return "removed"
-end
+if entry0 then entry0:Destroy() end
 
--- plan px -> studs (the plan image: map frame px x 50..1155 = 150 studs, px y 100..865 = 110 studs)
-local SX, SY = 1105 / 150, 765 / 110
-local function snap(v) return math.floor(v * 2 + 0.5) / 2 end
-local function planX(px) return snap((px - 50) / SX - 75) end
-local function planY(py) return snap(55 - (py - 100) / SY) end
--- plan point -> world (plan +y = north = world -Z)
-local function W(x, y, h) return ORIGIN + Vector3.new(x, h or FLOOR_TOP, -y) end
-
--- [PRANGE2] 2026-10-20 Edward: "put the greybox repeating texture that we have in our training room and make all of the objects
--- white". Everything is white SmoothPlastic with the training room's grid (GRID_TEX, 5-stud tiles, dark at 0.32 transparency, as on
--- LobbyMap.Training); the floor is the training floor's grey, the box walls a shade under the cover; only the spawn pads keep a faint tint.
-local WHITE, BOXWHITE = Color3.fromRGB(238, 238, 241), Color3.fromRGB(226, 226, 230)
-local PALETTE = {
-	Floor = Color3.fromRGB(214, 214, 218), Grid = Color3.fromRGB(214, 214, 218),
-	Box = BOXWHITE, Band = BOXWHITE, Rim = BOXWHITE,
-	P = WHITE, W = WHITE, C = WHITE, L = WHITE, R = WHITE, V = WHITE,
-	SpawnA = Color3.fromRGB(206, 226, 238), SpawnB = Color3.fromRGB(238, 212, 212),
-}
-local GRID_TEX = "rbxassetid://86361987736184" -- the training room's greybox grid
-local GRID_TILE, GRID_COLOR, GRID_ALPHA = 5, Color3.fromRGB(34, 34, 34), 0.32
-local HEIGHT = { P = 10, W = 7, C = 5, L = 3.4, VPost = 7, VSill = 3.4, Platform = 6, Parapet = 3.4, Box = 16 }
-
+-- ====================================================================================================== build
 local map = Instance.new("Model")
 map.Name = "Arena"
 local folders = {}
@@ -77,176 +191,201 @@ local function folder(name, parent)
 	folders[name] = f
 	return f
 end
-folder("Floor"); folder("Box"); local cover = folder("Cover")
-for _, n in { "Pillars", "Walls", "Cargo", "LowStone", "Windows", "Ramps" } do folder(n, cover) end
+folder("Floor"); folder("Box"); local coverF = folder("Cover")
+for _, n in { "Pillars", "Walls", "LowStone", "Windows", "Decks", "Ramps" } do folder(n, coverF) end
+local KIND_FOLDER = { pillar = "Pillars", wall = "Walls", low = "LowStone", window = "Windows", deck = "Decks" }
 
-local count = 0
-local function part(parent, name, size, cf, color, shape)
-	local p = Instance.new(shape == "Wedge" and "WedgePart" or "Part")
+-- plan (x east, y north, z up from the floor top) -> world
+local function W(x, y, z) return ORIGIN + Vector3.new(x, FLOOR_TOP + z, -y) end
+
+-- world-aligned texture offsets (tools/lookdev/grid_lib.lua, tested in the look-dev bays). A texture's (0,0) is the face's
+-- top-left corner seen from outside; U runs right, V runs down; on Top faces the image's up is the part's +Z.
+local ANCHOR = ORIGIN + Vector3.new(0, FLOOR_TOP, 0)
+local FACE_AXES = {
+	Top = { Vector3.new(0, 1, 0), Vector3.new(0, 0, 1) }, Bottom = { Vector3.new(0, -1, 0), Vector3.new(0, 0, -1) },
+	Front = { Vector3.new(0, 0, -1), Vector3.new(0, 1, 0) }, Back = { Vector3.new(0, 0, 1), Vector3.new(0, 1, 0) },
+	Left = { Vector3.new(-1, 0, 0), Vector3.new(0, 1, 0) }, Right = { Vector3.new(1, 0, 0), Vector3.new(0, 1, 0) },
+}
+local function worldOffsets(p, faceName, tile)
+	local n, up = FACE_AXES[faceName][1], FACE_AXES[faceName][2]
+	local right = (-n):Cross(up)
+	local h = p.Size / 2
+	local function half(v) return math.abs(v.X * h.X) + math.abs(v.Y * h.Y) + math.abs(v.Z * h.Z) end
+	local o = p.CFrame:PointToWorldSpace(n * half(n) + up * half(up) - right * half(right))
+	local function off(dirL)
+		local d = p.CFrame:VectorToWorldSpace(dirL)
+		for _, ax in { "X", "Y", "Z" } do
+			if math.abs(d[ax]) > 0.999 then
+				local s = d[ax] > 0 and 1 or -1
+				local v = (s * (o[ax] - ANCHOR[ax])) % tile
+				if math.abs(v - tile) < 1e-3 or math.abs(v) < 1e-3 then v = 0 end
+				return v
+			end
+		end
+		return 0 -- face axis off the world axes (a slope's V): leave it
+	end
+	return off(right), off(-up)
+end
+
+local nTextures = 0
+local function grid(p, faces)
+	local G = SURFACE.GRID
+	for _, face in faces do
+		local t = Instance.new("Texture")
+		t.Name = "Grid"
+		t.Texture = G.image
+		t.Face = Enum.NormalId[face]
+		t.StudsPerTileU, t.StudsPerTileV = G.tile, G.tile
+		t.Color3, t.Transparency = G.color, G.alpha
+		t.OffsetStudsU, t.OffsetStudsV = worldOffsets(p, face, G.tile)
+		if p:IsA("WedgePart") and face == "Top" then t.OffsetStudsV = 0 end -- the slope's V runs along the slope
+		t.Parent = p
+		nTextures += 1
+		for k = 1, G.copies - 1 do -- copies one line width apart, centred on the lattice: -1, +1 (3 copies)
+			local step = (k % 2 == 1) and -math.ceil(k / 2) or math.ceil(k / 2)
+			local t2 = t:Clone()
+			t2.Name = "GridWiden" .. k
+			t2.OffsetStudsU = (t.OffsetStudsU + step * G.widen) % G.tile
+			t2.OffsetStudsV = (t.OffsetStudsV + step * G.widen) % G.tile
+			t2.Parent = p
+			nTextures += 1
+		end
+	end
+end
+
+local nParts = 0
+local function part(parent, name, size, cf, color, wedge)
+	local p = Instance.new(wedge and "WedgePart" or "Part")
 	p.Name = name
 	p.Anchored = true
 	p.Size = size
 	p.CFrame = cf
 	p.Color = color
-	p.Material = Enum.Material.SmoothPlastic
+	p.Material = SURFACE.material
 	p.TopSurface, p.BottomSurface = Enum.SurfaceType.Smooth, Enum.SurfaceType.Smooth
 	p.Parent = parent
-	count += 1
+	nParts += 1
 	return p
 end
-
--- a box from plan px rect (x1, y1)-(x2, y2), h tall, standing on `base` (default the floor)
-local function block(parent, name, x1, y1, x2, y2, h, color, base)
-	local ax, bx = planX(math.min(x1, x2)), planX(math.max(x1, x2))
-	local ay, by = planY(math.max(y1, y2)), planY(math.min(y1, y2)) -- py grows downward
-	local w, d = math.max(bx - ax, 1), math.max(by - ay, 1)
-	local b = base or FLOOR_TOP
-	return part(parent, name, Vector3.new(w, h, d), CFrame.new(W((ax + bx) / 2, (ay + by) / 2, b + h / 2)), color)
+-- a box from plan bounds
+local function box(parent, name, x0, x1, y0, y1, z0, z1, color)
+	return part(parent, name, Vector3.new(x1 - x0, z1 - z0, y1 - y0), CFrame.new(W((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2)), color)
 end
 
--- // Floor: 10-stud tiles with a 0.3 grout line (the whitebox grid), one slab under them
-local SIZE_X, SIZE_Z = 150, 110
-part(folders.Floor, "Slab", Vector3.new(SIZE_X + 4, 1, SIZE_Z + 4), CFrame.new(W(0, 0, FLOOR_TOP - 0.5)), PALETTE.Floor)
--- (the grid texture draws the tiles now: no separate tile parts)
+local B = LAYOUT.box
+local SX, SY, T, H = B.x1 - B.x0, B.y1 - B.y0, B.t, B.h
 
--- // The box: perimeter walls, open roof, no doors. 2 thick, outside the 150 x 110 play area.
-local T = 2
-local boxH = HEIGHT.Box
+-- // Floor: one slab under the whole box (its top is the floor), grid on top
+local slab = box(folders.Floor, "Slab", B.x0 - T, B.x1 + T, B.y0 - T, B.y1 + T, -1, 0, SURFACE.color.floor)
+slab:SetAttribute("NotCover", true)
+grid(slab, GRID_FACES.floor)
+
+-- // The box: perimeter walls (open roof, no doors), T thick, outside the play area; the N/S walls own the corners.
+-- Rims on top: inflated 0.05 each side across the wall thickness only; the E/W rims stop at the N/S rims' inner faces, so no two
+-- rim tops share a plane where they meet (the v1 rims overlapped at all four corners: a ZFIGHT).
+local RIM, RIM_OUT = 0.6, 0.05
+-- the box tops (16.6) are out of reach (highest eye + hop 11.8): their drop to the floor is not a hole (MapAudit HOLE)
+game:GetService("CollectionService"):AddTag(folders.Box, "KitIntendedDrop")
 for _, s in {
-	{ "North", Vector3.new(SIZE_X + 2 * T, boxH, T), Vector3.new(0, 0, SIZE_Z / 2 + T / 2) },
-	{ "South", Vector3.new(SIZE_X + 2 * T, boxH, T), Vector3.new(0, 0, -SIZE_Z / 2 - T / 2) },
-	{ "East", Vector3.new(T, boxH, SIZE_Z), Vector3.new(SIZE_X / 2 + T / 2, 0, 0) },
-	{ "West", Vector3.new(T, boxH, SIZE_Z), Vector3.new(-SIZE_X / 2 - T / 2, 0, 0) },
+	{ "North", B.x0 - T, B.x1 + T, B.y1, B.y1 + T, "Back" }, -- inner face looks south (world +Z)
+	{ "South", B.x0 - T, B.x1 + T, B.y0 - T, B.y0, "Front" },
+	{ "East", B.x1, B.x1 + T, B.y0, B.y1, "Left" },
+	{ "West", B.x0 - T, B.x0, B.y0, B.y1, "Right" },
 } do
-	local c = s[3]
-	local wall = part(folders.Box, s[1], s[2], CFrame.new(W(c.X, c.Z, FLOOR_TOP + boxH / 2)), PALETTE.Box)
+	local name, x0, x1, y0, y1, inner = s[1], s[2], s[3], s[4], s[5], s[6]
+	local wall = box(folders.Box, name, x0, x1, y0, y1, 0, H, SURFACE.color.structure)
 	wall:SetAttribute("NotCover", true) -- the box itself isn't cover (no hugging the outer wall)
-	-- a pale accent band at eye height and a darker rim on top
-	local inset = s[2] + Vector3.new(0.1, 0, 0.1)
-	part(folders.Box, s[1] .. "Rim", Vector3.new(inset.X, 0.6, inset.Z), CFrame.new(W(c.X, c.Z, FLOOR_TOP + boxH + 0.3)), PALETTE.Rim)
-end
-
--- // Cover, transcribed from the plan (px rects)
-local P = {
-	{ 147, 174, 185, 212 }, { 461, 373, 499, 411 }, { 795, 343, 833, 381 }, { 691, 520, 727, 557 },
-	{ 165, 545, 203, 582 }, { 292, 780, 328, 818 }, { 691, 123, 712, 161 }, { 566, 400, 590, 440 },
-	{ 1025, 448, 1082, 472 }, { 1030, 568, 1083, 592 },
-}
-local Wl = {
-	{ 58, 155, 90, 345 }, { 330, 252, 493, 288 }, { 463, 229, 493, 252 }, { 580, 207, 605, 302 }, { 800, 105, 823, 175 },
-	{ 895, 137, 920, 210 }, { 1125, 163, 1148, 278 }, { 882, 242, 905, 300 }, { 962, 365, 1082, 392 }, { 1060, 392, 1082, 445 },
-	{ 1123, 368, 1148, 490 }, { 113, 389, 138, 477 }, { 362, 412, 386, 493 }, { 58, 448, 88, 652 }, { 591, 400, 771, 428 },
-	{ 836, 527, 920, 550 }, { 920, 480, 955, 568 }, { 485, 538, 590, 567 }, { 292, 605, 400, 635 }, { 370, 635, 400, 705 },
-	{ 400, 676, 470, 705 }, { 1125, 578, 1148, 685 }, { 697, 740, 720, 825 }, { 720, 790, 834, 825 }, { 797, 690, 818, 757 },
-	{ 797, 675, 955, 720 }, { 1025, 678, 1075, 805 }, { 205, 643, 235, 775 }, { 493, 753, 523, 862 }, { 880, 843, 943, 862 },
-}
-local C = {
-	{ 432, 107, 480, 175, 8 }, { 90, 250, 120, 322 }, { 298, 198, 328, 266, 8 }, { 835, 242, 880, 276 }, { 1100, 235, 1125, 266 },
-	{ 705, 430, 753, 453 }, { 265, 487, 312, 552, 8 }, { 485, 513, 533, 537 }, { 843, 615, 888, 688, 8 }, { 1083, 672, 1123, 728 },
-	{ 237, 705, 273, 775 },
-}
-local L = {
-	{ 220, 132, 312, 155 }, { 470, 290, 494, 330 }, { 514, 183, 604, 206 }, { 712, 128, 798, 151 }, { 988, 287, 1012, 360 },
-	{ 400, 470, 448, 493 }, { 843, 438, 866, 520 }, { 400, 598, 424, 672 }, { 697, 667, 720, 740 }, { 387, 803, 490, 826 },
-	{ 880, 823, 943, 840 },
-}
-for i, r in P do block(folders.Pillars, "Pillar" .. i, r[1], r[2], r[3], r[4], HEIGHT.P, PALETTE.P) end
-for i, r in Wl do block(folders.Walls, "Wall" .. i, r[1], r[2], r[3], r[4], HEIGHT.W, PALETTE.W) end
-for i, r in C do
-	local h = r[5] or HEIGHT.C
-	block(folders.Cargo, "Cargo" .. i, r[1], r[2], r[3], r[4], h, PALETTE.C)
-end
-for i, r in L do block(folders.LowStone, "Low" .. i, r[1], r[2], r[3], r[4], HEIGHT.L, PALETTE.L) end
-
--- // Windows: two tall posts + a vaultable sill between (horizontal: posts left/right; vertical: posts top/bottom)
-local windows = {
-	{ posts = { { 215, 290, 240, 345 }, { 323, 290, 348, 345 } }, sill = { 240, 312, 323, 328 } },
-	{ posts = { { 606, 242, 624, 290 }, { 704, 236, 722, 290 } }, sill = { 624, 266, 704, 282 } },
-	{ posts = { { 566, 615, 590, 663 }, { 665, 615, 689, 663 } }, sill = { 590, 624, 665, 640 } },
-	{ posts = {}, sill = { 1048, 472, 1066, 568 } }, -- the east window uses the two pillars above / below it as its posts
-}
-for i, wdw in windows do
-	for j, r in wdw.posts do block(folders.Windows, "Window" .. i .. "Post" .. j, r[1], r[2], r[3], r[4], HEIGHT.VPost, PALETTE.W) end
-	block(folders.Windows, "Window" .. i .. "Sill", wdw.sill[1], wdw.sill[2], wdw.sill[3], wdw.sill[4], HEIGHT.VSill, PALETTE.V)
-end
-
--- // Ramps + platforms (6 high, 3.4 parapets on open edges). A ramp is a WedgePart rising from `low` to `high` (plan px points).
-local PH = HEIGHT.Platform
-local function platform(name, x1, y1, x2, y2, parapets)
-	local deck = block(folders.Ramps, name, x1, y1, x2, y2, PH, PALETTE.R)
-	-- parapets: list of edges "N" / "S" / "E" / "W" that get a low wall on top of the deck
-	local ax, bx = planX(math.min(x1, x2)), planX(math.max(x1, x2))
-	local ay, by = planY(math.max(y1, y2)), planY(math.min(y1, y2))
-	for _, e in parapets or {} do
-		local cx, cy, w, d
-		if e == "N" then cx, cy, w, d = (ax + bx) / 2, by - 0.5, bx - ax, 1
-		elseif e == "S" then cx, cy, w, d = (ax + bx) / 2, ay + 0.5, bx - ax, 1
-		elseif e == "E" then cx, cy, w, d = bx - 0.5, (ay + by) / 2, 1, by - ay
-		else cx, cy, w, d = ax + 0.5, (ay + by) / 2, 1, by - ay end
-		part(folders.Ramps, name .. "Parapet" .. e, Vector3.new(w, HEIGHT.Parapet, d), CFrame.new(W(cx, cy, FLOOR_TOP + PH + HEIGHT.Parapet / 2)), PALETTE.W)
+	grid(wall, { inner })
+	local rim
+	if name == "North" or name == "South" then
+		rim = box(folders.Box, name .. "Rim", x0, x1, y0 - RIM_OUT, y1 + RIM_OUT, H, H + RIM, SURFACE.color.structure)
+	else
+		rim = box(folders.Box, name .. "Rim", x0 - RIM_OUT, x1 + RIM_OUT, y0 + RIM_OUT, y1 - RIM_OUT, H, H + RIM, SURFACE.color.structure)
 	end
-	return deck
+	rim:SetAttribute("NotCover", true)
 end
-local function ramp(name, lowPx, highPx, widthStuds)
-	local a = W(planX(lowPx[1]), planY(lowPx[2]), FLOOR_TOP)
-	local b = W(planX(highPx[1]), planY(highPx[2]), FLOOR_TOP)
-	local flat = (b - a) * Vector3.new(1, 0, 1)
-	local len = flat.Magnitude
-	local dir = flat.Unit
-	local centre = (a + b) / 2 + Vector3.new(0, PH / 2, 0)
-	-- a WedgePart's slope rises toward its back (+Z local) from the front edge (-Z); front = LookVector = toward the low end
-	local w = part(folders.Ramps, name, Vector3.new(widthStuds, PH, len), CFrame.lookAt(centre, centre - dir), PALETTE.R, "Wedge")
-	w:SetAttribute("NotCover", true)
-	return w
-end
--- A corner (bottom-left, by spawn A): deck along the west lane, ramp up from the spawn (south) side
-platform("PlatformA", 150, 643, 205, 700, { "E", "N" })
-ramp("RampA", { 177, 840 }, { 177, 700 }, 7.5)
--- West mid platform: ramp up from the west lane
-platform("PlatformWest", 205, 418, 362, 470, { "N", "S" })
-ramp("RampWest", { 140, 444 }, { 205, 444 }, 7)
--- B corner (top-right, by spawn B): deck south of the spawn, a ramp down to the spawn (north) and one to the middle (west)
-platform("PlatformB", 990, 163, 1125, 232, { "S" })
-ramp("RampBSpawn", { 1030, 110 }, { 1030, 163 }, 6)
-ramp("RampBMid", { 920, 197 }, { 990, 197 }, 9)
--- East low platform (bottom-right): a diagonal ramp up from the middle to a deck on the south wall
-platform("PlatformEast", 1012, 805, 1133, 840, {}) -- (no parapet: the diagonal ramp arrives on its north edge)
-ramp("RampEast", { 975, 725 }, { 1040, 812 }, 6.5)
 
--- // Spawns: team pads (tinted floor) + markers MatchSpawns.SpawnA / SpawnB facing the middle
+-- // Pieces (the layout block). Part names: the piece id for one-part pieces, else <id>_<Role><n>.
+local ROLE_NAME = { solid = "Post", sill = "Sill", lintel = "Lintel", deck = "Deck", parapet = "Parapet", curb = "Curb", low = "Low" }
+local COVER_ROLES = { low = true, parapet = true }
+local counts = { pillar = 0, wall = 0, low = 0, window = 0, deck = 0, ramp = 0, sill = 0, curb = 0, parapet = 0, lintel = 0 }
+for _, pc in LAYOUT.pieces do
+	local parent = folders[KIND_FOLDER[pc.kind]]
+	local seen = {}
+	counts[pc.kind] += 1
+	for _, q in pc.parts do
+		local role, x0, x1, y0, y1, z0, z1 = q[1], q[2], q[3], q[4], q[5], q[6], q[7]
+		local name = pc.id
+		if #pc.parts > 1 then
+			local rn = (pc.kind == "deck" and role == "solid") and "Wall" or ROLE_NAME[role] or role
+			seen[rn] = (seen[rn] or 0) + 1
+			name = pc.id .. "_" .. rn .. seen[rn]
+		end
+		if role ~= pc.kind and counts[role] then counts[role] += 1 end
+		-- colour: solid cover (pillars, walls, low walls, parapets, the wall on a deck) darker; window frames + decks are structure
+		local isCover = COVER_ROLES[role] or (role == "solid" and pc.kind ~= "window")
+		local p = box(parent, name, x0, x1, y0, y1, z0, z1, isCover and SURFACE.color.cover or SURFACE.color.structure)
+		p:SetAttribute("PieceId", pc.id)
+		p:SetAttribute("Kind", pc.kind)
+		p:SetAttribute("Role", role)
+		p:SetAttribute("Side", pc.side)
+		if role == "deck" or role == "curb" then p:SetAttribute("NotCover", true) end
+		-- tops 12 above the floor (window frames, the wall on B's ledge) are out of reach (highest eye + hop 11.8, climb 5.6):
+		-- their 12-stud drop to the floor is not a hole (MapAudit HOLE)
+		if z1 >= 12 then game:GetService("CollectionService"):AddTag(p, "KitIntendedDrop") end
+		grid(p, FACES5)
+	end
+	if pc.ramp then
+		local r = pc.ramp
+		local a, b = W(r.foot[1], r.foot[2], 0), W(r.top[1], r.top[2], 0)
+		local flat = (b - a) * Vector3.new(1, 0, 1)
+		local centre = (a + b) / 2 + Vector3.new(0, r.rise / 2, 0)
+		-- a WedgePart's slope rises toward its back (+Z local); LookVector (-Z) points at the low end
+		local w = part(folders.Ramps, pc.id .. "_Ramp", Vector3.new(r.width, r.rise, flat.Magnitude), CFrame.lookAt(centre, centre - flat.Unit),
+			SURFACE.color.structure, true)
+		w:SetAttribute("PieceId", pc.id)
+		w:SetAttribute("Kind", "ramp")
+		w:SetAttribute("Role", "ramp")
+		w:SetAttribute("Side", pc.side)
+		w:SetAttribute("NotCover", true) -- never snapped to or climbed
+		counts.ramp += 1
+		grid(w, GRID_FACES.ramp)
+	end
+end
+
+-- // Spawns: a faint team pad on each pocket floor + the markers MatchSpawns.SpawnA / SpawnB (teammates line up beside the
+-- marker, SpawnSpacing 4 apart, along its right vector: A (-70, -4 / 0 / 4), B (70, -1.5 / 2.5 / 6.5) in plan studs)
 local spawns = folder("MatchSpawns")
-local function spawnPad(team, x1, y1, x2, y2, color)
-	local pad = block(folders.Floor, "Spawn" .. team .. "Pad", x1, y1, x2, y2, 0.12, color, FLOOR_TOP - 0.02)
-	pad.CanCollide = false
-	local c = pad.Position
-	local at = Vector3.new(c.X, FLOOR_TOP, c.Z)
-	local look = (ORIGIN - at) * Vector3.new(1, 0, 1)
-	local m = part(spawns, "Spawn" .. team, Vector3.new(4, 1, 4), CFrame.lookAt(at, at + look.Unit), color)
-	m.Transparency, m.CanCollide, m.CanQuery, m.CanTouch = 1, false, false, false
-	return m
-end
-spawnPad("A", 58, 755, 148, 860, PALETTE.SpawnA)
-spawnPad("B", 1062, 108, 1148, 182, PALETTE.SpawnB)
-
-map:SetAttribute("Whitebox", true)
--- the training room's grid on every visible face of every part (not the bottom; not the invisible spawn markers)
-local textured = 0
-for _, p in map:GetDescendants() do
-	if p:IsA("BasePart") and p.Transparency < 1 then
-		for _, face in { Enum.NormalId.Top, Enum.NormalId.Front, Enum.NormalId.Back, Enum.NormalId.Left, Enum.NormalId.Right } do
-			local t = Instance.new("Texture")
-			t.Name = "Grid"
-			t.Texture = GRID_TEX
-			t.Face = face
-			t.StudsPerTileU, t.StudsPerTileV = GRID_TILE, GRID_TILE
-			t.Color3 = GRID_COLOR
-			t.Transparency = GRID_ALPHA
-			t.Parent = p
-			textured += 1
+for _, team in { "A", "B" } do
+	local s = LAYOUT.spawns[team]
+	-- the pocket (x0, x1, y0, y1), inset 0.25 and stopped short of any piece that reaches into it (B's shield pillars do), so no
+	-- face of the tint plate shares a plane with a piece's face (MapAudit ZFIGHT)
+	local k = { s.pocket[1] + 0.25, s.pocket[2] - 0.25, s.pocket[3] + 0.25, s.pocket[4] - 0.25 }
+	for _, pc in LAYOUT.pieces do
+		for _, q in pc.parts do
+			if q[2] < k[2] and q[3] > k[1] and q[4] < k[4] and q[5] > k[3] then
+				if s.face[1] > 0 then k[2] = math.min(k[2], q[2] - 0.25) else k[1] = math.max(k[1], q[3] + 0.25) end
+			end
 		end
 	end
+	local pad = box(folders.Floor, "Spawn" .. team .. "Pad", k[1], k[2], k[3], k[4], 0.02, 0.1, SURFACE.color["spawn" .. team])
+	pad.CanCollide, pad.CanQuery, pad.CanTouch, pad.CastShadow = false, false, false, false
+	pad:SetAttribute("NotCover", true)
+	grid(pad, GRID_FACES.pad)
+	local at = W(s.spot[1], s.spot[2], 0)
+	local look = Vector3.new(s.face[1], 0, -s.face[2])
+	local m = part(spawns, "Spawn" .. team, Vector3.new(4, 1, 4), CFrame.lookAt(at, at + look), SURFACE.color["spawn" .. team])
+	m.Transparency, m.CanCollide, m.CanQuery, m.CanTouch, m.CastShadow = 1, false, false, false, false
 end
-map.PrimaryPart = folders.Floor:FindFirstChild("Slab")
+
+map:SetAttribute("Whitebox", true)
+map:SetAttribute("LayoutVersion", 2)
+map:SetAttribute("Surface", "E")
+map.PrimaryPart = slab
+local summary = ("%d parts (%d pillars, %d walls, %d low walls, %d windows: %d sills / %d lintels, %d decks: %d parapets / %d curbs, %d ramps), %d textures")
+	:format(nParts, counts.pillar, counts.wall, counts.low, counts.window, counts.sill, counts.lintel, counts.deck, counts.parapet,
+		counts.curb, counts.ramp, nTextures)
+
 if LOBBY then
 	if not sourceFolder then
 		sourceFolder = Instance.new("Folder")
@@ -254,7 +393,7 @@ if LOBBY then
 		sourceFolder.Parent = SS._DuelSource
 	end
 	map.Parent = sourceFolder
-	return ("Arena duel source built: %d parts (run fix/duel_split_map.lua next)"):format(count)
+	return "Arena v2 duel source built: " .. summary .. " (run fix/duel_split_map.lua next)"
 end
 map.Parent = workspace
 
@@ -268,10 +407,10 @@ entry:SetAttribute("MatchInstall", true)
 local info = Instance.new("ModuleScript")
 info.Name = "MapInfo"
 info.Source = [[
--- MapInfo: registry entry for the ARENA (fix/map_arena.lua; Edward's floor plan 2026-10-20). A whitebox:
--- an open-roofed white box under daylight, colour-coded cover, no props / shootables / doors. Workspace.Arena is the
--- map at its native position; its own MatchSpawns hold the team markers (RoundManager points Workspace.MatchSpawns at them
--- when this map wins the vote, and applies Lighting below; the Warehouse's own values come back for the Warehouse).
+-- MapInfo: registry entry for the ARENA v2 (fix/map_arena.lua; layout notes/arena_v2_plan.md, approved by Edward 2026-10-26).
+-- An open-roofed warm-grey box under daylight: three lanes, twin windows, two 5-high decks; no props / shootables / doors.
+-- Workspace.Arena is the map at its native position; its own MatchSpawns hold the team markers (RoundManager points
+-- Workspace.MatchSpawns at them when this map wins the vote, and applies Lighting below; the Warehouse gets its own values back).
 return {
 	Id = "Arena",
 	DisplayName = "Arena",
@@ -297,4 +436,4 @@ return {
 info.Parent = entry
 entry.Parent = root
 
-return ("Arena built: %d parts at %s"):format(count, tostring(ORIGIN))
+return ("Arena v2 built at %s: %s"):format(tostring(ORIGIN), summary)

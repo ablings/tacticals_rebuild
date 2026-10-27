@@ -20,12 +20,17 @@ What it checks (Tacticals movement numbers are in the layout's "movement" block)
   perches         which low cover a perch cancels (a crouched player behind it shows >= 1 stud to the perch's eye)
   windows         opening clear height vs the vault arc; what each window looks onto
 """
-import json, math, os, heapq, itertools
+import json, math, os, sys, heapq, itertools
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 MAPS = os.path.join(os.path.dirname(HERE), "notes", "maps")
-D = json.load(open(os.path.join(MAPS, "arena_v2_layout.json")))
+# (2026-10-26) optional: a layout read back from Studio (tools/arena_v2_readback.py) and an output tag, so the built map is
+# checked by the same code:  python -I tools/arena_v2_check.py out/arena_v2/built_layout.json built
+LAYOUT_IN = sys.argv[1] if len(sys.argv) > 1 else os.path.join(MAPS, "arena_v2_layout.json")
+TAG = ("_" + sys.argv[2]) if len(sys.argv) > 2 else ""
+OUT_DIR = MAPS if not TAG else os.path.dirname(os.path.abspath(LAYOUT_IN))
+D = json.load(open(LAYOUT_IN))
 MV = D["movement"]
 BOX = D["box"]
 RES = 0.5
@@ -629,8 +634,8 @@ cover_fp = sum((q["x1"] - q["x0"]) * (q["y1"] - q["y0"]) for _, q in parts_flat 
     + sum(p["ramp"]["run"] * p["ramp"]["width"] for p in P if p["kind"] == "deck")
 R["info"]["footprint_pct"] = round(cover_fp / ((X1 - X0) * (Y1 - Y0)) * 100, 1)
 
-json.dump(R, open(os.path.join(MAPS, "arena_v2_checks.json"), "w"), indent=1, default=float)
-np.save(os.path.join(MAPS, "_arena_v2_cache.npy"), np.column_stack([S, expo]))
+json.dump(R, open(os.path.join(OUT_DIR, f"arena_v2_checks{TAG}.json"), "w"), indent=1, default=float)
+np.save(os.path.join(OUT_DIR, f"_arena_v2_cache{TAG}.npy"), np.column_stack([S, expo]))
 
 # ------------------------------------------------------------------------------------------------ print
 print(f"ERRORS {len(R['errors'])}"); [print("  " + e) for e in R["errors"]]

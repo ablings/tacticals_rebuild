@@ -132,7 +132,7 @@ window("A_SouthGate", -23, -37.5, "y", "A", openings=2, faces="east",
 wall("A_Shield_N", -61.5, 5, "y", "A"); wall("A_Shield_S", -61.5, -5, "y", "A")
 # --- A north: THE PERCH (square, 12 x 10, against the north wall). Ramp from A's staging, rising east along the north wall.
 deck("A_Perch", -40, -28, 45, 55, "A",
-     parapets=[("E", 45, 55)], curbs=[("S", -40, -30), ("W", 45, 47)],
+     parapets=[("E", 45, 55)], curbs=[("S", -40, -30), ("W", 45.5, 47)],
      ramp_spec=(-52, 51, -40, 51, 8),
      job="TOWER: a watch edge (curb) over the north lane + a crouch parapet facing B's gate 50 away", style="curb+parapet")
 pillar("A_NStage_P", -50, 25, "A"); low("A_NStage_L", -44.5, 25, "x", "A")      # pocket exit -> ramp foot
