@@ -1,6 +1,7 @@
-"""Per capture: luminance (Rec.709 on 0-255 sRGB) of the surfaces only (sky masked: B > R + 60 and B > 140), mean and the brightest
+"""Per capture: luminance (Rec.709 on 0-255 sRGB) of the surfaces only (bays: pixels that differ from the empty-scene background
+frame G_<cam>.png by more than 6; RIVALS: colour sky mask B > R + 60 and B > 140), mean and the brightest
 5% (p95, glare check), share of surface pixels >= 230 (near-white), and on the 40-stud shots the grid-line contrast: column profile
-of a flat sunlit crop, divided by its 21-px running median; line_pct = how much darker the darkest line is (deepest dip, %).
+of a flat sunlit crop, divided by its 81-px running median (>= 4x the widest line: an 18-px soft line read 5.7% at 21 px, 10.9% at 81); line_pct = how much darker the darkest line is (deepest dip, %).
 Usage: python tools/lookdev/metrics.py  -> out/arena_lookdev/metrics.json"""
 import json, os
 import numpy as np
@@ -18,15 +19,16 @@ def lum(a):
 
 def line_pct(L, axis):
     P = L.mean(axis=axis)
-    pad = np.pad(P, 10, mode="edge")
-    T = np.array([np.median(pad[i:i + 21]) for i in range(len(P))])
+    W = 81
+    pad = np.pad(P, W // 2, mode="edge")
+    T = np.array([np.median(pad[i:i + W]) for i in range(len(P))])
     R = P / T - 1
     return float(-100 * R.min())  # the deepest line dip (round 2: a 2-px line is under 2% of a near crop, so p2 missed it)
 
 
 res = {}
 for f in sorted(os.listdir(OUT)):
-    if not f.endswith(".png") or "_" not in f or f.startswith(("gt_", "crop", "G_")):
+    if not f.endswith(".png") or "_" not in f or f.startswith(("gt_", "crop", "G_", "S_")):
         continue
     key = f[:-4]
     base = key[2:] if key.startswith("P_") else key  # P_ = the phone-like quality check (EditQualityLevel 05)

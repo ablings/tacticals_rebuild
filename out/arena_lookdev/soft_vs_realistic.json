@@ -1,0 +1,15 @@
+{
+ "what": "LightingStyle Soft (S_soft_*) vs Realistic (D_*), bay D, EditQualityLevel 21, same cameras",
+ "results": {
+  "c10": {
+   "soft_pair_diff": 0.06952738435599837,
+   "soft_vs_realistic_mean_abs": 0.42296575754101834,
+   "share_pixels_diff_gt8_pct": 1.6675698866458926
+  },
+  "c40": {
+   "soft_pair_diff": 0.07351660593091293,
+   "soft_vs_realistic_mean_abs": 0.23004665478585,
+   "share_pixels_diff_gt8_pct": 0.6021177034589851
+  }
+ }
+}

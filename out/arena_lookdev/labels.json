@@ -28,7 +28,7 @@
    "palette warm grey 200,196,186",
    "warm-compensated by render:",
    "structure 203,196,183",
-   "floor 205,196,181",
+   "floor 205,199,181",
    "cover 177,171,160",
    "grid as B: black at 0.75"
   ]
@@ -47,7 +47,8 @@
   "lines": [
    "everything as C",
    "same grid image x3,",
-   "side by side (0.04 apart),",
+   "centred, 0.04 studs apart",
+   "(one line width),",
    "each black at 0.85:",
    "a wider, softer line",
    "(3x the Texture count)"

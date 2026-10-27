@@ -1,6 +1,6 @@
 -- arena_lookdev bays: identical geometry (the Arena's pieces at the Arena's sizes), one surface recipe per bay. Idempotent: each run
 -- rebuilds the bays named in ONLY (or all). Old versions of a rebuilt bay go to ServerStorage.LookdevOld (UNDO path: move back).
-local ONLY = { C = true, D = true, E = true } --@ONLY e.g. { C = true }
+local ONLY = { B = true, C = true, D = true, E = true } --@ONLY e.g. { C = true }
 local GRID = "rbxassetid://86361987736184" -- our own grid (tex/hub_overlay_grid.png): white lines on the tile edges, 2 px of 512
 local ANCHOR = Vector3.new(0, 0.6, 0)      -- world lattice: x, z multiples of 5; y = floor top 0.6 + 5k (the Arena's FLOOR_TOP)
 local FT = 0.6
@@ -11,15 +11,16 @@ local BAYS = { --@BAYS
 	B = { z = 200, mat = Enum.Material.Plastic, structure = Color3.fromRGB(151, 153, 163), cover = Color3.fromRGB(132, 134, 143),
 		gridColor = Color3.new(0, 0, 0), gridAlpha = 0.75, aligned = true, shellInnerOnly = true },
 	-- C / D / E: the palette's warm grey 200,196,186, warm-compensated by measuring the render at Studio quality 21 (round 2):
-	-- the open blue sky fills horizontal faces most, so the floor gets +5 R / -5 B (same luminance; +9 / -9 overshot to R-B 19), walls and pieces +3 / -3;
+	-- the open blue sky fills horizontal faces most, so the floor gets +5 R / +3 G / -5 B (+9 / -9 overshot to R-B 19; R/B alone read pink: G-B too low), walls and pieces +3 / -3;
 	-- solid cover = 0.874 x structure (RIVALS' 132/151)
-	C = { z = 400, mat = Enum.Material.Plastic, structure = Color3.fromRGB(203, 196, 183), cover = Color3.fromRGB(177, 171, 160), floor = Color3.fromRGB(205, 196, 181),
+	C = { z = 400, mat = Enum.Material.Plastic, structure = Color3.fromRGB(203, 196, 183), cover = Color3.fromRGB(177, 171, 160), floor = Color3.fromRGB(205, 199, 181),
 		gridColor = Color3.new(0, 0, 0), gridAlpha = 0.75, aligned = true, shellInnerOnly = true },
-	D = { z = 600, mat = Enum.Material.Plastic, structure = Color3.fromRGB(203, 196, 183), cover = Color3.fromRGB(177, 171, 160), floor = Color3.fromRGB(205, 196, 181),
+	D = { z = 600, mat = Enum.Material.Plastic, structure = Color3.fromRGB(203, 196, 183), cover = Color3.fromRGB(177, 171, 160), floor = Color3.fromRGB(205, 199, 181),
 		gridColor = Color3.new(0, 0, 0), gridAlpha = 0.65, aligned = true, shellInnerOnly = true },
-	-- E: a wider, softer line from the SAME image: a second copy shifted by one line width (0.04 studs) doubles the line to
-	-- 0.08 studs; each copy lighter (0.8), so it is soft up close but carries further than one dark hairline
-	E = { z = 800, mat = Enum.Material.Plastic, structure = Color3.fromRGB(203, 196, 183), cover = Color3.fromRGB(177, 171, 160), floor = Color3.fromRGB(205, 196, 181),
+	-- E: a wider, softer line from the SAME image: 3 copies one line width apart (the image's seam line = 4 texels of 512 on a
+	-- 5-stud tile = 0.039 studs), centred on the lattice (-0.04 / 0 / +0.04) so faces whose U/V run in opposite world directions
+	-- still meet; each copy black at 0.85: soft up close, carries as far as a darker hairline
+	E = { z = 800, mat = Enum.Material.Plastic, structure = Color3.fromRGB(203, 196, 183), cover = Color3.fromRGB(177, 171, 160), floor = Color3.fromRGB(205, 199, 181),
 		gridColor = Color3.new(0, 0, 0), gridAlpha = 0.85, aligned = true, shellInnerOnly = true, widen = 0.04, copies = 3 }, --@E
 }
 -- pieces: name, class, size, centre (bay-local), role (floor / box / rim / structure / cover), grid faces when shellInnerOnly
@@ -38,7 +39,7 @@ local PIECES = {
 	{ "WindowPost2", "Part", Vector3.new(8, 7, 3.5), Vector3.new(7, FT + 3.5, 28.75), "structure", ALL5 },
 	{ "Platform", "Part", Vector3.new(8, 6, 8), Vector3.new(16, FT + 3, -26), "structure", ALL5 },
 	{ "PlatformParapet", "Part", Vector3.new(8, 3.4, 1), Vector3.new(16, FT + 6 + 1.7, -22.5), "cover", ALL5 },
-	{ "Ramp", "WedgePart", Vector3.new(7.5, 6, 20), Vector3.new(2, FT + 3, -26), "structure", { "Top", "Back", "Left", "Right" } },
+	{ "Ramp", "WedgePart", Vector3.new(7.5, 6, 20), Vector3.new(2, FT + 3, -26), "structure", { "Top", "Left", "Right" } }, -- Back = the vertical end against the deck: never seen
 }
 local SS = game:GetService("ServerStorage")
 local oldStore = SS:FindFirstChild("LookdevOld") or Instance.new("Folder")
@@ -77,9 +78,11 @@ for key, cfg in BAYS do
 				if p:IsA("WedgePart") and face == "Top" then t.OffsetStudsV = 0 end -- the slope's V runs along the slope
 			end
 			t.Parent = p; textures += 1
-			for k = 1, (cfg.copies or (cfg.widen and 2 or 1)) - 1 do -- copies side by side, one line width apart
+			local n = cfg.copies or 1
+			for k = 1, n - 1 do -- copies side by side, one line width apart, centred: steps -1, +1 around the base copy (n = 3)
+				local step = (k % 2 == 1) and -math.ceil(k / 2) or math.ceil(k / 2)
 				local t2 = t:Clone(); t2.Name = "GridWiden" .. k
-				t2.OffsetStudsU, t2.OffsetStudsV = (t.OffsetStudsU + k * cfg.widen) % 5, (t.OffsetStudsV + k * cfg.widen) % 5
+				t2.OffsetStudsU, t2.OffsetStudsV = (t.OffsetStudsU + step * cfg.widen) % 5, (t.OffsetStudsV + step * cfg.widen) % 5
 				t2.Parent = p; textures += 1
 			end
 		end
