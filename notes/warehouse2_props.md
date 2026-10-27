@@ -22,7 +22,12 @@ lamp, the toolbox, the forklift and the scale figure. Olive drab is now an accen
 | Fire barrel bung | olive | grey steel |
 | 5-stud figure on the sheet | lime shirt | slate-blue shirt |
 
-Geometry, sizes, pivots and collision are unchanged; only the baked colours changed. The .blend now saves relative image
+Geometry, sizes, pivots and collision are unchanged; only the baked colours changed.
+Round 6c (grader PASS 8.8 leftovers): dark stencils are now mixed in *after* the dirt and dust layers. The dirt mix toward
+(46,40,32) had lifted the black letters on the pine crates to brown, and raising the opacity did nothing. The supply
+crate's GROSS WT line is now cream, and the sheet's labels are cream/grey on neutral bars (the olive label text was a green cue).
+Measured green share of the placed prop surface (grader, hue-classified atlas samples x area x placement count):
+34.4% (round 5) -> 7.3% (6) -> 0.97% (6b, nearly all the ammo cans). The .blend now saves relative image
 paths, so it opens with its atlases on either PC. On the Shadow PC run the generator with `--device CUDA`: Blender 5.2's
 OptiX kernel fails there and Cycles bakes black without an error (the generator now stops on a black bake).
 Map builder: `notes/warehouse2_build.md` still names `W2_OilDrum_Olive`; use `W2_OilDrum_Grey`.
@@ -140,7 +145,7 @@ JerseyBarrier, PrecastBlockWall, PalletStack, BoxTrailer, Container20, FencePane
   - edge chips from a Bevel-node edge mask;
   - rust patches and streaks, AO dirt and dust on top faces;
   - stencils are PIL masks projected through extra UV layers (CLIP extension) and baked into the colour map. The extra UVs are then deleted, so one UV map ships.
-- **Buried faces** (wholly inside another part of the same mesh) keep their geometry, so meshes stay closed, but get zero UV area. Every mesh is now 36-70 px per stud; the cover crates went from about 20 to 41-50.
+- **Buried faces** (wholly inside another part of the same mesh) keep their geometry, so meshes stay closed, but get zero UV area. Every mesh is now 39-72 px per stud; the cover crates went from about 20 to 41-50.
 - **Stacked crates** rest on their top and bottom battens.
   - The upper crate is an instance scaled 0.035 smaller per side, sunk 0.03 into the lower one. That gives no butt joint, and no shared plane on the sides.
   - The corner blocks sit 0.03 inside the batten plane.
@@ -148,7 +153,7 @@ JerseyBarrier, PrecastBlockWall, PalletStack, BoxTrailer, Container20, FencePane
   - The trims step back from the frame plane: cleats 0.03, bands 0.06, braces 0.09.
 - **Proof check:**
   - `blender_check.py`: 0 FAIL, both per assembly and for the whole kit.
-  - The 44 WARN are concave lathes (A1b), plus parts sitting inside or edge-on to others (A8, with no shared visible area).
+  - The 47 WARN are concave lathes (A1b), plus parts sitting inside or edge-on to others (A8, with no shared visible area).
   - `assembly_check.py` (results in `renders/check/assembly_check.txt`):
     - see-through: 0 rays pass any cover piece (0.01 grid, 0.11 in from the box);
     - broken (flipped) caps: 0.000 sq studs (6.9 on the round-4 build);
@@ -166,4 +171,4 @@ JerseyBarrier, PrecastBlockWall, PalletStack, BoxTrailer, Container20, FencePane
     - In bmesh, call `normal_update()` before triangulating a new n-gon.
     - A whole-object volume test misses flipped cap triangles. Test each plane of each loose part for faces of both orientations.
   - `zero_uv_check.py`: visible area of faces with no texture space: 0.000.
-  - `texel_density.txt`: 36-70 px per stud.
+  - `texel_density.txt`: 39.4-71.9 px per stud.

@@ -499,6 +499,7 @@ def make_mat(name, kind, mb, decals):
         height = g.add(height, g.m("MULTIPLY", tread, 1.0))
 
     # stencils / labels: sprayed on the paint, so they wear with it
+    late = []   # dark stencils go on after the dirt/dust mixes: grime toward (46,40,32) would lift black letters to brown
     for i, d in decals:
         im = bpy.data.images.load(os.path.join(DEC, d["img"] + ".png"), check_existing=True)
         im.alpha_mode = "STRAIGHT"
@@ -507,6 +508,9 @@ def make_mat(name, kind, mb, decals):
         a = g.m("MULTIPLY", tx.outputs["Alpha"], d["op"])
         a = g.m("MULTIPLY", a, g.mr(g.noise(obj, 2.2, 3), 0.35, 0.65, 0.75, 1.0))
         dc = g.rgb(d["col"]) if d["col"] else tx.outputs["Color"]
+        if d["col"] and sum(d["col"]) < 150:
+            late.append((a, dc, d))
+            continue
         col = g.mixc(a, col, dc)
         if d["rough"] is not None:
             rough = g.mixf(a, rough, d["rough"])
@@ -566,6 +570,10 @@ def make_mat(name, kind, mb, decals):
         rough = g.mixf(du, rough, 0.95)
     if P["bleach"]:
         col = g.mixc(g.m("MULTIPLY", g.mr(nz, 0.3, 0.9), P["bleach"]), col, g.rgb((150, 150, 146)))   # neutral sun-bleach (olive-tinted bleach kept the tarp green)
+    for a, dc, d in late:
+        col = g.mixc(a, col, dc)
+        if d["rough"] is not None:
+            rough = g.mixf(a, rough, d["rough"])
 
     bsdf = g.n("ShaderNodeBsdfPrincipled")
     g.put(bsdf.inputs["Base Color"], col)
@@ -1642,7 +1650,7 @@ def main():
     obs.append(finish(mb))
     mb = wood_crate("W2_SupplyCrate", 5.0, 3.0, 3.5, diagonals=True, rope_z=2.4, wood="wood_grey")
     mb.decal("st_tacsupply", (0, -1, 0), (0, -1.5, 2.6), 3.6, 0.55, col=(236, 232, 218))
-    mb.decal("st_weight", (0, -1, 0), (0.6, -1.5, 1.05), 2.2, 0.72, col=(22, 22, 20))
+    mb.decal("st_weight", (0, -1, 0), (0.6, -1.5, 1.05), 2.2, 0.72, col=(236, 232, 218))   # cream: black on grey paint read weak
     mb.decal("st_rations", (0, 1, 0), (0, 1.5, 1.8), 3.6, 0.9, col=(236, 232, 218))
     mb.decal("st_upright", (1, 0, 0), (2.5, 0, 1.25), 1.3, 1.3, col=(236, 232, 218))
     mb.decal("st_upright", (-1, 0, 0), (-2.5, 0, 1.25), 1.3, 1.3, col=(236, 232, 218))
