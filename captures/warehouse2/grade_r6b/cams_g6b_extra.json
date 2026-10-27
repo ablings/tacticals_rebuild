@@ -1,0 +1,84 @@
+[
+ {
+  "name": "mirror_wh15_hall_corner_SW",
+  "area": "hall",
+  "eye": [
+   37,
+   4.6,
+   54
+  ],
+  "at": [
+   -10,
+   6,
+   -10
+  ]
+ },
+ {
+  "name": "mirror_wh04_west_lane_from_A",
+  "area": "hall",
+  "eye": [
+   36,
+   4.6,
+   38
+  ],
+  "at": [
+   36,
+   4.0,
+   -10
+  ]
+ },
+ {
+  "name": "mirror_wh09_centre_toward_A",
+  "area": "hall",
+  "eye": [
+   0,
+   4.6,
+   -3
+  ],
+  "at": [
+   12,
+   4,
+   40
+  ]
+ },
+ {
+  "name": "mirror_wh05_flush_pair_P03_L03",
+  "area": "hall",
+  "eye": [
+   6,
+   4.6,
+   31
+  ],
+  "at": [
+   15,
+   3,
+   19
+  ]
+ },
+ {
+  "name": "x_S_end_from_mid_n-8",
+  "eye": [
+   0,
+   4.6,
+   -8
+  ],
+  "at": [
+   0,
+   6,
+   -57
+  ]
+ },
+ {
+  "name": "x_N_end_from_mid_n8",
+  "eye": [
+   0,
+   4.6,
+   8
+  ],
+  "at": [
+   0,
+   6,
+   57
+  ]
+ }
+]

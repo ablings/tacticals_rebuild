@@ -30,3 +30,21 @@ The match place's "bot" is the Studio test dummy (never moves or shoots): this p
 door contract (tools/wh2_door_test.lua, Play server): both doors roll up (top edge drift 0.000, top 0.15 under the head,
   bottom rises to 14.1), a 2 x 5 x 1.2 body box fits only when open, a second open call is refused, rolls back down to the
   built ClosedSize / ClosedCFrame exactly; 0 ProximityPrompts.
+
+== Re-run on the final round-6c build (16:05, after grader 6b; it ran out of time for these) ==
+vote: Warehouse2 won, me (-31.0, -50.0), clock 0, Door_N / Door_S Open false, collide true
+push S door             ended (-0.0, -56.9) feet -0.01  n reached -56.95..-50.00  top feet 0.01
+push N door             ended (-0.0, 56.9) feet 0.00  n reached 50.00..56.94  top feet 0.00
+push S door left        ended (-8.0, -56.9) feet 0.01  n reached -56.92..-50.00  top feet 0.01
+push N door right       ended (8.0, 56.9) feet 0.01  n reached 50.00..56.93  top feet 0.01
+DOORS STOP: south min n -56.95 (curtain at -57.45), north max n 56.94 (curtain at 57.45)
+Space (cover vault/climb) at S shutter inCover=false part=nil crouched=false vaulting=false moving=false state=Running (-0.0, -55.5) feet 0.00
+   after (-0.0, -55.5) feet -0.00
+score before: A 0 B 0
+round 1: me (0.0, -55.5) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 2: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 3: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 4: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 5: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+end Victory Victory score A 5 B 0
+phases: | 37.2 Countdown/Playing | 37.6 RunIn/RunIn | 41.2 Countdown/Playing | 46.2 Live/Playing | 235.4 RoundEnd/Playing | 238.5 Countdown/Playing | 243.8 Live/Playing | 247.1 RoundEnd/Playing | 250.2 Countdown/Playing | 255.5 Live/Playing | 258.7 RoundEnd/Playing | 261.8 Countdown/Playing | 267.2 Live/Playing | 270.3 RoundEnd/Playing | 273.4 Countdown/Playing | 278.8 Live/Playing | 282.0 Victory/Victory

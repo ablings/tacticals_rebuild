@@ -708,9 +708,10 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	-- the bay number, big, stencilled on the blockwork either side of the door: readable from mid-hall (grade round 1)
 	for _, side in { -1, 1 } do
 		-- e +-26: clear of the gable posts at e +-21 (grade round 6), 0.15 off the pier face (n HN - 0.3)
-		local c = carrier(D, "BayNumber_" .. k .. side, side * 26, g * (HN - 0.45), 6.8, 7, 0.02, 0)
-		c.Size = Vector3.new(7, 6, 0.02)
-		c.CFrame = CFrame.new(W(side * 26, g * (HN - 0.45), 6.8))
+		-- 5.5..11.1 up: above the 7-high cover that hid the lower half from mid-hall (grade round 6b), under the blockwork top
+		local c = carrier(D, "BayNumber_" .. k .. side, side * 26, g * (HN - 0.45), 8.3, 7, 0.02, 0)
+		c.Size = Vector3.new(7, 5.6, 0.02)
+		c.CFrame = CFrame.new(W(side * 26, g * (HN - 0.45), 8.3))
 		local gui = text(c, g > 0 and "Front" or "Back", k == "S" and "01" or "02", rgb(30, 30, 28), { fade = 0.12 })
 		gui.Name = "BayNumber"
 		gui.PixelsPerStud = 14 -- TextScaled stops at 100 px: at 14 px/stud the digits can reach ~6 studs
@@ -794,9 +795,10 @@ for i, n in BEAM_ROWS do
 end
 -- corner wall bars on the end walls (above the blockwork, tilted down into the hall), point-symmetric: they light the spawn-side
 -- faces of the cover at both spawns and leave the middle of each end dark
--- south 3.2 / north 2.2: the same light rendered spawn A's cover face darker than B's (light-voxel alignment differs at the two
--- ends); with these the two faces measure the same (67,48,28), grade round 6
-local WALLBAR = { bright = 2.2, brightSouth = 3.2, range = 28, angle = 120, off = 1.5 } --@WALLBAR (tuned on the spawn cameras, round 6)
+-- one value at both ends (grade round 6b: south 3.2 / north 2.2 evened one cover face but lit team A's whole end ~20 % brighter;
+-- a 180-degree map is lit as a twin). Mirrored corner cameras now read 71 / 73 and 57 / 52; spawn A's pillar face still renders
+-- darker than B's (light-voxel alignment at that face; moving the source 0.4 changed nothing)
+local WALLBAR = { bright = 2.6, brightSouth = 2.6, range = 28, angle = 100, off = 1.5 } --@WALLBAR
 for _, x in { { -30, -1 }, { 30, -1 }, { 30, 1 }, { -30, 1 } } do
 	local e, g = x[1], x[2]
 	nLamp += 1
@@ -890,7 +892,7 @@ for _, k in LAYOUT.skin do
 		local e0, e1, n0, n1 = rectAt(pier, depth)
 		local mid = (n0 + n1) / 2
 		box(WD, "AlarmPanel_" .. tag, e0, e1, mid - 0.7, mid + 0.7, 4.2, 5.8, S.cabinet)
-		box(WD, "AlarmPanelLamp", e0, e1, mid - 0.2, mid + 0.2, 5.9, 6.3, { M.SmoothPlastic, nil, rgb(150, 28, 24) })
+		box(WD, "AlarmPanelLamp", e0, e1, mid - 0.2, mid + 0.2, 5.9, 6.3, S.cream) -- (no red: team colour only, grade round 6b)
 	end
 end
 -- steam main: from each valve's riser top along the wall to the end wall, on brackets
@@ -912,16 +914,17 @@ local function wallSign(name, g, n, h, w, str, fg, bgStyle)
 	text(p, g > 0 and "Right" or "Left", str, fg or rgb(28, 28, 26))
 	return p
 end
-wallSign("Sign_NoSmoking", 1, -12, 6.5, 5, "NO SMOKING", rgb(150, 30, 26))
-wallSign("Sign_NoSmoking", -1, 12, 6.5, 5, "NO SMOKING", rgb(150, 30, 26))
+wallSign("Sign_NoSmoking", 1, -12, 6.5, 5, "NO SMOKING", rgb(28, 28, 26))
+wallSign("Sign_NoSmoking", -1, 12, 6.5, 5, "NO SMOKING", rgb(28, 28, 26))
 wallSign("Sign_Forklift", 1, 44, 6.5, 6, "FORKLIFT ROUTE")
 wallSign("Sign_Forklift", -1, -44, 6.5, 6, "FORKLIFT ROUTE")
 wallSign("Sign_Ppe", -1, -16, 6.5, 6, "HI-VIS PAST THIS POINT")
 wallSign("Sign_Ppe", 1, 16, 6.5, 6, "HI-VIS PAST THIS POINT")
 for _, x in { { 1, -42.6 }, { -1, -37.4 }, { 1, 37.4 }, { -1, 42.6 } } do -- on piers beside the column slots
 	local g, n = x[1], x[2]
-	vcyl(WD, "Extinguisher", g * (HE - 0.7 - 0.45), n, 2.4, 4.2, 0.7, { M.SmoothPlastic, nil, rgb(150, 28, 24) })
-	box(WD, "ExtinguisherSign", g * (HE - 0.76), g * (HE - 0.7), n - 0.5, n + 0.5, 4.8, 5.8, { M.SmoothPlastic, nil, rgb(150, 28, 24) })
+	-- black CO2 extinguishers and black / cream signs: red is a team colour (Design Rules; grade round 6b)
+	vcyl(WD, "Extinguisher", g * (HE - 0.7 - 0.45), n, 2.4, 4.2, 0.7, S.black)
+	text(box(WD, "ExtinguisherSign", g * (HE - 0.76), g * (HE - 0.7), n - 0.5, n + 0.5, 4.8, 5.8, S.black), g > 0 and "Right" or "Left", "CO2", rgb(236, 232, 218))
 end
 
 -- ====================================================================================================== cover: stand-ins at the exact boxes

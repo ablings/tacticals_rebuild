@@ -206,7 +206,7 @@ frames were not re-run (stopped early at my request, time on the Shadow PC).
 |---|---|
 | Major: with the doors shut the two ends are the same picture (only a 75 x 12 px sign plate and the 01/02 digits differ) | Each curtain differs: BAY 01 charcoal slats (62,64,64) with a big cream "01" painted on the hall face, BAY 02 galvanised slats with a big black "02" (a SurfaceGui offset from the bottom edge, so it rides up when the door rolls); the wall stencils moved to e +-26, off the gable posts, now visible from mid-hall |
 | Major: the middle of the hall evenly lit (under / beside the middle bars 1.1-1.5x; pools only at the ends) | Middle rows (n +-15): spot 4 / 90 deg, point 0.25 (end rows keep 2.3 / 100, point 0.4). Straight-down floor luminance (`tools/wh2_pools.py`, h 11): under the middle bars 79 / 73, beside them (+-20, 0) 23 / 24 = 3.1-3.4x; centre line 10-14; under the end bars ~118 |
-| Minor: spawns lit unevenly (A 27 vs B 40) | South wall bars 3.2, north 2.2 (the same light renders A's face darker: light-voxel alignment differs at the two ends): both faces (67,48,28) |
+| Minor: spawns lit unevenly (A 27 vs B 40) | (6b: south wall bars 3.2, north 2.2 evened the faces but lit A's end brighter; replaced in 6c by one value, see below) |
 | Minor: north yard reads floodlit daytime (p50 146-153) | North door flood 1 (south 3), north wall-packs 0.9 (south 2), north lamp post 1.1 (south 2.2), the cream trailer a weathered off-white (182,178,168): north yard p50 75-106 vs south 72-89 |
 | Minor: 01 / 02 stencils across a gable post | moved to e +-26 (posts at +-21), 0.15 off the pier face |
 | Minor: doc numbers | lights 28 in the hall, 20 shadowed (16 bar lights, 2 door lights, 2 floods); brief's bar values corrected; camera numbers below re-measured |
@@ -215,6 +215,21 @@ frames were not re-run (stopped early at my request, time on the Shadow PC).
 Flood test upgraded (grader lesson): the floor rays now include the exterior's floors, and a control run rolls Door_S up in Play
 (must leak) and restores it: shut 7,564 cells / 0 outside; control 7,967 cells / 384 outside (n to -69). Re-run after 6b:
 MapAudit hall 0 FAIL 0 WARN (Edit + Play), exterior 0 FAIL 1 WARN, sky sweep 0 holes, read-back 0, metrics 25/25, green only C03/C04.
+
+### Grade round 6b (fresh roblox-map-grader, xhigh): FIX 8.6 on merits; open: Play re-checks not run in time + construction (Edward)
+Confirmed fixed: ends differ with the doors shut, hard pools mid-hall (2.8x on its own frames), spawn faces, north yard (mostly),
+stencils, doc numbers; MapAudit 0 FAIL, sky 0 holes, flood 0 outside with a leaking control, read-back 0, metrics within 5 %,
+green only C03/C04, no MaterialVariants, 32 lights. Its verdict rule: with "build it in Studio" in the brief and the three Play
+checks (match, door push, cutscene) passing -> PASS 8.6; if Edward wants the meshes imported -> FIX until that is done.
+| Finding (6b) | Fix (6c, same session) |
+|---|---|
+| Minor: team A's end ~20 % brighter (south wall bars 3.2 vs north 2.2) | one value at both ends (2.6, 100 deg): mirrored corner cameras 71 / 73, lanes 57 / 52; spawn A's pillar face still renders darker than B's (lum ~26 vs ~42, light-voxel alignment at that face; moving the source 0.4 changed nothing); both above round 5's 17 |
+| Minor: spawn ends above the dark band (wh15 93) | the lower, narrower wall bars bring wh15 to ~71, wh04 ~57 |
+| Minor: 01 / 02 wall stencils half hidden by the 7-high cover from mid-hall | raised to 5.5-11.1 |
+| Minor: red safety props (extinguishers, signs, NO SMOKING text, alarm lamps) | black CO2 extinguishers with black / cream CO2 signs, NO SMOKING in black, alarm lamps cream: red stays a team colour |
+| Not run by the grader: 5-round match, door push, cutscene frames | the builder's own runs: notes/warehouse2_metrics/play_lap_r6.txt (round 6, gameplay layer and doors unchanged since); cutscene frames cs01-cs03 in captures/warehouse2/r6 |
+| Pending Edward: built from Studio Parts | asked in the report |
+Re-run after 6c: MapAudit hall 0 FAIL 0 WARN, exterior 0 FAIL 1 WARN, read-back 0 differences, metrics 25/25, green only C03/C04.
 
 ### Not done in round 6
 - **Meshes (step 8, optional):** not swapped. Import 3D needs a Studio window by computer use; not attempted (no OK for computer
@@ -304,3 +319,6 @@ MapAudit hall 0 FAIL 0 WARN (Edit + Play), exterior 0 FAIL 1 WARN, sky sweep 0 h
     needs a low `PixelsPerStud` (100 px / pps = the largest letter in studs).
 13. **Even interior light is the default failure under ShadowMap:** a PointLight per lamp lights everything the same; a downward
     SpotLight pool + a weak PointLight fill gives pools (measure under / between >= 1.3) without black cover sides.
+
+- Lesson (grader 6b): on a point-symmetric map, never even out one face with different light values at the two ends; keep the
+  values equal and compare mirrored cameras (p50 within ~10 %). A local face that still differs is a renderer voxel artefact.
