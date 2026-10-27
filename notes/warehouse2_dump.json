@@ -1,0 +1,5387 @@
+{
+"registry": {
+"attrs": {
+"Image": "",
+"Modes": "1v1",
+"MatchInstall": true,
+"DisplayName": "Warehouse 2"
+},
+"hasInfo": true
+},
+"mapAttrs": {
+"Builder": "map_warehouse2",
+"LayoutVersion": 1,
+"PlanOrigin": null,
+"SteamFill": true
+},
+"camskin": [
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_1",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+14
+],
+"pos": [
+-124.44999694824219,
+6,
+-348
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_10",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+26
+],
+"pos": [
+-124.44999694824219,
+6,
+-258
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.35
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_11",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.550000011920929,
+11.199999809265137,
+2
+],
+"pos": [
+-124.625,
+6,
+-244
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_2",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+10
+],
+"pos": [
+-124.44999694824219,
+6,
+-334
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 1.6
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_3",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.7999999523162842,
+11.199999809265137,
+4
+],
+"pos": [
+-124,
+6,
+-327
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_4",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+14
+],
+"pos": [
+-124.44999694824219,
+6,
+-316
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_5",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+10
+],
+"pos": [
+-124.44999694824219,
+6,
+-302
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.85
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_6",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.0499999523162842,
+11.199999809265137,
+2
+],
+"pos": [
+-124.375,
+6,
+-296
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_7",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+2
+],
+"pos": [
+-124.44999694824219,
+6,
+-294
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_8",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+14
+],
+"pos": [
+-124.44999694824219,
+6,
+-284
+]
+},
+{
+"attrs": {
+"Wall": "E",
+"CamSkinProud": 1.6
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_E_9",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.7999999523162842,
+11.199999809265137,
+4
+],
+"pos": [
+-124,
+6,
+-273
+]
+},
+{
+"attrs": {
+"Wall": "N",
+"CamSkinProud": 0.55
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_N_E_1",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2,
+11.199999809265137,
+0.75
+],
+"pos": [
+-123.69999694824219,
+6,
+-243.1750030517578
+]
+},
+{
+"attrs": {
+"Wall": "N",
+"CamSkinProud": 0.3
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_N_E_2",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+16,
+11.199999809265137,
+0.5
+],
+"pos": [
+-108.69999694824219,
+6,
+-243.0500030517578
+]
+},
+{
+"attrs": {
+"Wall": "N",
+"CamSkinProud": 0.15
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_N_E_3",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2,
+11.199999809265137,
+0.3499999940395355
+],
+"pos": [
+-99.69999694824219,
+6,
+-242.97500610351562
+]
+},
+{
+"attrs": {
+"Wall": "N",
+"CamSkinProud": 0.3
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_N_W_2",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+16,
+11.199999809265137,
+0.5
+],
+"pos": [
+-60.19999694824219,
+6,
+-243.0500030517578
+]
+},
+{
+"attrs": {
+"Wall": "N",
+"CamSkinProud": 0.55
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_N_W_3",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.5,
+11.199999809265137,
+0.75
+],
+"pos": [
+-43.94999694824219,
+6,
+-243.1750030517578
+]
+},
+{
+"attrs": {
+"Wall": "S",
+"CamSkinProud": 0.3
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_S_E_1",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+16,
+11.199999809265137,
+0.5
+],
+"pos": [
+-108.69999694824219,
+6,
+-356.95001220703125
+]
+},
+{
+"attrs": {
+"Wall": "S",
+"CamSkinProud": 0.15
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_S_E_2",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2,
+11.199999809265137,
+0.3499999940395355
+],
+"pos": [
+-99.69999694824219,
+6,
+-357.0249938964844
+]
+},
+{
+"attrs": {
+"Wall": "S",
+"CamSkinProud": 0.3
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_S_W_2",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+16,
+11.199999809265137,
+0.5
+],
+"pos": [
+-60.19999694824219,
+6,
+-356.95001220703125
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_1",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+14
+],
+"pos": [
+-43.94999694824219,
+6,
+-348
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_10",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+26
+],
+"pos": [
+-43.94999694824219,
+6,
+-258
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.4
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_11",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.6000000238418579,
+11.199999809265137,
+2
+],
+"pos": [
+-43.79999542236328,
+6,
+-244
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_2",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+10
+],
+"pos": [
+-43.94999694824219,
+6,
+-334
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 1.6
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_3",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.7999999523162842,
+11.199999809265137,
+4
+],
+"pos": [
+-44.39999771118164,
+6,
+-327
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_4",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+14
+],
+"pos": [
+-43.94999694824219,
+6,
+-316
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.65
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_5",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8500000238418579,
+11.199999809265137,
+2
+],
+"pos": [
+-43.92499542236328,
+6,
+-306
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.85
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_6",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.0499999523162842,
+11.199999809265137,
+2
+],
+"pos": [
+-44.02499771118164,
+6,
+-304
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_7",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+10
+],
+"pos": [
+-43.94999694824219,
+6,
+-298
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 0.7
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_8",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8999999761581421,
+11.199999809265137,
+14
+],
+"pos": [
+-43.94999694824219,
+6,
+-284
+]
+},
+{
+"attrs": {
+"Wall": "W",
+"CamSkinProud": 1.6
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CamSkin",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_CamSkin_Wall_W_9",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.7999999523162842,
+11.199999809265137,
+4
+],
+"pos": [
+-44.39999771118164,
+6,
+-273
+]
+}
+],
+"art": {
+"count": 1229,
+"colliding": []
+},
+"props": [
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_PalletPile_S",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4,
+3.5999999046325684,
+3.4000000953674316
+],
+"pos": [
+-98.19999694824219,
+2.200000047683716,
+-354
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_PalletPile_N",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4,
+2.4000000953674316,
+3.4000000953674316
+],
+"pos": [
+-70.19999694824219,
+1.600000023841858,
+-246
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Pallets_SW",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4,
+4,
+3.4000000953674316
+],
+"pos": [
+-47.69999694824219,
+2.4000000953674316,
+-338
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Pallets_NE",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4,
+2.200000047683716,
+3.4000000953674316
+],
+"pos": [
+-120.69999694824219,
+1.5,
+-260
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Drums_W",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4.400000095367432,
+3,
+3.200000047683716
+],
+"pos": [
+-47.69999694824219,
+1.899999976158142,
+-269.29998779296875
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Drums_E",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4.400000095367432,
+3,
+3.200000047683716
+],
+"pos": [
+-120.69999694824219,
+1.899999976158142,
+-330.70001220703125
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Workbench",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2.200000047683716,
+3.299999952316284,
+6
+],
+"pos": [
+-46.69999694824219,
+2.049999952316284,
+-284
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_BreakTable",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4.599999904632568,
+2.5999999046325684,
+5.5
+],
+"pos": [
+-120.39999389648438,
+1.6999999284744263,
+-315.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Cartons_S",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.600000023841858,
+1.2000000476837158,
+1.399999976158142
+],
+"pos": [
+-63.19999694824219,
+1,
+-347.5
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Cartons_N",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.600000023841858,
+1.2000000476837158,
+1.399999976158142
+],
+"pos": [
+-105.19999694824219,
+1,
+-252.5
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-124.5,
+6,
+-340
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-43.89999771118164,
+6,
+-340
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-124.5,
+6,
+-324
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-43.89999771118164,
+6,
+-324
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-124.5,
+6,
+-308
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-43.89999771118164,
+6,
+-308
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-124.5,
+6,
+-292
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-43.89999771118164,
+6,
+-292
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-124.5,
+6,
+-276
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-43.89999771118164,
+6,
+-276
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-124.5,
+6,
+-260
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Column",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.4000000059604645,
+11.199999809265137,
+1.2000000476837158
+],
+"pos": [
+-43.89999771118164,
+6,
+-260
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_DoorGuide",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.550000011920929,
+14,
+0.5
+],
+"pos": [
+-73.92499542236328,
+7.400000095367432,
+-243.5500030517578
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_DoorGuide",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.550000011920929,
+14,
+0.5
+],
+"pos": [
+-94.4749984741211,
+7.400000095367432,
+-243.5500030517578
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_DoorGuide",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.550000011920929,
+14,
+0.5
+],
+"pos": [
+-73.92499542236328,
+7.400000095367432,
+-356.45001220703125
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_DoorGuide",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.550000011920929,
+14,
+0.5
+],
+"pos": [
+-94.4749984741211,
+7.400000095367432,
+-356.45001220703125
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Extinguisher",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.800000011920929,
+4.199999809265137,
+0.7200000286102295
+],
+"pos": [
+-123.5999984741211,
+2.5,
+-342.6000061035156
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Extinguisher",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.800000011920929,
+4.199999809265137,
+0.7200000286102295
+],
+"pos": [
+-44.79999542236328,
+2.5,
+-337.3999938964844
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Extinguisher",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.800000011920929,
+4.199999809265137,
+0.7200000286102295
+],
+"pos": [
+-123.5999984741211,
+2.5,
+-262.6000061035156
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Extinguisher",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.800000011920929,
+4.199999809265137,
+0.7200000286102295
+],
+"pos": [
+-44.79999542236328,
+2.5,
+-257.3999938964844
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_N_BollardW",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8399999737739563,
+3.5999999046325684,
+0.8399999737739563
+],
+"pos": [
+-73,
+2.200000047683716,
+-240.3000030517578
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_N_BollardE",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.8399999737739563,
+3.5999999046325684,
+0.8399999737739563
+],
+"pos": [
+-95.39999389648438,
+2.200000047683716,
+-240.3000030517578
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_N_Clutter",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+4.199999809265137,
+1.2000000476837158,
+5.099999904632568
+],
+"pos": [
+-62.69999694824219,
+1,
+-234.75
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_N_Drum",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2.200000047683716,
+3,
+2.200000047683716
+],
+"pos": [
+-61.89999771118164,
+1.899999976158142,
+-231.10000610351562
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_S_BollardW",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+0.8399999737739563,
+3.5999999046325684,
+0.8399999737739563
+],
+"pos": [
+-95.4000015258789,
+2.200000047683716,
+-359.70001220703125
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_S_BollardE",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+0.8399999737739563,
+3.5999999046325684,
+0.8399999737739563
+],
+"pos": [
+-73.00000762939453,
+2.200000047683716,
+-359.70001220703125
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Wood",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_S_Clutter",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+4.199999809265137,
+1.2000000476837158,
+5.099999904632568
+],
+"pos": [
+-105.70001220703125,
+1,
+-365.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "Props",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "PCOL_Yard_S_Drum",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+2.200000047683716,
+3,
+2.200000047683716
+],
+"pos": [
+-106.50000762939453,
+1.899999976158142,
+-368.8999938964844
+]
+}
+],
+"shootableModels": {
+"SteamValve_S2": {
+"attrs": {
+"MaskRadius": 18,
+"Shootable": "SteamValve"
+},
+"tags": [
+"SteamValve"
+]
+},
+"FireBarrel_F1": {
+"attrs": {
+"Shootable": "FireBarrel",
+"HazardRadius": 6
+},
+"tags": [
+"FireBarrel"
+]
+},
+"FireBarrel_F4": {
+"attrs": {
+"Shootable": "FireBarrel",
+"HazardRadius": 6
+},
+"tags": [
+"FireBarrel"
+]
+},
+"SteamValve_S1": {
+"attrs": {
+"MaskRadius": 18,
+"Shootable": "SteamValve"
+},
+"tags": [
+"SteamValve"
+]
+},
+"FireBarrel_F3": {
+"attrs": {
+"Shootable": "FireBarrel",
+"HazardRadius": 6
+},
+"tags": [
+"FireBarrel"
+]
+},
+"FireBarrel_F2": {
+"attrs": {
+"Shootable": "FireBarrel",
+"HazardRadius": 6
+},
+"tags": [
+"FireBarrel"
+]
+}
+},
+"bounds": [
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "Bounds",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "OutOfBounds_N_W",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.800000011920929,
+48,
+20.799999237060547
+],
+"pos": [
+-59.79999542236328,
+36.400001525878906,
+-231.10000610351562
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "Bounds",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "OutOfBounds_N_Back",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+49.599998474121094,
+48,
+0.800000011920929
+],
+"pos": [
+-84.19999694824219,
+36.400001525878906,
+-221.10000610351562
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "Bounds",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "OutOfBounds_N_E",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.800000011920929,
+43,
+20.799999237060547
+],
+"pos": [
+-108.5999984741211,
+38.900001525878906,
+-231.10000610351562
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "Bounds",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "OutOfBounds_S_W",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+0.800000011920929,
+48,
+20.799999237060547
+],
+"pos": [
+-108.60000610351562,
+36.400001525878906,
+-368.8999938964844
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "Bounds",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "OutOfBounds_S_Back",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+49.599998474121094,
+48,
+0.800000011920929
+],
+"pos": [
+-84.20000457763672,
+36.400001525878906,
+-378.8999938964844
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "Bounds",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "OutOfBounds_S_E",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+0.800000011920929,
+43,
+20.799999237060547
+],
+"pos": [
+-59.80000305175781,
+38.900001525878906,
+-368.9000244140625
+]
+}
+],
+"spawns": [
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "MatchSpawns",
+"mat": "Enum.Material.Plastic",
+"anchored": true,
+"shadow": false,
+"name": "SpawnA",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+148.201458271315,
+0
+],
+"size": [
+4,
+0.20000000298023224,
+4
+],
+"pos": [
+-53.249961853027344,
+0.6000187993049622,
+-350.00006103515625
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "MatchSpawns",
+"mat": "Enum.Material.Plastic",
+"anchored": true,
+"shadow": false,
+"name": "SpawnB",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+-31.799000945221128,
+0
+],
+"size": [
+4,
+0.20000000298023224,
+4
+],
+"pos": [
+-115.24996948242188,
+0.6000187993049622,
+-250.00006103515625
+]
+}
+],
+"shootables": [
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F3",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Lid",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.03999999910593033,
+1.899999976158142,
+1.899999976158142
+],
+"pos": [
+-61.20000076293945,
+3.4000000953674316,
+-288
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F3",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-61.20000076293945,
+0.47999998927116394,
+-288
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F3",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-61.20000076293945,
+3.319999933242798,
+-288
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "FireBarrel_F3",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Body",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+3,
+2.0999999046325684,
+2.0999999046325684
+],
+"pos": [
+-61.20000076293945,
+1.899999976158142,
+-288
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F3",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-61.20000076293945,
+2.4000000953674316,
+-288
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "MeshPart",
+"parent": "FireBarrel_F3",
+"mat": "Enum.Material.Plastic",
+"anchored": true,
+"shadow": true,
+"name": "Look",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2.0999984741210938,
+3.4000000953674316,
+2.1000003814697266
+],
+"pos": [
+-61.22044372558594,
+2.0500149726867676,
+-287.9850158691406
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F3",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-61.20000076293945,
+1.399999976158142,
+-288
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F4",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-107.19999694824219,
+2.4000000953674316,
+-312
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "MeshPart",
+"parent": "FireBarrel_F4",
+"mat": "Enum.Material.Plastic",
+"anchored": true,
+"shadow": true,
+"name": "Look",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2.0999984741210938,
+3.4000000953674316,
+2.1000003814697266
+],
+"pos": [
+-107.22044372558594,
+2.0500149726867676,
+-311.9850158691406
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F4",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-107.19999694824219,
+3.319999933242798,
+-312
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "FireBarrel_F4",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Body",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+3,
+2.0999999046325684,
+2.0999999046325684
+],
+"pos": [
+-107.19999694824219,
+1.899999976158142,
+-312
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F4",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-107.19999694824219,
+0.47999998927116394,
+-312
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F4",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Lid",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.03999999910593033,
+1.899999976158142,
+1.899999976158142
+],
+"pos": [
+-107.19999694824219,
+3.4000000953674316,
+-312
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F4",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-107.19999694824219,
+1.399999976158142,
+-312
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "MeshPart",
+"parent": "FireBarrel_F1",
+"mat": "Enum.Material.Plastic",
+"anchored": true,
+"shadow": true,
+"name": "Look",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2.0999984741210938,
+3.4000000953674316,
+2.1000003814697266
+],
+"pos": [
+-49.22044372558594,
+2.0500149726867676,
+-308.9850158691406
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-49.20000076293945,
+2.4000000953674316,
+-309
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-49.20000076293945,
+1.399999976158142,
+-309
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-49.20000076293945,
+0.47999998927116394,
+-309
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-49.20000076293945,
+3.319999933242798,
+-309
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "FireBarrel_F1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Body",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+3,
+2.0999999046325684,
+2.0999999046325684
+],
+"pos": [
+-49.20000076293945,
+1.899999976158142,
+-309
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Lid",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.03999999910593033,
+1.899999976158142,
+1.899999976158142
+],
+"pos": [
+-49.20000076293945,
+3.4000000953674316,
+-309
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "MeshPart",
+"parent": "FireBarrel_F2",
+"mat": "Enum.Material.Plastic",
+"anchored": true,
+"shadow": true,
+"name": "Look",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+2.0999984741210938,
+3.4000000953674316,
+2.1000003814697266
+],
+"pos": [
+-119.22044372558594,
+2.0500149726867676,
+-290.9850158691406
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-119.19999694824219,
+1.399999976158142,
+-291
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "FireBarrel_F2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Body",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+3,
+2.0999999046325684,
+2.0999999046325684
+],
+"pos": [
+-119.19999694824219,
+1.899999976158142,
+-291
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Lid",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.03999999910593033,
+1.899999976158142,
+1.899999976158142
+],
+"pos": [
+-119.19999694824219,
+3.4000000953674316,
+-291
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-119.19999694824219,
+3.319999933242798,
+-291
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-119.19999694824219,
+2.4000000953674316,
+-291
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "FireBarrel_F2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Rib",
+"query": false,
+"transp": 1,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+0.10000000149011612,
+2.180000066757202,
+2.180000066757202
+],
+"pos": [
+-119.19999694824219,
+0.47999998927116394,
+-291
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "SteamValve_S2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Wheel",
+"query": true,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.20000000298023224,
+1.7999999523162842,
+1.7999999523162842
+],
+"pos": [
+-123.19999694824219,
+4.599999904632568,
+-270
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "SteamValve_S2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "ValveBody",
+"query": true,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.2000000476837158,
+1.2000000476837158,
+1.2000000476837158
+],
+"pos": [
+-124.0999984741211,
+4.599999904632568,
+-270
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "SteamValve_S2",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Riser",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+9,
+0.800000011920929,
+0.800000011920929
+],
+"pos": [
+-124.0999984741211,
+7.900000095367432,
+-270
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "SteamValve_S2",
+"mat": "Enum.Material.Glass",
+"anchored": true,
+"shadow": true,
+"name": "Gauge",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.20000000298023224,
+0.6000000238418579,
+0.6000000238418579
+],
+"pos": [
+-123.5999984741211,
+6,
+-270
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "SteamValve_S1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Wheel",
+"query": true,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.20000000298023224,
+1.7999999523162842,
+1.7999999523162842
+],
+"pos": [
+-45.20000076293945,
+4.599999904632568,
+-330
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "SteamValve_S1",
+"mat": "Enum.Material.Glass",
+"anchored": true,
+"shadow": true,
+"name": "Gauge",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.20000000298023224,
+0.6000000238418579,
+0.6000000238418579
+],
+"pos": [
+-44.79999923706055,
+6,
+-330
+]
+},
+{
+"attrs": [],
+"touch": false,
+"tags": [],
+"collide": false,
+"class": "Part",
+"parent": "SteamValve_S1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "Riser",
+"query": false,
+"transp": 0,
+"rot": [
+0,
+0,
+90.00000250447816
+],
+"size": [
+9,
+0.800000011920929,
+0.800000011920929
+],
+"pos": [
+-44.29999923706055,
+7.900000095367432,
+-330
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "SteamValve_S1",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": true,
+"name": "ValveBody",
+"query": true,
+"transp": 0,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.2000000476837158,
+1.2000000476837158,
+1.2000000476837158
+],
+"pos": [
+-44.29999923706055,
+4.599999904632568,
+-330
+]
+}
+],
+"proxies": [
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Floor",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+84,
+2,
+117
+],
+"pos": [
+-84.19999694824219,
+-0.6000000238418579,
+-300
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_E",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.5,
+18,
+117
+],
+"pos": [
+-125.44999694824219,
+9.399999618530273,
+-300
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_W",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+1.5,
+18,
+117
+],
+"pos": [
+-42.94999694824219,
+9.399999618530273,
+-300
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_N_E",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+30.5,
+18,
+1.5
+],
+"pos": [
+-109.44999694824219,
+9.399999618530273,
+-242.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_N_W",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+30.5,
+18,
+1.5
+],
+"pos": [
+-58.94999694824219,
+9.399999618530273,
+-242.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_N_Header",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+20,
+4,
+1.5
+],
+"pos": [
+-84.19999694824219,
+16.399999618530273,
+-242.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "WedgePart",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_N_Gable_E",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+90.00000250447816,
+0
+],
+"size": [
+1.5,
+6,
+42
+],
+"pos": [
+-105.19999694824219,
+21.399999618530273,
+-242.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "WedgePart",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_N_Gable_W",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+-90.00000250447816,
+0
+],
+"size": [
+1.5,
+6,
+42
+],
+"pos": [
+-63.19999694824219,
+21.399999618530273,
+-242.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_S_E",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+30.5,
+18,
+1.5
+],
+"pos": [
+-109.44999694824219,
+9.399999618530273,
+-357.75
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_S_W",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+30.5,
+18,
+1.5
+],
+"pos": [
+-58.94999694824219,
+9.399999618530273,
+-357.75
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_S_Header",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+20,
+4,
+1.5
+],
+"pos": [
+-84.19999694824219,
+16.399999618530273,
+-357.75
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "WedgePart",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_S_Gable_E",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+90.00000250447816,
+0
+],
+"size": [
+1.5,
+6,
+42
+],
+"pos": [
+-105.19999694824219,
+21.399999618530273,
+-357.75
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "WedgePart",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Wall_S_Gable_W",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+-90.00000250447816,
+0
+],
+"size": [
+1.5,
+6,
+42
+],
+"pos": [
+-63.19999694824219,
+21.399999618530273,
+-357.75
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Ceiling_E",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+180.00000500895632,
+-8.130103088886761
+],
+"size": [
+43.03249740600586,
+1,
+117
+],
+"pos": [
+-104.970703125,
+21.937829971313477,
+-300
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Ceiling_W",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+-8.130103088886761
+],
+"size": [
+43.03249740600586,
+1,
+117
+],
+"pos": [
+-63.42928695678711,
+21.937829971313477,
+-300
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C01"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C01",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-79.19999694824219,
+3.9000000953674316,
+-308
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C02"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C02",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-89.19999694824219,
+3.9000000953674316,
+-292
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C03"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C03",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-53.19999694824219,
+3.9000000953674316,
+-323
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C04"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C04",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-115.19999694824219,
+3.9000000953674316,
+-277
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C05"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C05",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-115.19999694824219,
+3.9000000953674316,
+-334
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C06"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C06",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-53.19999694824219,
+3.9000000953674316,
+-266
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C07"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C07",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-75.19999694824219,
+3.9000000953674316,
+-343
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C08"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C08",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-93.19999694824219,
+3.9000000953674316,
+-257
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C09"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C09",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-67.19999694824219,
+3.9000000953674316,
+-334
+]
+},
+{
+"attrs": {
+"Look": "TallCrate",
+"PieceId": "C10"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.WoodPlanks",
+"anchored": true,
+"shadow": false,
+"name": "COLP_C10",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+7,
+4
+],
+"pos": [
+-101.19999694824219,
+3.9000000953674316,
+-266
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L01"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L01",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-61.19999694824219,
+2.1000001430511475,
+-343
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L02"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L02",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-107.19999694824219,
+2.1000001430511475,
+-257
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L03"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L03",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-72.19999694824219,
+2.1000001430511475,
+-319
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L04"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L04",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-96.19999694824219,
+2.1000001430511475,
+-281
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L05"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L05",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-102.19999694824219,
+2.1000001430511475,
+-325
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L06"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L06",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-66.19999694824219,
+2.1000001430511475,
+-275
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L07"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L07",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-80.19999694824219,
+2.1000001430511475,
+-331
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L08"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L08",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-88.19999694824219,
+2.1000001430511475,
+-269
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L09"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L09",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-58.19999694824219,
+2.1000001430511475,
+-296
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L10"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L10",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-110.19999694824219,
+2.1000001430511475,
+-304
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L13"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L13",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-57.19999694824219,
+2.1000001430511475,
+-312
+]
+},
+{
+"attrs": {
+"Look": "Jersey",
+"PieceId": "L14"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_L14",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+6,
+3.4000000953674316,
+2
+],
+"pos": [
+-111.19999694824219,
+2.1000001430511475,
+-288
+]
+},
+{
+"attrs": {
+"Look": "PalletStack",
+"PieceId": "P01"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Cardboard",
+"anchored": true,
+"shadow": false,
+"name": "COLP_P01",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+10,
+5
+],
+"pos": [
+-55.19999694824219,
+5.400000095367432,
+-344
+]
+},
+{
+"attrs": {
+"Look": "PalletStack",
+"PieceId": "P02"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Cardboard",
+"anchored": true,
+"shadow": false,
+"name": "COLP_P02",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+10,
+5
+],
+"pos": [
+-113.19999694824219,
+5.400000095367432,
+-256
+]
+},
+{
+"attrs": {
+"Look": "PalletStack",
+"PieceId": "P03"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Cardboard",
+"anchored": true,
+"shadow": false,
+"name": "COLP_P03",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+10,
+5
+],
+"pos": [
+-66.19999694824219,
+5.400000095367432,
+-319
+]
+},
+{
+"attrs": {
+"Look": "PalletStack",
+"PieceId": "P04"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Cardboard",
+"anchored": true,
+"shadow": false,
+"name": "COLP_P04",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+10,
+5
+],
+"pos": [
+-102.19999694824219,
+5.400000095367432,
+-319
+]
+},
+{
+"attrs": {
+"Look": "PalletStack",
+"PieceId": "P05"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Cardboard",
+"anchored": true,
+"shadow": false,
+"name": "COLP_P05",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+10,
+5
+],
+"pos": [
+-66.19999694824219,
+5.400000095367432,
+-281
+]
+},
+{
+"attrs": {
+"Look": "PalletStack",
+"PieceId": "P06"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Cardboard",
+"anchored": true,
+"shadow": false,
+"name": "COLP_P06",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+5,
+10,
+5
+],
+"pos": [
+-102.19999694824219,
+5.400000095367432,
+-281
+]
+},
+{
+"attrs": {
+"Look": "BlockWall",
+"PieceId": "W01"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_W01",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+10,
+7,
+3
+],
+"pos": [
+-68.25,
+3.9000000953674316,
+-294
+]
+},
+{
+"attrs": {
+"Look": "BlockWall",
+"PieceId": "W02"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_W02",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+10,
+7,
+3
+],
+"pos": [
+-100.25,
+3.9000000953674316,
+-306
+]
+},
+{
+"attrs": {
+"Look": "BlockWall",
+"PieceId": "W03"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_W03",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+10,
+7,
+3
+],
+"pos": [
+-101.25,
+3.9000000953674316,
+-349
+]
+},
+{
+"attrs": {
+"Look": "BlockWall",
+"PieceId": "W04"
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_W04",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+10,
+7,
+3
+],
+"pos": [
+-67.25,
+3.9000000953674316,
+-251
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_N_Floor",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+49.599998474121094,
+2,
+20.799999237060547
+],
+"pos": [
+-84.19999694824219,
+-0.6000000238418579,
+-231.10000610351562
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_N_Trailer",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+40,
+13,
+8.5
+],
+"pos": [
+-80.19999694824219,
+6.900000095367432,
+-225.75
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_N_Containers",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+8,
+17,
+20
+],
+"pos": [
+-104.19999694824219,
+8.899999618530273,
+-231.5
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_N_FenceW",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+0.800000011920929,
+12,
+20.799999237060547
+],
+"pos": [
+-59.79999542236328,
+6.400000095367432,
+-231.10000610351562
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_N_FenceBack",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+0,
+0
+],
+"size": [
+48.79999923706055,
+12,
+0.800000011920929
+],
+"pos": [
+-83.79999542236328,
+6.400000095367432,
+-221.10000610351562
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Concrete",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_S_Floor",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+49.599998474121094,
+2,
+20.799999237060547
+],
+"pos": [
+-84.20000457763672,
+-0.6000000238418579,
+-368.8999938964844
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_S_Trailer",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+40,
+13,
+8.5
+],
+"pos": [
+-88.20000457763672,
+6.900000095367432,
+-374.25
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_S_Containers",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+8,
+17,
+20
+],
+"pos": [
+-64.20000457763672,
+8.899999618530273,
+-368.5
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_S_FenceW",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+0.800000011920929,
+12,
+20.799999237060547
+],
+"pos": [
+-108.60000610351562,
+6.400000095367432,
+-368.8999938964844
+]
+},
+{
+"attrs": {
+"NotCover": true
+},
+"touch": true,
+"tags": [
+"KitIntendedDrop"
+],
+"collide": true,
+"class": "Part",
+"parent": "CollisionProxies",
+"mat": "Enum.Material.Metal",
+"anchored": true,
+"shadow": false,
+"name": "COLP_Yard_S_FenceBack",
+"query": true,
+"transp": 1,
+"rot": [
+0,
+-179.999991348578,
+0
+],
+"size": [
+48.79999923706055,
+12,
+0.800000011920929
+],
+"pos": [
+-84.60000610351562,
+6.400000095367432,
+-378.8999938964844
+]
+}
+],
+"warehouseIntact": 555
+}

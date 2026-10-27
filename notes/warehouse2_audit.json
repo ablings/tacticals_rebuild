@@ -1,0 +1,63 @@
+{
+ "built": {
+  "stats": {
+   "lights": 46,
+   "openSkyShare": 100,
+   "neon": 25,
+   "walkCells": 752,
+   "meshparts": 4,
+   "parts": 1398
+  },
+  "fails": 0,
+  "opts": "indoor=false (yards are open-air; see the hall sky sweep)",
+  "findings": [
+   {
+    "message": "3 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
+    "level": "WARN",
+    "where": "Warehouse2",
+    "code": "HOLE"
+   }
+  ],
+  "warns": 1
+ },
+ "sky": {
+  "lamp": 82,
+  "roof": 6651,
+  "glazing": 0,
+  "hole": 0,
+  "cells": 8526,
+  "holes": [],
+  "skylight": 1793
+ },
+ "roofLifted": {
+  "fails": 0,
+  "stats": {
+   "lights": 46,
+   "openSkyShare": 100,
+   "neon": 25,
+   "walkCells": 752,
+   "meshparts": 4,
+   "parts": 1398
+  },
+  "findings": [
+   {
+    "message": "3 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
+    "level": "WARN",
+    "where": "Warehouse2",
+    "code": "HOLE"
+   }
+  ],
+  "warns": 1
+ },
+ "flood": {
+  "bbox": {
+   "n0": -69,
+   "n1": 69,
+   "e1": 39,
+   "e0": -39
+  },
+  "outside": [],
+  "reached": 8397,
+  "capped": false
+ }
+}

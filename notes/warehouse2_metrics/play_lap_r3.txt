@@ -1,0 +1,29 @@
+map Warehouse2 me (-31.0, -50.0) feet 0.00
+walk south yard             ARRIVED 3.0s (-0.6, -62.4) feet -0.00
+walk south yard corner      ARRIVED 1.7s (19.1, -66.8) feet 0.24
+walk west lane              ARRIVED 10.0s (-35.1, 19.1) feet -0.00
+walk north yard             ARRIVED 4.8s (-0.4, 62.3) feet -0.00
+walk north yard corner      ARRIVED 1.8s (-19.1, 66.8) feet 0.39
+walk east lane              ARRIVED 10.6s (34.2, -19.5) feet -0.00
+walk centre                 ARRIVED 3.5s (0.7, -0.6) feet -0.00
+push S fence              ended (23.3, -63.9) feet 0.70 top feet 1.19
+push S trailer            ended (4.0, -69.4) feet 0.01 top feet 0.01
+push S containers         ended (-15.4, -64.0) feet -0.01 top feet 0.00
+push N fence              ended (-23.4, 64.0) feet 0.73 top feet 1.20
+push N trailer            ended (-4.0, 69.3) feet -0.02 top feet 0.00
+push N containers         ended (15.3, 64.0) feet -0.05 top feet 0.00
+space at S fence inCover=false part=nil crouched=false vaulting=false moving=false state=Running (22.6, -64.0) feet 1.20
+space at N trailer inCover=false part=nil crouched=false vaulting=false moving=false state=Running (-4.0, 68.6) feet -0.00
+cover L03 jersey         inCover=true part=COLP_L03 crouched=false vaulting=false moving=false state=Running
+   vault over L03 -> (-12.0, -16.7) feet -0.00
+cover C01 crate          inCover=true part=COLP_C01 crouched=false vaulting=false moving=false state=Running
+cover P01 pallet stack   inCover=true part=COLP_P01 crouched=false vaulting=false moving=false state=Running
+cover W01 block wall     inCover=true part=COLP_W01 crouched=false vaulting=false moving=false state=Running
+
+round 1: me (-31.0, -50.0) bot (31.1, 50.0) map Warehouse2
+round 2: me (-30.9, -50.0) bot (31.1, 50.0) map Warehouse2
+round 3: me (-30.9, -50.0) bot (31.1, 50.0) map Warehouse2
+round 4: me (-30.9, -50.0) bot (31.1, 50.0) map Warehouse2
+round 5: me (-30.9, -50.0) bot (31.1, 50.0) map Warehouse2
+end Ended 5-0
+
