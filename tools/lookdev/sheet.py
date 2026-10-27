@@ -5,17 +5,19 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT = os.path.join(ROOT, "out", "arena_lookdev")
 name = sys.argv[1] if len(sys.argv) > 1 else "sheet.jpg"
-rows = sys.argv[2] if len(sys.argv) > 2 else "ABCDR"
+rows = sys.argv[2] if len(sys.argv) > 2 else "ABCDER"
 CAMS = [("c10", "player height, 10 studs"), ("c40", "player height, 40 studs"), ("sun", "into the sun"), ("aerial", "aerial"), ("seam", "seam: sill + post on the floor (close)")]
 LABEL = json.load(open(os.path.join(OUT, "labels.json"))) if os.path.exists(os.path.join(OUT, "labels.json")) else {}
 MET = json.load(open(os.path.join(OUT, "metrics.json"))) if os.path.exists(os.path.join(OUT, "metrics.json")) else {}
 TW, TH, LW, HH = 520, 284, 250, 34
+CAMSJ = json.load(open(os.path.join(OUT, "cams.json"))) if os.path.exists(os.path.join(OUT, "cams.json")) else {}
 try:
     font = ImageFont.truetype("arial.ttf", 17); small = ImageFont.truetype("arial.ttf", 14); big = ImageFont.truetype("arialbd.ttf", 22)
 except OSError:
     font = small = big = ImageFont.load_default()
 sheet = Image.new("RGB", (LW + TW * len(CAMS), HH + TH * len(rows)), (24, 24, 24))
 d = ImageDraw.Draw(sheet)
+d.text((10, 8), "Studio quality " + CAMSJ.get("edit_quality", "?").replace("Enum.QualityLevel.", ""), fill=(255, 220, 120), font=small)
 for j, (c, title) in enumerate(CAMS):
     d.text((LW + j * TW + 10, 8), title, fill=(235, 235, 235), font=font)
 for i, b in enumerate(rows):
@@ -33,7 +35,9 @@ for i, b in enumerate(rows):
         sheet.paste(im, (LW + j * TW + 2, y + 2))
         m = MET.get(f"{b}_{c}")
         if m:
-            txt = f"mean {m['mean']:.0f}  top5% {m['p95']:.0f}" + (f"  lines {m['line_pct_40']:.1f}% @40 / {m['line_pct']:.1f}% @53" if m.get("line_pct") is not None and b not in ("R", "A") else (f"  lines {m['line_pct']:.1f}% @53" if m.get("line_pct") is not None and b == "A" else (f"  lines {m['line_pct_40']:.1f}% @40" if m.get("line_pct") is not None else "")))
+            txt = f"mean {m['mean']:.0f}  top5% {m['p95']:.0f}"
+            if "line_pct_10" in m: txt += f"  lines {m['line_pct_10']:.0f}% darker"
+            if "line_pct_40" in m: txt += f"  lines {m['line_pct_40']:.1f}% darker"
             tw = d.textlength(txt, font=small)
             d.rectangle((LW + j * TW + 6, y + TH - 26, LW + j * TW + 14 + tw, y + TH - 8), fill=(0, 0, 0))
             d.text((LW + j * TW + 10, y + TH - 25), txt, fill=(255, 255, 160), font=small)

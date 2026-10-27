@@ -1,24 +1,28 @@
-# Arena look test (surfaces only), 2026-10-26, Shadow PC, map builder
+# Arena look test (surfaces only), 2026-10-26, Shadow PC, map builder (round 2)
 
 Edward: "aesthetics should feel good too, the map shouldn't hurt your eyes, study the textures from RIVALS Arena".
-Surfaces only: no layout change. Nothing in the Arena map is changed yet. Edward picks A / B / C / D, then the chosen recipe is
-ported into `fix/map_arena.lua` (formerly `fix/map_practice_range.lua`, PRANGE2 block).
+Surfaces only: no layout change. Nothing in the Arena map is changed yet. Edward picks a bay, then the chosen recipe is ported
+into `fix/map_arena.lua` (formerly `fix/map_practice_range.lua`, PRANGE2 block).
 
-**Sheet:** `out/arena_lookdev/sheet.jpg` (force-added to git). Rows A-D + RIVALS; columns: player height at 10 and 40 studs,
-into the sun, aerial, a close seam shot (sill and post on the floor).
+**Sheet:** `out/arena_lookdev/sheet.jpg` (force-added to git). Rows A-E + RIVALS; columns: player height at 10 and 40 studs,
+into the sun, aerial, a close seam shot (sill and post on the floor). Every shot is at Studio quality 21, the PC look.
 
 ## For Edward, one line per bay
-- **A (what the Arena has now):** the brightest (average 160, top 5% at 195). Near-white everywhere, with dark lines that don't
-  line up from one piece to the next. This is the one that tires the eyes.
-- **B (RIVALS' exact greys):** dull and dark under our Arena lighting (average 90-102), and cool lavender, off our palette. RIVALS'
-  greys only look light under RIVALS' brighter lighting.
-- **C (our warm grey):** calm and warm, close to RIVALS in brightness (127-142), never glaring (top 5% 161, 17% under A). The grid
-  is faint at 40 studs.
-- **D (C with firmer lines), recommended:** looks just like C, but the lines still read across the map at 40 studs.
+- **A (what the Arena has now):** the brightest (average 161-167, top 5% at 190), with very dark lines (69% darker than the
+  surface up close) that don't line up from piece to piece. This is the one that tires the eyes.
+- **B (RIVALS' exact greys):** dull and dark under our Arena lighting (average 96-103), and cool lavender, off our palette.
+  RIVALS' greys only look light under RIVALS' brighter lighting.
+- **C (our warm grey):** calm and warm (average 134-143, top 5% 161-164, 15% under A), but the grid fades at 40 studs.
+- **D (C with darker lines):** the lines read at 40 studs, but they are harsh up close (38% darker).
+- **E (C with a soft, wider line), recommended:** looks like C, with lines soft up close (16%) that still read at 40 studs
+  (10.9%, the same as RIVALS' 10.2%). It uses our same grid image three times side by side, so no new upload is needed.
 
-## Recommendation: D
-Warm palette greys and a world-aligned grid at Transparency 0.65:
-- It drops A's glare: average brightness 160 → 142 at 40 studs, and the brightest 5% from 195 → 161. No near-white pixels anywhere.
+## Recommendation: E (D if the Texture count matters)
+E has warm palette greys and a world-aligned grid made of three side-by-side copies of our own image, each black at 0.85.
+- It drops A's glare:
+  - average brightness 161 → 142 at 40 studs, and the brightest 5% from 190 → 161;
+  - no surface pixel reaches 230 anywhere;
+  - line harshness up close goes from 69% to 16%.
 - It keeps RIVALS' craft:
   - two tones, solid cover 13% darker;
   - Plastic only;
@@ -26,58 +30,83 @@ Warm palette greys and a world-aligned grid at Transparency 0.65:
   - shell textured on its inner faces only;
   - no Neon or accents.
 - It reads as Tacticals rather than as a RIVALS copy.
-- C's 0.75 grid matches RIVALS' setting, but on our thinner-line image it reads only 5.3% darker at 40 studs (RIVALS 10.6%). D's
-  0.65 gives 7.8% and stays quiet up close.
+- Its lines carry as far as RIVALS' (10.9% vs 10.2% darker at 40 studs) and much further than C's (6.9%).
+- **Cost:** 3 Textures per face, so about 1,300 in the Arena (D or C: about 430; A today: about 485). This has not been measured
+  in Play. If draw calls on phones matter, take **D**: the same look at 430 Textures, with the harsher near line.
+- The clean long-term fix is a second own grid image with a 4-6 px soft line. That gives E's look at C's Texture count, but needs
+  an upload under Gunsy Funsy.
 
 ## Settings per bay
-All four bays have identical geometry: the Arena's pieces at the Arena's sizes. That means a floor, an L of 16-high perimeter wall
+All five bays have identical geometry: the Arena's pieces at the Arena's sizes. That means a floor, an L of 16-high perimeter wall
 (2 thick, with a 0.6 rim), a pillar 5x10x5, a wall 10x7x3 and a low wall 6x3.4x2. It also means a vault window (posts
 8x7x3.5, sill 11 x 3.4 x 2.5) and a 6-high platform reached by a 20-long wedge ramp (with a 3.4 parapet). The floor top is at
-0.6, as in the Arena.
+0.6, as in the Arena. MapAudit: 0 FAIL in every bay (1 HOLE warn: the rig's open floor edges).
 
-| | A control (current) | B RIVALS values | C Tacticals warm | D = C + firmer grid |
-|---|---|---|---|---|
-| Material | SmoothPlastic | Plastic | Plastic | Plastic |
-| Structure (floor, box, window, ramp, platform) | cover/window/ramp 238,238,241; box 226,226,230; floor 214,214,218 | 151,153,163 | **203,196,182** | 203,196,182 |
-| Solid cover (pillar, walls, low walls; Cargo in the map) | 238,238,241 | 132,134,143 | **177,171,158** (0.874 × structure, RIVALS' ratio 132/151) | 177,171,158 |
-| Grid image | rbxassetid://86361987736184 (ours) | same | same | same |
-| Grid Color3 / Transparency | 34,34,34 / 0.32 | 0,0,0 / 0.75 | 0,0,0 / 0.75 | 0,0,0 / **0.65** |
-| Tile | 5 × 5 | 5 × 5 | 5 × 5 | 5 × 5 |
-| Offsets | 0 (each part tiles from its own corner) | world lattice x,z = 5k, y = 0.6 + 5k | same | same |
-| Faces | Top/Front/Back/Left/Right of every part, both sides of the box | floor Top; box inner face only; rims none; freestanding pieces Top + 4 sides; ramp slope + back + sides | same as B | same as B |
-| Neon / accents | none | none | none | none |
+| | A control (current) | B RIVALS values | C Tacticals warm | D = C + darker grid | E = C + soft wide line |
+|---|---|---|---|---|---|
+| Material | SmoothPlastic | Plastic | Plastic | Plastic | Plastic |
+| Floor | 214,214,218 | 151,153,163 | **205,196,181** | 205,196,181 | 205,196,181 |
+| Structure (box, window, ramp, platform) | box 226,226,230; rest 238,238,241 | 151,153,163 | **203,196,183** | 203,196,183 | 203,196,183 |
+| Solid cover (pillar, walls, low walls, parapets; Cargo in the map) | 238,238,241 | 132,134,143 | **177,171,160** (0.874 × structure, RIVALS' 132/151) | 177,171,160 | 177,171,160 |
+| Grid image | rbxassetid://86361987736184 (ours) | same | same | same | same, **×3** offset 0 / 0.04 / 0.08 studs |
+| Grid Color3 / Transparency | 34,34,34 / 0.32 | 0,0,0 / 0.75 | 0,0,0 / 0.75 | 0,0,0 / **0.65** | 0,0,0 / **0.85** each |
+| Tile / offsets | 5 × 5 / 0 (each part from its own corner) | 5 × 5 / world lattice x,z = 5k, y = 0.6 + 5k | same as B | same | same |
+| Faces | Top + 4 sides of every part, both sides of the box, rims | floor Top; box inner face only; rims none; pieces Top + 4 sides; ramp slope (V 0) + back + sides | same as B | same | same |
+| Textures per bay | 70 | 47 | 47 | 47 | 141 |
 
-C/D colour = the palette's warm grey (200,196,186) + 3 R / − 4 B. The rendered lit wall came out at 165,159,149 (R − B = 16;
-the palette's R − B is 14). The training-room lesson (+12 R / −14 B) was measured under **Future** in a closed room. Under the match
-place's **ShadowMap** with an open sky, the blue shift is only a few points (first C at 178,174,164 rendered 143,140,133), so
-measure before compensating.
+**Colour:** the palette's warm grey 200,196,186, corrected by measuring the render.
+- The open blue sky fills horizontal faces most. As is, the floor rendered neutral (R − B = 0 where the palette gives about +10),
+  and the walls lost about 3 points.
+- The render passes a nominal R − B shift through about 1:1. +9 R / −9 B overshot the floor to R − B 19.
+- Final: floor +5 R / −5 B, everything else +3 R / −3 B, at the same luminance. Rendered result: floor 152,147,143 (R − B 10), lit
+  wall 164,159,150 (R − B 14). Both match the palette's hue.
 
-## Numbers (surfaces only, sky masked; luminance 0-255)
-Glare check = the brightest 5% of surface pixels (p95). Line contrast = how much darker a grid line is than the surface next to it.
-The **@40** crop is the pillar's sunlit face 40 studs away (RIVALS: the end slab 40 studs away). The **@53** crop is the back wall
-53.5 studs away, above the pieces.
+## Numbers (luminance 0-255, surfaces only)
+How they were measured:
+- **Surface pixels:** any pixel the bay changes against a background frame from the same camera with no bay in view (`G_*.png`).
+  This mask drops the sky, the void under the horizon and the sun disc. RIVALS (an enclosed box) uses a colour sky mask.
+- **Glare check:** p95, the brightest 5% of surface pixels.
+- **Lines:** how much darker the darkest grid line is than the surface next to it (the deepest dip of a column or row profile,
+  over a 21-px running median).
+  - "Near" = the pillar's sunlit face at 10 studs (RIVALS: the end slab at 10 studs).
+  - "@40" = the pillar face 40 studs away (RIVALS: the end slab 40 studs away).
 
-| Bay | 10 studs mean / p95 | 40 studs mean / p95 | into sun mean / p95 | aerial mean / p95 | seam mean / p95 | lines @40 | lines @53 | lit wall RGB @53 |
-|---|---|---|---|---|---|---|---|---|
-| A | 160 / 195 | 160 / 184 | 121 / 166 | 129 / 176 | 154 / 187 | (on the edges, see note) | 9.4% | 180,180,185 |
-| B | 90 / 120 | 102 / 122 | 55 / 110 | 99 / 115 | 92 / 121 | 6.2% | 4.2% | 116,119,134 |
-| C | 127 / 161 | 142 / 161 | 84 / 152 | 120 / 155 | 130 / 161 | 5.3% | 3.7% | 165,159,149 |
-| D | 127 / 161 | 142 / 161 | 84 / 152 | 120 / 156 | 130 / 161 | **7.8%** | 5.2% | 165,159,149 |
-| RIVALS Arena (own file lighting) | 136 / 181 | 117 / 174 | 89 / 110 | 138 / 192 | 105 / 164 | 10.6% | | 120,133,159 |
+| Bay | 10 studs mean / p95 | lines near | 40 studs mean / p95 | lines @40 | into sun mean / p95 | aerial mean / p95 | seam mean / p95 |
+|---|---|---|---|---|---|---|---|
+| A | 167 / 192 | **69%** | 161 / 190 | 13.3% | 111 / 164 | 159 / 181 | 164 / 191 |
+| B | 96 / 122 | 29% | 103 / 121 | 7.3% | 49 / 112 | 102 / 117 | 102 / 123 |
+| C | 134 / 163 | 26% | 143 / 161 | 6.9% | 77 / 152 | 141 / 158 | 141 / 164 |
+| D | 134 / 163 | 38% | 143 / 161 | 9.4% | 76 / 152 | 141 / 158 | 141 / 164 |
+| E | 134 / 163 | **16%** | 142 / 161 | **10.9%** | 76 / 152 | 141 / 158 | 141 / 164 |
+| RIVALS Arena (own file lighting) | 153 / 185 | 6% | 127 / 188 | 10.2% | 99 / 109 | 141 / 188 | 101 / 180 |
 
-- **Do the lines read at 40 studs?** A: yes, loud (59% darker up close) and misaligned. B: yes, faint. C: barely: 5% is visible
-  on a flat lit face but lost on shaded or grazing faces. D: yes, clearly, without being loud up close (35% darker at 10 studs, on
-  a hair-thin line). RIVALS: yes, and the strongest, helped by its thicker lines and corner crosses.
-- A's @40 pillar crop measures 1.2% only because A's unaligned lines happen to fall on the pillar's edges, outside the crop.
-- No surface pixel reaches 230 in any bay. The 1.2-1.6% "≥230" in the sun shots is the sun disc.
-- Into the sun, C/D's shaded faces average 84, about RIVALS' 89. B's are 55: heavy and almost black.
-- RIVALS was captured under its file's Studio-template lighting (Brightness 3, exposure 0, Soft). It is brighter than our Arena
-  lighting, so its numbers are for reference, not a target.
+- **Phone-like quality check (Studio level 5):** D near 39% / @40 9.3%; E near 16% / @40 11.2%. The same pattern holds
+  (`P_*.png`).
+- **Do the lines read at 40 studs?**
+  - A: yes, but loud and misaligned.
+  - B: yes, faintly.
+  - C: weakly.
+  - D: yes, but harsh up close.
+  - E: yes, at RIVALS' strength, and soft up close.
+  - RIVALS: yes. Its soft, wide lines (with corner crosses) stay about even from near to far. A hairline falls off steeply
+    (38% → 9%).
+- Into the sun, the shaded faces of C/D/E average 76 against RIVALS' 99; B's (49) go nearly black. That is lighting (exposure
+  −0.55), outside this test.
+- RIVALS was captured under its file's Studio-template lighting (Brightness 3, exposure 0, Soft), which is brighter than ours.
+  It is a reference, not a target.
 
 ## Viewing conditions (practice/arena_lookdev.rbxl)
+- **Studio EditQualityLevel 21 (PC look) for every capture** (it is written on the sheet).
+  - Round 1 was shot at the session's default level 1: no sun cast shadows, and lighting that only settled around the editor
+    camera.
+  - The level was set per Studio process (this place and the RIVALS copy only). Both are set back to level 1 at the end, so the
+    saved Studio settings stay as they were.
 - **Technology ShadowMap, LightingStyle Realistic, PrioritizeLightingQuality on.** These are the match place's values (read
-  offline from `match_place_ref.rbxl` with `tools/read_technology.py` and the new `tools/rbxl_lighting_dump.py`). The saved file
-  was re-read after saving.
+  offline from `match_place_ref.rbxl` with `tools/read_technology.py` / `tools/rbxl_lighting_dump.py`). The saved file was
+  re-read after saving.
+  - The hand-written blank file opened as Soft with Outlines on. Both were set by script.
+  - At level 21, Soft and Realistic differ on 1.7% of pixels (mean difference 0.4): with sun and sky only, LightingStyle barely
+    matters.
 - **Base lighting = match_place_ref's Lighting:**
   - Ambient 72,76,84; ShadowSoftness 0.12; ColorShift 0; Roblox's default Sky.
   - Atmosphere, Bloom and MapGrade, all Enabled.
@@ -90,65 +119,74 @@ The **@40** crop is the pillar's sunlit face 40 studs away (RIVALS: the end slab
   - Bloom 0.4 / 24 / 1.6.
 
   Script: `tools/lookdev/dev_lighting.lua`.
-- FOV 70 (`ui/set/CameraConfig.lua` Hip.FOV). Cameras sit 5.1 above the floor (HRP 3.0 + pivot 1.5 + 0.6), at a 1452 × 793
-  viewport. Every frame was kept only after two consecutive matching frames.
+- **Cameras:**
+  - FOV 70 (`ui/set/CameraConfig.lua` Hip.FOV), 5.1 above the floor (HRP 3.0 + pivot 1.5 + 0.6).
+  - The viewport is 1452 × 793, checked on every frame.
+  - The editor camera is moved to each bay and given a 6 s settle before shooting.
+  - A frame is kept only after two consecutive matching frames.
 - Sun direction (−0.71, 0.64, 0.28), so the lit faces point −X. RIVALS sun (−0.56, 0.73, −0.40).
 
-## Port recipe for fix/map_arena.lua (when Edward picks C or D)
+## Port recipe for fix/map_arena.lua (when Edward picks)
 1. In the PRANGE2 block, the materials and colours:
    - SmoothPlastic → Plastic;
-   - floor, box, rim, windows (posts and sill), ramps, platforms and parapets → 203,196,182;
-   - pillars, walls, cargo and low walls → 177,171,158;
-   - spawn pads: keep a faint tint, or move them to the warm family. That is Edward's call; they are outside this test.
-2. Grid: Color3 black; Transparency 0.65 (D) or 0.75 (C); 5 × 5. Offsets from `tools/lookdev/grid_lib.lua` `worldOffsets(p,
-   face, ANCHOR, 5)` with `ANCHOR = ORIGIN + (0, FLOOR_TOP, 0)`, so lines run at x, z = 5k from the map origin and y = floor top
-   + 5k.
-   - The face convention is tested: a texture's (0,0) is the face's top-left seen from outside, U runs right and V runs down.
-     On Top faces the image's up is the part's +Z.
-   - Captures: `gt_front`, `gt_top`, `gt_side` in `out/arena_lookdev/`.
+   - floor slab → 205,196,181;
+   - box walls, rims, window posts and sills, ramps and platforms → 203,196,183;
+   - pillars, walls, cargo, low walls **and parapets** (3.4-high solid cover) → 177,171,160;
+   - spawn pads: keep a faint tint or move them to the warm family (outside this test).
+2. Grid:
+   - Color3 black, 5 × 5. Transparency: C 0.75, D 0.65. For E, 0.85 on three copies, with the 2nd and 3rd copies' U and V offsets
+     +0.04 and +0.08 (mod 5).
+   - Offsets from `tools/lookdev/grid_lib.lua` `worldOffsets(p, face, ANCHOR, 5)` with `ANCHOR = ORIGIN + (0, FLOOR_TOP, 0)`.
+     Lines run at x, z = 5k from the map origin and y = floor top + 5k.
+   - Face convention (tested): (0,0) = the face's top-left seen from outside; U runs right, V runs down; on Top faces the image's
+     up is the part's +Z. Captures: `gt_front`, `gt_top`, `gt_side`.
+   - WedgePart slope: V = 0 (its V runs along the slope). The diagonal RampEast's faces are off the world axes, so they stay 0.
 3. Faces:
    - the floor slab: Top only;
    - the box walls: the inner face only (no outside, no rim);
    - every freestanding piece: Top + 4 sides;
-   - ramps (WedgePart): slope + back + 2 sides. The slope's V runs along the slope, so it stays 0.
-   - The diagonal RampEast's faces are off the world axes, so `worldOffsets` leaves them at 0.
-4. Lighting is out of scope here. B's dullness shows the Arena lighting is darker than RIVALS' (Brightness 1.6 and exposure −0.55
-   against 3 and 0), so any later lighting change should be judged with this sheet.
+   - ramps: slope + back + 2 sides.
+4. **Rims:** the live Arena has a corner ZFIGHT. `fix/map_arena.lua` inflates every rim 0.1 on both X and Z, so the rims overlap
+   at all 4 corners. Inflate only across the wall thickness, and stop the E/W rims at the N/S rims (as in `bays.lua`). Run
+   MapAudit after the port.
+5. Lighting is out of scope. B's dullness shows the Arena lighting is darker than RIVALS' (Brightness 1.6 and exposure −0.55
+   against 3 and 0); judge any lighting change with this sheet.
 
 ## Files
 - Practice place: `practice/arena_lookdev.rbxl`, a NEW place.
-  - It was written by `tools/lookdev/new_blank_rbxl.py`: Workspace + Lighting only, nobody else's place copied.
-  - Bays are in `Workspace.Lookdev.Bay_A`-`Bay_D` (z 0 / 200 / 400 / 600).
+  - It was written by `tools/lookdev/new_blank_rbxl.py`: Workspace + Lighting, nobody else's place copied.
+  - Bays are in `Workspace.Lookdev.Bay_A`-`Bay_E` (z 0 / 200 / 400 / 600 / 800).
   - Earlier versions and the convention test rig are in `ServerStorage.LookdevOld` (the UNDO path).
 - Scripts in `tools/lookdev/`:
   - `bays.lua` (+ `grid_lib.lua` prepended) builds the bays;
   - `dev_lighting.lua` sets up the lighting;
-  - `capture.py` (cameras in `out/arena_lookdev/cams.json`), `metrics.py` (`metrics.json`) and `sheet.py` produce the shots,
+  - `capture.py` (cameras + quality level in `cams.json`), `metrics.py` (`metrics.json`) and `sheet.py` produce the shots,
     numbers and sheet;
+  - `mapaudit_edit.lua` is MapAudit inlined for a read-only run in Edit;
   - `run.py` / `mcpcli.py` drive Studio.
-- RIVALS: a read-only temp copy of `Documents/RivalsArenaMap.rbxl`
-  (`%LOCALAPPDATA%\Temp\arena_lookdev_ref\RivalsArena_readonly_copy.rbxl`, file set read-only). Captured only, never saved.
-  The original file was not opened.
+- RIVALS: a read-only temp copy of `Documents/RivalsArenaMap.rbxl` (md5-identical,
+  `%LOCALAPPDATA%\Temp\arena_lookdev_ref\`, file set read-only). Captured only, never saved. The original was not opened.
 
 ## Lessons (filed in the vault: Grid Test Chamber, "Our variant")
+- **Studio's EditQualityLevel is part of the viewing conditions.** At level 1 the sun casts no shadows and lighting only settles
+  near the editor camera. Shoot looks at level 21 (PC) plus one phone-like level, and write the level on the sheet. The level is
+  per process (`settings().Rendering`); set it back afterwards.
 - **World-aligned texture offsets**:
   - offset = s · (face origin − anchor) mod tile, where the origin is the face's top-left seen from outside;
   - U runs right, V runs down, and Top faces' image-up = the part's +Z;
   - RIVALS' 3-high sill (V offset 2) agrees.
-- **Match greys to the lighting by measuring the render.** RIVALS' 151 renders at ~100-116 under a darker match lighting. The warm
-  shift needed under ShadowMap with an open sky was only +3 R / −4 B, against +12 / −14 under Future in a closed room.
-- **A thin-line grid image (2 px of 512) needs ~0.65 transparency** for its lines to read at 40 studs. RIVALS' 0.75 works for
-  RIVALS because its image has thicker lines and corner crosses.
-- **Capture pitfalls:**
-  - screen_capture borrows the camera, but the lighting grid follows the *editor* camera. A bay 600 studs away rendered flat with
-    no shading until the editor camera was moved there first.
-  - A save that restores the window can shrink the viewport (1452 × 793 → 812 × 675). Check the image size on every capture.
-  - A hand-written blank .rbxl's LightingStyle 0 opened as Soft with Outlines on: set them by script and read them back from the
-    saved file.
-- With sun + sky only, LightingStyle Soft and Realistic rendered the same numbers (it changes only local-light shadows).
+- **Pick greys by the render.**
+  - RIVALS' 151 renders at ~100 under a darker match lighting.
+  - With an open blue sky, horizontal faces lose ~10 points of R − B and walls ~3. Correct the floor separately (+5 / −5) from
+    the walls (+3 / −3): the render passes nominal shifts through about 1:1.
+- **Line width sets the far read; transparency sets the near read.** A hairline (4 px of a 512 tile) at 0.65 is 38% → 9% from
+  10 to 40 studs. Three copies side by side at 0.85 give 16% → 11%. RIVALS' wide line gives 6% → 10%.
+- **Rigs floating in the void:** mask surfaces with an empty-scene background frame, not a sky colour test.
+- **Capture pitfalls:** a save that restores the window shrank the viewport (1452 × 793 → 812 × 675); check every frame's size.
+  Matching frames don't prove the lighting has settled after a long editor-camera jump: move the camera, wait, then shoot.
 
 ## Open
-- Not ported. The Arena still has look A until Edward picks one.
-- If Edward wants RIVALS-strength lines (≈10% at 40 studs) without louder close-up lines, the next step is a second own grid image
-  with 4-6 px lines and small corner ticks. That needs an upload under Gunsy Funsy.
-- Cast shadows look soft in Edit captures at this sun angle. Check them in Play / the client before judging the shadow look.
+- Not ported. The Arena keeps look A until Edward picks.
+- E's Texture cost (about 1,300 in the Arena) is not measured in Play / on a phone. Measure before shipping E, or take D, or
+  upload a wide-line grid image.
+- Live RIVALS lighting is still unknown (the file has template lighting).

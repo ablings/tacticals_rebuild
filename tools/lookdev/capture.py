@@ -11,7 +11,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 OUT = os.path.join(ROOT, "out", "arena_lookdev")
 EYE = 5.1  # Tacticals third-person camera above the floor: HRP 3.0 + pivot 1.5 + 0.6 (ui/set/CameraConfig.lua), FOV 70
 FT = 0.6
-BAYZ = {"A": 0, "B": 200, "C": 400, "D": 600}
+BAYZ = {"A": 0, "B": 200, "C": 400, "D": 600, "E": 800, "G": 0}  # G = no bay (background frames for the surface mask)
 
 
 def bay_cams(z):
@@ -59,14 +59,17 @@ if __name__ == "__main__":
     cams = sys.argv[2].split(",") if len(sys.argv) > 2 else ["c10", "c40", "sun", "aerial", "seam"]
     allcams = {k: bay_cams(z) for k, z in BAYZ.items()}; allcams["R"] = ref_cams()
     os.makedirs(OUT, exist_ok=True)
-    json.dump({"eye_above_floor": EYE, "fov": 70, "cams": allcams}, open(os.path.join(OUT, "cams.json"), "w"), indent=1)
+    q = call("execute_luau", {"studio_id": SIDS["dev"], "datamodel_type": "Edit", "code": "return tostring(settings().Rendering.EditQualityLevel)"})
+    print("EditQualityLevel", q)
+    json.dump({"eye_above_floor": EYE, "fov": 70, "viewport": [1452, 793], "edit_quality": q.strip(), "cams": allcams}, open(os.path.join(OUT, "cams.json"), "w"), indent=1)
     SOLO = """local key = '%s'
 local park = game.ServerStorage:FindFirstChild('LookdevParked') or Instance.new('Folder', game.ServerStorage); park.Name = 'LookdevParked'
 for _, b in park:GetChildren() do b.Parent = workspace.Lookdev end
 if key ~= '' then for _, b in workspace.Lookdev:GetChildren() do if b.Name ~= 'Bay_' .. key then b.Parent = park end end
 	-- move the real editor camera to the bay: the lighting grid follows it, not screen_capture's borrowed camera (2026-10-26)
-	local z = ({ A = 0, B = 200, C = 400, D = 600 })[key]
+	local z = ({ A = 0, B = 200, C = 400, D = 600, E = 800, G = 0 })[key]
 	workspace.CurrentCamera.CFrame = CFrame.lookAt(Vector3.new(-40, 55.6, z + 30), Vector3.new(-5, 0.6, z - 2)) end
+if key == '' then park:Destroy() end -- nothing parked left behind in the saved place
 return #workspace.Lookdev:GetChildren()"""
     for b in bays:
         sid = SIDS["ref"] if b == "R" else SIDS["dev"]

@@ -25,10 +25,11 @@
   "title": "C  Tacticals warm",
   "lines": [
    "Plastic, warm greys",
-   "structure 203,196,182",
-   "solid cover 177,171,158",
-   "(warm grey 200,196,186",
-   " +3 R / -4 B, measured)",
+   "palette warm grey 200,196,186",
+   "warm-compensated by render:",
+   "structure 203,196,183",
+   "floor 205,196,181",
+   "cover 177,171,160",
    "grid as B: black at 0.75"
   ]
  },
@@ -37,7 +38,19 @@
   "lines": [
    "everything as C",
    "grid black at 0.65",
-   "(lines a bit darker)"
+   "(lines darker: read far,",
+   " but harsh up close)"
+  ]
+ },
+ "E": {
+  "title": "E  C + soft wide line",
+  "lines": [
+   "everything as C",
+   "same grid image x3,",
+   "side by side (0.04 apart),",
+   "each black at 0.85:",
+   "a wider, softer line",
+   "(3x the Texture count)"
   ]
  },
  "R": {

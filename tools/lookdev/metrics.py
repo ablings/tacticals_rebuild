@@ -1,6 +1,6 @@
 """Per capture: luminance (Rec.709 on 0-255 sRGB) of the surfaces only (sky masked: B > R + 60 and B > 140), mean and the brightest
 5% (p95, glare check), share of surface pixels >= 230 (near-white), and on the 40-stud shots the grid-line contrast: column profile
-of a flat sunlit crop, divided by its 21-px running median; line_pct = how much darker the lines are (2nd percentile dip, %).
+of a flat sunlit crop, divided by its 21-px running median; line_pct = how much darker the darkest line is (deepest dip, %).
 Usage: python tools/lookdev/metrics.py  -> out/arena_lookdev/metrics.json"""
 import json, os
 import numpy as np
@@ -21,27 +21,38 @@ def line_pct(L, axis):
     pad = np.pad(P, 10, mode="edge")
     T = np.array([np.median(pad[i:i + 21]) for i in range(len(P))])
     R = P / T - 1
-    return float(-100 * np.percentile(R, 2))
+    return float(-100 * R.min())  # the deepest line dip (round 2: a 2-px line is under 2% of a near crop, so p2 missed it)
 
 
 res = {}
 for f in sorted(os.listdir(OUT)):
-    if not f.endswith(".png") or "_" not in f or f.startswith(("gt_", "crop")):
+    if not f.endswith(".png") or "_" not in f or f.startswith(("gt_", "crop", "G_")):
         continue
     key = f[:-4]
+    base = key[2:] if key.startswith("P_") else key  # P_ = the phone-like quality check (EditQualityLevel 05)
     a = np.asarray(Image.open(os.path.join(OUT, f)).convert("RGB")).astype(float)
-    sky = (a[..., 2] > a[..., 0] + 60) & (a[..., 2] > 140)
+    bg = os.path.join(OUT, "G_" + base.split("_", 1)[1] + ".png")
+    if not base.startswith("R") and os.path.exists(bg):
+        # bays float in the void: background = the same camera with no bay; surface = any pixel the bay changes (round 2;
+        # the colour test alone counted the below-horizon void as floor and the sun disc as glare)
+        b = np.asarray(Image.open(bg).convert("RGB")).astype(float)
+        sky = np.abs(a - b).max(axis=2) <= 6
+    else:
+        sky = (a[..., 2] > a[..., 0] + 60) & (a[..., 2] > 140)
     L = lum(a)[~sky]
     m = {"mean": float(L.mean()), "p95": float(np.percentile(L, 95)), "white_share": float((L >= 230).mean() * 100),
          "sky_share": float(sky.mean() * 100), "frame_mean": float(lum(a).mean())}
     surf = a[~sky]
     m["rgb_mean"] = [round(float(v)) for v in surf.mean(axis=0)]
-    if key.endswith("_c40"):
-        x0, x1, y0, y1 = CROPS["R" if key.startswith("R") else "bay"]
+    if base.endswith("_c10"):  # the near read: the pillar face (bays) / the end slab (RIVALS) at 10 studs
+        x0, x1, y0, y1 = (500, 950, 150, 450) if base.startswith("R") else (600, 850, 150, 450)
+        c = lum(a[y0:y1, x0:x1]); m["line_pct_10"] = max(line_pct(c, 0), line_pct(c, 1))
+    if base.endswith("_c40"):
+        x0, x1, y0, y1 = CROPS["R" if base.startswith("R") else "bay"]
         c = lum(a[y0:y1, x0:x1])
         m["line_pct"] = line_pct(c, 0)   # vertical lines (column profile)
         m["line_pct_h"] = line_pct(c, 1) # horizontal lines (row profile)
-        if not key.startswith("R"):  # the pillar's sunlit face at exactly 40 studs (same distance as the RIVALS slab)
+        if not base.startswith("R"):  # the pillar's sunlit face at exactly 40 studs (same distance as the RIVALS slab)
             px0, px1, py0, py1 = CROPS["pillar"]; pc = lum(a[py0:py1, px0:px1])
             m["line_pct_40"] = max(line_pct(pc, 0), line_pct(pc, 1))
             m["pillar_rgb"] = [round(float(v)) for v in a[py0:py1, px0:px1].reshape(-1, 3).mean(axis=0)]
@@ -52,5 +63,5 @@ for f in sorted(os.listdir(OUT)):
     res[key] = m
 json.dump(res, open(os.path.join(OUT, "metrics.json"), "w"), indent=1)
 for k, m in res.items():
-    print(f"{k:10s} mean {m['mean']:6.1f}  p95 {m['p95']:6.1f}  >=230 {m['white_share']:5.1f}%  rgb {m['rgb_mean']}"
+    print(f"{k:10s} " + (f"near {m['line_pct_10']:.1f}% " if 'line_pct_10' in m else "") + f"mean {m['mean']:6.1f}  p95 {m['p95']:6.1f}  >=230 {m['white_share']:5.1f}%  rgb {m['rgb_mean']}"
           + (f"  lines@53 v {m['line_pct']:.1f}% h {m['line_pct_h']:.1f}%  lines@40 {m['line_pct_40']:.1f}%  wall {m['crop_rgb']} pillar {m.get('pillar_rgb')}" if "line_pct" in m else ""))
