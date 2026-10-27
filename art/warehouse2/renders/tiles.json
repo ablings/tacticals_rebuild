@@ -1,0 +1,266 @@
+[
+ {
+  "name": "W2_FireBarrel",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_FireBarrel.png",
+  "old": "FireBarrel (Look 2.1 x 3.4 x 2.1)",
+  "size": [
+   3.547,
+   3.4,
+   3.412
+  ],
+  "tris": 1476,
+  "replaces": "Shootables/FireBarrel_F1-F4 .Look (2.1 x 3.4 x 2.1)"
+ },
+ {
+  "name": "W2_FireBarrel_Burnt",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_FireBarrel_Burnt.png",
+  "old": "none (old barrel had no burnt state)",
+  "size": [
+   4.661,
+   3.019,
+   3.403
+  ],
+  "tris": 1952,
+  "replaces": "the FireBarrel after it explodes (swap the Look; same pivot)"
+ },
+ {
+  "name": "W2_OilDrum_Olive",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_OilDrum_Olive.png",
+  "old": "none (new clutter, 3.0 high: not shootable)",
+  "size": [
+   2.1,
+   3.0,
+   2.09
+  ],
+  "tris": 1192,
+  "replaces": "new clutter, not shootable (kit brief OilDrum 2.1 x 3.0 x 2.1)"
+ },
+ {
+  "name": "W2_OilDrum_Black",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_OilDrum_Black.png",
+  "old": "none (new clutter, 3.0 high: not shootable)",
+  "size": [
+   2.1,
+   3.0,
+   2.1
+  ],
+  "tris": 1192,
+  "replaces": "new clutter, not shootable (kit brief OilDrum)"
+ },
+ {
+  "name": "W2_Cover_Low",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Cover_Low.png",
+  "old": "Arena_L low cover 6 x 3.4 x 2",
+  "size": [
+   6.0,
+   3.37,
+   2.0
+  ],
+  "tris": 1112,
+  "replaces": "Visuals/Arena_L01-L14 (6 x 3.4 x 2), cover proxy COLP_Lxx"
+ },
+ {
+  "name": "W2_Cover_Tall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Cover_Tall.png",
+  "old": "Arena_C tall cover 5 x 7 x 4",
+  "size": [
+   5.0,
+   7.0,
+   4.0
+  ],
+  "tris": 348,
+  "replaces": "Visuals/Arena_C01-C10 (5 x 7 x 4), cover proxy COLP_Cxx"
+ },
+ {
+  "name": "W2_Cover_TallPly",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Cover_TallPly.png",
+  "old": "Arena_C tall cover 5 x 7 x 4 (variant 2)",
+  "size": [
+   5.0,
+   7.0,
+   4.0
+  ],
+  "tris": 396,
+  "replaces": "Visuals/Arena_C01-C10, second variant (kit brief TallCrate: plywood on skids)"
+ },
+ {
+  "name": "W2_Cover_Wall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Cover_Wall.png",
+  "old": "Arena_W cover wall 10 x 7 x 3",
+  "size": [
+   10.0,
+   6.97,
+   3.0
+  ],
+  "tris": 1356,
+  "replaces": "Visuals/Arena_W01-W04 (10 x 7 x 3), cover proxy COLP_Wxx (the stacked set: two crates under one long crate); pivot = the wall's bottom centre"
+ },
+ {
+  "name": "W2_SupplyCrate",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_SupplyCrate.png",
+  "old": "none (loose dressing crate)",
+  "size": [
+   5.0,
+   3.5,
+   3.0
+  ],
+  "tris": 532,
+  "replaces": "loose crate for dressing (half a wall stack)"
+ },
+ {
+  "name": "W2_SteelCrate",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_SteelCrate.png",
+  "old": "none (loose dressing crate)",
+  "size": [
+   5.0,
+   3.5,
+   3.0
+  ],
+  "tris": 256,
+  "replaces": "loose crate for dressing (half a wall stack)"
+ },
+ {
+  "name": "W2_LongCrate",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_LongCrate.png",
+  "old": "none (loose dressing crate)",
+  "size": [
+   10.0,
+   3.5,
+   3.0
+  ],
+  "tris": 556,
+  "replaces": "loose long crate for dressing (top of a wall stack)"
+ },
+ {
+  "name": "W2_AmmoCan",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_AmmoCan.png",
+  "old": "Arena_PropCrate 2.4 x 1.2 x 1.8",
+  "size": [
+   2.4,
+   1.189,
+   1.8
+  ],
+  "tris": 92,
+  "replaces": "Visuals/Arena_PropCrate01-04 (2.4 x 1.2 x 1.8)"
+ },
+ {
+  "name": "W2_RollDoor_Open",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_RollDoor_Open.png",
+  "old": "old Shutter 16 x 9; new opening is 20 x 14",
+  "size": [
+   23.6,
+   16.28,
+   2.59
+  ],
+  "tris": 420,
+  "replaces": "the end openings of Warehouse 2 (20 x 14, kit brief RollUpDoor; old Warehouse Shutter was 16 x 9); pivot = opening centre on the floor, on the wall's inside face"
+ },
+ {
+  "name": "W2_RollDoor_HalfOpen",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_RollDoor_HalfOpen.png",
+  "old": "old Shutter 16 x 9; new opening is 20 x 14",
+  "size": [
+   23.6,
+   16.28,
+   2.59
+  ],
+  "tris": 992,
+  "replaces": "same as Open, curtain down to 7.0 (half of 14)"
+ },
+ {
+  "name": "W2_Pallet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Pallet.png",
+  "old": "Props/Pallet 4 x 0.6 x 3.4",
+  "size": [
+   4.0,
+   0.6,
+   3.4
+  ],
+  "tris": 240,
+  "replaces": "Props/Pallet (4 x 0.6 x 3.4)"
+ },
+ {
+  "name": "W2_PalletSacks",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_PalletSacks.png",
+  "old": "Pallet + Cardboard",
+  "size": [
+   4.119,
+   2.122,
+   3.58
+  ],
+  "tris": 3384,
+  "replaces": "Props/Pallet + Cardboard piles"
+ },
+ {
+  "name": "W2_Tyre",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Tyre.png",
+  "old": "none (new clutter)",
+  "size": [
+   2.4,
+   0.86,
+   2.4
+  ],
+  "tris": 784,
+  "replaces": "new clutter (no old piece)"
+ },
+ {
+  "name": "W2_TyreStack",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_TyreStack.png",
+  "old": "none (new clutter)",
+  "size": [
+   2.519,
+   2.52,
+   2.509
+  ],
+  "tris": 2352,
+  "replaces": "new clutter (no old piece)"
+ },
+ {
+  "name": "W2_ShelfRack",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_ShelfRack.png",
+  "old": "Arena_Cabinet 0.65 x 3 x 2",
+  "size": [
+   8.0,
+   8.0,
+   2.5
+  ],
+  "tris": 600,
+  "replaces": "new wall storage for the yards or the hall walls (old Arena_Cabinet was only 0.65 x 3 x 2: keep the rack out of the play area or the hall metrics drift)"
+ },
+ {
+  "name": "W2_Workbench",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Workbench.png",
+  "old": "Props/Workbench 6 x 4.75 x 2.4",
+  "size": [
+   6.0,
+   4.75,
+   2.4
+  ],
+  "tris": 688,
+  "replaces": "Props/Workbench (6 x 4.75 x 2.4)"
+ },
+ {
+  "name": "W2_HighBayLamp",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_HighBayLamp.png",
+  "old": "flat ceiling light strip",
+  "size": [
+   2.6,
+   5.75,
+   2.6
+  ],
+  "tris": 948,
+  "replaces": "kit brief HighBayLamp (2.6 x 1.8 x 2.6 bell + rod); old Visuals/Arena_Detail_Light strips"
+ },
+ {
+  "name": "W2_Forklift",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\warehouse2\\renders\\W2_Forklift.png",
+  "old": "none (new set dressing)",
+  "size": [
+   3.44,
+   6.05,
+   10.27
+  ],
+  "tris": 3604,
+  "replaces": "new yard dressing (kit brief Forklift)"
+ }
+]

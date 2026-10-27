@@ -1,0 +1,156 @@
+{
+ "W2_FireBarrel": {
+  "tris": 1476,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "W2_FireBarrel_Burnt": {
+  "tris": 1952,
+  "fail": 0,
+  "warn": 2,
+  "findings": []
+ },
+ "W2_OilDrum_Olive": {
+  "tris": 1192,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "W2_OilDrum_Black": {
+  "tris": 1192,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "W2_Cover_Low": {
+  "tris": 1112,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   "WARN A8 W2_Cover_Low__W2_RifleCrate + W2_Cover_Low__W2_RifleCrate.001: 7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "W2_Cover_Tall": {
+  "tris": 348,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_Cover_TallPly": {
+  "tris": 396,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_Cover_Wall": {
+  "tris": 1356,
+  "fail": 0,
+  "warn": 6,
+  "findings": [
+   "WARN A8 W2_Cover_Wall__W2_LongCrate + W2_Cover_Wall__W2_SupplyCrate: 5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
+   "WARN A8 W2_Cover_Wall__W2_SupplyCrate + W2_Cover_Wall__W2_WallJoint: 28 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
+   "WARN A8 W2_Cover_Wall__W2_SteelCrate + W2_Cover_Wall__W2_WallJoint: 10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "W2_SupplyCrate": {
+  "tris": 532,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_SteelCrate": {
+  "tris": 256,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_LongCrate": {
+  "tris": 556,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_AmmoCan": {
+  "tris": 92,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_RollDoor_Open": {
+  "tris": 420,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   "WARN A8 W2_RollDoor_Open__W2_RollDoor_Frame + W2_RollDoor_Open__W2_RollDoor_Control: 6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "W2_RollDoor_HalfOpen": {
+  "tris": 992,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   "WARN A8 W2_RollDoor_HalfOpen__W2_RollDoor_Frame + W2_RollDoor_HalfOpen__W2_RollDoor_Control: 6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "W2_Pallet": {
+  "tris": 240,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_PalletSacks": {
+  "tris": 3384,
+  "fail": 0,
+  "warn": 2,
+  "findings": [
+   "WARN A8 W2_PalletSacks__W2_Pallet + W2_PalletSacks__W2_PalletSacks_Load: 2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "W2_Tyre": {
+  "tris": 784,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_TyreStack": {
+  "tris": 2352,
+  "fail": 0,
+  "warn": 3,
+  "findings": []
+ },
+ "W2_ShelfRack": {
+  "tris": 600,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   "WARN A8 W2_ShelfRack__W2_ShelfRack + W2_ShelfRack__W2_ShelfRack_Load: 3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "W2_Workbench": {
+  "tris": 688,
+  "fail": 0,
+  "warn": 1,
+  "findings": []
+ },
+ "W2_HighBayLamp": {
+  "tris": 948,
+  "fail": 0,
+  "warn": 2,
+  "findings": [
+   "WARN A8 W2_HighBayLamp__W2_HighBayLamp_Bell + W2_HighBayLamp__W2_HighBayLamp_Rod: 15 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "W2_Forklift": {
+  "tris": 3604,
+  "fail": 0,
+  "warn": 11,
+  "findings": [
+   "WARN A8 W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_Steer: 9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
+   "WARN A8 W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelF: 8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
+   "WARN A8 W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelF.001: 8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
+   "WARN A8 W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelR: 8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
+   "WARN A8 W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelR.001: 8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ }
+}
