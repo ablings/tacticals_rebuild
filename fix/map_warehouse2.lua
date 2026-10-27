@@ -2,9 +2,17 @@
 -- gameplay layer. Work order: the Lead's plan approved by Edward ("looks way too sci-fi, but the positioning of all the parts and
 -- cover are good... a garage opening on both ends... like a GTA warehouse"). Brief: briefs/map-warehouse2.md. Log + swap list:
 -- notes/warehouse2_build.md.
+-- Round 6 (Edward, 2026-10-27: "too many green accents... this is a separate map"; "love the steel beam lights the other warehouse
+-- had and the enclosedness"; "the door should be openable via scripts for cutscenes but in game it should remain closed";
+-- "night time outside and the lights should really give the effect that the stakes are raised"): olive only on two crates; light
+-- bars on steel beams across the hall (the old Warehouse's 8-light plan, shadowed); night lighting; both roll-up doors shut
+-- (Interactive.Door_S / Door_N: a colliding Shutter a script rolls up into the drum, contract in briefs/systems.md); no
+-- MaterialVariants (default materials; texturing is Blender's job); the yards and the outside are a separate model
+-- Workspace.Warehouse2Exterior (the cutscene set behind the shut doors), so Warehouse2 itself is an indoor map (Indoor = true).
 --
--- What it builds (match places only): Workspace.Warehouse2 + its registry entry ReplicatedStorage.DuelMaps.Warehouse2
--- (DisplayName "Warehouse 2", 1v1) + MaterialVariants WH2_* in MaterialService. Workspace.Warehouse (the Tutorial map) is only
+-- What it builds (match places only): Workspace.Warehouse2 (the hall: Indoor = true) + Workspace.Warehouse2Exterior (both yards
+-- and the backdrop, Indoor = false) + the registry entry ReplicatedStorage.DuelMaps.Warehouse2 (DisplayName "Warehouse 2", 1v1).
+-- Old WH2_* MaterialVariants (rounds 1-5) are removed from MaterialService. Workspace.Warehouse (the Tutorial map) is only
 -- READ (its Shootables are cloned); nothing of it is changed.
 -- Gameplay layer (generated LAYOUT block below, from the old map's dump by tools/wh2_gen.py; never hand-edit it):
 --   CollisionProxies: COLP_<id> for every cover piece at the old plan position / size (P pallet stacks 5x10x5, C crates 5x7x4,
@@ -12,17 +20,27 @@
 --     Invisible, CanCollide / CanQuery / CanTouch on, no shadow. Material = the new surface (bullet sound).
 --   CamSkin: the old map's camera skin, same names and rectangles (the 6 inside the wider doors dropped); the walls' blockwork
 --     piers and the 4 electrical cabinets are built on exactly these rectangles, so the walls stand proud where the old ones did.
---   Bounds: OutOfBounds caps above the yard edges (collide, no query: shots fly over, players can't).
+--   Interactive: Door_S / Door_N (tag Warehouse2Door, attributes Open / Moving / OpenHeight / RollTime): a closed Shutter
+--     (collides, queries, NotCover) in each 20 x 14 opening, no prompt; a script rolls it up (contract: briefs/systems.md).
+--   Exterior (Workspace.Warehouse2Exterior): COLP_Yard_* proxies, Bounds = OutOfBounds caps above the yard edges (collide, no
+--     query), the yards' art and the backdrop. Unreachable in a match (doors shut); what a cutscene shows when a door opens.
 --   Shootables: Workspace.Warehouse.Shootables cloned and moved (FireBarrel_F1-F4, SteamValve_S1-S2 keep names, tags, attributes).
 --   MatchSpawns.SpawnA / SpawnB: the old markers moved (RoundManager points Workspace.MatchSpawns at them when the map wins).
 --   Every yard boundary, wall, floor and roof proxy is NotCover (no climbing out); cover pieces keep their cover role.
 -- Art (Visuals, Cover): never collides, never queries. Cover looks are Part STAND-INS tagged Warehouse2Standin until the
 --   modeler's meshes land (art/warehouse2/, notes/warehouse2_props.md); swap list in notes/warehouse2_build.md.
 -- Idempotent: each run rebuilds Warehouse2 (a Warehouse2 this script didn't build is moved to ServerStorage._Warehouse2_Backup,
--- never deleted). UNDO = true removes Warehouse2, its registry entry and the WH2_* MaterialVariants.
+-- never deleted). UNDO = true removes Warehouse2, Warehouse2Exterior, the registry entry and any WH2_* MaterialVariants.
 local UNDO = false --@UNDO
 local ORIGIN = Vector3.new(-84.2, 0.4, -300) -- plan (0, 0, 0) = hall centre at floor top; clear of every other map + the pseudo-lobby
 local MAP_NAME, REG_ID = "Warehouse2", "Warehouse2" -- Workspace name read by ShootableManager / BotConfig (systems brief 2026-10-27)
+local EXT_NAME = "Warehouse2Exterior" -- the yards + backdrop: the cutscene set behind the shut doors
+-- the map's night (MapInfo.Lighting, applied by RoundManager.applyMapEnv when the map wins the vote); tuned on the render
+local NIGHT = { --@NIGHT
+	clock = 0, bright = 1, exposure = -0.3, ambient = "16, 17, 20", outdoor = "30, 32, 38", diffuse = 0.12, specular = 0.2,
+	density = 0.32, offset = 0, haze = 0.4, atmoColor = "52, 56, 64", decay = "26, 28, 34",
+	gradeBright = 0, contrast = 0.16, saturation = -0.12, tint = "255, 250, 242", bloom = 0.6, bloomSize = 24, threshold = 1.3,
+}
 local RS = game:GetService("ReplicatedStorage")
 local SS = game:GetService("ServerStorage")
 local CS = game:GetService("CollectionService")
@@ -118,90 +136,84 @@ if SS:FindFirstChild("_DuelSource") then
 	return "map_warehouse2: this is the lobby (ServerStorage._DuelSource): Warehouse 2 is a match-place map; not built here"
 end
 local old = workspace:FindFirstChild(MAP_NAME)
+local oldExt = workspace:FindFirstChild(EXT_NAME)
 local reg = RS:FindFirstChild("DuelMaps")
 local entry0 = reg and reg:FindFirstChild(REG_ID)
 local function variants() local t = {} for _, v in MS:GetChildren() do if v:IsA("MaterialVariant") and v.Name:match("^WH2_") then table.insert(t, v) end end return t end
+-- the WH2_* tiling MaterialVariants of rounds 1-5 go (Map Building Corrections 2026-10-12: no tiling variants; texturing is
+-- done in Blender). Removed on every run, so a place that had them is cleaned too.
+for _, v in variants() do v:Destroy() end
 if UNDO then
 	if old and old:GetAttribute("Builder") == "map_warehouse2" then old:Destroy() end
+	if oldExt and oldExt:GetAttribute("Builder") == "map_warehouse2" then oldExt:Destroy() end
 	if entry0 then entry0:Destroy() end
-	for _, v in variants() do v:Destroy() end
-	return "UNDO: Warehouse2, its registry entry and the WH2_* MaterialVariants removed (Warehouse untouched)"
+	return "UNDO: Warehouse2, Warehouse2Exterior, its registry entry and the WH2_* MaterialVariants removed (Warehouse untouched)"
 end
-if old and old:GetAttribute("Builder") ~= "map_warehouse2" then
-	local bk = SS:FindFirstChild("_Warehouse2_Backup") or Instance.new("Folder")
-	bk.Name = "_Warehouse2_Backup"; bk.Parent = SS
-	old.Name = MAP_NAME .. "_" .. os.time(); old.Parent = bk; old = nil
+for _, m in { old, oldExt } do
+	if m and m:GetAttribute("Builder") ~= "map_warehouse2" then
+		local bk = SS:FindFirstChild("_Warehouse2_Backup") or Instance.new("Folder")
+		bk.Name = "_Warehouse2_Backup"; bk.Parent = SS
+		m.Name = m.Name .. "_" .. os.time(); m.Parent = bk
+	elseif m then
+		m:Destroy()
+	end
 end
-if old then old:Destroy() end
+old, oldExt = nil, nil
 if entry0 then entry0:Destroy() end
 local src = workspace:FindFirstChild("Warehouse")
 assert(src and src:FindFirstChild("Shootables"), "map_warehouse2: needs Workspace.Warehouse.Shootables to clone (match place)")
 
 -- ====================================================================================================== surfaces
+-- Roblox default materials only (no MaterialVariants). Colours: greys, black and cream, galvanised steel, wood, rust; olive
+-- (107,122,58) only on two crates (Edward 2026-10-27: "some green crates here and there but way too much green").
 local M = Enum.Material
 local CARDBOARD = M.Cardboard or M.Fabric
-local IDS = { -- own uploads (group Gunsy Funsy, tex/asset_ids.json)
-	concrete_smooth = { c = "rbxassetid://127975492069244", n = "rbxassetid://134698104080164", r = "rbxassetid://77416348183156" },
-	concrete_panels = { c = "rbxassetid://92560807606107", n = "rbxassetid://111307272317855", r = "rbxassetid://139321089617915" },
-	corrugated_metal = { c = "rbxassetid://129791259335401", n = "rbxassetid://73528077989924", r = "rbxassetid://136833705922600", m = "rbxassetid://123612396854451" },
-	floor_concrete = { c = "rbxassetid://101352263098180", n = "rbxassetid://103891709493199", r = "rbxassetid://135116245015934" },
-	metal_floorplate = { c = "rbxassetid://123397734921602", n = "rbxassetid://136513665535643", r = "rbxassetid://99797696454588", m = "rbxassetid://123612396854451" },
-	metal_satin = { c = "rbxassetid://122079640706171", n = "rbxassetid://140513148485798", r = "rbxassetid://133742999882020", m = "rbxassetid://123612396854451" },
-}
-local TEX = { grime = "rbxassetid://110762390496312", hazard = "rbxassetid://79584884795039" }
-local VARIANTS = { -- name, base, set, StudsPerTile, pattern
-	{ "WH2_Floor", M.Concrete, "floor_concrete", 40, Enum.MaterialPattern.Regular }, -- joints every 20 studs
-	{ "WH2_Block", M.Concrete, "concrete_panels", 4, Enum.MaterialPattern.Regular }, -- reads as blockwork at this scale
-	{ "WH2_Corrugated", M.Metal, "corrugated_metal", 8, Enum.MaterialPattern.Regular },
-	{ "WH2_Metal", M.Metal, "metal_satin", 8, Enum.MaterialPattern.Regular },
-	{ "WH2_FloorPlate", M.Metal, "metal_floorplate", 6, Enum.MaterialPattern.Regular },
-}
-for _, v in VARIANTS do
-	local mv = MS:FindFirstChild(v[1]) or Instance.new("MaterialVariant")
-	local ids = IDS[v[3]]
-	mv.Name, mv.BaseMaterial, mv.StudsPerTile, mv.MaterialPattern = v[1], v[2], v[4], v[5]
-	mv.ColorMap, mv.NormalMap, mv.RoughnessMap, mv.MetalnessMap = ids.c, ids.n, ids.r, ids.m or ""
-	mv.Parent = MS
-end
+local TEX = { grime = "rbxassetid://110762390496312", hazard = "rbxassetid://79584884795039" } -- own uploads (Gunsy Funsy)
 local function rgb(r, g, b) return Color3.fromRGB(r, g, b) end
--- art styles: material, variant, colour, transparency, reflectance
+-- art styles: material, (unused: was the variant), colour, transparency, reflectance
 local S = {
-	floor = { M.Concrete, "WH2_Floor", rgb(128, 127, 123) },
-	yardFloor = { M.Concrete, "WH2_Floor", rgb(122, 121, 117) },
-	blockDark = { M.Concrete, "WH2_Block", rgb(96, 96, 93) },
-	block = { M.Concrete, "WH2_Block", rgb(178, 175, 168) },
-	blockOlive = { M.Concrete, "WH2_Block", rgb(107, 122, 58) },
-	clad = { M.Metal, "WH2_Corrugated", rgb(172, 174, 172) },
-	roof = { M.Metal, "WH2_Corrugated", rgb(150, 152, 150) },
-	steel = { M.Metal, "WH2_Metal", rgb(84, 88, 86) },
-	galv = { M.Metal, "WH2_Metal", rgb(160, 162, 160) },
-	plate = { M.Metal, "WH2_FloorPlate", rgb(120, 120, 116) },
+	floor = { M.Concrete, nil, rgb(128, 127, 123) },
+	yardFloor = { M.Concrete, nil, rgb(122, 121, 117) },
+	blockDark = { M.Concrete, nil, rgb(96, 96, 93) },
+	block = { M.Concrete, nil, rgb(178, 175, 168) },
+	blockStripe = { M.Concrete, nil, rgb(52, 52, 50) }, -- the wall band: charcoal (was olive)
+	clad = { M.Metal, nil, rgb(172, 174, 172) },
+	roof = { M.Metal, nil, rgb(150, 152, 150) },
+	steel = { M.Metal, nil, rgb(84, 88, 86) },
+	beam = { M.Metal, nil, rgb(46, 48, 48) }, -- the light beams: dark painted steel, as the old Warehouse's
+	galv = { M.Metal, nil, rgb(160, 162, 160) },
+	plate = { M.DiamondPlate, nil, rgb(120, 120, 116) },
 	glass = { M.Glass, nil, rgb(214, 222, 220), 0.35, 0.05 },
 	paint = { M.Concrete, nil, rgb(224, 220, 208) },
 	jersey = { M.Concrete, nil, rgb(180, 175, 165) },
 	blocks = { M.Concrete, nil, rgb(160, 156, 148) },
 	ply = { M.Wood, nil, rgb(178, 144, 100) },
 	batten = { M.Wood, nil, rgb(146, 112, 74) },
+	oliveCrate = { M.Wood, nil, rgb(96, 110, 58) }, -- the two olive crates (the only olive in the map)
+	oliveBatten = { M.Wood, nil, rgb(74, 84, 46) },
 	pallet = { M.Wood, nil, rgb(136, 104, 70) },
 	load = { CARDBOARD, nil, rgb(150, 124, 96) },
 	load2 = { CARDBOARD, nil, rgb(136, 114, 90) },
 	wrap = { M.SmoothPlastic, nil, rgb(232, 234, 236), 0.8, 0.15 },
-	olive = { M.SmoothPlastic, nil, rgb(107, 122, 58) },
 	cream = { M.SmoothPlastic, nil, rgb(236, 232, 218) },
 	black = { M.SmoothPlastic, nil, rgb(28, 28, 26) },
+	charcoal = { M.SmoothPlastic, nil, rgb(58, 58, 56) },
+	greyPlastic = { M.SmoothPlastic, nil, rgb(118, 118, 114) },
+	rust = { M.CorrodedMetal, nil, rgb(116, 70, 50) },
 	rubber = { M.SmoothPlastic, nil, rgb(30, 30, 30) },
 	trailer = { M.SmoothPlastic, nil, rgb(206, 204, 196) },
 	trailer2 = { M.SmoothPlastic, nil, rgb(176, 178, 172) },
-	contRust = { M.Metal, "WH2_Corrugated", rgb(122, 64, 46) },
-	contGreen = { M.Metal, "WH2_Corrugated", rgb(92, 104, 86) },
-	fencePost = { M.Metal, "WH2_Metal", rgb(66, 70, 66) },
-	mesh = { M.Fabric, nil, rgb(46, 60, 44) },
-	cabinet = { M.Metal, "WH2_Metal", rgb(150, 152, 146) },
-	lens = { M.Neon, nil, rgb(70, 64, 54) }, -- a dim warm glow (renders ~100 under bloom): the lit doors, not the lamps, are the brightest things
-	lampShade = { M.Metal, "WH2_Metal", rgb(176, 178, 176) },
-	backdrop = { M.Metal, "WH2_Corrugated", rgb(118, 122, 118) },
+	contRust = { M.CorrodedMetal, nil, rgb(122, 64, 46) },
+	contWhite = { M.Metal, nil, rgb(188, 186, 178) }, -- was the green container
+	fencePost = { M.Metal, nil, rgb(66, 70, 66) },
+	mesh = { M.Fabric, nil, rgb(40, 40, 40) }, -- the fence's privacy screen: charcoal (was green)
+	cabinet = { M.Metal, nil, rgb(150, 152, 146) },
+	lens = { M.Neon, nil, rgb(70, 64, 54) }, -- door / wall-pack lenses: a dim warm glow
+	barLens = { M.Neon, nil, rgb(238, 228, 206) }, -- the hall's light bars: switched on, warm white
+	lampShade = { M.Metal, nil, rgb(176, 178, 176) },
+	backdrop = { M.Metal, nil, rgb(118, 122, 118) },
 	backdrop2 = { M.Concrete, nil, rgb(150, 146, 138) },
-	pipe = { M.Metal, "WH2_Metal", rgb(112, 116, 112) },
+	pipe = { M.Metal, nil, rgb(112, 116, 112) },
 }
 
 -- ====================================================================================================== helpers
@@ -217,9 +229,16 @@ local function folder(name, parent, class)
 	F[name] = f
 	return f
 end
-folder("CollisionProxies"); folder("CamSkin"); folder("Bounds"); folder("MatchSpawns")
+folder("CollisionProxies"); folder("CamSkin"); folder("MatchSpawns")
 local VIS = folder("Visuals", map, "Model")
-for _, n in { "Hall", "Roof", "Doors", "Lamps", "FloorPaint", "WallDressing", "Yards", "Backdrop" } do folder(n, VIS) end
+for _, n in { "Hall", "Roof", "Doors", "Lamps", "FloorPaint", "WallDressing" } do folder(n, VIS) end
+-- the exterior: both yards + the backdrop, a separate model (the cutscene set behind the shut doors; Indoor = false)
+local ext = Instance.new("Model")
+ext.Name = EXT_NAME
+local XF = {}
+for _, n in { "CollisionProxies", "Props", "Bounds", "Yards", "Backdrop" } do
+	local f = Instance.new("Folder") f.Name = n f.Parent = ext XF[n] = f
+end
 folder("Cover"); folder("Props")
 
 local nArt, nProxy, nLights = 0, 0, 0
@@ -235,7 +254,6 @@ local function newPart(class, parent, name, size, cf)
 end
 local function style(p, s)
 	p.Material = s[1]
-	if s[2] then p.MaterialVariant = s[2] end
 	p.Color = s[3]
 	p.Transparency = s[4] or 0
 	p.Reflectance = s[5] or 0
@@ -488,7 +506,7 @@ end
 
 -- ====================================================================================================== the hall: floor + walls
 local H = F.Hall
-local BANDS = { { "Kick", 0, 1.2, S.blockDark }, { "Block", 1.2, 4.0, S.block }, { "Stripe", 4.0, 4.6, S.blockOlive }, { "BlockUp", 4.6, SKIN_H, S.block } }
+local BANDS = { { "Kick", 0, 1.2, S.blockDark }, { "Block", 1.2, 4.0, S.block }, { "Stripe", 4.0, 4.6, S.blockStripe }, { "BlockUp", 4.6, SKIN_H, S.block } }
 local slab = box(H, "Slab", -HE - WT, HE + WT, -HN - WT, HN + WT, -1, 0, S.floor)
 -- side walls: blockwork (dark kick band, light, olive stripe, light) 0.9 proud up to 11.2, cladding above with a glazed band
 for _, s in { { "E", 1 }, { "W", -1 } } do
@@ -577,8 +595,51 @@ for _, g in { 1, -1 } do
 end
 box(R, "RidgeCap", -1.2, 1.2, -HN - WT - 0.4, HN + WT + 0.4, RIDGE + 0.3, RIDGE + 0.5, S.galv)
 
--- ====================================================================================================== roll-up doors (both ends)
+-- ====================================================================================================== roll-up doors (both ends): SHUT
+-- Edward 2026-10-27: "the door should be openable via scripts for animating/cutscene purposes but in game it should remain
+-- closed". Each opening holds a closed roll-up curtain: Interactive.Door_<S|N>, tag Warehouse2Door, a Shutter part that
+-- collides (NotCover, no prompt). A script rolls it up by shrinking the Shutter from the bottom (its top stays behind the head,
+-- so nothing pokes out of the drum or the roof); contract and reference code: briefs/systems.md "Warehouse 2 doors".
 local D = F.Doors
+local IT = folder("Interactive")
+local SH_TOP = DOOR_H + 0.45 -- the curtain's top edge, inside the steel head (14..14.6)
+local SH_LIP = 0.35 -- rolled up, this much curtain (the bottom bar) still shows under the head
+local SLAT = 0.55 -- slat pitch (studs)
+local function slats(shutter, face)
+	-- the slat lines are drawn bottom-up in studs (offset from the bottom edge), so when a script shrinks the Shutter from the
+	-- bottom the slats ride up with the bottom bar and disappear under the head: the curtain reads as rolling up
+	local gui = Instance.new("SurfaceGui")
+	gui.Name = "Slats"
+	gui.Face = Enum.NormalId[face]
+	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+	gui.PixelsPerStud = 20
+	gui.LightInfluence = 1
+	gui.Parent = shutter
+	local pps = 20
+	local h = shutter.Size.Y
+	local function band(y0, hh, col, tr)
+		local f = Instance.new("Frame")
+		f.AnchorPoint = Vector2.new(0, 1)
+		f.Position = UDim2.new(0, 0, 1, -math.floor(y0 * pps + 0.5))
+		f.Size = UDim2.new(1, 0, 0, math.max(1, math.floor(hh * pps + 0.5)))
+		f.BackgroundColor3, f.BackgroundTransparency, f.BorderSizePixel = col, tr or 0, 0
+		f.Parent = gui
+		return f
+	end
+	-- grime toward the bottom (rides with the curtain)
+	local grime = band(0, 3.2, rgb(40, 36, 30), 0.55)
+	local gr = Instance.new("UIGradient")
+	gr.Rotation = -90
+	gr.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.2), NumberSequenceKeypoint.new(1, 1) })
+	gr.Parent = grime
+	for y = 0.45 + SLAT, h + SLAT, SLAT do
+		band(y - 0.07, 0.07, rgb(70, 72, 72), 0.25) -- the joint's shadow
+		band(y, 0.05, rgb(214, 216, 212), 0.55) -- the curl's highlight just above it
+	end
+	band(0, 0.45, rgb(52, 54, 54)) -- bottom bar (steel angle + rubber seal)
+	band(0, 0.08, rgb(22, 22, 22))
+	return gui
+end
 for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	local g, k = s[2], s[1]
 	local inner, outer = g * (HN - 0.3), g * (HN + WT) -- a steel frame 0.3 proud of the flush end wall
@@ -586,80 +647,142 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	box(D, "Jamb_" .. k .. "_E", DOOR_HALF, DOOR_HALF + 0.6, inner, outer, 0, DOOR_H + 0.6, S.galv)
 	box(D, "Jamb_" .. k .. "_W", -DOOR_HALF - 0.6, -DOOR_HALF, inner, outer, 0, DOOR_H + 0.6, S.galv)
 	box(D, "Head_" .. k, -DOOR_HALF, DOOR_HALF, inner, outer, DOOR_H, DOOR_H + 0.6, S.galv)
-	-- the drum housing on the inside face, the rolled-up curtain's bottom bar just showing, guide rails
+	-- the drum housing on the inside face and the guide rails beside the opening
 	box(D, "Drum_" .. k, -DOOR_HALF - 1, DOOR_HALF + 1, g * (HN - 2.7), inner, DOOR_H + 0.6, DOOR_H + 3.0, S.galv)
-	box(D, "BottomBar_" .. k, -DOOR_HALF + 0.1, DOOR_HALF - 0.1, g * (HN - 1.6), g * (HN - 1.2), DOOR_H - 0.4, DOOR_H + 0.6, S.steel)
 	for _, e in { -1, 1 } do -- (beside the opening, not in it)
 		box(D, "Guide_" .. k .. e, e * DOOR_HALF, e * (DOOR_HALF + 0.55), g * (HN - 0.8), inner, 0, DOOR_H + 0.6, S.steel)
 	end
-	-- the door light: a warm spot under the hood onto the hatch and threshold, so the doorway is the brightest thing at its end
+	-- the door: a model in Interactive with the Shutter (gameplay: collides, stops shots, NotCover) and its state
+	local dm = Instance.new("Model")
+	dm.Name = "Door_" .. k
+	dm:SetAttribute("Open", false) -- the state a script sets / reads (shut in every match: round start -> CloseAll)
+	dm:SetAttribute("Moving", false) -- true while a roll is playing
+	dm:SetAttribute("OpenHeight", SH_TOP - SH_LIP) -- how far the Shutter's bottom edge rises when open (studs)
+	dm:SetAttribute("RollTime", 4) -- seconds for a full roll (suggested; a cutscene may pass its own)
+	dm:SetAttribute("Bay", k == "S" and "01" or "02")
+	dm:SetAttribute("End", k == "S" and "A" or "B") -- whose end this is (spawn A south, spawn B north)
+	CS:AddTag(dm, "Warehouse2Door")
+	dm.Parent = IT
+	-- the curtain runs in the wall's reveal (inside the wall thickness, clear of the hall floor the metrics count), its top
+	-- behind the head; the slats are drawn on both faces
+	local sh = newPart("Part", dm, "Shutter", Vector3.new(2 * DOOR_HALF + 0.5, SH_TOP, 0.3), CFrame.new(W(0, g * (HN + 0.6), SH_TOP / 2)))
+	sh.Material, sh.Color = M.Metal, rgb(150, 152, 148)
+	sh.CanCollide, sh.CanQuery, sh.CanTouch, sh.CastShadow = true, true, true, true
+	sh:SetAttribute("NotCover", true)
+	sh:SetAttribute("ImpactSound", "Metal")
+	sh:SetAttribute("ClosedSize", sh.Size)
+	sh:SetAttribute("ClosedCFrame", sh.CFrame)
+	nProxy += 1
+	slats(sh, "Front")
+	slats(sh, "Back")
+	dm.PrimaryPart = sh
+	-- the door light: a warm spot under the hood onto the shut curtain and the hatch: the lit door is the landmark at its end
 	local dl = box(D, "DoorLight_" .. k, -1.2, 1.2, g * (HN - 2.6), g * (HN - 1.8), DOOR_H + 0.35, DOOR_H + 0.6, S.lens)
 	local dls = Instance.new("SpotLight")
-	dls.Face, dls.Angle, dls.Range, dls.Brightness, dls.Color, dls.Shadows = Enum.NormalId.Bottom, 110, 20, 2.4, rgb(255, 230, 196), false
+	dls.Face, dls.Angle, dls.Range, dls.Brightness, dls.Color, dls.Shadows = Enum.NormalId.Bottom, 110, 20, 0.9, rgb(255, 230, 196), true
 	dls.Parent = dl
 	nLights += 1
-	-- sign above the drum: olive plate, cream letters
-	-- (bottom 1.8 above the hood top: the hood hid the lower letters from door distance, grade round 3)
-	local sign = box(D, "Sign_" .. k, -6, 6, g * (HN - 0.12), g * HN, DOOR_H + 4.8, DOOR_H + 6.8, S.olive)
-	text(sign, g > 0 and "Front" or "Back", s[3], rgb(236, 232, 218))
+	-- sign above the drum (bottom 1.8 above the hood top: grade round 3). Hazard paint is black and cream (Design Rules), so the
+	-- two ends swap them: BAY 01 (south, team A) black plate / cream letters, BAY 02 (north, team B) cream plate / black letters
+	local sign = box(D, "Sign_" .. k, -6, 6, g * (HN - 0.12), g * HN, DOOR_H + 4.8, DOOR_H + 6.8, k == "S" and S.black or S.cream)
+	text(sign, g > 0 and "Front" or "Back", s[3], k == "S" and rgb(236, 232, 218) or rgb(28, 28, 26))
 	-- the bay number, big, stencilled on the blockwork either side of the door: readable from mid-hall (grade round 1)
 	for _, side in { -1, 1 } do
 		local c = carrier(D, "BayNumber_" .. k .. side, side * 22, g * (HN - 0.45), 6.8, 7, 0.02, 0)
 		c.Size = Vector3.new(7, 6, 0.02)
 		c.CFrame = CFrame.new(W(side * 22, g * (HN - 0.45), 6.8))
-		local gui = text(c, g > 0 and "Front" or "Back", k == "S" and "01" or "02", rgb(58, 68, 40), { fade = 0.08 })
+		local gui = text(c, g > 0 and "Front" or "Back", k == "S" and "01" or "02", rgb(30, 30, 28), { fade = 0.12 })
 		gui.Name = "BayNumber"
 		gui.PixelsPerStud = 14 -- TextScaled stops at 100 px: at 14 px/stud the digits can reach ~6 studs
 	end
 	-- threshold plate under the door (owned by the hall floor)
 	box(D, "Threshold_" .. k, -DOOR_HALF, DOOR_HALF, inner, outer, 0, 0.06, S.plate)
-	-- outside: a wall-pack flood over the door
+	-- outside (night): a flood over the door onto the trailer and two wall-packs: what an opened door shows
 	do
 		local fl = box(D, "Flood_" .. k, -1, 1, g * (HN + WT), g * (HN + WT + 0.6), EAVES - 2.2, EAVES - 1.2, S.steel)
 		local fs = Instance.new("SpotLight")
-		fs.Face, fs.Angle, fs.Range, fs.Brightness, fs.Color, fs.Shadows = g > 0 and Enum.NormalId.Back or Enum.NormalId.Front, 70, 32, g > 0 and 2.6 or 3.4, rgb(255, 238, 216), false
+		fs.Face, fs.Angle, fs.Range, fs.Brightness, fs.Color, fs.Shadows = g > 0 and Enum.NormalId.Back or Enum.NormalId.Front, 70, 34, 3, rgb(226, 232, 240), true
 		fs.Parent = fl
 		nLights += 1
 	end
 	for _, e in { -6, 6 } do
 		box(D, "WallPack_" .. k .. e, e - 0.7, e + 0.7, outer, g * (HN + WT + 0.7), DOOR_H + 1.6, DOOR_H + 2.6, S.steel)
-		local lens = box(D, "WallPackLens_" .. k .. e, e - 0.55, e + 0.55, g * (HN + WT + 0.15), g * (HN + WT + 0.6), DOOR_H + 1.5, DOOR_H + 1.6, S.lens)
+		local lens = box(D, "WallPackLens_" .. k .. e, e - 0.55, e + 0.55, g * (HN + WT + 0.15), g * (HN + WT + 0.6), DOOR_H + 1.5, DOOR_H + 1.6, S.barLens)
 		local sl = Instance.new("SpotLight")
-		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, 120, 26, 1.6, rgb(255, 222, 186), false
+		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, 120, 26, 2, rgb(255, 226, 196), false
 		sl.Parent = lens
 		nLights += 1
 	end
 end
 
--- ====================================================================================================== high-bay lamps
+-- ====================================================================================================== light beams (round 6)
+-- Edward 2026-10-27: "I love the idea of the steel beam lights that the other warehouse had". The old Warehouse: 8 lights ~12
+-- up (rows n +-15 / +-45, e +-20), range 40, Shadows on, under beams spanning the hall. Here: 4 dark steel I-beams across the
+-- hall at those rows, hung from the purlins on rods, each carrying two long light bars (warm-white Neon lens, a shadowed
+-- PointLight each). Under ShadowMap the beams and bars cast coarse shadows: the light fans on the roof and floor the old map has.
+-- Two corner wall bars per end light the spawn side of the cover at each spawn (grade round 5: those faces rendered 17 / 255).
 local L = F.Lamps
 local nLamp = 0
-for _, n in { -48.5, -32, -16, 0, 16, 32, 48.5 } do
-	for _, e in { -19, 0, 19 } do
-		if e == 0 and math.abs(n) > 48 then continue end -- the door light under each roll-up hood lights this bay
-		nLamp += 1
-		local lm = Instance.new("Model")
-		lm.Name = "HighBay_" .. nLamp
-		lm.Parent = L
-		local top = RP(e) - 0.62
-		vcyl(lm, "Rod", e, n, 15.4, top, 0.14, S.steel)
-		box(lm, "Driver", e - 0.5, e + 0.5, n - 0.5, n + 0.5, 14.6, 15.4, S.lampShade)
-		vcyl(lm, "Neck", e, n, 14.2, 14.6, 1.2, S.lampShade)
-		vcyl(lm, "Bell", e, n, 13.4, 14.2, 2.6, S.lampShade)
-		local lens = vcyl(lm, "Lens", e, n, 13.3, 13.4, 2.2, S.lens)
-		lens.CastShadow = false
-		-- a warm pool under every lamp (SpotLight down: floor under a lamp 1.8x the floor between lamps, measured) plus a weak
-		-- PointLight fill so the cover sides that look away from a lamp aren't black (no bounce light under ShadowMap)
-		local sl = Instance.new("SpotLight")
-		-- a vertical cylinder's local -X face (Left) points down after the 90 degree roll about Z
-		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Left, 80, 24, 1.6, rgb(255, 232, 204), false
-		sl.Parent = lens
-		local pl = Instance.new("PointLight")
-		pl.Brightness, pl.Range, pl.Color, pl.Shadows = 0.2, 20, rgb(255, 236, 214), false
-		pl.Parent = lens
-		nLights += 1
-		nLights += 1
+local BEAM_ROWS = { -45, -15, 15, 45 }
+local BAR_E = { -20, 20 }
+local BEAM_BOT, BEAM_TOP = 13.0, 14.3
+local BAR_LEN = 9
+local LIGHT = { color = rgb(255, 238, 214), range = 30, bright = 0.55 } --@LIGHT (tuned on the render at quality 21, round 6)
+local FILL = { range = 20, bright = 1.8, angle = 100 } --@FILL
+for i, n in BEAM_ROWS do
+	local bm = Instance.new("Model")
+	bm.Name = "LightBeam_" .. i
+	bm.Parent = L
+	-- I-beam wall to wall: bottom flange, web, top flange; end plates on the cladding
+	box(bm, "FlangeBot", -HE + 0.02, HE - 0.02, n - 0.4, n + 0.4, BEAM_BOT, BEAM_BOT + 0.14, S.beam)
+	box(bm, "Web", -HE + 0.02, HE - 0.02, n - 0.08, n + 0.08, BEAM_BOT + 0.14, BEAM_TOP - 0.14, S.beam)
+	box(bm, "FlangeTop", -HE + 0.02, HE - 0.02, n - 0.4, n + 0.4, BEAM_TOP - 0.14, BEAM_TOP, S.beam)
+	for _, g in { 1, -1 } do
+		box(bm, "EndPlate", g * (HE - 0.02), g * (HE - 0.14), n - 0.6, n + 0.6, BEAM_BOT - 0.4, BEAM_TOP + 0.4, S.beam)
 	end
+	-- hanger rods up to the purlins (purlin centres e +-7.5 / +-24.5 / +-36)
+	for _, e in { -36, -24.5, -7.5, 7.5, 24.5, 36 } do
+		local top = RP(math.abs(e)) - 0.62
+		vcyl(bm, "Hanger", e, n, BEAM_TOP, top, 0.16, S.steel)
+		box(bm, "HangerClip", e - 0.25, e + 0.25, n - 0.25, n + 0.25, BEAM_TOP, BEAM_TOP + 0.12, S.steel)
+	end
+	-- the light bars under the beam
+	for _, e in BAR_E do
+		nLamp += 1
+		local lb = Instance.new("Model")
+		lb.Name = "LightBar_" .. nLamp
+		lb.Parent = bm
+		box(lb, "Housing", e - BAR_LEN / 2, e + BAR_LEN / 2, n - 0.42, n + 0.42, BEAM_BOT - 0.42, BEAM_BOT, S.steel)
+		for _, d in { -1, 1 } do box(lb, "Clamp", e + d * (BAR_LEN / 2 - 0.8) - 0.15, e + d * (BAR_LEN / 2 - 0.8) + 0.15, n - 0.46, n + 0.46, BEAM_BOT - 0.46, BEAM_BOT, S.beam) end
+		local lens = box(lb, "Lens", e - BAR_LEN / 2 + 0.15, e + BAR_LEN / 2 - 0.15, n - 0.3, n + 0.3, BEAM_BOT - 0.52, BEAM_BOT - 0.42, S.barLens)
+		lens.CastShadow = false
+		local pl = Instance.new("PointLight")
+		pl.Brightness, pl.Range, pl.Color, pl.Shadows = LIGHT.bright, LIGHT.range, LIGHT.color, true
+		pl.Parent = lens
+		local sl = Instance.new("SpotLight") -- the pool on the floor under the bar
+		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, FILL.angle, FILL.range, FILL.bright, LIGHT.color, true
+		sl.Parent = lens
+		nLights += 2
+	end
+end
+-- corner wall bars on the end walls (above the blockwork, tilted down into the hall), point-symmetric: they light the spawn-side
+-- faces of the cover at both spawns and leave the middle of each end dark
+local WALLBAR = { bright = 0.9, range = 30, angle = 110 } --@WALLBAR
+for _, x in { { -30, -1 }, { 30, -1 }, { 30, 1 }, { -30, 1 } } do
+	local e, g = x[1], x[2]
+	nLamp += 1
+	local lb = Instance.new("Model")
+	lb.Name = "WallBar_" .. nLamp
+	lb.Parent = L
+	local face = g * (HN - 0.02)
+	box(lb, "Bracket", e - 2.6, e + 2.6, face - g * 0.5, face, 11.6, 11.9, S.beam)
+	box(lb, "Housing", e - 3, e + 3, face - g * 0.9, face - g * 0.3, 11.2, 11.6, S.steel)
+	local lens = box(lb, "Lens", e - 2.85, e + 2.85, face - g * 0.85, face - g * 0.35, 11.12, 11.2, S.barLens)
+	lens.CastShadow = false
+	local sl = Instance.new("SpotLight")
+	sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, WALLBAR.angle, WALLBAR.range, WALLBAR.bright, LIGHT.color, true
+	sl.Parent = lens
+	nLights += 1
 end
 
 -- ====================================================================================================== floor paint, stencils, stains
@@ -794,20 +917,26 @@ function LOOK.BlockWall(m, q) -- 2 x 3 interlocking precast blocks with a knob r
 end
 local CRATE_TEXT = { "FRAGILE", "THIS WAY UP", "LOT 044", "HANDLE WITH CARE", "LOT 103", "KEEP DRY", "LOT 017", "TAC-SUPPLY", "LOT 212", "MOTOR POOL" }
 local nCrate = 0
+-- the only olive in the map: two military crates, one in each half (point-symmetric twins C03 / C04 in the side lanes; Edward
+-- 2026-10-27: "I like some green crates here and there"); the other eight are plain plywood
+local OLIVE_CRATES = { C03 = true, C04 = true }
 function LOOK.TallCrate(m, q) -- plywood crate on two skids, battens on the edges, a stencil
 	nCrate += 1
+	local olive = OLIVE_CRATES[q.id]
+	local bodyS, battenS = olive and S.oliveCrate or S.ply, olive and S.oliveBatten or S.batten
 	local e0, e1, n0, n1 = q.e - q.w / 2, q.e + q.w / 2, q.n - q.d / 2, q.n + q.d / 2
 	for _, k in { -1, 1 } do box(m, "Skid", e0 + 0.05, e1 - 0.05, q.n + k * 1.3 - 0.35, q.n + k * 1.3 + 0.35, 0, 0.45, S.batten) end
-	local body = box(m, "Body", e0 + 0.12, e1 - 0.12, n0 + 0.12, n1 - 0.12, 0.45, q.h - 0.12, S.ply)
+	local body = box(m, "Body", e0 + 0.12, e1 - 0.12, n0 + 0.12, n1 - 0.12, 0.45, q.h - 0.12, bodyS)
 	-- battens round each face edge
 	for _, nn in { n0 + 0.06, n1 - 0.06 } do
-		for _, e in { e0 + 0.3, e1 - 0.3 } do box(m, "Batten", e - 0.3, e + 0.3, nn - 0.06, nn + 0.06, 0.45, q.h, S.batten) end
-		box(m, "Batten", e0 + 0.6, e1 - 0.6, nn - 0.06, nn + 0.06, q.h - 0.5, q.h, S.batten)
-		box(m, "Batten", e0 + 0.6, e1 - 0.6, nn - 0.06, nn + 0.06, 0.45, 0.95, S.batten)
-		box(m, "Batten", e0 + 0.6, e1 - 0.6, nn - 0.05, nn + 0.05, (q.h + 0.45) / 2 - 0.22, (q.h + 0.45) / 2 + 0.22, S.batten)
+		for _, e in { e0 + 0.3, e1 - 0.3 } do box(m, "Batten", e - 0.3, e + 0.3, nn - 0.06, nn + 0.06, 0.45, q.h, battenS) end
+		box(m, "Batten", e0 + 0.6, e1 - 0.6, nn - 0.06, nn + 0.06, q.h - 0.5, q.h, battenS)
+		box(m, "Batten", e0 + 0.6, e1 - 0.6, nn - 0.06, nn + 0.06, 0.45, 0.95, battenS)
+		box(m, "Batten", e0 + 0.6, e1 - 0.6, nn - 0.05, nn + 0.05, (q.h + 0.45) / 2 - 0.22, (q.h + 0.45) / 2 + 0.22, battenS)
 	end
 	for k, face in { "Front", "Back" } do
-		local g = text(body, face, CRATE_TEXT[(nCrate + k - 2) % #CRATE_TEXT + 1], rgb(40, 34, 28), { fade = 0.2 })
+		local str = olive and (k == 1 and "AMMUNITION" or "7.62 MM  LOT 7") or CRATE_TEXT[(nCrate + k - 2) % #CRATE_TEXT + 1]
+		local g = text(body, face, str, olive and rgb(232, 228, 214) or rgb(40, 34, 28), { fade = 0.2 })
 		local l = g:FindFirstChildOfClass("TextLabel")
 		l.Size, l.Position = UDim2.fromScale(0.82, 0.13), UDim2.fromScale(0.09, 0.2) -- (TextWrapped = false would switch TextScaled off)
 	end
@@ -855,8 +984,8 @@ do
 	m = prop("PalletPile_N", "Pallet") for i = 0, 3 do pallet(m, -14, 54, i * 0.6) end
 	m = prop("Pallets_SW", "Pallet") pallet(m, -36.5, -38, 0) boxes(m, -36.5, -38, 0.6, 3, 2, 2.6) boxes(m, -36.7, -37.7, 2.6, 2, 1.4, 1.8)
 	m = prop("Pallets_NE", "Pallet") pallet(m, 36.5, 40, 0) boxes(m, 36.5, 40.3, 0.6, 3, 1.6, 2.8)
-	m = prop("Drums_W", "OilDrum") drum(m, -37.6, 30.2, S.black) drum(m, -35.4, 31.2, S.olive)
-	m = prop("Drums_E", "OilDrum") drum(m, 37.6, -30.2, S.olive) drum(m, 35.4, -31.2, S.black)
+	m = prop("Drums_W", "OilDrum") drum(m, -37.6, 30.2, S.black) drum(m, -35.4, 31.2, S.rust)
+	m = prop("Drums_E", "OilDrum") drum(m, 37.6, -30.2, S.rust) drum(m, 35.4, -31.2, S.black)
 	m = prop("Cartons", "Carton") boxes(m, -21, -47.5, 0, 1.6, 1.2, 1.4) boxes(m, 21, 47.5, 0, 1.6, 1.2, 1.4)
 	-- workbench on the west wall (old workbench spot) and a break table on the east wall (old table + chairs)
 	m = prop("Workbench", "Workbench")
@@ -868,8 +997,8 @@ do
 	box(m, "Top", 35.5, 38.5, -18, -14, 2.4, 2.6, S.cream)
 	for _, x in { { 35.8, -17.7 }, { 38.2, -17.7 }, { 35.8, -14.3 }, { 38.2, -14.3 } } do box(m, "Leg", x[1] - 0.1, x[1] + 0.1, x[2] - 0.1, x[2] + 0.1, 0, 2.4, S.steel) end
 	for _, x in { { 35, -13.2 }, { 34.6, -17 } } do
-		box(m, "ChairSeat", x[1] - 0.7, x[1] + 0.7, x[2] - 0.7, x[2] + 0.7, 1.4, 1.55, S.olive)
-		box(m, "ChairBack", x[1] - 0.7, x[1] + 0.7, x[2] + 0.55, x[2] + 0.7, 1.55, 3.0, S.olive)
+		box(m, "ChairSeat", x[1] - 0.7, x[1] + 0.7, x[2] - 0.7, x[2] + 0.7, 1.4, 1.55, S.greyPlastic)
+		box(m, "ChairBack", x[1] - 0.7, x[1] + 0.7, x[2] + 0.55, x[2] + 0.7, 1.55, 3.0, S.greyPlastic)
 		for _, d in { { -0.55, -0.55 }, { 0.55, -0.55 }, { -0.55, 0.55 }, { 0.55, 0.55 } } do
 			box(m, "ChairLeg", x[1] + d[1] - 0.06, x[1] + d[1] + 0.06, x[2] + d[2] - 0.06, x[2] + d[2] + 0.06, 0, 1.4, S.steel)
 		end
@@ -890,6 +1019,25 @@ propBlock("PCOL_Workbench", -38.6, -36.4, 13, 19, 3.3)
 propBlock("PCOL_BreakTable", 33.9, 38.5, -18, -12.5, 2.6) -- table + both chairs
 propBlock("PCOL_Cartons_S", -21.8, -20.2, -48.2, -46.8, 1.2)
 propBlock("PCOL_Cartons_N", 20.2, 21.8, 46.8, 48.2, 1.2)
+-- the two ends read different with the doors shut (round 6): a hand pallet truck parked by the south pile (BAY 01), a stack of
+-- old tyres by the north pile (BAY 02); each on its own blocker
+do
+	local m = prop("PalletTruck_S", "PalletTruck")
+	local e, n0 = 18, -56.3 -- forks toward the wall, handle toward the hall
+	for _, d in { -0.45, 0.45 } do box(m, "Fork", e + d - 0.2, e + d + 0.2, n0, n0 + 3.6, 0.15, 0.4, S.charcoal) end
+	box(m, "PumpBody", e - 0.6, e + 0.6, n0 + 3.6, n0 + 4.3, 0.15, 1.3, S.charcoal)
+	vcyl(m, "Wheel", e, n0 + 4.0, 0, 0.5, 0.6, S.rubber)
+	box(m, "Handle", e - 0.06, e + 0.06, n0 + 4.1, n0 + 4.3, 1.3, 4.0, S.black)
+	box(m, "Grip", e - 0.35, e + 0.35, n0 + 4.1, n0 + 4.3, 3.8, 4.0, S.black)
+	propBlock("PCOL_PalletTruck_S", e - 0.7, e + 0.7, n0, n0 + 4.4, 1.3)
+	m = prop("TyreStack_N", "TyreStack")
+	local te, tn = -19, 54.6
+	for i = 0, 3 do
+		vcyl(m, "Tyre", te + (i % 2) * 0.12, tn, i * 0.8, i * 0.8 + 0.78, 2.6, S.rubber)
+		vcyl(m, "Rim", te + (i % 2) * 0.12, tn, i * 0.8 + 0.79, i * 0.8 + 0.8, 1.4, S.steel)
+	end
+	propBlock("PCOL_TyreStack_N", te - 1.4, te + 1.5, tn - 1.4, tn + 1.4, 3.2)
+end
 -- the steel columns in the wall slots and the door guides stand proud of the wall: blockers (not camera skin, so the study's
 -- free floor stays the old one) - walk-through scan, grade round 2
 for _, n in FRAMES do
@@ -935,18 +1083,18 @@ end
 for _, sc in { { -3, 5 }, { 3, 5 } } do scuff(yv, "TyreScuffs", sc[1], N0 + 5.5, 11, 0.18) end
 -- bollards either side of the door
 for _, e in { -DOOR_HALF - 1.2, DOOR_HALF + 1.2 } do
-	vcyl(yv, "Bollard", e, N0 + 1.2, 0, 3.6, 0.8, S.olive)
+	vcyl(yv, "Bollard", e, N0 + 1.2, 0, 3.6, 0.8, S.black)
 	vcyl(yv, "BollardBand", e, N0 + 1.2, 2.6, 3.0, 0.82, S.cream)
 	proxy(yp, "PCOL_Yard_N_Bollard" .. (e > 0 and "E" or "W"), e - 0.42, e + 0.42, N0 + 0.78, N0 + 1.62, 0, 3.6, M.Metal, NOT, false)
 end
--- trailer stand-in: 40 ft dry van on landing legs, side skirts, rear doors, olive stripe + name
+-- trailer stand-in: 40 ft dry van on landing legs, side skirts, rear doors, charcoal stripe + name
 local tr = Instance.new("Model") tr.Name = "Trailer" tr.Parent = yv standin(tr, "BoxTrailer")
 local body = box(tr, "Body", TR.e0 + 0.1, TR.e1 - 0.1, TR.n0 + 0.15, TR.n1 - 0.15, 4.2, TR.h - 0.1, S.trailer)
 box(tr, "Roof", TR.e0 + 0.05, TR.e1 - 0.05, TR.n0 + 0.1, TR.n1 - 0.1, TR.h - 0.1, TR.h, S.trailer2)
 box(tr, "Rail", TR.e0, TR.e1, TR.n0 + 0.05, TR.n1 - 0.05, 3.7, 4.2, S.steel)
-local stripe = box(tr, "Stripe", TR.e0 + 0.4, TR.e1 - 0.4, TR.n0 + 0.08, TR.n0 + 0.15, 9.2, 10.4, S.olive)
+local stripe = box(tr, "Stripe", TR.e0 + 0.4, TR.e1 - 0.4, TR.n0 + 0.08, TR.n0 + 0.15, 9.2, 10.4, S.charcoal)
 do -- lettering painted on the body's yard face (a SurfaceGui on the body; no plate in front of it)
-	local g = text(body, "Front", "TACTICAL FREIGHT CO.", rgb(70, 82, 40))
+	local g = text(body, "Front", "TACTICAL FREIGHT CO.", rgb(44, 44, 42))
 	g.Name = "Livery"
 	g.PixelsPerStud = 20 -- TextScaled stops at 100 px (5 studs here)
 	local l = g:FindFirstChildOfClass("TextLabel")
@@ -972,14 +1120,14 @@ box(tr, "RearBumper", TR.e0 - 0.4, TR.e0 + 0.6, TR.n0 + 0.8, TR.n1 - 0.8, 1.6, 2
 tex(body, "Front", TEX.grime, 10, 6, Color3.new(0, 0, 0), 0.7)
 -- containers stand-in
 local ct = Instance.new("Model") ct.Name = "Containers" ct.Parent = yv standin(ct, "Container20")
-for lvl, st in { S.contRust, S.contGreen } do
+for lvl, st in { S.contRust, S.contWhite } do
 	local h0 = (lvl - 1) * 8.5
 	local c = box(ct, "Box" .. lvl, CT.e0 + 0.15, CT.e1 - 0.15, CT.n0 + 0.15, CT.n1 - 0.15, h0 + 0.1, h0 + 8.4, st)
 	for _, x in { { CT.e0, CT.n0 }, { CT.e1 - 0.5, CT.n0 }, { CT.e0, CT.n1 - 0.5 }, { CT.e1 - 0.5, CT.n1 - 0.5 } } do
-		box(ct, "CornerPost", x[1], x[1] + 0.5, x[2], x[2] + 0.5, h0, h0 + 8.5, { M.Metal, "WH2_Metal", st[3]:Lerp(Color3.new(0, 0, 0), 0.25) })
+		box(ct, "CornerPost", x[1], x[1] + 0.5, x[2], x[2] + 0.5, h0, h0 + 8.5, { M.Metal, nil, st[3]:Lerp(Color3.new(0, 0, 0), 0.25) })
 	end
-	box(ct, "RailTop", CT.e0 + 0.02, CT.e0 + 0.15, CT.n0 + 0.5, CT.n1 - 0.5, h0 + 7.9, h0 + 8.5, { M.Metal, "WH2_Metal", st[3]:Lerp(Color3.new(0, 0, 0), 0.2) })
-	box(ct, "RailBottom", CT.e0 + 0.02, CT.e0 + 0.15, CT.n0 + 0.5, CT.n1 - 0.5, h0, h0 + 0.6, { M.Metal, "WH2_Metal", st[3]:Lerp(Color3.new(0, 0, 0), 0.2) })
+	box(ct, "RailTop", CT.e0 + 0.02, CT.e0 + 0.15, CT.n0 + 0.5, CT.n1 - 0.5, h0 + 7.9, h0 + 8.5, { M.Metal, nil, st[3]:Lerp(Color3.new(0, 0, 0), 0.2) })
+	box(ct, "RailBottom", CT.e0 + 0.02, CT.e0 + 0.15, CT.n0 + 0.5, CT.n1 - 0.5, h0, h0 + 0.6, { M.Metal, nil, st[3]:Lerp(Color3.new(0, 0, 0), 0.2) })
 	local plate = box(ct, "Marking", CT.e0 + 0.08, CT.e0 + 0.15, CT.n0 + 3, CT.n0 + 9, h0 + 6.2, h0 + 7.4, st)
 	text(plate, "Right", lvl == 1 and "TCLU 204417 5" or "OLVU 330918 2", rgb(232, 228, 214), { fade = 0.2 })
 	tex(c, "Right", TEX.grime, 8, 8, Color3.new(0, 0, 0), 0.6)
@@ -1014,7 +1162,7 @@ fenceRun(-YARD_HALF - 0.4, YARD_HALF, N1 + 0.4, N1 + 0.4, true)
 local yc = prop("YardClutter_N", "Pallet")
 yc.Parent = yv
 for i = 0, 1 do pallet(yc, -21.5, N0 + 6, i * 0.6) end
-drum(yc, -22.3, N0 + 10.4, S.olive)
+drum(yc, -22.3, N0 + 10.4, S.rust)
 proxy(yp, "PCOL_Yard_N_Clutter", -23.6, -19.4, N0 + 4.2, N0 + 9.3, 0, 1.2, M.Wood, NOT, false) -- the pallets
 proxy(yp, "PCOL_Yard_N_Drum", -23.4, -21.2, N0 + 9.3, N0 + 11.5, 0, 3, M.Metal, NOT, false)
 -- backdrop: the neighbours' sheds beyond the fence, so nothing but roofs and sky shows over it
@@ -1028,6 +1176,32 @@ for i, pole in { { -34, N1 + 6 }, { 8, N1 + 7 }, { 46, N1 + 4 } } do
 	vcyl(yd, "Pole" .. i, pole[1], pole[2], 0, 26, 0.7, S.batten)
 	box(yd, "CrossArm" .. i, pole[1] - 3, pole[1] + 3, pole[2] - 0.2, pole[2] + 0.2, 23.5, 23.9, S.batten)
 end
+-- night (round 6): the yard is lit like a real one at midnight, so an opened door shows a believable outside: a flood on a
+-- lamp post by the fence onto the apron and the trailer's end, a street lamp on the middle pole, one lit window next door
+do
+	local pe, pn = -YARD_HALF + 0.9, N0 + 2.6 -- the west corner by the hall wall, clear of the clutter and the trailer
+	vcyl(yv, "LampPost", pe, pn, 0, 15, 0.45, S.fencePost)
+	box(yv, "LampArm", pe, pe + 2.2, pn - 0.12, pn + 0.12, 14.6, 14.85, S.fencePost)
+	box(yv, "FloodHead", pe + 1.6, pe + 2.8, pn - 0.6, pn + 0.6, 13.9, 14.6, S.steel)
+	local fl = box(yv, "FloodLens", pe + 1.7, pe + 2.7, pn - 0.5, pn + 0.5, 13.82, 13.9, S.barLens)
+	fl.CastShadow = false
+	local sl = Instance.new("SpotLight")
+	sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, 120, 30, 2.2, rgb(222, 228, 238), true
+	sl.Parent = fl
+	nLights += 1
+	local pole = { 8, N1 + 7 } -- the middle pole: a street lamp head under the cross-arm
+	box(yd, "StreetLampHead", pole[1] - 0.5, pole[1] + 1.9, pole[2] - 0.45, pole[2] + 0.45, 22.6, 23.2, S.steel)
+	local sh = box(yd, "StreetLampLens", pole[1] - 0.35, pole[1] + 1.75, pole[2] - 0.32, pole[2] + 0.32, 22.52, 22.6, S.barLens)
+	sh.CastShadow = false
+	local pl = Instance.new("PointLight")
+	pl.Range, pl.Brightness, pl.Color, pl.Shadows = 26, 1.2, rgb(230, 230, 226), false
+	pl.Parent = sh
+	nLights += 1
+	-- a lit window high in the shed beyond the trailer (seen over it from the door; warm, dim: somebody is still in there)
+	local win = box(yd, "LitWindow", 0, 6, N1 + 11.85, N1 + 11.97, 15, 18, { M.Neon, nil, rgb(150, 132, 104) })
+	win.CastShadow = false
+	for _, e in { 2, 4 } do box(yd, "WindowBar", e - 0.1, e + 0.1, N1 + 11.7, N1 + 11.85, 15, 18, S.steel) end
+end
 -- south = the north turned 180 degrees about the hall centre; recolour so the two ends don't read the same
 local turn = CFrame.new(ORIGIN) * CFrame.Angles(0, math.pi, 0) * CFrame.new(-ORIGIN)
 local south = Y:Clone()
@@ -1035,15 +1209,16 @@ for _, d in south:GetDescendants() do
 	if d:IsA("BasePart") then d.CFrame = turn * d.CFrame end
 	d.Name = d.Name:gsub("_N_", "_S_"):gsub("_N$", "_S")
 end
--- south (team A's end): an olive-drab trailer with a cream stripe and another haulier; grey under sand containers. North keeps
--- the cream trailer with the olive stripe and rust under green containers (grade round 1: both ends read the same)
+-- south (team A's end): a charcoal trailer with a cream stripe and another haulier; grey under sand containers. North keeps
+-- the cream trailer with the charcoal stripe and rust under weathered-white containers (grade round 1: both ends read the same;
+-- round 6: no olive outside the two crates)
 for _, d in south:GetDescendants() do
 	if d:IsA("BasePart") and d.Parent.Name == "Trailer" then
-		if d.Name == "Body" or d.Name == "Dirt" then d.Color = rgb(118, 128, 92)
-		elseif d.Name == "Roof" or d.Name == "SidePost" or d.Name == "SkirtFront" then d.Color = rgb(86, 96, 66)
+		if d.Name == "Body" or d.Name == "Dirt" then d.Color = rgb(88, 90, 92)
+		elseif d.Name == "Roof" or d.Name == "SidePost" or d.Name == "SkirtFront" then d.Color = rgb(66, 68, 70)
 		elseif d.Name == "Stripe" then d.Color = rgb(226, 220, 200) end
 	end
-	if d:IsA("TextLabel") and d.Text == "TACTICAL FREIGHT CO." then d.Text = "OLIVE LINE HAULAGE" d.TextColor3 = rgb(232, 226, 206) end
+	if d:IsA("TextLabel") and d.Text == "TACTICAL FREIGHT CO." then d.Text = "RIDGEWAY HAULAGE" d.TextColor3 = rgb(232, 226, 206) end
 	if d:IsA("TextLabel") and d.Text == "TCLU 204417 5" then d.Text = "MSKU 118204 7" end -- each yard its own serials
 	if d:IsA("TextLabel") and d.Text == "OLVU 330918 2" then d.Text = "GSTU 702213 9" end
 	if d:IsA("BasePart") and d.Parent.Name == "Containers" then
@@ -1055,10 +1230,10 @@ for _, d in south:GetDescendants() do
 	end
 end
 for _, y in { Y, south } do
-	for _, p in y.Proxies:GetChildren() do p.Parent = p.Name:sub(1, 4) == "PCOL" and F.Props or CP end
-	for _, p in y.Bounds:GetChildren() do p.Parent = F.Bounds end
+	for _, p in y.Proxies:GetChildren() do p.Parent = p.Name:sub(1, 4) == "PCOL" and XF.Props or XF.CollisionProxies end
+	for _, p in y.Bounds:GetChildren() do p.Parent = XF.Bounds end
 	for _, m in y:GetChildren() do
-		if m.Name:find("^Yard_") then m.Parent = F.Yards elseif m.Name:find("^Backdrop_") then m.Parent = F.Backdrop end
+		if m.Name:find("^Yard_") then m.Parent = XF.Yards elseif m.Name:find("^Backdrop_") then m.Parent = XF.Backdrop end
 	end
 	y:Destroy()
 end
@@ -1066,16 +1241,25 @@ end
 -- ====================================================================================================== finish
 -- out of reach (highest eye + hop ~7, no climbing on NotCover): their tops' drops are planned, not holes (MapAudit HOLE)
 for _, p in F.CollisionProxies:GetChildren() do
-	if p.Name:match("^COLP_Wall_") or (p.Name:match("^COLP_Yard_") and not p.Name:match("Floor$")) then CS:AddTag(p, "KitIntendedDrop") end
-	-- (the yard aprons are NOT tagged: their edges stay visible to MapAudit HOLE; the enclosure is proved by the flood test in
-	-- tools/wh2_audit.py instead, grade round 1)
+	if p.Name:match("^COLP_Wall_") then CS:AddTag(p, "KitIntendedDrop") end
+end
+for _, p in XF.CollisionProxies:GetChildren() do
+	if p.Name:match("^COLP_Yard_") and not p.Name:match("Floor$") then CS:AddTag(p, "KitIntendedDrop") end
+	-- (the yard aprons are NOT tagged: their edges stay visible to MapAudit HOLE)
 end
 map:SetAttribute("Builder", "map_warehouse2")
 map:SetAttribute("LayoutVersion", 1)
+map:SetAttribute("LookRound", 6)
+map:SetAttribute("Indoor", true) -- the hall is closed (doors shut in play): MapAudit SKY runs on it
 map:SetAttribute("SteamFill", true) -- the systems agent's steam-fill contract (briefs/systems.md)
 map:SetAttribute("PlanOrigin", ORIGIN)
+map:SetAttribute("Exterior", EXT_NAME)
 map.PrimaryPart = slab
 map.Parent = workspace
+ext:SetAttribute("Builder", "map_warehouse2")
+ext:SetAttribute("Indoor", false) -- open-air yards: the set a cutscene shows when a door rolls up
+ext:SetAttribute("MapOf", MAP_NAME)
+ext.Parent = workspace
 
 -- registry entry (ReplicatedStorage.DuelMaps.Warehouse2): 1v1, like the Warehouse
 local root = RS:FindFirstChild("DuelMaps")
@@ -1088,10 +1272,12 @@ entry:SetAttribute("Image", "")
 local info = Instance.new("ModuleScript")
 info.Name = "MapInfo"
 info.Source = ([[
--- MapInfo: registry entry for WAREHOUSE 2 (fix/map_warehouse2.lua, 2026-10-27; brief briefs/map-warehouse2.md).
--- The old Warehouse's cover layout in a grounded freight warehouse: steel portal frame, skylights, roll-up doors open at both
--- ends onto closed loading yards. Workspace.Warehouse2 is the map at its native position; its own MatchSpawns hold the team
--- markers (RoundManager points Workspace.MatchSpawns at them when this map wins the vote, and applies Lighting below).
+-- MapInfo: registry entry for WAREHOUSE 2 (fix/map_warehouse2.lua; brief briefs/map-warehouse2.md).
+-- The old Warehouse's cover layout in a grounded freight warehouse at night: steel portal frame, light bars on steel beams across
+-- the hall, both roll-up doors shut (Workspace.Warehouse2.Interactive: a script can roll them up for a cutscene, see
+-- briefs/systems.md), the lit loading yards behind them (Workspace.Warehouse2Exterior). Workspace.Warehouse2 is the map at its
+-- native position; its own MatchSpawns hold the team markers (RoundManager points Workspace.MatchSpawns at them when this map
+-- wins the vote, and applies Lighting below).
 return {
 	Id = "%s",
 	DisplayName = "Warehouse 2",
@@ -1101,19 +1287,23 @@ return {
 	SpawnSpacing = 4,
 	KillDepth = 30,
 	WorkspaceName = "%s",
-	Dynamic = {},
+	Exterior = "%s",
+	Dynamic = { "Interactive" },
 	SourceOrigin = Vector3.new(%.3f, %.3f, %.3f),
-	-- afternoon sun through the skylights and the open doors, warm high-bay lamps inside, a little haze
+	-- midnight: a black sky with the moon and stars over the skylights, almost no ambient, so the light bars make the pools
 	Lighting = {
-		ClockTime = 14.3, GeographicLatitude = 35, Brightness = 2.2, ExposureCompensation = -0.15,
-		Ambient = Color3.fromRGB(98, 96, 92), OutdoorAmbient = Color3.fromRGB(128, 126, 120),
-		EnvironmentDiffuseScale = 0.35, EnvironmentSpecularScale = 0.25, GlobalShadows = true,
-		Atmosphere = { Density = 0.18, Offset = 0.1, Haze = 1.8, Glare = 0.1, Color = Color3.fromRGB(206, 210, 212), Decay = Color3.fromRGB(110, 114, 124) },
-		Grade = { Brightness = 0, Contrast = 0.12, Saturation = -0.08, TintColor = Color3.fromRGB(255, 252, 246) },
-		Bloom = { Intensity = 0.35, Size = 22, Threshold = 2.2 },
+		ClockTime = %s, GeographicLatitude = 35, Brightness = %s, ExposureCompensation = %s,
+		Ambient = Color3.fromRGB(%s), OutdoorAmbient = Color3.fromRGB(%s),
+		EnvironmentDiffuseScale = %s, EnvironmentSpecularScale = %s, GlobalShadows = true,
+		Atmosphere = { Density = %s, Offset = %s, Haze = %s, Glare = 0, Color = Color3.fromRGB(%s), Decay = Color3.fromRGB(%s) },
+		Grade = { Brightness = %s, Contrast = %s, Saturation = %s, TintColor = Color3.fromRGB(%s) },
+		Bloom = { Intensity = %s, Size = %s, Threshold = %s },
 	},
 }
-]]):format(REG_ID, 2 * (HE + WT), 2 * (N1), MAP_NAME, ORIGIN.X, ORIGIN.Y, ORIGIN.Z)
+]]):format(REG_ID, 2 * (HE + WT), 2 * (N1), MAP_NAME, EXT_NAME, ORIGIN.X, ORIGIN.Y, ORIGIN.Z,
+	NIGHT.clock, NIGHT.bright, NIGHT.exposure, NIGHT.ambient, NIGHT.outdoor, NIGHT.diffuse, NIGHT.specular,
+	NIGHT.density, NIGHT.offset, NIGHT.haze, NIGHT.atmoColor, NIGHT.decay, NIGHT.gradeBright, NIGHT.contrast, NIGHT.saturation,
+	NIGHT.tint, NIGHT.bloom, NIGHT.bloomSize, NIGHT.threshold)
 info.Parent = entry
 entry.Parent = root
 
