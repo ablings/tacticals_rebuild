@@ -6,7 +6,7 @@
    "neon": 25,
    "walkCells": 752,
    "meshparts": 4,
-   "parts": 1398
+   "parts": 1396
   },
   "fails": 0,
   "opts": "indoor=false (yards are open-air; see the hall sky sweep)",
@@ -37,7 +37,7 @@
    "neon": 25,
    "walkCells": 752,
    "meshparts": 4,
-   "parts": 1398
+   "parts": 1396
   },
   "findings": [
    {

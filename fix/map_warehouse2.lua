@@ -374,15 +374,20 @@ local function stain(parent, name, e, n, r, h)
 	g.PixelsPerStud = 16
 	g.LightInfluence = 1
 	g.Parent = p
-	for k = 1, 16 do
+	for k = 1, 10 do
 		local f = Instance.new("Frame")
-		local sz = rng:NextNumber(0.18, 0.62) * (k <= 4 and 1.25 or 1)
+		local sz = rng:NextNumber(0.3, 0.7) * (k <= 3 and 1.3 or 1)
 		f.Size = UDim2.fromScale(sz, sz * rng:NextNumber(0.65, 1))
 		f.AnchorPoint = Vector2.new(0.5, 0.5)
 		f.Position = UDim2.fromScale(0.5 + rng:NextNumber(-0.17, 0.17), 0.5 + rng:NextNumber(-0.17, 0.17))
 		f.Rotation = rng:NextNumber(0, 180)
 		f.BackgroundColor3 = rgb(16, 14, 12)
-		f.BackgroundTransparency = k <= 4 and 0.93 or 0.89
+		f.BackgroundTransparency = k <= 3 and 0.9 or 0.86
+		local fade = Instance.new("UIGradient") -- each disc fades toward one rim, turned at random: no hard disc edges
+		fade.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.85), NumberSequenceKeypoint.new(0.45, 0),
+			NumberSequenceKeypoint.new(1, 0.9) })
+		fade.Rotation = rng:NextNumber(0, 360)
+		fade.Parent = f
 		f.BorderSizePixel = 0
 		local c = Instance.new("UICorner")
 		c.CornerRadius = UDim.new(0.5, 0)
@@ -520,9 +525,7 @@ for _, s in { { "N", 1 }, { "S", -1 } } do
 		wedge(H, "End_" .. k .. side[1] .. "_Gable", 0, side[2] * (HE + WT), g * HN, g * (HN + WT), EAVES, RIDGE, side[2] > 0 and "e-" or "e+", S.clad)
 	end
 	box(H, "End_" .. k .. "_Header", -DOOR_HALF - 0.6, DOOR_HALF + 0.6, g * HN, g * (HN + WT), DOOR_H + 0.6, EAVES, S.clad)
-	-- louvred vent high in the gable
-	local v = box(H, "End_" .. k .. "_Vent", -4, 4, g * (HN - 0.15), g * HN, 20, 22.5, S.steel)
-	tex(v, g > 0 and "Front" or "Back", "rbxassetid://136153789620409", 2, 2.5, rgb(140, 142, 140))
+	-- (no gable vent: it framed the raised LOADING BAY sign in black, grade round 3)
 end
 
 -- portal frames: I-section columns in the blockwork line (inner flange flush with the blockwork face), rafters to the ridge,
@@ -596,7 +599,8 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	dls.Parent = dl
 	nLights += 1
 	-- sign above the drum: olive plate, cream letters
-	local sign = box(D, "Sign_" .. k, -6, 6, g * (HN - 0.12), g * HN, DOOR_H + 3.6, DOOR_H + 5.6, S.olive)
+	-- (bottom 1.8 above the hood top: the hood hid the lower letters from door distance, grade round 3)
+	local sign = box(D, "Sign_" .. k, -6, 6, g * (HN - 0.12), g * HN, DOOR_H + 4.8, DOOR_H + 6.8, S.olive)
 	text(sign, g > 0 and "Front" or "Back", s[3], rgb(236, 232, 218))
 	-- the bay number, big, stencilled on the blockwork either side of the door: readable from mid-hall (grade round 1)
 	for _, side in { -1, 1 } do
@@ -613,7 +617,7 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	do
 		local fl = box(D, "Flood_" .. k, -1, 1, g * (HN + WT), g * (HN + WT + 0.6), EAVES - 2.2, EAVES - 1.2, S.steel)
 		local fs = Instance.new("SpotLight")
-		fs.Face, fs.Angle, fs.Range, fs.Brightness, fs.Color, fs.Shadows = g > 0 and Enum.NormalId.Back or Enum.NormalId.Front, 70, 32, 2.6, rgb(255, 238, 216), false
+		fs.Face, fs.Angle, fs.Range, fs.Brightness, fs.Color, fs.Shadows = g > 0 and Enum.NormalId.Back or Enum.NormalId.Front, 70, 32, g > 0 and 2.6 or 3.4, rgb(255, 238, 216), false
 		fs.Parent = fl
 		nLights += 1
 	end
@@ -946,7 +950,7 @@ do -- lettering painted on the body's yard face (a SurfaceGui on the body; no pl
 	g.Name = "Livery"
 	g.PixelsPerStud = 20 -- TextScaled stops at 100 px (5 studs here)
 	local l = g:FindFirstChildOfClass("TextLabel")
-	l.Size, l.Position = UDim2.fromScale(0.62, 0.3), UDim2.fromScale(0.19, 0.4)
+	l.Size, l.Position = UDim2.fromScale(0.62, 0.3), UDim2.fromScale(0.2025, 0.4) -- clear of a rib post
 end
 box(tr, "SkirtFront", TR.e0 + 9, TR.e1 - 2, TR.n0 + 0.3, TR.n0 + 0.45, 0.7, 3.7, S.trailer2)
 -- side posts every 4 studs (a dry van's ribs) and a road-dirt band low on the side
@@ -1035,11 +1039,13 @@ end
 -- the cream trailer with the olive stripe and rust under green containers (grade round 1: both ends read the same)
 for _, d in south:GetDescendants() do
 	if d:IsA("BasePart") and d.Parent.Name == "Trailer" then
-		if d.Name == "Body" or d.Name == "Dirt" then d.Color = rgb(108, 118, 84)
+		if d.Name == "Body" or d.Name == "Dirt" then d.Color = rgb(118, 128, 92)
 		elseif d.Name == "Roof" or d.Name == "SidePost" or d.Name == "SkirtFront" then d.Color = rgb(86, 96, 66)
 		elseif d.Name == "Stripe" then d.Color = rgb(226, 220, 200) end
 	end
 	if d:IsA("TextLabel") and d.Text == "TACTICAL FREIGHT CO." then d.Text = "OLIVE LINE HAULAGE" d.TextColor3 = rgb(232, 226, 206) end
+	if d:IsA("TextLabel") and d.Text == "TCLU 204417 5" then d.Text = "MSKU 118204 7" end -- each yard its own serials
+	if d:IsA("TextLabel") and d.Text == "OLVU 330918 2" then d.Text = "GSTU 702213 9" end
 	if d:IsA("BasePart") and d.Parent.Name == "Containers" then
 		local upper = d.Position.Y > ORIGIN.Y + 8.5
 		local base = upper and rgb(170, 154, 122) or rgb(118, 120, 116)

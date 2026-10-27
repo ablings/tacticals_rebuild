@@ -131,12 +131,20 @@ outside, read-back 0, hall metrics 0 lines out, overlays, wall sound, brief = bu
 After round 3: MapAudit 0 FAIL / 1 WARN (the documented apron HOLE), sky sweep 0 holes, flood 8,397 cells / 0 outside, read-back
 0 differences, hall metrics 0 lines out of 5 %.
 
+## Grade round 3 (fresh roblox-map-grader, xhigh): FIX 8.4 (sky only blocks PASS), and the last fixes
+Confirmed: lenses no longer outshine the doors; ends differ; read-back 0, hall metrics 25/25 within 5 %, MapAudit 0 FAIL, sky
+sweep 0 holes, flood 0 outside (all re-run by the grader). Its verdict rule: the sky (proof check 1.3) alone keeps it at FIX.
+Fixed after it: LOADING BAY signs raised 1.2 (the roller hood hid the lower letters from door distance) and the dark gable vent
+removed; south trailer flood 3.4 and a lighter drab olive (118,128,92); stain discs fewer, larger, each fading toward one rim
+(UIGradient); the south yard's containers get their own serials; trailer lettering nudged off a rib post. Re-run after: MapAudit
+0 FAIL / 1 WARN, sky sweep 0 holes, flood 0 outside, read-back 0 differences, hall metrics 0 lines out; 21 cameras recaptured.
+
 ## Waiting on / open
 - **Systems (not map code):** `GadgetManager.mapFolder()` (grenade / smoke wall rays) and `PropController` (prop noise) still
   look only at `Workspace.Warehouse`: on Warehouse 2 (and the Arena / PracticeRange) grenades and smoke ignore the walls. The
   systems agent's steam-fill round covers ShootableManager (every placed registry map) and BotConfig, not these two. Fix: resolve
   the voted map (`ReplicatedStorage.ArenaMap` -> MapInfo.WorkspaceName) like CoverController / CameraController already do.
-- **Sky:** the place has one shared Sky (custom skybox, saturated royal blue at the zenith); RoundManager.applyMapEnv swaps lighting and post effects per map but not the Sky. Fix (systems): a `Sky` table in MapInfo.Lighting that applyMapEnv swaps, plus an own pale afternoon skybox uploaded under the group.
+- **Sky (blocks PASS; grader rounds 1-3):** the place has one shared Sky (custom skybox, saturated royal blue at the zenith); RoundManager.applyMapEnv swaps lighting and post effects per map but not the Sky. Fix (systems, ~10 lines): if MapInfo.Lighting holds a Sky, applyMapEnv parks the place's Sky in a holding folder and clones the map's in; the reset reverses it (same pattern as the post-effect swap). Needs an own pale afternoon skybox (6 faces) uploaded under Gunsy Funsy, or reuse an own pale sky if the lobby has one.
 - **Vote tile image:** `Image = ""` (as the Arena). A capture can become the tile once uploaded under the group.
 - **Lobby duels:** not added to `fix/duel_split_map.lua` (match places only, as ordered); the installer refuses to run in the lobby.
 - **Modeler's meshes** (`art/warehouse2/fbx`, `notes/warehouse2_props.md`): delivered as FBX, not imported (Import 3D needs a
@@ -188,6 +196,8 @@ After round 3: MapAudit 0 FAIL / 1 WARN (the documented apron HOLE), sky sweep 0
     proof is needed.
 11. **A point-symmetric clone needs a different landmark at each end:** recolour every part of the clone (posts, rails, roof),
     then compare the same camera at both ends on the render.
+16. **Door signs above a roller hood / drum: check them from door distance,** not only from the centre: keep the sign's bottom
+    edge above the hood's top as projected from the nearest player eye.
 14. **Measure the landmark against every emissive in the same frame from the area's centre:** a "dim" Neon swatch (118,110,94)
     still rendered 150-170 under bloom; a landmark framed around a dark object (a dark trailer in a door) reads as a hole.
 15. **Walk-through scan:** sample the centre of every visible art part at body height (1.5 / 2.5 / 3.2) inside the walkable area
