@@ -81,7 +81,7 @@ Fill maps only (Warehouse 2); the classic jet (the Warehouse, Tutorial 3) is unc
 | `Color`, `LightInfluence` | (205,210,215), 1 | look (lit by the room only: no glow in the dark) |
 | `ScreenWash` | 0.45 | standing inside greys the picture slightly (0 = off; never shows more than normal) |
 | `Sight.BlindDepth` | 6 | studs of steam an AI sight line may cross before it's blocked (round 3) |
-| `Sight.CoreRadius` / `CoreWeight` / `Step` | 9 / 3 / 1 | the thick core around the cloud's centre counts 3 x; sample spacing |
+| `Sight.CoreRadius` / `CoreWeight` / `Step` | 9 / 3 / 0.5 | the thick core around the cloud's centre counts 3 x; sample spacing |
 | `Footsteps.ListenerInSteam` | true | standing in the steam you can't hear people either (false: only steps in / through it) |
 | `Footsteps.ThroughDepth` | 6 | steps (and reloads, for the AI) on the far side of this much steam are muffled too (0 = off) |
 | `Footsteps.Volume` / `OwnVolume` | 0.06 / 0.5 | muffled footsteps: others' / your own (yours end up 0.5 x 0.7 x 0.5 = 0.175) |
@@ -91,9 +91,10 @@ Fill maps only (Warehouse 2); the classic jet (the Warehouse, Tutorial 3) is unc
 Studio test override: player attribute `SteamFillQuality = "High" | "Low"`.
 
 ## Files
-- `fix/steam_fill.lua` installer, **round 4** (= round 3 after its grader; 18 text edits: round 2's 12 + BotManager 3,
-  CombatManager 1, FootstepController 2; hash before 159e89d8 -> installed db0c45b8; UNDO back to 159e89d8). Round 3's text
-  (commit 84b6012, hash 14173ab7) existed only on this test copy and was UNDOne with its own installer before round 4. Round 2 was only
+- `fix/steam_fill.lua` installer, **round 5** (= round 3 after two graders; 18 text edits: round 2's 12 + BotManager 3,
+  CombatManager 1, FootstepController 2; hash before 159e89d8 -> installed e7c76e50; UNDO back to 159e89d8). Rounds 3 (84b6012)
+  and 4 (29c4b22) existed only on this test copy and were UNDOne with their own installers. **Install on the match places
+  (Matchmaking / Ranked / Tutorial) after `fix/map_warehouse2.lua`; nothing is installed on them yet.** Round 2 was only
   ever on the main PC's test copy; a round-2 stamp is refused (UNDO it with `git show 2d05a52:fix/steam_fill.lua`).
 - (round 2 text, kept for history:) installer (built by `python tools/steam_fill_build.py [--run <studio_id> [UNDO]]` from
   `fix/steam_fill/*.lua`). Match places only (refuses the hub). Idempotent; checks every anchor in every target, plus the
@@ -118,6 +119,24 @@ Studio test override: player attribute `SteamFillQuality = "High" | "Low"`.
 4. the test hook re-implemented the hearing rule: `hears` now runs the AI's real `_perceive` and `HearNoise`.
 Open from it: the two-player run (C2). Its note: after 5 s without seeing or hearing you, the AI's old hunt logic heads for
 your true position +-15 studs, so a blind AI still drifts toward someone hiding in the steam (not changed: older behaviour).
+
+## Round 4 grader (roblox-systems-grader, xhigh, fresh): FIX 8.4, nothing blocking. Fixed in round 5:
+1. an and/or with a possibly-false middle (`cfg and FillMuffled(...) or false`, SteamCloud): plain if;
+2. the SightDepth test was looser than it looked (Step 1 sampling of the core edge: up to 2.15 studs off, 2 blind/seen flips in
+   300 random lines): the cloud's AND the core's circles are now exact chords, only the wall fan and the height band are
+   sampled, Step 0.5; the test is 60 seeded random lines + a vertical + a zero-length line against a 6000-sample brute force
+   (all within 0.75 studs, no flips away from the threshold);
+3. ThroughDepth silently needed the Sight block: SightDepth uses DEFAULT_SIGHT when a map has none (SightBlocked still needs it);
+4. the hook's `hears` probe could leave the AI hunting: it now restores heardAt / noiseAt / lastKnown / noisePos.
+Kept: `BotConfig.CoverFolders` lists `Warehouse2/CollisionProxies` by path, as the work order asked (the existing entry is a path too).
+Open from it: the two-player run, phone frame time.
+
+## Round 5 results (same copy)
+- UNDO round 4 (`git show 29c4b22`) -> 159e89d8; install round 5 -> e7c76e50; second run all "="; UNDO -> 159e89d8; re-install.
+- Unit tests **63/63**.
+- Play, Warehouse 2 (real `_perceive` via the hook): steps heard with no steam, not through the steam (both outside, cloud between),
+  heard after the fade. SightDepth cost: 17.6 us through the core, 6.1 us for 60 studs of haze, 5.2 us missing (one raycast 2.3 us).
+  Output: no errors from this work.
 
 ## Round 4 results (same copy)
 - UNDO round 3 -> 159e89d8; install round 4 -> db0c45b8; second run all "="; UNDO -> 159e89d8; re-install db0c45b8.

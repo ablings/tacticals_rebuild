@@ -1,5 +1,5 @@
--- fix/steam_fill.lua [STEAMFILL] 2026-10-27, round 4 = round 3 after its grader (round 3 text never left the test copy; UNDO it
--- with `git show 84b6012:fix/steam_fill.lua` first). Round 3 = Edward's review of round 2: "yes it should be blinded by the steam, the steam
+-- fix/steam_fill.lua [STEAMFILL] 2026-10-27, round 5 = round 3 after two graders (rounds 3-4 never left the test copy; UNDO round 4
+-- with `git show 29c4b22:fix/steam_fill.lua` first). Round 3 = Edward's review of round 2: "yes it should be blinded by the steam, the steam
 -- should muddy up footstep sounds so they are very faint and you can't hear people"; rounds 1-2 never left a test copy). Work order: "make the steam valve steam the room up for Warehouse 2, while
 -- it keeps masking noise the way Tutorial 3 teaches" (Lead plan, approved by Edward). Notes: notes/steam_fill.md.
 -- MATCH PLACES ONLY (Matchmaking / Ranked / Tutorial and the combined match place), Edit mode. Refuses the hub.
@@ -21,7 +21,7 @@
 -- hear footsteps in or through the steam muffled and very faint (FootstepController -> SteamCloud.FootstepScale).
 --   also edits FootstepController, BotManager, CombatManager (one line: the reload noise is "quiet")
 local UNDO = false --@UNDO
-local ROUND = 4
+local ROUND = 5
 local SOURCES = {}
 --@@BEGIN SOURCES
 SOURCES.SteamMask = [=[
@@ -233,8 +233,28 @@ end
 
 -- How many studs of steam a line from `a` to `b` crosses, weighted: the thick core near the valve (Sight.CoreRadius) counts
 -- Sight.CoreWeight times, and everything scales with the cloud's strength (it thins in the fade). Fill clouds only.
--- Cheap enough for the AI's sight test (it runs after CanSee's raycast is clear): every per-valve lookup is done once, and the
--- line is clipped to the cloud's circle before it is sampled (the same test as Inside: radius, wall fan, height band).
+-- Cheap enough for the AI's sight test (it runs after CanSee's raycast is clear): every per-valve lookup is done once; the cloud's
+-- circle and the core's circle are exact chords (flat), so only the wall fan and the height band are sampled (every Sight.Step).
+-- A map without a Sight block still gets the depth (Footsteps.ThroughDepth uses it): DEFAULT_SIGHT.
+local DEFAULT_SIGHT = { CoreRadius = 9, CoreWeight = 3, Step = 0.5 }
+
+-- the part of the line (t in 0..1) whose flat projection lies inside a circle of radius r around the origin of (ox, oz); nil if none
+local function chord(ox: number, oz: number, dx: number, dz: number, r: number): (number?, number?)
+	local A = dx * dx + dz * dz
+	local C = ox * ox + oz * oz - r * r
+	if A < 1e-9 then
+		if C <= 0 then return 0, 1 end
+		return nil, nil
+	end
+	local B = 2 * (ox * dx + oz * dz)
+	local disc = B * B - 4 * A * C
+	if disc < 0 then return nil, nil end
+	local sq = math.sqrt(disc)
+	local t0, t1 = math.max(0, (-B - sq) / (2 * A)), math.min(1, (-B + sq) / (2 * A))
+	if t1 <= t0 then return nil, nil end
+	return t0, t1
+end
+
 function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	now = now or workspace:GetServerTimeNow()
 	local depth = 0
@@ -243,45 +263,38 @@ function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	if len < 0.01 then return 0 end
 	for _, valve in CollectionService:GetTagged("SteamValve") do
 		local fill = mask.FillOf(valve)
-		local sight = fill and fill.Sight
 		local grow, strength
-		if sight then grow, strength = mask.Phase(valve, now, fill) end
+		if fill then grow, strength = mask.Phase(valve, now, fill) end
 		local fan = grow and mask.Fan(valve, fill)
 		if fan then
+			local sight = fill.Sight or DEFAULT_SIGHT
 			local r = fill.MaskStartRadius + (fill.MaskRadius - fill.MaskStartRadius) * mask.Ease(grow) -- = mask.Radius
-			-- clip the line (flat) to the circle of radius r around the cloud's centre
 			local cx, cz = fan.centre.X, fan.centre.Z
-			local ox, oz, dx, dz = a.X - cx, a.Z - cz, ab.X, ab.Z
-			local A = dx * dx + dz * dz
-			local t0, t1 = 0, 1
-			if A < 1e-9 then
-				if ox * ox + oz * oz > r * r then t1 = -1 end
-			else
-				local B = 2 * (ox * dx + oz * dz)
-				local disc = B * B - 4 * A * (ox * ox + oz * oz - r * r)
-				if disc < 0 then
-					t1 = -1
-				else
-					local sq = math.sqrt(disc)
-					t0 = math.max(0, (-B - sq) / (2 * A))
-					t1 = math.min(1, (-B + sq) / (2 * A))
+			local ox, oz = a.X - cx, a.Z - cz
+			local t0, t1 = chord(ox, oz, ab.X, ab.Z, r)
+			if t0 and t1 then
+				-- split the cloud's chord at the core's chord: each piece has one weight
+				local c0, c1 = chord(ox, oz, ab.X, ab.Z, math.min(sight.CoreRadius, r))
+				local pieces = { { t0, t1, 1 } }
+				if c0 and c1 then
+					pieces = { { t0, c0, 1 }, { c0, c1, sight.CoreWeight }, { c1, t1, 1 } }
 				end
-			end
-			if t1 > t0 then
-				local span = (t1 - t0) * len
-				local n = math.max(1, math.ceil(span / (sight.Step or 1)))
-				local seg = span / n
 				local lo, hi = fan.floorY - 4, fan.floorY + fill.MaskHeight
 				local edge = fill.MaskEdge or 0
-				local core2 = sight.CoreRadius * sight.CoreRadius
+				local step = sight.Step or DEFAULT_SIGHT.Step
 				local here = 0
-				for i = 0, n - 1 do
-					local p = a + ab * (t0 + (t1 - t0) * (i + 0.5) / n)
-					if p.Y >= lo and p.Y <= hi then
-						local fx, fz = p.X - cx, p.Z - cz
-						local d2 = fx * fx + fz * fz
-						if math.sqrt(d2) <= mask.ReachAt(fan, p) + edge then
-							here += seg * (if d2 <= core2 then sight.CoreWeight else 1)
+				for _, piece in pieces do
+					local p0, p1, w = piece[1], piece[2], piece[3]
+					if p1 > p0 then
+						local span = (p1 - p0) * len
+						local n = math.max(1, math.ceil(span / step))
+						local seg = span / n
+						for i = 0, n - 1 do
+							local p = a + ab * (p0 + (p1 - p0) * (i + 0.5) / n)
+							if p.Y >= lo and p.Y <= hi then
+								local fx, fz = p.X - cx, p.Z - cz
+								if math.sqrt(fx * fx + fz * fz) <= mask.ReachAt(fan, p) + edge then here += seg * w end
+							end
 						end
 					end
 				end
@@ -657,7 +670,8 @@ end
 function SteamCloud.FootstepScale(sound: Sound, source: Vector3, own: boolean): number
 	local F = Steam.Fill
 	local cfg = type(F) == "table" and F.Footsteps
-	local inSteam = cfg and SteamMask.FillMuffled(source, ear()) or false -- the one rule the AI uses too
+	local inSteam = false
+	if cfg then inSteam = SteamMask.FillMuffled(source, ear()) end -- the one rule the AI uses too
 	local eq = sound:FindFirstChild("SteamMuffle")
 	if inSteam then
 		if not eq then
@@ -745,11 +759,11 @@ SOURCES.FillBlock = [=[
 				BlindDepth = 6,      -- studs of steam a bot's sight line may cross before it can't see (a player 6+ studs into the haze is hidden)
 				CoreRadius = 9,      -- studs around the cloud's centre that count as the thick core
 				CoreWeight = 3,      -- a stud of core counts this much (the valve corner blinds after 2 studs)
-				Step = 1,            -- studs between samples along the sight line
+				Step = 0.5,          -- studs between samples along the line (only the wall fan and the height band are sampled)
 			},
 			Footsteps = {
 				ListenerInSteam = true, -- standing in the steam you can't hear people either (false: only steps IN or THROUGH it)
-				ThroughDepth = 6,    -- steps on the far side of this much steam (weighted like Sight) are muffled too (0 = off)
+				ThroughDepth = 6,    -- steps on the far side of this much steam (weighted like Sight; works without it) are muffled too (0 = off)
 				Volume = 0.06,       -- other people's muffled steps: x this (very faint; you can't place them)
 				OwnVolume = 0.5,     -- your own steps in the steam: x this, muffled
 				HighGain = -40, MidGain = -18, LowGain = -2, -- the muffle (EqualizerSoundEffect, dB): steam swallows the crisp part
@@ -865,7 +879,7 @@ local function steamTestHook()
 			for _, bot in botList() do
 				if not (root and bm) then return "no player" end
 				local vel = root.AssemblyLinearVelocity
-				local heard0, noise0 = bot.heardAt, bot.noiseAt
+				local heard0, noise0, known0, noisePos0 = bot.heardAt, bot.noiseAt, bot.lastKnown, bot.noisePos
 				root.AssemblyLinearVelocity = Vector3.new(12, 0, 0)
 				bot.heardAt = nil
 				bot:_perceive()
@@ -877,8 +891,8 @@ local function steamTestHook()
 					bm.HearNoise(root.Position, (Config.ReloadHearRange or 22), true)
 				end
 				local reload = bot.noiseAt ~= nil
-				bot.heardAt = bot.heardAt or heard0
-				bot.noiseAt = bot.noiseAt or noise0
+				-- leave the AI as it was (a probe mustn't start a hunt)
+				bot.heardAt, bot.noiseAt, bot.lastKnown, bot.noisePos = heard0, noise0, known0, noisePos0
 				return HttpService:JSONEncode({ steps = steps, reload = reload,
 					botInSteam = SteamMask.InFill(bot.root.Position), playerInSteam = SteamMask.InFill(root.Position) })
 			end

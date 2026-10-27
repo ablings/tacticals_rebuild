@@ -311,7 +311,8 @@ end
 function SteamCloud.FootstepScale(sound: Sound, source: Vector3, own: boolean): number
 	local F = Steam.Fill
 	local cfg = type(F) == "table" and F.Footsteps
-	local inSteam = cfg and SteamMask.FillMuffled(source, ear()) or false -- the one rule the AI uses too
+	local inSteam = false
+	if cfg then inSteam = SteamMask.FillMuffled(source, ear()) end -- the one rule the AI uses too
 	local eq = sound:FindFirstChild("SteamMuffle")
 	if inSteam then
 		if not eq then

@@ -206,8 +206,28 @@ end
 
 -- How many studs of steam a line from `a` to `b` crosses, weighted: the thick core near the valve (Sight.CoreRadius) counts
 -- Sight.CoreWeight times, and everything scales with the cloud's strength (it thins in the fade). Fill clouds only.
--- Cheap enough for the AI's sight test (it runs after CanSee's raycast is clear): every per-valve lookup is done once, and the
--- line is clipped to the cloud's circle before it is sampled (the same test as Inside: radius, wall fan, height band).
+-- Cheap enough for the AI's sight test (it runs after CanSee's raycast is clear): every per-valve lookup is done once; the cloud's
+-- circle and the core's circle are exact chords (flat), so only the wall fan and the height band are sampled (every Sight.Step).
+-- A map without a Sight block still gets the depth (Footsteps.ThroughDepth uses it): DEFAULT_SIGHT.
+local DEFAULT_SIGHT = { CoreRadius = 9, CoreWeight = 3, Step = 0.5 }
+
+-- the part of the line (t in 0..1) whose flat projection lies inside a circle of radius r around the origin of (ox, oz); nil if none
+local function chord(ox: number, oz: number, dx: number, dz: number, r: number): (number?, number?)
+	local A = dx * dx + dz * dz
+	local C = ox * ox + oz * oz - r * r
+	if A < 1e-9 then
+		if C <= 0 then return 0, 1 end
+		return nil, nil
+	end
+	local B = 2 * (ox * dx + oz * dz)
+	local disc = B * B - 4 * A * C
+	if disc < 0 then return nil, nil end
+	local sq = math.sqrt(disc)
+	local t0, t1 = math.max(0, (-B - sq) / (2 * A)), math.min(1, (-B + sq) / (2 * A))
+	if t1 <= t0 then return nil, nil end
+	return t0, t1
+end
+
 function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	now = now or workspace:GetServerTimeNow()
 	local depth = 0
@@ -216,45 +236,38 @@ function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	if len < 0.01 then return 0 end
 	for _, valve in CollectionService:GetTagged("SteamValve") do
 		local fill = mask.FillOf(valve)
-		local sight = fill and fill.Sight
 		local grow, strength
-		if sight then grow, strength = mask.Phase(valve, now, fill) end
+		if fill then grow, strength = mask.Phase(valve, now, fill) end
 		local fan = grow and mask.Fan(valve, fill)
 		if fan then
+			local sight = fill.Sight or DEFAULT_SIGHT
 			local r = fill.MaskStartRadius + (fill.MaskRadius - fill.MaskStartRadius) * mask.Ease(grow) -- = mask.Radius
-			-- clip the line (flat) to the circle of radius r around the cloud's centre
 			local cx, cz = fan.centre.X, fan.centre.Z
-			local ox, oz, dx, dz = a.X - cx, a.Z - cz, ab.X, ab.Z
-			local A = dx * dx + dz * dz
-			local t0, t1 = 0, 1
-			if A < 1e-9 then
-				if ox * ox + oz * oz > r * r then t1 = -1 end
-			else
-				local B = 2 * (ox * dx + oz * dz)
-				local disc = B * B - 4 * A * (ox * ox + oz * oz - r * r)
-				if disc < 0 then
-					t1 = -1
-				else
-					local sq = math.sqrt(disc)
-					t0 = math.max(0, (-B - sq) / (2 * A))
-					t1 = math.min(1, (-B + sq) / (2 * A))
+			local ox, oz = a.X - cx, a.Z - cz
+			local t0, t1 = chord(ox, oz, ab.X, ab.Z, r)
+			if t0 and t1 then
+				-- split the cloud's chord at the core's chord: each piece has one weight
+				local c0, c1 = chord(ox, oz, ab.X, ab.Z, math.min(sight.CoreRadius, r))
+				local pieces = { { t0, t1, 1 } }
+				if c0 and c1 then
+					pieces = { { t0, c0, 1 }, { c0, c1, sight.CoreWeight }, { c1, t1, 1 } }
 				end
-			end
-			if t1 > t0 then
-				local span = (t1 - t0) * len
-				local n = math.max(1, math.ceil(span / (sight.Step or 1)))
-				local seg = span / n
 				local lo, hi = fan.floorY - 4, fan.floorY + fill.MaskHeight
 				local edge = fill.MaskEdge or 0
-				local core2 = sight.CoreRadius * sight.CoreRadius
+				local step = sight.Step or DEFAULT_SIGHT.Step
 				local here = 0
-				for i = 0, n - 1 do
-					local p = a + ab * (t0 + (t1 - t0) * (i + 0.5) / n)
-					if p.Y >= lo and p.Y <= hi then
-						local fx, fz = p.X - cx, p.Z - cz
-						local d2 = fx * fx + fz * fz
-						if math.sqrt(d2) <= mask.ReachAt(fan, p) + edge then
-							here += seg * (if d2 <= core2 then sight.CoreWeight else 1)
+				for _, piece in pieces do
+					local p0, p1, w = piece[1], piece[2], piece[3]
+					if p1 > p0 then
+						local span = (p1 - p0) * len
+						local n = math.max(1, math.ceil(span / step))
+						local seg = span / n
+						for i = 0, n - 1 do
+							local p = a + ab * (p0 + (p1 - p0) * (i + 0.5) / n)
+							if p.Y >= lo and p.Y <= hi then
+								local fx, fz = p.X - cx, p.Z - cz
+								if math.sqrt(fx * fx + fz * fz) <= mask.ReachAt(fan, p) + edge then here += seg * w end
+							end
 						end
 					end
 				end

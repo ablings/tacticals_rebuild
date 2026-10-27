@@ -27,11 +27,11 @@
 				BlindDepth = 6,      -- studs of steam a bot's sight line may cross before it can't see (a player 6+ studs into the haze is hidden)
 				CoreRadius = 9,      -- studs around the cloud's centre that count as the thick core
 				CoreWeight = 3,      -- a stud of core counts this much (the valve corner blinds after 2 studs)
-				Step = 1,            -- studs between samples along the sight line
+				Step = 0.5,          -- studs between samples along the line (only the wall fan and the height band are sampled)
 			},
 			Footsteps = {
 				ListenerInSteam = true, -- standing in the steam you can't hear people either (false: only steps IN or THROUGH it)
-				ThroughDepth = 6,    -- steps on the far side of this much steam (weighted like Sight) are muffled too (0 = off)
+				ThroughDepth = 6,    -- steps on the far side of this much steam (weighted like Sight; works without it) are muffled too (0 = off)
 				Volume = 0.06,       -- other people's muffled steps: x this (very faint; you can't place them)
 				OwnVolume = 0.5,     -- your own steps in the steam: x this, muffled
 				HighGain = -40, MidGain = -18, LowGain = -2, -- the muffle (EqualizerSoundEffect, dB): steam swallows the crisp part

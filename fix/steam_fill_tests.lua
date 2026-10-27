@@ -149,7 +149,7 @@ local ok, err = pcall(function()
 	-- round 4: the optimised SightDepth equals a brute-force walk with Inside (the rule the mask uses), on several lines
 	local function brute(a0: Vector3, b0: Vector3, t: number)
 		local _, st = mask.Phase(fv, t, F)
-		local ab, n, d = b0 - a0, 4000, 0
+		local ab, n, d = b0 - a0, 6000, 0
 		for i = 0, n - 1 do
 			local p = a0 + ab * ((i + 0.5) / n)
 			if mask.Inside(fv, F, p, t) then
@@ -159,12 +159,27 @@ local ok, err = pcall(function()
 		end
 		return d * (st or 0)
 	end
-	local lines = { { floorPos + Vector3.new(-4, 0, -24), floorPos + Vector3.new(-4, 0, 24) }, { outside, W },
-		{ outside, floorPos + Vector3.new(14, 0, 3) }, { floorPos + Vector3.new(-25, 1, -25), floorPos + Vector3.new(20, 3, 10) } }
-	for k, pair in lines do
-		local fast, slow = mask.SightDepth(pair[1], pair[2], now), brute(pair[1], pair[2], now)
-		check("SightDepth = brute force #" .. k, math.abs(fast - slow) <= math.max(1.0, slow * 0.06), ("%.2f vs %.2f"):format(fast, slow))
+	-- seeded random lines through and around the cloud (heights across the band), plus a vertical and a zero-length one
+	local rng = Random.new(20261027)
+	local worst, flips = 0, 0
+	for _ = 1, 60 do
+		local function pt() return floorPos + Vector3.new(rng:NextNumber(-42, 12), rng:NextNumber(-6, 15), rng:NextNumber(-42, 42)) end
+		local a0, b0 = pt(), pt()
+		local fast, slow = mask.SightDepth(a0, b0, now), brute(a0, b0, now)
+		worst = math.max(worst, math.abs(fast - slow))
+		if (fast >= F.Sight.BlindDepth) ~= (slow >= F.Sight.BlindDepth) and math.abs(slow - F.Sight.BlindDepth) > 0.75 then flips += 1 end
 	end
+	check("SightDepth = brute force on 60 seeded lines (within 0.75 studs)", worst <= 0.75, ("worst %.2f"):format(worst))
+	check("SightDepth: no blind/seen flip away from the threshold", flips == 0, flips)
+	local vA = floorPos + Vector3.new(-3, -10, 0)
+	check("SightDepth: vertical line", math.abs(mask.SightDepth(vA, vA + Vector3.new(0, 40, 0), now) - brute(vA, vA + Vector3.new(0, 40, 0), now)) <= 0.75)
+	check("SightDepth: zero-length line", mask.SightDepth(vA, vA, now) == 0)
+	-- the through-steam muffle works without a Sight block (DEFAULT_SIGHT); SightBlocked needs one
+	local keepSight = F.Sight
+	F.Sight = nil
+	check("no Sight block: steam between still muffles", mask.FillMuffled(floorPos + Vector3.new(-4, 0, 40), floorPos + Vector3.new(-4, 0, -40), now))
+	check("no Sight block: never blinds", not mask.SightBlocked(floorPos + Vector3.new(-4, 0, 40), floorPos + Vector3.new(-4, 0, -40), now))
+	F.Sight = keepSight
 	-- footsteps / reloads: steam BETWEEN two people outside it muffles too (ThroughDepth); ListenerInSteam can be switched off
 	local westOut, eastIn = floorPos + Vector3.new(-40, 0, 0), floorPos + Vector3.new(-3, 0, 0)
 	local northOut, southOut = floorPos + Vector3.new(-4, 0, 40), floorPos + Vector3.new(-4, 0, -40)

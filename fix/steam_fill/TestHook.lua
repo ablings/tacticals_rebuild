@@ -91,7 +91,7 @@ local function steamTestHook()
 			for _, bot in botList() do
 				if not (root and bm) then return "no player" end
 				local vel = root.AssemblyLinearVelocity
-				local heard0, noise0 = bot.heardAt, bot.noiseAt
+				local heard0, noise0, known0, noisePos0 = bot.heardAt, bot.noiseAt, bot.lastKnown, bot.noisePos
 				root.AssemblyLinearVelocity = Vector3.new(12, 0, 0)
 				bot.heardAt = nil
 				bot:_perceive()
@@ -103,8 +103,8 @@ local function steamTestHook()
 					bm.HearNoise(root.Position, (Config.ReloadHearRange or 22), true)
 				end
 				local reload = bot.noiseAt ~= nil
-				bot.heardAt = bot.heardAt or heard0
-				bot.noiseAt = bot.noiseAt or noise0
+				-- leave the AI as it was (a probe mustn't start a hunt)
+				bot.heardAt, bot.noiseAt, bot.lastKnown, bot.noisePos = heard0, noise0, known0, noisePos0
 				return HttpService:JSONEncode({ steps = steps, reload = reload,
 					botInSteam = SteamMask.InFill(bot.root.Position), playerInSteam = SteamMask.InFill(root.Position) })
 			end
