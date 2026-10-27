@@ -1,0 +1,15 @@
+{
+ "map": "Arena v2 (Tacticals second match map), plan notes/arena_v2_plan.md",
+ "status": "PLAN: build only after Edward approves; construction (Studio Parts as v1, or Blender meshes) is open question 3",
+ "style": "white SmoothPlastic + the training-room grid texture (rbxassetid://86361987736184, 5-stud tiles, dark at 0.32), plain boxes, sharp edges; collision = the visual",
+ "asset_library_start": "Grid Test Chamber style card (03 Map Building/Map Styles/Grid Test Chamber.md): window frame and ramp+perch recipes, resized here",
+ "pieces": [
+  {"name": "Pillar", "kind": "cover (tall)", "size_studs": [5, 10, 5], "count": 21, "view_distance": "whole map", "collision": "box, cover"},
+  {"name": "Wall", "kind": "cover (tall)", "size_studs": [10, 7, 3], "count": 16, "view_distance": "whole map", "collision": "box, cover"},
+  {"name": "LowWall", "kind": "cover (crouch, vault)", "size_studs": [6, 3.4, 2], "count": 21, "view_distance": "whole map", "collision": "box, cover"},
+  {"name": "WindowFrame", "kind": "cover + landmark", "size_studs": [20, 12, 3], "parts": "2 posts 5x12x3, sill 10x3.4x3, lintel 10x2x3 (10..12)", "count": "1 module per opening: 6 openings in 3 twin windows (35 long)", "view_distance": "whole map", "collision": "box per part; sill = low cover"},
+  {"name": "Deck", "kind": "level change", "size_studs": "12x4x10 (A) / 20x4x8 (B)", "extras": "parapet = LowWall-section 2 deep x 3.4 on the duel edge; KickCurb 0.5 deep x 1 high on watch edges (NotCover)", "count": 2, "collision": "box"},
+  {"name": "Ramp", "kind": "level change", "size_studs": [8, 4, 12], "shape": "wedge, 18.4 deg", "count": 2, "collision": "wedge, NotCover"}
+ ],
+ "box": {"inside": [150, 110], "wall_height": 16, "wall_thickness": 2, "roof": "open", "NotCover": true}
+}
