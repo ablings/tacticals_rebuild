@@ -19,7 +19,7 @@ twin window that touches the outer wall, so entering the enemy's half through a 
 8.5-wide gap at the gate's inner end. Each side owns **one height and one window**, on opposite lanes: A has the **perch** in the
 north-west and the **south gate**; B has the **north gate** and the **ledge** in the south-east. A perch watches the lane the other
 side's gate holds, so each high spot is answered by a window 50 studs away. In the middle of each outer lane a small **island** (a
-pillar or a wall with a low wall) splits the open stretch into two **gaps** you have to decide to cross. The halves have the same jobs
+pillar with a low wall in the north; a low wall between two pillars in the south) splits the open stretch into two **gaps** you have to decide to cross. The halves have the same jobs
 but different shapes (square perch with a parapet and a curb against a long ledge with a wall on it, wall shields against a
 pillar-wall-pillar shield, pillar chains against wall chains), and fairness comes from timing, not mirroring: every A/B pair below is
 within 8 %.
@@ -34,8 +34,8 @@ within 8 %.
    at x -18, then the **north gap** (14.8 studs, 0.6 s cover dash) to the island, then 20.7 studs (0.9 s dash) to B's gate. B holds the
    gate: crouch at a sill, peek through the opening down the whole lane. **The duel here is perch against gate, 50 studs apart**: the
    perch sees the gap and anyone vaulting the gate; the gate sees the perch's front and the gap.
-5. **South lane.** The same jobs swapped: B on the ledge, A at the south gate. The south island is closer to B (10.5) than to A's gate
-   (17.7), the north island closer to A (14.8) than to B's gate (20.7): each side has a short approach in one lane and a long one in
+5. **South lane.** The same jobs swapped: B on the ledge, A at the south gate. The south island is closer to B (10.3) than to A's gate
+   (14.8), the north island closer to A (14.8) than to B's gate (20.7): each side has a short approach in one lane and a long one in
    the other.
 6. **Rotations.** A moves north to centre through a 12.3 gap (pillar chain to the centre pillar), B moves south to centre through 10.3.
    Every rotation gap is watched by both the enemy's height and its gate: crossing it is a decision, not a walk.
@@ -47,11 +47,11 @@ within 8 %.
 | Spot | Reached (own side / enemy) | What it wins | Counter |
 |---|---|---|---|
 | **A perch** (NW, deck 4, 12 x 10) | 3.6 s / 7.9 s | Its **watch edge** (south, kick-curb) sees 30 % of the floor for crouched targets against 24 % from the floor in front of it: the north gap, the island and anyone crouch-walking or vaulting in the north lane. Its **duel edge** (east, 3.4 parapet) is a crouch spot facing B's gate | B's north gate sills (50 studs, sill against parapet). The island pillar hides the island's far side. The watch edge has no crouch cover: whoever peeks there is seen full height from the lane. The parapet hides the perch's own foot for ~11 studs. Taking it means going up A's ramp (7.8 s for B) |
-| **B ledge** (SE, deck 4, 20 x 8) | 3.4 s / 8.1 s | Long open front (kick-curb) with a wall standing on the deck: two peek spots (west end 29.5 % of the floor crouched, east end 26 %). Sees the south gap, the island and A's gate. Sees its own foot (80 %) | A's south gate sills (50 studs). The wall under the ledge (x 10-20) is tall cover for attackers outside its view line. No crouch cover on the ledge. Ramp on B's side |
+| **B ledge** (SE, deck 4, 20 x 8) | 3.4 s / 8.1 s | Long open front (kick-curb) with a wall standing on the deck: two peek spots (west end 29 % of the floor crouched, east end 26 %). Sees the south gap, the island and A's gate. Sees its own foot (80 %) | A's south gate sills (50 studs). The wall under the ledge (x 10-20) is tall cover for attackers outside its view line. No crouch cover on the ledge. Ramp on B's side |
 | **B north gate** (twin window, x 23) | 3.0 s / 5.7 s | Closes the north lane: crouch at either sill, peek through 10 x 6.6 openings at the whole lane and at A's perch. Its posts are 12 high: nothing sees over them | The perch sees anyone standing in the openings. A can flank round the gate's south end (8.5 gap) from the centre. Vaulting in from A's side puts A right on top of a crouched holder |
 | **A south gate** (twin window, x -23) | 3.0 s / 5.9 s | The same for the south lane | The ledge, the gate's north end, vaulting |
 | **Centre sills** (twin window, x 0) | 3.9-4.0 s both | The shortest fight. Two openings and three 12-high posts: you choose which opening to hold | The other opening, the lane rotations onto your flank, the enemy's high ground sees your fallback cover |
-| **Islands** (north: pillar + low wall; south: wall + low wall) | N 4.2 / 4.5 s, S 4.4 / 4.5 s | The only cover in the middle of each outer lane. Whoever holds it can cross to the enemy's gate | Seen from both the enemy's height and its gate. The crossing to it is a watched gap |
+| **Islands** (north: pillar + low wall; south: pillar, low wall, pillar) | N 4.2 / 4.5 s, S 4.4 / 4.5 s | The only cover in the middle of each outer lane. Whoever holds it can cross to the enemy's gate | Seen from both the enemy's height and its gate. The crossing to it is a watched gap |
 
 ## Gaps (deliberate open crossings)
 Cover dash (E) reaches 26 studs at 24 studs/s; sprint is 20/s. "Watched by" = the named spots that see the gap's middle at chest height.
@@ -60,8 +60,8 @@ Cover dash (E) reaches 26 studs at 24 studs/s; sprint is 20/s. "Watched by" = th
 |---|---|---|---|---|
 | North gap A (A chain to island) | 14.8 | 0.74 / 0.62 s | 31 % | A perch, B gate, both sills |
 | North gap B (B gate to island) | 20.7 | 1.04 / 0.86 s | 32 % | A perch, B gate, B ledge |
-| South gap B (B chain to island) | 10.5 | 0.53 / 0.44 s | 28 % | B ledge, A gate |
-| South gap A (A gate to island) | 17.7 | 0.88 / 0.74 s | 33 % | A perch (duel edge), A gate |
+| South gap B (B chain to island) | 10.3 | 0.51 / 0.43 s | 26 % | B ledge, A gate |
+| South gap A (A gate to island) | 14.8 | 0.74 / 0.62 s | 31 % | A perch (duel edge), A gate |
 | Centre A (A chain to sill) | 10.0 | 0.50 / 0.42 s | 26 % | both sills, B gate |
 | Centre B (B wall to sill) | 9.0 | 0.45 / 0.38 s | 23 % | both sills, A perch, A gate |
 | Rotation A (north chain to centre pillar) | 12.3 | 0.61 / 0.51 s | 36 % | A perch, B gate |
@@ -73,14 +73,14 @@ front of the gate that guards it.
 ## Checks (plan view, `tools/arena_v2_check.py`)
 | Check | Result |
 |---|---|
-| Overlaps; gaps between pieces 0, up to 1.5 (cover chain) or at least 4 (a lane), never 1.5-4 | **0 overlaps, 0 snag gaps** (63 pieces, 87 parts) |
-| Unwanted climbs (a top 0-5.6 above where you stand; low walls and sills must have 3.5 clear behind so Space vaults) | **0** (every deck edge has a parapet, curb, ramp or the box wall; no wall or pillar top in climb reach of a deck) |
+| Overlaps; gaps between pieces 0, up to 1.5 (cover chain) or at least 4 (a lane), never 1.5-4 | **0 overlaps, 0 snag gaps** (64 pieces, 88 parts) |
+| Unwanted climbs (a top 0-5.6 above where you stand; low walls and sills must have 3.5 clear behind so Space vaults; low walls met END-ON, which read 6 deep and get climbed) | **0** (every deck edge has a parapet, curb, ramp or the box wall; no wall or pillar top in climb reach of a deck; 20 low walls have a free end and can be stood on (eye 8.0, fully exposed), but none has a wall, parapet or deck within 3.5, so nothing chains upward) |
 | Spawn pocket to spawn pocket line of sight (whole pockets, 1-stud grid, eye to eye and eye to chest) | **0 of 43,681** |
-| Exposure: % of the floor each spot sees at eye height (eye 4.6 to chest 4.0) | min 3.3 / **mean 27.3** / max 40.6 (RIVALS Arena: 9.5 / 26.5 / 39) |
-| 10-stud bands along the long axis | 26.9-31.0 outside the spawn pockets (**spread 4.1**, rule 6); pockets 17.6-18.4 (hidden on purpose) |
-| Sight lengths (visible floor pairs) | median 40, 90th percentile 84, max 162 (a corner diagonal threading the centre's south opening); 7.4 % over 90 |
+| Exposure: % of the floor each spot sees at eye height (eye 4.6 to chest 4.0) | min 3.3 / **mean 26.9** / max 40.9 (RIVALS Arena: 9.5 / 26.5 / 39) |
+| 10-stud bands along the long axis | outside the spawn pockets **spread 4.0** (rule 6); pockets 17.5-18.2 (hidden on purpose) |
+| Sight lengths (visible floor pairs) | median 40, 90th percentile 83, max 162 (a corner diagonal threading the centre's south opening); 7.2 % over 90 |
 | Farthest floor spot from cover | **13.0** (mean 5.0): every spot is within half a cover dash of cover |
-| Floor covered by pieces | 12.8 % (RIVALS 17 %; Tacticals' pieces are smaller and the floor is bigger) |
+| Floor covered by pieces | 12.9 % (RIVALS 17 %; Tacticals' pieces are smaller and the floor is bigger) |
 | Reachability | every standable cell reachable from both spawns; ramps are the only way onto decks |
 | Highest eye + hop | 4 + 4.6 + 2.2 = 10.8, under the 16 walls |
 | Ramps | both 4 up over 12 (18.4°), 8 wide, 0.6 s sprinting / 1.2 s walking; the climb is seen by 2-6 % (A) and 5-11 % (B) of the enemy's half |
@@ -96,7 +96,7 @@ front of the gate that guards it.
 | Enemy high ground (its ramp top) | 8.08 | 7.78 | 4 % |
 | Enemy gate | 5.72 | 5.85 | 2 % |
 | North island | 4.22 | 4.54 | 8 % (A's short lane) |
-| South island | 4.36 | 4.53 | 4 % |
+| South island | 4.37 | 4.54 | 4 % |
 The 2v2 / 3v3 spots (4 apart in each pocket) are within ±0.2 s of these.
 
 ## Ramp rules for Tacticals (why the old 6-high perches were wrong)
@@ -119,6 +119,11 @@ your feet**, when the cover is too deep to vault (more than 5) or is head-high.
    parapet, a **1-high kick-curb** (0.5 deep: the climb's edge ray at deck + 0.6 hits it), a ramp, the box wall, or a tall piece
    against it. Nothing within 3.5 of a deck may have its top 0-5.6 above the deck (a 7 wall next to a 4 deck can be climbed onto from
    the deck; a 10 pillar next to it clears by only 0.4). Ramps get `NotCover` so CoverController never snaps to or climbs them.
+   **Low walls met end-on are climbable too:** CoverController measures depth along your approach, so a 6-long low wall approached at
+   its end reads 6 deep (over the 5 limit) and Space climbs on top. A low wall with a free end is therefore a standable top at 3.4:
+   nothing within 3.5 of it may have its top 0-5.6 above that (a 7 wall, a parapet, a deck), or the climb chains up to an eye of 11.6.
+   Cap both ends with tall pieces (as on the south island: pillar, low wall, pillar) or keep walls 4+ away. Standing on a low wall
+   puts your eye at 8.0 with your whole body showing: allowed, and its own punishment. (Found by the map trainer from the code.)
 4. **Choose each edge's job.** A **watch edge** gets a kick-curb: a 3.4 parapet hides the floor in front of the deck for ~11 studs and
    cancels the height. A **duel edge** (a long sight line to a defended spot) gets the 3.4 parapet: a crouch spot up high, the same game
    as a low wall. Each deck has one watch edge.

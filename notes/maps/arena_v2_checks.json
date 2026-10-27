@@ -178,21 +178,9 @@
     "cover chain"
    ],
    [
-    "B_S_P",
-    "S_Mid_L",
-    7.11,
-    "lane"
-   ],
-   [
     "B_LedgeFoot_W",
-    "S_Mid_W",
-    7.21,
-    "lane"
-   ],
-   [
-    "B_LedgeFoot_W",
-    "S_Mid_L",
-    4.5,
+    "S_Mid_P2",
+    4.24,
     "lane"
    ],
    [
@@ -238,11 +226,45 @@
     "touch"
    ],
    [
-    "S_Mid_W",
+    "S_Mid_P1",
     "S_Mid_L",
     0.0,
     "touch"
+   ],
+   [
+    "S_Mid_P1",
+    "S_Mid_P2",
+    6.0,
+    "lane"
+   ],
+   [
+    "S_Mid_L",
+    "S_Mid_P2",
+    0.0,
+    "touch"
    ]
+  ],
+  "low_walls_climbable_end_on": [
+   "A_C_L",
+   "A_C_L2",
+   "B_C_L",
+   "A_NStage_L",
+   "A_N_L",
+   "A_PerchFront_L",
+   "A_Fwd_L",
+   "A_S_L",
+   "A_SW_L",
+   "A_SStage_L",
+   "A_NWall_L",
+   "B_SStage_L",
+   "B_S_L",
+   "B_LedgeFront_L",
+   "B_Fwd_L",
+   "B_N_L",
+   "B_NE_L",
+   "B_NStage_L",
+   "B_NExit_L",
+   "N_Mid_L"
   ],
   "spawn_los": {
    "pairs": 43681,
@@ -252,33 +274,33 @@
   "exposure": {
    "cells": 2154,
    "min": 3.3,
-   "mean": 27.3,
-   "max": 40.6,
+   "mean": 26.9,
+   "max": 40.9,
    "bands": {
-    "-75..-65": 17.6,
-    "-65..-55": 26.9,
-    "-55..-45": 28.9,
-    "-45..-35": 30.6,
-    "-35..-25": 27.6,
-    "-25..-15": 28.4,
-    "-15..-5": 29.2,
-    "-5..5": 28.4,
-    "5..15": 29.3,
-    "15..25": 28.0,
-    "25..35": 27.8,
-    "35..45": 31.0,
-    "45..55": 30.8,
-    "55..65": 27.9,
-    "65..75": 18.4
+    "-75..-65": 17.5,
+    "-65..-55": 26.6,
+    "-55..-45": 28.6,
+    "-45..-35": 30.1,
+    "-35..-25": 27.0,
+    "-25..-15": 27.7,
+    "-15..-5": 28.2,
+    "-5..5": 28.5,
+    "5..15": 28.4,
+    "15..25": 27.5,
+    "25..35": 27.3,
+    "35..45": 30.6,
+    "45..55": 30.4,
+    "55..65": 27.6,
+    "65..75": 18.2
    },
-   "band_spread": 13.4,
-   "band_spread_outside_pockets": 4.1
+   "band_spread": 13.1,
+   "band_spread_outside_pockets": 4.0
   },
   "sight": {
-   "median": 40.1,
-   "p90": 83.6,
+   "median": 39.5,
+   "p90": 83.1,
    "max": 162.5,
-   "over_90": 7.44
+   "over_90": 7.24
   },
   "longest_lines": [
    [
@@ -351,7 +373,7 @@
   "cover_distance": {
    "max": 13.0,
    "mean": 5.0,
-   "p90": 8.9,
+   "p90": 8.8,
    "worst": [
     [
      13.0,
@@ -364,19 +386,19 @@
      -46.25
     ],
     [
-     12.9,
-     -8.75,
-     -53.75
-    ],
-    [
      12.8,
      -73.75,
      16.25
     ],
     [
-     12.5,
-     -6.25,
-     -53.75
+     12.4,
+     -73.75,
+     18.75
+    ],
+    [
+     12.3,
+     33.75,
+     -26.25
     ]
    ]
   },
@@ -539,14 +561,14 @@
    },
    "S_Island": {
     "A": [
-     4.36,
-     4.56,
-     4.16
+     4.37,
+     4.57,
+     4.17
     ],
     "B": [
-     4.53,
-     4.73,
-     4.33
+     4.54,
+     4.74,
+     4.34
     ]
    }
   },
@@ -596,8 +618,8 @@
    },
    {
     "what": "south island",
-    "A": 4.36,
-    "B": 4.53,
+    "A": 4.37,
+    "B": 4.54,
     "diff_pct": 3.9
    }
   ],
@@ -617,7 +639,7 @@
      "N_Island",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 31.4,
+    "floor_seeing_mid_pct": 31.3,
     "note": "A's north chain -> mid island"
    },
    {
@@ -636,15 +658,15 @@
      "N_Island",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 31.7,
+    "floor_seeing_mid_pct": 32.1,
     "note": "B's north gate -> mid island"
    },
    {
     "id": "SouthGap_B",
-    "length": 10.5,
-    "sprint_s": 0.53,
-    "walk_s": 1.05,
-    "dash_s": 0.44,
+    "length": 10.3,
+    "sprint_s": 0.51,
+    "walk_s": 1.03,
+    "dash_s": 0.43,
     "watched_by": [
      "Mid_B",
      "Mid_B_S",
@@ -653,15 +675,15 @@
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 27.8,
+    "floor_seeing_mid_pct": 26.1,
     "note": "B's south chain -> mid island"
    },
    {
     "id": "SouthGap_A",
-    "length": 17.7,
-    "sprint_s": 0.88,
-    "walk_s": 1.77,
-    "dash_s": 0.74,
+    "length": 14.8,
+    "sprint_s": 0.74,
+    "walk_s": 1.48,
+    "dash_s": 0.62,
     "watched_by": [
      "Mid_A",
      "Mid_A_S",
@@ -669,7 +691,7 @@
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 32.9,
+    "floor_seeing_mid_pct": 30.6,
     "note": "A's south gate -> mid island"
    },
    {
@@ -707,7 +729,7 @@
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 22.5,
+    "floor_seeing_mid_pct": 22.7,
     "note": "B's centre wall -> the centre post (sill)"
    },
    {
@@ -743,7 +765,7 @@
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 35.7,
+    "floor_seeing_mid_pct": 35.1,
     "note": "B rotation: south chain -> centre wall"
    }
   ],
@@ -758,9 +780,9 @@
     "on_ramp_walk_s": 1.2,
     "enemy_half_seeing_climb_pct": [
      1.9,
+     6.3,
      6.4,
-     6.4,
-     5.8,
+     5.9,
      4.2
     ]
    },
@@ -774,8 +796,8 @@
     "on_ramp_walk_s": 1.2,
     "enemy_half_seeing_climb_pct": [
      4.8,
-     10.7,
-     10.2,
+     8.6,
+     10.3,
      10.1,
      7.2
     ]
@@ -785,9 +807,9 @@
    {
     "spot": "A_Perch",
     "eye": 8.6,
-    "floor_seen_standing_pct": 33.2,
-    "floor_seen_crouched_pct": 30.2,
-    "floor_in_front_crouched_pct": 23.7,
+    "floor_seen_standing_pct": 32.7,
+    "floor_seen_crouched_pct": 29.9,
+    "floor_in_front_crouched_pct": 23.8,
     "own_foot_seen_pct": 66.7,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -798,8 +820,8 @@
    {
     "spot": "A_PerchDuel",
     "eye": 8.6,
-    "floor_seen_standing_pct": 32.2,
-    "floor_seen_crouched_pct": 28.8,
+    "floor_seen_standing_pct": 32.0,
+    "floor_seen_crouched_pct": 28.7,
     "floor_in_front_crouched_pct": 17.4,
     "own_foot_seen_pct": 5.4,
     "hugging_crouch_exposed": [],
@@ -809,9 +831,9 @@
    {
     "spot": "B_Ledge",
     "eye": 8.6,
-    "floor_seen_standing_pct": 32.8,
-    "floor_seen_crouched_pct": 29.5,
-    "floor_in_front_crouched_pct": 29.4,
+    "floor_seen_standing_pct": 31.4,
+    "floor_seen_crouched_pct": 28.9,
+    "floor_in_front_crouched_pct": 28.3,
     "own_foot_seen_pct": 80.4,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -824,7 +846,7 @@
     "eye": 8.6,
     "floor_seen_standing_pct": 27.3,
     "floor_seen_crouched_pct": 25.8,
-    "floor_in_front_crouched_pct": 26.0,
+    "floor_in_front_crouched_pct": 25.7,
     "own_foot_seen_pct": 78.9,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -848,7 +870,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 26.0,
+      "floor_seen_pct": 26.2,
       "sees_spots": [
        "Mid_B",
        "Mid_A_S",
@@ -861,7 +883,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 29.4,
+      "floor_seen_pct": 29.7,
       "sees_spots": [
        "Mid_A",
        "Mid_A_S",
@@ -886,7 +908,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 29.3,
+      "floor_seen_pct": 29.4,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -896,7 +918,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 30.7,
+      "floor_seen_pct": 30.9,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -987,7 +1009,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 32.6,
+      "floor_seen_pct": 28.5,
       "sees_spots": [
        "Mid_A_S",
        "B_Ledge"
@@ -995,7 +1017,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 29.5,
+      "floor_seen_pct": 27.0,
       "sees_spots": [
        "B_Ledge"
       ]
@@ -1014,7 +1036,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 36.4,
+      "floor_seen_pct": 35.1,
       "sees_spots": [
        "Mid_A_S",
        "Mid_B_S",
@@ -1023,7 +1045,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 32.6,
+      "floor_seen_pct": 30.8,
       "sees_spots": [
        "Mid_A_S",
        "Mid_B_S",
@@ -1034,6 +1056,6 @@
    }
   ],
   "highest_eye_plus_hop": 10.8,
-  "footprint_pct": 12.8
+  "footprint_pct": 12.9
  }
 }

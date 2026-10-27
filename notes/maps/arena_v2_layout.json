@@ -1297,21 +1297,20 @@
    "along": "y"
   },
   {
-   "id": "S_Mid_W",
-   "kind": "wall",
+   "id": "S_Mid_P1",
+   "kind": "pillar",
    "side": "C",
    "parts": [
     {
-     "x0": -6,
-     "x1": 4,
-     "y0": -41.5,
-     "y1": -38.5,
+     "x0": -9.0,
+     "x1": -4.0,
+     "y0": -42.5,
+     "y1": -37.5,
      "z0": 0,
-     "z1": 7,
+     "z1": 10,
      "role": "solid"
     }
-   ],
-   "along": "x"
+   ]
   },
   {
    "id": "S_Mid_L",
@@ -1319,8 +1318,8 @@
    "side": "C",
    "parts": [
     {
-     "x0": 4.0,
-     "x1": 10.0,
+     "x0": -4.0,
+     "x1": 2.0,
      "y0": -41,
      "y1": -39,
      "z0": 0,
@@ -1329,6 +1328,22 @@
     }
    ],
    "along": "x"
+  },
+  {
+   "id": "S_Mid_P2",
+   "kind": "pillar",
+   "side": "C",
+   "parts": [
+    {
+     "x0": 2.0,
+     "x1": 7.0,
+     "y0": -42.5,
+     "y1": -37.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
   }
  ],
  "spawns": {
@@ -1535,12 +1550,12 @@
   "S_Island": {
    "pos": [
     -1,
-    -37,
+    -37.5,
     0
    ],
    "side": "C",
    "kind": "gap",
-   "note": "the south mid island (north face of its wall)"
+   "note": "the south mid island (north face of its low wall, between the pillars)"
   }
  },
  "gaps": [
@@ -1575,8 +1590,8 @@
     -31
    ],
    "b": [
-    9,
-    -40
+    7,
+    -38
    ],
    "note": "B's south chain -> mid island"
   },
@@ -1587,8 +1602,8 @@
     -30
    ],
    "b": [
-    -6,
-    -38.5
+    -9,
+    -38
    ],
    "note": "A's south gate -> mid island"
   },

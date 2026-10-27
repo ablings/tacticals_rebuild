@@ -175,7 +175,7 @@ low("B_NExit_L", 68, 21, "x", "B"); pillar("B_SExit_P", 68, -20, "B")
 
 # --- mid-lane islands (the decision points in each lane), different shapes north and south
 pillar("N_Mid_P", 0, 40, "C"); low("N_Mid_L", 0, 34.5, "y", "C")
-wall("S_Mid_W", -1, -40, "x", "C"); low("S_Mid_L", 7, -40, "x", "C")
+pillar("S_Mid_P1", -6.5, -40, "C"); low("S_Mid_L", -1, -40, "x", "C"); pillar("S_Mid_P2", 4.5, -40, "C")   # both ends capped: no end-on climb
 
 # --- spawns (1v1 = the middle spot; 2v2 / 3v3 = the spots 4 apart)
 spawns = {
@@ -198,15 +198,15 @@ spots = {
     "A_SouthGate": dict(pos=[-26, -32.5, 0], side="A", kind="window", note="A's side of the south gate (north opening)"),
     "B_NorthGate": dict(pos=[26, 32.5, 0], side="B", kind="window", note="B's side of the north gate (south opening)"),
     "N_Island": dict(pos=[-2.5, 34.5, 0], side="C", kind="gap", note="the north mid island (west face of its low wall)"),
-    "S_Island": dict(pos=[-1, -37, 0], side="C", kind="gap", note="the south mid island (north face of its wall)"),
+    "S_Island": dict(pos=[-1, -37.5, 0], side="C", kind="gap", note="the south mid island (north face of its low wall, between the pillars)"),
 }
 
 # --- deliberate open crossings: from the last cover on one side to the next cover (edge to edge, along the walking line)
 gaps = [
     dict(id="NorthGap_A", a=[-15.5, 30], b=[-1, 33], note="A's north chain -> mid island"),
     dict(id="NorthGap_B", a=[21.5, 30], b=[1, 33], note="B's north gate -> mid island"),
-    dict(id="SouthGap_B", a=[14.5, -31], b=[9, -40], note="B's south chain -> mid island"),
-    dict(id="SouthGap_A", a=[-21.5, -30], b=[-6, -38.5], note="A's south gate -> mid island"),
+    dict(id="SouthGap_B", a=[14.5, -31], b=[7, -38], note="B's south chain -> mid island"),
+    dict(id="SouthGap_A", a=[-21.5, -30], b=[-9, -38], note="A's south gate -> mid island"),
     dict(id="Centre_A", a=[-11.5, 1.5], b=[-1.5, 2.5], note="A's centre chain -> the centre post (sill)"),
     dict(id="Centre_B", a=[10.5, -3], b=[1.5, -2.5], note="B's centre wall -> the centre post (sill)"),
     dict(id="Rot_A_NtoC", a=[-18, 23.5], b=[-12.5, 12.5], note="A rotation: north chain -> centre pillar"),

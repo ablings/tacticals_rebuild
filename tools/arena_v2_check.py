@@ -215,6 +215,38 @@ for p in P:
                     msg = f"{q_p['id']} top {q['z1']} is {dz:.1f} above {p['id']} ({g:.1f} away)"
                     (climbs.append(msg + " -> climbable from the deck") if dz <= CLIMB_REACH else
                      warn(msg + f": only {CLIMB_REACH + 1.0 - dz:.1f} under the climb reach + 1 margin"))
+# END-ON: CoverController measures depth along your approach, so a low wall longer than ClimbMinDepth (5) met at its END is
+# "too deep to vault" and Space climbs on top (eye 3.4 + 4.6 = 8.0, over every 7 wall). An end is capped when another part
+# covers it within 1.5. A low wall with a free end is a standable top: nothing within 3.5 of it may have its top 0-5.6 above
+# 3.4 (a wall, parapet, curb or deck), or the climb chains upward.
+end_on = []
+for pi, p in enumerate(P):
+    if p["kind"] != "low": continue
+    q = p["parts"][0]
+    L = max(q["x1"] - q["x0"], q["y1"] - q["y0"])
+    if L <= MV["climb_min_depth"]: continue
+    free = []
+    for end in (0, 1):
+        if q["x1"] - q["x0"] > q["y1"] - q["y0"]:   # long in x: ends are west / east faces
+            ex = q["x0"] if end == 0 else q["x1"]; d = -1 if end == 0 else 1
+            zone = (min(ex, ex + 1.5 * d), max(ex, ex + 1.5 * d), q["y0"], q["y1"])
+        else:
+            ey = q["y0"] if end == 0 else q["y1"]; d = -1 if end == 0 else 1
+            zone = (q["x0"], q["x1"], min(ey, ey + 1.5 * d), max(ey, ey + 1.5 * d))
+        inbox = X0 <= zone[0] and zone[1] <= X1 and Y0 <= zone[2] and zone[3] <= Y1
+        capped = not inbox or any(rect_gap((zone[0], zone[1], zone[2], zone[3], 0, 1), (o["x0"], o["x1"], o["y0"], o["y1"], 0, 1))[0] < 1e-6
+                                  and o["z1"] > CLIMB_REACH and o is not q for _, o in parts_flat if o["role"] != "lintel")
+        if not capped: free.append(end)
+    if not free: continue
+    end_on.append(p["id"])
+    for pj, p2 in enumerate(P):
+        if pj == pi: continue
+        for o in p2["parts"]:
+            if o["role"] == "lintel": continue
+            g, _ = rect_gap((q["x0"], q["x1"], q["y0"], q["y1"], 0, 1), (o["x0"], o["x1"], o["y0"], o["y1"], 0, 1))
+            if g <= 3.5 and 0 < o["z1"] - q["z1"] <= CLIMB_REACH:
+                climbs.append(f"{p['id']} (free end, standable at 3.4) -> {p2['id']} {o['role']} top {o['z1']} is {g:.1f} away: chain climb")
+R["info"]["low_walls_climbable_end_on"] = end_on
 # tall-on-floor: walls 7 next to low walls (stand on the low wall only if its vault is refused: covered above)
 for c in climbs: err("CLIMB " + c)
 
