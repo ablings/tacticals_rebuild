@@ -271,7 +271,7 @@ K = {
                        under_rough=0.85, dirt=0.55, dust=0.15, mottle=0.09, paintable=True),
     "wood_raw": dict(under=(140, 118, 88), wood=True, groove=True, stain=0.45, rough=0.85, dirt=0.5, dust=0.3, mottle=0.16),
     "wood_top": dict(under=(104, 76, 50), wood=True, groove=True, stain=0.5, rough=0.62, dirt=0.6, mottle=0.12),
-    "wood_pine": dict(under=(138, 108, 74), wood=True, groove=True, stain=0.45, rough=0.85, dirt=0.55, dust=0.2, mottle=0.14,
+    "wood_pine": dict(under=(150, 118, 80), wood=True, groove=True, stain=0.45, rough=0.85, dirt=0.55, dust=0.2, mottle=0.14,
                       paintable=True),
     "wood_dark": dict(under=(96, 70, 46), wood=True, groove=True, stain=0.5, rough=0.82, dirt=0.55, dust=0.25, mottle=0.12,
                       paintable=True),
@@ -565,7 +565,7 @@ def make_mat(name, kind, mb, decals):
         col = g.mixc(du, col, g.rgb((150, 145, 134)))
         rough = g.mixf(du, rough, 0.95)
     if P["bleach"]:
-        col = g.mixc(g.m("MULTIPLY", g.mr(nz, 0.3, 0.9), P["bleach"]), col, g.rgb((150, 150, 118)))
+        col = g.mixc(g.m("MULTIPLY", g.mr(nz, 0.3, 0.9), P["bleach"]), col, g.rgb((150, 150, 146)))   # neutral sun-bleach (olive-tinted bleach kept the tarp green)
 
     bsdf = g.n("ShaderNodeBsdfPrincipled")
     g.put(bsdf.inputs["Base Color"], col)
@@ -1635,8 +1635,8 @@ def main():
     obs = [b() for b in builders]
     # crates
     mb = wood_crate("W2_RifleCrate", 6.0, 2.0, 1.7, cleats_x=(-1.55, 1.55), rope_z=0.95, atlas="CratesCover", wood="wood_pine")
-    mb.decal("st_rifle", (0, -1, 0), (0, -1.0, 0.85), 2.7, 0.68, col=(22, 22, 20))
-    mb.decal("st_tacsupply", (0, 1, 0), (0, 1.0, 0.85), 2.6, 0.4, col=(22, 22, 20))
+    mb.decal("st_rifle", (0, -1, 0), (0, -1.0, 0.85), 2.7, 0.68, col=(16, 16, 14), op=1.0)
+    mb.decal("st_tacsupply", (0, 1, 0), (0, 1.0, 0.85), 2.6, 0.4, col=(16, 16, 14), op=1.0)
     mb.decal("st_handle", (0, 0, 1), (0, 0, 1.7), 3.0, 0.38, col=(22, 22, 20), depth=0.4)
     mb.decal("st_id017", (0, -1, 0), (-2.35, -1.0, 0.88), 0.62, 0.17, col=(22, 22, 20))
     obs.append(finish(mb))
@@ -1664,12 +1664,12 @@ def main():
     mb.decal("st_id103", (1, 0, 0), (2.5, 0, 5.6), 2.2, 0.55, col=(22, 22, 20))
     mb.decal("st_handle", (-1, 0, 0), (-2.5, 0, 2.3), 3.0, 0.36, col=(22, 22, 20))
     obs.append(finish(mb))
-    mb = wood_crate("W2_LongCrate", 10.0, 3.0, 3.5, cleats_x=(-1.8, 1.8), rope_z=2.3)
+    mb = wood_crate("W2_LongCrate", 10.0, 3.0, 3.5, cleats_x=(-1.8, 1.8), rope_z=2.3, wood="wood_dark")
     mb.decal("st_tacsupply", (0, -1, 0), (0, -1.5, 2.35), 3.2, 0.5, col=(236, 232, 218))
-    mb.decal("st_rifle", (0, -1, 0), (-3.4, -1.5, 1.6), 2.6, 0.65, col=(22, 22, 20))
+    mb.decal("st_rifle", (0, -1, 0), (-3.4, -1.5, 1.6), 2.6, 0.65, col=(236, 232, 218))
     mb.decal("st_id044", (0, -1, 0), (3.4, -1.5, 1.6), 2.0, 0.5, col=(236, 232, 218))
     mb.decal("st_handle", (0, 1, 0), (0, 1.5, 1.75), 3.2, 0.4, col=(236, 232, 218))
-    mb.decal("st_upright", (1, 0, 0), (5.0, 0, 1.2), 1.2, 1.2, col=(22, 22, 20))
+    mb.decal("st_upright", (1, 0, 0), (5.0, 0, 1.2), 1.2, 1.2, col=(236, 232, 218))
     mb.decal("st_emblem", (0, 0, 1), (2.5, 0, 3.5), 1.6, 1.6, col=(236, 232, 218), depth=0.4)
     obs.append(finish(mb))
     mb = steel_crate("W2_SteelCrate", 5.0, 3.0, 3.5)
@@ -1704,7 +1704,7 @@ def main():
             imgs = bake_atlas(atl, objs)
             finalize(objs, atlas_material(atl, imgs))
             atl_files[atl] = {p: f"tex/W2_{atl}_{p}.png" for p in imgs}
-            bpy.ops.wm.save_as_mainfile(filepath=BLEND)
+            bpy.ops.wm.save_as_mainfile(filepath=BLEND); bpy.ops.file.make_paths_relative(); bpy.ops.wm.save_mainfile()
     placed, manifest = layout_assemblies(by_name)
     cube, mk = scale_cube_marker()
     for c in list(bpy.data.collections):
@@ -1752,6 +1752,7 @@ def main():
                atlases=atl_files, assemblies=manifest, total_tris=sum(tris(o) for o in by_name.values()))
     json.dump(man, open(os.path.join(ROOT, "warehouse2_props.json"), "w"), indent=1)
     bpy.ops.wm.save_as_mainfile(filepath=BLEND)
+    bpy.ops.file.make_paths_relative(); bpy.ops.wm.save_mainfile()   # relative image paths: the .blend opens on either PC
     log("DONE", len(allobjs), "objects in kit;", man["total_tris"], "unique tris")
 
 

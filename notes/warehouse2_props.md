@@ -5,24 +5,26 @@ panels, no neon, no yellow (hazard paint is black/cream). Sheet: `notes/warehous
 piece | 5-stud human | new model).
 
 **Round 6 (Edward: "too much green", the same note as before).** Olive was on nearly every crate, the tarp, a drum, the
-lamp, the toolbox, the forklift and the scale figure. Olive drab is now an accent on two pieces only:
+lamp, the toolbox, the forklift and the scale figure. Olive drab is now an accent on **one small piece only** (the ammo can). Round 6b, after the grader measured olive at 7.8% of the placed prop surface, 84% of it the long crate on every wall stack: the long crate went dark wood too (now about 1%).
 
 | Piece | Was | Now |
 |---|---|---|
-| W2_Cover_Low (rifle crates, the most-placed cover, 14x) | olive wood | weathered pine, black stencils |
+| W2_Cover_Low (rifle crates, the most-placed cover, 14x) | olive wood | weathered pine, solid black stencils |
 | W2_Cover_Tall (engine crate) | olive wood | dark stained wood, cream stencils |
 | W2_SupplyCrate (also in the wall stack) | olive wood | grey-painted wood, cream stencils |
 | W2_SteelCrate (also in the wall stack) | olive steel | gunmetal grey steel |
-| W2_LongCrate (top of the wall stack) | olive wood | **olive kept** (greyer: 78,82,56) |
+| W2_LongCrate (top of the wall stack) | olive wood | dark stained wood, cream stencils |
 | W2_AmmoCan | olive steel | **olive kept** (70,74,52), like a real ammo can |
 | W2_OilDrum_Olive | olive | renamed **W2_OilDrum_Grey**, grey-blue paint |
-| PalletSacks tarp | olive canvas | grey canvas |
+| PalletSacks tarp | olive canvas | grey canvas, neutral sun-bleach (the bleach had kept an olive tint) |
 | HighBayLamp shade, workbench vice/toolbox/cabinet | olive-green | grey |
 | Forklift body and wheel rims | olive | warm charcoal grey |
 | Fire barrel bung | olive | grey steel |
 | 5-stud figure on the sheet | lime shirt | slate-blue shirt |
 
-Geometry, sizes, pivots and collision are unchanged; only the baked colours changed.
+Geometry, sizes, pivots and collision are unchanged; only the baked colours changed. The .blend now saves relative image
+paths, so it opens with its atlases on either PC. On the Shadow PC run the generator with `--device CUDA`: Blender 5.2's
+OptiX kernel fails there and Cycles bakes black without an error (the generator now stops on a black bake).
 Map builder: `notes/warehouse2_build.md` still names `W2_OilDrum_Olive`; use `W2_OilDrum_Grey`.
 
 Round 2 reconciles the work order with the map builder's kit brief (`briefs/kit-warehouse2.json`) and the map script
