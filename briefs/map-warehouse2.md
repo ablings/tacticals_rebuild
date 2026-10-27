@@ -37,6 +37,8 @@ but it should be night time outside and the lights should really give the effect
 - **The two ends still differ with the doors shut:** the curtains themselves differ (BAY 01 charcoal slats with a big cream
   01 painted on, BAY 02 galvanised slats with a big black 02; grade round 6), BAY 01 black sign vs BAY 02 cream sign, 01 / 02 stencils, and different
   dressing by each door (south: pallet pile with cartons + pallet truck; north: pallets + tyre stack) - checked on the render.
+- **Construction (Edward, 2026-10-27):** built from the modeler's meshes (art/warehouse2/fbx), imported into
+  ServerStorage.Warehouse2Kit; the installer places them on the gameplay boxes. Part stand-ins only until the import is done.
 - **Materials:** no MaterialVariants (the five WH2_* tiling variants are removed; Map Building Corrections 2026-10-12, Design
   Rules: texturing is done in Blender). Roblox default materials (Concrete, Metal, DiamondPlate, CorrodedMetal, Wood). If the
   corrugated walls / roof read flat, the fix is Blender-baked panels from the modeler, not variants.

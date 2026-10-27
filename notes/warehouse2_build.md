@@ -252,6 +252,35 @@ Re-run after 6c: MapAudit hall 0 FAIL 0 WARN, exterior 0 FAIL 1 WARN, read-back 
 6. **After a palette change, scan for the colour you removed:** every visible part, text, frame and texture (G above R and B for
    green, `wh2_green.lua`); text and stencils are the easy misses.
 
+## NEXT: import the modeler's meshes (Edward 2026-10-27: "Bring in the modeler's 3D models")
+Edward answered the construction question (grader 6 / 6b: built from Studio Parts while the brief never said "build it in
+Studio"): **import the modeler's meshes, then one more grading round.** Not started on the Shadow PC (76 min left; Import 3D needs
+computer use in a Studio window). Prepared instead: `fix/map_warehouse2.lua` now takes the meshes from
+**ServerStorage.Warehouse2Kit** (one Model per assembly, named as the FBX) and falls back to the Part stand-ins per piece.
+Tested with a stand-in kit: a right-size mesh lands with its bounding box on the gameplay box (centre off 0.000-0.015), a mesh
+turned 90 degrees in the file is turned back, a wrong-size mesh is refused (stand-in kept, reason in the installer's return
+line); art flags forced off (no collide / query / touch). Without the kit the build is unchanged (read-back 0, MapAudit 0 FAIL).
+
+Steps for the next session (main PC, or the Shadow PC with Edward's OK for computer use):
+1. Fresh `out/warehouse2/Warehouse2_build.rbxl` from `Matchmaking_place.rbxl` (if no newer .lock), run `fix/map_warehouse2.lua`.
+2. Import 3D `art/warehouse2/fbx/W2_Props_kit.fbx` once (creator = group **Gunsy Funsy**). Check `K_ScaleCube` = 10 studs and
+   `K_Marker` (notes/warehouse2_props.md: the FBX axis tags may be 180 degrees off). Textures: upload the atlases in
+   `art/warehouse2/tex` under the group and apply as SurfaceAppearance (notes/warehouse2_props.md "Textures to upload").
+3. Move each assembly into `ServerStorage.Warehouse2Kit` as a Model named exactly W2_Cover_Low, W2_Cover_Tall, W2_Cover_TallPly,
+   W2_Cover_Wall (the installer uses these four today), plus the others for the next hook.
+4. Re-run the installer: its return line says "N cover meshes from ServerStorage.Warehouse2Kit" and lists any refused piece.
+5. Still on Parts after that (extend the hook the same way; swap list below): PalletStack P01-P06 (no mesh exists: ask the modeler
+   or use W2_PalletSacks x2), FireBarrel Look (W2_FireBarrel; keep the Body cylinder), drums (W2_OilDrum_Black / _Grey), pallets
+   (W2_Pallet / W2_PalletSacks), workbench (W2_Workbench), tyre stack (W2_TyreStack), door frames (W2_RollDoor_Open: replaces
+   Jamb / Head / Drum / Guide; KEEP the Shutter part and its contract; mind the seam planes in notes/warehouse2_props.md), and
+   the light bars / beams (LightBar, SteelLightBeam: not modelled yet, kit list). Trailers / containers / fence: no meshes yet.
+6. Green: the modeler's meshes keep olive only on W2_AmmoCan (and LongCrate was neutralised in props round 6b). With the tall
+   crates as meshes, C03 / C04 lose their olive: place 2-3 W2_AmmoCan (or keep C03 / C04 as olive stand-ins) so Edward's "some
+   green crates here and there" still holds. Re-run `tools/wh2_green.lua`.
+7. Re-run every check (read-back, `tools/wh2_audit.py`, `tools/wh2_metrics.py`, Play: `tools/wh2_lap_r6_*.lua`,
+   `tools/wh2_rounds_r6.lua`), recapture with `tools/wh2_fastcap.py` at quality 21, then a fresh roblox-map-grader (xhigh).
+   Brief: add "built from the modeler's meshes" to the construction line.
+
 ## Waiting on / open
 - **Systems (not map code):** `GadgetManager.mapFolder()` (grenade / smoke wall rays) and `PropController` (prop noise) still
   look only at `Workspace.Warehouse`: on Warehouse 2 (and the Arena / PracticeRange) grenades and smoke ignore the walls. The

@@ -998,13 +998,59 @@ function LOOK.PalletStack(m, q) -- two shrink-wrapped pallet loads
 		box(m, "Wrap", e0 + 0.06, e1 - 0.06, n0 + 0.06, n1 - 0.06, h + 0.5, h + 4.98, S.wrap).CastShadow = false
 	end
 end
+-- the modeler's meshes (Edward 2026-10-27: "bring in the modeler's 3D models"). Import art/warehouse2/fbx with Import 3D (creator
+-- = group Gunsy Funsy), put one Model per assembly, named as the FBX (W2_Cover_Low, ...), in ServerStorage.Warehouse2Kit and
+-- re-run this script: each cover piece then gets the mesh, placed by its bounding box (bottom centre on the piece's floor
+-- centre, so the FBX pivot convention doesn't matter) and checked against the gameplay box; without the kit (or for a piece
+-- whose mesh is missing or the wrong size) the Part stand-in is built as before. Art never collides / queries / touches.
+local KIT = SS:FindFirstChild("Warehouse2Kit")
+local KIT_FOR = { Jersey = { "W2_Cover_Low" }, TallCrate = { "W2_Cover_Tall", "W2_Cover_TallPly" }, BlockWall = { "W2_Cover_Wall" } }
+local nKit, kitSkipped = 0, {}
+local function kitPiece(m, q, idx)
+	local names = KIT and KIT_FOR[q.look]
+	if not names then return false end
+	local src = KIT:FindFirstChild(names[(idx - 1) % #names + 1]) or KIT:FindFirstChild(names[1])
+	if not src then table.insert(kitSkipped, q.id .. ": no " .. names[1]) return false end
+	local c = src:Clone()
+	local parts = c:IsA("BasePart") and { c } or {}
+	for _, d in c:GetDescendants() do if d:IsA("BasePart") then table.insert(parts, d) end end
+	if #parts == 0 then c:Destroy() table.insert(kitSkipped, q.id .. ": empty " .. src.Name) return false end
+	local holder = c
+	if c:IsA("BasePart") then holder = Instance.new("Model") holder.Name = src.Name c.Parent = holder end
+	holder.Parent = m
+	-- the twins in the north half face the other way (point symmetry), like the layout
+	local yaw = q.n > 0 and math.pi or 0
+	local cf, size = holder:GetBoundingBox() -- box in the model's own frame
+	local near = function(x, y) return math.abs(x - y) <= 0.4 end
+	local turn
+	if near(size.X, q.w) and near(size.Z, q.d) then turn = 0
+	elseif near(size.X, q.d) and near(size.Z, q.w) then turn = math.pi / 2 -- a mesh turned 90 degrees in the file
+	end
+	if not turn or not near(size.Y, q.h) then
+		table.insert(kitSkipped, ("%s: %s is %.2f x %.2f x %.2f, box %.1f x %.1f x %.1f"):format(q.id, src.Name, size.X, size.Y, size.Z, q.w, q.h, q.d))
+		holder:Destroy()
+		return false
+	end
+	-- the box's bottom centre (in the box's own orientation) goes onto the piece's floor centre, turned as needed
+	local bottom = cf * CFrame.new(0, -size.Y / 2, 0)
+	local target = CFrame.new(W(q.e, q.n, 0)) * CFrame.Angles(0, yaw + turn, 0)
+	holder:PivotTo(target * bottom:ToObjectSpace(holder:GetPivot()))
+	for _, p in parts do p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch, p.CastShadow = true, false, false, false, true end
+	m:SetAttribute("Mesh", src.Name)
+	nKit += 1
+	return true
+end
+local kitIdx = {}
 for _, q in LAYOUT.pieces do
 	local m = Instance.new("Model")
 	m.Name = q.id
 	m:SetAttribute("PieceId", q.id)
 	m.Parent = CV
-	standin(m, q.look)
-	LOOK[q.look](m, q)
+	kitIdx[q.look] = (kitIdx[q.look] or 0) + 1
+	if not kitPiece(m, q, kitIdx[q.look]) then
+		standin(m, q.look)
+		LOOK[q.look](m, q)
+	end
 end
 
 -- ====================================================================================================== props (clutter where the old map had it; no collision)
@@ -1347,5 +1393,6 @@ info.Parent = entry
 entry.Parent = root
 
 local nStandin = #CS:GetTagged("Warehouse2Standin")
-return ("Warehouse 2 built at %s: %d art parts, %d gameplay parts (%d pieces), %d lights (%d lamps), %d stand-ins tagged; registry %s")
-	:format(tostring(ORIGIN), nArt, nProxy, #LAYOUT.pieces, nLights, nLamp, nStandin, entry:GetFullName())
+return ("Warehouse 2 built at %s: %d art parts, %d gameplay parts (%d pieces), %d lights (%d lamps), %d stand-ins tagged, %d cover meshes from %s%s; registry %s")
+	:format(tostring(ORIGIN), nArt, nProxy, #LAYOUT.pieces, nLights, nLamp, nStandin, nKit, KIT and "ServerStorage.Warehouse2Kit" or "no kit",
+		#kitSkipped > 0 and (" (kept stand-ins: " .. table.concat(kitSkipped, "; ") .. ")") or "", entry:GetFullName())
