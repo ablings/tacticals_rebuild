@@ -1,39 +1,33 @@
-# Handoff: Shadow PC lead -> main PC lead (2026-10-19 ~22:45, Edward: "hand off to the main pc and let them work it from there")
+# Handoff: Shadow PC -> main PC (2026-10-27 ~01:30, live port 43; Edward: "Shadow PC now: start straight away and stop cleanly by 01:50")
 
-The Shadow PC stops driving Tacticals. Everything is committed and pushed (github.com/ablings/tacticals_rebuild master, at or after
-bb595d2). Both working copies (`Tacticals_rebuild.rbxl`, `match_place_ref.rbxl`) are saved with everything below. No Studio is open on the
-Shadow PC, the play lock is free, nothing is half-applied.
+(The previous handoff of 2026-10-19 is in git history.)
 
-## Live now (published from the Shadow PC on Edward's go, each diffed vs the previous port and read back; see notes/port_manifest.md)
-- Port 21: match clock, Kit blur, connected Pump Shotgun / Bat / Riot Shield.
-- Port 22: Dual Pistols fire L/R (both muzzles named), Training TrialItem picker for every slot.
-- Port 23: Edward's movement spec ([MOVE2] fix/movement_spec.lua), DrawTime + server draw check + Xhair countdown attributes, TrialKit,
-  UI crosshair ring + picker flow.
-- Port 24: reload cancel, base speeds -20%, map vote drops to 5 s once everyone voted (MatchCore.waitVote), rematch fix (no series cap,
-  votes reset every game), MM_FailReason + UI MatchFoundGate.
-- Port 25: holstered kit on the body (scripts/holster/HolsterManager.server.lua, installed with tools/install_localscript.py --server).
+## Live now: all four places, nothing left to publish on the main PC
+Published from the Shadow PC (account whitteguy, group gunsy funsy) with File > Publish As > gunsy funsy > tacticals > <place> >
+Overwrite > Grant Permissions and Publish, each read back from its cloud window. Details: notes/port_manifest.md, "Live port 43".
 
-## In the working copies, NOT live yet
-- Draw from the holster: fix/draw_animations.lua builds KeyframeSequences DrawHip / DrawHipLeft / DrawBack / DrawBackLeft in
-  ReplicatedStorage.Repository.AnimationSources; WeaponConfig.DrawAnimation (in fix/movement_spec.lua) picks one per gun; WeaponController
-  plays Draw instead of Equip, sped to DrawTime. Works in Studio.
-  **Blocked on upload:** Save to Roblox with Creator = gunsy funsy fails with HTTP 403 from the Shadow account (whitteguy can't create
-  group assets). To finish: open Tacticals_rebuild.rbxl with Edward's account, select each of the 4 sources, right-click > Save / Export >
-  Save to Roblox > Creator gunsy funsy > Save (leave Delete Local Instances off), set attribute PublishedId = "rbxassetid://<id>" on each
-  source in BOTH working copies (run fix/draw_animations.lua first in the match copy if it isn't there: it keeps an existing PublishedId),
-  save, publish as port 26. Until then live falls back to the Equip animation (safe).
+| Place | Place id | Published | Built from |
+|---|---|---|---|
+| Matchmaking | 97339328188402 | 01:07 | match_place_ref.rbxl (9daafeb) + split_build + deploy_ui --matchmaking + PLAYQUEUE r6 + SWITCHNOW r5; bot match on the Arena to MatchEnd |
+| Ranked | 122908502889013 | 01:12 | same, deploy_ui --ranked |
+| Tutorial | 118492914954668 | 01:16 | match_place_ref + split_build Tutorial + SWITCHNOW r5 |
+| tacticals (lobby) | 126491009194165 | 01:26 | Tacticals_rebuild.rbxl (4ba8475), Technology Future; pad duel loads the Arena |
 
-## Open items (Edward)
-- Riot Shield holster: I put it flat on the back (too big for the front waist he asked for). Ask Edward.
-- Lead items still open from before: Dual Pistols real left-hand grip, real Bat / Katana / Shield animations, bots using the new kit,
-  real-input tests (Dual Pistols moving fire rate, Bat hold-to-charge).
-- Not verified by eye: the vault arc at the new speed (0.34375 s).
+Carried: [ARENANAME] (Practice Range -> Arena) and [ARENAV2] (Arena v2 layout). Both moved out of Pending in the manifest.
 
-## Gotchas found on the way (worth knowing before the next port)
-- Live scripts have drifted from some installer files: LobbyDuelManager (lobby) and RoundManager's SERIES block (match) were patched in
-  place by later installers, so fix/lobby_duels_install.lua / fix/postmatch_install.lua no longer match live. I patched only the exact
-  spots live (vote block; rematch lines). Don't re-run those installers blindly.
-- tools/split_build.py, run_luau_at.py, install_localscript.py now find mcpcli.py under ~ (were hard-coded to C:\Users\aroki).
-- The "reopened cloud place" windows after Publish As hang on "Applying script changes" when closed; they hold no edits, kill them.
-- Opening ~8 Studio windows shows a "Low System Resources" dialog on the last one: click Proceed.
-- The UI session (Shadow PC, "UI session") works in the same repo folder on the Shadow PC; it has its own client work queued.
+## Still to port (not published, on purpose)
+- **SURVEY1025** (fix/survey1025_security.lua + fix/survey1025_data.lua, 503ee89; notes/survey_fix_1025.md): security + data fixes, written
+  "for port 43" but not marked pending in the manifest and not in this publish order. Lead's call; run order in that note. The live match
+  places now carry PLAYQUEUE round 6 (not round 1), so no "UNDO round 1 first" step is needed there any more.
+- **SWITCHNOW in the lobby**: the match places have it (server + MatchFlowUI client); the lobby copy doesn't (fix/switch_now.lua also patches
+  the hub's LobbyDuelManager). Lobby duels behave as before.
+
+## Notes for the main PC
+- The six Studios the map builder had open on the Shadow PC were not touched. Mine are closed.
+- Shadow PC tooling for ports: out/port43 (not in git): copies of split_build / run_luau_at / deploy_ui with Shadow paths and an MCP client
+  that calls tools/list before tools/call (rivals_practice/mcpcli.py got "Unable to reach Roblox Studio" from the stdio proxy otherwise).
+  The repo's tools are unchanged.
+- out/c35.lua / v.lua / v2.lua / pre.lua exist only on the main PC; port 43 used out/port43/check.lua instead (DuelMaps, Workspace.Arena
+  LayoutVersion + parts, PracticeRange names, test attributes, StudioTeleportData, compile all).
+- Live checks for Edward: a lobby pad duel and a Matchmaking match on the new Arena (grid image granted on all four); Switch Weapons swaps at
+  once mid-round in Matchmaking / Ranked; Play Again still queues from the results screen.

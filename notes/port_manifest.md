@@ -486,45 +486,6 @@ himself; we never publish.
   MatchEnd, console clean (52 lines). PLAYQUEUE Studio-tested on out/pq copies with an in-memory MemoryStore stand-in.
 - Live check for Edward: two accounts, finish a match, Play Again on both -> matched into a new Matchmaking server.
 
-## Pending for the next port: Practice Range renamed to Arena [ARENANAME] (2026-10-26, Shadow PC systems session; planned by the lead, approved by Edward)
-- Edward: rename the map "Practice Range" to "Arena" "so the confusion disappears in all code and labels" (the lobby's Training
-  room was also called the practice range). Working copies changed and saved: Tacticals_rebuild.rbxl (lobby) and match_place_ref.rbxl
-  (match). Matchmaking / Ranked / Tutorial get it at the next port (they are copied from match_place_ref), with Edward's go.
-- Names: registry id + folder ReplicatedStorage.DuelMaps.Arena (DisplayName "Arena"), Workspace.Arena (match), ServerStorage._DuelSource.Arena.Arena
-  and ServerStorage.DuelMaps.Arena (lobby). The bare name "Arena" is safe: the other "Arena"s are prefixes (ArenaLoader, ArenaMap...,
-  DuelArena), keyword values (MatchFlow kind "Arena", the test Teleport "Arena"), or LobbyMap.Training.Arena, looked up only inside
-  Training; no script searches "Arena" recursively (scanned in both copies). Training and the Warehouse are untouched.
-- How: fix/rename_arena.lua (in place, idempotent, UNDO) in both copies, then fix/duel_split_map.lua with ONLY = "Arena" in the lobby
-  (layers identical before / after: Visual 594, Solid 109 instances, same positions, lighting, modes). fix/map_practice_range.lua is
-  now fix/map_arena.lua (history in its header). Two toasts reworded: "That teleport isn't open yet." / "Exfil isn't open yet."
-- Tested: match copy 1v1 me + bot: the vote shows Arena (aerial render) + Warehouse + Random; Arena won; both spawned inside with the
-  Arena lighting (ClockTime 15.2, exposure -0.55); 2 rounds to Victory 2-0, Output clean. Lobby: 2v2 pad duel with test bots
-  ("Map: Arena", ArenaLoader "Arena loaded for D1", played to 2-0) and a 3v3 bot duel (all 6 inside). StudioTeleportData cleared.
-- Port checks: verify DuelMaps Warehouse + Arena, Workspace.Arena (no PracticeRange anywhere outside the ServerStorage archives).
-  Old MatchHistory entries keep the map name "Practice Range" (saved player data, history).
-- Left as they are on purpose (Edward's call): the pad message "ARENAS FULL - WAITING" (LobbyDuelManager / lobby_duels_install,
-  a string the pad UI and boards show) and the Studio test-server button "BACK TO ARENA" (RangeKitController; goes to the chosen
-  map's spawns). Both use "arena" as the generic word for a duel slot / the match, which can now read like the map's name.
-- Graded: roblox-systems-grader round 1 FIX 9.1 (builder fallback could hit ArenaLoader's clone; fixed e9a1024), round 2 PASS 9.2.
-
-## Pending for the next port: Arena v2 layout [ARENAV2] (2026-10-26, Shadow PC map builder; layout approved by Edward 2026-10-26)
-- What: the Arena rebuilt to the approved v2 layout (notes/arena_v2_plan.md): 3 lanes, 3 twin windows (centre + 2 lane gates),
-  A's 5-high perch + B's 5-high ledge with 22.6° ramps, 25 pillars / 15 walls / 21 low walls; look E surfaces (warm greys, solid
-  cover 13 % darker, soft world-aligned grid from our image 86361987736184). Plain Studio Blocks + 2 Wedges, collision = what you see.
-- How: fix/map_arena.lua (layout block generated from notes/maps/arena_v2_layout.json by tools/arena_v2_lua.py). Idempotent. First
-  run moves v1 + its DuelMaps entry to ServerStorage._ArenaV1_Backup; UNDO = true puts them back.
-- Names kept: Workspace.Arena (Floor / Box / Cover / MatchSpawns), MatchSpawns.SpawnA (-670, 0.6, 0) / SpawnB (-530, 0.6, -2.5) facing
-  the middle, ReplicatedStorage.DuelMaps.Arena + MapInfo (same Lighting, Size, KillDepth, modes 1v1/2v2/3v3).
-  Cover hooks: NotCover on floor, box, decks, curbs, ramps; sills / parapets / pillars / walls / low walls are normal cover.
-- Match copy (match_place_ref.rbxl): built + saved 2026-10-26 22:45. Checks: read-back = plan exactly; arena_v2_check on the built
-  geometry 0 errors / 0 warnings; MapAudit 0 FAIL / 0 WARN; Play lap passed (see the report in notes/arena_v2_build.md).
-- Lobby copy (Tacticals_rebuild.rbxl): duel source rebuilt by fix/map_arena.lua (v1 source in ServerStorage._ArenaV1_Backup), then
-  fix/duel_split_map.lua with ONLY = "Arena": Visual 105 parts / 1504 instances, Solid 101 parts (17 NotCover) + 2 spawns, every
-  Solid twin = its Visual part. Lobby 3v3 duel (;duelsolo path, me + 5 bots): all 6 on the planned spots, cover / vault / ramp work in
-  the slot. Saved 2026-10-26 22:52.
-- Port checks: Workspace.Arena:GetAttribute("LayoutVersion") == 2, 105 parts; ServerStorage._ArenaV1_Backup present (can be dropped
-  from the published copies once Edward is happy); no StudioTeleportData.
-
 ## Live port 43 (2026-10-27, Shadow PC, Edward: publish now)
 - Edward ~00:47: "Shadow PC now: start straight away and stop cleanly by 01:50 if it isn't finished". Systems session on the Shadow PC,
   account whitteguy, group gunsy funsy. Source: the working copies as committed at b183b90 (match_place_ref.rbxl saved 22:45 = 9daafeb,
@@ -551,3 +512,53 @@ himself; we never publish.
 - **Tutorial** (118492914954668), published 01:16: match_place_ref copy -> split_build Tutorial (DuelMaps moved to ServerStorage._SplitStripped
   by design: Warehouse, Arena) -> SWITCHNOW (RoundManager=5) -> checks all ok (343 scripts; Workspace.Arena v2 105 parts). Saved, Publish As >
   gunsy funsy > tacticals > Tutorial > Overwrite > Grant; window retitled "Tutorial"; read back from the cloud window: same checks.
+- **tacticals lobby** (126491009194165), published 01:26: Tacticals_main_ported.rbxl = copy of Tacticals_rebuild.rbxl (4ba8475) with
+  Technology Future (tools/set_technology.py, as in earlier ports). Checks: DuelMaps Arena + Warehouse (Arena modes 1v1/2v2/3v3, Warehouse
+  1v1), _DuelSource.Arena 105 parts LayoutVersion 2, ServerStorage.DuelMaps.Arena Solid 103 (101 parts + 2 spawns), no PracticeRange outside
+  the archives, no test marks, compile all ok (377 scripts). No SWITCHNOW / SURVEY1025 in the lobby (as live). Play: DuelTestHook bots 2v2 ->
+  D1 "arena Arena"; me on Pad_2v2_A with duel solo -> D2 "arena Arena", client "[ArenaLoader] Arena loaded for D2 (1504 instances)", me in the
+  slot (5000, 43, 0). Console 28 lines: only the known AssetCheck diagnostic (1/1161 texture in Studio; SURVEY1025 parks it). Play stopped,
+  Edit clean (DuelTestSolo / StudioTeleportData nil). Saved, Publish As > gunsy funsy > tacticals > tacticals > Overwrite > Grant; window
+  retitled "tacticals"; read back from the cloud window: same checks.
+- All four places published and read back, 01:07-01:26. Cloud windows closed (mine only; the map builder's six Studios untouched).
+- Live checks for Edward: a lobby pad duel and a Matchmaking match on the Arena (new layout, look E surfaces, grid image granted); Switch
+  Weapons mid-round swaps at once in Matchmaking / Ranked; Play Again still queues from the results screen.
+
+### Carried by live port 43: Practice Range renamed to Arena [ARENANAME] (2026-10-26, Shadow PC systems session; planned by the lead, approved by Edward)
+- Edward: rename the map "Practice Range" to "Arena" "so the confusion disappears in all code and labels" (the lobby's Training
+  room was also called the practice range). Working copies changed and saved: Tacticals_rebuild.rbxl (lobby) and match_place_ref.rbxl
+  (match). Matchmaking / Ranked / Tutorial get it at the next port (they are copied from match_place_ref), with Edward's go.
+- Names: registry id + folder ReplicatedStorage.DuelMaps.Arena (DisplayName "Arena"), Workspace.Arena (match), ServerStorage._DuelSource.Arena.Arena
+  and ServerStorage.DuelMaps.Arena (lobby). The bare name "Arena" is safe: the other "Arena"s are prefixes (ArenaLoader, ArenaMap...,
+  DuelArena), keyword values (MatchFlow kind "Arena", the test Teleport "Arena"), or LobbyMap.Training.Arena, looked up only inside
+  Training; no script searches "Arena" recursively (scanned in both copies). Training and the Warehouse are untouched.
+- How: fix/rename_arena.lua (in place, idempotent, UNDO) in both copies, then fix/duel_split_map.lua with ONLY = "Arena" in the lobby
+  (layers identical before / after: Visual 594, Solid 109 instances, same positions, lighting, modes). fix/map_practice_range.lua is
+  now fix/map_arena.lua (history in its header). Two toasts reworded: "That teleport isn't open yet." / "Exfil isn't open yet."
+- Tested: match copy 1v1 me + bot: the vote shows Arena (aerial render) + Warehouse + Random; Arena won; both spawned inside with the
+  Arena lighting (ClockTime 15.2, exposure -0.55); 2 rounds to Victory 2-0, Output clean. Lobby: 2v2 pad duel with test bots
+  ("Map: Arena", ArenaLoader "Arena loaded for D1", played to 2-0) and a 3v3 bot duel (all 6 inside). StudioTeleportData cleared.
+- Port checks: verify DuelMaps Warehouse + Arena, Workspace.Arena (no PracticeRange anywhere outside the ServerStorage archives).
+  Old MatchHistory entries keep the map name "Practice Range" (saved player data, history).
+- Left as they are on purpose (Edward's call): the pad message "ARENAS FULL - WAITING" (LobbyDuelManager / lobby_duels_install,
+  a string the pad UI and boards show) and the Studio test-server button "BACK TO ARENA" (RangeKitController; goes to the chosen
+  map's spawns). Both use "arena" as the generic word for a duel slot / the match, which can now read like the map's name.
+- Graded: roblox-systems-grader round 1 FIX 9.1 (builder fallback could hit ArenaLoader's clone; fixed e9a1024), round 2 PASS 9.2.
+
+### Carried by live port 43: Arena v2 layout [ARENAV2] (2026-10-26, Shadow PC map builder; layout approved by Edward 2026-10-26)
+- What: the Arena rebuilt to the approved v2 layout (notes/arena_v2_plan.md): 3 lanes, 3 twin windows (centre + 2 lane gates),
+  A's 5-high perch + B's 5-high ledge with 22.6° ramps, 25 pillars / 15 walls / 21 low walls; look E surfaces (warm greys, solid
+  cover 13 % darker, soft world-aligned grid from our image 86361987736184). Plain Studio Blocks + 2 Wedges, collision = what you see.
+- How: fix/map_arena.lua (layout block generated from notes/maps/arena_v2_layout.json by tools/arena_v2_lua.py). Idempotent. First
+  run moves v1 + its DuelMaps entry to ServerStorage._ArenaV1_Backup; UNDO = true puts them back.
+- Names kept: Workspace.Arena (Floor / Box / Cover / MatchSpawns), MatchSpawns.SpawnA (-670, 0.6, 0) / SpawnB (-530, 0.6, -2.5) facing
+  the middle, ReplicatedStorage.DuelMaps.Arena + MapInfo (same Lighting, Size, KillDepth, modes 1v1/2v2/3v3).
+  Cover hooks: NotCover on floor, box, decks, curbs, ramps; sills / parapets / pillars / walls / low walls are normal cover.
+- Match copy (match_place_ref.rbxl): built + saved 2026-10-26 22:45. Checks: read-back = plan exactly; arena_v2_check on the built
+  geometry 0 errors / 0 warnings; MapAudit 0 FAIL / 0 WARN; Play lap passed (see the report in notes/arena_v2_build.md).
+- Lobby copy (Tacticals_rebuild.rbxl): duel source rebuilt by fix/map_arena.lua (v1 source in ServerStorage._ArenaV1_Backup), then
+  fix/duel_split_map.lua with ONLY = "Arena": Visual 105 parts / 1504 instances, Solid 101 parts (17 NotCover) + 2 spawns, every
+  Solid twin = its Visual part. Lobby 3v3 duel (;duelsolo path, me + 5 bots): all 6 on the planned spots, cover / vault / ramp work in
+  the slot. Saved 2026-10-26 22:52.
+- Port checks: Workspace.Arena:GetAttribute("LayoutVersion") == 2, 105 parts; ServerStorage._ArenaV1_Backup present (can be dropped
+  from the published copies once Edward is happy); no StudioTeleportData.
