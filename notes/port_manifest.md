@@ -518,6 +518,9 @@ himself; we never publish.
   Cover hooks: NotCover on floor, box, decks, curbs, ramps; sills / parapets / pillars / walls / low walls are normal cover.
 - Match copy (match_place_ref.rbxl): built + saved 2026-10-26 22:45. Checks: read-back = plan exactly; arena_v2_check on the built
   geometry 0 errors / 0 warnings; MapAudit 0 FAIL / 0 WARN; Play lap passed (see the report in notes/arena_v2_build.md).
-- Lobby copy (Tacticals_rebuild.rbxl): see below.
+- Lobby copy (Tacticals_rebuild.rbxl): duel source rebuilt by fix/map_arena.lua (v1 source in ServerStorage._ArenaV1_Backup), then
+  fix/duel_split_map.lua with ONLY = "Arena": Visual 105 parts / 1504 instances, Solid 101 parts (17 NotCover) + 2 spawns, every
+  Solid twin = its Visual part. Lobby 3v3 duel (;duelsolo path, me + 5 bots): all 6 on the planned spots, cover / vault / ramp work in
+  the slot. Saved 2026-10-26 22:52.
 - Port checks: Workspace.Arena:GetAttribute("LayoutVersion") == 2, 105 parts; ServerStorage._ArenaV1_Backup present (can be dropped
   from the published copies once Edward is happy); no StudioTeleportData.
