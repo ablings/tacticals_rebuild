@@ -139,12 +139,91 @@ removed; south trailer flood 3.4 and a lighter drab olive (118,128,92); stain di
 (UIGradient); the south yard's containers get their own serials; trailer lettering nudged off a rib post. Re-run after: MapAudit
 0 FAIL / 1 WARN, sky sweep 0 holes, flood 0 outside, read-back 0 differences, hall metrics 0 lines out; 21 cameras recaptured.
 
+## Round 6 (2026-10-27, Shadow PC map builder): Edward's changes - less green, beam lights, shut doors, night
+Edward, after seeing Warehouse 2: "Too many green accents this isn't the lobby this is a separate map ... I like some green
+crates here and there but there is way too much green i also love the idea of the steel beam lights that the other warehouse
+had and the enclosedness of it the door should be openable via scripts for animating/cutscene purposes but in game it should
+remain closed ... it should be night time outside and the lights should really give the effect that the stakes are raised".
+Built and tested in a fresh `out/warehouse2/Warehouse2_build.rbxl` (copy of `Matchmaking_place.rbxl` 01:05; the newest .lock
+in the repo root is from 2026-10-26). Never saved; the installer is the deliverable. Brief: round 6 section at the top.
+
+| Ask | What changed (fix/map_warehouse2.lua) |
+|---|---|
+| Much less green | Olive was on 2 side-wall stripes, 4 end-wall stripes, 15 pier stripes, both LOADING BAY signs, the four 01 / 02 stencils, 2 chairs, 2 hall drums, 2 yard drums, 4 bollards, both trailers (body, roof, posts, skirt, stripe, lettering), the green container (box, posts, rails, marking) and 4 fence screens (grade round 5 `evidence/green.json`). Now: wall band charcoal (52,52,50); signs BAY 01 black plate / cream letters, BAY 02 cream plate / black letters; stencils charcoal; chairs grey; drums black + rust; bollards black with a cream band; north trailer cream + charcoal stripe + charcoal lettering, south trailer charcoal + cream stripe "RIDGEWAY HAULAGE"; the green container weathered white (188,186,178), the south sand one warm grey; rust darkened; fence screens charcoal. **Olive only on crates C03 / C04** (twins in the side lanes, cream "AMMUNITION" stencil). `tools/wh2_green.lua`: the only green parts left are C03/C04 body + battens; no green text, frame or texture |
+| No tiling MaterialVariants | The five WH2_* variants are no longer created and are **destroyed on every run** (and by UNDO); every style uses a default material (Concrete, Metal, DiamondPlate, CorrodedMetal, Wood, Fabric, SmoothPlastic). 0 parts carry a MaterialVariant. (MaterialService still holds WH_Floor* / WH_Shutter*: the old Warehouse's, untouched.) |
+| Steel-beam lights | The 19 bell lamps are gone. 4 dark I-beams (46,48,48) span the hall wall to wall at n -45 / -15 / 15 / 45 (the old Warehouse's light rows), 13.0-14.3 up, on end plates, hung from the purlins by rods. Under each, 2 light bars at e +-20 (9 long, steel housing, clamps, warm-white Neon lens 238,228,206): a PointLight (0.4, range 30, **Shadows on**) + a SpotLight pool down (2.3, 20, 100 deg, **Shadows on**); roof sheets darkened to (112,114,112) so the roof stays dark between the bars. 4 corner wall bars on the end walls (e +-30, 11.2 up) with an unshadowed SpotLight 1.5 in front of the bar aimed into the hall (2.2, 28, 120 deg) for the spawn side of the cover |
+| Night, stakes raised | MapInfo.Lighting: ClockTime 0, Brightness 1, Exposure -0.3, Ambient (16,17,20), OutdoorAmbient (30,32,38), EnvDiffuse 0.12, EnvSpecular 0.2; Atmosphere density 0.32, offset 0, haze 0.4, glare 0, colour (52,56,64), decay (26,28,34); grade contrast 0.16, saturation -0.12, tint (255,250,242); bloom 0.6 / 24 / threshold 1.3. The place's own Sky renders black with the moon and stars at midnight (skylights, yards): no new sky |
+| Doors shut in a match, scriptable | Each 20 x 14 opening holds a closed curtain: `Warehouse2.Interactive.Door_S / Door_N` (tag `Warehouse2Door`; attributes Open false, Moving false, OpenHeight 14.04, RollTime 4, Bay, End). `Shutter` = 20.5 x 14.39 x 0.3 Part in the wall's reveal (inside the wall thickness, so the hall floor the metrics count is unchanged), collides + queries + touches, NotCover, ImpactSound Metal, ClosedSize / ClosedCFrame attributes, **no prompt**. Slats are SurfaceGui bands drawn up from the bottom edge, so when a script shrinks the part from the bottom they ride up with the bottom bar. The old open-door bottom bar is gone. Contract + reference code: `briefs/systems.md` "Warehouse 2 doors" (DoorManager only looks at Workspace.Warehouse today) |
+| Yards lit for night | Door flood (now cool white 226,232,240, 3, range 34, shadowed) onto each trailer; wall-packs brighter lens; per yard a lamp-post flood in the west corner (2.2, 30, 120 deg, shadowed), a street lamp on the middle pole, a lit window in the shed beyond the trailer |
+| Enclosedness / ends differ | BAY 01 black sign vs BAY 02 cream sign; 01 / 02 stencils; a hand pallet truck by the south pallet pile, a tyre stack by the north one (both on PCOL blockers) |
+| Exterior | The yards, backdrop, yard proxies (COLP_Yard_*), PCOL_Yard_* and the OutOfBounds caps moved into a separate model **Workspace.Warehouse2Exterior** (Indoor = false), unchanged in position, so Workspace.Warehouse2 is an indoor map (attribute **Indoor = true**) and MapAudit's SKY check runs on it. MapInfo gets `Exterior = "Warehouse2Exterior"` and `Dynamic = { "Interactive" }` (as the Warehouse) |
+
+### Checks (round 6)
+- **Read-back** (`tools/wh2_dump.lua` + `tools/wh2_readback.py`, now also reading the exterior and the doors): **0 differences**.
+  32 cover proxies, 2 spawns, 36 shootable parts, 30 skin rects = the old map; both doors shut, tagged, collide, NotCover, 0
+  prompts; Indoor true / exterior false; 0 of 1,274 art parts collide / query / touch; old Warehouse 555 instances.
+- **MapAudit** (`tools/wh2_audit.py`, the kit's MapAudit inlined): hall, map attribute Indoor = true: **0 FAIL, 0 WARN** (SKY
+  ran: open-sky share 0 %; 1,167 parts, 28 lights, 18 Neon), in Edit and in a Play server. Exterior (Indoor = false): 0 FAIL, 1
+  WARN (HOLE: 23 cells at the yard aprons' outer edges, the documented apron edge; unreachable with the doors shut). First run
+  found 46 ZFIGHTs in the new pieces, fixed at the cause: light-bar housings shared their top plane with the clamps (housing now
+  0.04 under the flange), beam ends sat in the end plates' face plane (beams end inside the plates), the shutter's bottom shared
+  the threshold plate's bottom plane (shutter rests on the plate).
+- **Hall sky sweep** (Play server, art queryable): 8,526 cells, roof 6,705, skylight glass 1,793, light beams / bars 28: **0 holes**.
+- **Flood fill** from spawn A (doors shut): 7,564 standable cells, e -39..39, n -56..56: **0 cells outside the hall** (nothing
+  past the shut doors).
+- **Hall numbers** (`tools/wh2_metrics.py`, hall only now: with the doors shut the hall is the whole playable space): **25 / 25
+  within 5 %** (routes 0.0 %, exposure mean 43.8 = 43.8, spawn-to-spawn sight 0, spawn floor view A +0.9 % / B -0.1 %).
+- **Door contract** (`tools/wh2_door_test.lua`, Play server): both doors roll up and down with the reference code; top edge drift
+  0.000, 0.15 under the head; bottom rises to 14.1; a body box fits only when open; second open call refused; closed again =
+  the built shutter exactly.
+- **Play** (`notes/warehouse2_metrics/play_lap_r6.txt`): Warehouse 2 picked in the vote, night lighting applied, me on spawn A;
+  5 pathfinding walks ARRIVED (both door fronts, both lanes, centre); pushing + jumping into both doors (centre and off-centre)
+  stops at n +-56.93 (curtain face 57.45), feet never above 0.01; Space at the shutter does nothing (NotCover); cover on L03 /
+  C01 / P01 / W01, vault over L03 lands where round 3 did; 5 rounds to 5-0 Victory, me on spawn A every round, both doors
+  shut and solid at every round start. (The match place's bot is the Studio test dummy: this proves vote, spawns, rounds, doors.)
+- **Light, measured** (quality 21, `tools/wh2_fastcap.py --stats`, luminance of the frame p5 / p50 / p95): hall cameras p5 0-3,
+  p50 20-65, 11 of 16 inside 22-49 (the old map's frames: p5 ~0, p50 22-49; the round-5 night test with the bell lamps 28-48 with no pools); the lit
+  doors are the brightest thing at each end (door cameras p50 85, p95 ~171); light bars render white (on). Spawn-side cover
+  face at spawn A (35,22,10) = luminance ~24, spawn B (52,35,19) = ~39 (round 5: 17); the spawn floor is a lit pool (~120).
+- **Cost** (estimate: visible parts x box 12 / wedge 8 / cylinder 48 / MeshPart 1,500): hall 991 visible parts, ~19.8k tris,
+  28 lights (24 shadowed), 44 Textures, 77 SurfaceGuis; exterior 248 parts, ~5.4k tris, 4 lights. (Round 5: 1,396 parts, 46
+  lights.) Draw calls not readable by script.
+- **Materials judged on the render:** the default Concrete / Metal read clean; the blockwork and the cladding lose their joints
+  and ribs, and the roof reads as smooth sheets between the purlins. The fix is Blender-baked panels, not variants: added to
+  `briefs/kit-warehouse2.json` as CorrugatedCladdingPanel, CorrugatedRoofSheet, BlockworkPanel (+ LightBar, SteelLightBeam;
+  HighBayLamp retired).
+- **Captures:** `captures/cams-warehouse2.json` (27 cameras: the 21 of rounds 1-5 + hall corner, ceiling side, beam light
+  up-shot + 3 cutscene cameras with a door open / half), `captures/warehouse2/r6/` at Studio quality 21 (two matching frames
+  each, 2.5 s settle after every camera jump: a north-yard frame taken right after the south one rendered black twice and
+  "matched"); sheet `notes/warehouse2_sheet_r6.jpg`.
+
+### Not done in round 6
+- **Meshes (step 8, optional):** not swapped. Import 3D needs a Studio window by computer use; not attempted (no OK for computer
+  use this session). Swap list below unchanged; the modeler's round-6 FBX keep olive to the long crate and the ammo can.
+- **DoorManager** (systems): needs the Warehouse2Door open / close calls and CloseAll for Warehouse 2 (contract written).
+
+### Lessons (round 6, for the keeper / gardener; no game names)
+1. **A map with doors a cutscene opens: put the outside in its own model.** The playable map stays a true indoor map (Indoor =
+   true, MapAudit SKY runs and passes) and the exterior set is audited on its own as outdoor.
+2. **A scripted roll-up door = one colliding Part shrunk from the bottom** (tween Size and CFrame with the same easing: the top
+   edge never moves, so nothing pokes out of the hood). Draw the slats as SurfaceGui bands offset from the bottom edge, so they
+   ride up with the bottom bar. Put the curtain inside the wall thickness so the walkable floor doesn't change.
+3. **Under ShadowMap, a local light within a stud of a wall can sit in a light voxel the wall fills:** two identical lights on
+   opposite walls lit the same kind of cover face 17 vs 31. Hang the source 1.5+ studs off the wall (an invisible part) and the
+   faces read 39 vs 58 (voxel alignment still differs by end; check both ends on the render).
+4. **Night tuning numbers that worked on pale concrete** (ShadowMap, Realistic): ambient 16, exposure -0.3, 8 bars x (point
+   0.4 / 30 shadowed + spot 2.3 / 20 / 100 deg shadowed, roof sheets 112) over 81 x 114 gave p5 ~0 / p50 20-65; the first guess (point 1.9 / 40)
+   flooded the frame to p50 ~200. Tune on the render at quality 21; Automatic quality reads very differently.
+5. **"Two matching frames" can match two black frames:** after a long camera jump, wait ~2.5 s before the first frame.
+6. **After a palette change, scan for the colour you removed:** every visible part, text, frame and texture (G above R and B for
+   green, `wh2_green.lua`); text and stencils are the easy misses.
+
 ## Waiting on / open
 - **Systems (not map code):** `GadgetManager.mapFolder()` (grenade / smoke wall rays) and `PropController` (prop noise) still
   look only at `Workspace.Warehouse`: on Warehouse 2 (and the Arena / PracticeRange) grenades and smoke ignore the walls. The
   systems agent's steam-fill round covers ShootableManager (every placed registry map) and BotConfig, not these two. Fix: resolve
   the voted map (`ReplicatedStorage.ArenaMap` -> MapInfo.WorkspaceName) like CoverController / CameraController already do.
-- **Sky (blocks PASS; grader rounds 1-3):** the place has one shared Sky (custom skybox, saturated royal blue at the zenith); RoundManager.applyMapEnv swaps lighting and post effects per map but not the Sky. Fix (systems, ~10 lines): if MapInfo.Lighting holds a Sky, applyMapEnv parks the place's Sky in a holding folder and clones the map's in; the reset reverses it (same pattern as the post-effect swap). Needs an own pale afternoon skybox (6 faces) uploaded under Gunsy Funsy, or reuse an own pale sky if the lobby has one.
+- **Sky: closed in round 6** (night: at ClockTime 0 the place's own Sky renders black with the moon and stars; no per-map Sky needed). Old note: **Sky (blocks PASS; grader rounds 1-3):** the place has one shared Sky (custom skybox, saturated royal blue at the zenith); RoundManager.applyMapEnv swaps lighting and post effects per map but not the Sky. Fix (systems, ~10 lines): if MapInfo.Lighting holds a Sky, applyMapEnv parks the place's Sky in a holding folder and clones the map's in; the reset reverses it (same pattern as the post-effect swap). Needs an own pale afternoon skybox (6 faces) uploaded under Gunsy Funsy, or reuse an own pale sky if the lobby has one.
 - **Vote tile image:** `Image = ""` (as the Arena). A capture can become the tile once uploaded under the group.
 - **Lobby duels:** not added to `fix/duel_split_map.lua` (match places only, as ordered); the installer refuses to run in the lobby.
 - **Modeler's meshes** (`art/warehouse2/fbx`, `notes/warehouse2_props.md`): delivered as FBX, not imported (Import 3D needs a

@@ -1,0 +1,32 @@
+Warehouse 2 round 6 Play test (build copy out/warehouse2/Warehouse2_build.rbxl, 2026-10-27, Shadow PC)
+setup: StudioTeleportData me vs bot 1v1 (tools/wh2_play.py setup; reverted by clear)
+vote (tools/wh2_lap_r6_vote.lua): MapVote -> MatchFlow:FireServer("Vote", "Warehouse2") -> Live/Playing, ArenaMap Warehouse2
+  me (-31.0, -50.0) feet 0.00 | Lighting.ClockTime 0, Ambient (16,17,20) = MapInfo.Lighting applied
+  Door_N Open false, Shutter CanCollide true | Door_S Open false, Shutter CanCollide true
+lap (tools/wh2_lap_r6_walk.lua, PathfindingService radius 1.2 height 5, no jumping):
+walk south door (inside)    ARRIVED 6.4s (-0.7, -53.6) feet -0.00
+walk west lane              ARRIVED 8.1s (-35.0, 18.2) feet -0.01
+walk north door (inside)    ARRIVED 4.6s (-0.5, 53.5) feet -0.00
+walk east lane              ARRIVED 9.1s (33.3, -18.9) feet -0.00
+walk centre                 ARRIVED 3.6s (1.0, -1.0) feet -0.00
+push S door             ended (-0.0, -56.9) feet 0.01  n reached -56.92..-50.00  top feet 0.01   (MoveTo + Jump spam for 5 s)
+push N door             ended (-0.0, 56.9) feet 0.00  n reached 50.00..56.93  top feet 0.00
+push S door left        ended (-8.0, -57.0) feet 0.01  n reached -56.95..-50.00  top feet 0.01
+push N door right       ended (8.0, 56.9) feet -0.01  n reached 50.00..56.93  top feet 0.00
+DOORS STOP: south min n -56.93 (curtain face at -57.45), north max n 56.93 (curtain face at 57.45)
+Space (cover vault/climb, CoverTestHook "Jump") at S shutter: inCover=false vaulting=false, position unchanged (NotCover)
+cover L03 jersey       inCover=true part=COLP_L03   -> vault over L03 lands (-12.0, -16.7) (= round 3)
+cover C01 crate        inCover=true part=COLP_C01
+cover P01 pallet stack inCover=true part=COLP_P01
+cover W01 block wall   inCover=true part=COLP_W01
+rounds (tools/wh2_rounds_r6.lua, MatchTestHook "kill" on the test bot, userId -1):
+round 1: me (0.0, -55.5) [still where the lap left me: round 1 started before the lap] doors Door_S shut/solid, Door_N shut/solid
+round 2: me (-30.9, -50.0) doors shut/solid
+round 3: me (-30.9, -50.0) doors shut/solid
+round 4: me (-30.9, -50.0) doors shut/solid
+round 5: me (-30.9, -50.0) doors shut/solid
+end Victory, score A 5 B 0 (phases: ... Live -> RoundEnd -> Countdown -> Live x5 -> Victory)
+The match place's "bot" is the Studio test dummy (never moves or shoots): this proves vote, spawns, rounds, doors; not AI.
+door contract (tools/wh2_door_test.lua, Play server): both doors roll up (top edge drift 0.000, top 0.15 under the head,
+  bottom rises to 14.1), a 2 x 5 x 1.2 body box fits only when open, a second open call is refused, rolls back down to the
+  built ClosedSize / ClosedCFrame exactly; 0 ProximityPrompts.

@@ -292,5 +292,92 @@
    20,
    72
   ]
+ },
+ {
+  "name": "wh15_hall_corner_SW",
+  "area": "hall",
+  "eye": [
+   -37,
+   4.6,
+   -54
+  ],
+  "at": [
+   10,
+   6,
+   10
+  ]
+ },
+ {
+  "name": "wh16_ceiling_side",
+  "area": "hall",
+  "eye": [
+   -30,
+   4.6,
+   0
+  ],
+  "at": [
+   10,
+   16,
+   0
+  ]
+ },
+ {
+  "name": "wh17_beam_light_up",
+  "area": "hall",
+  "eye": [
+   -14,
+   4.6,
+   -4
+  ],
+  "at": [
+   -20,
+   13,
+   -15
+  ]
+ },
+ {
+  "name": "cs01_S_door_open_from_mid",
+  "area": "cutscene (door open)",
+  "eye": [
+   3,
+   4.6,
+   -38
+  ],
+  "at": [
+   0,
+   6.5,
+   -70
+  ],
+  "door": "open"
+ },
+ {
+  "name": "cs02_S_yard_into_open_door",
+  "area": "cutscene (door open)",
+  "eye": [
+   6,
+   5.5,
+   -72
+  ],
+  "at": [
+   0,
+   5,
+   -50
+  ],
+  "door": "open"
+ },
+ {
+  "name": "cs03_N_door_half_from_mid",
+  "area": "cutscene (door half)",
+  "eye": [
+   -3,
+   4.6,
+   38
+  ],
+  "at": [
+   0,
+   6.5,
+   70
+  ],
+  "door": "half"
  }
 ]

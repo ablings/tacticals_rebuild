@@ -178,7 +178,7 @@ local S = {
 	block = { M.Concrete, nil, rgb(178, 175, 168) },
 	blockStripe = { M.Concrete, nil, rgb(52, 52, 50) }, -- the wall band: charcoal (was olive)
 	clad = { M.Metal, nil, rgb(172, 174, 172) },
-	roof = { M.Metal, nil, rgb(150, 152, 150) },
+	roof = { M.Metal, nil, rgb(112, 114, 112) }, -- darker sheets: the roof stays dark between the light bars at night
 	steel = { M.Metal, nil, rgb(84, 88, 86) },
 	beam = { M.Metal, nil, rgb(46, 48, 48) }, -- the light beams: dark painted steel, as the old Warehouse's
 	galv = { M.Metal, nil, rgb(160, 162, 160) },
@@ -199,11 +199,11 @@ local S = {
 	black = { M.SmoothPlastic, nil, rgb(28, 28, 26) },
 	charcoal = { M.SmoothPlastic, nil, rgb(58, 58, 56) },
 	greyPlastic = { M.SmoothPlastic, nil, rgb(118, 118, 114) },
-	rust = { M.CorrodedMetal, nil, rgb(116, 70, 50) },
+	rust = { M.CorrodedMetal, nil, rgb(96, 62, 50) },
 	rubber = { M.SmoothPlastic, nil, rgb(30, 30, 30) },
 	trailer = { M.SmoothPlastic, nil, rgb(206, 204, 196) },
 	trailer2 = { M.SmoothPlastic, nil, rgb(176, 178, 172) },
-	contRust = { M.CorrodedMetal, nil, rgb(122, 64, 46) },
+	contRust = { M.CorrodedMetal, nil, rgb(98, 62, 50) }, -- a dark rust brown (the material itself is orange enough)
 	contWhite = { M.Metal, nil, rgb(188, 186, 178) }, -- was the green container
 	fencePost = { M.Metal, nil, rgb(66, 70, 66) },
 	mesh = { M.Fabric, nil, rgb(40, 40, 40) }, -- the fence's privacy screen: charcoal (was green)
@@ -721,15 +721,16 @@ end
 -- up (rows n +-15 / +-45, e +-20), range 40, Shadows on, under beams spanning the hall. Here: 4 dark steel I-beams across the
 -- hall at those rows, hung from the purlins on rods, each carrying two long light bars (warm-white Neon lens, a shadowed
 -- PointLight each). Under ShadowMap the beams and bars cast coarse shadows: the light fans on the roof and floor the old map has.
--- Two corner wall bars per end light the spawn side of the cover at each spawn (grade round 5: those faces rendered 17 / 255).
+-- Two corner wall bars per end light the spawn side of the cover at each spawn (grade round 5: those faces rendered 17 / 255;
+-- round 6: ~28 and ~44, the spawn floor a lit pool).
 local L = F.Lamps
 local nLamp = 0
 local BEAM_ROWS = { -45, -15, 15, 45 }
 local BAR_E = { -20, 20 }
 local BEAM_BOT, BEAM_TOP = 13.0, 14.3
 local BAR_LEN = 9
-local LIGHT = { color = rgb(255, 238, 214), range = 30, bright = 0.55 } --@LIGHT (tuned on the render at quality 21, round 6)
-local FILL = { range = 20, bright = 1.8, angle = 100 } --@FILL
+local LIGHT = { color = rgb(255, 238, 214), range = 30, bright = 0.4 } --@LIGHT (tuned on the render at quality 21, round 6)
+local FILL = { range = 20, bright = 2.3, angle = 100 } --@FILL
 for i, n in BEAM_ROWS do
 	local bm = Instance.new("Model")
 	bm.Name = "LightBeam_" .. i
@@ -770,7 +771,7 @@ for i, n in BEAM_ROWS do
 end
 -- corner wall bars on the end walls (above the blockwork, tilted down into the hall), point-symmetric: they light the spawn-side
 -- faces of the cover at both spawns and leave the middle of each end dark
-local WALLBAR = { bright = 0.9, range = 30, angle = 110 } --@WALLBAR
+local WALLBAR = { bright = 2.2, range = 28, angle = 120, off = 1.5 } --@WALLBAR (tuned on the spawn cameras, round 6)
 for _, x in { { -30, -1 }, { 30, -1 }, { 30, 1 }, { -30, 1 } } do
 	local e, g = x[1], x[2]
 	nLamp += 1
@@ -782,9 +783,15 @@ for _, x in { { -30, -1 }, { 30, -1 }, { 30, 1 }, { -30, 1 } } do
 	box(lb, "Housing", e - 3, e + 3, face - g * 0.9, face - g * 0.3, 11.2, 11.6, S.steel)
 	local lens = box(lb, "Lens", e - 2.85, e + 2.85, face - g * 0.85, face - g * 0.35, 11.12, 11.2, S.barLens)
 	lens.CastShadow = false
+	-- the light itself sits 1.5 in front of the bar, aimed into the hall: a source within a stud of the wall sits in a light
+	-- voxel the wall fills (ShadowMap lights local lights per 4-stud voxel) and lit the spawn cover faces unevenly (A 17 vs B
+	-- 31 / 255); off the wall, unshadowed, both read (measured round 6)
+	local src = newPart("Part", lb, "LightSource", Vector3.new(0.2, 0.2, 0.2), CFrame.new(W(e, face - g * (0.6 + WALLBAR.off), 10.6)))
+	src.Transparency, src.CanCollide, src.CanQuery, src.CanTouch, src.CastShadow = 1, false, false, false, false
 	local sl = Instance.new("SpotLight")
-	sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, WALLBAR.angle, WALLBAR.range, WALLBAR.bright, LIGHT.color, true
-	sl.Parent = lens
+	sl.Face = g < 0 and Enum.NormalId.Back or Enum.NormalId.Front -- into the hall (+n from the south wall, -n from the north)
+	sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = WALLBAR.angle, WALLBAR.range, WALLBAR.bright, LIGHT.color, false
+	sl.Parent = src
 	nLights += 1
 end
 
@@ -1226,7 +1233,7 @@ for _, d in south:GetDescendants() do
 	if d:IsA("TextLabel") and d.Text == "OLVU 330918 2" then d.Text = "GSTU 702213 9" end
 	if d:IsA("BasePart") and d.Parent.Name == "Containers" then
 		local upper = d.Position.Y > ORIGIN.Y + 8.5
-		local base = upper and rgb(170, 154, 122) or rgb(118, 120, 116)
+		local base = upper and rgb(152, 146, 134) or rgb(118, 120, 116) -- warm grey over mid grey (no sand-yellow)
 		if d.Name:match("^Box") then d.Color = base
 		elseif d.Name == "Marking" then d.Color = base
 		else d.Color = base:Lerp(Color3.new(0, 0, 0), 0.22) end

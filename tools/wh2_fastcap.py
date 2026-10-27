@@ -130,6 +130,9 @@ def main():
         m.lua(f"""local cam=workspace.CurrentCamera cam.CameraType=Enum.CameraType.Scriptable cam.FieldOfView={cam.get('fov', 70)}
 cam.CFrame=CFrame.lookAt(Vector3.new({p[0]},{p[1]},{p[2]}),Vector3.new({t[0]},{t[1]},{t[2]})) cam.Focus=CFrame.new({t[0]},{t[1]},{t[2]})
 game.Selection:Set({{}}) return 'ok'""")
+        # local lights load into the light grid a moment after a long camera jump (a frame of the north yard taken right after
+        # the south one rendered black twice in a row and "matched"): settle first
+        time.sleep(float(os.environ.get("WH2_SETTLE", "2.5")))
         hs, prev = [], None
         dst = os.path.join(outdir, f"{prefix}{cam['name']}.png")
         for k in range(6):

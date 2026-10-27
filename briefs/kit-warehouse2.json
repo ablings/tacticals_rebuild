@@ -4,20 +4,239 @@
  "rules": "Visual meshes never collide (CanCollide/CanQuery/CanTouch off): collision stays the invisible COLP_* box of the same size. Cover sizes are fixed by the gameplay layer: a mesh may be up to 0.1 smaller than its box on any side, never bigger. Pivot = bottom centre. Grounded / GTA look: worn, real materials, no neon, no screens, no blue trims, no yellow (hazard = black/cream).",
  "asset_library_start": "02 Modeling/Asset Library: start from the crate / pallet / barrier entries where they exist; stand-in recipes in fix/map_warehouse2.lua (STANDIN table)",
  "pieces": [
-  {"name": "JerseyBarrier", "role": "low cover (crouch, vault), old L01-L14", "size_studs": [6, 3.4, 2], "count": 12, "view_distance": "0-120", "collision": "COLP_Lnn box 6x3.4x2", "notes": "precast concrete, upright profile (top >= 1.0 wide so the box isn't far off), lifting slots, chipped edges, faint grime"},
-  {"name": "PrecastBlockWall", "role": "tall cover, old W01-W04", "size_studs": [10, 7, 3], "count": 4, "view_distance": "0-120", "collision": "COLP_Wnn box 10x7x3", "notes": "interlocking concrete blocks (2 wide x 3 high, each ~5x2.33x3), bay divider"},
-  {"name": "TallCrate", "role": "tall cover, old C01-C10", "size_studs": [5, 7, 4], "count": 10, "view_distance": "0-120", "collision": "COLP_Cnn box 5x7x4", "notes": "plywood shipping crate on skids, battens, stencil (art/warehouse2/tex/decals), 2 or 3 variants"},
-  {"name": "PalletStack", "role": "tall cover, old P01-P06", "size_studs": [5, 10, 5], "count": 6, "view_distance": "0-120", "collision": "COLP_Pnn box 5x10x5", "notes": "two shrink-wrapped pallet loads stacked (each 5x5x5 incl. pallet), cardboard / sacks under wrap"},
-  {"name": "BoxTrailer", "role": "yard boundary (NotCover)", "size_studs": [40, 13, 8.5], "count": 2, "view_distance": "0-60 (from the hall through the door up to 130)", "collision": "COLP_Yard_*_Trailer box", "notes": "40 ft dry van on landing legs, side skirts down to 0.6 so nothing is seen under it, olive stripe livery, two colourways"},
-  {"name": "Container20", "role": "yard boundary (NotCover)", "size_studs": [20, 8.5, 8], "count": 4, "view_distance": "0-60", "collision": "one box per stack", "notes": "20 ft ISO container, corrugated sides, door end, two colours (rust red-brown, grey-green)"},
-  {"name": "HighBayLamp", "role": "light fixture (no collision)", "size_studs": [2.6, 1.8, 2.6], "count": 21, "view_distance": "0-120", "notes": "aluminium bell + driver box + drop rod; lens disc is the light source (SpotLight down)"},
-  {"name": "RollUpDoor", "role": "landmark frame (no collision)", "size_studs": [21.6, 16.2, 2.4], "count": 2, "view_distance": "0-130", "notes": "galvanised slat curtain rolled up in a drum housing, side guides, bottom bar; opening 20 x 14"},
-  {"name": "FencePanelScreened", "role": "yard boundary (NotCover)", "size_studs": [10, 12, 0.4], "count": 6, "view_distance": "0-60", "notes": "steel palisade with dark-green privacy mesh, barbed wire on top"},
-  {"name": "Bollard", "role": "dressing at the yard side of each door (no collision)", "size_studs": [0.8, 3.6, 0.8], "count": 4, "notes": "steel pipe, olive paint, cream reflective band"},
-  {"name": "ElectricalCabinet", "role": "wall dressing (camera skin 1.8 deep)", "size_studs": [4, 7, 1.8], "count": 4, "notes": "grey steel cabinet with conduit up the wall"},
-  {"name": "Pallet", "role": "clutter (no collision)", "size_studs": [4, 0.6, 3.4], "count": 12},
-  {"name": "OilDrum", "role": "clutter (no collision), not shootable", "size_studs": [2.1, 3.0, 2.1], "count": 8, "notes": "black / olive drums, NOT red (red = the shootable fire barrels)"},
-  {"name": "Forklift", "role": "yard dressing behind a collider (NotCover)", "size_studs": [4, 7, 8], "count": 1}
+  {
+   "name": "JerseyBarrier",
+   "role": "low cover (crouch, vault), old L01-L14",
+   "size_studs": [
+    6,
+    3.4,
+    2
+   ],
+   "count": 12,
+   "view_distance": "0-120",
+   "collision": "COLP_Lnn box 6x3.4x2",
+   "notes": "precast concrete, upright profile (top >= 1.0 wide so the box isn't far off), lifting slots, chipped edges, faint grime"
+  },
+  {
+   "name": "PrecastBlockWall",
+   "role": "tall cover, old W01-W04",
+   "size_studs": [
+    10,
+    7,
+    3
+   ],
+   "count": 4,
+   "view_distance": "0-120",
+   "collision": "COLP_Wnn box 10x7x3",
+   "notes": "interlocking concrete blocks (2 wide x 3 high, each ~5x2.33x3), bay divider"
+  },
+  {
+   "name": "TallCrate",
+   "role": "tall cover, old C01-C10",
+   "size_studs": [
+    5,
+    7,
+    4
+   ],
+   "count": 10,
+   "view_distance": "0-120",
+   "collision": "COLP_Cnn box 5x7x4",
+   "notes": "plywood shipping crate on skids, battens, stencil (art/warehouse2/tex/decals), 2 or 3 variants"
+  },
+  {
+   "name": "PalletStack",
+   "role": "tall cover, old P01-P06",
+   "size_studs": [
+    5,
+    10,
+    5
+   ],
+   "count": 6,
+   "view_distance": "0-120",
+   "collision": "COLP_Pnn box 5x10x5",
+   "notes": "two shrink-wrapped pallet loads stacked (each 5x5x5 incl. pallet), cardboard / sacks under wrap"
+  },
+  {
+   "name": "BoxTrailer",
+   "role": "yard boundary (NotCover)",
+   "size_studs": [
+    40,
+    13,
+    8.5
+   ],
+   "count": 2,
+   "view_distance": "0-60 (from the hall through the door up to 130)",
+   "collision": "COLP_Yard_*_Trailer box",
+   "notes": "40 ft dry van on landing legs, side skirts down to 0.6 so nothing is seen under it, olive stripe livery, two colourways"
+  },
+  {
+   "name": "Container20",
+   "role": "yard boundary (NotCover)",
+   "size_studs": [
+    20,
+    8.5,
+    8
+   ],
+   "count": 4,
+   "view_distance": "0-60",
+   "collision": "one box per stack",
+   "notes": "20 ft ISO container, corrugated sides, door end, two colours (rust red-brown, grey-green)"
+  },
+  {
+   "name": "HighBayLamp",
+   "role": "light fixture (no collision)",
+   "size_studs": [
+    2.6,
+    1.8,
+    2.6
+   ],
+   "count": 21,
+   "view_distance": "0-120",
+   "notes": "aluminium bell + driver box + drop rod; lens disc is the light source (SpotLight down) | ROUND 6: RETIRED - the hall now uses LightBar + SteelLightBeam (Edward: the old Warehouse's steel-beam lights)."
+  },
+  {
+   "name": "RollUpDoor",
+   "role": "landmark frame (no collision)",
+   "size_studs": [
+    21.6,
+    16.2,
+    2.4
+   ],
+   "count": 2,
+   "view_distance": "0-130",
+   "notes": "galvanised slat curtain rolled up in a drum housing, side guides, bottom bar; opening 20 x 14 | ROUND 6: the doors are SHUT in play and roll up by script: the curtain is a gameplay Part (Shutter) the script shrinks from the bottom, so model only the frame (jambs, head, drum hood, guides) as a mesh; the curtain look stays a Part + slat SurfaceGui (or a baked slat texture that tiles vertically on that Part)."
+  },
+  {
+   "name": "FencePanelScreened",
+   "role": "yard boundary (NotCover)",
+   "size_studs": [
+    10,
+    12,
+    0.4
+   ],
+   "count": 6,
+   "view_distance": "0-60",
+   "notes": "steel palisade with dark-green privacy mesh, barbed wire on top"
+  },
+  {
+   "name": "Bollard",
+   "role": "dressing at the yard side of each door (no collision)",
+   "size_studs": [
+    0.8,
+    3.6,
+    0.8
+   ],
+   "count": 4,
+   "notes": "steel pipe, olive paint, cream reflective band"
+  },
+  {
+   "name": "ElectricalCabinet",
+   "role": "wall dressing (camera skin 1.8 deep)",
+   "size_studs": [
+    4,
+    7,
+    1.8
+   ],
+   "count": 4,
+   "notes": "grey steel cabinet with conduit up the wall"
+  },
+  {
+   "name": "Pallet",
+   "role": "clutter (no collision)",
+   "size_studs": [
+    4,
+    0.6,
+    3.4
+   ],
+   "count": 12
+  },
+  {
+   "name": "OilDrum",
+   "role": "clutter (no collision), not shootable",
+   "size_studs": [
+    2.1,
+    3.0,
+    2.1
+   ],
+   "count": 8,
+   "notes": "black / olive drums, NOT red (red = the shootable fire barrels)"
+  },
+  {
+   "name": "Forklift",
+   "role": "yard dressing behind a collider (NotCover)",
+   "size_studs": [
+    4,
+    7,
+    8
+   ],
+   "count": 1
+  },
+  {
+   "name": "LightBar",
+   "role": "the hall's light (round 6): long LED bar under a steel beam, switched on",
+   "size_studs": [
+    9,
+    0.5,
+    0.85
+   ],
+   "count": 8,
+   "view_distance": "0-120",
+   "collision": "none (art)",
+   "notes": "steel housing, two clamps, a recessed warm-white lens (the lens stays a Neon part in Studio so it glows), cable drop optional; keep the lens face flat and 0.1 below the housing"
+  },
+  {
+   "name": "SteelLightBeam",
+   "role": "I-beam spanning the hall wall to wall at 13-14.3, carries 2 LightBars, hung on rods from the purlins",
+   "size_studs": [
+    81,
+    1.3,
+    0.8
+   ],
+   "count": 4,
+   "view_distance": "0-120",
+   "collision": "none (art, out of reach)",
+   "notes": "dark painted steel (46,48,48), end plates on the cladding, hanger clips; one mesh + instances"
+  },
+  {
+   "name": "CorrugatedCladdingPanel",
+   "role": "MATERIAL (round 6): replaces the removed WH2_Corrugated MaterialVariant on the side / end wall cladding above the blockwork",
+   "size_studs": [
+    8,
+    6.8,
+    0.3
+   ],
+   "count": 30,
+   "view_distance": "0-120",
+   "collision": "none (the wall proxies collide)",
+   "notes": "real trapezoidal ribs every ~0.9 stud modelled or baked (normal + AO) in Blender, galvanised (172,174,172), light streak grime baked; panel seams every 8 studs; no tiling Studio variant (Edward: tiling textures look fake)"
+  },
+  {
+   "name": "CorrugatedRoofSheet",
+   "role": "MATERIAL (round 6): the pitched roof sheets between the skylight strips (default Metal reads flat from below)",
+   "size_studs": [
+    8,
+    0.3,
+    26
+   ],
+   "count": 28,
+   "view_distance": "0-60 (seen from below)",
+   "collision": "none (COLP_Ceiling collides)",
+   "notes": "ribs running eave to ridge, baked AO in the troughs so the underside reads corrugated under the light bars"
+  },
+  {
+   "name": "BlockworkPanel",
+   "role": "MATERIAL (round 6): the 0-11.2 blockwork band (was the WH2_Block variant)",
+   "size_studs": [
+    8,
+    11.2,
+    0.9
+   ],
+   "count": 30,
+   "view_distance": "0-120",
+   "collision": "none (wall proxies / camera skin collide)",
+   "notes": "400x200 block joints baked into one panel texture (not a tiling variant), dark kick band and the charcoal stripe painted in; light (178,175,168)"
+  }
  ],
- "frame_kit_in_parts": "steel portal frames (I-section from 3 Parts), purlins, roof sheets, skylights, cladding, plinth, floor paint and stains stay Studio Parts + own textures (parts-first style)"
+ "frame_kit_in_parts": "steel portal frames (I-section from 3 Parts), purlins, roof sheets, skylights, cladding, plinth, floor paint and stains stay Studio Parts + own textures (parts-first style)",
+ "round6": "2026-10-27 map builder: lamps -> LightBar + SteelLightBeam; the five WH2_* MaterialVariants removed, so the cladding, roof sheets and blockwork need Blender-baked panels (CorrugatedCladdingPanel, CorrugatedRoofSheet, BlockworkPanel) if the render reads flat; olive only on two crates (the modeler's round 6 keeps olive to the long crate and the ammo can: fine)"
 }

@@ -1,7 +1,8 @@
 """Warehouse 2 comparison sheet: old Warehouse (left) vs Warehouse 2 (right) from the same fixed cameras
 (notes/warehouse_study/cams.json), plus a strip of the new yard / door cameras.
 
-    python tools/wh2_sheet.py   -> notes/warehouse2_sheet.jpg
+    python tools/wh2_sheet.py [newdir] [out.jpg]  -> notes/warehouse2_sheet.jpg (round 6: captures/warehouse2/r6 ->
+                                                    notes/warehouse2_sheet_r6.jpg, with the shut doors and a door rolled up)
 Inputs: captures/warehouse2/old/old_<cam>.png (the Warehouse under its own lighting) and captures/warehouse2/final/new_<cam>.png
 (Warehouse 2 under its MapInfo lighting), both made by tools/wh2_capture.py."""
 import json, os
@@ -23,9 +24,15 @@ def tile(path, label):
     return im
 
 
+import sys
+NEW = os.path.join(CAP, sys.argv[1]) if len(sys.argv) > 1 else os.path.join(CAP, "final")
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "notes", "warehouse2_sheet.jpg")
 cams = [c["name"] for c in json.load(open(os.path.join(ROOT, "notes", "warehouse_study", "cams.json")))]
 extra = ["wh12_long_axis_to_north_door", "wh13_south_door_inside", "ys01_south_yard_from_door", "yn02_north_yard_corner_look_in"]
-rows = len(cams) // 2 + (len(cams) % 2) + 1
+if len(sys.argv) > 1:
+    extra = ["wh13_south_door_inside", "wh14_north_door_inside", "cs03_N_door_half_from_mid", "cs01_S_door_open_from_mid",
+             "wh17_beam_light_up", "wh12_long_axis_to_north_door", "ys02_south_yard_corner_look_in", "yn02_north_yard_corner_look_in"]
+rows = len(cams) // 2 + (len(cams) % 2) + (len(extra) + 3) // 4
 head = 60
 sheet = Image.new("RGB", (4 * W, head + rows * H), (24, 24, 22))
 d = ImageDraw.Draw(sheet)
@@ -34,10 +41,10 @@ for i, c in enumerate(cams):
     r, k = divmod(i, 2)
     x, y = k * 2 * W, head + r * H
     sheet.paste(tile(os.path.join(CAP, "old", f"old_{c}.png"), f"OLD  {c}"), (x, y))
-    sheet.paste(tile(os.path.join(CAP, "final", f"new_{c}.png"), f"NEW  {c}"), (x + W, y))
-y = head + (rows - 1) * H
+    sheet.paste(tile(os.path.join(NEW, f"new_{c}.png"), f"NEW  {c}"), (x + W, y))
+y0 = head + (len(cams) // 2 + len(cams) % 2) * H
 for k, c in enumerate(extra):
-    sheet.paste(tile(os.path.join(CAP, "final", f"new_{c}.png"), f"NEW  {c}"), (k * W, y))
-out = os.path.join(ROOT, "notes", "warehouse2_sheet.jpg")
+    sheet.paste(tile(os.path.join(NEW, f"new_{c}.png"), f"NEW  {c}"), ((k % 4) * W, y0 + (k // 4) * H))
+out = OUT
 sheet.save(out, quality=84)
 print(out, sheet.size)
