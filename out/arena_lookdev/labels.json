@@ -1,0 +1,54 @@
+{
+ "A": {
+  "title": "A  current (control)",
+  "lines": [
+   "SmoothPlastic, near-white",
+   "cover 238,238,241 / box 226",
+   "floor 214,214,218",
+   "grid 34,34,34 at 0.32",
+   "all 5 faces of every part",
+   "tiles from each part's corner"
+  ]
+ },
+ "B": {
+  "title": "B  RIVALS values",
+  "lines": [
+   "Plastic, cool greys",
+   "structure 151,153,163",
+   "solid cover 132,134,143",
+   "our grid, black at 0.75",
+   "world-aligned 5x5",
+   "shell: inner faces only"
+  ]
+ },
+ "C": {
+  "title": "C  Tacticals warm",
+  "lines": [
+   "Plastic, warm greys",
+   "structure 203,196,182",
+   "solid cover 177,171,158",
+   "(warm grey 200,196,186",
+   " +3 R / -4 B, measured)",
+   "grid as B: black at 0.75"
+  ]
+ },
+ "D": {
+  "title": "D  C + firmer grid",
+  "lines": [
+   "everything as C",
+   "grid black at 0.65",
+   "(lines a bit darker)"
+  ]
+ },
+ "R": {
+  "title": "RIVALS Arena",
+  "lines": [
+   "reference, read-only copy",
+   "its own file lighting",
+   "(Studio template, brighter)",
+   "151,153,163 / 132,134,143",
+   "RIVALS' own grid image",
+   "(not used by us)"
+  ]
+ }
+}
