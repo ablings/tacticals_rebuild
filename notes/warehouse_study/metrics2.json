@@ -1,0 +1,475 @@
+{
+ "crouch_exposure": {
+  "min": 4.0,
+  "mean": 29.1,
+  "max": 49.2
+ },
+ "sightline": {
+  "median": 36.7,
+  "p90": 70.7,
+  "max": 135.4,
+  "over60_pct": 18.7
+ },
+ "spawn_sees": {
+  "SpawnA": [
+   [
+    "C03",
+    0
+   ],
+   [
+    "W04",
+    0
+   ],
+   [
+    "P03",
+    0
+   ],
+   [
+    "W03",
+    91
+   ],
+   [
+    "C10",
+    0
+   ],
+   [
+    "L02",
+    0
+   ],
+   [
+    "L09",
+    0
+   ],
+   [
+    "L13",
+    0
+   ],
+   [
+    "L10",
+    48
+   ],
+   [
+    "P02",
+    0
+   ],
+   [
+    "L01",
+    57
+   ],
+   [
+    "L14",
+    0
+   ],
+   [
+    "P01",
+    63
+   ],
+   [
+    "L07",
+    83
+   ],
+   [
+    "C09",
+    20
+   ],
+   [
+    "C02",
+    0
+   ],
+   [
+    "L06",
+    0
+   ],
+   [
+    "P06",
+    0
+   ],
+   [
+    "C04",
+    0
+   ],
+   [
+    "P05",
+    0
+   ],
+   [
+    "C07",
+    72
+   ],
+   [
+    "L03",
+    0
+   ],
+   [
+    "C05",
+    29
+   ],
+   [
+    "C06",
+    0
+   ],
+   [
+    "C08",
+    0
+   ],
+   [
+    "L08",
+    0
+   ],
+   [
+    "L04",
+    0
+   ],
+   [
+    "C01",
+    0
+   ],
+   [
+    "W02",
+    25
+   ],
+   [
+    "W01",
+    0
+   ],
+   [
+    "L05",
+    69
+   ],
+   [
+    "P04",
+    69
+   ],
+   [
+    "FireBarrel_F3",
+    0
+   ],
+   [
+    "FireBarrel_F4",
+    41
+   ],
+   [
+    "FireBarrel_F1",
+    1
+   ],
+   [
+    "FireBarrel_F2",
+    3
+   ]
+  ],
+  "SpawnA_enemy_half_pct": 1.0,
+  "SpawnA_own_half_pct": 43.8,
+  "SpawnA_crouch_floor_pct": 16.3,
+  "SpawnB": [
+   [
+    "C03",
+    0
+   ],
+   [
+    "W04",
+    91
+   ],
+   [
+    "P03",
+    0
+   ],
+   [
+    "W03",
+    0
+   ],
+   [
+    "C10",
+    3
+   ],
+   [
+    "L02",
+    48
+   ],
+   [
+    "L09",
+    2
+   ],
+   [
+    "L13",
+    0
+   ],
+   [
+    "L10",
+    0
+   ],
+   [
+    "P02",
+    65
+   ],
+   [
+    "L01",
+    0
+   ],
+   [
+    "L14",
+    0
+   ],
+   [
+    "P01",
+    0
+   ],
+   [
+    "L07",
+    0
+   ],
+   [
+    "C09",
+    0
+   ],
+   [
+    "C02",
+    0
+   ],
+   [
+    "L06",
+    84
+   ],
+   [
+    "P06",
+    0
+   ],
+   [
+    "C04",
+    33
+   ],
+   [
+    "P05",
+    48
+   ],
+   [
+    "C07",
+    0
+   ],
+   [
+    "L03",
+    0
+   ],
+   [
+    "C05",
+    0
+   ],
+   [
+    "C06",
+    10
+   ],
+   [
+    "C08",
+    73
+   ],
+   [
+    "L08",
+    51
+   ],
+   [
+    "L04",
+    0
+   ],
+   [
+    "C01",
+    0
+   ],
+   [
+    "W02",
+    0
+   ],
+   [
+    "W01",
+    0
+   ],
+   [
+    "L05",
+    0
+   ],
+   [
+    "P04",
+    0
+   ],
+   [
+    "FireBarrel_F3",
+    1
+   ],
+   [
+    "FireBarrel_F4",
+    0
+   ],
+   [
+    "FireBarrel_F1",
+    0
+   ],
+   [
+    "FireBarrel_F2",
+    52
+   ]
+  ],
+  "SpawnB_enemy_half_pct": 2.6,
+  "SpawnB_own_half_pct": 41.2,
+  "SpawnB_crouch_floor_pct": 17.1
+ },
+ "peek": [
+  {
+   "id": "C03",
+   "kind": "block",
+   "west_southface": 64,
+   "west_northface": 43,
+   "east_southface": 70,
+   "east_northface": 40
+  },
+  {
+   "id": "W04",
+   "kind": "wall",
+   "west_southface": 56,
+   "west_northface": 100,
+   "east_southface": 50,
+   "east_northface": 100
+  },
+  {
+   "id": "P03",
+   "kind": "pillar",
+   "west_southface": 75,
+   "west_northface": 47,
+   "east_southface": 74,
+   "east_northface": 46
+  },
+  {
+   "id": "W03",
+   "kind": "wall",
+   "west_southface": 98,
+   "west_northface": 51,
+   "east_southface": 96,
+   "east_northface": 57
+  },
+  {
+   "id": "C10",
+   "kind": "block",
+   "west_southface": 41,
+   "west_northface": 62,
+   "east_southface": 45,
+   "east_northface": 60
+  },
+  {
+   "id": "P02",
+   "kind": "pillar",
+   "west_southface": 30,
+   "west_northface": 88,
+   "east_southface": 28,
+   "east_northface": 88
+  },
+  {
+   "id": "P01",
+   "kind": "pillar",
+   "west_southface": 87,
+   "west_northface": 27,
+   "east_southface": 87,
+   "east_northface": 30
+  },
+  {
+   "id": "C09",
+   "kind": "block",
+   "west_southface": 62,
+   "west_northface": 43,
+   "east_southface": 65,
+   "east_northface": 41
+  },
+  {
+   "id": "C02",
+   "kind": "block",
+   "west_southface": 56,
+   "west_northface": 71,
+   "east_southface": 57,
+   "east_northface": 67
+  },
+  {
+   "id": "P06",
+   "kind": "pillar",
+   "west_southface": 45,
+   "west_northface": 75,
+   "east_southface": 48,
+   "east_northface": 77
+  },
+  {
+   "id": "C04",
+   "kind": "block",
+   "west_southface": 40,
+   "west_northface": 69,
+   "east_southface": 43,
+   "east_northface": 63
+  },
+  {
+   "id": "P05",
+   "kind": "pillar",
+   "west_southface": 31,
+   "west_northface": 75,
+   "east_southface": 32,
+   "east_northface": 77
+  },
+  {
+   "id": "C07",
+   "kind": "block",
+   "west_southface": 81,
+   "west_northface": 39,
+   "east_southface": 79,
+   "east_northface": 42
+  },
+  {
+   "id": "C05",
+   "kind": "block",
+   "west_southface": 77,
+   "west_northface": 41,
+   "east_southface": 77,
+   "east_northface": 46
+  },
+  {
+   "id": "C06",
+   "kind": "block",
+   "west_southface": 44,
+   "west_northface": 78,
+   "east_southface": 40,
+   "east_northface": 77
+  },
+  {
+   "id": "C08",
+   "kind": "block",
+   "west_southface": 40,
+   "west_northface": 84,
+   "east_southface": 39,
+   "east_northface": 86
+  },
+  {
+   "id": "C01",
+   "kind": "block",
+   "west_southface": 67,
+   "west_northface": 57,
+   "east_southface": 70,
+   "east_northface": 56
+  },
+  {
+   "id": "W02",
+   "kind": "wall",
+   "west_southface": 66,
+   "west_northface": 52,
+   "east_southface": 59,
+   "east_northface": 62
+  },
+  {
+   "id": "W01",
+   "kind": "wall",
+   "west_southface": 62,
+   "west_northface": 61,
+   "east_southface": 49,
+   "east_northface": 65
+  },
+  {
+   "id": "P04",
+   "kind": "pillar",
+   "west_southface": 77,
+   "west_northface": 35,
+   "east_southface": 74,
+   "east_northface": 34
+  }
+ ]
+}

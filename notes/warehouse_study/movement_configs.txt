@@ -1,0 +1,193 @@
+=== CoverConfig
+-- ReplicatedStorage/Modules/Shared/Config/CoverConfig (ModuleScript)
+-- Tunables for cover, peeking, enemy visibility and the aim pose. Distances in studs, times in seconds.
+
+return {
+	Keybinds = {
+		Cover = Enum.KeyCode.Q, -- enter / leave cover (jumping also leaves)
+		Crouch = Enum.KeyCode.C, -- crouch / stand behind tall cover
+		Vault = Enum.KeyCode.Space, -- behind low cover: vault over it (otherwise a normal jump)
+		Dash = Enum.KeyCode.E, -- dash to the spot under your crosshair (takes cover there if there's cover)
+		Sprint = Enum.KeyCode.LeftShift, -- hold while pressing Q at far cover: sprint there instead of crouch-dashing
+	},
+
+	-- Finding cover
+	DetectDistance = 3.5,  -- how far from your waist a wall can be to snap to it
+	WaistHeight = -0.5,    -- ray height relative to HumanoidRootPart (waist)
+	HeadHeight = 1.5,      -- ray height used to tell tall cover from low cover
+
+	-- Being in cover
+	WallOffset = 0.85,     -- distance from the wall surface to your centre (hug the wall: was 1.15)
+	EdgeMargin = 1.25,     -- how close to an edge you can slide while hidden (keeps shoulders, elbows and feet fully behind the cover)
+	CoverWalkSpeed = 8, -- [MOVE2] was 10 (base -20%)   -- slower while hugging cover
+	LeaveDot = 0.7,        -- moving this directly away from the wall leaves cover (1 = straight back)
+	LeaveHoldTime = 0.15,  -- ...after holding it this long
+
+	-- Peeking (hold aim)
+	PeekEdgeDistance = 1.5, -- must be this close to an edge to peek around tall cover
+	PeekOutDistance = 0.4,  -- how far past the edge your centre moves when peeking
+	PeekTime = 0.18,        -- time to lean out / rise up. Higher = less "peek-and-hide" abuse
+	SidePeekMargin = 0.4,   -- low cover: crosshair this close to (or past) an end of the crate -> side peek, else over the top
+
+	-- Smoothing (higher = snappier)
+	SnapSharpness = 10,     -- easing into the cover spot / sliding out to peek
+	TurnSharpness = 12,     -- turning to face along the wall
+	CoverTurnRate = 620,    -- degrees/second at most for any cover turn (no instant spins)
+	MoveTurnRate = 720,     -- degrees/second: turning into a dash / sneak run
+	CoverAccel = 70,        -- studs/s per second: speeding up along the wall
+	CoverDecel = 80,        -- ...and settling to a stop (no instant start/stop)
+
+	-- Cover-to-cover (Q with the crosshair on cover further away)
+	MoveMinDistance = 3,
+	MoveMaxDistance = 26,   -- (was 15; the real map's cover is further apart)
+	RouteMaxDetour = 1.6,   -- a route around cover may be at most this many times MoveMaxDistance long
+	-- Cover to cover = crouched dash. Open to cover = run, then roll in over the last RollDistance studs.
+	RollDistance = 4,
+	-- E goes to the cover your crosshair is on. These are the only yaw offsets (degrees) it also tries,
+	-- so a thin pillar far away still counts when you're a hair off. Aim at nothing = nothing happens.
+	DashAimAssist = { 0, -2, 2 },
+	-- Which face of it: from the open, the face on YOUR side of it (south of it -> its south face);
+	-- from cover, the face looking the same way as your cover. Other faces only if that one can't be reached.
+	SideSelectAngle = 55,   -- (only used by scripted tutorial moves now)
+	SpotCoverReach = 3,     -- E aimed at the floor: cover this close ahead of that spot counts as aimed at
+	AdjacentGap = 1.5,      -- cover pieces this close together are walked between without leaving cover
+	AdjacentDepth = 2.5,    -- ...even if one sticks out this much further than the other (pillar next to a low wall)
+	MoveSpeeds = { Sneak = 8, Dash = 24, Roll = 22.4, Sprint = 24.8 }, --[[ [MOVE2] were 9 / 26 / 28 / 31: Edward's 10 / 30, then base -20% ]] -- E = Sneak (silent: below the AI's hearing speed); Shift+E = Dash / Roll (Roll = run-up speed before the roll)
+	-- Dive-roll: hop (Space), then Shift+E in mid-air at cover -> a fast flat lunge through the air, then a
+	-- roll along the ground into cover. The quickest way into cover (needs a straight, clear line).
+	DiveSpeed = 27.2, -- [MOVE2] was 34 (base -20%)         -- studs/s through the air
+	DiveMaxAir = 12,        -- the longest the airborne part can be (the roll covers the rest)
+	DiveRollDistance = 3.5, -- you land this far short of the spot and roll the rest
+	DivePitch = 62,         -- degrees the body is thrown forward at the peak of the dive
+
+	-- Space: vault low cover in front of you (in cover or not), otherwise a short hop
+	CornerWrap = false,       -- (pass 43) hug round the corner of a pillar/crate onto its next face: OFF (too glitchy)
+	CornerWrapHold = 0.1,     -- hold A/D this long at the end of a pillar/crate to hug round onto the next face
+	DoubleVaultWindow = 1.2,   -- after a running vault lands: Space alone (no Shift) vaults straight back into cover
+	SilentVaultSlowdown = 1.7, -- Space alone: the vault takes this many times longer (quiet), then you settle into the nearest cover
+	SilentVaultCoverReach = 16, -- ...within this many studs of where you land
+	VaultTime = 0.34375, -- [MOVE2] was 0.55: Edward's 2x faster (0.275), then base -20% (/0.8)
+	VaultClearance = 1.8,   -- root height above the cover top mid-slide: planted hand lands on the top, legs just clear it
+	VaultCoverReach = 3,    -- vaulting from cover: cover this close ahead of the landing takes you straight back into cover
+	RevaultReach = 3.5,     -- Space vaults back over the low cover you just vaulted if it's this close
+	HopHeight = 2.2,        -- studs; Roblox's default jump is 7.2
+	ShotHopLock = 0.45,     -- after a shot, this long before you can hop (the fire animation)
+
+	-- Movement animations. "" = Studio preview from AnimationSources/Cover<Name>
+	MoveAnimations = {
+		Dash = "",  -- crouched run (looped)
+		Sneak = "", -- slow crouched walk to cover (looped)
+		Roll = "",  -- tactical roll (one shot)
+		Vault = "", -- vault over low cover (one shot)
+		Climb = "", -- [CLIMB] climb on top of deep / head-high cover (one shot)
+	},
+	-- [CLIMB] Space climbs instead of vaulting: cover deeper than ClimbMinDepth (studs), or a wall whose top is at most
+	-- ClimbMaxAboveRoot above the root (under the top of the head); ClimbTime + 0.06 s per stud of rise
+	ClimbMinDepth = 5,
+	ClimbMaxAboveRoot = 2.6,
+	ClimbTime = 0.62,
+
+	-- GTA-style cover idle poses (gun held low across the body while hidden).
+	-- Published IDs; "" = Studio preview from ReplicatedStorage/Repository/AnimationSources/Cover<Name>
+	CoverAnimations = {
+		IdleTall = "",      -- standing behind tall cover, gun in right hand
+		IdleTallLeft = "",  -- same, left hand (left shoulder)
+		Crouch = "",        -- crouched behind low cover, right hand
+		CrouchLeft = "",    -- crouched, left hand
+		CrouchPeek = "",    -- crouched, aiming around the side of low cover
+		CrouchPeekLeft = "",
+		BlindCorner = "",   -- blind fire: arm curled around a tall cover edge
+		BlindCornerLeft = "",
+		BlindOver = "",     -- blind fire: half-rise, gun hand up over low cover, other hand braced on top
+		BlindOverLeft = "",
+		BlindCornerCrouch = "",     -- blind fire around a tall edge while crouched (C)
+		BlindCornerCrouchLeft = "",
+		-- Back-to-the-wall extras
+		LookPos = "",        -- head/shoulders turned toward the edge on your left (back to the wall)
+		LookNeg = "",        -- ...toward the edge on your right
+		ShuffleTall = "",    -- side-shuffle along tall cover (legs only)
+		ShuffleCrouch = "",  -- side-shuffle crouched behind low cover
+		Brace = "",         -- near miss: flinch and tuck in against the cover
+	},
+
+	-- Near miss: a bullet passing close to you interrupts whatever isn't fully committed
+	-- (peeking, aiming, leaning out). Dashes, rolls and vaults carry on.
+	NearMiss = {
+		Radius = 3.2,            -- how close (studs) a bullet's path must pass your head/body
+		ExposedLockout = 0.6,    -- seconds you can't peek/aim again after one while exposed
+		CoverLockout = 0.25,     -- ...while already fully behind cover (just a brace)
+		ExposedFlash = 0.45,     -- screen flash strength (0..1) while exposed
+		CoverFlash = 0.15,
+		ExposedShake = 0.35,     -- camera jolt (studs)
+		CoverShake = 0.12,
+		WhizSounds = { "rbxassetid://120992871261386", "rbxassetid://108893721768018", "rbxassetid://107896098783996", "rbxassetid://92387458125824" },
+	},
+
+	-- Blind fire (left click in cover without aiming)
+	BlindFireRaiseTime = 0.12, -- arm comes out before the shot leaves
+	BlindFireHoldTime = 0.45,  -- arm stays out this long after each shot
+
+	-- Enemies are only drawn on your screen if your character's head could see them.
+	-- Stops the over-the-shoulder camera from seeing around cover for free.
+	HeadLineOfSight = false, -- off: peeking popped people in/out. Smoke still hides characters.
+	VisibilityHideDelay = 0.1, -- grace period before hiding, avoids flicker at edges
+
+	-- Upper body follows your aim up/down (replicated to other players)
+	AimPitchWeight = 0.8, -- how much of the camera pitch the torso follows
+	AimPitchSendRate = 10, -- updates per second sent to the server
+}
+
+=== MovementConfig
+-- ReplicatedStorage/Modules/Shared/Config/MovementConfig (ModuleScript)
+-- On-foot movement out of cover. Speeds in studs/second (Roblox's default walk is 16).
+
+return {
+	Keybinds = {
+		Crouch = Enum.KeyCode.C,          -- toggle crouch (in cover, C is the cover crouch instead)
+		Sprint = Enum.KeyCode.LeftShift,  -- hold
+	},
+
+	Speeds = {
+		Walk = 10, -- [MOVE2] was 12.5 (base -20%)        -- normal movement: a bit slower than Roblox's default
+		Sprint = 20, -- [MOVE2] was 23 (25, then base -20%)        -- clearly faster than Roblox's default. Uses stamina.
+		Crouch = 4.8, -- [MOVE2] was 6 (base -20%)         -- crouch walk / crab walk. Silent.
+	},
+	SpeedChangeRate = 60,   -- studs/s per second: how quickly you speed up / slow down between modes
+
+	Stamina = {
+		Max = 100,
+		SprintDrain = 12,       -- per second while sprinting upright (about 8s from full)
+		Regen = 20,             -- per second, after the delay
+		RegenDelay = 0.8,       -- seconds after you stop using it
+		MinToStart = 20,        -- after running dry, need this much before fast strides work again
+	},
+
+	-- Firing while sprinting cancels the sprint (you keep moving at walk speed and shoot).
+	-- The sprint stays off until Shift is released and pressed again.
+
+	-- Legs-only crouch animations. "" = Studio preview from AnimationSources/Move<Name>
+	Animations = {
+		CrouchIdle = "",
+		CrouchWalk = "",
+		Slide = "",   -- placeholder pose (AnimationSources/MoveSlide)
+	},
+
+	-- Slide: press [C] while sprinting (out of cover). You shoot forward low on your hip and slow down;
+	-- if the slide ends right next to cover you go straight into it.
+	Slide = {
+		Speed = 24, -- [MOVE2] was 30 (base -20%)         -- studs/s at the start...
+		EndSpeed = 20, -- [MOVE2] was 9 (25, then base -20%);       -- ...easing down to this
+		Time = 0.75,        -- seconds
+		Cooldown = 0.6,
+		StaminaCost = 12,
+	},
+	CrouchWalkAnimSpeed = 6, -- movement speed at which CrouchWalk plays at 1x
+}
+
+=== shootables
+FireBarrel_F3 -61.2 2.1 19.5 attrs={"Shootable":"FireBarrel","HazardRadius":6}
+FireBarrel_F4 -107.2 2.1 -4.5 attrs={"Shootable":"FireBarrel","HazardRadius":6}
+FireBarrel_F1 -49.2 2.1 -1.5 attrs={"Shootable":"FireBarrel","HazardRadius":6}
+FireBarrel_F2 -119.2 2.1 16.5 attrs={"Shootable":"FireBarrel","HazardRadius":6}
+SteamValve_S2 -123.9 7.9 37.5 attrs={"MaskRadius":18,"Shootable":"SteamValve"}
+SteamValve_S1 -44.5 7.9 -22.5 attrs={"MaskRadius":18,"Shootable":"SteamValve"}

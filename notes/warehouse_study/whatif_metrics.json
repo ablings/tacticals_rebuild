@@ -1,0 +1,1345 @@
+{
+ "room": {
+  "inside_e": 81.0,
+  "inside_n": 114.0,
+  "ceiling": 18.0,
+  "floor_area": 9234.0
+ },
+ "footprint_pct": {
+  "all": 6.9,
+  "tall": 5.1,
+  "low": 1.8
+ },
+ "counts": {
+  "pillar": 6,
+  "block": 10,
+  "wall": 4,
+  "low": 12,
+  "barrel": 4
+ },
+ "spawns": {
+  "SpawnA": {
+   "e": -30.950034332275393,
+   "n": -50.00006866455078,
+   "yaw": 148.20108944109984
+  },
+  "SpawnB": {
+   "e": 31.049969482421872,
+   "n": 49.99993133544922,
+   "yaw": -31.798915567856504
+  }
+ },
+ "spawn_view": {
+  "SpawnA": {
+   "stand_floor_pct": 22.802850356294538,
+   "sees_centre_stand": false
+  },
+  "SpawnB": {
+   "stand_floor_pct": 21.947743467933492,
+   "sees_centre_stand": false
+  }
+ },
+ "spawn_to_spawn_los_pct": 0.0,
+ "spawn_straight_to_centre": 58.8,
+ "spawn_to_spawn_path": 119.9,
+ "centre": {
+  "SpawnA": {
+   "novault_sprint": 2.96,
+   "vault_sprint": 2.96,
+   "novault_walk": 5.93,
+   "path_len": 59.3
+  },
+  "SpawnB": {
+   "novault_sprint": 2.96,
+   "vault_sprint": 2.96,
+   "novault_walk": 5.92,
+   "path_len": 59.2
+  }
+ },
+ "cover": {
+  "max_walls": 10.5,
+  "mean_walls": 3.7173506577817297,
+  "p90_walls": 6.576473218982953,
+  "max_pieces": 19.60867155112758,
+  "mean_pieces": 5.051510048749834,
+  "max_tall": 20.081085628023203,
+  "mean_tall": 6.799604292104969
+ },
+ "exposure": {
+  "min": 6.7,
+  "mean": 43.6,
+  "max": 60.5,
+  "p10": 30.2,
+  "p90": 54.4,
+  "bands": [
+   [
+    -57,
+    35.8
+   ],
+   [
+    -47,
+    42.2
+   ],
+   [
+    -37,
+    43.8
+   ],
+   [
+    -27,
+    45.4
+   ],
+   [
+    -17,
+    47.2
+   ],
+   [
+    -7,
+    49.5
+   ],
+   [
+    3,
+    48.4
+   ],
+   [
+    13,
+    45.8
+   ],
+   [
+    23,
+    44.9
+   ],
+   [
+    33,
+    42.5
+   ],
+   [
+    43,
+    38.4
+   ],
+   [
+    53,
+    35.1
+   ]
+  ]
+ },
+ "pairing": {
+  "low_walls": [
+   {
+    "low": "L02",
+    "e": 22.999996948242185,
+    "n": 43.0,
+    "nearest_tall": "P02",
+    "tall_kind": "pillar",
+    "gap": 0.5,
+    "how": "beside",
+    "nearest_pillar": "P02",
+    "pillar_gap": 0.5
+   },
+   {
+    "low": "L09",
+    "e": -25.999995422363284,
+    "n": 4.0,
+    "nearest_tall": "W01",
+    "tall_kind": "wall",
+    "gap": 2.05,
+    "how": "beside",
+    "nearest_pillar": "P05",
+    "pillar_gap": 11.77
+   },
+   {
+    "low": "L13",
+    "e": 10.0,
+    "n": -36.0,
+    "nearest_tall": "W03",
+    "tall_kind": "wall",
+    "gap": 10.5,
+    "how": "in front/behind",
+    "nearest_pillar": "P04",
+    "pillar_gap": 13.73
+   },
+   {
+    "low": "L10",
+    "e": 25.999996948242185,
+    "n": -4.0,
+    "nearest_tall": "W02",
+    "tall_kind": "wall",
+    "gap": 1.95,
+    "how": "beside",
+    "nearest_pillar": "P04",
+    "pillar_gap": 11.77
+   },
+   {
+    "low": "L01",
+    "e": -22.999995422363284,
+    "n": -43.0,
+    "nearest_tall": "P01",
+    "tall_kind": "pillar",
+    "gap": 0.5,
+    "how": "beside",
+    "nearest_pillar": "P01",
+    "pillar_gap": 0.5
+   },
+   {
+    "low": "L14",
+    "e": -10.0,
+    "n": 36.0,
+    "nearest_tall": "W04",
+    "tall_kind": "wall",
+    "gap": 10.5,
+    "how": "in front/behind",
+    "nearest_pillar": "P05",
+    "pillar_gap": 13.73
+   },
+   {
+    "low": "L07",
+    "e": -3.999995422363284,
+    "n": -31.0,
+    "nearest_tall": "C09",
+    "tall_kind": "block",
+    "gap": 7.5,
+    "how": "beside",
+    "nearest_pillar": "P03",
+    "pillar_gap": 12.02
+   },
+   {
+    "low": "L06",
+    "e": -4.0,
+    "n": 20.0,
+    "nearest_tall": "P05",
+    "tall_kind": "pillar",
+    "gap": 8.5,
+    "how": "beside",
+    "nearest_pillar": "P05",
+    "pillar_gap": 8.5
+   },
+   {
+    "low": "L03",
+    "e": -11.999995422363284,
+    "n": -19.0,
+    "nearest_tall": "P03",
+    "tall_kind": "pillar",
+    "gap": 0.5,
+    "how": "beside",
+    "nearest_pillar": "P03",
+    "pillar_gap": 0.5
+   },
+   {
+    "low": "L08",
+    "e": 4.000004577636716,
+    "n": 31.0,
+    "nearest_tall": "C10",
+    "tall_kind": "block",
+    "gap": 7.5,
+    "how": "beside",
+    "nearest_pillar": "P06",
+    "pillar_gap": 12.02
+   },
+   {
+    "low": "L04",
+    "e": 12.000004577636716,
+    "n": 19.0,
+    "nearest_tall": "P06",
+    "tall_kind": "pillar",
+    "gap": 0.5,
+    "how": "beside",
+    "nearest_pillar": "P06",
+    "pillar_gap": 0.5
+   },
+   {
+    "low": "L05",
+    "e": 4.0,
+    "n": -20.0,
+    "nearest_tall": "P04",
+    "tall_kind": "pillar",
+    "gap": 8.5,
+    "how": "beside",
+    "nearest_pillar": "P04",
+    "pillar_gap": 8.5
+   }
+  ],
+  "pillars": [
+   {
+    "pillar": "P03",
+    "nearest_low": "L03",
+    "gap": 0.5,
+    "lows_within_3": [
+     "L03"
+    ]
+   },
+   {
+    "pillar": "P02",
+    "nearest_low": "L02",
+    "gap": 0.5,
+    "lows_within_3": [
+     "L02"
+    ]
+   },
+   {
+    "pillar": "P01",
+    "nearest_low": "L01",
+    "gap": 0.5,
+    "lows_within_3": [
+     "L01"
+    ]
+   },
+   {
+    "pillar": "P06",
+    "nearest_low": "L04",
+    "gap": 0.5,
+    "lows_within_3": [
+     "L04"
+    ]
+   },
+   {
+    "pillar": "P05",
+    "nearest_low": "L06",
+    "gap": 8.5,
+    "lows_within_3": []
+   },
+   {
+    "pillar": "P04",
+    "nearest_low": "L05",
+    "gap": 8.5,
+    "lows_within_3": []
+   }
+  ]
+ },
+ "hops": [
+  {
+   "id": "C03",
+   "kind": "block",
+   "nearest": "P03",
+   "gap": 8.0,
+   "second": "FireBarrel_F1",
+   "gap2": 10.95
+  },
+  {
+   "id": "W04",
+   "kind": "wall",
+   "nearest": "L14",
+   "gap": 10.5,
+   "second": "C06",
+   "gap2": 13.23
+  },
+  {
+   "id": "P03",
+   "kind": "pillar",
+   "nearest": "L03",
+   "gap": 0.5,
+   "second": "C03",
+   "gap2": 8.0
+  },
+  {
+   "id": "W03",
+   "kind": "wall",
+   "nearest": "L13",
+   "gap": 10.5,
+   "second": "C05",
+   "gap2": 13.19
+  },
+  {
+   "id": "C10",
+   "kind": "block",
+   "nearest": "C08",
+   "gap": 5.83,
+   "second": "L02",
+   "gap2": 6.02
+  },
+  {
+   "id": "L02",
+   "kind": "low",
+   "nearest": "P02",
+   "gap": 0.5,
+   "second": "C10",
+   "gap2": 6.02
+  },
+  {
+   "id": "L09",
+   "kind": "low",
+   "nearest": "W01",
+   "gap": 2.05,
+   "second": "FireBarrel_F3",
+   "gap2": 5.95
+  },
+  {
+   "id": "L13",
+   "kind": "low",
+   "nearest": "L07",
+   "gap": 8.54,
+   "second": "W03",
+   "gap2": 10.5
+  },
+  {
+   "id": "L10",
+   "kind": "low",
+   "nearest": "W02",
+   "gap": 1.95,
+   "second": "FireBarrel_F4",
+   "gap2": 5.95
+  },
+  {
+   "id": "P02",
+   "kind": "pillar",
+   "nearest": "L02",
+   "gap": 0.5,
+   "second": "C10",
+   "gap2": 8.9
+  },
+  {
+   "id": "L01",
+   "kind": "low",
+   "nearest": "P01",
+   "gap": 0.5,
+   "second": "C09",
+   "gap2": 6.02
+  },
+  {
+   "id": "L14",
+   "kind": "low",
+   "nearest": "L08",
+   "gap": 8.54,
+   "second": "W04",
+   "gap2": 10.5
+  },
+  {
+   "id": "P01",
+   "kind": "pillar",
+   "nearest": "L01",
+   "gap": 0.5,
+   "second": "C09",
+   "gap2": 8.9
+  },
+  {
+   "id": "L07",
+   "kind": "low",
+   "nearest": "C09",
+   "gap": 7.5,
+   "second": "L13",
+   "gap2": 8.54
+  },
+  {
+   "id": "C09",
+   "kind": "block",
+   "nearest": "C07",
+   "gap": 5.83,
+   "second": "L01",
+   "gap2": 6.02
+  },
+  {
+   "id": "C02",
+   "kind": "block",
+   "nearest": "L04",
+   "gap": 8.14,
+   "second": "L06",
+   "gap2": 9.66
+  },
+  {
+   "id": "L06",
+   "kind": "low",
+   "nearest": "P05",
+   "gap": 8.5,
+   "second": "L08",
+   "gap2": 9.22
+  },
+  {
+   "id": "P06",
+   "kind": "pillar",
+   "nearest": "L04",
+   "gap": 0.5,
+   "second": "C04",
+   "gap2": 8.0
+  },
+  {
+   "id": "C04",
+   "kind": "block",
+   "nearest": "P06",
+   "gap": 8.0,
+   "second": "FireBarrel_F2",
+   "gap2": 10.95
+  },
+  {
+   "id": "P05",
+   "kind": "pillar",
+   "nearest": "FireBarrel_F3",
+   "gap": 3.59,
+   "second": "L06",
+   "gap2": 8.5
+  },
+  {
+   "id": "C07",
+   "kind": "block",
+   "nearest": "C09",
+   "gap": 5.83,
+   "second": "L01",
+   "gap2": 8.5
+  },
+  {
+   "id": "L03",
+   "kind": "low",
+   "nearest": "P03",
+   "gap": 0.5,
+   "second": "C01",
+   "gap2": 8.14
+  },
+  {
+   "id": "C05",
+   "kind": "block",
+   "nearest": "W03",
+   "gap": 13.19,
+   "second": "P04",
+   "gap2": 13.2
+  },
+  {
+   "id": "C06",
+   "kind": "block",
+   "nearest": "P05",
+   "gap": 13.2,
+   "second": "W04",
+   "gap2": 13.23
+  },
+  {
+   "id": "C08",
+   "kind": "block",
+   "nearest": "C10",
+   "gap": 5.83,
+   "second": "L02",
+   "gap2": 8.5
+  },
+  {
+   "id": "L08",
+   "kind": "low",
+   "nearest": "C10",
+   "gap": 7.5,
+   "second": "L14",
+   "gap2": 8.54
+  },
+  {
+   "id": "L04",
+   "kind": "low",
+   "nearest": "P06",
+   "gap": 0.5,
+   "second": "C02",
+   "gap2": 8.14
+  },
+  {
+   "id": "C01",
+   "kind": "block",
+   "nearest": "L03",
+   "gap": 8.14,
+   "second": "L05",
+   "gap2": 9.66
+  },
+  {
+   "id": "W02",
+   "kind": "wall",
+   "nearest": "L10",
+   "gap": 1.95,
+   "second": "FireBarrel_F4",
+   "gap2": 3.48
+  },
+  {
+   "id": "W01",
+   "kind": "wall",
+   "nearest": "L09",
+   "gap": 2.05,
+   "second": "FireBarrel_F3",
+   "gap2": 3.49
+  },
+  {
+   "id": "L05",
+   "kind": "low",
+   "nearest": "P04",
+   "gap": 8.5,
+   "second": "L07",
+   "gap2": 9.22
+  },
+  {
+   "id": "P04",
+   "kind": "pillar",
+   "nearest": "FireBarrel_F4",
+   "gap": 3.59,
+   "second": "L05",
+   "gap2": 8.5
+  }
+ ],
+ "gaps": [
+  {
+   "a": "P06",
+   "b": "L04",
+   "gap": 0.5,
+   "axis": "e"
+  },
+  {
+   "a": "L10",
+   "b": "W02",
+   "gap": 1.95,
+   "axis": "e"
+  },
+  {
+   "a": "L09",
+   "b": "FireBarrel_F3",
+   "gap": 5.95,
+   "axis": "n"
+  },
+  {
+   "a": "L10",
+   "b": "FireBarrel_F4",
+   "gap": 5.95,
+   "axis": "n"
+  },
+  {
+   "a": "C10",
+   "b": "L08",
+   "gap": 7.5,
+   "axis": "e"
+  },
+  {
+   "a": "L07",
+   "b": "C09",
+   "gap": 7.5,
+   "axis": "e"
+  },
+  {
+   "a": "C03",
+   "b": "P03",
+   "gap": 8.0,
+   "axis": "e"
+  },
+  {
+   "a": "P06",
+   "b": "C04",
+   "gap": 8.0,
+   "axis": "e"
+  },
+  {
+   "a": "L02",
+   "b": "C08",
+   "gap": 8.5,
+   "axis": "e"
+  },
+  {
+   "a": "L01",
+   "b": "C07",
+   "gap": 8.5,
+   "axis": "e"
+  },
+  {
+   "a": "L06",
+   "b": "P05",
+   "gap": 8.5,
+   "axis": "e"
+  },
+  {
+   "a": "L05",
+   "b": "P04",
+   "gap": 8.5,
+   "axis": "e"
+  },
+  {
+   "a": "L07",
+   "b": "C07",
+   "gap": 9.0,
+   "axis": "n"
+  },
+  {
+   "a": "P05",
+   "b": "W01",
+   "gap": 9.0,
+   "axis": "n"
+  },
+  {
+   "a": "C08",
+   "b": "L08",
+   "gap": 9.0,
+   "axis": "n"
+  },
+  {
+   "a": "W02",
+   "b": "P04",
+   "gap": 9.0,
+   "axis": "n"
+  },
+  {
+   "a": "L06",
+   "b": "L04",
+   "gap": 10.0,
+   "axis": "e"
+  },
+  {
+   "a": "L03",
+   "b": "L05",
+   "gap": 10.0,
+   "axis": "e"
+  },
+  {
+   "a": "W04",
+   "b": "L14",
+   "gap": 10.5,
+   "axis": "n"
+  },
+  {
+   "a": "P03",
+   "b": "C09",
+   "gap": 10.5,
+   "axis": "n"
+  },
+  {
+   "a": "W03",
+   "b": "L13",
+   "gap": 10.5,
+   "axis": "n"
+  },
+  {
+   "a": "C10",
+   "b": "P06",
+   "gap": 10.5,
+   "axis": "n"
+  },
+  {
+   "a": "C04",
+   "b": "FireBarrel_F2",
+   "gap": 10.95,
+   "axis": "n"
+  },
+  {
+   "a": "C10",
+   "b": "L04",
+   "gap": 12.0,
+   "axis": "n"
+  },
+  {
+   "a": "C09",
+   "b": "L03",
+   "gap": 12.0,
+   "axis": "n"
+  },
+  {
+   "a": "C02",
+   "b": "W01",
+   "gap": 13.45,
+   "axis": "e"
+  },
+  {
+   "a": "C01",
+   "b": "W02",
+   "gap": 13.55,
+   "axis": "e"
+  },
+  {
+   "a": "L13",
+   "b": "L05",
+   "gap": 14.0,
+   "axis": "n"
+  },
+  {
+   "a": "L14",
+   "b": "L06",
+   "gap": 14.0,
+   "axis": "n"
+  },
+  {
+   "a": "P02",
+   "b": "C08",
+   "gap": 15.0,
+   "axis": "e"
+  },
+  {
+   "a": "P01",
+   "b": "C07",
+   "gap": 15.0,
+   "axis": "e"
+  },
+  {
+   "a": "L13",
+   "b": "C05",
+   "gap": 15.5,
+   "axis": "e"
+  },
+  {
+   "a": "L14",
+   "b": "C06",
+   "gap": 15.5,
+   "axis": "e"
+  }
+ ],
+ "wall_gaps": [
+  {
+   "id": "C03",
+   "west": 7.0,
+   "east": 69.0,
+   "south": 32.0,
+   "north": 78.0
+  },
+  {
+   "id": "W04",
+   "west": 18.55,
+   "east": 52.45,
+   "south": 104.5,
+   "north": 6.5
+  },
+  {
+   "id": "P03",
+   "west": 20.0,
+   "east": 56.0,
+   "south": 35.5,
+   "north": 73.5
+  },
+  {
+   "id": "W03",
+   "west": 52.55,
+   "east": 18.45,
+   "south": 6.5,
+   "north": 104.5
+  },
+  {
+   "id": "C10",
+   "west": 55.0,
+   "east": 21.0,
+   "south": 89.0,
+   "north": 21.0
+  },
+  {
+   "id": "L02",
+   "west": 60.5,
+   "east": 14.5,
+   "south": 99.0,
+   "north": 13.0
+  },
+  {
+   "id": "L09",
+   "west": 11.5,
+   "east": 63.5,
+   "south": 60.0,
+   "north": 52.0
+  },
+  {
+   "id": "L13",
+   "west": 47.5,
+   "east": 27.5,
+   "south": 20.0,
+   "north": 92.0
+  },
+  {
+   "id": "L10",
+   "west": 63.5,
+   "east": 11.5,
+   "south": 52.0,
+   "north": 60.0
+  },
+  {
+   "id": "P02",
+   "west": 67.0,
+   "east": 9.0,
+   "south": 98.5,
+   "north": 10.5
+  },
+  {
+   "id": "L01",
+   "west": 14.5,
+   "east": 60.5,
+   "south": 13.0,
+   "north": 99.0
+  },
+  {
+   "id": "L14",
+   "west": 27.5,
+   "east": 47.5,
+   "south": 92.0,
+   "north": 20.0
+  },
+  {
+   "id": "P01",
+   "west": 9.0,
+   "east": 67.0,
+   "south": 10.5,
+   "north": 98.5
+  },
+  {
+   "id": "L07",
+   "west": 33.5,
+   "east": 41.5,
+   "south": 25.0,
+   "north": 87.0
+  },
+  {
+   "id": "C09",
+   "west": 21.0,
+   "east": 55.0,
+   "south": 21.0,
+   "north": 89.0
+  },
+  {
+   "id": "C02",
+   "west": 43.0,
+   "east": 33.0,
+   "south": 63.0,
+   "north": 47.0
+  },
+  {
+   "id": "L06",
+   "west": 33.5,
+   "east": 41.5,
+   "south": 76.0,
+   "north": 36.0
+  },
+  {
+   "id": "P06",
+   "west": 56.0,
+   "east": 20.0,
+   "south": 73.5,
+   "north": 35.5
+  },
+  {
+   "id": "C04",
+   "west": 69.0,
+   "east": 7.0,
+   "south": 78.0,
+   "north": 32.0
+  },
+  {
+   "id": "P05",
+   "west": 20.0,
+   "east": 56.0,
+   "south": 73.5,
+   "north": 35.5
+  },
+  {
+   "id": "C07",
+   "west": 29.0,
+   "east": 47.0,
+   "south": 12.0,
+   "north": 98.0
+  },
+  {
+   "id": "L03",
+   "west": 25.5,
+   "east": 49.5,
+   "south": 37.0,
+   "north": 75.0
+  },
+  {
+   "id": "C05",
+   "west": 69.0,
+   "east": 7.0,
+   "south": 21.0,
+   "north": 89.0
+  },
+  {
+   "id": "C06",
+   "west": 7.0,
+   "east": 69.0,
+   "south": 89.0,
+   "north": 21.0
+  },
+  {
+   "id": "C08",
+   "west": 47.0,
+   "east": 29.0,
+   "south": 98.0,
+   "north": 12.0
+  },
+  {
+   "id": "L08",
+   "west": 41.5,
+   "east": 33.5,
+   "south": 87.0,
+   "north": 25.0
+  },
+  {
+   "id": "L04",
+   "west": 49.5,
+   "east": 25.5,
+   "south": 75.0,
+   "north": 37.0
+  },
+  {
+   "id": "C01",
+   "west": 33.0,
+   "east": 43.0,
+   "south": 47.0,
+   "north": 63.0
+  },
+  {
+   "id": "W02",
+   "west": 51.55,
+   "east": 19.45,
+   "south": 49.5,
+   "north": 61.5
+  },
+  {
+   "id": "W01",
+   "west": 19.55,
+   "east": 51.45,
+   "south": 61.5,
+   "north": 49.5
+  },
+  {
+   "id": "L05",
+   "west": 41.5,
+   "east": 33.5,
+   "south": 36.0,
+   "north": 76.0
+  },
+  {
+   "id": "P04",
+   "west": 56.0,
+   "east": 20.0,
+   "south": 35.5,
+   "north": 73.5
+  },
+  {
+   "id": "FireBarrel_F3",
+   "west": 16.0,
+   "east": 62.0,
+   "south": 67.95,
+   "north": 43.95
+  },
+  {
+   "id": "FireBarrel_F4",
+   "west": 62.0,
+   "east": 16.0,
+   "south": 43.95,
+   "north": 67.95
+  },
+  {
+   "id": "FireBarrel_F1",
+   "west": 4.0,
+   "east": 74.0,
+   "south": 46.95,
+   "north": 64.95
+  },
+  {
+   "id": "FireBarrel_F2",
+   "west": 74.0,
+   "east": 4.0,
+   "south": 64.95,
+   "north": 46.95
+  }
+ ],
+ "times": [
+  {
+   "id": "P01",
+   "kind": "pillar",
+   "e": -28.999995422363284,
+   "n": -44.0,
+   "tA": 0.1,
+   "tB": 5.5,
+   "diff": -5.4
+  },
+  {
+   "id": "L01",
+   "kind": "low",
+   "e": -22.999995422363284,
+   "n": -43.0,
+   "tA": 0.37,
+   "tB": 5.33,
+   "diff": -4.96
+  },
+  {
+   "id": "C07",
+   "kind": "block",
+   "e": -8.999995422363284,
+   "n": -43.0,
+   "tA": 0.92,
+   "tB": 4.99,
+   "diff": -4.07
+  },
+  {
+   "id": "C09",
+   "kind": "block",
+   "e": -16.999995422363284,
+   "n": -34.0,
+   "tA": 0.98,
+   "tB": 4.75,
+   "diff": -3.77
+  },
+  {
+   "id": "C03",
+   "kind": "block",
+   "e": -30.999995422363284,
+   "n": -23.0,
+   "tA": 1.2,
+   "tB": 4.64,
+   "diff": -3.44
+  },
+  {
+   "id": "L07",
+   "kind": "low",
+   "e": -3.999995422363284,
+   "n": -31.0,
+   "tA": 1.39,
+   "tB": 4.37,
+   "diff": -2.98
+  },
+  {
+   "id": "P03",
+   "kind": "pillar",
+   "e": -17.999995422363284,
+   "n": -19.0,
+   "tA": 1.52,
+   "tB": 4.07,
+   "diff": -2.56
+  },
+  {
+   "id": "L03",
+   "kind": "low",
+   "e": -11.999995422363284,
+   "n": -19.0,
+   "tA": 1.8,
+   "tB": 4.01,
+   "diff": -2.21
+  },
+  {
+   "id": "L13",
+   "kind": "low",
+   "e": 10.0,
+   "n": -36.0,
+   "tA": 1.94,
+   "tB": 4.44,
+   "diff": -2.5
+  },
+  {
+   "id": "FireBarrel_F1",
+   "kind": "barrel",
+   "e": -34.99999923706055,
+   "n": -9.0,
+   "tA": 1.97,
+   "tB": 4.39,
+   "diff": -2.42
+  },
+  {
+   "id": "W03",
+   "kind": "wall",
+   "e": 17.049938964843747,
+   "n": -49.000064849853516,
+   "tA": 2.05,
+   "tB": 4.95,
+   "diff": -2.9
+  },
+  {
+   "id": "L05",
+   "kind": "low",
+   "e": 4.0,
+   "n": -20.0,
+   "tA": 2.08,
+   "tB": 3.66,
+   "diff": -1.58
+  },
+  {
+   "id": "C01",
+   "kind": "block",
+   "e": -4.999995422363284,
+   "n": -8.0,
+   "tA": 2.44,
+   "tB": 3.34,
+   "diff": -0.9
+  },
+  {
+   "id": "P04",
+   "kind": "pillar",
+   "e": 18.000004577636716,
+   "n": -19.0,
+   "tA": 2.63,
+   "tB": 3.4,
+   "diff": -0.77
+  },
+  {
+   "id": "L09",
+   "kind": "low",
+   "e": -25.999995422363284,
+   "n": 4.0,
+   "tA": 2.66,
+   "tB": 3.52,
+   "diff": -0.86
+  },
+  {
+   "id": "W01",
+   "kind": "wall",
+   "e": -15.950015258789065,
+   "n": 5.999935150146484,
+   "tA": 2.8,
+   "tB": 2.95,
+   "diff": -0.15
+  },
+  {
+   "id": "W02",
+   "kind": "wall",
+   "e": 16.04995422363281,
+   "n": -6.000072479248047,
+   "tA": 2.93,
+   "tB": 2.77,
+   "diff": 0.17
+  },
+  {
+   "id": "C05",
+   "kind": "block",
+   "e": 30.999996948242185,
+   "n": -34.0,
+   "tA": 3.02,
+   "tB": 4.07,
+   "diff": -1.05
+  },
+  {
+   "id": "FireBarrel_F3",
+   "kind": "barrel",
+   "e": -22.99999923706055,
+   "n": 12.0,
+   "tA": 3.13,
+   "tB": 3.18,
+   "diff": -0.05
+  },
+  {
+   "id": "FireBarrel_F4",
+   "kind": "barrel",
+   "e": 22.999996948242185,
+   "n": -12.0,
+   "tA": 3.16,
+   "tB": 3.1,
+   "diff": 0.06
+  },
+  {
+   "id": "C02",
+   "kind": "block",
+   "e": 5.000004577636716,
+   "n": 8.0,
+   "tA": 3.34,
+   "tB": 2.46,
+   "diff": 0.88
+  },
+  {
+   "id": "P05",
+   "kind": "pillar",
+   "e": -17.999995422363284,
+   "n": 19.0,
+   "tA": 3.43,
+   "tB": 2.65,
+   "diff": 0.79
+  },
+  {
+   "id": "L10",
+   "kind": "low",
+   "e": 25.999996948242185,
+   "n": -4.0,
+   "tA": 3.5,
+   "tB": 2.63,
+   "diff": 0.87
+  },
+  {
+   "id": "L06",
+   "kind": "low",
+   "e": -4.0,
+   "n": 20.0,
+   "tA": 3.7,
+   "tB": 2.1,
+   "diff": 1.59
+  },
+  {
+   "id": "L04",
+   "kind": "low",
+   "e": 12.000004577636716,
+   "n": 19.0,
+   "tA": 4.04,
+   "tB": 1.77,
+   "diff": 2.27
+  },
+  {
+   "id": "P06",
+   "kind": "pillar",
+   "e": 18.000004577636716,
+   "n": 19.0,
+   "tA": 4.05,
+   "tB": 1.48,
+   "diff": 2.57
+  },
+  {
+   "id": "C06",
+   "kind": "block",
+   "e": -30.999995422363284,
+   "n": 34.0,
+   "tA": 4.1,
+   "tB": 3.04,
+   "diff": 1.06
+  },
+  {
+   "id": "FireBarrel_F2",
+   "kind": "barrel",
+   "e": 34.999996948242185,
+   "n": 9.0,
+   "tA": 4.37,
+   "tB": 1.94,
+   "diff": 2.43
+  },
+  {
+   "id": "L08",
+   "kind": "low",
+   "e": 4.000004577636716,
+   "n": 31.0,
+   "tA": 4.4,
+   "tB": 1.41,
+   "diff": 2.99
+  },
+  {
+   "id": "L14",
+   "kind": "low",
+   "e": -10.0,
+   "n": 36.0,
+   "tA": 4.47,
+   "tB": 1.96,
+   "diff": 2.51
+  },
+  {
+   "id": "C04",
+   "kind": "block",
+   "e": 30.999996948242185,
+   "n": 23.0,
+   "tA": 4.62,
+   "tB": 1.17,
+   "diff": 3.45
+  },
+  {
+   "id": "C10",
+   "kind": "block",
+   "e": 17.000004577636716,
+   "n": 34.0,
+   "tA": 4.78,
+   "tB": 1.0,
+   "diff": 3.78
+  },
+  {
+   "id": "W04",
+   "kind": "wall",
+   "e": -16.950000000000003,
+   "n": 48.99994659423828,
+   "tA": 4.98,
+   "tB": 2.08,
+   "diff": 2.9
+  },
+  {
+   "id": "C08",
+   "kind": "block",
+   "e": 9.000004577636716,
+   "n": 43.0,
+   "tA": 5.02,
+   "tB": 0.94,
+   "diff": 4.08
+  },
+  {
+   "id": "L02",
+   "kind": "low",
+   "e": 22.999996948242185,
+   "n": 43.0,
+   "tA": 5.36,
+   "tB": 0.37,
+   "diff": 4.99
+  },
+  {
+   "id": "P02",
+   "kind": "pillar",
+   "e": 28.999996948242185,
+   "n": 44.0,
+   "tA": 5.53,
+   "tB": 0.07,
+   "diff": 5.45
+  }
+ ]
+}
