@@ -10,6 +10,7 @@
 -- Mobile-safe: particles capped per quality level (Fill.Quality.High / Low; Low on touch-only devices, saved graphics
 -- quality <= Fill.LowQualityAt, or below ~40 fps); Low uses fewer, bigger, denser puffs so the valve corner hides just as well.
 -- Studio test override: LocalPlayer attribute SteamFillQuality = "High" / "Low".
+-- API: SteamCloud.FootstepScale(sound, source, own) -> volume scale (round 3: footsteps muffled in the steam).
 -- API: SteamCloud.Bind(valve) -> handle (:Destroy()). The valve is the replicated model that carries the attributes and its
 --   ValveBody / Wheel (the cloud's shape comes from SteamMask.Fan of that model). Binding a classic valve is harmless: it
 --   only draws when SteamMask.FillOf(valve) says the map steams up.
@@ -291,6 +292,45 @@ RunService.RenderStepped:Connect(function(dt)
 	if next(live) == nil and not (wash and wash.Enabled) then return end
 	washStep()
 end)
+
+-- // Footsteps in the steam (round 3, Edward 2026-10-27: "muddy up footstep sounds so they are very faint and you can't hear
+-- people"). FootstepController asks this for every step it plays. Fill clouds: when the walker OR you stand in the steam the step
+-- is muffled (an EqualizerSoundEffect on that Sound cuts the crisp highs) and very faint (Fill.Footsteps.Volume; your own:
+-- OwnVolume). Classic jet (Warehouse, Tutorial 3): exactly as before, x0.04 for other people's steps inside its 22-stud mask.
+-- Returns the volume scale; switches the sound's muffle on / off.
+local function ear(): Vector3?
+	local me = Players.LocalPlayer
+	local char = me and me.Character
+	local hum = char and char:FindFirstChildOfClass("Humanoid")
+	local root = char and char:FindFirstChild("HumanoidRootPart")
+	if hum and hum.Health > 0 and root and root:IsA("BasePart") then return root.Position end
+	local cam = camera()
+	return cam and cam.CFrame.Position -- dead / spectating: where you are looking from
+end
+
+function SteamCloud.FootstepScale(sound: Sound, source: Vector3, own: boolean): number
+	local F = Steam.Fill
+	local cfg = type(F) == "table" and F.Footsteps
+	local inSteam = false
+	if cfg then
+		local listener = ear()
+		inSteam = SteamMask.InFill(source) > 0 or (listener ~= nil and SteamMask.InFill(listener) > 0)
+	end
+	local eq = sound:FindFirstChild("SteamMuffle")
+	if inSteam then
+		if not eq then
+			eq = Instance.new("EqualizerSoundEffect")
+			eq.Name = "SteamMuffle"
+			eq.HighGain, eq.MidGain, eq.LowGain = cfg.HighGain, cfg.MidGain, cfg.LowGain
+			eq.Parent = sound
+		end
+		eq.Enabled = true
+		return own and cfg.OwnVolume or cfg.Volume
+	end
+	if eq then eq.Enabled = false end
+	if not own and SteamMask.IsMasked(source) then return 0.04 end -- the classic jet, unchanged
+	return 1
+end
 
 -- test / debug: what this client is drawing
 function SteamCloud.Debug()

@@ -22,6 +22,18 @@
 			Color = Color3.fromRGB(205, 210, 215),
 			LightInfluence = 1,       -- lit by the room only (no glow of its own in a dark warehouse)
 			ScreenWash = 0.45,       -- standing inside it greys the picture a little (0 = off)
+			-- round 3 (Edward 2026-10-27): the AI is blinded by the steam, and footsteps in or through it are muddied to very faint
+			Sight = {
+				BlindDepth = 6,      -- studs of steam a bot's sight line may cross before it can't see (a player 6+ studs into the haze is hidden)
+				CoreRadius = 9,      -- studs around the cloud's centre that count as the thick core
+				CoreWeight = 3,      -- a stud of core counts this much (the valve corner blinds after 2 studs)
+				Step = 1,            -- studs between samples along the sight line
+			},
+			Footsteps = {
+				Volume = 0.06,       -- other people's steps in the steam (theirs or yours): x this, muffled (very faint; can't place them)
+				OwnVolume = 0.5,     -- your own steps in the steam: x this, muffled
+				HighGain = -40, MidGain = -18, LowGain = -2, -- the muffle (EqualizerSoundEffect, dB): steam swallows the crisp part
+			},
 			-- mobile-safe: Particles = how many puffs are alive at once (Low: touch-only devices, saved graphics quality
 			-- 1..LowQualityAt, or < 40 fps). Low draws fewer, bigger, denser puffs so the valve corner hides just as well.
 			LowQualityAt = 4,

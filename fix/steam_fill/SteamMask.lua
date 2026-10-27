@@ -8,6 +8,8 @@
 -- without the attribute (the Warehouse, the tutorial) keep the classic jet mask: Steam.MaskRadius while it hisses.
 -- Valve attributes: SteamAt (server time it started), SteamUntil (server time the hiss stops). Pure: reads tags, attributes
 -- and the map's collision; the shared maths for ShootableManager / BotManager / CombatManager / FootstepController / SteamCloud.
+-- Round 3 (fill maps only): the AI can't see through the cloud (SightBlocked), and footsteps / reloads are lost when either the
+-- source or the listener is in it (Muffled; players hear them as a faint, muffled thump: SteamCloud.FootstepScale).
 local CollectionService = game:GetService("CollectionService")
 local Steam = require(script.Parent.Config.ShootableConfig).Steam
 local FLAT = Vector3.new(1, 0, 1)
@@ -182,6 +184,77 @@ function mask.Inside(valve: Instance, fill, position: Vector3, now: number): boo
 	if dy < -4 or dy > fill.MaskHeight then return false end
 	local d = ((position - fan.centre) * FLAT).Magnitude
 	return d <= math.min(r, mask.ReachAt(fan, position) + (fill.MaskEdge or 0))
+end
+
+-- // Round 3 (Edward 2026-10-27: "it should be blinded by the steam; the steam should muddy up footstep sounds so they are very
+-- faint and you can't hear people"). Fill clouds only: the classic jet (Warehouse, Tutorial 3) is unchanged.
+
+-- How thick the fill steam is at this position: 0 = not in any fill cloud, else the cloud's strength (1 while it hisses, thinning
+-- to 0 over the fade). Uses the same Inside test as the mask, so "in the steam" means the same thing everywhere.
+function mask.InFill(position: Vector3, now: number?): number
+	now = now or workspace:GetServerTimeNow()
+	local best = 0
+	for _, valve in CollectionService:GetTagged("SteamValve") do
+		local fill = mask.FillOf(valve)
+		if fill and mask.Inside(valve, fill, position, now) then
+			local _, strength = mask.Phase(valve, now, fill)
+			best = math.max(best, strength or 0)
+		end
+	end
+	return best
+end
+
+-- Is a quiet sound (a footstep, a reload) from `source` lost in the steam for a listener at `listener`? True when the source is
+-- masked (classic jet or fill cloud, as IsMasked) or, on a fill map, when the LISTENER stands in the cloud (the hiss around you
+-- drowns the room out). Gunshots, explosions and fire never ask this.
+function mask.Muffled(source: Vector3, listener: Vector3?): boolean
+	if mask.IsMasked(source) then return true end
+	return listener ~= nil and mask.InFill(listener) > 0
+end
+
+-- How many studs of steam a sight line from `a` to `b` crosses, weighted: the thick core near the valve (Sight.CoreRadius) counts
+-- Sight.CoreWeight times, and everything scales with the cloud's strength (it thins in the fade). Fill clouds only.
+function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
+	now = now or workspace:GetServerTimeNow()
+	local depth = 0
+	local ab = b - a
+	local len = ab.Magnitude
+	if len < 0.01 then return 0 end
+	for _, valve in CollectionService:GetTagged("SteamValve") do
+		local fill = mask.FillOf(valve)
+		local sight = fill and fill.Sight
+		local r = sight and mask.Radius(valve, now) or 0
+		if r > 0 then
+			local fan = mask.Fan(valve, fill)
+			local _, strength = mask.Phase(valve, now, fill)
+			if fan and strength then
+				-- quick reject: the line never comes within the cloud's radius (flat)
+				local fa, fab = a * FLAT, ab * FLAT
+				local c = fan.centre * FLAT
+				local t = fab:Dot(fab) > 1e-6 and math.clamp((c - fa):Dot(fab) / fab:Dot(fab), 0, 1) or 0
+				if (fa + fab * t - c).Magnitude <= r + 1 then
+					local step = sight.Step or 1
+					local n = math.max(1, math.ceil(len / step))
+					local seg = len / n
+					for i = 0, n - 1 do
+						local p = a + ab * ((i + 0.5) / n)
+						if mask.Inside(valve, fill, p, now) then
+							local core = ((p - fan.centre) * FLAT).Magnitude <= sight.CoreRadius
+							depth += seg * (core and sight.CoreWeight or 1) * strength
+						end
+					end
+				end
+			end
+		end
+	end
+	return depth
+end
+
+-- Does the steam block this sight line? (the AI is as blind in it as players are: Fill.Sight.BlindDepth)
+function mask.SightBlocked(a: Vector3, b: Vector3, now: number?): boolean
+	local fill = Steam.Fill
+	if type(fill) ~= "table" or fill.Enabled == false or type(fill.Sight) ~= "table" then return false end
+	return mask.SightDepth(a, b, now) >= fill.Sight.BlindDepth
 end
 
 function mask.IsMasked(position: Vector3): boolean

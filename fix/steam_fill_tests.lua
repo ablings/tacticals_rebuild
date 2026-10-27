@@ -125,6 +125,39 @@ local ok, err = pcall(function()
 		own and mask.ReachAt(own, own.centre + Vector3.new(5, 0, 0)))
 	check("Inside = IsMasked", mask.Inside(fv, F, floorPos + Vector3.new(-20, 0, 0), now) == mask.IsMasked(floorPos + Vector3.new(-20, 0, 0)))
 	fv:SetAttribute("SteamFill", nil)
+
+	-- 3c. round 3 (Edward 2026-10-27): the AI is blinded by the steam; footsteps / reloads lost when the source OR the listener is in it
+	local W = floorPos + Vector3.new(-26, 0, 0) -- 4 studs inside the haze's west edge (radius 30)
+	check("InFill inside", mask.InFill(floorPos + Vector3.new(-20, 0, 0), now) == 1, mask.InFill(floorPos + Vector3.new(-20, 0, 0), now))
+	check("InFill outside", mask.InFill(floorPos + Vector3.new(-40, 0, 0), now) == 0)
+	check("InFill past the wall", mask.InFill(floorPos + Vector3.new(15, 0, 0), now) == 0)
+	check("Muffled: source in the steam", mask.Muffled(W, floorPos + Vector3.new(-60, 0, 0)))
+	check("Muffled: listener in the steam", mask.Muffled(floorPos + Vector3.new(-60, 0, 0), W))
+	check("not Muffled: both outside", not mask.Muffled(floorPos + Vector3.new(-60, 0, 0), floorPos + Vector3.new(-40, 0, 0)))
+	local outside = floorPos + Vector3.new(-40, 0, 0)
+	check("sight: through the core blocked", mask.SightBlocked(floorPos + Vector3.new(-4, 0, -24), floorPos + Vector3.new(-4, 0, 24), now))
+	local d4 = mask.SightDepth(outside, W, now)
+	check("sight: 4 studs of haze = depth 4", near(d4, 4, 1.01), d4)
+	check("sight: 4 studs of haze still visible", not mask.SightBlocked(outside, W, now))
+	check("sight: 8 studs of haze blinds", mask.SightBlocked(outside, floorPos + Vector3.new(-22, 0, 0), now))
+	check("sight: clear line outside the cloud", mask.SightDepth(outside, floorPos + Vector3.new(-40, 0, 20), now) == 0)
+	local untilT = fv:GetAttribute("SteamUntil")
+	local halfFade = untilT + F.FadeTime / 2
+	local dHalf = mask.SightDepth(outside, floorPos + Vector3.new(-22, 0, 0), halfFade)
+	check("sight: the fading haze thins (half strength)", near(dHalf, 4, 1.01) and not mask.SightBlocked(outside, floorPos + Vector3.new(-22, 0, 0), halfFade), dHalf)
+	check("sight: clear after the fade", mask.SightDepth(floorPos + Vector3.new(-4, 0, -24), floorPos + Vector3.new(-4, 0, 24), untilT + F.FadeTime + 0.05) == 0)
+	-- the classic jet never blinds and never muffles a listener (Tutorial 3 unchanged)
+	classic:SetAttribute("SteamUntil", now + 5)
+	local cat = classic:GetPivot().Position
+	check("classic: never blinds", mask.SightDepth(cat + Vector3.new(-15, 0, 0), cat + Vector3.new(15, 0, 0), now) == 0)
+	check("classic: a listener in the jet still hears", not mask.Muffled(cat + Vector3.new(40, 0, 0), cat + Vector3.new(1, 0, 0)))
+	check("classic: a walker in the jet is masked", mask.Muffled(cat + Vector3.new(1, 0, 0), cat + Vector3.new(40, 0, 0)))
+	check("classic: InFill 0", mask.InFill(cat + Vector3.new(1, 0, 0), now) == 0)
+	classic:SetAttribute("SteamUntil", nil)
+	F.Enabled = false
+	check("Fill.Enabled = false: never blinds", not mask.SightBlocked(floorPos + Vector3.new(-4, 0, -24), floorPos + Vector3.new(-4, 0, 24), now))
+	F.Enabled = true
+
 	-- 4. one valve opted out on a fill map: classic
 	fv:SetAttribute("SteamFill", false)
 	check("opt-out: classic radius", mask.Radius(fv, now) == Steam.MaskRadius)

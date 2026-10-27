@@ -34,3 +34,11 @@ Attributes on the valve model: `SteamAt` (start), `SteamUntil` (hiss ends); clou
 Unit (Edit, fresh module instances): classic radius unchanged; fill radius grows / holds / fades / ends; wall clips the
 fan; opt-out valve; no `SteamAt` fallback. Play: 2 players (both see the cloud, footsteps masked, ends with fade, reset
 next round); me + bot (reload in the cloud not heard, control outside heard); Tutorial 3 valve step on the Warehouse.
+
+## Round 3 (Edward's review, 2026-10-27): AI blinded, footsteps muddied (fill maps only)
+- `SteamMask`: `InFill(pos)`, `Muffled(source, listener)` (source masked, or listener in a fill cloud), `SightDepth(a, b)` /
+  `SightBlocked(a, b)` (studs of steam on the line, the core x3, x strength; blocked at `Fill.Sight.BlindDepth`).
+- `BotManager`: `smokeBlocks` asks `SightBlocked`; footsteps use `Muffled(walker, bot)`; `HearNoise(pos, r, quiet)`: quiet
+  (reloads, from CombatManager) is not heard by a bot in the steam. `FootstepController` -> `SteamCloud.FootstepScale`
+  (EqualizerSoundEffect `SteamMuffle` + `Fill.Footsteps.Volume`). Classic jet unchanged. Tests: 50/50 unit; Play results in
+  notes/steam_fill.md.

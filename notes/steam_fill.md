@@ -4,6 +4,25 @@ Work order (Lead, approved by Edward): on Warehouse 2 the steam valve fills the 
 the way Tutorial 3 teaches. The old Warehouse and the tutorial keep the classic jet. Sheet: `notes/steam_fill_sheet.jpg`
 (frames in `captures/steam_fill/`). Plan: `briefs/systems.md`.
 
+## Round 3 (Edward's review, 2026-10-27): "yes it should be blinded by the steam; the steam should muddy up footstep sounds
+## so they are very faint and you can't hear people"
+Fill maps only (Warehouse 2); the classic jet (the Warehouse, Tutorial 3) is unchanged. Sheet: `notes/steam_fill_r3_sheet.jpg`
+(built by `tools/steam_fill_r3_sheet.py` from the Play-test logs below).
+- **The AI is blind in the steam.** BotManager's sight test (`smokeBlocks`, used by `CanSee`) now also asks
+  `SteamMask.SightBlocked(eye, target)`: the sight line's studs inside the cloud are added up (the thick core within
+  `Sight.CoreRadius` of the cloud's centre counts `CoreWeight` x, everything x the cloud's strength, so it thins in the fade);
+  at `Sight.BlindDepth` studs the AI can't see. Result: you're hidden in the valve corner (after 2 studs of core) and anywhere
+  6+ studs into the haze; someone just inside the edge stays visible; an AI standing in the steam can't see out.
+- **Footsteps are muddied and very faint**, when the walker OR the listener is in the steam ("you can't hear people"; the hiss
+  around you drowns the room out). Players: `FootstepController` asks `SteamCloud.FootstepScale(sound, pos, own)`: an
+  `EqualizerSoundEffect` (`SteamMuffle`) on that footstep Sound cuts the highs (-40 dB) and mids (-18 dB), and the volume is
+  x`Footsteps.Volume` (0.06; your own steps x`OwnVolume` 0.5, muffled). AI: footsteps are lost when the walker or the AI is in
+  the steam (`SteamMask.Muffled(source, listener)`), and a reload (`HearNoise(..., quiet = true)`, set by CombatManager's reload
+  line) isn't heard by an AI standing in the steam. Gunshots, breaks and blasts never ask (unchanged).
+- Classic jet: other people's steps x0.04 inside its 22-stud mask while it hisses (no muffle, no listener rule, no sight block),
+  exactly as before; Tutorial 3 plays as before.
+- The masking still lasts until the fade ends (round 2 rule); sight comes back gradually as the haze thins.
+
 ## What it does
 - Shoot a valve on a map with `SteamFill = true`: the same hiss + jet as before, then over ~3 s a cloud billows out of the
   valve and fills the room: thick at the valve (the corner is hidden), a light haze across the room (a player at mid range
@@ -60,12 +79,19 @@ the way Tutorial 3 teaches. The old Warehouse and the tutorial keep the classic 
 | `CentreOut`, `FanHeight`, `FanRays`, `WallMinLength`, `WallPad` | 3, 6, 24, 16, 1 | cloud shape (rays) |
 | `Color`, `LightInfluence` | (205,210,215), 1 | look (lit by the room only: no glow in the dark) |
 | `ScreenWash` | 0.45 | standing inside greys the picture slightly (0 = off; never shows more than normal) |
+| `Sight.BlindDepth` | 6 | studs of steam an AI sight line may cross before it's blocked (round 3) |
+| `Sight.CoreRadius` / `CoreWeight` / `Step` | 9 / 3 / 1 | the thick core around the cloud's centre counts 3 x; sample spacing |
+| `Footsteps.Volume` / `OwnVolume` | 0.06 / 0.5 | footsteps in or through the steam (others / your own), muffled |
+| `Footsteps.HighGain` / `MidGain` / `LowGain` | -40 / -18 / -2 dB | the muffle (EqualizerSoundEffect `SteamMuffle` on the footstep Sound) |
 | `LowQualityAt` | 4 | saved graphics 1..4 = Low (also touch-only devices, `_ForceTouch`, < 40 fps) |
 | `Quality.High / Low` | 170 / 60 puffs | live particle budget; Low = 7 emitters, bigger denser puffs (hides the corner as well) |
 Studio test override: player attribute `SteamFillQuality = "High" | "Low"`.
 
 ## Files
-- `fix/steam_fill.lua` installer, **round 2** (built by `python tools/steam_fill_build.py [--run <studio_id> [UNDO]]` from
+- `fix/steam_fill.lua` installer, **round 3** (18 text edits: round 2's 12 + BotManager 3, CombatManager 1,
+  FootstepController 2; hash before 159e89d8 -> installed 14173ab7 on the round-3 copy; UNDO back to 159e89d8). Round 2 was only
+  ever on the main PC's test copy; a round-2 stamp is refused (UNDO it with `git show 2d05a52:fix/steam_fill.lua`).
+- (round 2 text, kept for history:) installer (built by `python tools/steam_fill_build.py [--run <studio_id> [UNDO]]` from
   `fix/steam_fill/*.lua`). Match places only (refuses the hub). Idempotent; checks every anchor in every target, plus the
   two new module names, before writing; stamps `SteamFillRound = 2` on ShootableManager BEFORE the first write (an
   interrupted run can be re-run or undone) and refuses any other round; UNDO restores the exact original (hash b7069a20
@@ -79,7 +105,34 @@ Studio test override: player attribute `SteamFillQuality = "High" | "Low"`.
 - Studio-only hook `ServerStorage.SteamFillTestHook` (`valves`, `shoot`, `activate`, `reset`, `radius`, `masked`, `bots`,
   `botAt`, `ammo`), created only when `RunService:IsStudio()`.
 
-## Test results (own copy `out/steam_fill/test.rbxl`, copied from Matchmaking_place.rbxl 02:38, no lock)
+## Round 3 test results (Shadow PC; own copy `out/steam_fill/test.rbxl` copied from Matchmaking_place.rbxl 01:05, no lock;
+## the REAL Warehouse 2 installed on it with `fix/map_warehouse2.lua`, which carries `SteamFill = true`)
+- Installer: install 18 edits + mask + 2 modules; second run all "="; UNDO -> original hash 159e89d8; re-install 14173ab7.
+- Unit tests **50/50** (`fix/steam_fill_tests.lua`; 18 new: InFill in / out / past a wall; Muffled by source and by listener;
+  sight through the core blocked; 4 studs of haze = depth 4, visible; 8 studs blinds; half-faded haze thins to 4; clear after;
+  the classic jet never blinds, never muffles a listener, still masks a walker; `Enabled = false` never blinds).
+- Me + AI on Warehouse 2 (real map vote, practice bot, valve S1, cloud radius 30): see the table on the sheet.
+  Sight (bot 38 studs from the cloud centre): no steam all seen; full cloud: core blind (depth 41.8), 20 studs out blind (9.8),
+  3 studs in seen (2.8), outside seen; AI in the core can't see out (35.4); mid-fade (strength 0.47) the core still blind (16.0),
+  the mid haze seen again (2.9); after: all seen.
+- Hearing (hook, same positions): steps / reload not heard with me in the steam or the AI in the steam (full cloud, fade);
+  heard before and after. **Real reload remote** (`Combat.ReloadWeapon`, Pistol): no steam heard; me in the steam not heard;
+  AI 3 studs inside the edge, me outside 13 studs away: not heard; after the fade heard.
+- Footsteps on my client (AI walking, scripted timeline, every step the client played): 0.50 walk / 0.16 sneak with no steam;
+  **0.03 / 0.01 with the muffle on** from the moment the growing cloud reached the AI; with the AI outside and me in the core
+  during the fade: 0.03 muffled; 0.50 again at the first step after the fade (14.1 s). The screen wash was on exactly while I
+  stood in the steam.
+- Round reset (kill -> round 2): SteamAt / SteamUntil cleared, valve re-armed, no cloud drawn on the client.
+- Tutorial 3 on the Warehouse (my copy set to PlaceKind Tutorial + StudioTutorialServer for the test, then restored): valve
+  activated -> the slide step ("SlidIntoCover") came next; classic radius 22, jet + hiss, no cloud, no muffle; me 20 studs
+  from the valve: steps and reload masked, sight depth 0; 8.5 s later radius 0, jet and hiss off.
+- An autonomous-AI damage run was inconclusive (the practice bot didn't fire at all in 5 s, even without steam); the sight
+  samples matched (20/20 seen in the open, 2/20 in the haze as it moved in).
+- **Not run: Studio server + 2 players.** On this PC too only the Server window opened (the place's
+  `TestService.NumberOfPlayers` was 0; setting it to 2 didn't help; the ribbon's player-count box isn't reachable by UI
+  Automation, and this session has no desktop control).
+
+## Round 2 test results (own copy `out/steam_fill/test.rbxl`, copied from Matchmaking_place.rbxl 02:38, no lock)
 - Installer round 1: a foreign round stamp is refused; one broken anchor refuses with nothing written.
 - Installer round 2: install 12 edits + mask + 2 modules, second run all "=", UNDO back to the original hash; a foreign
   `SteamCloud` module refuses with nothing written; a simulated half install (stamp set, a module missing) UNDOes and
@@ -116,7 +169,10 @@ ignores a dead body; notes reworded; the test copy's StudioTeleportData set back
 - Lobby pad duels: ArenaShootables doesn't tag its valves `SteamValve` (so lobby valves never mask noise) and ArenaLoader
   places the jet attachment before parenting (same far-off jet). If Warehouse 2 goes into the lobby: tag + `SteamAt` in
   ArenaShootables, `SteamCloud.Bind(solidValve)` in ArenaLoader's `bindValve` (the solid valve carries the attributes and the shape).
-- The AI's eyes ignore the cloud (it can see through it, players can't); decide if the AI should be blinded in it.
+- ~~The AI's eyes ignore the cloud~~ (Edward: blind it; done in round 3).
+- The AI is blind 6+ studs into the haze, while players still see each other at mid range there: the AI is a little weaker
+  than a player in the steam (by Edward's choice). `Sight.BlindDepth` is the knob.
+- Other players: the muffle is client-side and only for footsteps (gun and reload sounds of other players are as before).
 - Warehouse 2 props: bullets pass through them, but they neither break on screen nor alert the AI until PropController
   binds every placed map (then add them to ShootableManager's noisy `props`). DoorManager drives the Warehouse's shutters only.
 - Phone frame time not measured (Low caps 60 puffs, up to 30 studs across; overdraw with the camera inside is the cost).

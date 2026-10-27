@@ -4,6 +4,7 @@
 --   "shoot", path, player?   -> a real shot from the player's head through the valve (OnShot, as CombatManager calls it)
 --   "activate", path | "reset" | "radius", path | "masked", Vector3
 --   "bots" -> JSON { name, pos, noiseAt, heardAt, clock } | "botAt", Vector3, autonomous? | "ammo", n, player?
+--   "sees", player? -> JSON { sees, depth } (round 3) | "hears", player? -> JSON { steps, reload, botInSteam, playerInSteam }
 local function steamTestHook()
 	local HttpService = game:GetService("HttpService")
 	local function pathOf(m: Instance): string
@@ -68,6 +69,26 @@ local function steamTestHook()
 				bot.root.CFrame = CFrame.new(a)
 				bot.root.AssemblyLinearVelocity = Vector3.zero
 				return "ok"
+			end
+			return "no bot"
+		elseif cmd == "sees" then -- round 3: can the first bot see this player (walls, smoke, steam; FOV ignored)?
+			local p = playerBy(a)
+			for _, bot in botList() do
+				local char = p and p.Character
+				local eye = bot.head and bot.head.Position
+				local at = char and char:FindFirstChild("UpperTorso")
+				return HttpService:JSONEncode({ sees = bot:CanSee(char, true),
+					depth = (eye and at) and SteamMask.SightDepth(eye, at.Position, now) or -1 })
+			end
+			return "no bot"
+		elseif cmd == "hears" then -- round 3: would the first bot hear this player's footsteps / a reload right now?
+			local p = playerBy(a)
+			local root = p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")
+			for _, bot in botList() do
+				if not root then return "no player" end
+				return HttpService:JSONEncode({ steps = not SteamMask.Muffled(root.Position, bot.root.Position),
+					reload = not SteamMask.IsMasked(root.Position) and SteamMask.InFill(bot.root.Position) <= 0,
+					botInSteam = SteamMask.InFill(bot.root.Position), playerInSteam = SteamMask.InFill(root.Position) })
 			end
 			return "no bot"
 		elseif cmd == "ammo" then
