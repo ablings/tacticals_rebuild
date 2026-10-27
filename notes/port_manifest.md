@@ -548,3 +548,6 @@ himself; we never publish.
   1-10+ module + -> SWITCHNOW (RoundManager=5) -> checks all ok (345 scripts; no Play test: the bot-match check is Matchmaking's, same build
   path). Saved, Publish As > gunsy funsy > tacticals > Ranked > Overwrite > Grant; window retitled "Ranked"; read back from the cloud window:
   same checks.
+- **Tutorial** (118492914954668), published 01:16: match_place_ref copy -> split_build Tutorial (DuelMaps moved to ServerStorage._SplitStripped
+  by design: Warehouse, Arena) -> SWITCHNOW (RoundManager=5) -> checks all ok (343 scripts; Workspace.Arena v2 105 parts). Saved, Publish As >
+  gunsy funsy > tacticals > Tutorial > Overwrite > Grant; window retitled "Tutorial"; read back from the cloud window: same checks.
