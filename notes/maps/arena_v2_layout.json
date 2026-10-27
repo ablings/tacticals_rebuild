@@ -1,6 +1,7 @@
 {
  "name": "Arena v2",
- "version": 1,
+ "version": 2,
+ "decisions": "Edward 2026-10-26: asymmetry as planned; decks 5; build from Studio Parts",
  "units": "studs",
  "plan_axes": "x east, y north, z up; world = ORIGIN + (x, z, -y)",
  "box": {
@@ -18,7 +19,7 @@
   "sill": 3.4,
   "lintel_lo": 10,
   "window": 12,
-  "deck": 4,
+  "deck": 5,
   "parapet": 3.4,
   "curb": 1
  },
@@ -406,7 +407,7 @@
      "y0": 45,
      "y1": 55,
      "z0": 0,
-     "z1": 4,
+     "z1": 5,
      "role": "deck"
     },
     {
@@ -414,8 +415,8 @@
      "x1": -28,
      "y0": 45,
      "y1": 55,
-     "z0": 4,
-     "z1": 7.4,
+     "z0": 5,
+     "z1": 8.4,
      "role": "parapet"
     },
     {
@@ -423,8 +424,8 @@
      "x1": -30,
      "y0": 45,
      "y1": 45.5,
-     "z0": 4,
-     "z1": 5,
+     "z0": 5,
+     "z1": 6,
      "role": "curb"
     },
     {
@@ -432,8 +433,8 @@
      "x1": -39.5,
      "y0": 45,
      "y1": 47,
-     "z0": 4,
-     "z1": 5,
+     "z0": 5,
+     "z1": 6,
      "role": "curb"
     }
    ],
@@ -447,11 +448,11 @@
      51
     ],
     "width": 8,
-    "rise": 4,
+    "rise": 5,
     "run": 12.0,
-    "slope_deg": 18.4
+    "slope_deg": 22.6
    },
-   "h": 4,
+   "h": 5,
    "job": "TOWER: a watch edge (curb) over the north lane + a crouch parapet facing B's gate 50 away",
    "style": "curb+parapet"
   },
@@ -880,7 +881,7 @@
      "y0": -55,
      "y1": -47,
      "z0": 0,
-     "z1": 4,
+     "z1": 5,
      "role": "deck"
     },
     {
@@ -888,8 +889,8 @@
      "x1": 46,
      "y0": -47.5,
      "y1": -47,
-     "z0": 4,
-     "z1": 5,
+     "z0": 5,
+     "z1": 6,
      "role": "curb"
     },
     {
@@ -897,8 +898,8 @@
      "x1": 26.5,
      "y0": -55,
      "y1": -47.5,
-     "z0": 4,
-     "z1": 5,
+     "z0": 5,
+     "z1": 6,
      "role": "curb"
     },
     {
@@ -906,8 +907,8 @@
      "x1": 41,
      "y0": -50.5,
      "y1": -47.5,
-     "z0": 4,
-     "z1": 11,
+     "z0": 5,
+     "z1": 12,
      "role": "solid"
     }
    ],
@@ -921,11 +922,11 @@
      -51
     ],
     "width": 8,
-    "rise": 4,
+    "rise": 5,
     "run": 12.0,
-    "slope_deg": 18.4
+    "slope_deg": 22.6
    },
-   "h": 4,
+   "h": 5,
    "job": "BALCONY: open front with a kick-curb, a wall on the deck to peek; sees its own foot, no crouch cover",
    "style": "open"
   },
@@ -1461,7 +1462,7 @@
    "pos": [
     -34,
     46.5,
-    4
+    5
    ],
    "side": "A",
    "kind": "height",
@@ -1475,7 +1476,7 @@
    "pos": [
     -31.2,
     51,
-    4
+    5
    ],
    "side": "A",
    "kind": "height",
@@ -1489,7 +1490,7 @@
    "pos": [
     29.5,
     -48,
-    4
+    5
    ],
    "side": "B",
    "kind": "height",
@@ -1503,7 +1504,7 @@
    "pos": [
     43.5,
     -48,
-    4
+    5
    ],
    "side": "B",
    "kind": "height",
@@ -1517,7 +1518,7 @@
    "pos": [
     -38.5,
     51,
-    4
+    5
    ],
    "side": "A",
    "kind": "ramp",
@@ -1527,7 +1528,7 @@
    "pos": [
     44.5,
     -51,
-    4
+    5
    ],
    "side": "B",
    "kind": "ramp",

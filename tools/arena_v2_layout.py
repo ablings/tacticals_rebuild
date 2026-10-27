@@ -13,8 +13,8 @@ Pieces are Tacticals' own cover at the tutorial sizes plus the two new collidabl
     low     6 x 2,   3.4 high        (crouch cover, vaultable)
     window  20 x 3 frame, 12 high: two 5-wide posts, a 10-wide x 6.6-high opening over a 3.4 sill (= low-wall height,
             vault + shoot through), a 2-high lintel (10..12). A twin window is 35 long (post, opening, post, opening, post).
-    deck    raised floor, 4 high, with 3.4 parapets on its open edges (= a low wall on top)
-    ramp    wedge 0 -> 4 over a 12 run (18.4 deg), 8 wide; the only way up a deck
+    deck    raised floor, 5 high (Edward 2026-10-26: "5 is fine"), each edge a 3.4 parapet, a 1-high kick-curb, the ramp or the box
+    ramp    wedge 0 -> 5 over a 12 run (22.6 deg), 8 wide; the only way up a deck
 Every part is axis-aligned (CoverController measures cover from the part's box) and sits on a 0.5 grid.
 """
 import json, math, os
@@ -23,7 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(os.path.dirname(HERE), "notes", "maps", "arena_v2_layout.json")
 
 BOX = dict(x0=-75, x1=75, y0=-55, y1=55, wall_h=16, wall_t=2)
-H = dict(pillar=10, wall=7, low=3.4, sill=3.4, lintel_lo=10, window=12, deck=4, parapet=3.4, curb=1)
+H = dict(pillar=10, wall=7, low=3.4, sill=3.4, lintel_lo=10, window=12, deck=5, parapet=3.4, curb=1)
 
 pieces = []   # each: id, kind, side ('A'/'B'/'C'), parts: [{x0,x1,y0,y1,z0,z1, role}] or ramp dict
 
@@ -191,12 +191,12 @@ spots = {
     "Mid_B": dict(pos=[3.5, 7.5, 0], side="B", kind="middle", note="B's sill of the twin windows (north opening)"),
     "Mid_A_S": dict(pos=[-3.5, -7.5, 0], side="A", kind="middle", note="A's sill, south opening"),
     "Mid_B_S": dict(pos=[3.5, -7.5, 0], side="B", kind="middle", note="B's sill, south opening"),
-    "A_Perch": dict(pos=[-34, 46.5, 4], side="A", kind="height", note="A's perch: the watch edge (kick-curb) over the north lane", ref=[-34, 41]),
-    "A_PerchDuel": dict(pos=[-31.2, 51, 4], side="A", kind="height", note="A's perch: crouched behind the east parapet (the long duel with B's gate)", ref=[-26, 51]),
-    "B_Ledge": dict(pos=[29.5, -48, 4], side="B", kind="height", note="B's ledge: the west end, peeking the deck wall", ref=[29, -43]),
-    "B_Ledge_E": dict(pos=[43.5, -48, 4], side="B", kind="height", note="B's ledge: the east end of the deck wall", ref=[43.5, -43]),
-    "A_PerchTop": dict(pos=[-38.5, 51, 4], side="A", kind="ramp", note="top of A's ramp"),
-    "B_LedgeTop": dict(pos=[44.5, -51, 4], side="B", kind="ramp", note="top of B's ramp"),
+    "A_Perch": dict(pos=[-34, 46.5, 5], side="A", kind="height", note="A's perch: the watch edge (kick-curb) over the north lane", ref=[-34, 41]),
+    "A_PerchDuel": dict(pos=[-31.2, 51, 5], side="A", kind="height", note="A's perch: crouched behind the east parapet (the long duel with B's gate)", ref=[-26, 51]),
+    "B_Ledge": dict(pos=[29.5, -48, 5], side="B", kind="height", note="B's ledge: the west end, peeking the deck wall", ref=[29, -43]),
+    "B_Ledge_E": dict(pos=[43.5, -48, 5], side="B", kind="height", note="B's ledge: the east end of the deck wall", ref=[43.5, -43]),
+    "A_PerchTop": dict(pos=[-38.5, 51, 5], side="A", kind="ramp", note="top of A's ramp"),
+    "B_LedgeTop": dict(pos=[44.5, -51, 5], side="B", kind="ramp", note="top of B's ramp"),
     "A_SouthGate": dict(pos=[-26, -32.5, 0], side="A", kind="window", note="A's side of the south gate (north opening)"),
     "B_NorthGate": dict(pos=[26, 32.5, 0], side="B", kind="window", note="B's side of the north gate (south opening)"),
     "N_Island": dict(pos=[-2.5, 34.5, 0], side="C", kind="gap", note="the north mid island (west face of its low wall)"),
@@ -239,7 +239,7 @@ sightlines = [
 ]
 
 data = dict(
-    name="Arena v2", version=1, units="studs", plan_axes="x east, y north, z up; world = ORIGIN + (x, z, -y)",
+    name="Arena v2", version=2, decisions="Edward 2026-10-26: asymmetry as planned; decks 5; build from Studio Parts", units="studs", plan_axes="x east, y north, z up; world = ORIGIN + (x, z, -y)",
     box=BOX, heights=H, pieces=pieces, spawns=spawns, spots=spots, gaps=gaps, sightlines=sightlines, balance=balance,
     movement=dict(walk=10, sprint=20, crouch=4.8, cover_dash=24, cover_dash_max=26, cover_sneak=8, vault_s=0.34375,
                   silent_vault_s=0.584, vault_clearance=1.8, climb_s="0.62 + 0.06/stud", climb_max_above_feet=5.6,
