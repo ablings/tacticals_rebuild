@@ -29,7 +29,14 @@ local RS = game:GetService("ReplicatedStorage")
 local SS = game:GetService("ServerStorage")
 local LOBBY = SS:FindFirstChild("_DuelSource") ~= nil
 local sourceFolder = LOBBY and SS._DuelSource:FindFirstChild("Arena")
-local old = LOBBY and (sourceFolder and sourceFolder:FindFirstChild("Arena")) or workspace:FindFirstChild("Arena")
+-- (2026-10-26) explicit branches: the old `LOBBY and (...) or workspace:FindFirstChild(...)` fell through to Workspace in the lobby
+-- when the source model was missing, and a top-level "Arena" there is ArenaLoader's client clone, not this map's source
+local old
+if LOBBY then
+	old = sourceFolder and sourceFolder:FindFirstChild("Arena")
+else
+	old = workspace:FindFirstChild("Arena")
+end
 if old then old:Destroy() end
 local oldEntry = not LOBBY and RS:FindFirstChild("DuelMaps") and RS.DuelMaps:FindFirstChild("Arena")
 if oldEntry then oldEntry:Destroy() end

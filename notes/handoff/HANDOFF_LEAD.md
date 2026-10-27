@@ -70,7 +70,7 @@ Push after every commit. Vault: Obsidian Remotely Save. Pages: `wiki/building-pr
 ## Done since the last handoff (ports 26-30)
 - Practice Range map from Edward's floor plan:
   - Open-roof whitebox, all white with the training grid texture.
-  - 1v1/2v2/3v3, per-map spawns and lighting (`fix/map_practice_range.lua`, `fix/map_env.lua`).
+  - 1v1/2v2/3v3, per-map spawns and lighting (`fix/map_practice_range.lua`, now `fix/map_arena.lua`: the map is the Arena since 2026-10-26; `fix/map_env.lua`).
 - Draw-from-holster animations (4 ids in the working copies).
 - [ROUNDFLOW] (`fix/round_flow.lua`):
   - The weapon swaps at once until you move more than 2 studs or fire; after that the pick is queued to the round end (KitLocked).
