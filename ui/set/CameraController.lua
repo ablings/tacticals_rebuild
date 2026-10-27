@@ -128,7 +128,7 @@ local function duelArena(): Instance?
 	-- (the after-match pseudo lobby also puts a LobbyMap in the match places: ReplicatedStorage.PseudoLobbyMap)
 	if not workspace:FindFirstChild("LobbyMap") or ReplicatedStorage:GetAttribute("PseudoLobbyMap") == true then
 		for _, c in workspace:GetChildren() do if c:GetAttribute("DuelArena") ~= nil then return c end end
-		-- (2026-10-20) the match place holds several maps (Warehouse, PracticeRange): use the one this match is on
+		-- (2026-10-20) the match place holds several maps (Warehouse, Arena): use the one this match is on
 		local chosen = ReplicatedStorage:GetAttribute("ArenaMap") or ReplicatedStorage:GetAttribute("MapChosen")
 		return (typeof(chosen) == "string" and workspace:FindFirstChild(chosen)) or workspace:FindFirstChild("Warehouse")
 	end

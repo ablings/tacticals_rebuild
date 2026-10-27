@@ -22,7 +22,7 @@
 --               the input: turning away is never dragged back).
 --   The player's turn direction is measured from the camera's own rotation between frames (minus what aim assist added).
 -- Targets: alive (never dead players / NPCs), in line of sight, within Range; in a match only the other team; in the
---   practice range (InTraining) the Training dummies + enemy; anywhere the ;aimnpc test dummy (tag "AimAssistTarget").
+--   Training room (InTraining) the Training dummies + enemy; anywhere the ;aimnpc test dummy (tag "AimAssistTarget").
 --
 -- Camera hook (CameraController, UI session), once per frame after reading the look input:
 --   local aa = AimAssist.Step(dt, camera.CFrame, { aiming = isAiming, firing = recentlyFired, looking = lookDeltaMagnitude > 0 })
@@ -97,7 +97,7 @@ local function alive(model)
 	return true
 end
 
--- the practice range (Edward: "it should work in the practice range"): while InTraining, the Training room's dummies and the
+-- the Training room (Edward: aim assist "should work" in Training): while InTraining, the Training room's dummies and the
 -- training enemy (humanoid models with an OnHit event under LobbyMap.Training) are targets. Rescanned every 2 s.
 local rangeCache, rangeAt = {}, -math.huge
 local function rangeTargets()

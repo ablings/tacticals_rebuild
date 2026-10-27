@@ -1328,7 +1328,7 @@ new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = elimL })
 local elimSub = new("TextLabel", { Name = "EliminatedHow", BackgroundTransparency = 1, Text = "", FontFace = FB, TextSize = 22, TextColor3 = Color3.fromRGB(232, 232, 236),
 	Position = UDim2.fromOffset(560, 794), Size = UDim2.fromOffset(800, 28), Visible = false, ZIndex = 6, Parent = root })
 elimSub:SetAttribute("dTS", 22); table.insert(scaled, elimSub)
-new("UIStroke", { Thickness = 2, Transparency = 0.25, Parent = elimSub }) -- (live check) readable over the bright Practice Range walls
+new("UIStroke", { Thickness = 2, Transparency = 0.25, Parent = elimSub }) -- (live check) readable over the bright Arena walls
 local elimToken = 0
 function RV.endElim()
 	if not elimL.Visible then return end

@@ -485,3 +485,20 @@ himself; we never publish.
 - Every copy: c35 (+ PLAYQUEUE true / mm / pill, test false) + compile all ok; pre.lua clean. Matchmaking bot match (rd8) to
   MatchEnd, console clean (52 lines). PLAYQUEUE Studio-tested on out/pq copies with an in-memory MemoryStore stand-in.
 - Live check for Edward: two accounts, finish a match, Play Again on both -> matched into a new Matchmaking server.
+
+## Pending for the next port: Practice Range renamed to Arena [ARENANAME] (2026-10-26, Shadow PC systems session; planned by the lead, approved by Edward)
+- Edward: rename the map "Practice Range" to "Arena" "so the confusion disappears in all code and labels" (the lobby's Training
+  room was also called the practice range). Working copies changed and saved: Tacticals_rebuild.rbxl (lobby) and match_place_ref.rbxl
+  (match). Matchmaking / Ranked / Tutorial get it at the next port (they are copied from match_place_ref), with Edward's go.
+- Names: registry id + folder ReplicatedStorage.DuelMaps.Arena (DisplayName "Arena"), Workspace.Arena (match), ServerStorage._DuelSource.Arena.Arena
+  and ServerStorage.DuelMaps.Arena (lobby). The bare name "Arena" is safe: the other "Arena"s are prefixes (ArenaLoader, ArenaMap...,
+  DuelArena), keyword values (MatchFlow kind "Arena", the test Teleport "Arena"), or LobbyMap.Training.Arena, looked up only inside
+  Training; no script searches "Arena" recursively (scanned in both copies). Training and the Warehouse are untouched.
+- How: fix/rename_arena.lua (in place, idempotent, UNDO) in both copies, then fix/duel_split_map.lua with ONLY = "Arena" in the lobby
+  (layers identical before / after: Visual 594, Solid 109 instances, same positions, lighting, modes). fix/map_practice_range.lua is
+  now fix/map_arena.lua (history in its header). Two toasts reworded: "That teleport isn't open yet." / "Exfil isn't open yet."
+- Tested: match copy 1v1 me + bot: the vote shows Arena (aerial render) + Warehouse + Random; Arena won; both spawned inside with the
+  Arena lighting (ClockTime 15.2, exposure -0.55); 2 rounds to Victory 2-0, Output clean. Lobby: 2v2 pad duel with test bots
+  ("Map: Arena", ArenaLoader "Arena loaded for D1", played to 2-0) and a 3v3 bot duel (all 6 inside). StudioTeleportData cleared.
+- Port checks: verify DuelMaps Warehouse + Arena, Workspace.Arena (no PracticeRange anywhere outside the ServerStorage archives).
+  Old MatchHistory entries keep the map name "Practice Range" (saved player data, history).

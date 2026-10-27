@@ -1669,10 +1669,10 @@ do
 		if id and id ~= "" and prompt:GetAttribute("NPC_OpensPanel") ~= false then
 			LobbyUI.Open(id)
 		elseif prompt:GetAttribute("Teleport") == "Range" then
-			toast("The practice range isn't open yet.", "bad")
+			toast("That teleport isn't open yet.", "bad")
 		end
 	end)
-	-- jumping onto the helicopter = exfil to the practice range (teleport wired later)
+	-- jumping onto the helicopter = exfil (its destination is wired later)
 	local lastHeli = 0
 	local function hookHeli(trig: BasePart)
 		trig.Touched:Connect(function(hit)
@@ -1680,7 +1680,7 @@ do
 			if not char or not hit:IsDescendantOf(char) then return end
 			if os.clock() - lastHeli < 4 then return end
 			lastHeli = os.clock()
-			toast("Exfil: the practice range isn't open yet.", "bad")
+			toast("Exfil isn't open yet.", "bad")
 		end)
 	end
 	task.spawn(function()

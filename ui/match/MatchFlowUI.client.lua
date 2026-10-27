@@ -384,7 +384,7 @@ local function buildMaps(list)
 		elseif m.image and m.image ~= "" then
 			new("ImageLabel", { BackgroundTransparency = 1, Image = m.image, ScaleType = Enum.ScaleType.Crop, Size = UDim2.fromScale(1, 1), Parent = t })
 		else
-			-- (2026-10-20) no picture uploaded yet (Practice Range): an aerial render of the map itself. Lobby duels keep the
+			-- (2026-10-20) no picture uploaded yet (the Arena): an aerial render of the map itself. Lobby duels keep the
 			-- map's look in ReplicatedStorage.DuelMaps[id].Visual; the match place has it in Workspace[id].
 			local reg = ReplicatedStorage:FindFirstChild("DuelMaps") and ReplicatedStorage.DuelMaps:FindFirstChild(m.id)
 			local src = (reg and reg:FindFirstChild("Visual")) or workspace:FindFirstChild(m.id)

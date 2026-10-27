@@ -1,5 +1,5 @@
 -- fix/map_env.lua [PRANGE] 2026-10-20: per-map spawns + lighting in the match place's RoundManager, for a second placed map
--- (Workspace.PracticeRange, fix/map_practice_range.lua). When a map wins the vote, Workspace.MatchSpawns.SpawnA / SpawnB are
+-- (Workspace.Arena, fix/map_arena.lua; named PracticeRange until 2026-10-26). When a map wins the vote, Workspace.MatchSpawns.SpawnA / SpawnB are
 -- moved onto that map's own markers (<map>.MatchSpawns) and MapInfo.Lighting is applied (Lighting, Atmosphere, MapGrade,
 -- Bloom). Maps without them, and the after-match lobby, get the place's originals back (captured the first time). Everything
 -- that reads Workspace.MatchSpawns (round spawns, bots, the range) follows without changes. Idempotent; UNDO swaps back.

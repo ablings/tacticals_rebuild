@@ -42,13 +42,14 @@ local MAPS = {
 			},
 		},
 	},
-	-- [PRANGE] 2026-10-20 Edward's floor plan: the open-roofed whitebox (fix/map_practice_range.lua builds the source)
-	PracticeRange = {
-		DisplayName = "Practice Range",
+	-- [PRANGE] 2026-10-20 Edward's floor plan: the open-roofed whitebox (fix/map_arena.lua builds the source). Named the Arena on
+	-- 2026-10-26 (was PracticeRange / "Practice Range"; fix/rename_arena.lua migrated the copies).
+	Arena = {
+		DisplayName = "Arena",
 		Image = "",
 		Modes = { "1v1", "2v2", "3v3" },
-		Model = "PracticeRange",
-		Spawns = { A = { "PracticeRange.MatchSpawns.SpawnA" }, B = { "PracticeRange.MatchSpawns.SpawnB" } },
+		Model = "Arena",
+		Spawns = { A = { "Arena.MatchSpawns.SpawnA" }, B = { "Arena.MatchSpawns.SpawnB" } },
 		SpawnSpacing = 4,
 		Dynamic = {},
 		Lighting = {

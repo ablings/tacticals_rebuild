@@ -1,5 +1,11 @@
--- fix/map_practice_range.lua [PRANGE] 2026-10-20, Edward's floor plan "PRACTICE RANGE (LARGE)" (150 x 110 studs, 1v1 / 2v2 / 3v3).
--- Builds Workspace.PracticeRange in the match place (and its registry entry ReplicatedStorage.DuelMaps.PracticeRange) as a
+-- fix/map_arena.lua [PRANGE] 2026-10-20, Edward's floor plan "PRACTICE RANGE (LARGE)" (150 x 110 studs, 1v1 / 2v2 / 3v3).
+-- History: built as the "Practice Range" (file fix/map_practice_range.lua, ids PracticeRange); renamed to the Arena on 2026-10-26
+-- (Edward: "so the confusion disappears in all code and labels" - the lobby's Training room was also called the practice range).
+-- The [PRANGE] tags stay: port checks and the map_env anchors look for them. Instance name / registry id = "Arena" is safe:
+-- every other "Arena" in the code is a prefix (ArenaLoader, ArenaMap, DuelArena), a keyword (MatchFlow kind "Arena", the test
+-- Teleport "Arena"), or LobbyMap.Training.Arena, which is only looked up inside Training (fix/place_training.lua); nothing
+-- finds an "Arena" by a recursive name search. fix/rename_arena.lua migrated the existing copies in place.
+-- Builds Workspace.Arena in the match place (and its registry entry ReplicatedStorage.DuelMaps.Arena) as a
 -- whitebox: an open-roofed box under daylight, no doors, no props, no shootables. A completely different feel from the dark,
 -- enclosed Warehouse: bright, clean, colour-coded cover read at a glance.
 -- Edward's calls: "fully whiteboxed or a blockout, no effects no special items", "a large box shaped whitebox map with an open
@@ -18,14 +24,14 @@ local ORIGIN = Vector3.new(-600, 0, 0) -- clear of the Warehouse (x -126..-42), 
 local FLOOR_TOP = 0.6
 local RS = game:GetService("ReplicatedStorage")
 
--- Lobby (has ServerStorage._DuelSource): the map goes in as a duel source (_DuelSource.PracticeRange.PracticeRange) for
--- fix/duel_split_map.lua to split into arena layers. Match place: Workspace.PracticeRange + its registry entry here.
+-- Lobby (has ServerStorage._DuelSource): the map goes in as a duel source (_DuelSource.Arena.Arena) for
+-- fix/duel_split_map.lua to split into arena layers. Match place: Workspace.Arena + its registry entry here.
 local SS = game:GetService("ServerStorage")
 local LOBBY = SS:FindFirstChild("_DuelSource") ~= nil
-local sourceFolder = LOBBY and SS._DuelSource:FindFirstChild("PracticeRange")
-local old = LOBBY and (sourceFolder and sourceFolder:FindFirstChild("PracticeRange")) or workspace:FindFirstChild("PracticeRange")
+local sourceFolder = LOBBY and SS._DuelSource:FindFirstChild("Arena")
+local old = LOBBY and (sourceFolder and sourceFolder:FindFirstChild("Arena")) or workspace:FindFirstChild("Arena")
 if old then old:Destroy() end
-local oldEntry = not LOBBY and RS:FindFirstChild("DuelMaps") and RS.DuelMaps:FindFirstChild("PracticeRange")
+local oldEntry = not LOBBY and RS:FindFirstChild("DuelMaps") and RS.DuelMaps:FindFirstChild("Arena")
 if oldEntry then oldEntry:Destroy() end
 if UNDO then
 	if sourceFolder then sourceFolder:Destroy() end
@@ -55,7 +61,7 @@ local GRID_TILE, GRID_COLOR, GRID_ALPHA = 5, Color3.fromRGB(34, 34, 34), 0.32
 local HEIGHT = { P = 10, W = 7, C = 5, L = 3.4, VPost = 7, VSill = 3.4, Platform = 6, Parapet = 3.4, Box = 16 }
 
 local map = Instance.new("Model")
-map.Name = "PracticeRange"
+map.Name = "Arena"
 local folders = {}
 local function folder(name, parent)
 	local f = Instance.new("Folder")
@@ -237,37 +243,37 @@ map.PrimaryPart = folders.Floor:FindFirstChild("Slab")
 if LOBBY then
 	if not sourceFolder then
 		sourceFolder = Instance.new("Folder")
-		sourceFolder.Name = "PracticeRange"
+		sourceFolder.Name = "Arena"
 		sourceFolder.Parent = SS._DuelSource
 	end
 	map.Parent = sourceFolder
-	return ("PracticeRange duel source built: %d parts (run fix/duel_split_map.lua next)"):format(count)
+	return ("Arena duel source built: %d parts (run fix/duel_split_map.lua next)"):format(count)
 end
 map.Parent = workspace
 
--- // Registry entry (ReplicatedStorage.DuelMaps.PracticeRange): every mode
+-- // Registry entry (ReplicatedStorage.DuelMaps.Arena): every mode
 local root = RS:FindFirstChild("DuelMaps")
 local entry = Instance.new("Folder")
-entry.Name = "PracticeRange"
-entry:SetAttribute("DisplayName", "Practice Range")
+entry.Name = "Arena"
+entry:SetAttribute("DisplayName", "Arena")
 entry:SetAttribute("Modes", "1v1,2v2,3v3")
 entry:SetAttribute("MatchInstall", true)
 local info = Instance.new("ModuleScript")
 info.Name = "MapInfo"
 info.Source = [[
--- MapInfo: registry entry for the PRACTICE RANGE (fix/map_practice_range.lua; Edward's floor plan 2026-10-20). A whitebox:
--- an open-roofed white box under daylight, colour-coded cover, no props / shootables / doors. Workspace.PracticeRange is the
+-- MapInfo: registry entry for the ARENA (fix/map_arena.lua; Edward's floor plan 2026-10-20). A whitebox:
+-- an open-roofed white box under daylight, colour-coded cover, no props / shootables / doors. Workspace.Arena is the
 -- map at its native position; its own MatchSpawns hold the team markers (RoundManager points Workspace.MatchSpawns at them
 -- when this map wins the vote, and applies Lighting below; the Warehouse's own values come back for the Warehouse).
 return {
-	Id = "PracticeRange",
-	DisplayName = "Practice Range",
+	Id = "Arena",
+	DisplayName = "Arena",
 	Image = "",
 	Modes = { "1v1", "2v2", "3v3" },
 	Size = Vector3.new(154, 17, 114),
 	SpawnSpacing = 4,
 	KillDepth = 30,
-	WorkspaceName = "PracticeRange",
+	WorkspaceName = "Arena",
 	Dynamic = {},
 	SourceOrigin = Vector3.new(-600, 0, 0),
 	-- daylight in an open box: bright, crisp sun shadows, cool sky fill (the Warehouse is dim and enclosed)
@@ -284,4 +290,4 @@ return {
 info.Parent = entry
 entry.Parent = root
 
-return ("PracticeRange built: %d parts at %s"):format(count, tostring(ORIGIN))
+return ("Arena built: %d parts at %s"):format(count, tostring(ORIGIN))
