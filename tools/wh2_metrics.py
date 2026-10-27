@@ -140,6 +140,15 @@ def compare(old, new, label):
 if __name__ == "__main__":
     old = json.load(open(os.path.join(STUDY, "metrics.json")))
     hall = run("hall")
+    if "--yards" not in sys.argv:
+        # round 6: both doors are shut in a match, so the playable space is the hall alone (the old study's own domain);
+        # the yards variant (doors open) only matters for a cutscene and is run with --yards
+        l1, bad1 = compare(old, hall, "Hall (same domain as the old study; doors shut, the whole playable space): the 5 % check")
+        txt = "\n".join(l1)
+        open(os.path.join(OUT, "compare.md"), "w", encoding="utf-8").write(txt + "\n")
+        print(txt)
+        print("\nOUT of 5 %: hall", bad1)
+        sys.exit(1 if bad1 else 0)
     yards = run("yards")
     l1, bad1 = compare(old, hall, "Hall (same domain as the old study): the 5 % check")
     l2, bad2 = compare(old, yards, "Hall + both yards (new space; informative)")

@@ -127,6 +127,24 @@ if NEW["warehouseIntact"] != OLD_WAREHOUSE_INSTANCES:
 if not NEW["mapAttrs"].get("SteamFill"):
     errs.append("Warehouse2 lacks SteamFill = true")
 notes.append(f"old Warehouse: {NEW['warehouseIntact']} instances (study dump {OLD_WAREHOUSE_INSTANCES}); registry {reg['attrs']}")
+# round 6: both doors shut, scriptable, not interactable by players; the hall is an indoor map, the yards are the exterior
+doors = {d["name"]: d for d in NEW.get("doors", [])}
+for nm in ("Door_S", "Door_N"):
+    d = doors.get(nm)
+    if not d or not d["shutter"]:
+        errs.append(f"{nm}: missing (Interactive.{nm}.Shutter)"); continue
+    a, sh = d["attrs"], d["shutter"]
+    if a.get("Open") is not False or a.get("Moving") is not False or not a.get("OpenHeight") or "Warehouse2Door" not in d["tags"]:
+        errs.append(f"{nm}: state {a} tags {d['tags']}")
+    if not (sh["collide"] and sh["query"]) or not (sh["attrs"] or {}).get("NotCover") or d["prompts"]:
+        errs.append(f"{nm}: shutter collide {sh['collide']} query {sh['query']} NotCover {(sh['attrs'] or {}).get('NotCover')} prompts {d['prompts']}")
+    if sh["size"][0] < 20 or sh["size"][1] < 14:
+        errs.append(f"{nm}: shutter {sh['size']} does not fill the 20 x 14 opening")
+notes.append("doors: " + ", ".join(f"{k} open={v['attrs'].get('Open')} size={[round(x, 2) for x in v['shutter']['size']]} prompts={v['prompts']}" for k, v in doors.items()))
+if NEW["mapAttrs"].get("Indoor") is not True:
+    errs.append("Warehouse2 lacks Indoor = true")
+if not NEW.get("exteriorAttrs") or NEW["exteriorAttrs"].get("Indoor") is not False:
+    errs.append(f"Warehouse2Exterior: {NEW.get('exteriorAttrs')}")
 
 print("\n".join("- " + n for n in notes))
 print(f"READ-BACK: {len(errs)} differences")

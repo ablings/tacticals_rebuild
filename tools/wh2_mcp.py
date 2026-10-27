@@ -4,7 +4,7 @@ Usage:
   python tools/wh2_mcp.py call <tool> '<json>'                                 any MCP tool (studio_id is filled in)
 The studio id is looked up by window name (Warehouse2_build.rbxl) every call, so a reload doesn't break it. Never targets
 another Studio: if no instance with that name is connected, it stops."""
-import json, os, re, subprocess, sys, tempfile
+import json, os, re, subprocess, sys, tempfile, time
 HERE = os.path.dirname(os.path.abspath(__file__))
 CLI = os.path.join(os.path.expanduser("~"), "Documents", "roblox_kits", "tools", "mcpcli.py")
 NAME = os.environ.get("WH2_STUDIO", "Warehouse2_build.rbxl")
@@ -12,18 +12,26 @@ ENV = dict(os.environ, PYTHONIOENCODING="utf-8", MCP_WARMUP=os.environ.get("MCP_
 
 
 def raw_call(tool, args):
-    fd, path = tempfile.mkstemp(suffix=".json"); os.close(fd)
-    json.dump(args, open(path, "w", encoding="utf-8"))
-    r = subprocess.run([sys.executable, CLI, "call", tool, path], capture_output=True, text=True, encoding="utf-8",
-                       errors="replace", env=ENV)
-    os.remove(path)
-    return r.stdout + (r.stderr[-1500:] if r.returncode else "")
+    # a fresh StudioMCP proxy sometimes answers "No Roblox Studio instances" / an empty list for a few seconds (Shadow PC,
+    # 2026-10-27): retry a few times before giving up
+    for attempt in range(5):
+        fd, path = tempfile.mkstemp(suffix=".json"); os.close(fd)
+        json.dump(args, open(path, "w", encoding="utf-8"))
+        r = subprocess.run([sys.executable, CLI, "call", tool, path], capture_output=True, text=True, encoding="utf-8",
+                           errors="replace", env=ENV)
+        os.remove(path)
+        out = r.stdout + (r.stderr[-1500:] if r.returncode else "")
+        if "No Roblox Studio instances" in out or '"studios":[]' in out or "Unable to reach" in out:
+            time.sleep(4)
+            continue
+        return out
+    return out
 
 
 def studio_id():
     out = raw_call("list_roblox_studios", {})
     m = re.search(r"\{.*\}", out, re.S)
-    for s in json.loads(m.group(0))["studios"]:
+    for s in (json.loads(m.group(0))["studios"] if m else []):
         if s["name"] == NAME:
             return s["id"]
     sys.exit("no Studio named " + NAME + " connected: " + out[:300])

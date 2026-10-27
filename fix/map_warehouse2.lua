@@ -657,7 +657,7 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	dm.Name = "Door_" .. k
 	dm:SetAttribute("Open", false) -- the state a script sets / reads (shut in every match: round start -> CloseAll)
 	dm:SetAttribute("Moving", false) -- true while a roll is playing
-	dm:SetAttribute("OpenHeight", SH_TOP - SH_LIP) -- how far the Shutter's bottom edge rises when open (studs)
+	dm:SetAttribute("OpenHeight", SH_TOP - 0.06 - SH_LIP) -- how far the Shutter's bottom edge rises when open (studs)
 	dm:SetAttribute("RollTime", 4) -- seconds for a full roll (suggested; a cutscene may pass its own)
 	dm:SetAttribute("Bay", k == "S" and "01" or "02")
 	dm:SetAttribute("End", k == "S" and "A" or "B") -- whose end this is (spawn A south, spawn B north)
@@ -665,7 +665,8 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	dm.Parent = IT
 	-- the curtain runs in the wall's reveal (inside the wall thickness, clear of the hall floor the metrics count), its top
 	-- behind the head; the slats are drawn on both faces
-	local sh = newPart("Part", dm, "Shutter", Vector3.new(2 * DOOR_HALF + 0.5, SH_TOP, 0.3), CFrame.new(W(0, g * (HN + 0.6), SH_TOP / 2)))
+	-- the bottom rests on the threshold plate (0.06), its ends 0.25 into the jambs' channels (no face shared with either)
+	local sh = newPart("Part", dm, "Shutter", Vector3.new(2 * DOOR_HALF + 0.5, SH_TOP - 0.06, 0.3), CFrame.new(W(0, g * (HN + 0.6), (SH_TOP + 0.06) / 2)))
 	sh.Material, sh.Color = M.Metal, rgb(150, 152, 148)
 	sh.CanCollide, sh.CanQuery, sh.CanTouch, sh.CastShadow = true, true, true, true
 	sh:SetAttribute("NotCover", true)
@@ -734,9 +735,10 @@ for i, n in BEAM_ROWS do
 	bm.Name = "LightBeam_" .. i
 	bm.Parent = L
 	-- I-beam wall to wall: bottom flange, web, top flange; end plates on the cladding
-	box(bm, "FlangeBot", -HE + 0.02, HE - 0.02, n - 0.4, n + 0.4, BEAM_BOT, BEAM_BOT + 0.14, S.beam)
-	box(bm, "Web", -HE + 0.02, HE - 0.02, n - 0.08, n + 0.08, BEAM_BOT + 0.14, BEAM_TOP - 0.14, S.beam)
-	box(bm, "FlangeTop", -HE + 0.02, HE - 0.02, n - 0.4, n + 0.4, BEAM_TOP - 0.14, BEAM_TOP, S.beam)
+	-- (the beam ends inside its end plates: no end face in a plate's face plane, MapAudit ZFIGHT round 6)
+	box(bm, "FlangeBot", -HE + 0.08, HE - 0.08, n - 0.4, n + 0.4, BEAM_BOT, BEAM_BOT + 0.14, S.beam)
+	box(bm, "Web", -HE + 0.08, HE - 0.08, n - 0.08, n + 0.08, BEAM_BOT + 0.14, BEAM_TOP - 0.14, S.beam)
+	box(bm, "FlangeTop", -HE + 0.08, HE - 0.08, n - 0.4, n + 0.4, BEAM_TOP - 0.14, BEAM_TOP, S.beam)
 	for _, g in { 1, -1 } do
 		box(bm, "EndPlate", g * (HE - 0.02), g * (HE - 0.14), n - 0.6, n + 0.6, BEAM_BOT - 0.4, BEAM_TOP + 0.4, S.beam)
 	end
@@ -752,7 +754,8 @@ for i, n in BEAM_ROWS do
 		local lb = Instance.new("Model")
 		lb.Name = "LightBar_" .. nLamp
 		lb.Parent = bm
-		box(lb, "Housing", e - BAR_LEN / 2, e + BAR_LEN / 2, n - 0.42, n + 0.42, BEAM_BOT - 0.42, BEAM_BOT, S.steel)
+		-- housing 0.04 under the flange, the clamps up to it: no shared top plane (MapAudit ZFIGHT round 6)
+		box(lb, "Housing", e - BAR_LEN / 2, e + BAR_LEN / 2, n - 0.42, n + 0.42, BEAM_BOT - 0.42, BEAM_BOT - 0.04, S.steel)
 		for _, d in { -1, 1 } do box(lb, "Clamp", e + d * (BAR_LEN / 2 - 0.8) - 0.15, e + d * (BAR_LEN / 2 - 0.8) + 0.15, n - 0.46, n + 0.46, BEAM_BOT - 0.46, BEAM_BOT, S.beam) end
 		local lens = box(lb, "Lens", e - BAR_LEN / 2 + 0.15, e + BAR_LEN / 2 - 0.15, n - 0.3, n + 0.3, BEAM_BOT - 0.52, BEAM_BOT - 0.42, S.barLens)
 		lens.CastShadow = false

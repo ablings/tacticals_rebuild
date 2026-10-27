@@ -17,15 +17,22 @@ The match place has no ServerStorage.KitChecks / KitMaps, so the kit's MapAudit 
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import wh2_mcp  # noqa: E402
+# round 6 (doors shut, yards in Workspace.Warehouse2Exterior): pass 1 runs MapAudit on the hall with its own Indoor = true (SKY
+# runs) and on the exterior with Indoor = false; the flood must stay inside the hall
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KIT = os.path.join(os.path.expanduser("~"), "Documents", "roblox_kits", "checks", "audit", "MapAudit.lua")
 
 PASS1 = r'''
+-- round 6: the doors are shut and the yards are their own model, so the hall is audited as what it is, an indoor map (the
+-- map's own attribute Indoor = true: SKY runs), and the exterior on its own as an outdoor set (Indoor = false)
 local map = workspace.Warehouse2
-local r = MapAudit.run(map, { indoor = false })
-r.opts = "indoor=false (yards are open-air; see the hall sky sweep)"
-return game:GetService("HttpService"):JSONEncode(r)
+local r = MapAudit.run(map)
+r.opts = "map attribute Indoor = " .. tostring(map:GetAttribute("Indoor"))
+local ext = workspace:FindFirstChild("Warehouse2Exterior")
+local rx = ext and MapAudit.run(ext) or { fails = 1, warns = 0, findings = { { level = "FAIL", code = "MISSING", where = "Warehouse2Exterior", message = "not found" } }, stats = {} }
+rx.opts = "exterior attribute Indoor = " .. tostring(ext and ext:GetAttribute("Indoor"))
+return game:GetService("HttpService"):JSONEncode({ hall = r, exterior = rx })
 '''
 
 PASS2 = r'''
@@ -33,10 +40,8 @@ local map = workspace.Warehouse2
 local HS = game:GetService("HttpService")
 local O = map:GetAttribute("PlanOrigin") or Vector3.new(-84.2, 0.4, -300)
 local out = {}
--- 2. roof proxies out of the rays (Play: not saved)
-for _, p in map.CollisionProxies:GetChildren() do if p.Name:match("^COLP_Ceiling") then p.CanQuery = false end end
-out.roofLifted = MapAudit.run(map, { indoor = false })
-for _, p in map.CollisionProxies:GetChildren() do if p.Name:match("^COLP_Ceiling") then p.CanQuery = true end end
+-- 2. MapAudit again in the running game (indoor, as the map says), so nothing in a live server differs from Edit
+out.play = MapAudit.run(map)
 -- 3. hall sky sweep: art queryable for the sweep
 for _, d in map.Visuals:GetDescendants() do if d:IsA("BasePart") then d.CanQuery = true end end
 local inc = RaycastParams.new()
@@ -75,7 +80,8 @@ local floorP = RaycastParams.new()
 floorP.FilterType = Enum.RaycastFilterType.Include
 floorP.FilterDescendantsInstances = { map.CollisionProxies, map.CamSkin, map.Props, map.Shootables }
 local solids = {}
-for _, root in { map.CollisionProxies, map.CamSkin, map.Bounds, map.Props, map.Shootables } do
+local ext = workspace:FindFirstChild("Warehouse2Exterior")
+for _, root in { map.CollisionProxies, map.CamSkin, map.Props, map.Shootables, map.Interactive, ext } do
 	for _, d in root:GetDescendants() do if d:IsA("BasePart") and d.CanCollide then table.insert(solids, d) end end
 end
 local ov = OverlapParams.new()
@@ -103,9 +109,9 @@ while head <= #queue and reached < 40000 do
 	if standable(c[1], c[2]) then
 		reached += 1
 		box.e0 = math.min(box.e0, c[1]); box.e1 = math.max(box.e1, c[1]); box.n0 = math.min(box.n0, c[2]); box.n1 = math.max(box.n1, c[2])
+		-- doors shut (round 6): every reached cell is in the hall (the 1-stud grid's last row inside the doors is n +-57)
 		local inHall = math.abs(c[1]) <= 40.5 and math.abs(c[2]) <= 57
-		local inYard = math.abs(c[1]) <= 24.8 and math.abs(c[2]) <= 79.3
-		if not (inHall or inYard) and #outside < 20 then table.insert(outside, c) end
+		if not inHall and #outside < 20 then table.insert(outside, c) end
 		for _, d in { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } } do
 			local k = (c[1] + d[1]) .. "," .. (c[2] + d[2])
 			if not seen[k] then seen[k] = true; table.insert(queue, { c[1] + d[1], c[2] + d[2] }) end
@@ -122,6 +128,13 @@ def main():
     src = src[:src.rindex("return MapAudit")]
     o1 = wh2_mcp.lua(src + PASS1, "Edit")
     r1 = json.loads(o1[o1.index("{"):o1.rindex("}") + 1])
+    if "--edit" in sys.argv:  # quick: pass 1 only (Edit), every finding printed
+        for k in ("hall", "exterior"):
+            r = r1[k]
+            print(f"MAP AUDIT [{k}, Edit] {r.get('opts', '')}: {r['fails']} FAIL, {r['warns']} WARN  stats {r['stats']}")
+            for f in r["findings"]:
+                print(f"  {f['level']} {f['code']} {f['where']}: {f['message']}")
+        sys.exit(1 if r1["hall"]["fails"] + r1["exterior"]["fails"] else 0)
     print(wh2_mcp.call("start_stop_play", {"is_start": True}).strip())
     try:
         o2 = wh2_mcp.lua(src + PASS2, "Server")
@@ -129,8 +142,8 @@ def main():
     finally:
         print(wh2_mcp.call("start_stop_play", {"is_start": False}).strip())
     bad = 0
-    for k, r in (("built (Edit)", r1), ("roof proxies lifted (Play)", r2["roofLifted"])):
-        print(f"MAP AUDIT Warehouse2 [{k}] opts indoor=false: {r['fails']} FAIL, {r['warns']} WARN  stats {r['stats']}")
+    for k, r in (("hall, Edit", r1["hall"]), ("hall, Play server", r2["play"]), ("exterior, Edit", r1["exterior"])):
+        print(f"MAP AUDIT [{k}] {r.get('opts', '')}: {r['fails']} FAIL, {r['warns']} WARN  stats {r['stats']}")
         for f in r["findings"]:
             print(f"  {f['level']} {f['code']} {f['where']}: {f['message']}")
         bad += r["fails"]
@@ -138,7 +151,7 @@ def main():
     print(f"HALL SKY SWEEP: {s['cells']} cells: roof {s['roof']}, skylight glass {s['skylight']}, lamps {s['lamp']}, side glazing {s['glazing']}, HOLES {s['hole']} {s['holes']}")
     f = r2["flood"]
     print(f"ENCLOSURE FLOOD from spawn A: {f['reached']} standable cells reached, extent e {f['bbox']['e0']}..{f['bbox']['e1']} n {f['bbox']['n0']}..{f['bbox']['n1']}; "
-          f"outside the hall + yards: {len(f['outside'])} {f['outside']}{' (CAPPED)' if f['capped'] else ''}")
+          f"outside the hall (doors shut): {len(f['outside'])} {f['outside']}{' (CAPPED)' if f['capped'] else ''}")
     bad += s["hole"] + len(f["outside"]) + (1 if f["capped"] else 0)
     json.dump({"built": r1, **r2}, open(os.path.join(ROOT, "notes", "warehouse2_audit.json"), "w"), indent=1)
     sys.exit(1 if bad else 0)

@@ -1,63 +1,389 @@
 {
  "built": {
-  "stats": {
-   "lights": 46,
-   "openSkyShare": 100,
-   "neon": 25,
-   "walkCells": 752,
-   "meshparts": 4,
-   "parts": 1396
+  "exterior": {
+   "stats": {
+    "lights": 4,
+    "openSkyShare": 100,
+    "neon": 6,
+    "indoor": false,
+    "walkCells": 143,
+    "meshparts": 0,
+    "parts": 284
+   },
+   "fails": 0,
+   "opts": "exterior attribute Indoor = false",
+   "findings": [
+    {
+     "message": "23 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
+     "level": "WARN",
+     "where": "Warehouse2Exterior",
+     "code": "HOLE"
+    }
+   ],
+   "warns": 1
   },
-  "fails": 0,
-  "opts": "indoor=false (yards are open-air; see the hall sky sweep)",
-  "findings": [
-   {
-    "message": "3 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
-    "level": "WARN",
-    "where": "Warehouse2",
-    "code": "HOLE"
-   }
-  ],
-  "warns": 1
+  "hall": {
+   "stats": {
+    "lights": 28,
+    "openSkyShare": 0,
+    "neon": 18,
+    "indoor": true,
+    "walkCells": 603,
+    "meshparts": 4,
+    "parts": 1163
+   },
+   "fails": 26,
+   "opts": "map attribute Indoor = true",
+   "findings": [
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_1.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_1.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_2.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_2.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_3.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_3.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_4.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_4.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_5.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_5.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_6.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_6.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_7.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_7.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_8.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_8.Housing + Clamp",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_S_E + Shutter",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_S_W + Shutter",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 6.0 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Doors.Threshold_S + Shutter",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_N_E + Shutter",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_N_W + Shutter",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 6.0 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Doors.Threshold_N + Shutter",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.FlangeBot + EndPlate",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.2 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.Web + EndPlate",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+     "level": "FAIL",
+     "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.FlangeTop + EndPlate",
+     "code": "ZFIGHT"
+    },
+    {
+     "message": "21 more z-fighting pairs",
+     "level": "FAIL",
+     "where": "Warehouse2",
+     "code": "ZFIGHT"
+    }
+   ],
+   "warns": 0
+  }
  },
  "sky": {
-  "lamp": 82,
-  "roof": 6651,
+  "lamp": 28,
+  "roof": 6705,
   "glazing": 0,
   "hole": 0,
   "cells": 8526,
   "holes": [],
   "skylight": 1793
  },
- "roofLifted": {
-  "fails": 0,
+ "play": {
+  "fails": 26,
   "stats": {
-   "lights": 46,
-   "openSkyShare": 100,
-   "neon": 25,
-   "walkCells": 752,
+   "lights": 28,
+   "openSkyShare": 0,
+   "neon": 18,
+   "indoor": true,
+   "walkCells": 603,
    "meshparts": 4,
-   "parts": 1396
+   "parts": 1163
   },
   "findings": [
    {
-    "message": "3 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
-    "level": "WARN",
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_1.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_1.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_2.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.LightBar_2.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_3.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_3.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_4.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_2.LightBar_4.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_5.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_5.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_6.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_3.LightBar_6.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_7.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_7.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_8.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.3 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_4.LightBar_8.Housing + Clamp",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_S_E + Shutter",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_S_W + Shutter",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 6.0 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Doors.Threshold_S + Shutter",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_N_E + Shutter",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Doors.Jamb_N_W + Shutter",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 6.0 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Doors.Threshold_N + Shutter",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.FlangeBot + EndPlate",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.2 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.Web + EndPlate",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "faces in the same plane overlap 0.1 sq studs (move one 0.12+ off, or overlap solidly)",
+    "level": "FAIL",
+    "where": "Workspace.Warehouse2.Visuals.Lamps.LightBeam_1.FlangeTop + EndPlate",
+    "code": "ZFIGHT"
+   },
+   {
+    "message": "21 more z-fighting pairs",
+    "level": "FAIL",
     "where": "Warehouse2",
-    "code": "HOLE"
+    "code": "ZFIGHT"
    }
   ],
-  "warns": 1
+  "warns": 0
  },
  "flood": {
   "bbox": {
-   "n0": -69,
-   "n1": 69,
+   "n0": -56,
+   "n1": 56,
    "e1": 39,
    "e0": -39
   },
   "outside": [],
-  "reached": 8397,
+  "reached": 7564,
   "capped": false
  }
 }
