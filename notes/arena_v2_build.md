@@ -55,3 +55,22 @@ spots on the Arena (also true for v1): a script/config change for the lead (e.g.
 - **Curb:** Roblox's step-up carries a walking player over the 1-high curb and off the deck (an extra way down, harmless). A player can't
   stop on it: walking at it stops 0.5 short; placed on it, the body settles back to the deck (feet 5.33 max), so the eye never reaches 10.6.
 - **End-on low wall:** confirmed climbable (Space at a free end -> standing on top at 3.4), as the plan allows.
+
+## Lessons for the vault (for the keeper / gardener to file; no game names)
+1. **Generate the map builder from the checked layout data, then read the built map back and diff it against the data** (0.001 tolerance)
+   and run the plan checker on the read-back. It proves the build equals what was checked, and catches build-side mistakes the plan
+   check can't (Map Proof Check §0/§4b).
+2. **Run the overlap check inside each piece too**: two curbs of one deck overlapped 0.5 x 0.5 at a corner; the plan checker only
+   compared pieces with each other. Edge strips of one deck must butt, not cross, at corners.
+3. **Decorative floor plates (team tints) are clipped to the free floor**, inset 0.25 and stopped at any piece that reaches into the
+   area; a plate edge in the same plane as a piece face is a ZFIGHT.
+4. **A 5-high deck is neither low nor tall cover: mark it not-cover.** With a cover system whose climb only targets cover, that alone
+   makes the ramp the only way up; curbs and parapets stay as a second guard.
+5. **A 1-high kick-curb stops the cover climb, not walking:** Roblox's step-up carries a walking player over it and off the deck. It's a
+   harmless extra way down; nobody can stop on a 0.5-deep curb (the body settles back). Don't rely on a curb to keep players on a deck.
+6. **Measure the crouched head in low cover before trusting a low-wall height:** in this game the head top sits 3.8-3.9 above the floor
+   in low cover, 0.4-0.5 over the 3.4 low walls (the plan assumed 3.2). Put the measured number in the movement block.
+7. **MapAudit HOLE on an open-roofed arena:** unreachable tops (window frames, box walls, 12+ high) read as 12-stud drops; tag them
+   intended drops with the reason (out of reach: highest eye + hop < top), don't silence the whole map.
+8. **Window sills as separate low parts** make the cover system treat the opening as low cover and vault through it with no script
+   change (the head-height probe passes through the opening); 12/12 vaults landed clean.
