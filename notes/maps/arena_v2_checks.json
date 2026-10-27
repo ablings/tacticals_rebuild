@@ -82,6 +82,18 @@
     "touch"
    ],
    [
+    "A_NStage_P",
+    "A_PocketN_P",
+    5.0,
+    "lane"
+   ],
+   [
+    "A_NStage_L",
+    "A_PocketN_P",
+    6.5,
+    "lane"
+   ],
+   [
     "A_N_P",
     "A_N_L",
     0.5,
@@ -98,6 +110,12 @@
     "A_Mid_P",
     5.5,
     "lane"
+   ],
+   [
+    "A_Mid_W",
+    "A_PocketN_P",
+    1.12,
+    "cover chain"
    ],
    [
     "A_Mid_P",
@@ -166,6 +184,12 @@
     "cover chain"
    ],
    [
+    "B_SStage_P",
+    "B_PocketS_P",
+    7.57,
+    "lane"
+   ],
+   [
     "B_SE_W",
     "B_SE_W2",
     5.5,
@@ -178,12 +202,6 @@
     "cover chain"
    ],
    [
-    "B_LedgeFoot_W",
-    "S_Mid_P2",
-    4.24,
-    "lane"
-   ],
-   [
     "B_Mid_P",
     "B_Mid_W",
     5.5,
@@ -194,6 +212,12 @@
     "B_Fwd_W",
     5.5,
     "lane"
+   ],
+   [
+    "B_Mid_W",
+    "B_PocketS_P",
+    0.0,
+    "touch"
    ],
    [
     "B_Fwd_L",
@@ -230,18 +254,6 @@
     "S_Mid_L",
     0.0,
     "touch"
-   ],
-   [
-    "S_Mid_P1",
-    "S_Mid_P2",
-    6.0,
-    "lane"
-   ],
-   [
-    "S_Mid_L",
-    "S_Mid_P2",
-    0.0,
-    "touch"
    ]
   ],
   "low_walls_climbable_end_on": [
@@ -264,7 +276,8 @@
    "B_NE_L",
    "B_NStage_L",
    "B_NExit_L",
-   "N_Mid_L"
+   "N_Mid_L",
+   "S_Mid_L"
   ],
   "spawn_los": {
    "pairs": 43681,
@@ -272,59 +285,37 @@
    "eye_to_chest": 0
   },
   "exposure": {
-   "cells": 2154,
-   "min": 3.3,
-   "mean": 26.9,
-   "max": 40.9,
+   "cells": 2148,
+   "min": 3.4,
+   "mean": 25.7,
+   "max": 36.9,
    "bands": {
-    "-75..-65": 17.5,
-    "-65..-55": 26.6,
-    "-55..-45": 28.6,
-    "-45..-35": 30.1,
-    "-35..-25": 27.0,
-    "-25..-15": 27.7,
-    "-15..-5": 28.2,
-    "-5..5": 28.5,
-    "5..15": 28.4,
-    "15..25": 27.5,
-    "25..35": 27.3,
-    "35..45": 30.6,
-    "45..55": 30.4,
-    "55..65": 27.6,
-    "65..75": 18.2
+    "-75..-65": 16.5,
+    "-65..-55": 24.5,
+    "-55..-45": 25.7,
+    "-45..-35": 27.9,
+    "-35..-25": 26.4,
+    "-25..-15": 27.3,
+    "-15..-5": 28.4,
+    "-5..5": 29.6,
+    "5..15": 29.5,
+    "15..25": 27.0,
+    "25..35": 26.3,
+    "35..45": 27.7,
+    "45..55": 27.2,
+    "55..65": 25.7,
+    "65..75": 17.2
    },
    "band_spread": 13.1,
-   "band_spread_outside_pockets": 4.0
+   "band_spread_outside_pockets": 5.1
   },
   "sight": {
-   "median": 39.5,
-   "p90": 83.1,
-   "max": 162.5,
-   "over_90": 7.24
+   "median": 38.2,
+   "p90": 82.5,
+   "max": 159.3,
+   "over_90": 6.86
   },
   "longest_lines": [
-   [
-    [
-     -66.25,
-     28.75
-    ],
-    [
-     73.75,
-     -53.75
-    ],
-    162.5
-   ],
-   [
-    [
-     -73.75,
-     43.75
-    ],
-    [
-     71.25,
-     -26.25
-    ],
-    161.0
-   ],
    [
     [
      -66.25,
@@ -350,17 +341,6 @@
    [
     [
      -73.75,
-     31.25
-    ],
-    [
-     63.75,
-     -43.75
-    ],
-    156.6
-   ],
-   [
-    [
-     -73.75,
      -21.25
     ],
     [
@@ -368,12 +348,45 @@
      28.75
     ],
     153.4
+   ],
+   [
+    [
+     -73.75,
+     -18.75
+    ],
+    [
+     61.25,
+     53.75
+    ],
+    153.2
+   ],
+   [
+    [
+     -58.75,
+     43.75
+    ],
+    [
+     58.75,
+     -53.75
+    ],
+    152.7
+   ],
+   [
+    [
+     -73.75,
+     -16.25
+    ],
+    [
+     73.75,
+     -53.75
+    ],
+    152.2
    ]
   ],
   "cover_distance": {
    "max": 13.0,
-   "mean": 5.0,
-   "p90": 8.8,
+   "mean": 4.9,
+   "p90": 8.5,
    "worst": [
     [
      13.0,
@@ -405,170 +418,170 @@
   "times_sprint_s": {
    "Mid_A": {
     "A": [
-     3.94,
+     3.9,
      3.74,
-     3.9
+     3.78
     ],
     "B": [
-     4.43,
-     4.23,
-     4.33
+     4.34,
+     4.18,
+     4.22
     ]
    },
    "Mid_B": {
     "A": [
-     4.41,
-     4.21,
-     4.37
+     4.37,
+     4.2,
+     4.24
     ],
     "B": [
-     3.98,
-     3.78,
-     3.87
+     3.89,
+     3.72,
+     3.76
     ]
    },
    "Mid_A_S": {
     "A": [
-     3.96,
-     3.87,
-     3.76
+     3.86,
+     3.73,
+     3.7
     ],
     "B": [
-     4.53,
-     4.4,
-     4.33
+     4.39,
+     4.25,
+     4.23
     ]
    },
    "Mid_B_S": {
     "A": [
-     4.43,
-     4.34,
-     4.23
+     4.32,
+     4.2,
+     4.16
     ],
     "B": [
-     4.08,
      3.93,
-     3.88
+     3.79,
+     3.77
     ]
    },
    "A_Perch": {
     "A": [
-     3.59,
-     3.39,
-     3.79
+     3.41,
+     3.21,
+     3.61
     ],
     "B": [
-     7.93,
-     7.73,
-     8.13
+     7.58,
+     7.42,
+     7.78
     ]
    },
    "A_PerchDuel": {
     "A": [
-     3.79,
-     3.59,
-     3.99
+     3.58,
+     3.38,
+     3.78
     ],
     "B": [
-     8.13,
-     7.93,
-     8.33
+     7.75,
+     7.58,
+     7.94
     ]
    },
    "B_Ledge": {
     "A": [
-     9.0,
-     9.2,
-     8.8
+     8.6,
+     8.8,
+     8.44
     ],
     "B": [
-     4.36,
-     4.56,
-     4.16
+     4.21,
+     4.41,
+     4.01
     ]
    },
    "B_Ledge_E": {
     "A": [
-     8.08,
-     8.28,
-     7.88
+     7.7,
+     7.89,
+     7.53
     ],
     "B": [
-     3.44,
-     3.64,
-     3.24
+     3.3,
+     3.5,
+     3.1
     ]
    },
    "A_PerchTop": {
     "A": [
-     3.44,
-     3.24,
-     3.64
+     3.23,
+     3.03,
+     3.43
     ],
     "B": [
-     7.78,
-     7.58,
-     7.98
+     7.4,
+     7.23,
+     7.59
     ]
    },
    "B_LedgeTop": {
     "A": [
-     8.08,
-     8.28,
-     7.88
+     7.68,
+     7.87,
+     7.52
     ],
     "B": [
-     3.44,
-     3.64,
-     3.24
+     3.28,
+     3.48,
+     3.08
     ]
    },
    "A_SouthGate": {
     "A": [
-     3.02,
-     3.22,
-     2.82
+     2.84,
+     3.03,
+     2.67
     ],
     "B": [
-     5.85,
-     6.05,
-     5.65
+     5.59,
+     5.79,
+     5.43
     ]
    },
    "B_NorthGate": {
     "A": [
-     5.72,
-     5.52,
-     5.92
+     5.49,
+     5.32,
+     5.67
     ],
     "B": [
-     2.97,
-     2.77,
-     3.17
+     2.75,
+     2.59,
+     2.95
     ]
    },
    "N_Island": {
     "A": [
-     4.22,
-     4.02,
-     4.42
+     4.06,
+     3.89,
+     4.24
     ],
     "B": [
-     4.54,
      4.34,
-     4.74
+     4.17,
+     4.53
     ]
    },
    "S_Island": {
     "A": [
-     4.37,
-     4.57,
-     4.17
+     4.24,
+     4.43,
+     4.07
     ],
     "B": [
-     4.54,
-     4.74,
-     4.34
+     4.3,
+     4.5,
+     4.13
     ]
    }
   },
@@ -576,51 +589,51 @@
   "balance": [
    {
     "what": "middle (nearest sill)",
-    "A": 3.94,
-    "B": 3.98,
-    "diff_pct": 1.0
+    "A": 3.86,
+    "B": 3.89,
+    "diff_pct": 0.8
    },
    {
     "what": "own high ground (first peek)",
-    "A": 3.59,
-    "B": 3.44,
-    "diff_pct": 4.4
+    "A": 3.41,
+    "B": 3.3,
+    "diff_pct": 3.3
    },
    {
     "what": "own high ground (ramp top)",
-    "A": 3.44,
-    "B": 3.44,
-    "diff_pct": 0.0
+    "A": 3.23,
+    "B": 3.28,
+    "diff_pct": 1.5
    },
    {
     "what": "own gate",
-    "A": 3.02,
-    "B": 2.97,
-    "diff_pct": 1.7
+    "A": 2.84,
+    "B": 2.75,
+    "diff_pct": 3.3
    },
    {
     "what": "enemy high ground (contest: ramp top)",
-    "A": 8.08,
-    "B": 7.78,
-    "diff_pct": 3.9
+    "A": 7.68,
+    "B": 7.4,
+    "diff_pct": 3.8
    },
    {
     "what": "enemy gate (contest)",
-    "A": 5.72,
-    "B": 5.85,
-    "diff_pct": 2.3
+    "A": 5.49,
+    "B": 5.59,
+    "diff_pct": 1.8
    },
    {
     "what": "north island",
-    "A": 4.22,
-    "B": 4.54,
-    "diff_pct": 7.6
+    "A": 4.06,
+    "B": 4.34,
+    "diff_pct": 6.9
    },
    {
     "what": "south island",
-    "A": 4.37,
-    "B": 4.54,
-    "diff_pct": 3.9
+    "A": 4.24,
+    "B": 4.3,
+    "diff_pct": 1.4
    }
   ],
   "gaps": [
@@ -639,7 +652,17 @@
      "N_Island",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 31.3,
+    "crosser": "A",
+    "enemy_watchers_pct": {
+     "B_NorthGate": 100
+    },
+    "own_watchers_pct": {
+     "Mid_A": 100,
+     "Mid_A_S": 100,
+     "A_Perch": 57,
+     "A_PerchDuel": 71
+    },
+    "floor_seeing_mid_pct": 30.1,
     "note": "A's north chain -> mid island"
    },
    {
@@ -658,15 +681,24 @@
      "N_Island",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 32.1,
+    "crosser": "B",
+    "enemy_watchers_pct": {
+     "A_Perch": 100
+    },
+    "own_watchers_pct": {
+     "Mid_B": 100,
+     "Mid_B_S": 57,
+     "B_NorthGate": 100
+    },
+    "floor_seeing_mid_pct": 31.1,
     "note": "B's north gate -> mid island"
    },
    {
     "id": "SouthGap_B",
-    "length": 10.3,
-    "sprint_s": 0.51,
-    "walk_s": 1.03,
-    "dash_s": 0.43,
+    "length": 13.9,
+    "sprint_s": 0.69,
+    "walk_s": 1.39,
+    "dash_s": 0.58,
     "watched_by": [
      "Mid_B",
      "Mid_B_S",
@@ -675,7 +707,17 @@
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 26.1,
+    "crosser": "B",
+    "enemy_watchers_pct": {
+     "A_SouthGate": 100
+    },
+    "own_watchers_pct": {
+     "Mid_B": 100,
+     "Mid_B_S": 100,
+     "B_Ledge": 86,
+     "B_Ledge_E": 71
+    },
+    "floor_seeing_mid_pct": 30.1,
     "note": "B's south chain -> mid island"
    },
    {
@@ -688,10 +730,21 @@
      "Mid_A",
      "Mid_A_S",
      "A_PerchDuel",
+     "B_Ledge_E",
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 30.6,
+    "crosser": "A",
+    "enemy_watchers_pct": {
+     "B_Ledge": 57,
+     "B_Ledge_E": 71
+    },
+    "own_watchers_pct": {
+     "Mid_A_S": 86,
+     "A_PerchDuel": 57,
+     "A_SouthGate": 100
+    },
+    "floor_seeing_mid_pct": 32.0,
     "note": "A's south gate -> mid island"
    },
    {
@@ -711,7 +764,18 @@
      "N_Island",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 26.0,
+    "crosser": "A",
+    "enemy_watchers_pct": {
+     "Mid_B": 100,
+     "Mid_B_S": 57,
+     "B_Ledge_E": 57,
+     "B_NorthGate": 100
+    },
+    "own_watchers_pct": {
+     "Mid_A": 100,
+     "Mid_A_S": 100
+    },
+    "floor_seeing_mid_pct": 26.2,
     "note": "A's centre chain -> the centre post (sill)"
    },
    {
@@ -729,7 +793,16 @@
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 22.7,
+    "crosser": "B",
+    "enemy_watchers_pct": {
+     "Mid_A_S": 100,
+     "A_SouthGate": 86
+    },
+    "own_watchers_pct": {
+     "Mid_B": 100,
+     "Mid_B_S": 100
+    },
+    "floor_seeing_mid_pct": 23.6,
     "note": "B's centre wall -> the centre post (sill)"
    },
    {
@@ -747,7 +820,17 @@
      "B_NorthGate",
      "N_Island"
     ],
-    "floor_seeing_mid_pct": 36.0,
+    "crosser": "A",
+    "enemy_watchers_pct": {
+     "Mid_B": 86,
+     "B_NorthGate": 100
+    },
+    "own_watchers_pct": {
+     "Mid_A": 71,
+     "A_Perch": 100,
+     "A_PerchDuel": 100
+    },
+    "floor_seeing_mid_pct": 33.2,
     "note": "A rotation: north chain -> centre pillar"
    },
    {
@@ -765,10 +848,44 @@
      "A_SouthGate",
      "S_Island"
     ],
-    "floor_seeing_mid_pct": 35.1,
+    "crosser": "B",
+    "enemy_watchers_pct": {
+     "Mid_A_S": 86,
+     "A_SouthGate": 100
+    },
+    "own_watchers_pct": {
+     "Mid_B_S": 71,
+     "B_Ledge": 100,
+     "B_Ledge_E": 100
+    },
+    "floor_seeing_mid_pct": 34.6,
     "note": "B rotation: south chain -> centre wall"
    }
   ],
+  "windows_seeing_pockets": [
+   "B_NorthGate sill (23.0,30.0) side +1: 1 points of the B pocket",
+   "B_NorthGate sill (23.0,45.0) side +1: 5 points of the A pocket",
+   "B_NorthGate sill (23.0,45.0) side +1: 42 points of the B pocket",
+   "B_NorthGate sill (23.0,45.0) side -1: 35 points of the B pocket",
+   "A_SouthGate sill (-23.0,-45.0) side +1: 49 points of the A pocket",
+   "A_SouthGate sill (-23.0,-45.0) side -1: 55 points of the A pocket"
+  ],
+  "spawn_camp": {
+   "A": {
+    "first_enemy_sight_s": 5.09,
+    "at": [
+     -11.75,
+     -53.25
+    ]
+   },
+   "B": {
+    "first_enemy_sight_s": 5.77,
+    "at": [
+     26.75,
+     49.25
+    ]
+   }
+  },
   "ramps": [
    {
     "deck": "A_Perch",
@@ -780,10 +897,10 @@
     "on_ramp_walk_s": 1.2,
     "enemy_half_seeing_climb_pct": [
      1.9,
-     6.3,
      6.4,
-     5.9,
-     4.2
+     6.4,
+     6.0,
+     4.5
     ]
    },
    {
@@ -796,7 +913,7 @@
     "on_ramp_walk_s": 1.2,
     "enemy_half_seeing_climb_pct": [
      4.8,
-     8.6,
+     10.8,
      10.3,
      10.1,
      7.2
@@ -807,9 +924,9 @@
    {
     "spot": "A_Perch",
     "eye": 8.6,
-    "floor_seen_standing_pct": 32.7,
-    "floor_seen_crouched_pct": 29.9,
-    "floor_in_front_crouched_pct": 23.8,
+    "floor_seen_standing_pct": 27.8,
+    "floor_seen_crouched_pct": 25.3,
+    "floor_in_front_crouched_pct": 19.0,
     "own_foot_seen_pct": 66.7,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -820,9 +937,9 @@
    {
     "spot": "A_PerchDuel",
     "eye": 8.6,
-    "floor_seen_standing_pct": 32.0,
-    "floor_seen_crouched_pct": 28.7,
-    "floor_in_front_crouched_pct": 17.4,
+    "floor_seen_standing_pct": 27.1,
+    "floor_seen_crouched_pct": 23.6,
+    "floor_in_front_crouched_pct": 17.5,
     "own_foot_seen_pct": 5.4,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [],
@@ -831,10 +948,10 @@
    {
     "spot": "B_Ledge",
     "eye": 8.6,
-    "floor_seen_standing_pct": 31.4,
-    "floor_seen_crouched_pct": 28.9,
-    "floor_in_front_crouched_pct": 28.3,
-    "own_foot_seen_pct": 80.4,
+    "floor_seen_standing_pct": 28.6,
+    "floor_seen_crouched_pct": 25.8,
+    "floor_in_front_crouched_pct": 24.8,
+    "own_foot_seen_pct": 87.2,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
      "B_LedgeFront_L@14"
@@ -844,19 +961,19 @@
    {
     "spot": "B_Ledge_E",
     "eye": 8.6,
-    "floor_seen_standing_pct": 27.3,
-    "floor_seen_crouched_pct": 25.8,
-    "floor_in_front_crouched_pct": 25.7,
-    "own_foot_seen_pct": 78.9,
+    "floor_seen_standing_pct": 28.3,
+    "floor_seen_crouched_pct": 26.5,
+    "floor_in_front_crouched_pct": 22.3,
+    "own_foot_seen_pct": 95.1,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
      "B_C_L@65",
-     "B_LedgeFront_L@15"
+     "B_LedgeFront_L@14"
     ],
     "one_stud_radius": 4.5
    }
   ],
-  "floor_avg_crouched_seen_pct": 21.0,
+  "floor_avg_crouched_seen_pct": 20.5,
   "windows": [
    {
     "window": "CentreWindows",
@@ -883,7 +1000,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 29.7,
+      "floor_seen_pct": 29.0,
       "sees_spots": [
        "Mid_A",
        "Mid_A_S",
@@ -908,7 +1025,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 29.4,
+      "floor_seen_pct": 28.9,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -918,7 +1035,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 30.9,
+      "floor_seen_pct": 29.7,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -944,7 +1061,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 30.8,
+      "floor_seen_pct": 29.5,
       "sees_spots": [
        "Mid_A",
        "N_Island"
@@ -952,7 +1069,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 36.0,
+      "floor_seen_pct": 34.6,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -974,7 +1091,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 29.8,
+      "floor_seen_pct": 28.6,
       "sees_spots": [
        "A_Perch",
        "A_PerchDuel",
@@ -986,7 +1103,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 32.2,
+      "floor_seen_pct": 31.4,
       "sees_spots": [
        "Mid_B",
        "A_Perch",
@@ -1009,7 +1126,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 28.5,
+      "floor_seen_pct": 30.1,
       "sees_spots": [
        "Mid_A_S",
        "B_Ledge"
@@ -1017,7 +1134,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 27.0,
+      "floor_seen_pct": 27.5,
       "sees_spots": [
        "B_Ledge"
       ]
@@ -1036,19 +1153,23 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 35.1,
+      "floor_seen_pct": 35.2,
       "sees_spots": [
        "Mid_A_S",
        "Mid_B_S",
+       "B_Ledge",
+       "B_Ledge_E",
        "S_Island"
       ]
      },
      {
       "side": "west",
-      "floor_seen_pct": 30.8,
+      "floor_seen_pct": 31.3,
       "sees_spots": [
        "Mid_A_S",
        "Mid_B_S",
+       "B_Ledge",
+       "B_Ledge_E",
        "S_Island"
       ]
      }
@@ -1056,6 +1177,6 @@
    }
   ],
   "highest_eye_plus_hop": 10.8,
-  "footprint_pct": 12.9
+  "footprint_pct": 13.1
  }
 }

@@ -149,6 +149,7 @@ wall("A_SW_W", -55, -36, "y", "A")                                              
 pillar("A_SW_P", -67.5, -46, "A"); low("A_SW_L", -67.5, -40.5, "y", "A")
 low("A_SStage_L", -46, -46, "y", "A")
 pillar("A_SExit_P", -68, -24, "A")
+pillar("A_PocketN_P", -45, 15, "A")                                            # closes a 100-stud line from B's gate to the pocket's north edge
 low("A_NWall_L", -12, 50, "x", "A")                                             # along the north wall, inside the perch's band
 
 # --- B spawn (east): pocket behind a pillar - wall - pillar shield (20 long), set 2.5 north of A's
@@ -172,10 +173,11 @@ wall("B_NE_W", 55, 38, "y", "B")
 pillar("B_NE_P", 67.5, 47, "B"); low("B_NE_L", 67.5, 41.5, "y", "B")
 low("B_NStage_L", 46, 47, "y", "B")
 low("B_NExit_L", 68, 21, "x", "B"); pillar("B_SExit_P", 68, -20, "B")
+pillar("B_PocketS_P", 44, -12.5, "B")                                          # closes the line from A's gate to the pocket's south edge
 
 # --- mid-lane islands (the decision points in each lane), different shapes north and south
 pillar("N_Mid_P", 0, 40, "C"); low("N_Mid_L", 0, 34.5, "y", "C")
-pillar("S_Mid_P1", -6.5, -40, "C"); low("S_Mid_L", -1, -40, "x", "C"); pillar("S_Mid_P2", 4.5, -40, "C")   # both ends capped: no end-on climb
+pillar("S_Mid_P1", -6.5, -40, "C"); low("S_Mid_L", -1, -40, "x", "C")   # free east end is safe: the pillar top is 6.6 above it
 
 # --- spawns (1v1 = the middle spot; 2v2 / 3v3 = the spots 4 apart)
 spawns = {
@@ -189,10 +191,10 @@ spots = {
     "Mid_B": dict(pos=[3.5, 7.5, 0], side="B", kind="middle", note="B's sill of the twin windows (north opening)"),
     "Mid_A_S": dict(pos=[-3.5, -7.5, 0], side="A", kind="middle", note="A's sill, south opening"),
     "Mid_B_S": dict(pos=[3.5, -7.5, 0], side="B", kind="middle", note="B's sill, south opening"),
-    "A_Perch": dict(pos=[-34, 46.6, 4], side="A", kind="height", note="A's perch: the watch edge (kick-curb) over the north lane", ref=[-34, 41]),
+    "A_Perch": dict(pos=[-34, 46.5, 4], side="A", kind="height", note="A's perch: the watch edge (kick-curb) over the north lane", ref=[-34, 41]),
     "A_PerchDuel": dict(pos=[-31.2, 51, 4], side="A", kind="height", note="A's perch: crouched behind the east parapet (the long duel with B's gate)", ref=[-26, 51]),
-    "B_Ledge": dict(pos=[29, -48.5, 4], side="B", kind="height", note="B's ledge: the west end, peeking the deck wall", ref=[29, -43]),
-    "B_Ledge_E": dict(pos=[43.5, -48.5, 4], side="B", kind="height", note="B's ledge: the east end of the deck wall", ref=[43.5, -43]),
+    "B_Ledge": dict(pos=[29.5, -48, 4], side="B", kind="height", note="B's ledge: the west end, peeking the deck wall", ref=[29, -43]),
+    "B_Ledge_E": dict(pos=[43.5, -48, 4], side="B", kind="height", note="B's ledge: the east end of the deck wall", ref=[43.5, -43]),
     "A_PerchTop": dict(pos=[-38.5, 51, 4], side="A", kind="ramp", note="top of A's ramp"),
     "B_LedgeTop": dict(pos=[44.5, -51, 4], side="B", kind="ramp", note="top of B's ramp"),
     "A_SouthGate": dict(pos=[-26, -32.5, 0], side="A", kind="window", note="A's side of the south gate (north opening)"),
@@ -203,14 +205,14 @@ spots = {
 
 # --- deliberate open crossings: from the last cover on one side to the next cover (edge to edge, along the walking line)
 gaps = [
-    dict(id="NorthGap_A", a=[-15.5, 30], b=[-1, 33], note="A's north chain -> mid island"),
-    dict(id="NorthGap_B", a=[21.5, 30], b=[1, 33], note="B's north gate -> mid island"),
-    dict(id="SouthGap_B", a=[14.5, -31], b=[7, -38], note="B's south chain -> mid island"),
-    dict(id="SouthGap_A", a=[-21.5, -30], b=[-9, -38], note="A's south gate -> mid island"),
-    dict(id="Centre_A", a=[-11.5, 1.5], b=[-1.5, 2.5], note="A's centre chain -> the centre post (sill)"),
-    dict(id="Centre_B", a=[10.5, -3], b=[1.5, -2.5], note="B's centre wall -> the centre post (sill)"),
-    dict(id="Rot_A_NtoC", a=[-18, 23.5], b=[-12.5, 12.5], note="A rotation: north chain -> centre pillar"),
-    dict(id="Rot_B_StoC", a=[17, -22], b=[12, -13], note="B rotation: south chain -> centre wall"),
+    dict(id="NorthGap_A", crosser="A", a=[-15.5, 30], b=[-1, 33], note="A's north chain -> mid island"),
+    dict(id="NorthGap_B", crosser="B", a=[21.5, 30], b=[1, 33], note="B's north gate -> mid island"),
+    dict(id="SouthGap_B", crosser="B", a=[14.5, -31], b=[2.5, -38], note="B's south chain -> mid island"),
+    dict(id="SouthGap_A", crosser="A", a=[-21.5, -30], b=[-9, -38], note="A's south gate -> mid island"),
+    dict(id="Centre_A", crosser="A", a=[-11.5, 1.5], b=[-1.5, 2.5], note="A's centre chain -> the centre post (sill)"),
+    dict(id="Centre_B", crosser="B", a=[10.5, -3], b=[1.5, -2.5], note="B's centre wall -> the centre post (sill)"),
+    dict(id="Rot_A_NtoC", crosser="A", a=[-18, 23.5], b=[-12.5, 12.5], note="A rotation: north chain -> centre pillar"),
+    dict(id="Rot_B_StoC", crosser="B", a=[17, -22], b=[12, -13], note="B rotation: south chain -> centre wall"),
 ]
 
 # --- timing pairs that must be within 10 % (A's target, B's target); the gaps are reported, not judged

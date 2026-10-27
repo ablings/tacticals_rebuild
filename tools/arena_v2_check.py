@@ -163,9 +163,9 @@ for p in P:
         q = p["parts"][0]
         # landing clear on both sides across the short axis: 3.5 of standable floor
         if p["along"] == "x":
-            probes = [((q["x0"] + q["x1"]) / 2, q["y1"] + 3.5), ((q["x0"] + q["x1"]) / 2, q["y0"] - 3.5)]
+            probes = [(t, q["y1"] + 3.5) for t in (q["x0"] + 0.5, (q["x0"] + q["x1"]) / 2, q["x1"] - 0.5)] +                      [(t, q["y0"] - 3.5) for t in (q["x0"] + 0.5, (q["x0"] + q["x1"]) / 2, q["x1"] - 0.5)]
         else:
-            probes = [(q["x1"] + 3.5, (q["y0"] + q["y1"]) / 2), (q["x0"] - 3.5, (q["y0"] + q["y1"]) / 2)]
+            probes = [(q["x1"] + 3.5, t) for t in (q["y0"] + 0.5, (q["y0"] + q["y1"]) / 2, q["y1"] - 0.5)] +                      [(q["x0"] - 3.5, t) for t in (q["y0"] + 0.5, (q["y0"] + q["y1"]) / 2, q["y1"] - 0.5)]
         for x, y in probes:
             i, j = cell_of(x, y)
             if not (X0 < x < X1 and Y0 < y < Y1) or role[i, j] not in (0,):
@@ -352,6 +352,8 @@ for di in range(-ri, ri + 1):
 edge = np.zeros_like(walk); edge[:ri, :] = edge[-ri:, :] = True; edge[:, :ri] = edge[:, -ri:] = True
 ok = walk & ~blocked & ~edge
 NB = [(1, 0, 1), (-1, 0, 1), (0, 1, 1), (0, -1, 1), (1, 1, 1.4142), (1, -1, 1.4142), (-1, 1, 1.4142), (-1, -1, 1.4142)]
+# [REVIEW] knight moves make it a 16-neighbour grid: any-angle error <= 2.8 % (8 neighbours: up to 8.2 %)
+NB += [(dx, dy, 2.2361) for dx, dy in ((2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2))]
 extra = {}  # (i,j) -> list of ((i2,j2), seconds): vaults and drops
 
 
@@ -376,7 +378,7 @@ for p in P:
                     b = (s, q["y1"] + 1.75) if sgn > 0 else (s, q["y0"] - 1.75)
                 ca, cb = cell_of(*a), cell_of(*b)
                 if not (X0 < a[0] < X1 and Y0 < a[1] < Y1 and X0 < b[0] < X1 and Y0 < b[1] < Y1): continue
-                if not ok[ca] or not walk[cb]: continue
+                if not ok[ca] or not ok[cb]: continue
                 if abs(walkH[ca] - base) > 0.6: continue          # you vault from the piece's own floor
                 if walkH[cb] > base + 0.6: continue               # never up onto something
                 add_edge(ca, cb, VAULT_S + 0.1 + (0.25 if walkH[cb] < base - 0.6 else 0))  # + landing after a drop
@@ -384,8 +386,12 @@ for p in P:
 for p in P:
     if p["kind"] != "deck": continue
     d = p["parts"][0]
-    for x in np.arange(d["x0"] + 0.25, d["x1"], 0.5):
-        for y in np.arange(d["y0"] + 0.25, d["y1"], 0.5):
+    rp = p["ramp"]; (fx, fy), (tx, ty), rw = rp["foot"], rp["top"], rp["width"]
+    rx0, rx1 = (min(fx, tx), max(fx, tx)) if fy == ty else (fx - rw / 2, fx + rw / 2)
+    ry0, ry1 = (fy - rw / 2, fy + rw / 2) if fy == ty else (min(fy, ty), max(fy, ty))
+    cells_xy = [(x, y) for x in np.arange(d["x0"] + 0.25, d["x1"], 0.5) for y in np.arange(d["y0"] + 0.25, d["y1"], 0.5)] +                [(x, y) for x in np.arange(rx0 + 0.25, rx1, 0.5) for y in np.arange(ry0 + 0.25, ry1, 0.5)]
+    for x, y in cells_xy:
+        if True:
             for ox, oy in ((0, 1.5), (0, -1.5), (1.5, 0), (-1.5, 0), (0, 2), (0, -2), (2, 0), (-2, 0)):
                 c, o = cell_of(x, y), cell_of(x + ox, y + oy)
                 if ok[c] and ok[o] and walkH[c] - walkH[o] > 1 and role[o] == 0:
@@ -407,7 +413,11 @@ def dijkstra(src):
             if not (0 <= i2 < NX and 0 <= j2 < NY) or not ok[i2, j2]: continue
             if walkH[i2, j2] - hi > 0.6: continue          # no stepping up (ramps rise 0.17 per cell)
             if hi - walkH[i2, j2] > 0.6: continue          # drops go through the drop edges
-            if di and dj and (not ok[i + di, j] or not ok[i, j + dj]): continue
+            if abs(di) == 1 and abs(dj) == 1 and (not ok[i + di, j] or not ok[i, j + dj]): continue
+            if abs(di) == 2 and (not ok[i + di // 2, j] or not ok[i + di // 2, j + dj]
+                                 or abs(walkH[i + di // 2, j] - hi) > 0.6 or abs(walkH[i + di // 2, j + dj] - hi) > 0.6): continue
+            if abs(dj) == 2 and (not ok[i, j + dj // 2] or not ok[i + di, j + dj // 2]
+                                 or abs(walkH[i, j + dj // 2] - hi) > 0.6 or abs(walkH[i + di, j + dj // 2] - hi) > 0.6): continue
             nd = d0 + w * RES / SPRINT
             if nd < dist[i2, j2]:
                 dist[i2, j2] = nd; heapq.heappush(h, (nd, (i2, j2)))
@@ -464,12 +474,57 @@ for g in D["gaps"]:
     L = math.hypot(bx - ax, by - ay)
     mx, my = (ax + bx) / 2, (ay + by) / 2
     watchers = [k for k, e in spot_eyes.items() if los(e, (mx, my, CHEST))]
+    # [REVIEW] per team, sampled along the whole crossing line (7 points, chest height); a spot "watches" if it sees >= 50 %
+    line = np.array([(ax + (bx - ax) * t, ay + (by - ay) * t, CHEST) for t in np.linspace(0, 1, 7)])
+    share = {k: float(los_many(np.array(e), line).mean()) for k, e in spot_eyes.items()
+             if D["spots"][k]["kind"] != "ramp"}
+    crosser = g.get("crosser")
+    enemy = {"A": "B", "B": "A"}.get(crosser)
+    enemy_w = {k: round(v * 100) for k, v in share.items() if v >= 0.5 and D["spots"][k]["side"] == enemy}
+    own_w = {k: round(v * 100) for k, v in share.items() if v >= 0.5 and D["spots"][k]["side"] == crosser}
+    if crosser and not enemy_w:
+        warn(f"GAP {g['id']}: no {enemy} spot sees half of {crosser}'s crossing")
     # share of the floor that sees the gap's midpoint
     seen = los_many(np.array([mx, my, CHEST]), np.column_stack([S[:, 0], S[:, 1], S[:, 2] + EYE]))
     gres.append(dict(id=g["id"], length=round(L, 1), sprint_s=round(L / SPRINT, 2), walk_s=round(L / WALK, 2),
-                     dash_s=round(L / DASH, 2) if L <= DASH_MAX else None, watched_by=watchers,
+                     dash_s=round(L / DASH, 2) if L <= DASH_MAX else None, watched_by=watchers, crosser=crosser,
+                     enemy_watchers_pct=enemy_w, own_watchers_pct=own_w,
                      floor_seeing_mid_pct=round(float(seen.mean() * 100), 1), note=g["note"]))
 R["info"]["gaps"] = gres
+
+# 8b. [REVIEW] named spots and window sills must not see the enemy's spawn pocket; how soon can an enemy see a spawn spot?
+pocket_pts_team = {"A": pa, "B": pb}
+for k, sp in D["spots"].items():
+    if sp["side"] not in "AB": continue
+    enemy = "B" if sp["side"] == "A" else "A"
+    e = np.array([sp["pos"][0], sp["pos"][1], sp["pos"][2] + EYE])
+    Q = np.array([(x, y, CHEST) for x, y in pocket_pts_team[enemy]])
+    n_vis = int(los_many(e, Q).sum())
+    if n_vis: err(f"SPOT {k} sees {n_vis} points of the {enemy} spawn pocket")
+for p in P:
+    if p["kind"] != "window": continue
+    for q in p["parts"]:
+        if q["role"] != "sill": continue
+        cx, cy = (q["x0"] + q["x1"]) / 2, (q["y0"] + q["y1"]) / 2
+        for sgn in (1, -1):
+            e = np.array([cx + sgn * 2.85, cy, EYE] if p["along"] == "y" else [cx, cy + sgn * 2.85, EYE])
+            for team, pts in pocket_pts_team.items():
+                n_vis = int(los_many(e, np.array([(x, y, CHEST) for x, y in pts])).sum())
+                if n_vis: R["info"].setdefault("windows_seeing_pockets", []).append(f"{p['id']} sill ({cx},{cy}) side {sgn:+d}: {n_vis} points of the {team} pocket")
+camp = {}
+OKI, OKJ = np.where(ok)
+cellsQ = np.column_stack([xs[OKI], ys[OKJ], walkH[OKI, OKJ] + EYE])
+for team in "AB":
+    enemy = "B" if team == "A" else "A"
+    seen = np.zeros(len(cellsQ), dtype=bool)
+    for x, y in D["spawns"][team]["spots"]:
+        seen |= los_many(np.array([x, y, CHEST]), cellsQ, step=0.5)
+    t_enemy = fields[enemy][0][OKI[seen], OKJ[seen]]
+    k = int(np.argmin(t_enemy)) if len(t_enemy) else None
+    camp[team] = dict(first_enemy_sight_s=round(float(t_enemy[k]), 2) if k is not None else None,
+                      at=[float(cellsQ[seen][k][0]), float(cellsQ[seen][k][1])] if k is not None else None)
+    if k is not None and t_enemy[k] < 4: warn(f"SPAWN CAMP: {enemy} can see a {team} spawn spot after {t_enemy[k]:.1f} s")
+R["info"]["spawn_camp"] = camp
 
 # 9. ramps --------------------------------------------------------------------------------------------------
 rres = []
