@@ -13,6 +13,16 @@ Started 2026-10-14 on the main PC.
   (107,122,58), cream (236,232,218), warm grey (200,196,186), sage (167,173,152), near-black (10,12,10).
 - **Theme:** a floating sky military base.
 
+## Feed the duels kit: automatic (Edward, 2026-10-24)
+This repo is watched: when a Claude session here ends, the `roblox-kit-keeper` agent reviews the new commits in the background
+and ports anything general (round flow, queue, arenas, rewards, remotes, combat validation, UI components) into
+`Documents/roblox_kits` with a test. You don't run it. **Write commit messages that say what was wrong and why**: that's its input.
+
+## Grade before you report (Edward, 2026-10-24)
+Before telling Edward a visible or playable change is done (lobby, map, UI, animation, gameplay flow such as queue / teleport /
+matches), run the matching grader agent at effort xhigh (roblox-model / map / ui / animation / systems-grader). Fix its blocking and
+major items first, then report with its verdict. Full rule: vault `meta/Claude Standing Rules.md` 1c.
+
 ## Hard rules
 - **Never edit, save or publish the live place** (it is Team Create: edits sync to the cloud). Edward ordered the port on
   2026-10-16: the result is `Tacticals_main_ported.rbxl`, built locally; Edward publishes it himself (notes/port_manifest.md).
@@ -63,8 +73,9 @@ Started 2026-10-14 on the main PC.
   displays, dummy hits, lamp/beam light shafts, Training extras); remove ambient ones (the floating white specks, motes, steam, sparks,
   drifting particles in the hub/rooms/hangar).
 - After the overlap fix: a fresh agent does a **lap in Play mode** at player height through every room; anything still overlapping is
-  logged with its **root cause**; the causes and prevention rules go into the vault (roblox-build-workflow: 6 Blender Modelling Method
-  and the Studio finishing page) (Edward, 2026-10-15).
+  logged with its **root cause**; the causes and prevention rules go into the vault (general rules without game names in
+  `02 Modeling/Model Proof Check` and `03 Map Building/Map Proof Check`; Tacticals notes in `07 Projects/Tacticals/`; see
+  `wiki/meta/Vault Guide.md`, vault restructured 2026-10-24) (Edward, 2026-10-15).
 - After the lap and the particle cleanup, once everything is sound: **RIVALS vs Tacticals diff**. Go through the RIVALS place, then the
   rebuild, and list everything RIVALS has that ours doesn't (rooms/areas, interactive features, displays, signage, props, lighting,
   effects), with captures. Edward picks which to implement; build nothing from the list until he does (Edward, 2026-10-15).
