@@ -8,7 +8,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
 g = np.load('grids.npz'); m = json.load(open('metrics.json'))
 COL = {'pillar': '#3b3f8f', 'block': '#2f7d6d', 'wall': '#8a5a2b', 'low': '#e0a526', 'barrel': '#c0392b'}
 LBL = {'pillar': 'Pillar 5×5, 10 high (×6)', 'block': 'Head-high block 5×4, 7 high (×10)', 'wall': 'Wall 10×3, 7 high (×4)',
-       'low': 'Low wall 6×2, 3.4 high (×12)', 'barrel': 'Fire barrel ⌀2.1, 2.5 high, shootable (×4)'}
+       'low': 'Low wall 6×2, 3.4 high (×12)', 'barrel': 'Fire barrel, upright ⌀2.1 × 3, shootable; NOT cover (×4)'}
 pair = {r['low']: r for r in m['pairing']['low_walls']}
 
 def room(ax):
@@ -42,7 +42,7 @@ fig, ax = plt.subplots(figsize=(8.6, 11))
 room(ax); draw_pieces(ax); draw_spawns(ax)
 for L in [q for q in pieces if q['kind'] == 'low']:
     r = pair[L['id']]
-    tag = 'flush' if r['gap'] <= 1.5 else ('near' if r['gap'] <= 5 else 'alone')
+    tag = 'flush' if r['gap'] <= 1.5 else ('near' if r['gap'] < 6 else 'alone')
     below = any(abs(q['e'] - L['e']) < (q['w'] + L['w']) / 2 and 0 < L['n'] - q['n'] < 7 for q in pieces if q is not L)
     tx, ty, ha, va = (L['e'] + L['w'] / 2 + 0.6, L['n'], 'left', 'center') if below else (L['e'], L['n'] - 1.9, 'center', 'top')
     ax.text(tx, ty, tag, ha=ha, va=va, fontsize=6, color={'flush': '#b03a2e', 'near': '#9a7d0a', 'alone': '#1e8449'}[tag], style='italic')
@@ -51,7 +51,7 @@ ax.set_title('Warehouse (Tacticals tutorial map): cover plan\n81 × 114 inside, 
              '180° turn about the centre', fontsize=9.5)
 ax.set_xlabel('studs east of centre  (east = -X in Roblox)'); ax.set_ylabel('studs north of centre (+Z)')
 ax.legend(loc='upper left', fontsize=6.6, bbox_to_anchor=(0, -0.06), ncol=2, frameon=False)
-fig.text(0.5, 0.012, 'Low-wall tags: flush = ≤1.5 from tall cover (one cover unit), near = 1.5-5, alone = >5.  '
+fig.text(0.5, 0.012, 'Low-wall tags: flush = ≤1.5 from tall cover (one cover unit), near = 1.5-6 (avoid), alone = ≥6.  '
          'Grey = wall pilasters (12 high). Red bars = closed shutter doors (decor).', ha='center', fontsize=6.5)
 fig.tight_layout(rect=(0, 0.03, 1, 1)); fig.savefig(f'{OUT}/warehouse_plan.png', dpi=140); plt.close(fig)
 

@@ -70,9 +70,12 @@ for s in ('SpawnA', 'SpawnB'):
     D[s] = {'novault': dist_field(walk_novault, src), 'vault': dist_field(walk_vault, src, low_zone, VAULT_PEN)}
 
 def t_at(field, e, n):
+    """Distance at the target cell itself (nearest reachable cell only if the target cell is blocked).
+    (Fixed after grading: the old version took the minimum over a +-3 stud window and read ~3 studs short.)"""
     i, j = to_idx(e, n)
-    win = field[max(0, i - 6):i + 7, max(0, j - 6):j + 7]
-    return float(np.min(win))
+    if np.isfinite(field[i, j]): return float(field[i, j])
+    ok = np.argwhere(np.isfinite(field)); k = np.argmin(np.hypot(ok[:, 0] - i, ok[:, 1] - j))
+    return float(field[ok[k][0], ok[k][1]])
 
 # ---------- visibility ----------
 def los_grid(block, sub_step=4):

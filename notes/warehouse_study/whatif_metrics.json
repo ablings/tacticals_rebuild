@@ -41,19 +41,19 @@
  },
  "spawn_to_spawn_los_pct": 0.0,
  "spawn_straight_to_centre": 58.8,
- "spawn_to_spawn_path": 119.9,
+ "spawn_to_spawn_path": 123.3,
  "centre": {
   "SpawnA": {
-   "novault_sprint": 2.96,
-   "vault_sprint": 2.96,
-   "novault_walk": 5.93,
-   "path_len": 59.3
+   "novault_sprint": 3.13,
+   "vault_sprint": 3.13,
+   "novault_walk": 6.25,
+   "path_len": 62.5
   },
   "SpawnB": {
-   "novault_sprint": 2.96,
-   "vault_sprint": 2.96,
-   "novault_walk": 5.92,
-   "path_len": 59.2
+   "novault_sprint": 3.13,
+   "vault_sprint": 3.13,
+   "novault_walk": 6.25,
+   "path_len": 62.5
   }
  },
  "cover": {
