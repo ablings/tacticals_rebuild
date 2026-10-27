@@ -13,12 +13,13 @@ Fill maps only (Warehouse 2); the classic jet (the Warehouse, Tutorial 3) is unc
   `Sight.CoreRadius` of the cloud's centre counts `CoreWeight` x, everything x the cloud's strength, so it thins in the fade);
   at `Sight.BlindDepth` studs the AI can't see. Result: you're hidden in the valve corner (after 2 studs of core) and anywhere
   6+ studs into the haze; someone just inside the edge stays visible; an AI standing in the steam can't see out.
-- **Footsteps are muddied and very faint**, when the walker OR the listener is in the steam ("you can't hear people"; the hiss
-  around you drowns the room out). Players: `FootstepController` asks `SteamCloud.FootstepScale(sound, pos, own)`: an
+- **Footsteps are muddied and very faint** when the walker is in the steam, when the listener is in it ("you can't hear
+  people": the hiss around you drowns the room out; knob `Footsteps.ListenerInSteam`), or when `Footsteps.ThroughDepth` (6)
+  studs of steam lie between them (the same weighted depth as the AI's sight; added after the round-3 grader). One rule,
+  `SteamMask.FillMuffled`, for players and the AI (`Muffled` = the classic jet's `IsMasked(source)` or `FillMuffled`). Players: `FootstepController` asks `SteamCloud.FootstepScale(sound, pos, own)`: an
   `EqualizerSoundEffect` (`SteamMuffle`) on that footstep Sound cuts the highs (-40 dB) and mids (-18 dB), and the volume is
-  x`Footsteps.Volume` (0.06; your own steps x`OwnVolume` 0.5, muffled). AI: footsteps are lost when the walker or the AI is in
-  the steam (`SteamMask.Muffled(source, listener)`), and a reload (`HearNoise(..., quiet = true)`, set by CombatManager's reload
-  line) isn't heard by an AI standing in the steam. Gunshots, breaks and blasts never ask (unchanged).
+  x`Footsteps.Volume` (0.06; your own steps x`OwnVolume` 0.5, muffled). AI: footsteps and reloads (`HearNoise(..., quiet = true)`, set by
+  CombatManager's reload line) follow `SteamMask.Muffled(source, listener)`. Gunshots, breaks and blasts never ask (unchanged).
 - Classic jet: other people's steps x0.04 inside its 22-stud mask while it hisses (no muffle, no listener rule, no sight block),
   exactly as before; Tutorial 3 plays as before.
 - The masking still lasts until the fade ends (round 2 rule); sight comes back gradually as the haze thins.
@@ -81,15 +82,18 @@ Fill maps only (Warehouse 2); the classic jet (the Warehouse, Tutorial 3) is unc
 | `ScreenWash` | 0.45 | standing inside greys the picture slightly (0 = off; never shows more than normal) |
 | `Sight.BlindDepth` | 6 | studs of steam an AI sight line may cross before it's blocked (round 3) |
 | `Sight.CoreRadius` / `CoreWeight` / `Step` | 9 / 3 / 1 | the thick core around the cloud's centre counts 3 x; sample spacing |
-| `Footsteps.Volume` / `OwnVolume` | 0.06 / 0.5 | footsteps in or through the steam (others / your own), muffled |
+| `Footsteps.ListenerInSteam` | true | standing in the steam you can't hear people either (false: only steps in / through it) |
+| `Footsteps.ThroughDepth` | 6 | steps (and reloads, for the AI) on the far side of this much steam are muffled too (0 = off) |
+| `Footsteps.Volume` / `OwnVolume` | 0.06 / 0.5 | muffled footsteps: others' / your own (yours end up 0.5 x 0.7 x 0.5 = 0.175) |
 | `Footsteps.HighGain` / `MidGain` / `LowGain` | -40 / -18 / -2 dB | the muffle (EqualizerSoundEffect `SteamMuffle` on the footstep Sound) |
 | `LowQualityAt` | 4 | saved graphics 1..4 = Low (also touch-only devices, `_ForceTouch`, < 40 fps) |
 | `Quality.High / Low` | 170 / 60 puffs | live particle budget; Low = 7 emitters, bigger denser puffs (hides the corner as well) |
 Studio test override: player attribute `SteamFillQuality = "High" | "Low"`.
 
 ## Files
-- `fix/steam_fill.lua` installer, **round 3** (18 text edits: round 2's 12 + BotManager 3, CombatManager 1,
-  FootstepController 2; hash before 159e89d8 -> installed 14173ab7 on the round-3 copy; UNDO back to 159e89d8). Round 2 was only
+- `fix/steam_fill.lua` installer, **round 4** (= round 3 after its grader; 18 text edits: round 2's 12 + BotManager 3,
+  CombatManager 1, FootstepController 2; hash before 159e89d8 -> installed db0c45b8; UNDO back to 159e89d8). Round 3's text
+  (commit 84b6012, hash 14173ab7) existed only on this test copy and was UNDOne with its own installer before round 4. Round 2 was only
   ever on the main PC's test copy; a round-2 stamp is refused (UNDO it with `git show 2d05a52:fix/steam_fill.lua`).
 - (round 2 text, kept for history:) installer (built by `python tools/steam_fill_build.py [--run <studio_id> [UNDO]]` from
   `fix/steam_fill/*.lua`). Match places only (refuses the hub). Idempotent; checks every anchor in every target, plus the
@@ -104,6 +108,25 @@ Studio test override: player attribute `SteamFillQuality = "High" | "Low"`.
   entry). Never run it on a shipped place; the real Warehouse 2 replaces it.
 - Studio-only hook `ServerStorage.SteamFillTestHook` (`valves`, `shoot`, `activate`, `reset`, `radius`, `masked`, `bots`,
   `botAt`, `ammo`), created only when `RunService:IsStudio()`.
+
+## Round 3 grader (roblox-systems-grader, xhigh): FIX 8.9, nothing blocking. Fixed in round 4:
+1. code after a comment on the CombatManager line (`--[[ABILITY]] --[[STEAMFILL quiet]] end`): the tag is gone;
+2. the steam sight test cost ~150 raycasts (349 us through the core): per-valve lookups hoisted, the line clipped to the cloud's
+   circle before sampling -> **13.5 us through the core, 5.6 us for 60 studs of haze, 5.4 us missing** (one raycast 2.8 us);
+   a unit test checks it against a brute-force walk with `Inside` on 4 lines;
+3. comments said "as blind as players" and "in or through": reworded; "through" is now real (`ThroughDepth`);
+4. the test hook re-implemented the hearing rule: `hears` now runs the AI's real `_perceive` and `HearNoise`.
+Open from it: the two-player run (C2). Its note: after 5 s without seeing or hearing you, the AI's old hunt logic heads for
+your true position +-15 studs, so a blind AI still drifts toward someone hiding in the steam (not changed: older behaviour).
+
+## Round 4 results (same copy)
+- UNDO round 3 -> 159e89d8; install round 4 -> db0c45b8; second run all "="; UNDO -> 159e89d8; re-install db0c45b8.
+- Unit tests **61/61**.
+- Play, Warehouse 2: AI and me each just outside the cloud on opposite sides (38 studs apart, the cloud between): the AI's real
+  `_perceive` hears my steps with no steam, **not through the steam**, and again after the fade. My client: the AI's steps
+  through the steam 0.03 muffled from 6.1 s (as the cloud grew in between) to 13.3 s, 0.50 from 13.6 s (the thinning haze
+  drops under ThroughDepth just before the fade ends); no screen wash (I was outside).
+- The CombatManager line installed: `...SoundScale or 1), true) --[[ABILITY]] end`.
 
 ## Round 3 test results (Shadow PC; own copy `out/steam_fill/test.rbxl` copied from Matchmaking_place.rbxl 01:05, no lock;
 ## the REAL Warehouse 2 installed on it with `fix/map_warehouse2.lua`, which carries `SteamFill = true`)

@@ -294,8 +294,8 @@ RunService.RenderStepped:Connect(function(dt)
 end)
 
 -- // Footsteps in the steam (round 3, Edward 2026-10-27: "muddy up footstep sounds so they are very faint and you can't hear
--- people"). FootstepController asks this for every step it plays. Fill clouds: when the walker OR you stand in the steam the step
--- is muffled (an EqualizerSoundEffect on that Sound cuts the crisp highs) and very faint (Fill.Footsteps.Volume; your own:
+-- people"). FootstepController asks this for every step it plays. Fill clouds (SteamMask.FillMuffled): when the walker or you
+-- stand in the steam, or enough steam lies between you, the step is muffled (an EqualizerSoundEffect on that Sound cuts the crisp highs) and very faint (Fill.Footsteps.Volume; your own:
 -- OwnVolume). Classic jet (Warehouse, Tutorial 3): exactly as before, x0.04 for other people's steps inside its 22-stud mask.
 -- Returns the volume scale; switches the sound's muffle on / off.
 local function ear(): Vector3?
@@ -311,11 +311,7 @@ end
 function SteamCloud.FootstepScale(sound: Sound, source: Vector3, own: boolean): number
 	local F = Steam.Fill
 	local cfg = type(F) == "table" and F.Footsteps
-	local inSteam = false
-	if cfg then
-		local listener = ear()
-		inSteam = SteamMask.InFill(source) > 0 or (listener ~= nil and SteamMask.InFill(listener) > 0)
-	end
+	local inSteam = cfg and SteamMask.FillMuffled(source, ear()) or false -- the one rule the AI uses too
 	local eq = sound:FindFirstChild("SteamMuffle")
 	if inSteam then
 		if not eq then

@@ -204,16 +204,10 @@ function mask.InFill(position: Vector3, now: number?): number
 	return best
 end
 
--- Is a quiet sound (a footstep, a reload) from `source` lost in the steam for a listener at `listener`? True when the source is
--- masked (classic jet or fill cloud, as IsMasked) or, on a fill map, when the LISTENER stands in the cloud (the hiss around you
--- drowns the room out). Gunshots, explosions and fire never ask this.
-function mask.Muffled(source: Vector3, listener: Vector3?): boolean
-	if mask.IsMasked(source) then return true end
-	return listener ~= nil and mask.InFill(listener) > 0
-end
-
--- How many studs of steam a sight line from `a` to `b` crosses, weighted: the thick core near the valve (Sight.CoreRadius) counts
+-- How many studs of steam a line from `a` to `b` crosses, weighted: the thick core near the valve (Sight.CoreRadius) counts
 -- Sight.CoreWeight times, and everything scales with the cloud's strength (it thins in the fade). Fill clouds only.
+-- Cheap enough for the AI's sight test (it runs after CanSee's raycast is clear): every per-valve lookup is done once, and the
+-- line is clipped to the cloud's circle before it is sampled (the same test as Inside: radius, wall fan, height band).
 function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	now = now or workspace:GetServerTimeNow()
 	local depth = 0
@@ -223,38 +217,84 @@ function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	for _, valve in CollectionService:GetTagged("SteamValve") do
 		local fill = mask.FillOf(valve)
 		local sight = fill and fill.Sight
-		local r = sight and mask.Radius(valve, now) or 0
-		if r > 0 then
-			local fan = mask.Fan(valve, fill)
-			local _, strength = mask.Phase(valve, now, fill)
-			if fan and strength then
-				-- quick reject: the line never comes within the cloud's radius (flat)
-				local fa, fab = a * FLAT, ab * FLAT
-				local c = fan.centre * FLAT
-				local t = fab:Dot(fab) > 1e-6 and math.clamp((c - fa):Dot(fab) / fab:Dot(fab), 0, 1) or 0
-				if (fa + fab * t - c).Magnitude <= r + 1 then
-					local step = sight.Step or 1
-					local n = math.max(1, math.ceil(len / step))
-					local seg = len / n
-					for i = 0, n - 1 do
-						local p = a + ab * ((i + 0.5) / n)
-						if mask.Inside(valve, fill, p, now) then
-							local core = ((p - fan.centre) * FLAT).Magnitude <= sight.CoreRadius
-							depth += seg * (core and sight.CoreWeight or 1) * strength
+		local grow, strength
+		if sight then grow, strength = mask.Phase(valve, now, fill) end
+		local fan = grow and mask.Fan(valve, fill)
+		if fan then
+			local r = fill.MaskStartRadius + (fill.MaskRadius - fill.MaskStartRadius) * mask.Ease(grow) -- = mask.Radius
+			-- clip the line (flat) to the circle of radius r around the cloud's centre
+			local cx, cz = fan.centre.X, fan.centre.Z
+			local ox, oz, dx, dz = a.X - cx, a.Z - cz, ab.X, ab.Z
+			local A = dx * dx + dz * dz
+			local t0, t1 = 0, 1
+			if A < 1e-9 then
+				if ox * ox + oz * oz > r * r then t1 = -1 end
+			else
+				local B = 2 * (ox * dx + oz * dz)
+				local disc = B * B - 4 * A * (ox * ox + oz * oz - r * r)
+				if disc < 0 then
+					t1 = -1
+				else
+					local sq = math.sqrt(disc)
+					t0 = math.max(0, (-B - sq) / (2 * A))
+					t1 = math.min(1, (-B + sq) / (2 * A))
+				end
+			end
+			if t1 > t0 then
+				local span = (t1 - t0) * len
+				local n = math.max(1, math.ceil(span / (sight.Step or 1)))
+				local seg = span / n
+				local lo, hi = fan.floorY - 4, fan.floorY + fill.MaskHeight
+				local edge = fill.MaskEdge or 0
+				local core2 = sight.CoreRadius * sight.CoreRadius
+				local here = 0
+				for i = 0, n - 1 do
+					local p = a + ab * (t0 + (t1 - t0) * (i + 0.5) / n)
+					if p.Y >= lo and p.Y <= hi then
+						local fx, fz = p.X - cx, p.Z - cz
+						local d2 = fx * fx + fz * fz
+						if math.sqrt(d2) <= mask.ReachAt(fan, p) + edge then
+							here += seg * (if d2 <= core2 then sight.CoreWeight else 1)
 						end
 					end
 				end
+				depth += here * strength
 			end
 		end
 	end
 	return depth
 end
 
--- Does the steam block this sight line? (the AI is as blind in it as players are: Fill.Sight.BlindDepth)
+-- Does the steam block this sight line? The AI can't see through it (Edward: "it should be blinded by the steam"): it is blind
+-- at Fill.Sight.BlindDepth studs of steam, which makes it blinder than a player, who still makes out a shape in the haze at
+-- mid range. BlindDepth is the knob.
 function mask.SightBlocked(a: Vector3, b: Vector3, now: number?): boolean
 	local fill = Steam.Fill
 	if type(fill) ~= "table" or fill.Enabled == false or type(fill.Sight) ~= "table" then return false end
 	return mask.SightDepth(a, b, now) >= fill.Sight.BlindDepth
+end
+
+-- The fill steam's rule for quiet sounds (footsteps, reloads; Edward: "muddy up footstep sounds so they are very faint and you
+-- can't hear people"): lost when the source is in the steam, when the listener is in it (Fill.Footsteps.ListenerInSteam: the
+-- hiss around you drowns the room out), or when Fill.Footsteps.ThroughDepth studs of steam lie between them (the same weighted
+-- depth as the AI's sight). One rule for players (SteamCloud.FootstepScale) and the AI (BotManager). Fill clouds only.
+function mask.FillMuffled(source: Vector3, listener: Vector3?, now: number?): boolean
+	local F = Steam.Fill
+	local cfg = type(F) == "table" and F.Enabled ~= false and F.Footsteps
+	if not cfg then return false end
+	now = now or workspace:GetServerTimeNow()
+	if mask.InFill(source, now) > 0 then return true end
+	if listener == nil then return false end
+	if cfg.ListenerInSteam ~= false and mask.InFill(listener, now) > 0 then return true end
+	return (cfg.ThroughDepth or 0) > 0 and mask.SightDepth(source, listener, now) >= cfg.ThroughDepth
+end
+
+-- Is a quiet sound (a footstep, a reload) from `source` lost in the steam for a listener at `listener`? The classic jet's mask
+-- (IsMasked: the source within its 22 studs while it hisses, as before) or the fill steam's rule (FillMuffled). Gunshots,
+-- explosions and fire never ask this.
+function mask.Muffled(source: Vector3, listener: Vector3?): boolean
+	if mask.IsMasked(source) then return true end
+	return mask.FillMuffled(source, listener)
 end
 
 function mask.IsMasked(position: Vector3): boolean

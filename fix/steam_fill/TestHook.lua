@@ -4,7 +4,8 @@
 --   "shoot", path, player?   -> a real shot from the player's head through the valve (OnShot, as CombatManager calls it)
 --   "activate", path | "reset" | "radius", path | "masked", Vector3
 --   "bots" -> JSON { name, pos, noiseAt, heardAt, clock } | "botAt", Vector3, autonomous? | "ammo", n, player?
---   "sees", player? -> JSON { sees, depth } (round 3) | "hears", player? -> JSON { steps, reload, botInSteam, playerInSteam }
+--   "sees", player? -> JSON { sees, depth } (round 3) | "hears", player? -> JSON { steps (true/false/"seen"), reload, botInSteam,
+--   playerInSteam }: runs the AI's real _perceive / HearNoise once (round 3, after the grader: never re-implement the rule here)
 local function steamTestHook()
 	local HttpService = game:GetService("HttpService")
 	local function pathOf(m: Instance): string
@@ -81,13 +82,30 @@ local function steamTestHook()
 					depth = (eye and at) and SteamMask.SightDepth(eye, at.Position, now) or -1 })
 			end
 			return "no bot"
-		elseif cmd == "hears" then -- round 3: would the first bot hear this player's footsteps / a reload right now?
+		elseif cmd == "hears" then -- round 3: drives the AI's REAL hearing code once (BotManager), for the first bot and this player
+			-- steps: bot:_perceive() with the player moving (only counts when the bot can't see them: then "seen")
+			-- reload: CombatManager's own test (IsMasked at the source) + the real BotManager.HearNoise(..., quiet = true)
 			local p = playerBy(a)
-			local root = p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")
+			local root = p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
+			local bm = Get and Get("BotManager")
 			for _, bot in botList() do
-				if not root then return "no player" end
-				return HttpService:JSONEncode({ steps = not SteamMask.Muffled(root.Position, bot.root.Position),
-					reload = not SteamMask.IsMasked(root.Position) and SteamMask.InFill(bot.root.Position) <= 0,
+				if not (root and bm) then return "no player" end
+				local vel = root.AssemblyLinearVelocity
+				local heard0, noise0 = bot.heardAt, bot.noiseAt
+				root.AssemblyLinearVelocity = Vector3.new(12, 0, 0)
+				bot.heardAt = nil
+				bot:_perceive()
+				local steps: any = bot.heardAt ~= nil
+				if bot.visible then steps = "seen" end
+				root.AssemblyLinearVelocity = vel
+				bot.noiseAt = nil
+				if not SteamMask.IsMasked(root.Position) then
+					bm.HearNoise(root.Position, (Config.ReloadHearRange or 22), true)
+				end
+				local reload = bot.noiseAt ~= nil
+				bot.heardAt = bot.heardAt or heard0
+				bot.noiseAt = bot.noiseAt or noise0
+				return HttpService:JSONEncode({ steps = steps, reload = reload,
 					botInSteam = SteamMask.InFill(bot.root.Position), playerInSteam = SteamMask.InFill(root.Position) })
 			end
 			return "no bot"

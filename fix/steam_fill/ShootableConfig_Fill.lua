@@ -22,7 +22,7 @@
 			Color = Color3.fromRGB(205, 210, 215),
 			LightInfluence = 1,       -- lit by the room only (no glow of its own in a dark warehouse)
 			ScreenWash = 0.45,       -- standing inside it greys the picture a little (0 = off)
-			-- round 3 (Edward 2026-10-27): the AI is blinded by the steam, and footsteps in or through it are muddied to very faint
+			-- round 3 (Edward 2026-10-27): the AI is blinded by the steam, and footsteps in, near or through it are muddied to very faint
 			Sight = {
 				BlindDepth = 6,      -- studs of steam a bot's sight line may cross before it can't see (a player 6+ studs into the haze is hidden)
 				CoreRadius = 9,      -- studs around the cloud's centre that count as the thick core
@@ -30,7 +30,9 @@
 				Step = 1,            -- studs between samples along the sight line
 			},
 			Footsteps = {
-				Volume = 0.06,       -- other people's steps in the steam (theirs or yours): x this, muffled (very faint; can't place them)
+				ListenerInSteam = true, -- standing in the steam you can't hear people either (false: only steps IN or THROUGH it)
+				ThroughDepth = 6,    -- steps on the far side of this much steam (weighted like Sight) are muffled too (0 = off)
+				Volume = 0.06,       -- other people's muffled steps: x this (very faint; you can't place them)
 				OwnVolume = 0.5,     -- your own steps in the steam: x this, muffled
 				HighGain = -40, MidGain = -18, LowGain = -2, -- the muffle (EqualizerSoundEffect, dB): steam swallows the crisp part
 			},

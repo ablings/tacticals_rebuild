@@ -60,10 +60,11 @@ rows = [
     ["Hears my steps (me in the steam)", "yes", "NO", "NO", "yes"],
     ["Hears my steps (AI in the steam)", "yes", "NO", "NO", "yes"],
     ["Hears my real reload (me / AI in steam)", "yes", "NO / NO", "-", "yes"],
+    ["Hears my steps, steam between us", "yes", "NO", "NO (until thin)", "yes"],
     ["Tutorial 3, old Warehouse (classic jet)", "-", "steps + reload masked in 22 studs, sight NOT blocked, no cloud, no muffle", "", ""],
 ]
 t = tx.table(cellText=rows, colLabels=cols, loc="upper left", cellLoc="left", colWidths=[0.3, 0.12, 0.2, 0.2, 0.12])
-t.auto_set_font_size(False); t.set_fontsize(10); t.scale(1, 1.55)
+t.auto_set_font_size(False); t.set_fontsize(10); t.scale(1, 1.45)
 for (r, c), cell in t.get_celld().items():
     cell.set_edgecolor("#e0dfda"); cell.set_facecolor(SURF)
     cell.get_text().set_color(INK if r else INK2)

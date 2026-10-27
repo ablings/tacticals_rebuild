@@ -1,4 +1,5 @@
--- fix/steam_fill.lua [STEAMFILL] 2026-10-27, round 3 (Edward's review of round 2: "yes it should be blinded by the steam, the steam
+-- fix/steam_fill.lua [STEAMFILL] 2026-10-27, round 4 = round 3 after its grader (round 3 text never left the test copy; UNDO it
+-- with `git show 84b6012:fix/steam_fill.lua` first). Round 3 = Edward's review of round 2: "yes it should be blinded by the steam, the steam
 -- should muddy up footstep sounds so they are very faint and you can't hear people"; rounds 1-2 never left a test copy). Work order: "make the steam valve steam the room up for Warehouse 2, while
 -- it keeps masking noise the way Tutorial 3 teaches" (Lead plan, approved by Edward). Notes: notes/steam_fill.md.
 -- MATCH PLACES ONLY (Matchmaking / Ranked / Tutorial and the combined match place), Edit mode. Refuses the hub.
@@ -20,7 +21,7 @@
 -- hear footsteps in or through the steam muffled and very faint (FootstepController -> SteamCloud.FootstepScale).
 --   also edits FootstepController, BotManager, CombatManager (one line: the reload noise is "quiet")
 local UNDO = false --@UNDO
-local ROUND = 3
+local ROUND = 4
 local SOURCES = {}
 --@@BEGIN SOURCES
 SOURCES.SteamMask = [=[
@@ -230,16 +231,10 @@ function mask.InFill(position: Vector3, now: number?): number
 	return best
 end
 
--- Is a quiet sound (a footstep, a reload) from `source` lost in the steam for a listener at `listener`? True when the source is
--- masked (classic jet or fill cloud, as IsMasked) or, on a fill map, when the LISTENER stands in the cloud (the hiss around you
--- drowns the room out). Gunshots, explosions and fire never ask this.
-function mask.Muffled(source: Vector3, listener: Vector3?): boolean
-	if mask.IsMasked(source) then return true end
-	return listener ~= nil and mask.InFill(listener) > 0
-end
-
--- How many studs of steam a sight line from `a` to `b` crosses, weighted: the thick core near the valve (Sight.CoreRadius) counts
+-- How many studs of steam a line from `a` to `b` crosses, weighted: the thick core near the valve (Sight.CoreRadius) counts
 -- Sight.CoreWeight times, and everything scales with the cloud's strength (it thins in the fade). Fill clouds only.
+-- Cheap enough for the AI's sight test (it runs after CanSee's raycast is clear): every per-valve lookup is done once, and the
+-- line is clipped to the cloud's circle before it is sampled (the same test as Inside: radius, wall fan, height band).
 function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	now = now or workspace:GetServerTimeNow()
 	local depth = 0
@@ -249,38 +244,84 @@ function mask.SightDepth(a: Vector3, b: Vector3, now: number?): number
 	for _, valve in CollectionService:GetTagged("SteamValve") do
 		local fill = mask.FillOf(valve)
 		local sight = fill and fill.Sight
-		local r = sight and mask.Radius(valve, now) or 0
-		if r > 0 then
-			local fan = mask.Fan(valve, fill)
-			local _, strength = mask.Phase(valve, now, fill)
-			if fan and strength then
-				-- quick reject: the line never comes within the cloud's radius (flat)
-				local fa, fab = a * FLAT, ab * FLAT
-				local c = fan.centre * FLAT
-				local t = fab:Dot(fab) > 1e-6 and math.clamp((c - fa):Dot(fab) / fab:Dot(fab), 0, 1) or 0
-				if (fa + fab * t - c).Magnitude <= r + 1 then
-					local step = sight.Step or 1
-					local n = math.max(1, math.ceil(len / step))
-					local seg = len / n
-					for i = 0, n - 1 do
-						local p = a + ab * ((i + 0.5) / n)
-						if mask.Inside(valve, fill, p, now) then
-							local core = ((p - fan.centre) * FLAT).Magnitude <= sight.CoreRadius
-							depth += seg * (core and sight.CoreWeight or 1) * strength
+		local grow, strength
+		if sight then grow, strength = mask.Phase(valve, now, fill) end
+		local fan = grow and mask.Fan(valve, fill)
+		if fan then
+			local r = fill.MaskStartRadius + (fill.MaskRadius - fill.MaskStartRadius) * mask.Ease(grow) -- = mask.Radius
+			-- clip the line (flat) to the circle of radius r around the cloud's centre
+			local cx, cz = fan.centre.X, fan.centre.Z
+			local ox, oz, dx, dz = a.X - cx, a.Z - cz, ab.X, ab.Z
+			local A = dx * dx + dz * dz
+			local t0, t1 = 0, 1
+			if A < 1e-9 then
+				if ox * ox + oz * oz > r * r then t1 = -1 end
+			else
+				local B = 2 * (ox * dx + oz * dz)
+				local disc = B * B - 4 * A * (ox * ox + oz * oz - r * r)
+				if disc < 0 then
+					t1 = -1
+				else
+					local sq = math.sqrt(disc)
+					t0 = math.max(0, (-B - sq) / (2 * A))
+					t1 = math.min(1, (-B + sq) / (2 * A))
+				end
+			end
+			if t1 > t0 then
+				local span = (t1 - t0) * len
+				local n = math.max(1, math.ceil(span / (sight.Step or 1)))
+				local seg = span / n
+				local lo, hi = fan.floorY - 4, fan.floorY + fill.MaskHeight
+				local edge = fill.MaskEdge or 0
+				local core2 = sight.CoreRadius * sight.CoreRadius
+				local here = 0
+				for i = 0, n - 1 do
+					local p = a + ab * (t0 + (t1 - t0) * (i + 0.5) / n)
+					if p.Y >= lo and p.Y <= hi then
+						local fx, fz = p.X - cx, p.Z - cz
+						local d2 = fx * fx + fz * fz
+						if math.sqrt(d2) <= mask.ReachAt(fan, p) + edge then
+							here += seg * (if d2 <= core2 then sight.CoreWeight else 1)
 						end
 					end
 				end
+				depth += here * strength
 			end
 		end
 	end
 	return depth
 end
 
--- Does the steam block this sight line? (the AI is as blind in it as players are: Fill.Sight.BlindDepth)
+-- Does the steam block this sight line? The AI can't see through it (Edward: "it should be blinded by the steam"): it is blind
+-- at Fill.Sight.BlindDepth studs of steam, which makes it blinder than a player, who still makes out a shape in the haze at
+-- mid range. BlindDepth is the knob.
 function mask.SightBlocked(a: Vector3, b: Vector3, now: number?): boolean
 	local fill = Steam.Fill
 	if type(fill) ~= "table" or fill.Enabled == false or type(fill.Sight) ~= "table" then return false end
 	return mask.SightDepth(a, b, now) >= fill.Sight.BlindDepth
+end
+
+-- The fill steam's rule for quiet sounds (footsteps, reloads; Edward: "muddy up footstep sounds so they are very faint and you
+-- can't hear people"): lost when the source is in the steam, when the listener is in it (Fill.Footsteps.ListenerInSteam: the
+-- hiss around you drowns the room out), or when Fill.Footsteps.ThroughDepth studs of steam lie between them (the same weighted
+-- depth as the AI's sight). One rule for players (SteamCloud.FootstepScale) and the AI (BotManager). Fill clouds only.
+function mask.FillMuffled(source: Vector3, listener: Vector3?, now: number?): boolean
+	local F = Steam.Fill
+	local cfg = type(F) == "table" and F.Enabled ~= false and F.Footsteps
+	if not cfg then return false end
+	now = now or workspace:GetServerTimeNow()
+	if mask.InFill(source, now) > 0 then return true end
+	if listener == nil then return false end
+	if cfg.ListenerInSteam ~= false and mask.InFill(listener, now) > 0 then return true end
+	return (cfg.ThroughDepth or 0) > 0 and mask.SightDepth(source, listener, now) >= cfg.ThroughDepth
+end
+
+-- Is a quiet sound (a footstep, a reload) from `source` lost in the steam for a listener at `listener`? The classic jet's mask
+-- (IsMasked: the source within its 22 studs while it hisses, as before) or the fill steam's rule (FillMuffled). Gunshots,
+-- explosions and fire never ask this.
+function mask.Muffled(source: Vector3, listener: Vector3?): boolean
+	if mask.IsMasked(source) then return true end
+	return mask.FillMuffled(source, listener)
 end
 
 function mask.IsMasked(position: Vector3): boolean
@@ -599,8 +640,8 @@ RunService.RenderStepped:Connect(function(dt)
 end)
 
 -- // Footsteps in the steam (round 3, Edward 2026-10-27: "muddy up footstep sounds so they are very faint and you can't hear
--- people"). FootstepController asks this for every step it plays. Fill clouds: when the walker OR you stand in the steam the step
--- is muffled (an EqualizerSoundEffect on that Sound cuts the crisp highs) and very faint (Fill.Footsteps.Volume; your own:
+-- people"). FootstepController asks this for every step it plays. Fill clouds (SteamMask.FillMuffled): when the walker or you
+-- stand in the steam, or enough steam lies between you, the step is muffled (an EqualizerSoundEffect on that Sound cuts the crisp highs) and very faint (Fill.Footsteps.Volume; your own:
 -- OwnVolume). Classic jet (Warehouse, Tutorial 3): exactly as before, x0.04 for other people's steps inside its 22-stud mask.
 -- Returns the volume scale; switches the sound's muffle on / off.
 local function ear(): Vector3?
@@ -616,11 +657,7 @@ end
 function SteamCloud.FootstepScale(sound: Sound, source: Vector3, own: boolean): number
 	local F = Steam.Fill
 	local cfg = type(F) == "table" and F.Footsteps
-	local inSteam = false
-	if cfg then
-		local listener = ear()
-		inSteam = SteamMask.InFill(source) > 0 or (listener ~= nil and SteamMask.InFill(listener) > 0)
-	end
+	local inSteam = cfg and SteamMask.FillMuffled(source, ear()) or false -- the one rule the AI uses too
 	local eq = sound:FindFirstChild("SteamMuffle")
 	if inSteam then
 		if not eq then
@@ -703,7 +740,7 @@ SOURCES.FillBlock = [=[
 			Color = Color3.fromRGB(205, 210, 215),
 			LightInfluence = 1,       -- lit by the room only (no glow of its own in a dark warehouse)
 			ScreenWash = 0.45,       -- standing inside it greys the picture a little (0 = off)
-			-- round 3 (Edward 2026-10-27): the AI is blinded by the steam, and footsteps in or through it are muddied to very faint
+			-- round 3 (Edward 2026-10-27): the AI is blinded by the steam, and footsteps in, near or through it are muddied to very faint
 			Sight = {
 				BlindDepth = 6,      -- studs of steam a bot's sight line may cross before it can't see (a player 6+ studs into the haze is hidden)
 				CoreRadius = 9,      -- studs around the cloud's centre that count as the thick core
@@ -711,7 +748,9 @@ SOURCES.FillBlock = [=[
 				Step = 1,            -- studs between samples along the sight line
 			},
 			Footsteps = {
-				Volume = 0.06,       -- other people's steps in the steam (theirs or yours): x this, muffled (very faint; can't place them)
+				ListenerInSteam = true, -- standing in the steam you can't hear people either (false: only steps IN or THROUGH it)
+				ThroughDepth = 6,    -- steps on the far side of this much steam (weighted like Sight) are muffled too (0 = off)
+				Volume = 0.06,       -- other people's muffled steps: x this (very faint; you can't place them)
 				OwnVolume = 0.5,     -- your own steps in the steam: x this, muffled
 				HighGain = -40, MidGain = -18, LowGain = -2, -- the muffle (EqualizerSoundEffect, dB): steam swallows the crisp part
 			},
@@ -739,7 +778,8 @@ SOURCES.TestHook = [=[
 --   "shoot", path, player?   -> a real shot from the player's head through the valve (OnShot, as CombatManager calls it)
 --   "activate", path | "reset" | "radius", path | "masked", Vector3
 --   "bots" -> JSON { name, pos, noiseAt, heardAt, clock } | "botAt", Vector3, autonomous? | "ammo", n, player?
---   "sees", player? -> JSON { sees, depth } (round 3) | "hears", player? -> JSON { steps, reload, botInSteam, playerInSteam }
+--   "sees", player? -> JSON { sees, depth } (round 3) | "hears", player? -> JSON { steps (true/false/"seen"), reload, botInSteam,
+--   playerInSteam }: runs the AI's real _perceive / HearNoise once (round 3, after the grader: never re-implement the rule here)
 local function steamTestHook()
 	local HttpService = game:GetService("HttpService")
 	local function pathOf(m: Instance): string
@@ -816,13 +856,30 @@ local function steamTestHook()
 					depth = (eye and at) and SteamMask.SightDepth(eye, at.Position, now) or -1 })
 			end
 			return "no bot"
-		elseif cmd == "hears" then -- round 3: would the first bot hear this player's footsteps / a reload right now?
+		elseif cmd == "hears" then -- round 3: drives the AI's REAL hearing code once (BotManager), for the first bot and this player
+			-- steps: bot:_perceive() with the player moving (only counts when the bot can't see them: then "seen")
+			-- reload: CombatManager's own test (IsMasked at the source) + the real BotManager.HearNoise(..., quiet = true)
 			local p = playerBy(a)
-			local root = p and p.Character and p.Character:FindFirstChild("HumanoidRootPart")
+			local root = p and p.Character and p.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
+			local bm = Get and Get("BotManager")
 			for _, bot in botList() do
-				if not root then return "no player" end
-				return HttpService:JSONEncode({ steps = not SteamMask.Muffled(root.Position, bot.root.Position),
-					reload = not SteamMask.IsMasked(root.Position) and SteamMask.InFill(bot.root.Position) <= 0,
+				if not (root and bm) then return "no player" end
+				local vel = root.AssemblyLinearVelocity
+				local heard0, noise0 = bot.heardAt, bot.noiseAt
+				root.AssemblyLinearVelocity = Vector3.new(12, 0, 0)
+				bot.heardAt = nil
+				bot:_perceive()
+				local steps: any = bot.heardAt ~= nil
+				if bot.visible then steps = "seen" end
+				root.AssemblyLinearVelocity = vel
+				bot.noiseAt = nil
+				if not SteamMask.IsMasked(root.Position) then
+					bm.HearNoise(root.Position, (Config.ReloadHearRange or 22), true)
+				end
+				local reload = bot.noiseAt ~= nil
+				bot.heardAt = bot.heardAt or heard0
+				bot.noiseAt = bot.noiseAt or noise0
+				return HttpService:JSONEncode({ steps = steps, reload = reload,
 					botInSteam = SteamMask.InFill(bot.root.Position), playerInSteam = SteamMask.InFill(root.Position) })
 			end
 			return "no bot"
@@ -912,23 +969,24 @@ edit(Cfg.BotConfig, "\tCoverFolders = { \"Warehouse/CollisionProxies\" }, -- whe
 	"\tCoverFolders = { \"Warehouse/CollisionProxies\", \"Warehouse2/CollisionProxies\" }, -- where cover boxes live (paths under Workspace) [STEAMFILL] + Warehouse 2\n")
 
 -- [STEAMFILL] round 3 (Edward 2026-10-27): the AI is blinded by the steam, and steam muffles footsteps / reloads
--- BotManager: its sight test (smokeBlocks, used by CanSee) also asks the steam; footsteps are lost when the walker OR the bot is in
--- the steam; HearNoise(..., quiet = true) (a reload) isn't heard by a bot standing in the steam. Shots / blasts: unchanged.
+-- BotManager: its sight test (smokeBlocks, used by CanSee) also asks the steam; footsteps and reloads (HearNoise(..., quiet =
+-- true)) follow SteamMask.Muffled: lost when the walker or the bot is in the steam or enough steam lies between them (the same
+-- rule the players' footsteps use). Shots / breaks / blasts: unchanged.
 edit(BM, "local function smokeBlocks(a: Vector3, b: Vector3): boolean\n",
 	"local function smokeBlocks(a: Vector3, b: Vector3): boolean\n"
 	.. "\tif SteamMask.SightBlocked(a, b) then return true end -- [STEAMFILL] round 3: the AI is blinded by the steam (fill maps only)\n")
 edit(BM, "\t\tif root and character:GetAttribute(\"Stance\") ~= \"Crouch\" and not SteamMask.IsMasked(root.Position) then\n",
-	"\t\t-- [STEAMFILL] round 3: lost in the steam when the walker or this bot stands in it (classic jet: the walker only, as before)\n"
+	"\t\t-- [STEAMFILL] round 3: lost in the steam (SteamMask.Muffled: walker / this bot in it, or steam between; classic jet: the walker only, as before)\n"
 	.. "\t\tif root and character:GetAttribute(\"Stance\") ~= \"Crouch\" and not SteamMask.Muffled(root.Position, self.root.Position) then\n")
 edit(BM, "function manager.HearNoise(position: Vector3, radius: number)\n\tlocal now = os.clock()\n\tfor _, bot in bots do\n"
 	.. "\t\tif bot:IsAlive() and (bot.root.Position - position).Magnitude <= radius then\n",
 	"function manager.HearNoise(position: Vector3, radius: number, quiet: boolean?)\n"
-	.. "\t-- [STEAMFILL] round 3: quiet = a reload (never a shot, a break or a blast): a bot standing in steam doesn't hear it\n"
+	.. "\t-- [STEAMFILL] round 3: quiet = a reload (never a shot, a break or a blast): lost in the steam for this bot (SteamMask.Muffled)\n"
 	.. "\tlocal now = os.clock()\n\tfor _, bot in bots do\n"
-	.. "\t\tif bot:IsAlive() and (bot.root.Position - position).Magnitude <= radius and not (quiet and SteamMask.InFill(bot.root.Position) > 0) then\n")
--- CombatManager: the reload's noise is "quiet"
+	.. "\t\tif bot:IsAlive() and (bot.root.Position - position).Magnitude <= radius and not (quiet and SteamMask.Muffled(position, bot.root.Position)) then\n")
+-- CombatManager: the reload's noise is "quiet" (no tag on that line: only "end" may follow its existing --[[ABILITY]])
 edit(CM, "bots.HearNoise(root.Position, (ShootableConfig.ReloadHearRange or 22) * (state.config.SoundScale or 1)) --[[ABILITY]] end\n",
-	"bots.HearNoise(root.Position, (ShootableConfig.ReloadHearRange or 22) * (state.config.SoundScale or 1), true) --[[ABILITY]] --[[STEAMFILL quiet]] end\n")
+	"bots.HearNoise(root.Position, (ShootableConfig.ReloadHearRange or 22) * (state.config.SoundScale or 1), true) --[[ABILITY]] end\n")
 -- FootstepController: every step asks SteamCloud (classic: x0.04 for other people's steps in the jet's mask, exactly as before)
 edit(FC, "local SteamMask = require(Shared:WaitForChild(\"SteamMask\"))\n",
 	"local SteamMask = require(Shared:WaitForChild(\"SteamMask\"))\n"
@@ -936,7 +994,7 @@ edit(FC, "local SteamMask = require(Shared:WaitForChild(\"SteamMask\"))\n",
 edit(FC, "\t\t\t\t\t-- a hissing steam valve nearby drowns out other people's footsteps\n"
 	.. "\t\t\t\t\tif character ~= me and SteamMask.IsMasked(position) then volume *= 0.04 end\n",
 	"\t\t\t\t\t-- [STEAMFILL] round 3: steam drowns footsteps. Classic jet: other people's x0.04 in its mask (as before). A fill cloud:\n"
-	.. "\t\t\t\t\t-- muffled and very faint when the walker or you stand in it (SteamCloud.FootstepScale)\n"
+	.. "\t\t\t\t\t-- muffled and very faint when the walker or you stand in it, or it lies between you (SteamCloud.FootstepScale)\n"
 	.. "\t\t\t\t\tvolume *= SteamCloud.FootstepScale(s, position, character == me)\n")
 
 -- ShootableManager

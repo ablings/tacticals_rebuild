@@ -146,6 +146,38 @@ local ok, err = pcall(function()
 	local dHalf = mask.SightDepth(outside, floorPos + Vector3.new(-22, 0, 0), halfFade)
 	check("sight: the fading haze thins (half strength)", near(dHalf, 4, 1.01) and not mask.SightBlocked(outside, floorPos + Vector3.new(-22, 0, 0), halfFade), dHalf)
 	check("sight: clear after the fade", mask.SightDepth(floorPos + Vector3.new(-4, 0, -24), floorPos + Vector3.new(-4, 0, 24), untilT + F.FadeTime + 0.05) == 0)
+	-- round 4: the optimised SightDepth equals a brute-force walk with Inside (the rule the mask uses), on several lines
+	local function brute(a0: Vector3, b0: Vector3, t: number)
+		local _, st = mask.Phase(fv, t, F)
+		local ab, n, d = b0 - a0, 4000, 0
+		for i = 0, n - 1 do
+			local p = a0 + ab * ((i + 0.5) / n)
+			if mask.Inside(fv, F, p, t) then
+				local core = ((p - fan.centre) * Vector3.new(1, 0, 1)).Magnitude <= F.Sight.CoreRadius
+				d += ab.Magnitude / n * (core and F.Sight.CoreWeight or 1)
+			end
+		end
+		return d * (st or 0)
+	end
+	local lines = { { floorPos + Vector3.new(-4, 0, -24), floorPos + Vector3.new(-4, 0, 24) }, { outside, W },
+		{ outside, floorPos + Vector3.new(14, 0, 3) }, { floorPos + Vector3.new(-25, 1, -25), floorPos + Vector3.new(20, 3, 10) } }
+	for k, pair in lines do
+		local fast, slow = mask.SightDepth(pair[1], pair[2], now), brute(pair[1], pair[2], now)
+		check("SightDepth = brute force #" .. k, math.abs(fast - slow) <= math.max(1.0, slow * 0.06), ("%.2f vs %.2f"):format(fast, slow))
+	end
+	-- footsteps / reloads: steam BETWEEN two people outside it muffles too (ThroughDepth); ListenerInSteam can be switched off
+	local westOut, eastIn = floorPos + Vector3.new(-40, 0, 0), floorPos + Vector3.new(-3, 0, 0)
+	local northOut, southOut = floorPos + Vector3.new(-4, 0, 40), floorPos + Vector3.new(-4, 0, -40)
+	check("FillMuffled: steam between two people outside it", mask.FillMuffled(northOut, southOut, now))
+	check("FillMuffled: clear line outside the cloud", not mask.FillMuffled(westOut, floorPos + Vector3.new(-40, 0, 20), now))
+	check("Muffled = IsMasked or FillMuffled (through)", mask.Muffled(northOut, southOut))
+	check("FillMuffled: listener in the steam", mask.FillMuffled(westOut, eastIn, now))
+	F.Footsteps.ListenerInSteam = false
+	check("ListenerInSteam = false: a listener just inside hears a step outside", not mask.FillMuffled(floorPos + Vector3.new(-40, 0, 2), W, now))
+	F.Footsteps.ListenerInSteam = true
+	F.Footsteps.ThroughDepth = 0
+	check("ThroughDepth = 0: steam between doesn't muffle", not mask.FillMuffled(northOut, southOut, now))
+	F.Footsteps.ThroughDepth = 6
 	-- the classic jet never blinds and never muffles a listener (Tutorial 3 unchanged)
 	classic:SetAttribute("SteamUntil", now + 5)
 	local cat = classic:GetPivot().Position
@@ -153,6 +185,7 @@ local ok, err = pcall(function()
 	check("classic: a listener in the jet still hears", not mask.Muffled(cat + Vector3.new(40, 0, 0), cat + Vector3.new(1, 0, 0)))
 	check("classic: a walker in the jet is masked", mask.Muffled(cat + Vector3.new(1, 0, 0), cat + Vector3.new(40, 0, 0)))
 	check("classic: InFill 0", mask.InFill(cat + Vector3.new(1, 0, 0), now) == 0)
+	check("classic: steam between two people never muffles", not mask.Muffled(cat + Vector3.new(-30, 0, 0), cat + Vector3.new(30, 0, 0)))
 	classic:SetAttribute("SteamUntil", nil)
 	F.Enabled = false
 	check("Fill.Enabled = false: never blinds", not mask.SightBlocked(floorPos + Vector3.new(-4, 0, -24), floorPos + Vector3.new(-4, 0, 24), now))
