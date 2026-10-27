@@ -1,0 +1,1779 @@
+{
+ "name": "Arena v2",
+ "version": 1,
+ "units": "studs",
+ "plan_axes": "x east, y north, z up; world = ORIGIN + (x, z, -y)",
+ "box": {
+  "x0": -75,
+  "x1": 75,
+  "y0": -55,
+  "y1": 55,
+  "wall_h": 16,
+  "wall_t": 2
+ },
+ "heights": {
+  "pillar": 10,
+  "wall": 7,
+  "low": 3.4,
+  "sill": 3.4,
+  "lintel_lo": 10,
+  "window": 12,
+  "deck": 4,
+  "parapet": 3.4,
+  "curb": 1
+ },
+ "pieces": [
+  {
+   "id": "CentreWindows",
+   "kind": "window",
+   "side": "C",
+   "parts": [
+    {
+     "x0": -1.5,
+     "x1": 1.5,
+     "y0": -17.5,
+     "y1": -12.5,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    },
+    {
+     "x0": -1.5,
+     "x1": 1.5,
+     "y0": -12.5,
+     "y1": -2.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "sill"
+    },
+    {
+     "x0": -1.5,
+     "x1": 1.5,
+     "y0": -12.5,
+     "y1": -2.5,
+     "z0": 10,
+     "z1": 12,
+     "role": "lintel"
+    },
+    {
+     "x0": -1.5,
+     "x1": 1.5,
+     "y0": -2.5,
+     "y1": 2.5,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    },
+    {
+     "x0": -1.5,
+     "x1": 1.5,
+     "y0": 2.5,
+     "y1": 12.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "sill"
+    },
+    {
+     "x0": -1.5,
+     "x1": 1.5,
+     "y0": 2.5,
+     "y1": 12.5,
+     "z0": 10,
+     "z1": 12,
+     "role": "lintel"
+    },
+    {
+     "x0": -1.5,
+     "x1": 1.5,
+     "y0": 12.5,
+     "y1": 17.5,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    }
+   ],
+   "along": "y",
+   "openings": 2,
+   "faces": "both",
+   "looks": "each sill looks straight down the centre at the other side's fallback cover"
+  },
+  {
+   "id": "A_C_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -15.0,
+     "x1": -10.0,
+     "y0": 7.5,
+     "y1": 12.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_C_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -13.5,
+     "x1": -11.5,
+     "y0": 1.5,
+     "y1": 7.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_C_L2",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -13.5,
+     "x1": -11.5,
+     "y0": -9.0,
+     "y1": -3.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_C_P2",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -15.0,
+     "x1": -10.0,
+     "y0": -14.0,
+     "y1": -9.0,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_C_W",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 10.5,
+     "x1": 13.5,
+     "y0": -13,
+     "y1": -3,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_C_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 11,
+     "x1": 13,
+     "y0": 3.0,
+     "y1": 9.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_C_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 9.5,
+     "x1": 14.5,
+     "y0": 9.5,
+     "y1": 14.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_NorthGate",
+   "kind": "window",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 21.5,
+     "x1": 24.5,
+     "y0": 20.0,
+     "y1": 25.0,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    },
+    {
+     "x0": 21.5,
+     "x1": 24.5,
+     "y0": 25.0,
+     "y1": 35.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "sill"
+    },
+    {
+     "x0": 21.5,
+     "x1": 24.5,
+     "y0": 25.0,
+     "y1": 35.0,
+     "z0": 10,
+     "z1": 12,
+     "role": "lintel"
+    },
+    {
+     "x0": 21.5,
+     "x1": 24.5,
+     "y0": 35.0,
+     "y1": 40.0,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    },
+    {
+     "x0": 21.5,
+     "x1": 24.5,
+     "y0": 40.0,
+     "y1": 50.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "sill"
+    },
+    {
+     "x0": 21.5,
+     "x1": 24.5,
+     "y0": 40.0,
+     "y1": 50.0,
+     "z0": 10,
+     "z1": 12,
+     "role": "lintel"
+    },
+    {
+     "x0": 21.5,
+     "x1": 24.5,
+     "y0": 50.0,
+     "y1": 55.0,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    }
+   ],
+   "along": "y",
+   "openings": 2,
+   "faces": "west",
+   "looks": "west down the north lane: the mid island, the north gap and A's perch"
+  },
+  {
+   "id": "A_SouthGate",
+   "kind": "window",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -24.5,
+     "x1": -21.5,
+     "y0": -55.0,
+     "y1": -50.0,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    },
+    {
+     "x0": -24.5,
+     "x1": -21.5,
+     "y0": -50.0,
+     "y1": -40.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "sill"
+    },
+    {
+     "x0": -24.5,
+     "x1": -21.5,
+     "y0": -50.0,
+     "y1": -40.0,
+     "z0": 10,
+     "z1": 12,
+     "role": "lintel"
+    },
+    {
+     "x0": -24.5,
+     "x1": -21.5,
+     "y0": -40.0,
+     "y1": -35.0,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    },
+    {
+     "x0": -24.5,
+     "x1": -21.5,
+     "y0": -35.0,
+     "y1": -25.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "sill"
+    },
+    {
+     "x0": -24.5,
+     "x1": -21.5,
+     "y0": -35.0,
+     "y1": -25.0,
+     "z0": 10,
+     "z1": 12,
+     "role": "lintel"
+    },
+    {
+     "x0": -24.5,
+     "x1": -21.5,
+     "y0": -25.0,
+     "y1": -20.0,
+     "z0": 0,
+     "z1": 12,
+     "role": "solid"
+    }
+   ],
+   "along": "y",
+   "openings": 2,
+   "faces": "east",
+   "looks": "east down the south lane: the mid island, the south gap and B's ledge"
+  },
+  {
+   "id": "A_Shield_N",
+   "kind": "wall",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -63.0,
+     "x1": -60.0,
+     "y0": 0,
+     "y1": 10,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_Shield_S",
+   "kind": "wall",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -63.0,
+     "x1": -60.0,
+     "y0": -10,
+     "y1": 0,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_Perch",
+   "kind": "deck",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -40,
+     "x1": -28,
+     "y0": 45,
+     "y1": 55,
+     "z0": 0,
+     "z1": 4,
+     "role": "deck"
+    },
+    {
+     "x0": -30,
+     "x1": -28,
+     "y0": 45,
+     "y1": 55,
+     "z0": 4,
+     "z1": 7.4,
+     "role": "parapet"
+    },
+    {
+     "x0": -40,
+     "x1": -30,
+     "y0": 45,
+     "y1": 45.5,
+     "z0": 4,
+     "z1": 5,
+     "role": "curb"
+    },
+    {
+     "x0": -40,
+     "x1": -39.5,
+     "y0": 45,
+     "y1": 47,
+     "z0": 4,
+     "z1": 5,
+     "role": "curb"
+    }
+   ],
+   "ramp": {
+    "foot": [
+     -52,
+     51
+    ],
+    "top": [
+     -40,
+     51
+    ],
+    "width": 8,
+    "rise": 4,
+    "run": 12.0,
+    "slope_deg": 18.4
+   },
+   "h": 4,
+   "job": "TOWER: a watch edge (curb) over the north lane + a crouch parapet facing B's gate 50 away",
+   "style": "curb+parapet"
+  },
+  {
+   "id": "A_NStage_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -52.5,
+     "x1": -47.5,
+     "y0": 22.5,
+     "y1": 27.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_NStage_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -47.5,
+     "x1": -41.5,
+     "y0": 24,
+     "y1": 26,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "A_NW_W",
+   "kind": "wall",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -71,
+     "x1": -61,
+     "y0": 30.5,
+     "y1": 33.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "A_NW_W2",
+   "kind": "wall",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -71,
+     "x1": -61,
+     "y0": 44.5,
+     "y1": 47.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "A_N_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -20.5,
+     "x1": -15.5,
+     "y0": 30.0,
+     "y1": 35.0,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_N_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -19,
+     "x1": -17,
+     "y0": 23.5,
+     "y1": 29.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_PerchFront_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -34.0,
+     "x1": -28.0,
+     "y0": 36.5,
+     "y1": 38.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "A_PerchFoot_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -47.5,
+     "x1": -42.5,
+     "y0": 35.5,
+     "y1": 40.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_Mid_W",
+   "kind": "wall",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -41.5,
+     "x1": -38.5,
+     "y0": 2,
+     "y1": 12,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_Mid_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -42.5,
+     "x1": -37.5,
+     "y0": -8.5,
+     "y1": -3.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_Fwd_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -29.5,
+     "x1": -24.5,
+     "y0": 9.5,
+     "y1": 14.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_Fwd_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -28,
+     "x1": -26,
+     "y0": 3.5,
+     "y1": 9.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_Fwd_W",
+   "kind": "wall",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -32,
+     "x1": -22,
+     "y0": -11.5,
+     "y1": -8.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "A_S_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -35.0,
+     "x1": -29.0,
+     "y0": -23,
+     "y1": -21,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "A_S_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -40.0,
+     "x1": -35.0,
+     "y0": -24.5,
+     "y1": -19.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_SW_W",
+   "kind": "wall",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -56.5,
+     "x1": -53.5,
+     "y0": -41,
+     "y1": -31,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_SW_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -70.0,
+     "x1": -65.0,
+     "y0": -48.5,
+     "y1": -43.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_SW_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -68.5,
+     "x1": -66.5,
+     "y0": -43.5,
+     "y1": -37.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_SStage_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -47,
+     "x1": -45,
+     "y0": -49.0,
+     "y1": -43.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "A_SExit_P",
+   "kind": "pillar",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -70.5,
+     "x1": -65.5,
+     "y0": -26.5,
+     "y1": -21.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "A_NWall_L",
+   "kind": "low",
+   "side": "A",
+   "parts": [
+    {
+     "x0": -15.0,
+     "x1": -9.0,
+     "y0": 49,
+     "y1": 51,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "B_Shield_S",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 59.0,
+     "x1": 64.0,
+     "y0": -7.5,
+     "y1": -2.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_Shield_W",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 60.0,
+     "x1": 63.0,
+     "y0": -2.5,
+     "y1": 7.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_Shield_N",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 59.0,
+     "x1": 64.0,
+     "y0": 7.5,
+     "y1": 12.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_Ledge",
+   "kind": "deck",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 26,
+     "x1": 46,
+     "y0": -55,
+     "y1": -47,
+     "z0": 0,
+     "z1": 4,
+     "role": "deck"
+    },
+    {
+     "x0": 26,
+     "x1": 46,
+     "y0": -47.5,
+     "y1": -47,
+     "z0": 4,
+     "z1": 5,
+     "role": "curb"
+    },
+    {
+     "x0": 26,
+     "x1": 26.5,
+     "y0": -55,
+     "y1": -47.5,
+     "z0": 4,
+     "z1": 5,
+     "role": "curb"
+    },
+    {
+     "x0": 31,
+     "x1": 41,
+     "y0": -50.5,
+     "y1": -47.5,
+     "z0": 4,
+     "z1": 11,
+     "role": "solid"
+    }
+   ],
+   "ramp": {
+    "foot": [
+     58,
+     -51
+    ],
+    "top": [
+     46,
+     -51
+    ],
+    "width": 8,
+    "rise": 4,
+    "run": 12.0,
+    "slope_deg": 18.4
+   },
+   "h": 4,
+   "job": "BALCONY: open front with a kick-curb, a wall on the deck to peek; sees its own foot, no crouch cover",
+   "style": "open"
+  },
+  {
+   "id": "B_SStage_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 47.5,
+     "x1": 52.5,
+     "y0": -27.5,
+     "y1": -22.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_SStage_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 49,
+     "x1": 51,
+     "y0": -34.0,
+     "y1": -28.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_SE_W",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 61,
+     "x1": 71,
+     "y0": -33.5,
+     "y1": -30.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "B_SE_W2",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 66.5,
+     "x1": 69.5,
+     "y0": -49,
+     "y1": -39,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_S_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 14.5,
+     "x1": 19.5,
+     "y0": -33.5,
+     "y1": -28.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_S_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 16,
+     "x1": 18,
+     "y0": -28.0,
+     "y1": -22.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_LedgeFront_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 33.0,
+     "x1": 39.0,
+     "y0": -41,
+     "y1": -39,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "B_LedgeFoot_W",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 10,
+     "x1": 20,
+     "y0": -48.5,
+     "y1": -45.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "B_Mid_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 37.5,
+     "x1": 42.5,
+     "y0": 5.5,
+     "y1": 10.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_Mid_W",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 38.5,
+     "x1": 41.5,
+     "y0": -10,
+     "y1": 0,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_Fwd_W",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 22,
+     "x1": 32,
+     "y0": 8.5,
+     "y1": 11.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "B_Fwd_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 26,
+     "x1": 28,
+     "y0": -10.0,
+     "y1": -4.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_Fwd_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 24.5,
+     "x1": 29.5,
+     "y0": -15.0,
+     "y1": -10.0,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_N_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 29.0,
+     "x1": 35.0,
+     "y0": 21,
+     "y1": 23,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "B_N_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 35.0,
+     "x1": 40.0,
+     "y0": 19.5,
+     "y1": 24.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_NE_W",
+   "kind": "wall",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 53.5,
+     "x1": 56.5,
+     "y0": 33,
+     "y1": 43,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_NE_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 65.0,
+     "x1": 70.0,
+     "y0": 44.5,
+     "y1": 49.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "B_NE_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 66.5,
+     "x1": 68.5,
+     "y0": 38.5,
+     "y1": 44.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_NStage_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 45,
+     "x1": 47,
+     "y0": 44.0,
+     "y1": 50.0,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "B_NExit_L",
+   "kind": "low",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 65.0,
+     "x1": 71.0,
+     "y0": 20,
+     "y1": 22,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "B_SExit_P",
+   "kind": "pillar",
+   "side": "B",
+   "parts": [
+    {
+     "x0": 65.5,
+     "x1": 70.5,
+     "y0": -22.5,
+     "y1": -17.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "N_Mid_P",
+   "kind": "pillar",
+   "side": "C",
+   "parts": [
+    {
+     "x0": -2.5,
+     "x1": 2.5,
+     "y0": 37.5,
+     "y1": 42.5,
+     "z0": 0,
+     "z1": 10,
+     "role": "solid"
+    }
+   ]
+  },
+  {
+   "id": "N_Mid_L",
+   "kind": "low",
+   "side": "C",
+   "parts": [
+    {
+     "x0": -1,
+     "x1": 1,
+     "y0": 31.5,
+     "y1": 37.5,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "y"
+  },
+  {
+   "id": "S_Mid_W",
+   "kind": "wall",
+   "side": "C",
+   "parts": [
+    {
+     "x0": -6,
+     "x1": 4,
+     "y0": -41.5,
+     "y1": -38.5,
+     "z0": 0,
+     "z1": 7,
+     "role": "solid"
+    }
+   ],
+   "along": "x"
+  },
+  {
+   "id": "S_Mid_L",
+   "kind": "low",
+   "side": "C",
+   "parts": [
+    {
+     "x0": 4.0,
+     "x1": 10.0,
+     "y0": -41,
+     "y1": -39,
+     "z0": 0,
+     "z1": 3.4,
+     "role": "low"
+    }
+   ],
+   "along": "x"
+  }
+ ],
+ "spawns": {
+  "A": {
+   "pocket": [
+    -75,
+    -63,
+    -10,
+    10
+   ],
+   "spots": [
+    [
+     -70,
+     0
+    ],
+    [
+     -70,
+     4
+    ],
+    [
+     -70,
+     -4
+    ]
+   ],
+   "face": [
+    1,
+    0
+   ]
+  },
+  "B": {
+   "pocket": [
+    63,
+    75,
+    -7.5,
+    12.5
+   ],
+   "spots": [
+    [
+     70,
+     2.5
+    ],
+    [
+     70,
+     6.5
+    ],
+    [
+     70,
+     -1.5
+    ]
+   ],
+   "face": [
+    -1,
+    0
+   ]
+  }
+ },
+ "spots": {
+  "Mid_A": {
+   "pos": [
+    -3.5,
+    7.5,
+    0
+   ],
+   "side": "A",
+   "kind": "middle",
+   "note": "A's sill of the twin windows (north opening)"
+  },
+  "Mid_B": {
+   "pos": [
+    3.5,
+    7.5,
+    0
+   ],
+   "side": "B",
+   "kind": "middle",
+   "note": "B's sill of the twin windows (north opening)"
+  },
+  "Mid_A_S": {
+   "pos": [
+    -3.5,
+    -7.5,
+    0
+   ],
+   "side": "A",
+   "kind": "middle",
+   "note": "A's sill, south opening"
+  },
+  "Mid_B_S": {
+   "pos": [
+    3.5,
+    -7.5,
+    0
+   ],
+   "side": "B",
+   "kind": "middle",
+   "note": "B's sill, south opening"
+  },
+  "A_Perch": {
+   "pos": [
+    -34,
+    46.6,
+    4
+   ],
+   "side": "A",
+   "kind": "height",
+   "note": "A's perch: the watch edge (kick-curb) over the north lane",
+   "ref": [
+    -34,
+    41
+   ]
+  },
+  "A_PerchDuel": {
+   "pos": [
+    -31.2,
+    51,
+    4
+   ],
+   "side": "A",
+   "kind": "height",
+   "note": "A's perch: crouched behind the east parapet (the long duel with B's gate)",
+   "ref": [
+    -26,
+    51
+   ]
+  },
+  "B_Ledge": {
+   "pos": [
+    29,
+    -48.5,
+    4
+   ],
+   "side": "B",
+   "kind": "height",
+   "note": "B's ledge: the west end, peeking the deck wall",
+   "ref": [
+    29,
+    -43
+   ]
+  },
+  "B_Ledge_E": {
+   "pos": [
+    43.5,
+    -48.5,
+    4
+   ],
+   "side": "B",
+   "kind": "height",
+   "note": "B's ledge: the east end of the deck wall",
+   "ref": [
+    43.5,
+    -43
+   ]
+  },
+  "A_PerchTop": {
+   "pos": [
+    -38.5,
+    51,
+    4
+   ],
+   "side": "A",
+   "kind": "ramp",
+   "note": "top of A's ramp"
+  },
+  "B_LedgeTop": {
+   "pos": [
+    44.5,
+    -51,
+    4
+   ],
+   "side": "B",
+   "kind": "ramp",
+   "note": "top of B's ramp"
+  },
+  "A_SouthGate": {
+   "pos": [
+    -26,
+    -32.5,
+    0
+   ],
+   "side": "A",
+   "kind": "window",
+   "note": "A's side of the south gate (north opening)"
+  },
+  "B_NorthGate": {
+   "pos": [
+    26,
+    32.5,
+    0
+   ],
+   "side": "B",
+   "kind": "window",
+   "note": "B's side of the north gate (south opening)"
+  },
+  "N_Island": {
+   "pos": [
+    -2.5,
+    34.5,
+    0
+   ],
+   "side": "C",
+   "kind": "gap",
+   "note": "the north mid island (west face of its low wall)"
+  },
+  "S_Island": {
+   "pos": [
+    -1,
+    -37,
+    0
+   ],
+   "side": "C",
+   "kind": "gap",
+   "note": "the south mid island (north face of its wall)"
+  }
+ },
+ "gaps": [
+  {
+   "id": "NorthGap_A",
+   "a": [
+    -15.5,
+    30
+   ],
+   "b": [
+    -1,
+    33
+   ],
+   "note": "A's north chain -> mid island"
+  },
+  {
+   "id": "NorthGap_B",
+   "a": [
+    21.5,
+    30
+   ],
+   "b": [
+    1,
+    33
+   ],
+   "note": "B's north gate -> mid island"
+  },
+  {
+   "id": "SouthGap_B",
+   "a": [
+    14.5,
+    -31
+   ],
+   "b": [
+    9,
+    -40
+   ],
+   "note": "B's south chain -> mid island"
+  },
+  {
+   "id": "SouthGap_A",
+   "a": [
+    -21.5,
+    -30
+   ],
+   "b": [
+    -6,
+    -38.5
+   ],
+   "note": "A's south gate -> mid island"
+  },
+  {
+   "id": "Centre_A",
+   "a": [
+    -11.5,
+    1.5
+   ],
+   "b": [
+    -1.5,
+    2.5
+   ],
+   "note": "A's centre chain -> the centre post (sill)"
+  },
+  {
+   "id": "Centre_B",
+   "a": [
+    10.5,
+    -3
+   ],
+   "b": [
+    1.5,
+    -2.5
+   ],
+   "note": "B's centre wall -> the centre post (sill)"
+  },
+  {
+   "id": "Rot_A_NtoC",
+   "a": [
+    -18,
+    23.5
+   ],
+   "b": [
+    -12.5,
+    12.5
+   ],
+   "note": "A rotation: north chain -> centre pillar"
+  },
+  {
+   "id": "Rot_B_StoC",
+   "a": [
+    17,
+    -22
+   ],
+   "b": [
+    12,
+    -13
+   ],
+   "note": "B rotation: south chain -> centre wall"
+  }
+ ],
+ "sightlines": [
+  {
+   "a": "A_Perch",
+   "b": "N_Island",
+   "note": "perch watches the north island and gap"
+  },
+  {
+   "a": "B_NorthGate",
+   "b": "N_Island",
+   "note": "north gate watches the island"
+  },
+  {
+   "a": "B_Ledge",
+   "b": "S_Island",
+   "note": "ledge watches the south island and gap"
+  },
+  {
+   "a": "A_SouthGate",
+   "b": "S_Island",
+   "note": "south gate watches the island"
+  },
+  {
+   "a": "B_NorthGate",
+   "b": "A_Perch",
+   "note": "counter: the gate duels the perch"
+  },
+  {
+   "a": "A_SouthGate",
+   "b": "B_Ledge",
+   "note": "counter: the gate duels the ledge"
+  },
+  {
+   "a": "Mid_A",
+   "b": "Mid_B",
+   "note": "the centre duel through the twin windows"
+  }
+ ],
+ "balance": [
+  {
+   "what": "middle (nearest sill)",
+   "A": [
+    "Mid_A",
+    "Mid_A_S"
+   ],
+   "B": [
+    "Mid_B",
+    "Mid_B_S"
+   ]
+  },
+  {
+   "what": "own high ground (first peek)",
+   "A": [
+    "A_Perch"
+   ],
+   "B": [
+    "B_Ledge",
+    "B_Ledge_E"
+   ]
+  },
+  {
+   "what": "own high ground (ramp top)",
+   "A": [
+    "A_PerchTop"
+   ],
+   "B": [
+    "B_LedgeTop"
+   ]
+  },
+  {
+   "what": "own gate",
+   "A": [
+    "A_SouthGate"
+   ],
+   "B": [
+    "B_NorthGate"
+   ]
+  },
+  {
+   "what": "enemy high ground (contest: ramp top)",
+   "A": [
+    "B_LedgeTop"
+   ],
+   "B": [
+    "A_PerchTop"
+   ]
+  },
+  {
+   "what": "enemy gate (contest)",
+   "A": [
+    "B_NorthGate"
+   ],
+   "B": [
+    "A_SouthGate"
+   ]
+  },
+  {
+   "what": "north island",
+   "A": [
+    "N_Island"
+   ],
+   "B": [
+    "N_Island"
+   ]
+  },
+  {
+   "what": "south island",
+   "A": [
+    "S_Island"
+   ],
+   "B": [
+    "S_Island"
+   ]
+  }
+ ],
+ "movement": {
+  "walk": 10,
+  "sprint": 20,
+  "crouch": 4.8,
+  "cover_dash": 24,
+  "cover_dash_max": 26,
+  "cover_sneak": 8,
+  "vault_s": 0.34375,
+  "silent_vault_s": 0.584,
+  "vault_clearance": 1.8,
+  "climb_s": "0.62 + 0.06/stud",
+  "climb_max_above_feet": 5.6,
+  "climb_min_depth": 5,
+  "hop": 2.2,
+  "jump": 0,
+  "eye": 4.6,
+  "camera": 5.1,
+  "stand_top": 5.2,
+  "crouch_top": 3.2,
+  "source": "CoverConfig + MovementConfig in match_place_ref.rbxl (2026-10-26), fix/movement_spec.lua"
+ }
+}

@@ -1,0 +1,1039 @@
+{
+ "errors": [],
+ "warnings": [],
+ "info": {
+  "close_pairs": [
+   [
+    "A_C_P",
+    "A_C_L",
+    0.0,
+    "touch"
+   ],
+   [
+    "A_C_L",
+    "A_C_L2",
+    4.5,
+    "lane"
+   ],
+   [
+    "A_C_L2",
+    "A_C_P2",
+    0.0,
+    "touch"
+   ],
+   [
+    "A_C_P2",
+    "A_Fwd_W",
+    7.0,
+    "lane"
+   ],
+   [
+    "B_C_W",
+    "B_C_L",
+    6.0,
+    "lane"
+   ],
+   [
+    "B_C_L",
+    "B_C_P",
+    0.5,
+    "cover chain"
+   ],
+   [
+    "B_C_P",
+    "B_Fwd_W",
+    7.5,
+    "lane"
+   ],
+   [
+    "B_NorthGate",
+    "B_N_L",
+    4.5,
+    "lane"
+   ],
+   [
+    "A_SouthGate",
+    "A_S_L",
+    4.5,
+    "lane"
+   ],
+   [
+    "A_Shield_N",
+    "A_Shield_S",
+    0.0,
+    "touch"
+   ],
+   [
+    "A_Perch",
+    "A_PerchFront_L",
+    6.5,
+    "lane"
+   ],
+   [
+    "A_Perch",
+    "A_PerchFoot_P",
+    5.15,
+    "lane"
+   ],
+   [
+    "A_NStage_P",
+    "A_NStage_L",
+    0.0,
+    "touch"
+   ],
+   [
+    "A_N_P",
+    "A_N_L",
+    0.5,
+    "cover chain"
+   ],
+   [
+    "A_N_P",
+    "A_PerchFront_L",
+    7.65,
+    "lane"
+   ],
+   [
+    "A_Mid_W",
+    "A_Mid_P",
+    5.5,
+    "lane"
+   ],
+   [
+    "A_Mid_P",
+    "A_Fwd_W",
+    5.5,
+    "lane"
+   ],
+   [
+    "A_Fwd_P",
+    "A_Fwd_L",
+    0.0,
+    "touch"
+   ],
+   [
+    "A_S_L",
+    "A_S_P",
+    0.0,
+    "touch"
+   ],
+   [
+    "A_SW_W",
+    "A_SStage_L",
+    6.8,
+    "lane"
+   ],
+   [
+    "A_SW_P",
+    "A_SW_L",
+    0.0,
+    "touch"
+   ],
+   [
+    "B_Shield_S",
+    "B_Shield_W",
+    0.0,
+    "touch"
+   ],
+   [
+    "B_Shield_W",
+    "B_Shield_N",
+    0.0,
+    "touch"
+   ],
+   [
+    "B_Shield_N",
+    "B_NExit_L",
+    7.57,
+    "lane"
+   ],
+   [
+    "B_Ledge",
+    "B_LedgeFront_L",
+    6.0,
+    "lane"
+   ],
+   [
+    "B_Ledge",
+    "B_LedgeFoot_W",
+    6.0,
+    "lane"
+   ],
+   [
+    "B_SStage_P",
+    "B_SStage_L",
+    0.5,
+    "cover chain"
+   ],
+   [
+    "B_SE_W",
+    "B_SE_W2",
+    5.5,
+    "lane"
+   ],
+   [
+    "B_S_P",
+    "B_S_L",
+    0.5,
+    "cover chain"
+   ],
+   [
+    "B_S_P",
+    "S_Mid_L",
+    7.11,
+    "lane"
+   ],
+   [
+    "B_LedgeFoot_W",
+    "S_Mid_W",
+    7.21,
+    "lane"
+   ],
+   [
+    "B_LedgeFoot_W",
+    "S_Mid_L",
+    4.5,
+    "lane"
+   ],
+   [
+    "B_Mid_P",
+    "B_Mid_W",
+    5.5,
+    "lane"
+   ],
+   [
+    "B_Mid_P",
+    "B_Fwd_W",
+    5.5,
+    "lane"
+   ],
+   [
+    "B_Fwd_L",
+    "B_Fwd_P",
+    0.0,
+    "touch"
+   ],
+   [
+    "B_N_L",
+    "B_N_P",
+    0.0,
+    "touch"
+   ],
+   [
+    "B_NE_W",
+    "B_NStage_L",
+    6.58,
+    "lane"
+   ],
+   [
+    "B_NE_P",
+    "B_NE_L",
+    0.0,
+    "touch"
+   ],
+   [
+    "N_Mid_P",
+    "N_Mid_L",
+    0.0,
+    "touch"
+   ],
+   [
+    "S_Mid_W",
+    "S_Mid_L",
+    0.0,
+    "touch"
+   ]
+  ],
+  "spawn_los": {
+   "pairs": 43681,
+   "eye_to_eye": 0,
+   "eye_to_chest": 0
+  },
+  "exposure": {
+   "cells": 2154,
+   "min": 3.3,
+   "mean": 27.3,
+   "max": 40.6,
+   "bands": {
+    "-75..-65": 17.6,
+    "-65..-55": 26.9,
+    "-55..-45": 28.9,
+    "-45..-35": 30.6,
+    "-35..-25": 27.6,
+    "-25..-15": 28.4,
+    "-15..-5": 29.2,
+    "-5..5": 28.4,
+    "5..15": 29.3,
+    "15..25": 28.0,
+    "25..35": 27.8,
+    "35..45": 31.0,
+    "45..55": 30.8,
+    "55..65": 27.9,
+    "65..75": 18.4
+   },
+   "band_spread": 13.4,
+   "band_spread_outside_pockets": 4.1
+  },
+  "sight": {
+   "median": 40.1,
+   "p90": 83.6,
+   "max": 162.5,
+   "over_90": 7.44
+  },
+  "longest_lines": [
+   [
+    [
+     -66.25,
+     28.75
+    ],
+    [
+     73.75,
+     -53.75
+    ],
+    162.5
+   ],
+   [
+    [
+     -73.75,
+     43.75
+    ],
+    [
+     71.25,
+     -26.25
+    ],
+    161.0
+   ],
+   [
+    [
+     -66.25,
+     -53.75
+    ],
+    [
+     51.25,
+     53.75
+    ],
+    159.3
+   ],
+   [
+    [
+     -51.25,
+     -53.75
+    ],
+    [
+     63.75,
+     53.75
+    ],
+    157.4
+   ],
+   [
+    [
+     -73.75,
+     31.25
+    ],
+    [
+     63.75,
+     -43.75
+    ],
+    156.6
+   ],
+   [
+    [
+     -73.75,
+     -21.25
+    ],
+    [
+     71.25,
+     28.75
+    ],
+    153.4
+   ]
+  ],
+  "cover_distance": {
+   "max": 13.0,
+   "mean": 5.0,
+   "p90": 8.9,
+   "worst": [
+    [
+     13.0,
+     8.75,
+     53.75
+    ],
+    [
+     12.9,
+     53.75,
+     -46.25
+    ],
+    [
+     12.9,
+     -8.75,
+     -53.75
+    ],
+    [
+     12.8,
+     -73.75,
+     16.25
+    ],
+    [
+     12.5,
+     -6.25,
+     -53.75
+    ]
+   ]
+  },
+  "times_sprint_s": {
+   "Mid_A": {
+    "A": [
+     3.94,
+     3.74,
+     3.9
+    ],
+    "B": [
+     4.43,
+     4.23,
+     4.33
+    ]
+   },
+   "Mid_B": {
+    "A": [
+     4.41,
+     4.21,
+     4.37
+    ],
+    "B": [
+     3.98,
+     3.78,
+     3.87
+    ]
+   },
+   "Mid_A_S": {
+    "A": [
+     3.96,
+     3.87,
+     3.76
+    ],
+    "B": [
+     4.53,
+     4.4,
+     4.33
+    ]
+   },
+   "Mid_B_S": {
+    "A": [
+     4.43,
+     4.34,
+     4.23
+    ],
+    "B": [
+     4.08,
+     3.93,
+     3.88
+    ]
+   },
+   "A_Perch": {
+    "A": [
+     3.59,
+     3.39,
+     3.79
+    ],
+    "B": [
+     7.93,
+     7.73,
+     8.13
+    ]
+   },
+   "A_PerchDuel": {
+    "A": [
+     3.79,
+     3.59,
+     3.99
+    ],
+    "B": [
+     8.13,
+     7.93,
+     8.33
+    ]
+   },
+   "B_Ledge": {
+    "A": [
+     9.0,
+     9.2,
+     8.8
+    ],
+    "B": [
+     4.36,
+     4.56,
+     4.16
+    ]
+   },
+   "B_Ledge_E": {
+    "A": [
+     8.08,
+     8.28,
+     7.88
+    ],
+    "B": [
+     3.44,
+     3.64,
+     3.24
+    ]
+   },
+   "A_PerchTop": {
+    "A": [
+     3.44,
+     3.24,
+     3.64
+    ],
+    "B": [
+     7.78,
+     7.58,
+     7.98
+    ]
+   },
+   "B_LedgeTop": {
+    "A": [
+     8.08,
+     8.28,
+     7.88
+    ],
+    "B": [
+     3.44,
+     3.64,
+     3.24
+    ]
+   },
+   "A_SouthGate": {
+    "A": [
+     3.02,
+     3.22,
+     2.82
+    ],
+    "B": [
+     5.85,
+     6.05,
+     5.65
+    ]
+   },
+   "B_NorthGate": {
+    "A": [
+     5.72,
+     5.52,
+     5.92
+    ],
+    "B": [
+     2.97,
+     2.77,
+     3.17
+    ]
+   },
+   "N_Island": {
+    "A": [
+     4.22,
+     4.02,
+     4.42
+    ],
+    "B": [
+     4.54,
+     4.34,
+     4.74
+    ]
+   },
+   "S_Island": {
+    "A": [
+     4.36,
+     4.56,
+     4.16
+    ],
+    "B": [
+     4.53,
+     4.73,
+     4.33
+    ]
+   }
+  },
+  "unreachable_cells": 0,
+  "balance": [
+   {
+    "what": "middle (nearest sill)",
+    "A": 3.94,
+    "B": 3.98,
+    "diff_pct": 1.0
+   },
+   {
+    "what": "own high ground (first peek)",
+    "A": 3.59,
+    "B": 3.44,
+    "diff_pct": 4.4
+   },
+   {
+    "what": "own high ground (ramp top)",
+    "A": 3.44,
+    "B": 3.44,
+    "diff_pct": 0.0
+   },
+   {
+    "what": "own gate",
+    "A": 3.02,
+    "B": 2.97,
+    "diff_pct": 1.7
+   },
+   {
+    "what": "enemy high ground (contest: ramp top)",
+    "A": 8.08,
+    "B": 7.78,
+    "diff_pct": 3.9
+   },
+   {
+    "what": "enemy gate (contest)",
+    "A": 5.72,
+    "B": 5.85,
+    "diff_pct": 2.3
+   },
+   {
+    "what": "north island",
+    "A": 4.22,
+    "B": 4.54,
+    "diff_pct": 7.6
+   },
+   {
+    "what": "south island",
+    "A": 4.36,
+    "B": 4.53,
+    "diff_pct": 3.9
+   }
+  ],
+  "gaps": [
+   {
+    "id": "NorthGap_A",
+    "length": 14.8,
+    "sprint_s": 0.74,
+    "walk_s": 1.48,
+    "dash_s": 0.62,
+    "watched_by": [
+     "Mid_A",
+     "Mid_A_S",
+     "A_Perch",
+     "A_PerchDuel",
+     "B_NorthGate",
+     "N_Island",
+     "S_Island"
+    ],
+    "floor_seeing_mid_pct": 31.4,
+    "note": "A's north chain -> mid island"
+   },
+   {
+    "id": "NorthGap_B",
+    "length": 20.7,
+    "sprint_s": 1.04,
+    "walk_s": 2.07,
+    "dash_s": 0.86,
+    "watched_by": [
+     "Mid_B",
+     "Mid_B_S",
+     "A_Perch",
+     "B_Ledge",
+     "A_PerchTop",
+     "B_NorthGate",
+     "N_Island",
+     "S_Island"
+    ],
+    "floor_seeing_mid_pct": 31.7,
+    "note": "B's north gate -> mid island"
+   },
+   {
+    "id": "SouthGap_B",
+    "length": 10.5,
+    "sprint_s": 0.53,
+    "walk_s": 1.05,
+    "dash_s": 0.44,
+    "watched_by": [
+     "Mid_B",
+     "Mid_B_S",
+     "B_Ledge",
+     "B_Ledge_E",
+     "A_SouthGate",
+     "S_Island"
+    ],
+    "floor_seeing_mid_pct": 27.8,
+    "note": "B's south chain -> mid island"
+   },
+   {
+    "id": "SouthGap_A",
+    "length": 17.7,
+    "sprint_s": 0.88,
+    "walk_s": 1.77,
+    "dash_s": 0.74,
+    "watched_by": [
+     "Mid_A",
+     "Mid_A_S",
+     "A_PerchDuel",
+     "A_SouthGate",
+     "S_Island"
+    ],
+    "floor_seeing_mid_pct": 32.9,
+    "note": "A's south gate -> mid island"
+   },
+   {
+    "id": "Centre_A",
+    "length": 10.0,
+    "sprint_s": 0.5,
+    "walk_s": 1.0,
+    "dash_s": 0.42,
+    "watched_by": [
+     "Mid_A",
+     "Mid_B",
+     "Mid_A_S",
+     "Mid_B_S",
+     "B_Ledge_E",
+     "B_LedgeTop",
+     "B_NorthGate",
+     "N_Island",
+     "S_Island"
+    ],
+    "floor_seeing_mid_pct": 26.0,
+    "note": "A's centre chain -> the centre post (sill)"
+   },
+   {
+    "id": "Centre_B",
+    "length": 9.0,
+    "sprint_s": 0.45,
+    "walk_s": 0.9,
+    "dash_s": 0.38,
+    "watched_by": [
+     "Mid_B",
+     "Mid_A_S",
+     "Mid_B_S",
+     "A_Perch",
+     "A_PerchTop",
+     "A_SouthGate",
+     "S_Island"
+    ],
+    "floor_seeing_mid_pct": 22.5,
+    "note": "B's centre wall -> the centre post (sill)"
+   },
+   {
+    "id": "Rot_A_NtoC",
+    "length": 12.3,
+    "sprint_s": 0.61,
+    "walk_s": 1.23,
+    "dash_s": 0.51,
+    "watched_by": [
+     "Mid_A",
+     "Mid_B",
+     "A_Perch",
+     "A_PerchDuel",
+     "A_PerchTop",
+     "B_NorthGate",
+     "N_Island"
+    ],
+    "floor_seeing_mid_pct": 36.0,
+    "note": "A rotation: north chain -> centre pillar"
+   },
+   {
+    "id": "Rot_B_StoC",
+    "length": 10.3,
+    "sprint_s": 0.51,
+    "walk_s": 1.03,
+    "dash_s": 0.43,
+    "watched_by": [
+     "Mid_A_S",
+     "Mid_B_S",
+     "B_Ledge",
+     "B_Ledge_E",
+     "B_LedgeTop",
+     "A_SouthGate",
+     "S_Island"
+    ],
+    "floor_seeing_mid_pct": 35.7,
+    "note": "B rotation: south chain -> centre wall"
+   }
+  ],
+  "ramps": [
+   {
+    "deck": "A_Perch",
+    "rise": 4,
+    "run": 12.0,
+    "slope_deg": 18.4,
+    "width": 8,
+    "on_ramp_sprint_s": 0.6,
+    "on_ramp_walk_s": 1.2,
+    "enemy_half_seeing_climb_pct": [
+     1.9,
+     6.4,
+     6.4,
+     5.8,
+     4.2
+    ]
+   },
+   {
+    "deck": "B_Ledge",
+    "rise": 4,
+    "run": 12.0,
+    "slope_deg": 18.4,
+    "width": 8,
+    "on_ramp_sprint_s": 0.6,
+    "on_ramp_walk_s": 1.2,
+    "enemy_half_seeing_climb_pct": [
+     4.8,
+     10.7,
+     10.2,
+     10.1,
+     7.2
+    ]
+   }
+  ],
+  "perches": [
+   {
+    "spot": "A_Perch",
+    "eye": 8.6,
+    "floor_seen_standing_pct": 33.2,
+    "floor_seen_crouched_pct": 30.2,
+    "floor_in_front_crouched_pct": 23.7,
+    "own_foot_seen_pct": 66.7,
+    "hugging_crouch_exposed": [],
+    "crouch_walk_3_behind_exposed": [
+     "A_PerchFront_L@13"
+    ],
+    "one_stud_radius": 4.5
+   },
+   {
+    "spot": "A_PerchDuel",
+    "eye": 8.6,
+    "floor_seen_standing_pct": 32.2,
+    "floor_seen_crouched_pct": 28.8,
+    "floor_in_front_crouched_pct": 17.4,
+    "own_foot_seen_pct": 5.4,
+    "hugging_crouch_exposed": [],
+    "crouch_walk_3_behind_exposed": [],
+    "one_stud_radius": 4.5
+   },
+   {
+    "spot": "B_Ledge",
+    "eye": 8.6,
+    "floor_seen_standing_pct": 32.8,
+    "floor_seen_crouched_pct": 29.5,
+    "floor_in_front_crouched_pct": 29.4,
+    "own_foot_seen_pct": 80.4,
+    "hugging_crouch_exposed": [],
+    "crouch_walk_3_behind_exposed": [
+     "B_LedgeFront_L@14"
+    ],
+    "one_stud_radius": 4.5
+   },
+   {
+    "spot": "B_Ledge_E",
+    "eye": 8.6,
+    "floor_seen_standing_pct": 27.3,
+    "floor_seen_crouched_pct": 25.8,
+    "floor_in_front_crouched_pct": 26.0,
+    "own_foot_seen_pct": 78.9,
+    "hugging_crouch_exposed": [],
+    "crouch_walk_3_behind_exposed": [
+     "B_C_L@65",
+     "B_LedgeFront_L@15"
+    ],
+    "one_stud_radius": 4.5
+   }
+  ],
+  "floor_avg_crouched_seen_pct": 21.0,
+  "windows": [
+   {
+    "window": "CentreWindows",
+    "sill_centre": [
+     0.0,
+     -7.5
+    ],
+    "opening": "10 wide x 6.6 high (3.4 .. 10)",
+    "vault_apex_head": 7.4,
+    "clear": 2.5999999999999996,
+    "views": [
+     {
+      "side": "east",
+      "floor_seen_pct": 26.0,
+      "sees_spots": [
+       "Mid_B",
+       "Mid_A_S",
+       "Mid_B_S",
+       "B_Ledge_E",
+       "B_LedgeTop",
+       "A_SouthGate",
+       "S_Island"
+      ]
+     },
+     {
+      "side": "west",
+      "floor_seen_pct": 29.4,
+      "sees_spots": [
+       "Mid_A",
+       "Mid_A_S",
+       "Mid_B_S",
+       "B_Ledge_E",
+       "A_SouthGate",
+       "N_Island",
+       "S_Island"
+      ]
+     }
+    ]
+   },
+   {
+    "window": "CentreWindows",
+    "sill_centre": [
+     0.0,
+     7.5
+    ],
+    "opening": "10 wide x 6.6 high (3.4 .. 10)",
+    "vault_apex_head": 7.4,
+    "clear": 2.5999999999999996,
+    "views": [
+     {
+      "side": "east",
+      "floor_seen_pct": 29.3,
+      "sees_spots": [
+       "Mid_A",
+       "Mid_B",
+       "Mid_B_S",
+       "B_NorthGate"
+      ]
+     },
+     {
+      "side": "west",
+      "floor_seen_pct": 30.7,
+      "sees_spots": [
+       "Mid_A",
+       "Mid_B",
+       "Mid_A_S",
+       "A_Perch",
+       "A_PerchTop",
+       "B_NorthGate",
+       "N_Island",
+       "S_Island"
+      ]
+     }
+    ]
+   },
+   {
+    "window": "B_NorthGate",
+    "sill_centre": [
+     23.0,
+     30.0
+    ],
+    "opening": "10 wide x 6.6 high (3.4 .. 10)",
+    "vault_apex_head": 7.4,
+    "clear": 2.5999999999999996,
+    "views": [
+     {
+      "side": "east",
+      "floor_seen_pct": 30.8,
+      "sees_spots": [
+       "Mid_A",
+       "N_Island"
+      ]
+     },
+     {
+      "side": "west",
+      "floor_seen_pct": 36.0,
+      "sees_spots": [
+       "Mid_A",
+       "Mid_B",
+       "A_Perch",
+       "N_Island"
+      ]
+     }
+    ]
+   },
+   {
+    "window": "B_NorthGate",
+    "sill_centre": [
+     23.0,
+     45.0
+    ],
+    "opening": "10 wide x 6.6 high (3.4 .. 10)",
+    "vault_apex_head": 7.4,
+    "clear": 2.5999999999999996,
+    "views": [
+     {
+      "side": "east",
+      "floor_seen_pct": 29.8,
+      "sees_spots": [
+       "A_Perch",
+       "A_PerchDuel",
+       "B_Ledge_E",
+       "A_PerchTop",
+       "B_LedgeTop",
+       "N_Island"
+      ]
+     },
+     {
+      "side": "west",
+      "floor_seen_pct": 32.2,
+      "sees_spots": [
+       "Mid_B",
+       "A_Perch",
+       "A_PerchDuel",
+       "A_PerchTop",
+       "N_Island"
+      ]
+     }
+    ]
+   },
+   {
+    "window": "A_SouthGate",
+    "sill_centre": [
+     -23.0,
+     -45.0
+    ],
+    "opening": "10 wide x 6.6 high (3.4 .. 10)",
+    "vault_apex_head": 7.4,
+    "clear": 2.5999999999999996,
+    "views": [
+     {
+      "side": "east",
+      "floor_seen_pct": 32.6,
+      "sees_spots": [
+       "Mid_A_S",
+       "B_Ledge"
+      ]
+     },
+     {
+      "side": "west",
+      "floor_seen_pct": 29.5,
+      "sees_spots": [
+       "B_Ledge"
+      ]
+     }
+    ]
+   },
+   {
+    "window": "A_SouthGate",
+    "sill_centre": [
+     -23.0,
+     -30.0
+    ],
+    "opening": "10 wide x 6.6 high (3.4 .. 10)",
+    "vault_apex_head": 7.4,
+    "clear": 2.5999999999999996,
+    "views": [
+     {
+      "side": "east",
+      "floor_seen_pct": 36.4,
+      "sees_spots": [
+       "Mid_A_S",
+       "Mid_B_S",
+       "S_Island"
+      ]
+     },
+     {
+      "side": "west",
+      "floor_seen_pct": 32.6,
+      "sees_spots": [
+       "Mid_A_S",
+       "Mid_B_S",
+       "S_Island"
+      ]
+     }
+    ]
+   }
+  ],
+  "highest_eye_plus_hop": 10.8,
+  "footprint_pct": 12.8
+ }
+}
