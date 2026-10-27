@@ -2,7 +2,7 @@
 import json, sys, numpy as np, matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle, FancyArrow
+from matplotlib.patches import Rectangle, FancyArrow, Circle
 from geom import pieces, barrels, camskin, spawns, HALF_W, HALF_L
 OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
 g = np.load('grids.npz'); m = json.load(open('metrics.json'))
@@ -24,8 +24,11 @@ def draw_pieces(ax, labels=True, alpha=1):
     seen = set()
     for q in pieces + barrels:
         k = q['kind']
-        ax.add_patch(Rectangle((q['e'] - q['w'] / 2, q['n'] - q['d'] / 2), q['w'], q['d'], fc=COL[k], ec='k', lw=.6, alpha=alpha,
-                               label=LBL[k] if k not in seen else None))
+        if k == 'barrel':   # upright cylinder: diameter 2.1
+            ax.add_patch(Circle((q['e'], q['n']), 1.05, fc=COL[k], ec='k', lw=.6, alpha=alpha, label=LBL[k] if k not in seen else None))
+        else:
+            ax.add_patch(Rectangle((q['e'] - q['w'] / 2, q['n'] - q['d'] / 2), q['w'], q['d'], fc=COL[k], ec='k', lw=.6, alpha=alpha,
+                                   label=LBL[k] if k not in seen else None))
         seen.add(k)
         if labels:
             ax.text(q['e'], q['n'] + q['d'] / 2 + 0.6, q['id'].replace('FireBarrel_', ''), ha='center', va='bottom', fontsize=6.5)
