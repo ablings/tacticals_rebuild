@@ -84,13 +84,13 @@
    [
     "A_NStage_P",
     "A_PocketN_P",
-    5.0,
+    4.0,
     "lane"
    ],
    [
     "A_NStage_L",
     "A_PocketN_P",
-    6.5,
+    5.5,
     "lane"
    ],
    [
@@ -108,7 +108,7 @@
    [
     "A_Mid_W",
     "A_Mid_P",
-    5.5,
+    6.0,
     "lane"
    ],
    [
@@ -154,6 +154,12 @@
     "touch"
    ],
    [
+    "B_Shield_S",
+    "B_PocketS_P2",
+    4.95,
+    "lane"
+   ],
+   [
     "B_Shield_W",
     "B_Shield_N",
     0.0,
@@ -187,6 +193,12 @@
     "B_SStage_P",
     "B_PocketS_P",
     7.57,
+    "lane"
+   ],
+   [
+    "B_SStage_P",
+    "B_PocketS_P2",
+    6.5,
     "lane"
    ],
    [
@@ -244,6 +256,12 @@
     "touch"
    ],
    [
+    "B_PocketS_P",
+    "B_PocketS_P2",
+    4.0,
+    "lane"
+   ],
+   [
     "N_Mid_P",
     "N_Mid_L",
     0.0,
@@ -285,35 +303,35 @@
    "eye_to_chest": 0
   },
   "exposure": {
-   "cells": 2148,
+   "cells": 2139,
    "min": 3.4,
-   "mean": 25.6,
-   "max": 36.8,
+   "mean": 25.0,
+   "max": 36.6,
    "bands": {
-    "-75..-65": 16.5,
-    "-65..-55": 24.4,
-    "-55..-45": 25.7,
-    "-45..-35": 27.9,
-    "-35..-25": 26.4,
+    "-75..-65": 16.4,
+    "-65..-55": 24.3,
+    "-55..-45": 25.6,
+    "-45..-35": 27.5,
+    "-35..-25": 26.3,
     "-25..-15": 27.2,
-    "-15..-5": 28.3,
-    "-5..5": 29.5,
-    "5..15": 29.5,
-    "15..25": 27.0,
-    "25..35": 26.2,
-    "35..45": 27.7,
-    "45..55": 27.2,
-    "55..65": 25.7,
-    "65..75": 17.2
+    "-15..-5": 28.2,
+    "-5..5": 29.3,
+    "5..15": 29.4,
+    "15..25": 26.8,
+    "25..35": 25.8,
+    "35..45": 26.3,
+    "45..55": 24.6,
+    "55..65": 22.7,
+    "65..75": 16.4
    },
    "band_spread": 13.0,
-   "band_spread_outside_pockets": 5.1
+   "band_spread_outside_pockets": 6.7
   },
   "sight": {
-   "median": 38.2,
-   "p90": 82.5,
+   "median": 38.1,
+   "p90": 81.4,
    "max": 159.3,
-   "over_90": 6.86
+   "over_90": 6.65
   },
   "longest_lines": [
    [
@@ -418,8 +436,8 @@
   "times_sprint_s": {
    "Mid_A": {
     "A": [
-     3.9,
-     3.74,
+     3.93,
+     3.77,
      3.78
     ],
     "B": [
@@ -430,8 +448,8 @@
    },
    "Mid_B": {
     "A": [
-     4.37,
-     4.2,
+     4.39,
+     4.23,
      4.24
     ],
     "B": [
@@ -447,21 +465,21 @@
      3.7
     ],
     "B": [
-     4.39,
+     4.41,
      4.25,
-     4.23
+     4.24
     ]
    },
    "Mid_B_S": {
     "A": [
      4.32,
-     4.2,
+     4.19,
      4.16
     ],
     "B": [
-     3.93,
+     3.94,
      3.79,
-     3.77
+     3.78
     ]
    },
    "A_Perch": {
@@ -543,16 +561,16 @@
      2.67
     ],
     "B": [
-     5.59,
-     5.79,
-     5.43
+     5.67,
+     5.8,
+     5.5
     ]
    },
    "B_NorthGate": {
     "A": [
-     5.49,
-     5.32,
-     5.67
+     5.5,
+     5.34,
+     5.69
     ],
     "B": [
      2.75,
@@ -562,9 +580,9 @@
    },
    "N_Island": {
     "A": [
-     4.06,
-     3.89,
-     4.24
+     4.07,
+     3.91,
+     4.26
     ],
     "B": [
      4.34,
@@ -579,9 +597,9 @@
      4.07
     ],
     "B": [
-     4.3,
-     4.5,
-     4.13
+     4.31,
+     4.51,
+     4.14
     ]
    }
   },
@@ -619,21 +637,21 @@
    },
    {
     "what": "enemy gate (contest)",
-    "A": 5.49,
-    "B": 5.59,
-    "diff_pct": 1.8
+    "A": 5.5,
+    "B": 5.67,
+    "diff_pct": 3.1
    },
    {
     "what": "north island",
-    "A": 4.06,
+    "A": 4.07,
     "B": 4.34,
-    "diff_pct": 6.9
+    "diff_pct": 6.6
    },
    {
     "what": "south island",
     "A": 4.24,
-    "B": 4.3,
-    "diff_pct": 1.4
+    "B": 4.31,
+    "diff_pct": 1.7
    }
   ],
   "gaps": [
@@ -662,7 +680,7 @@
      "A_Perch": 57,
      "A_PerchDuel": 71
     },
-    "floor_seeing_mid_pct": 29.8,
+    "floor_seeing_mid_pct": 29.6,
     "note": "A's north chain -> mid island"
    },
    {
@@ -690,7 +708,7 @@
      "Mid_B_S": 57,
      "B_NorthGate": 100
     },
-    "floor_seeing_mid_pct": 31.1,
+    "floor_seeing_mid_pct": 30.9,
     "note": "B's north gate -> mid island"
    },
    {
@@ -717,7 +735,7 @@
      "B_Ledge": 86,
      "B_Ledge_E": 71
     },
-    "floor_seeing_mid_pct": 30.0,
+    "floor_seeing_mid_pct": 30.1,
     "note": "B's south chain -> mid island"
    },
    {
@@ -744,7 +762,7 @@
      "A_PerchDuel": 57,
      "A_SouthGate": 100
     },
-    "floor_seeing_mid_pct": 31.9,
+    "floor_seeing_mid_pct": 31.2,
     "note": "A's south gate -> mid island"
    },
    {
@@ -775,7 +793,7 @@
      "Mid_A": 100,
      "Mid_A_S": 100
     },
-    "floor_seeing_mid_pct": 26.2,
+    "floor_seeing_mid_pct": 26.4,
     "note": "A's centre chain -> the centre post (sill)"
    },
    {
@@ -802,7 +820,7 @@
      "Mid_B": 100,
      "Mid_B_S": 100
     },
-    "floor_seeing_mid_pct": 23.6,
+    "floor_seeing_mid_pct": 23.7,
     "note": "B's centre wall -> the centre post (sill)"
    },
    {
@@ -830,7 +848,7 @@
      "A_Perch": 100,
      "A_PerchDuel": 86
     },
-    "floor_seeing_mid_pct": 33.2,
+    "floor_seeing_mid_pct": 32.9,
     "note": "A rotation: north chain -> centre pillar"
    },
    {
@@ -858,17 +876,19 @@
      "B_Ledge": 100,
      "B_Ledge_E": 100
     },
-    "floor_seeing_mid_pct": 34.6,
+    "floor_seeing_mid_pct": 34.4,
     "note": "B rotation: south chain -> centre wall"
    }
   ],
   "windows_seeing_pockets": [
-   "B_NorthGate sill (23.0,30.0) side +1: 1 points of the B pocket",
-   "B_NorthGate sill (23.0,45.0) side +1: 5 points of the A pocket",
-   "B_NorthGate sill (23.0,45.0) side +1: 42 points of the B pocket",
-   "B_NorthGate sill (23.0,45.0) side -1: 35 points of the B pocket",
-   "A_SouthGate sill (-23.0,-45.0) side +1: 49 points of the A pocket",
-   "A_SouthGate sill (-23.0,-45.0) side -1: 55 points of the A pocket"
+   "B_NorthGate sill (23.0,30.0) east side (holder B): 103 sightings of the B pocket",
+   "B_NorthGate sill (23.0,30.0) west side (holder None): 39 sightings of the B pocket",
+   "B_NorthGate sill (23.0,45.0) east side (holder B): 416 sightings of the B pocket",
+   "B_NorthGate sill (23.0,45.0) west side (holder None): 268 sightings of the B pocket",
+   "A_SouthGate sill (-23.0,-45.0) east side (holder None): 360 sightings of the A pocket",
+   "A_SouthGate sill (-23.0,-45.0) west side (holder A): 574 sightings of the A pocket",
+   "A_SouthGate sill (-23.0,-30.0) east side (holder None): 6 sightings of the A pocket",
+   "A_SouthGate sill (-23.0,-30.0) west side (holder A): 100 sightings of the A pocket"
   ],
   "spawn_camp": {
    "A": {
@@ -924,9 +944,9 @@
    {
     "spot": "A_Perch",
     "eye": 9.6,
-    "floor_seen_standing_pct": 28.0,
-    "floor_seen_crouched_pct": 24.5,
-    "floor_in_front_crouched_pct": 19.0,
+    "floor_seen_standing_pct": 27.9,
+    "floor_seen_crouched_pct": 24.3,
+    "floor_in_front_crouched_pct": 18.8,
     "own_foot_seen_pct": 52.1,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -937,9 +957,9 @@
    {
     "spot": "A_PerchDuel",
     "eye": 9.6,
-    "floor_seen_standing_pct": 26.7,
-    "floor_seen_crouched_pct": 23.1,
-    "floor_in_front_crouched_pct": 17.5,
+    "floor_seen_standing_pct": 26.6,
+    "floor_seen_crouched_pct": 23.2,
+    "floor_in_front_crouched_pct": 17.6,
     "own_foot_seen_pct": 2.7,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -950,9 +970,9 @@
    {
     "spot": "B_Ledge",
     "eye": 9.6,
-    "floor_seen_standing_pct": 29.5,
-    "floor_seen_crouched_pct": 26.6,
-    "floor_in_front_crouched_pct": 24.7,
+    "floor_seen_standing_pct": 29.1,
+    "floor_seen_crouched_pct": 26.2,
+    "floor_in_front_crouched_pct": 24.2,
     "own_foot_seen_pct": 76.6,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -963,9 +983,9 @@
    {
     "spot": "B_Ledge_E",
     "eye": 9.6,
-    "floor_seen_standing_pct": 28.4,
-    "floor_seen_crouched_pct": 26.7,
-    "floor_in_front_crouched_pct": 22.3,
+    "floor_seen_standing_pct": 28.5,
+    "floor_seen_crouched_pct": 26.8,
+    "floor_in_front_crouched_pct": 22.4,
     "own_foot_seen_pct": 82.9,
     "hugging_crouch_exposed": [],
     "crouch_walk_3_behind_exposed": [
@@ -975,7 +995,7 @@
     "one_stud_radius": 5.2
    }
   ],
-  "floor_avg_crouched_seen_pct": 20.5,
+  "floor_avg_crouched_seen_pct": 19.6,
   "windows": [
    {
     "window": "CentreWindows",
@@ -989,7 +1009,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 26.2,
+      "floor_seen_pct": 26.5,
       "sees_spots": [
        "Mid_B",
        "Mid_A_S",
@@ -1002,7 +1022,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 29.0,
+      "floor_seen_pct": 29.2,
       "sees_spots": [
        "Mid_A",
        "Mid_A_S",
@@ -1027,7 +1047,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 28.9,
+      "floor_seen_pct": 29.2,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -1037,7 +1057,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 29.7,
+      "floor_seen_pct": 30.1,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -1063,7 +1083,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 29.5,
+      "floor_seen_pct": 29.4,
       "sees_spots": [
        "Mid_A",
        "N_Island"
@@ -1071,7 +1091,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 34.6,
+      "floor_seen_pct": 34.7,
       "sees_spots": [
        "Mid_A",
        "Mid_B",
@@ -1093,7 +1113,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 28.4,
+      "floor_seen_pct": 28.2,
       "sees_spots": [
        "A_Perch",
        "A_PerchDuel",
@@ -1105,7 +1125,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 31.2,
+      "floor_seen_pct": 31.3,
       "sees_spots": [
        "Mid_B",
        "A_Perch",
@@ -1128,7 +1148,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 30.1,
+      "floor_seen_pct": 30.2,
       "sees_spots": [
        "Mid_A_S",
        "B_Ledge"
@@ -1136,7 +1156,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 27.5,
+      "floor_seen_pct": 27.7,
       "sees_spots": [
        "B_Ledge"
       ]
@@ -1155,7 +1175,7 @@
     "views": [
      {
       "side": "east",
-      "floor_seen_pct": 35.3,
+      "floor_seen_pct": 34.8,
       "sees_spots": [
        "Mid_A_S",
        "Mid_B_S",
@@ -1166,7 +1186,7 @@
      },
      {
       "side": "west",
-      "floor_seen_pct": 31.2,
+      "floor_seen_pct": 30.8,
       "sees_spots": [
        "Mid_A_S",
        "Mid_B_S",
@@ -1179,6 +1199,6 @@
    }
   ],
   "highest_eye_plus_hop": 11.8,
-  "footprint_pct": 13.1
+  "footprint_pct": 13.2
  }
 }

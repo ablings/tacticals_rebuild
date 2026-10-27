@@ -39,7 +39,7 @@ for h, lab in ((0, "floor: eye 4.6"), (4, "deck 4: eye 8.6"), (5, "deck 5 (this 
     ax.text(17.7, e - (0.35 if h == 5 else 0), lab, va="center", fontsize=7.5, color=col)
 ax.set_xlabel("Eye below 7: sees over nothing tall. 7 to 10: over walls (weakly), never over pillars or windows.\n"
               "Eye above 10 (deck 5.4 or more): over every piece; the old 6-high perches did this. Deck 5 is the ceiling:\n"
-              "its eye (9.6) stays under the pillar tops, and the third-person camera (10.1) only grazes them.", **NOTE)
+              "its eye (9.6) stays under the pillar tops; at level pitch the third-person camera (10.1) only grazes them.", **NOTE)
 ax.set_xlim(0, 28); ax.set_ylim(0, 13.5); ax.set_aspect("equal"); ax.set_xticks([])
 
 # 2. hugged low wall vs height --------------------------------------------------------------------------------------------

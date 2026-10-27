@@ -79,7 +79,7 @@ def deck(pid, x0, x1, y0, y1, side, parapets, ramp_spec, h=H["deck"], curbs=(), 
     """Raised floor h high.
     parapets: (edge, a, b) - a 2-thick, 3.4-high low wall along that edge from a to b (plan coords along it).
     curbs:    (edge, a, b) - a 0.5-thick, 1-high kick-curb on the edge: stops the CLIMB from the floor (the climb's edge ray at
-              deck + 0.6 hits it) but hardly shades the floor below (a parapet hides the first ~12 studs in front of it).
+              deck + 0.6 hits it) but hardly shades the floor below (a parapet hides the first ~14 studs in front of it at deck 5).
     on_deck:  (kind, cx, cy, along) - tall cover standing on the deck ('pillar' 5 x 5 x 10, 'wall' 10 x 3 x 7).
     ramp_spec: (foot_x, foot_y, top_x, top_y, width): the wedge rises from foot to top (top = on the deck edge)."""
     parts = [box(x0, x1, y0, y1, 0, h, "deck")]
@@ -107,8 +107,8 @@ def deck(pid, x0, x1, y0, y1, side, parapets, ramp_spec, h=H["deck"], curbs=(), 
 # ---------------------------------------------------------------------------------------------------------------------------
 # THE LAYOUT. Three lanes between two spawn pockets: NORTH (y 20..55), CENTRE (y -18..18), SOUTH (y -55..-20).
 # Centre: one twin window wall across the middle (the landmark; same for both sides).
-# A (west) owns the HIGH GROUND in the north (a square perch) and an ANGLE in the south (a corner window).
-# B (east) owns an ANGLE in the north (a corner window) and the HIGH GROUND in the south (a long ledge).
+# A (west) owns the HIGH GROUND in the north (a square perch) and an ANGLE in the south (a twin-window gate).
+# B (east) owns an ANGLE in the north (a twin-window gate) and the HIGH GROUND in the south (a long ledge).
 # The halves are not a mirror or a turn of each other: the perches, windows, spawn shields and cover chains have different
 # shapes and distances; fairness is checked by timing (arena_v2_check.py) instead of by symmetry.
 # ---------------------------------------------------------------------------------------------------------------------------
@@ -142,19 +142,19 @@ pillar("A_N_P", -18, 32.5, "A"); low("A_N_L", -18, 26.5, "y", "A")              
 low("A_PerchFront_L", -31, 37.5, "x", "A")                                       # in the perch's own radius: a trap for B
 pillar("A_PerchFoot_P", -45, 38, "A")                                            # tall cover under the perch (B's counter)
 # --- A centre / south staging
-wall("A_Mid_W", -40, 7, "y", "A"); pillar("A_Mid_P", -40, -6, "A")             # in front of the pocket
+wall("A_Mid_W", -40.5, 7.5, "y", "A"); pillar("A_Mid_P", -40, -6, "A")             # in front of the pocket
 pillar("A_Fwd_P", -27, 12, "A"); low("A_Fwd_L", -27, 6.5, "y", "A"); wall("A_Fwd_W", -27, -10, "x", "A")
 low("A_S_L", -32, -22, "x", "A"); pillar("A_S_P", -37.5, -22, "A")              # behind the south gate's north end
 wall("A_SW_W", -55, -36, "y", "A")                                              # SW corner breaker
 pillar("A_SW_P", -67.5, -46, "A"); low("A_SW_L", -67.5, -40.5, "y", "A")
 low("A_SStage_L", -46, -46, "y", "A")
 pillar("A_SExit_P", -68, -24, "A")
-pillar("A_PocketN_P", -45, 15, "A")                                            # closes a 100-stud line from B's gate to the pocket's north edge
+pillar("A_PocketN_P", -45, 16, "A")                                            # closes a 100-stud line from B's gate to the pocket's north edge
 low("A_NWall_L", -12, 50, "x", "A")                                             # along the north wall, inside the perch's band
 
 # --- B spawn (east): pocket behind a pillar - wall - pillar shield (20 long), set 2.5 north of A's
 pillar("B_Shield_S", 61.5, -5, "B"); wall("B_Shield_W", 61.5, 2.5, "y", "B"); pillar("B_Shield_N", 61.5, 10, "B")
-# --- B south: THE LEDGE (long and shallow, 20 x 6, against the south wall). Ramp from B's staging, rising west.
+# --- B south: THE LEDGE (long and shallow, 20 x 8, against the south wall). Ramp from B's staging, rising west.
 deck("B_Ledge", 26, 46, -55, -47, "B",
      parapets=[], curbs=[("N", 26, 46), ("W", -55, -47.5)], on_deck=[("wall", 36, -49, "x")],
      ramp_spec=(58, -51, 46, -51, 8),
@@ -173,7 +173,7 @@ wall("B_NE_W", 55, 38, "y", "B")
 pillar("B_NE_P", 67.5, 47, "B"); low("B_NE_L", 67.5, 41.5, "y", "B")
 low("B_NStage_L", 46, 47, "y", "B")
 low("B_NExit_L", 68, 21, "x", "B"); pillar("B_SExit_P", 68, -20, "B")
-pillar("B_PocketS_P", 44, -12.5, "B")                                          # closes the line from A's gate to the pocket's south edge
+pillar("B_PocketS_P", 44, -12.5, "B"); pillar("B_PocketS_P2", 53, -13.5, "B")    # close the lines from A's gate openings to the pocket's south edge
 
 # --- mid-lane islands (the decision points in each lane), different shapes north and south
 pillar("N_Mid_P", 0, 40, "C"); low("N_Mid_L", 0, 34.5, "y", "C")

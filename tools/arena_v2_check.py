@@ -1,5 +1,5 @@
 """Check the Arena v2 layout in plan view (no Studio). Reads notes/maps/arena_v2_layout.json, writes
-notes/maps/arena_v2_checks.json, arena_v2_plan.png and arena_v2_exposure.png, and prints a summary.
+notes/maps/arena_v2_checks.json / .txt and _arena_v2_cache.npy (the images come from arena_v2_plot.py), and prints a summary.
 
     python -I tools/arena_v2_layout.py && python -I tools/arena_v2_check.py
 
@@ -211,7 +211,7 @@ for p in P:
                 if q["role"] in ("lintel",): continue
                 g, _ = rect_gap((d["x0"], d["x1"], d["y0"], d["y1"], 0, 1), (q["x0"], q["x1"], q["y0"], q["y1"], 0, 1))
                 dz = q["z1"] - h
-                if g <= 3.5 and 0 < dz <= CLIMB_REACH + 1.0:
+                if g <= 4.5 and 0 < dz <= CLIMB_REACH + 1.0:  # [REVIEW2] 3.5 from the waist + ~1 stood past the edge
                     msg = f"{q_p['id']} top {q['z1']} is {dz:.1f} above {p['id']} ({g:.1f} away)"
                     (climbs.append(msg + " -> climbable from the deck") if dz <= CLIMB_REACH else
                      warn(msg + f": only {CLIMB_REACH + 1.0 - dz:.1f} under the climb reach + 1 margin"))
@@ -507,10 +507,22 @@ for p in P:
         if q["role"] != "sill": continue
         cx, cy = (q["x0"] + q["x1"]) / 2, (q["y0"] + q["y1"]) / 2
         for sgn in (1, -1):
-            e = np.array([cx + sgn * 2.85, cy, EYE] if p["along"] == "y" else [cx, cy + sgn * 2.85, EYE])
-            for team, pts in pocket_pts_team.items():
-                n_vis = int(los_many(e, np.array([(x, y, CHEST) for x, y in pts])).sum())
-                if n_vis: R["info"].setdefault("windows_seeing_pockets", []).append(f"{p['id']} sill ({cx},{cy}) side {sgn:+d}: {n_vis} points of the {team} pocket")
+            # [REVIEW2] who holds this side: a gate is held on the side away from where it looks; the centre by the side's own team
+            side_name = ("east" if sgn > 0 else "west") if p["along"] == "y" else ("north" if sgn > 0 else "south")
+            looks = {"east": "west", "west": "east", "north": "south", "south": "north"}[side_name]
+            holder = (("B" if side_name == "east" else "A") if p["side"] == "C" else (p["side"] if p.get("faces") == looks else None))
+            n_tot = {"A": 0, "B": 0}
+            span = np.arange((q["y0"] if p["along"] == "y" else q["x0"]) + 0.5, (q["y1"] if p["along"] == "y" else q["x1"]), 1.0)
+            for t in span:
+                e = np.array([cx + sgn * 2.85, t, EYE] if p["along"] == "y" else [t, cy + sgn * 2.85, EYE])
+                for team, pts in pocket_pts_team.items():
+                    n_tot[team] += int(los_many(e, np.array([(x, y, CHEST) for x, y in pts])).sum())
+            for team, n_vis in n_tot.items():
+                if not n_vis: continue
+                R["info"].setdefault("windows_seeing_pockets", []).append(
+                    f"{p['id']} sill ({cx},{cy}) {side_name} side (holder {holder}): {n_vis} sightings of the {team} pocket")
+                if holder and team != holder:
+                    err(f"WINDOW {p['id']} sill ({cx},{cy}): its holder {holder} ({side_name} side) sees the {team} spawn pocket ({n_vis} sightings)")
 camp = {}
 OKI, OKJ = np.where(ok)
 cellsQ = np.column_stack([xs[OKI], ys[OKJ], walkH[OKI, OKJ] + EYE])
