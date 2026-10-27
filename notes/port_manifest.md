@@ -544,3 +544,7 @@ himself; we never publish.
   voted in MapVote): map Arena, 5 rounds to Victory 5-0 -> MatchEnd; console clean (58 lines: the known sound "Asset type does not match"
   preload lines, KitGuard / Rematch / MenuPrewarm logs, no errors). StudioTeleportData cleared, saved, Publish As > gunsy funsy > tacticals
   > Matchmaking > Overwrite > Grant Permissions and Publish; window retitled "Matchmaking". Read back from the cloud window: same checks.
+- **Ranked** (122908502889013), published 01:12: match_place_ref copy -> split_build Ranked -> deploy_ui --ranked (67 + 16 [SET]) -> PLAYQUEUE
+  1-10+ module + -> SWITCHNOW (RoundManager=5) -> checks all ok (345 scripts; no Play test: the bot-match check is Matchmaking's, same build
+  path). Saved, Publish As > gunsy funsy > tacticals > Ranked > Overwrite > Grant; window retitled "Ranked"; read back from the cloud window:
+  same checks.
