@@ -186,7 +186,7 @@ in the repo root is from 2026-10-26). Never saved; the installer is the delivera
   doors are the brightest thing at each end (door cameras p50 85, p95 ~171); light bars render white (on). Spawn-side cover
   face at spawn A (35,22,10) = luminance ~24, spawn B (52,35,19) = ~39 (round 5: 17); the spawn floor is a lit pool (~120).
 - **Cost** (estimate: visible parts x box 12 / wedge 8 / cylinder 48 / MeshPart 1,500): hall 991 visible parts, ~19.8k tris,
-  28 lights (24 shadowed), 44 Textures, 77 SurfaceGuis; exterior 248 parts, ~5.4k tris, 4 lights. (Round 5: 1,396 parts, 46
+  28 lights (20 shadowed: 16 bar lights, 2 door lights, 2 door floods; the 4 wall bars and 4 wall-packs are unshadowed), 44 Textures, 77 SurfaceGuis; exterior 248 parts, ~5.4k tris, 4 lights. (Round 5: 1,396 parts, 46
   lights.) Draw calls not readable by script.
 - **Materials judged on the render:** the default Concrete / Metal read clean; the blockwork and the cladding lose their joints
   and ribs, and the roof reads as smooth sheets between the purlins. The fix is Blender-baked panels, not variants: added to
@@ -196,6 +196,25 @@ in the repo root is from 2026-10-26). Never saved; the installer is the delivera
   up-shot + 3 cutscene cameras with a door open / half), `captures/warehouse2/r6/` at Studio quality 21 (two matching frames
   each, 2.5 s settle after every camera jump: a north-yard frame taken right after the south one rendered black twice and
   "matched"); sheet `notes/warehouse2_sheet_r6.jpg`.
+
+### Grade round 6 (fresh roblox-map-grader, xhigh): FIX 8.0, and what changed (round 6b)
+Confirmed by the grader on its own runs: green only on C03/C04, no MaterialVariants, 4 beams x 2 bars, night (p5 0-3), the door
+contract, doors stop pushes, vote picks Warehouse 2, read-back 0, MapAudit 0 FAIL (indoor), sky sweep 0 holes, flood 0 outside
+(and with Door_S rolled up it leaks to n -69: the door is what stops it), metrics 25/25. Its 5-round match and the cutscene
+frames were not re-run (stopped early at my request, time on the Shadow PC).
+| Finding | Fix (round 6b) |
+|---|---|
+| Major: with the doors shut the two ends are the same picture (only a 75 x 12 px sign plate and the 01/02 digits differ) | Each curtain differs: BAY 01 charcoal slats (62,64,64) with a big cream "01" painted on the hall face, BAY 02 galvanised slats with a big black "02" (a SurfaceGui offset from the bottom edge, so it rides up when the door rolls); the wall stencils moved to e +-26, off the gable posts, now visible from mid-hall |
+| Major: the middle of the hall evenly lit (under / beside the middle bars 1.1-1.5x; pools only at the ends) | Middle rows (n +-15): spot 4 / 90 deg, point 0.25 (end rows keep 2.3 / 100, point 0.4). Straight-down floor luminance (`tools/wh2_pools.py`, h 11): under the middle bars 79 / 73, beside them (+-20, 0) 23 / 24 = 3.1-3.4x; centre line 10-14; under the end bars ~118 |
+| Minor: spawns lit unevenly (A 27 vs B 40) | South wall bars 3.2, north 2.2 (the same light renders A's face darker: light-voxel alignment differs at the two ends): both faces (67,48,28) |
+| Minor: north yard reads floodlit daytime (p50 146-153) | North door flood 1 (south 3), north wall-packs 0.9 (south 2), north lamp post 1.1 (south 2.2), the cream trailer a weathered off-white (182,178,168): north yard p50 75-106 vs south 72-89 |
+| Minor: 01 / 02 stencils across a gable post | moved to e +-26 (posts at +-21), 0.15 off the pier face |
+| Minor: doc numbers | lights 28 in the hall, 20 shadowed (16 bar lights, 2 door lights, 2 floods); brief's bar values corrected; camera numbers below re-measured |
+| Hall frames too dark after the pool change (p50 8-47) | Exposure -0.3 -> 0 (keeps the ratios). Final (quality 21): hall p5 0-1; p50 middle cameras 21-50 (wh05 21, wh09 23, wh17 25, wh16 31, wh07 32, wh08 35, wh06 42, wh10 46, wh12 50), spawn / corner cameras 60-93 (the spawn pools), up-shot 13; door cameras 87 / 84; yards south 72-89, north 75-106; pools under the middle bars 96 / 86 vs beside them 30 / 31 (3.1x), centre line 17-22, under the end bars 152 / 140 |
+| Blocking (grader): built from Studio Parts; the brief says "Parts-first" but not "build it in Studio" (Corrections 2026-10-11 / 2026-10-26) | **Edward / Lead decision**: write "build it in Studio" into the brief for this map, or import the modeler's FBX (needs Import 3D by computer use, a few minutes of the PC). Rounds 1-5 graders did not count it |
+Flood test upgraded (grader lesson): the floor rays now include the exterior's floors, and a control run rolls Door_S up in Play
+(must leak) and restores it: shut 7,564 cells / 0 outside; control 7,967 cells / 384 outside (n to -69). Re-run after 6b:
+MapAudit hall 0 FAIL 0 WARN (Edit + Play), exterior 0 FAIL 1 WARN, sky sweep 0 holes, read-back 0, metrics 25/25, green only C03/C04.
 
 ### Not done in round 6
 - **Meshes (step 8, optional):** not swapped. Import 3D needs a Studio window by computer use; not attempted (no OK for computer

@@ -37,7 +37,7 @@ local MAP_NAME, REG_ID = "Warehouse2", "Warehouse2" -- Workspace name read by Sh
 local EXT_NAME = "Warehouse2Exterior" -- the yards + backdrop: the cutscene set behind the shut doors
 -- the map's night (MapInfo.Lighting, applied by RoundManager.applyMapEnv when the map wins the vote); tuned on the render
 local NIGHT = { --@NIGHT
-	clock = 0, bright = 1, exposure = -0.3, ambient = "16, 17, 20", outdoor = "30, 32, 38", diffuse = 0.12, specular = 0.2,
+	clock = 0, bright = 1, exposure = 0, ambient = "16, 17, 20", outdoor = "30, 32, 38", diffuse = 0.12, specular = 0.2,
 	density = 0.32, offset = 0, haze = 0.4, atmoColor = "52, 56, 64", decay = "26, 28, 34",
 	gradeBright = 0, contrast = 0.16, saturation = -0.12, tint = "255, 250, 242", bloom = 0.6, bloomSize = 24, threshold = 1.3,
 }
@@ -201,7 +201,7 @@ local S = {
 	greyPlastic = { M.SmoothPlastic, nil, rgb(118, 118, 114) },
 	rust = { M.CorrodedMetal, nil, rgb(96, 62, 50) },
 	rubber = { M.SmoothPlastic, nil, rgb(30, 30, 30) },
-	trailer = { M.SmoothPlastic, nil, rgb(206, 204, 196) },
+	trailer = { M.SmoothPlastic, nil, rgb(182, 178, 168) }, -- weathered off-white (the floodlit cream read daylit, grade round 6)
 	trailer2 = { M.SmoothPlastic, nil, rgb(176, 178, 172) },
 	contRust = { M.CorrodedMetal, nil, rgb(98, 62, 50) }, -- a dark rust brown (the material itself is orange enough)
 	contWhite = { M.Metal, nil, rgb(188, 186, 178) }, -- was the green container
@@ -667,7 +667,9 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	-- behind the head; the slats are drawn on both faces
 	-- the bottom rests on the threshold plate (0.06), its ends 0.25 into the jambs' channels (no face shared with either)
 	local sh = newPart("Part", dm, "Shutter", Vector3.new(2 * DOOR_HALF + 0.5, SH_TOP - 0.06, 0.3), CFrame.new(W(0, g * (HN + 0.6), (SH_TOP + 0.06) / 2)))
-	sh.Material, sh.Color = M.Metal, rgb(150, 152, 148)
+	-- each end its own curtain (grade round 6: with the doors shut the two ends read as the same picture): BAY 01 (south)
+	-- charcoal slats with a big cream 01, BAY 02 (north) galvanised slats with a big black 02, painted on the hall face
+	sh.Material, sh.Color = M.Metal, k == "S" and rgb(62, 64, 64) or rgb(150, 152, 148)
 	sh.CanCollide, sh.CanQuery, sh.CanTouch, sh.CastShadow = true, true, true, true
 	sh:SetAttribute("NotCover", true)
 	sh:SetAttribute("ImpactSound", "Metal")
@@ -676,6 +678,22 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	nProxy += 1
 	slats(sh, "Front")
 	slats(sh, "Back")
+	do -- the bay number painted on the curtain's hall face, offset from the bottom edge so it rides up when the door rolls
+		local pg = Instance.new("SurfaceGui")
+		pg.Name = "BayPaint"
+		pg.Face = g < 0 and Enum.NormalId.Back or Enum.NormalId.Front -- the hall side (+Z for the south door, -Z for the north)
+		pg.SizingMode, pg.PixelsPerStud, pg.LightInfluence = Enum.SurfaceGuiSizingMode.PixelsPerStud, 16, 1
+		pg.Parent = sh
+		local l = Instance.new("TextLabel")
+		l.AnchorPoint, l.Position = Vector2.new(0.5, 1), UDim2.new(0.5, 0, 1, -3.2 * 16)
+		l.Size = UDim2.new(0, 9 * 16, 0, 6.2 * 16) -- TextScaled stops at 100 px: ~6 studs tall at 16 px/stud
+		l.BackgroundTransparency, l.TextScaled = 1, true
+		l.FontFace = Font.new("rbxasset://fonts/families/Oswald.json", Enum.FontWeight.Bold)
+		l.Text = k == "S" and "01" or "02"
+		l.TextColor3 = k == "S" and rgb(226, 222, 208) or rgb(30, 30, 28)
+		l.TextTransparency = 0.12
+		l.Parent = pg
+	end
 	dm.PrimaryPart = sh
 	-- the door light: a warm spot under the hood onto the shut curtain and the hatch: the lit door is the landmark at its end
 	local dl = box(D, "DoorLight_" .. k, -1.2, 1.2, g * (HN - 2.6), g * (HN - 1.8), DOOR_H + 0.35, DOOR_H + 0.6, S.lens)
@@ -689,9 +707,10 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	text(sign, g > 0 and "Front" or "Back", s[3], k == "S" and rgb(236, 232, 218) or rgb(28, 28, 26))
 	-- the bay number, big, stencilled on the blockwork either side of the door: readable from mid-hall (grade round 1)
 	for _, side in { -1, 1 } do
-		local c = carrier(D, "BayNumber_" .. k .. side, side * 22, g * (HN - 0.45), 6.8, 7, 0.02, 0)
+		-- e +-26: clear of the gable posts at e +-21 (grade round 6), 0.15 off the pier face (n HN - 0.3)
+		local c = carrier(D, "BayNumber_" .. k .. side, side * 26, g * (HN - 0.45), 6.8, 7, 0.02, 0)
 		c.Size = Vector3.new(7, 6, 0.02)
-		c.CFrame = CFrame.new(W(side * 22, g * (HN - 0.45), 6.8))
+		c.CFrame = CFrame.new(W(side * 26, g * (HN - 0.45), 6.8))
 		local gui = text(c, g > 0 and "Front" or "Back", k == "S" and "01" or "02", rgb(30, 30, 28), { fade = 0.12 })
 		gui.Name = "BayNumber"
 		gui.PixelsPerStud = 14 -- TextScaled stops at 100 px: at 14 px/stud the digits can reach ~6 studs
@@ -702,7 +721,7 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	do
 		local fl = box(D, "Flood_" .. k, -1, 1, g * (HN + WT), g * (HN + WT + 0.6), EAVES - 2.2, EAVES - 1.2, S.steel)
 		local fs = Instance.new("SpotLight")
-		fs.Face, fs.Angle, fs.Range, fs.Brightness, fs.Color, fs.Shadows = g > 0 and Enum.NormalId.Back or Enum.NormalId.Front, 70, 34, 3, rgb(226, 232, 240), true
+		fs.Face, fs.Angle, fs.Range, fs.Brightness, fs.Color, fs.Shadows = g > 0 and Enum.NormalId.Back or Enum.NormalId.Front, 70, 34, g > 0 and 1 or 3, rgb(226, 232, 240), true -- the north trailer is cream: half the flood (grade round 6: it read daylit)
 		fs.Parent = fl
 		nLights += 1
 	end
@@ -710,7 +729,8 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 		box(D, "WallPack_" .. k .. e, e - 0.7, e + 0.7, outer, g * (HN + WT + 0.7), DOOR_H + 1.6, DOOR_H + 2.6, S.steel)
 		local lens = box(D, "WallPackLens_" .. k .. e, e - 0.55, e + 0.55, g * (HN + WT + 0.15), g * (HN + WT + 0.6), DOOR_H + 1.5, DOOR_H + 1.6, S.barLens)
 		local sl = Instance.new("SpotLight")
-		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, 120, 26, 2, rgb(255, 226, 196), false
+		-- north 0.9 / south 2: the north yard's pale trailer and galvanised door read daylit at the south's level (grade round 6)
+		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, 120, 26, g > 0 and 0.9 or 2, rgb(255, 226, 196), false
 		sl.Parent = lens
 		nLights += 1
 	end
@@ -731,6 +751,7 @@ local BEAM_BOT, BEAM_TOP = 13.0, 14.3
 local BAR_LEN = 9
 local LIGHT = { color = rgb(255, 238, 214), range = 30, bright = 0.4 } --@LIGHT (tuned on the render at quality 21, round 6)
 local FILL = { range = 20, bright = 2.3, angle = 100 } --@FILL
+local MID = { bright = 0.25, spot = 4, angle = 90 } --@MID (rows n +-15; grade round 6: under / between was only 1.1-1.5x)
 for i, n in BEAM_ROWS do
 	local bm = Instance.new("Model")
 	bm.Name = "LightBeam_" .. i
@@ -761,17 +782,21 @@ for i, n in BEAM_ROWS do
 		local lens = box(lb, "Lens", e - BAR_LEN / 2 + 0.15, e + BAR_LEN / 2 - 0.15, n - 0.3, n + 0.3, BEAM_BOT - 0.52, BEAM_BOT - 0.42, S.barLens)
 		lens.CastShadow = false
 		local pl = Instance.new("PointLight")
-		pl.Brightness, pl.Range, pl.Color, pl.Shadows = LIGHT.bright, LIGHT.range, LIGHT.color, true
+		local midRow = math.abs(n) < 30 -- the middle rows get no help from the end walls / doors: harder, narrower pools
+		pl.Brightness, pl.Range, pl.Color, pl.Shadows = midRow and MID.bright or LIGHT.bright, LIGHT.range, LIGHT.color, true
 		pl.Parent = lens
 		local sl = Instance.new("SpotLight") -- the pool on the floor under the bar
-		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, FILL.angle, FILL.range, FILL.bright, LIGHT.color, true
+		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, midRow and MID.angle or FILL.angle, FILL.range,
+			midRow and MID.spot or FILL.bright, LIGHT.color, true
 		sl.Parent = lens
 		nLights += 2
 	end
 end
 -- corner wall bars on the end walls (above the blockwork, tilted down into the hall), point-symmetric: they light the spawn-side
 -- faces of the cover at both spawns and leave the middle of each end dark
-local WALLBAR = { bright = 2.2, range = 28, angle = 120, off = 1.5 } --@WALLBAR (tuned on the spawn cameras, round 6)
+-- south 3.2 / north 2.2: the same light rendered spawn A's cover face darker than B's (light-voxel alignment differs at the two
+-- ends); with these the two faces measure the same (67,48,28), grade round 6
+local WALLBAR = { bright = 2.2, brightSouth = 3.2, range = 28, angle = 120, off = 1.5 } --@WALLBAR (tuned on the spawn cameras, round 6)
 for _, x in { { -30, -1 }, { 30, -1 }, { 30, 1 }, { -30, 1 } } do
 	local e, g = x[1], x[2]
 	nLamp += 1
@@ -790,7 +815,7 @@ for _, x in { { -30, -1 }, { 30, -1 }, { 30, 1 }, { -30, 1 } } do
 	src.Transparency, src.CanCollide, src.CanQuery, src.CanTouch, src.CastShadow = 1, false, false, false, false
 	local sl = Instance.new("SpotLight")
 	sl.Face = g < 0 and Enum.NormalId.Back or Enum.NormalId.Front -- into the hall (+n from the south wall, -n from the north)
-	sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = WALLBAR.angle, WALLBAR.range, WALLBAR.bright, LIGHT.color, false
+	sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = WALLBAR.angle, WALLBAR.range, g < 0 and WALLBAR.brightSouth or WALLBAR.bright, LIGHT.color, false
 	sl.Parent = src
 	nLights += 1
 end
@@ -1196,7 +1221,7 @@ do
 	local fl = box(yv, "FloodLens", pe + 1.7, pe + 2.7, pn - 0.5, pn + 0.5, 13.82, 13.9, S.barLens)
 	fl.CastShadow = false
 	local sl = Instance.new("SpotLight")
-	sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, 120, 30, 2.2, rgb(222, 228, 238), true
+	sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, 120, 30, 1.1, rgb(222, 228, 238), true -- north: pale trailer + galvanised door read daylit at 2.2 (south set to 2.2 below)
 	sl.Parent = fl
 	nLights += 1
 	local pole = { 8, N1 + 7 } -- the middle pole: a street lamp head under the cross-arm
@@ -1228,6 +1253,7 @@ for _, d in south:GetDescendants() do
 		elseif d.Name == "Roof" or d.Name == "SidePost" or d.Name == "SkirtFront" then d.Color = rgb(66, 68, 70)
 		elseif d.Name == "Stripe" then d.Color = rgb(226, 220, 200) end
 	end
+	if d:IsA("SpotLight") and d.Parent.Name == "FloodLens" then d.Brightness = 2.2 end -- the south yard is dark (charcoal trailer)
 	if d:IsA("TextLabel") and d.Text == "TACTICAL FREIGHT CO." then d.Text = "RIDGEWAY HAULAGE" d.TextColor3 = rgb(232, 226, 206) end
 	if d:IsA("TextLabel") and d.Text == "TCLU 204417 5" then d.Text = "MSKU 118204 7" end -- each yard its own serials
 	if d:IsA("TextLabel") and d.Text == "OLVU 330918 2" then d.Text = "GSTU 702213 9" end

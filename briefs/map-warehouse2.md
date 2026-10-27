@@ -16,8 +16,8 @@ but it should be night time outside and the lights should really give the effect
   bloom on the light bars. The place's own sky renders black with a moon and stars at midnight: no new sky image.
 - **Lights:** the 19 bell lamps are gone. Like the old Warehouse: 4 dark steel I-beams span the hall at n +-15 / +-45, hung
   from the purlins on rods, each with two long light bars (e +-20, ~12.5 up, warm white 255,238,214). Each bar: a PointLight
-  (range 40, Shadows on: under ShadowMap the beams and bars throw the coarse light fans on the roof and floor) + a shadowed
-  SpotLight pool down. Two wall bars per end (above the blockwork, corners) light the spawn side of the cover at each spawn.
+  (0.4 / range 30; middle rows 0.25; Shadows on: under ShadowMap the beams and bars throw coarse shadows) + a shadowed
+  SpotLight pool down (end rows 2.3 / 100 deg, middle rows 4 / 90 deg so the middle has hard pools too). Two wall bars per end (above the blockwork, corners) light the spawn side of the cover at each spawn.
   Measure: darkest 5 % of a frame near 0, middle 22-49 (the old map's frames); cover faces at both spawns readable.
 - **Doors shut in play:** each 20 x 14 opening holds a closed roll-up curtain: `Warehouse2.Interactive.Door_S / Door_N`
   (tag `Warehouse2Door`, attributes Open / Moving / OpenHeight / RollTime / Bay / End), a `Shutter` part that collides, stops
@@ -34,7 +34,8 @@ but it should be night time outside and the lights should really give the effect
   (charcoal), chairs (grey), drums (black + rust), bollards (black with a cream band), trailers (north cream with a charcoal
   stripe, south charcoal with a cream stripe "RIDGEWAY HAULAGE"), the old green container (weathered white), fence screens
   (charcoal).
-- **The two ends still differ with the doors shut:** BAY 01 black sign vs BAY 02 cream sign, 01 / 02 stencils, and different
+- **The two ends still differ with the doors shut:** the curtains themselves differ (BAY 01 charcoal slats with a big cream
+  01 painted on, BAY 02 galvanised slats with a big black 02; grade round 6), BAY 01 black sign vs BAY 02 cream sign, 01 / 02 stencils, and different
   dressing by each door (south: pallet pile with cartons + pallet truck; north: pallets + tyre stack) - checked on the render.
 - **Materials:** no MaterialVariants (the five WH2_* tiling variants are removed; Map Building Corrections 2026-10-12, Design
   Rules: texturing is done in Blender). Roblox default materials (Concrete, Metal, DiamondPlate, CorrodedMetal, Wood). If the

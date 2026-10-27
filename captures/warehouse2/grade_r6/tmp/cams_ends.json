@@ -1,0 +1,8 @@
+[
+ {"name": "x_S_door_from_mid_n-8", "eye": [4, 4.6, -8], "at": [0, 6.5, -57]},
+ {"name": "x_N_door_from_mid_n8", "eye": [-4, 4.6, 8], "at": [0, 6.5, 57]},
+ {"name": "x_S_door_shut_n-38", "eye": [3, 4.6, -38], "at": [0, 6.5, -70]},
+ {"name": "x_N_door_shut_n38", "eye": [-3, 4.6, 38], "at": [0, 6.5, 70]},
+ {"name": "x_S_end_wide_from_n-30", "eye": [0, 5.5, -28], "at": [0, 5, -57]},
+ {"name": "x_N_end_wide_from_n30", "eye": [0, 5.5, 28], "at": [0, 5, 57]}
+]

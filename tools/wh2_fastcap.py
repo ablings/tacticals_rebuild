@@ -92,6 +92,13 @@ def world(e, h, n):
     return (ORIGIN_X - e, FLOOR_Y + h, ORIGIN_Z + n)
 
 
+def dark(path):
+    from PIL import Image
+    im = Image.open(path).convert("L")
+    w, h = im.size
+    return max(im.crop((0, int(h * 0.06), w, h)).getdata()) < 8
+
+
 def match(a, b):
     from PIL import Image, ImageChops
     x, y = Image.open(a).convert("L"), Image.open(b).convert("L")
@@ -139,6 +146,9 @@ game.Selection:Set({{}}) return 'ok'""")
             if m.call("screen_capture", {"capture_id": "wh2fast"}, img=tmp) != "IMAGE":
                 print("  no image")
                 break
+            if dark(tmp) and k < 5:  # a black frame right after a jump: the light grid isn't in yet; wait and take it again
+                time.sleep(3)
+                continue
             cur = open(tmp, "rb").read()
             hs.append(match(prev, tmp) if prev else False)
             prev = tmp + ".prev"

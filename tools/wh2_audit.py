@@ -78,7 +78,8 @@ for _, d in map.Visuals:GetDescendants() do if d:IsA("BasePart") then d.CanQuery
 -- 4. enclosure flood from spawn A
 local floorP = RaycastParams.new()
 floorP.FilterType = Enum.RaycastFilterType.Include
-floorP.FilterDescendantsInstances = { map.CollisionProxies, map.CamSkin, map.Props, map.Shootables }
+-- the yards' floors too (grade round 6): with hall-only floor rays a flood could never step outside, door or no door
+floorP.FilterDescendantsInstances = { map.CollisionProxies, map.CamSkin, map.Props, map.Shootables, workspace:FindFirstChild("Warehouse2Exterior") }
 local solids = {}
 local ext = workspace:FindFirstChild("Warehouse2Exterior")
 for _, root in { map.CollisionProxies, map.CamSkin, map.Props, map.Shootables, map.Interactive, ext } do
@@ -99,26 +100,39 @@ local function standable(e, n)
 	end
 	return fy
 end
-local seen, queue, reached = {}, { { -31, -50 } }, 0
-local box = { e0 = 1e9, e1 = -1e9, n0 = 1e9, n1 = -1e9 }
-local outside = {}
-seen["-31,-50"] = true
-local head = 1
-while head <= #queue and reached < 40000 do
-	local c = queue[head]; head += 1
-	if standable(c[1], c[2]) then
-		reached += 1
-		box.e0 = math.min(box.e0, c[1]); box.e1 = math.max(box.e1, c[1]); box.n0 = math.min(box.n0, c[2]); box.n1 = math.max(box.n1, c[2])
-		-- doors shut (round 6): every reached cell is in the hall (the 1-stud grid's last row inside the doors is n +-57)
-		local inHall = math.abs(c[1]) <= 40.5 and math.abs(c[2]) <= 57
-		if not inHall and #outside < 20 then table.insert(outside, c) end
-		for _, d in { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } } do
-			local k = (c[1] + d[1]) .. "," .. (c[2] + d[2])
-			if not seen[k] then seen[k] = true; table.insert(queue, { c[1] + d[1], c[2] + d[2] }) end
+local function flood()
+	local seen, queue, reached = {}, { { -31, -50 } }, 0
+	local box = { e0 = 1e9, e1 = -1e9, n0 = 1e9, n1 = -1e9 }
+	local outside, nOutside = {}, 0
+	seen["-31,-50"] = true
+	local head = 1
+	while head <= #queue and reached < 40000 do
+		local c = queue[head]; head += 1
+		if standable(c[1], c[2]) then
+			reached += 1
+			box.e0 = math.min(box.e0, c[1]); box.e1 = math.max(box.e1, c[1]); box.n0 = math.min(box.n0, c[2]); box.n1 = math.max(box.n1, c[2])
+			-- doors shut (round 6): every reached cell is in the hall (the 1-stud grid's last row inside the doors is n +-57)
+			local inHall = math.abs(c[1]) <= 40.5 and math.abs(c[2]) <= 57
+			if not inHall then nOutside += 1 if #outside < 20 then table.insert(outside, c) end end
+			for _, d in { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } } do
+				local k = (c[1] + d[1]) .. "," .. (c[2] + d[2])
+				if not seen[k] then seen[k] = true; table.insert(queue, { c[1] + d[1], c[2] + d[2] }) end
+			end
 		end
 	end
+	return { reached = reached, bbox = box, outside = outside, nOutside = nOutside, capped = reached >= 40000 }
 end
-out.flood = { reached = reached, bbox = box, outside = outside, capped = reached >= 40000 }
+out.flood = flood()
+-- control (Play only, restored): roll Door_S up; the same flood must now leak into the south yard, which proves the shut door
+-- (not a blind test) is what stops it
+local door = map.Interactive.Door_S
+local sh = door.Shutter
+local cs, cf = sh:GetAttribute("ClosedSize"), sh:GetAttribute("ClosedCFrame")
+local h = cs.Y - door:GetAttribute("OpenHeight")
+sh.Size, sh.CFrame = Vector3.new(cs.X, h, cs.Z), cf + Vector3.new(0, (cs.Y - h) / 2, 0)
+local ctl = flood()
+sh.Size, sh.CFrame = cs, cf
+out.control = { reached = ctl.reached, nOutside = ctl.nOutside, bbox = ctl.bbox }
 return HS:JSONEncode(out)
 '''
 
@@ -152,7 +166,9 @@ def main():
     f = r2["flood"]
     print(f"ENCLOSURE FLOOD from spawn A: {f['reached']} standable cells reached, extent e {f['bbox']['e0']}..{f['bbox']['e1']} n {f['bbox']['n0']}..{f['bbox']['n1']}; "
           f"outside the hall (doors shut): {len(f['outside'])} {f['outside']}{' (CAPPED)' if f['capped'] else ''}")
-    bad += s["hole"] + len(f["outside"]) + (1 if f["capped"] else 0)
+    c = r2["control"]
+    print(f"FLOOD CONTROL (Door_S rolled up in Play, then restored): {c['reached']} cells, {c['nOutside']} outside the hall, extent n {c['bbox']['n0']}..{c['bbox']['n1']} (must be > 0: the test can see past the door)")
+    bad += s["hole"] + len(f["outside"]) + (1 if f["capped"] else 0) + (1 if c["nOutside"] == 0 else 0)
     json.dump({"built": r1, **r2}, open(os.path.join(ROOT, "notes", "warehouse2_audit.json"), "w"), indent=1)
     sys.exit(1 if bad else 0)
 
