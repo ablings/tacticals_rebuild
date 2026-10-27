@@ -502,3 +502,7 @@ himself; we never publish.
   ("Map: Arena", ArenaLoader "Arena loaded for D1", played to 2-0) and a 3v3 bot duel (all 6 inside). StudioTeleportData cleared.
 - Port checks: verify DuelMaps Warehouse + Arena, Workspace.Arena (no PracticeRange anywhere outside the ServerStorage archives).
   Old MatchHistory entries keep the map name "Practice Range" (saved player data, history).
+- Left as they are on purpose (Edward's call): the pad message "ARENAS FULL - WAITING" (LobbyDuelManager / lobby_duels_install,
+  a string the pad UI and boards show) and the Studio test-server button "BACK TO ARENA" (RangeKitController; goes to the chosen
+  map's spawns). Both use "arena" as the generic word for a duel slot / the match, which can now read like the map's name.
+- Graded: roblox-systems-grader round 1 FIX 9.1 (builder fallback could hit ArenaLoader's clone; fixed e9a1024), round 2 PASS 9.2.
