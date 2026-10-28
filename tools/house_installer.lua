@@ -273,6 +273,7 @@ local function placeKit(name, parent, x, y, z, face, fit, label)
 	if not src then table.insert(skipped, (label or name) .. ": no " .. name) return nil end
 	local m = asModel(src)
 	m.Name = label or name
+	m:SetAttribute("KitModel", name)
 	m.Parent = parent
 	local cf, size = m:GetBoundingBox()
 	local bottom = cf * CFrame.new(0, -size.Y / 2, 0)
@@ -457,6 +458,12 @@ local function plainOf(part)
 end
 for _, root in { map, ext } do
 	for _, d in root:GetDescendants() do if d:IsA("BasePart") and (d:FindFirstAncestor("Visuals") or d:FindFirstAncestor("Shootables") or d:FindFirstAncestor("Doors") or root == ext) and d.Transparency < 1 then plainOf(d) end end
+end
+-- the tall cabinets read as fridges (white with a long handle): a warm oak tint on their atlas (Edward 2026-10-28)
+for _, m in VFU:GetChildren() do
+	for _, d in m:GetDescendants() do
+		if d:IsA("SurfaceAppearance") and m:GetAttribute("KitModel") == "H_TallCabinet" then d.Color = rgb(214, 172, 128) end
+	end
 end
 -- the mirrors: the baked atlas of a mirror is black (a diffuse bake of a metal): a pale, slightly reflective pane instead
 for _, m in VDR:GetChildren() do

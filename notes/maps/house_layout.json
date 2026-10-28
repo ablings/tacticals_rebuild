@@ -1353,8 +1353,8 @@
    "room": "LR",
    "model": "H_ShelfWall",
    "cover": "tall",
-   "x0": -31,
-   "x1": -29,
+   "x0": -29,
+   "x1": -27,
    "y0": -25,
    "y1": -13,
    "z0": 0.0,
@@ -1633,8 +1633,8 @@
    "room": "KT",
    "model": "H_OvenWall",
    "cover": "tall",
-   "x0": 29,
-   "x1": 31,
+   "x0": 27,
+   "x1": 29,
    "y0": 13,
    "y1": 25,
    "z0": 0.0,
@@ -2912,15 +2912,15 @@
   },
   {
    "id": "MB_Art",
-   "model": "H_Frame_Abstract",
+   "model": "H_Frame_Landscape",
    "room": "MB",
    "x": -24.6,
    "y": -11,
-   "z": 19.2,
-   "face": "E",
+   "z": 17.9,
+   "face": "W",
    "size": [
-    4.0,
-    4.0,
+    5.4,
+    3.6,
     0.15
    ],
    "hang": true,
@@ -2928,8 +2928,8 @@
    "box": [
     -24.675,
     -24.525,
-    -13.0,
-    -9.0
+    -13.7,
+    -8.3
    ]
   },
   {
@@ -5810,8 +5810,8 @@
   {
    "id": "F_LR_ShelfWall",
    "shape": "box",
-   "x0": -31,
-   "x1": -29,
+   "x0": -29,
+   "x1": -27,
    "y0": -25,
    "y1": -13,
    "z0": 0.0,
@@ -6398,8 +6398,8 @@
   {
    "id": "F_KT_TallUnit",
    "shape": "box",
-   "x0": 29,
-   "x1": 31,
+   "x0": 27,
+   "x1": 29,
    "y0": 13,
    "y1": 25,
    "z0": 0.0,
@@ -7360,52 +7360,52 @@
  ],
  "spawns": {
   "A": {
-   "x": -35,
+   "x": -34.5,
    "y": -19,
    "z": 0.0,
    "look": [
-    1,
-    0
+    0,
+    1
    ],
    "room": "LR",
-   "note": "living room, west end behind the shelf wall",
+   "note": "living room, west end behind the shelf wall, facing up the room (north; Edward 2026-10-28: face into the room)",
    "slots": [
     [
-     -35.0,
+     -34.5,
      -19.0
     ],
     [
-     -35.0,
-     -15.0
+     -38.5,
+     -19.0
     ],
     [
-     -35.0,
-     -23.0
+     -30.5,
+     -19.0
     ]
    ]
   },
   "B": {
-   "x": 35,
+   "x": 34.5,
    "y": 19,
    "z": 0.0,
    "look": [
-    -1,
-    0
+    0,
+    -1
    ],
    "room": "KT",
-   "note": "kitchen, east end behind the oven wall",
+   "note": "kitchen, east end behind the oven wall, facing down the room (south; Edward 2026-10-28)",
    "slots": [
     [
-     35.0,
+     34.5,
      19.0
     ],
     [
-     35.0,
-     15.0
+     38.5,
+     19.0
     ],
     [
-     35.0,
-     23.0
+     30.5,
+     19.0
     ]
    ]
   }

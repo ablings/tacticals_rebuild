@@ -28,7 +28,8 @@ def room_lights():
         h = ceil - st["floor"]
         for qi, q in enumerate(r["rects"]):
             w, d = q["x1"] - q["x0"], q["y1"] - q["y0"]
-            nx, ny = max(1, round(w / 20)), max(1, round(d / 20))   # ~1 per 400 sq studs (light budget ~40: style card)
+            nx, ny = max(1, round(w / 20)), max(1, round(d / 20))
+            if r["id"] in ("MB", "BR2", "BR3"): nx, ny = 2, 1   # bedrooms: two fixtures (spot + fill each), light budget   # ~1 per 400 sq studs (light budget ~40: style card)
             if w < 6 or d < 6:
                 continue
             for i in range(nx):
@@ -36,7 +37,11 @@ def room_lights():
                     x = q["x0"] + w * (i + 0.5) / nx
                     y = q["y0"] + d * (j + 0.5) / ny
                     out.append(dict(id=f"L_{r['id']}_{qi}_{i}{j}", kind="down", x=round(x, 2), y=round(y, 2), z=round(ceil - 0.3, 2),
-                                    angle=120, range=round(h + 12, 1), bright=2.4, fill=0, color=WARM, shadows=False))
+                                    angle=(150 if r["id"] in ("MB", "BR2", "BR3") else 120), range=round(h + 12, 1), bright=(5.0 if r["id"] in ("MB", "BR2", "BR3") else 2.4),
+                                    fill=(0.9 if r["id"] in ("MB", "BR2", "BR3") else 0),
+                                    color=WARM, shadows=False))  # bedrooms brighter (Edward 2026-10-28)
+    # the foyer plant read as a dark silhouette: a warm uplight in its planter (Edward 2026-10-28)
+    out.append(dict(id="L_FY_PlantUp", kind="point", x=4.5, y=-14.5, z=3.8, range=11, bright=1.2, color=LAMP, shadows=False))
     for d in L["dressing"]:
         lift = {"H_FloorLamp": 5.3, "H_PendantLamp": -3.4}.get(d["model"])   # table lamps: art only (light budget)
         if lift is None:
