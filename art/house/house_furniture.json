@@ -84,11 +84,23 @@
    "rough": "tex/H_ShelfWall_rough.png",
    "metal": "tex/H_ShelfWall_metal.png"
   },
+  "ShelfBooks": {
+   "color": "tex/H_ShelfBooks_color.png",
+   "normal": "tex/H_ShelfBooks_normal.png",
+   "rough": "tex/H_ShelfBooks_rough.png",
+   "metal": "tex/H_ShelfBooks_metal.png"
+  },
   "Storage3": {
    "color": "tex/H_Storage3_color.png",
    "normal": "tex/H_Storage3_normal.png",
    "rough": "tex/H_Storage3_rough.png",
    "metal": "tex/H_Storage3_metal.png"
+  },
+  "Storage4": {
+   "color": "tex/H_Storage4_color.png",
+   "normal": "tex/H_Storage4_normal.png",
+   "rough": "tex/H_Storage4_rough.png",
+   "metal": "tex/H_Storage4_metal.png"
   },
   "Storage2": {
    "color": "tex/H_Storage2_color.png",
@@ -131,48 +143,48 @@
      "size": [
       12.0,
       3.4,
-      1.05
+      1.65
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      3.075
+      2.775
      ]
     },
     {
      "size": [
       0.95,
       2.6,
-      2.55
+      1.95
      ],
      "centre_rel_pivot": [
       5.525,
       1.3,
-      1.275
+      0.975
      ]
     },
     {
      "size": [
       0.95,
       2.6,
-      6.15
+      5.55
      ],
      "centre_rel_pivot": [
       -5.525,
       1.3,
-      -0.525
+      -0.825
      ]
     },
     {
      "size": [
       10.1,
       1.8,
-      2.55
+      1.95
      ],
      "centre_rel_pivot": [
       -0.0,
       0.9,
-      1.275
+      0.975
      ]
     },
     {
@@ -249,48 +261,48 @@
      "size": [
       4.2,
       3.4,
-      1.0
+      1.65
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      1.5
+      1.175
      ]
     },
     {
      "size": [
       0.75,
       2.5,
-      3.0
+      2.35
      ],
      "centre_rel_pivot": [
       1.725,
       1.25,
-      -0.5
+      -0.825
      ]
     },
     {
      "size": [
       0.75,
       2.5,
-      3.0
+      2.35
      ],
      "centre_rel_pivot": [
       -1.725,
       1.25,
-      -0.5
+      -0.825
      ]
     },
     {
      "size": [
       2.7,
       1.8,
-      3.0
+      2.35
      ],
      "centre_rel_pivot": [
       -0.0,
       0.9,
-      -0.5
+      -0.825
      ]
     }
    ],
@@ -1796,7 +1808,8 @@
    "role": "open bookshelf wall dressed on both faces (team A spawn wall)",
    "cover": "TALL 8.0",
    "objects": [
-    "H_ShelfWall"
+    "H_ShelfWall__H_ShelfWall",
+    "H_ShelfWall__H_ShelfWall_Books"
    ],
    "fbx": "fbx/H_ShelfWall.fbx",
    "size_studio": [
@@ -1835,10 +1848,10 @@
    ],
    "parts": [
     {
-     "object": "H_ShelfWall",
+     "object": "H_ShelfWall__H_ShelfWall",
      "mesh": "H_ShelfWall",
      "atlas": "ShelfWall",
-     "tris": 3528,
+     "tris": 120,
      "centre_studio_rel_pivot": [
       -0.0,
       4.0,
@@ -1850,10 +1863,31 @@
       2.0
      ],
      "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_ShelfWall__H_ShelfWall_Books",
+     "mesh": "H_ShelfWall_Books",
+     "atlas": "ShelfBooks",
+     "tris": 3408,
+     "centre_studio_rel_pivot": [
+      0.026,
+      3.931,
+      0.0
+     ],
+     "size_studio": [
+      11.458,
+      7.022,
+      1.939
+     ],
+     "rot_z_deg": 0.0
     }
    ],
    "tris": 3528,
    "textures": [
+    "tex/H_ShelfBooks_color.png",
+    "tex/H_ShelfBooks_metal.png",
+    "tex/H_ShelfBooks_normal.png",
+    "tex/H_ShelfBooks_rough.png",
     "tex/H_ShelfWall_color.png",
     "tex/H_ShelfWall_metal.png",
     "tex/H_ShelfWall_normal.png",
@@ -2047,7 +2081,7 @@
     {
      "object": "H_HeadboardWall",
      "mesh": "H_HeadboardWall",
-     "atlas": "Storage3",
+     "atlas": "Storage4",
      "tris": 1320,
      "centre_studio_rel_pivot": [
       -0.0,
@@ -2064,10 +2098,10 @@
    ],
    "tris": 1320,
    "textures": [
-    "tex/H_Storage3_color.png",
-    "tex/H_Storage3_metal.png",
-    "tex/H_Storage3_normal.png",
-    "tex/H_Storage3_rough.png"
+    "tex/H_Storage4_color.png",
+    "tex/H_Storage4_metal.png",
+    "tex/H_Storage4_normal.png",
+    "tex/H_Storage4_rough.png"
    ],
    "art_outside_box": 0.0
   },
@@ -2104,24 +2138,24 @@
      "size": [
       10.0,
       3.4,
-      0.65
+      1.25
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      1.425
+      1.125
      ]
     },
     {
      "size": [
       10.0,
       1.95,
-      2.85
+      2.25
      ],
      "centre_rel_pivot": [
       -0.0,
       0.975,
-      -0.325
+      -0.625
      ]
     }
    ],
@@ -2452,7 +2486,7 @@
     {
      "object": "H_DisplayColumn",
      "mesh": "H_DisplayColumn",
-     "atlas": "Storage3",
+     "atlas": "Storage4",
      "tris": 284,
      "centre_studio_rel_pivot": [
       -0.0,
@@ -2469,10 +2503,10 @@
    ],
    "tris": 284,
    "textures": [
-    "tex/H_Storage3_color.png",
-    "tex/H_Storage3_metal.png",
-    "tex/H_Storage3_normal.png",
-    "tex/H_Storage3_rough.png"
+    "tex/H_Storage4_color.png",
+    "tex/H_Storage4_metal.png",
+    "tex/H_Storage4_normal.png",
+    "tex/H_Storage4_rough.png"
    ],
    "art_outside_box": 0.0
   },

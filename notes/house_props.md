@@ -1,4 +1,4 @@
-# House: models (modeler, 2026-10-28, overnight, round 2)
+# House: models (modeler, 2026-10-28, overnight, final: round 3 + fixes)
 
 Everything modelled for Tacticals' new map **House**: a big two-storey MODERN suburban house whose layout and feel are
 inspired by a classic suburban test-site shooter map. Own models, own textures, no copied asset, logo or text. Built from
@@ -9,8 +9,8 @@ Files and numbers in full: `art/house/DONE.md`.
 | File | What | Triangles |
 |---|---|---|
 | `art/house/fbx/H_Furniture_kit.fbx` (+ `fbx/<assembly>.fbx`, pivot at the origin) | 65 furniture / dressing assemblies, 79 meshes, 13 baked atlases | 28,260 unique |
-| `art/house/fbx/H_House.fbx` | the house IN PLACE: shell, roof, stairs, railings, 8 doors, 8 door frames, 28 windows (frame + glass + broken glass), skylights | 24,112 |
-| `art/house/fbx/H_Exterior.fbx` | street, yards, the house across, 6 neighbour houses, fences, shed, 4 cars, 15 trees, power poles + wires, lamps, mailbox | 20,486 |
+| `art/house/fbx/H_House.fbx` | the house IN PLACE: shell, roof, stairs, railings, 8 doors, 8 door frames, 28 windows (frame + glass + broken glass), skylights | 24,096 |
+| `art/house/fbx/H_Exterior.fbx` | street, yards, the house across, 6 neighbour houses, fences, shed, 4 cars, 15 trees, power poles + wires, lamps, mailbox | 20,488 |
 | `art/house/tex/sky/sky_{side,up,dn}.png` | the sky (Roblox Sky faces) | |
 Each FBX carries `K_ScaleCube` (10 studs) and `K_Marker` (long arm +X, upright +Z, short arm +Y): measure them after Import 3D.
 
@@ -35,22 +35,22 @@ Each FBX carries `K_ScaleCube` (10 studs) and `K_Marker` (long arm +X, upright +
 
 | Cover piece | Size W x H x D (studs, Studio X x Y x Z) | Collision box(es) | Notes |
 |---|---|---|---|
-| H_Sofa_Sectional | 12 x 3.4 x 7.2 | 12x3.4x3.6 (the back + main seat) + 3.8x1.8x3.6 chaise | solid plinth, no gap under it; pivot = centre of the 12 x 7.2 footprint |
-| H_Armchair | 4.2 x 3.4 x 4 | 4.2x3.4x4 | leather |
+| H_Sofa_Sectional | 12 x 3.4 x 7.2 | **banded:** back + cushions 3.4, arms 2.6, seats 1.8 (5 boxes, house_furniture.json) | solid plinth, no gap under it; pivot = centre of the 12 x 7.2 footprint |
+| H_Armchair | 4.2 x 3.4 x 4 | **banded:** back + cushion 3.4, arms 2.5, seat 1.8 | leather |
 | H_KitchenIsland | 10 x 3.4 x 4.68 | same | quartz top with waterfall ends, seating overhang at +Y |
-| H_DiningSet (table + 6 chairs) | 8 x 3.4 x 6.7 | table 8x2.6x4 + two chair-row boxes 6.1x3.4x1.95 | chair backs 3.4; table top 2.6 (H_DiningTable alone: low obstacle 2.6) |
+| H_DiningSet (table + 6 chairs) | 8 x 3.4 x 6.7 | **banded:** table 2.6, chair backs 3.4, chair seats 1.75 | chair backs 3.4; table top 2.6 (H_DiningTable alone: low obstacle 2.6) |
 | H_Bed_Double / H_Bed_Single | 7.7 x 3.4 x 10 / 4.7 x 3.4 x 8.6 | headboard box 3.4 + body box 2.4 | head at +Y against a wall |
 | H_Dresser | 6 x 3.4 x 2.3 | same | |
 | H_Bathtub | 7 x 3.4 x 3.6 (tap 4.1) | 7x3.4x3.6 | soaking tub on a tiled plinth, rim at 3.4 |
 | H_TVConsole (+ _WithTV) | 8 x 3.4 x 2.02 | same | |
 | H_KitchenBase / Sink / Hob | 4 x 3.4 x 2.46-2.58 | same | 4-wide modules: tile them in runs; hob glass flush in the top |
-| H_KitchenBench | 10 x 3.4 x 3.5 | same | banquette, seat faces -Y |
-| H_HallBench_3 / _8 | 3.5 / 8 x 3.4 x 2 | same | solid back board behind the slats |
+| H_KitchenBench | 10 x 3.4 x 3.5 | **banded:** back + cushions 3.4, seat 1.95 | banquette, seat faces -Y |
+| H_HallBench_3 / _8 | 3.5 / 8 x 3.4 x 2 | **banded:** back 3.4, seat 1.65 | solid back board behind the slats |
 | H_Planter | 3 x 3.4 x 3 | same | concrete box; the tree above is art |
 | H_Bookcase | 6 x 8 x 1.6 | same | solid back panel |
 | H_Fridge | 3.6 x 8 x 2.86 | same | kid's drawing under a magnet |
 | H_Wardrobe / H_TallCabinet / H_Pantry | 6x8x2.5 / 3x8x2.12 / 4x8x2.46 | same | |
-| H_ShelfWall | 12 x 8 x 2 | same | both faces dressed, solid spine (team A spawn wall) |
+| H_ShelfWall | 12 x 8 x 2 | same | 2 meshes (shelves + H_ShelfWall_Books); both faces dressed, solid spine (team A spawn wall) |
 | H_OvenWall | 12 x 8 x 1.99 | same | ovens on -Y, cupboards on +Y (team B spawn wall) |
 | H_SlatScreen | 6 x 8 x 2.04 | same | solid oak core between the slats |
 | H_HeadboardWall | 14 x 8 x 1.5 | same | upholstered channels on -Y |
@@ -120,6 +120,19 @@ teddy, bar stool, nightstand, coffee table, side table, desk, desk chair, kitche
   - the shed's front slot is closed;
   - the fence cap rails have bottoms and no shared plane with the posts;
   - the oak strip along the back stair is now tile.
+
+## Final fixes after round 3 (grade FIX 8.4; the last grader round)
+- **Every atlas is back at 1024** (Roblox caps uploaded images at 1024, so 2048 maps would land at half density). Density now comes from splitting:
+  - the shelf wall's books are their own mesh and atlas;
+  - the oven wall / slat screens, and the headboard wall / display column, have separate atlases;
+  - stairs and railings, and door leaves and door frames, have separate atlases;
+  - the windows are spread over 4 sheets;
+  - each car has its own atlas.
+- **Car tyres** sit 0.12 off the body side. They were exactly on its plane and z-fought.
+- **Shed gables** follow the roof underside's slope (a tapering slit was left).
+- **Seat back boxes** reach forward over the leaning back cushions, so the cushions are no longer shoot-through.
+- **Door linings** end 0.03 behind the wall faces, under the architraves.
+- **Builder:** apply the banded boxes from `house_furniture.json` (collision_boxes_studio). Until then the layout's single boxes still give invisible cover over seats.
 
 ## Exterior (mobile-safe)
 - Big surfaces use own seamless tiling textures (`tex/tile`, made by `tools/make_tiles.py`): grass, asphalt, concrete, render, cladding, brick, siding, fence, hedge, metal roof.

@@ -1,6 +1,6 @@
 {
  "objects": 136,
- "triangles": 24112,
+ "triangles": 24096,
  "fail": 0,
  "warn": 124,
  "findings": [
@@ -98,7 +98,7 @@
    "level": "WARN",
    "code": "A1b",
    "object": "Door_Back_BrokenGlass",
-   "message": "158 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "message": "156 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
   },
   {
    "level": "WARN",
@@ -398,7 +398,7 @@
    "level": "WARN",
    "code": "A8",
    "object": "Shell_U_PaintWhite + DoorFrame_MB",
-   "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -446,19 +446,19 @@
    "level": "WARN",
    "code": "A8",
    "object": "Door_Front + DoorFrame_Front",
-   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Door_Back + DoorFrame_Back",
-   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Door_Back + Door_Back_BrokenGlass",
-   "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -494,7 +494,7 @@
    "level": "WARN",
    "code": "A8",
    "object": "Door_EN + DoorFrame_EN",
-   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",

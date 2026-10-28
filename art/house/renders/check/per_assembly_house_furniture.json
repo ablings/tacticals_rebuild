@@ -144,9 +144,10 @@
  "H_ShelfWall": {
   "tris": 3528,
   "fail": 0,
-  "warn": 1,
+  "warn": 2,
   "findings": [
-   "WARN A1b H_ShelfWall: 1685 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "WARN A1b H_ShelfWall__H_ShelfWall_Books: 1663 faces point toward the centre: check for flipped faces (concave shapes can be fine)",
+   "WARN A8 H_ShelfWall__H_ShelfWall + H_ShelfWall__H_ShelfWall_Books: 10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   ]
  },
  "H_OvenWall": {

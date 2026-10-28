@@ -13,7 +13,7 @@ from hcore import *          # noqa: F401,F403
 import hcore
 
 BLEND = os.path.join(ROOT, "house_furniture.blend")
-hcore.ATLAS_RES.update({"ShelfWall": 2048, "Storage3": 2048, "Sofa": 2048, "Storage": 2048})
+# every atlas at 1024 (Roblox caps uploaded images at 1024): density comes from splitting atlases
 
 # extra kinds used only here
 for k_, v_ in {
@@ -705,6 +705,7 @@ def shelf_wall():
     """12 x 2 x 8 open bookshelf wall, dressed on BOTH faces (team A's spawn wall). A solid charcoal spine down the middle
     keeps it full tall cover."""
     mb = MB("H_ShelfWall", "ShelfWall", 8.0)
+    bk = MB("H_ShelfWall_Books", "ShelfBooks", 8.0)
     H = 8.0
     for (a, b) in ((-6.0, -5.78), (-2.21, -1.99), (1.99, 2.21), (5.78, 6.0)):
         mb.boxr((a, -1.0, 0.0), (b, 1.0, H), "oak")
@@ -723,13 +724,13 @@ def shelf_wall():
                 if k == 1:        # a vase and a lying stack in this bay
                     cx = (x0 + x1) / 2 + 0.6
                     cy = 0.55 * face
-                    mb.lathe([(0, z0 - 0.02), (0.2, z0 - 0.02), (0.34, z0 + 0.4), (0.26, z0 + 0.9), (0.13, z0 + 1.05), (0.0, z0 + 1.0)],
+                    bk.lathe([(0, z0 - 0.02), (0.2, z0 - 0.02), (0.34, z0 + 0.4), (0.26, z0 + 0.9), (0.13, z0 + 1.05), (0.0, z0 + 1.0)],
                              14, rng.choice(["ceramic", "concrete_pot"]), M=Matrix.Translation((cx, cy, 0)))
                     for j, kk in enumerate(rng.sample(BOOKK, 2)):
-                        mb.boxr((x0 + 0.1, cy - 0.38, z0 - 0.03 + j * 0.17), (x0 + 1.2, cy + 0.38, z0 + 0.14 + j * 0.17), kk)
+                        bk.boxr((x0 + 0.1, cy - 0.38, z0 - 0.03 + j * 0.17), (x0 + 1.2, cy + 0.38, z0 + 0.14 + j * 0.17), kk)
                 else:
-                    books_row(mb, x0 + 0.02, (x1 - 0.02) if k != 3 else (x0 + x1) / 2, z0, z1 - 0.14, 0.12 * face, 0.85, rng, facing=face)
-    return finish(mb)
+                    books_row(bk, x0 + 0.02, (x1 - 0.02) if k != 3 else (x0 + x1) / 2, z0, z1 - 0.14, 0.12 * face, 0.85, rng, facing=face)
+    return [finish(mb), finish(bk)]
 
 
 def oven_wall():
@@ -781,7 +782,7 @@ def slat_screen():
 
 def headboard_wall():
     """14 x 1.5 x 8 freestanding headboard wall: upholstered channels on the bed side (-Y), walnut behind"""
-    mb = MB("H_HeadboardWall", "Storage3", 8.0)
+    mb = MB("H_HeadboardWall", "Storage4", 8.0)
     mb.boxr((-7.0, -0.45, 0.0), (7.0, 0.75, 8.0), "walnut")
     n = 12
     for i in range(n):
@@ -845,7 +846,7 @@ def planter():
 
 def display_column():
     """3 x 3 x 8 column wrapped in walnut with a display niche on the -Y and +Y faces (a vase in each); solid core"""
-    mb = MB("H_DisplayColumn", "Storage3", 8.0)
+    mb = MB("H_DisplayColumn", "Storage4", 8.0)
     mb.boxr((-1.5, -1.5, 0.0), (1.5, 1.5, 3.4), "walnut")
     mb.boxr((-1.5, -1.5, 6.0), (1.5, 1.5, 8.0), "walnut")
     mb.boxr((-1.5, -1.5, 3.35), (-1.0, 1.5, 6.05), "walnut")
@@ -862,10 +863,10 @@ def display_column():
 LOW, TALL, NONE = "LOW 3.4", "TALL 8.0", "none (dressing)"
 ASM = [
     ("H_Sofa_Sectional", [("H_Sofa_Sectional", (0, 0, 0), 0)], "living room sectional, back to the room; boxes: back 3.4, arms 2.6, seats 1.8", LOW,
-     [((-6, 0.75, 0), (6, 1.8, 3.4)), ((-6, -1.8, 0), (-5.05, 0.75, 2.6)), ((5.05, -5.4, 0), (6, 0.75, 2.6)),
-      ((-5.05, -1.8, 0), (5.05, 0.75, 1.8)), ((2.2, -5.4, 0), (5.05, -1.8, 1.8))]),
+     [((-6, 0.15, 0), (6, 1.8, 3.4)), ((-6, -1.8, 0), (-5.05, 0.15, 2.6)), ((5.05, -5.4, 0), (6, 0.15, 2.6)),
+      ((-5.05, -1.8, 0), (5.05, 0.15, 1.8)), ((2.2, -5.4, 0), (5.05, -1.8, 1.8))]),
     ("H_Armchair", [("H_Armchair", (0, 0, 0), 0)], "living room armchair; boxes: back 3.4, arms 2.5, seat 1.8", LOW,
-     [((-2.1, 1.0, 0), (2.1, 2.0, 3.4)), ((-2.1, -2.0, 0), (-1.35, 1.0, 2.5)), ((1.35, -2.0, 0), (2.1, 1.0, 2.5)), ((-1.35, -2.0, 0), (1.35, 1.0, 1.8))]),
+     [((-2.1, 0.35, 0), (2.1, 2.0, 3.4)), ((-2.1, -2.0, 0), (-1.35, 0.35, 2.5)), ((1.35, -2.0, 0), (2.1, 0.35, 2.5)), ((-1.35, -2.0, 0), (1.35, 0.35, 1.8))]),
     ("H_KitchenIsland", [("H_KitchenIsland", (0, 0, 0), 0)], "kitchen island, seating side +Y (Studio -Z)", LOW, [((-5, -2.3, 0), (5, 2.3, 3.4))]),
     ("H_DiningSet", [("H_DiningTable", (0, 0, 0), 0)] + [("H_DiningChair", (x, sy * 2.35, 0), 0 if sy > 0 else 180) for x in (-2.1, 0, 2.1) for sy in (-1, 1)],
      "dining table + 6 chairs pushed in; boxes: table 2.6 + a 3.4 box per chair row (union = 8 x 6.7)", LOW,
@@ -890,12 +891,12 @@ ASM = [
     ("H_Wardrobe", [("H_Wardrobe", (0, 0, 0), 0)], "bedroom wardrobe", TALL, [((-3, -1.2, 0), (3, 1.2, 8.0))]),
     ("H_TallCabinet", [("H_TallCabinet", (0, 0, 0), 0)], "tall linen / hall cabinet", TALL, [((-1.5, -1.0, 0), (1.5, 1.0, 8.0))]),
     ("H_Pantry", [("H_Pantry", (0, 0, 0), 0)], "tall kitchen pantry", TALL, [((-2, -1.2, 0), (2, 1.2, 8.0))]),
-    ("H_ShelfWall", [("H_ShelfWall", (0, 0, 0), 0)], "open bookshelf wall dressed on both faces (team A spawn wall)", TALL, [((-6, -1, 0), (6, 1, 8))]),
+    ("H_ShelfWall", [("H_ShelfWall", (0, 0, 0), 0), ("H_ShelfWall_Books", (0, 0, 0), 0)], "open bookshelf wall dressed on both faces (team A spawn wall)", TALL, [((-6, -1, 0), (6, 1, 8))]),
     ("H_OvenWall", [("H_OvenWall", (0, 0, 0), 0)], "tall oven + pantry bank, both faces finished (team B spawn wall); ovens on -Y", TALL, [((-6, -1, 0), (6, 1, 8))]),
     ("H_SlatScreen", [("H_SlatScreen", (0, 0, 0), 0)], "timber slat screen on a storage base (inside the hall arches)", TALL, [((-3, -1, 0), (3, 1, 8))]),
     ("H_HeadboardWall", [("H_HeadboardWall", (0, 0, 0), 0)], "freestanding headboard wall, upholstered side -Y (bed side)", TALL, [((-7, -0.75, 0), (7, 0.75, 8))]),
     ("H_KitchenBench", [("H_KitchenBench", (0, 0, 0), 0)], "kitchen banquette, seat faces -Y; boxes: back 3.4, seat 1.95", LOW,
-     [((-5, 1.1, 0), (5, 1.75, 3.4)), ((-5, -1.75, 0), (5, 1.1, 1.95))]),
+     [((-5, 0.5, 0), (5, 1.75, 3.4)), ((-5, -1.75, 0), (5, 0.5, 1.95))]),
     ("H_HallBench_3", [("H_HallBench_3", (0, 0, 0), 0)], "hall bench 3.5 wide, seat faces -Y; boxes: back 3.4, seat 1.65", LOW,
      [((-1.75, 0.65, 0), (1.75, 1, 3.4)), ((-1.75, -1, 0), (1.75, 0.65, 1.65))]),
     ("H_HallBench_8", [("H_HallBench_8", (0, 0, 0), 0)], "hall / mudroom bench 8 wide, seat faces -Y; boxes: back 3.4, seat 1.65", LOW,
@@ -995,7 +996,7 @@ def main():
             frame("H_Frame_Botanical", 2.6, 3.4, "gen/art_botanical", "oak"), frame("H_Frame_Geometric", 3.0, 3.0, "gen/art_geometric")]
     obs += [rug("H_Rug_Living", 12.0, 8.0, "gen/rug_geo"), rug("H_Rug_Runner", 4.0, 10.0, "gen/rug_stripe")]
     obs += [plant_fiddle(), plant_snake()] + toys()
-    obs += [shelf_wall(), oven_wall(), slat_screen(), headboard_wall(), kitchen_bench(), hall_bench("H_HallBench_3", 3.5),
+    obs += shelf_wall() + [oven_wall(), slat_screen(), headboard_wall(), kitchen_bench(), hall_bench("H_HallBench_3", 3.5),
             hall_bench("H_HallBench_8", 8.0), display_column()] + planter()
     by_name = {o.name: o for o in obs}
     x = 0.0

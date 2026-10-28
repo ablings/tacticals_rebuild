@@ -15,7 +15,7 @@ v1. Hand-over for the map builder: `notes/house_props.md`. Sheet: `notes/house_p
 | `house_furniture.json` | per assembly: size, cover class, collision boxes, pivot, parts, tris, atlas files |
 | `house_shell.json` | every house object (bbox, origin, tris, material), doors[] (hinge, yaws), windows[] (frame / glass / broken names) |
 | `house_exterior.json` | every exterior object |
-| `tex/H_<atlas>_{color,normal,rough,metal}.png` | 19 baked atlases (furniture 15, house Doors / Windows / Stairs, Cars). Colour + normal at 1024, or 2048 for Sofa, Storage, ShelfWall, Storage3, Stairs, Doors, Windows and Cars; rough / metal at half size. Lowest density is 22.6 px/stud (`tools/texel_pivot_check.py`) |
+| `tex/H_<atlas>_{color,normal,rough,metal}.png` | 28 baked atlases, all **1024** (Roblox caps uploaded images at 1024); rough / metal 512. Density comes from splitting: furniture 16, house Stairs / Rails / Doors / DoorFrames / Windows1-4 / Windows (skylight trims), one per car. Lowest density 21.3 px/stud (`tools/texel_pivot_check.py`) |
 | `tex/tile/T_*.png` | 18 seamless tiling textures (shell + exterior), studs per tile in `tex/tile/tiles.json` |
 | `tex/sky/sky_side.png`, `sky_up.png`, `sky_dn.png` | Roblox Sky faces (side for Bk / Ft / Lf / Rt) |
 | `tex/gen/*.png` | Codex-generated art: 4 prints, 2 rugs, a kid's drawing, the source sky |
@@ -88,9 +88,9 @@ Dressing (no collision) sizes are in `house_furniture.json` and `notes/house_pro
 ## Numbers
 | | Meshes | Triangles | Largest mesh |
 |---|---|---|---|
-| Furniture (unique) | 79 | 28,260 | H_ShelfWall 3,528 |
-| House | 136 | 24,112 | 2,424 |
-| Exterior | 144 | 20,486 | 2,108 |
+| Furniture (unique) | 80 | 28,260 | H_ShelfWall_Books 3,408 |
+| House | 136 | 24,096 | 2,424 |
+| Exterior | 144 | 20,488 | 2,108 |
 
 The placed map is about 100k triangles. Every piece is under 2,048 studs (the largest is the ground, 1,800).
 
@@ -104,5 +104,26 @@ The placed map is about 100k triangles. Every piece is under 2,048 studs (the la
   - A1b on multi-part meshes;
   - A8 on parts that are buried or intended: glass vs broken glass (never shown together), frames in their reveals, closed leaves in their linings, skylight glow inside its trim.
 
-## Grader
-See the end of this file (filled in after the grade).
+## Grader (roblox-model-grader, effort xhigh, 3 rounds: the work order's maximum)
+| Round | Commit | Verdict | Main findings |
+|---|---|---|---|
+| 1 | 8924936 | FIX 6.9 | shell slits at T-junctions (blocking); neighbour side windows painted on (blocking, repeated correction); invisible cover over seats; ensuite z-fight |
+| 2 | b7afacf | FIX 8.1 | both blockers fixed. Left: seats still under one 3.4 box, mesh origins not on the pivots, low texture density on the big atlases |
+| 3 | ad3e6bd | FIX 8.4 | seats, pivots and slits confirmed fixed. Left: car tyres coplanar with the body (major), 2048 atlases at risk from Roblox's 1024 cap, shed gable slit, shoot-through back cushions, door-lining ends under the architraves |
+
+After round 3, fixed without a 4th grade:
+- car tyres moved 0.12 out;
+- every atlas at 1024, with the big ones split;
+- shed gables follow the roof slope;
+- seat back boxes cover the cushions;
+- lining ends tucked behind the wall faces.
+
+Re-checked afterwards: blender_check 0 FAIL (furniture, house, exterior); coverage 0 missing; exact coplanar overlaps 0; pivots 0 mismatches; lowest density 21.3 px/stud.
+
+**Still open:**
+- The far houses' window frames sit 0.03 inside their reveals (minor; seen from 17-150 studs).
+- The TV screen front is 0.075 from the hidden body face behind it (buried).
+- A few coplanar outer faces on the armchair / bench ends (same material).
+- No skirting or cornices (a kit-brief extra, not in the work order; a taste call for Edward).
+- The sky is a bright afternoon blue (a taste call).
+- **Studio checks (Proof Check B) are not done:** scale, axes, count, and atlas size after upload are left for the first import.

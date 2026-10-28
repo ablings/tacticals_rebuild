@@ -12,7 +12,7 @@ from build_house import *        # noqa  (hcore names, add_poly, box_faces, tile
 
 BLEND = os.path.join(ROOT, "house_exterior.blend")
 import hcore as _hc
-_hc.ATLAS_RES.update({"Cars": 2048})
+# every atlas at 1024 (Roblox caps uploaded images at 1024): one atlas per car
 GZ = -1.0       # outside ground level
 EXT = bh.SHELL  # (group, material) -> polys
 
@@ -252,7 +252,7 @@ def car(name, kind, style, paint):
     for sx in (-1, 1):
         x = sx * (L / 2 - 2.6)
         for sy in (-1, 1):
-            M = Matrix.Translation((x, sy * (W / 2 - 0.45), 1.1)) @ Matrix.Rotation(math.radians(90), 4, "X")
+            M = Matrix.Translation((x, sy * (W / 2 - 0.33), 1.1)) @ Matrix.Rotation(math.radians(90), 4, "X")
             mb.lathe([(0, -0.45), (1.1, -0.45), (1.15, -0.3), (1.15, 0.3), (1.1, 0.45), (0, 0.45)], 12, "tyre", M=M)
     for sy in (-1, 1):
         mb.boxr((L / 2 - 0.08, sy * (W / 2 - 0.9) - 0.4, hb - 0.9), (L / 2 + 0.05, sy * (W / 2 - 0.9) + 0.4, hb - 0.55), "lamp_white")
@@ -318,7 +318,7 @@ def shed(group, x0, x1, y0, y1):
         add_poly("Charcoal", q, group)
     for (xa, ya, xb, yb) in ((x0 - 1, y0 - 1, x1 + 1, y0 - 1), (x1 + 1, y1 + 1, x0 - 1, y1 + 1), (x1 + 1, y0 - 1, x1 + 1, y1 + 1), (x0 - 1, y1 + 1, x0 - 1, y0 - 1)):
         add_poly("Charcoal", [P(xa, ya, 0), P(xb, yb, 0), P(xb, yb, 0.4), P(xa, ya, 0.4)], group)
-    tri = lambda x, sg: [Vector((x, y0, GZ + 8.0)), Vector((x, y1, GZ + 8.0)), Vector((x, y1, GZ + 8.0 + (y1 - y0 + 1) * s))]
+    tri = lambda x, sg: [Vector((x, y0, GZ + 8.0)), Vector((x, y1, GZ + 8.0)), P(x, y1, 0.05), P(x, y0, 0.05)]
     for x, sg in ((x0, -1), (x1, 1)):
         t = tri(x, sg)
         n = (t[1] - t[0]).cross(t[2] - t[0])
@@ -413,9 +413,12 @@ def main():
         for o in cars:
             o.location = (8000 + x, 8000, 0); x += 20
         bpy.context.view_layer.update()
-        imgs = bake_atlas("Cars", cars)
-        finalize(cars, atlas_material("Cars", imgs))
-        atl_files["Cars"] = {p: f"tex/{PREFIX}Cars_{p}.png" for p in imgs}
+        for i, o in enumerate(cars):          # one 1024 atlas per car
+            atl = f"Car{i + 1}"
+            o["atlas"] = atl
+            imgs = bake_atlas(atl, [o])
+            finalize([o], atlas_material(atl, imgs))
+            atl_files[atl] = {p: f"tex/{PREFIX}{atl}_{p}.png" for p in imgs}
     for o in cars:
         (loc, rz) = place[o.name]
         o.location = loc; o.rotation_euler = (0, 0, math.radians(rz))

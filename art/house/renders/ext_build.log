@@ -1,38 +1,56 @@
 [   1.3s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
-[   1.3s] bake Cars ['Car_FamilySUV', 'Car_SedanSlate', 'Car_SedanWine', 'Car_SUVCharcoal']
+[   1.3s] bake Car1 ['Car_FamilySUV']
 Info: Baking map saved to internal image, save it externally or pack it
+[   3.7s]    Car1 color 1.0s
 Info: Baking map saved to internal image, save it externally or pack it
+[   4.6s]    Car1 rough 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[   5.6s]    Car1 metal 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
-[   8.7s]    Cars color 5.3s
+[   6.5s]    Car1 normal 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[   7.5s]    Car1 ao 1.0s
+[   7.7s] bake Car2 ['Car_SedanSlate']
 Info: Baking map saved to internal image, save it externally or pack it
+[  10.0s]    Car2 color 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[  10.9s]    Car2 rough 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
-[  13.8s]    Cars rough 5.1s
+[  11.9s]    Car2 metal 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[  12.8s]    Car2 normal 1.0s
 Info: Baking map saved to internal image, save it externally or pack it
+[  13.9s]    Car2 ao 1.0s
+[  14.0s] bake Car3 ['Car_SedanWine']
 Info: Baking map saved to internal image, save it externally or pack it
+[  16.3s]    Car3 color 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
-[  19.0s]    Cars metal 5.1s
+[  17.2s]    Car3 rough 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[  18.2s]    Car3 metal 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[  19.1s]    Car3 normal 1.0s
 Info: Baking map saved to internal image, save it externally or pack it
+[  20.2s]    Car3 ao 1.0s
+[  20.3s] bake Car4 ['Car_SUVCharcoal']
 Info: Baking map saved to internal image, save it externally or pack it
-[  24.3s]    Cars normal 5.3s
+[  22.7s]    Car4 color 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[  23.7s]    Car4 rough 1.0s
 Info: Baking map saved to internal image, save it externally or pack it
+[  24.6s]    Car4 metal 0.9s
 Info: Baking map saved to internal image, save it externally or pack it
+[  25.6s]    Car4 normal 1.0s
 Info: Baking map saved to internal image, save it externally or pack it
-[  29.6s]    Cars ao 5.3s
-[  30.5s] deduped 2580 hidden back-to-back faces
+[  26.6s]    Car4 ao 1.0s
+[  27.0s] deduped 2580 hidden back-to-back faces
 
 FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\fbx\\H_Exterior.fbx'
-export finished in 0.1372 sec.
+export finished in 0.1462 sec.
 Info: Saved as "house_exterior.blend"
-Info: Total files 18 | Changed 0 | Failed 0
+Info: Total files 30 | Changed 0 | Failed 0
 Info: Saved "house_exterior.blend"
-[  30.8s] DONE 144 objects 20486 tris
+[  27.4s] DONE 144 objects 20488 tris
 Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
 
 Blender quit

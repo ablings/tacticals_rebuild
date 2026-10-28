@@ -23,7 +23,7 @@ REPO = os.path.abspath(os.path.join(ROOT, "..", ".."))
 LAY = json.load(open(os.path.join(REPO, "notes", "maps", "house_layout.json")))
 TILES = json.load(open(os.path.join(TEX, "tile", "tiles.json")))
 BLEND = os.path.join(ROOT, "house.blend")
-hcore.ATLAS_RES.update({"Stairs": 2048, "Doors": 2048, "Windows": 2048})
+# every atlas at 1024 (Roblox caps uploaded images at 1024): stairs / rails, door leaves / frames, windows in 4 sheets
 
 for k_, v_ in {
     "oak_slat": dict(under=(178, 144, 104), wood=True, groove=True, stain=0.12, rough=0.55, mottle=0.08),
@@ -669,7 +669,7 @@ def stair(st):
     return finish(mb)
 
 
-def railing(name, x0, x1, y0, y1, zfn, along, length_pts, atlas="Stairs", newel_ends=(True, True)):
+def railing(name, x0, x1, y0, y1, zfn, along, length_pts, atlas="Rails", newel_ends=(True, True)):
     """balusters 0.25 sq every <= 1.2, handrail 0.35 x 0.25 with its top 3.5 above the walking line zfn(t)"""
     mb = MB(name, atlas, 3.5)
     a0, a1 = length_pts
@@ -776,7 +776,7 @@ def door_leaf(d):
 
 def door_frame(op):
     """lining + architraves for a door opening (white inside; the street / garden faces of the outer doors charcoal)"""
-    mb = MB("DoorFrame_" + op["id"].split("_", 1)[1], "Doors", op["z1"] - op["z0"])
+    mb = MB("DoorFrame_" + op["id"].split("_", 1)[1], "DoorFrames", op["z1"] - op["z0"])
     a, b, z0, z1, t0, t1 = op["a"], op["b"], op["z0"], op["z1"], op["t0"], op["t1"]
     ext = op["wall"].startswith("W_")
     def B(alo, ahi, tlo, thi, zlo, zhi, kind):
@@ -786,9 +786,9 @@ def door_frame(op):
             mb.boxr((tlo, alo, zlo), (thi, ahi, zhi), kind)
     k_in = "lacquer_white"
     lin = 0.1
-    B(a, a + lin, t0 - 0.02, t1 + 0.02, z0, z1, k_in)
-    B(b - lin, b, t0 - 0.02, t1 + 0.02, z0, z1, k_in)
-    B(a - 0.01, b + 0.01, t0 - 0.02, t1 + 0.02, z1 - lin, z1, k_in)
+    B(a, a + lin, t0 + 0.03, t1 - 0.03, z0, z1, k_in)
+    B(b - lin, b, t0 + 0.03, t1 - 0.03, z0, z1, k_in)
+    B(a - 0.01, b + 0.01, t0 + 0.03, t1 - 0.03, z1 - lin, z1, k_in)
     out_side_t0 = ext and (op["line"] < 0 if op["axis"] == "x" else op["line"] < 0)
     for side, (tl, th) in (("t0", (t0 - 0.14, t0 + 0.02)), ("t1", (t1 - 0.02, t1 + 0.14))):
         k = k_in
@@ -865,7 +865,7 @@ def window(op):
     ncol = max(1, int(math.ceil(W / 5.2)))
     nrow = 2 if H > 8.5 else 1
     fw, fd = 0.22, 0.2           # frame member width (in the wall plane), half depth across the wall
-    fr = MB(op["id"] + "_Frame", "Windows", H)
+    fr = MB(op["id"] + "_Frame", "Windows" + str(sum(map(ord, op["id"])) % 4 + 1), H)
     def B(alo, ahi, zlo, zhi, tlo, thi, kind):
         if axis == "x":
             fr.boxr((alo, tlo, zlo), (ahi, thi, zhi), kind)

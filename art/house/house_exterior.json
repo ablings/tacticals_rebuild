@@ -1,11 +1,29 @@
 {
  "note": "Same coordinates as house_shell.json (layout plan; outside ground z = -1). All art, CanCollide off, unreachable. Sky: tex/sky/sky_side.png for SkyboxBk/Ft/Lf/Rt, sky_up.png for SkyboxUp, sky_dn.png for SkyboxDn.",
  "atlases": {
-  "Cars": {
-   "color": "tex/H_Cars_color.png",
-   "normal": "tex/H_Cars_normal.png",
-   "rough": "tex/H_Cars_rough.png",
-   "metal": "tex/H_Cars_metal.png"
+  "Car1": {
+   "color": "tex/H_Car1_color.png",
+   "normal": "tex/H_Car1_normal.png",
+   "rough": "tex/H_Car1_rough.png",
+   "metal": "tex/H_Car1_metal.png"
+  },
+  "Car2": {
+   "color": "tex/H_Car2_color.png",
+   "normal": "tex/H_Car2_normal.png",
+   "rough": "tex/H_Car2_rough.png",
+   "metal": "tex/H_Car2_metal.png"
+  },
+  "Car3": {
+   "color": "tex/H_Car3_color.png",
+   "normal": "tex/H_Car3_normal.png",
+   "rough": "tex/H_Car3_rough.png",
+   "metal": "tex/H_Car3_metal.png"
+  },
+  "Car4": {
+   "color": "tex/H_Car4_color.png",
+   "normal": "tex/H_Car4_normal.png",
+   "rough": "tex/H_Car4_rough.png",
+   "metal": "tex/H_Car4_metal.png"
   }
  },
  "tiles": {
@@ -1494,7 +1512,7 @@
   },
   {
    "name": "Ext_Yard_Fence",
-   "tris": 14,
+   "tris": 16,
    "material": [
     "T_Fence"
    ],
@@ -1507,7 +1525,7 @@
     [
      36.0,
      68.0,
-     8.8
+     8.85
     ]
    ]
   },
@@ -2693,16 +2711,16 @@
    "name": "Car_FamilySUV",
    "tris": 512,
    "material": [
-    "H_Cars"
+    "H_Car1"
    ],
    "bbox_plan": [
     [
-     20.2,
+     20.08,
      -49.82,
      -0.87
     ],
     [
-     25.8,
+     25.92,
      -36.18,
      4.73
     ]
@@ -2712,17 +2730,17 @@
    "name": "Car_SedanSlate",
    "tris": 512,
    "material": [
-    "H_Cars"
+    "H_Car2"
    ],
    "bbox_plan": [
     [
      -36.62,
-     -66.2,
+     -66.32,
      -0.93
     ],
     [
      -23.38,
-     -61.0,
+     -60.88,
      3.67
     ]
    ]
@@ -2731,17 +2749,17 @@
    "name": "Car_SedanWine",
    "tris": 512,
    "material": [
-    "H_Cars"
+    "H_Car3"
    ],
    "bbox_plan": [
     [
      37.38,
-     -75.0,
+     -75.12,
      -0.93
     ],
     [
      50.62,
-     -69.8,
+     -69.68,
      3.67
     ]
    ]
@@ -2750,21 +2768,21 @@
    "name": "Car_SUVCharcoal",
    "tris": 512,
    "material": [
-    "H_Cars"
+    "H_Car4"
    ],
    "bbox_plan": [
     [
-     -26.8,
+     -26.92,
      -116.82,
      -0.87
     ],
     [
-     -21.2,
+     -21.08,
      -103.18,
      4.73
     ]
    ]
   }
  ],
- "total_tris": 20486
+ "total_tris": 20488
 }
