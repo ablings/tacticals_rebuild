@@ -1,0 +1,782 @@
+[
+ {
+  "name": "H_Sofa_Sectional",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Sofa_Sectional.png",
+  "size": [
+   12.0,
+   3.4,
+   7.2
+  ],
+  "tris": 2308,
+  "cover": "LOW 3.4",
+  "role": "living room sectional, back to the room"
+ },
+ {
+  "name": "H_Armchair",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Armchair.png",
+  "size": [
+   4.2,
+   3.4,
+   4.0
+  ],
+  "tris": 1060,
+  "cover": "LOW 3.4",
+  "role": "living room armchair"
+ },
+ {
+  "name": "H_KitchenIsland",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_KitchenIsland.png",
+  "size": [
+   10.0,
+   3.4,
+   4.68
+  ],
+  "tris": 204,
+  "cover": "LOW 3.4",
+  "role": "kitchen island, seating side +Y (Studio -Z)"
+ },
+ {
+  "name": "H_DiningSet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_DiningSet.png",
+  "size": [
+   8.0,
+   3.392,
+   6.673
+  ],
+  "tris": 1872,
+  "cover": "LOW 3.4",
+  "role": "dining table + 6 chairs pushed in"
+ },
+ {
+  "name": "H_DiningTable",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_DiningTable.png",
+  "size": [
+   8.0,
+   2.6,
+   4.0
+  ],
+  "tris": 144,
+  "cover": "low obstacle 2.6",
+  "role": "dining table alone (top 2.6)"
+ },
+ {
+  "name": "H_DiningChair",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_DiningChair.png",
+  "size": [
+   1.9,
+   3.392,
+   1.937
+  ],
+  "tris": 288,
+  "cover": "none (dressing)",
+  "role": "dining chair alone"
+ },
+ {
+  "name": "H_Bed_Double",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Bed_Double.png",
+  "size": [
+   7.7,
+   3.4,
+   10.0
+  ],
+  "tris": 1452,
+  "cover": "LOW 3.4",
+  "role": "master bed, head at +Y (Studio -Z) against the wall"
+ },
+ {
+  "name": "H_Bed_Single",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Bed_Single.png",
+  "size": [
+   4.7,
+   3.4,
+   8.6
+  ],
+  "tris": 900,
+  "cover": "LOW 3.4",
+  "role": "kid's bed, head at +Y against the wall"
+ },
+ {
+  "name": "H_Dresser",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Dresser.png",
+  "size": [
+   6.0,
+   3.4,
+   2.3
+  ],
+  "tris": 168,
+  "cover": "LOW 3.4",
+  "role": "bedroom dresser"
+ },
+ {
+  "name": "H_Bathtub",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Bathtub.png",
+  "size": [
+   7.0,
+   4.119,
+   3.6
+  ],
+  "tris": 768,
+  "cover": "LOW 3.4",
+  "role": "freestanding tub on a tiled plinth"
+ },
+ {
+  "name": "H_TVConsole",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_TVConsole.png",
+  "size": [
+   8.0,
+   3.4,
+   2.02
+  ],
+  "tris": 84,
+  "cover": "LOW 3.4",
+  "role": "media sideboard (the TV stands on it)"
+ },
+ {
+  "name": "H_TVConsole_WithTV",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_TVConsole_WithTV.png",
+  "size": [
+   8.0,
+   7.4,
+   2.02
+  ],
+  "tris": 216,
+  "cover": "LOW 3.4",
+  "role": "media sideboard with the TV on it"
+ },
+ {
+  "name": "H_KitchenBase",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_KitchenBase.png",
+  "size": [
+   4.0,
+   3.4,
+   2.46
+  ],
+  "tris": 108,
+  "cover": "LOW 3.4",
+  "role": "kitchen wall-run base module 4 wide (tile them side by side)"
+ },
+ {
+  "name": "H_KitchenSink",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_KitchenSink.png",
+  "size": [
+   4.0,
+   5.007,
+   2.46
+  ],
+  "tris": 632,
+  "cover": "LOW 3.4",
+  "role": "kitchen base with sink and tap"
+ },
+ {
+  "name": "H_KitchenHob",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_KitchenHob.png",
+  "size": [
+   4.0,
+   3.4,
+   2.58
+  ],
+  "tris": 184,
+  "cover": "LOW 3.4",
+  "role": "kitchen base with hob and oven"
+ },
+ {
+  "name": "H_Bookcase",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Bookcase.png",
+  "size": [
+   6.0,
+   8.0,
+   1.6
+  ],
+  "tris": 1368,
+  "cover": "TALL 7+",
+  "role": "living-room / study bookcase"
+ },
+ {
+  "name": "H_Fridge",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Fridge.png",
+  "size": [
+   3.6,
+   8.0,
+   2.855
+  ],
+  "tris": 668,
+  "cover": "TALL 7+",
+  "role": "French-door fridge"
+ },
+ {
+  "name": "H_Wardrobe",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Wardrobe.png",
+  "size": [
+   6.0,
+   8.0,
+   2.5
+  ],
+  "tris": 96,
+  "cover": "TALL 7+",
+  "role": "bedroom wardrobe"
+ },
+ {
+  "name": "H_TallCabinet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_TallCabinet.png",
+  "size": [
+   3.0,
+   8.0,
+   2.12
+  ],
+  "tris": 60,
+  "cover": "TALL 7+",
+  "role": "tall linen / hall cabinet"
+ },
+ {
+  "name": "H_Pantry",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Pantry.png",
+  "size": [
+   4.0,
+   8.0,
+   2.46
+  ],
+  "tris": 96,
+  "cover": "TALL 7+",
+  "role": "tall kitchen pantry"
+ },
+ {
+  "name": "H_ShelfWall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_ShelfWall.png",
+  "size": [
+   12.0,
+   8.0,
+   2.0
+  ],
+  "tris": 3528,
+  "cover": "TALL 7+",
+  "role": "open bookshelf wall dressed on both faces (team A spawn wall)"
+ },
+ {
+  "name": "H_OvenWall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_OvenWall.png",
+  "size": [
+   12.0,
+   8.0,
+   1.985
+  ],
+  "tris": 452,
+  "cover": "TALL 7+",
+  "role": "tall oven + pantry bank, both faces finished (team B spawn wall); ovens on -Y"
+ },
+ {
+  "name": "H_SlatScreen",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_SlatScreen.png",
+  "size": [
+   6.0,
+   8.0,
+   2.04
+  ],
+  "tris": 324,
+  "cover": "TALL 7+",
+  "role": "timber slat screen on a storage base (inside the hall arches)"
+ },
+ {
+  "name": "H_HeadboardWall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_HeadboardWall.png",
+  "size": [
+   14.0,
+   8.0,
+   1.5
+  ],
+  "tris": 1320,
+  "cover": "TALL 7+",
+  "role": "freestanding headboard wall, upholstered side -Y (bed side)"
+ },
+ {
+  "name": "H_KitchenBench",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_KitchenBench.png",
+  "size": [
+   10.0,
+   3.4,
+   3.5
+  ],
+  "tris": 480,
+  "cover": "LOW 3.4",
+  "role": "kitchen banquette, seat faces -Y"
+ },
+ {
+  "name": "H_HallBench_3",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_HallBench_3.png",
+  "size": [
+   3.5,
+   3.4,
+   2.0
+  ],
+  "tris": 168,
+  "cover": "LOW 3.4",
+  "role": "hall bench 3.5 wide, seat faces -Y"
+ },
+ {
+  "name": "H_HallBench_8",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_HallBench_8.png",
+  "size": [
+   8.0,
+   3.4,
+   2.0
+  ],
+  "tris": 300,
+  "cover": "LOW 3.4",
+  "role": "hall / mudroom bench 8 wide, seat faces -Y"
+ },
+ {
+  "name": "H_Planter",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Planter.png",
+  "size": [
+   3.0,
+   8.954,
+   3.0
+  ],
+  "tris": 1280,
+  "cover": "LOW 3.4",
+  "role": "concrete planter (cover 3.4) + fiddle tree above as art (no collision)"
+ },
+ {
+  "name": "H_DisplayColumn",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_DisplayColumn.png",
+  "size": [
+   3.0,
+   8.0,
+   3.0
+  ],
+  "tris": 284,
+  "cover": "TALL 7+",
+  "role": "column wrapped in walnut with display niches on -Y and +Y"
+ },
+ {
+  "name": "H_KitchenUpper",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_KitchenUpper.png",
+  "size": [
+   4.0,
+   2.6,
+   1.45
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "wall cabinet, bottom 5.8 above the floor"
+ },
+ {
+  "name": "H_RangeHood",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_RangeHood.png",
+  "size": [
+   3.2,
+   3.44,
+   1.65
+  ],
+  "tris": 44,
+  "cover": "none (dressing)",
+  "role": "hood over the hob, bottom 5.8 above the floor"
+ },
+ {
+  "name": "H_BarStool",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_BarStool.png",
+  "size": [
+   1.48,
+   2.605,
+   1.48
+  ],
+  "tris": 328,
+  "cover": "none (dressing)",
+  "role": "island stool"
+ },
+ {
+  "name": "H_Nightstand",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Nightstand.png",
+  "size": [
+   2.2,
+   2.0,
+   2.05
+  ],
+  "tris": 72,
+  "cover": "none (dressing)",
+  "role": "bedside table"
+ },
+ {
+  "name": "H_CoffeeTable",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_CoffeeTable.png",
+  "size": [
+   5.0,
+   1.66,
+   2.8
+  ],
+  "tris": 320,
+  "cover": "none (dressing)",
+  "role": "coffee table with books and a bowl"
+ },
+ {
+  "name": "H_SideTable",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_SideTable.png",
+  "size": [
+   1.8,
+   2.14,
+   1.8
+  ],
+  "tris": 240,
+  "cover": "none (dressing)",
+  "role": "round side table"
+ },
+ {
+  "name": "H_Desk",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Desk.png",
+  "size": [
+   5.0,
+   2.62,
+   2.44
+  ],
+  "tris": 120,
+  "cover": "none (dressing)",
+  "role": "kid's / study desk"
+ },
+ {
+  "name": "H_DeskChair",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_DeskChair.png",
+  "size": [
+   2.182,
+   3.59,
+   2.09
+  ],
+  "tris": 608,
+  "cover": "none (dressing)",
+  "role": "swivel desk chair"
+ },
+ {
+  "name": "H_WashingMachine",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_WashingMachine.png",
+  "size": [
+   2.6,
+   3.0,
+   2.52
+  ],
+  "tris": 456,
+  "cover": "none (dressing)",
+  "role": "laundry / utility"
+ },
+ {
+  "name": "H_FruitBowl",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_FruitBowl.png",
+  "size": [
+   1.5,
+   0.66,
+   1.477
+  ],
+  "tris": 544,
+  "cover": "none (dressing)",
+  "role": "fruit bowl for the island / counter"
+ },
+ {
+  "name": "H_Microwave",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Microwave.png",
+  "size": [
+   1.9,
+   1.1,
+   1.36
+  ],
+  "tris": 132,
+  "cover": "none (dressing)",
+  "role": "counter appliance"
+ },
+ {
+  "name": "H_CoffeeMachine",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_CoffeeMachine.png",
+  "size": [
+   0.9,
+   1.3,
+   1.5
+  ],
+  "tris": 180,
+  "cover": "none (dressing)",
+  "role": "counter appliance"
+ },
+ {
+  "name": "H_Kettle",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Kettle.png",
+  "size": [
+   0.8,
+   0.929,
+   1.049
+  ],
+  "tris": 288,
+  "cover": "none (dressing)",
+  "role": "counter appliance"
+ },
+ {
+  "name": "H_TV",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_TV.png",
+  "size": [
+   6.4,
+   4.04,
+   0.75
+  ],
+  "tris": 132,
+  "cover": "none (dressing)",
+  "role": "flat TV on feet; screen is its own mesh"
+ },
+ {
+  "name": "H_Laptop",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Laptop.png",
+  "size": [
+   1.5,
+   0.985,
+   1.286
+  ],
+  "tris": 240,
+  "cover": "none (dressing)",
+  "role": "open laptop for the desk"
+ },
+ {
+  "name": "H_FloorLamp",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_FloorLamp.png",
+  "size": [
+   1.9,
+   6.0,
+   1.9
+  ],
+  "tris": 256,
+  "cover": "none (dressing)",
+  "role": "floor lamp; PointLight in the shade at z 5.3"
+ },
+ {
+  "name": "H_TableLamp",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_TableLamp.png",
+  "size": [
+   1.24,
+   2.0,
+   1.24
+  ],
+  "tris": 296,
+  "cover": "none (dressing)",
+  "role": "bedside lamp; PointLight at z 1.6"
+ },
+ {
+  "name": "H_PendantLamp",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_PendantLamp.png",
+  "size": [
+   1.8,
+   4.05,
+   1.8
+  ],
+  "tris": 480,
+  "cover": "none (dressing)",
+  "role": "pendant: origin = ceiling point, bulb 3.4 below (SpotLight down)"
+ },
+ {
+  "name": "H_Frame_Abstract",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Frame_Abstract.png",
+  "size": [
+   4.0,
+   4.0,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "wall art 4 x 4"
+ },
+ {
+  "name": "H_Frame_Landscape",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Frame_Landscape.png",
+  "size": [
+   5.4,
+   3.6,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "wall art 5.4 x 3.6"
+ },
+ {
+  "name": "H_Frame_Botanical",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Frame_Botanical.png",
+  "size": [
+   2.6,
+   3.4,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "wall art 2.6 x 3.4"
+ },
+ {
+  "name": "H_Frame_Geometric",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Frame_Geometric.png",
+  "size": [
+   3.0,
+   3.0,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "wall art 3 x 3"
+ },
+ {
+  "name": "H_Rug_Living",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Rug_Living.png",
+  "size": [
+   12.0,
+   0.06,
+   8.0
+  ],
+  "tris": 44,
+  "cover": "none (dressing)",
+  "role": "rug 12 x 8"
+ },
+ {
+  "name": "H_Rug_Runner",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Rug_Runner.png",
+  "size": [
+   4.0,
+   0.06,
+   10.0
+  ],
+  "tris": 44,
+  "cover": "none (dressing)",
+  "role": "runner 4 x 10"
+ },
+ {
+  "name": "H_PlantFiddle",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_PlantFiddle.png",
+  "size": [
+   2.605,
+   5.475,
+   2.031
+  ],
+  "tris": 1260,
+  "cover": "none (dressing)",
+  "role": "tall plant"
+ },
+ {
+  "name": "H_PlantSnake",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_PlantSnake.png",
+  "size": [
+   1.107,
+   2.833,
+   1.05
+  ],
+  "tris": 588,
+  "cover": "none (dressing)",
+  "role": "small plant"
+ },
+ {
+  "name": "H_Toilet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Toilet.png",
+  "size": [
+   1.9,
+   2.64,
+   2.5
+  ],
+  "tris": 564,
+  "cover": "none (dressing)",
+  "role": "toilet, back to the wall (+Y)"
+ },
+ {
+  "name": "H_Vanity",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Vanity.png",
+  "size": [
+   4.1,
+   3.043,
+   1.92
+  ],
+  "tris": 432,
+  "cover": "none (dressing)",
+  "role": "floating vanity: back on the wall at +Y 0.9"
+ },
+ {
+  "name": "H_Mirror",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Mirror.png",
+  "size": [
+   3.0,
+   4.0,
+   0.19
+  ],
+  "tris": 248,
+  "cover": "none (dressing)",
+  "role": "bathroom mirror, back on y = 0, hang bottom at 3.9"
+ },
+ {
+  "name": "H_ShowerSet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_ShowerSet.png",
+  "size": [
+   1.1,
+   3.31,
+   1.6
+  ],
+  "tris": 220,
+  "cover": "none (dressing)",
+  "role": "rain shower head + valve, back on y = 0"
+ },
+ {
+  "name": "H_ShowerGlass",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_ShowerGlass.png",
+  "size": [
+   3.12,
+   6.6,
+   0.2
+  ],
+  "tris": 24,
+  "cover": "glass: CanCollide on, box 3 x 6.6 x 0.1",
+  "role": "glass screen (Transparency 0.7) + black wall profile"
+ },
+ {
+  "name": "H_TowelRail",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_TowelRail.png",
+  "size": [
+   2.2,
+   1.32,
+   0.48
+  ],
+  "tris": 408,
+  "cover": "none (dressing)",
+  "role": "towel rail with towels, back on y = 0"
+ },
+ {
+  "name": "H_ToyBlocks",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_ToyBlocks.png",
+  "size": [
+   2.172,
+   1.11,
+   1.772
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "toy blocks"
+ },
+ {
+  "name": "H_ToyBall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_ToyBall.png",
+  "size": [
+   1.2,
+   1.2,
+   1.2
+  ],
+  "tris": 288,
+  "cover": "none (dressing)",
+  "role": "ball"
+ },
+ {
+  "name": "H_ToyCar",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_ToyCar.png",
+  "size": [
+   0.96,
+   0.78,
+   1.5
+  ],
+  "tris": 408,
+  "cover": "none (dressing)",
+  "role": "toy car"
+ },
+ {
+  "name": "H_Teddy",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Teddy.png",
+  "size": [
+   1.187,
+   1.57,
+   0.936
+  ],
+  "tris": 1092,
+  "cover": "none (dressing)",
+  "role": "teddy bear"
+ }
+]

@@ -1,0 +1,20 @@
+{
+ "PaintWhite": 8.0,
+ "PaintGreige": 8.0,
+ "PaintSlate": 8.0,
+ "CeilingWhite": 8.0,
+ "OakFloor": 6.0,
+ "FloorTile": 5.0,
+ "WallTile": 4.0,
+ "Render": 8.0,
+ "Cladding": 6.0,
+ "RoofMetal": 6.0,
+ "Gravel": 6.0,
+ "Asphalt": 12.0,
+ "Concrete": 10.0,
+ "Grass": 10.0,
+ "Hedge": 6.0,
+ "Fence": 6.0,
+ "Brick": 6.0,
+ "Siding": 6.0
+}

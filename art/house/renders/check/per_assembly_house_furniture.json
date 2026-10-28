@@ -1,0 +1,457 @@
+{
+ "H_Sofa_Sectional": {
+  "tris": 2308,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Armchair": {
+  "tris": 1060,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_KitchenIsland": {
+  "tris": 204,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_KitchenIsland: 66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_DiningSet": {
+  "tris": 1872,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_DiningTable": {
+  "tris": 144,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_DiningChair": {
+  "tris": 288,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Bed_Double": {
+  "tris": 1452,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Bed_Single": {
+  "tris": 900,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Dresser": {
+  "tris": 168,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Dresser: 72 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Bathtub": {
+  "tris": 768,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Bathtub: 342 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_TVConsole": {
+  "tris": 84,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_TVConsole: 22 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_TVConsole_WithTV": {
+  "tris": 216,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   "WARN A1b H_TVConsole_WithTV__H_TVConsole: 22 faces point toward the centre: check for flipped faces (concave shapes can be fine)",
+   "WARN A8 H_TVConsole_WithTV__H_TVConsole + H_TVConsole_WithTV__H_TV: 4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
+   "WARN A8 H_TVConsole_WithTV__H_TV + H_TVConsole_WithTV__H_TV_Screen: 32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "H_KitchenBase": {
+  "tris": 108,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_KitchenBase: 28 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_KitchenSink": {
+  "tris": 632,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_KitchenSink: 266 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_KitchenHob": {
+  "tris": 184,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_KitchenHob: 54 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Bookcase": {
+  "tris": 1368,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Bookcase: 458 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Fridge": {
+  "tris": 668,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Wardrobe": {
+  "tris": 96,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_TallCabinet": {
+  "tris": 60,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Pantry": {
+  "tris": 96,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Pantry: 30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_ShelfWall": {
+  "tris": 3528,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_ShelfWall: 1685 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_OvenWall": {
+  "tris": 452,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_OvenWall: 156 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_SlatScreen": {
+  "tris": 324,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_SlatScreen: 100 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_HeadboardWall": {
+  "tris": 1320,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_KitchenBench": {
+  "tris": 480,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_HallBench_3": {
+  "tris": 168,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_HallBench_3: 54 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_HallBench_8": {
+  "tris": 300,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_HallBench_8: 102 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Planter": {
+  "tris": 1280,
+  "fail": 0,
+  "warn": 2,
+  "findings": [
+   "WARN A1b H_Planter__H_Planter_Tree: 574 faces point toward the centre: check for flipped faces (concave shapes can be fine)",
+   "WARN A8 H_Planter__H_Planter + H_Planter__H_Planter_Tree: 4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "H_DisplayColumn": {
+  "tris": 284,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_DisplayColumn: 88 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_KitchenUpper": {
+  "tris": 60,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_KitchenUpper: 20 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_RangeHood": {
+  "tris": 44,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_BarStool": {
+  "tris": 328,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_BarStool: 108 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Nightstand": {
+  "tris": 72,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_CoffeeTable": {
+  "tris": 320,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_SideTable": {
+  "tris": 240,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_SideTable: 80 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Desk": {
+  "tris": 120,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Desk: 42 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_DeskChair": {
+  "tris": 608,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_DeskChair: 208 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_WashingMachine": {
+  "tris": 456,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_WashingMachine: 148 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_FruitBowl": {
+  "tris": 544,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Microwave": {
+  "tris": 132,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_CoffeeMachine": {
+  "tris": 180,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Kettle": {
+  "tris": 288,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Kettle: 84 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_TV": {
+  "tris": 132,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A8 H_TV__H_TV + H_TV__H_TV_Screen: 32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "H_Laptop": {
+  "tris": 240,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_FloorLamp": {
+  "tris": 256,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_TableLamp": {
+  "tris": 296,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_PendantLamp": {
+  "tris": 480,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Frame_Abstract": {
+  "tris": 60,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Frame_Landscape": {
+  "tris": 60,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Frame_Botanical": {
+  "tris": 60,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Frame_Geometric": {
+  "tris": 60,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Rug_Living": {
+  "tris": 44,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Rug_Runner": {
+  "tris": 44,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_PlantFiddle": {
+  "tris": 1260,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_PlantFiddle: 583 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_PlantSnake": {
+  "tris": 588,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_PlantSnake: 272 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Toilet": {
+  "tris": 564,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Vanity": {
+  "tris": 432,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Vanity: 182 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_Mirror": {
+  "tris": 248,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_ShowerSet": {
+  "tris": 220,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_ShowerSet: 80 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ },
+ "H_ShowerGlass": {
+  "tris": 24,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A8 H_ShowerGlass__H_ShowerGlass + H_ShowerGlass__H_ShowerGlassProfile: 10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  ]
+ },
+ "H_TowelRail": {
+  "tris": 408,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_ToyBlocks": {
+  "tris": 60,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_ToyBall": {
+  "tris": 288,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_ToyCar": {
+  "tris": 408,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "H_Teddy": {
+  "tris": 1092,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_Teddy: 296 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
+ }
+}
