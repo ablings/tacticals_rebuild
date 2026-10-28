@@ -602,3 +602,32 @@ himself; we never publish.
 - Open: the Warehouse 2 vote tile has no picture (shows the roof from above; needs an own capture uploaded under the group);
   steam is the next small job (thickening); GadgetManager.mapFolder / PropController still look only at Workspace.Warehouse
   (grenade / smoke walls and prop noise on the other maps, as on the Arena since port 43); steam fill two-player test still open.
+
+## Live port 45 (2026-10-28, Shadow PC systems session; Edward: "warehouse 2 was never published to the lobby", plan approved) - LOBBY ONLY
+- What: Warehouse 2 in the lobby's pad duels (the lobby keeps every map for pad duels; port 44 put it in Matchmaking / Ranked only),
+  with its night lighting, shut doors and steam fill in the duel slot. Commit 59b5544 (lobby copy saved 10:32).
+- Since live port 43 the lobby copy had NOT changed (Tacticals_rebuild.rbxl untouched since 4ba8475 = port 43's source; no
+  pending sections). The House / smoke alarms (held by Edward) were built in their own copies (out/house/lobby.rbxl) and are NOT in
+  it: check House=false/false. SURVEY1025 still not in the lobby (as live).
+- Lobby copy: ServerStorage.Warehouse2Kit from port 44's serialized kit (out/port44/kitimport.lua, 112 items) -> fix/map_warehouse2.lua
+  (new lobby path: _DuelSource.Warehouse2.{Warehouse2, Warehouse2Exterior}, doors ScriptOnly; 905 parts / 77 MeshParts, 2,610
+  instances = the match copy) -> fix/duel_split_map.lua ONLY = "Warehouse2" (new MAPS entry, 1v1, night Lighting = the installer's
+  NIGHT; Visual 905 parts, Solid 122 parts + 2 spawns; the hall only, so arena slot spacing is unchanged) -> fix/lobby_steam_fill.lua
+  round 1 [LOBBYSTEAM] (shared SteamMask / SteamCloud / Fill config byte-identical to the match places; ArenaShootables / ArenaLoader /
+  FootstepController edits; idempotent; UNDO back to hash 8ae303f0).
+- Pad duel test (Studio Play, me on Pad_1v1_A, DuelTestSolo bot): vote listed Arena / Warehouse / Warehouse 2; Warehouse2 won; me on
+  spawn A, bot on spawn B inside the hall (captures/port45/lobby_duel_wh2_spawnA.png); my client at night (ClockTime 0, ambient
+  38,41,50, Duel* effects) while the server Lighting (= every hub player's) stayed ClockTime 12 / ambient 121 the whole match; the
+  swap is ArenaLoader's, local to the match's clients. Doors: no prompt, shutters collide, a ray from mid-hall hits them. Valve S2
+  shot: cloud emitters live, fill reaches 6 and 25 studs, not the far end, footsteps muffled; played to Victory -> MatchEnd, back at
+  the pads with lobby lighting. Output: no errors ("D1 arena Warehouse2: 0 doors, 4 barrels, 2 valves").
+- **tacticals lobby** (126491009194165), published 10:36: Tacticals_main_ported.rbxl = copy of Tacticals_rebuild.rbxl (59b5544) with
+  Technology Future (tools/set_technology.py); checks (out/port45/check.lua) all ok; Publish As > gunsy funsy > tacticals > tacticals >
+  Overwrite > Grant Permissions and Publish (grants the Warehouse 2 meshes to the lobby). Read back from the cloud window (PlaceId
+  126491009194165): DuelMaps Arena, Warehouse, Warehouse2 (1v1, ClockTime 0), doors ScriptOnly + colliding, LobbySteamFillRound 1,
+  no House, no test marks, compile all ok (379 scripts). Cloud window closed untouched.
+- Not done: a two-player Studio run (hub player beside a duel); the evidence for "hub unaffected" is the server Lighting plus the
+  client-only swap. The lobby AI is not blinded by steam (match places' BotManager edit has no lobby twin). The Warehouse 2 vote tile
+  still has no picture (as in Matchmaking).
+- Live checks for Edward: a 1v1 pad duel, vote Warehouse 2: night hall, doors stay shut, shooting a valve fills that end with steam;
+  a friend in the hub keeps daylight.
