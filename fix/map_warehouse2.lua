@@ -502,6 +502,8 @@ shoot.Parent = map
 F.Shootables = shoot
 for _, d in shoot:GetDescendants() do
 	if d:IsA("BasePart") then d.CFrame = d.CFrame + OFFSET end
+	-- the valve hand wheels came over bright red; red is a team colour in Tacticals (grader 7): cream, like the hazard paint
+	if d:IsA("BasePart") and d.Name == "Wheel" and d.Parent and d.Parent.Name:match("^SteamValve") then d.Color = Color3.fromRGB(226, 222, 206) end
 end
 
 -- ====================================================================================================== the hall: floor + walls
@@ -1004,12 +1006,16 @@ end
 -- centre, so the FBX pivot convention doesn't matter) and checked against the gameplay box; without the kit (or for a piece
 -- whose mesh is missing or the wrong size) the Part stand-in is built as before. Art never collides / queries / touches.
 local KIT = SS:FindFirstChild("Warehouse2Kit")
+local OLIVE_TINT = Color3.fromRGB(165, 255, 160) --@OLIVE_TINT
 local KIT_FOR = { Jersey = { "W2_Cover_Low" }, TallCrate = { "W2_Cover_Tall", "W2_Cover_TallPly" }, BlockWall = { "W2_Cover_Wall" } }
 local nKit, kitSkipped = 0, {}
 local function kitPiece(m, q, idx)
 	local names = KIT and KIT_FOR[q.look]
 	if not names then return false end
-	local src = KIT:FindFirstChild(names[(idx - 1) % #names + 1]) or KIT:FindFirstChild(names[1])
+	local olive = OLIVE_CRATES[q.id] and q.look == "TallCrate"
+	-- the olive pair always takes the light plywood crate (the dark engine crate tints to near-black)
+	local pick = olive and "W2_Cover_TallPly" or names[(idx - 1) % #names + 1]
+	local src = KIT:FindFirstChild(pick) or KIT:FindFirstChild(names[1])
 	if not src then table.insert(kitSkipped, q.id .. ": no " .. names[1]) return false end
 	local c = src:Clone()
 	local parts = c:IsA("BasePart") and { c } or {}
@@ -1036,6 +1042,12 @@ local function kitPiece(m, q, idx)
 	local target = CFrame.new(W(q.e, q.n, 0)) * CFrame.Angles(0, yaw + turn, 0)
 	holder:PivotTo(target * bottom:ToObjectSpace(holder:GetPivot()))
 	for _, p in parts do p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch, p.CastShadow = true, false, false, false, true end
+	if olive then
+		-- Edward 2026-10-27: "I like some green crates here and there": tint the baked plywood atlas (median 116,95,68) toward
+		-- the Tacticals olive (107,122,58 ratio) with SurfaceAppearance.Color (a multiply; the mesh keeps its grain and stencils)
+		for _, d in holder:GetDescendants() do if d:IsA("SurfaceAppearance") then d.Color = OLIVE_TINT end end
+		m:SetAttribute("Tint", "olive")
+	end
 	m:SetAttribute("Mesh", src.Name)
 	nKit += 1
 	return true
@@ -1063,16 +1075,45 @@ local function pallet(m, e, n, h)
 end
 local function boxes(m, e, n, h, sx, sy, sz) box(m, "Carton", e - sx / 2, e + sx / 2, n - sz / 2, n + sz / 2, h, h + sy, S.load) end
 local function drum(m, e, n, s) vcyl(m, "Drum", e, n, 0, 3, 2.1, s) vcyl(m, "Rim", e, n, 2.95, 3.02, 2.15, S.steel) end
+-- the modeler's dressing meshes (round 8): with ServerStorage.Warehouse2Kit present, a prop takes its mesh, its box's bottom
+-- centre on (e, n, h) and its front (-Z in the kit) turned by yaw; returns false (stand-in built instead) without the kit
+local nPropMesh = 0
+local function meshAt(m, kitName, e, n, h, yaw)
+	local src = KIT and KIT:FindFirstChild(kitName)
+	if not src then return false end
+	local c = src:Clone()
+	c.Parent = m
+	local cf, size = c:GetBoundingBox()
+	local bottom = cf * CFrame.new(0, -size.Y / 2, 0)
+	c:PivotTo(CFrame.new(W(e, n, h)) * CFrame.Angles(0, yaw or 0, 0) * bottom:ToObjectSpace(c:GetPivot()))
+	for _, p in c:GetDescendants() do
+		if p:IsA("BasePart") then p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch = true, false, false, false end
+	end
+	m:SetAttribute("Mesh", kitName)
+	CS:RemoveTag(m, "Warehouse2Standin")
+	nPropMesh += 1
+	return true
+end
+if KIT then -- swap the Part stand-ins of the pieces the kit has a mesh for (same footprint; the PCOL blockers stay)
+	local partPallet, partDrum = pallet, drum
+	pallet = function(m, e, n, h) if not meshAt(m, "W2_Pallet", e, n, h, 0) then partPallet(m, e, n, h) end end
+	drum = function(m, e, n, s)
+		if not meshAt(m, s == S.rust and "W2_OilDrum_Grey" or "W2_OilDrum_Black", e, n, 0, (e + n) % 1.3) then partDrum(m, e, n, s) end
+	end
+end
 do
 	local m = prop("PalletPile_S", "Pallet") for i = 0, 2 do pallet(m, 14, -54, i * 0.6) end boxes(m, 14.2, -54, 1.8, 2.6, 1.8, 2.6)
 	m = prop("PalletPile_N", "Pallet") for i = 0, 3 do pallet(m, -14, 54, i * 0.6) end
-	m = prop("Pallets_SW", "Pallet") pallet(m, -36.5, -38, 0) boxes(m, -36.5, -38, 0.6, 3, 2, 2.6) boxes(m, -36.7, -37.7, 2.6, 2, 1.4, 1.8)
-	m = prop("Pallets_NE", "Pallet") pallet(m, 36.5, 40, 0) boxes(m, 36.5, 40.3, 0.6, 3, 1.6, 2.8)
+	m = prop("Pallets_SW", "Pallet")
+	if not meshAt(m, "W2_PalletSacks", -36.5, -38, 0, 0) then pallet(m, -36.5, -38, 0) boxes(m, -36.5, -38, 0.6, 3, 2, 2.6) boxes(m, -36.7, -37.7, 2.6, 2, 1.4, 1.8) end
+	m = prop("Pallets_NE", "Pallet")
+	if not meshAt(m, "W2_PalletSacks", 36.5, 40, 0, math.pi) then pallet(m, 36.5, 40, 0) boxes(m, 36.5, 40.3, 0.6, 3, 1.6, 2.8) end
 	m = prop("Drums_W", "OilDrum") drum(m, -37.6, 30.2, S.black) drum(m, -35.4, 31.2, S.rust)
 	m = prop("Drums_E", "OilDrum") drum(m, 37.6, -30.2, S.rust) drum(m, 35.4, -31.2, S.black)
 	m = prop("Cartons", "Carton") boxes(m, -21, -47.5, 0, 1.6, 1.2, 1.4) boxes(m, 21, 47.5, 0, 1.6, 1.2, 1.4)
 	-- workbench on the west wall (old workbench spot) and a break table on the east wall (old table + chairs)
 	m = prop("Workbench", "Workbench")
+	if meshAt(m, "W2_Workbench", -37.4, 16, 0, math.pi / 2) then m = Instance.new("Model") end -- mesh in: the Parts below go nowhere
 	box(m, "Top", -38.6, -36.4, 13, 19, 3, 3.3, S.batten)
 	for _, n in { 13.3, 18.7 } do box(m, "Leg", -38.4, -36.6, n - 0.2, n + 0.2, 0, 3, S.steel) end
 	box(m, "Shelf", -38.5, -36.5, 13.2, 18.8, 0.8, 0.95, S.steel)
@@ -1095,7 +1136,7 @@ local function propBlock(name, e0, e1, n0, n1, h1)
 end
 propBlock("PCOL_PalletPile_S", 12, 16, -55.7, -52.3, 3.6)
 propBlock("PCOL_PalletPile_N", -16, -12, 52.3, 55.7, 2.4)
-propBlock("PCOL_Pallets_SW", -38.5, -34.5, -39.7, -36.3, 4)
+propBlock("PCOL_Pallets_SW", -38.5, -34.5, -39.7, -36.3, (KIT and KIT:FindFirstChild("W2_PalletSacks")) and 2.2 or 4)
 propBlock("PCOL_Pallets_NE", 34.5, 38.5, 38.3, 41.7, 2.2)
 propBlock("PCOL_Drums_W", -38.7, -34.3, 29.1, 32.3, 3)
 propBlock("PCOL_Drums_E", 34.3, 38.7, -32.3, -29.1, 3)
@@ -1116,7 +1157,7 @@ do
 	propBlock("PCOL_PalletTruck_S", e - 0.7, e + 0.7, n0, n0 + 4.4, 1.3)
 	m = prop("TyreStack_N", "TyreStack")
 	local te, tn = -19, 54.6
-	for i = 0, 3 do
+	for i = 0, (meshAt(m, "W2_TyreStack", te, tn, 0, 0.4) and -1 or 3) do
 		vcyl(m, "Tyre", te + (i % 2) * 0.12, tn, i * 0.8, i * 0.8 + 0.78, 2.6, S.rubber)
 		vcyl(m, "Rim", te + (i % 2) * 0.12, tn, i * 0.8 + 0.79, i * 0.8 + 0.8, 1.4, S.steel)
 	end
@@ -1393,6 +1434,6 @@ info.Parent = entry
 entry.Parent = root
 
 local nStandin = #CS:GetTagged("Warehouse2Standin")
-return ("Warehouse 2 built at %s: %d art parts, %d gameplay parts (%d pieces), %d lights (%d lamps), %d stand-ins tagged, %d cover meshes from %s%s; registry %s")
-	:format(tostring(ORIGIN), nArt, nProxy, #LAYOUT.pieces, nLights, nLamp, nStandin, nKit, KIT and "ServerStorage.Warehouse2Kit" or "no kit",
+return ("Warehouse 2 built at %s: %d art parts, %d gameplay parts (%d pieces), %d lights (%d lamps), %d stand-ins tagged, %d cover meshes + %d prop meshes from %s%s; registry %s")
+	:format(tostring(ORIGIN), nArt, nProxy, #LAYOUT.pieces, nLights, nLamp, nStandin, nKit, nPropMesh, KIT and "ServerStorage.Warehouse2Kit" or "no kit",
 		#kitSkipped > 0 and (" (kept stand-ins: " .. table.concat(kitSkipped, "; ") .. ")") or "", entry:GetFullName())
