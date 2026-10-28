@@ -1,0 +1,29 @@
+KitChecks: nil
+KitMaps: false
+Warehouse2Kit: true 22
+  W2_AmmoCan (Model) meshparts 1 size - ids 135419002296414
+  W2_Cover_Low (Model) meshparts 2 size - ids 76368908656310/122698614598448
+  W2_Cover_Tall (Model) meshparts 1 size - ids 130580922333714
+  W2_Cover_TallPly (Model) meshparts 1 size - ids 113605038044132
+  W2_Cover_Wall (Model) meshparts 4 size - ids 96247919243153/79784169492381/72561745222342/76138960449694
+  W2_FireBarrel (Model) meshparts 2 size - ids 104907848359660/90532995113266
+  W2_FireBarrel_Burnt (Model) meshparts 2 size - ids 106954486229495/134319287066585
+  W2_Forklift (Model) meshparts 8 size - ids 108681209205043/110672481927127/95024855108444/137594801220896/101827057177994/105012810939874/72179481808593/84408008014749
+  W2_HighBayLamp (Model) meshparts 3 size - ids 81393954488231/123451763451650/90022049032338
+  W2_LongCrate (Model) meshparts 1 size - ids 100913019474427
+  W2_OilDrum_Black (Model) meshparts 1 size - ids 85245316034125
+  W2_OilDrum_Grey (Model) meshparts 1 size - ids 71268456658376
+  W2_Pallet (Model) meshparts 1 size - ids 108169802799411
+  W2_PalletSacks (Model) meshparts 2 size - ids 88610933047542/95415401876113
+  W2_RollDoor_HalfOpen (Model) meshparts 3 size - ids 82679873027646/122066674910268/75560691886457
+  W2_RollDoor_Open (Model) meshparts 3 size - ids 100948261208240/137377559130516/95358228442643
+  W2_ShelfRack (Model) meshparts 2 size - ids 80100699219046/133823439590640
+  W2_SteelCrate (Model) meshparts 1 size - ids 107741821581781
+  W2_SupplyCrate (Model) meshparts 1 size - ids 89285916069199
+  W2_Tyre (Model) meshparts 1 size - ids 120205694716814
+  W2_TyreStack (Model) meshparts 3 size - ids 130568839933575/130087402365425/116623163994361
+  W2_Workbench (Model) meshparts 1 size - ids 130013912941211
+_W2_PropsImport: true 93
+Warehouse2 MeshParts 77 with SurfaceAppearance 77 unique MeshIds 23 colliding/query/touch meshes 0
+Warehouse2Exterior MeshParts 6 with SurfaceAppearance 6 unique MeshIds 2 colliding/query/touch meshes 0
+

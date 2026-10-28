@@ -1,0 +1,61 @@
+Style Enum.LightingStyle.Realistic
+PrioritizeLQ true
+Clock 0 Bright 1 Exp 0 Amb 38,41,50 OutAmb 84,88,100
+EnvDiff 0.11999999731779099 EnvSpec 0.20000000298023224 GlobalShadows true ShadowSoft 0.11999999731779099 Lat 35
+ColorShift top 0,0,0 bottom 0,0,0
+_WH2EnvSaved present: true
+  child: Sky Sky Bk rbxassetid://6444884337 Up rbxassetid://6412503613 Stars 3000 Celestial true Moon rbxassetid://6444320592
+  child: Atmosphere Atmosphere Dens 0.320 Off 0.000 Haze 0.40 Glare 0.00 Col 52,56,64 Decay 26,28,34
+  child: BloomEffect Bloom Enabled=true Int 0.60 Size 24 Thr 1.30
+  child: ColorCorrectionEffect MapGrade Enabled=true Bri 0.000 Con 0.160 Sat -0.120 Tint 255,250,242
+  child: Configuration TutorialArenaOriginalLighting
+  child: Configuration _WH2EnvSaved
+FOV 70 CameraType Enum.CameraType.Fixed Streaming false
+EditQualityLevel Enum.QualityLevel.Level21
+QualityLevel Enum.QualityLevel.Automatic
+MeshPartDetailLevel Enum.MeshPartDetailLevel.DistanceBased GraphicsMode Enum.GraphicsMode.OpenGL
+UGS SavedQualityLevel Enum.SavedQualitySetting.Automatic
+Warehouse2 attrs: Builder=map_warehouse2; Exterior=Warehouse2Exterior; Indoor=true; LayoutVersion=1; LookRound=6; PlanOrigin=-84.19999694824219, 0.4000000059604645, -300; SteamFill=true
+Warehouse2Exterior attrs: Builder=map_warehouse2; Indoor=false; MapOf=Warehouse2
+DuelMaps.Warehouse2: ReplicatedStorage.DuelMaps.Warehouse2
+  entry attrs: DisplayName=Warehouse 2; Image=; MatchInstall=true; Modes=1v1
+  DisplayName = Warehouse 2
+  Dynamic:
+    1 = Interactive
+  Exterior = Warehouse2Exterior
+  Id = Warehouse2
+  Image = 
+  KillDepth = 30
+  Lighting:
+    Ambient = 38,41,50
+    Atmosphere:
+      Color = 52,56,64
+      Decay = 26,28,34
+      Density = 0.32
+      Glare = 0
+      Haze = 0.4
+      Offset = 0
+    Bloom:
+      Intensity = 0.6
+      Size = 24
+      Threshold = 1.3
+    Brightness = 1
+    ClockTime = 0
+    EnvironmentDiffuseScale = 0.12
+    EnvironmentSpecularScale = 0.2
+    ExposureCompensation = 0
+    GeographicLatitude = 35
+    GlobalShadows = true
+    Grade:
+      Brightness = 0
+      Contrast = 0.16
+      Saturation = -0.12
+      TintColor = 255,250,242
+    OutdoorAmbient = 84,88,100
+  Modes:
+    1 = 1v1
+  Size = 84, 25, 157
+  SourceOrigin = -84.19999694824219, 0.4000000059604645, -300
+  SpawnSpacing = 4
+  WorkspaceName = Warehouse2
+

@@ -1,0 +1,6 @@
+Warehouse2 Indoor=true: 0 FAIL 0 WARN | parts 905 meshparts 77 lights 28 neon 18 walkCells 603 openSky 0%
+Warehouse2Exterior Indoor=false: 0 FAIL 1 WARN | parts 266 meshparts 6 lights 4 neon 6 walkCells 143 openSky 100%
+   WARN HOLE Warehouse2Exterior: 23 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)
+SPAWN SpawnA at (-53.25, 0.60, -350.00) floor COLP_Floor 0.20 below headroom ok (6+)
+SPAWN SpawnB at (-115.25, 0.60, -250.00) floor COLP_Floor 0.20 below headroom ok (6+)
+

@@ -1,0 +1,9 @@
+MAPAUDIT Play server Warehouse2 Indoor=true: 0 FAIL 0 WARN | parts 905 meshparts 77 lights 28
+DOOR Door_N Open=false Moving=false shutter 20.50x14.39 collide true query true
+DOOR Door_S Open=false Moving=false shutter 20.50x14.39 collide true query true
+ROOF SWEEP cells 8381 holes 0 | DoorLight_N 3, DoorLight_S 3, FlangeBot 226, Knee_-24_-1 5, Knee_-24_1 5, Knee_-40_-1 4, Knee_-40_1 5, Knee_-8_-1 5, Knee_-8_1 5, Knee_24_-1 5, Knee_24_1 5, Knee_40_-1 5, Knee_40_1 3, Knee_8_-1 5, Knee_8_1 5, Lens 72, Look 4, Pier_all_E_10_Stripe 26, Pier_all_E_1_Stripe 15, Pier_all_E_2_Stripe 11, Pier_all_E_3_Stripe 4, Pier_all_E_4_Stripe 15, Pier_all_E_5_Stripe 11, Pier_all_E_6_Stripe 2, Pier_all_E_7_Stripe 2, Pier_all_E_8_Stripe 15, Pier_all_E_9_Stripe 4, PipeBracket 12, Purlin 558, Rafter_-24_-1_Bot 30, Rafter_-24_1_Bot 28, Rafter_-40_-1_Bot 35, Rafter_-40_1_Bot 35, Rafter_-8_-1_Bot 30, Rafter_-8_1_Bot 35, Rafter_24_-1_Bot 28, Rafter_24_1_Bot 30, Rafter_40_-1_Bot 35, Rafter_40_1_Bot 35, Rafter_8_-1_Bot 35, Rafter_8_1_Bot 30, RoofSheet 4990, SteamMain 44, ValveBody 2, W2_RollDoor_Frame 78, W2_Workbench 1, Wheel 2, glass:RoofSkylight 1838
+DRUM LABEL_S size 5.599999904632568, 1.100000023841858, 0.05000000074505806 | drum surface behind the label's front face (studs, + = behind): 0.103 0.103 0.103 0.234 0.151 0.234 0.151
+DOOR TEST Door_N: shut-body-fits false (Shutter) | open: top drift mid 0.0000 end 0.0000, bottom 14.10 above floor, body fits true (), Open=true | second open call refused true | closed again exact true, Open=false
+DOOR TEST Door_S: shut-body-fits false (Shutter) | open: top drift mid 0.0000 end 0.0000, bottom 14.10 above floor, body fits true (), Open=true | second open call refused true | closed again exact true, Open=false
+ArenaMap set (Play server only): Warehouse2 | MatchState Cancelled
+

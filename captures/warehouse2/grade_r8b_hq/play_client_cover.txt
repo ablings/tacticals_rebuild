@@ -1,0 +1,9 @@
+ArenaMap Warehouse2 MatchState Cancelled health 150
+cover L03 side 0, 0, -1: inCover=true part=COLP_L03 crouched=false vaulting=false moving=false | vault: inCover=false part=nil crouched=false vaulting=true moving=false -> moved 5.5, crossed to the far side true, feet -0.00
+cover L07 side 0, 0, -1: inCover=true part=COLP_L07 crouched=false vaulting=false moving=false
+cover C01 side 0, 0, -1: inCover=true part=COLP_C01 crouched=false vaulting=false moving=false
+cover C03 side 0, 0, -1: inCover=true part=COLP_C03 crouched=false vaulting=false moving=false
+cover W01 side 0, 0, -1: inCover=true part=COLP_W01 crouched=false vaulting=false moving=false
+cover W03 side 0, 0, 1: inCover=true part=COLP_W03 crouched=false vaulting=false moving=false
+cover P01 side 0, 0, -1: inCover=true part=COLP_P01 crouched=false vaulting=false moving=false
+

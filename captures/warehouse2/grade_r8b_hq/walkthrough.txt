@@ -1,0 +1,4 @@
+WALK-THROUGH SCAN: 177 art parts reach body height inside the hall; 2 with half or more of their body-height samples outside every collider
+  WALK-THROUGH Visuals.Doors.DoorFrame_S.W2_RollDoor_Frame 27/27 samples, size 21.90x16.28x2.59 at e -0.0 n -55.8 h -0.0..16.3
+  WALK-THROUGH Visuals.Doors.DoorFrame_N.W2_RollDoor_Frame 27/27 samples, size 21.90x16.28x2.59 at e -0.0 n 55.8 h -0.0..16.3
+

@@ -1,0 +1,8 @@
+- cover pieces: 32 compared
+- spawns: 2 compared
+- shootables: 36 parts in 6 models compared
+- camera skin: 30 kept, 6 dropped inside the new doors (COLP_CamSkin_Wall_N_E_4, COLP_CamSkin_Wall_N_E_5, COLP_CamSkin_Wall_N_W_1, COLP_CamSkin_Wall_S_E_3, COLP_CamSkin_Wall_S_E_4, COLP_CamSkin_Wall_S_W_1)
+- art parts: 997, colliding / querying / touching: 0
+- old Warehouse: 555 instances (study dump 555); registry {'Image': '', 'Modes': '1v1', 'MatchInstall': True, 'DisplayName': 'Warehouse 2'}
+- doors: Door_S open=False size=[20.5, 14.39, 0.3] prompts=0, Door_N open=False size=[20.5, 14.39, 0.3] prompts=0
+READ-BACK: 0 differences

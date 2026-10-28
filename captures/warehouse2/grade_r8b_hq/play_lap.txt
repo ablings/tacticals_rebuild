@@ -1,0 +1,13 @@
+start (spawn A) (-31.0, -50.0) feet 0.00
+walk south door (inside)    ARRIVED 2.9s end (-0.8, -53.9) feet -0.00 off 0.81, highest feet 0.00
+walk west lane              ARRIVED 8.2s end (-35.0, 18.2) feet -0.00 off 0.79, highest feet 0.00
+walk north door (inside)    ARRIVED 4.5s end (-0.6, 53.4) feet -0.00 off 0.79, highest feet -0.00
+walk spawn B                ARRIVED 2.9s end (30.2, 50.1) feet 0.00 off 0.81, highest feet 0.00
+walk east lane              ARRIVED 8.0s end (33.2, -18.9) feet -0.00 off 0.95, highest feet 0.11
+walk centre                 ARRIVED 3.6s end (1.1, -1.0) feet -0.00 off 0.79, highest feet 0.00
+walk spawn A                ARRIVED 6.0s end (-31.5, -49.4) feet -0.00 off 0.79, highest feet -0.00
+push S door        furthest |n| 56.92 (curtain at 57.45), highest feet 0.01
+push N door        furthest |n| 56.46 (curtain at 57.45), highest feet 0.00
+push S door left   furthest |n| 56.92 (curtain at 57.45), highest feet 0.01
+push N door right  furthest |n| 56.46 (curtain at 57.45), highest feet 0.00
+

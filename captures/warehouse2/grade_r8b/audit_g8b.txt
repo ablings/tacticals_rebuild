@@ -1,0 +1,7 @@
+MAP AUDIT [hall, Edit] map attribute Indoor = true: 0 FAIL, 0 WARN  stats {'lights': 28, 'openSkyShare': 0, 'neon': 18, 'indoor': True, 'walkCells': 603, 'meshparts': 77, 'parts': 905}
+MAP AUDIT [hall, Play server] : 0 FAIL, 0 WARN  stats {'lights': 28, 'openSkyShare': 0, 'neon': 18, 'indoor': True, 'walkCells': 603, 'meshparts': 77, 'parts': 905}
+MAP AUDIT [exterior, Edit] exterior attribute Indoor = false: 0 FAIL, 1 WARN  stats {'lights': 4, 'openSkyShare': 100, 'neon': 6, 'indoor': False, 'walkCells': 143, 'meshparts': 6, 'parts': 266}
+  WARN HOLE Warehouse2Exterior: 23 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)
+HALL SKY SWEEP: 8526 cells: roof 6689, skylight 1809, lamps 28, glazing 0, HOLES 0 []
+FLOOD from spawn A: 7564 cells, e -39..39 n -56..56; outside 0 [] capped=False
+FLOOD CONTROL (Door_S up): 7967 cells, 384 outside, n -69..56

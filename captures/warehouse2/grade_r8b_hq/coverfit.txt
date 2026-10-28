@@ -1,0 +1,34 @@
+C01 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C01
+C02 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C02
+C03 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C03
+C04 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C04
+C05 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C05
+C06 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C06
+C07 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C07
+C08 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C08
+C09 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C09
+C10 vis 1 art out-of-collider 0.000 collider-beyond-art 0.000 | colp size 5.00x7.00x4.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=TallCrate,PieceId=C10
+L01 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L01
+L02 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L02
+L03 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L03
+L04 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L04
+L05 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L05
+L06 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L06
+L07 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L07
+L08 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L08
+L09 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L09
+L10 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L10
+L13 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L13
+L14 vis 2 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 6.00x3.40x2.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=Jersey,PieceId=L14
+P01 vis 28 art out-of-collider 0.000 collider-beyond-art 0.060 | colp size 5.00x10.00x5.00 Ctrue Qtrue Ttrue tr 1.0 mat Cardboard | art colliding 0 | Look=PalletStack,PieceId=P01
+P02 vis 28 art out-of-collider 0.000 collider-beyond-art 0.060 | colp size 5.00x10.00x5.00 Ctrue Qtrue Ttrue tr 1.0 mat Cardboard | art colliding 0 | Look=PalletStack,PieceId=P02
+P03 vis 28 art out-of-collider 0.000 collider-beyond-art 0.060 | colp size 5.00x10.00x5.00 Ctrue Qtrue Ttrue tr 1.0 mat Cardboard | art colliding 0 | Look=PalletStack,PieceId=P03
+P04 vis 28 art out-of-collider 0.000 collider-beyond-art 0.060 | colp size 5.00x10.00x5.00 Ctrue Qtrue Ttrue tr 1.0 mat Cardboard | art colliding 0 | Look=PalletStack,PieceId=P04
+P05 vis 28 art out-of-collider 0.000 collider-beyond-art 0.060 | colp size 5.00x10.00x5.00 Ctrue Qtrue Ttrue tr 1.0 mat Cardboard | art colliding 0 | Look=PalletStack,PieceId=P05
+P06 vis 28 art out-of-collider 0.000 collider-beyond-art 0.060 | colp size 5.00x10.00x5.00 Ctrue Qtrue Ttrue tr 1.0 mat Cardboard | art colliding 0 | Look=PalletStack,PieceId=P06
+W01 vis 4 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 10.00x7.00x3.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=BlockWall,PieceId=W01
+W02 vis 4 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 10.00x7.00x3.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=BlockWall,PieceId=W02
+W03 vis 4 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 10.00x7.00x3.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=BlockWall,PieceId=W03
+W04 vis 4 art out-of-collider 0.000 collider-beyond-art 0.030 | colp size 10.00x7.00x3.00 Ctrue Qtrue Ttrue tr 1.0 mat WoodPlanks | art colliding 0 | Look=BlockWall,PieceId=W04
+WORST mismatch 0.060
+

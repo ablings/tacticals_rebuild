@@ -1,0 +1,67 @@
+Warehouse2 lights 28 shadowed 12
+  4x PointLight on Lens b=0.48 r=40  sh=false col=212,222,240 en=true
+  4x PointLight on Lens b=0.60 r=40  sh=false col=212,222,240 en=true
+  1x SpotLight on DoorLight_N b=1.40 r=20 ang=110 face=Bottom sh=true col=255,230,196 en=true
+  1x SpotLight on DoorLight_S b=1.40 r=20 ang=110 face=Bottom sh=true col=255,230,196 en=true
+  1x SpotLight on Flood_N b=1.00 r=34 ang=70 face=Back sh=true col=226,232,240 en=true
+  1x SpotLight on Flood_S b=3.00 r=34 ang=70 face=Front sh=true col=226,232,240 en=true
+  4x SpotLight on Lens b=3.00 r=20 ang=100 face=Bottom sh=true col=255,238,214 en=true
+  4x SpotLight on Lens b=5.00 r=20 ang=90 face=Bottom sh=true col=255,238,214 en=true
+  2x SpotLight on LightSource b=2.60 r=28 ang=100 face=Back sh=false col=255,238,214 en=true
+  2x SpotLight on LightSource b=2.60 r=28 ang=100 face=Front sh=false col=255,238,214 en=true
+  1x SpotLight on WallPackLens_N-6 b=0.90 r=26 ang=120 face=Bottom sh=false col=255,226,196 en=true
+  1x SpotLight on WallPackLens_N6 b=0.90 r=26 ang=120 face=Bottom sh=false col=255,226,196 en=true
+  1x SpotLight on WallPackLens_S-6 b=2.00 r=26 ang=120 face=Bottom sh=false col=255,226,196 en=true
+  1x SpotLight on WallPackLens_S6 b=2.00 r=26 ang=120 face=Bottom sh=false col=255,226,196 en=true
+Warehouse2Exterior lights 4 shadowed 2
+  2x PointLight on StreetLampLens b=1.20 r=26  sh=false col=230,230,226 en=true
+  1x SpotLight on FloodLens b=1.10 r=30 ang=120 face=Bottom sh=true col=222,228,238 en=true
+  1x SpotLight on FloodLens b=2.20 r=30 ang=120 face=Bottom sh=true col=222,228,238 en=true
+  neon 1x DoorLight_N 70,64,54
+  neon 1x WallPackLens_S6 238,228,206
+  neon 1x WallPackLens_N6 238,228,206
+  neon 1x DoorLight_S 70,64,54
+  neon 1x WallPackLens_S-6 238,228,206
+  neon 1x WallPackLens_N-6 238,228,206
+  neon 12x Lens 238,228,206
+  vis  24 Hanger Metal 84,88,86 cs=true
+  vis  24 HangerClip Metal 84,88,86 cs=true
+  vis  16 Clamp Metal 46,48,48 cs=false
+  vis  14 Purlin Metal 160,162,160 cs=true
+  vis  13 Wall_W_Mullion Metal 84,88,86 cs=true
+  vis  13 Wall_E_Mullion Metal 84,88,86 cs=true
+  vis  12 Lens Neon 238,228,206 cs=false
+  vis  12 BayLine Concrete 224,220,208 cs=true
+  vis   8 Housing Metal 84,88,86 cs=false
+  vis   8 PipeBracket Metal 84,88,86 cs=true
+  vis   8 EndPlate Metal 46,48,48 cs=true
+  vis   8 CabinetHandle Metal 84,88,86 cs=true
+  vis   6 RoofSheet Metal 108,110,108 cs=true
+  vis   4 ExtinguisherSign SmoothPlastic 28,28,26 cs=true
+  vis   4 Housing Metal 84,88,86 cs=true
+  vis   4 RoofSkylight Glass 214,222,220 cs=false
+  vis   4 FlangeTop Metal 46,48,48 cs=true
+  vis   4 Bracket Metal 46,48,48 cs=true
+  vis   4 CabinetSeam Metal 84,88,86 cs=true
+  vis   4 Web Metal 46,48,48 cs=true
+  vis   4 CabinetLabel SmoothPlastic 236,232,218 cs=true
+  vis   4 FlangeBot Metal 46,48,48 cs=true
+  vis   4 CabinetPlinth Concrete 96,96,93 cs=true
+  vis   4 Extinguisher SmoothPlastic 28,28,26 cs=true
+  vis   4 Conduit Metal 112,116,112 cs=true
+  vis   2 W2_RollDoor_Control Plastic 163,162,165 cs=true
+  vis   2 SteamStub Metal 112,116,112 cs=true
+  vis   2 WalkwayLine Concrete 224,220,208 cs=true
+  vis   2 AisleLine Concrete 224,220,208 cs=true
+  vis   2 LoadingZone SmoothPlastic 28,28,26 cs=true
+  vis   2 SteamMain Metal 112,116,112 cs=true
+  vis   2 Sign_NoSmoking SmoothPlastic 236,232,218 cs=true
+  vis   2 W2_RollDoor_Frame Plastic 163,162,165 cs=true
+  vis   2 Sign_Forklift SmoothPlastic 236,232,218 cs=true
+  vis   2 Gutter Metal 160,162,160 cs=true
+  vis   2 Sign_Ppe SmoothPlastic 236,232,218 cs=true
+  vis   2 SteamElbow Metal 112,116,112 cs=true
+  vis   1 Pier_all_E_1_BlockUp Concrete 140,137,131 cs=true
+  vis   1 Pier_all_E_10_Kick Concrete 96,96,93 cs=true
+  vis   1 Col_W-40_Web Metal 84,88,86 cs=true
+

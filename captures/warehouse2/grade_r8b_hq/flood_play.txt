@@ -1,0 +1,3 @@
+FLOOD from spawn A: 7181 surface cells reached, spawn B reached true, outside the hall 0 , highest (-118.5, 3.40, -330.5), reached by a jump 3
+  raised surfaces reached (height: cells): 3.0:30 3.4:13
+
