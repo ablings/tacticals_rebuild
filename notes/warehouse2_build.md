@@ -383,6 +383,11 @@ push, Space at a shutter nothing, cover L03 (+ vault) / C01 / P01 / W01, 5 round
 contract both doors exact. Sheet notes/warehouse2_sheet_r8.jpg now has 4 columns (quality 1 as graded | same at 21 | round 8 |
 round 8b).
 
+### Round 9 (grader 8b round 2: FIX 8.7; Edward kept night look B, lighting untouched; `tools/wh2_r9.lua` + installer; captures/warehouse2/r9, sheet r9_before_after_q21.png)
+- Olive C03 / C04 tint (160,215,255) -> **(170,215,170)**: lit pixels hue 132 / sat 0.19 (cold grey-green) -> **hue 69 / sat 0.53** at quality 21 (Tacticals olive 73 / 0.53); Play: cover on C03 / C04 / C01 holds (r9/play_cover_r9.txt).
+- Black box by each spawn = the loose carton (Props.Cartons): its sides get no direct light (fill lamp straight overhead, wall-light cones end short, no bounce) and colour / material / CastShadow / kit meshes all stayed >= 83 % near-black; a cardboard skin (SurfaceGui, LightInfluence 0.75, tape strip) on the 4 sides: **0 -> 32, near-black 88 % -> 0 %**, spawn-view p50 unchanged (46 / 51); DrumLabel_S 0.03 toward the room (front 0.103 -> 0.133 off the drum).
+- Checks: MapAudit hall 0 FAIL 0 WARN (Edit + Play), exterior 1 WARN (apron, known), sky 0 holes, flood 0 outside / control 384 (r9/audit_r9.txt); place's own lighting restored, then saved to file.
+
 Lessons (8b, no game names):
 6. **A darkness ceiling is not a mood check.** After meeting "<= 25 % near-black", measure what the added light landed on: roof
    and walls at or above the floor between the pools read as "lights on". Keep the roof dark but not black (~25-45) and the

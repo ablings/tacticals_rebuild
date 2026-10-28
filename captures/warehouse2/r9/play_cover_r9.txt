@@ -1,0 +1,7 @@
+Round 9 Play cover check (tools/wh2_play.py setup/start, tools/wh2_lap_r6_vote.lua, tools/wh2_r9_cover.lua, stop, clear), EditQualityLevel 21 build copy
+phase MapVote; voted Warehouse2; ArenaMap Warehouse2, me on spawn A (-31.0, -50.0) feet 0.00, clock 0, ambient 38,41,50 (night look B)
+Door_S Open false shutter collide true / Door_N Open false shutter collide true
+cover C03 olive    inCover=true part=COLP_C03 crouched=false vaulting=false moving=false (-31.0, -26.1) feet -0.00
+cover C04 olive    inCover=true part=COLP_C04 crouched=false vaulting=false moving=false (31.0, 26.1) feet -0.00
+cover C01 control  inCover=true part=COLP_C01 crouched=false vaulting=false moving=false (-5.0, -11.0) feet 0.00
+Game stopped; test setup cleared (botcfg test line present: false); Studio back in Edit

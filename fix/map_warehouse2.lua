@@ -677,7 +677,7 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 		if k == "S" then
 			-- the kit's drum carries a baked "BAY 02" stencil: on BAY 01 a riveted label plate covers it (black / cream, the
 			-- south end's sign colours), tangent to the drum's front (n -54.58 at h 15.0, measured by raycast)
-			local plate = box(D, "DrumLabel_S", 1.8, 7.4, -54.53, -54.48, 14.45, 15.55, S.black)
+			local plate = box(D, "DrumLabel_S", 1.8, 7.4, -54.50, -54.45, 14.45, 15.55, S.black) -- round 9: 0.03 toward the room (front 0.133 off the drum, >= 0.12)
 			plate.CastShadow = false
 			text(plate, "Back", "BAY 01", rgb(236, 232, 218))
 		end
@@ -1048,7 +1048,7 @@ end
 -- centre, so the FBX pivot convention doesn't matter) and checked against the gameplay box; without the kit (or for a piece
 -- whose mesh is missing or the wrong size) the Part stand-in is built as before. Art never collides / queries / touches.
 local KIT = SS:FindFirstChild("Warehouse2Kit")
-local OLIVE_TINT = Color3.fromRGB(160, 215, 255) --@OLIVE_TINT (render-checked at quality 21: olive drab, not lime)
+local OLIVE_TINT = Color3.fromRGB(170, 215, 170) --@OLIVE_TINT (round 9, night look B: renders hue 69 / sat 0.53 at quality 21 = Tacticals olive; (160,215,255) read cold grey-green under the cool fill)
 local KIT_FOR = { Jersey = { "W2_Cover_Low" }, TallCrate = { "W2_Cover_Tall", "W2_Cover_TallPly" }, BlockWall = { "W2_Cover_Wall" } }
 local nKit, kitSkipped = 0, {}
 local function kitPiece(m, q, idx)
@@ -1153,6 +1153,24 @@ do
 	m = prop("Drums_W", "OilDrum") drum(m, -37.6, 30.2, S.black) drum(m, -35.4, 31.2, S.rust)
 	m = prop("Drums_E", "OilDrum") drum(m, 37.6, -30.2, S.rust) drum(m, 35.4, -31.2, S.black)
 	m = prop("Cartons", "Carton") boxes(m, -21, -47.5, 0, 1.6, 1.2, 1.4) boxes(m, 21, 47.5, 0, 1.6, 1.2, 1.4)
+	-- round 9: the loose cartons' side faces get no direct light (fill lamp straight overhead, wall-light cones end before them,
+	-- no bounce under ShadowMap) and rendered as black cubes by each spawn; a cardboard skin at LightInfluence 0.75 keeps them a
+	-- dark box (sides ~32, not 0) without touching the lights
+	for _, c in m:GetChildren() do
+		for _, face in { Enum.NormalId.Front, Enum.NormalId.Back, Enum.NormalId.Left, Enum.NormalId.Right } do
+			local g = Instance.new("SurfaceGui")
+			g.Name, g.Face, g.SizingMode, g.PixelsPerStud = "Skin_" .. face.Name, face, Enum.SurfaceGuiSizingMode.PixelsPerStud, 40
+			g.LightInfluence, g.Brightness, g.ClipsDescendants = 0.75, 1, true
+			local f = Instance.new("Frame")
+			f.Size, f.BorderSizePixel, f.BackgroundColor3 = UDim2.fromScale(1, 1), 0, c.Color
+			f.Parent = g
+			local tape = Instance.new("Frame")
+			tape.Name, tape.AnchorPoint, tape.Position = "Tape", Vector2.new(0.5, 0), UDim2.fromScale(0.5, 0)
+			tape.Size, tape.BorderSizePixel, tape.BackgroundColor3 = UDim2.fromScale(0.14, 0.32), 0, Color3.fromRGB(196, 170, 128)
+			tape.Parent = f
+			g.Parent = c
+		end
+	end
 	-- workbench on the west wall (old workbench spot) and a break table on the east wall (old table + chairs)
 	m = prop("Workbench", "Workbench")
 	if meshAt(m, "W2_Workbench", -37.4, 16, 0, math.pi / 2) then m = Instance.new("Model") end -- mesh in: the Parts below go nowhere
