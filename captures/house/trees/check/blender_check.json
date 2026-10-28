@@ -1,0 +1,213 @@
+{
+ "objects": 31,
+ "triangles": 51080,
+ "fail": 0,
+ "warn": 33,
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_01",
+   "message": "244 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_01_Crown",
+   "message": "1129 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_02",
+   "message": "295 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_02_Crown",
+   "message": "1073 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_03",
+   "message": "417 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_03_Crown",
+   "message": "1215 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_04_Crown",
+   "message": "907 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_05",
+   "message": "246 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_05_Crown",
+   "message": "1115 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_06_Crown",
+   "message": "987 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_07",
+   "message": "302 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_07_Crown",
+   "message": "1101 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_08_Crown",
+   "message": "907 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_09",
+   "message": "429 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_09_Crown",
+   "message": "1173 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_10",
+   "message": "242 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_10_Crown",
+   "message": "1102 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_11_Crown",
+   "message": "1017 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_12",
+   "message": "301 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_12_Crown",
+   "message": "1084 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_13_Crown",
+   "message": "949 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_14_Crown",
+   "message": "977 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_15",
+   "message": "406 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Tree_15_Crown",
+   "message": "1181 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_01 + Tree_01_Crown",
+   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_02 + Tree_02_Crown",
+   "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_03 + Tree_03_Crown",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_05 + Tree_05_Crown",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_07 + Tree_07_Crown",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_09 + Tree_09_Crown",
+   "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_10 + Tree_10_Crown",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_12 + Tree_12_Crown",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tree_15 + Tree_15_Crown",
+   "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\captures\\house\\trees\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\captures\\house\\trees\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\captures\\house\\trees\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\captures\\house\\trees\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\captures\\house\\trees\\check\\check_below.png"
+ ]
+}

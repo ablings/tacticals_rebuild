@@ -1,0 +1,892 @@
+{
+ "note": "Plan coordinates, same as H_Exterior.fbx (outside ground z = -1); import scale from K_ScaleCube (10 studs). Each Tree_NN here replaces H_Exterior's Tree_NN, Tree_NN_Leaves and Tree_NN_LeavesDark (hide those); Hedge_Front replaces Ext_Yard_Hedge. All art: CanCollide off, CastShadow on for trunks, crowns may keep shadows (realistic). One SurfaceAppearance for every object: ColorMap/NormalMap/RoughnessMap = the three H_Trees_* images, AlphaMode Overlay (no transparency used).",
+ "atlas": {
+  "color": "tex/H_Trees_color.png",
+  "normal": "tex/H_Trees_normal.png",
+  "rough": "tex/H_Trees_rough.png"
+ },
+ "objects": [
+  {
+   "name": "Tree_01",
+   "form": "round",
+   "tris": 626,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -30.0,
+    -46.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -33.58,
+     -49.02,
+     -1.43
+    ],
+    [
+     -25.96,
+     -41.73,
+     14.77
+    ]
+   ],
+   "replaces": [
+    "Tree_01",
+    "Tree_01_Leaves",
+    "Tree_01_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_01_Crown",
+   "form": "round",
+   "tris": 3226,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -30.0,
+    -46.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -35.72,
+     -50.63,
+     6.95
+    ],
+    [
+     -22.65,
+     -38.89,
+     16.95
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_02",
+   "form": "oval",
+   "tris": 826,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    36.0,
+    -48.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     33.99,
+     -49.71,
+     -1.41
+    ],
+    [
+     38.2,
+     -45.81,
+     11.57
+    ]
+   ],
+   "replaces": [
+    "Tree_02",
+    "Tree_02_Leaves",
+    "Tree_02_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_02_Crown",
+   "form": "oval",
+   "tris": 3110,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    36.0,
+    -48.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     32.42,
+     -51.33,
+     4.27
+    ],
+    [
+     39.86,
+     -44.38,
+     12.96
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_03",
+   "form": "spread",
+   "tris": 936,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -34.0,
+    58.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -38.69,
+     53.18,
+     -1.42
+    ],
+    [
+     -28.77,
+     62.14,
+     15.49
+    ]
+   ],
+   "replaces": [
+    "Tree_03",
+    "Tree_03_Leaves",
+    "Tree_03_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_03_Crown",
+   "form": "spread",
+   "tris": 3226,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -34.0,
+    58.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -42.0,
+     50.55,
+     9.84
+    ],
+    [
+     -25.87,
+     64.5,
+     18.04
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_04",
+   "form": "spruce",
+   "tris": 64,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    6.0,
+    66.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     5.14,
+     65.14,
+     -1.4
+    ],
+    [
+     6.86,
+     66.86,
+     9.8
+    ]
+   ],
+   "replaces": [
+    "Tree_04",
+    "Tree_04_Leaves",
+    "Tree_04_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_04_Crown",
+   "form": "spruce",
+   "tris": 2246,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    6.0,
+    66.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     0.2,
+     60.12,
+     -1.08
+    ],
+    [
+     12.2,
+     71.87,
+     14.43
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_05",
+   "form": "round",
+   "tris": 626,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -60.0,
+    -98.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -63.28,
+     -100.44,
+     -1.4
+    ],
+    [
+     -56.93,
+     -94.84,
+     11.48
+    ]
+   ],
+   "replaces": [
+    "Tree_05",
+    "Tree_05_Leaves",
+    "Tree_05_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_05_Crown",
+   "form": "round",
+   "tris": 3226,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -60.0,
+    -98.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -65.54,
+     -101.82,
+     6.02
+    ],
+    [
+     -54.8,
+     -92.74,
+     13.79
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_06",
+   "form": "fir",
+   "tris": 64,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    24.0,
+    -98.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     23.01,
+     -98.97,
+     -1.4
+    ],
+    [
+     24.99,
+     -97.01,
+     11.42
+    ]
+   ],
+   "replaces": [
+    "Tree_06",
+    "Tree_06_Leaves",
+    "Tree_06_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_06_Crown",
+   "form": "fir",
+   "tris": 2358,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    24.0,
+    -98.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     19.23,
+     -99.5,
+     -1.01
+    ],
+    [
+     29.32,
+     -93.61,
+     16.74
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_07",
+   "form": "oval",
+   "tris": 826,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    60.0,
+    -96.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     57.63,
+     -98.43,
+     -1.41
+    ],
+    [
+     63.15,
+     -93.4,
+     15.2
+    ]
+   ],
+   "replaces": [
+    "Tree_07",
+    "Tree_07_Leaves",
+    "Tree_07_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_07_Crown",
+   "form": "oval",
+   "tris": 3110,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    60.0,
+    -96.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     55.62,
+     -100.46,
+     5.55
+    ],
+    [
+     64.79,
+     -91.86,
+     16.34
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_08",
+   "form": "spruce",
+   "tris": 64,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -110.0,
+    -50.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -110.89,
+     -50.89,
+     -1.4
+    ],
+    [
+     -109.11,
+     -49.11,
+     10.16
+    ]
+   ],
+   "replaces": [
+    "Tree_08",
+    "Tree_08_Leaves",
+    "Tree_08_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_08_Crown",
+   "form": "spruce",
+   "tris": 2246,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -110.0,
+    -50.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -115.64,
+     -56.01,
+     -1.05
+    ],
+    [
+     -104.12,
+     -44.07,
+     14.94
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_09",
+   "form": "spread",
+   "tris": 936,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    112.0,
+    -50.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     108.39,
+     -53.28,
+     -1.41
+    ],
+    [
+     115.51,
+     -46.02,
+     11.83
+    ]
+   ],
+   "replaces": [
+    "Tree_09",
+    "Tree_09_Leaves",
+    "Tree_09_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_09_Crown",
+   "form": "spread",
+   "tris": 3226,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    112.0,
+    -50.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     106.19,
+     -55.57,
+     7.23
+    ],
+    [
+     117.75,
+     -44.76,
+     13.86
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_10",
+   "form": "round",
+   "tris": 626,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -70.0,
+    70.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -72.68,
+     67.5,
+     -1.42
+    ],
+    [
+     -66.53,
+     74.02,
+     12.74
+    ]
+   ],
+   "replaces": [
+    "Tree_10",
+    "Tree_10_Leaves",
+    "Tree_10_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_10_Crown",
+   "form": "round",
+   "tris": 3226,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -70.0,
+    70.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -75.47,
+     65.21,
+     6.67
+    ],
+    [
+     -63.88,
+     76.41,
+     15.6
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_11",
+   "form": "fir",
+   "tris": 64,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    78.0,
+    72.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     77.02,
+     71.02,
+     -1.4
+    ],
+    [
+     78.98,
+     72.98,
+     11.2
+    ]
+   ],
+   "replaces": [
+    "Tree_11",
+    "Tree_11_Leaves",
+    "Tree_11_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_11_Crown",
+   "form": "fir",
+   "tris": 2358,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    78.0,
+    72.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     73.12,
+     66.65,
+     -1.01
+    ],
+    [
+     83.31,
+     74.46,
+     16.43
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_12",
+   "form": "oval",
+   "tris": 826,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -140.0,
+    -96.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -143.02,
+     -98.91,
+     -1.42
+    ],
+    [
+     -138.16,
+     -94.38,
+     13.23
+    ]
+   ],
+   "replaces": [
+    "Tree_12",
+    "Tree_12_Leaves",
+    "Tree_12_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_12_Crown",
+   "form": "oval",
+   "tris": 3110,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -140.0,
+    -96.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -145.1,
+     -100.58,
+     5.04
+    ],
+    [
+     -136.79,
+     -92.24,
+     14.68
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_13",
+   "form": "spruce",
+   "tris": 64,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    140.0,
+    -98.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     139.06,
+     -98.94,
+     -1.4
+    ],
+    [
+     140.94,
+     -97.06,
+     10.79
+    ]
+   ],
+   "replaces": [
+    "Tree_13",
+    "Tree_13_Leaves",
+    "Tree_13_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_13_Crown",
+   "form": "spruce",
+   "tris": 2342,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    140.0,
+    -98.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     133.38,
+     -103.9,
+     -1.05
+    ],
+    [
+     146.71,
+     -91.72,
+     15.85
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_14",
+   "form": "fir",
+   "tris": 64,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -20.0,
+    92.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -20.87,
+     91.13,
+     -1.4
+    ],
+    [
+     -19.13,
+     92.87,
+     9.89
+    ]
+   ],
+   "replaces": [
+    "Tree_14",
+    "Tree_14_Leaves",
+    "Tree_14_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_14_Crown",
+   "form": "fir",
+   "tris": 2262,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    -20.0,
+    92.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -24.72,
+     87.61,
+     -1.04
+    ],
+    [
+     -15.23,
+     97.02,
+     14.55
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Tree_15",
+   "form": "spread",
+   "tris": 936,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    20.0,
+    92.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     16.53,
+     88.56,
+     -1.41
+    ],
+    [
+     23.48,
+     95.82,
+     11.05
+    ]
+   ],
+   "replaces": [
+    "Tree_15",
+    "Tree_15_Leaves",
+    "Tree_15_LeavesDark"
+   ]
+  },
+  {
+   "name": "Tree_15_Crown",
+   "form": "spread",
+   "tris": 3226,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    20.0,
+    92.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     13.43,
+     86.46,
+     6.46
+    ],
+    [
+     25.35,
+     97.91,
+     12.82
+    ]
+   ],
+   "replaces": []
+  },
+  {
+   "name": "Hedge_Front",
+   "form": "hedge",
+   "tris": 1034,
+   "material": [
+    "H_Trees"
+   ],
+   "location_plan": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "bbox_plan": [
+    [
+     -44.0,
+     -55.78,
+     -1.1
+    ],
+    [
+     44.0,
+     -53.81,
+     1.52
+    ]
+   ],
+   "replaces": [
+    "Ext_Yard_Hedge"
+   ]
+  }
+ ],
+ "markers": {
+  "K_ScaleCube": [
+   0,
+   -120,
+   30
+  ],
+  "K_Marker": [
+   12,
+   -120,
+   25
+  ]
+ },
+ "total_tris": 51080,
+ "tree_tris": 50046
+}
