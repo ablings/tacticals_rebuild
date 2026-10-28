@@ -63,6 +63,28 @@ local MAPS = {
 			},
 		},
 	},
+	-- [WH2] 2026-10-28 (live port 45): Warehouse 2, 1v1 like the Warehouse (fix/map_warehouse2.lua builds the source in the lobby:
+	-- _DuelSource.Warehouse2.{Warehouse2,Warehouse2Exterior}; only the hall is the duel map: the doors stay shut). Lighting = the
+	-- installer's NIGHT block (MapInfo.Lighting of the match places). Steam fill in the slot: fix/lobby_steam_fill.lua.
+	Warehouse2 = {
+		DisplayName = "Warehouse 2",
+		Image = "",
+		Modes = { "1v1" },
+		Model = "Warehouse2",
+		Spawns = { A = { "Warehouse2.MatchSpawns.SpawnA" }, B = { "Warehouse2.MatchSpawns.SpawnB" } },
+		SpawnSpacing = 4,
+		Dynamic = { "Interactive" },
+		Lighting = {
+			props = { Brightness = 1, ClockTime = 0, GeographicLatitude = 35, Ambient = Color3.fromRGB(38, 41, 50),
+				OutdoorAmbient = Color3.fromRGB(84, 88, 100), ExposureCompensation = 0, EnvironmentDiffuseScale = 0.12,
+				EnvironmentSpecularScale = 0.2, GlobalShadows = true, ColorShift_Top = Color3.new(0, 0, 0), ColorShift_Bottom = Color3.new(0, 0, 0) },
+			effects = {
+				{ "Atmosphere", { Density = 0.32, Offset = 0, Color = Color3.fromRGB(52, 56, 64), Decay = Color3.fromRGB(26, 28, 34), Glare = 0, Haze = 0.4 } },
+				{ "BloomEffect", { Intensity = 0.6, Size = 24, Threshold = 1.3 } },
+				{ "ColorCorrectionEffect", { Brightness = 0, Contrast = 0.16, Saturation = -0.12, TintColor = Color3.fromRGB(255, 250, 242) } },
+			},
+		},
+	},
 	-- [HOUSE] 2026-10-28: the two-storey suburban house (fix/map_house.lua builds the source in the match place; tools/duel_map_port.py
 	-- roots House,HouseExterior; fix/house_lobby_prep.lua folds a trimmed exterior into the model). Values = MapInfo.Lighting of
 	-- fix/map_house.lua (tools/house_lua.py LIGHTING).
