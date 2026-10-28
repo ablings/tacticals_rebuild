@@ -344,7 +344,7 @@ def F(fid, rm, model, cover, x0, x1, y0, y1, z0=None, h=None, face=None, note=""
 # Sizes = the modeler's meshes (art/house/house_furniture.json, size_studio [w, h, d]) where one exists; "custom" = in the kit
 # list for the modeler (briefs/kit-house.json). Plan boxes: the mesh footprint turned to its facing.
 # Living room (x -40..-9, y -30..10): close to the kitchen turned 180 degrees about the centre (fair spawns)
-F("LR_ShelfWall", "LR", "H_ShelfWall", "tall", -29, -27, -25, -13, note="custom: tall open bookshelf wall, both faces dressed: team A's spawn wall")
+F("LR_ShelfWall", "LR", "H_ShelfWall", "tall", -28, -26, -25, -13, note="custom: tall open bookshelf wall, both faces dressed: team A's spawn wall")
 F("LR_ChairA", "LR", "H_Armchair", "low", -29.2, -25, -9, -5, face="N", note="pair of armchairs facing the fireplace wall side (mirror of the island)")
 F("LR_ChairB", "LR", "H_Armchair", "low", -23, -18.8, -9, -5, face="N")
 F("LR_SofaStair", "LR", "H_Sofa_Sectional", "low", -21.2, -14, -27, -15, face="W", note="turned: its back faces the foyer arch and the stair foot: the ambush sofa")
@@ -366,7 +366,7 @@ F("KT_Pantry", "KT", "H_Pantry", "tall", 9.5, 11.96, 14, 18, face="E")
 F("KT_CounterE", "KT", "KitchenRun1", "low", 37.04, 39.5, 1, 5, face="W", note="1 module (H_KitchenBase)")
 F("KT_CounterPT", "KT", "KitchenRun1", "low", 32, 36, -9.5, -7.04, face="N", note="beside the pass-through, not under it (a counter under it made the vault land on the counter)")
 F("KT_Screen", "KT", "H_SlatScreen", "tall", 15, 17, -2, 4, note="custom: tall timber slat screen inside the hall arch (mirror)")
-F("KT_TallUnit", "KT", "H_OvenWall", "tall", 27, 29, 13, 25, note="custom: tall oven + pantry bank, both faces finished: team B's spawn wall")
+F("KT_TallUnit", "KT", "H_OvenWall", "tall", 26, 28, 13, 25, note="custom: tall oven + pantry bank, both faces finished: team B's spawn wall")
 F("KT_Bench", "KT", "H_KitchenBench", "low", 16.5, 20, 16, 26, face="E", note="custom: banquette (mirror of the ambush sofa)")
 # Foyer, cross hall, back hall, ground bathroom
 F("CH_Column", "CH", "H_DisplayColumn", "tall", -1.5, 1.5, -1.5, 1.5, note="custom: structural column wrapped in a display niche")
@@ -466,7 +466,7 @@ Dr("MB_Night2", "H_Nightstand", "MB", -21.9, -5.9, 0, "E")
 Dr("MB_Lamp1", "H_TableLamp", "MB", -21.9, -16.1, 2.0, "E", blocker=False)
 Dr("MB_Lamp2", "H_TableLamp", "MB", -21.9, -5.9, 2.0, "E", blocker=False)
 Dr("MB_Rug", "H_Rug_Living", "MB", -16, -11, 0.06, "E", blocker=False)
-Dr("MB_Art", "H_Frame_Landscape", "MB", -24.6, -11, 3.9, "W", blocker=False, hang=True, note="on the head wall's east face")
+Dr("MB_Art", "H_Frame_Landscape", "MB", -24.6, -11, 3.9, "W", blocker=False, hang=True, note="on the head wall's west face (dressing side), facing west")
 Dr("MB_Plant", "H_PlantFiddle", "MB", -10.8, -28.4, 0, "N")
 Dr("MB_FloorLamp", "H_FloorLamp", "MB", -26.5, -28.6, 0, "N")
 # bedroom 2
@@ -490,8 +490,8 @@ Dr("BR3_Art", "H_Frame_Geometric", "BR3", -39.92, 22, 5.6, "E", blocker=False, h
 # ------------------------------------------------------------------------------------------------ spawns
 # One marker per team; teammates stand 4 apart along the marker's right vector (slots 0, -4, +4), as every Tacticals map.
 SPAWNS = {
-    "A": dict(x=-34.5, y=-19, z=G0, look=[0, 1], room="LR", note="living room, west end behind the shelf wall, facing up the room (north; Edward 2026-10-28: face into the room)"),
-    "B": dict(x=34.5, y=19, z=G0, look=[0, -1], room="KT", note="kitchen, east end behind the oven wall, facing down the room (south; Edward 2026-10-28)"),
+    "A": dict(x=-34, y=-19, z=G0, look=[0, 1], room="LR", note="living room, west end behind the shelf wall, facing up the room (north; Edward 2026-10-28: face into the room)"),
+    "B": dict(x=34, y=19, z=G0, look=[0, -1], room="KT", note="kitchen, east end behind the oven wall, facing down the room (south; Edward 2026-10-28)"),
 }
 SPACING = 4.0
 for t, s in SPAWNS.items():

@@ -180,7 +180,20 @@ His answer chose "Hold: I want changes first" without naming the changes yet; as
 | Spawns face into the room | A faces north up the living room, B south down the kitchen; spawn walls moved 2 studs (shelf wall x -29..-27, oven wall x 27..29) so the slots (x -38.5 / -34.5 / -30.5 and mirror) fit; fairness PASS (contact <= 1.7 %, approach <= 7.5 %, spawn sight <= 6.7 %); spawn cameras h01 / h02 updated |
 | Bedrooms brighter | two fixtures per bedroom (SpotLight 5, 150 deg + PointLight fill 0.9): master p50 98 -> 179, bedroom 3 128 -> 196; 37 lights (budget ~40) |
 | Props that read wrong | tall cabinets tinted oak (SurfaceAppearance.Color 214,172,128); the master-bedroom print faced into its wall (white back showed): turned, lowered to sit inside the 8-high head wall, now a landscape print; foyer plant: warm uplight in its planter |
-| Better trees / outside | modeler (art/house/TREES_DONE.md, ad935ee): 15 textured trees (round / oval / spread / spruce / fir, 50k tris) + trimmed hedge; Import 3D (gunsy funsy, scale 0.01, scene position) -> HouseKit.H_Trees; installer hides the old blobs + box hedge; two trees that stood inside the neighbours' houses moved 9 into their gardens |
+| Better trees / outside | modeler (art/house/TREES_DONE.md, ad935ee): 15 textured trees (round / oval / spread / spruce / fir, 50k tris) + trimmed hedge; Import 3D (gunsy funsy, scale 0.01, scene position) -> HouseKit.H_Trees; installer removes the old blobs + box hedge from its installed copy (the kit's H_Exterior keeps them: re-run without H_Trees to undo); two trees that stood inside the neighbours' houses moved 9 into their gardens |
 | Vote tile picture | `captures/house/tile/house_vote_tile.png` (1024 x 640, street view with the new tree); upload under the group pending (Chrome: two browsers connected, asked Edward which) |
 Checks after: read-back 0, checker PASS (built), walk-through 0, art fit 0.02, MapAudit 0 FAIL / 1 WARN; lobby test source re-ported
 (COLP 232 / PCOL 30, trees in, spawn A faces north). Captures `captures/house/r5/`, `spawn_view_before_after.png`, `trees_before_after.png`.
+
+## Grade round 6 (fresh roblox-map-grader, xhigh, on Edward's changes): FIX 8.5 (narrow), and the fixes
+No blocking / major on anything it ran: spawns face into the rooms, doors / glass / 17 escape pushes, trees art-only (31 parts, 0 collide /
+query / touch, old blobs gone), read-back 0, checker PASS, walk-through 0, MapAudit 0 FAIL, 37 lights. FIX because of three checks it
+had no time for, and one minor:
+| Finding | Fix |
+|---|---|
+| Minor: in 3v3 the outer teammates spawned half a body (0.45) into the walls (slots 1.5 from wall faces, bodies 3.9-4.1 wide) | spawn walls moved one more stud (shelf wall x -28..-26, oven wall 26..28), spawns x -34 / 34: slots x -38 / -34 / -30 (and mirror) stand 2.0 clear; Play 3v3: all six bodies 0.00 off their slots, facing north / south. Fairness PASS (contact <= 1.4 %, approach <= 6.0 %, spawn sight <= 7.9 %) |
+| Not run: lobby copy | re-ported: COLP 232 / PCOL 30 = build; 31 trees in Visual, 0 colliding, 0 in Solid; spawn A faces north |
+| Not run: tree cost | trees + hedge 51k tris (modeler, blender_check 0 FAIL); map total ~150k placed (house 24k, furniture ~28k unique, exterior ~20k, trees 51k): no per-camera draw-call readout in Studio |
+| Minor docs: "hidden" vs removed; MB print note | wording fixed (build log, layout note) |
+| Minor: Tree_15 crown vs the house behind (bbox 0.15) | render w10: the tree stands in the garden in front of the house; no visible clash |
+Re-run after: read-back 0, checker PASS (built), walk-through 0, art fit 0.02, MapAudit 0 FAIL / 1 WARN.
