@@ -58,7 +58,7 @@ def mark(arrs, x0, x1, y0, y1, z0, z1):
 
 for p in D["parts"]:
     role = p["role"]
-    arrs = [solid_walk] if role == "barrier" else [solid_walk, solid_vis]
+    arrs = [solid_walk] if role in ("barrier", "blocker") else [solid_walk, solid_vis]
     if p["shape"] == "box":
         mark(arrs, p["x0"], p["x1"], p["y0"], p["y1"], p["z0"], p["z1"])
         if (role == "furniture" and p["cover"] == "low") or (role == "sill" and "Pass_" in p["id"]):

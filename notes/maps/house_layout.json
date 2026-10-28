@@ -1250,8 +1250,8 @@
   {
    "id": "Pass_KT_DR",
    "kind": "pass",
-   "a": 26,
-   "b": 32,
+   "a": 26.5,
+   "b": 31,
    "z0": 3.4,
    "z1": 8.5,
    "wall": "I_Y-10_G",
@@ -1263,7 +1263,7 @@
   {
    "id": "Pass_LR_BH",
    "kind": "pass",
-   "a": -32,
+   "a": -32.5,
    "b": -26,
    "z0": 3.4,
    "z1": 8.5,
@@ -1377,18 +1377,32 @@
    "note": "custom: tall open bookshelf wall, both faces dressed: team A's spawn wall"
   },
   {
-   "id": "LR_Sofa",
+   "id": "LR_ChairA",
    "room": "LR",
-   "model": "H_Sofa_Sectional",
+   "model": "H_Armchair",
    "cover": "low",
-   "x0": -30,
-   "x1": -18,
-   "y0": -12.2,
+   "x0": -29.2,
+   "x1": -25,
+   "y0": -9,
    "y1": -5,
    "z0": 0.0,
    "z1": 3.4,
    "face": "N",
-   "note": "sectional, back to the spawn side"
+   "note": "pair of armchairs facing the fireplace wall side (mirror of the island)"
+  },
+  {
+   "id": "LR_ChairB",
+   "room": "LR",
+   "model": "H_Armchair",
+   "cover": "low",
+   "x0": -23,
+   "x1": -18.8,
+   "y0": -9,
+   "y1": -5,
+   "z0": 0.0,
+   "z1": 3.4,
+   "face": "N",
+   "note": ""
   },
   {
    "id": "LR_SofaStair",
@@ -1541,8 +1555,8 @@
    "y1": 9.68,
    "z0": 0.0,
    "z1": 3.4,
-   "face": null,
-   "note": "seating side north"
+   "face": "S",
+   "note": "seating side south (the stools mirror the living room coffee table)"
   },
   {
    "id": "KT_CounterN",
@@ -2005,6 +2019,1372 @@
    "z1": 17.4,
    "face": "N",
    "note": ""
+  }
+ ],
+ "dressing": [
+  {
+   "id": "LR_Rug",
+   "model": "H_Rug_Living",
+   "room": "LR",
+   "x": -24,
+   "y": -1,
+   "z": 0.02,
+   "face": "S",
+   "size": [
+    12.0,
+    0.06,
+    8.0
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -30.0,
+    -18.0,
+    -5.0,
+    3.0
+   ]
+  },
+  {
+   "id": "LR_Coffee",
+   "model": "H_CoffeeTable",
+   "room": "LR",
+   "x": -24,
+   "y": -2.2,
+   "z": 0.0,
+   "face": "S",
+   "size": [
+    5.0,
+    1.66,
+    2.8
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -26.5,
+    -21.5,
+    -3.6,
+    -0.8
+   ]
+  },
+  {
+   "id": "LR_Lamp1",
+   "model": "H_FloorLamp",
+   "room": "LR",
+   "x": -38.5,
+   "y": -8,
+   "z": 0.0,
+   "face": "E",
+   "size": [
+    1.9,
+    6.0,
+    1.9
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -39.45,
+    -37.55,
+    -8.95,
+    -7.05
+   ]
+  },
+  {
+   "id": "LR_Lamp2",
+   "model": "H_FloorLamp",
+   "room": "LR",
+   "x": -12,
+   "y": 8,
+   "z": 0.0,
+   "face": "S",
+   "size": [
+    1.9,
+    6.0,
+    1.9
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -12.95,
+    -11.05,
+    7.05,
+    8.95
+   ]
+  },
+  {
+   "id": "LR_Plant",
+   "model": "H_PlantFiddle",
+   "room": "LR",
+   "x": -38.3,
+   "y": 8.2,
+   "z": 0.0,
+   "face": "E",
+   "size": [
+    2.605,
+    5.475,
+    2.031
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -39.316,
+    -37.284,
+    6.897,
+    9.502
+   ]
+  },
+  {
+   "id": "LR_Side",
+   "model": "H_SideTable",
+   "room": "LR",
+   "x": -12.5,
+   "y": -27.5,
+   "z": 0.0,
+   "face": "N",
+   "size": [
+    1.8,
+    2.14,
+    1.8
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -13.4,
+    -11.6,
+    -28.4,
+    -26.6
+   ]
+  },
+  {
+   "id": "LR_Art1",
+   "model": "H_Frame_Landscape",
+   "room": "LR",
+   "x": -29,
+   "y": -29.92,
+   "z": 6.0,
+   "face": "N",
+   "size": [
+    5.4,
+    3.6,
+    0.15
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -31.7,
+    -26.3,
+    -29.995,
+    -29.845
+   ]
+  },
+  {
+   "id": "LR_Art2",
+   "model": "H_Frame_Abstract",
+   "room": "LR",
+   "x": -39.92,
+   "y": -18,
+   "z": 5.5,
+   "face": "E",
+   "size": [
+    4.0,
+    4.0,
+    0.15
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -39.995,
+    -39.845,
+    -20.0,
+    -16.0
+   ]
+  },
+  {
+   "id": "KT_Stool1",
+   "model": "H_BarStool",
+   "room": "KT",
+   "x": 21.5,
+   "y": 3.4,
+   "z": 0.0,
+   "face": "N",
+   "size": [
+    1.48,
+    2.605,
+    1.48
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    20.76,
+    22.24,
+    2.66,
+    4.14
+   ]
+  },
+  {
+   "id": "KT_Stool2",
+   "model": "H_BarStool",
+   "room": "KT",
+   "x": 24,
+   "y": 3.4,
+   "z": 0.0,
+   "face": "N",
+   "size": [
+    1.48,
+    2.605,
+    1.48
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    23.26,
+    24.74,
+    2.66,
+    4.14
+   ]
+  },
+  {
+   "id": "KT_Stool3",
+   "model": "H_BarStool",
+   "room": "KT",
+   "x": 26.5,
+   "y": 3.4,
+   "z": 0.0,
+   "face": "N",
+   "size": [
+    1.48,
+    2.605,
+    1.48
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    25.76,
+    27.24,
+    2.66,
+    4.14
+   ]
+  },
+  {
+   "id": "KT_Upper1",
+   "model": "H_KitchenUpper",
+   "room": "KT",
+   "x": 24,
+   "y": 29.27,
+   "z": 5.8,
+   "face": "S",
+   "size": [
+    4.0,
+    2.6,
+    1.45
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    22.0,
+    26.0,
+    28.545,
+    29.995
+   ]
+  },
+  {
+   "id": "KT_Bowl",
+   "model": "H_FruitBowl",
+   "room": "KT",
+   "x": 24,
+   "y": 7.3,
+   "z": 3.4,
+   "face": "S",
+   "size": [
+    1.5,
+    0.66,
+    1.477
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    23.25,
+    24.75,
+    6.561,
+    8.038
+   ]
+  },
+  {
+   "id": "KT_Coffee",
+   "model": "H_CoffeeMachine",
+   "room": "KT",
+   "x": 35,
+   "y": 28.6,
+   "z": 3.4,
+   "face": "S",
+   "size": [
+    0.9,
+    1.3,
+    1.5
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    34.55,
+    35.45,
+    27.85,
+    29.35
+   ]
+  },
+  {
+   "id": "KT_Kettle",
+   "model": "H_Kettle",
+   "room": "KT",
+   "x": 13.5,
+   "y": 28.6,
+   "z": 3.4,
+   "face": "S",
+   "size": [
+    0.8,
+    0.929,
+    1.049
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    13.1,
+    13.9,
+    28.076,
+    29.125
+   ]
+  },
+  {
+   "id": "KT_Micro",
+   "model": "H_Microwave",
+   "room": "KT",
+   "x": 38.3,
+   "y": 3.0,
+   "z": 3.4,
+   "face": "W",
+   "size": [
+    1.9,
+    1.1,
+    1.36
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    37.62,
+    38.98,
+    2.05,
+    3.95
+   ]
+  },
+  {
+   "id": "KT_Plant",
+   "model": "H_PlantSnake",
+   "room": "KT",
+   "x": 38.5,
+   "y": -8.5,
+   "z": 0.0,
+   "face": "W",
+   "size": [
+    1.107,
+    2.833,
+    1.05
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    37.975,
+    39.025,
+    -9.053,
+    -7.947
+   ]
+  },
+  {
+   "id": "DR_Pend1",
+   "model": "H_PendantLamp",
+   "room": "DR",
+   "x": 21,
+   "y": -18.97,
+   "z": 13.0,
+   "face": "S",
+   "size": [
+    1.8,
+    4.05,
+    1.8
+   ],
+   "hang": true,
+   "note": "origin = ceiling point",
+   "box": [
+    20.1,
+    21.9,
+    -19.87,
+    -18.07
+   ]
+  },
+  {
+   "id": "DR_Pend2",
+   "model": "H_PendantLamp",
+   "room": "DR",
+   "x": 29,
+   "y": -18.97,
+   "z": 13.0,
+   "face": "S",
+   "size": [
+    1.8,
+    4.05,
+    1.8
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    28.1,
+    29.9,
+    -19.87,
+    -18.07
+   ]
+  },
+  {
+   "id": "DR_Art",
+   "model": "H_Frame_Landscape",
+   "room": "DR",
+   "x": 25,
+   "y": -29.92,
+   "z": 6.0,
+   "face": "N",
+   "size": [
+    5.4,
+    3.6,
+    0.15
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    22.3,
+    27.7,
+    -29.995,
+    -29.845
+   ]
+  },
+  {
+   "id": "DR_Plant",
+   "model": "H_PlantFiddle",
+   "room": "DR",
+   "x": 38.3,
+   "y": -28.3,
+   "z": 0.0,
+   "face": "W",
+   "size": [
+    2.605,
+    5.475,
+    2.031
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    37.284,
+    39.316,
+    -29.602,
+    -26.998
+   ]
+  },
+  {
+   "id": "FY_Plant",
+   "model": "H_PlantFiddle",
+   "room": "FY",
+   "x": 4.5,
+   "y": -14.5,
+   "z": 3.4,
+   "face": "S",
+   "size": [
+    2.605,
+    5.475,
+    2.031
+   ],
+   "hang": false,
+   "note": "in the planter (FY_Planter)",
+   "box": [
+    3.197,
+    5.803,
+    -15.515,
+    -13.485
+   ]
+  },
+  {
+   "id": "FY_Runner",
+   "model": "H_Rug_Runner",
+   "room": "FY",
+   "x": 3,
+   "y": -21,
+   "z": 0.02,
+   "face": "S",
+   "size": [
+    4.0,
+    0.06,
+    10.0
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    1.0,
+    5.0,
+    -26.0,
+    -16.0
+   ]
+  },
+  {
+   "id": "FY_Pend",
+   "model": "H_PendantLamp",
+   "room": "FY",
+   "x": 3,
+   "y": -17,
+   "z": 26.0,
+   "face": "S",
+   "size": [
+    1.8,
+    4.05,
+    1.8
+   ],
+   "hang": true,
+   "note": "hangs from the double-height ceiling",
+   "box": [
+    2.1,
+    3.9,
+    -17.9,
+    -16.1
+   ]
+  },
+  {
+   "id": "CH_Art",
+   "model": "H_Frame_Botanical",
+   "room": "CH",
+   "x": 0,
+   "y": -1.6,
+   "z": 5.0,
+   "face": "S",
+   "size": [
+    2.6,
+    3.4,
+    0.15
+   ],
+   "hang": true,
+   "note": "on the display column",
+   "box": [
+    -1.3,
+    1.3,
+    -1.675,
+    -1.525
+   ]
+  },
+  {
+   "id": "BH_Washer",
+   "model": "H_WashingMachine",
+   "room": "BH",
+   "x": 1.8,
+   "y": 28.7,
+   "z": 0.0,
+   "face": "S",
+   "size": [
+    2.6,
+    3.0,
+    2.52
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    0.5,
+    3.1,
+    27.44,
+    29.96
+   ]
+  },
+  {
+   "id": "MR_Art",
+   "model": "H_Frame_Geometric",
+   "room": "MR",
+   "x": -16,
+   "y": 29.92,
+   "z": 5.5,
+   "face": "S",
+   "size": [
+    3.0,
+    3.0,
+    0.15
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -17.5,
+    -14.5,
+    29.845,
+    29.995
+   ]
+  },
+  {
+   "id": "GB_Toilet",
+   "model": "H_Toilet",
+   "room": "GB",
+   "x": -38.75,
+   "y": 15,
+   "z": 0.0,
+   "face": "E",
+   "size": [
+    1.9,
+    2.64,
+    2.5
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -40.0,
+    -37.5,
+    14.05,
+    15.95
+   ]
+  },
+  {
+   "id": "GB_Vanity",
+   "model": "H_Vanity",
+   "room": "GB",
+   "x": -39.04,
+   "y": 21,
+   "z": 0.2,
+   "face": "E",
+   "size": [
+    4.1,
+    3.043,
+    1.92
+   ],
+   "hang": false,
+   "note": "floating vanity on the west wall",
+   "box": [
+    -40.0,
+    -38.08,
+    18.95,
+    23.05
+   ]
+  },
+  {
+   "id": "GB_Mirror",
+   "model": "H_Mirror",
+   "room": "GB",
+   "x": -39.9,
+   "y": 21,
+   "z": 3.9,
+   "face": "E",
+   "size": [
+    3.0,
+    4.0,
+    0.19
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -39.995,
+    -39.805,
+    19.5,
+    22.5
+   ]
+  },
+  {
+   "id": "GB_ShowerGlass",
+   "model": "H_ShowerGlass",
+   "room": "GB",
+   "x": -26.1,
+   "y": 13.6,
+   "z": 0.0,
+   "face": "N",
+   "size": [
+    3.12,
+    6.6,
+    0.2
+   ],
+   "hang": false,
+   "note": "glass screen; its collision is the modeler's 3 x 6.6 x 0.1 box (PCOL_GB_ShowerGlass)",
+   "box": [
+    -27.66,
+    -24.54,
+    13.5,
+    13.7
+   ]
+  },
+  {
+   "id": "GB_ShowerSet",
+   "model": "H_ShowerSet",
+   "room": "GB",
+   "x": -25.0,
+   "y": 10.6,
+   "z": 4.0,
+   "face": "N",
+   "size": [
+    1.1,
+    3.31,
+    1.6
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -25.55,
+    -24.45,
+    9.8,
+    11.4
+   ]
+  },
+  {
+   "id": "GB_Towel",
+   "model": "H_TowelRail",
+   "room": "GB",
+   "x": -32,
+   "y": 29.76,
+   "z": 3.8,
+   "face": "S",
+   "size": [
+    2.2,
+    1.32,
+    0.48
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -33.1,
+    -30.9,
+    29.52,
+    30.0
+   ]
+  },
+  {
+   "id": "UB_Toilet",
+   "model": "H_Toilet",
+   "room": "UB",
+   "x": 1.5,
+   "y": 28.75,
+   "z": 14.0,
+   "face": "S",
+   "size": [
+    1.9,
+    2.64,
+    2.5
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    0.55,
+    2.45,
+    27.5,
+    30.0
+   ]
+  },
+  {
+   "id": "UB_Vanity",
+   "model": "H_Vanity",
+   "room": "UB",
+   "x": -4,
+   "y": 17.96,
+   "z": 14.2,
+   "face": "N",
+   "size": [
+    4.1,
+    3.043,
+    1.92
+   ],
+   "hang": false,
+   "note": "on the hall wall, beside the door",
+   "box": [
+    -6.05,
+    -1.95,
+    17.0,
+    18.92
+   ]
+  },
+  {
+   "id": "UB_Mirror",
+   "model": "H_Mirror",
+   "room": "UB",
+   "x": -4,
+   "y": 17.6,
+   "z": 17.9,
+   "face": "N",
+   "size": [
+    3.0,
+    4.0,
+    0.19
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -5.5,
+    -2.5,
+    17.505,
+    17.695
+   ]
+  },
+  {
+   "id": "UB_ShowerGlass",
+   "model": "H_ShowerGlass",
+   "room": "UB",
+   "x": 6.25,
+   "y": 24.4,
+   "z": 14.0,
+   "face": "N",
+   "size": [
+    3.12,
+    6.6,
+    0.2
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    4.69,
+    7.81,
+    24.3,
+    24.5
+   ]
+  },
+  {
+   "id": "UB_ShowerSet",
+   "model": "H_ShowerSet",
+   "room": "UB",
+   "x": 6.25,
+   "y": 29.7,
+   "z": 18.0,
+   "face": "S",
+   "size": [
+    1.1,
+    3.31,
+    1.6
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    5.7,
+    6.8,
+    28.9,
+    30.5
+   ]
+  },
+  {
+   "id": "MB_Night1",
+   "model": "H_Nightstand",
+   "room": "MB",
+   "x": -19.9,
+   "y": -16.1,
+   "z": 14.0,
+   "face": "E",
+   "size": [
+    2.2,
+    2.0,
+    2.05
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -20.925,
+    -18.875,
+    -17.2,
+    -15.0
+   ]
+  },
+  {
+   "id": "MB_Night2",
+   "model": "H_Nightstand",
+   "room": "MB",
+   "x": -19.9,
+   "y": -5.9,
+   "z": 14.0,
+   "face": "E",
+   "size": [
+    2.2,
+    2.0,
+    2.05
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -20.925,
+    -18.875,
+    -7.0,
+    -4.8
+   ]
+  },
+  {
+   "id": "MB_Lamp1",
+   "model": "H_TableLamp",
+   "room": "MB",
+   "x": -19.9,
+   "y": -16.1,
+   "z": 16.0,
+   "face": "E",
+   "size": [
+    1.24,
+    2.0,
+    1.24
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -20.52,
+    -19.28,
+    -16.72,
+    -15.48
+   ]
+  },
+  {
+   "id": "MB_Lamp2",
+   "model": "H_TableLamp",
+   "room": "MB",
+   "x": -19.9,
+   "y": -5.9,
+   "z": 16.0,
+   "face": "E",
+   "size": [
+    1.24,
+    2.0,
+    1.24
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -20.52,
+    -19.28,
+    -6.52,
+    -5.28
+   ]
+  },
+  {
+   "id": "MB_Rug",
+   "model": "H_Rug_Living",
+   "room": "MB",
+   "x": -14,
+   "y": -11,
+   "z": 14.02,
+   "face": "E",
+   "size": [
+    12.0,
+    0.06,
+    8.0
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -18.0,
+    -10.0,
+    -17.0,
+    -5.0
+   ]
+  },
+  {
+   "id": "MB_Art",
+   "model": "H_Frame_Abstract",
+   "room": "MB",
+   "x": -22.6,
+   "y": -11,
+   "z": 19.2,
+   "face": "E",
+   "size": [
+    4.0,
+    4.0,
+    0.15
+   ],
+   "hang": true,
+   "note": "on the head wall's east face",
+   "box": [
+    -22.675,
+    -22.525,
+    -13.0,
+    -9.0
+   ]
+  },
+  {
+   "id": "MB_Plant",
+   "model": "H_PlantFiddle",
+   "room": "MB",
+   "x": -10.8,
+   "y": -28.4,
+   "z": 14.0,
+   "face": "N",
+   "size": [
+    2.605,
+    5.475,
+    2.031
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -12.103,
+    -9.498,
+    -29.415,
+    -27.384
+   ]
+  },
+  {
+   "id": "MB_FloorLamp",
+   "model": "H_FloorLamp",
+   "room": "MB",
+   "x": -18.5,
+   "y": -28.6,
+   "z": 14.0,
+   "face": "N",
+   "size": [
+    1.9,
+    6.0,
+    1.9
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -19.45,
+    -17.55,
+    -29.55,
+    -27.65
+   ]
+  },
+  {
+   "id": "BR2_Night1",
+   "model": "H_Nightstand",
+   "room": "BR2",
+   "x": 38.4,
+   "y": -15.1,
+   "z": 14.0,
+   "face": "W",
+   "size": [
+    2.2,
+    2.0,
+    2.05
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    37.375,
+    39.425,
+    -16.2,
+    -14.0
+   ]
+  },
+  {
+   "id": "BR2_Night2",
+   "model": "H_Nightstand",
+   "room": "BR2",
+   "x": 38.4,
+   "y": -4.9,
+   "z": 14.0,
+   "face": "W",
+   "size": [
+    2.2,
+    2.0,
+    2.05
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    37.375,
+    39.425,
+    -6.0,
+    -3.8
+   ]
+  },
+  {
+   "id": "BR2_Lamp",
+   "model": "H_TableLamp",
+   "room": "BR2",
+   "x": 38.4,
+   "y": -15.1,
+   "z": 16.0,
+   "face": "W",
+   "size": [
+    1.24,
+    2.0,
+    1.24
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    37.78,
+    39.02,
+    -15.72,
+    -14.48
+   ]
+  },
+  {
+   "id": "BR2_Desk",
+   "model": "H_Desk",
+   "room": "BR2",
+   "x": 31,
+   "y": -28.28,
+   "z": 14.0,
+   "face": "N",
+   "size": [
+    5.0,
+    2.62,
+    2.44
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    28.5,
+    33.5,
+    -29.5,
+    -27.06
+   ]
+  },
+  {
+   "id": "BR2_Chair",
+   "model": "H_DeskChair",
+   "room": "BR2",
+   "x": 31,
+   "y": -25.6,
+   "z": 14.0,
+   "face": "S",
+   "size": [
+    2.182,
+    3.59,
+    2.09
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    29.909,
+    32.091,
+    -26.645,
+    -24.555
+   ]
+  },
+  {
+   "id": "BR2_Laptop",
+   "model": "H_Laptop",
+   "room": "BR2",
+   "x": 31,
+   "y": -28.3,
+   "z": 16.62,
+   "face": "N",
+   "size": [
+    1.5,
+    0.985,
+    1.286
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    30.25,
+    31.75,
+    -28.943,
+    -27.657
+   ]
+  },
+  {
+   "id": "BR2_Art",
+   "model": "H_Frame_Botanical",
+   "room": "BR2",
+   "x": 39.92,
+   "y": -10,
+   "z": 19.4,
+   "face": "W",
+   "size": [
+    2.6,
+    3.4,
+    0.15
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    39.845,
+    39.995,
+    -11.3,
+    -8.7
+   ]
+  },
+  {
+   "id": "BR3_Night",
+   "model": "H_Nightstand",
+   "room": "BR3",
+   "x": -33.6,
+   "y": 26.4,
+   "z": 14.0,
+   "face": "S",
+   "size": [
+    2.2,
+    2.0,
+    2.05
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -34.7,
+    -32.5,
+    25.375,
+    27.425
+   ]
+  },
+  {
+   "id": "BR3_Lamp",
+   "model": "H_TableLamp",
+   "room": "BR3",
+   "x": -33.6,
+   "y": 26.4,
+   "z": 16.0,
+   "face": "S",
+   "size": [
+    1.24,
+    2.0,
+    1.24
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -34.22,
+    -32.98,
+    25.78,
+    27.02
+   ]
+  },
+  {
+   "id": "BR3_Desk",
+   "model": "H_Desk",
+   "room": "BR3",
+   "x": -21,
+   "y": 28.28,
+   "z": 14.0,
+   "face": "S",
+   "size": [
+    5.0,
+    2.62,
+    2.44
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -23.5,
+    -18.5,
+    27.06,
+    29.5
+   ]
+  },
+  {
+   "id": "BR3_Chair",
+   "model": "H_DeskChair",
+   "room": "BR3",
+   "x": -21,
+   "y": 25.6,
+   "z": 14.0,
+   "face": "N",
+   "size": [
+    2.182,
+    3.59,
+    2.09
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -22.091,
+    -19.909,
+    24.555,
+    26.645
+   ]
+  },
+  {
+   "id": "BR3_Blocks",
+   "model": "H_ToyBlocks",
+   "room": "BR3",
+   "x": -28,
+   "y": 16,
+   "z": 14.0,
+   "face": "S",
+   "size": [
+    2.172,
+    1.11,
+    1.772
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -29.086,
+    -26.914,
+    15.114,
+    16.886
+   ]
+  },
+  {
+   "id": "BR3_Ball",
+   "model": "H_ToyBall",
+   "room": "BR3",
+   "x": -30.5,
+   "y": 12,
+   "z": 14.0,
+   "face": "S",
+   "size": [
+    1.2,
+    1.2,
+    1.2
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -31.1,
+    -29.9,
+    11.4,
+    12.6
+   ]
+  },
+  {
+   "id": "BR3_Car",
+   "model": "H_ToyCar",
+   "room": "BR3",
+   "x": -25.5,
+   "y": 13.5,
+   "z": 14.0,
+   "face": "E",
+   "size": [
+    0.96,
+    0.78,
+    1.5
+   ],
+   "hang": false,
+   "note": "",
+   "box": [
+    -26.25,
+    -24.75,
+    13.02,
+    13.98
+   ]
+  },
+  {
+   "id": "BR3_Teddy",
+   "model": "H_Teddy",
+   "room": "BR3",
+   "x": -37.2,
+   "y": 27,
+   "z": 16.0,
+   "face": "E",
+   "size": [
+    1.187,
+    1.57,
+    0.936
+   ],
+   "hang": false,
+   "note": "on the bed",
+   "box": [
+    -37.668,
+    -36.732,
+    26.407,
+    27.593
+   ]
+  },
+  {
+   "id": "BR3_Art",
+   "model": "H_Frame_Geometric",
+   "room": "BR3",
+   "x": -39.92,
+   "y": 22,
+   "z": 19.6,
+   "face": "E",
+   "size": [
+    3.0,
+    3.0,
+    0.15
+   ],
+   "hang": true,
+   "note": "",
+   "box": [
+    -39.995,
+    -39.845,
+    20.5,
+    23.5
+   ]
   }
  ],
  "parts": [
@@ -3668,7 +5048,7 @@
    "id": "I_Y-10_G_3",
    "shape": "box",
    "x0": 20.5,
-   "x1": 26,
+   "x1": 26.5,
    "y0": -10.5,
    "y1": -9.5,
    "z0": 0.0,
@@ -3680,8 +5060,8 @@
   {
    "id": "I_Y-10_G_4_Pass_KT_DR_Below",
    "shape": "box",
-   "x0": 26,
-   "x1": 32,
+   "x0": 26.5,
+   "x1": 31,
    "y0": -10.5,
    "y1": -9.5,
    "z0": 0.0,
@@ -3693,8 +5073,8 @@
   {
    "id": "I_Y-10_G_5_Above",
    "shape": "box",
-   "x0": 26,
-   "x1": 32,
+   "x0": 26.5,
+   "x1": 31,
    "y0": -10.5,
    "y1": -9.5,
    "z0": 8.5,
@@ -3706,7 +5086,7 @@
   {
    "id": "I_Y-10_G_6",
    "shape": "box",
-   "x0": 32,
+   "x0": 31,
    "x1": 40.0,
    "y0": -10.5,
    "y1": -9.5,
@@ -3720,7 +5100,7 @@
    "id": "I_Y10_G_1",
    "shape": "box",
    "x0": -40.0,
-   "x1": -32,
+   "x1": -32.5,
    "y0": 9.5,
    "y1": 10.5,
    "z0": 0.0,
@@ -3732,7 +5112,7 @@
   {
    "id": "I_Y10_G_2_Pass_LR_BH_Below",
    "shape": "box",
-   "x0": -32,
+   "x0": -32.5,
    "x1": -26,
    "y0": 9.5,
    "y1": 10.5,
@@ -3745,7 +5125,7 @@
   {
    "id": "I_Y10_G_3_Above",
    "shape": "box",
-   "x0": -32,
+   "x0": -32.5,
    "x1": -26,
    "y0": 9.5,
    "y1": 10.5,
@@ -4561,18 +5941,32 @@
    "model": "ShelfWall"
   },
   {
-   "id": "F_LR_Sofa",
+   "id": "F_LR_ChairA",
    "shape": "box",
-   "x0": -30,
-   "x1": -18,
-   "y0": -12.2,
+   "x0": -29.2,
+   "x1": -25,
+   "y0": -9,
    "y1": -5,
    "z0": 0.0,
    "z1": 3.4,
    "role": "furniture",
    "cover": "low",
    "room": "LR",
-   "model": "H_Sofa_Sectional"
+   "model": "H_Armchair"
+  },
+  {
+   "id": "F_LR_ChairB",
+   "shape": "box",
+   "x0": -23,
+   "x1": -18.8,
+   "y0": -9,
+   "y1": -5,
+   "z0": 0.0,
+   "z1": 3.4,
+   "role": "furniture",
+   "cover": "low",
+   "room": "LR",
+   "model": "H_Armchair"
   },
   {
    "id": "F_LR_SofaStair",
@@ -5189,6 +6583,370 @@
    "cover": "low",
    "room": "BR3",
    "model": "H_Dresser"
+  },
+  {
+   "id": "PCOL_LR_Coffee",
+   "shape": "box",
+   "x0": -26.5,
+   "x1": -21.5,
+   "y0": -3.6,
+   "y1": -0.8,
+   "z0": 0.0,
+   "z1": 1.66,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_CoffeeTable",
+   "room": "LR"
+  },
+  {
+   "id": "PCOL_LR_Lamp1",
+   "shape": "box",
+   "x0": -39.45,
+   "x1": -37.55,
+   "y0": -8.95,
+   "y1": -7.05,
+   "z0": 0.0,
+   "z1": 6.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_FloorLamp",
+   "room": "LR"
+  },
+  {
+   "id": "PCOL_LR_Lamp2",
+   "shape": "box",
+   "x0": -12.95,
+   "x1": -11.05,
+   "y0": 7.05,
+   "y1": 8.95,
+   "z0": 0.0,
+   "z1": 6.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_FloorLamp",
+   "room": "LR"
+  },
+  {
+   "id": "PCOL_LR_Plant",
+   "shape": "box",
+   "x0": -39.316,
+   "x1": -37.284,
+   "y0": 6.897,
+   "y1": 9.502,
+   "z0": 0.0,
+   "z1": 5.475,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_PlantFiddle",
+   "room": "LR"
+  },
+  {
+   "id": "PCOL_LR_Side",
+   "shape": "box",
+   "x0": -13.4,
+   "x1": -11.6,
+   "y0": -28.4,
+   "y1": -26.6,
+   "z0": 0.0,
+   "z1": 2.14,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_SideTable",
+   "room": "LR"
+  },
+  {
+   "id": "PCOL_KT_Stool1",
+   "shape": "box",
+   "x0": 20.76,
+   "x1": 22.24,
+   "y0": 2.66,
+   "y1": 4.14,
+   "z0": 0.0,
+   "z1": 2.605,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_BarStool",
+   "room": "KT"
+  },
+  {
+   "id": "PCOL_KT_Stool2",
+   "shape": "box",
+   "x0": 23.26,
+   "x1": 24.74,
+   "y0": 2.66,
+   "y1": 4.14,
+   "z0": 0.0,
+   "z1": 2.605,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_BarStool",
+   "room": "KT"
+  },
+  {
+   "id": "PCOL_KT_Stool3",
+   "shape": "box",
+   "x0": 25.76,
+   "x1": 27.24,
+   "y0": 2.66,
+   "y1": 4.14,
+   "z0": 0.0,
+   "z1": 2.605,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_BarStool",
+   "room": "KT"
+  },
+  {
+   "id": "PCOL_KT_Plant",
+   "shape": "box",
+   "x0": 37.975,
+   "x1": 39.025,
+   "y0": -9.053,
+   "y1": -7.947,
+   "z0": 0.0,
+   "z1": 2.833,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_PlantSnake",
+   "room": "KT"
+  },
+  {
+   "id": "PCOL_DR_Plant",
+   "shape": "box",
+   "x0": 37.284,
+   "x1": 39.316,
+   "y0": -29.602,
+   "y1": -26.998,
+   "z0": 0.0,
+   "z1": 5.475,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_PlantFiddle",
+   "room": "DR"
+  },
+  {
+   "id": "PCOL_BH_Washer",
+   "shape": "box",
+   "x0": 0.5,
+   "x1": 3.1,
+   "y0": 27.44,
+   "y1": 29.96,
+   "z0": 0.0,
+   "z1": 3.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_WashingMachine",
+   "room": "BH"
+  },
+  {
+   "id": "PCOL_GB_Toilet",
+   "shape": "box",
+   "x0": -40.0,
+   "x1": -37.5,
+   "y0": 14.05,
+   "y1": 15.95,
+   "z0": 0.0,
+   "z1": 2.64,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Toilet",
+   "room": "GB"
+  },
+  {
+   "id": "PCOL_UB_Toilet",
+   "shape": "box",
+   "x0": 0.55,
+   "x1": 2.45,
+   "y0": 27.5,
+   "y1": 30.0,
+   "z0": 14.0,
+   "z1": 16.64,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Toilet",
+   "room": "UB"
+  },
+  {
+   "id": "PCOL_MB_Night1",
+   "shape": "box",
+   "x0": -20.925,
+   "x1": -18.875,
+   "y0": -17.2,
+   "y1": -15.0,
+   "z0": 14.0,
+   "z1": 16.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Nightstand",
+   "room": "MB"
+  },
+  {
+   "id": "PCOL_MB_Night2",
+   "shape": "box",
+   "x0": -20.925,
+   "x1": -18.875,
+   "y0": -7.0,
+   "y1": -4.8,
+   "z0": 14.0,
+   "z1": 16.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Nightstand",
+   "room": "MB"
+  },
+  {
+   "id": "PCOL_MB_Plant",
+   "shape": "box",
+   "x0": -12.103,
+   "x1": -9.498,
+   "y0": -29.415,
+   "y1": -27.384,
+   "z0": 14.0,
+   "z1": 19.475,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_PlantFiddle",
+   "room": "MB"
+  },
+  {
+   "id": "PCOL_MB_FloorLamp",
+   "shape": "box",
+   "x0": -19.45,
+   "x1": -17.55,
+   "y0": -29.55,
+   "y1": -27.65,
+   "z0": 14.0,
+   "z1": 20.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_FloorLamp",
+   "room": "MB"
+  },
+  {
+   "id": "PCOL_BR2_Night1",
+   "shape": "box",
+   "x0": 37.375,
+   "x1": 39.425,
+   "y0": -16.2,
+   "y1": -14.0,
+   "z0": 14.0,
+   "z1": 16.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Nightstand",
+   "room": "BR2"
+  },
+  {
+   "id": "PCOL_BR2_Night2",
+   "shape": "box",
+   "x0": 37.375,
+   "x1": 39.425,
+   "y0": -6.0,
+   "y1": -3.8,
+   "z0": 14.0,
+   "z1": 16.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Nightstand",
+   "room": "BR2"
+  },
+  {
+   "id": "PCOL_BR2_Desk",
+   "shape": "box",
+   "x0": 28.5,
+   "x1": 33.5,
+   "y0": -29.5,
+   "y1": -27.06,
+   "z0": 14.0,
+   "z1": 16.62,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Desk",
+   "room": "BR2"
+  },
+  {
+   "id": "PCOL_BR2_Chair",
+   "shape": "box",
+   "x0": 29.909,
+   "x1": 32.091,
+   "y0": -26.645,
+   "y1": -24.555,
+   "z0": 14.0,
+   "z1": 17.59,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_DeskChair",
+   "room": "BR2"
+  },
+  {
+   "id": "PCOL_BR3_Night",
+   "shape": "box",
+   "x0": -34.7,
+   "x1": -32.5,
+   "y0": 25.375,
+   "y1": 27.425,
+   "z0": 14.0,
+   "z1": 16.0,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Nightstand",
+   "room": "BR3"
+  },
+  {
+   "id": "PCOL_BR3_Desk",
+   "shape": "box",
+   "x0": -23.5,
+   "x1": -18.5,
+   "y0": 27.06,
+   "y1": 29.5,
+   "z0": 14.0,
+   "z1": 16.62,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_Desk",
+   "room": "BR3"
+  },
+  {
+   "id": "PCOL_BR3_Chair",
+   "shape": "box",
+   "x0": -22.091,
+   "x1": -19.909,
+   "y0": 24.555,
+   "y1": 26.645,
+   "z0": 14.0,
+   "z1": 17.59,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_DeskChair",
+   "room": "BR3"
+  },
+  {
+   "id": "PCOL_BR3_Blocks",
+   "shape": "box",
+   "x0": -29.086,
+   "x1": -26.914,
+   "y0": 15.114,
+   "y1": 16.886,
+   "z0": 14.0,
+   "z1": 15.11,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_ToyBlocks",
+   "room": "BR3"
+  },
+  {
+   "id": "PCOL_BR3_Ball",
+   "shape": "box",
+   "x0": -31.1,
+   "x1": -29.9,
+   "y0": 11.4,
+   "y1": 12.6,
+   "z0": 14.0,
+   "z1": 15.2,
+   "role": "blocker",
+   "cover": "none",
+   "model": "H_ToyBall",
+   "room": "BR3"
   }
  ],
  "art_only": [

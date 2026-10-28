@@ -59,9 +59,11 @@ Above the kitchen (x 9..40, y 4..30) the upper storey is a flat roof with skylig
 ## Fairness (tools/house_check.py, 0.5-stud voxels, eye 4.6, sprint 20, vault 0.34 s; see house_checks.txt)
 | Mode | Contact when A holds / B holds | Approach exposure A / B | Spawn sight A / B | Spawn exposure A / B | Half exposure A / B |
 |---|---|---|---|---|---|
-| 1v1 | 1.53 / 1.52 s (0.8 %) | 15.1 / 16.6 (8.8 %) | 10.2 / 9.7 (4.8 %) | 10.2 / 9.7 (4.8 %) | 14.1 / 13.2 (6.2 %) |
-| 2v2 | 1.38 / 1.42 s (3.1 %) | 15.1 / 16.6 (8.7 %) | 13.2 / 13.0 (1.2 %) | 13.3 / 13.0 (1.9 %) | 14.0 / 13.2 (6.0 %) |
-| 3v3 | 1.37 / 1.36 s (0.5 %) | 15.1 / 16.6 (8.9 %) | 13.2 / 13.0 (1.2 %) | 13.3 / 13.0 (1.9 %) | 14.1 / 13.2 (6.1 %) |
+| 1v1 | 1.53 / 1.52 s (0.8 %) | 15.5 / 16.4 (5.4 %) | 10.3 / 9.5 (8.3 %) | 10.3 / 9.5 (8.3 %) | 14.6 / 13.1 (10.0 %) |
+| 2v2 | 1.38 / 1.41 s (2.0 %) | 15.6 / 16.4 (5.0 %) | 13.1 / 12.6 (3.9 %) | 13.2 / 12.6 (4.5 %) | 14.6 / 13.1 (10.0 %) |
+| 3v3 | 1.38 / 1.36 s (1.4 %) | 15.6 / 16.4 (5.1 %) | 13.1 / 12.6 (3.9 %) | 13.2 / 12.6 (4.5 %) | 14.6 / 13.1 (10.0 %) |
+(After the dressing pass: floor dressing has walk blockers; the living room's first sectional became two armchairs, the island
+stools moved to the island's south side, mirroring the coffee table.)
 - Time to first contact, per side = the earliest moment two enemies see each other with that side arriving first ("A holds" /
   "B holds"). The single earliest pair (1v1: A 1.52 / B 1.04) has a mirror twin with the roles swapped; it and the mean of the
   10 earliest pairs (up to 14 % apart in 3v3) are reported only, because both pick one twin.

@@ -186,11 +186,11 @@ wall("I_X9_U", "y", 9, -4, YI, U0, UC, ops=[
 # kitchen / dining: an archway and a counter pass-through (sill 3.4 = low cover, vault and shoot through)
 wall("I_Y-10_G", "x", -10, 9.5, XI, G0, GC, ops=[
     D("Arch_KT_DR", 14, 20.5, G0, 10, kind="arch"),
-    dict(id="Pass_KT_DR", kind="pass", a=26, b=32, z0=LOW, z1=8.5),
+    dict(id="Pass_KT_DR", kind="pass", a=26.5, b=31, z0=LOW, z1=8.5),
 ])
 wall("I_Y10_G", "x", 10, -XI, -9.5, G0, GC, ops=[
     D("Arch_LR_BH", -20.5, -14, G0, 10, kind="arch"),
-    dict(id="Pass_LR_BH", kind="pass", a=-32, b=-26, z0=LOW, z1=8.5, note="half wall with a shelf: mirror of the kitchen pass-through"),
+    dict(id="Pass_LR_BH", kind="pass", a=-32.5, b=-26, z0=LOW, z1=8.5, note="half wall with a shelf: mirror of the kitchen pass-through"),
 ])
 # mudroom / back hall: separated from the stair hall by a wall with an archway (mirror of the dining room's arch to the foyer)
 wall("I_X-9_BH", "y", -9, 10.5, YI, G0, GC, ops=[D("Arch_MR_BH", 12, 22, G0, 10, kind="arch")])
@@ -320,7 +320,8 @@ def F(fid, rm, model, cover, x0, x1, y0, y1, z0=None, h=None, face=None, note=""
 # list for the modeler (briefs/kit-house.json). Plan boxes: the mesh footprint turned to its facing.
 # Living room (x -40..-9, y -30..10): close to the kitchen turned 180 degrees about the centre (fair spawns)
 F("LR_ShelfWall", "LR", "ShelfWall", "tall", -31, -29, -25, -13, note="custom: tall open bookshelf wall, both faces dressed: team A's spawn wall")
-F("LR_Sofa", "LR", "H_Sofa_Sectional", "low", -30, -18, -12.2, -5, face="N", note="sectional, back to the spawn side")
+F("LR_ChairA", "LR", "H_Armchair", "low", -29.2, -25, -9, -5, face="N", note="pair of armchairs facing the fireplace wall side (mirror of the island)")
+F("LR_ChairB", "LR", "H_Armchair", "low", -23, -18.8, -9, -5, face="N")
 F("LR_SofaStair", "LR", "H_Sofa_Sectional", "low", -21.2, -14, -27, -15, face="W", note="turned: its back faces the foyer arch and the stair foot: the ambush sofa")
 F("LR_Media", "LR", "H_TVConsole_WithTV", "low", -33, -25, -29.5, -27.48, face="N", note="collision 3.4 (the console); the TV above is art against the wall")
 F("LR_Bookcase1", "LR", "H_Bookcase", "tall", -11.1, -9.5, -22, -16, face="W")
@@ -333,7 +334,7 @@ F("DR_Table", "DR", "H_DiningSet", "low", 17, 33, -22.3, -15.63, note="two dinin
 F("DR_Cabinet", "DR", "H_Bookcase", "tall", 37.9, 39.5, -17, -11, face="W", note="as a china cabinet (glass-front variant welcome)")
 F("DR_Sideboard", "DR", "H_TVConsole", "low", 10, 12.02, -29.5, -21.5, face="E", note="used as a sideboard")
 # Kitchen (x 9..40, y -10..30)
-F("KT_Island", "KT", "H_KitchenIsland", "low", 19, 29, 5, 9.68, note="seating side north")
+F("KT_Island", "KT", "H_KitchenIsland", "low", 19, 29, 5, 9.68, face="S", note="seating side south (the stools mirror the living room coffee table)")
 F("KT_CounterN", "KT", "KitchenRun6", "low", 12, 36, 27.04, 29.5, face="S", note="6 modules of 4: H_KitchenBase / H_KitchenSink / H_KitchenHob; uppers + hood above as dressing")
 F("KT_Fridge", "KT", "H_Fridge", "tall", 9.5, 12.355, 18, 21.6, face="E")
 F("KT_Pantry", "KT", "H_Pantry", "tall", 9.5, 11.96, 14, 18, face="E")
@@ -372,9 +373,97 @@ F("BR2_Dresser", "BR2", "H_Dresser", "low", 24, 30, 1.2, 3.5, face="S")
 F("BR3_Bed", "BR3", "H_Bed_Single", "low", -39.5, -34.8, 19, 27.6, face="E")
 F("BR3_Wardrobe", "BR3", "H_Wardrobe", "tall", -12, -9.5, 19, 25, face="W")
 F("BR3_Dresser", "BR3", "H_Dresser", "low", -32, -26, 4.5, 6.8, face="N")
-# Dressing only (no collision of its own, placed by the installer; listed so the modeler's set is all used): desks + chairs
-# (BR2, BR3), vanities + mirrors + toilets + towel rails (GB, UB), shower glass screens, washing machine (BH), coffee tables,
-# rugs, lamps, frames, plants, toys (BR3), kitchen uppers + hood, stools at the island, appliances.
+# Dressing: the modeler's art-only meshes. Placed by bottom centre (x, y, z above the storey floor) and the direction the front
+# faces (S = plan -y = the mesh's own front, N, E, W). Floor pieces in walkable space get a blocker (PCOL_<id>: collides, no
+# query, NotCover) the size of the mesh's footprint, so nothing is walk-through; wall / counter / ceiling pieces get none.
+_FURN = json.load(open(os.path.join(os.path.dirname(HERE), "art", "house", "house_furniture.json")))
+MESH = {a["assembly"]: a["size_studio"] for a in _FURN["assemblies"]}
+dressing = []
+
+
+def Dr(did, model, rm, x, y, z=0.0, face="S", blocker=True, hang=False, note=""):
+    st = next(r for r in rooms if r["id"] == rm)["storey"]
+    zf = (G0 if st == "G" else U0)
+    w, h, d = MESH[model]
+    fx, fy = (w, d) if face in ("S", "N") else (d, w)
+    rec = dict(id=did, model=model, room=rm, x=x, y=y, z=round(zf + z, 3), face=face, size=[w, h, d], hang=hang, note=note,
+               box=[round(x - fx / 2, 3), round(x + fx / 2, 3), round(y - fy / 2, 3), round(y + fy / 2, 3)])
+    dressing.append(rec)
+    if blocker:
+        box("PCOL_" + did, x - fx / 2, x + fx / 2, y - fy / 2, y + fy / 2, zf + z, zf + z + h, "blocker", model=model, room=rm)
+
+
+# living room
+Dr("LR_Rug", "H_Rug_Living", "LR", -24, -1, 0.02, "S", blocker=False)
+Dr("LR_Coffee", "H_CoffeeTable", "LR", -24, -2.2, 0, "S")
+Dr("LR_Lamp1", "H_FloorLamp", "LR", -38.5, -8, 0, "E")
+Dr("LR_Lamp2", "H_FloorLamp", "LR", -12, 8, 0, "S")
+Dr("LR_Plant", "H_PlantFiddle", "LR", -38.3, 8.2, 0, "E")
+Dr("LR_Side", "H_SideTable", "LR", -12.5, -27.5, 0, "N")
+Dr("LR_Art1", "H_Frame_Landscape", "LR", -29, -29.92, 6.0, "N", blocker=False, hang=True)
+Dr("LR_Art2", "H_Frame_Abstract", "LR", -39.92, -18, 5.5, "E", blocker=False, hang=True)
+# kitchen
+Dr("KT_Stool1", "H_BarStool", "KT", 21.5, 3.4, 0, "N")
+Dr("KT_Stool2", "H_BarStool", "KT", 24, 3.4, 0, "N")
+Dr("KT_Stool3", "H_BarStool", "KT", 26.5, 3.4, 0, "N")
+Dr("KT_Upper1", "H_KitchenUpper", "KT", 24, 29.27, 5.8, "S", blocker=False)
+Dr("KT_Bowl", "H_FruitBowl", "KT", 24, 7.3, LOW, "S", blocker=False)
+Dr("KT_Coffee", "H_CoffeeMachine", "KT", 35, 28.6, LOW, "S", blocker=False)
+Dr("KT_Kettle", "H_Kettle", "KT", 13.5, 28.6, LOW, "S", blocker=False)
+Dr("KT_Micro", "H_Microwave", "KT", 38.3, 3.0, LOW, "W", blocker=False)
+Dr("KT_Plant", "H_PlantSnake", "KT", 38.5, -8.5, 0, "W")
+# dining
+Dr("DR_Pend1", "H_PendantLamp", "DR", 21, -18.97, GC - G0, "S", blocker=False, hang=True, note="origin = ceiling point")
+Dr("DR_Pend2", "H_PendantLamp", "DR", 29, -18.97, GC - G0, "S", blocker=False, hang=True)
+Dr("DR_Art", "H_Frame_Landscape", "DR", 25, -29.92, 6.0, "N", blocker=False, hang=True)
+Dr("DR_Plant", "H_PlantFiddle", "DR", 38.3, -28.3, 0, "W")
+# foyer, halls, mudroom
+Dr("FY_Plant", "H_PlantFiddle", "FY", 4.5, -14.5, LOW, "S", blocker=False, note="in the planter (FY_Planter)")
+Dr("FY_Runner", "H_Rug_Runner", "FY", 3, -21, 0.02, "S", blocker=False)
+Dr("FY_Pend", "H_PendantLamp", "FY", 3, -17, UC - G0, "S", blocker=False, hang=True, note="hangs from the double-height ceiling")
+Dr("CH_Art", "H_Frame_Botanical", "CH", 0, -1.6, 5.0, "S", blocker=False, hang=True, note="on the display column")
+Dr("BH_Washer", "H_WashingMachine", "BH", 1.8, 28.7, 0, "S")
+Dr("MR_Art", "H_Frame_Geometric", "MR", -16, 29.92, 5.5, "S", blocker=False, hang=True)
+# ground bathroom
+Dr("GB_Toilet", "H_Toilet", "GB", -38.75, 15, 0, "E")
+Dr("GB_Vanity", "H_Vanity", "GB", -39.04, 21, 0.2, "E", blocker=False, note="floating vanity on the west wall")
+Dr("GB_Mirror", "H_Mirror", "GB", -39.9, 21, 3.9, "E", blocker=False, hang=True)
+Dr("GB_ShowerGlass", "H_ShowerGlass", "GB", -26.1, 13.6, 0, "N", blocker=False, note="glass screen; its collision is the modeler's 3 x 6.6 x 0.1 box (PCOL_GB_ShowerGlass)")
+Dr("GB_ShowerSet", "H_ShowerSet", "GB", -25.0, 10.6, 4.0, "N", blocker=False, hang=True)
+Dr("GB_Towel", "H_TowelRail", "GB", -32, 29.76, 3.8, "S", blocker=False, hang=True)
+# upper bathroom
+Dr("UB_Toilet", "H_Toilet", "UB", 1.5, 28.75, 0, "S")
+Dr("UB_Vanity", "H_Vanity", "UB", -4, 17.96, 0.2, "N", blocker=False, note="on the hall wall, beside the door")
+Dr("UB_Mirror", "H_Mirror", "UB", -4, 17.6, 3.9, "N", blocker=False, hang=True)
+Dr("UB_ShowerGlass", "H_ShowerGlass", "UB", 6.25, 24.4, 0, "N", blocker=False)
+Dr("UB_ShowerSet", "H_ShowerSet", "UB", 6.25, 29.7, 4.0, "S", blocker=False, hang=True)
+# master bedroom
+Dr("MB_Night1", "H_Nightstand", "MB", -19.9, -16.1, 0, "E")
+Dr("MB_Night2", "H_Nightstand", "MB", -19.9, -5.9, 0, "E")
+Dr("MB_Lamp1", "H_TableLamp", "MB", -19.9, -16.1, 2.0, "E", blocker=False)
+Dr("MB_Lamp2", "H_TableLamp", "MB", -19.9, -5.9, 2.0, "E", blocker=False)
+Dr("MB_Rug", "H_Rug_Living", "MB", -14, -11, 0.02, "E", blocker=False)
+Dr("MB_Art", "H_Frame_Abstract", "MB", -22.6, -11, 5.2, "E", blocker=False, hang=True, note="on the head wall's east face")
+Dr("MB_Plant", "H_PlantFiddle", "MB", -10.8, -28.4, 0, "N")
+Dr("MB_FloorLamp", "H_FloorLamp", "MB", -18.5, -28.6, 0, "N")
+# bedroom 2
+Dr("BR2_Night1", "H_Nightstand", "BR2", 38.4, -15.1, 0, "W")
+Dr("BR2_Night2", "H_Nightstand", "BR2", 38.4, -4.9, 0, "W")
+Dr("BR2_Lamp", "H_TableLamp", "BR2", 38.4, -15.1, 2.0, "W", blocker=False)
+Dr("BR2_Desk", "H_Desk", "BR2", 31, -28.28, 0, "N")
+Dr("BR2_Chair", "H_DeskChair", "BR2", 31, -25.6, 0, "S")
+Dr("BR2_Laptop", "H_Laptop", "BR2", 31, -28.3, 2.62, "N", blocker=False)
+Dr("BR2_Art", "H_Frame_Botanical", "BR2", 39.92, -10, 5.4, "W", blocker=False, hang=True)
+# bedroom 3
+Dr("BR3_Night", "H_Nightstand", "BR3", -33.6, 26.4, 0, "S")
+Dr("BR3_Lamp", "H_TableLamp", "BR3", -33.6, 26.4, 2.0, "S", blocker=False)
+Dr("BR3_Desk", "H_Desk", "BR3", -21, 28.28, 0, "S")
+Dr("BR3_Chair", "H_DeskChair", "BR3", -21, 25.6, 0, "N")
+Dr("BR3_Blocks", "H_ToyBlocks", "BR3", -28, 16, 0, "S")
+Dr("BR3_Ball", "H_ToyBall", "BR3", -30.5, 12, 0, "S")
+Dr("BR3_Car", "H_ToyCar", "BR3", -25.5, 13.5, 0, "E", blocker=False)
+Dr("BR3_Teddy", "H_Teddy", "BR3", -37.2, 27, 2.0, "E", blocker=False, note="on the bed")
+Dr("BR3_Art", "H_Frame_Geometric", "BR3", -39.92, 22, 5.6, "E", blocker=False, hang=True)
 
 # ------------------------------------------------------------------------------------------------ spawns
 # One marker per team; teammates stand 4 apart along the marker's right vector (slots 0, -4, +4), as every Tacticals map.
@@ -431,7 +520,7 @@ layout = dict(
                   "measured in Play 3.79-3.89 (arena v2)"),
     voids=[dict(id="Void_Foyer", x0=-9, x1=9, y0=-30, y1=-4, note="double-height foyer + the main stair"),
            dict(id="Void_BackStair", x0=3.5, x1=9, y0=4, y1=23, note="back stair well")],
-    rooms=rooms, stairs=STAIRS, doors=doors, openings=openings, furniture=furniture, parts=parts, art_only=art_only,
+    rooms=rooms, stairs=STAIRS, doors=doors, openings=openings, furniture=furniture, dressing=dressing, parts=parts, art_only=art_only,
     spawns=SPAWNS, spawn_spacing=SPACING, modes=["1v1", "2v2", "3v3"], bounds=BOUNDS, exterior=EXTERIOR,
 )
 
