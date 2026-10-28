@@ -52,6 +52,8 @@ for p in L["parts"]:
     elif not r["query"]: diffs.append(f"{p['id']} not queryable")
     cover = (role == "furniture" and p["cover"] in ("low", "tall")) or (role == "sill" and "Pass_" in p["id"])
     if cover == bool(r["attrs"].get("NotCover")): diffs.append(f"{p['id']} NotCover wrong ({r['attrs'].get('NotCover')})")
+    for k in ("x0", "x1", "y0", "y1", "z0", "z1", "cx", "cy", "w", "d", "yaw"):
+        if k in q: q[k] = round(q[k], 3)
     newparts.append(q)
 extra = set(built) - {p["id"] for p in L["parts"]}
 if extra: diffs.append(f"extra parts {sorted(extra)[:10]}")

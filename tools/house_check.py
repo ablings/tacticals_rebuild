@@ -42,7 +42,7 @@ t0 = time.time()
 solid_walk = np.zeros((NX, NY, NZ), bool)     # what a body collides with
 solid_vis = np.zeros((NX, NY, NZ), bool)      # what blocks sight / bullets (no player barriers)
 lowmask = np.zeros((NX, NY, NZ), bool)        # low furniture + pass-through sills (vault graph removes these)
-EPS = 1e-6
+EPS = 1e-3  # Studio stores float32: a read-back 3.49999 must land on the same cell as 3.5
 
 
 def rng(a, b, o, n):
