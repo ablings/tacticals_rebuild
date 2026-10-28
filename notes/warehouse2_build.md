@@ -360,6 +360,39 @@ restored first). Viewing condition on every round-8 sheet and number: **Studio E
 5. **Tune night maps on the near-black share** (with p50 and a pool ratio): a mask of the near-black pixels shows whether the
    black is missing light (fill it) or dark paint (lighten the paint).
 
+### Grade round 8 (fresh roblox-map-grader, xhigh): FIX 8.2, and what changed (round 8b)
+Confirmed by the grader on its own Level21 runs: meshes sit on their gameplay boxes (all 32 within 0.03), nothing collides,
+olive crates render olive drab (not lime) and are the only green, numbers re-measured equal (13-25 % near-black, spawn faces
+29 / 29, pools 3.7x / 2.9x), MapAudit 0 FAIL, sky 0 holes, flood 0 outside with a leaking control, ends differ.
+| Finding | Fix (8b) |
+|---|---|
+| Major: "lights on": roof 55-72, walls 114 (above the floor between pools), every hall view in one p50 band | Fill range 40 -> 28 put cover faces back to black (47 %), so tone + colour: roof sheets 150 -> 108, blockwork 178 -> 140, cladding 172 -> 140; the unshadowed bar fill turned into a cool moonlit bounce (212,222,240; 0.6 ends / 0.48 middle), ambient 38,41,50, warm shadowed pools 3 / 5. wh12: roof 54 -> 27, wall 100 -> 67, aisle floor 79 (`tools/wh2_mood.py`) |
+| Blocking (unverified): the Play match not re-run by the grader | the builder's re-run on 8b: captures/warehouse2/r8/play_r8b.txt; the next grader is allowed the test-only setup |
+| Minor: door frame mesh unused | W2_RollDoor_Open on both doors (Frame + Control; the open door's bottom bar left out), placed by the Frame part's box, back 0.08 behind the wall face; steel reveal starts behind the mesh guides (n HN + 0.1); door light under the mesh hood (13.72-13.97); the drum's baked "BAY 02" stencil covered on BAY 01 by a black / cream "BAY 01" label plate (position found by raycast + two captures) |
+| Minor: COLP_L* / W* Concrete under wooden crates | WoodPlanks when the kit is present (impact sound) |
+| Minor: pallet-truck handle walk-through | PCOL_PalletTruck_S_Handle 4.1 high |
+| Minor: drums / sacks past their blockers | drums placed unturned (a turned 2.1 box reached 1.48 from the axis); sack-pallet blockers sized to the 4.12 x 3.58 mesh |
+| Minor: cartons render as black cubes | cartons 150 -> 176: still dark (lit only from straight above); open |
+| Minor: trailer lettering cut by posts (exterior, cutscene) | open |
+
+Level21 after 8b (`captures/warehouse2/r8/after_q21b`): hall views **14.5-26.3 %** near-black (worst wh12 26.3, wh17 25.9,
+wh16 25.2), p50 25-66; spawn shield faces **33 / 34**; pools 239 vs 63 (**3.8x**) middle, 213 vs 70 (**3.0x**) ends; yard
+corner views 40 % (darker cladding; cutscene only). Re-run: MapAudit hall 0 FAIL 0 WARN (77 MeshParts), exterior 1 WARN
+(apron), sky 0 holes, flood 0 outside / control 384, read-back 0, metrics 0 out of 5 %; Play (play_r8b.txt): doors stop every
+push, Space at a shutter nothing, cover L03 (+ vault) / C01 / P01 / W01, 5 rounds to Victory 5-0 with both doors shut, door
+contract both doors exact. Sheet notes/warehouse2_sheet_r8.jpg now has 4 columns (quality 1 as graded | same at 21 | round 8 |
+round 8b).
+
+Lessons (8b, no game names):
+6. **A darkness ceiling is not a mood check.** After meeting "<= 25 % near-black", measure what the added light landed on: roof
+   and walls at or above the floor between the pools read as "lights on". Keep the roof dark but not black (~25-45) and the
+   walls under the floor between pools; compare them at eye level, not only top-down pools (grader 8).
+7. **Night without black: colour, not level.** A cool unshadowed fill against warm shadowed pools reads as midnight at the same
+   luminance; shortening the fill instead returns the black faces.
+8. **A kit mesh with baked lettering is the same on every copy:** point-symmetric ends need a cover plate (or a second atlas)
+   where the lettering must differ.
+9. When a cover visual changes material, change its collision proxy's material too (it is the impact sound).
+
 ## Waiting on / open
 - **Systems (not map code):** `GadgetManager.mapFolder()` (grenade / smoke wall rays) and `PropController` (prop noise) still
   look only at `Workspace.Warehouse`: on Warehouse 2 (and the Arena / PracticeRange) grenades and smoke ignore the walls. The
