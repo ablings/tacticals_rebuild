@@ -372,7 +372,7 @@ F("KT_Bench", "KT", "H_KitchenBench", "low", 16.5, 20, 16, 26, face="E", note="c
 F("CH_Column", "CH", "H_DisplayColumn", "tall", -1.5, 1.5, -1.5, 1.5, note="custom: structural column wrapped in a display niche")
 F("FY_Planter", "FY", "H_Planter", "low", 3, 6, -16, -13, note="custom: low planter box (cover 3.4) + H_PlantFiddle in it as art")
 F("FY_Console", "FY", "H_Dresser", "low", 6.2, 8.5, -10.5, -4.5, face="W", note="as a hall console")
-F("FY_Bench", "FY", "H_HallBench_3", "low", -2, 0, -29.5, -26, face="N", note="custom: beside the front door")
+F("FY_Bench", "FY", "H_HallBench_3", "low", -2, 0, -29.5, -26, face="E", note="custom: beside the front door")
 F("MR_Lockers", "MR", "H_Wardrobe", "tall", -23.5, -21, 11, 17, face="E", note="as coat lockers")
 F("MR_Bench", "MR", "H_HallBench_8", "low", -20, -12, 27.5, 29.5, face="S", note="custom")
 F("BH_CoatTree", "BH", "H_TallCabinet", "tall", -5, -2, 13, 15.12, note="freestanding coat cabinet")
@@ -443,7 +443,6 @@ Dr("DR_Pend2", "H_PendantLamp", "DR", 29, -18.97, GC - G0, "S", blocker=False, h
 Dr("DR_Art", "H_Frame_Landscape", "DR", 25, -29.92, 6.0, "N", blocker=False, hang=True)
 Dr("DR_Plant", "H_PlantFiddle", "DR", 38.3, -28.3, 0, "W")
 # foyer, halls, mudroom
-Dr("FY_Plant", "H_PlantFiddle", "FY", 4.5, -14.5, LOW, "S", blocker=False, note="in the planter (FY_Planter)")
 Dr("FY_Runner", "H_Rug_Runner", "FY", 3, -21, 0.02, "S", blocker=False)
 Dr("FY_Pend", "H_PendantLamp", "FY", 3, -17, UC - G0, "S", blocker=False, hang=True, note="hangs from the double-height ceiling")
 Dr("CH_Art", "H_Frame_Botanical", "CH", 0, -1.6, 5.0, "S", blocker=False, hang=True, note="on the display column")

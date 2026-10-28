@@ -65,7 +65,7 @@ def lua(v, ind=""):
 KEEP_PART = ("id", "shape", "x0", "x1", "y0", "y1", "z0", "z1", "role", "cover", "model", "foot_y", "top_y", "cx", "cy", "w", "d", "yaw")
 parts = [{k: p[k] for k in KEEP_PART if k in p} for p in L["parts"]]
 windows = [dict(id=o["id"], wall=o["wall"], axis=o["axis"], a=o["a"], b=o["b"], z0=o["z0"], z1=o["z1"],
-                interior=bool(o.get("interior"))) for o in L["openings"] if o["kind"] == "window"]
+                interior=bool(o.get("interior")), frosted=bool(o.get("frosted"))) for o in L["openings"] if o["kind"] == "window"]
 doors = [{k: d[k] for k in ("id", "model", "state", "locked", "hinge", "leaf", "z0", "open_deg", "closed_dir", "open_dir_side",
                             "angle_deg", "leaf_yaw_deg")} for d in L["doors"]]
 furniture = [{k: f[k] for k in ("id", "room", "model", "cover", "x0", "x1", "y0", "y1", "z0", "z1", "face")} for f in L["furniture"]]

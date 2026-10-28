@@ -4,17 +4,17 @@
    "stats": {
     "lights": 138,
     "openSkyShare": 0,
-    "neon": 0,
+    "neon": 2,
     "indoor": true,
-    "walkCells": 289,
-    "meshparts": 0,
-    "parts": 350
+    "walkCells": 285,
+    "meshparts": 277,
+    "parts": 636
    },
    "fails": 0,
    "opts": "map attribute Indoor = true",
    "findings": [
     {
-     "message": "2 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
+     "message": "8 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
      "level": "WARN",
      "where": "House",
      "code": "HOLE"
@@ -29,8 +29,8 @@
     "neon": 0,
     "indoor": false,
     "walkCells": 0,
-    "meshparts": 0,
-    "parts": 0
+    "meshparts": 144,
+    "parts": 144
    },
    "fails": 0,
    "opts": "exterior attribute Indoor = false",

@@ -36,6 +36,15 @@ switch ($cmd) {
     $bmp.Save($a1, [System.Drawing.Imaging.ImageFormat]::Png); $g.Dispose(); $bmp.Dispose()
     "fg: " + [Dk]::Title([Dk]::GetForegroundWindow())
   }
+  'shotr' {
+    # the right monitor (Studio's), any screen that is not the primary
+    $b = ([System.Windows.Forms.Screen]::AllScreens | Where-Object { -not $_.Primary } | Select-Object -First 1).Bounds
+    $bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
+    $g = [System.Drawing.Graphics]::FromImage($bmp)
+    $g.CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size)
+    $bmp.Save($a1, [System.Drawing.Imaging.ImageFormat]::Png); $g.Dispose(); $bmp.Dispose()
+    "fg: " + [Dk]::Title([Dk]::GetForegroundWindow()) + " | origin " + $b.X + "," + $b.Y
+  }
   'front' {
     $p = Get-Process RobloxStudioBeta -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -like "*$a1*" } | Select-Object -First 1
     if (-not $p) { Write-Error "no Studio window with '$a1'"; exit 1 }

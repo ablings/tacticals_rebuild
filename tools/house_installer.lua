@@ -26,7 +26,8 @@
 -- Idempotent: each run rebuilds all of it. A House it didn't build goes to ServerStorage._House_Backup (never deleted).
 -- UNDO = true removes House, HouseExterior, the registry entry, HouseBounds and the BotConfig line.
 local UNDO = false --@UNDO
-local ORIGIN = Vector3.new(-650, 0.4, -450) -- plan (0, 0, 0) = house centre at ground-floor top; clear of every other map
+local ORIGIN = Vector3.new(-650, 1.2, -450) -- plan (0, 0, 0) = house centre at ground-floor top; clear of every other map;
+-- 1.2 up so the exterior ground (plan z -1) clears the place's Baseplate top (y 0)
 local MAP_NAME, EXT_NAME, REG_ID, KIT_NAME = "House", "HouseExterior", "House", "HouseKit"
 local SHELL_YAW = math.pi -- the shell FBX is in plan coordinates; Import 3D maps Blender (x, y, z) to Studio (-x, z, y)
 --@@LAYOUT
@@ -265,6 +266,7 @@ local function asModel(src)
 	if c:IsA("BasePart") then local h = Instance.new("Model") h.Name = src.Name c.Parent = h return h end
 	return c
 end
+local ART_ABOVE = { H_TVConsole_WithTV = true, H_Planter = true, H_Bathtub = true }
 -- place a kit model with its bounding box's bottom centre on plan (x, y, z), its front (local -Z) toward `face`
 local function placeKit(name, parent, x, y, z, face, fit, label)
 	local src = KIT and KIT:FindFirstChild(name)
@@ -281,9 +283,11 @@ local function placeKit(name, parent, x, y, z, face, fit, label)
 	if fit then
 		local _, s2 = m:GetBoundingBox()
 		local want = Vector3.new(fit[1], fit[3], fit[2]) -- plan box (dx, dy, dz) -> world (X, Y, Z)
+		-- GetBoundingBox is in the model's own axes (= the target turn): a piece facing E / W lies across
 		local w, d = s2.X, s2.Z
-		if face == "E" or face == "W" then w, d = s2.X, s2.Z end
-		if math.abs(w - want.X) > 0.3 or math.abs(d - want.Z) > 0.3 or math.abs(s2.Y - want.Y) > 0.75 then
+		if face == "E" or face == "W" then w, d = s2.Z, s2.X end
+		local tallArt = ART_ABOVE[name] == true -- art meant to rise above its collision box (the TV, the plant)
+		if math.abs(w - want.X) > 0.3 or math.abs(d - want.Z) > 0.3 or (not tallArt and math.abs(s2.Y - want.Y) > 0.3) then
 			table.insert(skipped, ("%s: %s is %.2f x %.2f x %.2f, box %.2f x %.2f x %.2f (placed anyway)"):format(label or name, name, s2.X, s2.Y, s2.Z, want.X, want.Y, want.Z))
 		end
 	end
@@ -319,7 +323,7 @@ for _, w in L.windows do
 	if glass then
 		glass.Name = "Glass"; glass.Parent = m
 		for _, g in (glass:IsA("BasePart") and { glass } or glass:GetDescendants()) do
-			if g:IsA("BasePart") then g.Transparency = 0.82; g.Material = M.Glass; g.CastShadow = false end
+			if g:IsA("BasePart") then g.CastShadow = false; g.CanQuery = true end -- queryable at authoring so the lobby split keeps a Solid twin; the game turns it off
 		end
 	end
 	if broken then broken.Name = "BrokenGlass"; broken.Parent = m end
@@ -409,6 +413,51 @@ if KIT and KIT:FindFirstChild("H_Exterior") then
 	nMesh += 1
 else
 	table.insert(skipped, "exterior: no " .. KIT_NAME .. ".H_Exterior")
+end
+
+
+-- ====================================================================================================== plain colours
+-- Import 3D brings the baked atlases (SurfaceAppearance) and tiling textures but not plain material colours: the modeler's
+-- build scripts' values (art/house/tools/build_exterior.py PLAIN_COL / PLAIN_KIND, build_house.py) are applied by name here.
+local FROSTED = {}
+for _, w in L.windows do if w.frosted then FROSTED[w.id] = true end end
+local PLAIN = { Paint = { 232, 226, 210 }, FencePost = { 48, 46, 44 }, GlassDark = { 40, 46, 50 }, Frame = { 44, 44, 44 },
+	GarageDoor = { 196, 196, 192 }, DoorOak = { 150, 112, 76 }, Charcoal = { 44, 44, 44 }, SidingWhite = { 226, 224, 218 },
+	RoofTile = { 84, 80, 78 }, Pole = { 96, 78, 60 }, Pole2 = { 30, 30, 31 }, Wire = { 20, 20, 20 }, Mailbox = { 30, 30, 31 },
+	Leaves = { 64, 96, 54 }, LeavesDark = { 44, 72, 44 } }
+local nPlain = 0
+local function plainOf(part)
+	if part:FindFirstChildOfClass("SurfaceAppearance") or (part:IsA("MeshPart") and part.TextureID ~= "") then return end
+	local n = part.Name
+	local win = n:match("^(Win_.-)_Glass$") or n:match("^(Win_.-)_BrokenGlass$")
+	local function glass(frost)
+		part.Material = M.Glass
+		part.Color = frost and rgb(214, 222, 226) or rgb(150, 170, 180)
+		part.Transparency = frost and 0.3 or 0.82
+		part.Reflectance = 0.06
+		part.CastShadow = false
+	end
+	if n == "Glass" or n == "BrokenGlass" then
+		local w = part:FindFirstAncestorWhichIsA("Model")
+		glass(w and FROSTED[w.Name])
+	elseif win then glass(FROSTED[win])
+	elseif n:match("Glow$") then part.Material = M.Neon; part.Color = rgb(255, 250, 236); part.CastShadow = false
+	elseif n:match("Glass$") then glass(false)
+	elseif n:match("^Tree_%d+$") then part.Color = rgb(92, 70, 52)
+	else
+		local key = n:match("_([%a%d]+)$") or n
+		local c = PLAIN[key] or PLAIN[n]
+		if c then part.Color = rgb(table.unpack(c)) else return end
+		if key == "GlassDark" then part.Material = M.Glass; part.Reflectance = 0.15 end
+	end
+	nPlain += 1
+end
+for _, root in { map, ext } do
+	for _, d in root:GetDescendants() do if d:IsA("BasePart") and (d:FindFirstAncestor("Visuals") or d:FindFirstAncestor("Shootables") or d:FindFirstAncestor("Doors") or root == ext) and d.Transparency < 1 then plainOf(d) end end
+end
+-- the shower screens' glass (baked atlas, opaque): see-through as the modeler intended (Transparency 0.7)
+for _, d in VIS:GetDescendants() do
+	if d:IsA("BasePart") and d.Parent and d.Parent.Name:match("ShowerGlass") and d.Name:match("Glass") then d.Transparency = 0.7 end
 end
 
 -- ====================================================================================================== map attributes, parent

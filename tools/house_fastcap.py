@@ -8,7 +8,7 @@ luminance p5 / p50 / p95 (0-255), the numbers the night lighting is tuned on."""
 import base64, glob, hashlib, json, os, queue, subprocess, sys, threading, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-ORIGIN_X, FLOOR_Y, ORIGIN_Z = -650.0, 0.4, -450.0
+ORIGIN_X, FLOOR_Y, ORIGIN_Z = -650.0, 1.2, -450.0
 
 NAME = os.environ.get("HOUSE_STUDIO", "build.rbxl")
 
