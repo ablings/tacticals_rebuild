@@ -173,3 +173,14 @@ with "publish if it passes"; asked Edward before touching the live places. Nothi
 
 ## Edward after the sheets (2026-10-28): HOLD, wants changes first
 His answer chose "Hold: I want changes first" without naming the changes yet; asked him which. Nothing published or staged.
+
+## Edward's changes after the sheets (2026-10-28 afternoon): "all of these"
+| Ask | Done |
+|---|---|
+| Spawns face into the room | A faces north up the living room, B south down the kitchen; spawn walls moved 2 studs (shelf wall x -29..-27, oven wall x 27..29) so the slots (x -38.5 / -34.5 / -30.5 and mirror) fit; fairness PASS (contact <= 1.7 %, approach <= 7.5 %, spawn sight <= 6.7 %); spawn cameras h01 / h02 updated |
+| Bedrooms brighter | two fixtures per bedroom (SpotLight 5, 150 deg + PointLight fill 0.9): master p50 98 -> 179, bedroom 3 128 -> 196; 37 lights (budget ~40) |
+| Props that read wrong | tall cabinets tinted oak (SurfaceAppearance.Color 214,172,128); the master-bedroom print faced into its wall (white back showed): turned, lowered to sit inside the 8-high head wall, now a landscape print; foyer plant: warm uplight in its planter |
+| Better trees / outside | modeler (art/house/TREES_DONE.md, ad935ee): 15 textured trees (round / oval / spread / spruce / fir, 50k tris) + trimmed hedge; Import 3D (gunsy funsy, scale 0.01, scene position) -> HouseKit.H_Trees; installer hides the old blobs + box hedge; two trees that stood inside the neighbours' houses moved 9 into their gardens |
+| Vote tile picture | `captures/house/tile/house_vote_tile.png` (1024 x 640, street view with the new tree); upload under the group pending (Chrome: two browsers connected, asked Edward which) |
+Checks after: read-back 0, checker PASS (built), walk-through 0, art fit 0.02, MapAudit 0 FAIL / 1 WARN; lobby test source re-ported
+(COLP 232 / PCOL 30, trees in, spawn A faces north). Captures `captures/house/r5/`, `spawn_view_before_after.png`, `trees_before_after.png`.

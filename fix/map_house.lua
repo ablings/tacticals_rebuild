@@ -908,6 +908,21 @@ if KIT and KIT:FindFirstChild("H_Exterior") then
 	e:PivotTo(CFrame.new(ORIGIN) * CFrame.Angles(0, SHELL_YAW, 0))
 	artFlags(e)
 	nMesh += 1
+	-- the modeler's realistic trees + trimmed hedge (Edward 2026-10-28: "better trees and outside") replace the faceted blobs
+	if KIT:FindFirstChild("H_Trees") then
+		for _, d in e:GetDescendants() do
+			if d:IsA("BasePart") and (d.Name:match("^Tree_%d+$") or d.Name:match("^Tree_%d+_Leaves") or d.Name == "Ext_Yard_Hedge") then d:Destroy() end
+		end
+		local t = asModel(KIT.H_Trees)
+		t.Name = "Trees"; t.Parent = ext
+		t:PivotTo(CFrame.new(ORIGIN) * CFrame.Angles(0, SHELL_YAW, 0))
+		artFlags(t)
+		-- two trees stood inside the houses behind (trunks at plan y 92, houses y 90..126): into their back gardens, plan y -9
+		for _, d in t:GetDescendants() do
+			if d:IsA("BasePart") and (d.Name:match("^Tree_1[45]$") or d.Name:match("^Tree_1[45]_Crown")) then d.CFrame = d.CFrame + Vector3.new(0, 0, 9) end
+		end
+		nMesh += 1
+	end
 else
 	table.insert(skipped, "exterior: no " .. KIT_NAME .. ".H_Exterior")
 end

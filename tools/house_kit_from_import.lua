@@ -53,6 +53,9 @@ local function whole(src, name)
 	return m
 end
 local h = whole(hs, "H_House"); local e = whole(ex, "H_Exterior")
+-- the modeler's trees round (art/house/TREES_DONE.md): optional, in plan coordinates like the exterior
+local tr = workspace:FindFirstChild("H_Trees") or hold:FindFirstChild("H_Trees")
+if tr then tr.Parent = hold; whole(tr, "H_Trees") end
 kit.Parent = SS
 return ("HouseKit: %d furniture assemblies, H_House %d parts, H_Exterior %d parts; unknown names: %s\n%s"):format(#order,
 	#h:GetDescendants(), #e:GetDescendants(), table.concat(unknown, ","), table.concat(lines, "; "))
