@@ -166,4 +166,21 @@ result there was a mid-air frag; a frag ON the landing floor left U whole at rad
 Installer round 3 (round 2 UNDOne first with `git show 4b7a81f:fix/smoke_alarm.lua`): match 90fedd14 -> 82903312, hub ebdcaa18 ->
 595894e2; second run all "=", UNDO back to the before hash; glass r1 DRY all "=" on both.
 
-Grader verdict and publish result: below.
+## Grader verdicts
+- Round 1 (roblox-systems-grader, xhigh): FIX 8.4 (2 majors: breaking through the floor by melee, and by blast in lobby duels).
+- Round 2 (fresh, xhigh): FIX 8.7, 0 blocking / 0 major; both majors confirmed fixed in lobby Play. Its minors are fixed in round 3
+  (not re-graded: two grader rounds at most). Still open for its owner: the hub MeleeManager's missing CombatEnabled re-check
+  after the wind-up (older code; the alarms are guarded).
+
+## Publish: NOT DONE (2026-10-28 10:55)
+The House itself was not published: its map grade ended FIX 8.4 after the 4 allowed rounds, so its publish waits for Edward
+(`notes/house_build.md` "Ready to publish"). The alarms ride on that port; nothing of this was installed on match_place_ref, the
+lobby copy, or any published place. When Edward says go, add to the House's port steps:
+- step 2 (match_place_ref.rbxl), right after `fix/map_house.lua`: `python tools/smoke_alarm_build.py --run <ref id>` (expect round 3
+  install, 10 "+", both alarms placed), then `python tools/run_luau_at.py <ref id> fix/smoke_alarm_tests.lua` (47/47).
+  port_prep.sh copies the ref, so Matchmaking / Ranked carry it.
+- step 4 (lobby), after `fix/house_lobby_prep.lua` and BEFORE `fix/duel_split_map.lua` ONLY = 'House': run the installer on the lobby
+  (hub: 14 "+"; if the port already brought the alarms in from the ref it reports them "=") and the tests (42/42); the split then
+  copies them into Visual / Solid (7 parts each).
+- Read-back: `SmokeAlarmRound` = 3 on ShootableManager; Workspace.House.Shootables.SmokeAlarm_G / _U (match);
+  ReplicatedStorage.DuelMaps.House.Visual + ServerStorage.DuelMaps.House.Solid hold both (lobby).
