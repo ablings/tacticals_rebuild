@@ -1050,7 +1050,7 @@ entry.Name = REG_ID
 entry:SetAttribute("DisplayName", "House")
 entry:SetAttribute("Modes", "1v1,2v2,3v3")
 entry:SetAttribute("MatchInstall", true)
-entry:SetAttribute("Image", "")
+entry:SetAttribute("Image", "rbxassetid://115831329348823") -- vote tile (captures/house/tile/house_vote_tile.png; decal 122051902725345, gunsy funsy, 2026-10-28)
 local info = Instance.new("ModuleScript")
 info.Name = "MapInfo"
 local LG = L.lighting
@@ -1063,7 +1063,7 @@ info.Source = ([[
 return {
 	Id = "%s",
 	DisplayName = "House",
-	Image = "",
+	Image = "rbxassetid://115831329348823",
 	Modes = { "1v1", "2v2", "3v3" },
 	Size = Vector3.new(%.1f, 30, %.1f),
 	SpawnSpacing = 4,

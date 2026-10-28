@@ -90,7 +90,7 @@ local MAPS = {
 	-- fix/map_house.lua (tools/house_lua.py LIGHTING).
 	House = {
 		DisplayName = "House",
-		Image = "",
+		Image = "rbxassetid://115831329348823", -- vote tile (decal 122051902725345, gunsy funsy, 2026-10-28)
 		Modes = { "1v1", "2v2", "3v3" },
 		Model = "House",
 		Spawns = { A = { "House.MatchSpawns.SpawnA" }, B = { "House.MatchSpawns.SpawnB" } },
