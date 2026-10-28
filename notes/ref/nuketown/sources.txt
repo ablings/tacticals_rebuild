@@ -1,0 +1,19 @@
+Test-site house interior references, gathered 2026-10-28 by the map trainer for the House (1965 test-site) restyle.
+STUDY ONLY. Nothing here (image, texture, logo, sign, text, mannequin face, poster) may go into the game or any upload.
+The image files are gitignored (about 20 MB); only this file and contact_sheet.jpg are committed.
+
+Frames (720p stills, extracted with ffmpeg at the time given):
+  Video 2B3AkqBXvus  "Nuke Town Walkthrough" by BlackOpsWalkthroughs (2010-11-02), original 2010 map
+     https://www.youtube.com/watch?v=2B3AkqBXvus   -> 01-05, 06-07 (window views), 08-17
+  Video G2GcHXSkvuU  "Call of Duty: Black Ops - Nuketown Mannequin Secret Easter Egg" by aequinoxk (2010-11-14)
+     https://www.youtube.com/watch?v=G2GcHXSkvuU   -> 18-31
+  Video TeET5VDFZYk  "The Black Ops 6 Nuketown Mannequin Easter Egg!" by Inkslasher (2024-11-14), 2024 remaster
+     https://www.youtube.com/watch?v=TeET5VDFZYk   -> 32-37
+  File name tNNNN in the raw pick = seconds into the video.
+Wiki images (Call of Duty Wiki, callofduty.fandom.com, File: pages listed in raw/_urls.txt):
+  38 = File:AdvancedRookie_Nuketown_Shotgun_collateral.png (original map, bedroom with bunk bed)
+  39 = File:Nuketown_Promo7_BOCW.jpg (later ruined version: view out of a garage; for grit/wear only)
+  raw/ = 38 wiki images (promos, concept art, top views) kept for context.
+Also downloaded and looked at, not used as references: q2FJZg5X_Mk (camcorder capture, too dark), uDyyFHhzcdw (BO6, mostly outdoors).
+Naming: A = the "green" house (red kitchen, checker carpet, stone wall), B = the "yellow" house (wood kitchen,
+vine wallpaper, red stair runner), R = 2024 remaster, no letter = garage / views.

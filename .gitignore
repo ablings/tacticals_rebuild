@@ -6,3 +6,8 @@ ui/_survey/
 ui/_deploy_payload.json
 ui/_deployed_hashes.json
 ui/_hash_payload.json
+
+# reference images (study only, never shipped); keep the list and the sheet
+notes/ref/nuketown/*
+!notes/ref/nuketown/sources.txt
+!notes/ref/nuketown/contact_sheet.jpg
