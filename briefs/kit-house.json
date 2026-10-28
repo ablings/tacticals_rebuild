@@ -1,0 +1,1453 @@
+{
+ "map": "House",
+ "from_layout": "notes/maps/house_layout.json (version 1)",
+ "units": "studs (1 stud = 1 Blender unit; Roblox world = ORIGIN + (x, z, -y))",
+ "rules": [
+  "art only, CanCollide off: collision is the builder's COLP proxies = the boxes listed",
+  "mesh bounding box = the COLP box for cover pieces (the builder refuses a mesh off by more than 0.15)",
+  "cover heights: low pieces exactly 3.4 tall (no headboard or back above it), tall 7.5-8",
+  "no olive/green except as accents; modern suburban palette (white, warm grey, oak, charcoal)",
+  "own models and wording only"
+ ],
+ "pieces": [
+  {
+   "name": "H_ShelfWall",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     2,
+     12,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_ShelfWall",
+     "room": "LR",
+     "box": [
+      -31,
+      -29,
+      -25,
+      -13,
+      0.0,
+      8.0
+     ],
+     "face": null,
+     "note": "tall open bookshelf wall, both faces dressed: team A's spawn wall"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_SofaLong",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     12,
+     4.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_Sofa",
+     "room": "LR",
+     "box": [
+      -30,
+      -18,
+      -9.5,
+      -5,
+      0.0,
+      3.4
+     ],
+     "face": "N",
+     "note": "long sofa (mirror of the kitchen island)"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Sofa3",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     3.5,
+     10,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_SofaStair",
+     "room": "LR",
+     "box": [
+      -20,
+      -16.5,
+      -26,
+      -16,
+      0.0,
+      3.4
+     ],
+     "face": "W",
+     "note": "its back faces the foyer arch and the stair foot: the ambush sofa"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_MediaConsole",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     14,
+     2.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_Media",
+     "room": "LR",
+     "box": [
+      -36,
+      -22,
+      -29.5,
+      -27,
+      0.0,
+      3.4
+     ],
+     "face": "N",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Bookcase",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     3.5,
+     4,
+     8.0
+    ],
+    [
+     4,
+     1.5,
+     8.0
+    ],
+    [
+     1.5,
+     7,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_Bookcase1",
+     "room": "LR",
+     "box": [
+      -13,
+      -9.5,
+      -22,
+      -18,
+      0.0,
+      8.0
+     ],
+     "face": "W",
+     "note": ""
+    },
+    {
+     "id": "LR_Bookcase2",
+     "room": "LR",
+     "box": [
+      -13,
+      -9.5,
+      -18,
+      -14,
+      0.0,
+      8.0
+     ],
+     "face": "W",
+     "note": ""
+    },
+    {
+     "id": "LD_Bookcase",
+     "room": "LD",
+     "box": [
+      -3,
+      1,
+      2.5,
+      4,
+      14.0,
+      22.0
+     ],
+     "face": "S",
+     "note": "the bookcase by the landing"
+    },
+    {
+     "id": "BR2_Bookcase",
+     "room": "BR2",
+     "box": [
+      20,
+      21.5,
+      -21,
+      -14,
+      14.0,
+      22.0
+     ],
+     "face": null,
+     "note": "freestanding, back to back with a low cabinet"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_Piano",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     3.5,
+     5.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_Piano",
+     "room": "LR",
+     "box": [
+      -39.5,
+      -36,
+      -4.5,
+      1,
+      0.0,
+      3.4
+     ],
+     "face": "E",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Sideboard",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     11,
+     2.5,
+     3.4
+    ],
+    [
+     3,
+     5.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_Sideboard",
+     "room": "LR",
+     "box": [
+      -34,
+      -23,
+      7,
+      9.5,
+      0.0,
+      3.4
+     ],
+     "face": "S",
+     "note": ""
+    },
+    {
+     "id": "DR_Sideboard",
+     "room": "DR",
+     "box": [
+      10,
+      13,
+      -29.5,
+      -24,
+      0.0,
+      3.4
+     ],
+     "face": "E",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_SlatScreen",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     2,
+     6,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "LR_Screen",
+     "room": "LR",
+     "box": [
+      -17,
+      -15,
+      -4,
+      2,
+      0.0,
+      8.0
+     ],
+     "face": null,
+     "note": "tall timber slat screen inside the hall arch: breaks the long axis"
+    },
+    {
+     "id": "KT_Screen",
+     "room": "KT",
+     "box": [
+      15,
+      17,
+      -2,
+      4,
+      0.0,
+      8.0
+     ],
+     "face": null,
+     "note": "tall timber slat screen inside the hall arch (mirror)"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_DiningTable8",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     12,
+     6,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "DR_Table",
+     "room": "DR",
+     "box": [
+      19,
+      31,
+      -22,
+      -16,
+      0.0,
+      3.4
+     ],
+     "face": null,
+     "note": "table + 8 tucked chairs inside this box"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_ChinaCabinet",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     2.5,
+     6,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "DR_Cabinet",
+     "room": "DR",
+     "box": [
+      37,
+      39.5,
+      -17,
+      -11,
+      0.0,
+      8.0
+     ],
+     "face": "W",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_KitchenIsland",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     12,
+     4.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "KT_Island",
+     "room": "KT",
+     "box": [
+      18,
+      30,
+      5,
+      9.5,
+      0.0,
+      3.4
+     ],
+     "face": null,
+     "note": "sink side faces the pass-through"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_CounterRun",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     23,
+     2.5,
+     3.4
+    ],
+    [
+     2.5,
+     3.5,
+     3.4
+    ],
+    [
+     11,
+     2.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "KT_CounterN",
+     "room": "KT",
+     "box": [
+      13,
+      36,
+      27,
+      29.5,
+      0.0,
+      3.4
+     ],
+     "face": "S",
+     "note": ""
+    },
+    {
+     "id": "KT_CounterE",
+     "room": "KT",
+     "box": [
+      37,
+      39.5,
+      1,
+      4.5,
+      0.0,
+      3.4
+     ],
+     "face": "W",
+     "note": ""
+    },
+    {
+     "id": "KT_CounterPT",
+     "room": "KT",
+     "box": [
+      23,
+      34,
+      -9.5,
+      -7,
+      0.0,
+      3.4
+     ],
+     "face": "N",
+     "note": "kitchen side of the pass-through"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_Fridge",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     3.5,
+     4,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "KT_Fridge",
+     "room": "KT",
+     "box": [
+      9.5,
+      13,
+      18,
+      22,
+      0.0,
+      8.0
+     ],
+     "face": "E",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_PantryCabinet",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     3.5,
+     4,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "KT_Pantry",
+     "room": "KT",
+     "box": [
+      9.5,
+      13,
+      14,
+      18,
+      0.0,
+      8.0
+     ],
+     "face": "E",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_KitchenBench",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     3.5,
+     10,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "KT_Bench",
+     "room": "KT",
+     "box": [
+      16.5,
+      20,
+      16,
+      26,
+      0.0,
+      3.4
+     ],
+     "face": "E",
+     "note": "banquette (mirror of the ambush sofa)"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_OvenWall",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     2,
+     12,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "KT_TallUnit",
+     "room": "KT",
+     "box": [
+      29,
+      31,
+      13,
+      25,
+      0.0,
+      8.0
+     ],
+     "face": null,
+     "note": "tall oven + pantry bank, both faces finished: the spawn wall"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_DisplayColumn",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     3.0,
+     3.0,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "CH_Column",
+     "room": "CH",
+     "box": [
+      -1.5,
+      1.5,
+      -1.5,
+      1.5,
+      0.0,
+      8.0
+     ],
+     "face": null,
+     "note": "structural column wrapped in a display niche (breaks the LR-CH-KT line)"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_PlanterTree",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     3,
+     3,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "FY_Planter",
+     "room": "FY",
+     "box": [
+      3,
+      6,
+      -16,
+      -13,
+      0.0,
+      3.4
+     ],
+     "face": null,
+     "note": "pot is the cover (3.4); the tree is art above, no collision"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_ConsoleTable",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     2.0,
+     5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "FY_Console",
+     "room": "FY",
+     "box": [
+      6.5,
+      8.5,
+      -10,
+      -5,
+      0.0,
+      3.4
+     ],
+     "face": "W",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_HallBench",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     2,
+     3.5,
+     3.4
+    ],
+    [
+     8,
+     2.0,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "FY_Bench",
+     "room": "FY",
+     "box": [
+      -2,
+      0,
+      -29.5,
+      -26,
+      0.0,
+      3.4
+     ],
+     "face": "N",
+     "note": "beside the front door"
+    },
+    {
+     "id": "BH_Bench",
+     "room": "BH",
+     "box": [
+      -20,
+      -12,
+      27.5,
+      29.5,
+      0.0,
+      3.4
+     ],
+     "face": "S",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_CoatLockers",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     2.0,
+     7,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "BH_Lockers",
+     "room": "BH",
+     "box": [
+      -23.5,
+      -21.5,
+      11,
+      18,
+      0.0,
+      8.0
+     ],
+     "face": "E",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_CoatCabinet",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     3,
+     3,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "BH_CoatTree",
+     "room": "BH",
+     "box": [
+      -5,
+      -2,
+      13,
+      16,
+      0.0,
+      8.0
+     ],
+     "face": null,
+     "note": "freestanding coat cabinet in the hall"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_WasherDryer",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     2.5,
+     2.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "BH_Washer",
+     "room": "BH",
+     "box": [
+      0.5,
+      3,
+      27,
+      29.5,
+      0.0,
+      3.4
+     ],
+     "face": "S",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Vanity",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     2.5,
+     6,
+     3.4
+    ],
+    [
+     4.5,
+     2.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "GB_Vanity",
+     "room": "GB",
+     "box": [
+      -39.5,
+      -37,
+      13,
+      19,
+      0.0,
+      3.4
+     ],
+     "face": "E",
+     "note": ""
+    },
+    {
+     "id": "UB_Vanity",
+     "room": "UB",
+     "box": [
+      4,
+      8.5,
+      27,
+      29.5,
+      14.0,
+      17.4
+     ],
+     "face": "S",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_Bathtub",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     8.5,
+     3.5,
+     3.4
+    ],
+    [
+     7.5,
+     3.0,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "GB_Tub",
+     "room": "GB",
+     "box": [
+      -39.5,
+      -31,
+      26,
+      29.5,
+      0.0,
+      3.4
+     ],
+     "face": null,
+     "note": ""
+    },
+    {
+     "id": "UB_Tub",
+     "room": "UB",
+     "box": [
+      -8.5,
+      -1,
+      26.5,
+      29.5,
+      14.0,
+      17.4
+     ],
+     "face": null,
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_ShowerGlass",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     5,
+     4,
+     8.0
+    ],
+    [
+     4,
+     3.5,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "GB_Shower",
+     "room": "GB",
+     "box": [
+      -31,
+      -26,
+      11,
+      15,
+      0.0,
+      8.0
+     ],
+     "face": null,
+     "note": "frosted glass enclosure: counts as tall cover"
+    },
+    {
+     "id": "UB_Shower",
+     "room": "UB",
+     "box": [
+      -1,
+      3,
+      17.5,
+      21,
+      14.0,
+      22.0
+     ],
+     "face": null,
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_LinenCabinet",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     2,
+     5,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "UH_Linen",
+     "room": "UH",
+     "box": [
+      1,
+      3,
+      10,
+      15,
+      14.0,
+      22.0
+     ],
+     "face": "W",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_HeadboardWall",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     1.5,
+     14,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "MB_HeadWall",
+     "room": "MB",
+     "box": [
+      -22.5,
+      -21,
+      -18,
+      -4,
+      14.0,
+      22.0
+     ],
+     "face": null,
+     "note": "freestanding upholstered headboard wall, 8 tall"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_KingBed",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     9,
+     10,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "MB_Bed",
+     "room": "MB",
+     "box": [
+      -21,
+      -12,
+      -16,
+      -6,
+      14.0,
+      17.4
+     ],
+     "face": null,
+     "note": "headboard against the head wall; nightstands inside the box"
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Wardrobe",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     3.0,
+     9,
+     8.0
+    ],
+    [
+     3.0,
+     8,
+     8.0
+    ],
+    [
+     3.0,
+     7,
+     8.0
+    ]
+   ],
+   "uses": [
+    {
+     "id": "MB_Wardrobe1",
+     "room": "MB",
+     "box": [
+      -39.5,
+      -36.5,
+      -17,
+      -8,
+      14.0,
+      22.0
+     ],
+     "face": "E",
+     "note": ""
+    },
+    {
+     "id": "MB_Wardrobe2",
+     "room": "MB",
+     "box": [
+      -39.5,
+      -36.5,
+      -6,
+      3,
+      14.0,
+      22.0
+     ],
+     "face": "E",
+     "note": ""
+    },
+    {
+     "id": "BR2_Wardrobe",
+     "room": "BR2",
+     "box": [
+      9.5,
+      12.5,
+      -16,
+      -8,
+      14.0,
+      22.0
+     ],
+     "face": "E",
+     "note": ""
+    },
+    {
+     "id": "BR3_Wardrobe",
+     "room": "BR3",
+     "box": [
+      -12.5,
+      -9.5,
+      19,
+      26,
+      14.0,
+      22.0
+     ],
+     "face": "W",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_Dresser",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     6,
+     2.0,
+     3.4
+    ],
+    [
+     6,
+     2.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "MB_Dresser",
+     "room": "MB",
+     "box": [
+      -32,
+      -26,
+      1.5,
+      3.5,
+      14.0,
+      17.4
+     ],
+     "face": "S",
+     "note": ""
+    },
+    {
+     "id": "BR2_Dresser",
+     "room": "BR2",
+     "box": [
+      24,
+      30,
+      1,
+      3.5,
+      14.0,
+      17.4
+     ],
+     "face": "S",
+     "note": ""
+    },
+    {
+     "id": "BR3_Dresser",
+     "room": "BR3",
+     "box": [
+      -32,
+      -26,
+      4.5,
+      6.5,
+      14.0,
+      17.4
+     ],
+     "face": "N",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use",
+   "note": "several sizes: build per size (or a stretchable module); the mesh bounding box must equal the COLP box (the builder refuses a mesh >0.15 off)"
+  },
+  {
+   "name": "H_Armchair",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     3,
+     3.0,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "MB_Chair",
+     "room": "MB",
+     "box": [
+      -16,
+      -13,
+      -28.5,
+      -25.5,
+      14.0,
+      17.4
+     ],
+     "face": "N",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_DoubleBed",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     8.5,
+     9,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "BR2_Bed",
+     "room": "BR2",
+     "box": [
+      31,
+      39.5,
+      -14,
+      -5,
+      14.0,
+      17.4
+     ],
+     "face": "W",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Desk",
+   "kind": "furniture",
+   "cover": "low",
+   "size_studs_xyz_plan": [
+    [
+     8,
+     2.5,
+     3.4
+    ]
+   ],
+   "uses": [
+    {
+     "id": "BR2_Desk",
+     "room": "BR2",
+     "box": [
+      27,
+      35,
+      -29.5,
+      -27,
+      14.0,
+      17.4
+     ],
+     "face": "N",
+     "note": ""
+    },
+    {
+     "id": "BR3_Desk",
+     "room": "BR3",
+     "box": [
+      -24,
+      -16,
+      27,
+      29.5,
+      14.0,
+      17.4
+     ],
+     "face": "S",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_BunkBed",
+   "kind": "furniture",
+   "cover": "tall",
+   "size_studs_xyz_plan": [
+    [
+     4.5,
+     9,
+     7.5
+    ]
+   ],
+   "uses": [
+    {
+     "id": "BR3_Bunk",
+     "room": "BR3",
+     "box": [
+      -39.5,
+      -35,
+      19,
+      28,
+      14.0,
+      21.5
+     ],
+     "face": "E",
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Beanbag",
+   "kind": "furniture",
+   "cover": "step",
+   "size_studs_xyz_plan": [
+    [
+     4,
+     3,
+     1.5
+    ]
+   ],
+   "uses": [
+    {
+     "id": "BR3_Beanbags",
+     "room": "BR3",
+     "box": [
+      -26,
+      -22,
+      14,
+      17,
+      14.0,
+      15.5
+     ],
+     "face": null,
+     "note": ""
+    }
+   ],
+   "view": "5-40 studs, player height",
+   "collision": "none (art only); the builder adds a COLP box = the size listed for each use"
+  },
+  {
+   "name": "H_Shell",
+   "kind": "architecture",
+   "note": "the house shell as meshes on the layout: exterior walls (outside the inside faces, 1 thick) with the window and door openings cut exactly as house_layout.json openings[], interior walls (1 thick, centred), floor slabs, ceilings, the double-height foyer, roof (pitched over the upper storey, flat roof + 2 skylights over the kitchen x 9..40 y 4..30); split per room so the builder can hide parts; skirting, cornices, door casings. Modern suburban: white render + timber cladding outside, pale oak floors, warm white walls, one feature wall per room",
+   "collision": "builder: COLP_ wall/floor boxes from parts[]"
+  },
+  {
+   "name": "H_StairMain",
+   "kind": "architecture",
+   "size": "5 wide, rise 14, run 19, 16 steps, open east side with banister + newel; closed west side (wall); oak treads, white stringer",
+   "placement": "x -8.5..-3.5, foot y -23 (z 0) -> top y -4 (z 14)",
+   "collision": "builder: ramp proxy"
+  },
+  {
+   "name": "H_StairBack",
+   "kind": "architecture",
+   "size": "4.5 wide, rise 14, run 19, 16 steps, open west side (banister), rising SOUTH",
+   "placement": "x 4..8.5, foot y 23 -> top y 4"
+  },
+  {
+   "name": "H_Railing",
+   "kind": "architecture",
+   "size": "3.5 high, balusters 0.25 sq every ~1.2 (see-through: players peek and shoot between them), handrail 0.35 x 0.25; straight (gallery, x -3.5..8.5 at y -4) and sloped (both stairs)"
+  },
+  {
+   "name": "H_InteriorDoor",
+   "kind": "door",
+   "size": "leaf 5.8 x 8.9 x 0.25 (6-wide frames) and 4.8 x 8.9 (5-wide frames); casing both faces; handle; pivot at the HINGE edge (mesh origin on the hinge line, bottom)",
+   "note": "hinged: the builder sets OpenCF/ClosedCF on the pivot"
+  },
+  {
+   "name": "H_FrontDoor",
+   "kind": "door",
+   "size": "leaf 5.8 x 9.9 x 0.3, modern timber with a glass slot, sidelight-free; frame",
+   "note": "held closed + locked"
+  },
+  {
+   "name": "H_BackDoor",
+   "kind": "door",
+   "size": "leaf 5.8 x 9.9 x 0.3, glazed patio-style door (glass panes: breakable convention like windows)"
+  },
+  {
+   "name": "H_WindowFrame",
+   "kind": "window",
+   "size": "frames for every window in openings[] (widths 4-12, heights 4-7, the tall feature window 10 x 10.5 over the front door); frame + mullions only, glass per the systems glass convention (separate part); sill inside + outside",
+   "note": "frame stays when the glass breaks"
+  },
+  {
+   "name": "H_ExteriorSet",
+   "kind": "exterior",
+   "note": "see layout exterior{}: street with kerbs and markings, the house across (a different modern two-storey), neighbour houses at both sides and behind, timber fences 7 high, lawns, driveway + family car, 2-3 parked cars, mailbox, street lamps, trees and hedges, patio + shed in the backyard. Seen only through windows: low detail beyond 60 studs"
+  }
+ ]
+}
