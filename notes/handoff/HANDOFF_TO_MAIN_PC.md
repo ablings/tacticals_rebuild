@@ -1,4 +1,18 @@
-# Handoff: Shadow PC -> main PC (2026-10-27 ~01:30, live port 43; Edward: "Shadow PC now: start straight away and stop cleanly by 01:50")
+# Handoff: Shadow PC -> main PC (2026-10-27 ~00:00, live port 44: Warehouse 2 in Matchmaking + Ranked)
+
+## Live port 44 (this session)
+- Matchmaking (97339328188402) published 23:55 and Ranked (122908502889013) published 23:58 with the new 1v1 map **Warehouse 2**
+  in the map vote, plus steam fill round 5. Both read back from the cloud window. Details: notes/port_manifest.md "Live port 44".
+- Source: match_place_ref.rbxl (b7eb241) = port 43's copy + Warehouse2Kit (copied from the build copy) + fix/map_warehouse2.lua (r9)
+  + fix/steam_fill.lua r5. Matchmaking_place.rbxl / Ranked_place.rbxl rebuilt from it (a758252 / 3216c6f).
+- Lobby and Tutorial NOT republished. Tutorial strips DuelMaps (Warehouse 2 never shows there) but the shared steam scripts changed
+  (classic valve fixes for Tutorial 3): it gets them at its next republish.
+- Next small job: the steam thickening. Also open: Warehouse 2 vote tile picture; GadgetManager / PropController map lookup.
+- Shadow tooling added: out/port44 (check.lua with the Warehouse 2 lines, kit export/import through SerializationService,
+  front.ps1). Studios: mine closed; the map builder's Warehouse2_build.rbxl left open, untouched.
+
+## Previous handoff (live port 43)
+
 
 (The previous handoff of 2026-10-19 is in git history.)
 

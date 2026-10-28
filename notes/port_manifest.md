@@ -562,3 +562,43 @@ himself; we never publish.
   the slot. Saved 2026-10-26 22:52.
 - Port checks: Workspace.Arena:GetAttribute("LayoutVersion") == 2, 105 parts; ServerStorage._ArenaV1_Backup present (can be dropped
   from the published copies once Edward is happy); no StudioTeleportData.
+
+## Live port 44 (2026-10-27, Shadow PC systems session; Edward: "can the map be published as a new map to tacticals?", plan approved)
+- What: the new 1v1 map **Warehouse 2** (notes/warehouse2_build.md, round 9 = final look, night look B) in the map vote of
+  Matchmaking and Ranked, plus the steam fill it uses ([STEAMFILL] round 5, notes/steam_fill.md). Lobby and Tutorial not
+  republished (below).
+- Working copy match_place_ref.rbxl (b7eb241): ServerStorage.Warehouse2Kit (22 models / 45 MeshParts + SurfaceAppearances, the
+  modeler's Import 3D under gunsy funsy) copied from a private copy of out/warehouse2/Warehouse2_build.rbxl with
+  SerializationService through the MCP (base64 in 90,000-char chunks: execute_luau output stops at 100,000 chars); fingerprint
+  identical (112 items). fix/map_warehouse2.lua -> Workspace.Warehouse2 + Warehouse2Exterior + DuelMaps.Warehouse2, identical to the
+  build copy's round 9 (2,611 items, same hash). fix/steam_fill.lua round 5 after it: 18 edits + 3 modules, hash 984f43e0 -> 2692c1f8,
+  second run all "=", fix/steam_fill_tests.lua 63/63. Lighting file values unchanged (= live port 43).
+- Matchmaking / Ranked (a758252 / 3216c6f): match_place_ref copy -> split_build -> deploy_ui --matchmaking / --ranked (67 + 16 [SET])
+  -> PLAYQUEUE 1-10 + module -> SWITCHNOW (CombatManager 2- = the hub anchor, as always). Shadow helpers in out/port43, checks
+  out/port44/check.lua.
+- Checks per place (out/port44/check.lua): DuelMaps = Arena, Warehouse, Warehouse2 (DisplayName "Warehouse 2", Modes 1v1, night
+  ClockTime 0); Workspace.Warehouse2 905 parts / 77 MeshParts, SteamFill, Indoor; Door_S / Door_N Open=false, Shutter colliding;
+  Warehouse2Exterior; 6 shootables; Arena v2 105 parts; no PracticeRange outside archives; no StudioTeleportData / test marks;
+  SteamFillRound 5; compile all ok (348 scripts); no scripts in the map / kit but the MapInfo module.
+- Matchmaking bot match (StudioTeleportData me + bot): vote screen shows Random / Arena / Warehouse / Warehouse 2
+  (captures/port44/mm_vote_warehouse2.png); Warehouse2 voted; night lighting live (Ambient 38,41,50, OutdoorAmbient 84,88,100);
+  me and the bot on Warehouse2.MatchSpawns inside the hall; doors shut and solid; 5 rounds to Victory 5-0 -> MatchEnd; lighting back to
+  the place defaults in the after-match lobby; Rematch in the same server, Arena voted: Arena lighting (ClockTime 15.2, exposure
+  -0.55) and Arena spawns. Output 60 lines, no errors (known sound preload / KitGuard / MenuPrewarm lines).
+- Tutorial: split_build Tutorial still strips every DuelMaps entry (scratch copy: Warehouse, Arena, Warehouse2 in
+  ServerStorage._SplitStripped), so Warehouse 2 never reaches it. The working copy's shared scripts DID change (steam fill: the
+  classic valve's hiss error and misplaced jet fixed on every map, Tutorial 3 included), so the live Tutorial keeps the old valve
+  until its next republish; nothing in it breaks. A Tutorial build from this copy also carries Workspace.Warehouse2 (unused).
+- **Matchmaking** (97339328188402), published 23:55: Publish As > gunsy funsy > tacticals > Matchmaking > Overwrite > Grant Permissions
+  and Publish (also grants the Warehouse 2 mesh / texture assets). Read back from the cloud window (PlaceId 97339328188402): DuelMaps
+  Arena, Warehouse, Warehouse2; PlaceKind Matchmaking; Warehouse2 905 parts / 77 MeshParts, doors shut; no test marks; compile all ok
+  (348 scripts).
+- **Ranked** (122908502889013), published 23:58: same path > Ranked > Overwrite > Grant. Read back (PlaceId 122908502889013): same checks,
+  PlaceKind Ranked. No Play test (same build path as Matchmaking, as in port 43).
+- Not published: lobby (the vote runs in the match places), Tutorial (above). Grading: a systems grader was started before publishing
+  but stopped with the session restart; Edward: publish on the session's own checks, HQ grades after.
+- Live checks for Edward: a Matchmaking or Ranked 1v1 shows Warehouse 2 in the vote; on it the hall is at night, doors stay shut,
+  shooting a steam valve fills the room with steam.
+- Open: the Warehouse 2 vote tile has no picture (shows the roof from above; needs an own capture uploaded under the group);
+  steam is the next small job (thickening); GadgetManager.mapFolder / PropController still look only at Workspace.Warehouse
+  (grenade / smoke walls and prop noise on the other maps, as on the Arena since port 43); steam fill two-player test still open.
