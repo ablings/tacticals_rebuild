@@ -15,5 +15,6 @@
 		MaskAbove = 2,           -- ... to this far above it (never the floor upstairs)
 		ListenerInBlare = true,  -- standing in the blare you can't hear people either (the steam's rule)
 		HitPadding = 0.3,        -- studs around the alarm for the bullet test
-		BlastScale = 1,          -- a blast breaks alarms within its Radius x this, with no wall in between
+		BlastScale = 1.25,       -- a blast breaks alarms within its Radius x this, with no wall in between (a frag on the floor
+		                         -- under a 12-13 stud ceiling reaches; floors and walls between still block)
 	},

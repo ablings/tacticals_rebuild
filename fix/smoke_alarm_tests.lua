@@ -146,6 +146,29 @@ local ok, err = pcall(function()
 	check("bad input", set:Hit(nil :: any, A) == nil and set:Blast(nil :: any, 5) == 0 and set:Melee(A, nil :: any, 6) == nil
 		and SmokeAlarm.Blaring(nil :: any) == false)
 
+	-- the wall test alone decides: the alarm above the head, in reach, facing it, a wall between (round 3, grader round 2)
+	local wall2 = Instance.new("Part")
+	wall2.Anchored = true; wall2.Size = Vector3.new(0.5, 9, 10)
+	wall2.CFrame = CFrame.new(A + Vector3.new(-2, -5, 0))
+	wall2.Parent = geo
+	check("melee in reach and facing it, a wall between: nothing", set:Melee(A + Vector3.new(-4, -3, 0), look, 6, 70) == nil)
+	wall2:Destroy()
+	check("same swing, no wall: breaks", set:Melee(A + Vector3.new(-4, -3, 0), look, 6, 70) == mA)
+	set:Reset()
+
+	-- a frag lying on the floor 13 below (radius 11 x BlastScale 1.25): reaches the ceiling alarm
+	check("frag on the floor under it (13 below, radius 11): breaks", set:Blast(A + Vector3.new(2, -13, 0), 11) == 1)
+	set:Reset()
+
+	-- the feature switched off: nothing breaks, nothing masks
+	cfg.Enabled = false
+	check("Enabled = false: a bullet does nothing", set:Hit(A + Vector3.new(-20, -9, 0), A + Vector3.new(0.3, 0.2, 0)) == nil)
+	mA:SetAttribute("BlareUntil", workspace:GetServerTimeNow() + 5)
+	check("Enabled = false: never masks", not SmokeAlarm.Blaring(floorNear) and not SteamMask.IsMasked(floorNear))
+	mA:SetAttribute("BlareUntil", nil)
+	cfg.Enabled = true
+	set:Reset()
+
 	-- a map that isn't being played: no chirps
 	live = false
 	mA:SetAttribute("ChirpAt", nil)

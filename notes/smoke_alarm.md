@@ -53,7 +53,7 @@ Parts only, own work: `Base` plate (white cylinder 1.4 x 0.12), `Cover` housing 
 | `MaskBelow` / `MaskAbove` | 16 / 2 | the band around the alarm's height: its own floor only |
 | `ListenerInBlare` | true | standing in it you can't hear people either |
 | `HitPadding` | 0.3 | studs around the parts for the bullet test |
-| `BlastScale` | 1 | blasts break alarms within Radius x this |
+| `BlastScale` | 1.25 | blasts break alarms within Radius x this (round 3: a frag on the floor under it reaches) |
 Module-only knobs: `ChirpPitch` 2.9, `ChirpLength` 0.14, `ChirpRollOff` 3-45, `BlarePitch` 2.2, `BlareRollOff` 10-130, the blare
 pattern (`BlareOn` 0.42, `BlareOff` 0.12, `BlarePause` 0.55), `MeleeReach` 0 (round 2; was 1.5), `FirstChirpMin` 4, LED colours.
 
@@ -67,7 +67,7 @@ react to the attributes (a late joiner never hears an old chirp: only one under 
   `fix/smoke_alarm/*.lua`). ONE installer for both kinds of place; needs breakable glass round 1 (and steam fill round 5 on a match
   place). Idempotent (second run: every line "="), checks every anchor in every target before writing, token-boundary anchors,
   stamps `SmokeAlarmRound = 1` on ShootableManager before the first write, refuses any other round, UNDO returns the exact "before"
-  hash, `DRY` writes nothing. No House in the place: the code goes in, nothing is placed.
+  hash, `DRY` writes nothing. No House in the place: nothing at all is written (round 2).
   - Match places: adds `Shared.SmokeAlarm`, `Client.Controllers.SmokeAlarmController`; edits ShootableConfig (block before the reload
     line), SteamMask (2 edits: `IsMasked` + `FillMuffled` ask SmokeAlarm), ShootableManager (6: require + state, setup + Studio test
     hook in Start, shots, blasts, melee wraps the glass's `OnMelee`, ResetAll); places both alarms in `Workspace.House.Shootables`.
@@ -114,7 +114,8 @@ react to the attributes (a late joiner never hears an old chirp: only one under 
 - Studio's footstep sounds: the first two samples of the first two-player run read 0.000 (Player2 had just been moved); the clean
   baseline run read 0.160 on every step. Not from the alarm (it was quiet then).
 - Melee reach (round 2, measured in Play through the real `OnMelee`): melee weapons reach 5-7 studs. Downstairs (13-stud ceiling)
-  no swing from the floor reaches the alarm (knife 6 and katana 7 both left it whole). Upstairs (12-stud ceiling) a 6.5-7 swing right
+  no swing from the floor reaches the alarm (knife 6 and katana 7 both left it whole, standing; a hop of 2.2 next to the column
+  could just let a katana reach, computed, not played). Upstairs (12-stud ceiling) a 6.5-7 swing right
   under it does (same room, nothing between). Never from above it, never through a floor (the grader's round-1 major, fixed).
 - The one Studio window rule: the session waited ~4 h for two or fewer open windows; it then opened its single window while four
   were open, two of them left behind by sessions that had ended (glass, the kit keeper's test).
@@ -140,8 +141,29 @@ Round 2 results: installer round 2 (round 1 UNDOne on both copies first with `gi
 match 90fedd14 -> f3eb80c8, hub ebdcaa18 -> 6604b698; second run all "=", UNDO back to the before hash; glass r1 DRY all "=" /
 UNDO all "+" on both. Unit tests **42/42** match, **37/37** hub. Play, match place (House voted, the real `OnMelee` / `Explode` /
 `OnShot` via the hook): melee from the landing straight over G (3 facings, reach 7) and 4 off facing it: G whole; frag on the
-landing over G and 5 off: G whole; knife 6 / katana 7 from the hall floor under G: whole; frag 6 under G in the hall: Blast;
-bullet from the hall: Bullet. Lobby pad duel (DuelTestHook explode, arena D1): frag on the landing over G and 5 off: G whole (U, in
-that room and in reach, Blast); frag in the hall under G: Blast. Output: no errors.
+landing over G and 5 off: G whole; knife 6 / katana 7 from the hall floor under G: whole; a MID-AIR frag 6 under G (y 8.5): Blast;
+bullet from the hall: Bullet. Lobby pad duel (DuelTestHook explode, arena D1): frag on the landing over G and 5 off: G whole (the U
+result there was a mid-air frag; a frag ON the landing floor left U whole at radius 11 x 1); a mid-air frag in the hall: Blast. Output: no errors.
+
+## Round 3 (after grader round 2: roblox-systems-grader xhigh, FIX 8.7, 0 blocking, 0 major; both round-1 majors confirmed fixed
+## in lobby Play through the real Combat.Melee remote and ArenaShootables:Explode). No round 4 (speed rule: two grader rounds).
+1. Lobby melee after the round: the hub's MeleeManager re-checks only health after the wind-up (older code, not this feature's), so a
+   swing finishing after combat ends could still break an alarm. Both melee hooks now skip the alarm when combat is off (lobby: the
+   arena state's `CombatEnabled`; match: ReplicatedStorage's). **The older lobby gap itself (the swing still hurts a player) is left
+   for its owner: an anchor fix in the hub's MeleeManager adding the [SWITCHNOW]-style CombatEnabled re-check after `task.wait(HitDelay)`.**
+   Code-only (the race isn't reachable from a test hook).
+2. A frag lying on the floor never reached either ceiling alarm (radius 11; G 12.9-13.0 above the hall floor, U 11.6 above the
+   landing): `BlastScale` 1 -> 1.25. Lobby Play: a frag on the open hall floor 13.0 below G: Blast; on the landing floor 2 off G:
+   G whole (the slab); behind the display column: whole (the column is between: correct cover).
+3. Two players re-run on round 3 (match copy, Server + 2 Players, House voted by both): chirp on both clients (0.04 / 0.05 s, LED
+   Neon); P1's steps on P2: baseline 0.160 (two 0.000 start-up samples, also in this no-alarm run), blare 0.010 muffled, after 0.160;
+   shot -> both clients broken -> MatchTestHook kill -> next round 3.3 s later both whole, housing shut, score 1-0. Patch reverted.
+4. Unit tests: a case decided only by the wall test (in reach, facing, wall between: nothing; same swing without the wall: breaks),
+   a frag on the floor 13 below, `Enabled = false` (no break, no mask). **47/47 match, 42/42 hub.**
+5. Docs fixed (header, module comment on the melee rule, reach note, test descriptions). Kept: the ArenaShootables melee wrapper sits
+   below the "Per frame" header because the glass installer's inserted text ends in the middle of that header line (anchoring
+   above it would split the glass's text).
+Installer round 3 (round 2 UNDOne first with `git show 4b7a81f:fix/smoke_alarm.lua`): match 90fedd14 -> 82903312, hub ebdcaa18 ->
+595894e2; second run all "=", UNDO back to the before hash; glass r1 DRY all "=" on both.
 
 Grader verdict and publish result: below.

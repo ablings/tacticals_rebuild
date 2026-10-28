@@ -1,5 +1,5 @@
--- fix/smoke_alarm.lua [SMOKEALARM] 2026-10-28, round 2 (round 1 only ever ran on the test copies: UNDO it with
--- `git show 5fe0db6:fix/smoke_alarm.lua` first). Work order (Lead plan, approved by Edward): "a smoke alarm that can be shot
+-- fix/smoke_alarm.lua [SMOKEALARM] 2026-10-28, round 3 (rounds 1-2 only ever ran on the test copies: UNDO them with
+-- `git show 5fe0db6:fix/smoke_alarm.lua` / `git show 4b7a81f:fix/smoke_alarm.lua` first). Work order (Lead plan, approved by Edward): "a smoke alarm that can be shot
 -- out, maybe two of them, that do a light beep; shooting it out will also muddy footsteps like the warehouse map". Notes:
 -- notes/smoke_alarm.md. Built by tools/smoke_alarm_build.py (embeds fix/smoke_alarm/*.lua below). Edit mode.
 -- ONE installer for both kinds of place (it finds out which it is in). Needs breakable glass round 1 first (it anchors beside its
@@ -15,7 +15,7 @@
 --            ArenaShootables (per arena: OnShot / Explode / OnMelee / ResetAll / Destroy), ArenaLoader (the Visual twin follows)
 --   both   places the two alarms (SmokeAlarm_G on the ground-floor ceiling, SmokeAlarm_U on the upper one, both at the house's plan
 --          centre: notes/smoke_alarm.md) into Workspace.House.Shootables and into the lobby's House duel source
---          (ServerStorage._DuelSource.House) when present. No House: the code is installed, nothing is placed.
+--          (ServerStorage._DuelSource.House) when present. No House in the place: nothing at all is written.
 -- Every edit sits BESIDE the glass / steam installers' inserted text (never inside it), so theirs still re-run and UNDO. Exception:
 -- SteamMask is a whole-module check in fix/steam_fill.lua: re-running steam fill needs this UNDOne first.
 -- Idempotent (second run: every line "="); checks EVERY anchor in every target, and the new module names, before writing anything;
@@ -24,7 +24,7 @@
 -- Prints a state hash before / after: UNDO returns to the "before" hash. DRY = true checks everything and writes nothing.
 local UNDO = false --@UNDO
 local DRY = false --@DRY
-local ROUND = 2
+local ROUND = 3
 local SOURCES = {}
 --@@BEGIN SOURCES
 SOURCES.SmokeAlarm = [=[
@@ -74,7 +74,8 @@ local DEFAULTS = {
 	ListenerInBlare = true,    -- standing in the blare you can't hear people either (the steam's ListenerInSteam rule)
 	HitPadding = 0.3,          -- studs added around the parts for the bullet test
 	MeleeReach = 0,            -- extra reach on top of the weapon's (0: a knife from the floor never reaches a ceiling alarm)
-	BlastScale = 1,            -- a blast breaks alarms within its Radius x this, with no wall in between
+	BlastScale = 1.25,         -- a blast breaks alarms within its Radius x this, with no wall in between (1.25: a frag lying on
+	                           -- the floor under a 12-13 stud ceiling reaches it; at 1 only mid-air blasts did)
 	SoundId = "rbxassetid://9117197553", -- the beep the gadgets already use live
 	LedOn = Color3.fromRGB(255, 45, 35),
 	LedOff = Color3.fromRGB(70, 14, 12),
@@ -206,6 +207,7 @@ function Set:IsAlarmPart(part: Instance): boolean
 end
 
 -- Is anything of the map's collision between a and b? Floors and ceilings count (see Server). The alarms themselves don't.
+-- No geometry given (a map without collision proxies): nothing blocks, like the callers' own wall tests.
 function Set:Blocked(a: Vector3, b: Vector3): boolean
 	local geo = self.geometry
 	if type(geo) == "function" then geo = geo() end
@@ -269,9 +271,11 @@ function Set:Hit(origin: Vector3, endPos: Vector3): (Instance?, number?)
 	return nil, nil
 end
 
--- a melee swing (MeleeManager -> OnMelee, after its wind-up re-checks): origin = the attacker's root, look = flat facing,
--- reach / angle = the weapon's. The alarm breaks when its nearest point is within reach + MeleeReach of the head and inside
--- the swing's angle (or straight overhead). A ceiling alarm is normally out of a knife's reach: you have to shoot it.
+-- a melee swing (MeleeManager -> OnMelee, after its wind-up; the callers also skip it once combat is off): origin = the
+-- attacker's root, look = flat facing, reach / angle = the weapon's. The alarm breaks when its nearest point is within
+-- reach + MeleeReach of the head, inside the swing's angle (or within 1.5 studs flat: right under it), at or above the head
+-- (never from above it), and nothing of the map's collision is between (Blocked: never through a floor or a wall). On the
+-- House only a 6.5-7 stud weapon reaches, and only the upstairs alarm (12-stud ceiling) from right under it.
 function Set:Melee(origin: Vector3, look: Vector3, reach: number, angle: number?): Instance?
 	if self.dead or typeof(origin) ~= "Vector3" or typeof(look) ~= "Vector3" or type(reach) ~= "number" then return nil end
 	local cfg = SmokeAlarm.Config()
@@ -533,7 +537,8 @@ SOURCES.AlarmBlock = [=[
 		MaskAbove = 2,           -- ... to this far above it (never the floor upstairs)
 		ListenerInBlare = true,  -- standing in the blare you can't hear people either (the steam's rule)
 		HitPadding = 0.3,        -- studs around the alarm for the bullet test
-		BlastScale = 1,          -- a blast breaks alarms within its Radius x this, with no wall in between
+		BlastScale = 1.25,       -- a blast breaks alarms within its Radius x this, with no wall in between (a frag on the floor
+		                         -- under a 12-13 stud ceiling reaches; floors and walls between still block)
 	},
 ]=]
 SOURCES.TestHook = [=[
@@ -794,7 +799,7 @@ if not HUB then
 		.. "do" .. TAG .. " a melee swing reaches the smoke alarms too (then the glass, as before)\n"
 		.. "\tlocal glassMelee = manager.OnMelee\n"
 		.. "\tfunction manager.OnMelee(origin: Vector3, look: Vector3, reach: number, angle: number, attacker: Player?)\n"
-		.. "\t\tif alarms then alarms:Melee(origin, look, reach, angle) end\n"
+		.. "\t\tif alarms and ReplicatedStorage:GetAttribute(\"CombatEnabled\") ~= false then alarms:Melee(origin, look, reach, angle) end\n"
 		.. "\t\tif glassMelee then glassMelee(origin, look, reach, angle, attacker) end\n"
 		.. "\tend\n"
 		.. "end\n")
@@ -834,7 +839,8 @@ else
 		"\ndo" .. TAG .. " a melee swing in this arena reaches its smoke alarms too (then the glass, as before)\n"
 		.. "\tlocal glassMelee = ArenaShootables.OnMelee\n"
 		.. "\tfunction ArenaShootables:OnMelee(origin: Vector3, look: Vector3, reach: number, angle: number, attacker: Player?)\n"
-		.. "\t\tif self.alarms and not self.dead then self.alarms:Melee(origin, look, reach, angle) end\n"
+		.. "\t\t-- the lobby's MeleeManager re-checks only health after the wind-up: skip the alarm once this arena's combat is off\n"
+		.. "\t\tif self.alarms and not self.dead and self.arena.state:GetAttribute(\"CombatEnabled\") ~= false then self.alarms:Melee(origin, look, reach, angle) end\n"
 		.. "\t\tif glassMelee then return glassMelee(self, origin, look, reach, angle, attacker) end\n"
 		.. "\tend\n"
 		.. "end\n"
