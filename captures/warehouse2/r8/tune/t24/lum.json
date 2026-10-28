@@ -1,0 +1,191 @@
+{
+ "fA_spawnA_shield_face": {
+  "p5": 0,
+  "p50": 45,
+  "p95": 184,
+  "dark": 25.8,
+  "centre": 29
+ },
+ "fB_spawnB_shield_face": {
+  "p5": 0,
+  "p50": 51,
+  "p95": 183,
+  "dark": 23.9,
+  "centre": 29
+ },
+ "pool_e-20_n-15": {
+  "p5": 59,
+  "p50": 123,
+  "p95": 231,
+  "dark": 0.5,
+  "centre": 234
+ },
+ "pool_e-20_n-30": {
+  "p5": 7,
+  "p50": 67,
+  "p95": 187,
+  "dark": 9.6,
+  "centre": 68
+ },
+ "pool_e-20_n-45": {
+  "p5": 23,
+  "p50": 139,
+  "p95": 206,
+  "dark": 2.4,
+  "centre": 208
+ },
+ "pool_e-20_n0": {
+  "p5": 5,
+  "p50": 60,
+  "p95": 202,
+  "dark": 17.8,
+  "centre": 61
+ },
+ "pool_e-31_n-50": {
+  "p5": 1,
+  "p50": 44,
+  "p95": 151,
+  "dark": 8.6,
+  "centre": 53
+ },
+ "pool_e0_n-15": {
+  "p5": 4,
+  "p50": 62,
+  "p95": 81,
+  "dark": 7.8,
+  "centre": 50
+ },
+ "pool_e0_n0": {
+  "p5": 15,
+  "p50": 65,
+  "p95": 77,
+  "dark": 4.1,
+  "centre": 77
+ },
+ "pool_e20_n0": {
+  "p5": 4,
+  "p50": 60,
+  "p95": 211,
+  "dark": 16.9,
+  "centre": 60
+ },
+ "pool_e20_n15": {
+  "p5": 61,
+  "p50": 123,
+  "p95": 231,
+  "dark": 0.3,
+  "centre": 235
+ },
+ "pool_e20_n30": {
+  "p5": 34,
+  "p50": 67,
+  "p95": 180,
+  "dark": 1.3,
+  "centre": 67
+ },
+ "pool_e20_n45": {
+  "p5": 18,
+  "p50": 132,
+  "p95": 207,
+  "dark": 1.3,
+  "centre": 208
+ },
+ "pool_e31_n50": {
+  "p5": 1,
+  "p50": 40,
+  "p95": 143,
+  "dark": 8.9,
+  "centre": 41
+ },
+ "wh01_spawnA_eye_facing": {
+  "p5": 0,
+  "p50": 44,
+  "p95": 184,
+  "dark": 23.9,
+  "centre": 38
+ },
+ "wh02_spawnB_eye_facing": {
+  "p5": 0,
+  "p50": 49,
+  "p95": 183,
+  "dark": 22.1,
+  "centre": 39
+ },
+ "wh04_west_lane_from_A": {
+  "p5": 0,
+  "p50": 52,
+  "p95": 112,
+  "dark": 17.0,
+  "centre": 33
+ },
+ "wh05_flush_pair_P03_L03": {
+  "p5": 1,
+  "p50": 58,
+  "p95": 89,
+  "dark": 19.1,
+  "centre": 34
+ },
+ "wh06_front_pair_P04_L05": {
+  "p5": 1,
+  "p50": 64,
+  "p95": 100,
+  "dark": 15.0,
+  "centre": 41
+ },
+ "wh07_lone_low_L07": {
+  "p5": 0,
+  "p50": 58,
+  "p95": 101,
+  "dark": 19.2,
+  "centre": 45
+ },
+ "wh08_overshoulder_behind_L05": {
+  "p5": 0,
+  "p50": 55,
+  "p95": 146,
+  "dark": 19.6,
+  "centre": 55
+ },
+ "wh09_centre_toward_A": {
+  "p5": 0,
+  "p50": 49,
+  "p95": 129,
+  "dark": 21.1,
+  "centre": 17
+ },
+ "wh10_middle_walls_W01_W02": {
+  "p5": 0,
+  "p50": 41,
+  "p95": 190,
+  "dark": 23.7,
+  "centre": 63
+ },
+ "wh12_long_axis_to_north_door": {
+  "p5": 0,
+  "p50": 35,
+  "p95": 111,
+  "dark": 27.0,
+  "centre": 50
+ },
+ "wh13_south_door_inside": {
+  "p5": 1,
+  "p50": 48,
+  "p95": 185,
+  "dark": 20.8,
+  "centre": 31
+ },
+ "wh14_north_door_inside": {
+  "p5": 1,
+  "p50": 59,
+  "p95": 173,
+  "dark": 19.4,
+  "centre": 78
+ },
+ "wh15_hall_corner_SW": {
+  "p5": 0,
+  "p50": 41,
+  "p95": 170,
+  "dark": 24.5,
+  "centre": 9
+ }
+}

@@ -1,0 +1,184 @@
+{
+ "new_fA_spawnA_shield_face": {
+  "p5": 0,
+  "p50": 47,
+  "p95": 184,
+  "dark": 24.5,
+  "centre": 33
+ },
+ "new_fB_spawnB_shield_face": {
+  "p5": 0,
+  "p50": 52,
+  "p95": 185,
+  "dark": 22.5,
+  "centre": 34
+ },
+ "new_wh01_spawnA_eye_facing": {
+  "p5": 0,
+  "p50": 46,
+  "p95": 186,
+  "dark": 22.5,
+  "centre": 45
+ },
+ "new_wh02_spawnB_eye_facing": {
+  "p5": 0,
+  "p50": 51,
+  "p95": 185,
+  "dark": 20.6,
+  "centre": 45
+ },
+ "new_wh04_west_lane_from_A": {
+  "p5": 0,
+  "p50": 55,
+  "p95": 115,
+  "dark": 16.7,
+  "centre": 34
+ },
+ "new_wh05_flush_pair_P03_L03": {
+  "p5": 0,
+  "p50": 62,
+  "p95": 91,
+  "dark": 18.7,
+  "centre": 33
+ },
+ "new_wh06_front_pair_P04_L05": {
+  "p5": 1,
+  "p50": 66,
+  "p95": 103,
+  "dark": 14.5,
+  "centre": 41
+ },
+ "new_wh07_lone_low_L07": {
+  "p5": 0,
+  "p50": 61,
+  "p95": 102,
+  "dark": 18.8,
+  "centre": 46
+ },
+ "new_wh08_overshoulder_behind_L05": {
+  "p5": 0,
+  "p50": 56,
+  "p95": 149,
+  "dark": 19.1,
+  "centre": 56
+ },
+ "new_wh09_centre_toward_A": {
+  "p5": 0,
+  "p50": 51,
+  "p95": 133,
+  "dark": 20.7,
+  "centre": 17
+ },
+ "new_wh10_middle_walls_W01_W02": {
+  "p5": 0,
+  "p50": 43,
+  "p95": 191,
+  "dark": 23.5,
+  "centre": 65
+ },
+ "new_wh11_upshot_centre": {
+  "p5": 6,
+  "p50": 25,
+  "p95": 62,
+  "dark": 18.8,
+  "centre": 33
+ },
+ "new_wh12_long_axis_to_north_door": {
+  "p5": 0,
+  "p50": 37,
+  "p95": 113,
+  "dark": 26.3,
+  "centre": 51
+ },
+ "new_wh13_south_door_inside": {
+  "p5": 0,
+  "p50": 46,
+  "p95": 187,
+  "dark": 19.7,
+  "centre": 33
+ },
+ "new_wh14_north_door_inside": {
+  "p5": 0,
+  "p50": 58,
+  "p95": 176,
+  "dark": 17.6,
+  "centre": 80
+ },
+ "new_wh15_hall_corner_SW": {
+  "p5": 0,
+  "p50": 42,
+  "p95": 173,
+  "dark": 23.7,
+  "centre": 10
+ },
+ "new_wh16_ceiling_side": {
+  "p5": 0,
+  "p50": 31,
+  "p95": 135,
+  "dark": 25.2,
+  "centre": 26
+ },
+ "new_wh17_beam_light_up": {
+  "p5": 0,
+  "p50": 31,
+  "p95": 128,
+  "dark": 25.9,
+  "centre": 52
+ },
+ "new_yn01_north_yard_from_door": {
+  "p5": 6,
+  "p50": 126,
+  "p95": 153,
+  "dark": 6.2,
+  "centre": 132
+ },
+ "new_yn02_north_yard_corner_look_in": {
+  "p5": 0,
+  "p50": 16,
+  "p95": 133,
+  "dark": 40.4,
+  "centre": 17
+ },
+ "new_yn03_north_yard_containers": {
+  "p5": 0,
+  "p50": 35,
+  "p95": 141,
+  "dark": 22.6,
+  "centre": 13
+ },
+ "new_yn04_north_yard_upshot": {
+  "p5": 0,
+  "p50": 0,
+  "p95": 143,
+  "dark": 59.7,
+  "centre": 0
+ },
+ "new_ys01_south_yard_from_door": {
+  "p5": 25,
+  "p50": 56,
+  "p95": 177,
+  "dark": 3.2,
+  "centre": 39
+ },
+ "new_ys02_south_yard_corner_look_in": {
+  "p5": 0,
+  "p50": 22,
+  "p95": 167,
+  "dark": 40.2,
+  "centre": 3
+ },
+ "new_ys03_south_yard_containers": {
+  "p5": 0,
+  "p50": 29,
+  "p95": 179,
+  "dark": 36.7,
+  "centre": 23
+ },
+ "new_ys04_south_yard_upshot": {
+  "p5": 0,
+  "p50": 0,
+  "p95": 173,
+  "dark": 54.5,
+  "centre": 0
+ }
+}

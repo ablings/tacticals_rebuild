@@ -1,0 +1,37 @@
+Warehouse2 lights 28 shadowed 12
+  4x SpotLight on Lens b=4.40 r=20 ang=90 sh=true col=255,238,214 en=true
+  4x SpotLight on Lens b=2.60 r=20 ang=100 sh=true col=255,238,214 en=true
+  4x SpotLight on LightSource b=2.60 r=28 ang=100 sh=false col=255,238,214 en=true
+  4x PointLight on Lens b=0.50 r=40 sh=false col=255,238,214 en=true
+  1x SpotLight on WallPackLens_N-6 b=0.90 r=26 ang=120 sh=false col=255,226,196 en=true
+  4x PointLight on Lens b=0.40 r=40 sh=false col=255,238,214 en=true
+  1x SpotLight on Flood_N b=1.00 r=34 ang=70 sh=true col=226,232,240 en=true
+  1x SpotLight on WallPackLens_N6 b=0.90 r=26 ang=120 sh=false col=255,226,196 en=true
+  1x SpotLight on WallPackLens_S-6 b=2.00 r=26 ang=120 sh=false col=255,226,196 en=true
+  1x SpotLight on DoorLight_S b=1.40 r=20 ang=110 sh=true col=255,230,196 en=true
+  1x SpotLight on DoorLight_N b=1.40 r=20 ang=110 sh=true col=255,230,196 en=true
+  1x SpotLight on Flood_S b=3.00 r=34 ang=70 sh=true col=226,232,240 en=true
+  1x SpotLight on WallPackLens_S6 b=2.00 r=26 ang=120 sh=false col=255,226,196 en=true
+Warehouse2Exterior lights 4 shadowed 2
+  1x SpotLight on FloodLens b=1.10 r=30 ang=120 sh=true col=222,228,238 en=true
+  1x SpotLight on FloodLens b=2.20 r=30 ang=120 sh=true col=222,228,238 en=true
+  2x PointLight on StreetLampLens b=1.20 r=26 sh=false col=230,230,226 en=true
+4x RoofSkylight 214,222,220 Enum.Material.Glass cs=false
+8x Housing 84,88,86 Enum.Material.Metal cs=false
+1x Shutter 150,152,148 Enum.Material.Metal cs=true
+1x Shutter 96,98,98 Enum.Material.Metal cs=true
+4x Housing 84,88,86 Enum.Material.Metal cs=true
+6x RoofSheet 150,152,150 Enum.Material.Metal cs=true
+WS child: Folder MatchSpawns
+WS child: Terrain Terrain
+WS child: Model Warehouse
+WS child: Model R15
+WS child: Model AnimRig
+WS child: SpawnLocation SpawnLocation
+WS child: Part Baseplate
+WS child: Camera Camera
+WS child: Model Arena
+WS child: Model Warehouse2
+WS child: Model Warehouse2Exterior
+K_ScaleCube in workspace: nil
+

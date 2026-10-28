@@ -17,7 +17,7 @@ D = dict(amb="16,17,20", out="30,32,38", exp="0", bright="1", diffuse="0.12", sp
          contrast="0.16", sat="-0.12", bloom="0.6", thresh="1.3",
          endPoint="0.4", endRange="30", endSpot="2.3", endAngle="100", endSpotRange="20",
          midPoint="0.25", midRange="30", midSpot="4", midAngle="90", midSpotRange="20",
-         wall="2.6", wallRange="28", wallAngle="100", roof="112,114,112", door="0.9", housingShadow="true", pointShadow="true", curtainS="62,64,64")
+         wall="2.6", wallRange="28", wallAngle="100", roof="112,114,112", door="0.9", housingShadow="true", pointShadow="true", curtainS="62,64,64", block="178,175,168", clad="172,174,172", fillColor="255,238,214")
 
 LUA = r'''
 local T = { %s }
@@ -37,7 +37,7 @@ for _, d in map:GetDescendants() do
 	if d:IsA("Light") and d.Parent and d.Parent.Name == "Lens" then
 		local beam = d.Parent.Parent and d.Parent.Parent.Parent
 		local mid = beam and (beam.Name == "LightBeam_2" or beam.Name == "LightBeam_3")
-		if d:IsA("PointLight") then d.Brightness, d.Range, d.Shadows = mid and T.midPoint or T.endPoint, mid and T.midRange or T.endRange, T.pointShadow
+		if d:IsA("PointLight") then d.Brightness, d.Range, d.Shadows, d.Color = mid and T.midPoint or T.endPoint, mid and T.midRange or T.endRange, T.pointShadow, c3(T.fillColor)
 		elseif d:IsA("SpotLight") then
 			d.Brightness, d.Angle, d.Range = mid and T.midSpot or T.endSpot, mid and T.midAngle or T.endAngle, mid and T.midSpotRange or T.endSpotRange
 		end
@@ -50,6 +50,11 @@ for _, d in map:GetDescendants() do
 		d.CastShadow = T.housingShadow
 	elseif d:IsA("BasePart") and d.Name == "Shutter" and d.Parent and d.Parent.Name == "Door_S" then
 		d.Color = c3(T.curtainS)
+	elseif d:IsA("BasePart") and (d:GetAttribute("_tuneOrig") == "block" or d:GetAttribute("_tuneOrig") == "clad"
+		or d.Color == Color3.fromRGB(178, 175, 168) or d.Color == Color3.fromRGB(172, 174, 172)) and not d:IsA("MeshPart") then
+		local k = d:GetAttribute("_tuneOrig") or (d.Color == Color3.fromRGB(178, 175, 168) and "block" or "clad")
+		d:SetAttribute("_tuneOrig", k)
+		d.Color = c3(T[k])
 	elseif d:IsA("BasePart") and d.Name == "RoofSheet" then
 		d.Color = c3(T.roof)
 	end

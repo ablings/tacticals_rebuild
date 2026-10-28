@@ -37,7 +37,7 @@ local MAP_NAME, REG_ID = "Warehouse2", "Warehouse2" -- Workspace name read by Sh
 local EXT_NAME = "Warehouse2Exterior" -- the yards + backdrop: the cutscene set behind the shut doors
 -- the map's night (MapInfo.Lighting, applied by RoundManager.applyMapEnv when the map wins the vote); tuned on the render
 local NIGHT = { --@NIGHT
-	clock = 0, bright = 1, exposure = 0, ambient = "40, 41, 46", outdoor = "84, 88, 100", diffuse = 0.12, specular = 0.2,
+	clock = 0, bright = 1, exposure = 0, ambient = "38, 41, 50", outdoor = "84, 88, 100", diffuse = 0.12, specular = 0.2,
 	density = 0.32, offset = 0, haze = 0.4, atmoColor = "52, 56, 64", decay = "26, 28, 34",
 	gradeBright = 0, contrast = 0.16, saturation = -0.12, tint = "255, 250, 242", bloom = 0.6, bloomSize = 24, threshold = 1.3,
 }
@@ -175,10 +175,10 @@ local S = {
 	floor = { M.Concrete, nil, rgb(128, 127, 123) },
 	yardFloor = { M.Concrete, nil, rgb(122, 121, 117) },
 	blockDark = { M.Concrete, nil, rgb(96, 96, 93) },
-	block = { M.Concrete, nil, rgb(178, 175, 168) },
+	block = { M.Concrete, nil, rgb(140, 137, 131) }, -- round 8b: 178 rendered brighter than the floor between the pools
 	blockStripe = { M.Concrete, nil, rgb(52, 52, 50) }, -- the wall band: charcoal (was olive)
-	clad = { M.Metal, nil, rgb(172, 174, 172) },
-	roof = { M.Metal, nil, rgb(150, 152, 150) }, -- round 8 (quality 21): 112 rendered the whole roof black; the fill now reaches it
+	clad = { M.Metal, nil, rgb(140, 142, 140) },
+	roof = { M.Metal, nil, rgb(108, 110, 108) }, -- round 8b: dark but lit by the fill (luminance ~27 between the bars, not black)
 	steel = { M.Metal, nil, rgb(84, 88, 86) },
 	beam = { M.Metal, nil, rgb(46, 48, 48) }, -- the light beams: dark painted steel, as the old Warehouse's
 	galv = { M.Metal, nil, rgb(160, 162, 160) },
@@ -192,7 +192,7 @@ local S = {
 	oliveCrate = { M.Wood, nil, rgb(96, 110, 58) }, -- the two olive crates (the only olive in the map)
 	oliveBatten = { M.Wood, nil, rgb(74, 84, 46) },
 	pallet = { M.Wood, nil, rgb(136, 104, 70) },
-	load = { CARDBOARD, nil, rgb(150, 124, 96) },
+	load = { CARDBOARD, nil, rgb(176, 150, 118) }, -- round 8: 150 rendered as a black cube with a lit top at quality 21
 	load2 = { CARDBOARD, nil, rgb(136, 114, 90) },
 	wrap = { M.SmoothPlastic, nil, rgb(232, 234, 236), 0.8, 0.15 },
 	cream = { M.SmoothPlastic, nil, rgb(236, 232, 218) },
@@ -474,7 +474,10 @@ end
 -- cover pieces (generated layout): same plan position, size and role as the old Warehouse
 local PIECE_MAT = { Cardboard = CARDBOARD, WoodPlanks = M.WoodPlanks, Concrete = M.Concrete }
 for _, q in LAYOUT.pieces do
-	local p = proxy(CP, "COLP_" .. q.id, q.e - q.w / 2, q.e + q.w / 2, q.n - q.d / 2, q.n + q.d / 2, 0, q.h, PIECE_MAT[q.mat])
+	-- the proxy's material is the bullet-impact sound: with the modeler's kit the low walls and walls are wooden crates (grader 8)
+	local mat = PIECE_MAT[q.mat]
+	if SS:FindFirstChild("Warehouse2Kit") and (q.look == "Jersey" or q.look == "BlockWall") then mat = M.WoodPlanks end
+	local p = proxy(CP, "COLP_" .. q.id, q.e - q.w / 2, q.e + q.w / 2, q.n - q.d / 2, q.n + q.d / 2, 0, q.h, mat)
 	p:SetAttribute("PieceId", q.id)
 	p:SetAttribute("Look", q.look)
 end
@@ -645,14 +648,45 @@ end
 for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	local g, k = s[2], s[1]
 	local inner, outer = g * (HN - 0.3), g * (HN + WT) -- a steel frame 0.3 proud of the flush end wall
-	-- steel reveal frame: jambs + head, the depth of the wall
+	-- round 8b (grader 8): the modeler's W2_RollDoor_Open frame (guides, drum housing, control box) replaces the Part drum and
+	-- guides; its guides run 0.62 in front of the wall face to 0.08 behind it, so the steel reveal starts behind them (one kit
+	-- owns each seam plane, props note). The Shutter part and its contract are unchanged; the mesh's own bottom bar (an open
+	-- door's) is left out
+	local frameSrc = SS:FindFirstChild("Warehouse2Kit") and SS.Warehouse2Kit:FindFirstChild("W2_RollDoor_Open")
+	if frameSrc then inner = g * (HN + 0.1) end
 	box(D, "Jamb_" .. k .. "_E", DOOR_HALF, DOOR_HALF + 0.6, inner, outer, 0, DOOR_H + 0.6, S.galv)
 	box(D, "Jamb_" .. k .. "_W", -DOOR_HALF - 0.6, -DOOR_HALF, inner, outer, 0, DOOR_H + 0.6, S.galv)
 	box(D, "Head_" .. k, -DOOR_HALF, DOOR_HALF, inner, outer, DOOR_H, DOOR_H + 0.6, S.galv)
-	-- the drum housing on the inside face and the guide rails beside the opening
-	box(D, "Drum_" .. k, -DOOR_HALF - 1, DOOR_HALF + 1, g * (HN - 2.7), inner, DOOR_H + 0.6, DOOR_H + 3.0, S.galv)
-	for _, e in { -1, 1 } do -- (beside the opening, not in it)
-		box(D, "Guide_" .. k .. e, e * DOOR_HALF, e * (DOOR_HALF + 0.55), g * (HN - 0.8), inner, 0, DOOR_H + 0.6, S.steel)
+	if frameSrc then
+		local fm = frameSrc:Clone()
+		local bar = fm:FindFirstChild("W2_RollDoor_BottomBar")
+		if bar then bar.Parent = nil end
+		local frame = fm:FindFirstChild("W2_RollDoor_Frame")
+		fm.Name = "DoorFrame_" .. k
+		fm.Parent = D
+		-- place by the Frame part's own box (the control box beside it would shift a whole-model box): centred on the opening,
+		-- bottom on the floor, back face 0.08 behind the wall face, front (-Z in the kit) into the hall
+		local fcf, fs = frame.CFrame, frame.Size
+		local back = fcf * CFrame.new(0, -fs.Y / 2, fs.Z / 2) -- bottom centre of the frame's back face, in the kit
+		local target = CFrame.new(W(0, g * (HN + 0.08), 0)) * CFrame.Angles(0, g < 0 and math.pi or 0, 0)
+		fm:PivotTo(target * back:ToObjectSpace(fm:GetPivot()))
+		for _, p in fm:GetDescendants() do
+			if p:IsA("BasePart") then p.Anchored, p.CanCollide, p.CanQuery, p.CanTouch = true, false, false, false end
+		end
+		fm:SetAttribute("Mesh", "W2_RollDoor_Open")
+		if k == "S" then
+			-- the kit's drum carries a baked "BAY 02" stencil: on BAY 01 a riveted label plate covers it (black / cream, the
+			-- south end's sign colours), tangent to the drum's front (n -54.58 at h 15.0, measured by raycast)
+			local plate = box(D, "DrumLabel_S", 1.8, 7.4, -54.53, -54.48, 14.45, 15.55, S.black)
+			plate.CastShadow = false
+			text(plate, "Back", "BAY 01", rgb(236, 232, 218))
+		end
+	else
+		-- the drum housing on the inside face and the guide rails beside the opening
+		box(D, "Drum_" .. k, -DOOR_HALF - 1, DOOR_HALF + 1, g * (HN - 2.7), inner, DOOR_H + 0.6, DOOR_H + 3.0, S.galv)
+		for _, e in { -1, 1 } do -- (beside the opening, not in it)
+			box(D, "Guide_" .. k .. e, e * DOOR_HALF, e * (DOOR_HALF + 0.55), g * (HN - 0.8), inner, 0, DOOR_H + 0.6, S.steel)
+		end
 	end
 	-- the door: a model in Interactive with the Shutter (gameplay: collides, stops shots, NotCover) and its state
 	local dm = Instance.new("Model")
@@ -699,7 +733,9 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	end
 	dm.PrimaryPart = sh
 	-- the door light: a warm spot under the hood onto the shut curtain and the hatch: the lit door is the landmark at its end
-	local dl = box(D, "DoorLight_" .. k, -1.2, 1.2, g * (HN - 2.6), g * (HN - 1.8), DOOR_H + 0.35, DOOR_H + 0.6, S.lens)
+	-- under the hood: the mesh housing's underside is at 14.0, the Part drum's at 14.6
+	local dlTop = frameSrc and DOOR_H - 0.03 or DOOR_H + 0.6
+	local dl = box(D, "DoorLight_" .. k, -1.2, 1.2, g * (HN - 2.6), g * (HN - 1.8), dlTop - 0.25, dlTop, S.lens)
 	local dls = Instance.new("SpotLight")
 	dls.Face, dls.Angle, dls.Range, dls.Brightness, dls.Color, dls.Shadows = Enum.NormalId.Bottom, 110, 20, 1.4, rgb(255, 230, 196), true
 	dls.Parent = dl
@@ -756,9 +792,11 @@ local BAR_LEN = 9
 -- round 8: re-tuned at EditQualityLevel 21 (the PC default; rounds 1-7 were judged at Studio's Level01, which lights very
 -- differently). The bar PointLights are UNSHADOWED fill (ShadowMap has no bounce: shadowed, every face turned from a bar and
 -- every cover shadow rendered pure black, 40-81 % of a hall frame); the downward SpotLights keep their shadows for the hard pools
-local LIGHT = { color = rgb(255, 238, 214), range = 40, bright = 0.5, shadows = false } --@LIGHT
-local FILL = { range = 20, bright = 2.6, angle = 100 } --@FILL
-local MID = { bright = 0.4, spot = 4.4, angle = 90 } --@MID (rows n +-15; grade round 6: under / between was only 1.1-1.5x)
+-- round 8b (grader 8: "lights on", roof and walls as bright as the floor): roof 108, blockwork 140, cladding 140; the fill is a
+-- cool moonlit bounce (212,222,240) against the warm pools, so the dark between the pools reads as night without going black
+local LIGHT = { color = rgb(255, 238, 214), range = 40, bright = 0.6, shadows = false, fillColor = rgb(212, 222, 240) } --@LIGHT
+local FILL = { range = 20, bright = 3, angle = 100 } --@FILL
+local MID = { bright = 0.48, spot = 5, angle = 90 } --@MID (rows n +-15; grade round 6: under / between was only 1.1-1.5x)
 for i, n in BEAM_ROWS do
 	local bm = Instance.new("Model")
 	bm.Name = "LightBeam_" .. i
@@ -790,7 +828,7 @@ for i, n in BEAM_ROWS do
 		lens.CastShadow = false
 		local pl = Instance.new("PointLight")
 		local midRow = math.abs(n) < 30 -- the middle rows get no help from the end walls / doors: harder, narrower pools
-		pl.Brightness, pl.Range, pl.Color, pl.Shadows = midRow and MID.bright or LIGHT.bright, LIGHT.range, LIGHT.color, LIGHT.shadows
+		pl.Brightness, pl.Range, pl.Color, pl.Shadows = midRow and MID.bright or LIGHT.bright, LIGHT.range, LIGHT.fillColor, LIGHT.shadows
 		pl.Parent = lens
 		local sl = Instance.new("SpotLight") -- the pool on the floor under the bar
 		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, midRow and MID.angle or FILL.angle, FILL.range,
@@ -1102,7 +1140,7 @@ if KIT then -- swap the Part stand-ins of the pieces the kit has a mesh for (sam
 	local partPallet, partDrum = pallet, drum
 	pallet = function(m, e, n, h) if not meshAt(m, "W2_Pallet", e, n, h, 0) then partPallet(m, e, n, h) end end
 	drum = function(m, e, n, s)
-		if not meshAt(m, s == S.rust and "W2_OilDrum_Grey" or "W2_OilDrum_Black", e, n, 0, (e + n) % 1.3) then partDrum(m, e, n, s) end
+		if not meshAt(m, s == S.rust and "W2_OilDrum_Grey" or "W2_OilDrum_Black", e, n, 0, 0) then partDrum(m, e, n, s) end
 	end
 end
 do
@@ -1140,8 +1178,14 @@ local function propBlock(name, e0, e1, n0, n1, h1)
 end
 propBlock("PCOL_PalletPile_S", 12, 16, -55.7, -52.3, 3.6)
 propBlock("PCOL_PalletPile_N", -16, -12, 52.3, 55.7, 2.4)
-propBlock("PCOL_Pallets_SW", -38.5, -34.5, -39.7, -36.3, (KIT and KIT:FindFirstChild("W2_PalletSacks")) and 2.2 or 4)
-propBlock("PCOL_Pallets_NE", 34.5, 38.5, 38.3, 41.7, 2.2)
+-- the sack pallet mesh is 4.12 x 3.58: its blocker covers it (grader 8: 0.06-0.09 overhang)
+if KIT and KIT:FindFirstChild("W2_PalletSacks") then
+	propBlock("PCOL_Pallets_SW", -38.56, -34.44, -39.79, -36.21, 2.2)
+	propBlock("PCOL_Pallets_NE", 34.44, 38.56, 38.21, 41.79, 2.2)
+else
+	propBlock("PCOL_Pallets_SW", -38.5, -34.5, -39.7, -36.3, 4)
+	propBlock("PCOL_Pallets_NE", 34.5, 38.5, 38.3, 41.7, 2.2)
+end
 propBlock("PCOL_Drums_W", -38.7, -34.3, 29.1, 32.3, 3)
 propBlock("PCOL_Drums_E", 34.3, 38.7, -32.3, -29.1, 3)
 propBlock("PCOL_Workbench", -38.6, -36.4, 13, 19, 3.3)
@@ -1159,6 +1203,7 @@ do
 	box(m, "Handle", e - 0.06, e + 0.06, n0 + 4.1, n0 + 4.3, 1.3, 4.0, S.black)
 	box(m, "Grip", e - 0.35, e + 0.35, n0 + 4.1, n0 + 4.3, 3.8, 4.0, S.black)
 	propBlock("PCOL_PalletTruck_S", e - 0.7, e + 0.7, n0, n0 + 4.4, 1.3)
+	propBlock("PCOL_PalletTruck_S_Handle", e - 0.4, e + 0.4, n0 + 3.9, n0 + 4.4, 4.1) -- the handle (grader 8 walk-through scan)
 	m = prop("TyreStack_N", "TyreStack")
 	local te, tn = -19, 54.6
 	for i = 0, (meshAt(m, "W2_TyreStack", te, tn, 0, 0.4) and -1 or 3) do

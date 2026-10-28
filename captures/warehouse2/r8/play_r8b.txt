@@ -1,0 +1,30 @@
+Warehouse 2 round 8b Play test (door frame meshes, mood fix), 2026-10-27 20:02, Studio quality n/a (Play)
+
+voted Warehouse2
+phase Playing ArenaMap Warehouse2 151.2s me (-31.0, -50.0) feet 0.00 clock 0 ambient 0.14902, 0.160784, 0.196078
+Door_S Open false shutter collide true
+Door_N Open false shutter collide true
+
+push S door             ended (-0.0, -56.9) feet 0.00  n reached -56.94..-50.00  top feet 0.00
+push N door             ended (-0.2, 56.9) feet -0.01  n reached 50.00..56.95  top feet 0.01
+push S door left        ended (-7.9, -56.9) feet -0.00  n reached -56.94..-50.00  top feet 0.00
+push N door right       ended (8.0, 56.9) feet 0.02  n reached 50.00..56.95  top feet 0.02
+DOORS STOP: south min n -56.94 (curtain at -57.45), north max n 56.95 (curtain at 57.45)
+Space (cover vault/climb) at S shutter inCover=false part=nil crouched=false vaulting=false moving=false state=Running (-0.0, -55.5) feet 0.00
+   after (-0.0, -55.5) feet 0.00
+
+cover L03 jersey       inCover=true part=COLP_L03 crouched=false vaulting=false moving=false state=Running
+   vault over L03 -> (-12.0, -16.7) feet -0.00
+cover C01 crate        inCover=true part=COLP_C01 crouched=false vaulting=false moving=false state=Running
+cover P01 pallet stack inCover=true part=COLP_P01 crouched=false vaulting=false moving=false state=Running
+cover W01 block wall   inCover=true part=COLP_W01 crouched=false vaulting=false moving=false state=Running
+
+round 1: me (-16.0, 3.0) bot ? map Warehouse2 doors Door_S shut/solid, Door_N shut/solid phase Playing
+round 2: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_S shut/solid, Door_N shut/solid phase Playing
+round 3: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_S shut/solid, Door_N shut/solid phase Playing
+round 4: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_S shut/solid, Door_N shut/solid phase Playing
+round 5: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_S shut/solid, Door_N shut/solid phase Playing
+end Victory Victory score A 5 B 0
+phases: | 49.2 Countdown/Playing | 49.6 RunIn/RunIn | 53.2 Countdown/Playing | 58.2 Live/Playing | 296.9 RoundEnd/Playing | 299.9 Countdown/Playing | 305.2 Live/Playing | 308.6 RoundEnd/Playing | 311.6 Countdown/Playing | 316.9 Live/Playing | 320.1 RoundEnd/Playing | 323.2 Countdown/Playing | 328.6 Live/Playing | 331.7 RoundEnd/Playing | 334.8 Countdown/Playing | 340.2 Live/Playing | 343.3 Victory/Victory
+
+door contract (8b): Door_N open->shut exact True, body fits open True / shut False, top drift 0.001, prompts 0, NotCover True; Door_S open->shut exact True, body fits open True / shut False, top drift 0, prompts 0, NotCover True

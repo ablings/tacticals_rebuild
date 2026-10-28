@@ -1,0 +1,1 @@
+[{"name": "wh13_south_door_inside", "area": "hall", "eye": [6, 4.6, -36], "at": [0, 7, -60]}, {"name": "wh14_north_door_inside", "area": "hall", "eye": [-6, 4.6, 36], "at": [0, 7, 60]}, {"name": "d1_S_frame_side", "eye": [-15, 6, -50], "at": [-9, 7, -56.5]}, {"name": "d2_N_frame_side", "eye": [15, 6, 50], "at": [9, 7, 56.5]}]

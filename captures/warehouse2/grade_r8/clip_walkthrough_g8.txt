@@ -1,0 +1,20 @@
+PlanOrigin -84.19999694824219, 0.4000000059604645, -300 colliders 116
+walk-through misses: 2
+  prop Props.PalletTruck_S.Wheel miss 15/15 size(0.5,0.6,0.6) at (-18.0,0.6,-52.3)
+  prop Props.PalletTruck_S.Handle miss 15/15 size(0.1,2.7,0.2) at (-18.0,3.1,-52.1)
+art overlapping cover boxes: 10
+  C03 <- Visuals.FloorPaint.BayLine overlap(4.90,0.03,0.35) art size(23.0,0.0,0.3)
+  C04 <- Visuals.FloorPaint.BayLine overlap(4.90,0.03,0.35) art size(23.0,0.0,0.3)
+  L03 <- Visuals.FloorPaint.AisleLine overlap(0.35,0.03,1.90) art size(0.3,0.0,100.0)
+  L04 <- Visuals.FloorPaint.AisleLine overlap(0.35,0.03,1.90) art size(0.3,0.0,100.0)
+  L05 <- Visuals.FloorPaint.BayLine overlap(5.90,0.03,0.12) art size(23.0,0.0,0.3)
+  L06 <- Visuals.FloorPaint.BayLine overlap(5.90,0.03,0.12) art size(23.0,0.0,0.3)
+  W01 <- Visuals.FloorPaint.AisleLine overlap(0.35,0.03,2.90) art size(0.3,0.0,100.0)
+  W02 <- Visuals.FloorPaint.AisleLine overlap(0.35,0.03,2.90) art size(0.3,0.0,100.0)
+  W03 <- Visuals.FloorPaint.AisleLine overlap(0.07,0.03,2.45) art size(0.3,0.0,100.0)
+  W04 <- Visuals.FloorPaint.AisleLine overlap(0.18,0.03,2.45) art size(0.3,0.0,100.0)
+C03 local (31.0, -23.0)
+C04 local (-31.0, 23.0)
+SpawnA local (31.0, -50.0)
+SpawnB local (-31.0, 50.0)
+

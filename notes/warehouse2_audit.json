@@ -29,7 +29,7 @@
     "neon": 18,
     "indoor": true,
     "walkCells": 603,
-    "meshparts": 73,
+    "meshparts": 77,
     "parts": 905
    },
    "fails": 0,
@@ -50,12 +50,12 @@
  },
  "sky": {
   "lamp": 28,
-  "roof": 6705,
+  "roof": 6689,
   "glazing": 0,
   "hole": 0,
   "cells": 8526,
   "holes": [],
-  "skylight": 1793
+  "skylight": 1809
  },
  "play": {
   "fails": 0,
@@ -65,7 +65,7 @@
    "neon": 18,
    "indoor": true,
    "walkCells": 603,
-   "meshparts": 73,
+   "meshparts": 77,
    "parts": 905
   },
   "findings": [],

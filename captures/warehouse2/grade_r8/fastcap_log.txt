@@ -1,0 +1,39 @@
+C:\Users\Shadow\Documents\tacticals_rebuild\tools\wh2_fastcap.py:99: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  return max(im.crop((0, int(h * 0.06), w, h)).getdata()) < 8
+C:\Users\Shadow\Documents\tacticals_rebuild\tools\wh2_fastcap.py:107: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  d = list(ImageChops.difference(x, y).getdata())
+C:\Users\Shadow\Documents\tacticals_rebuild\tools\wh2_fastcap.py:116: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+  px = sorted(im.getdata())
+Warehouse2 lighting applied: clock 0 bright 1 exp 0 | EditQualityLevel Enum.QualityLevel.Level21
+wh01_spawnA_eye_facing frames 2 stable p5/p50/p95 0/50/177
+wh02_spawnB_eye_facing frames 2 stable p5/p50/p95 0/56/176
+wh04_west_lane_from_A frames 2 stable p5/p50/p95 0/59/145
+wh05_flush_pair_P03_L03 frames 2 stable p5/p50/p95 1/65/120
+wh06_front_pair_P04_L05 frames 2 stable p5/p50/p95 1/69/126
+wh07_lone_low_L07 frames 2 stable p5/p50/p95 0/67/106
+wh08_overshoulder_behind_L05 frames 2 stable p5/p50/p95 0/62/149
+wh09_centre_toward_A frames 2 stable p5/p50/p95 0/61/140
+wh10_middle_walls_W01_W02 frames 2 stable p5/p50/p95 0/58/186
+wh11_upshot_centre frames 2 stable p5/p50/p95 6/57/75
+wh12_long_axis_to_north_door frames 2 stable p5/p50/p95 0/56/119
+wh13_south_door_inside frames 2 stable p5/p50/p95 1/61/186
+wh14_north_door_inside frames 2 stable p5/p50/p95 1/75/175
+ys01_south_yard_from_door frames 2 stable p5/p50/p95 25/56/177
+ys02_south_yard_corner_look_in frames 2 stable p5/p50/p95 0/28/167
+ys03_south_yard_containers frames 2 stable p5/p50/p95 0/29/178
+ys04_south_yard_upshot frames 2 stable p5/p50/p95 0/0/174
+yn01_north_yard_from_door frames 2 stable p5/p50/p95 6/127/154
+yn02_north_yard_corner_look_in frames 2 stable p5/p50/p95 0/28/134
+yn03_north_yard_containers frames 2 stable p5/p50/p95 0/35/140
+yn04_north_yard_upshot frames 2 stable p5/p50/p95 0/0/143
+wh15_hall_corner_SW frames 2 stable p5/p50/p95 0/49/168
+wh16_ceiling_side frames 2 stable p5/p50/p95 0/50/142
+wh17_beam_light_up frames 2 stable p5/p50/p95 0/57/134
+fA_spawnA_shield_face frames 2 stable p5/p50/p95 0/49/176
+fB_spawnB_shield_face frames 2 stable p5/p50/p95 0/55/176
+o1_C03 frames 2 stable p5/p50/p95 3/69/142
+o2_C04 frames 2 stable p5/p50/p95 3/68/141
+p1_workbench_drums_W frames 2 stable p5/p50/p95 6/55/147
+p2_pallets_SW frames 2 stable p5/p50/p95 22/76/153
+p3_tyres_N_pile frames 2 stable p5/p50/p95 1/66/200
+p4_olive_C03 frames 2 stable p5/p50/p95 3/76/156
