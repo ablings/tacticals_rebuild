@@ -158,3 +158,15 @@ After: read-back 0 differences (293 proxies, 8 doors, 28 windows), checker PASS 
    (move any existing _DuelSource.House aside FIRST: the import appends), `fix/house_lobby_prep.lua`, `fix/duel_split_map.lua` with
    ONLY = 'House'; pad duel test; save; copy -> Tacticals_main_ported.rbxl + `tools/set_technology.py` Future; publish to tacticals; read back.
 5. Tutorial unchanged. port_manifest entry; commit own paths only.
+
+## Grade round 5 (Edward's extra round; fresh roblox-map-grader, xhigh): PASS 8.6
+Edward (answer to my question): "Run one more grade round first, then publish if it passes."
+Verdict: PASS, 0 blocking / 0 major. Confirmed: TV fix, kitchen cabinet removed, lobby source = build (293 parts by name, 0 differences,
+COLP 232 / PCOL 30 / BAR 31, 28 windows, 34 lights); read-back 0; checker PASS on plan and read-back (flood 18,936 cells, 0 outside);
+walk-through 0; MapAudit 0 FAIL / 1 WARN (with the kit's new WALK and WINDOW checks: 0 / 0); Play: vote, spawns A / B, doors, 11 escape
+pushes held (incl. two at a broken pane), glass shot -> broken, pane hidden on the client.
+Open minors (not fixed: publish exactly what passed): the landing bookcase still overlaps the master-bedroom door casing by 0.05 x 0.14;
+the upper vanity reaches 0.32 into the bathroom doorway's width (body passes); the foyer bench stands in front of 0.35 of the locked
+front door's casing.
+**Publish held:** the smoke-alarm session logged (84fc50d, 11:20) Edward: "Not yet: I'll look at the House sheets first." That conflicts
+with "publish if it passes"; asked Edward before touching the live places. Nothing staged in match_place_ref / Tacticals_rebuild.
