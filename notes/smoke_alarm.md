@@ -173,6 +173,8 @@ Installer round 3 (round 2 UNDOne first with `git show 4b7a81f:fix/smoke_alarm.l
   after the wind-up (older code; the alarms are guarded).
 
 ## Publish: NOT DONE (2026-10-28 10:55)
+Edward (2026-10-28): "Not yet: I'll look at the House sheets first." Nothing is published; the alarms go out with the House
+port when he says go (steps below).
 The House itself was not published: its map grade ended FIX 8.4 after the 4 allowed rounds, so its publish waits for Edward
 (`notes/house_build.md` "Ready to publish"). The alarms ride on that port; nothing of this was installed on match_place_ref, the
 lobby copy, or any published place. When Edward says go, add to the House's port steps:
