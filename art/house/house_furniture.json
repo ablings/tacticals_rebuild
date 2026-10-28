@@ -2,7 +2,7 @@
  "note": "Blender (x, y, z) -> Studio (-x, z, y). 1 unit = 1 stud. Pivot = bottom centre of the collision box (the per-assembly FBX has it at the origin). Kit FBX has K_ScaleCube (10 studs) and K_Marker (long arm +X, upright +Z, short arm +Y). Every visual mesh: CanCollide/CanQuery/CanTouch off; collision = the listed boxes as invisible Parts.",
  "cover_heights": {
   "low": 3.4,
-  "tall": "7+ (7.0-7.6 here)",
+  "tall": "8.0 (the final layout boxes every tall piece at 8.0)",
   "source": "notes/warehouse_study/movement_configs.txt CoverConfig"
  },
  "atlases": {
@@ -102,16 +102,16 @@
    "bbox_min_rel_pivot_studio": [
     -6.0,
     0.0,
-    -5.4
+    -3.6
    ],
    "bbox_max_rel_pivot_studio": [
     6.0,
     3.4,
-    1.8
+    3.6
    ],
    "pivot_blender_in_kit": [
     6.0,
-    0.0,
+    -1.8,
     0.0
    ],
    "collision_boxes_studio": [
@@ -124,7 +124,7 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      0.0
+      1.8
      ]
     },
     {
@@ -136,7 +136,7 @@
      "centre_rel_pivot": [
       -4.1,
       0.9,
-      -3.6
+      -1.8
      ]
     }
    ],
@@ -149,7 +149,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      -1.8
+      0.0
      ],
      "size_studio": [
       12.0,
@@ -254,16 +254,16 @@
    "bbox_min_rel_pivot_studio": [
     -5.0,
     0.0,
-    -2.38
+    -2.34
    ],
    "bbox_max_rel_pivot_studio": [
     5.0,
     3.4,
-    2.3
+    2.34
    ],
    "pivot_blender_in_kit": [
     29.2,
-    0.0,
+    -0.04,
     0.0
    ],
    "collision_boxes_studio": [
@@ -276,7 +276,7 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -0.04
+      0.0
      ]
     }
    ],
@@ -289,7 +289,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      -0.04
+      0.0
      ],
      "size_studio": [
       10.0,
@@ -310,7 +310,7 @@
   },
   {
    "assembly": "H_DiningSet",
-   "role": "dining table + 6 chairs pushed in",
+   "role": "dining table + 6 chairs pushed in; boxes: table 2.6 + a 3.4 box per chair row (union = 8 x 6.7)",
    "cover": "LOW 3.4",
    "objects": [
     "H_DiningSet__H_DiningTable",
@@ -345,14 +345,38 @@
    "collision_boxes_studio": [
     {
      "size": [
-      8.2,
+      8.0,
+      2.6,
+      4.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.3,
+      0.0
+     ]
+    },
+    {
+     "size": [
+      6.1,
       3.4,
-      6.8
+      1.95
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      0.0
+      -2.375
+     ]
+    },
+    {
+     "size": [
+      6.1,
+      3.4,
+      1.95
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      2.375
      ]
     }
    ],
@@ -792,16 +816,16 @@
    "bbox_min_rel_pivot_studio": [
     -3.0,
     0.0,
-    -1.2
+    -1.15
    ],
    "bbox_max_rel_pivot_studio": [
     3.0,
     3.4,
-    1.1
+    1.15
    ],
    "pivot_blender_in_kit": [
     91.5,
-    0.0,
+    -0.05,
     0.0
    ],
    "collision_boxes_studio": [
@@ -814,7 +838,7 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -0.05
+      0.0
      ]
     }
    ],
@@ -827,7 +851,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      -0.05
+      0.0
      ],
      "size_studio": [
       6.0,
@@ -854,6 +878,7 @@
     "H_Bathtub"
    ],
    "fbx": "fbx/H_Bathtub.fbx",
+   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "size_studio": [
     7.0,
     4.119,
@@ -888,7 +913,6 @@
      ]
     }
    ],
-   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "parts": [
     {
      "object": "H_Bathtub",
@@ -933,16 +957,16 @@
    "bbox_min_rel_pivot_studio": [
     -4.0,
     0.0,
-    -1.02
+    -1.01
    ],
    "bbox_max_rel_pivot_studio": [
     4.0,
     3.4,
-    1.0
+    1.01
    ],
    "pivot_blender_in_kit": [
     113.5,
-    0.0,
+    -0.01,
     0.0
    ],
    "collision_boxes_studio": [
@@ -955,7 +979,7 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -0.01
+      0.0
      ]
     }
    ],
@@ -968,7 +992,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      -0.01
+      0.0
      ],
      "size_studio": [
       8.0,
@@ -997,6 +1021,7 @@
     "H_TVConsole_WithTV__H_TV_Screen"
    ],
    "fbx": "fbx/H_TVConsole_WithTV.fbx",
+   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "size_studio": [
     8.0,
     7.4,
@@ -1005,16 +1030,16 @@
    "bbox_min_rel_pivot_studio": [
     -4.0,
     0.0,
-    -1.02
+    -1.01
    ],
    "bbox_max_rel_pivot_studio": [
     4.0,
     7.4,
-    1.0
+    1.01
    ],
    "pivot_blender_in_kit": [
     4.0,
-    -16.0,
+    -16.01,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1027,11 +1052,10 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -0.01
+      0.0
      ]
     }
    ],
-   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "parts": [
     {
      "object": "H_TVConsole_WithTV__H_TVConsole",
@@ -1041,7 +1065,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      -0.01
+      0.0
      ],
      "size_studio": [
       8.0,
@@ -1058,7 +1082,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       5.38,
-      0.175
+      0.185
      ],
      "size_studio": [
       6.4,
@@ -1075,7 +1099,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       5.55,
-      0.163
+      0.173
      ],
      "size_studio": [
       6.2,
@@ -1114,16 +1138,16 @@
    "bbox_min_rel_pivot_studio": [
     -2.0,
     0.0,
-    -1.26
+    -1.23
    ],
    "bbox_max_rel_pivot_studio": [
     2.0,
     3.4,
-    1.2
+    1.23
    ],
    "pivot_blender_in_kit": [
     14.0,
-    -16.0,
+    -16.03,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1136,7 +1160,7 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -0.03
+      0.0
      ]
     }
    ],
@@ -1149,7 +1173,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      -0.03
+      0.0
      ],
      "size_studio": [
       4.0,
@@ -1176,6 +1200,7 @@
     "H_KitchenSink"
    ],
    "fbx": "fbx/H_KitchenSink.fbx",
+   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "size_studio": [
     4.0,
     5.007,
@@ -1184,16 +1209,16 @@
    "bbox_min_rel_pivot_studio": [
     -2.0,
     0.0,
-    -1.26
+    -1.23
    ],
    "bbox_max_rel_pivot_studio": [
     2.0,
     5.007,
-    1.2
+    1.23
    ],
    "pivot_blender_in_kit": [
     22.0,
-    -16.0,
+    -16.03,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1206,11 +1231,10 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -0.03
+      0.0
      ]
     }
    ],
-   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "parts": [
     {
      "object": "H_KitchenSink",
@@ -1220,7 +1244,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       2.504,
-      -0.03
+      0.0
      ],
      "size_studio": [
       4.0,
@@ -1255,16 +1279,16 @@
    "bbox_min_rel_pivot_studio": [
     -2.0,
     0.0,
-    -1.38
+    -1.29
    ],
    "bbox_max_rel_pivot_studio": [
     2.0,
     3.4,
-    1.2
+    1.29
    ],
    "pivot_blender_in_kit": [
     30.0,
-    -16.0,
+    -16.09,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1277,7 +1301,7 @@
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -0.09
+      0.0
      ]
     }
    ],
@@ -1290,7 +1314,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      -0.09
+      0.0
      ],
      "size_studio": [
       4.0,
@@ -1312,7 +1336,7 @@
   {
    "assembly": "H_Bookcase",
    "role": "living-room / study bookcase",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_Bookcase"
    ],
@@ -1382,7 +1406,7 @@
   {
    "assembly": "H_Fridge",
    "role": "French-door fridge",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_Fridge"
    ],
@@ -1395,16 +1419,16 @@
    "bbox_min_rel_pivot_studio": [
     -1.8,
     0.0,
-    -1.555
+    -1.427
    ],
    "bbox_max_rel_pivot_studio": [
     1.8,
     8.0,
-    1.3
+    1.427
    ],
    "pivot_blender_in_kit": [
     47.8,
-    -16.0,
+    -16.127,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1417,7 +1441,7 @@
      "centre_rel_pivot": [
       -0.0,
       4.0,
-      -0.127
+      0.0
      ]
     }
    ],
@@ -1430,7 +1454,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       4.0,
-      -0.127
+      0.0
      ],
      "size_studio": [
       3.6,
@@ -1452,7 +1476,7 @@
   {
    "assembly": "H_Wardrobe",
    "role": "bedroom wardrobe",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_Wardrobe"
    ],
@@ -1465,16 +1489,16 @@
    "bbox_min_rel_pivot_studio": [
     -3.0,
     0.0,
-    -1.3
+    -1.25
    ],
    "bbox_max_rel_pivot_studio": [
     3.0,
     8.0,
-    1.2
+    1.25
    ],
    "pivot_blender_in_kit": [
     56.6,
-    -16.0,
+    -16.05,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1487,7 +1511,7 @@
      "centre_rel_pivot": [
       -0.0,
       4.0,
-      -0.05
+      0.0
      ]
     }
    ],
@@ -1500,7 +1524,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       4.0,
-      -0.05
+      0.0
      ],
      "size_studio": [
       6.0,
@@ -1522,7 +1546,7 @@
   {
    "assembly": "H_TallCabinet",
    "role": "tall linen / hall cabinet",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_TallCabinet"
    ],
@@ -1535,16 +1559,16 @@
    "bbox_min_rel_pivot_studio": [
     -1.5,
     0.0,
-    -1.12
+    -1.06
    ],
    "bbox_max_rel_pivot_studio": [
     1.5,
     8.0,
-    1.0
+    1.06
    ],
    "pivot_blender_in_kit": [
     65.1,
-    -16.0,
+    -16.06,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1557,7 +1581,7 @@
      "centre_rel_pivot": [
       -0.0,
       4.0,
-      -0.06
+      0.0
      ]
     }
    ],
@@ -1570,7 +1594,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       4.0,
-      -0.06
+      0.0
      ],
      "size_studio": [
       3.0,
@@ -1592,7 +1616,7 @@
   {
    "assembly": "H_Pantry",
    "role": "tall kitchen pantry",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_Pantry"
    ],
@@ -1605,16 +1629,16 @@
    "bbox_min_rel_pivot_studio": [
     -2.0,
     0.0,
-    -1.26
+    -1.23
    ],
    "bbox_max_rel_pivot_studio": [
     2.0,
     8.0,
-    1.2
+    1.23
    ],
    "pivot_blender_in_kit": [
     72.6,
-    -16.0,
+    -16.03,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1627,7 +1651,7 @@
      "centre_rel_pivot": [
       -0.0,
       4.0,
-      -0.03
+      0.0
      ]
     }
    ],
@@ -1640,7 +1664,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       4.0,
-      -0.03
+      0.0
      ],
      "size_studio": [
       4.0,
@@ -1662,7 +1686,7 @@
   {
    "assembly": "H_ShelfWall",
    "role": "open bookshelf wall dressed on both faces (team A spawn wall)",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_ShelfWall"
    ],
@@ -1732,7 +1756,7 @@
   {
    "assembly": "H_OvenWall",
    "role": "tall oven + pantry bank, both faces finished (team B spawn wall); ovens on -Y",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_OvenWall"
    ],
@@ -1745,16 +1769,16 @@
    "bbox_min_rel_pivot_studio": [
     -6.0,
     0.0,
-    -0.995
+    -0.993
    ],
    "bbox_max_rel_pivot_studio": [
     6.0,
     8.0,
-    0.99
+    0.993
    ],
    "pivot_blender_in_kit": [
     100.6,
-    -16.0,
+    -16.003,
     0.0
    ],
    "collision_boxes_studio": [
@@ -1767,7 +1791,7 @@
      "centre_rel_pivot": [
       -0.0,
       4.0,
-      -0.003
+      0.0
      ]
     }
    ],
@@ -1780,7 +1804,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       4.0,
-      -0.003
+      0.0
      ],
      "size_studio": [
       12.0,
@@ -1802,7 +1826,7 @@
   {
    "assembly": "H_SlatScreen",
    "role": "timber slat screen on a storage base (inside the hall arches)",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_SlatScreen"
    ],
@@ -1872,7 +1896,7 @@
   {
    "assembly": "H_HeadboardWall",
    "role": "freestanding headboard wall, upholstered side -Y (bed side)",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_HeadboardWall"
    ],
@@ -2056,7 +2080,7 @@
      "object": "H_HallBench_3",
      "mesh": "H_HallBench_3",
      "atlas": "Storage2",
-     "tris": 168,
+     "tris": 180,
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
@@ -2070,7 +2094,7 @@
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 168,
+   "tris": 180,
    "textures": [
     "tex/H_Storage2_color.png",
     "tex/H_Storage2_metal.png",
@@ -2126,7 +2150,7 @@
      "object": "H_HallBench_8",
      "mesh": "H_HallBench_8",
      "atlas": "Storage2",
-     "tris": 300,
+     "tris": 312,
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
@@ -2140,7 +2164,7 @@
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 300,
+   "tris": 312,
    "textures": [
     "tex/H_Storage2_color.png",
     "tex/H_Storage2_metal.png",
@@ -2158,6 +2182,7 @@
     "H_Planter__H_Planter_Tree"
    ],
    "fbx": "fbx/H_Planter.fbx",
+   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "size_studio": [
     3.0,
     8.954,
@@ -2192,7 +2217,6 @@
      ]
     }
    ],
-   "above_box": "thin tap / the TV stands above the 3.4 box: no collision needed",
    "parts": [
     {
      "object": "H_Planter__H_Planter",
@@ -2241,7 +2265,7 @@
   {
    "assembly": "H_DisplayColumn",
    "role": "column wrapped in walnut with display niches on -Y and +Y",
-   "cover": "TALL 7+",
+   "cover": "TALL 8.0",
    "objects": [
     "H_DisplayColumn"
    ],
@@ -2846,7 +2870,7 @@
      "object": "H_FruitBowl",
      "mesh": "H_FruitBowl",
      "atlas": "Kitchen",
-     "tris": 544,
+     "tris": 312,
      "centre_studio_rel_pivot": [
       -0.0,
       0.33,
@@ -2860,7 +2884,7 @@
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 544,
+   "tris": 312,
    "textures": [
     "tex/H_Kitchen_color.png",
     "tex/H_Kitchen_metal.png",
@@ -4145,12 +4169,12 @@
    "size_studio": [
     2.2,
     1.32,
-    0.48
+    0.49
    ],
    "bbox_min_rel_pivot_studio": [
     -1.1,
     1.4,
-    -0.48
+    -0.49
    ],
    "bbox_max_rel_pivot_studio": [
     1.1,
@@ -4168,21 +4192,21 @@
      "object": "H_TowelRail",
      "mesh": "H_TowelRail",
      "atlas": "Bath",
-     "tris": 408,
+     "tris": 96,
      "centre_studio_rel_pivot": [
       -0.0,
       2.06,
-      -0.24
+      -0.245
      ],
      "size_studio": [
       2.2,
       1.32,
-      0.48
+      0.49
      ],
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 408,
+   "tris": 96,
    "textures": [
     "tex/H_Bath_color.png",
     "tex/H_Bath_metal.png",
@@ -4367,22 +4391,22 @@
    ],
    "fbx": "fbx/H_Teddy.fbx",
    "size_studio": [
-    1.187,
+    1.199,
     1.57,
-    0.936
+    0.96
    ],
    "bbox_min_rel_pivot_studio": [
-    -0.593,
+    -0.599,
     0.0,
-    -0.585
+    -0.6
    ],
    "bbox_max_rel_pivot_studio": [
-    0.593,
+    0.599,
     1.57,
-    0.351
+    0.36
    ],
    "pivot_blender_in_kit": [
-    61.452,
+    61.458,
     -64.0,
     0.0
    ],
@@ -4392,21 +4416,21 @@
      "object": "H_Teddy",
      "mesh": "H_Teddy",
      "atlas": "Toys",
-     "tris": 1092,
+     "tris": 432,
      "centre_studio_rel_pivot": [
       -0.0,
       0.785,
-      -0.117
+      -0.12
      ],
      "size_studio": [
-      1.187,
+      1.199,
       1.57,
-      0.936
+      0.96
      ],
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 1092,
+   "tris": 432,
    "textures": [
     "tex/H_Toys_color.png",
     "tex/H_Toys_metal.png",
@@ -4415,5 +4439,5 @@
    ]
   }
  ],
- "unique_tris": 29440
+ "unique_tris": 28260
 }

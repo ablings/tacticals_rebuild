@@ -31,7 +31,45 @@ for k_, v_ in {
     d_ = dict(DEF); d_.update(v_); K[k_] = d_
 
 # ----------------------------------------------------------------------------------------------------------- shell
-ROOMS = LAY["rooms"]
+def _inside_rect(a, b):
+    return b["x0"] - 1e-6 <= a["x0"] and a["x1"] <= b["x1"] + 1e-6 and b["y0"] - 1e-6 <= a["y0"] and a["y1"] <= b["y1"] + 1e-6
+
+
+def _nested(rm, rooms):
+    return any(o is not rm and o["storey"] == rm["storey"] and all(any(_inside_rect(r, q) for q in o["rects"]) for r in rm["rects"])
+               for o in rooms)
+
+
+ROOMS = sorted(LAY["rooms"], key=lambda r: 0 if _nested(r, LAY["rooms"]) else 1)    # nested rooms first
+
+
+def rect_minus(r, cut):
+    """r minus cut (axis-aligned), as up to 4 rects"""
+    if cut["x1"] <= r["x0"] or cut["x0"] >= r["x1"] or cut["y1"] <= r["y0"] or cut["y0"] >= r["y1"]:
+        return [r]
+    out = []
+    if cut["y0"] > r["y0"]:
+        out.append(dict(x0=r["x0"], x1=r["x1"], y0=r["y0"], y1=cut["y0"]))
+    if cut["y1"] < r["y1"]:
+        out.append(dict(x0=r["x0"], x1=r["x1"], y0=cut["y1"], y1=r["y1"]))
+    ya, yb = max(r["y0"], cut["y0"]), min(r["y1"], cut["y1"])
+    if cut["x0"] > r["x0"]:
+        out.append(dict(x0=r["x0"], x1=cut["x0"], y0=ya, y1=yb))
+    if cut["x1"] < r["x1"]:
+        out.append(dict(x0=cut["x1"], x1=r["x1"], y0=ya, y1=yb))
+    return out
+
+
+def room_rects(rm):
+    rects = [dict(r) for r in rm["rects"]]
+    for o in ROOMS:
+        if o is rm or o["storey"] != rm["storey"] or not _nested(o, [rm, o]):
+            continue
+        if not all(any(_inside_rect(q, r) for r in rm["rects"]) for q in o["rects"]):
+            continue
+        for q in o["rects"]:
+            rects = [piece for r in rects for piece in rect_minus(r, q)]
+    return rects
 VOIDS = LAY["voids"]
 SH = LAY["shell"]
 WALL_MAT = {"LR": "PaintGreige", "DR": "PaintGreige", "MB": "PaintSlate", "BR2": "PaintGreige",
@@ -104,6 +142,7 @@ def _band_fill():
 
 
 BANDS = _band_fill()
+PLANE_RECTS = []      # (z, x0, x1, y0, y1, facing_up) of every room floor (up) and ceiling (down) quad
 # visual corner square where the back-hall wall (I_Y10_G_3) stops short of the hall wall line: without it two faces of
 # the same plane look at each other across the corner (0.5 x 1 x 13, inside the wall corner; art only)
 CORNERS = [dict(id="Corner_BH", x0=-9.5, x1=-8.5, y0=10.0, y1=10.5, z0=0.0, z1=13.0, role="wall")]
@@ -170,6 +209,57 @@ def visible_parts(face, normal, owner, n=5):
     return cells
 
 
+def exact_cells(face, normal, owner):
+    """split an axis-aligned face at every boundary of the parts that touch it, then keep the cells whose centre is not
+    buried in another part and not covered by a room floor / ceiling quad on the same plane (same facing)"""
+    ax = max(range(3), key=lambda i: abs(normal[i]))
+    u, v = [i for i in range(3) if i != ax]
+    lo = [min(p[i] for p in face) for i in range(3)]
+    hi = [max(p[i] for p in face) for i in range(3)]
+    cu, cv = {lo[u], hi[u]}, {lo[v], hi[v]}
+    key = ("x0", "y0", "z0"), ("x1", "y1", "z1")
+    for b in BOXES:
+        if b is owner:
+            continue
+        blo = [b["x0"], b["y0"], b["z0"]]; bhi = [b["x1"], b["y1"], b["z1"]]
+        if any(bhi[i] < lo[i] - 0.06 or blo[i] > hi[i] + 0.06 for i in range(3)):
+            continue
+        for val in (blo[u], bhi[u]):
+            if lo[u] + 1e-4 < val < hi[u] - 1e-4:
+                cu.add(val)
+        for val in (blo[v], bhi[v]):
+            if lo[v] + 1e-4 < val < hi[v] - 1e-4:
+                cv.add(val)
+    for (fz, rx0, rx1, ry0, ry1, up) in PLANE_RECTS:
+        if ax == 2 and abs(lo[2] - fz) < 1e-4:
+            for val in (rx0, rx1):
+                if lo[0] + 1e-4 < val < hi[0] - 1e-4:
+                    cu.add(val)
+            for val in (ry0, ry1):
+                if lo[1] + 1e-4 < val < hi[1] - 1e-4:
+                    cv.add(val)
+    cu, cv = sorted(cu), sorted(cv)
+    cells = []
+    for i in range(len(cu) - 1):
+        for j in range(len(cv) - 1):
+            c = Vector(lo)
+            c[u] = (cu[i] + cu[i + 1]) / 2; c[v] = (cv[j] + cv[j + 1]) / 2
+            if inside_any(c + normal * 0.03, skip=owner):
+                continue
+            if ax == 2 and any(abs(c.z - fz) < 1e-4 and rx0 <= c.x <= rx1 and ry0 <= c.y <= ry1 and (normal.z > 0) == up
+                               for (fz, rx0, rx1, ry0, ry1, up) in PLANE_RECTS):
+                continue
+            q = []
+            for (a_, b_) in ((cu[i], cv[j]), (cu[i + 1], cv[j]), (cu[i + 1], cv[j + 1]), (cu[i], cv[j + 1])):
+                pnt = Vector(lo); pnt[u] = a_; pnt[v] = b_
+                q.append(pnt)
+            nq = (q[1] - q[0]).cross(q[2] - q[0])
+            if nq.dot(normal) < 0:
+                q = list(reversed(q))
+            cells.append(q)
+    return cells, (len(cu) - 1) * (len(cv) - 1)
+
+
 def merge_cells(cells, face, n):
     """if every cell is visible return the whole face, else the cells (keeps big faces as one quad)"""
     return [face] if len(cells) == n * n else cells
@@ -183,6 +273,12 @@ def o_axis_end(quad, nrm, b):
 
 
 def build_shell():
+    for rm in ROOMS:
+        fz = 0.0 if rm["storey"] == "G" else 14.0
+        cz = 26.0 if (rm["storey"] == "U" or rm["id"] == "FY") else 13.0
+        for r in room_rects(rm):
+            PLANE_RECTS.append((fz, r["x0"], r["x1"], r["y0"], r["y1"], True))
+            PLANE_RECTS.append((cz, r["x0"], r["x1"], r["y0"], r["y1"], False))
     split_z = (0.0, 13.0, 14.0, 26.0)
     for b in BOXES:
         role = b["role"]
@@ -223,16 +319,16 @@ def build_shell():
                         mat = "PaintWhite"   # reveal of an opening or a wall end inside the house
                     if (b["x0"] <= -40.999 or b["x1"] >= 40.999 or b["y0"] <= -30.999 or b["y1"] >= 30.999) and not along_thickness and not on_edge:
                         mat = "PaintWhite"
-                cells = visible_parts(quad, nrm, b, n=6)
+                cells, total = exact_cells(quad, nrm, b)
                 if not cells:
                     continue
-                for q in merge_cells(cells, quad, 6):
+                for q in ([quad] if len(cells) == total else cells):
                     add_poly(mat, q, storey)
     # floors and ceilings per room rect (plus the stair voids)
     for rm in ROOMS:
         fz = 0.0 if rm["storey"] == "G" else 14.0
         cz = 26.0 if (rm["storey"] == "U" or rm["id"] == "FY") else 13.0
-        for r in rm["rects"]:
+        for r in room_rects(rm):
             x0, x1, y0, y1 = r["x0"], r["x1"], r["y0"], r["y1"]
             add_poly(FLOOR_MAT.get(rm["id"], "OakFloor"), [(x0, y0, fz), (x1, y0, fz), (x1, y1, fz), (x0, y1, fz)], rm["storey"])
             add_poly("CeilingWhite", [(x0, y1, cz), (x1, y1, cz), (x1, y0, cz), (x0, y0, cz)], rm["storey"])
@@ -243,6 +339,9 @@ def build_shell():
             pr = Vector((pa, probe_t, o["z0"] + 2)) if o["axis"] == "x" else Vector((probe_t, pa, o["z0"] + 2))
             rid = room_at(pr)
             mat = FLOOR_MAT.get(rid, "OakFloor") if rid else "Concrete"
+            hc = Vector(((o["a"] + o["b"]) / 2, (ta + tb) / 2, o["z0"])) if o["axis"] == "x" else Vector(((ta + tb) / 2, (o["a"] + o["b"]) / 2, o["z0"]))
+            if any(abs(fz - o["z0"]) < 1e-4 and up and rx0 <= hc.x <= rx1 and ry0 <= hc.y <= ry1 for (fz, rx0, rx1, ry0, ry1, up) in PLANE_RECTS):
+                continue     # a room floor already reaches the wall centre line here
             if o["axis"] == "x":
                 q = [(o["a"], ta, o["z0"]), (o["b"], ta, o["z0"]), (o["b"], tb, o["z0"]), (o["a"], tb, o["z0"])]
             else:
@@ -307,6 +406,31 @@ def dedupe_shell():
     for key in list(SHELL):
         SHELL[key] = [p for i, p in enumerate(SHELL[key]) if (key, i) not in drop]
     return len(drop)
+
+
+def coplanar_same_report():
+    """exactly coplanar, same-facing overlapping polygons (z-fight) across all shell groups: blender_check's A8 skips
+    hits closer than 0.001, so these are invisible to it. Returns a list of (group/material pairs, centre)."""
+    allp = []
+    for key, polys in SHELL.items():
+        for i, poly in enumerate(polys):
+            n, d, k = _plane_key(poly)
+            if n is not None:
+                allp.append((key, i, poly, n, d, k))
+    buckets = {}
+    for e in allp:
+        buckets.setdefault(e[5], []).append(e)
+    out = []
+    for es in buckets.values():
+        for e in es:
+            c = sum(e[2], Vector()) / len(e[2])
+            for f in es:
+                if f is e or e[3].dot(f[3]) < 0.999 or abs(e[4] - f[4]) > 2e-3:
+                    continue
+                if _inside_poly(c, f[2], f[3]):
+                    out.append((e[0], f[0], [round(v, 2) for v in c]))
+                    break
+    return out
 
 
 def tiled_object(name, mat, polys):
@@ -459,13 +583,13 @@ def build_roof():
     roof_slab("front_e", 9.5, 42.5, (-32.5, 6.0), under_front)
     roof_slab("back", -42.5, 11.0, (4.5, 32.5), under_back)
     # infill between the top of the walls (27) and the roof underside, on the outside line
-    infill("x", -31.0, -30.0, -41.0, 41.0, 26.9, lambda a: under_front(-30.0))                    # front (south) face
-    infill("y", -41.0, -40.0, -30.0, 4.5, 26.9, lambda a: under_front(a))                        # west gable, front block
-    infill("y", 40.0, 41.0, -30.0, 3.5, 26.9, lambda a: under_front(a))                          # east gable (the eave infill owns y 3.5..4.5)
-    infill("x", 3.5, 4.5, 9.5, 41.0, 25.9, lambda a: under_front(4.5))                           # front block's north eave over the kitchen roof
-    infill("y", -41.0, -40.0, 4.5, 30.0, 26.9, lambda a: under_back(a))                          # west gable, back wing
-    infill("y", 8.5, 9.5, 4.5, 30.0, 25.9, lambda a: under_back(a))                              # back wing's east face over the kitchen roof
-    infill("x", 30.0, 31.0, -41.0, 9.5, 26.9, lambda a: under_back(30.0))                        # back (north) face
+    infill("x", -31.0, -30.0, -41.0, 41.0, 27.0, lambda a: under_front(-30.0))                    # front (south) face
+    infill("y", -41.0, -40.0, -30.0, 4.5, 27.0, lambda a: under_front(a))                        # west gable, front block
+    infill("y", 40.0, 41.0, -30.0, 3.5, 27.0, lambda a: under_front(a))                          # east gable (the eave infill owns y 3.5..4.5)
+    infill("x", 3.5, 4.5, 9.5, 41.0, 27.0, lambda a: under_front(4.5))                           # front block's north eave over the kitchen roof
+    infill("y", -41.0, -40.0, 4.5, 30.0, 27.0, lambda a: under_back(a))                          # west gable, back wing
+    infill("y", 8.5, 9.5, 4.5, 30.0, 27.0, lambda a: under_back(a))                              # back wing's east face over the kitchen roof
+    infill("x", 30.0, 31.0, -41.0, 9.5, 27.0, lambda a: under_back(30.0))                        # back (north) face
     # parapets round the flat kitchen roof (render, 1.2 above the membrane)
     for (x0, x1, y0, y1) in ((40.0, 41.0, 4.5, 31.0), (9.5, 40.0, 30.0, 31.0)):
         for nrm, quad in box_faces(x0, x1, y0, y1, 13.0, 15.2):
@@ -627,8 +751,12 @@ def door_leaf(d):
         return obs
     mb = MB(name, "Doors", h)
     if model == "FrontDoor":
-        mb.boxr((0.0, -t / 2, 0.0), (w, t / 2, h), "oak_slat", grain=2)
-        mb.boxr((0.9, -t / 2 - 0.04, 1.6), (1.35, t / 2 + 0.04, h - 1.6), "glass_dark")       # narrow glass slot
+        sx0, sx1, sz0, sz1 = 0.9, 1.35, 1.6, h - 1.6          # narrow glass slot cut through the leaf
+        mb.boxr((0.0, -t / 2, 0.0), (sx0, t / 2, h), "oak_slat", grain=2)
+        mb.boxr((sx1, -t / 2, 0.0), (w, t / 2, h), "oak_slat", grain=2)
+        mb.boxr((sx0 - 0.01, -t / 2, 0.0), (sx1 + 0.01, t / 2, sz0), "oak_slat", grain=2)
+        mb.boxr((sx0 - 0.01, -t / 2, sz1), (sx1 + 0.01, t / 2, h), "oak_slat", grain=2)
+        mb.boxr((sx0 - 0.02, -0.03, sz0 - 0.02), (sx1 + 0.02, 0.03, sz1 + 0.02), "glass_dark")
         for sy in (-1,):     # long pull bar outside (street side)
             y = sy * (t / 2)
             mb.tube([(w - 0.6, y, 2.5), (w - 0.6, y - 0.35, 2.6), (w - 0.6, y - 0.35, 7.0), (w - 0.6, y, 7.1)], 0.07, "black_metal", segs=8)
@@ -667,9 +795,9 @@ def door_frame(op):
             outside = (side == "t0") if op["line"] < 0 else (side == "t1")
             k = "black_metal" if outside else k_in
         w = 0.35
-        B(a - w, a + 0.04, tl, th, z0, z1 + w - 0.04, k)
-        B(b - 0.04, b + w, tl, th, z0, z1 + w - 0.04, k)
-        B(a - w + 0.02, b + w - 0.02, tl, th, z1 - 0.04, z1 + w, k)
+        B(a - w, a + 0.12, tl, th, z0, z1 + w - 0.04, k)          # the architrave covers the lining's end (0.1)
+        B(b - 0.12, b + w, tl, th, z0, z1 + w - 0.04, k)
+        B(a - w + 0.02, b + w - 0.02, tl, th, z1 - 0.12, z1 + w, k)
     ob = finish(mb)
     return ob
 
@@ -767,9 +895,9 @@ def window(op):
             tout = t0 if op["line"] < 0 else t1
         si = 1.0 if tin > tout else -1.0
         tlo, thi = sorted((tm + si * fd - si * 0.02, tin + si * 0.35))
-        B(a - 0.25, b + 0.25, z0 - 0.12, z0 + 0.03, tlo, thi, "lacquer_white")
+        B(a - 0.25, b + 0.25, z0 - 0.05, z0 + 0.15, tlo, thi, "lacquer_white")
         tlo, thi = sorted((tm - si * fd + si * 0.02, tout - si * 0.3))
-        B(a - 0.1, b + 0.1, z0 - 0.1, z0 - 0.02, tlo, thi, "black_metal")
+        B(a - 0.1, b + 0.1, z0 - 0.1, z0 + 0.12, tlo, thi, "black_metal")
     o = finish(fr)
     # glass panes (0.06 thick on the mid-line, edges 0.06 inside the members)
     frost = op.get("frosted", False)
@@ -824,14 +952,16 @@ def main():
     plain = []
     sky = skylights()
     log("deduped", dedupe_shell(), "hidden back-to-back faces;", len(BANDS), "wall bands filled")
+    cs = coplanar_same_report()
+    log("coplanar same-facing overlaps:", len(cs), cs[:6])
     for st in LAY["stairs"]:
         baked.append(stair(st))
     stm = [s for s in LAY["stairs"] if s["id"] == "Stair_Main"][0]
     stb = [s for s in LAY["stairs"] if s["id"] == "Stair_Back"][0]
     zm, zb = stair_line(stm), stair_line(stb)
     baked.append(railing("Rail_Gallery", -3.5, 8.5, -4.15, -3.85, lambda a: 14.0, "x", (-3.45, 8.45)))
-    baked.append(railing("Rail_MainStair", -3.55, -3.35, -23.0, -4.15, zm, "y", (-23.0, -4.0), newel_ends=(True, False)))
-    baked.append(railing("Rail_BackStair", 3.85, 4.05, 4.15, 23.0, zb, "y", (23.0, 4.0), newel_ends=(True, False)))
+    baked.append(railing("Rail_MainStair", -3.55, -3.35, -23.0, -4.15, zm, "y", (-23.0, -4.75), newel_ends=(True, False)))
+    baked.append(railing("Rail_BackStair", 3.85, 4.05, 4.15, 23.0, zb, "y", (23.0, 9.6), newel_ends=(True, True)))
     # doors: leaf at the origin, then posed on the hinge
     door_info = []
     for d in LAY["doors"]:

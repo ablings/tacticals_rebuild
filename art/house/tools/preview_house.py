@@ -57,7 +57,7 @@ def look(loc, tgt, lens=24):
 def hide(fn):
     for o in sc.objects:
         if o.type == "MESH" and o.name not in ("PGround",):
-            o.hide_render = fn(o) or ("ScaleCube" in o.name or "Marker" in o.name) or ("Glass" in o.name and "Skylight" not in o.name)
+            o.hide_render = fn(o) or ("ScaleCube" in o.name or "Marker" in o.name) or ((o.name.endswith("_Glass") or "_BrokenGlass" in o.name) and "Skylight" not in o.name)
 
 
 def zmin(o):
@@ -78,6 +78,9 @@ VIEWDEF = {
     "win_n": (lambda o: False, (-30, 24, 18.6), (-30, 70, 16), 22),
     "street": (lambda o: False, (40, -66, 4), (-10, -40, 10), 20),
     "aerial": (lambda o: False, (110, -170, 90), (0, -40, 0), 24),
+    "win_w": (lambda o: False, (-33, -2, 4.6), (-90, -2, 9), 26),
+    "win_e": (lambda o: False, (33, 12, 5.5), (90, 12, 9), 26),
+    "win_bw": (lambda o: False, (-33, 14, 18.6), (-90, 14, 22), 26),
     "int_bh": (lambda o: False, (-2, 28, 4.6), (2, 6, 6), 18),
 }
 # preview-only fill lights in the rooms (the map builder lights the real map)
@@ -85,6 +88,19 @@ for (x, y, z) in ((-25, -10, 11), (0, -16, 22), (0, -16, 10), (25, -20, 11), (25
                   (-25, 17, 24), (0, 0, 24), (0, 0, 11), (-3, 24, 24), (-32, 20, 11)):
     L = bpy.data.objects.new("PFill", bpy.data.lights.new("PFill", "POINT")); sc.collection.objects.link(L)
     L.location = (x, y, z); L.data.energy = 9000; L.data.shadow_soft_size = 3; L.data.color = (1.0, 0.95, 0.88)
+CULL = "--cull" in A
+if CULL:      # Roblox-like: back faces culled, magenta sky -> any hole or flipped face shows magenta
+    try:
+        sc.render.engine = "BLENDER_EEVEE_NEXT"
+    except Exception:
+        sc.render.engine = "BLENDER_EEVEE"
+    nt = w.node_tree
+    mg = nt.nodes.new("ShaderNodeBackground"); mg.inputs[0].default_value = (1, 0, 1, 1)
+    lp = nt.nodes.new("ShaderNodeLightPath"); mix = nt.nodes.new("ShaderNodeMixShader")
+    nt.links.new(lp.outputs["Is Camera Ray"], mix.inputs[0]); nt.links.new(bg.outputs[0], mix.inputs[1]); nt.links.new(mg.outputs[0], mix.inputs[2])
+    nt.links.new(mix.outputs[0], nt.nodes["World Output"].inputs[0])
+    for m in bpy.data.materials:
+        m.use_backface_culling = True
 for v in VIEWS:
     fn, loc, tgt, lens = VIEWDEF[v]
     hide(fn)
@@ -93,6 +109,6 @@ for v in VIEWS:
         cam.data.type = "ORTHO"; cam.data.ortho_scale = 100
     else:
         cam.data.type = "PERSP"
-    sc.render.filepath = os.path.join(OUT, f"house_{v}.png")
+    sc.render.filepath = os.path.join(OUT, f"house_{v}{'_cull' if CULL else ''}.png")
     bpy.ops.render.render(write_still=True)
     print("VIEW", v, flush=True)

@@ -44,7 +44,7 @@ def quad(group, mat, x0, x1, y0, y1, z):
 # ----------------------------------------------------------------------------------------------------------- ground
 def ground():
     # one big lawn under everything, then paved / street pieces as 0.15-0.25 thick slabs on top of it (never flush)
-    quad("Ground", "Grass", -220, 220, -230, 160, GZ)
+    quad("Ground", "Grass", -900, 900, -900, 900, GZ)       # to the horizon from the upper windows
     # street: road sunk below the kerbs; sidewalks either side
     boxp("Street", "Asphalt", -220, 220, -75.0, -61.0, GZ - 0.3, GZ + 0.12)
     for (y0, y1) in ((-61.0, -56.0), (-80.0, -75.0)):
@@ -74,18 +74,18 @@ def fence(group, x0, y0, x1, y1, h=7.0, post_every=6.0):
     L = math.hypot(x1 - x0, y1 - y0)
     if abs(y1 - y0) < 1e-6:
         boxp(group, "Fence", min(x0, x1), max(x0, x1), y0 - 0.15, y0 + 0.15, GZ, GZ + h)
-        boxp(group, "FencePost", min(x0, x1), max(x0, x1), y0 - 0.22, y0 + 0.22, GZ + h - 0.05, GZ + h + 0.2)
+        boxp(group, "FencePost", min(x0, x1), max(x0, x1), y0 - 0.3, y0 + 0.3, GZ + h - 0.05, GZ + h + 0.2)
         n = max(1, int(L / post_every))
         for i in range(n + 1):
             x = min(x0, x1) + L * i / n
-            boxp(group, "FencePost", x - 0.25, x + 0.25, y0 - 0.25, y0 + 0.25, GZ, GZ + h + 0.15)
+            boxp(group, "FencePost", x - 0.3, x + 0.3, y0 - 0.3, y0 + 0.3, GZ, GZ + h + 0.15)
     else:
         boxp(group, "Fence", x0 - 0.15, x0 + 0.15, min(y0, y1), max(y0, y1), GZ, GZ + h)
-        boxp(group, "FencePost", x0 - 0.22, x0 + 0.22, min(y0, y1), max(y0, y1), GZ + h - 0.05, GZ + h + 0.2)
+        boxp(group, "FencePost", x0 - 0.3, x0 + 0.3, min(y0, y1), max(y0, y1), GZ + h - 0.05, GZ + h + 0.2)
         n = max(1, int(L / post_every))
         for i in range(n + 1):
             y = min(y0, y1) + L * i / n
-            boxp(group, "FencePost", x0 - 0.25, x0 + 0.25, y - 0.25, y + 0.25, GZ, GZ + h + 0.15)
+            boxp(group, "FencePost", x0 - 0.3, x0 + 0.3, y - 0.3, y + 0.3, GZ, GZ + h + 0.15)
 
 
 # ----------------------------------------------------------------------------------------------------------- far houses
@@ -97,21 +97,26 @@ def wall_with_windows(group, axis, out_sign, line, a0, a1, z0, z1, wins, mat, t=
     def B(alo, ahi, zlo, zhi, mm=mat, tlo=tl, thi=th):
         if alo >= ahi - 1e-6 or zlo >= zhi - 1e-6:
             return
+        sb = zlo <= z0 + 1e-6 and z0 <= GZ + 0.61      # only the cells standing on the plinth skip their bottom face
         if axis == "x":
-            boxp(group, mm, alo, ahi, tlo, thi, zlo, zhi)
+            boxp(group, mm, alo, ahi, tlo, thi, zlo, zhi, skip_bottom=sb)
         else:
-            boxp(group, mm, tlo, thi, alo, ahi, zlo, zhi)
-    wins = sorted(wins)
-    a = a0
-    for (wa, wb, wz0, wz1) in wins:
-        B(a, wa, z0, z1)
-        B(wa, wb, z0, wz0); B(wa, wb, wz1, z1)
-        a = wb
-    B(a, a1, z0, z1)
+            boxp(group, mm, tlo, thi, alo, ahi, zlo, zhi, skip_bottom=sb)
+    # the wall minus the openings, as a grid cut at every opening edge (openings may share columns: a pier-by-pier walk
+    # filled the second window of a column back in)
+    ca = sorted({a0, a1} | {v for w in wins for v in (w[0], w[1]) if a0 < v < a1})
+    cz = sorted({z0, z1} | {v for w in wins for v in (w[2], w[3]) if z0 < v < z1})
+    for i in range(len(ca) - 1):
+        for j in range(len(cz) - 1):
+            am, zm = (ca[i] + ca[i + 1]) / 2, (cz[j] + cz[j + 1]) / 2
+            if any(w[0] < am < w[1] and w[2] < zm < w[3] for w in wins):
+                continue
+            B(ca[i], ca[i + 1], cz[j], cz[j + 1])
     for (wa, wb, wz0, wz1) in wins:
         g0 = line - out_sign * 0.35
         gl, gh = sorted((g0, g0 - out_sign * 0.1))
-        B(wa - 0.02, wb + 0.02, wz0 - 0.02, wz1 + 0.02, "GlassDark", gl, gh)
+        if wz1 - wz0 < 8.5:        # windows get dark glass; door / garage openings are filled by their panel
+            B(wa - 0.02, wb + 0.02, wz0 - 0.02, wz1 + 0.02, "GlassDark", gl, gh)
         f0 = line + out_sign * 0.12
         fl, fh = sorted((line - out_sign * 0.37, f0))      # reaches 0.02 into the glass: no slit
         fw = 0.22
@@ -207,21 +212,22 @@ def tree(name, kind, seed, h=16.0):
              deform=lambda v: v + lean * max(0.0, (v.z - GZ) / h))
     top = Vector((0, 0, GZ + h * 0.45)) + lean * 0.45
     leaves = MB(name + "_Leaves", "Plain:Leaves", h)
+    leaves2 = MB(name + "_LeavesDark", "Plain:LeavesDark", h)
     if kind == "broad":
         for i in range(4):
             c = top + Vector((rng.uniform(-2.2, 2.2), rng.uniform(-2.2, 2.2), rng.uniform(1.5, h * 0.45)))
             r = rng.uniform(2.8, 4.2)
-            ellipsoid(leaves, c, (r, r * rng.uniform(0.85, 1.1), r * 0.8), rng.choice(["leaf", "leaf_dark"]), segs=7, rings=4)
+            ellipsoid(leaves if i % 2 == 0 else leaves2, c, (r, r * rng.uniform(0.85, 1.1), r * 0.8), "leaf" if i % 2 == 0 else "leaf_dark", segs=7, rings=4)
     else:
-        z = top.z - 2.5
+        z = top.z - 3.0          # the trunk top ends inside the second cone (no 0.1 slit)
         for i, r in enumerate((4.2, 3.4, 2.5, 1.5)):
-            leaves.lathe([(0, z), (r, z), (0, z + 4.2)], 7, "leaf_dark" if i % 2 else "leaf", M=Matrix.Translation(top * 0 + Vector((top.x, top.y, 0))))
+            (leaves2 if i % 2 else leaves).lathe([(0, z), (r, z), (0, z + 4.2)], 7, "leaf_dark" if i % 2 else "leaf", M=Matrix.Translation(Vector((top.x, top.y, 0))))
             z += 2.6
-    a = finish(mb); b = finish(leaves)
-    for o in (a, b):
+    a = finish(mb); b = finish(leaves); c = finish(leaves2)
+    for o in (a, b, c):
         for p in o.data.polygons:
             p.use_smooth = False
-    return [a, b]
+    return [a, b, c]
 
 
 def car(name, kind, style, paint):
@@ -416,12 +422,10 @@ def main():
         if str(o.get("atlas", "")).startswith("Plain:"):
             k = o["atlas"].split(":", 1)[1]
             me = o.data
-            if k == "Leaves":   # two greens kept: one material per tone would need two meshes; use per-face vertex tone -> split
-                leafm = plain_material("H_Leaf", (64, 96, 54), 0.8); darkm = plain_material("H_LeafDark", (44, 72, 44), 0.8)
-                kinds = [m.name.split("|")[-1] for m in me.materials]
-                me.materials.clear(); me.materials.append(leafm); me.materials.append(darkm)
+            if k in ("Leaves", "LeavesDark"):   # one tone per mesh, so each tints on its own in Studio
+                me.materials.clear(); me.materials.append(plain_material("H_" + k, (64, 96, 54) if k == "Leaves" else (44, 72, 44), 0.8))
                 for p in me.polygons:
-                    p.material_index = 1 if kinds[p.material_index] == "leaf_dark" else 0
+                    p.material_index = 0
             else:
                 me.materials.clear(); me.materials.append(plain_material("H_" + k, PLAIN_KIND[k], 0.7))
                 for p in me.polygons:

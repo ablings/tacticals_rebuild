@@ -45,7 +45,7 @@
   ],
   "tris": 1872,
   "cover": "LOW 3.4",
-  "role": "dining table + 6 chairs pushed in"
+  "role": "dining table + 6 chairs pushed in; boxes: table 2.6 + a 3.4 box per chair row (union = 8 x 6.7)"
  },
  {
   "name": "H_DiningTable",
@@ -188,7 +188,7 @@
    1.6
   ],
   "tris": 1368,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "living-room / study bookcase"
  },
  {
@@ -200,7 +200,7 @@
    2.855
   ],
   "tris": 668,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "French-door fridge"
  },
  {
@@ -212,7 +212,7 @@
    2.5
   ],
   "tris": 96,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "bedroom wardrobe"
  },
  {
@@ -224,7 +224,7 @@
    2.12
   ],
   "tris": 60,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "tall linen / hall cabinet"
  },
  {
@@ -236,7 +236,7 @@
    2.46
   ],
   "tris": 96,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "tall kitchen pantry"
  },
  {
@@ -248,7 +248,7 @@
    2.0
   ],
   "tris": 3528,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "open bookshelf wall dressed on both faces (team A spawn wall)"
  },
  {
@@ -260,7 +260,7 @@
    1.985
   ],
   "tris": 452,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "tall oven + pantry bank, both faces finished (team B spawn wall); ovens on -Y"
  },
  {
@@ -272,7 +272,7 @@
    2.04
   ],
   "tris": 324,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "timber slat screen on a storage base (inside the hall arches)"
  },
  {
@@ -284,7 +284,7 @@
    1.5
   ],
   "tris": 1320,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "freestanding headboard wall, upholstered side -Y (bed side)"
  },
  {
@@ -307,7 +307,7 @@
    3.4,
    2.0
   ],
-  "tris": 168,
+  "tris": 180,
   "cover": "LOW 3.4",
   "role": "hall bench 3.5 wide, seat faces -Y"
  },
@@ -319,7 +319,7 @@
    3.4,
    2.0
   ],
-  "tris": 300,
+  "tris": 312,
   "cover": "LOW 3.4",
   "role": "hall / mudroom bench 8 wide, seat faces -Y"
  },
@@ -344,7 +344,7 @@
    3.0
   ],
   "tris": 284,
-  "cover": "TALL 7+",
+  "cover": "TALL 8.0",
   "role": "column wrapped in walnut with display niches on -Y and +Y"
  },
  {
@@ -463,7 +463,7 @@
    0.66,
    1.477
   ],
-  "tris": 544,
+  "tris": 312,
   "cover": "none (dressing)",
   "role": "fruit bowl for the island / counter"
  },
@@ -725,9 +725,9 @@
   "size": [
    2.2,
    1.32,
-   0.48
+   0.49
   ],
-  "tris": 408,
+  "tris": 96,
   "cover": "none (dressing)",
   "role": "towel rail with towels, back on y = 0"
  },
@@ -771,11 +771,11 @@
   "name": "H_Teddy",
   "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\renders\\H_Teddy.png",
   "size": [
-   1.187,
+   1.199,
    1.57,
-   0.936
+   0.96
   ],
-  "tris": 1092,
+  "tris": 432,
   "cover": "none (dressing)",
   "role": "teddy bear"
  }

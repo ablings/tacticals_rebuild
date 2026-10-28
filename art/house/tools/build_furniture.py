@@ -236,7 +236,7 @@ def fruit_bowl():
     mb = MB("H_FruitBowl", "Kitchen", 0.6)
     mb.lathe([(0, 0), (0.45, 0), (0.75, 0.32), (0.7, 0.34), (0.4, 0.07), (0, 0.07)], 18, "ceramic")
     for (dx, dy, dz) in ((0.2, 0.1, 0.24), (-0.2, 0.15, 0.24), (0.0, -0.22, 0.26), (0.05, 0.05, 0.47)):
-        ellipsoid(mb, (dx, dy, dz), (0.2, 0.2, 0.19), "fruit", segs=10, rings=6)
+        ellipsoid(mb, (dx, dy, dz), (0.2, 0.2, 0.19), "fruit", segs=7, rings=4)
     return finish(mb)
 
 
@@ -455,11 +455,11 @@ def shower_glass_profile():
 def towel_rail():
     mb = MB("H_TowelRail", "Bath", 3.0)
     for x in (-1.0, 1.0):
-        mb.tube([(x, 0.0, 2.6), (x, -0.35, 2.6)], 0.05, "chrome", segs=8)
-    mb.tube([(-1.1, -0.35, 2.6), (1.1, -0.35, 2.6)], 0.06, "chrome", segs=8)
-    rbox(mb, (-0.8, -0.48, 1.4), (0.8, -0.38, 2.68), "towel", r=0.04)
-    rbox(mb, (-0.8, -0.32, 1.6), (0.8, -0.22, 2.68), "towel", r=0.04)
-    rbox(mb, (-0.8, -0.48, 2.6), (0.8, -0.22, 2.72), "towel", r=0.05)
+        mb.tube([(x, 0.0, 2.6), (x, -0.35, 2.6)], 0.05, "chrome", segs=6)
+    mb.tube([(-1.1, -0.35, 2.6), (1.1, -0.35, 2.6)], 0.06, "chrome", segs=6)
+    mb.boxr((-0.8, -0.48, 1.4), (0.8, -0.38, 2.68), "towel")
+    mb.boxr((-0.8, -0.32, 1.6), (0.8, -0.22, 2.68), "towel")
+    mb.boxr((-0.8, -0.49, 2.6), (0.8, -0.21, 2.72), "towel")
     return finish(mb)
 
 
@@ -654,13 +654,13 @@ def toys():
         for sy in (-1, 1):
             car.lathe([(0, -0.08), (0.17, -0.08), (0.17, 0.08), (0, 0.08)], 12, "rubber", M=Matrix.Translation((sx * 0.4, sy * 0.48, 0.17)) @ ROT(90, "Y"))
     teddy = MB("H_Teddy", "Toys", 1.6)
-    ellipsoid(teddy, (0, 0, 0.5), (0.42, 0.36, 0.5), "plush", segs=14, rings=8)
-    ellipsoid(teddy, (0, 0, 1.18), (0.34, 0.32, 0.32), "plush", segs=14, rings=8)
+    ellipsoid(teddy, (0, 0, 0.5), (0.42, 0.36, 0.5), "plush", segs=8, rings=4)
+    ellipsoid(teddy, (0, 0, 1.18), (0.34, 0.32, 0.32), "plush", segs=8, rings=4)
     for sx in (-1, 1):
-        ellipsoid(teddy, (sx * 0.24, 0.0, 1.45), (0.12, 0.08, 0.12), "plush", segs=10, rings=6)
-        ellipsoid(teddy, (sx * 0.42, -0.12, 0.6), (0.14, 0.14, 0.3), "plush", segs=10, rings=6, M=ROT(sx * 25, "Y"))
-        ellipsoid(teddy, (sx * 0.24, -0.3, 0.14), (0.16, 0.3, 0.14), "plush", segs=10, rings=6)
-    ellipsoid(teddy, (0, -0.28, 1.12), (0.13, 0.1, 0.1), "fabric_cream", segs=10, rings=6)
+        ellipsoid(teddy, (sx * 0.24, 0.0, 1.45), (0.12, 0.08, 0.12), "plush", segs=8, rings=4)
+        ellipsoid(teddy, (sx * 0.42, -0.12, 0.6), (0.14, 0.14, 0.3), "plush", segs=8, rings=4, M=ROT(sx * 25, "Y"))
+        ellipsoid(teddy, (sx * 0.24, -0.3, 0.14), (0.16, 0.3, 0.14), "plush", segs=8, rings=4)
+    ellipsoid(teddy, (0, -0.28, 1.12), (0.13, 0.1, 0.1), "fabric_cream", segs=8, rings=4)
     return [finish(blocks), finish(ball), finish(car), finish(teddy)]
 
 
@@ -819,6 +819,7 @@ def hall_bench(name, W):
     for i in range(ns):
         x = -W / 2 + 0.32 + (W - 0.64) * i / (ns - 1)
         mb.boxr((x - 0.1, 0.7, 1.6), (x + 0.1, 0.95, 3.25), "oak_slat")
+    mb.boxr((-W / 2 + 0.15, 0.9, 1.6), (W / 2 - 0.15, 1.0, 3.25), "walnut")       # solid back board behind the slats
     mb.boxr((-W / 2, 0.65, 3.22), (W / 2, 1.0, 3.4), "oak")
     mb.boxr((-W / 2, 0.66, 1.6), (-W / 2 + 0.2, 0.99, 3.3), "oak"); mb.boxr((W / 2 - 0.2, 0.66, 1.6), (W / 2, 0.99, 3.3), "oak")
     return finish(mb)
@@ -857,14 +858,15 @@ def display_column():
 
 # =========================================================================================================== assemblies
 # name: parts [(master, (dx, dy, dz), rot_z_deg)], role, cover class, collision boxes [(lo, hi) Blender, rel. pivot]
-LOW, TALL, NONE = "LOW 3.4", "TALL 7+", "none (dressing)"
+LOW, TALL, NONE = "LOW 3.4", "TALL 8.0", "none (dressing)"
 ASM = [
     ("H_Sofa_Sectional", [("H_Sofa_Sectional", (0, 0, 0), 0)], "living room sectional, back to the room", LOW,
      [((-6, -1.8, 0), (6, 1.8, 3.4)), ((2.2, -5.4, 0), (6, -1.8, 1.8))]),
     ("H_Armchair", [("H_Armchair", (0, 0, 0), 0)], "living room armchair", LOW, [((-2.1, -2.0, 0), (2.1, 2.0, 3.4))]),
     ("H_KitchenIsland", [("H_KitchenIsland", (0, 0, 0), 0)], "kitchen island, seating side +Y (Studio -Z)", LOW, [((-5, -2.3, 0), (5, 2.3, 3.4))]),
     ("H_DiningSet", [("H_DiningTable", (0, 0, 0), 0)] + [("H_DiningChair", (x, sy * 2.35, 0), 0 if sy > 0 else 180) for x in (-2.1, 0, 2.1) for sy in (-1, 1)],
-     "dining table + 6 chairs pushed in", LOW, [((-4.1, -3.4, 0), (4.1, 3.4, 3.4))]),
+     "dining table + 6 chairs pushed in; boxes: table 2.6 + a 3.4 box per chair row (union = 8 x 6.7)", LOW,
+     [((-4.0, -2.0, 0), (4.0, 2.0, 2.6)), ((-3.05, -3.35, 0), (3.05, -1.4, 3.4)), ((-3.05, 1.4, 0), (3.05, 3.35, 3.4))]),
     ("H_DiningTable", [("H_DiningTable", (0, 0, 0), 0)], "dining table alone (top 2.6)", "low obstacle 2.6", [((-4, -2, 0), (4, 2, 2.6))]),
     ("H_DiningChair", [("H_DiningChair", (0, 0, 0), 0)], "dining chair alone", NONE, []),
     ("H_Bed_Double", [("H_Bed_Double", (0, 0, 0), 0)], "master bed, head at +Y (Studio -Z) against the wall", LOW,
@@ -1027,17 +1029,24 @@ def main():
         piv = pivots[name]
         lo, hi = bbox(objs)
         e = dict(assembly=name, role=role, cover=cover, objects=[o.name for o in objs], fbx=f"fbx/{name}.fbx")
+        if len(boxes) == 1 and name not in ("H_DiningSet",):   # footprint = the art's footprint (handles, fronts), height = the cover height
+            (bl, bh) = boxes[0]
+            boxes = [((lo.x - piv.x, lo.y - piv.y, bl[2]), (hi.x - piv.x, hi.y - piv.y, bh[2]))]
+            if name in ("H_KitchenSink", "H_Bathtub", "H_TVConsole_WithTV", "H_Planter"):
+                e["above_box"] = "thin tap / the TV stands above the 3.4 box: no collision needed"
+        if boxes:   # pivot = bottom centre of the union of the collision boxes (= the layout's COLP box)
+            ul = Vector([min(Vector(b[0])[i] for b in boxes) for i in range(3)]); uh = Vector([max(Vector(b[1])[i] for b in boxes) for i in range(3)])
+            c = Vector(((ul.x + uh.x) / 2, (ul.y + uh.y) / 2, 0.0))
+            if c.length > 1e-4:
+                piv = piv + c
+                pivots[name] = piv
+                boxes = [(tuple(Vector(b0) - c), tuple(Vector(b1) - c)) for (b0, b1) in boxes]
         e["size_studio"] = studio_size(hi - lo)
         a_, b_ = studio(lo - piv), studio(hi - piv)
         e["bbox_min_rel_pivot_studio"] = [min(p, q) for p, q in zip(a_, b_)]
         e["bbox_max_rel_pivot_studio"] = [max(p, q) for p, q in zip(a_, b_)]
         e["pivot_blender_in_kit"] = [round(v, 3) for v in piv]
         e["collision_boxes_studio"] = []
-        if len(boxes) == 1 and name not in ("H_DiningSet",):   # footprint = the art's footprint (handles, fronts), height = the cover height
-            (bl, bh) = boxes[0]
-            boxes = [((lo.x - piv.x, lo.y - piv.y, bl[2]), (hi.x - piv.x, hi.y - piv.y, bh[2]))]
-            if name in ("H_KitchenSink", "H_Bathtub", "H_TVConsole_WithTV", "H_Planter"):
-                e["above_box"] = "thin tap / the TV stands above the 3.4 box: no collision needed"
         for (bl, bh) in boxes:
             bl, bh = Vector(bl), Vector(bh)
             e["collision_boxes_studio"].append(dict(size=studio_size(bh - bl), centre_rel_pivot=studio((bl + bh) / 2)))
@@ -1071,7 +1080,7 @@ def main():
     man = dict(note="Blender (x, y, z) -> Studio (-x, z, y). 1 unit = 1 stud. Pivot = bottom centre of the collision box (the per-assembly "
                     "FBX has it at the origin). Kit FBX has K_ScaleCube (10 studs) and K_Marker (long arm +X, upright +Z, short arm +Y). "
                     "Every visual mesh: CanCollide/CanQuery/CanTouch off; collision = the listed boxes as invisible Parts.",
-               cover_heights=dict(low=3.4, tall="7+ (7.0-7.6 here)", source="notes/warehouse_study/movement_configs.txt CoverConfig"),
+               cover_heights=dict(low=3.4, tall="8.0 (the final layout boxes every tall piece at 8.0)", source="notes/warehouse_study/movement_configs.txt CoverConfig"),
                atlases=atl_files, assemblies=manifest, unique_tris=sum(tris(o) for o in obs))
     json.dump(man, open(os.path.join(ROOT, "house_furniture.json"), "w"), indent=1)
     bpy.ops.wm.save_as_mainfile(filepath=BLEND)

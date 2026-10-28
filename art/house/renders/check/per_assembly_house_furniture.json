@@ -178,19 +178,19 @@
   "findings": []
  },
  "H_HallBench_3": {
-  "tris": 168,
+  "tris": 180,
   "fail": 0,
   "warn": 1,
   "findings": [
-   "WARN A1b H_HallBench_3: 54 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "WARN A1b H_HallBench_3: 56 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
   ]
  },
  "H_HallBench_8": {
-  "tris": 300,
+  "tris": 312,
   "fail": 0,
   "warn": 1,
   "findings": [
-   "WARN A1b H_HallBench_8: 102 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "WARN A1b H_HallBench_8: 104 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
   ]
  },
  "H_Planter": {
@@ -277,10 +277,12 @@
   ]
  },
  "H_FruitBowl": {
-  "tris": 544,
+  "tris": 312,
   "fail": 0,
-  "warn": 0,
-  "findings": []
+  "warn": 1,
+  "findings": [
+   "WARN A1b H_FruitBowl: 81 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  ]
  },
  "H_Microwave": {
   "tris": 132,
@@ -423,7 +425,7 @@
   ]
  },
  "H_TowelRail": {
-  "tris": 408,
+  "tris": 96,
   "fail": 0,
   "warn": 0,
   "findings": []
@@ -447,11 +449,11 @@
   "findings": []
  },
  "H_Teddy": {
-  "tris": 1092,
+  "tris": 432,
   "fail": 0,
   "warn": 1,
   "findings": [
-   "WARN A1b H_Teddy: 296 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "WARN A1b H_Teddy: 136 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
   ]
  }
 }

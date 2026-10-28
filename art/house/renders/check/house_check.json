@@ -1,14 +1,14 @@
 {
  "objects": 136,
- "triangles": 28750,
+ "triangles": 24024,
  "fail": 0,
- "warn": 147,
+ "warn": 126,
  "findings": [
   {
    "level": "WARN",
    "code": "A3b",
    "object": "Shell_R_Cladding",
-   "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+   "message": "5 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
   },
   {
    "level": "WARN",
@@ -32,19 +32,13 @@
    "level": "WARN",
    "code": "A1b",
    "object": "Rail_MainStair",
-   "message": "62 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
-  },
-  {
-   "level": "WARN",
-   "code": "A1b",
-   "object": "Rail_BackStair",
-   "message": "62 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "message": "60 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
   },
   {
    "level": "WARN",
    "code": "A1b",
    "object": "Door_Front",
-   "message": "36 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "message": "50 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
   },
   {
    "level": "WARN",
@@ -277,25 +271,7 @@
   {
    "level": "WARN",
    "code": "A8",
-   "object": "Shell_G_PaintGreige + Shell_U_PaintWhite",
-   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
    "object": "Shell_G_PaintGreige + DoorFrame_Front",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_G_PaintWhite + Shell_U_PaintWhite",
-   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_G_PaintWhite + Rail_BackStair",
    "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
@@ -320,13 +296,13 @@
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_LR_S1_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_LR_S2_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -338,25 +314,19 @@
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_DR_S1_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_DR_S2_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_G_Render + Win_GB_N_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_BH_N_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -368,37 +338,31 @@
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_KT_N1_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_KT_N2_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_LR_W_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_G_Render + Win_GB_W_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_DR_E_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_G_Render + Win_KT_E_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -427,104 +391,8 @@
   {
    "level": "WARN",
    "code": "A8",
-   "object": "Shell_R_Cladding + Shell_U_CeilingWhite",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_R_Cladding + Shell_U_Cladding",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Shell_U_PaintSlate",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_EN_S_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_MB_S_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_FY_S_Frame",
-   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_BR2_S1_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_BR2_S2_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_BR3_N1_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_BR3_N2_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_UB_N_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_EN_W_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_BR3_W_Frame",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_Cladding + Win_BR2_E_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_PaintGreige + Shell_U_PaintWhite",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
    "object": "Shell_U_PaintGreige + DoorFrame_BR2",
    "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_PaintSlate + Shell_U_PaintWhite",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -536,25 +404,13 @@
    "level": "WARN",
    "code": "A8",
    "object": "Shell_U_PaintSlate + DoorFrame_EN",
-   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_PaintWhite + Rail_BackStair",
-   "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_PaintWhite + Win_BR2_N_Frame",
-   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
    "code": "A8",
    "object": "Shell_U_PaintWhite + DoorFrame_MB",
-   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -571,18 +427,6 @@
   {
    "level": "WARN",
    "code": "A8",
-   "object": "Shell_U_PaintWhite + Win_ST2_E_Frame",
-   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_U_PaintWhite + Win_UB_E_Frame",
-   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
    "object": "Shell_U_PaintWhite + DoorFrame_UB",
    "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
@@ -591,6 +435,12 @@
    "code": "A8",
    "object": "Shell_U_WallTile + DoorFrame_BR3",
    "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Shell_U_WallTile + DoorFrame_EN",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -607,14 +457,8 @@
   {
    "level": "WARN",
    "code": "A8",
-   "object": "Rail_Gallery + Rail_MainStair",
-   "message": "16 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
    "object": "Door_Front + DoorFrame_Front",
-   "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -626,7 +470,37 @@
    "level": "WARN",
    "code": "A8",
    "object": "Door_Back + Door_Back_BrokenGlass",
-   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "21 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Door_GB + DoorFrame_GB",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Door_MB + DoorFrame_MB",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Door_BR2 + DoorFrame_BR2",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Door_BR3 + DoorFrame_BR3",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Door_UB + DoorFrame_UB",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -704,7 +578,7 @@
    "level": "WARN",
    "code": "A8",
    "object": "Win_BH_N_Frame + Win_BH_N_BrokenGlass",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -824,7 +698,7 @@
    "level": "WARN",
    "code": "A8",
    "object": "Door_Back_Glass + Door_Back_BrokenGlass",
-   "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
