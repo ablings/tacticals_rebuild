@@ -15,7 +15,7 @@ World = ORIGIN + (x, z, -y). House inside 80 x 60; ground ceiling 13, upper ceil
 | G | Foyer | -9..9, -30..-4, double height | front door (locked); main stair; the gallery looks down on it |
 | G | Cross hall | -9..9, -4..4 (under the landing) | links living room, foyer, kitchen; display column in the middle |
 | G | Back hall | -9..9, 4..30 | back door (locked), foot of the back stair |
-| G | Mudroom | -24..-9, 10..30 | lockers, bench; archway to the back hall, half-wall opening to the living room |
+| G | Mudroom | -24..-9, 10..30 | lockers, bench; archways to the living room and the back hall |
 | G | Living room | -40..-9, -30..10 | **team A spawn** behind a tall shelf wall; ambush sofa facing the stair foot |
 | G | Bathroom | -40..-24, 10..30 | door ajar, off the back hall |
 | G | Dining room | 9..40, -30..-10 | open to the foyer (10-wide arch); long table |
@@ -59,11 +59,12 @@ Above the kitchen (x 9..40, y 4..30) the upper storey is a flat roof with skylig
 ## Fairness (tools/house_check.py, 0.5-stud voxels, eye 4.6, sprint 20, vault 0.34 s; see house_checks.txt)
 | Mode | Contact when A holds / B holds | Approach exposure A / B | Spawn sight A / B | Spawn exposure A / B | Half exposure A / B |
 |---|---|---|---|---|---|
-| 1v1 | 1.53 / 1.52 s (0.8 %) | 15.5 / 16.4 (5.4 %) | 10.3 / 9.5 (8.3 %) | 10.3 / 9.5 (8.3 %) | 14.6 / 13.1 (10.0 %) |
-| 2v2 | 1.38 / 1.41 s (2.0 %) | 15.6 / 16.4 (5.0 %) | 13.1 / 12.6 (3.9 %) | 13.2 / 12.6 (4.5 %) | 14.6 / 13.1 (10.0 %) |
-| 3v3 | 1.38 / 1.36 s (1.4 %) | 15.6 / 16.4 (5.1 %) | 13.1 / 12.6 (3.9 %) | 13.2 / 12.6 (4.5 %) | 14.6 / 13.1 (10.0 %) |
-(After the dressing pass: floor dressing has walk blockers; the living room's first sectional became two armchairs, the island
-stools moved to the island's south side, mirroring the coffee table.)
+| 1v1 | 1.53 / 1.52 s (0.8 %) | 15.2 / 16.6 (8.5 %) | 9.8 / 9.7 (0.9 %) | 9.8 / 9.7 (0.9 %) | 14.1 / 13.1 (6.9 %) |
+| 2v2 | 1.38 / 1.41 s (2.0 %) | 15.3 / 16.6 (8.0 %) | 12.6 / 12.9 (2.0 %) | 12.7 / 12.9 (1.3 %) | 14.1 / 13.1 (6.9 %) |
+| 3v3 | 1.38 / 1.36 s (1.4 %) | 15.3 / 16.6 (8.1 %) | 12.6 / 12.9 (2.0 %) | 12.7 / 12.9 (1.3 %) | 14.1 / 13.1 (6.9 %) |
+(After the dressing pass and the Play lap: floor dressing has walk blockers; the living room's first sectional became two armchairs;
+the island stools moved to the island's south side, mirroring the coffee table; no counter under the kitchen pass-through (the vault
+landed on it); the living room's half-wall opening was dropped (it opened into the bathroom); master bed + head wall 2 west.)
 - Time to first contact, per side = the earliest moment two enemies see each other with that side arriving first ("A holds" /
   "B holds"). The single earliest pair (1v1: A 1.52 / B 1.04) has a mirror twin with the roles swapped; it and the mean of the
   10 earliest pairs (up to 14 % apart in 3v3) are reported only, because both pick one twin.
@@ -77,7 +78,7 @@ stools moved to the island's south side, mirroring the coffee table.)
   in 2v2-3v3 (reported, not in the brief).
 - Tuning that got here (all generated): spawns moved from upstairs/downstairs to both downstairs; slat screens inside both
   hall arches (they broke an 80-stud house-long line at 0.6 s); the back stair opened to its hall like the main stair; a
-  mudroom wall with an archway + a half-wall opening from the living room, mirroring the dining room's enclosure.
+  mudroom wall with an archway, mirroring the dining room's enclosure.
 
 ## Numbers the build must keep
 Doorways 5-6 wide x 9 high (front/back 6 x 10); archways 6-10 wide x 10; window sills 3 above the floor (kitchen 4.5);
