@@ -306,13 +306,39 @@ door("Door_EN", "b", "-", "Closed", "InteriorDoor")
 
 
 # ------------------------------------------------------------------------------------------------ furniture (cover)
+_FJ = json.load(open(os.path.join(os.path.dirname(HERE), "art", "house", "house_furniture.json")))
+MULTI = {a["assembly"]: a["collision_boxes_studio"] for a in _FJ["assemblies"]
+         if len(a.get("collision_boxes_studio") or []) > 1}
+
+
 def F(fid, rm, model, cover, x0, x1, y0, y1, z0=None, h=None, face=None, note=""):
     st = next(r for r in rooms if r["id"] == rm)["storey"]
     zb = (G0 if st == "G" else U0) if z0 is None else z0
     hh = h if h is not None else {"low": LOW, "tall": TALL, "step": STEP}[cover]
     furniture.append(dict(id=fid, room=rm, model=model, cover=cover, x0=x0, x1=x1, y0=y0, y1=y1, z0=zb, z1=zb + hh,
                           face=face, note=note))
-    box("F_" + fid, x0, x1, y0, y1, zb, zb + hh, "furniture", cover=cover, room=rm, model=model)
+    multi = MULTI.get(model)
+    if not multi:
+        box("F_" + fid, x0, x1, y0, y1, zb, zb + hh, "furniture", cover=cover, room=rm, model=model)
+        return
+    # the modeler's accurate collision boxes (sofa back + chaise, bed headboard + body, table + chair rows): one box over the
+    # whole piece gave invisible cover above the seat / mattress / table top. 3.4 boxes are low cover; lower ones are NotCover.
+    fc = face or ("S" if (x1 - x0) >= (y1 - y0) else "E")
+    copies = [((x0 + x1) / 2, (y0 + y1) / 2)]
+    if model == "H_DiningSet":   # two sets end to end along the long side
+        copies = [(x0 + (x1 - x0) * 0.25, (y0 + y1) / 2), (x0 + (x1 - x0) * 0.75, (y0 + y1) / 2)]
+    k = 0
+    for (cx, cy) in copies:
+        for b in multi:
+            (sx, sy, sz), (ox, oy, oz) = b["size"], b["centre_rel_pivot"]
+            if fc == "N": dx, dy, ex, ey = ox, -oz, sx, sz
+            elif fc == "S": dx, dy, ex, ey = -ox, oz, sx, sz
+            elif fc == "E": dx, dy, ex, ey = -oz, -ox, sz, sx
+            else: dx, dy, ex, ey = oz, ox, sz, sx
+            k += 1
+            c = "low" if abs(sy - LOW) < 0.05 else "none"
+            box(f"F_{fid}_{k}", cx + dx - ex / 2, cx + dx + ex / 2, cy + dy - ey / 2, cy + dy + ey / 2, zb, zb + sy, "furniture",
+                cover=c, room=rm, model=model)
 
 
 # Sizes = the modeler's meshes (art/house/house_furniture.json, size_studio [w, h, d]) where one exists; "custom" = in the kit
@@ -369,7 +395,7 @@ F("BR2_Wardrobe", "BR2", "H_Wardrobe", "tall", 9.5, 12, -16, -10, face="E")
 F("BR2_Bookcase", "BR2", "H_Bookcase", "tall", 20, 21.6, -21, -15, face="E", note="freestanding")
 F("BR2_Dresser", "BR2", "H_Dresser", "low", 24, 30, 1.2, 3.5, face="S")
 # Bedroom 3 (x -40..-9, y 4..30)
-F("BR3_Bed", "BR3", "H_Bed_Single", "low", -39.5, -34.8, 19, 27.6, face="E")
+F("BR3_Bed", "BR3", "H_Bed_Single", "low", -39.5, -34.8, 21.4, 30, face="S", note="head against the north wall")
 F("BR3_Wardrobe", "BR3", "H_Wardrobe", "tall", -12, -9.5, 19, 25, face="W")
 F("BR3_Dresser", "BR3", "H_Dresser", "low", -32, -26, 4.5, 6.8, face="N")
 # Dressing: the modeler's art-only meshes. Placed by bottom centre (x, y, z above the storey floor) and the direction the front
@@ -454,14 +480,14 @@ Dr("BR2_Chair", "H_DeskChair", "BR2", 31, -25.6, 0, "S")
 Dr("BR2_Laptop", "H_Laptop", "BR2", 31, -28.3, 2.62, "N", blocker=False)
 Dr("BR2_Art", "H_Frame_Botanical", "BR2", 39.92, -10, 5.4, "W", blocker=False, hang=True)
 # bedroom 3
-Dr("BR3_Night", "H_Nightstand", "BR3", -33.6, 26.4, 0, "S")
-Dr("BR3_Lamp", "H_TableLamp", "BR3", -33.6, 26.4, 2.0, "S", blocker=False)
+Dr("BR3_Night", "H_Nightstand", "BR3", -33.4, 28.9, 0, "S")
+Dr("BR3_Lamp", "H_TableLamp", "BR3", -33.4, 28.9, 2.0, "S", blocker=False)
 Dr("BR3_Desk", "H_Desk", "BR3", -21, 28.28, 0, "S")
 Dr("BR3_Chair", "H_DeskChair", "BR3", -21, 25.6, 0, "N")
 Dr("BR3_Blocks", "H_ToyBlocks", "BR3", -28, 16, 0, "S")
 Dr("BR3_Ball", "H_ToyBall", "BR3", -30.5, 12, 0, "S")
 Dr("BR3_Car", "H_ToyCar", "BR3", -25.5, 13.5, 0, "E", blocker=False)
-Dr("BR3_Teddy", "H_Teddy", "BR3", -37.2, 27, 2.0, "E", blocker=False, note="on the bed")
+Dr("BR3_Teddy", "H_Teddy", "BR3", -37.2, 25, 2.4, "S", blocker=False, note="on the bed")
 Dr("BR3_Art", "H_Frame_Geometric", "BR3", -39.92, 22, 5.6, "E", blocker=False, hang=True)
 
 # ------------------------------------------------------------------------------------------------ spawns
