@@ -39,6 +39,13 @@ but it should be night time outside and the lights should really give the effect
   dressing by each door (south: pallet pile with cartons + pallet truck; north: pallets + tyre stack) - checked on the render.
 - **Construction (Edward, 2026-10-27):** built from the modeler's meshes (art/warehouse2/fbx), imported into
   ServerStorage.Warehouse2Kit; the installer places them on the gameplay boxes. Part stand-ins only until the import is done.
+  Round 8: imported (group Gunsy Funsy): every cover crate / crate wall / low crate and the pallets, drums, workbench and tyre
+  stack are meshes; still Parts where no mesh exists yet (pallet-stack pillars, cartons, table, pallet truck, door frames, light
+  bars, yards).
+- **Viewing condition (round 8):** every capture and light number at Studio **EditQualityLevel 21** (the PC default); rounds
+  1-7 were captured at Level01 by mistake. Night re-tuned there: bar PointLights unshadowed fill 0.5 / 0.4 (range 40), shadowed
+  pool spots 2.6 / 4.4, Ambient 40, OutdoorAmbient 84, roof sheets 150, door lights 1.4, BAY 01 curtain 96 grey. Targets: no
+  player-height hall view over ~25 % near-black, pools about 3x the floor between them, spawn faces within 15 %.
 - **Materials:** no MaterialVariants (the five WH2_* tiling variants are removed; Map Building Corrections 2026-10-12, Design
   Rules: texturing is done in Blender). Roblox default materials (Concrete, Metal, DiamondPlate, CorrodedMetal, Wood). If the
   corrugated walls / roof read flat, the fix is Blender-baked panels from the modeler, not variants.

@@ -281,6 +281,85 @@ Steps for the next session (main PC, or the Shadow PC with Edward's OK for compu
    `tools/wh2_rounds_r6.lua`), recapture with `tools/wh2_fastcap.py` at quality 21, then a fresh roblox-map-grader (xhigh).
    Brief: add "built from the modeler's meshes" to the construction line.
 
+## Round 8 (2026-10-27 evening, Shadow PC map builder): meshes imported, lights re-tuned at PC quality
+Work order (Lead, approved by Edward): import the modeler's prop kit, re-tune the lights at the real PC quality (grade round 7,
+FIX 7.9, found that every capture and grade so far ran at Studio's lowest quality), checks, sheet. Built in
+`out/warehouse2/Warehouse2_build.rbxl` (the same copy; stale 11:26 lock moved aside, the auto-recovery prompt ignored: the
+installer rebuilds everything). **The place is now saved to file** (`tools/save_studio.ps1`, with the place's own lighting
+restored first). Viewing condition on every round-8 sheet and number: **Studio EditQualityLevel 21**.
+
+### Step 1: import (computer use, Edward's OK, about 4 minutes of the mouse)
+- No desktop tool in the session: `tools/desk.ps1` (screenshot / click / keys; refuses any window that isn't Studio and refuses
+  Delete / Backspace / Ctrl+A) + `tools/desk_scroll.ps1`.
+- Import 3D of `art/warehouse2/fbx/W2_Props_kit.fbx`: Creator **gunsy funsy** (group), Anchored on, Upload to Roblox on. The
+  FBX is in **centimetres**: at scale factor 1 it read 27,208 studs long; **scale factor 0.01** gives 272 studs and
+  `K_ScaleCube` = 10.000. `K_Marker` by raycast: Blender (x, y, z) -> Studio (-x, z, y) (the pipeline page's mapping), prop
+  fronts face -Z. 47 MeshParts, each with its SurfaceAppearance (atlases uploaded with the meshes).
+- `tools/wh2_kit_from_import.lua`: one Model per assembly (`<assembly>__<part>` names) in **ServerStorage.Warehouse2Kit**; the
+  raw import is parked in ServerStorage._W2_PropsImport (UNDO). Trap: "Set Pivot to Scene Origin" leaves a Z-up turn in every
+  MeshPart's PivotOffset, so Model:GetBoundingBox() swapped height and depth (tall crate 5 x 4 x 7) and the installer would have
+  refused all 26 pieces. Pivots reset; boxes then equal the props note exactly.
+- Installer: **26 cover meshes** (12 W2_Cover_Low, 10 W2_Cover_Tall / TallPly alternating, 4 W2_Cover_Wall), **0 refused**;
+  **18 prop meshes** (pallets in the piles, 2 sack pallets, 4 drums, workbench, tyre stack; Pallets_SW blocker 4 -> 2.2 = the
+  art). Art flags off; collision stays the COLP_* boxes (= the mesh size on cover pieces) and the PCOL blockers (props).
+- Green: C03 / C04 (point-symmetric twins in the side lanes, 27 studs from the spawns) always take the light plywood crate,
+  tinted with SurfaceAppearance.Color. The first tint (165,255,160) rendered lime under the warm bars (hue 72-76 = olive, but
+  saturation 0.9 vs olive 0.5); final **(160,215,255)** reads olive drab at quality 21. The ammo cans are not placed (no slot).
+- Steam-valve hand wheels were bright red (grader 7 zoom): cream (226,222,206).
+- Still Parts (no mesh exists): pallet-stack pillars P01-P06 (kit list PalletStack 5 x 10 x 5), cartons, break table, pallet
+  truck, door frames (W2_RollDoor_Open exists but shares seam planes with the reveal: not swapped), light bars / beams, yards.
+  Fire barrels keep the old Look (Shootables contract).
+
+### Step 2: light at quality 21
+- Technology read offline (`tools/read_technology.py`): **3 = ShadowMap** in the build copy and every match place: unchanged.
+- Baseline (round-6c lights + meshes) at Level21: hall views **40-81 % near-black** (luminance <= 12), centre p50 1, up-shot 100 %.
+- Tuning loop `tools/wh2_tune.py` (live values -> Level21 captures -> numbers; 13 hall cameras, 2 spawn-face cameras, 12 pool
+  cameras). What mattered, in order: (1) **shadowed PointLights = no bounce**: every face turned from a bar and every cover
+  shadow rendered pure black; Ambient 40 -> 75 hardly moved it (tone mapping crushes the darks; 120 did, but flat). The bar
+  PointLights are now **unshadowed fill**, the downward SpotLights keep the shadows (hard pools). (2) The bar housings shadowed
+  the fill's spill: the whole roof was black, so housings / clamps CastShadow off and roof sheets 112 -> 150. (3) Dark paint,
+  not light: the BAY 01 charcoal curtain (a third of the door view), dark crates, black beams; curtain 62 -> 96 (BAY 02 stays
+  galvanised 150).
+- Final (fix/map_warehouse2.lua): Ambient 40,41,46; OutdoorAmbient 84,88,100; exposure 0; bar PointLight 0.5 ends / 0.4
+  middle, range 40, unshadowed; SpotLight 2.6 / 100 deg ends, 4.4 / 90 deg middle, range 20, shadowed; wall bars 2.6
+  (unchanged); door lights 0.9 -> 1.4 at both ends. 30 hall lights (none added), 12 shadowed (8 spots, 2 door lights, 2 floods).
+- Measured at Level21 (`captures/warehouse2/r8/after_q21/lum.json`): hall views **13-25 % near-black**, p50 49-75 (worst: spawn-A
+  shield face 24.9 %, wh16 ceiling 23.7 %, wh12 long axis 23.4 %); spawn shield faces **A 29 / B 29**; spawn views p50 50 / 56;
+  pools (`after_q21_pools/pools.txt`): under the middle bars 232 / 233 vs between 63 / 63 (**3.7x**), under the end bars
+  203 / 205 vs n +-30 71 / 70 (**2.9x**), centre line 53-81, spawn floors 49 / 46. Yards (cutscene only, doors shut): 3-36 %;
+  the yard up-shots are the black starry sky (by design). Sheet **notes/warehouse2_sheet_r8.jpg** (round 6c as graded at
+  quality 1 | same lights + meshes at 21 | round 8 at 21); more views in captures/warehouse2/r8/sheet_r8_more.jpg.
+
+### Step 3: checks (after the light change)
+- **MapAudit** (`tools/wh2_audit.py`, captures/warehouse2/r8/audit_r8.txt): hall Indoor = true **0 FAIL 0 WARN** in Edit and in
+  Play (905 parts, 73 MeshParts, 28 lights); exterior 0 FAIL 1 WARN (the documented apron edge). Sky sweep 8,526 cells, 0 holes.
+  Flood from spawn A, doors shut: 7,564 cells, 0 outside; control (Door_S rolled up): 384 outside (the test can see).
+- **Read-back** 0 differences (32 cover proxies, spawns, 36 shootable parts, 30 skin rects, doors shut / NotCover / 0 prompts,
+  0 of 998 art parts collide). **Hall metrics** 0 lines out of 5 %.
+- **Play** (captures/warehouse2/r8/play_r8.txt): vote -> Warehouse 2, night values live (Ambient 40), me on spawn A; 5 walks
+  ARRIVED; 4 door pushes stop at n +-56.95 (curtain 57.45); Space at a shutter does nothing; **cover on L03 (mesh low crate, and
+  the vault over it), C01 (mesh tall crate), P01 (pillar, still a Part stand-in), W01 (mesh crate wall)**; 5 rounds to
+  **Victory 5-0** (MatchEnd), both doors shut and solid at every round start; door contract (`tools/wh2_door_test.lua`): both
+  doors roll up and back to the built shutter exactly, top edge drift 0.000, 0 prompts. Test-only setup cleared after
+  (StudioTeleportData nil, BotConfig unpatched). The match place's bot is the Studio test dummy: vote, spawns, rounds and
+  doors, not AI.
+- Green scan (`tools/wh2_green.lua`): 0 green Parts; it cannot see a SurfaceAppearance tint, so the olive crates were checked
+  on the render (above).
+
+### Lessons (round 8, no game names)
+1. **Grade lighting at the shipping graphics quality.** Studio's EditQualityLevel is per process and can sit at Level01; local
+   lights there render far brighter and softer than at the PC default. Set it to Level21 by script before every capture and
+   write it on every sheet (vaulted in Map Building Corrections).
+2. **ShadowMap has no bounce:** shadowed point lights leave every face turned from them pure black at high quality. Shadow the
+   downward pool lights, keep the fill unshadowed; Ambient can't replace it (tone mapping crushes the darks).
+3. **Import 3D traps:** a Blender FBX may be in centimetres (read the File Dimensions line and measure a 10-stud scale cube; set
+   scale factor 0.01); "Set Pivot to Scene Origin" leaves a Z-up PivotOffset that swaps Y / Z in Model:GetBoundingBox(): reset
+   PivotOffset before measuring or placing by the box.
+4. **Tints on baked textures are judged on the render:** SurfaceAppearance.Color multiplies; warm light plus tone mapping crush
+   blue, so a tint with the right hue can still render over-saturated (lime). Check hue and saturation of the lit pixels.
+5. **Tune night maps on the near-black share** (with p50 and a pool ratio): a mask of the near-black pixels shows whether the
+   black is missing light (fill it) or dark paint (lighten the paint).
+
 ## Waiting on / open
 - **Systems (not map code):** `GadgetManager.mapFolder()` (grenade / smoke wall rays) and `PropController` (prop noise) still
   look only at `Workspace.Warehouse`: on Warehouse 2 (and the Arena / PracticeRange) grenades and smoke ignore the walls. The

@@ -1,0 +1,40 @@
+Warehouse 2 round 8 Play test (build copy, meshes + quality-21 lights), 2026-10-27 19:11
+
+phase MapVote MapVote 0.0s
+voted Warehouse2
+phase Playing ArenaMap Warehouse2 151.2s me (-31.0, -50.0) feet -0.00 clock 0 ambient 0.156863, 0.160784, 0.180392
+Door_N Open false shutter collide true
+Door_S Open false shutter collide true
+
+walk south door (inside)    ARRIVED 2.9s (-0.9, -53.9) feet -0.00
+walk west lane              ARRIVED 8.2s (-35.0, 18.3) feet -0.00
+walk north door (inside)    ARRIVED 4.6s (-0.6, 53.4) feet -0.00
+walk east lane              ARRIVED 9.2s (33.3, -19.0) feet -0.00
+walk centre                 ARRIVED 3.6s (1.1, -1.1) feet 0.00
+
+push S door             ended (-0.0, -56.9) feet 0.00  n reached -56.95..-50.00  top feet 0.02
+push N door             ended (-0.0, 56.9) feet 0.00  n reached 50.00..56.94  top feet 0.00
+push S door left        ended (-8.0, -56.9) feet 0.00  n reached -56.93..-50.00  top feet 0.00
+push N door right       ended (8.0, 56.9) feet -0.00  n reached 50.00..56.94  top feet 0.00
+DOORS STOP: south min n -56.95 (curtain at -57.45), north max n 56.94 (curtain at 57.45)
+Space (cover vault/climb) at S shutter inCover=false part=nil crouched=false vaulting=false moving=false state=Running (-0.0, -55.5) feet 0.00
+   after (-0.0, -55.5) feet -0.00
+
+cover L03 jersey       inCover=true part=COLP_L03 crouched=false vaulting=false moving=false state=Running
+   vault over L03 -> (-12.0, -16.7) feet -0.00
+cover C01 crate        inCover=true part=COLP_C01 crouched=false vaulting=false moving=false state=Running
+cover P01 pallet stack inCover=true part=COLP_P01 crouched=false vaulting=false moving=false state=Running
+cover W01 block wall   inCover=true part=COLP_W01 crouched=false vaulting=false moving=false state=Running
+
+score before: A 0 B 0
+round 1: me (-16.0, 3.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 2: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 3: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 4: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+round 5: me (-30.9, -50.0) bot ? map Warehouse2 doors Door_N shut/solid, Door_S shut/solid phase Playing
+end Victory Victory score A 5 B 0
+phases: | 49.2 Countdown/Playing | 49.7 RunIn/RunIn | 53.3 Countdown/Playing | 58.3 Live/Playing | 348.3 RoundEnd/Playing | 351.5 Countdown/Playing | 356.9 Live/Playing | 359.9 RoundEnd/Playing | 363.0 Countdown/Playing | 368.2 Live/Playing | 371.6 RoundEnd/Playing | 374.7 Countdown/Playing | 380.2 Live/Playing | 383.3 RoundEnd/Playing | 386.4 Countdown/Playing | 391.6 Live/Playing | 394.8 Victory/Victory
+
+{"doors":[{"blockOpen":[],"openAfter":true,"fitsOpen":true,"open0":false,"topAboveHead":-0.1499994397163391,"shutCollide":true,"movingAfter":false,"notCover":true,"samples":[{"top":-0.001,"t":0.45,"bottomAboveFloor":1.58,"h":12.8},{"top":0,"t":0.9,"bottomAboveFloor":5.93,"h":8.45},{"top":0,"t":1.35,"bottomAboveFloor":10.84,"h":3.54},{"top":0,"t":1.8,"bottomAboveFloor":13.8,"h":0.58},{"top":0,"t":2.25,"bottomAboveFloor":14.03,"h":0.35}],"openHeightLeft":0.35000038146972659,"fitsShutAgain":false,"fitsShut":false,"closedAgain":true,"name":"Door_N","moving0":false,"secondCallWhileOpen":true,"prompts":0,"blockShut":["Shutter"],"movingDuring":true},{"blockOpen":[],"openAfter":true,"fitsOpen":true,"open0":false,"topAboveHead":-0.1499994397163391,"shutCollide":true,"movingAfter":false,"notCover":true,"samples":[{"top":0,"t":0.45,"bottomAboveFloor":1.79,"h":12.59},{"top":0,"t":0.9,"bottomAboveFloor":6.1,"h":8.28},{"top":0,"t":1.35,"bottomAboveFloor":10.99,"h":3.39},{"top":-0.001,"t":1.8,"bottomAboveFloor":13.81,"h":0.57},{"top":0,"t":2.25,"bottomAboveFloor":14.03,"h":0.35}],"openHeightLeft":0.35000038146972659,"fitsShutAgain":false,"fitsShut":false,"closedAgain":true,"name":"Door_S","moving0":false,"secondCallWhileOpen":true,"prompts":0,"blockShut":["Shutter"],"movingDuring":true}],"found":2}
+
+The match place's bot is the Studio test dummy (never moves or shoots): this proves vote, spawns, rounds, doors; not AI.
