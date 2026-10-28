@@ -170,3 +170,6 @@ the upper vanity reaches 0.32 into the bathroom doorway's width (body passes); t
 front door's casing.
 **Publish held:** the smoke-alarm session logged (84fc50d, 11:20) Edward: "Not yet: I'll look at the House sheets first." That conflicts
 with "publish if it passes"; asked Edward before touching the live places. Nothing staged in match_place_ref / Tacticals_rebuild.
+
+## Edward after the sheets (2026-10-28): HOLD, wants changes first
+His answer chose "Hold: I want changes first" without naming the changes yet; asked him which. Nothing published or staged.
