@@ -202,7 +202,13 @@ for _, p in L.parts do
 	part:SetAttribute("PartId", p.id)
 	if p.shape ~= "obox" then part.Parent = CP end
 end
--- the floor proxy is the map's PrimaryPart (pivot); the ramps and the floor are KitIntendedDrop-free (no drops in the house)
+-- planned drops (MapAudit HOLE): the landing / upper-hall slabs end at the foyer void and the back stair well; the edges are
+-- closed by the gallery railing + its player barrier, and the stair wells by walls / banister barriers (enclosure proof:
+-- tools/house_check.py flood on the read-back, 0 cells outside, with a door-open control that leaks)
+for _, id in { "Slab_LD", "Slab_UH", "Slab_ST2End", "Slab_W", "Slab_E", "Stair_Main_Ramp", "Stair_Back_Ramp" } do
+	local p = CP:FindFirstChild("COLP_" .. id)
+	if p then CS:AddTag(p, "KitIntendedDrop"); p:SetAttribute("DropReason", "edge of the foyer void / a stair well, behind a railing barrier or wall") end
+end
 
 -- doors: real hinged doors, held as the layout says (ajar 70 degrees / closed / locked), anchored, no prompt
 for _, d in L.doors do

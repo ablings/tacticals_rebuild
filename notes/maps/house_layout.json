@@ -1351,7 +1351,7 @@
   {
    "id": "LR_ShelfWall",
    "room": "LR",
-   "model": "ShelfWall",
+   "model": "H_ShelfWall",
    "cover": "tall",
    "x0": -31,
    "x1": -29,
@@ -1477,7 +1477,7 @@
   {
    "id": "LR_Screen",
    "room": "LR",
-   "model": "SlatScreen",
+   "model": "H_SlatScreen",
    "cover": "tall",
    "x0": -17,
    "x1": -15,
@@ -1617,7 +1617,7 @@
   {
    "id": "KT_Screen",
    "room": "KT",
-   "model": "SlatScreen",
+   "model": "H_SlatScreen",
    "cover": "tall",
    "x0": 15,
    "x1": 17,
@@ -1631,7 +1631,7 @@
   {
    "id": "KT_TallUnit",
    "room": "KT",
-   "model": "OvenWall",
+   "model": "H_OvenWall",
    "cover": "tall",
    "x0": 29,
    "x1": 31,
@@ -1645,7 +1645,7 @@
   {
    "id": "KT_Bench",
    "room": "KT",
-   "model": "KitchenBench",
+   "model": "H_KitchenBench",
    "cover": "low",
    "x0": 16.5,
    "x1": 20,
@@ -1659,7 +1659,7 @@
   {
    "id": "CH_Column",
    "room": "CH",
-   "model": "DisplayColumn",
+   "model": "H_DisplayColumn",
    "cover": "tall",
    "x0": -1.5,
    "x1": 1.5,
@@ -1673,7 +1673,7 @@
   {
    "id": "FY_Planter",
    "room": "FY",
-   "model": "Planter",
+   "model": "H_Planter",
    "cover": "low",
    "x0": 3,
    "x1": 6,
@@ -1701,7 +1701,7 @@
   {
    "id": "FY_Bench",
    "room": "FY",
-   "model": "HallBench",
+   "model": "H_HallBench_3",
    "cover": "low",
    "x0": -2,
    "x1": 0,
@@ -1729,7 +1729,7 @@
   {
    "id": "MR_Bench",
    "room": "MR",
-   "model": "HallBench",
+   "model": "H_HallBench_8",
    "cover": "low",
    "x0": -20,
    "x1": -12,
@@ -1827,7 +1827,7 @@
   {
    "id": "MB_HeadWall",
    "room": "MB",
-   "model": "HeadboardWall",
+   "model": "H_HeadboardWall",
    "cover": "tall",
    "x0": -24.5,
    "x1": -23,
@@ -5885,7 +5885,7 @@
    "role": "furniture",
    "cover": "tall",
    "room": "LR",
-   "model": "ShelfWall"
+   "model": "H_ShelfWall"
   },
   {
    "id": "F_LR_ChairA",
@@ -6011,7 +6011,7 @@
    "role": "furniture",
    "cover": "tall",
    "room": "LR",
-   "model": "SlatScreen"
+   "model": "H_SlatScreen"
   },
   {
    "id": "F_DR_Table",
@@ -6151,7 +6151,7 @@
    "role": "furniture",
    "cover": "tall",
    "room": "KT",
-   "model": "SlatScreen"
+   "model": "H_SlatScreen"
   },
   {
    "id": "F_KT_TallUnit",
@@ -6165,7 +6165,7 @@
    "role": "furniture",
    "cover": "tall",
    "room": "KT",
-   "model": "OvenWall"
+   "model": "H_OvenWall"
   },
   {
    "id": "F_KT_Bench",
@@ -6179,7 +6179,7 @@
    "role": "furniture",
    "cover": "low",
    "room": "KT",
-   "model": "KitchenBench"
+   "model": "H_KitchenBench"
   },
   {
    "id": "F_CH_Column",
@@ -6193,7 +6193,7 @@
    "role": "furniture",
    "cover": "tall",
    "room": "CH",
-   "model": "DisplayColumn"
+   "model": "H_DisplayColumn"
   },
   {
    "id": "F_FY_Planter",
@@ -6207,7 +6207,7 @@
    "role": "furniture",
    "cover": "low",
    "room": "FY",
-   "model": "Planter"
+   "model": "H_Planter"
   },
   {
    "id": "F_FY_Console",
@@ -6235,7 +6235,7 @@
    "role": "furniture",
    "cover": "low",
    "room": "FY",
-   "model": "HallBench"
+   "model": "H_HallBench_3"
   },
   {
    "id": "F_MR_Lockers",
@@ -6263,7 +6263,7 @@
    "role": "furniture",
    "cover": "low",
    "room": "MR",
-   "model": "HallBench"
+   "model": "H_HallBench_8"
   },
   {
    "id": "F_BH_CoatTree",
@@ -6361,7 +6361,7 @@
    "role": "furniture",
    "cover": "tall",
    "room": "MB",
-   "model": "HeadboardWall"
+   "model": "H_HeadboardWall"
   },
   {
    "id": "F_MB_Bed",
