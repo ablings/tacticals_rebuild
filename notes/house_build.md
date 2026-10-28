@@ -118,3 +118,17 @@ glass shot + push at the broken opening held; vote / spawns / doors / 15 pushes 
 New tool `tools/house_walkthrough.lua` (art at body height where a body could stand, column test): **0**. Read-back 0 differences,
 checker PASS (contact <= 9.2 %, approach <= 7.6 %, spawn sight <= 3.2 %), MapAudit 0 FAIL / 1 WARN; lobby source re-ported:
 COLP 232 / PCOL 30 = build.
+
+## Grade round 3 (fresh roblox-map-grader, xhigh): FIX 8.3, and the fixes
+Confirmed: round 2 fixes in Play (vanity / screens stop the body, bathroom doorway clear); thresholds continuous in all 8 doorways;
+HouseBounds puts a body stepped outside the shell back in ~1.0 s (3 tries) and one placed under the floor back onto it; 0 visible
+Studio Parts; lobby pad duel D1 on House with me on A1 / bot on B1; 34 lights.
+| Finding | Fix |
+|---|---|
+| Major: prints LR_Art1 / MR_Art and the ground-bath mirror hung over window glass | moved to solid wall (LR print x -25; MR print x -11.5; ground-bath vanity + mirror to the bathroom's south wall) |
+| Minor: BR2 dresser top rose 0.24 into the north window opening | moved beside the window (x 31..37) |
+| Minor: rugs' top 0.08 off the floor (< 0.12 overlay rule) | lifted to 0.06..0.12 |
+| Minor: review sheets stale | full recapture `captures/house/r4/` + sheets r4_* |
+| Root cause | wall dressing was placed on wall spans without testing the openings. `tools/house_check.py` now fails on any furniture / dressing box reaching into a window opening; it caught two more (the master bedroom floor lamp in front of its window; bedroom 3's table lamp rising into the sill): lamp moved, that table lamp dropped |
+Re-run after: checker PASS (incl. art-over-windows 0), read-back 0 differences, walk-through 0, art fit 0.02, MapAudit 0 FAIL / 1 WARN;
+lobby source re-ported (COLP 232 / PCOL 30 = build).

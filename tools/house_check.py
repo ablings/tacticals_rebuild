@@ -396,6 +396,21 @@ vv = vis_u
 report["sight"] = dict(max=round(float(L[vv].max()), 1), p90=round(float(np.percentile(L[vv], 90)), 1),
                        median=round(float(np.median(L[vv])), 1))
 
+# art vs windows: no furniture / dressing box may reach into a window opening (opening + 0.5 on the room sides, sill..head)
+art_win = []
+for o in D["openings"]:
+    if o["kind"] != "window": continue
+    if o["axis"] == "x":
+        wb = (o["a"], o["b"], o["t0"] - 0.5, o["t1"] + 0.5)
+    else:
+        wb = (o["t0"] - 0.5, o["t1"] + 0.5, o["a"], o["b"])
+    for f in D["furniture"] + D.get("dressing", []):
+        if "box" in f: x0, x1, y0, y1 = f["box"]; z0 = f["z"]; z1 = f["z"] + f["size"][1]
+        else: x0, x1, y0, y1, z0, z1 = f["x0"], f["x1"], f["y0"], f["y1"], f["z0"], f["z1"]
+        if f.get("model") == "H_PendantLamp": continue
+        if x0 < wb[1] and x1 > wb[0] and y0 < wb[3] and y1 > wb[2] and z0 < o["z1"] and z1 > o["z0"] + 0.01:
+            art_win.append(f"{f['id']} x {o['id']}")
+report["art_over_windows"] = art_win
 # ------------------------------------------------------------------------------------------------ verdict
 fails = []
 if sp_rows: fails.append(f"spawn-to-spawn sight: {len(sp_rows)} slot pairs see each other")
@@ -411,6 +426,7 @@ for rid, rr in reach.items():
         if rr["from_A"] or rr["from_B"]: fails.append("ensuite reachable (its door must be closed)")
     elif rr["from_A"] == 0 or rr["from_B"] == 0:
         fails.append(f"room {rid} not reached ({rr})")
+if art_win: fails.append(f"art over windows: {art_win}")
 if report["reached_outside_shell"]: fails.append(f"{report['reached_outside_shell']} reachable cells outside the shell")
 report["fails"] = fails
 report["verdict"] = "PASS" if not fails else "FAIL"
