@@ -7,8 +7,8 @@
     "neon": 6,
     "indoor": false,
     "walkCells": 143,
-    "meshparts": 0,
-    "parts": 284
+    "meshparts": 6,
+    "parts": 266
    },
    "fails": 0,
    "opts": "exterior attribute Indoor = false",
@@ -29,8 +29,8 @@
     "neon": 18,
     "indoor": true,
     "walkCells": 603,
-    "meshparts": 4,
-    "parts": 1167
+    "meshparts": 73,
+    "parts": 905
    },
    "fails": 0,
    "opts": "map attribute Indoor = true",
@@ -65,8 +65,8 @@
    "neon": 18,
    "indoor": true,
    "walkCells": 603,
-   "meshparts": 4,
-   "parts": 1167
+   "meshparts": 73,
+   "parts": 905
   },
   "findings": [],
   "warns": 0
