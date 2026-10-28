@@ -1,0 +1,16 @@
+{
+ "fA_spawnA_shield_face": {
+  "p5": 5,
+  "p50": 61,
+  "p95": 187,
+  "dark": 7.3,
+  "centre": 49
+ },
+ "wh05_flush_pair_P03_L03": {
+  "p5": 3,
+  "p50": 52,
+  "p95": 160,
+  "dark": 10.0,
+  "centre": 24
+ }
+}

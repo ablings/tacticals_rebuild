@@ -1,0 +1,79 @@
+{
+ "wh09_centre_toward_A": {
+  "p5": 0,
+  "p50": 61,
+  "p95": 140,
+  "dark": 18.2,
+  "centre": 18
+ },
+ "wh12_long_axis_to_north_door": {
+  "p5": 0,
+  "p50": 56,
+  "p95": 118,
+  "dark": 23.4,
+  "centre": 54
+ },
+ "wh13_south_door_inside": {
+  "p5": 1,
+  "p50": 61,
+  "p95": 186,
+  "dark": 18.8,
+  "centre": 32
+ },
+ "yn01_north_yard_from_door": {
+  "p5": 6,
+  "p50": 127,
+  "p95": 154,
+  "dark": 6.1,
+  "centre": 132
+ },
+ "yn02_north_yard_corner_look_in": {
+  "p5": 0,
+  "p50": 28,
+  "p95": 133,
+  "dark": 22.9,
+  "centre": 17
+ },
+ "yn03_north_yard_containers": {
+  "p5": 0,
+  "p50": 35,
+  "p95": 140,
+  "dark": 22.1,
+  "centre": 13
+ },
+ "yn04_north_yard_upshot": {
+  "p5": 0,
+  "p50": 0,
+  "p95": 143,
+  "dark": 59.2,
+  "centre": 0
+ },
+ "ys01_south_yard_from_door": {
+  "p5": 25,
+  "p50": 56,
+  "p95": 177,
+  "dark": 3.2,
+  "centre": 39
+ },
+ "ys02_south_yard_corner_look_in": {
+  "p5": 0,
+  "p50": 28,
+  "p95": 166,
+  "dark": 28.8,
+  "centre": 3
+ },
+ "ys03_south_yard_containers": {
+  "p5": 0,
+  "p50": 29,
+  "p95": 178,
+  "dark": 36.2,
+  "centre": 23
+ },
+ "ys04_south_yard_upshot": {
+  "p5": 0,
+  "p50": 0,
+  "p95": 174,
+  "dark": 54.2,
+  "centre": 0
+ }
+}

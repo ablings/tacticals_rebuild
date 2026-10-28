@@ -37,7 +37,7 @@ local MAP_NAME, REG_ID = "Warehouse2", "Warehouse2" -- Workspace name read by Sh
 local EXT_NAME = "Warehouse2Exterior" -- the yards + backdrop: the cutscene set behind the shut doors
 -- the map's night (MapInfo.Lighting, applied by RoundManager.applyMapEnv when the map wins the vote); tuned on the render
 local NIGHT = { --@NIGHT
-	clock = 0, bright = 1, exposure = 0, ambient = "16, 17, 20", outdoor = "30, 32, 38", diffuse = 0.12, specular = 0.2,
+	clock = 0, bright = 1, exposure = 0, ambient = "40, 41, 46", outdoor = "84, 88, 100", diffuse = 0.12, specular = 0.2,
 	density = 0.32, offset = 0, haze = 0.4, atmoColor = "52, 56, 64", decay = "26, 28, 34",
 	gradeBright = 0, contrast = 0.16, saturation = -0.12, tint = "255, 250, 242", bloom = 0.6, bloomSize = 24, threshold = 1.3,
 }
@@ -178,7 +178,7 @@ local S = {
 	block = { M.Concrete, nil, rgb(178, 175, 168) },
 	blockStripe = { M.Concrete, nil, rgb(52, 52, 50) }, -- the wall band: charcoal (was olive)
 	clad = { M.Metal, nil, rgb(172, 174, 172) },
-	roof = { M.Metal, nil, rgb(112, 114, 112) }, -- darker sheets: the roof stays dark between the light bars at night
+	roof = { M.Metal, nil, rgb(150, 152, 150) }, -- round 8 (quality 21): 112 rendered the whole roof black; the fill now reaches it
 	steel = { M.Metal, nil, rgb(84, 88, 86) },
 	beam = { M.Metal, nil, rgb(46, 48, 48) }, -- the light beams: dark painted steel, as the old Warehouse's
 	galv = { M.Metal, nil, rgb(160, 162, 160) },
@@ -671,7 +671,8 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	local sh = newPart("Part", dm, "Shutter", Vector3.new(2 * DOOR_HALF + 0.5, SH_TOP - 0.06, 0.3), CFrame.new(W(0, g * (HN + 0.6), (SH_TOP + 0.06) / 2)))
 	-- each end its own curtain (grade round 6: with the doors shut the two ends read as the same picture): BAY 01 (south)
 	-- charcoal slats with a big cream 01, BAY 02 (north) galvanised slats with a big black 02, painted on the hall face
-	sh.Material, sh.Color = M.Metal, k == "S" and rgb(62, 64, 64) or rgb(150, 152, 148)
+	-- BAY 01 dark steel (round 8: charcoal 62 rendered near-black at quality 21, a third of the door view), BAY 02 galvanised
+	sh.Material, sh.Color = M.Metal, k == "S" and rgb(96, 98, 98) or rgb(150, 152, 148)
 	sh.CanCollide, sh.CanQuery, sh.CanTouch, sh.CastShadow = true, true, true, true
 	sh:SetAttribute("NotCover", true)
 	sh:SetAttribute("ImpactSound", "Metal")
@@ -700,7 +701,7 @@ for _, s in { { "S", -1, "LOADING BAY 01" }, { "N", 1, "LOADING BAY 02" } } do
 	-- the door light: a warm spot under the hood onto the shut curtain and the hatch: the lit door is the landmark at its end
 	local dl = box(D, "DoorLight_" .. k, -1.2, 1.2, g * (HN - 2.6), g * (HN - 1.8), DOOR_H + 0.35, DOOR_H + 0.6, S.lens)
 	local dls = Instance.new("SpotLight")
-	dls.Face, dls.Angle, dls.Range, dls.Brightness, dls.Color, dls.Shadows = Enum.NormalId.Bottom, 110, 20, 0.9, rgb(255, 230, 196), true
+	dls.Face, dls.Angle, dls.Range, dls.Brightness, dls.Color, dls.Shadows = Enum.NormalId.Bottom, 110, 20, 1.4, rgb(255, 230, 196), true
 	dls.Parent = dl
 	nLights += 1
 	-- sign above the drum (bottom 1.8 above the hood top: grade round 3). Hazard paint is black and cream (Design Rules), so the
@@ -752,9 +753,12 @@ local BEAM_ROWS = { -45, -15, 15, 45 }
 local BAR_E = { -20, 20 }
 local BEAM_BOT, BEAM_TOP = 13.0, 14.3
 local BAR_LEN = 9
-local LIGHT = { color = rgb(255, 238, 214), range = 30, bright = 0.4 } --@LIGHT (tuned on the render at quality 21, round 6)
-local FILL = { range = 20, bright = 2.3, angle = 100 } --@FILL
-local MID = { bright = 0.25, spot = 4, angle = 90 } --@MID (rows n +-15; grade round 6: under / between was only 1.1-1.5x)
+-- round 8: re-tuned at EditQualityLevel 21 (the PC default; rounds 1-7 were judged at Studio's Level01, which lights very
+-- differently). The bar PointLights are UNSHADOWED fill (ShadowMap has no bounce: shadowed, every face turned from a bar and
+-- every cover shadow rendered pure black, 40-81 % of a hall frame); the downward SpotLights keep their shadows for the hard pools
+local LIGHT = { color = rgb(255, 238, 214), range = 40, bright = 0.5, shadows = false } --@LIGHT
+local FILL = { range = 20, bright = 2.6, angle = 100 } --@FILL
+local MID = { bright = 0.4, spot = 4.4, angle = 90 } --@MID (rows n +-15; grade round 6: under / between was only 1.1-1.5x)
 for i, n in BEAM_ROWS do
 	local bm = Instance.new("Model")
 	bm.Name = "LightBeam_" .. i
@@ -780,13 +784,13 @@ for i, n in BEAM_ROWS do
 		lb.Name = "LightBar_" .. nLamp
 		lb.Parent = bm
 		-- housing 0.04 under the flange, the clamps up to it: no shared top plane (MapAudit ZFIGHT round 6)
-		box(lb, "Housing", e - BAR_LEN / 2, e + BAR_LEN / 2, n - 0.42, n + 0.42, BEAM_BOT - 0.42, BEAM_BOT - 0.04, S.steel)
-		for _, d in { -1, 1 } do box(lb, "Clamp", e + d * (BAR_LEN / 2 - 0.8) - 0.15, e + d * (BAR_LEN / 2 - 0.8) + 0.15, n - 0.46, n + 0.46, BEAM_BOT - 0.46, BEAM_BOT, S.beam) end
+		box(lb, "Housing", e - BAR_LEN / 2, e + BAR_LEN / 2, n - 0.42, n + 0.42, BEAM_BOT - 0.42, BEAM_BOT - 0.04, S.steel).CastShadow = false
+		for _, d in { -1, 1 } do box(lb, "Clamp", e + d * (BAR_LEN / 2 - 0.8) - 0.15, e + d * (BAR_LEN / 2 - 0.8) + 0.15, n - 0.46, n + 0.46, BEAM_BOT - 0.46, BEAM_BOT, S.beam).CastShadow = false end
 		local lens = box(lb, "Lens", e - BAR_LEN / 2 + 0.15, e + BAR_LEN / 2 - 0.15, n - 0.3, n + 0.3, BEAM_BOT - 0.52, BEAM_BOT - 0.42, S.barLens)
 		lens.CastShadow = false
 		local pl = Instance.new("PointLight")
 		local midRow = math.abs(n) < 30 -- the middle rows get no help from the end walls / doors: harder, narrower pools
-		pl.Brightness, pl.Range, pl.Color, pl.Shadows = midRow and MID.bright or LIGHT.bright, LIGHT.range, LIGHT.color, true
+		pl.Brightness, pl.Range, pl.Color, pl.Shadows = midRow and MID.bright or LIGHT.bright, LIGHT.range, LIGHT.color, LIGHT.shadows
 		pl.Parent = lens
 		local sl = Instance.new("SpotLight") -- the pool on the floor under the bar
 		sl.Face, sl.Angle, sl.Range, sl.Brightness, sl.Color, sl.Shadows = Enum.NormalId.Bottom, midRow and MID.angle or FILL.angle, FILL.range,
@@ -1006,7 +1010,7 @@ end
 -- centre, so the FBX pivot convention doesn't matter) and checked against the gameplay box; without the kit (or for a piece
 -- whose mesh is missing or the wrong size) the Part stand-in is built as before. Art never collides / queries / touches.
 local KIT = SS:FindFirstChild("Warehouse2Kit")
-local OLIVE_TINT = Color3.fromRGB(165, 255, 160) --@OLIVE_TINT
+local OLIVE_TINT = Color3.fromRGB(160, 215, 255) --@OLIVE_TINT (render-checked at quality 21: olive drab, not lime)
 local KIT_FOR = { Jersey = { "W2_Cover_Low" }, TallCrate = { "W2_Cover_Tall", "W2_Cover_TallPly" }, BlockWall = { "W2_Cover_Wall" } }
 local nKit, kitSkipped = 0, {}
 local function kitPiece(m, q, idx)

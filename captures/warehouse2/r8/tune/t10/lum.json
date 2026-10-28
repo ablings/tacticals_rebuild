@@ -1,0 +1,23 @@
+{
+ "wh09_centre_toward_A": {
+  "p5": 0,
+  "p50": 57,
+  "p95": 137,
+  "dark": 20.2,
+  "centre": 17
+ },
+ "wh13_south_door_inside": {
+  "p5": 1,
+  "p50": 56,
+  "p95": 185,
+  "dark": 21.2,
+  "centre": 31
+ },
+ "wh14_north_door_inside": {
+  "p5": 1,
+  "p50": 70,
+  "p95": 169,
+  "dark": 20.0,
+  "centre": 78
+ }
+}
