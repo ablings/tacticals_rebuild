@@ -1,0 +1,457 @@
+{
+ "W2_AmmoCan": {
+  "objects": 1,
+  "tris": 92,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_AmmoCan",
+    "message": "28 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_Cover_Low": {
+  "objects": 2,
+  "tris": 1112,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Cover_Low__W2_RifleCrate",
+    "message": "222 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Cover_Low__W2_RifleCrate.001",
+    "message": "222 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Cover_Low__W2_RifleCrate + W2_Cover_Low__W2_RifleCrate.001",
+    "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_Cover_Tall": {
+  "objects": 1,
+  "tris": 348,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Cover_Tall__W2_TallCrate",
+    "message": "120 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_Cover_TallPly": {
+  "objects": 1,
+  "tris": 396,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Cover_TallPly__W2_TallCrate_Ply",
+    "message": "144 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_Cover_Wall": {
+  "objects": 4,
+  "tris": 1356,
+  "fail": 0,
+  "warn": 6,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Cover_Wall__W2_LongCrate",
+    "message": "248 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Cover_Wall__W2_SupplyCrate",
+    "message": "224 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Cover_Wall__W2_SteelCrate",
+    "message": "96 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Cover_Wall__W2_LongCrate + W2_Cover_Wall__W2_SupplyCrate",
+    "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Cover_Wall__W2_SupplyCrate + W2_Cover_Wall__W2_WallJoint",
+    "message": "28 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Cover_Wall__W2_SteelCrate + W2_Cover_Wall__W2_WallJoint",
+    "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_FireBarrel": {
+  "objects": 2,
+  "tris": 1476,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "W2_FireBarrel_Burnt": {
+  "objects": 2,
+  "tris": 1952,
+  "fail": 0,
+  "warn": 2,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_FireBarrel_Burnt__W2_FireBarrel_Burnt",
+    "message": "759 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_FireBarrel_Burnt__W2_FireBarrel_BurntLid",
+    "message": "60 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_Forklift": {
+  "objects": 8,
+  "tris": 3604,
+  "fail": 0,
+  "warn": 11,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Forklift__W2_Forklift_Body",
+    "message": "124 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Forklift__W2_Forklift_Forks",
+    "message": "50 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Forklift__W2_Forklift_WheelF",
+    "message": "188 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Forklift__W2_Forklift_WheelF.001",
+    "message": "188 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Forklift__W2_Forklift_WheelR",
+    "message": "188 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Forklift__W2_Forklift_WheelR.001",
+    "message": "188 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_Steer",
+    "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelF",
+    "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelF.001",
+    "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelR",
+    "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_Forklift__W2_Forklift_Body + W2_Forklift__W2_Forklift_WheelR.001",
+    "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_HighBayLamp": {
+  "objects": 3,
+  "tris": 948,
+  "fail": 0,
+  "warn": 2,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_HighBayLamp__W2_HighBayLamp_Bell",
+    "message": "370 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_HighBayLamp__W2_HighBayLamp_Bell + W2_HighBayLamp__W2_HighBayLamp_Rod",
+    "message": "15 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_LongCrate": {
+  "objects": 1,
+  "tris": 556,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_LongCrate",
+    "message": "248 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_OilDrum_Black": {
+  "objects": 1,
+  "tris": 1192,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "W2_OilDrum_Grey": {
+  "objects": 1,
+  "tris": 1192,
+  "fail": 0,
+  "warn": 0,
+  "findings": []
+ },
+ "W2_Pallet": {
+  "objects": 1,
+  "tris": 240,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Pallet",
+    "message": "62 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_PalletSacks": {
+  "objects": 2,
+  "tris": 3384,
+  "fail": 0,
+  "warn": 2,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_PalletSacks__W2_Pallet",
+    "message": "62 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_PalletSacks__W2_Pallet + W2_PalletSacks__W2_PalletSacks_Load",
+    "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_RollDoor_HalfOpen": {
+  "objects": 3,
+  "tris": 992,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_RollDoor_HalfOpen__W2_RollDoor_Frame",
+    "message": "72 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_RollDoor_HalfOpen__W2_RollDoor_Control",
+    "message": "60 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_RollDoor_HalfOpen__W2_RollDoor_Frame + W2_RollDoor_HalfOpen__W2_RollDoor_Control",
+    "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_RollDoor_Open": {
+  "objects": 3,
+  "tris": 420,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_RollDoor_Open__W2_RollDoor_Frame",
+    "message": "72 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_RollDoor_Open__W2_RollDoor_Control",
+    "message": "60 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_RollDoor_Open__W2_RollDoor_Frame + W2_RollDoor_Open__W2_RollDoor_Control",
+    "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_ShelfRack": {
+  "objects": 2,
+  "tris": 600,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_ShelfRack__W2_ShelfRack",
+    "message": "116 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_ShelfRack__W2_ShelfRack_Load",
+    "message": "56 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A8",
+    "object": "W2_ShelfRack__W2_ShelfRack + W2_ShelfRack__W2_ShelfRack_Load",
+    "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   }
+  ]
+ },
+ "W2_SteelCrate": {
+  "objects": 1,
+  "tris": 256,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_SteelCrate",
+    "message": "96 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_SupplyCrate": {
+  "objects": 1,
+  "tris": 532,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_SupplyCrate",
+    "message": "224 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_Tyre": {
+  "objects": 1,
+  "tris": 784,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Tyre",
+    "message": "280 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_TyreStack": {
+  "objects": 3,
+  "tris": 2352,
+  "fail": 0,
+  "warn": 3,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_TyreStack__W2_Tyre",
+    "message": "280 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_TyreStack__W2_Tyre.001",
+    "message": "280 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   },
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_TyreStack__W2_Tyre.002",
+    "message": "280 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ },
+ "W2_Workbench": {
+  "objects": 1,
+  "tris": 688,
+  "fail": 0,
+  "warn": 1,
+  "findings": [
+   {
+    "level": "WARN",
+    "code": "A1b",
+    "object": "W2_Workbench",
+    "message": "315 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   }
+  ]
+ }
+}

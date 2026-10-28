@@ -1,0 +1,37 @@
+{
+ "rays": {
+  "S": {
+   "total": 114,
+   "open": 114,
+   "firstHits": {
+    "COLP_Yard_S_Trailer": 114
+   }
+  },
+  "N": {
+   "total": 114,
+   "open": 114,
+   "firstHits": {
+    "COLP_Yard_N_Trailer": 114
+   }
+  }
+ },
+ "curtain": [],
+ "scripts": 0,
+ "doorPieceKinds": [
+  "Jamb",
+  "BottomBar",
+  "Head",
+  "Guide",
+  "BayNumber",
+  "Threshold",
+  "WallPackLens",
+  "WallPack",
+  "Sign",
+  "Flood",
+  "DoorLight",
+  "Drum"
+ ],
+ "doorChildren": 34,
+ "doorAttrs": [],
+ "prompts": 0
+}

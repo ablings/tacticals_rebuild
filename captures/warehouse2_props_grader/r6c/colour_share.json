@@ -1,0 +1,454 @@
+{
+ "W2_FireBarrel__W2_FireBarrel": {
+  "area": 29.290670088327307,
+  "buried": 0.10609520326570854,
+  "classes": {
+   "red": 23.65313974822815,
+   "other": 0.19367629178911494,
+   "wood_brown": 0.4692737577886573,
+   "neutral": 4.974580290521369
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_FireBarrel__W2_FireBarrel_Puddle": {
+  "area": 17.365352679512764,
+  "buried": 0.0,
+  "classes": {
+   "dark": 17.365352679512757
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_FireBarrel_Burnt__W2_FireBarrel_Burnt": {
+  "area": 37.80905165300901,
+  "buried": 0.0,
+  "classes": {
+   "dark": 25.580211495500155,
+   "wood_brown": 7.454595634733438,
+   "orange_yellow": 0.7066548771955268,
+   "other": 2.8118538004950313,
+   "red": 1.2048707136074395,
+   "neutral": 0.05086513147737027
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_FireBarrel_Burnt__W2_FireBarrel_BurntLid": {
+  "area": 6.638107645085044,
+  "buried": 0.0,
+  "classes": {
+   "dark": 2.873640601895587,
+   "wood_brown": 3.478509652869272,
+   "red": 0.032151514488543614,
+   "orange_yellow": 0.2538058758316439
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_OilDrum_Grey": {
+  "area": 26.821359048363423,
+  "buried": 0.10609544740686802,
+  "classes": {
+   "neutral": 23.746077494145325,
+   "other": 1.2699757222120116,
+   "wood_brown": 1.6318320041891703,
+   "red": 0.17347382781689868
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_OilDrum_Black": {
+  "area": 26.820793995537894,
+  "buried": 0.10609544740686802,
+  "classes": {
+   "wood_brown": 6.967990819253209,
+   "neutral": 18.862266258568365,
+   "orange_yellow": 0.9413716241409563,
+   "red": 0.017275564253569593,
+   "other": 0.03188972932174505
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_Low__W2_RifleCrate": {
+  "area": 105.70225903478043,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 96.21797473413973,
+   "neutral": 9.484284300642557
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_Low__W2_RifleCrate.001": {
+  "area": 102.55296461312885,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 93.27377410934058,
+   "neutral": 9.279190503789147
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_Tall__W2_TallCrate": {
+  "area": 268.1971940272136,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 256.80916695474974,
+   "neutral": 11.388027072466858
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_TallPly__W2_TallCrate_Ply": {
+  "area": 294.49773337012874,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 284.50308865050533,
+   "neutral": 9.994644719601729
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_Wall__W2_LongCrate": {
+  "area": 234.36999690171933,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 224.53872478423256,
+   "neutral": 9.831272117454864
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_Wall__W2_SupplyCrate": {
+  "area": 151.09541789384815,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 107.48951617544748,
+   "wood_brown": 43.605901718392666
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_Wall__W2_SteelCrate": {
+  "area": 199.66811787325753,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 194.49246895800425,
+   "other": 2.119444739286868,
+   "wood_brown": 2.7351065097595426,
+   "greenish_grey": 0.2543694799403287,
+   "green": 0.0333447777346063,
+   "dark": 0.03338340853571643
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Cover_Wall__W2_WallJoint": {
+  "area": 27.461109073099454,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 27.41081037198312,
+   "dark": 0.05029870111695777
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_SupplyCrate": {
+  "area": 151.09541789384815,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 108.1115755436395,
+   "wood_brown": 42.98384235020047
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_SteelCrate": {
+  "area": 199.66811787325753,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 193.9802806806269,
+   "other": 2.4727692017558045,
+   "wood_brown": 2.816656417872846,
+   "greenish_grey": 0.33011585921989967,
+   "green": 0.03333965926847009,
+   "dark": 0.03495605451709945
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_LongCrate": {
+  "area": 238.73856221348478,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 228.54935896671947,
+   "neutral": 10.189203246772449
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_AmmoCan": {
+  "area": 35.27144459968762,
+  "buried": 0.23789839060598933,
+  "classes": {
+   "green": 24.961327804808793,
+   "wood_brown": 5.222689476605859,
+   "greenish_grey": 1.602075551576838,
+   "neutral": 3.48535176669596
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_RollDoor_Open__W2_RollDoor_Frame": {
+  "area": 324.44697319139584,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 324.2293935203035,
+   "wood_brown": 0.20083490502027587,
+   "red": 0.016744766069863384
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_RollDoor_Open__W2_RollDoor_BottomBar": {
+  "area": 27.557440700081017,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 26.874332229184684,
+   "other": 0.3351674644728561,
+   "wood_brown": 0.281398448290881,
+   "red": 0.017853998579947617,
+   "dark": 0.030722920260954918,
+   "green": 0.017965639292190562
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_RollDoor_Open__W2_RollDoor_Control": {
+  "area": 11.207825981070394,
+  "buried": 0.13225053170952716,
+  "classes": {
+   "neutral": 10.077376841262282,
+   "other": 0.08608552408018486,
+   "wood_brown": 0.6896218365111436,
+   "green": 0.17737096317865494,
+   "red": 0.1773708160381524
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_RollDoor_HalfOpen__W2_RollDoor_Frame": {
+  "area": 324.44697319139584,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 324.1080134972017,
+   "dark": 0.01750017842157364,
+   "wood_brown": 0.2712643566716365,
+   "green": 0.050195159098788134
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_RollDoor_HalfOpen__W2_RollDoor_Curtain_Half": {
+  "area": 391.660317833676,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 388.76227799142333,
+   "wood_brown": 1.680237305044482,
+   "other": 1.2178025371806875
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_RollDoor_HalfOpen__W2_RollDoor_Control": {
+  "area": 11.207825981070394,
+  "buried": 0.13225053170952716,
+  "classes": {
+   "neutral": 10.068204610430596,
+   "wood_brown": 0.768106978902383,
+   "other": 0.01677261252063265,
+   "green": 0.17737096317865494,
+   "red": 0.1773708160381524
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Pallet": {
+  "area": 60.20239955758666,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 60.20239955758419
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_PalletSacks__W2_Pallet": {
+  "area": 60.20239955758666,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 60.20239955758419
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_PalletSacks__W2_PalletSacks_Load": {
+  "area": 68.08069563784645,
+  "buried": 57.74258380969464,
+  "classes": {
+   "wood_brown": 30.322581670830782,
+   "neutral": 37.758113967015646
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Tyre": {
+  "area": 14.232378473633828,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 7.487645968034727,
+   "dark": 4.902332673311336,
+   "wood_brown": 1.8423998322877768
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_TyreStack__W2_Tyre": {
+  "area": 14.232378473633828,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 7.306491603441797,
+   "dark": 5.138846482636472,
+   "wood_brown": 1.7870403875555652
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_TyreStack__W2_Tyre.001": {
+  "area": 14.232372911617517,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 7.638279761532447,
+   "dark": 4.972455861271653,
+   "wood_brown": 1.621637288813423
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_TyreStack__W2_Tyre.002": {
+  "area": 14.232384144818964,
+  "buried": 0.0,
+  "classes": {
+   "dark": 5.309501036218446,
+   "neutral": 6.929851882507841,
+   "wood_brown": 1.9930312260926613
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_ShelfRack__W2_ShelfRack": {
+  "area": 275.80011140942594,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 120.7687443278722,
+   "wood_brown": 154.83936706183465,
+   "other": 0.19200001968514044
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_ShelfRack__W2_ShelfRack_Load": {
+  "area": 108.91892606969071,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 108.91892606969094
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Workbench": {
+  "area": 134.75556906156868,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 77.87201902355805,
+   "neutral": 54.36076834268373,
+   "other": 0.13607076850056568,
+   "dark": 2.386710926829446
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_HighBayLamp__W2_HighBayLamp_Bell": {
+  "area": 25.014663846534336,
+  "buried": 0.6606759228026129,
+  "classes": {
+   "neutral": 17.493159562745628,
+   "wood_brown": 7.521504283788622
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_HighBayLamp__W2_HighBayLamp_Lens": {
+  "area": 8.969205129958656,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 8.969205129958679
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_HighBayLamp__W2_HighBayLamp_Rod": {
+  "area": 1.4934653412969412,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 1.4934653412969408
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_Body": {
+  "area": 131.3495093491762,
+  "buried": 0.0,
+  "classes": {
+   "wood_brown": 44.376762660015466,
+   "neutral": 84.93757381383914,
+   "dark": 2.0184297323900564,
+   "greenish_grey": 0.01674314293220667
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_Mast": {
+  "area": 26.143745441473392,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 23.388882649411617,
+   "other": 0.033662340989800005,
+   "wood_brown": 0.40819631947257695,
+   "dark": 2.31300413159929
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_Forks": {
+  "area": 25.12841593567374,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 21.307442194648896,
+   "wood_brown": 1.612569572563197,
+   "dark": 2.208404168461731
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_Steer": {
+  "area": 1.555376307439268,
+  "buried": 0.0,
+  "classes": {
+   "neutral": 0.8278241676580431,
+   "wood_brown": 0.7275521397812252
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_WheelF": {
+  "area": 10.737996450655752,
+  "buried": 1.3246416156044376,
+  "classes": {
+   "dark": 5.66458822777094,
+   "neutral": 2.613393915335535,
+   "wood_brown": 2.4600143075492733
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_WheelF.001": {
+  "area": 10.737996650407574,
+  "buried": 1.3246416155927236,
+  "classes": {
+   "dark": 5.719614981697016,
+   "neutral": 2.7528955481627637,
+   "wood_brown": 2.2654861205477945
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_WheelR": {
+  "area": 7.627685108135091,
+  "buried": 0.9624955609239629,
+  "classes": {
+   "dark": 2.338716716163606,
+   "neutral": 3.7608862858543164,
+   "wood_brown": 1.5280821061171623
+  },
+  "colourspace": "sRGB"
+ },
+ "W2_Forklift__W2_Forklift_WheelR.001": {
+  "area": 7.627685240128006,
+  "buried": 0.9624955672589316,
+  "classes": {
+   "dark": 2.435456595706539,
+   "neutral": 3.58845661893694,
+   "wood_brown": 1.6037720254845202
+  },
+  "colourspace": "sRGB"
+ }
+}

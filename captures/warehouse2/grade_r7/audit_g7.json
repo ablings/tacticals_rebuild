@@ -1,0 +1,86 @@
+{
+ "built": {
+  "exterior": {
+   "stats": {
+    "lights": 4,
+    "openSkyShare": 100,
+    "neon": 6,
+    "indoor": false,
+    "walkCells": 143,
+    "meshparts": 0,
+    "parts": 284
+   },
+   "fails": 0,
+   "opts": "exterior attribute Indoor = false",
+   "findings": [
+    {
+     "message": "23 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
+     "level": "WARN",
+     "where": "Warehouse2Exterior",
+     "code": "HOLE"
+    }
+   ],
+   "warns": 1
+  },
+  "hall": {
+   "stats": {
+    "lights": 28,
+    "openSkyShare": 0,
+    "neon": 18,
+    "indoor": true,
+    "walkCells": 603,
+    "meshparts": 4,
+    "parts": 1167
+   },
+   "fails": 0,
+   "opts": "map attribute Indoor = true",
+   "findings": [],
+   "warns": 0
+  }
+ },
+ "control": {
+  "bbox": {
+   "n0": -69,
+   "n1": 56,
+   "e1": 39,
+   "e0": -39
+  },
+  "reached": 7967,
+  "nOutside": 384
+ },
+ "sky": {
+  "lamp": 28,
+  "roof": 6705,
+  "glazing": 0,
+  "hole": 0,
+  "cells": 8526,
+  "holes": [],
+  "skylight": 1793
+ },
+ "play": {
+  "fails": 0,
+  "stats": {
+   "lights": 28,
+   "openSkyShare": 0,
+   "neon": 18,
+   "indoor": true,
+   "walkCells": 603,
+   "meshparts": 4,
+   "parts": 1167
+  },
+  "findings": [],
+  "warns": 0
+ },
+ "flood": {
+  "reached": 7564,
+  "bbox": {
+   "n0": -56,
+   "n1": 56,
+   "e1": 39,
+   "e0": -39
+  },
+  "outside": [],
+  "capped": false,
+  "nOutside": 0
+ }
+}

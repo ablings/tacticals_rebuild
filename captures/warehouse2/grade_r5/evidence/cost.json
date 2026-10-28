@@ -1,0 +1,141 @@
+{
+ "cams": [
+  {
+   "lights": 46,
+   "tris": 22196,
+   "cam": "wh01_spawnA_eye_facing",
+   "surfaceGuis": 23,
+   "parts": 999
+  },
+  {
+   "lights": 46,
+   "tris": 21908,
+   "cam": "wh02_spawnB_eye_facing",
+   "surfaceGuis": 23,
+   "parts": 975
+  },
+  {
+   "lights": 34,
+   "tris": 14948,
+   "cam": "wh04_west_lane_from_A",
+   "surfaceGuis": 17,
+   "parts": 727
+  },
+  {
+   "lights": 36,
+   "tris": 11928,
+   "cam": "wh05_flush_pair_P03_L03",
+   "surfaceGuis": 14,
+   "parts": 532
+  },
+  {
+   "lights": 39,
+   "tris": 14472,
+   "cam": "wh06_front_pair_P04_L05",
+   "surfaceGuis": 16,
+   "parts": 707
+  },
+  {
+   "lights": 44,
+   "tris": 17876,
+   "cam": "wh07_lone_low_L07",
+   "surfaceGuis": 18,
+   "parts": 827
+  },
+  {
+   "lights": 40,
+   "tris": 16916,
+   "cam": "wh08_overshoulder_behind_L05",
+   "surfaceGuis": 16,
+   "parts": 755
+  },
+  {
+   "lights": 31,
+   "tris": 8360,
+   "cam": "wh09_centre_toward_A",
+   "surfaceGuis": 12,
+   "parts": 500
+  },
+  {
+   "lights": 39,
+   "tris": 13612,
+   "cam": "wh10_middle_walls_W01_W02",
+   "surfaceGuis": 11,
+   "parts": 671
+  },
+  {
+   "lights": 25,
+   "tris": 1532,
+   "cam": "wh11_upshot_centre",
+   "surfaceGuis": 0,
+   "parts": 95
+  },
+  {
+   "lights": 46,
+   "tris": 20516,
+   "cam": "g5_long_axis_to_N_door",
+   "surfaceGuis": 20,
+   "parts": 887
+  },
+  {
+   "lights": 15,
+   "tris": 3688,
+   "cam": "g5_S_door_from_mid",
+   "surfaceGuis": 5,
+   "parts": 203
+  },
+  {
+   "lights": 15,
+   "tris": 3880,
+   "cam": "g5_N_door_from_mid",
+   "surfaceGuis": 5,
+   "parts": 219
+  },
+  {
+   "lights": 8,
+   "tris": 1552,
+   "cam": "g5_S_yard_from_door",
+   "surfaceGuis": 1,
+   "parts": 79
+  },
+  {
+   "lights": 8,
+   "tris": 1552,
+   "cam": "g5_N_yard_from_door",
+   "surfaceGuis": 1,
+   "parts": 79
+  },
+  {
+   "lights": 8,
+   "tris": 1204,
+   "cam": "g5_S_yard_up",
+   "surfaceGuis": 3,
+   "parts": 86
+  },
+  {
+   "lights": 46,
+   "tris": 23336,
+   "cam": "g5_hall_corner_SW",
+   "surfaceGuis": 25,
+   "parts": 1061
+  },
+  {
+   "lights": 42,
+   "tris": 13696,
+   "cam": "g5_ceiling_side",
+   "surfaceGuis": 11,
+   "parts": 666
+  }
+ ],
+ "total": {
+  "lights": 46,
+  "classes": {
+   "WedgePart": 52,
+   "Part/Cylinder": 168,
+   "MeshPart": 4,
+   "Part/Block": 966
+  },
+  "neon": 25,
+  "parts": 1190
+ }
+}

@@ -1,0 +1,7322 @@
+{
+ "W2_AmmoCan.fbx": {
+  "W2_AmmoCan": {
+   "tris": 92,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "15d0ff8a35",
+   "lo": [
+    -1.2,
+    -0.9,
+    -0.0
+   ],
+   "hi": [
+    1.2,
+    0.9,
+    1.189
+   ],
+   "size": [
+    2.4,
+    1.8,
+    1.189
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_AmmoCan.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_AmmoCan.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_AmmoCan.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_AmmoCan.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Cover_Low.fbx": {
+  "W2_Cover_Low__W2_RifleCrate": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "cf16670564",
+   "lo": [
+    -3.0,
+    -1.0,
+    -0.0
+   ],
+   "hi": [
+    3.0,
+    1.0,
+    1.7
+   ],
+   "size": [
+    6.0,
+    2.0,
+    1.7
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesCover",
+     "imgs": [
+      {
+       "name": "W2_CratesCover_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "db01666cbc",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_color.png"
+      },
+      {
+       "name": "W2_CratesCover_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9f3414ca30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_normal.png"
+      },
+      {
+       "name": "W2_CratesCover_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "75983e2f3b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_rough.png"
+      },
+      {
+       "name": "W2_CratesCover_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c383753030",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Low__W2_RifleCrate.001": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "cf16670564",
+   "lo": [
+    -2.965,
+    -0.965,
+    1.67
+   ],
+   "hi": [
+    2.965,
+    0.965,
+    3.37
+   ],
+   "size": [
+    5.93,
+    1.93,
+    1.7
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesCover",
+     "imgs": [
+      {
+       "name": "W2_CratesCover_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "db01666cbc",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_color.png"
+      },
+      {
+       "name": "W2_CratesCover_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9f3414ca30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_normal.png"
+      },
+      {
+       "name": "W2_CratesCover_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "75983e2f3b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_rough.png"
+      },
+      {
+       "name": "W2_CratesCover_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c383753030",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Low.fbm\\W2_CratesCover_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    -3.1416
+   ],
+   "scale": [
+    0.9883,
+    0.965,
+    1.0
+   ]
+  }
+ },
+ "W2_Cover_Tall.fbx": {
+  "W2_Cover_Tall__W2_TallCrate": {
+   "tris": 348,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "ffdb5ee2c8",
+   "lo": [
+    -2.5,
+    -2.0,
+    -0.0
+   ],
+   "hi": [
+    2.5,
+    2.0,
+    7.0
+   ],
+   "size": [
+    5.0,
+    4.0,
+    7.0
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesCover",
+     "imgs": [
+      {
+       "name": "W2_CratesCover_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "db01666cbc",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Tall.fbm\\W2_CratesCover_color.png"
+      },
+      {
+       "name": "W2_CratesCover_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9f3414ca30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Tall.fbm\\W2_CratesCover_normal.png"
+      },
+      {
+       "name": "W2_CratesCover_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "75983e2f3b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Tall.fbm\\W2_CratesCover_rough.png"
+      },
+      {
+       "name": "W2_CratesCover_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c383753030",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Tall.fbm\\W2_CratesCover_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Cover_TallPly.fbx": {
+  "W2_Cover_TallPly__W2_TallCrate_Ply": {
+   "tris": 396,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "0a118eab6c",
+   "lo": [
+    -2.5,
+    -2.0,
+    -0.0
+   ],
+   "hi": [
+    2.5,
+    2.0,
+    7.0
+   ],
+   "size": [
+    5.0,
+    4.0,
+    7.0
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesPly",
+     "imgs": [
+      {
+       "name": "W2_CratesPly_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "4273dff236",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_TallPly.fbm\\W2_CratesPly_color.png"
+      },
+      {
+       "name": "W2_CratesPly_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5e64bed0ef",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_TallPly.fbm\\W2_CratesPly_normal.png"
+      },
+      {
+       "name": "W2_CratesPly_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c795efc9d1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_TallPly.fbm\\W2_CratesPly_rough.png"
+      },
+      {
+       "name": "W2_CratesPly_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "6ecfccc83c",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_TallPly.fbm\\W2_CratesPly_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Cover_Wall.fbx": {
+  "W2_Cover_Wall__W2_LongCrate": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "5dce9dde19",
+   "lo": [
+    -4.965,
+    -1.465,
+    3.47
+   ],
+   "hi": [
+    4.965,
+    1.465,
+    6.97
+   ],
+   "size": [
+    9.93,
+    2.93,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    0.993,
+    0.9767,
+    1.0
+   ]
+  },
+  "W2_Cover_Wall__W2_SteelCrate": {
+   "tris": 256,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "b0fd6b51d4",
+   "lo": [
+    0.0,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    5.0,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Wall__W2_SupplyCrate": {
+   "tris": 532,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "331883f77f",
+   "lo": [
+    -5.0,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    0.0,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Wall__W2_WallJoint": {
+   "tris": 12,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "fe12f3915c",
+   "lo": [
+    -0.34,
+    -1.37,
+    0.06
+   ],
+   "hi": [
+    0.34,
+    1.37,
+    3.53
+   ],
+   "size": [
+    0.68,
+    2.74,
+    3.47
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Cover_Wall.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_FireBarrel.fbx": {
+  "W2_FireBarrel__W2_FireBarrel": {
+   "tris": 1192,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "7783becbc0",
+   "lo": [
+    -1.049,
+    -1.05,
+    -0.0
+   ],
+   "hi": [
+    1.05,
+    1.047,
+    3.4
+   ],
+   "size": [
+    2.099,
+    2.097,
+    3.4
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_FireBarrel__W2_FireBarrel_Puddle": {
+   "tris": 284,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "13c7d652a7",
+   "lo": [
+    -1.46,
+    -1.949,
+    -0.0
+   ],
+   "hi": [
+    2.087,
+    1.463,
+    0.12
+   ],
+   "size": [
+    3.547,
+    3.412,
+    0.12
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_FireBarrel_Burnt.fbx": {
+  "W2_FireBarrel_Burnt__W2_FireBarrel_Burnt": {
+   "tris": 1792,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "db42aa87e7",
+   "lo": [
+    -1.088,
+    -1.252,
+    -0.0
+   ],
+   "hi": [
+    1.091,
+    1.33,
+    2.974
+   ],
+   "size": [
+    2.179,
+    2.583,
+    2.974
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_FireBarrel_Burnt__W2_FireBarrel_BurntLid": {
+   "tris": 160,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "a4c0aeec02",
+   "lo": [
+    1.627,
+    -2.073,
+    -0.045
+   ],
+   "hi": [
+    3.573,
+    -0.127,
+    0.29
+   ],
+   "size": [
+    1.945,
+    1.945,
+    0.335
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_FireBarrel_Burnt.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    -0.0,
+    0.4363
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Forklift.fbx": {
+  "W2_Forklift__W2_Forklift_Body": {
+   "tris": 328,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "6b1cb59cc2",
+   "lo": [
+    -1.72,
+    -3.1,
+    0.45
+   ],
+   "hi": [
+    1.72,
+    3.62,
+    6.05
+   ],
+   "size": [
+    3.44,
+    6.72,
+    5.6
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_Forks": {
+   "tris": 164,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "ace4fb069a",
+   "lo": [
+    -1.15,
+    -6.65,
+    0.12
+   ],
+   "hi": [
+    1.15,
+    -3.32,
+    3.0
+   ],
+   "size": [
+    2.3,
+    3.33,
+    2.88
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_Mast": {
+   "tris": 140,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "b55f46e7ae",
+   "lo": [
+    -0.87,
+    -3.4,
+    0.35
+   ],
+   "hi": [
+    0.87,
+    -2.89,
+    5.75
+   ],
+   "size": [
+    1.74,
+    0.51,
+    5.4
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_Steer": {
+   "tris": 316,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "c9dd6288f6",
+   "lo": [
+    -0.42,
+    -1.844,
+    3.189
+   ],
+   "hi": [
+    0.42,
+    -1.156,
+    3.711
+   ],
+   "size": [
+    0.84,
+    0.688,
+    0.523
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelF": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "525c1481b9",
+   "lo": [
+    -1.66,
+    -3.166,
+    -0.0
+   ],
+   "hi": [
+    -0.818,
+    -1.334,
+    1.86
+   ],
+   "size": [
+    0.843,
+    1.832,
+    1.86
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    -0.0,
+    -3.1416
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelF.001": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "525c1481b9",
+   "lo": [
+    0.818,
+    -3.166,
+    -0.0
+   ],
+   "hi": [
+    1.66,
+    -1.334,
+    1.86
+   ],
+   "size": [
+    0.843,
+    1.832,
+    1.86
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelR": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "fd57ed79a1",
+   "lo": [
+    -1.56,
+    1.542,
+    -0.0
+   ],
+   "hi": [
+    -0.805,
+    3.098,
+    1.58
+   ],
+   "size": [
+    0.755,
+    1.556,
+    1.58
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    -0.0,
+    -3.1416
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelR.001": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "fd57ed79a1",
+   "lo": [
+    0.805,
+    1.542,
+    -0.0
+   ],
+   "hi": [
+    1.56,
+    3.098,
+    1.58
+   ],
+   "size": [
+    0.755,
+    1.556,
+    1.58
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Forklift.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_HighBayLamp.fbx": {
+  "W2_HighBayLamp__W2_HighBayLamp_Bell": {
+   "tris": 804,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "1de95a1922",
+   "lo": [
+    -1.3,
+    -1.3,
+    -0.0
+   ],
+   "hi": [
+    1.3,
+    1.3,
+    1.8
+   ],
+   "size": [
+    2.6,
+    2.6,
+    1.8
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_HighBayLamp__W2_HighBayLamp_Lens": {
+   "tris": 112,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "477cd57c28",
+   "lo": [
+    -1.17,
+    -1.17,
+    0.14
+   ],
+   "hi": [
+    1.17,
+    1.17,
+    0.2
+   ],
+   "size": [
+    2.34,
+    2.34,
+    0.06
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_HighBayLamp__W2_HighBayLamp_Rod": {
+   "tris": 32,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "96a3035ba9",
+   "lo": [
+    -0.06,
+    -0.06,
+    1.74
+   ],
+   "hi": [
+    0.06,
+    0.06,
+    5.75
+   ],
+   "size": [
+    0.12,
+    0.12,
+    4.01
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_HighBayLamp.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_LongCrate.fbx": {
+  "W2_LongCrate": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "5dce9dde19",
+   "lo": [
+    -5.0,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    5.0,
+    1.5,
+    3.5
+   ],
+   "size": [
+    10.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_LongCrate.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_LongCrate.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_LongCrate.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_LongCrate.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_OilDrum_Black.fbx": {
+  "W2_OilDrum_Black": {
+   "tris": 1192,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "06ba99713f",
+   "lo": [
+    -1.05,
+    -1.05,
+    -0.0
+   ],
+   "hi": [
+    1.05,
+    1.05,
+    3.0
+   ],
+   "size": [
+    2.1,
+    2.1,
+    3.0
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Black.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Black.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Black.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Black.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_OilDrum_Grey.fbx": {
+  "W2_OilDrum_Grey": {
+   "tris": 1192,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "a4f82b39a1",
+   "lo": [
+    -1.05,
+    -1.05,
+    -0.0
+   ],
+   "hi": [
+    1.05,
+    1.04,
+    3.0
+   ],
+   "size": [
+    2.1,
+    2.09,
+    3.0
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Grey.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Grey.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Grey.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_OilDrum_Grey.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Pallet.fbx": {
+  "W2_Pallet": {
+   "tris": 240,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "eaff3dcbba",
+   "lo": [
+    -2.0,
+    -1.7,
+    -0.0
+   ],
+   "hi": [
+    2.0,
+    1.7,
+    0.6
+   ],
+   "size": [
+    4.0,
+    3.4,
+    0.6
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Pallet.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Pallet.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Pallet.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Pallet.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_PalletSacks.fbx": {
+  "W2_PalletSacks__W2_Pallet": {
+   "tris": 240,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "eaff3dcbba",
+   "lo": [
+    -2.0,
+    -1.7,
+    -0.0
+   ],
+   "hi": [
+    2.0,
+    1.7,
+    0.6
+   ],
+   "size": [
+    4.0,
+    3.4,
+    0.6
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_PalletSacks__W2_PalletSacks_Load": {
+   "tris": 3144,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "c82a6cb919",
+   "lo": [
+    -2.063,
+    -1.784,
+    0.572
+   ],
+   "hi": [
+    2.056,
+    1.797,
+    2.122
+   ],
+   "size": [
+    4.119,
+    3.58,
+    1.55
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_PalletSacks.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Props_kit.fbx": {
+  "K_Marker": {
+   "tris": 36,
+   "ngons": 18,
+   "uv_layers": [],
+   "uvh": null,
+   "lo": [
+    8.0,
+    29.0,
+    -0.0
+   ],
+   "hi": [
+    18.0,
+    35.0,
+    7.0
+   ],
+   "size": [
+    10.0,
+    6.0,
+    7.0
+   ],
+   "mats": [
+    {
+     "name": "K_Grey",
+     "imgs": []
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "K_ScaleCube": {
+   "tris": 12,
+   "ngons": 6,
+   "uv_layers": [],
+   "uvh": null,
+   "lo": [
+    -5.0,
+    25.0,
+    -0.0
+   ],
+   "hi": [
+    5.0,
+    35.0,
+    10.0
+   ],
+   "size": [
+    10.0,
+    10.0,
+    10.0
+   ],
+   "mats": [
+    {
+     "name": "K_Grey",
+     "imgs": []
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_AmmoCan": {
+   "tris": 92,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "15d0ff8a35",
+   "lo": [
+    124.408,
+    -0.9,
+    -0.0
+   ],
+   "hi": [
+    126.808,
+    0.9,
+    1.189
+   ],
+   "size": [
+    2.4,
+    1.8,
+    1.189
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Low__W2_RifleCrate": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "cf16670564",
+   "lo": [
+    36.408,
+    -1.0,
+    -0.0
+   ],
+   "hi": [
+    42.408,
+    1.0,
+    1.7
+   ],
+   "size": [
+    6.0,
+    2.0,
+    1.7
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesCover",
+     "imgs": [
+      {
+       "name": "W2_CratesCover_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "db01666cbc",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_color.png"
+      },
+      {
+       "name": "W2_CratesCover_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9f3414ca30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_normal.png"
+      },
+      {
+       "name": "W2_CratesCover_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "75983e2f3b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_rough.png"
+      },
+      {
+       "name": "W2_CratesCover_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c383753030",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Low__W2_RifleCrate.001": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "cf16670564",
+   "lo": [
+    36.443,
+    -0.965,
+    1.67
+   ],
+   "hi": [
+    42.373,
+    0.965,
+    3.37
+   ],
+   "size": [
+    5.93,
+    1.93,
+    1.7
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesCover",
+     "imgs": [
+      {
+       "name": "W2_CratesCover_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "db01666cbc",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_color.png"
+      },
+      {
+       "name": "W2_CratesCover_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9f3414ca30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_normal.png"
+      },
+      {
+       "name": "W2_CratesCover_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "75983e2f3b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_rough.png"
+      },
+      {
+       "name": "W2_CratesCover_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c383753030",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    -3.1416
+   ],
+   "scale": [
+    0.9883,
+    0.965,
+    1.0
+   ]
+  },
+  "W2_Cover_TallPly__W2_TallCrate_Ply": {
+   "tris": 396,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "0a118eab6c",
+   "lo": [
+    59.408,
+    -2.0,
+    -0.0
+   ],
+   "hi": [
+    64.408,
+    2.0,
+    7.0
+   ],
+   "size": [
+    5.0,
+    4.0,
+    7.0
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesPly",
+     "imgs": [
+      {
+       "name": "W2_CratesPly_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "4273dff236",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesPly_color.png"
+      },
+      {
+       "name": "W2_CratesPly_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5e64bed0ef",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesPly_normal.png"
+      },
+      {
+       "name": "W2_CratesPly_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c795efc9d1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesPly_rough.png"
+      },
+      {
+       "name": "W2_CratesPly_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "6ecfccc83c",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesPly_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Tall__W2_TallCrate": {
+   "tris": 348,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "ffdb5ee2c8",
+   "lo": [
+    48.408,
+    -2.0,
+    -0.0
+   ],
+   "hi": [
+    53.408,
+    2.0,
+    7.0
+   ],
+   "size": [
+    5.0,
+    4.0,
+    7.0
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesCover",
+     "imgs": [
+      {
+       "name": "W2_CratesCover_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "db01666cbc",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_color.png"
+      },
+      {
+       "name": "W2_CratesCover_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9f3414ca30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_normal.png"
+      },
+      {
+       "name": "W2_CratesCover_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "75983e2f3b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_rough.png"
+      },
+      {
+       "name": "W2_CratesCover_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c383753030",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesCover_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Wall__W2_LongCrate": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "5dce9dde19",
+   "lo": [
+    70.443,
+    -1.465,
+    3.47
+   ],
+   "hi": [
+    80.373,
+    1.465,
+    6.97
+   ],
+   "size": [
+    9.93,
+    2.93,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    0.993,
+    0.9767,
+    1.0
+   ]
+  },
+  "W2_Cover_Wall__W2_SteelCrate": {
+   "tris": 256,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "b0fd6b51d4",
+   "lo": [
+    75.408,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    80.408,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Wall__W2_SupplyCrate": {
+   "tris": 532,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "331883f77f",
+   "lo": [
+    70.408,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    75.408,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Cover_Wall__W2_WallJoint": {
+   "tris": 12,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "fe12f3915c",
+   "lo": [
+    75.068,
+    -1.37,
+    0.06
+   ],
+   "hi": [
+    75.748,
+    1.37,
+    3.53
+   ],
+   "size": [
+    0.68,
+    2.74,
+    3.47
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_FireBarrel_Burnt__W2_FireBarrel_Burnt": {
+   "tris": 1792,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "db42aa87e7",
+   "lo": [
+    9.547,
+    -1.252,
+    -0.0
+   ],
+   "hi": [
+    11.726,
+    1.33,
+    2.974
+   ],
+   "size": [
+    2.179,
+    2.583,
+    2.974
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_FireBarrel_Burnt__W2_FireBarrel_BurntLid": {
+   "tris": 160,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "a4c0aeec02",
+   "lo": [
+    12.262,
+    -2.073,
+    -0.045
+   ],
+   "hi": [
+    14.208,
+    -0.127,
+    0.29
+   ],
+   "size": [
+    1.945,
+    1.945,
+    0.335
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    -0.0,
+    0.4363
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_FireBarrel__W2_FireBarrel": {
+   "tris": 1192,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "7783becbc0",
+   "lo": [
+    0.411,
+    -1.05,
+    -0.0
+   ],
+   "hi": [
+    2.51,
+    1.047,
+    3.4
+   ],
+   "size": [
+    2.099,
+    2.097,
+    3.4
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_FireBarrel__W2_FireBarrel_Puddle": {
+   "tris": 284,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "13c7d652a7",
+   "lo": [
+    -0.0,
+    -1.949,
+    -0.0
+   ],
+   "hi": [
+    3.547,
+    1.463,
+    0.12
+   ],
+   "size": [
+    3.547,
+    3.412,
+    0.12
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_Body": {
+   "tris": 328,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "6b1cb59cc2",
+   "lo": [
+    263.646,
+    -3.1,
+    0.45
+   ],
+   "hi": [
+    267.086,
+    3.62,
+    6.05
+   ],
+   "size": [
+    3.44,
+    6.72,
+    5.6
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_Forks": {
+   "tris": 164,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "ace4fb069a",
+   "lo": [
+    264.216,
+    -6.65,
+    0.12
+   ],
+   "hi": [
+    266.516,
+    -3.32,
+    3.0
+   ],
+   "size": [
+    2.3,
+    3.33,
+    2.88
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_Mast": {
+   "tris": 140,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "b55f46e7ae",
+   "lo": [
+    264.496,
+    -3.4,
+    0.35
+   ],
+   "hi": [
+    266.236,
+    -2.89,
+    5.75
+   ],
+   "size": [
+    1.74,
+    0.51,
+    5.4
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_Steer": {
+   "tris": 316,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "c9dd6288f6",
+   "lo": [
+    264.946,
+    -1.844,
+    3.189
+   ],
+   "hi": [
+    265.786,
+    -1.156,
+    3.711
+   ],
+   "size": [
+    0.84,
+    0.688,
+    0.523
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelF": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "525c1481b9",
+   "lo": [
+    263.706,
+    -3.166,
+    -0.0
+   ],
+   "hi": [
+    264.548,
+    -1.334,
+    1.86
+   ],
+   "size": [
+    0.842,
+    1.832,
+    1.86
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    -0.0,
+    -3.1416
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelF.001": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "525c1481b9",
+   "lo": [
+    266.183,
+    -3.166,
+    -0.0
+   ],
+   "hi": [
+    267.026,
+    -1.334,
+    1.86
+   ],
+   "size": [
+    0.842,
+    1.832,
+    1.86
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelR": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "fd57ed79a1",
+   "lo": [
+    263.806,
+    1.542,
+    -0.0
+   ],
+   "hi": [
+    264.561,
+    3.098,
+    1.58
+   ],
+   "size": [
+    0.755,
+    1.556,
+    1.58
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    -0.0,
+    -3.1416
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Forklift__W2_Forklift_WheelR.001": {
+   "tris": 664,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "fd57ed79a1",
+   "lo": [
+    266.171,
+    1.542,
+    -0.0
+   ],
+   "hi": [
+    266.926,
+    3.098,
+    1.58
+   ],
+   "size": [
+    0.755,
+    1.556,
+    1.58
+   ],
+   "mats": [
+    {
+     "name": "W2_Forklift",
+     "imgs": [
+      {
+       "name": "W2_Forklift_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "20fb46220b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_color.png"
+      },
+      {
+       "name": "W2_Forklift_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "fa1c1d25a1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_normal.png"
+      },
+      {
+       "name": "W2_Forklift_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "46be762a0d",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_rough.png"
+      },
+      {
+       "name": "W2_Forklift_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "176d3d7ccf",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Forklift_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_HighBayLamp__W2_HighBayLamp_Bell": {
+   "tris": 804,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "1de95a1922",
+   "lo": [
+    255.046,
+    -1.3,
+    -0.0
+   ],
+   "hi": [
+    257.646,
+    1.3,
+    1.8
+   ],
+   "size": [
+    2.6,
+    2.6,
+    1.8
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_HighBayLamp__W2_HighBayLamp_Lens": {
+   "tris": 112,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "477cd57c28",
+   "lo": [
+    255.176,
+    -1.17,
+    0.14
+   ],
+   "hi": [
+    257.516,
+    1.17,
+    0.2
+   ],
+   "size": [
+    2.34,
+    2.34,
+    0.06
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_HighBayLamp__W2_HighBayLamp_Rod": {
+   "tris": 32,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "96a3035ba9",
+   "lo": [
+    256.286,
+    -0.06,
+    1.74
+   ],
+   "hi": [
+    256.406,
+    0.06,
+    5.75
+   ],
+   "size": [
+    0.12,
+    0.12,
+    4.01
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_LongCrate": {
+   "tris": 556,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "5dce9dde19",
+   "lo": [
+    108.408,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    118.408,
+    1.5,
+    3.5
+   ],
+   "size": [
+    10.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_OilDrum_Black": {
+   "tris": 1192,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "06ba99713f",
+   "lo": [
+    28.308,
+    -1.05,
+    -0.0
+   ],
+   "hi": [
+    30.408,
+    1.05,
+    3.0
+   ],
+   "size": [
+    2.1,
+    2.1,
+    3.0
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_OilDrum_Grey": {
+   "tris": 1192,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "a4f82b39a1",
+   "lo": [
+    20.208,
+    -1.05,
+    -0.0
+   ],
+   "hi": [
+    22.308,
+    1.04,
+    3.0
+   ],
+   "size": [
+    2.1,
+    2.09,
+    3.0
+   ],
+   "mats": [
+    {
+     "name": "W2_Barrels",
+     "imgs": [
+      {
+       "name": "W2_Barrels_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "dd923811f5",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_color.png"
+      },
+      {
+       "name": "W2_Barrels_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "2f052c0b71",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_normal.png"
+      },
+      {
+       "name": "W2_Barrels_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "d6d94f2b48",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_rough.png"
+      },
+      {
+       "name": "W2_Barrels_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5ec1abfd49",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Barrels_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Pallet": {
+   "tris": 240,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "eaff3dcbba",
+   "lo": [
+    192.008,
+    -1.7,
+    -0.0
+   ],
+   "hi": [
+    196.008,
+    1.7,
+    0.6
+   ],
+   "size": [
+    4.0,
+    3.4,
+    0.6
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_PalletSacks__W2_Pallet": {
+   "tris": 240,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "eaff3dcbba",
+   "lo": [
+    202.071,
+    -1.7,
+    -0.0
+   ],
+   "hi": [
+    206.071,
+    1.7,
+    0.6
+   ],
+   "size": [
+    4.0,
+    3.4,
+    0.6
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_PalletSacks__W2_PalletSacks_Load": {
+   "tris": 3144,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "c82a6cb919",
+   "lo": [
+    202.008,
+    -1.784,
+    0.572
+   ],
+   "hi": [
+    206.127,
+    1.797,
+    2.122
+   ],
+   "size": [
+    4.119,
+    3.58,
+    1.55
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_HalfOpen__W2_RollDoor_Control": {
+   "tris": 148,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "4bb6dd53e5",
+   "lo": [
+    162.408,
+    -0.52,
+    4.25
+   ],
+   "hi": [
+    164.378,
+    0.03,
+    15.17
+   ],
+   "size": [
+    1.97,
+    0.55,
+    10.92
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_HalfOpen__W2_RollDoor_Curtain_Half": {
+   "tris": 628,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "9e9f0816ce",
+   "lo": [
+    164.778,
+    -0.728,
+    7.0
+   ],
+   "hi": [
+    185.338,
+    -0.24,
+    14.86
+   ],
+   "size": [
+    20.56,
+    0.488,
+    7.86
+   ],
+   "mats": [
+    {
+     "name": "W2_DoorCurtain",
+     "imgs": [
+      {
+       "name": "W2_DoorCurtain_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "429acce284",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_DoorCurtain_color.png"
+      },
+      {
+       "name": "W2_DoorCurtain_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7ced310191",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_DoorCurtain_normal.png"
+      },
+      {
+       "name": "W2_DoorCurtain_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "e60b194937",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_DoorCurtain_rough.png"
+      },
+      {
+       "name": "W2_DoorCurtain_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "6f0bec0775",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_DoorCurtain_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_HalfOpen__W2_RollDoor_Frame": {
+   "tris": 216,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "194c74a78f",
+   "lo": [
+    164.108,
+    -2.48,
+    -0.0
+   ],
+   "hi": [
+    186.008,
+    0.11,
+    16.28
+   ],
+   "size": [
+    21.9,
+    2.59,
+    16.28
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_Open__W2_RollDoor_BottomBar": {
+   "tris": 56,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "a36cb4fbd4",
+   "lo": [
+    135.208,
+    -0.728,
+    13.6
+   ],
+   "hi": [
+    155.708,
+    -0.24,
+    14.0
+   ],
+   "size": [
+    20.5,
+    0.488,
+    0.4
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_Open__W2_RollDoor_Control": {
+   "tris": 148,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "4bb6dd53e5",
+   "lo": [
+    132.808,
+    -0.52,
+    4.25
+   ],
+   "hi": [
+    134.778,
+    0.03,
+    15.17
+   ],
+   "size": [
+    1.97,
+    0.55,
+    10.92
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_Open__W2_RollDoor_Frame": {
+   "tris": 216,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "194c74a78f",
+   "lo": [
+    134.508,
+    -2.48,
+    -0.0
+   ],
+   "hi": [
+    156.408,
+    0.11,
+    16.28
+   ],
+   "size": [
+    21.9,
+    2.59,
+    16.28
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_ShelfRack__W2_ShelfRack": {
+   "tris": 396,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "dfeaddacff",
+   "lo": [
+    229.046,
+    -1.25,
+    -0.0
+   ],
+   "hi": [
+    237.046,
+    1.25,
+    8.0
+   ],
+   "size": [
+    8.0,
+    2.5,
+    8.0
+   ],
+   "mats": [
+    {
+     "name": "W2_Rack",
+     "imgs": [
+      {
+       "name": "W2_Rack_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "464a764775",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_color.png"
+      },
+      {
+       "name": "W2_Rack_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "c43a18daa1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_normal.png"
+      },
+      {
+       "name": "W2_Rack_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "2059c39ae6",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_rough.png"
+      },
+      {
+       "name": "W2_Rack_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "212825d8c3",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_ShelfRack__W2_ShelfRack_Load": {
+   "tris": 204,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "8b45b7ec4c",
+   "lo": [
+    229.466,
+    -1.03,
+    0.64
+   ],
+   "hi": [
+    236.064,
+    1.013,
+    6.636
+   ],
+   "size": [
+    6.598,
+    2.043,
+    5.996
+   ],
+   "mats": [
+    {
+     "name": "W2_Rack",
+     "imgs": [
+      {
+       "name": "W2_Rack_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "464a764775",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_color.png"
+      },
+      {
+       "name": "W2_Rack_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "c43a18daa1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_normal.png"
+      },
+      {
+       "name": "W2_Rack_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "2059c39ae6",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_rough.png"
+      },
+      {
+       "name": "W2_Rack_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "212825d8c3",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_Rack_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_SteelCrate": {
+   "tris": 256,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "b0fd6b51d4",
+   "lo": [
+    97.408,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    102.408,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_SupplyCrate": {
+   "tris": 532,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "331883f77f",
+   "lo": [
+    86.408,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    91.408,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Tyre": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    212.127,
+    -1.2,
+    -0.0
+   ],
+   "hi": [
+    214.527,
+    1.2,
+    0.86
+   ],
+   "size": [
+    2.4,
+    2.4,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_TyreStack__W2_Tyre": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    220.576,
+    -1.2,
+    -0.0
+   ],
+   "hi": [
+    222.976,
+    1.2,
+    0.86
+   ],
+   "size": [
+    2.4,
+    2.4,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_TyreStack__W2_Tyre.001": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    220.647,
+    -1.25,
+    0.83
+   ],
+   "hi": [
+    223.046,
+    1.15,
+    1.69
+   ],
+   "size": [
+    2.399,
+    2.399,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.6981
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_TyreStack__W2_Tyre.002": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    220.527,
+    -1.139,
+    1.66
+   ],
+   "hi": [
+    222.925,
+    1.259,
+    2.52
+   ],
+   "size": [
+    2.398,
+    2.398,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    -0.0,
+    1.309
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_Workbench": {
+   "tris": 688,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "60af285a8c",
+   "lo": [
+    243.046,
+    -1.2,
+    -0.0
+   ],
+   "hi": [
+    249.046,
+    1.2,
+    4.75
+   ],
+   "size": [
+    6.0,
+    2.4,
+    4.75
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Props_kit.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_RollDoor_HalfOpen.fbx": {
+  "W2_RollDoor_HalfOpen__W2_RollDoor_Control": {
+   "tris": 148,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "4bb6dd53e5",
+   "lo": [
+    -12.65,
+    -0.52,
+    4.25
+   ],
+   "hi": [
+    -10.68,
+    0.03,
+    15.17
+   ],
+   "size": [
+    1.97,
+    0.55,
+    10.92
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_HalfOpen__W2_RollDoor_Curtain_Half": {
+   "tris": 628,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "9e9f0816ce",
+   "lo": [
+    -10.28,
+    -0.728,
+    7.0
+   ],
+   "hi": [
+    10.28,
+    -0.24,
+    14.86
+   ],
+   "size": [
+    20.56,
+    0.488,
+    7.86
+   ],
+   "mats": [
+    {
+     "name": "W2_DoorCurtain",
+     "imgs": [
+      {
+       "name": "W2_DoorCurtain_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "429acce284",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_DoorCurtain_color.png"
+      },
+      {
+       "name": "W2_DoorCurtain_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7ced310191",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_DoorCurtain_normal.png"
+      },
+      {
+       "name": "W2_DoorCurtain_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "e60b194937",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_DoorCurtain_rough.png"
+      },
+      {
+       "name": "W2_DoorCurtain_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "6f0bec0775",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_DoorCurtain_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_HalfOpen__W2_RollDoor_Frame": {
+   "tris": 216,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "194c74a78f",
+   "lo": [
+    -10.95,
+    -2.48,
+    -0.0
+   ],
+   "hi": [
+    10.95,
+    0.11,
+    16.28
+   ],
+   "size": [
+    21.9,
+    2.59,
+    16.28
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_HalfOpen.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_RollDoor_Open.fbx": {
+  "W2_RollDoor_Open__W2_RollDoor_BottomBar": {
+   "tris": 56,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "a36cb4fbd4",
+   "lo": [
+    -10.25,
+    -0.728,
+    13.6
+   ],
+   "hi": [
+    10.25,
+    -0.24,
+    14.0
+   ],
+   "size": [
+    20.5,
+    0.488,
+    0.4
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_Open__W2_RollDoor_Control": {
+   "tris": 148,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "4bb6dd53e5",
+   "lo": [
+    -12.65,
+    -0.52,
+    4.25
+   ],
+   "hi": [
+    -10.68,
+    0.03,
+    15.17
+   ],
+   "size": [
+    1.97,
+    0.55,
+    10.92
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_RollDoor_Open__W2_RollDoor_Frame": {
+   "tris": 216,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "194c74a78f",
+   "lo": [
+    -10.95,
+    -2.48,
+    -0.0
+   ],
+   "hi": [
+    10.95,
+    0.11,
+    16.28
+   ],
+   "size": [
+    21.9,
+    2.59,
+    16.28
+   ],
+   "mats": [
+    {
+     "name": "W2_Door",
+     "imgs": [
+      {
+       "name": "W2_Door_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "16a1c23b88",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_color.png"
+      },
+      {
+       "name": "W2_Door_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "5c35f2f516",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_normal.png"
+      },
+      {
+       "name": "W2_Door_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1cfe7624fd",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_rough.png"
+      },
+      {
+       "name": "W2_Door_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "c40ea723df",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_RollDoor_Open.fbm\\W2_Door_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_ShelfRack.fbx": {
+  "W2_ShelfRack__W2_ShelfRack": {
+   "tris": 396,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "dfeaddacff",
+   "lo": [
+    -4.0,
+    -1.25,
+    -0.0
+   ],
+   "hi": [
+    4.0,
+    1.25,
+    8.0
+   ],
+   "size": [
+    8.0,
+    2.5,
+    8.0
+   ],
+   "mats": [
+    {
+     "name": "W2_Rack",
+     "imgs": [
+      {
+       "name": "W2_Rack_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "464a764775",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_color.png"
+      },
+      {
+       "name": "W2_Rack_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "c43a18daa1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_normal.png"
+      },
+      {
+       "name": "W2_Rack_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "2059c39ae6",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_rough.png"
+      },
+      {
+       "name": "W2_Rack_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "212825d8c3",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_ShelfRack__W2_ShelfRack_Load": {
+   "tris": 204,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "8b45b7ec4c",
+   "lo": [
+    -3.58,
+    -1.03,
+    0.64
+   ],
+   "hi": [
+    3.018,
+    1.013,
+    6.636
+   ],
+   "size": [
+    6.598,
+    2.043,
+    5.996
+   ],
+   "mats": [
+    {
+     "name": "W2_Rack",
+     "imgs": [
+      {
+       "name": "W2_Rack_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "464a764775",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_color.png"
+      },
+      {
+       "name": "W2_Rack_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "c43a18daa1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_normal.png"
+      },
+      {
+       "name": "W2_Rack_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "2059c39ae6",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_rough.png"
+      },
+      {
+       "name": "W2_Rack_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "212825d8c3",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_ShelfRack.fbm\\W2_Rack_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_SteelCrate.fbx": {
+  "W2_SteelCrate": {
+   "tris": 256,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "b0fd6b51d4",
+   "lo": [
+    -2.5,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    2.5,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesSteel",
+     "imgs": [
+      {
+       "name": "W2_CratesSteel_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "9b8e992999",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SteelCrate.fbm\\W2_CratesSteel_color.png"
+      },
+      {
+       "name": "W2_CratesSteel_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "8dd024f84f",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SteelCrate.fbm\\W2_CratesSteel_normal.png"
+      },
+      {
+       "name": "W2_CratesSteel_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "5a3d2c42f1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SteelCrate.fbm\\W2_CratesSteel_rough.png"
+      },
+      {
+       "name": "W2_CratesSteel_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "db466b3b10",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SteelCrate.fbm\\W2_CratesSteel_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_SupplyCrate.fbx": {
+  "W2_SupplyCrate": {
+   "tris": 532,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "331883f77f",
+   "lo": [
+    -2.5,
+    -1.5,
+    -0.0
+   ],
+   "hi": [
+    2.5,
+    1.5,
+    3.5
+   ],
+   "size": [
+    5.0,
+    3.0,
+    3.5
+   ],
+   "mats": [
+    {
+     "name": "W2_CratesWood",
+     "imgs": [
+      {
+       "name": "W2_CratesWood_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "1621b9fbb4",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SupplyCrate.fbm\\W2_CratesWood_color.png"
+      },
+      {
+       "name": "W2_CratesWood_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "307583f6b2",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SupplyCrate.fbm\\W2_CratesWood_normal.png"
+      },
+      {
+       "name": "W2_CratesWood_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "861dd3705b",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SupplyCrate.fbm\\W2_CratesWood_rough.png"
+      },
+      {
+       "name": "W2_CratesWood_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "8b3d4d44b1",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_SupplyCrate.fbm\\W2_CratesWood_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Tyre.fbx": {
+  "W2_Tyre": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    -1.2,
+    -1.2,
+    -0.0
+   ],
+   "hi": [
+    1.2,
+    1.2,
+    0.86
+   ],
+   "size": [
+    2.4,
+    2.4,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Tyre.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Tyre.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Tyre.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Tyre.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_TyreStack.fbx": {
+  "W2_TyreStack__W2_Tyre": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    -1.2,
+    -1.2,
+    -0.0
+   ],
+   "hi": [
+    1.2,
+    1.2,
+    0.86
+   ],
+   "size": [
+    2.4,
+    2.4,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_TyreStack__W2_Tyre.001": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    -1.13,
+    -1.25,
+    0.83
+   ],
+   "hi": [
+    1.27,
+    1.15,
+    1.69
+   ],
+   "size": [
+    2.399,
+    2.399,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.6981
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "W2_TyreStack__W2_Tyre.002": {
+   "tris": 784,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "97861cbf58",
+   "lo": [
+    -1.249,
+    -1.139,
+    1.66
+   ],
+   "hi": [
+    1.149,
+    1.259,
+    2.52
+   ],
+   "size": [
+    2.398,
+    2.398,
+    0.86
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterA",
+     "imgs": [
+      {
+       "name": "W2_ClutterA_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "6be8635067",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_color.png"
+      },
+      {
+       "name": "W2_ClutterA_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "0cad699590",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_normal.png"
+      },
+      {
+       "name": "W2_ClutterA_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "9fbe05c9db",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_rough.png"
+      },
+      {
+       "name": "W2_ClutterA_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "3912078f30",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_TyreStack.fbm\\W2_ClutterA_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    0.0,
+    -0.0,
+    1.309
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ },
+ "W2_Workbench.fbx": {
+  "W2_Workbench": {
+   "tris": 688,
+   "ngons": 0,
+   "uv_layers": [
+    "UVMap"
+   ],
+   "uvh": "60af285a8c",
+   "lo": [
+    -3.0,
+    -1.2,
+    -0.0
+   ],
+   "hi": [
+    3.0,
+    1.2,
+    4.75
+   ],
+   "size": [
+    6.0,
+    2.4,
+    4.75
+   ],
+   "mats": [
+    {
+     "name": "W2_ClutterB",
+     "imgs": [
+      {
+       "name": "W2_ClutterB_color",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "7fe7bbb342",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Workbench.fbm\\W2_ClutterB_color.png"
+      },
+      {
+       "name": "W2_ClutterB_normal",
+       "size": [
+        1024,
+        1024
+       ],
+       "packed": true,
+       "px_hash": "a611014001",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Workbench.fbm\\W2_ClutterB_normal.png"
+      },
+      {
+       "name": "W2_ClutterB_rough",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "1d71cf35a8",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Workbench.fbm\\W2_ClutterB_rough.png"
+      },
+      {
+       "name": "W2_ClutterB_metal",
+       "size": [
+        512,
+        512
+       ],
+       "packed": true,
+       "px_hash": "cd8f0fd885",
+       "file": "C:\\Users\\Shadow\\Documents\\tacticals_rebuild\\art\\warehouse2\\fbx\\W2_Workbench.fbm\\W2_ClutterB_metal.png"
+      }
+     ]
+    }
+   ],
+   "rot": [
+    -0.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  }
+ }
+}

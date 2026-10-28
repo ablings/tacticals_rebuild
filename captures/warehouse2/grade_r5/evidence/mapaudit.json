@@ -1,0 +1,35 @@
+{
+ "default": {
+  "fails": 0,
+  "stats": {
+   "lights": 46,
+   "openSkyShare": 100,
+   "neon": 25,
+   "indoor": "unset",
+   "walkCells": 752,
+   "meshparts": 4,
+   "parts": 1396
+  },
+  "findings": [
+   "WARN HOLE Warehouse2: 3 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
+   "WARN SKY Warehouse2: not run: Indoor is unset (set the map attribute Indoor = true/false, or pass opts.indoor)"
+  ],
+  "warns": 2
+ },
+ "outdoor": {
+  "fails": 0,
+  "stats": {
+   "lights": 46,
+   "openSkyShare": 100,
+   "neon": 25,
+   "indoor": false,
+   "walkCells": 752,
+   "meshparts": 4,
+   "parts": 1396
+  },
+  "findings": [
+   "WARN HOLE Warehouse2: 3 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)"
+  ],
+  "warns": 1
+ }
+}

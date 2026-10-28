@@ -1,0 +1,36 @@
+{
+ "visibleParts": 1239,
+ "materialVariants": [
+  "WH_Floor",
+  "WH_Floor1",
+  "WH_Floor2",
+  "WH_Floor3",
+  "WH_Shutter",
+  "WH_Shutter1",
+  "WH_Shutter2",
+  "WH_Shutter3"
+ ],
+ "partsWithVariant": [],
+ "green": [
+  {
+   "area": 145.4,
+   "k": "C04/Body Earth yellow (96,110,58)",
+   "n": 1
+  },
+  {
+   "area": 145.4,
+   "k": "C03/Body Earth yellow (96,110,58)",
+   "n": 1
+  },
+  {
+   "area": 66,
+   "k": "C04/Batten Medium brown (74,84,46)",
+   "n": 10
+  },
+  {
+   "area": 66,
+   "k": "C03/Batten Medium brown (74,84,46)",
+   "n": 10
+  }
+ ]
+}

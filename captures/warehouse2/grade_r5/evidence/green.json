@@ -1,0 +1,224 @@
+{
+ "groups": [
+  {
+   "yard": 1548.1,
+   "k": "Fence/Screen",
+   "hall": 0,
+   "col": "46,60,44",
+   "area": 1548.1,
+   "n": 4
+  },
+  {
+   "yard": 0,
+   "k": "Hall/Wall_Stripe",
+   "hall": 351,
+   "col": "107,122,58",
+   "area": 351,
+   "n": 2
+  },
+  {
+   "yard": 346.3,
+   "k": "Trailer/Body",
+   "hall": 0,
+   "col": "118,128,92",
+   "area": 346.3,
+   "n": 1
+  },
+  {
+   "yard": 331.2,
+   "k": "Trailer/Roof",
+   "hall": 0,
+   "col": "86,96,66",
+   "area": 331.2,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "Hall/End_Stripe",
+   "hall": 179.4,
+   "col": "107,122,58",
+   "area": 179.4,
+   "n": 4
+  },
+  {
+   "yard": 163.5,
+   "k": "Containers/Box#",
+   "hall": 0,
+   "col": "92,104,86",
+   "area": 163.5,
+   "n": 1
+  },
+  {
+   "yard": 121.2,
+   "k": "TEXT Trailer/Body 'TACTICAL FREIGHT CO.'",
+   "hall": 0,
+   "col": "70,82,40",
+   "area": 121.2,
+   "n": 1
+  },
+  {
+   "yard": 87,
+   "k": "Trailer/SkirtFront",
+   "hall": 0,
+   "col": "86,96,66",
+   "area": 87,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "WallDressing/Pier_all_#_Stripe",
+   "hall": 70.1,
+   "col": "107,122,58",
+   "area": 70.1,
+   "n": 11
+  },
+  {
+   "yard": 0,
+   "k": "Doors/Sign",
+   "hall": 48,
+   "col": "107,122,58",
+   "area": 48,
+   "n": 2
+  },
+  {
+   "yard": 47,
+   "k": "Trailer/Stripe",
+   "hall": 0,
+   "col": "107,122,58",
+   "area": 47,
+   "n": 1
+  },
+  {
+   "yard": 22.4,
+   "k": "Trailer/SidePost",
+   "hall": 0,
+   "col": "86,96,66",
+   "area": 22.4,
+   "n": 10
+  },
+  {
+   "yard": 17,
+   "k": "Containers/CornerPost",
+   "hall": 0,
+   "col": "69,78,64",
+   "area": 17,
+   "n": 4
+  },
+  {
+   "yard": 0,
+   "k": "TEXT Doors/BayNumber '01'",
+   "hall": 14.7,
+   "col": "58,68,40",
+   "area": 14.7,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "TEXT Doors/BayNumber_S-# '01'",
+   "hall": 14.7,
+   "col": "58,68,40",
+   "area": 14.7,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "TEXT Doors/BayNumber '02'",
+   "hall": 14.7,
+   "col": "58,68,40",
+   "area": 14.7,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "TEXT Doors/BayNumber_N-# '02'",
+   "hall": 14.7,
+   "col": "58,68,40",
+   "area": 14.7,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "Drums/Drum",
+   "hall": 12.6,
+   "col": "107,122,58",
+   "area": 12.6,
+   "n": 2
+  },
+  {
+   "yard": 12.6,
+   "k": "YardClutter/Drum",
+   "hall": 0,
+   "col": "107,122,58",
+   "area": 12.6,
+   "n": 2
+  },
+  {
+   "yard": 0,
+   "k": "WallDressing/Pier_all_E_#_Stripe",
+   "hall": 11.5,
+   "col": "107,122,58",
+   "area": 11.5,
+   "n": 3
+  },
+  {
+   "yard": 11.5,
+   "k": "Yard/Bollard",
+   "hall": 0,
+   "col": "107,122,58",
+   "area": 11.5,
+   "n": 4
+  },
+  {
+   "yard": 11.4,
+   "k": "Containers/RailBottom",
+   "hall": 0,
+   "col": "73,83,68",
+   "area": 11.4,
+   "n": 1
+  },
+  {
+   "yard": 11.4,
+   "k": "Containers/RailTop",
+   "hall": 0,
+   "col": "73,83,68",
+   "area": 11.4,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "WallDressing/Pier_all_W_#_Stripe",
+   "hall": 9.6,
+   "col": "107,122,58",
+   "area": 9.6,
+   "n": 1
+  },
+  {
+   "yard": 7.2,
+   "k": "Containers/Marking",
+   "hall": 0,
+   "col": "92,104,86",
+   "area": 7.2,
+   "n": 1
+  },
+  {
+   "yard": 0,
+   "k": "BreakTable/ChairBack",
+   "hall": 4.1,
+   "col": "107,122,58",
+   "area": 4.1,
+   "n": 2
+  },
+  {
+   "yard": 0,
+   "k": "BreakTable/ChairSeat",
+   "hall": 3.9,
+   "col": "107,122,58",
+   "area": 3.9,
+   "n": 2
+  }
+ ],
+ "totalArt": {
+  "yard": 49671.32052803071,
+  "hall": 37989.343656603625
+ }
+}

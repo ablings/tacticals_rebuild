@@ -1,0 +1,407 @@
+{
+ "W2_FireBarrel__W2_FireBarrel": {
+  "mean": [
+   131,
+   41,
+   34
+  ],
+  "dark_share": 0.0,
+  "area": 29.29
+ },
+ "W2_FireBarrel__W2_FireBarrel_Puddle": {
+  "mean": [
+   13,
+   9,
+   5
+  ],
+  "dark_share": 1.0,
+  "area": 17.37
+ },
+ "W2_FireBarrel_Burnt__W2_FireBarrel_Burnt": {
+  "mean": [
+   26,
+   21,
+   19
+  ],
+  "dark_share": 0.281,
+  "area": 37.81
+ },
+ "W2_FireBarrel_Burnt__W2_FireBarrel_BurntLid": {
+  "mean": [
+   39,
+   35,
+   31
+  ],
+  "dark_share": 0.002,
+  "area": 6.64
+ },
+ "W2_OilDrum_Grey": {
+  "mean": [
+   91,
+   90,
+   92
+  ],
+  "dark_share": 0.0,
+  "area": 26.82
+ },
+ "W2_OilDrum_Black": {
+  "mean": [
+   45,
+   42,
+   39
+  ],
+  "dark_share": 0.0,
+  "area": 26.82
+ },
+ "W2_Cover_Low__W2_RifleCrate": {
+  "mean": [
+   96,
+   77,
+   55
+  ],
+  "dark_share": 0.0,
+  "area": 105.7
+ },
+ "W2_Cover_Low__W2_RifleCrate.001": {
+  "mean": [
+   95,
+   77,
+   55
+  ],
+  "dark_share": 0.0,
+  "area": 102.55
+ },
+ "W2_Cover_Tall__W2_TallCrate": {
+  "mean": [
+   74,
+   57,
+   40
+  ],
+  "dark_share": 0.0,
+  "area": 268.2
+ },
+ "W2_Cover_TallPly__W2_TallCrate_Ply": {
+  "mean": [
+   122,
+   100,
+   72
+  ],
+  "dark_share": 0.0,
+  "area": 294.5
+ },
+ "W2_Cover_Wall__W2_LongCrate": {
+  "mean": [
+   75,
+   57,
+   41
+  ],
+  "dark_share": 0.0,
+  "area": 234.37
+ },
+ "W2_Cover_Wall__W2_SupplyCrate": {
+  "mean": [
+   79,
+   78,
+   74
+  ],
+  "dark_share": 0.0,
+  "area": 151.1
+ },
+ "W2_Cover_Wall__W2_SteelCrate": {
+  "mean": [
+   63,
+   64,
+   64
+  ],
+  "dark_share": 0.0,
+  "area": 199.67
+ },
+ "W2_Cover_Wall__W2_WallJoint": {
+  "mean": [
+   27,
+   25,
+   22
+  ],
+  "dark_share": 0.0,
+  "area": 27.46
+ },
+ "W2_SupplyCrate": {
+  "mean": [
+   79,
+   78,
+   74
+  ],
+  "dark_share": 0.0,
+  "area": 151.1
+ },
+ "W2_SteelCrate": {
+  "mean": [
+   63,
+   64,
+   64
+  ],
+  "dark_share": 0.0,
+  "area": 199.67
+ },
+ "W2_LongCrate": {
+  "mean": [
+   75,
+   57,
+   41
+  ],
+  "dark_share": 0.0,
+  "area": 238.74
+ },
+ "W2_AmmoCan": {
+  "mean": [
+   63,
+   63,
+   49
+  ],
+  "dark_share": 0.0,
+  "area": 35.27
+ },
+ "W2_RollDoor_Open__W2_RollDoor_Frame": {
+  "mean": [
+   97,
+   98,
+   98
+  ],
+  "dark_share": 0.0,
+  "area": 324.45
+ },
+ "W2_RollDoor_Open__W2_RollDoor_BottomBar": {
+  "mean": [
+   54,
+   55,
+   56
+  ],
+  "dark_share": 0.002,
+  "area": 27.56
+ },
+ "W2_RollDoor_Open__W2_RollDoor_Control": {
+  "mean": [
+   71,
+   71,
+   70
+  ],
+  "dark_share": 0.0,
+  "area": 11.21
+ },
+ "W2_RollDoor_HalfOpen__W2_RollDoor_Frame": {
+  "mean": [
+   97,
+   98,
+   98
+  ],
+  "dark_share": 0.0,
+  "area": 324.45
+ },
+ "W2_RollDoor_HalfOpen__W2_RollDoor_Curtain_Half": {
+  "mean": [
+   97,
+   98,
+   98
+  ],
+  "dark_share": 0.0,
+  "area": 391.66
+ },
+ "W2_RollDoor_HalfOpen__W2_RollDoor_Control": {
+  "mean": [
+   71,
+   70,
+   69
+  ],
+  "dark_share": 0.0,
+  "area": 11.21
+ },
+ "W2_Pallet": {
+  "mean": [
+   107,
+   91,
+   70
+  ],
+  "dark_share": 0.0,
+  "area": 60.2
+ },
+ "W2_PalletSacks__W2_Pallet": {
+  "mean": [
+   107,
+   91,
+   70
+  ],
+  "dark_share": 0.0,
+  "area": 60.2
+ },
+ "W2_PalletSacks__W2_PalletSacks_Load": {
+  "mean": [
+   102,
+   95,
+   81
+  ],
+  "dark_share": 0.0,
+  "area": 68.08
+ },
+ "W2_Tyre": {
+  "mean": [
+   37,
+   37,
+   35
+  ],
+  "dark_share": 0.0,
+  "area": 14.23
+ },
+ "W2_TyreStack__W2_Tyre": {
+  "mean": [
+   37,
+   36,
+   35
+  ],
+  "dark_share": 0.0,
+  "area": 14.23
+ },
+ "W2_TyreStack__W2_Tyre.001": {
+  "mean": [
+   37,
+   37,
+   35
+  ],
+  "dark_share": 0.0,
+  "area": 14.23
+ },
+ "W2_TyreStack__W2_Tyre.002": {
+  "mean": [
+   37,
+   36,
+   35
+  ],
+  "dark_share": 0.0,
+  "area": 14.23
+ },
+ "W2_ShelfRack__W2_ShelfRack": {
+  "mean": [
+   99,
+   88,
+   73
+  ],
+  "dark_share": 0.0,
+  "area": 275.8
+ },
+ "W2_ShelfRack__W2_ShelfRack_Load": {
+  "mean": [
+   131,
+   100,
+   64
+  ],
+  "dark_share": 0.0,
+  "area": 108.92
+ },
+ "W2_Workbench": {
+  "mean": [
+   80,
+   69,
+   56
+  ],
+  "dark_share": 0.007,
+  "area": 134.76
+ },
+ "W2_HighBayLamp__W2_HighBayLamp_Bell": {
+  "mean": [
+   107,
+   106,
+   101
+  ],
+  "dark_share": 0.0,
+  "area": 25.01
+ },
+ "W2_HighBayLamp__W2_HighBayLamp_Lens": {
+  "mean": [
+   254,
+   240,
+   208
+  ],
+  "dark_share": 0.0,
+  "area": 8.97
+ },
+ "W2_HighBayLamp__W2_HighBayLamp_Rod": {
+  "mean": [
+   53,
+   54,
+   55
+  ],
+  "dark_share": 0.0,
+  "area": 1.49
+ },
+ "W2_Forklift__W2_Forklift_Body": {
+  "mean": [
+   62,
+   59,
+   56
+  ],
+  "dark_share": 0.001,
+  "area": 131.35
+ },
+ "W2_Forklift__W2_Forklift_Mast": {
+  "mean": [
+   47,
+   48,
+   48
+  ],
+  "dark_share": 0.066,
+  "area": 26.14
+ },
+ "W2_Forklift__W2_Forklift_Forks": {
+  "mean": [
+   43,
+   43,
+   42
+  ],
+  "dark_share": 0.031,
+  "area": 25.13
+ },
+ "W2_Forklift__W2_Forklift_Steer": {
+  "mean": [
+   44,
+   42,
+   39
+  ],
+  "dark_share": 0.0,
+  "area": 1.56
+ },
+ "W2_Forklift__W2_Forklift_WheelF": {
+  "mean": [
+   38,
+   37,
+   35
+  ],
+  "dark_share": 0.0,
+  "area": 10.74
+ },
+ "W2_Forklift__W2_Forklift_WheelF.001": {
+  "mean": [
+   38,
+   37,
+   35
+  ],
+  "dark_share": 0.0,
+  "area": 10.74
+ },
+ "W2_Forklift__W2_Forklift_WheelR": {
+  "mean": [
+   39,
+   39,
+   37
+  ],
+  "dark_share": 0.0,
+  "area": 7.63
+ },
+ "W2_Forklift__W2_Forklift_WheelR.001": {
+  "mean": [
+   39,
+   38,
+   37
+  ],
+  "dark_share": 0.0,
+  "area": 7.63
+ }
+}

@@ -1,0 +1,27 @@
+00:00.812  blend            | Read blend: "C:\Users\Shadow\Documents\tacticals_rebuild\art\warehouse2\warehouse2_props.blend"
+ASM W2_AmmoCan             LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_Cover_Low           LAYER 0.716  GAPIN 1.185  SEE 0 | L [(0.191, 0.021, (0.96, -0.58, 1.78)), (0.191, 0.021, (-0.96, 0.58, 1.78)), (0.042, 0.029, (1.59, 0.88, 2.33)), (0.042, 0.029, (1.59, -0.88, 2.71))] | G [(0.184, 0.06, (0.96, -0.69, 1.67)), (0.184, 0.06, (-0.96, 0.69, 1.67)), (0.043, 0.03, (2.8, 0.8, 1.7)), (0.043, 0.03, (-2.8, -0.8, 1.7))] | S []
+ASM W2_Cover_Tall          LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_Cover_TallPly       LAYER 0.000  GAPIN 0.007  SEE 0 | L [] | G [(0.002, 0.13, (2.25, -1.37, 0.31)), (0.002, 0.13, (2.15, 1.37, 0.31)), (0.002, 0.13, (-2.15, -1.37, 0.31)), (0.002, 0.13, (-2.25, 1.37, 0.31))] | S []
+ASM W2_Cover_Wall          LAYER 0.320  GAPIN 0.986  SEE 0 | L [(0.16, 0.026, (-1.7, 1.1, 3.39)), (0.16, 0.026, (-3.31, -1.1, 3.39))] | G [(0.138, 0.09, (0.03, -1.38, 2.0)), (0.135, 0.06, (1.63, -1.19, 3.47)), (0.135, 0.06, (-1.63, 1.19, 3.47)), (0.117, 0.09, (0.03, 1.38, 1.06))] | S []
+ASM W2_FireBarrel          LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_FireBarrel_Burnt    LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_Forklift            LAYER 0.010  GAPIN 2.825  SEE 0 | L [(0.002, 0.013, (-0.05, -1.51, 3.55)), (0.001, 0.013, (0.0, -1.53, 3.55)), (0.001, 0.013, (-0.08, -1.44, 3.49)), (0.001, 0.013, (-0.08, -1.48, 3.52))] | G [(0.052, 0.068, (1.11, -1.9, 1.0)), (0.052, 0.068, (1.11, -1.95, 1.13)), (0.052, 0.068, (1.11, -2.45, 1.23)), (0.052, 0.068, (1.11, -2.55, 1.13))] | S []
+ASM W2_HighBayLamp         LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_LongCrate           LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_OilDrum_Black       LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_OilDrum_Grey        LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_Pallet              LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_PalletSacks         LAYER 0.003  GAPIN 0.310  SEE 0 | L [(0.003, 0.02, (0.46, 0.93, 1.09))] | G [(0.038, 0.023, (1.11, -0.54, 0.84)), (0.038, 0.023, (0.9, -0.56, 0.8)), (0.022, 0.023, (-0.9, -0.54, 0.84)), (0.022, 0.023, (-1.1, 0.56, 0.8))] | S []
+ASM W2_RollDoor_HalfOpen   LAYER 0.000  GAPIN 0.830  SEE 0 | L [] | G [(0.4, 0.02, (3.42, -0.28, 7.42)), (0.251, 0.02, (-3.43, -0.3, 7.42)), (0.16, 0.02, (-3.43, -0.3, 7.42)), (0.011, 0.02, (3.42, -0.28, 7.42))] | S []
+ASM W2_RollDoor_Open       LAYER 0.000  GAPIN 0.007  SEE 0 | L [] | G [(0.003, 0.065, (-12.22, -0.48, 4.89)), (0.002, 0.065, (-12.19, -0.44, 4.89)), (0.002, 0.065, (-12.22, -0.48, 4.89))] | S []
+ASM W2_ShelfRack           LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_SteelCrate          LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_SupplyCrate         LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_Tyre                LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_TyreStack           LAYER 0.000  GAPIN 0.000  SEE 0 | L [] | G [] | S []
+ASM W2_Workbench           LAYER 0.000  GAPIN 0.211  SEE 0 | L [] | G [(0.054, 0.08, (1.65, -1.14, 2.52)), (0.054, 0.07, (1.65, -1.14, 2.05)), (0.034, 0.08, (2.09, -1.11, 2.52)), (0.034, 0.07, (2.09, -1.11, 2.05))] | S []
+ASSEMBLY CHECK: LAYER 1.049 sq studs, GAPIN 6.361 sq studs, SEE 0 rays, BROKEN CAPS 0.000 sq studs
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit
