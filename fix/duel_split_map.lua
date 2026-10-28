@@ -63,6 +63,28 @@ local MAPS = {
 			},
 		},
 	},
+	-- [HOUSE] 2026-10-28: the two-storey suburban house (fix/map_house.lua builds the source in the match place; tools/duel_map_port.py
+	-- roots House,HouseExterior; fix/house_lobby_prep.lua folds a trimmed exterior into the model). Values = MapInfo.Lighting of
+	-- fix/map_house.lua (tools/house_lua.py LIGHTING).
+	House = {
+		DisplayName = "House",
+		Image = "",
+		Modes = { "1v1", "2v2", "3v3" },
+		Model = "House",
+		Spawns = { A = { "House.MatchSpawns.SpawnA" }, B = { "House.MatchSpawns.SpawnB" } },
+		SpawnSpacing = 4,
+		Dynamic = {},
+		Lighting = {
+			props = { Brightness = 2.6, ClockTime = 16.2, GeographicLatitude = 35, Ambient = Color3.fromRGB(112, 110, 106),
+				OutdoorAmbient = Color3.fromRGB(128, 126, 122), ExposureCompensation = 0, EnvironmentDiffuseScale = 0.45,
+				EnvironmentSpecularScale = 0.25, ShadowSoftness = 0.2, ColorShift_Top = Color3.new(0, 0, 0), ColorShift_Bottom = Color3.new(0, 0, 0) },
+			effects = {
+				{ "Atmosphere", { Density = 0.24, Offset = 0.1, Color = Color3.fromRGB(205, 214, 224), Decay = Color3.fromRGB(150, 160, 176), Glare = 0.1, Haze = 1.2 } },
+				{ "BloomEffect", { Intensity = 0.3, Size = 22, Threshold = 2.0 } },
+				{ "ColorCorrectionEffect", { Brightness = 0, Contrast = 0.08, Saturation = -0.04, TintColor = Color3.fromRGB(255, 250, 244) } },
+			},
+		},
+	},
 }
 
 local RS, SS = game:GetService("ReplicatedStorage"), game:GetService("ServerStorage")

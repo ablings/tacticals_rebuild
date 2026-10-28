@@ -45,3 +45,47 @@ modern suburban house inspired by a classic suburban test-site shooter map (own 
   sill and at the gallery railing: nothing.
 - Fixed from the lap: a counter under the kitchen pass-through made the vault land on it (counter moved beside it); the living
   room's half-wall opening opened into the bathroom (removed); the master bed left 1.5 to the wall (bed + head wall 2 west).
+
+## Step 2: assembly (03:55-04:30), after art/house/DONE.md and notes/breakable_glass_DONE.md
+- Collision change from the model grader (via the modeler): sofas, beds, dining sets get the modeler's multi-boxes (3.4 back /
+  headboard / chair rows = low cover; chaise 1.8, mattress 2.4, table 2.6 = NotCover obstacles). Fairness re-checked: PASS.
+- **Import 3D** (desktop control in my own Studio window, right monitor; Import Queue, three files): H_Furniture_kit, H_House,
+  H_Exterior; Creator **gunsy funsy**, Insert Using Scene Position, Anchored, **scale 0.01** (the FBX are in centimetres:
+  K_ScaleCube = 10.000 studs after). Shell / exterior land at Studio (-x, z, y) of the plan: the installer turns them 180 degrees
+  about the plan origin. 81 + 138 + 146 MeshParts, baked atlases as SurfaceAppearance, tiles as TextureID.
+- `tools/house_kit_from_import.lua` -> ServerStorage.HouseKit: 65 assemblies (sizes = the modeler's JSON exactly), H_House,
+  H_Exterior (pivot = plan origin); raw imports parked in ServerStorage._HouseImport (UNDO).
+- Installer with the kit: 116 kit placements; `tools/house_artfit.lua`: every furniture mesh within **0.02** of its collision box.
+- Fixed after the first captures: the exterior ground (plan z -1) sat under the place's Baseplate (origin y 0.4 -> **1.2**);
+  Import 3D dropped plain material colours (trees, siding, roofs, glass, the skylight glow): re-applied by name from the
+  modeler's build scripts; window glass Glass 0.82 (frosted 0.3); shower screens 0.7; the hall bench turned.
+- Checks after: read-back **0 differences**; checker on the read-back **PASS** (same numbers as the plan); MapAudit **0 FAIL**,
+  1 WARN (HOLE 8 cells at the void edges, behind barriers); exterior 0 / 0. Captures: `captures/house/r1/` (41 cameras, quality 21,
+  two matching frames each), sheets `captures/house/r1_rooms_{a,b,c}.jpg`, `r1_windows.jpg`. Build copy saved to file (4.2 MB).
+
+## Step 3: tests (04:30-05:20)
+- **Play lap with the art** (me vs bot, 1v1): vote list Warehouse / Arena / Warehouse2 / House; House voted; spawns A (-35, -19),
+  B (35, 19); doors Front / Back Locked, EN Closed, five Open (ajar), leaves colliding; 15 escape pushes (windows both floors,
+  locked doors, gallery railing, both stairs' open sides, gallery window, ensuite door): **all stayed in**.
+- **Glass**: `GlassTestHook shoot House/Win_LR_W` -> broken (cause Shot); on my client the pane hidden (LTM 1), shards shown;
+  pushing + jumping + Space at the broken opening (standing on the armchair under it): stopped at x -39.44 (inside face -40).
+  A second shot at Win_LR_S2 stayed intact: the shelf wall is between the spawn and that window (correct).
+- **Rounds** (`tools/house_rounds.lua`): 5 rounds to Victory 5-0; me on spawn A / bot on B every round; the pane broken in round 1
+  is back in round 2 (broken count 1 -> 0).
+- **3v3 with bots**: all six on the planned slots (A x -35, y -19 / -15 / -23; B x 35, y 19 / 15 / 23); a round played.
+- **Two players** (Studio Server & Clients, 2 players, set by hand in the player-count box; `tools/house_mp.py`): Player1 team A
+  on spawn A, Player2 team B on spawn B, on House (voted by clicking the House tile in a player window). Shot Win_LR_W from
+  Player1: **both clients** GlassBroken true, pane hidden, shards shown, cause Shot. Next round (Player1 kills Player2 via
+  MatchTestHook): **both clients** pane back, shards hidden; both on their spawns; score 1-0.
+  Test-only change, reverted: RoundManager counted Studio's local test players (user ids -1, -2) as bots; for the test, ids -1..-8
+  counted as real (marker HOUSE2P; `tools/house_mp_unpatch.lua` restored both copies; 0 marked scripts left). The first try
+  lost a player window to a GPU "device removed" crash (six Studio windows rendering).
+- **Lobby pad duel** (own lobby copy `out/house/lobby.rbxl` from Tacticals_main_ported.rbxl; breakable glass hub install 1168fe70 ->
+  b17cf410; `tools/duel_map_port.py build lobby House House,HouseExterior` 1,276 instances, 0 missing meshes;
+  `fix/house_lobby_prep.lua` folds a trimmed exterior into the source (ground + street cut to 320, far poles dropped: the lobby's slot
+  spacing follows the biggest footprint); `fix/duel_split_map.lua` gains a House entry, run with ONLY = 'House': 776 visual / 305
+  solid parts, footprint 321 x 360). DuelTestSolo, Pad_1v1_A: vote House -> arena D1 at (4000, 100, 0), me on A1 (-35, -19 plan),
+  the bot on B1; 57 barriers + 28 windows in the Solid layer; the client clone draws the house and the street
+  (`captures/house/lobby_pad_duel.png`).
+- Look notes for Edward (taste): the living-room spawn faces its shelf wall at 4 studs (the spawn shield, mirrored by the kitchen's
+  oven wall).

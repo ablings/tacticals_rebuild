@@ -8,7 +8,7 @@ for _, e in RS:WaitForChild("DuelMaps"):GetChildren() do table.insert(opts, e.Na
 log("registry", table.concat(opts, ","))
 flow:FireServer("Vote", "House")
 log("voted House")
-while RS:GetAttribute("MatchPhase") ~= "Live" and os.clock() - t0 < 180 do task.wait(0.25) end
+while RS:GetAttribute("MatchPhase") ~= "Live" and RS:GetAttribute("MatchPhase") ~= "Playing" and os.clock() - t0 < 180 do task.wait(0.25) end
 task.wait(1)
 char = lp.Character; hum = char:FindFirstChildOfClass("Humanoid"); root = char:FindFirstChild("HumanoidRootPart")
 local Lg = game:GetService("Lighting")
