@@ -1,41 +1,42 @@
-[   0.9s] deduped 205 hidden back-to-back faces; 4 wall bands filled
+[   0.3s] deduped 230 hidden back-to-back faces; 4 wall bands filled
+[   0.4s] coplanar same-facing overlaps: 0 []
 Warning: No mesh data to join
 Warning: No mesh data to join
 Warning: No mesh data to join
-[   3.1s] baked 51 plain 62
-[   3.2s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
-[   3.2s] bake Stairs ['Stair_Main', 'Stair_Back', 'Rail_Gallery', 'Rail_MainStair', 'Rail_BackStair']
+[   2.8s] baked 51 plain 62
+[   2.9s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
+[   2.9s] bake Stairs ['Stair_Main', 'Stair_Back', 'Rail_Gallery', 'Rail_MainStair', 'Rail_BackStair']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[   7.6s]    Stairs color 3.6s
+[  10.3s]    Stairs color 6.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  11.2s]    Stairs rough 3.6s
+[  16.7s]    Stairs rough 6.4s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  15.0s]    Stairs metal 3.8s
+[  23.3s]    Stairs metal 6.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  18.7s]    Stairs normal 3.6s
+[  29.8s]    Stairs normal 6.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  22.3s]    Stairs ao 3.6s
-[  22.5s] bake Doors ['Door_Front', 'Door_Back', 'Door_GB', 'Door_MB', 'Door_BR2', 'Door_BR3', 'Door_UB', 'Door_EN', 'DoorFrame_Front', 'DoorFrame_Back', 'DoorFrame_MB', 'DoorFrame_BR3', 'DoorFrame_BR2', 'DoorFrame_GB', 'DoorFrame_EN', 'DoorFrame_UB']
+[  36.4s]    Stairs ao 6.6s
+[  37.1s] bake Doors ['Door_Front', 'Door_Back', 'Door_GB', 'Door_MB', 'Door_BR2', 'Door_BR3', 'Door_UB', 'Door_EN', 'DoorFrame_Front', 'DoorFrame_Back', 'DoorFrame_MB', 'DoorFrame_BR3', 'DoorFrame_BR2', 'DoorFrame_GB', 'DoorFrame_EN', 'DoorFrame_UB']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -52,7 +53,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  34.1s]    Doors color 11.2s
+[  56.3s]    Doors color 18.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -69,7 +70,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  45.4s]    Doors rough 11.3s
+[  75.1s]    Doors rough 18.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -86,7 +87,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  56.5s]    Doors metal 11.0s
+[  93.7s]    Doors metal 18.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -103,7 +104,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  67.6s]    Doors normal 11.1s
+[ 112.8s]    Doors normal 19.1s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -120,8 +121,8 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  78.7s]    Doors ao 11.1s
-[  78.9s] bake Windows ['Win_LR_S1_Frame', 'Win_LR_S2_Frame', 'Win_DR_S1_Frame', 'Win_DR_S2_Frame', 'Win_EN_S_Frame', 'Win_MB_S_Frame', 'Win_FY_S_Frame', 'Win_BR2_S1_Frame', 'Win_BR2_S2_Frame', 'Win_GB_N_Frame', 'Win_BH_N_Frame', 'Win_KT_N1_Frame', 'Win_KT_N2_Frame', 'Win_BR3_N1_Frame', 'Win_BR3_N2_Frame', 'Win_UB_N_Frame', 'Win_EN_W_Frame', 'Win_LR_W_Frame', 'Win_BR3_W_Frame', 'Win_GB_W_Frame', 'Win_DR_E_Frame', 'Win_KT_E_Frame', 'Win_BR2_E_Frame', 'Win_BR2_N_Frame', 'Win_MB_FY_Frame', 'Win_BR2_FY_Frame', 'Win_ST2_E_Frame', 'Win_UB_E_Frame', 'Skylight_1_Trim', 'Skylight_2_Trim']
+[ 132.1s]    Doors ao 19.2s
+[ 132.8s] bake Windows ['Win_LR_S1_Frame', 'Win_LR_S2_Frame', 'Win_DR_S1_Frame', 'Win_DR_S2_Frame', 'Win_EN_S_Frame', 'Win_MB_S_Frame', 'Win_FY_S_Frame', 'Win_BR2_S1_Frame', 'Win_BR2_S2_Frame', 'Win_GB_N_Frame', 'Win_BH_N_Frame', 'Win_KT_N1_Frame', 'Win_KT_N2_Frame', 'Win_BR3_N1_Frame', 'Win_BR3_N2_Frame', 'Win_UB_N_Frame', 'Win_EN_W_Frame', 'Win_LR_W_Frame', 'Win_BR3_W_Frame', 'Win_GB_W_Frame', 'Win_DR_E_Frame', 'Win_KT_E_Frame', 'Win_BR2_E_Frame', 'Win_BR2_N_Frame', 'Win_MB_FY_Frame', 'Win_BR2_FY_Frame', 'Win_ST2_E_Frame', 'Win_UB_E_Frame', 'Skylight_1_Trim', 'Skylight_2_Trim']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -152,7 +153,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  99.9s]    Windows color 20.5s
+[ 166.4s]    Windows color 33.2s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -183,7 +184,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 120.0s]    Windows rough 20.1s
+[ 200.8s]    Windows rough 34.4s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -214,7 +215,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 140.1s]    Windows metal 20.1s
+[ 235.8s]    Windows metal 35.0s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -245,7 +246,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 160.6s]    Windows normal 20.5s
+[ 270.9s]    Windows normal 35.1s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -276,14 +277,14 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 181.0s]    Windows ao 20.3s
+[ 313.7s]    Windows ao 42.8s
 
 FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\fbx\\H_House.fbx'
-export finished in 0.1327 sec.
+export finished in 0.1623 sec.
 Info: Saved as "house.blend"
 Info: Total files 24 | Changed 0 | Failed 0
 Info: Saved "house.blend"
-[ 181.5s] DONE 136 objects 28750 tris
+[ 314.7s] DONE 136 objects 24112 tris
 Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
 
 Blender quit

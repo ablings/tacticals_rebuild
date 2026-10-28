@@ -1,8 +1,8 @@
 {
  "objects": 136,
- "triangles": 24024,
+ "triangles": 24112,
  "fail": 0,
- "warn": 126,
+ "warn": 124,
  "findings": [
   {
    "level": "WARN",
@@ -98,7 +98,7 @@
    "level": "WARN",
    "code": "A1b",
    "object": "Door_Back_BrokenGlass",
-   "message": "154 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+   "message": "158 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
   },
   {
    "level": "WARN",
@@ -379,18 +379,6 @@
   {
    "level": "WARN",
    "code": "A8",
-   "object": "Shell_R_Charcoal + Skylight_1_Glass",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
-   "object": "Shell_R_Charcoal + Skylight_2_Glass",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
-  },
-  {
-   "level": "WARN",
-   "code": "A8",
    "object": "Shell_U_PaintGreige + DoorFrame_BR2",
    "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
@@ -470,7 +458,7 @@
    "level": "WARN",
    "code": "A8",
    "object": "Door_Back + Door_Back_BrokenGlass",
-   "message": "21 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",
@@ -698,7 +686,7 @@
    "level": "WARN",
    "code": "A8",
    "object": "Door_Back_Glass + Door_Back_BrokenGlass",
-   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   },
   {
    "level": "WARN",

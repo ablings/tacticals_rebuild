@@ -13,6 +13,7 @@ from hcore import *          # noqa: F401,F403
 import hcore
 
 BLEND = os.path.join(ROOT, "house_furniture.blend")
+hcore.ATLAS_RES.update({"ShelfWall": 2048, "Storage3": 2048, "Sofa": 2048, "Storage": 2048})
 
 # extra kinds used only here
 for k_, v_ in {
@@ -561,7 +562,7 @@ def pendant_lamp():
 def tv():
     """65-inch-style flat TV 6.4 x 3.7 on two feet; the screen is its own mesh (H_TV_Screen) for a SurfaceGui / image"""
     body = MB("H_TV", "Decor", 4.0)
-    body.boxr((-3.2, -0.02, 0.3), (3.2, 0.1, 4.0), "plastic_black")                 # back shell
+    body.boxr((-3.2, 0.0, 0.3), (3.2, 0.1, 4.0), "plastic_black")                  # back shell (the screen sits on its front)
     body.boxr((-3.2, -0.09, 0.3), (3.2, 0.0, 0.42), "plastic_black")                # bezel ring around the screen
     body.boxr((-3.2, -0.09, 3.88), (3.2, 0.0, 4.0), "plastic_black")
     body.boxr((-3.2, -0.09, 0.4), (-3.08, 0.0, 3.9), "plastic_black")
@@ -703,7 +704,7 @@ def books_row(mb, x0, x1, z0, zmax, yback, depth, rng, facing=-1):
 def shelf_wall():
     """12 x 2 x 8 open bookshelf wall, dressed on BOTH faces (team A's spawn wall). A solid charcoal spine down the middle
     keeps it full tall cover."""
-    mb = MB("H_ShelfWall", "Storage2", 8.0)
+    mb = MB("H_ShelfWall", "ShelfWall", 8.0)
     H = 8.0
     for (a, b) in ((-6.0, -5.78), (-2.21, -1.99), (1.99, 2.21), (5.78, 6.0)):
         mb.boxr((a, -1.0, 0.0), (b, 1.0, H), "oak")
@@ -733,7 +734,7 @@ def shelf_wall():
 
 def oven_wall():
     """12 x 2 x 8 tall kitchen bank, both faces finished: -Y = two built-in ovens + pantry doors, +Y = cupboard doors"""
-    mb = MB("H_OvenWall", "Storage2", 8.0)
+    mb = MB("H_OvenWall", "Storage3", 8.0)
     mb.boxr((-6.0, -0.83, 0.38), (6.0, 0.83, 8.0), "lacquer_white")
     mb.boxr((-5.85, -0.7, 0.0), (5.85, 0.7, 0.42), "plinth")
     cols = [-6.0, -3.0, 0.0, 3.0, 6.0]
@@ -760,7 +761,7 @@ def oven_wall():
 
 def slat_screen():
     """6 x 2 x 8 timber slat screen: a low white storage base, oak slats on both faces of a solid oak core (tall cover)"""
-    mb = MB("H_SlatScreen", "Storage2", 8.0)
+    mb = MB("H_SlatScreen", "Storage3", 8.0)
     mb.boxr((-3.0, -0.96, 0.3), (3.0, 0.96, 2.4), "lacquer_white")
     mb.boxr((-2.9, -0.85, 0.0), (2.9, 0.85, 0.35), "plinth")
     mb.boxr((-3.0, -1.0, 2.38), (3.0, 1.0, 2.55), "oak")
@@ -780,7 +781,7 @@ def slat_screen():
 
 def headboard_wall():
     """14 x 1.5 x 8 freestanding headboard wall: upholstered channels on the bed side (-Y), walnut behind"""
-    mb = MB("H_HeadboardWall", "Storage2", 8.0)
+    mb = MB("H_HeadboardWall", "Storage3", 8.0)
     mb.boxr((-7.0, -0.45, 0.0), (7.0, 0.75, 8.0), "walnut")
     n = 12
     for i in range(n):
@@ -844,7 +845,7 @@ def planter():
 
 def display_column():
     """3 x 3 x 8 column wrapped in walnut with a display niche on the -Y and +Y faces (a vase in each); solid core"""
-    mb = MB("H_DisplayColumn", "Storage2", 8.0)
+    mb = MB("H_DisplayColumn", "Storage3", 8.0)
     mb.boxr((-1.5, -1.5, 0.0), (1.5, 1.5, 3.4), "walnut")
     mb.boxr((-1.5, -1.5, 6.0), (1.5, 1.5, 8.0), "walnut")
     mb.boxr((-1.5, -1.5, 3.35), (-1.0, 1.5, 6.05), "walnut")
@@ -860,13 +861,16 @@ def display_column():
 # name: parts [(master, (dx, dy, dz), rot_z_deg)], role, cover class, collision boxes [(lo, hi) Blender, rel. pivot]
 LOW, TALL, NONE = "LOW 3.4", "TALL 8.0", "none (dressing)"
 ASM = [
-    ("H_Sofa_Sectional", [("H_Sofa_Sectional", (0, 0, 0), 0)], "living room sectional, back to the room", LOW,
-     [((-6, -1.8, 0), (6, 1.8, 3.4)), ((2.2, -5.4, 0), (6, -1.8, 1.8))]),
-    ("H_Armchair", [("H_Armchair", (0, 0, 0), 0)], "living room armchair", LOW, [((-2.1, -2.0, 0), (2.1, 2.0, 3.4))]),
+    ("H_Sofa_Sectional", [("H_Sofa_Sectional", (0, 0, 0), 0)], "living room sectional, back to the room; boxes: back 3.4, arms 2.6, seats 1.8", LOW,
+     [((-6, 0.75, 0), (6, 1.8, 3.4)), ((-6, -1.8, 0), (-5.05, 0.75, 2.6)), ((5.05, -5.4, 0), (6, 0.75, 2.6)),
+      ((-5.05, -1.8, 0), (5.05, 0.75, 1.8)), ((2.2, -5.4, 0), (5.05, -1.8, 1.8))]),
+    ("H_Armchair", [("H_Armchair", (0, 0, 0), 0)], "living room armchair; boxes: back 3.4, arms 2.5, seat 1.8", LOW,
+     [((-2.1, 1.0, 0), (2.1, 2.0, 3.4)), ((-2.1, -2.0, 0), (-1.35, 1.0, 2.5)), ((1.35, -2.0, 0), (2.1, 1.0, 2.5)), ((-1.35, -2.0, 0), (1.35, 1.0, 1.8))]),
     ("H_KitchenIsland", [("H_KitchenIsland", (0, 0, 0), 0)], "kitchen island, seating side +Y (Studio -Z)", LOW, [((-5, -2.3, 0), (5, 2.3, 3.4))]),
     ("H_DiningSet", [("H_DiningTable", (0, 0, 0), 0)] + [("H_DiningChair", (x, sy * 2.35, 0), 0 if sy > 0 else 180) for x in (-2.1, 0, 2.1) for sy in (-1, 1)],
      "dining table + 6 chairs pushed in; boxes: table 2.6 + a 3.4 box per chair row (union = 8 x 6.7)", LOW,
-     [((-4.0, -2.0, 0), (4.0, 2.0, 2.6)), ((-3.05, -3.35, 0), (3.05, -1.4, 3.4)), ((-3.05, 1.4, 0), (3.05, 3.35, 3.4))]),
+     [((-4.0, -2.0, 0), (4.0, 2.0, 2.6)), ((-3.05, -3.35, 0), (3.05, -3.0, 3.4)), ((-3.05, 3.0, 0), (3.05, 3.35, 3.4)),
+      ((-3.05, -3.0, 0), (3.05, -2.0, 1.75)), ((-3.05, 2.0, 0), (3.05, 3.0, 1.75))]),
     ("H_DiningTable", [("H_DiningTable", (0, 0, 0), 0)], "dining table alone (top 2.6)", "low obstacle 2.6", [((-4, -2, 0), (4, 2, 2.6))]),
     ("H_DiningChair", [("H_DiningChair", (0, 0, 0), 0)], "dining chair alone", NONE, []),
     ("H_Bed_Double", [("H_Bed_Double", (0, 0, 0), 0)], "master bed, head at +Y (Studio -Z) against the wall", LOW,
@@ -890,9 +894,12 @@ ASM = [
     ("H_OvenWall", [("H_OvenWall", (0, 0, 0), 0)], "tall oven + pantry bank, both faces finished (team B spawn wall); ovens on -Y", TALL, [((-6, -1, 0), (6, 1, 8))]),
     ("H_SlatScreen", [("H_SlatScreen", (0, 0, 0), 0)], "timber slat screen on a storage base (inside the hall arches)", TALL, [((-3, -1, 0), (3, 1, 8))]),
     ("H_HeadboardWall", [("H_HeadboardWall", (0, 0, 0), 0)], "freestanding headboard wall, upholstered side -Y (bed side)", TALL, [((-7, -0.75, 0), (7, 0.75, 8))]),
-    ("H_KitchenBench", [("H_KitchenBench", (0, 0, 0), 0)], "kitchen banquette, seat faces -Y", LOW, [((-5, -1.75, 0), (5, 1.75, 3.4))]),
-    ("H_HallBench_3", [("H_HallBench_3", (0, 0, 0), 0)], "hall bench 3.5 wide, seat faces -Y", LOW, [((-1.75, -1, 0), (1.75, 1, 3.4))]),
-    ("H_HallBench_8", [("H_HallBench_8", (0, 0, 0), 0)], "hall / mudroom bench 8 wide, seat faces -Y", LOW, [((-4, -1, 0), (4, 1, 3.4))]),
+    ("H_KitchenBench", [("H_KitchenBench", (0, 0, 0), 0)], "kitchen banquette, seat faces -Y; boxes: back 3.4, seat 1.95", LOW,
+     [((-5, 1.1, 0), (5, 1.75, 3.4)), ((-5, -1.75, 0), (5, 1.1, 1.95))]),
+    ("H_HallBench_3", [("H_HallBench_3", (0, 0, 0), 0)], "hall bench 3.5 wide, seat faces -Y; boxes: back 3.4, seat 1.65", LOW,
+     [((-1.75, 0.65, 0), (1.75, 1, 3.4)), ((-1.75, -1, 0), (1.75, 0.65, 1.65))]),
+    ("H_HallBench_8", [("H_HallBench_8", (0, 0, 0), 0)], "hall / mudroom bench 8 wide, seat faces -Y; boxes: back 3.4, seat 1.65", LOW,
+     [((-4, 0.65, 0), (4, 1, 3.4)), ((-4, -1, 0), (4, 0.65, 1.65))]),
     ("H_Planter", [("H_Planter", (0, 0, 0), 0), ("H_Planter_Tree", (0, 0, 0), 0)], "concrete planter (cover 3.4) + fiddle tree above as art (no collision)", LOW, [((-1.5, -1.5, 0), (1.5, 1.5, 3.4))]),
     ("H_DisplayColumn", [("H_DisplayColumn", (0, 0, 0), 0)], "column wrapped in walnut with display niches on -Y and +Y", TALL, [((-1.5, -1.5, 0), (1.5, 1.5, 8))]),
     # dressing
@@ -1040,6 +1047,13 @@ def main():
             if c.length > 1e-4:
                 piv = piv + c
                 pivots[name] = piv
+                o0 = objs[0]           # the gameplay part: its own mesh origin goes onto the pivot too
+                if o0.data.users > 1:
+                    o0.data = o0.data.copy()
+                local = o0.matrix_world.inverted().to_3x3() @ c
+                o0.data.transform(Matrix.Translation(-local))
+                o0.location += c
+                bpy.context.view_layer.update()
                 boxes = [(tuple(Vector(b0) - c), tuple(Vector(b1) - c)) for (b0, b1) in boxes]
         e["size_studio"] = studio_size(hi - lo)
         a_, b_ = studio(lo - piv), studio(hi - piv)

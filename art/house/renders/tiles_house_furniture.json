@@ -9,7 +9,7 @@
   ],
   "tris": 2308,
   "cover": "LOW 3.4",
-  "role": "living room sectional, back to the room"
+  "role": "living room sectional, back to the room; boxes: back 3.4, arms 2.6, seats 1.8"
  },
  {
   "name": "H_Armchair",
@@ -21,7 +21,7 @@
   ],
   "tris": 1060,
   "cover": "LOW 3.4",
-  "role": "living room armchair"
+  "role": "living room armchair; boxes: back 3.4, arms 2.5, seat 1.8"
  },
  {
   "name": "H_KitchenIsland",
@@ -297,7 +297,7 @@
   ],
   "tris": 480,
   "cover": "LOW 3.4",
-  "role": "kitchen banquette, seat faces -Y"
+  "role": "kitchen banquette, seat faces -Y; boxes: back 3.4, seat 1.95"
  },
  {
   "name": "H_HallBench_3",
@@ -309,7 +309,7 @@
   ],
   "tris": 180,
   "cover": "LOW 3.4",
-  "role": "hall bench 3.5 wide, seat faces -Y"
+  "role": "hall bench 3.5 wide, seat faces -Y; boxes: back 3.4, seat 1.65"
  },
  {
   "name": "H_HallBench_8",
@@ -321,7 +321,7 @@
   ],
   "tris": 312,
   "cover": "LOW 3.4",
-  "role": "hall / mudroom bench 8 wide, seat faces -Y"
+  "role": "hall / mudroom bench 8 wide, seat faces -Y; boxes: back 3.4, seat 1.65"
  },
  {
   "name": "H_Planter",

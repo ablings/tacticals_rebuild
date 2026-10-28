@@ -9,8 +9,8 @@ Files and numbers in full: `art/house/DONE.md`.
 | File | What | Triangles |
 |---|---|---|
 | `art/house/fbx/H_Furniture_kit.fbx` (+ `fbx/<assembly>.fbx`, pivot at the origin) | 65 furniture / dressing assemblies, 79 meshes, 13 baked atlases | 28,260 unique |
-| `art/house/fbx/H_House.fbx` | the house IN PLACE: shell, roof, stairs, railings, 8 doors, 8 door frames, 28 windows (frame + glass + broken glass), skylights | 24,024 |
-| `art/house/fbx/H_Exterior.fbx` | street, yards, the house across, 6 neighbour houses, fences, shed, 4 cars, 15 trees, power poles + wires, lamps, mailbox | 20,470 |
+| `art/house/fbx/H_House.fbx` | the house IN PLACE: shell, roof, stairs, railings, 8 doors, 8 door frames, 28 windows (frame + glass + broken glass), skylights | 24,112 |
+| `art/house/fbx/H_Exterior.fbx` | street, yards, the house across, 6 neighbour houses, fences, shed, 4 cars, 15 trees, power poles + wires, lamps, mailbox | 20,486 |
 | `art/house/tex/sky/sky_{side,up,dn}.png` | the sky (Roblox Sky faces) | |
 Each FBX carries `K_ScaleCube` (10 studs) and `K_Marker` (long arm +X, upright +Z, short arm +Y): measure them after Import 3D.
 
@@ -104,6 +104,22 @@ teddy, bar stool, nightstand, coffee table, side table, desk, desk chair, kitche
   - architraves cover the door linings;
   - pivots = collision-box centres;
   - teddy / fruit bowl / towel rail lighter.
+
+## Round 3 (after the second model grade, FIX 8.1)
+- **Every seat piece now has height-banded collision boxes:** armchair, sofa, kitchen bench, hall benches and the dining chairs. Back 3.4, arms about 2.5, seat about 1.8 (the beds and the table were already done). A single 3.4 box over a seat gave invisible cover.
+- **Pivots:**
+  - Round 2 had moved the manifest pivot but not the meshes. The gameplay part's mesh origin now sits on the pivot in the kit FBX and the per-assembly FBX (the sofa was 1.8 off).
+  - New `art/house/tools/texel_pivot_check.py`: 0 mismatches.
+- **Texture density:**
+  - The spawn shelf wall, oven wall, slat screens, headboard wall, stairs, doors, windows and cars were 8-19 px/stud.
+  - Fix: Storage2 is split three ways, and the big atlases are baked at 2048.
+  - Lowest anywhere is now 22.6 px/stud.
+- **Smaller fixes:**
+  - the TV screen sits on the body's front plane;
+  - the skylight glass sits on its curb;
+  - the shed's front slot is closed;
+  - the fence cap rails have bottoms and no shared plane with the posts;
+  - the oak strip along the back stair is now tile.
 
 ## Exterior (mobile-safe)
 - Big surfaces use own seamless tiling textures (`tex/tile`, made by `tools/make_tiles.py`): grass, asphalt, concrete, render, cladding, brick, siding, fence, hedge, metal roof.

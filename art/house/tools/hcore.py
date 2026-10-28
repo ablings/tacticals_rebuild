@@ -839,7 +839,11 @@ def unwrap(objs, angle=60):
     bpy.ops.object.mode_set(mode="OBJECT")
 
 
+ATLAS_RES = {}      # atlas name -> bake resolution (default RES)
+
+
 def bake_atlas(atl, objs):
+    RES = ATLAS_RES.get(atl, globals()["RES"])
     log("bake", atl, [o.name for o in objs])
     unwrap(objs)
     imgs = {}

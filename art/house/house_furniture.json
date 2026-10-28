@@ -78,6 +78,18 @@
    "rough": "tex/H_Toys_rough.png",
    "metal": "tex/H_Toys_metal.png"
   },
+  "ShelfWall": {
+   "color": "tex/H_ShelfWall_color.png",
+   "normal": "tex/H_ShelfWall_normal.png",
+   "rough": "tex/H_ShelfWall_rough.png",
+   "metal": "tex/H_ShelfWall_metal.png"
+  },
+  "Storage3": {
+   "color": "tex/H_Storage3_color.png",
+   "normal": "tex/H_Storage3_normal.png",
+   "rough": "tex/H_Storage3_rough.png",
+   "metal": "tex/H_Storage3_metal.png"
+  },
   "Storage2": {
    "color": "tex/H_Storage2_color.png",
    "normal": "tex/H_Storage2_normal.png",
@@ -88,7 +100,7 @@
  "assemblies": [
   {
    "assembly": "H_Sofa_Sectional",
-   "role": "living room sectional, back to the room",
+   "role": "living room sectional, back to the room; boxes: back 3.4, arms 2.6, seats 1.8",
    "cover": "LOW 3.4",
    "objects": [
     "H_Sofa_Sectional"
@@ -119,22 +131,58 @@
      "size": [
       12.0,
       3.4,
-      3.6
+      1.05
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      1.8
+      3.075
      ]
     },
     {
      "size": [
-      3.8,
+      0.95,
+      2.6,
+      2.55
+     ],
+     "centre_rel_pivot": [
+      5.525,
+      1.3,
+      1.275
+     ]
+    },
+    {
+     "size": [
+      0.95,
+      2.6,
+      6.15
+     ],
+     "centre_rel_pivot": [
+      -5.525,
+      1.3,
+      -0.525
+     ]
+    },
+    {
+     "size": [
+      10.1,
+      1.8,
+      2.55
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.9,
+      1.275
+     ]
+    },
+    {
+     "size": [
+      2.85,
       1.8,
       3.6
      ],
      "centre_rel_pivot": [
-      -4.1,
+      -3.625,
       0.9,
       -1.8
      ]
@@ -149,7 +197,7 @@
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
-      0.0
+      -0.0
      ],
      "size_studio": [
       12.0,
@@ -170,7 +218,7 @@
   },
   {
    "assembly": "H_Armchair",
-   "role": "living room armchair",
+   "role": "living room armchair; boxes: back 3.4, arms 2.5, seat 1.8",
    "cover": "LOW 3.4",
    "objects": [
     "H_Armchair"
@@ -201,12 +249,48 @@
      "size": [
       4.2,
       3.4,
-      4.0
+      1.0
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      0.0
+      1.5
+     ]
+    },
+    {
+     "size": [
+      0.75,
+      2.5,
+      3.0
+     ],
+     "centre_rel_pivot": [
+      1.725,
+      1.25,
+      -0.5
+     ]
+    },
+    {
+     "size": [
+      0.75,
+      2.5,
+      3.0
+     ],
+     "centre_rel_pivot": [
+      -1.725,
+      1.25,
+      -0.5
+     ]
+    },
+    {
+     "size": [
+      2.7,
+      1.8,
+      3.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.9,
+      -0.5
      ]
     }
    ],
@@ -359,24 +443,48 @@
      "size": [
       6.1,
       3.4,
-      1.95
+      0.35
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      -2.375
+      -3.175
      ]
     },
     {
      "size": [
       6.1,
       3.4,
-      1.95
+      0.35
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      2.375
+      3.175
+     ]
+    },
+    {
+     "size": [
+      6.1,
+      1.75,
+      1.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.875,
+      -2.5
+     ]
+    },
+    {
+     "size": [
+      6.1,
+      1.75,
+      1.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.875,
+      2.5
      ]
     }
    ],
@@ -986,7 +1094,7 @@
    "parts": [
     {
      "object": "H_TVConsole",
-     "mesh": "H_TVConsole",
+     "mesh": "H_TVConsole.001",
      "atlas": "WoodA",
      "tris": 84,
      "centre_studio_rel_pivot": [
@@ -1729,7 +1837,7 @@
     {
      "object": "H_ShelfWall",
      "mesh": "H_ShelfWall",
-     "atlas": "Storage2",
+     "atlas": "ShelfWall",
      "tris": 3528,
      "centre_studio_rel_pivot": [
       -0.0,
@@ -1746,10 +1854,10 @@
    ],
    "tris": 3528,
    "textures": [
-    "tex/H_Storage2_color.png",
-    "tex/H_Storage2_metal.png",
-    "tex/H_Storage2_normal.png",
-    "tex/H_Storage2_rough.png"
+    "tex/H_ShelfWall_color.png",
+    "tex/H_ShelfWall_metal.png",
+    "tex/H_ShelfWall_normal.png",
+    "tex/H_ShelfWall_rough.png"
    ],
    "art_outside_box": 0.0
   },
@@ -1799,7 +1907,7 @@
     {
      "object": "H_OvenWall",
      "mesh": "H_OvenWall",
-     "atlas": "Storage2",
+     "atlas": "Storage3",
      "tris": 452,
      "centre_studio_rel_pivot": [
       -0.0,
@@ -1816,10 +1924,10 @@
    ],
    "tris": 452,
    "textures": [
-    "tex/H_Storage2_color.png",
-    "tex/H_Storage2_metal.png",
-    "tex/H_Storage2_normal.png",
-    "tex/H_Storage2_rough.png"
+    "tex/H_Storage3_color.png",
+    "tex/H_Storage3_metal.png",
+    "tex/H_Storage3_normal.png",
+    "tex/H_Storage3_rough.png"
    ],
    "art_outside_box": 0.0
   },
@@ -1869,7 +1977,7 @@
     {
      "object": "H_SlatScreen",
      "mesh": "H_SlatScreen",
-     "atlas": "Storage2",
+     "atlas": "Storage3",
      "tris": 324,
      "centre_studio_rel_pivot": [
       -0.0,
@@ -1886,10 +1994,10 @@
    ],
    "tris": 324,
    "textures": [
-    "tex/H_Storage2_color.png",
-    "tex/H_Storage2_metal.png",
-    "tex/H_Storage2_normal.png",
-    "tex/H_Storage2_rough.png"
+    "tex/H_Storage3_color.png",
+    "tex/H_Storage3_metal.png",
+    "tex/H_Storage3_normal.png",
+    "tex/H_Storage3_rough.png"
    ],
    "art_outside_box": 0.0
   },
@@ -1939,7 +2047,7 @@
     {
      "object": "H_HeadboardWall",
      "mesh": "H_HeadboardWall",
-     "atlas": "Storage2",
+     "atlas": "Storage3",
      "tris": 1320,
      "centre_studio_rel_pivot": [
       -0.0,
@@ -1956,16 +2064,16 @@
    ],
    "tris": 1320,
    "textures": [
-    "tex/H_Storage2_color.png",
-    "tex/H_Storage2_metal.png",
-    "tex/H_Storage2_normal.png",
-    "tex/H_Storage2_rough.png"
+    "tex/H_Storage3_color.png",
+    "tex/H_Storage3_metal.png",
+    "tex/H_Storage3_normal.png",
+    "tex/H_Storage3_rough.png"
    ],
    "art_outside_box": 0.0
   },
   {
    "assembly": "H_KitchenBench",
-   "role": "kitchen banquette, seat faces -Y",
+   "role": "kitchen banquette, seat faces -Y; boxes: back 3.4, seat 1.95",
    "cover": "LOW 3.4",
    "objects": [
     "H_KitchenBench"
@@ -1996,12 +2104,24 @@
      "size": [
       10.0,
       3.4,
-      3.5
+      0.65
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      0.0
+      1.425
+     ]
+    },
+    {
+     "size": [
+      10.0,
+      1.95,
+      2.85
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.975,
+      -0.325
      ]
     }
    ],
@@ -2035,7 +2155,7 @@
   },
   {
    "assembly": "H_HallBench_3",
-   "role": "hall bench 3.5 wide, seat faces -Y",
+   "role": "hall bench 3.5 wide, seat faces -Y; boxes: back 3.4, seat 1.65",
    "cover": "LOW 3.4",
    "objects": [
     "H_HallBench_3"
@@ -2066,12 +2186,24 @@
      "size": [
       3.5,
       3.4,
-      2.0
+      0.35
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      0.0
+      0.825
+     ]
+    },
+    {
+     "size": [
+      3.5,
+      1.65,
+      1.65
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.825,
+      -0.175
      ]
     }
    ],
@@ -2105,7 +2237,7 @@
   },
   {
    "assembly": "H_HallBench_8",
-   "role": "hall / mudroom bench 8 wide, seat faces -Y",
+   "role": "hall / mudroom bench 8 wide, seat faces -Y; boxes: back 3.4, seat 1.65",
    "cover": "LOW 3.4",
    "objects": [
     "H_HallBench_8"
@@ -2136,12 +2268,24 @@
      "size": [
       8.0,
       3.4,
-      2.0
+      0.35
      ],
      "centre_rel_pivot": [
       -0.0,
       1.7,
-      0.0
+      0.825
+     ]
+    },
+    {
+     "size": [
+      8.0,
+      1.65,
+      1.65
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.825,
+      -0.175
      ]
     }
    ],
@@ -2308,7 +2452,7 @@
     {
      "object": "H_DisplayColumn",
      "mesh": "H_DisplayColumn",
-     "atlas": "Storage2",
+     "atlas": "Storage3",
      "tris": 284,
      "centre_studio_rel_pivot": [
       -0.0,
@@ -2325,10 +2469,10 @@
    ],
    "tris": 284,
    "textures": [
-    "tex/H_Storage2_color.png",
-    "tex/H_Storage2_metal.png",
-    "tex/H_Storage2_normal.png",
-    "tex/H_Storage2_rough.png"
+    "tex/H_Storage3_color.png",
+    "tex/H_Storage3_metal.png",
+    "tex/H_Storage3_normal.png",
+    "tex/H_Storage3_rough.png"
    ],
    "art_outside_box": 0.0
   },

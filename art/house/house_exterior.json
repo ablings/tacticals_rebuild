@@ -962,19 +962,19 @@
   },
   {
    "name": "Ext_Fences_FencePost",
-   "tris": 1172,
+   "tris": 1188,
    "material": [
     "H_FencePost"
    ],
    "bbox_plan": [
     [
      -160.3,
-     -92.3,
+     -92.33,
      -1.0
     ],
     [
      160.3,
-     75.3,
+     75.33,
      6.2
     ]
    ]
@@ -2766,5 +2766,5 @@
    ]
   }
  ],
- "total_tris": 20470
+ "total_tris": 20486
 }

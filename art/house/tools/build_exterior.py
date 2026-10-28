@@ -11,6 +11,8 @@ import build_house as bh
 from build_house import *        # noqa  (hcore names, add_poly, box_faces, tiled_object, plain_material ...)
 
 BLEND = os.path.join(ROOT, "house_exterior.blend")
+import hcore as _hc
+_hc.ATLAS_RES.update({"Cars": 2048})
 GZ = -1.0       # outside ground level
 EXT = bh.SHELL  # (group, material) -> polys
 
@@ -74,14 +76,14 @@ def fence(group, x0, y0, x1, y1, h=7.0, post_every=6.0):
     L = math.hypot(x1 - x0, y1 - y0)
     if abs(y1 - y0) < 1e-6:
         boxp(group, "Fence", min(x0, x1), max(x0, x1), y0 - 0.15, y0 + 0.15, GZ, GZ + h)
-        boxp(group, "FencePost", min(x0, x1), max(x0, x1), y0 - 0.3, y0 + 0.3, GZ + h - 0.05, GZ + h + 0.2)
+        boxp(group, "FencePost", min(x0, x1), max(x0, x1), y0 - 0.33, y0 + 0.33, GZ + h - 0.05, GZ + h + 0.2, skip_bottom=False)
         n = max(1, int(L / post_every))
         for i in range(n + 1):
             x = min(x0, x1) + L * i / n
             boxp(group, "FencePost", x - 0.3, x + 0.3, y0 - 0.3, y0 + 0.3, GZ, GZ + h + 0.15)
     else:
         boxp(group, "Fence", x0 - 0.15, x0 + 0.15, min(y0, y1), max(y0, y1), GZ, GZ + h)
-        boxp(group, "FencePost", x0 - 0.3, x0 + 0.3, min(y0, y1), max(y0, y1), GZ + h - 0.05, GZ + h + 0.2)
+        boxp(group, "FencePost", x0 - 0.33, x0 + 0.33, min(y0, y1), max(y0, y1), GZ + h - 0.05, GZ + h + 0.2, skip_bottom=False)
         n = max(1, int(L / post_every))
         for i in range(n + 1):
             y = min(y0, y1) + L * i / n
@@ -307,7 +309,7 @@ def mailbox(name, x, y):
 
 
 def shed(group, x0, x1, y0, y1):
-    boxp(group, "Fence", x0, x1, y0, y1, GZ, GZ + 8.0)
+    boxp(group, "Fence", x0, x1, y0, y1, GZ, GZ + 8.25)
     s = 2.0 / (y1 - y0 + 2)
     P = lambda x, y, dz: Vector((x, y, GZ + 8.0 + (y - (y0 - 1)) * s + dz))
     top = [P(x0 - 1, y0 - 1, 0.4), P(x1 + 1, y0 - 1, 0.4), P(x1 + 1, y1 + 1, 0.4), P(x0 - 1, y1 + 1, 0.4)]

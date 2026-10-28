@@ -895,7 +895,7 @@
   },
   {
    "name": "Shell_G_FloorTile",
-   "tris": 10,
+   "tris": 12,
    "material": "T_FloorTile",
    "bbox_plan": [
     [
@@ -917,7 +917,7 @@
   },
   {
    "name": "Shell_G_OakFloor",
-   "tris": 14,
+   "tris": 12,
    "material": "T_OakFloor",
    "bbox_plan": [
     [
@@ -2501,7 +2501,7 @@
   },
   {
    "name": "Door_Back_BrokenGlass",
-   "tris": 336,
+   "tris": 424,
    "material": "H_Glass",
    "bbox_plan": [
     [
@@ -3761,12 +3761,12 @@
     [
      16.95,
      14.95,
-     14.85
+     14.9
     ],
     [
      23.05,
      21.05,
-     15.0
+     15.05
     ]
    ],
    "origin_plan": [
@@ -3805,12 +3805,12 @@
     [
      31.95,
      14.95,
-     14.85
+     14.9
     ],
     [
      38.05,
      21.05,
-     15.0
+     15.05
     ]
    ],
    "origin_plan": [
@@ -3842,5 +3842,5 @@
    ]
   }
  ],
- "total_tris": 24024
+ "total_tris": 24112
 }

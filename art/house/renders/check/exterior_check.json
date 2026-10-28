@@ -1,8 +1,8 @@
 {
  "objects": 144,
- "triangles": 20470,
+ "triangles": 20486,
  "fail": 0,
- "warn": 59,
+ "warn": 58,
  "findings": [
   {
    "level": "WARN",
@@ -129,12 +129,6 @@
    "code": "A1b",
    "object": "Ext_NeighbourW_GlassDark",
    "message": "64 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
-  },
-  {
-   "level": "WARN",
-   "code": "A3b",
-   "object": "Ext_Yard_Fence",
-   "message": "3 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
   },
   {
    "level": "WARN",

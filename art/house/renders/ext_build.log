@@ -1,0 +1,38 @@
+[   1.3s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
+[   1.3s] bake Cars ['Car_FamilySUV', 'Car_SedanSlate', 'Car_SedanWine', 'Car_SUVCharcoal']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[   8.7s]    Cars color 5.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  13.8s]    Cars rough 5.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  19.0s]    Cars metal 5.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  24.3s]    Cars normal 5.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  29.6s]    Cars ao 5.3s
+[  30.5s] deduped 2580 hidden back-to-back faces
+
+FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\fbx\\H_Exterior.fbx'
+export finished in 0.1372 sec.
+Info: Saved as "house_exterior.blend"
+Info: Total files 18 | Changed 0 | Failed 0
+Info: Saved "house_exterior.blend"
+[  30.8s] DONE 144 objects 20486 tris
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

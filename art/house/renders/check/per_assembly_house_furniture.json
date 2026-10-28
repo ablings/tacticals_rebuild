@@ -80,7 +80,7 @@
   "findings": [
    "WARN A1b H_TVConsole_WithTV__H_TVConsole: 22 faces point toward the centre: check for flipped faces (concave shapes can be fine)",
    "WARN A8 H_TVConsole_WithTV__H_TVConsole + H_TVConsole_WithTV__H_TV: 4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly",
-   "WARN A8 H_TVConsole_WithTV__H_TV + H_TVConsole_WithTV__H_TV_Screen: 32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "WARN A8 H_TVConsole_WithTV__H_TV + H_TVConsole_WithTV__H_TV_Screen: 29 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   ]
  },
  "H_KitchenBase": {
@@ -309,7 +309,7 @@
   "fail": 0,
   "warn": 1,
   "findings": [
-   "WARN A8 H_TV__H_TV + H_TV__H_TV_Screen: 32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+   "WARN A8 H_TV__H_TV + H_TV__H_TV_Screen: 29 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
   ]
  },
  "H_Laptop": {

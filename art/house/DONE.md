@@ -15,7 +15,7 @@ v1. Hand-over for the map builder: `notes/house_props.md`. Sheet: `notes/house_p
 | `house_furniture.json` | per assembly: size, cover class, collision boxes, pivot, parts, tris, atlas files |
 | `house_shell.json` | every house object (bbox, origin, tris, material), doors[] (hinge, yaws), windows[] (frame / glass / broken names) |
 | `house_exterior.json` | every exterior object |
-| `tex/H_<atlas>_{color,normal,rough,metal}.png` | 18 baked atlases (furniture 13, house Doors / Windows / Stairs, Cars); colour + normal 1024, rough / metal 512 |
+| `tex/H_<atlas>_{color,normal,rough,metal}.png` | 19 baked atlases (furniture 15, house Doors / Windows / Stairs, Cars). Colour + normal at 1024, or 2048 for Sofa, Storage, ShelfWall, Storage3, Stairs, Doors, Windows and Cars; rough / metal at half size. Lowest density is 22.6 px/stud (`tools/texel_pivot_check.py`) |
 | `tex/tile/T_*.png` | 18 seamless tiling textures (shell + exterior), studs per tile in `tex/tile/tiles.json` |
 | `tex/sky/sky_side.png`, `sky_up.png`, `sky_dn.png` | Roblox Sky faces (side for Bk / Ft / Lf / Rt) |
 | `tex/gen/*.png` | Codex-generated art: 4 prints, 2 rugs, a kid's drawing, the source sky |
@@ -40,21 +40,22 @@ Rebuild: `"C:/Program Files/Blender Foundation/Blender 5.2/blender.exe" -b --fac
 ## Sizes and collision footprints
 Cover heights: low **3.4**, tall **8.0** (CoverConfig waist / head rays; the final layout boxes every tall piece at 8.0).
 - **Pivot:** the bottom centre of the union of the piece's collision boxes. The box footprint = the art footprint (handles included).
-- **Multi-box pieces:** the sofa, the beds and the dining set list accurate multi-boxes. A single layout box over them gives invisible cover above the seat, mattress or table top.
+- **Multi-box pieces:** every seat piece (sofa, armchair, beds, dining set, kitchen bench, hall benches) lists height-banded boxes: back 3.4, arms about 2.5, seat about 1.8. A single 3.4 layout box over them gives invisible cover above the seat, mattress or table top.
+- Each piece's mesh origin (its first part) sits on that pivot in the kit FBX and the per-assembly FBX: `tools/texel_pivot_check.py` finds 0 mismatches.
 
 | Piece | Size (Studio X x Y x Z) | Collision box(es): size @ centre from the pivot |
 |---|---|---|
-| H_Sofa_Sectional | 12 x 3.4 x 7.2 | 12x3.4x3.6 @ (0,1.7,1.8); chaise 3.8x1.8x3.6 @ (-4.1,0.9,-1.8) |
-| H_Armchair | 4.2 x 3.4 x 4 | same as the size |
+| H_Sofa_Sectional | 12 x 3.4 x 7.2 | back 12x3.4x1.05 @ (0,1.7,3.075); arms 0.95x2.6x2.55 @ (5.525,1.3,1.275) and 0.95x2.6x6.15 @ (-5.525,1.3,-0.525); seats 10.1x1.8x2.55 @ (0,0.9,1.275) and 2.85x1.8x3.6 @ (-3.625,0.9,-1.8) |
+| H_Armchair | 4.2 x 3.4 x 4 | back 4.2x3.4x1 @ (0,1.7,1.5); arms 0.75x2.5x3 @ (+-1.725,1.25,-0.5); seat 2.7x1.8x3 @ (0,0.9,-0.5) |
 | H_KitchenIsland | 10 x 3.4 x 4.68 | same |
-| H_DiningSet | 8 x 3.4 x 6.7 | table 8x2.6x4 @ (0,1.3,0); chair rows 6.1x3.4x1.95 @ (0,1.7,+-2.375) |
+| H_DiningSet | 8 x 3.4 x 6.7 | table 8x2.6x4 @ (0,1.3,0); chair backs 6.1x3.4x0.35 @ (0,1.7,+-3.175); chair seats 6.1x1.75x1 @ (0,0.875,+-2.5) |
 | H_Bed_Double / H_Bed_Single | 7.7 x 3.4 x 10 / 4.7 x 3.4 x 8.6 | headboard 3.4 tall + body 2.4 tall (see the json) |
 | H_Dresser | 6 x 3.4 x 2.3 | same |
 | H_Bathtub | 7 x 3.4 x 3.6 (floor tap to 4.1) | 7x3.4x3.6 |
 | H_TVConsole (+ _WithTV) | 8 x 3.4 x 2.02 | same (the TV is art above) |
 | H_KitchenBase / Sink / Hob | 4 x 3.4 x 2.46 / 2.46 / 2.58 | same (sink tap to 5.0) |
-| H_KitchenBench | 10 x 3.4 x 3.5 | same |
-| H_HallBench_3 / _8 | 3.5 / 8 x 3.4 x 2 | same |
+| H_KitchenBench | 10 x 3.4 x 3.5 | back 10x3.4x0.65 @ (0,1.7,1.425); seat 10x1.95x2.85 @ (0,0.975,-0.325) |
+| H_HallBench_3 / _8 | 3.5 / 8 x 3.4 x 2 | back W x3.4x0.35 @ (0,1.7,0.825); seat W x1.65x1.65 @ (0,0.825,-0.175) |
 | H_Planter | 3 x 3.4 x 3 (+ tree art to 8.95) | 3x3.4x3 |
 | H_Bookcase | 6 x 8 x 1.6 | same |
 | H_Fridge | 3.6 x 8 x 2.86 | same |
@@ -88,8 +89,8 @@ Dressing (no collision) sizes are in `house_furniture.json` and `notes/house_pro
 | | Meshes | Triangles | Largest mesh |
 |---|---|---|---|
 | Furniture (unique) | 79 | 28,260 | H_ShelfWall 3,528 |
-| House | 136 | 24,024 | 2,424 |
-| Exterior | 144 | 20,470 | 2,108 |
+| House | 136 | 24,112 | 2,424 |
+| Exterior | 144 | 20,486 | 2,108 |
 
 The placed map is about 100k triangles. Every piece is under 2,048 studs (the largest is the ground, 1,800).
 

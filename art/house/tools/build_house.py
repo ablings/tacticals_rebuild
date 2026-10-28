@@ -23,6 +23,7 @@ REPO = os.path.abspath(os.path.join(ROOT, "..", ".."))
 LAY = json.load(open(os.path.join(REPO, "notes", "maps", "house_layout.json")))
 TILES = json.load(open(os.path.join(TEX, "tile", "tiles.json")))
 BLEND = os.path.join(ROOT, "house.blend")
+hcore.ATLAS_RES.update({"Stairs": 2048, "Doors": 2048, "Windows": 2048})
 
 for k_, v_ in {
     "oak_slat": dict(under=(178, 144, 104), wood=True, groove=True, stain=0.12, rough=0.55, mottle=0.08),
@@ -348,7 +349,7 @@ def build_shell():
                 q = [(ta, o["a"], o["z0"]), (tb, o["a"], o["z0"]), (tb, o["b"], o["z0"]), (ta, o["b"], o["z0"])]
             add_poly(mat, q, "G" if o["z0"] < 13 else "U")
     v = [v for v in VOIDS if v["id"] == "Void_BackStair"][0]
-    add_poly("OakFloor", [(v["x0"], v["y0"], 0), (v["x1"], v["y0"], 0), (v["x1"], v["y1"], 0), (v["x0"], v["y1"], 0)], "G")
+    add_poly("FloorTile", [(v["x0"], v["y0"], 0), (v["x1"], v["y0"], 0), (v["x1"], v["y1"], 0), (v["x0"], v["y1"], 0)], "G")
     add_poly("CeilingWhite", [(v["x0"], v["y1"], 26), (v["x1"], v["y1"], 26), (v["x1"], v["y0"], 26), (v["x0"], v["y0"], 26)], "U")
     # flat kitchen roof (outside, upper level): gravel membrane over the slab, x 9.5..40, y 4.5..30
     add_poly("Gravel", [(9.5, 4.5, 14.0), (40.0, 4.5, 14.0), (40.0, 30.0, 14.0), (9.5, 30.0, 14.0)], "U")
@@ -622,7 +623,7 @@ def skylights():
                 continue
             add_poly("Render" if abs(nrm.z) < 0.5 else "Charcoal", quad, "R")
         mb = MB(f"Skylight_{i + 1}_Glass", "Plain:Glass", 0.2)
-        mb.boxr((x0 - 0.05, y0 - 0.05, 14.85), (x1 + 0.05, y1 + 0.05, 15.0), "glass_dark")
+        mb.boxr((x0 - 0.05, y0 - 0.05, 14.9), (x1 + 0.05, y1 + 0.05, 15.05), "glass_dark")
         obs.append(finish_plain(mb, "H_Glass"))
         tr = MB(f"Skylight_{i + 1}_Trim", "Windows", 0.4)
         for (a, b, c, d) in ((x0 - 0.3, x1 + 0.3, y0 - 0.3, y0), (x0 - 0.3, x1 + 0.3, y1, y1 + 0.3), (x0 - 0.3, x0, y0 - 0.02, y1 + 0.02), (x1, x1 + 0.3, y0 - 0.02, y1 + 0.02)):
@@ -747,7 +748,7 @@ def door_leaf(d):
         gl = MB(name + "_Glass", "Plain:Glass", h)
         gl.boxr((st - 0.06, -0.03, 0.84), (w - st + 0.06, 0.03, h - 0.39), "glass_dark")
         obs.append(finish_plain(gl, "H_Glass"))
-        obs.append(broken_pane(name + "_BrokenGlass", (st - 0.06, 0.84), (w - st + 0.06, h - 0.39), axis="x", tm=0.0, seed=hash(name) % 997))
+        obs.append(broken_pane(name + "_BrokenGlass", (st - 0.06, 0.84), (w - st + 0.06, h - 0.39), axis="x", tm=0.0, seed=sum(map(ord, name))))
         return obs
     mb = MB(name, "Doors", h)
     if model == "FrontDoor":
