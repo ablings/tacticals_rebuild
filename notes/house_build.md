@@ -89,3 +89,18 @@ modern suburban house inspired by a classic suburban test-site shooter map (own 
   (`captures/house/lobby_pad_duel.png`).
 - Look notes for Edward (taste): the living-room spawn faces its shelf wall at 4 studs (the spawn shield, mirrored by the kitchen's
   oven wall).
+
+## Grade round 1 (roblox-map-grader, xhigh; cut short at 08:06 on my wrap-up request): FIX 8.0, and the fixes
+Confirmed by the grader: read-back 0 differences (289 proxies, 8 doors, 28 windows); checker PASS on the read-back; barriers in the
+WindowBarrier group (558 Default rays across every BAR_ part: 0 hits); glass never collides / queries; doors pivot on the hinge, held
+pose = OpenCF / ClosedCF; MapInfo lighting matches the brief; 4 extra escape pushes stayed in; builder's calls (back stair, both spawns
+downstairs) judged to serve the brief, for Edward to confirm.
+| Finding | Fix |
+|---|---|
+| Blocking: the lobby test copy was older than the final build (210 COLP vs 232: old single-box seats) | Re-ported (old source moved to ServerStorage._HouseSource_Backup first: tools/duel_map_import APPENDS to an existing _DuelSource.<Id>), prep, split ONLY = 'House': lobby COLP 232 = build, 34 lights; pad duel re-run: D1 House, me on A1, 57 barriers, 28 windows |
+| Major: 138 lights (style card ~40) | 34: downlights one per ~400 sq studs (SpotLight 2.4, 120 deg, range ceiling + 12), no PointLight fills, lamp lights only in floor lamps + pendants. Ground rooms back to their earlier brightness; bedrooms calmer (median ~95 vs ~150): `captures/house/lights_before_after.png` for Edward |
+| Major: the brief's bunk bed became a single bed | No bunk-bed mesh exists; plan + brief updated (Bedroom 3's tall cover is its wardrobe) |
+| Minor: Door_Back_BrokenGlass always visible | hidden by the installer (Transparency 1; doors aren't Shootables windows) |
+| Minor: plan's fairness numbers stale | replaced by the built read-back's numbers |
+| Minor (accepted, noted): one floor proxy (WoodPlanks) under tile rooms too; MapAudit HOLE 10 cells at the void edges; art above its box (the foyer plant, the TV) is see-through to the checker | |
+Re-run after: read-back 0 differences, checker PASS on the read-back, MapAudit 0 FAIL / 1 WARN (34 lights), captures `captures/house/r3/`.

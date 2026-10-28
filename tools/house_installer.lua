@@ -339,6 +339,9 @@ for _, d in L.doors do
 		if a then a.Parent = dm end
 	end
 	if not takeFromShell(d.id) and not dm:FindFirstChild(d.id) then table.insert(skipped, d.id .. ": no leaf mesh") end
+	-- a door's broken pane is not a Shootables window (the game never hides it): hidden here, kept for a later door mechanic
+	local bg = dm:FindFirstChild(d.id .. "_BrokenGlass")
+	for _, x in (bg and (bg:IsA("BasePart") and { bg } or bg:GetDescendants()) or {}) do if x:IsA("BasePart") then x.Transparency = 1 end end
 end
 
 -- furniture: each on its COLP box; composites (kitchen runs, two dining sets) are laid out along the box's long side

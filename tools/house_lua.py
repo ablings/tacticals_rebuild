@@ -28,7 +28,7 @@ def room_lights():
         h = ceil - st["floor"]
         for qi, q in enumerate(r["rects"]):
             w, d = q["x1"] - q["x0"], q["y1"] - q["y0"]
-            nx, ny = max(1, round(w / 12)), max(1, round(d / 12))
+            nx, ny = max(1, round(w / 20)), max(1, round(d / 20))   # ~1 per 400 sq studs (light budget ~40: style card)
             if w < 6 or d < 6:
                 continue
             for i in range(nx):
@@ -36,9 +36,9 @@ def room_lights():
                     x = q["x0"] + w * (i + 0.5) / nx
                     y = q["y0"] + d * (j + 0.5) / ny
                     out.append(dict(id=f"L_{r['id']}_{qi}_{i}{j}", kind="down", x=round(x, 2), y=round(y, 2), z=round(ceil - 0.3, 2),
-                                    angle=110, range=round(h + 6, 1), bright=1.1, fill=0.12, color=WARM, shadows=False))
+                                    angle=120, range=round(h + 12, 1), bright=2.4, fill=0, color=WARM, shadows=False))
     for d in L["dressing"]:
-        lift = {"H_FloorLamp": 5.3, "H_TableLamp": 1.6, "H_PendantLamp": -3.4}.get(d["model"])
+        lift = {"H_FloorLamp": 5.3, "H_PendantLamp": -3.4}.get(d["model"])   # table lamps: art only (light budget)
         if lift is None:
             continue
         out.append(dict(id="L_" + d["id"], kind="point", x=d["x"], y=d["y"], z=round(d["z"] + lift, 2), range=12, bright=0.7,

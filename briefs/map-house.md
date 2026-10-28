@@ -1,7 +1,7 @@
 # Brief: House (Tacticals duel map, 1v1 / 2v2 / 3v3)
 
 **Fantasy:** a gunfight through a big, lived-in modern suburban home on a sunny late afternoon: sofas, a kitchen island and
-bunk beds as cover, sun through every window, the street and the neighbours' houses outside. Layout and feel inspired by a
+beds as cover, sun through every window, the street and the neighbours' houses outside. Layout and feel inspired by a
 classic suburban test-site shooter map; every model, texture and word is our own.
 **Landmark:** the double-height foyer with its tall feature window over the front door, the open-tread main stair and the
 gallery railing above it (the place players screenshot, and the hinge of the fight).
@@ -42,5 +42,6 @@ map; no MaterialVariants (default materials + the modeler's baked textures).
 - Sky: the place's shared Sky (afternoon: it shows through every window; the exterior set's houses and trees fill most views).
 - FOV: the game's default camera (70).
 - Studio quality for captures: **EditQualityLevel 21** set by script before every capture (Corrections 2026-10-27).
-- Lights: per room unshadowed ceiling downlights (SpotLight 1.1 + PointLight fill 0.12) + warm lamp PointLights; ~70 holders,
-  ~138 lights. Counted and tuned at quality 21.
+- Lights: 34 (style card budget ~40, grade round 1): per room unshadowed ceiling downlights, one per ~400 sq studs (SpotLight 2.4,
+  120 deg, range ceiling + 12), plus warm PointLights in the floor lamps and pendants (table lamps are art only). Tuned at quality 21:
+  ground rooms median 86-166, bedrooms ~92-124 (calmer than the 138-light round: captures/house/lights_before_after.png).

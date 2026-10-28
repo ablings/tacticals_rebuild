@@ -24,7 +24,7 @@ World = ORIGIN + (x, z, -y). House inside 80 x 60; ground ceiling 13, upper ceil
 | U | Master bedroom | -40..-9, -30..4 | **door on the LEFT at the top of the main stair**; headboard wall, king bed, wardrobes |
 | U | Master bathroom | -40..-28, -30..-19 | door held CLOSED (not playable yet) |
 | U | Bedroom 2 | 9..40, -30..4 | door off the landing; gallery window onto the foyer |
-| U | Bedroom 3 | -40..-9, 4..30 | teen room, bunk bed (tall cover) |
+| U | Bedroom 3 | -40..-9, 4..30 | kid's / teen room: single bed (low), wardrobe (tall), toys |
 | U | Bathroom | -9..9, 17..30 | off the upper hall |
 | U | Upper hall | -9..3.5, 4..17 | to bedroom 3 and the bathroom |
 Above the kitchen (x 9..40, y 4..30) the upper storey is a flat roof with skylights: outside, seen from bedroom 2's window.
@@ -41,7 +41,10 @@ Above the kitchen (x 9..40, y 4..30) the upper storey is a flat roof with skylig
   the foyer void). Each gets the systems task's breakable glass in the frame and a player-only barrier (`Bar_*`, CanQuery off)
   in the opening; the barriers stay when the glass breaks. Front / back doors locked. Return volume all round + below.
 - **Cover = furniture at the game's heights:** low 3.4 (sofas, island, counters, beds, dressers, dining table, tubs, vanities)
-  and tall 7.5-8 (bookcases, fridge, wardrobes, cabinets, oven wall, shelf wall, slat screens, bunk bed, shower glass).
+  and tall 8 (bookcases, fridge, pantry, wardrobes, tall cabinets, oven wall, shelf wall, slat screens, head wall, display column).
+  Sofas, armchairs, benches, beds and dining sets use the modeler's height-banded boxes: back / headboard / chair rows 3.4 = cover,
+  arms ~2.5, seats 1.8, mattresses 2.4, table 2.6 = NotCover obstacles (one box would give invisible cover above the seat).
+  The brief's bunk bed became a single bed (no bunk-bed mesh was made); Bedroom 3's tall cover is its wardrobe.
   53 pieces; every one is a COLP box and a modeler mesh of exactly that size.
 - **Ambush spots:** a sofa whose back faces the foyer arch and the stair foot (LR_SofaStair); the kitchen pass-through (sill
   3.4: vault and shoot through); the bookcase by the landing (LD_Bookcase); a peek between the banisters (gallery railing:
@@ -59,9 +62,10 @@ Above the kitchen (x 9..40, y 4..30) the upper storey is a flat roof with skylig
 ## Fairness (tools/house_check.py, 0.5-stud voxels, eye 4.6, sprint 20, vault 0.34 s; see house_checks.txt)
 | Mode | Contact when A holds / B holds | Approach exposure A / B | Spawn sight A / B | Spawn exposure A / B | Half exposure A / B |
 |---|---|---|---|---|---|
-| 1v1 | 1.53 / 1.52 s (0.8 %) | 15.2 / 16.6 (8.5 %) | 9.8 / 9.7 (0.9 %) | 9.8 / 9.7 (0.9 %) | 14.1 / 13.1 (6.9 %) |
-| 2v2 | 1.38 / 1.41 s (2.0 %) | 15.3 / 16.6 (8.0 %) | 12.6 / 12.9 (2.0 %) | 12.7 / 12.9 (1.3 %) | 14.1 / 13.1 (6.9 %) |
-| 3v3 | 1.38 / 1.36 s (1.4 %) | 15.3 / 16.6 (8.1 %) | 12.6 / 12.9 (2.0 %) | 12.7 / 12.9 (1.3 %) | 14.1 / 13.1 (6.9 %) |
+| 1v1 | 1.41 / 1.42 s (1.0 %) | 15.2 / 16.4 (7.5 %) | 9.7 / 9.7 (0.0 %) | 9.7 / 9.7 (0.0 %) | 14.3 / 13.0 (8.7 %) |
+| 2v2 | 1.38 / 1.25 s (9.2 %) | 15.3 / 16.5 (7.4 %) | 12.5 / 12.9 (3.2 %) | 12.6 / 12.9 (2.6 %) | 14.3 / 13.0 (8.7 %) |
+| 3v3 | 1.21 / 1.26 s (4.0 %) | 15.2 / 16.4 (7.3 %) | 12.5 / 12.9 (3.2 %) | 12.6 / 12.9 (2.6 %) | 14.3 / 13.0 (8.7 %) |
+(Numbers from the checker on the BUILT read-back, final meshes + banded seat collision, 2026-10-28 ~08:40.)
 (After the dressing pass and the Play lap: floor dressing has walk blockers; the living room's first sectional became two armchairs;
 the island stools moved to the island's south side, mirroring the coffee table; no counter under the kitchen pass-through (the vault
 landed on it); the living room's half-wall opening was dropped (it opened into the bathroom); master bed + head wall 2 west.)
