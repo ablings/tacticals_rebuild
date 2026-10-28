@@ -78,7 +78,7 @@ elseif PART == "push" then
 	push("BR3 west window", -36, 14, 14, -47, 14, IN)
 	push("MB south window", -19, -27, 14, -19, -37, IN)
 	push("BR2 north window", 25, 0, 14, 25, 10, { -40.2, 40.2, -30.2, 4.2 })
-	push("FY feature window", 2, -6, 14, 2, -40, { -40.2, 40.2, -30.2, 30.2 })
+	push("front wall under the feature window (ground)", 2, -24, 0, 2, -40, { -40.2, 40.2, -30.2, 30.2 })
 	push("gallery railing", 3, -2, 14, 3, -12, { -40, 40, -4.6, 30 })
 	push("main stair side", -6, -14, 6.6, 4, -14, { -9, -3.0, -30, 30 })
 	push("back stair side", 6.25, 14, 6.6, -4, 14, { 3.0, 9, -30, 30 })

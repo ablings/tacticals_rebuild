@@ -1,25 +1,25 @@
-House layout check (house_layout.json): PASS  (5s)
-nodes 26366, samples 1193, reached 19061 cells, outside shell 0
+House layout check (house_layout.json): PASS  (4s)
+nodes 26285, samples 1187, reached 18931 cells, outside shell 0
 spawn-to-spawn visible pairs: 0; landing (389 cells) sees a slot: 0
-[1v1] contact when A holds 1.41 s / when B holds 1.42 s (-1.0 %); first contact A 1.35 s / B 1.41 s (-4.3 %), mean of 10 A 1.48 / B 1.3 (12.7 %) at A[np.float64(-22.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(37.2), np.float64(-6.8), np.float64(0.0)]
-      approach_exposure: A 15.2 / B 16.4 (-7.5 %) ok
-      half_exposure: A 14.3 / B 13.0 (8.7 %) ok
-      spawn_sight: A 9.7 / B 9.7 (0.0 %) ok
-      spawn_exposure: A 9.7 / B 9.7 (0.0 %) ok
+[1v1] contact when A holds 1.41 s / when B holds 1.42 s (-1.0 %); first contact A 1.35 s / B 1.41 s (-4.3 %), mean of 10 A 1.43 / B 1.35 (5.8 %) at A[np.float64(-22.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(37.2), np.float64(-6.8), np.float64(0.0)]
+      approach_exposure: A 15.3 / B 16.5 (-7.5 %) ok
+      half_exposure: A 14.4 / B 13.1 (9.0 %) ok
+      spawn_sight: A 9.8 / B 9.8 (0.0 %) ok
+      spawn_exposure: A 9.8 / B 9.8 (0.0 %) ok
       enemy reaches a cell that sees the spawn after: A's spawn 2.67 s, B's 3.34 s; spawn-to-spawn sprint 4.59 s
-[2v2] contact when A holds 1.38 s / when B holds 1.25 s (9.2 %); first contact A 1.25 s / B 1.21 s (3.2 %), mean of 10 A 1.13 / B 1.35 (-16.3 %) at A[np.float64(-22.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(37.2), np.float64(-6.8), np.float64(0.0)]
-      approach_exposure: A 15.3 / B 16.5 (-7.4 %) ok
-      half_exposure: A 14.3 / B 13.0 (8.7 %) ok
-      spawn_sight: A 12.5 / B 12.9 (-3.2 %) ok
-      spawn_exposure: A 12.6 / B 12.9 (-2.6 %) ok
+[2v2] contact when A holds 1.38 s / when B holds 1.25 s (9.2 %); first contact A 1.25 s / B 1.21 s (3.2 %), mean of 10 A 1.1 / B 1.35 (-18.4 %) at A[np.float64(-22.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(37.2), np.float64(-6.8), np.float64(0.0)]
+      approach_exposure: A 15.3 / B 16.6 (-7.4 %) ok
+      half_exposure: A 14.4 / B 13.1 (9.0 %) ok
+      spawn_sight: A 12.6 / B 13.0 (-3.2 %) ok
+      spawn_exposure: A 12.6 / B 13.0 (-2.6 %) ok
       enemy reaches a cell that sees the spawn after: A's spawn 1.95 s, B's 2.16 s; spawn-to-spawn sprint 4.43 s
-[3v3] contact when A holds 1.21 s / when B holds 1.26 s (-4.0 %); first contact A 1.19 s / B 1.21 s (-1.7 %), mean of 10 A 1.32 / B 1.1 (16.6 %) at A[np.float64(-22.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(37.2), np.float64(-6.8), np.float64(0.0)]
-      approach_exposure: A 15.2 / B 16.4 (-7.3 %) ok
-      half_exposure: A 14.3 / B 13.0 (8.7 %) ok
-      spawn_sight: A 12.5 / B 12.9 (-3.2 %) ok
-      spawn_exposure: A 12.6 / B 12.9 (-2.6 %) ok
+[3v3] contact when A holds 1.21 s / when B holds 1.26 s (-4.0 %); first contact A 1.19 s / B 1.21 s (-1.7 %), mean of 10 A 1.26 / B 1.16 (8.2 %) at A[np.float64(-22.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(37.2), np.float64(-6.8), np.float64(0.0)]
+      approach_exposure: A 15.3 / B 16.5 (-7.3 %) ok
+      half_exposure: A 14.4 / B 13.1 (9.0 %) ok
+      spawn_sight: A 12.6 / B 13.0 (-3.2 %) ok
+      spawn_exposure: A 12.6 / B 13.0 (-2.6 %) ok
       enemy reaches a cell that sees the spawn after: A's spawn 1.95 s, B's 2.16 s; spawn-to-spawn sprint 4.43 s
-reach: FY 952/952, CH 423/423, BH 1066/1066, LR 2710/2710, MR 794/794, GB 721/721, DR 1264/1264, KT 2858/2858, LD 389/389, UH 420/420, MB 1935/1935, EN 0/0, BR2 2699/2699, BR3 2123/2123, UB 335/335
-room exposure: {'FY': 19.1, 'CH': 16.7, 'BH': 14.9, 'LR': 15.4, 'MR': 16.2, 'GB': 4.7, 'DR': 17.5, 'KT': 16.3, 'LD': 13.5, 'UH': 6.5, 'MB': 7.9, 'BR2': 12.3, 'BR3': 11.3, 'UB': 2.8}
+reach: FY 952/952, CH 423/423, BH 1066/1066, LR 2710/2710, MR 794/794, GB 642/642, DR 1264/1264, KT 2858/2858, LD 389/389, UH 420/420, MB 1935/1935, EN 0/0, BR2 2699/2699, BR3 2123/2123, UB 284/284
+room exposure: {'FY': 19.2, 'CH': 16.8, 'BH': 15.0, 'LR': 15.4, 'MR': 16.2, 'GB': 4.4, 'DR': 17.6, 'KT': 16.4, 'LD': 13.6, 'UH': 6.6, 'MB': 8.0, 'BR2': 12.4, 'BR3': 11.4, 'UB': 2.8}
 outside: []
-exposure {'mean': 13.4, 'p10': 6.7, 'p90': 18.9, 'max': 24.7}, sight {'max': 79.2, 'p90': 35.4, 'median': 17.2}, cover distance {'max': 10.9, 'mean': 3.32, 'worst': [-22.8, 17.2, 14.0]}
+exposure {'mean': 13.5, 'p10': 6.9, 'p90': 19.0, 'max': 25.0}, sight {'max': 79.2, 'p90': 35.4, 'median': 17.2}, cover distance {'max': 10.9, 'mean': 3.33, 'worst': [-22.8, 17.2, 14.0]}

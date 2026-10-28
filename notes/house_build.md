@@ -104,3 +104,17 @@ downstairs) judged to serve the brief, for Edward to confirm.
 | Minor: plan's fairness numbers stale | replaced by the built read-back's numbers |
 | Minor (accepted, noted): one floor proxy (WoodPlanks) under tile rooms too; MapAudit HOLE 10 cells at the void edges; art above its box (the foyer plant, the TV) is see-through to the checker | |
 Re-run after: read-back 0 differences, checker PASS on the read-back, MapAudit 0 FAIL / 1 WARN (34 lights), captures `captures/house/r3/`.
+
+## Grade round 2 (fresh roblox-map-grader, xhigh, 45-minute limit): FIX 8.3, and the fixes
+Confirmed: round 1 fixes (34 lights, lobby = build, back-door shards hidden, docs); MapAudit 0 FAIL / 1 WARN; all 6 slots on the floor
+with 13 headroom; post effects / MapInfo lighting = brief; 0 sky holes indoors (1,783 up-rays against the art); art never collides;
+glass shot + push at the broken opening held; vote / spawns / doors / 15 pushes in Play.
+| Finding | Fix |
+|---|---|
+| Major: the upper bathroom's vanity + mirror stood in its doorway (walked through) | moved to the bathroom's west wall (x -7.54 / -8.4, y 21.5), clear of the door swing |
+| Major: both vanities and both shower screens had no walk blocker | PCOL blockers for all four (player-only; bullets pass the glass); the upper shower screen now closes the shower alcove (it ran parallel to the stairwell wall) |
+| Minor: the "FY feature window" push started over the void | renamed / restarted on the ground (the window is out of reach) |
+| Minor: vote tile Image empty | as Warehouse 2 and the Arena (no tile images yet): open item |
+New tool `tools/house_walkthrough.lua` (art at body height where a body could stand, column test): **0**. Read-back 0 differences,
+checker PASS (contact <= 9.2 %, approach <= 7.6 %, spawn sight <= 3.2 %), MapAudit 0 FAIL / 1 WARN; lobby source re-ported:
+COLP 232 / PCOL 30 = build.
