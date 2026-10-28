@@ -455,6 +455,15 @@ end
 for _, root in { map, ext } do
 	for _, d in root:GetDescendants() do if d:IsA("BasePart") and (d:FindFirstAncestor("Visuals") or d:FindFirstAncestor("Shootables") or d:FindFirstAncestor("Doors") or root == ext) and d.Transparency < 1 then plainOf(d) end end
 end
+-- the mirrors: the baked atlas of a mirror is black (a diffuse bake of a metal): a pale, slightly reflective pane instead
+for _, m in VDR:GetChildren() do
+	if m.Name:match("_Mirror$") then
+		for _, d in m:GetDescendants() do
+			if d:IsA("SurfaceAppearance") then d:Destroy() end
+			if d:IsA("BasePart") then d.Material = M.Glass; d.Color = rgb(196, 204, 208); d.Reflectance = 0.35; d.Transparency = 0 end
+		end
+	end
+end
 -- the shower screens' glass (baked atlas, opaque): see-through as the modeler intended (Transparency 0.7)
 for _, d in VIS:GetDescendants() do
 	if d:IsA("BasePart") and d.Parent and d.Parent.Name:match("ShowerGlass") and d.Name:match("Glass") then d.Transparency = 0.7 end

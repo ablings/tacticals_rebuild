@@ -7,9 +7,17 @@ L = json.load(open(os.path.join(ROOT, "notes", "maps", "house_layout.json")))
 if len(sys.argv) > 1:
     D = json.load(open(sys.argv[1]))
 else:
-    out = subprocess.run([sys.executable, os.path.join(HERE, "house_mcp.py"), "lua", os.path.join(HERE, "house_dump.lua")],
-                         capture_output=True, text=True, encoding="utf-8").stdout
-    D = json.loads(out[out.index("{"):out.rindex("}") + 1])
+    src = open(os.path.join(HERE, "house_dump.lua"), encoding="utf-8").read()
+    D, i, STEP = None, 1, 120
+    while True:
+        code = re.sub(r"^local FROM, TO = .*--@CHUNK$", f"local FROM, TO = {i}, {i + STEP - 1}", src, flags=re.M)
+        out = subprocess.run([sys.executable, os.path.join(HERE, "house_mcp.py"), "lua", "-"], input=code,
+                             capture_output=True, text=True, encoding="utf-8").stdout
+        d = json.loads(out[out.index("{"):out.rindex("}") + 1])
+        if D is None: D = d
+        else: D["parts"] += d["parts"]
+        i += STEP
+        if i > d["nparts"]: break
     json.dump(D, open(os.path.join(ROOT, "out", "house", "dump.json"), "w"), indent=1)
 ox, oy, oz = D["origin"]
 TOL = 0.001

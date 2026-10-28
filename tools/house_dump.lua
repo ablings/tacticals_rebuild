@@ -1,4 +1,5 @@
 -- tools/house_dump.lua: read back Workspace.House's gameplay layer (proxies, door leaves, spawns, windows, registry) as JSON
+local FROM, TO = 1, 100000 --@CHUNK
 local HS = game:GetService("HttpService")
 local CS = game:GetService("CollectionService")
 local map = workspace:FindFirstChild("House")
@@ -16,7 +17,10 @@ local function rec(p, extra)
 	for k, v in r.attrs do if typeof(v) ~= "string" and typeof(v) ~= "number" and typeof(v) ~= "boolean" then r.attrs[k] = tostring(v) end end
 	return r
 end
-for _, p in map.CollisionProxies:GetChildren() do table.insert(out.parts, rec(p)) end
+local all = map.CollisionProxies:GetChildren()
+table.sort(all, function(a, b) return a.Name < b.Name end)
+out.nparts = #all
+for i = FROM, math.min(TO, #all) do table.insert(out.parts, rec(all[i])) end
 for _, d in map.Doors:GetChildren() do
 	local a = d:GetAttributes()
 	for k, v in a do if typeof(v) == "CFrame" then a[k] = { v:GetComponents() } end end
