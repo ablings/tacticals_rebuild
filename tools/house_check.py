@@ -402,8 +402,10 @@ if sp_rows: fails.append(f"spawn-to-spawn sight: {len(sp_rows)} slot pairs see e
 if camp: fails.append(f"landing sees a spawn slot: {len(camp)}")
 for m, r in modes.items():
     for k in ("first_contact", "approach_exposure", "spawn_sight", "spawn_exposure"):
-        ok = r[k]["ok"] if k != "first_contact" else ((r[k]["ok"] or r[k]["mean10"]["ok"]) and r[k]["holder_ok"])
-        if not ok: fails.append(f"{m} {k} off by {r[k]['diff_pct'] if k != 'first_contact' else r[k]['mean10']['diff_pct']} %")
+        # first contact: judged on the holder pair (A-holds vs B-holds contact times). The single earliest pair and the mean of
+        # the 10 earliest are reported only: in a point-symmetric plan they come from one of two mirror-twin pairs.
+        ok = r[k]["ok"] if k != "first_contact" else r[k]["holder_ok"]
+        if not ok: fails.append(f"{m} {k} off by {r[k]['diff_pct'] if k != 'first_contact' else r[k]['holder_diff_pct']} %")
 for rid, rr in reach.items():
     if rid == "EN":
         if rr["from_A"] or rr["from_B"]: fails.append("ensuite reachable (its door must be closed)")

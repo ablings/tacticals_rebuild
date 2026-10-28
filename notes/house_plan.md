@@ -14,7 +14,8 @@ World = ORIGIN + (x, z, -y). House inside 80 x 60; ground ceiling 13, upper ceil
 |---|---|---|---|
 | G | Foyer | -9..9, -30..-4, double height | front door (locked); main stair; the gallery looks down on it |
 | G | Cross hall | -9..9, -4..4 (under the landing) | links living room, foyer, kitchen; display column in the middle |
-| G | Back hall | -24..9, 4..30 | back door (locked), mudroom, foot of the back stair |
+| G | Back hall | -9..9, 4..30 | back door (locked), foot of the back stair |
+| G | Mudroom | -24..-9, 10..30 | lockers, bench; archway to the back hall, half-wall opening to the living room |
 | G | Living room | -40..-9, -30..10 | **team A spawn** behind a tall shelf wall; ambush sofa facing the stair foot |
 | G | Bathroom | -40..-24, 10..30 | door ajar, off the back hall |
 | G | Dining room | 9..40, -30..-10 | open to the foyer (10-wide arch); long table |
@@ -56,19 +57,25 @@ Above the kitchen (x 9..40, y 4..30) the upper storey is a flat roof with skylig
    ~50 % and spawn sight 25-75 %; furniture could not close it. The upper floor is now the contested high ground.
 
 ## Fairness (tools/house_check.py, 0.5-stud voxels, eye 4.6, sprint 20, vault 0.34 s; see house_checks.txt)
-| Mode | Contact when A holds / B holds | Approach exposure A / B | Spawn sight A / B | Spawn exposure A / B |
-|---|---|---|---|---|
-| 1v1 | 1.54 / 1.48 s (3.8 %) | 16.3 / 17.9 (9.3 %) | 10.3 / 10.9 (5.3 %) | 10.3 / 10.9 (5.3 %) |
-| 2v2 | 1.39 / 1.33 s (4.2 %) | 16.3 / 18.0 (9.4 %) | 13.4 / 14.0 (4.1 %) | 13.5 / 14.0 (3.5 %) |
-| 3v3 | 1.39 / 1.33 s (4.2 %) | 16.3 / 18.0 (9.4 %) | 13.4 / 14.0 (4.1 %) | 13.5 / 14.0 (3.5 %) |
-- "Contact when X holds": the earliest moment two enemies see each other with X arriving first. The single earliest pair
-  (A 1.48 / B 1.0) has its mirror twin (A 1.0 / B 1.48): the plan is point-symmetric; mean of the 10 earliest pairs 1.35 / 1.37.
-- Approach exposure = mean exposure of the cells each team reaches before first contact; half exposure (cells each team
-  reaches first) 14.1 / 14.8 (4.6 %).
-- No spawn slot sees an enemy slot (eye, chest, crouched: 0 of 36 tests). No landing cell (409) sees any spawn slot.
+| Mode | Contact when A holds / B holds | Approach exposure A / B | Spawn sight A / B | Spawn exposure A / B | Half exposure A / B |
+|---|---|---|---|---|---|
+| 1v1 | 1.53 / 1.52 s (0.8 %) | 15.1 / 16.6 (8.8 %) | 10.2 / 9.7 (4.8 %) | 10.2 / 9.7 (4.8 %) | 14.1 / 13.2 (6.2 %) |
+| 2v2 | 1.38 / 1.42 s (3.1 %) | 15.1 / 16.6 (8.7 %) | 13.2 / 13.0 (1.2 %) | 13.3 / 13.0 (1.9 %) | 14.0 / 13.2 (6.0 %) |
+| 3v3 | 1.37 / 1.36 s (0.5 %) | 15.1 / 16.6 (8.9 %) | 13.2 / 13.0 (1.2 %) | 13.3 / 13.0 (1.9 %) | 14.1 / 13.2 (6.1 %) |
+- Time to first contact, per side = the earliest moment two enemies see each other with that side arriving first ("A holds" /
+  "B holds"). The single earliest pair (1v1: A 1.52 / B 1.04) has a mirror twin with the roles swapped; it and the mean of the
+  10 earliest pairs (up to 14 % apart in 3v3) are reported only, because both pick one twin.
+- Approach exposure = mean exposure (% of the floor seen at eye height) of the cells each team reaches before first contact;
+  half exposure = of the cells each team reaches first; spawn sight = floor seen from the slots; spawn exposure = floor that
+  sees a slot.
+- No spawn slot sees an enemy slot (eye, chest, crouched: 0 of 36). No landing cell (389) sees any spawn slot.
 - Every playable room reached from both spawns; the ensuite (door closed) not reached; 0 reachable cells outside the shell.
-- Exposure mean 14.5 % (p10 8, p90 21); longest sight line 80.6 (front-to-back diagonal); farthest spot from cover 9.8.
-- Spawn to spawn 4.4-4.6 s at sprint.
+- Exposure mean 13.4 % (p10 7, p90 19); longest sight line 80.6; farthest standing spot from cover 10.9; spawn to spawn
+  4.4-4.6 s at sprint; the enemy can first reach a cell that sees a spawn after 2.7 s (A's) / 3.5 s (B's) in 1v1, 2.0 / 2.2 s
+  in 2v2-3v3 (reported, not in the brief).
+- Tuning that got here (all generated): spawns moved from upstairs/downstairs to both downstairs; slat screens inside both
+  hall arches (they broke an 80-stud house-long line at 0.6 s); the back stair opened to its hall like the main stair; a
+  mudroom wall with an archway + a half-wall opening from the living room, mirroring the dining room's enclosure.
 
 ## Numbers the build must keep
 Doorways 5-6 wide x 9 high (front/back 6 x 10); archways 6-10 wide x 10; window sills 3 above the floor (kitchen 4.5);

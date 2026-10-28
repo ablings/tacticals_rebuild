@@ -185,10 +185,15 @@ wall("I_X9_U", "y", 9, -4, YI, U0, UC, ops=[
 ])
 # kitchen / dining: an archway and a counter pass-through (sill 3.4 = low cover, vault and shoot through)
 wall("I_Y-10_G", "x", -10, 9.5, XI, G0, GC, ops=[
-    D("Arch_KT_DR", 14, 21, G0, 10, kind="arch"),
-    dict(id="Pass_KT_DR", kind="pass", a=25, b=32, z0=LOW, z1=8.5),
+    D("Arch_KT_DR", 14, 20.5, G0, 10, kind="arch"),
+    dict(id="Pass_KT_DR", kind="pass", a=26, b=32, z0=LOW, z1=8.5),
 ])
-wall("I_Y10_G", "x", 10, -XI, -9.5, G0, GC, ops=[D("Arch_LR_BH", -21, -14, G0, 10, kind="arch")])
+wall("I_Y10_G", "x", 10, -XI, -9.5, G0, GC, ops=[
+    D("Arch_LR_BH", -20.5, -14, G0, 10, kind="arch"),
+    dict(id="Pass_LR_BH", kind="pass", a=-32, b=-26, z0=LOW, z1=8.5, note="half wall with a shelf: mirror of the kitchen pass-through"),
+])
+# mudroom / back hall: separated from the stair hall by a wall with an archway (mirror of the dining room's arch to the foyer)
+wall("I_X-9_BH", "y", -9, 10.5, YI, G0, GC, ops=[D("Arch_MR_BH", 12, 22, G0, 10, kind="arch")])
 wall("I_X-24_G", "y", -24, 10.5, YI, G0, GC, ops=[D("Door_GB", 21, 26, G0, DOOR_H)])
 # back stair: open to the back hall on its west side (banister, as the main stair to the foyer); walled upstairs
 wall("I_X3.5", "y", 3.5, 4, 23, U0, UC)
@@ -238,10 +243,11 @@ railing("Rail_BackStair", 3.85, 4.05, 4.15, 23.0, G0, sloped="Stair_Back")      
 room("FY", "Foyer", "G", [(-9, 9, -30, -4)], "arrive; the double-height hall the gallery looks down on",
      "bright, tall, exposed: daylight from the feature window", "double height (26)")
 room("CH", "Cross hall", "G", [(-9, 9, -4, 4)], "link living room, foyer, kitchen", "low and dim under the landing", 13)
-room("BH", "Back hall", "G", [(-24, 3.5, 10, 30), (-9, 3.5, 4, 10), (3.5, 9, 23, 30)], "back door, mudroom, foot of the back stair",
+room("BH", "Back hall", "G", [(-9, 3.5, 4, 30), (3.5, 9, 23, 30)], "back door, foot of the back stair",
      "narrow, cluttered, coat cabinets", 13)
 room("LR", "Living room", "G", [(-40, -9, -30, 10)], "team A's spawn behind the shelf wall; sofa ambush on the stair foot",
      "warm, soft, lived-in", 13)
+room("MR", "Mudroom", "G", [(-24, -9, 10, 30)], "coat lockers, bench; between the living room and the back hall", "cluttered", 13)
 room("GB", "Bathroom (ground)", "G", [(-40, -24, 10, 30)], "side pocket off the back hall", "tiled, cool, quiet", 13)
 room("DR", "Dining room", "G", [(9, 40, -30, -10)], "open to the foyer; the long table", "formal, bright windows", 13)
 room("KT", "Kitchen", "G", [(9, 40, -10, 30)], "team B's spawn behind the oven wall; island + pass-through to the dining room",
@@ -310,73 +316,71 @@ def F(fid, rm, model, cover, x0, x1, y0, y1, z0=None, h=None, face=None, note=""
     box("F_" + fid, x0, x1, y0, y1, zb, zb + hh, "furniture", cover=cover, room=rm, model=model)
 
 
+# Sizes = the modeler's meshes (art/house/house_furniture.json, size_studio [w, h, d]) where one exists; "custom" = in the kit
+# list for the modeler (briefs/kit-house.json). Plan boxes: the mesh footprint turned to its facing.
 # Living room (x -40..-9, y -30..10): close to the kitchen turned 180 degrees about the centre (fair spawns)
-F("LR_ShelfWall", "LR", "ShelfWall", "tall", -31, -29, -25, -13, note="tall open bookshelf wall, both faces dressed: team A's spawn wall")
-F("LR_Sofa", "LR", "SofaLong", "low", -30, -18, -9.5, -5, face="N", note="long sofa (mirror of the kitchen island)")
-F("LR_SofaStair", "LR", "Sofa3", "low", -20, -16.5, -26, -16, face="W", note="its back faces the foyer arch and the stair foot: the ambush sofa")
-F("LR_Media", "LR", "MediaConsole", "low", -36, -22, -29.5, -27, face="N")
-F("LR_Bookcase1", "LR", "Bookcase", "tall", -13, -9.5, -22, -18, face="W")
-F("LR_Bookcase2", "LR", "Bookcase", "tall", -13, -9.5, -18, -14, face="W")
-F("LR_Piano", "LR", "Piano", "low", -39.5, -36, -4.5, 1, face="E")
-F("LR_Sideboard", "LR", "Sideboard", "low", -34, -23, 7, 9.5, face="S")
-F("LR_Screen", "LR", "SlatScreen", "tall", -17, -15, -4, 2, note="tall timber slat screen inside the hall arch: breaks the long axis")
-# Dining room (x 9..40, y -30..-8)
-F("DR_Table", "DR", "DiningTable8", "low", 19, 31, -22, -16, note="table + 8 tucked chairs inside this box")
-F("DR_Cabinet", "DR", "ChinaCabinet", "tall", 37, 39.5, -17, -11, face="W")
-F("DR_Sideboard", "DR", "Sideboard", "low", 10, 13, -29.5, -24, face="E")
-# Kitchen (x 9..40, y -8..30)
-F("KT_Island", "KT", "KitchenIsland", "low", 18, 30, 5, 9.5, note="sink side faces the pass-through")
-F("KT_CounterN", "KT", "CounterRun", "low", 13, 36, 27, 29.5, face="S")
-F("KT_Fridge", "KT", "Fridge", "tall", 9.5, 13, 18, 22, face="E")
-F("KT_Pantry", "KT", "PantryCabinet", "tall", 9.5, 13, 14, 18, face="E")
-F("KT_CounterE", "KT", "CounterRun", "low", 37, 39.5, 1, 4.5, face="W")
-F("KT_CounterPT", "KT", "CounterRun", "low", 23, 34, -9.5, -7, face="N", note="kitchen side of the pass-through")
-F("KT_Bench", "KT", "KitchenBench", "low", 16.5, 20, 16, 26, face="E", note="banquette (mirror of the ambush sofa)")
-F("KT_Screen", "KT", "SlatScreen", "tall", 15, 17, -2, 4, note="tall timber slat screen inside the hall arch (mirror)")
-F("KT_TallUnit", "KT", "OvenWall", "tall", 29, 31, 13, 25, note="tall oven + pantry bank, both faces finished: the spawn wall")
-F("CH_Column", "CH", "DisplayColumn", "tall", -1.5, 1.5, -1.5, 1.5, note="structural column wrapped in a display niche (breaks the LR-CH-KT line)")
+F("LR_ShelfWall", "LR", "ShelfWall", "tall", -31, -29, -25, -13, note="custom: tall open bookshelf wall, both faces dressed: team A's spawn wall")
+F("LR_Sofa", "LR", "H_Sofa_Sectional", "low", -30, -18, -12.2, -5, face="N", note="sectional, back to the spawn side")
+F("LR_SofaStair", "LR", "H_Sofa_Sectional", "low", -21.2, -14, -27, -15, face="W", note="turned: its back faces the foyer arch and the stair foot: the ambush sofa")
+F("LR_Media", "LR", "H_TVConsole_WithTV", "low", -33, -25, -29.5, -27.48, face="N", note="collision 3.4 (the console); the TV above is art against the wall")
+F("LR_Bookcase1", "LR", "H_Bookcase", "tall", -11.1, -9.5, -22, -16, face="W")
+F("LR_Bookcase2", "LR", "H_Bookcase", "tall", -11.1, -9.5, -16, -10, face="W")
+F("LR_Chair", "LR", "H_Armchair", "low", -39.5, -35.5, -4.2, 0, face="E")
+F("LR_Sideboard", "LR", "KitchenRun3", "low", -34.5, -22.5, 7.04, 9.5, face="S", note="low shelf cabinet run under the half-wall opening (mirror of the kitchen counter)")
+F("LR_Screen", "LR", "SlatScreen", "tall", -17, -15, -4, 2, note="custom: tall timber slat screen inside the hall arch: breaks the long axis")
+# Dining room (x 9..40, y -30..-10)
+F("DR_Table", "DR", "H_DiningSet", "low", 17, 33, -22.3, -15.63, note="two dining sets end to end (one 16-long table, 12 chairs)")
+F("DR_Cabinet", "DR", "H_Bookcase", "tall", 37.9, 39.5, -17, -11, face="W", note="as a china cabinet (glass-front variant welcome)")
+F("DR_Sideboard", "DR", "H_TVConsole", "low", 10, 12.02, -29.5, -21.5, face="E", note="used as a sideboard")
+# Kitchen (x 9..40, y -10..30)
+F("KT_Island", "KT", "H_KitchenIsland", "low", 19, 29, 5, 9.68, note="seating side north")
+F("KT_CounterN", "KT", "KitchenRun6", "low", 12, 36, 27.04, 29.5, face="S", note="6 modules of 4: H_KitchenBase / H_KitchenSink / H_KitchenHob; uppers + hood above as dressing")
+F("KT_Fridge", "KT", "H_Fridge", "tall", 9.5, 12.355, 18, 21.6, face="E")
+F("KT_Pantry", "KT", "H_Pantry", "tall", 9.5, 11.96, 14, 18, face="E")
+F("KT_CounterE", "KT", "KitchenRun1", "low", 37.04, 39.5, 1, 5, face="W", note="1 module (H_KitchenBase)")
+F("KT_CounterPT", "KT", "KitchenRun3", "low", 22.5, 34.5, -9.5, -7.04, face="N", note="3 modules: the kitchen side of the pass-through")
+F("KT_Screen", "KT", "SlatScreen", "tall", 15, 17, -2, 4, note="custom: tall timber slat screen inside the hall arch (mirror)")
+F("KT_TallUnit", "KT", "OvenWall", "tall", 29, 31, 13, 25, note="custom: tall oven + pantry bank, both faces finished: team B's spawn wall")
+F("KT_Bench", "KT", "KitchenBench", "low", 16.5, 20, 16, 26, face="E", note="custom: banquette (mirror of the ambush sofa)")
 # Foyer, cross hall, back hall, ground bathroom
-F("FY_Planter", "FY", "PlanterTree", "low", 3, 6, -16, -13, note="pot is the cover (3.4); the tree is art above, no collision")
-F("FY_Console", "FY", "ConsoleTable", "low", 6.5, 8.5, -10, -5, face="W")
-F("FY_Bench", "FY", "HallBench", "low", -2, 0, -29.5, -26, face="N", note="beside the front door")
-F("BH_Lockers", "BH", "CoatLockers", "tall", -23.5, -21.5, 11, 18, face="E")
-F("BH_Bench", "BH", "HallBench", "low", -20, -12, 27.5, 29.5, face="S")
-F("BH_CoatTree", "BH", "CoatCabinet", "tall", -5, -2, 13, 16, note="freestanding coat cabinet in the hall")
-F("BH_Washer", "BH", "WasherDryer", "low", 0.5, 3, 27, 29.5, face="S")
-F("GB_Vanity", "GB", "Vanity", "low", -39.5, -37, 13, 19, face="E")
-F("GB_Tub", "GB", "Bathtub", "low", -39.5, -31, 26, 29.5)
-F("GB_Shower", "GB", "ShowerGlass", "tall", -31, -26, 11, 15, note="frosted glass enclosure: counts as tall cover")
+F("CH_Column", "CH", "DisplayColumn", "tall", -1.5, 1.5, -1.5, 1.5, note="custom: structural column wrapped in a display niche")
+F("FY_Planter", "FY", "Planter", "low", 3, 6, -16, -13, note="custom: low planter box (cover 3.4) + H_PlantFiddle in it as art")
+F("FY_Console", "FY", "H_Dresser", "low", 6.2, 8.5, -10.5, -4.5, face="W", note="as a hall console")
+F("FY_Bench", "FY", "HallBench", "low", -2, 0, -29.5, -26, face="N", note="custom: beside the front door")
+F("MR_Lockers", "MR", "H_Wardrobe", "tall", -23.5, -21, 11, 17, face="E", note="as coat lockers")
+F("MR_Bench", "MR", "HallBench", "low", -20, -12, 27.5, 29.5, face="S", note="custom")
+F("BH_CoatTree", "BH", "H_TallCabinet", "tall", -5, -2, 13, 15.12, note="freestanding coat cabinet")
+F("GB_Tub", "GB", "H_Bathtub", "low", -39.5, -32.5, 26, 29.6, note="collision 3.4; the mesh's tap rises to 4.1")
+F("GB_Cabinet", "GB", "H_TallCabinet", "tall", -31, -28, 10.5, 12.62)
 # Landing, upper hall, bathroom
-F("LD_Bookcase", "LD", "Bookcase", "tall", -3, 1, 2.5, 4, face="S", note="the bookcase by the landing")
-F("UH_Linen", "UH", "LinenCabinet", "tall", 1, 3, 10, 15, face="W")
-F("UB_Tub", "UB", "Bathtub", "low", -8.5, -1, 26.5, 29.5)
-F("UB_Vanity", "UB", "Vanity", "low", 4, 8.5, 27, 29.5, face="S")
-F("UB_Shower", "UB", "ShowerGlass", "tall", -1, 3, 17.5, 21)
-# Master bedroom (team B spawn behind the headboard wall)
-F("MB_HeadWall", "MB", "HeadboardWall", "tall", -22.5, -21, -18, -4, note="freestanding upholstered headboard wall, 8 tall")
-F("MB_Bed", "MB", "KingBed", "low", -21, -12, -16, -6, note="headboard against the head wall; nightstands inside the box")
-F("MB_Wardrobe1", "MB", "Wardrobe", "tall", -39.5, -36.5, -17, -8, face="E")
-F("MB_Wardrobe2", "MB", "Wardrobe", "tall", -39.5, -36.5, -6, 3, face="E")
-F("MB_Dresser", "MB", "Dresser", "low", -32, -26, 1.5, 3.5, face="S")
-F("MB_Chair", "MB", "Armchair", "low", -16, -13, -28.5, -25.5, face="N")
+F("LD_Bookcase", "LD", "H_Bookcase", "tall", -8.5, -2.5, 2.4, 4, face="S", note="the bookcase by the landing")
+F("UH_Linen", "UH", "H_TallCabinet", "tall", 0.88, 3, 10, 13, face="W")
+F("UB_Tub", "UB", "H_Bathtub", "low", -8.5, -1.5, 26, 29.6)
+# Master bedroom
+F("MB_HeadWall", "MB", "HeadboardWall", "tall", -22.5, -21, -18, -4, note="custom: freestanding upholstered headboard wall, 8 tall")
+F("MB_Bed", "MB", "H_Bed_Double", "low", -21, -11, -14.85, -7.15, face="E", note="head against the head wall")
+F("MB_Wardrobe1", "MB", "H_Wardrobe", "tall", -39.5, -37, -16, -10, face="E")
+F("MB_Wardrobe2", "MB", "H_Wardrobe", "tall", -39.5, -37, -5, 1, face="E")
+F("MB_Dresser", "MB", "H_Dresser", "low", -32, -26, 1.2, 3.5, face="S")
+F("MB_Chair", "MB", "H_Armchair", "low", -17, -12.8, -29, -25, face="N")
 # Bedroom 2 (x 9..40, y -30..4)
-F("BR2_Bed", "BR2", "DoubleBed", "low", 31, 39.5, -14, -5, face="W")
-F("BR2_Wardrobe", "BR2", "Wardrobe", "tall", 9.5, 12.5, -16, -8, face="E")
-F("BR2_Desk", "BR2", "Desk", "low", 27, 35, -29.5, -27, face="N")
-F("BR2_Bookcase", "BR2", "Bookcase", "tall", 20, 21.5, -21, -14, note="freestanding, back to back with a low cabinet")
-F("BR2_Dresser", "BR2", "Dresser", "low", 24, 30, 1, 3.5, face="S")
+F("BR2_Bed", "BR2", "H_Bed_Double", "low", 29.5, 39.5, -13.85, -6.15, face="W")
+F("BR2_Wardrobe", "BR2", "H_Wardrobe", "tall", 9.5, 12, -16, -10, face="E")
+F("BR2_Bookcase", "BR2", "H_Bookcase", "tall", 20, 21.6, -21, -15, face="E", note="freestanding")
+F("BR2_Dresser", "BR2", "H_Dresser", "low", 24, 30, 1.2, 3.5, face="S")
 # Bedroom 3 (x -40..-9, y 4..30)
-F("BR3_Bunk", "BR3", "BunkBed", "tall", -39.5, -35, 19, 28, h=7.5, face="E")
-F("BR3_Desk", "BR3", "Desk", "low", -24, -16, 27, 29.5, face="S")
-F("BR3_Wardrobe", "BR3", "Wardrobe", "tall", -12.5, -9.5, 19, 26, face="W")
-F("BR3_Dresser", "BR3", "Dresser", "low", -32, -26, 4.5, 6.5, face="N")
-F("BR3_Beanbags", "BR3", "Beanbag", "step", -26, -22, 14, 17, h=1.5)
+F("BR3_Bed", "BR3", "H_Bed_Single", "low", -39.5, -34.8, 19, 27.6, face="E")
+F("BR3_Wardrobe", "BR3", "H_Wardrobe", "tall", -12, -9.5, 19, 25, face="W")
+F("BR3_Dresser", "BR3", "H_Dresser", "low", -32, -26, 4.5, 6.8, face="N")
+# Dressing only (no collision of its own, placed by the installer; listed so the modeler's set is all used): desks + chairs
+# (BR2, BR3), vanities + mirrors + toilets + towel rails (GB, UB), shower glass screens, washing machine (BH), coffee tables,
+# rugs, lamps, frames, plants, toys (BR3), kitchen uppers + hood, stools at the island, appliances.
 
 # ------------------------------------------------------------------------------------------------ spawns
 # One marker per team; teammates stand 4 apart along the marker's right vector (slots 0, -4, +4), as every Tacticals map.
 SPAWNS = {
-    "A": dict(x=-35.0, y=-19.0, z=G0, look=[1, 0], room="LR", note="living room, west end behind the shelf wall"),
-    "B": dict(x=35.0, y=19.0, z=G0, look=[-1, 0], room="KT", note="kitchen, east end behind the oven wall"),
+    "A": dict(x=-35, y=-19, z=G0, look=[1, 0], room="LR", note="living room, west end behind the shelf wall"),
+    "B": dict(x=35, y=19, z=G0, look=[-1, 0], room="KT", note="kitchen, east end behind the oven wall"),
 }
 SPACING = 4.0
 for t, s in SPAWNS.items():
