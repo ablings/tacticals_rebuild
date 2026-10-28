@@ -85,6 +85,8 @@ return {
 			if rm then
 				local ok, why = rm.EndMatch("admin " .. (ctx.caller and ctx.caller.Name or "console"))
 				if not ok then return false, why end
+				-- [TESTPLACE] on the Test place everyone stays (back to its waiting area)
+				if rm._testPlace then return true, "Ending this test match: nobody is paid, everyone goes back to the Test place's waiting area." end
 				return true, "Ending this server's match: no rewards, everyone goes back to the lobby."
 			end
 			local m = ldm(ctx)

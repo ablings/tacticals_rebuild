@@ -1,5 +1,5 @@
 """Place split installers (notes/place_split.md).
-  python tools/split_build.py place <studio_id> Tutorial|Matchmaking|Ranked   convert an opened match-place COPY into that kind
+  python tools/split_build.py place <studio_id> Tutorial|Matchmaking|Ranked|Test   convert an opened match-place COPY into that kind
   python tools/split_build.py place <studio_id> UNDO                           put it back
   python tools/split_build.py lobby <studio_id> [UNDO]                         lobby routing ([SPLIT] edits)
   python tools/split_build.py embed                                            only refresh the embedded PlaceKind source
@@ -43,9 +43,9 @@ if __name__ == '__main__':
     if a[0] == 'place':
         code = embed()
         if not undo:
-            kind = next((k for k in rest if k in ('Tutorial', 'Matchmaking', 'Ranked')), None)
+            kind = next((k for k in rest if k in ('Tutorial', 'Matchmaking', 'Ranked', 'Test')), None)
             if not kind:
-                sys.exit('give a kind: Tutorial | Matchmaking | Ranked (or UNDO)')
+                sys.exit('give a kind: Tutorial | Matchmaking | Ranked | Test (or UNDO)')
             code = re.sub(r'^local KIND = "\w+" --@KIND', f'local KIND = "{kind}" --@KIND', code, flags=re.M)
     else:
         code = open(os.path.join(ROOT, 'fix', 'split_lobby_install.lua'), encoding='utf-8').read()

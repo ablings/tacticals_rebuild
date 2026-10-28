@@ -16,6 +16,8 @@
 --        Tutorial    : ReplicatedStorage.DuelMaps (the map-vote registry; the tutorial's map IS Workspace.Warehouse, which stays)
 --        Matchmaking : Workspace.FiringRange (test servers only; a split place never runs a test server)
 --        Ranked      : Workspace.FiringRange
+--        Test        : Workspace.FiringRange   [TESTPLACE] 2026-10-28: the admin-only Test place (notes/test_place.md); its own
+--                      code (admin gate, map pick, no saves) is fix/test_place_install.lua, run after this file
 -- Order: after match_place_build -> data_release -> ranked (this file edits text those installers wrote; UNDO this one first if one
 -- of them has to be undone or re-run, then install this again).
 local KIND = "Matchmaking" --@KIND
@@ -25,8 +27,8 @@ local RS = game:GetService("ReplicatedStorage")
 local SS = game:GetService("ServerStorage")
 local SSS = game:GetService("ServerScriptService")
 local CHS = game:GetService("ChangeHistoryService")
-local KINDS = { Tutorial = true, Matchmaking = true, Ranked = true }
-assert(UNDO or KINDS[KIND], "KIND must be Tutorial, Matchmaking or Ranked")
+local KINDS = { Tutorial = true, Matchmaking = true, Ranked = true, Test = true }
+assert(UNDO or KINDS[KIND], "KIND must be Tutorial, Matchmaking, Ranked or Test")
 assert(workspace:FindFirstChild("LobbyMap") == nil, "this is the lobby: use fix/split_lobby_install.lua")
 
 local log = {}
@@ -74,12 +76,14 @@ local PLACEKIND_SRC = [==[
 -- places; the only per-place difference is the StringValue ReplicatedStorage.PlaceKind ("Tutorial" / "Matchmaking" / "Ranked"),
 -- set by fix/split_place_install.lua. No value (or an unknown one) = nil = the old combined match place (81861384114744),
 -- whose behaviour is unchanged. Server and client may require it. No side effects.
+-- [TESTPLACE] 2026-10-28 (notes/test_place.md): "Test" = the admin-only Test place, where new maps are tried before they reach
+-- Matchmaking / Ranked / the lobby. Casual matches only, never the tutorial, and nothing it plays is saved.
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local PlaceKind = {}
-PlaceKind.Kinds = { Tutorial = true, Matchmaking = true, Ranked = true }
+PlaceKind.Kinds = { Tutorial = true, Matchmaking = true, Ranked = true, Test = true }
 
--- "Tutorial" / "Matchmaking" / "Ranked", or nil on the old combined place (and in the lobby)
+-- "Tutorial" / "Matchmaking" / "Ranked" / "Test", or nil on the old combined place (and in the lobby)
 function PlaceKind.Get(): string?
 	local v = ReplicatedStorage:FindFirstChild("PlaceKind")
 	local kind = v and v:IsA("StringValue") and v.Value or nil
@@ -97,14 +101,19 @@ function PlaceKind.TutorialAllowed(): boolean
 	return kind == nil or kind == "Tutorial"
 end
 
--- a match with this Ranked flag may run here: the Matchmaking place plays casual only, the Ranked place ranked only,
--- the Tutorial place none, the old combined place both
+-- a match with this Ranked flag may run here: the Matchmaking and Test places play casual only, the Ranked place ranked
+-- only, the Tutorial place none, the old combined place both
 function PlaceKind.MatchAllowed(ranked: boolean?): boolean
 	local kind = PlaceKind.Get()
 	if kind == nil then return true end
-	if kind == "Matchmaking" then return ranked ~= true end
+	if kind == "Matchmaking" or kind == "Test" then return ranked ~= true end
 	if kind == "Ranked" then return ranked == true end
 	return false
+end
+
+-- [TESTPLACE] the admin-only Test place: progress is never saved here (DataManager opens view-only copies)
+function PlaceKind.IsTest(): boolean
+	return PlaceKind.Get() == "Test"
 end
 
 return PlaceKind
@@ -116,6 +125,8 @@ local RM_BLOCK = [==[
 -- [SPLIT] the server kind on a split place, from the first player: "tutorial", a match TeleportData table, or
 -- { SplitReject = reason } (the wrong kind for this place, or no / invalid TeleportData: everyone goes back to the lobby)
 local function splitFirst()
+	-- [TESTPLACE] the Test place never reads TeleportData: its own runner (manager.RunTestPlace) gates every player itself
+	if PLACE_KIND == "Test" then return { TestPlace = true } end
 	while #Players:GetPlayers() == 0 do task.wait(0.25) end
 	local p = Players:GetPlayers()[1]
 	local d = joinMatchData(p)
@@ -195,6 +206,9 @@ local EDITS = {
 		"\t\tif first == \"tutorial\" then runTutorialServer()\n",
 		"\t\t-- [SPLIT] wrong / missing TeleportData on a split place: back to the lobby\n"
 			.. "\t\tif type(first) == \"table\" and first.SplitReject then runRejectServer(first.SplitReject)\n"
+			.. "\t\t-- [TESTPLACE] the Test place (fix/test_place_install.lua adds manager.RunTestPlace; without it: back to the lobby)\n"
+			.. "\t\telseif type(first) == \"table\" and first.TestPlace then\n"
+			.. "\t\t\tif manager.RunTestPlace then manager.RunTestPlace() else runRejectServer(\"the Test place code is not installed\") end\n"
 			.. "\t\telseif first == \"tutorial\" then runTutorialServer()\n" },
 	-- RoundManager 5: test evidence
 	{ "RoundManager",
@@ -226,6 +240,7 @@ local STRIP = {
 	Tutorial = { { RS, "DuelMaps" } },
 	Matchmaking = { { workspace, "FiringRange" } },
 	Ranked = { { workspace, "FiringRange" } },
+	Test = { { workspace, "FiringRange" } },
 }
 
 local function backup(s)
