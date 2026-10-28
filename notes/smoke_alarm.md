@@ -8,7 +8,7 @@ match places and in lobby pad duels. Built on top of breakable glass round 1 (`n
 - **Chirp:** each alarm gives a quiet, positional low-battery chirp (a 0.14 s pip of the beep the gadgets already use live,
   rbxassetid://9117197553, pitch 2.9, volume 0.16, heard to ~45 studs) every 25-40 s, a new random gap every time and per alarm
   (the first one 4-40 s into the round, so the two never chirp together). The red LED blinks with it.
-- **Shot** (a bullet, a melee swing that reaches it, or a blast in reach with no wall between): it blares for 7 s (a real alarm's
+- **Shot** (a bullet, a melee swing that reaches it, or a blast in reach; never through a wall, a floor or a ceiling): it blares for 7 s (a real alarm's
   "temporal three": three 0.42 s tones, a pause, again; volume 0.75, heard to ~130 studs), the LED flashes with it, a short burst of
   sparks, and the housing drops open on a hinge (the green circuit board and the battery show).
 - **While it blares** footsteps and reloads within 28 studs (flat) on its floor are masked, for players and the AI, exactly the steam
@@ -55,7 +55,7 @@ Parts only, own work: `Base` plate (white cylinder 1.4 x 0.12), `Cover` housing 
 | `HitPadding` | 0.3 | studs around the parts for the bullet test |
 | `BlastScale` | 1 | blasts break alarms within Radius x this |
 Module-only knobs: `ChirpPitch` 2.9, `ChirpLength` 0.14, `ChirpRollOff` 3-45, `BlarePitch` 2.2, `BlareRollOff` 10-130, the blare
-pattern (`BlareOn` 0.42, `BlareOff` 0.12, `BlarePause` 0.55), `MeleeReach` 1.5, `FirstChirpMin` 4, LED colours.
+pattern (`BlareOn` 0.42, `BlareOff` 0.12, `BlarePause` 0.55), `MeleeReach` 0 (round 2; was 1.5), `FirstChirpMin` 4, LED colours.
 
 ## Server state and events (for UI / animation)
 On the alarm model the server owns: `AlarmPos` (Vector3), `ChirpAt` (server time of the last chirp), `AlarmBroken` (bool),
@@ -113,7 +113,35 @@ react to the attributes (a late joiner never hears an old chirp: only one under 
 ## Notes and open items
 - Studio's footstep sounds: the first two samples of the first two-player run read 0.000 (Player2 had just been moved); the clean
   baseline run read 0.160 on every step. Not from the alarm (it was quiet then).
-- A ceiling alarm is out of reach of a knife from the floor (8.5 studs up; reach 6 + 1.5): melee only counts if you get close.
+- Melee reach (round 2, measured in Play through the real `OnMelee`): melee weapons reach 5-7 studs. Downstairs (13-stud ceiling)
+  no swing from the floor reaches the alarm (knife 6 and katana 7 both left it whole). Upstairs (12-stud ceiling) a 6.5-7 swing right
+  under it does (same room, nothing between). Never from above it, never through a floor (the grader's round-1 major, fixed).
 - The one Studio window rule: the session waited ~4 h for two or fewer open windows; it then opened its single window while four
   were open, two of them left behind by sessions that had ended (glass, the kit keeper's test).
-- Grader verdict and publish result: below.
+
+## Round 2 (after grader round 1: roblox-systems-grader xhigh, FIX 8.4, 0 blocking, 2 major)
+1. **Major, fixed: melee broke the downstairs alarm through the landing's floor** (no wall test; "straight overhead" accepted any
+   facing). `Set:Melee` now needs the alarm at or above the head and nothing of the map's collision between (`Set:Blocked`).
+2. **Major, fixed: in lobby duels a grenade upstairs broke the alarm below:** the hub's `ArenaShootables:wallBetween` skips every
+   horizontal face (written so a floor-level blast isn't stopped by its own floor). The alarm set now has its own wall test,
+   `Set:Blocked`, over the map's collision (match: every placed map's CollisionProxies; lobby: the arena's Solid layer), floors
+   and ceilings included, the alarms themselves excluded. Used by melee and blasts in both places.
+3. Minor, fixed: the listener rule sat behind `Steam.Fill`'s gate in `FillMuffled` (Fill off = the alarm's rule off). The hook is now
+   the first line of `FillMuffled` (unit test with Fill off).
+4. Minor, fixed: the reach note (above), `MeleeReach` 1.5 -> 0.
+5. Minor, fixed: no House in the place = the installer writes nothing at all (returns before any check or write).
+6. Minor, fixed: unit tests for a slab between (melee + blast from the floor above), a wall between, Fill off, map not in play.
+7. Nit, fixed: a stray model-version attribute on the new ModuleScripts.
+8. Nit, fixed: alarms on a map that isn't being played don't chirp (`isLive`: the map named by ReplicatedStorage.ArenaMap).
+9. Kept, for Edward's ear: the chirp / blare sound is the game's existing beep (already used live for gadget beeps), pitched.
+10. The grader could not repeat the two-player and lobby runs (one-window rule); the evidence is above.
+
+Round 2 results: installer round 2 (round 1 UNDOne on both copies first with `git show 5fe0db6:fix/smoke_alarm.lua`):
+match 90fedd14 -> f3eb80c8, hub ebdcaa18 -> 6604b698; second run all "=", UNDO back to the before hash; glass r1 DRY all "=" /
+UNDO all "+" on both. Unit tests **42/42** match, **37/37** hub. Play, match place (House voted, the real `OnMelee` / `Explode` /
+`OnShot` via the hook): melee from the landing straight over G (3 facings, reach 7) and 4 off facing it: G whole; frag on the
+landing over G and 5 off: G whole; knife 6 / katana 7 from the hall floor under G: whole; frag 6 under G in the hall: Blast;
+bullet from the hall: Bullet. Lobby pad duel (DuelTestHook explode, arena D1): frag on the landing over G and 5 off: G whole (U, in
+that room and in reach, Blast); frag in the hall under G: Blast. Output: no errors.
+
+Grader verdict and publish result: below.

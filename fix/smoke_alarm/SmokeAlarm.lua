@@ -43,7 +43,7 @@ local DEFAULTS = {
 	MaskAbove = 2,             -- ... to this far above it (not the floor upstairs)
 	ListenerInBlare = true,    -- standing in the blare you can't hear people either (the steam's ListenerInSteam rule)
 	HitPadding = 0.3,          -- studs added around the parts for the bullet test
-	MeleeReach = 1.5,          -- a swing reaches the alarm this much further than a body
+	MeleeReach = 0,            -- extra reach on top of the weapon's (0: a knife from the floor never reaches a ceiling alarm)
 	BlastScale = 1,            -- a blast breaks alarms within its Radius x this, with no wall in between
 	SoundId = "rbxassetid://9117197553", -- the beep the gadgets already use live
 	LedOn = Color3.fromRGB(255, 45, 35),
@@ -132,10 +132,14 @@ end
 local Set = {}
 Set.__index = Set
 
--- SmokeAlarm.Server(models, wallBetween?) -> set. One set per map (match places) or per lobby arena (ArenaShootables).
--- wallBetween(a, b) -> bool: a wall between a blast and the alarm (the caller's own map walls).
-function SmokeAlarm.Server(models: { Instance }, wallBetween: ((Vector3, Vector3) -> boolean)?)
-	local self = setmetatable({ alarms = {}, wallBetween = wallBetween, dead = false }, Set)
+-- SmokeAlarm.Server(models, opts?) -> set. One set per map (match places) or per lobby arena (ArenaShootables).
+--   opts.geometry: { Instance } or () -> { Instance }: the map's collision (what a swing or a blast can't pass). Every face counts,
+--     floors and ceilings too: the alarm sits on a ceiling with a floor above it, so a wall test that skips horizontal faces (made
+--     so a floor-level blast isn't blocked by its own floor) would let a swing or a grenade upstairs break the alarm below.
+--   opts.isLive: (model) -> bool: false = this alarm's map isn't being played (no chirps). Default: always live.
+function SmokeAlarm.Server(models: { Instance }, opts)
+	opts = if type(opts) == "table" then opts else {}
+	local self = setmetatable({ alarms = {}, geometry = opts.geometry, isLive = opts.isLive, dead = false }, Set)
 	for _, model in models do
 		local parts = {}
 		for _, p in model:GetDescendants() do if p:IsA("BasePart") then table.insert(parts, p) end end
@@ -163,6 +167,34 @@ end
 
 function Set:Count(): number return #self.alarms end
 
+-- is a part one of this set's alarms? (the lobby's Solid layer holds the alarms too: they never block themselves)
+function Set:IsAlarmPart(part: Instance): boolean
+	for _, a in self.alarms do
+		if part:IsDescendantOf(a.model) then return true end
+	end
+	return false
+end
+
+-- Is anything of the map's collision between a and b? Floors and ceilings count (see Server). The alarms themselves don't.
+function Set:Blocked(a: Vector3, b: Vector3): boolean
+	local geo = self.geometry
+	if type(geo) == "function" then geo = geo() end
+	if type(geo) ~= "table" or #geo == 0 then return false end
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Include
+	params.FilterDescendantsInstances = geo
+	local from = a
+	for _ = 1, 8 do
+		local dir = b - from
+		if dir.Magnitude < 0.05 then return false end
+		local hit = workspace:Raycast(from, dir, params)
+		if not hit then return false end
+		if not self:IsAlarmPart(hit.Instance) then return true end
+		from = hit.Position + dir.Unit * 0.05
+	end
+	return false
+end
+
 -- the low-battery chirp: every ChirpMin..ChirpMax seconds per alarm while it isn't broken (clients play it from ChirpAt)
 function Set:Step()
 	if self.dead then return end
@@ -170,7 +202,7 @@ function Set:Step()
 	if cfg.Enabled == false then return end
 	local clock = os.clock()
 	for _, a in self.alarms do
-		if not a.broken and a.model.Parent and clock >= a.nextChirp then
+		if not a.broken and a.model.Parent and clock >= a.nextChirp and not (self.isLive and not self.isLive(a.model)) then
 			a.model:SetAttribute("ChirpAt", serverNow())
 			a.nextChirp = clock + cfg.ChirpMin + math.random() * (cfg.ChirpMax - cfg.ChirpMin)
 		end
@@ -226,6 +258,8 @@ function Set:Melee(origin: Vector3, look: Vector3, reach: number, angle: number?
 				if (near - head).Magnitude <= reach + cfg.MeleeReach then
 					local off = (near - head) * FLAT
 					local ok = off.Magnitude < 1.5 or (flatLook ~= nil and math.acos(math.clamp(off.Unit:Dot(flatLook), -1, 1)) <= half)
+					-- never from above it, never through a floor / wall (the same test as a blast's)
+					ok = ok and near.Y >= head.Y and not self:Blocked(head, near)
 					if ok and self:Break(a, "Melee") then return a.model end
 				end
 			end
@@ -243,7 +277,7 @@ function Set:Blast(position: Vector3, radius: number): number
 		if not a.broken and (a.pos - position).Magnitude <= r then
 			-- aim just below the alarm: a ray ending on its own ceiling isn't a wall between them
 			local target = a.pos - Vector3.new(0, 0.6, 0)
-			if not (self.wallBetween and self.wallBetween(position + Vector3.new(0, 1, 0), target)) then
+			if not self:Blocked(position + Vector3.new(0, 1, 0), target) then
 				if self:Break(a, "Blast") then n += 1 end
 			end
 		end

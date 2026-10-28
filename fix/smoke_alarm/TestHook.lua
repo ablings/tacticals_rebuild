@@ -6,6 +6,8 @@
 --   "reset"                -> ResetAll (as a new round does)
 --   "masked", Vector3      -> SteamMask.IsMasked (what footsteps / reloads ask)
 --   "spawnai", Vector3     -> a BotManager AI (not autonomous: it stands still and only perceives) at that spot; "botAt", Vector3 moves it
+--   "melee", Vector3 root, Vector3 look, reach, angle -> the real manager.OnMelee (as MeleeManager calls it after its wind-up)
+--   "blast", Vector3, kind?  -> the real manager.Explode (a "Frag" by default): everything a grenade does there
 --   "hears", player?       -> JSON { steps, reload, botInBlare, playerInBlare }: the AI's REAL _perceive / HearNoise once (first bot),
 --                             the reload exactly as CombatManager gates it (IsMasked at the source, then HearNoise(..., quiet = true))
 local function alarmTestHook()
@@ -52,6 +54,13 @@ local function alarmTestHook()
 			return "ok"
 		elseif cmd == "masked" then
 			return SteamMask.IsMasked(a)
+		elseif cmd == "melee" then
+			local reach, angle = b and b.reach or 6, b and b.angle or 70
+			manager.OnMelee(a.root, a.look, reach, angle, nil)
+			return "ok"
+		elseif cmd == "blast" then
+			manager.Explode(a, b or "Frag", nil)
+			return "ok"
 		elseif cmd == "spawnai" then
 			local bm = Get and Get("BotManager")
 			if not (bm and bm.Spawn) then return "no BotManager" end

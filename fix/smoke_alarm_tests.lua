@@ -48,8 +48,16 @@ local ok, err = pcall(function()
 	local B = Vector3.new(3000, 5013, 0)   -- another match's alarm far away
 	local mA, mB = alarmAt("SmokeAlarm_A", A), alarmAt("SmokeAlarm_B", B)
 	check("IsAlarm by attribute", SmokeAlarm.IsAlarm(mA))
-	local wall = false
-	local set = SmokeAlarm.Server({ mA }, function() return wall end)
+	-- the map's collision: the slab the alarm hangs from (its top = the floor upstairs) and, later, a wall
+	local geo = Instance.new("Folder")
+	geo.Name = "Geo"
+	geo.Parent = world
+	local slab = Instance.new("Part")
+	slab.Name = "COLP_Slab"; slab.Anchored = true; slab.Size = Vector3.new(60, 1, 60)
+	slab.CFrame = CFrame.new(A + Vector3.new(0, 0.56, 0))
+	slab.Parent = geo
+	local live = true
+	local set = SmokeAlarm.Server({ mA }, { geometry = function() return { geo } end, isLive = function() return live end })
 	local setB = SmokeAlarm.Server({ mB }, nil)
 	check("Server: one alarm each, tagged, AlarmPos", set:Count() == 1 and mA:HasTag(SmokeAlarm.TAG) and (mA:GetAttribute("AlarmPos") - A).Magnitude < 0.01)
 	local first = set.alarms[1].nextChirp - os.clock()
@@ -114,9 +122,13 @@ local ok, err = pcall(function()
 		and mA:GetAttribute("BlareUntil") == nil and mA:GetAttribute("ChirpAt") == nil)
 
 	-- blasts: in reach and no wall; a wall stops it; out of reach does nothing
-	wall = true
-	check("blast behind a wall: nothing", set:Blast(A + Vector3.new(0, -8, 4), 15) == 0)
-	wall = false
+	check("blast on the floor above (through the slab): nothing", set:Blast(A + Vector3.new(0, 2.06, 3), 15) == 0)
+	local wallPart = Instance.new("Part")
+	wallPart.Anchored = true; wallPart.Size = Vector3.new(1, 20, 20)
+	wallPart.CFrame = CFrame.new(A + Vector3.new(-4, -8, 0))
+	wallPart.Parent = geo
+	check("blast behind a wall: nothing", set:Blast(A + Vector3.new(-8, -8, 0), 15) == 0)
+	wallPart:Destroy()
 	check("blast 30 away (radius 15): nothing", set:Blast(A + Vector3.new(30, -8, 0), 15) == 0)
 	check("blast in reach: breaks", set:Blast(A + Vector3.new(0, -8, 4), 15) == 1 and mA:GetAttribute("AlarmCause") == "Blast")
 	set:Reset()
@@ -124,6 +136,8 @@ local ok, err = pcall(function()
 	-- melee: a knife from the floor can't reach the ceiling; from 2 studs under it (standing on something) it can
 	local look = Vector3.new(1, 0, 0)
 	check("melee from the floor (root 10 below): out of reach", set:Melee(A + Vector3.new(-1, -10, 0), look, 6, 70) == nil)
+	check("melee from the floor above, straight over it (through the slab): nothing", set:Melee(A + Vector3.new(0, 4.06, 0), look, 6, 70) == nil)
+	check("melee from the floor above, 3 studs off and facing it: nothing", set:Melee(A + Vector3.new(-3, 4.06, 0), look, 7, 70) == nil)
 	check("melee facing away: nothing", set:Melee(A + Vector3.new(-3, -3, 0), -look, 6, 70) == nil)
 	check("melee close and facing it: breaks", set:Melee(A + Vector3.new(-3, -3, 0), look, 6, 70) == mA and mA:GetAttribute("AlarmCause") == "Melee")
 	set:Reset()
@@ -131,6 +145,28 @@ local ok, err = pcall(function()
 	-- bad input never errors
 	check("bad input", set:Hit(nil :: any, A) == nil and set:Blast(nil :: any, 5) == 0 and set:Melee(A, nil :: any, 6) == nil
 		and SmokeAlarm.Blaring(nil :: any) == false)
+
+	-- a map that isn't being played: no chirps
+	live = false
+	mA:SetAttribute("ChirpAt", nil)
+	set.alarms[1].nextChirp = 0
+	set:Step()
+	check("map not in play: no chirp", mA:GetAttribute("ChirpAt") == nil)
+	live = true
+	set:Step()
+	check("map in play again: chirps", mA:GetAttribute("ChirpAt") ~= nil)
+
+	-- the steam fill switched off must not switch the alarm's listener rule off (the hook sits before Fill's gate)
+	if SteamMask.FillMuffled then
+		local Steam = require(box.Config.ShootableConfig).Steam
+		local was = Steam.Fill and Steam.Fill.Enabled
+		set:Hit(A + Vector3.new(-20, -9, 0), A + Vector3.new(0.3, 0.2, 0))
+		if Steam.Fill then Steam.Fill.Enabled = false end
+		check("Fill off: listener in the blare still muffles (AI)", SteamMask.Muffled(A + Vector3.new(60, -10, 0), floorNear))
+		check("Fill off: walker in the blare still masked", SteamMask.IsMasked(floorNear))
+		if Steam.Fill then Steam.Fill.Enabled = was end
+		set:Reset()
+	end
 
 	-- Destroy: untagged, no more chirps
 	set:Destroy(); setB:Destroy()
