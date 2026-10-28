@@ -348,7 +348,7 @@ F("LR_ShelfWall", "LR", "H_ShelfWall", "tall", -31, -29, -25, -13, note="custom:
 F("LR_ChairA", "LR", "H_Armchair", "low", -29.2, -25, -9, -5, face="N", note="pair of armchairs facing the fireplace wall side (mirror of the island)")
 F("LR_ChairB", "LR", "H_Armchair", "low", -23, -18.8, -9, -5, face="N")
 F("LR_SofaStair", "LR", "H_Sofa_Sectional", "low", -21.2, -14, -27, -15, face="W", note="turned: its back faces the foyer arch and the stair foot: the ambush sofa")
-F("LR_Media", "LR", "H_TVConsole_WithTV", "low", -33, -25, -29.5, -27.48, face="N", note="collision 3.4 (the console); the TV above is art against the wall")
+F("LR_Media", "LR", "H_TVConsole", "low", -33, -25, -29.5, -27.48, face="N", note="console only: the TV stood in front of the south window (grade round 4)")
 F("LR_Bookcase1", "LR", "H_Bookcase", "tall", -11.1, -9.5, -22, -16, face="W")
 F("LR_Bookcase2", "LR", "H_Bookcase", "tall", -11.1, -9.5, -16, -10, face="W")
 F("LR_Chair", "LR", "H_Armchair", "low", -39.5, -35.5, -4.2, 0, face="E")
@@ -379,7 +379,7 @@ F("BH_CoatTree", "BH", "H_TallCabinet", "tall", -5, -2, 13, 15.12, note="freesta
 F("GB_Tub", "GB", "H_Bathtub", "low", -39.5, -32.5, 26, 29.6, note="collision 3.4; the mesh's tap rises to 4.1")
 F("GB_Cabinet", "GB", "H_TallCabinet", "tall", -31, -28, 10.5, 12.62)
 # Landing, upper hall, bathroom
-F("LD_Bookcase", "LD", "H_Bookcase", "tall", -8.5, -2.5, 2.4, 4, face="S", note="the bookcase by the landing")
+F("LD_Bookcase", "LD", "H_Bookcase", "tall", -8.5, -2.5, 2.8, 4.4, face="S", note="the bookcase by the landing (0.3 clear of the master bedroom door frame)")
 F("UH_Linen", "UH", "H_TallCabinet", "tall", 0.88, 3, 10, 13, face="W")
 F("UB_Tub", "UB", "H_Bathtub", "low", -8.5, -1.5, 26, 29.6)
 # Master bedroom
@@ -431,7 +431,6 @@ Dr("LR_Art2", "H_Frame_Abstract", "LR", -39.92, -18, 5.5, "E", blocker=False, ha
 Dr("KT_Stool1", "H_BarStool", "KT", 21.5, 3.4, 0, "N")
 Dr("KT_Stool2", "H_BarStool", "KT", 24, 3.4, 0, "N")
 Dr("KT_Stool3", "H_BarStool", "KT", 26.5, 3.4, 0, "N")
-Dr("KT_Upper1", "H_KitchenUpper", "KT", 24, 29.27, 5.8, "S", blocker=False)
 Dr("KT_Bowl", "H_FruitBowl", "KT", 24, 7.3, LOW, "S", blocker=False)
 Dr("KT_Coffee", "H_CoffeeMachine", "KT", 35, 28.6, LOW, "S", blocker=False)
 Dr("KT_Kettle", "H_Kettle", "KT", 13.5, 28.6, LOW, "S", blocker=False)

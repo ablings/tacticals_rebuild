@@ -1407,7 +1407,7 @@
   {
    "id": "LR_Media",
    "room": "LR",
-   "model": "H_TVConsole_WithTV",
+   "model": "H_TVConsole",
    "cover": "low",
    "x0": -33,
    "x1": -25,
@@ -1416,7 +1416,7 @@
    "z0": 0.0,
    "z1": 3.4,
    "face": "N",
-   "note": "collision 3.4 (the console); the TV above is art against the wall"
+   "note": "console only: the TV stood in front of the south window (grade round 4)"
   },
   {
    "id": "LR_Bookcase1",
@@ -1789,12 +1789,12 @@
    "cover": "tall",
    "x0": -8.5,
    "x1": -2.5,
-   "y0": 2.4,
-   "y1": 4,
+   "y0": 2.8,
+   "y1": 4.4,
    "z0": 14.0,
    "z1": 22.0,
    "face": "S",
-   "note": "the bookcase by the landing"
+   "note": "the bookcase by the landing (0.3 clear of the master bedroom door frame)"
   },
   {
    "id": "UH_Linen",
@@ -2248,28 +2248,6 @@
     27.24,
     2.66,
     4.14
-   ]
-  },
-  {
-   "id": "KT_Upper1",
-   "model": "H_KitchenUpper",
-   "room": "KT",
-   "x": 24,
-   "y": 29.27,
-   "z": 5.8,
-   "face": "S",
-   "size": [
-    4.0,
-    2.6,
-    1.45
-   ],
-   "hang": false,
-   "note": "",
-   "box": [
-    22.0,
-    26.0,
-    28.545,
-    29.995
    ]
   },
   {
@@ -6037,7 +6015,7 @@
    "role": "furniture",
    "cover": "low",
    "room": "LR",
-   "model": "H_TVConsole_WithTV"
+   "model": "H_TVConsole"
   },
   {
    "id": "F_LR_Bookcase1",
@@ -6618,8 +6596,8 @@
    "shape": "box",
    "x0": -8.5,
    "x1": -2.5,
-   "y0": 2.4,
-   "y1": 4,
+   "y0": 2.8,
+   "y1": 4.4,
    "z0": 14.0,
    "z1": 22.0,
    "role": "furniture",

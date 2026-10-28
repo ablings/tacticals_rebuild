@@ -132,3 +132,29 @@ Studio Parts; lobby pad duel D1 on House with me on A1 / bot on B1; 34 lights.
 | Root cause | wall dressing was placed on wall spans without testing the openings. `tools/house_check.py` now fails on any furniture / dressing box reaching into a window opening; it caught two more (the master bedroom floor lamp in front of its window; bedroom 3's table lamp rising into the sill): lamp moved, that table lamp dropped |
 Re-run after: checker PASS (incl. art-over-windows 0), read-back 0 differences, walk-through 0, art fit 0.02, MapAudit 0 FAIL / 1 WARN;
 lobby source re-ported (COLP 232 / PCOL 30 = build).
+
+## Grade round 4 (fresh roblox-map-grader, xhigh; the last allowed round): FIX 8.4 -> NOT PUBLISHED
+Function confirmed sound: vote, spawns (RunIn then A / B), doors, 6 more escape pushes held (from console / counter / armchair tops), glass
+shot breaks the pane and the opening still holds, read-back 0, checker PASS on the read-back, walk-through 0, MapAudit 0 FAIL, lobby = build,
+round 3 fixes in. The work order says "re-grade until PASS, at most 4 rounds; no pass means no publish": so no publish; asked Edward.
+| Finding | Fix (after round 4, verified by my checks; not re-graded) |
+|---|---|
+| Major: the living-room TV (art above its console) stood 1.4 in front of window Win_LR_S1, covering 32 % of the glass | the console is now H_TVConsole (no TV); `tools/house_check.py` tests anything rising > 1 above the sill 3 studs into the room and uses the mesh height, not the collision height: run on the round-3 layout it FAILS on LR_Media x Win_LR_S1; on the fixed layout it passes |
+| Minor: landing bookcase cut 0.14 into the master bedroom's door frame | moved 0.4 north (y 2.8..4.4); fairness unchanged |
+| Minor: kitchen wall cabinet KT_Upper1 ran into both window trims | removed (the 4-stud gap between the windows has no room for it) |
+| Minor: quality level not written on the sheets | every capture in r1-r4 was taken after tools/house_capenv.lua set EditQualityLevel = Level21 (its return line) |
+After: read-back 0 differences (293 proxies, 8 doors, 28 windows), checker PASS (built), walk-through 0, art fit 0.02, MapAudit 0 FAIL / 1 WARN
+(34 lights), r4 recaptured (h03, h11, h20, w01) + sheets rebuilt; lobby test source re-ported (COLP 232 / PCOL 30 = build).
+
+## Ready to publish (steps, once Edward says go)
+1. git pull; check: no repo-root .lock newer than 30 min, no other session mid-port (git log, notes/port_manifest.md), no Studio window
+   on match_place_ref / Matchmaking_place / Ranked_place / Tacticals_rebuild / Tacticals_main_ported.
+2. match_place_ref.rbxl: `fix/breakable_glass.lua` (match), `python tools/house_kit_copy.py <build id> <ref id>` (fingerprint MATCH),
+   `fix/map_house.lua`; `HOUSE_STUDIO=match_place_ref.rbxl python tools/house_readback.py` (0 differences) + walkthrough + artfit; save; commit.
+   (Staged and verified once this morning: glass 15 edits, kit MATCH 562 instances / 360 MeshParts / 135 SA, read-back 0; closed unsaved.)
+3. Matchmaking / Ranked: copy match_place_ref -> <Kind>_place.rbxl, `tools/port_prep.sh <Kind>`; bot match on House (vote) in
+   Matchmaking; Publish As > gunsy funsy > tacticals > <Kind> > Overwrite > Grant; read back from the cloud window.
+4. Lobby: Tacticals_rebuild.rbxl: `fix/breakable_glass.lua` (hub), `tools/duel_map_port.py <ref id> <lobby id> House House,HouseExterior`
+   (move any existing _DuelSource.House aside FIRST: the import appends), `fix/house_lobby_prep.lua`, `fix/duel_split_map.lua` with
+   ONLY = 'House'; pad duel test; save; copy -> Tacticals_main_ported.rbxl + `tools/set_technology.py` Future; publish to tacticals; read back.
+5. Tutorial unchanged. port_manifest entry; commit own paths only.

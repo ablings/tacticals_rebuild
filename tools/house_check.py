@@ -397,16 +397,24 @@ report["sight"] = dict(max=round(float(L[vv].max()), 1), p90=round(float(np.perc
                        median=round(float(np.median(L[vv])), 1))
 
 # art vs windows: no furniture / dressing box may reach into a window opening (opening + 0.5 on the room sides, sill..head)
+_fj = json.load(open(os.path.join(os.path.dirname(HERE), "art", "house", "house_furniture.json")))
+ART_H = {a["assembly"]: a["size_studio"][1] for a in _fj["assemblies"]}
 art_win = []
 for o in D["openings"]:
     if o["kind"] != "window": continue
-    if o["axis"] == "x":
-        wb = (o["a"], o["b"], o["t0"] - 0.5, o["t1"] + 0.5)
-    else:
-        wb = (o["t0"] - 0.5, o["t1"] + 0.5, o["a"], o["b"])
     for f in D["furniture"] + D.get("dressing", []):
+        # anything rising more than 1 stud above the sill is tested 3 studs into the room (a TV on a console 1.4 in front of
+        # the glass, grade round 4); lower pieces (consoles, counters under a sill) only in a 0.5 band
+        tall_art = ((f["z"] + f["size"][1]) if "box" in f else max(f["z1"], f["z0"] + ART_H.get(f["model"], 0))) > o["z0"] + 1
+        band = 3.0 if tall_art else 0.5
+        if o["axis"] == "x":
+            wb = (o["a"], o["b"], o["t0"] - band, o["t1"] + band)
+        else:
+            wb = (o["t0"] - band, o["t1"] + band, o["a"], o["b"])
         if "box" in f: x0, x1, y0, y1 = f["box"]; z0 = f["z"]; z1 = f["z"] + f["size"][1]
-        else: x0, x1, y0, y1, z0, z1 = f["x0"], f["x1"], f["y0"], f["y1"], f["z0"], f["z1"]
+        else:
+            x0, x1, y0, y1, z0, z1 = f["x0"], f["x1"], f["y0"], f["y1"], f["z0"], f["z1"]
+            z1 = max(z1, z0 + ART_H.get(f["model"], 0))   # art taller than its collision (a TV on a console) counts too
         if f.get("model") == "H_PendantLamp": continue
         if x0 < wb[1] and x1 > wb[0] and y0 < wb[3] and y1 > wb[2] and z0 < o["z1"] and z1 > o["z0"] + 0.01:
             art_win.append(f"{f['id']} x {o['id']}")
