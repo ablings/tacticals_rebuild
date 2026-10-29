@@ -38,6 +38,8 @@ class Placer:
         ob.rotation_euler = (0.0, math.radians(tilt), math.radians(rot))
         ob.scale = scale
         ob["atlas"] = master.get("atlas", "D65")
+        if master.get("open_shell"):
+            ob["open_shell"] = True
         s.coll.objects.link(ob)
         s.out.append(ob)
         e = dict(name=name, master=master.name, at=[round(x, 3), round(y, 3), round(z, 3)], rot_z=round(rot, 1), note=note)
@@ -217,12 +219,12 @@ def place_all(P, masters, segs, LAY, openings, frames_hang, rng_seed=65):
             fx, fy = (u, tin + si * 0.45) if ax == "x" else (tin + si * 0.45, u)
             if any(x0 - 0.55 <= fx <= x1 + 0.55 and y0 - 0.55 <= fy <= y1 + 0.55 and zz1 > fz + 0.3 and zz0 < top for (x0, x1, y0, y1, zz0, zz1) in occ):
                 continue
-            P.put(m, f"Drape_{wid}_{side}", px, py, fz + 0.05, rot, scale=(1, 1, h / 8.0), note="pulled to the side of the window")
+            P.put(m, f"Drape_{wid}_{side}", px, py, fz - 0.03, rot, scale=(1, 1, (h + 0.08) / 8.0), note="pulled to the side of the window")
             n_side += 1
         if n_side:
             u = (op["a"] + op["b"]) / 2
             L = (op["b"] - op["a"]) + 2.6
-            px, py = (u, tin + si * 0.02) if ax == "x" else (tin + si * 0.02, u)
+            px, py = (u, tin - si * 0.03) if ax == "x" else (tin - si * 0.03, u)       # brackets 0.03 into the wall
             P.put(M["D65_DrapeRod"], f"DrapeRod_{wid}", px, py, top - 0.1, rot, scale=(L, 1, 1))
     return P.out, P.log
 

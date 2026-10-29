@@ -40,7 +40,7 @@ FLOORS = {"FY": "Parquet", "CH": "Parquet", "BH": "LinoA", "MR": "LinoA", "LR": 
 EXT_BASE = ("Fieldstone", 2.5, "SidingWhite")      # outside: fieldstone base course, white lap siding above
 FLOOR_Z = {"G": 0.0, "U": 14.0, "R": 0.0}
 TRIM = {   # name: (z from the floor (None = from the ceiling), height, depth)
-    "base": (0.0, 0.5, 0.12), "chair": (3.0, 0.3, 0.18), "rail35": (3.35, 0.25, 0.16), "picture": (9.0, 0.15, 0.12),
+    "base": (0.0, 0.5, 0.13), "chair": (3.0, 0.3, 0.18), "rail35": (3.35, 0.25, 0.16), "picture": (9.0, 0.15, 0.13),
     "plate": (8.0, 0.14, 0.42), "crown": (None, 0.5, 0.26),
 }
 
@@ -135,7 +135,7 @@ def _merge(iv):
     return out
 
 
-def trims(add_poly):
+def trims(add_poly, door_ops=()):
     """trim strips as closed prisms (front, top, bottom, ends; no back) in TrimWalnut. Returns the count."""
     groups = {}
     for s in SEGS:
@@ -158,6 +158,15 @@ def trims(add_poly):
     for (rid, t, ax, sg, plane, za, zb, d), iv in groups.items():
         storey = "G" if za < 13.5 else "U"
         for u0, u1 in _merge(iv):
+            # an end at a door opening stops 0.25 short, behind the door casing: a door leaf swings past it
+            for o in door_ops:
+                ax_o = 1 if o["axis"] == "x" else 0           # the door wall's normal axis
+                if ax_o != ax or not (min(o["t0"], o["t1"]) - 0.01 <= plane <= max(o["t0"], o["t1"]) + 0.01) or not (o["z0"] - 0.1 <= za <= o["z1"]):
+                    continue
+                if abs(u1 - o["a"]) < 0.05:
+                    u1 -= 0.25
+                if abs(u0 - o["b"]) < 0.05:
+                    u0 += 0.25
             if u1 - u0 < 0.3:
                 continue
             _prism(add_poly, ax, sg, plane, u0, u1, za, zb, d, crown=(t == "crown"), storey=storey)
@@ -204,17 +213,20 @@ WALL_PLAN = {   # room -> wear cells on its walls (each placed once on a random 
     "FY": ["chalk_marks_a", "faded_rect", "bullets_a", "water_stain_b"], "CH": ["bullets_b", "faded_rect"],
     "BH": ["peel_seam", "chalk_marks_b"], "MR": ["scorch_a", "bullets_a"], "LR": ["peel_corner", "bullets_b", "faded_rect", "chalk_marks_b"],
     "DR": ["water_stain_a", "bullets_a", "peel_seam"], "KT": ["scorch_b", "chalk_marks_a", "bullets_b"], "GB": ["water_stain_b"],
-    "LD": ["bullets_a", "faded_rect"], "UH": ["peel_corner"], "MB": ["peel_seam", "chalk_marks_a", "bullets_b", "scorch_a"],
-    "BR2": ["peel_corner", "bullets_a", "faded_rect"], "BR3": ["water_stain_a", "chalk_marks_b"], "UB": ["peel_corner"],
+    "LD": ["bullets_a", "faded_rect", "water_stain_b"], "UH": ["peel_corner", "bullets_b"], "MB": ["peel_seam", "chalk_marks_a", "bullets_b", "scorch_a"],
+    "BR2": ["peel_corner", "bullets_a", "faded_rect", "water_stain_b"], "BR3": ["water_stain_a", "chalk_marks_b", "peel_seam"], "UB": ["peel_corner", "water_stain_a"],
 }
-FLOOR_PLAN = {"LR": ["floor_scuff", "dust_patch"], "DR": ["floor_scuff", "dust_patch"], "KT": ["lino_crack", "floor_scuff", "dust_patch"],
-              "FY": ["floor_scuff", "dust_patch"], "BH": ["floor_scuff"], "MR": ["dust_patch"], "CH": ["floor_scuff"],
-              "MB": ["dust_patch"], "BR2": ["dust_patch"], "BR3": ["floor_scuff"], "LD": ["floor_scuff"], "UH": ["dust_patch"]}
-CEIL_PLAN = {"LR": ["water_stain_a"], "MB": ["water_stain_b"], "KT": ["water_stain_b"], "BR3": ["water_stain_a"]}
+FLOOR_PLAN = {"LR": ["floor_scuff", "dust_patch", "floor_scuff", "dust_patch"], "DR": ["floor_scuff", "dust_patch", "dust_patch"],
+              "KT": ["lino_crack", "lino_crack", "floor_scuff", "dust_patch", "floor_scuff"], "FY": ["floor_scuff", "dust_patch", "floor_scuff"],
+              "BH": ["floor_scuff", "dust_patch"], "MR": ["dust_patch", "floor_scuff"], "CH": ["floor_scuff", "dust_patch"],
+              "MB": ["dust_patch", "floor_scuff"], "BR2": ["dust_patch", "floor_scuff"], "BR3": ["floor_scuff", "dust_patch"],
+              "LD": ["floor_scuff", "dust_patch"], "UH": ["dust_patch"], "GB": ["dust_patch"], "UB": ["dust_patch"]}
+CEIL_PLAN = {"LR": ["water_stain_a", "water_stain_b"], "MB": ["water_stain_b"], "KT": ["water_stain_b"], "BR3": ["water_stain_a"],
+             "DR": ["water_stain_a"], "BR2": ["water_stain_b"], "GB": ["water_stain_a"], "MR": ["water_stain_b"], "LD": ["water_stain_a"]}
 SIZE = {"water_stain_a": 3.2, "water_stain_b": 2.6, "peel_corner": 2.0, "peel_seam": 2.4, "scorch_a": 2.6, "scorch_b": 2.2,
         "bullets_a": 2.0, "bullets_b": 2.2, "faded_rect": 2.6, "chalk_marks_a": 2.4, "chalk_marks_b": 2.4, "floor_scuff": 4.0,
         "sand_fan": 3.0, "cobweb": 1.5, "lino_crack": 2.4, "dust_patch": 4.0}
-OFF = 0.12
+OFF = 0.13
 
 
 def _cell_uv(name, corner):
@@ -225,11 +237,11 @@ def _cell_uv(name, corner):
     return (u, v)
 
 
-def wear(rooms, room_rects, floor_z, ceil_z, blocked_floor, rng_seed=1965):
+def wear(rooms, room_rects, floor_z, ceil_z, blocked_floor, rng_seed=1965, reserve=()):
     """returns {storey: [(quad verts, uv corners)]}. blocked_floor(x, y, z, r) -> True where rugs / furniture sit"""
     rng = random.Random(rng_seed)
     out = {"G": [], "U": []}
-    used = []
+    used = list(reserve)
     def free(c, r):
         return all((c - q).length > r + rr for q, rr in used)
     for rid, cells in WALL_PLAN.items():

@@ -21,7 +21,7 @@ NEW = {
     "enamel_gold":   dict(paint=(206, 160, 52), under=(110, 108, 104), chip=0.35, metal_under=0.8, under_rough=0.35, rough=0.28, paintable=True),
     # the kitchen's one saturated colour: avocado / olive enamel (Tacticals' own olive; Design Rules: no yellow / orange
     # map accents, so the brief's harvest gold became olive, the card's named alternative)
-    "enamel_olive":  dict(paint=(124, 134, 70), under=(110, 108, 104), chip=0.35, metal_under=0.8, under_rough=0.35, rough=0.28, paintable=True),
+    "enamel_olive":  dict(paint=(98, 106, 56), under=(110, 108, 104), chip=0.35, metal_under=0.8, under_rough=0.35, rough=0.28, paintable=True),
     "enamel_white":  dict(paint=(232, 228, 212), under=(70, 68, 66), chip=0.25, metal_under=0.6, rough=0.25, paintable=True),
     "enamel_cream":  dict(paint=(226, 216, 186), under=(70, 68, 66), chip=0.25, metal_under=0.6, rough=0.28, paintable=True),
     "enamel_mint":   dict(paint=(176, 204, 182), under=(200, 198, 190), chip=0.2, rough=0.2, paintable=True),

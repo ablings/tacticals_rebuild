@@ -1,0 +1,191 @@
+[   3.3s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
+[   3.3s] bake Car1 ['Car_Wagon']
+Info: Baking map saved to internal image, save it externally or pack it
+[   5.3s]    Car1 color 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[   6.5s]    Car1 rough 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[   7.7s]    Car1 metal 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[   8.9s]    Car1 normal 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  10.1s]    Car1 ao 1.2s
+[  10.2s] bake Car2 ['Car_Sedan']
+Info: Baking map saved to internal image, save it externally or pack it
+[  12.0s]    Car2 color 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  13.2s]    Car2 rough 1.1s
+Info: Baking map saved to internal image, save it externally or pack it
+[  14.3s]    Car2 metal 1.1s
+Info: Baking map saved to internal image, save it externally or pack it
+[  15.5s]    Car2 normal 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  16.7s]    Car2 ao 1.2s
+[  16.9s] bake Car3 ['Car_SedanSalmon']
+Info: Baking map saved to internal image, save it externally or pack it
+[  18.6s]    Car3 color 1.1s
+Info: Baking map saved to internal image, save it externally or pack it
+[  19.8s]    Car3 rough 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  20.9s]    Car3 metal 1.1s
+Info: Baking map saved to internal image, save it externally or pack it
+[  22.1s]    Car3 normal 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  23.3s]    Car3 ao 1.2s
+[  23.5s] bake Car4 ['Truck_Dairy']
+Info: Baking map saved to internal image, save it externally or pack it
+[  29.9s]    Car4 color 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  31.1s]    Car4 rough 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  32.3s]    Car4 metal 1.2s
+Info: Baking map saved to internal image, save it externally or pack it
+[  33.6s]    Car4 normal 1.3s
+Info: Baking map saved to internal image, save it externally or pack it
+[  34.9s]    Car4 ao 1.3s
+[  35.1s] bake Sandbags ['Sandbags_1', 'Sandbags_2', 'Sandbags_3']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  37.8s]    Sandbags color 2.2s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  40.1s]    Sandbags rough 2.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  42.3s]    Sandbags metal 2.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  44.6s]    Sandbags normal 2.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  46.9s]    Sandbags ao 2.3s
+[  47.1s] bake Signs ['Sign_Restricted', 'Sign_Danger', 'Sign_RoadClosed', 'Sign_Restricted2', 'Trellis_Across', 'Trellis_Ours', 'Bike_1', 'Bike_2', 'Banner_Garage']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  54.3s]    Signs color 6.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  60.3s]    Signs rough 6.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  66.3s]    Signs metal 6.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  72.4s]    Signs normal 6.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  78.5s]    Signs ao 6.1s
+[  78.8s] bake DryTrees ['DryTree_01', 'DryTree_02', 'DryTree_03', 'DryTree_04', 'DryTree_05', 'DryTree_06', 'DryTree_07', 'DryTree_08']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  84.9s]    DryTrees color 5.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  90.3s]    DryTrees rough 5.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[  95.5s]    DryTrees metal 5.3s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 100.6s]    DryTrees normal 5.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 105.8s]    DryTrees ao 5.2s
+[ 106.0s] bake Mast ['Mast_South', 'Mast_NE']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 107.8s]    Mast color 1.4s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 109.2s]    Mast rough 1.4s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 110.6s]    Mast metal 1.4s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 112.0s]    Mast normal 1.4s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 113.5s]    Mast ao 1.5s
+[ 113.9s] deduped 2031 hidden back-to-back faces
+
+FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Exterior.fbx'
+WARNING: Cannot register a valid material index for 'H_Dummies' from 'D65_Dummy_Lean' mesh, 'Dummy_Ext_Truck' object. Most likely, different objects using the same mesh, but different material slots layouts.
+export finished in 0.1506 sec.
+Info: Saved as "house_exterior.blend"
+Info: Total files 69 | Changed 0 | Failed 0
+Info: Saved "house_exterior.blend"
+[ 114.3s] DONE 104 objects 40290 tris
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

@@ -1,0 +1,8 @@
+SUMMARY Exterior 41534 tris 6 FAIL 98 WARN
+CODES {('WARN', 'A3b'): 21, ('WARN', 'A1b'): 33, ('WARN', 'A19'): 5, ('WARN', 'A8'): 39, ('FAIL', 'GAP'): 6}
+F GAP Ext_Across_Pegboard + Ext_Across_TrimWhite 4 faces come within 0.15 studs without touching: a visible seam or hole. Overlap the joint by 0.05-0.1
+F GAP Ext_Across_TrimWhite + Trellis_Across 1 faces come within 0.15 studs without touching: a visible seam or hole. Overlap the joint by 0.05-0.1
+F GAP Ext_AcrossW_Pegboard + Ext_AcrossW_TrimWhite 4 faces come within 0.15 studs without touching: a visible seam or hole. Overlap the joint by 0.05-0.1
+F GAP Ext_Ground_Desert + Dummy_Ext_Porch 20 faces come within 0.15 studs without touching: a visible seam or hole. Overlap the joint by 0.05-0.1
+F GAP Ext_Ground_Desert + Dummy_Ext_Truck 4 faces come within 0.15 studs without touching: a visible seam or hole. Overlap the joint by 0.05-0.1
+F GAP Ext_Ground_Desert + Sandbags_2 12 faces come within 0.15 studs without touching: a visible seam or hole. Overlap the joint by 0.05-0.1

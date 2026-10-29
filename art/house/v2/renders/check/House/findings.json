@@ -1,0 +1,1850 @@
+[
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Shell_R_SidingWhite",
+  "message": "6 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Stair_Main",
+  "message": "312 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Stair_Back",
+  "message": "158 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Rail_Gallery",
+  "message": "644 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Rail_MainStair",
+  "message": "1178 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Rail_BackStair",
+  "message": "844 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_Front",
+  "message": "240 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_Back",
+  "message": "98 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_GB",
+  "message": "84 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_MB",
+  "message": "84 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_BR2",
+  "message": "84 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_BR3",
+  "message": "84 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_UB",
+  "message": "84 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_EN",
+  "message": "84 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_Front",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_Back",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_MB",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_BR3",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_BR2",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_GB",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_EN",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DoorFrame_UB",
+  "message": "30 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_KT_E_GlassTape",
+  "message": "40 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Door_Back_BrokenGlass",
+  "message": "140 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_LR_S1_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_LR_S1_BrokenGlass",
+  "message": "452 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_LR_S2_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_LR_S2_BrokenGlass",
+  "message": "472 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_DR_S1_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_DR_S1_BrokenGlass",
+  "message": "458 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_DR_S2_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_DR_S2_BrokenGlass",
+  "message": "478 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_EN_S_Glass",
+  "message": "16 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_EN_S_BrokenGlass",
+  "message": "212 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_MB_S_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_MB_S_BrokenGlass",
+  "message": "492 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_FY_S_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_FY_S_BrokenGlass",
+  "message": "684 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_S1_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_S1_BrokenGlass",
+  "message": "458 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_S2_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_S2_BrokenGlass",
+  "message": "436 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_GB_N_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_GB_N_BrokenGlass",
+  "message": "346 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BH_N_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BH_N_BrokenGlass",
+  "message": "468 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_KT_N1_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_KT_N1_BrokenGlass",
+  "message": "418 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_KT_N2_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_KT_N2_BrokenGlass",
+  "message": "430 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR3_N1_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR3_N1_BrokenGlass",
+  "message": "496 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR3_N2_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR3_N2_BrokenGlass",
+  "message": "446 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_UB_N_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_UB_N_BrokenGlass",
+  "message": "340 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_EN_W_Glass",
+  "message": "16 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_EN_W_BrokenGlass",
+  "message": "194 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_LR_W_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_LR_W_BrokenGlass",
+  "message": "488 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR3_W_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR3_W_BrokenGlass",
+  "message": "456 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_GB_W_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_GB_W_BrokenGlass",
+  "message": "298 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_DR_E_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_DR_E_BrokenGlass",
+  "message": "466 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_KT_E_Glass",
+  "message": "48 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_KT_E_BrokenGlass",
+  "message": "588 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_E_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_E_BrokenGlass",
+  "message": "486 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_N_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_N_BrokenGlass",
+  "message": "496 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_MB_FY_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_MB_FY_BrokenGlass",
+  "message": "472 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_FY_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_BR2_FY_BrokenGlass",
+  "message": "446 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_ST2_E_Glass",
+  "message": "32 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_ST2_E_BrokenGlass",
+  "message": "400 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_UB_E_Glass",
+  "message": "16 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Win_UB_E_BrokenGlass",
+  "message": "178 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_LR_Sofa",
+  "message": "472 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_DR_1",
+  "message": "452 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_DR_2",
+  "message": "452 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_KT_Booth",
+  "message": "468 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_BR2_Bed",
+  "message": "466 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_KT_Counter",
+  "message": "454 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Radio_KT",
+  "message": "82 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Radio_MB",
+  "message": "82 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Papers_LR",
+  "message": "46 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Papers_BR2",
+  "message": "46 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Papers_MB",
+  "message": "46 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Plates_DR",
+  "message": "87 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Plates_KT",
+  "message": "87 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_LR_S1",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_LR_S2",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_DR_S1",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_DR_S2",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_FY_S",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BR2_S1",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BR2_S2",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BH_N",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BR3_N1",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BR3_N2",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_LR_W",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BR3_W",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BR2_E",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DrapeRod_Win_BR2_N",
+  "message": "66 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_CarpetGold + Papers_LR",
+  "message": "20 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_Fieldstone + Shell_G_TrimWalnut",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_LinoA + Plates_DR",
+  "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_LinoA + Sand_Door_Back",
+  "message": "182 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_LinoA + Sand_Win_DR_E",
+  "message": "182 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_LinoB + Plates_KT",
+  "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaintCoffee + Shell_G_TrimWalnut",
+  "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaintCoffee + Shell_G_Wainscot",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaintCoffeeLow + DoorFrame_Back",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaintCoffeeLow + DoorFrame_GB",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaintCream + Shell_G_TrimWalnut",
+  "message": "146 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaperDiamond + Shell_G_TrimWalnut",
+  "message": "14 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaperDiamond + Poster_KT",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaperVine + Shell_G_TrimWalnut",
+  "message": "14 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaperVine + DoorFrame_Back",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_PaperVine + Notice_BH",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_Parquet + Sand_Door_Front",
+  "message": "182 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_Pegboard + Shell_G_TrimWalnut",
+  "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_Pegboard + DoorFrame_Back",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_Pegboard + DoorFrame_GB",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_Pegboard + Clipboard_MR",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_Pegboard + Calendar_MR",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_LR_S1_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_LR_S2_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + DoorFrame_Front",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_DR_S1_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_DR_S2_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_BH_N_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + DoorFrame_Back",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_KT_N1_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_KT_N2_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_LR_W_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_DR_E_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_SidingWhite + Win_KT_E_Frame",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_TileMint + DoorFrame_GB",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_TrimWalnut + Stair_Main",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_G_TrimWalnut + DoorFrame_Back",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_R_PaintCream + Shell_R_SidingWhite",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_CarpetGold + Papers_MB",
+  "message": "17 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_CarpetGreige + Papers_BR2",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_CarpetTiles + Sand_Win_BR3_W",
+  "message": "182 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaintCream + Shell_U_TrimWalnut",
+  "message": "49 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaintCream + DoorFrame_MB",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaintCream + DoorFrame_BR2",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaintMustard + Shell_U_TrimWalnut",
+  "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaintMustard + DoorFrame_BR2",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaintMustard + Poster_BR2",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaintMustardLow + DoorFrame_BR2",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVine + Shell_U_TrimWalnut",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVine + DoorFrame_MB",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVine + DoorFrame_BR3",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVine + DoorFrame_BR2",
+  "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVine + DoorFrame_UB",
+  "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVineYellow + Shell_U_TrimWalnut",
+  "message": "14 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVineYellow + DoorFrame_MB",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVineYellow + DoorFrame_BR3",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVineYellow + Pennant_BR3",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVineYellowLow + DoorFrame_MB",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_PaperVineYellowLow + DoorFrame_BR3",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_Pine + Shell_U_TrimWalnut",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TileButter + DoorFrame_BR3",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TileButter + DoorFrame_UB",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TilePink + DoorFrame_EN",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TrimWalnut + DoorFrame_MB",
+  "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TrimWalnut + DoorFrame_BR2",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TrimWalnut + DoorFrame_EN",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TrimWalnut + Drape_Win_FY_S_B",
+  "message": "22 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_TrimWalnut + Wear_U",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_Wainscot + DoorFrame_MB",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_Wainscot + DoorFrame_BR3",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_Wainscot + DoorFrame_BR2",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Shell_U_Wainscot + DoorFrame_UB",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Stair_Back + Rail_BackStair",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_Front + DoorFrame_Front",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_Back + DoorFrame_Back",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_Back + Door_Back_Glass",
+  "message": "20 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_Back + Door_Back_BrokenGlass",
+  "message": "20 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_GB + DoorFrame_GB",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_MB + DoorFrame_MB",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_BR2 + DoorFrame_BR2",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_BR3 + DoorFrame_BR3",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_UB + DoorFrame_UB",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_EN + DoorFrame_EN",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S1_Frame + Win_LR_S1_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S1_Frame + Win_LR_S1_BrokenGlass",
+  "message": "44 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S2_Frame + Win_LR_S2_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S2_Frame + Win_LR_S2_BrokenGlass",
+  "message": "33 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S1_Frame + Win_DR_S1_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S1_Frame + Win_DR_S1_BrokenGlass",
+  "message": "45 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S2_Frame + Win_DR_S2_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S2_Frame + Win_DR_S2_BrokenGlass",
+  "message": "37 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_EN_S_Frame + Win_EN_S_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_EN_S_Frame + Win_EN_S_BrokenGlass",
+  "message": "29 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_MB_S_Frame + Win_MB_S_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_MB_S_Frame + Win_MB_S_BrokenGlass",
+  "message": "34 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_FY_S_Frame + Win_FY_S_Glass",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_FY_S_Frame + Win_FY_S_BrokenGlass",
+  "message": "47 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_FY_S_Frame + Drape_Win_FY_S_A",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_FY_S_Frame + Drape_Win_FY_S_B",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S1_Frame + Win_BR2_S1_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S1_Frame + Win_BR2_S1_BrokenGlass",
+  "message": "38 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S2_Frame + Win_BR2_S2_Glass",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S2_Frame + Win_BR2_S2_BrokenGlass",
+  "message": "41 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_GB_N_Frame + Win_GB_N_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_GB_N_Frame + Win_GB_N_BrokenGlass",
+  "message": "19 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BH_N_Frame + Win_BH_N_Glass",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BH_N_Frame + Win_BH_N_BrokenGlass",
+  "message": "35 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_N1_Frame + Win_KT_N1_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_N1_Frame + Win_KT_N1_BrokenGlass",
+  "message": "29 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_N2_Frame + Win_KT_N2_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_N2_Frame + Win_KT_N2_BrokenGlass",
+  "message": "31 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N1_Frame + Win_BR3_N1_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N1_Frame + Win_BR3_N1_BrokenGlass",
+  "message": "32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N2_Frame + Win_BR3_N2_Glass",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N2_Frame + Win_BR3_N2_BrokenGlass",
+  "message": "27 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_UB_N_Frame + Win_UB_N_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_UB_N_Frame + Win_UB_N_BrokenGlass",
+  "message": "31 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_EN_W_Frame + Win_EN_W_Glass",
+  "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_EN_W_Frame + Win_EN_W_BrokenGlass",
+  "message": "18 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_W_Frame + Win_LR_W_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_W_Frame + Win_LR_W_BrokenGlass",
+  "message": "33 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_W_Frame + Win_BR3_W_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_W_Frame + Win_BR3_W_BrokenGlass",
+  "message": "38 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_GB_W_Frame + Win_GB_W_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_GB_W_Frame + Win_GB_W_BrokenGlass",
+  "message": "30 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_E_Frame + Win_DR_E_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_E_Frame + Win_DR_E_BrokenGlass",
+  "message": "43 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_E_Frame + Win_KT_E_Glass",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_E_Frame + Win_KT_E_BrokenGlass",
+  "message": "41 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_E_Frame + Win_BR2_E_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_E_Frame + Win_BR2_E_BrokenGlass",
+  "message": "23 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_N_Frame + Win_BR2_N_Glass",
+  "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_N_Frame + Win_BR2_N_BrokenGlass",
+  "message": "38 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_MB_FY_Frame + Win_MB_FY_Glass",
+  "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_MB_FY_Frame + Win_MB_FY_BrokenGlass",
+  "message": "51 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_FY_Frame + Win_BR2_FY_Glass",
+  "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_FY_Frame + Win_BR2_FY_BrokenGlass",
+  "message": "41 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_ST2_E_Frame + Win_ST2_E_Glass",
+  "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_ST2_E_Frame + Win_ST2_E_BrokenGlass",
+  "message": "28 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_UB_E_Frame + Win_UB_E_Glass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_UB_E_Frame + Win_UB_E_BrokenGlass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S2_GlassTape + Win_LR_S2_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S2_GlassTape + Win_LR_S2_BrokenGlass",
+  "message": "16 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S1_GlassTape + Win_DR_S1_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S1_GlassTape + Win_DR_S1_BrokenGlass",
+  "message": "16 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_FY_S_GlassTape + Win_FY_S_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_FY_S_GlassTape + Win_FY_S_BrokenGlass",
+  "message": "17 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S1_GlassTape + Win_BR2_S1_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S1_GlassTape + Win_BR2_S1_BrokenGlass",
+  "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BH_N_GlassTape + Win_BH_N_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BH_N_GlassTape + Win_BH_N_BrokenGlass",
+  "message": "14 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N1_GlassTape + Win_BR3_N1_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N1_GlassTape + Win_BR3_N1_BrokenGlass",
+  "message": "19 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N2_GlassTape + Win_BR3_N2_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N2_GlassTape + Win_BR3_N2_BrokenGlass",
+  "message": "22 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_E_GlassTape + Win_DR_E_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_E_GlassTape + Win_DR_E_BrokenGlass",
+  "message": "16 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_E_GlassTape + Win_KT_E_Glass",
+  "message": "36 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_E_GlassTape + Win_KT_E_BrokenGlass",
+  "message": "19 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_E_GlassTape + Win_BR2_E_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_E_GlassTape + Win_BR2_E_BrokenGlass",
+  "message": "17 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_N_GlassTape + Win_BR2_N_Glass",
+  "message": "24 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_N_GlassTape + Win_BR2_N_BrokenGlass",
+  "message": "15 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Skylight_1_Trim + Skylight_1_Glow",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Skylight_2_Trim + Skylight_2_Glow",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Door_Back_Glass + Door_Back_BrokenGlass",
+  "message": "184 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S1_Glass + Win_LR_S1_BrokenGlass",
+  "message": "650 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_S2_Glass + Win_LR_S2_BrokenGlass",
+  "message": "641 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S1_Glass + Win_DR_S1_BrokenGlass",
+  "message": "649 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_S2_Glass + Win_DR_S2_BrokenGlass",
+  "message": "643 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_EN_S_Glass + Win_EN_S_BrokenGlass",
+  "message": "287 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_MB_S_Glass + Win_MB_S_BrokenGlass",
+  "message": "693 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_FY_S_Glass + Win_FY_S_BrokenGlass",
+  "message": "952 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S1_Glass + Win_BR2_S1_BrokenGlass",
+  "message": "645 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_S2_Glass + Win_BR2_S2_BrokenGlass",
+  "message": "615 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_GB_N_Glass + Win_GB_N_BrokenGlass",
+  "message": "457 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BH_N_Glass + Win_BH_N_BrokenGlass",
+  "message": "637 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_N1_Glass + Win_KT_N1_BrokenGlass",
+  "message": "577 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_N2_Glass + Win_KT_N2_BrokenGlass",
+  "message": "572 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N1_Glass + Win_BR3_N1_BrokenGlass",
+  "message": "701 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_N2_Glass + Win_BR3_N2_BrokenGlass",
+  "message": "632 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_UB_N_Glass + Win_UB_N_BrokenGlass",
+  "message": "491 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_EN_W_Glass + Win_EN_W_BrokenGlass",
+  "message": "253 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_LR_W_Glass + Win_LR_W_BrokenGlass",
+  "message": "653 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR3_W_Glass + Win_BR3_W_BrokenGlass",
+  "message": "649 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_GB_W_Glass + Win_GB_W_BrokenGlass",
+  "message": "445 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_DR_E_Glass + Win_DR_E_BrokenGlass",
+  "message": "660 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_KT_E_Glass + Win_KT_E_BrokenGlass",
+  "message": "870 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_E_Glass + Win_BR2_E_BrokenGlass",
+  "message": "665 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_N_Glass + Win_BR2_N_BrokenGlass",
+  "message": "713 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_MB_FY_Glass + Win_MB_FY_BrokenGlass",
+  "message": "656 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_BR2_FY_Glass + Win_BR2_FY_BrokenGlass",
+  "message": "638 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_ST2_E_Glass + Win_ST2_E_BrokenGlass",
+  "message": "597 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Win_UB_E_Glass + Win_UB_E_BrokenGlass",
+  "message": "252 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Sand_Door_Front + Wear_G",
+  "message": "149 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Sand_Door_Back + Wear_G",
+  "message": "149 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Drape_Win_LR_S2_B + DrapeRod_Win_LR_S2",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Drape_Win_DR_S2_B + DrapeRod_Win_DR_S2",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Drape_Win_FY_S_A + DrapeRod_Win_FY_S",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Drape_Win_BR2_S1_B + DrapeRod_Win_BR2_S1",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Drape_Win_BR3_W_A + DrapeRod_Win_BR3_W",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ }
+]

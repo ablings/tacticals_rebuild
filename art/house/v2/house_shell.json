@@ -160,9 +160,76 @@
   "Gravel65": {
    "file": "tex/tile/T_Gravel65.png",
    "studs_per_tile": 6.0
+  },
+  "TrimWhite": {
+   "file": "tex/tile/T_TrimWhite.png",
+   "studs_per_tile": 4.0
+  },
+  "MesaRock": {
+   "file": "tex/tile/T_MesaRock.png",
+   "studs_per_tile": 40.0
+  },
+  "DirtRoad": {
+   "file": "tex/tile/T_DirtRoad.png",
+   "studs_per_tile": 12.0
   }
  },
- "atlases": {},
+ "atlases": {
+  "Stairs": {
+   "color": "tex/H_Stairs_color.png",
+   "normal": "tex/H_Stairs_normal.png",
+   "rough": "tex/H_Stairs_rough.png",
+   "metal": "tex/H_Stairs_metal.png"
+  },
+  "Rails": {
+   "color": "tex/H_Rails_color.png",
+   "normal": "tex/H_Rails_normal.png",
+   "rough": "tex/H_Rails_rough.png",
+   "metal": "tex/H_Rails_metal.png"
+  },
+  "Doors": {
+   "color": "tex/H_Doors_color.png",
+   "normal": "tex/H_Doors_normal.png",
+   "rough": "tex/H_Doors_rough.png",
+   "metal": "tex/H_Doors_metal.png"
+  },
+  "Windows3": {
+   "color": "tex/H_Windows3_color.png",
+   "normal": "tex/H_Windows3_normal.png",
+   "rough": "tex/H_Windows3_rough.png",
+   "metal": "tex/H_Windows3_metal.png"
+  },
+  "Windows4": {
+   "color": "tex/H_Windows4_color.png",
+   "normal": "tex/H_Windows4_normal.png",
+   "rough": "tex/H_Windows4_rough.png",
+   "metal": "tex/H_Windows4_metal.png"
+  },
+  "DoorFrames": {
+   "color": "tex/H_DoorFrames_color.png",
+   "normal": "tex/H_DoorFrames_normal.png",
+   "rough": "tex/H_DoorFrames_rough.png",
+   "metal": "tex/H_DoorFrames_metal.png"
+  },
+  "Windows1": {
+   "color": "tex/H_Windows1_color.png",
+   "normal": "tex/H_Windows1_normal.png",
+   "rough": "tex/H_Windows1_rough.png",
+   "metal": "tex/H_Windows1_metal.png"
+  },
+  "Windows2": {
+   "color": "tex/H_Windows2_color.png",
+   "normal": "tex/H_Windows2_normal.png",
+   "rough": "tex/H_Windows2_rough.png",
+   "metal": "tex/H_Windows2_metal.png"
+  },
+  "Windows": {
+   "color": "tex/H_Windows_color.png",
+   "normal": "tex/H_Windows_normal.png",
+   "rough": "tex/H_Windows_rough.png",
+   "metal": "tex/H_Windows_metal.png"
+  }
+ },
  "doors": [
   {
    "id": "Door_Front",
@@ -1956,7 +2023,7 @@
   {
    "name": "Stair_Main",
    "tris": 1028,
-   "material": "Stair_Main|walnut65",
+   "material": "H_Stairs",
    "parent": null,
    "bbox_plan": [
     [
@@ -1979,7 +2046,7 @@
   {
    "name": "Stair_Back",
    "tris": 516,
-   "material": "Stair_Back|paint_cream",
+   "material": "H_Stairs",
    "parent": null,
    "bbox_plan": [
     [
@@ -2002,7 +2069,7 @@
   {
    "name": "Rail_Gallery",
    "tris": 1568,
-   "material": "Rail_Gallery|walnut65",
+   "material": "H_Rails",
    "parent": null,
    "bbox_plan": [
     [
@@ -2025,7 +2092,7 @@
   {
    "name": "Rail_MainStair",
    "tris": 2464,
-   "material": "Rail_MainStair|walnut65",
+   "material": "H_Rails",
    "parent": null,
    "bbox_plan": [
     [
@@ -2048,7 +2115,7 @@
   {
    "name": "Rail_BackStair",
    "tris": 1856,
-   "material": "Rail_BackStair|walnut65",
+   "material": "H_Rails",
    "parent": null,
    "bbox_plan": [
     [
@@ -2071,7 +2138,7 @@
   {
    "name": "Door_Front",
    "tris": 712,
-   "material": "Door_Front|walnut65",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2094,7 +2161,7 @@
   {
    "name": "Door_Back",
    "tris": 244,
-   "material": "Door_Back|paint_white65",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2117,7 +2184,7 @@
   {
    "name": "Door_GB",
    "tris": 172,
-   "material": "Door_GB|birch",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2140,7 +2207,7 @@
   {
    "name": "Door_MB",
    "tris": 172,
-   "material": "Door_MB|birch",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2163,7 +2230,7 @@
   {
    "name": "Door_BR2",
    "tris": 172,
-   "material": "Door_BR2|birch",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2186,7 +2253,7 @@
   {
    "name": "Door_BR3",
    "tris": 172,
-   "material": "Door_BR3|birch",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2209,7 +2276,7 @@
   {
    "name": "Door_UB",
    "tris": 172,
-   "material": "Door_UB|birch",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2232,7 +2299,7 @@
   {
    "name": "Door_EN",
    "tris": 172,
-   "material": "Door_EN|birch",
+   "material": "H_Doors",
    "parent": null,
    "bbox_plan": [
     [
@@ -2255,7 +2322,7 @@
   {
    "name": "Win_LR_S1_Frame",
    "tris": 120,
-   "material": "Win_LR_S1_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2278,7 +2345,7 @@
   {
    "name": "Win_LR_S2_Frame",
    "tris": 120,
-   "material": "Win_LR_S2_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2301,7 +2368,7 @@
   {
    "name": "DoorFrame_Front",
    "tris": 108,
-   "material": "DoorFrame_Front|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -2324,7 +2391,7 @@
   {
    "name": "Win_DR_S1_Frame",
    "tris": 120,
-   "material": "Win_DR_S1_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2347,7 +2414,7 @@
   {
    "name": "Win_DR_S2_Frame",
    "tris": 120,
-   "material": "Win_DR_S2_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2370,7 +2437,7 @@
   {
    "name": "Win_EN_S_Frame",
    "tris": 96,
-   "material": "Win_EN_S_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2393,7 +2460,7 @@
   {
    "name": "Win_MB_S_Frame",
    "tris": 120,
-   "material": "Win_MB_S_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2416,7 +2483,7 @@
   {
    "name": "Win_FY_S_Frame",
    "tris": 120,
-   "material": "Win_FY_S_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2439,7 +2506,7 @@
   {
    "name": "Win_BR2_S1_Frame",
    "tris": 120,
-   "material": "Win_BR2_S1_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2462,7 +2529,7 @@
   {
    "name": "Win_BR2_S2_Frame",
    "tris": 120,
-   "material": "Win_BR2_S2_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2485,7 +2552,7 @@
   {
    "name": "Win_GB_N_Frame",
    "tris": 120,
-   "material": "Win_GB_N_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2508,7 +2575,7 @@
   {
    "name": "Win_BH_N_Frame",
    "tris": 120,
-   "material": "Win_BH_N_Frame|paint_white65",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -2531,7 +2598,7 @@
   {
    "name": "DoorFrame_Back",
    "tris": 108,
-   "material": "DoorFrame_Back|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -2554,7 +2621,7 @@
   {
    "name": "Win_KT_N1_Frame",
    "tris": 120,
-   "material": "Win_KT_N1_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2577,7 +2644,7 @@
   {
    "name": "Win_KT_N2_Frame",
    "tris": 120,
-   "material": "Win_KT_N2_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2600,7 +2667,7 @@
   {
    "name": "Win_BR3_N1_Frame",
    "tris": 120,
-   "material": "Win_BR3_N1_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2623,7 +2690,7 @@
   {
    "name": "Win_BR3_N2_Frame",
    "tris": 120,
-   "material": "Win_BR3_N2_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2646,7 +2713,7 @@
   {
    "name": "Win_UB_N_Frame",
    "tris": 120,
-   "material": "Win_UB_N_Frame|paint_white65",
+   "material": "H_Windows2",
    "parent": null,
    "bbox_plan": [
     [
@@ -2669,7 +2736,7 @@
   {
    "name": "Win_EN_W_Frame",
    "tris": 96,
-   "material": "Win_EN_W_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2692,7 +2759,7 @@
   {
    "name": "Win_LR_W_Frame",
    "tris": 120,
-   "material": "Win_LR_W_Frame|paint_white65",
+   "material": "H_Windows2",
    "parent": null,
    "bbox_plan": [
     [
@@ -2715,7 +2782,7 @@
   {
    "name": "Win_BR3_W_Frame",
    "tris": 120,
-   "material": "Win_BR3_W_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2738,7 +2805,7 @@
   {
    "name": "Win_GB_W_Frame",
    "tris": 120,
-   "material": "Win_GB_W_Frame|paint_white65",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -2761,7 +2828,7 @@
   {
    "name": "Win_DR_E_Frame",
    "tris": 120,
-   "material": "Win_DR_E_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2784,7 +2851,7 @@
   {
    "name": "Win_KT_E_Frame",
    "tris": 144,
-   "material": "Win_KT_E_Frame|paint_white65",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -2807,7 +2874,7 @@
   {
    "name": "Win_BR2_E_Frame",
    "tris": 120,
-   "material": "Win_BR2_E_Frame|paint_white65",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -2830,7 +2897,7 @@
   {
    "name": "Win_BR2_N_Frame",
    "tris": 120,
-   "material": "Win_BR2_N_Frame|paint_white65",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -2853,7 +2920,7 @@
   {
    "name": "Win_MB_FY_Frame",
    "tris": 96,
-   "material": "Win_MB_FY_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2876,7 +2943,7 @@
   {
    "name": "DoorFrame_MB",
    "tris": 108,
-   "material": "DoorFrame_MB|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -2899,7 +2966,7 @@
   {
    "name": "DoorFrame_BR3",
    "tris": 108,
-   "material": "DoorFrame_BR3|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -2922,7 +2989,7 @@
   {
    "name": "Win_BR2_FY_Frame",
    "tris": 96,
-   "material": "Win_BR2_FY_Frame|paint_white65",
+   "material": "H_Windows2",
    "parent": null,
    "bbox_plan": [
     [
@@ -2945,7 +3012,7 @@
   {
    "name": "DoorFrame_BR2",
    "tris": 108,
-   "material": "DoorFrame_BR2|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -2968,7 +3035,7 @@
   {
    "name": "Win_ST2_E_Frame",
    "tris": 120,
-   "material": "Win_ST2_E_Frame|paint_white65",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2991,7 +3058,7 @@
   {
    "name": "Win_UB_E_Frame",
    "tris": 96,
-   "material": "Win_UB_E_Frame|paint_white65",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -3014,7 +3081,7 @@
   {
    "name": "DoorFrame_GB",
    "tris": 108,
-   "material": "DoorFrame_GB|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -3037,7 +3104,7 @@
   {
    "name": "DoorFrame_EN",
    "tris": 108,
-   "material": "DoorFrame_EN|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -3060,7 +3127,7 @@
   {
    "name": "DoorFrame_UB",
    "tris": 108,
-   "material": "DoorFrame_UB|walnut_trim",
+   "material": "H_DoorFrames",
    "parent": null,
    "bbox_plan": [
     [
@@ -3082,19 +3149,19 @@
   },
   {
    "name": "Win_LR_S2_GlassTape",
-   "tris": 192,
-   "material": "Win_LR_S2_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows4",
    "parent": "Win_LR_S2_Glass",
    "bbox_plan": [
     [
-     -21.834,
-     -30.43,
-     3.248
+     -21.62,
+     -30.485,
+     3.356
     ],
     [
-     -14.166,
-     -30.41,
-     9.752
+     -14.38,
+     -30.45,
+     9.644
     ]
    ],
    "origin_plan": [
@@ -3105,19 +3172,19 @@
   },
   {
    "name": "Win_DR_S1_GlassTape",
-   "tris": 192,
-   "material": "Win_DR_S1_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows3",
    "parent": "Win_DR_S1_Glass",
    "bbox_plan": [
     [
-     14.166,
-     -30.43,
-     3.248
+     14.38,
+     -30.485,
+     3.356
     ],
     [
-     21.834,
-     -30.41,
-     9.752
+     21.62,
+     -30.45,
+     9.644
     ]
    ],
    "origin_plan": [
@@ -3128,19 +3195,19 @@
   },
   {
    "name": "Win_FY_S_GlassTape",
-   "tris": 192,
-   "material": "Win_FY_S_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows3",
    "parent": "Win_FY_S_Glass",
    "bbox_plan": [
     [
-     -2.846,
-     -30.43,
-     14.26
+     -2.637,
+     -30.485,
+     14.372
     ],
     [
-     6.846,
-     -30.41,
-     24.24
+     6.637,
+     -30.45,
+     24.128
     ]
    ],
    "origin_plan": [
@@ -3151,19 +3218,19 @@
   },
   {
    "name": "Win_BR2_S1_GlassTape",
-   "tris": 192,
-   "material": "Win_BR2_S1_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows3",
    "parent": "Win_BR2_S1_Glass",
    "bbox_plan": [
     [
-     16.166,
-     -30.43,
-     17.248
+     16.38,
+     -30.485,
+     17.356
     ],
     [
-     23.834,
-     -30.41,
-     23.752
+     23.62,
+     -30.45,
+     23.644
     ]
    ],
    "origin_plan": [
@@ -3174,19 +3241,19 @@
   },
   {
    "name": "Win_BH_N_GlassTape",
-   "tris": 192,
-   "material": "Win_BH_N_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows1",
    "parent": "Win_BH_N_Glass",
    "bbox_plan": [
     [
-     -19.852,
-     30.41,
-     3.265
+     -19.647,
+     30.45,
+     3.382
     ],
     [
-     -14.148,
-     30.43,
-     9.735
+     -14.353,
+     30.485,
+     9.618
     ]
    ],
    "origin_plan": [
@@ -3197,19 +3264,19 @@
   },
   {
    "name": "Win_BR3_N1_GlassTape",
-   "tris": 192,
-   "material": "Win_BR3_N1_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows3",
    "parent": "Win_BR3_N1_Glass",
    "bbox_plan": [
     [
-     -33.834,
-     30.41,
-     17.248
+     -33.62,
+     30.45,
+     17.356
     ],
     [
-     -26.166,
-     30.43,
-     23.752
+     -26.38,
+     30.485,
+     23.644
     ]
    ],
    "origin_plan": [
@@ -3220,19 +3287,19 @@
   },
   {
    "name": "Win_BR3_N2_GlassTape",
-   "tris": 192,
-   "material": "Win_BR3_N2_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows4",
    "parent": "Win_BR3_N2_Glass",
    "bbox_plan": [
     [
-     -19.852,
-     30.41,
-     17.265
+     -19.647,
+     30.45,
+     17.382
     ],
     [
-     -14.148,
-     30.43,
-     23.735
+     -14.353,
+     30.485,
+     23.618
     ]
    ],
    "origin_plan": [
@@ -3243,19 +3310,19 @@
   },
   {
    "name": "Win_DR_E_GlassTape",
-   "tris": 192,
-   "material": "Win_DR_E_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows4",
    "parent": "Win_DR_E_Glass",
    "bbox_plan": [
     [
-     40.41,
-     -25.834,
-     3.248
+     40.45,
+     -25.62,
+     3.356
     ],
     [
-     40.43,
-     -18.166,
-     9.752
+     40.485,
+     -18.38,
+     9.644
     ]
    ],
    "origin_plan": [
@@ -3266,19 +3333,19 @@
   },
   {
    "name": "Win_KT_E_GlassTape",
-   "tris": 288,
-   "material": "Win_KT_E_GlassTape|tape",
+   "tris": 144,
+   "material": "H_Windows1",
    "parent": "Win_KT_E_Glass",
    "bbox_plan": [
     [
-     40.41,
-     6.187,
-     4.728
+     40.45,
+     6.402,
+     4.832
     ],
     [
-     40.43,
-     17.813,
-     9.772
+     40.485,
+     17.598,
+     9.668
     ]
    ],
    "origin_plan": [
@@ -3289,19 +3356,19 @@
   },
   {
    "name": "Win_BR2_E_GlassTape",
-   "tris": 192,
-   "material": "Win_BR2_E_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows4",
    "parent": "Win_BR2_E_Glass",
    "bbox_plan": [
     [
-     40.41,
-     -23.834,
-     17.248
+     40.45,
+     -23.62,
+     17.356
     ],
     [
-     40.43,
-     -16.166,
-     23.752
+     40.485,
+     -16.38,
+     23.644
     ]
    ],
    "origin_plan": [
@@ -3312,19 +3379,19 @@
   },
   {
    "name": "Win_BR2_N_GlassTape",
-   "tris": 192,
-   "material": "Win_BR2_N_GlassTape|tape",
+   "tris": 96,
+   "material": "H_Windows1",
    "parent": "Win_BR2_N_Glass",
    "bbox_plan": [
     [
-     20.183,
-     3.91,
-     17.232
+     20.398,
+     3.95,
+     17.337
     ],
     [
-     29.817,
-     3.93,
-     23.768
+     29.602,
+     3.985,
+     23.663
     ]
    ],
    "origin_plan": [
@@ -3336,7 +3403,7 @@
   {
    "name": "Skylight_1_Trim",
    "tris": 48,
-   "material": "Skylight_1_Trim|paint_white65",
+   "material": "H_Windows",
    "parent": null,
    "bbox_plan": [
     [
@@ -3359,7 +3426,7 @@
   {
    "name": "Skylight_2_Trim",
    "tris": 48,
-   "material": "Skylight_2_Trim|paint_white65",
+   "material": "H_Windows",
    "parent": null,
    "bbox_plan": [
     [
@@ -4807,19 +4874,19 @@
   },
   {
    "name": "Dummy_LR_Sofa",
-   "tris": 1308,
-   "material": "D65_Dummy_SitA|cloth_skirt",
+   "tris": 1348,
+   "material": "H_Dummies",
    "parent": null,
    "bbox_plan": [
     [
-     -18.3,
-     -18.559,
-     -0.04
+     -18.4,
+     -18.553,
+     0.0
     ],
     [
-     -15.554,
-     -16.841,
-     5.1
+     -15.578,
+     -16.847,
+     4.924
     ]
    ],
    "origin_plan": [
@@ -4830,19 +4897,19 @@
   },
   {
    "name": "Dummy_DR_1",
-   "tris": 1296,
-   "material": "D65_Dummy_SitB|cloth_suit",
+   "tris": 1240,
+   "material": "H_Dummies",
    "parent": null,
    "bbox_plan": [
     [
-     20.141,
-     -18.715,
-     -0.1
+     20.147,
+     -18.815,
+     0.0
     ],
     [
-     21.859,
-     -15.969,
-     5.04
+     21.853,
+     -15.993,
+     4.864
     ]
    ],
    "origin_plan": [
@@ -4853,19 +4920,19 @@
   },
   {
    "name": "Dummy_DR_2",
-   "tris": 1296,
-   "material": "D65_Dummy_SitC|cloth_suit",
+   "tris": 1240,
+   "material": "H_Dummies",
    "parent": null,
    "bbox_plan": [
     [
-     26.041,
-     -21.961,
-     -0.1
+     26.047,
+     -21.937,
+     0.0
     ],
     [
-     27.759,
-     -19.215,
-     5.04
+     27.753,
+     -19.115,
+     4.864
     ]
    ],
    "origin_plan": [
@@ -4876,19 +4943,19 @@
   },
   {
    "name": "Dummy_KT_Booth",
-   "tris": 1308,
-   "material": "D65_Dummy_SitD|cloth_skirt",
+   "tris": 1348,
+   "material": "H_Dummies",
    "parent": null,
    "bbox_plan": [
     [
-     18.054,
-     21.641,
-     0.13
+     18.078,
+     21.647,
+     0.0
     ],
     [
-     20.8,
-     23.359,
-     5.27
+     20.9,
+     23.353,
+     5.094
     ]
    ],
    "origin_plan": [
@@ -4899,19 +4966,19 @@
   },
   {
    "name": "Dummy_BR2_Bed",
-   "tris": 1308,
-   "material": "D65_Dummy_SitE|cloth_skirt",
+   "tris": 1348,
+   "material": "H_Dummies",
    "parent": null,
    "bbox_plan": [
     [
-     32.141,
-     -15.35,
-     14.43
+     32.147,
+     -15.45,
+     14.0
     ],
     [
-     33.859,
-     -12.604,
-     19.57
+     33.853,
+     -12.628,
+     19.394
     ]
    ],
    "origin_plan": [
@@ -4922,19 +4989,19 @@
   },
   {
    "name": "Dummy_KT_Counter",
-   "tris": 1296,
-   "material": "D65_Dummy_Lean|cloth_suit",
+   "tris": 1240,
+   "material": "H_Dummies",
    "parent": null,
    "bbox_plan": [
     [
-     12.763,
-     24.517,
+     12.744,
+     25.361,
      0.0
     ],
     [
-     14.437,
-     27.25,
-     6.17
+     14.456,
+     27.21,
+     6.161
     ]
    ],
    "origin_plan": [
@@ -4946,7 +5013,7 @@
   {
    "name": "Phone_FY",
    "tris": 360,
-   "material": "D65_Phone|phone_olive",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -4969,7 +5036,7 @@
   {
    "name": "Radio_KT",
    "tris": 292,
-   "material": "D65_Radio|walnut65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -4992,7 +5059,7 @@
   {
    "name": "Canisters_KT",
    "tris": 560,
-   "material": "D65_Canisters|enamel_cream",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5015,7 +5082,7 @@
   {
    "name": "Cake_KT",
    "tris": 316,
-   "material": "D65_CakeDome|china",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5038,7 +5105,7 @@
   {
    "name": "RecordPlayer_BR2",
    "tris": 124,
-   "material": "D65_RecordPlayer|enamel_cream",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5061,7 +5128,7 @@
   {
    "name": "TinRocket_BR3",
    "tris": 96,
-   "material": "D65_TinRocket|tin",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5084,7 +5151,7 @@
   {
    "name": "Radio_MB",
    "tris": 292,
-   "material": "D65_Radio|walnut65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5107,7 +5174,7 @@
   {
    "name": "Papers_LR",
    "tris": 120,
-   "material": "D65_Papers|paper65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5130,7 +5197,7 @@
   {
    "name": "Papers_BR2",
    "tris": 120,
-   "material": "D65_Papers|paper65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5153,7 +5220,7 @@
   {
    "name": "Papers_MB",
    "tris": 120,
-   "material": "D65_Papers|paper65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5176,7 +5243,7 @@
   {
    "name": "Plates_DR",
    "tris": 152,
-   "material": "D65_BrokenPlates|china",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5199,7 +5266,7 @@
   {
    "name": "Plates_KT",
    "tris": 152,
-   "material": "D65_BrokenPlates|china",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5222,7 +5289,7 @@
   {
    "name": "LampDown_MB",
    "tris": 172,
-   "material": "D65_LampKnocked|walnut65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5245,7 +5312,7 @@
   {
    "name": "ChairDown_DR",
    "tris": 392,
-   "material": "D65_ChairKnocked|chrome65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5268,7 +5335,7 @@
   {
    "name": "Sand_Door_Front",
    "tris": 200,
-   "material": "D65_SandDrift|sand",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5291,7 +5358,7 @@
   {
    "name": "Sand_Door_Back",
    "tris": 200,
-   "material": "D65_SandDrift|sand",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5314,7 +5381,7 @@
   {
    "name": "Sand_Win_DR_E",
    "tris": 200,
-   "material": "D65_SandDriftSmall|sand",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5337,7 +5404,7 @@
   {
    "name": "Sand_Win_BR3_W",
    "tris": 200,
-   "material": "D65_SandDriftSmall|sand",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5360,7 +5427,7 @@
   {
    "name": "Cobweb_FY_0",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5383,7 +5450,7 @@
   {
    "name": "Cobweb_BH_1",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5406,7 +5473,7 @@
   {
    "name": "Cobweb_BH_2",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5429,7 +5496,7 @@
   {
    "name": "Cobweb_LR_3",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5452,7 +5519,7 @@
   {
    "name": "Cobweb_MR_4",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5475,7 +5542,7 @@
   {
    "name": "Cobweb_MR_5",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5498,7 +5565,7 @@
   {
    "name": "Cobweb_MR_6",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5521,7 +5588,7 @@
   {
    "name": "Cobweb_GB_7",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5544,7 +5611,7 @@
   {
    "name": "Cobweb_DR_8",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5567,7 +5634,7 @@
   {
    "name": "Cobweb_DR_9",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5590,7 +5657,7 @@
   {
    "name": "Cobweb_KT_10",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5613,7 +5680,7 @@
   {
    "name": "Cobweb_KT_11",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5636,7 +5703,7 @@
   {
    "name": "Cobweb_UH_12",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5659,7 +5726,7 @@
   {
    "name": "Cobweb_MB_13",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5682,7 +5749,7 @@
   {
    "name": "Cobweb_MB_14",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5705,7 +5772,7 @@
   {
    "name": "Cobweb_MB_15",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5728,7 +5795,7 @@
   {
    "name": "Cobweb_MB_16",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5751,7 +5818,7 @@
   {
    "name": "Cobweb_BR3_17",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5774,7 +5841,7 @@
   {
    "name": "Cobweb_UB_18",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5797,7 +5864,7 @@
   {
    "name": "Cobweb_UB_19",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5820,7 +5887,7 @@
   {
    "name": "Cobweb_UB_20",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5843,7 +5910,7 @@
   {
    "name": "Cobweb_UB_21",
    "tris": 2,
-   "material": "D65_Cobweb|web",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5866,7 +5933,7 @@
   {
    "name": "Calendar_KT",
    "tris": 12,
-   "material": "D65_Calendar|paper65",
+   "material": "H_Posters",
    "parent": null,
    "bbox_plan": [
     [
@@ -5875,7 +5942,7 @@
      4.763
     ],
     [
-     9.62,
+     9.72,
      -5.788,
      6.934
     ]
@@ -5889,7 +5956,7 @@
   {
    "name": "Poster_KT",
    "tris": 12,
-   "material": "D65_Poster_Kitchen|paper65",
+   "material": "H_Posters",
    "parent": null,
    "bbox_plan": [
     [
@@ -5899,7 +5966,7 @@
     ],
     [
      35.506,
-     -9.48,
+     -9.38,
      8.24
     ]
    ],
@@ -5912,12 +5979,12 @@
   {
    "name": "Poster_BR2",
    "tris": 12,
-   "material": "D65_Poster_Travel|paper65",
+   "material": "H_Posters",
    "parent": null,
    "bbox_plan": [
     [
      30.568,
-     3.33,
+     3.23,
      18.516
     ],
     [
@@ -5935,7 +6002,7 @@
   {
    "name": "Notice_BH",
    "tris": 12,
-   "material": "D65_Notice|paper65",
+   "material": "H_Posters",
    "parent": null,
    "bbox_plan": [
     [
@@ -5944,7 +6011,7 @@
      4.6
     ],
     [
-     -8.48,
+     -8.38,
      6.838,
      6.4
     ]
@@ -5958,7 +6025,7 @@
   {
    "name": "Clipboard_MR",
    "tris": 36,
-   "material": "D65_Clipboard|pine65",
+   "material": "H_Dress65",
    "parent": null,
    "bbox_plan": [
     [
@@ -5981,7 +6048,7 @@
   {
    "name": "Pennant_BR3",
    "tris": 12,
-   "material": "D65_Pennant|paper65",
+   "material": "H_Posters",
    "parent": null,
    "bbox_plan": [
     [
@@ -5990,7 +6057,7 @@
      19.869
     ],
     [
-     -39.98,
+     -39.88,
      29.116,
      21.625
     ]
@@ -6004,7 +6071,7 @@
   {
    "name": "Calendar_MR",
    "tris": 12,
-   "material": "D65_Calendar|paper65",
+   "material": "H_Posters",
    "parent": null,
    "bbox_plan": [
     [
@@ -6013,7 +6080,7 @@
      4.776
     ],
     [
-     -23.38,
+     -23.28,
      19.812,
      6.923
     ]
@@ -6027,13 +6094,13 @@
   {
    "name": "Drape_Win_LR_S1_A",
    "tris": 112,
-   "material": "D65_Drape_Mustard|drape_mustard",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -37.22,
      -30.03,
-     0.05
+     -0.03
     ],
     [
      -36.18,
@@ -6044,42 +6111,42 @@
    "origin_plan": [
     -36.7,
     -29.98,
-    0.05
+    -0.03
    ]
   },
   {
    "name": "DrapeRod_Win_LR_S1",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -38.106,
-     -29.98,
+     -30.03,
      10.32
     ],
     [
      -25.894,
-     -29.554,
+     -29.604,
      10.48
     ]
    ],
    "origin_plan": [
     -32.0,
-    -29.98,
+    -30.03,
     10.25
    ]
   },
   {
    "name": "Drape_Win_LR_S2_B",
    "tris": 112,
-   "material": "D65_Drape_Mustard|drape_mustard",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -13.82,
      -30.03,
-     0.05
+     -0.03
     ],
     [
      -12.78,
@@ -6090,42 +6157,42 @@
    "origin_plan": [
     -13.3,
     -29.98,
-    0.05
+    -0.03
    ]
   },
   {
    "name": "DrapeRod_Win_LR_S2",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -24.106,
-     -29.98,
+     -30.03,
      10.32
     ],
     [
      -11.894,
-     -29.554,
+     -29.604,
      10.48
     ]
    ],
    "origin_plan": [
     -18.0,
-    -29.98,
+    -30.03,
     10.25
    ]
   },
   {
    "name": "Drape_Win_DR_S1_A",
    "tris": 112,
-   "material": "D65_Drape_Green|drape_green",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      12.78,
      -30.03,
-     0.05
+     -0.03
     ],
     [
      13.82,
@@ -6136,42 +6203,42 @@
    "origin_plan": [
     13.3,
     -29.98,
-    0.05
+    -0.03
    ]
   },
   {
    "name": "DrapeRod_Win_DR_S1",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      11.894,
-     -29.98,
+     -30.03,
      10.32
     ],
     [
      24.106,
-     -29.554,
+     -29.604,
      10.48
     ]
    ],
    "origin_plan": [
     18.0,
-    -29.98,
+    -30.03,
     10.25
    ]
   },
   {
    "name": "Drape_Win_DR_S2_B",
    "tris": 112,
-   "material": "D65_Drape_Green|drape_green",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      36.18,
      -30.03,
-     0.05
+     -0.03
     ],
     [
      37.22,
@@ -6182,42 +6249,42 @@
    "origin_plan": [
     36.7,
     -29.98,
-    0.05
+    -0.03
    ]
   },
   {
    "name": "DrapeRod_Win_DR_S2",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      25.894,
-     -29.98,
+     -30.03,
      10.32
     ],
     [
      38.106,
-     -29.554,
+     -29.604,
      10.48
     ]
    ],
    "origin_plan": [
     32.0,
-    -29.98,
+    -30.03,
     10.25
    ]
   },
   {
    "name": "Drape_Win_FY_S_A",
    "tris": 112,
-   "material": "D65_Drape_Gold|drape_gold",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -4.22,
      -30.03,
-     14.05
+     13.97
     ],
     [
      -3.18,
@@ -6228,19 +6295,19 @@
    "origin_plan": [
     -3.7,
     -29.98,
-    14.05
+    13.97
    ]
   },
   {
    "name": "Drape_Win_FY_S_B",
    "tris": 112,
-   "material": "D65_Drape_Gold|drape_gold",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      7.18,
      -30.03,
-     14.05
+     13.97
     ],
     [
      8.22,
@@ -6251,42 +6318,42 @@
    "origin_plan": [
     7.7,
     -29.98,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_FY_S",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -5.259,
-     -29.98,
+     -30.03,
      24.82
     ],
     [
      9.259,
-     -29.554,
+     -29.604,
      24.98
     ]
    ],
    "origin_plan": [
     2.0,
-    -29.98,
+    -30.03,
     24.75
    ]
   },
   {
    "name": "Drape_Win_BR2_S1_A",
    "tris": 112,
-   "material": "D65_Drape_Gold|drape_gold",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      14.78,
      -30.03,
-     14.05
+     13.97
     ],
     [
      15.82,
@@ -6297,19 +6364,19 @@
    "origin_plan": [
     15.3,
     -29.98,
-    14.05
+    13.97
    ]
   },
   {
    "name": "Drape_Win_BR2_S1_B",
    "tris": 112,
-   "material": "D65_Drape_Gold|drape_gold",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      24.18,
      -30.03,
-     14.05
+     13.97
     ],
     [
      25.22,
@@ -6320,42 +6387,42 @@
    "origin_plan": [
     24.7,
     -29.98,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_BR2_S1",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      13.894,
-     -29.98,
+     -30.03,
      24.32
     ],
     [
      26.106,
-     -29.554,
+     -29.604,
      24.48
     ]
    ],
    "origin_plan": [
     20.0,
-    -29.98,
+    -30.03,
     24.25
    ]
   },
   {
    "name": "Drape_Win_BR2_S2_B",
    "tris": 112,
-   "material": "D65_Drape_Gold|drape_gold",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      36.18,
      -30.03,
-     14.05
+     13.97
     ],
     [
      37.22,
@@ -6366,42 +6433,42 @@
    "origin_plan": [
     36.7,
     -29.98,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_BR2_S2",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      28.046,
-     -29.98,
+     -30.03,
      24.32
     ],
     [
      37.954,
-     -29.554,
+     -29.604,
      24.48
     ]
    ],
    "origin_plan": [
     33.0,
-    -29.98,
+    -30.03,
     24.25
    ]
   },
   {
    "name": "Drape_Win_BH_N_A",
    "tris": 112,
-   "material": "D65_Drape_Green|drape_green",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -21.22,
      29.63,
-     0.05
+     -0.03
     ],
     [
      -20.18,
@@ -6412,42 +6479,42 @@
    "origin_plan": [
     -20.7,
     29.98,
-    0.05
+    -0.03
    ]
   },
   {
    "name": "DrapeRod_Win_BH_N",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -21.954,
-     29.554,
+     29.604,
      10.32
     ],
     [
      -12.046,
-     29.98,
+     30.03,
      10.48
     ]
    ],
    "origin_plan": [
     -17.0,
-    29.98,
+    30.03,
     10.25
    ]
   },
   {
    "name": "Drape_Win_BR3_N1_B",
    "tris": 112,
-   "material": "D65_Drape_Mustard|drape_mustard",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -25.82,
      29.63,
-     14.05
+     13.97
     ],
     [
      -24.78,
@@ -6458,42 +6525,42 @@
    "origin_plan": [
     -25.3,
     29.98,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_BR3_N1",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -36.106,
-     29.554,
+     29.604,
      24.32
     ],
     [
      -23.894,
-     29.98,
+     30.03,
      24.48
     ]
    ],
    "origin_plan": [
     -30.0,
-    29.98,
+    30.03,
     24.25
    ]
   },
   {
    "name": "Drape_Win_BR3_N2_B",
    "tris": 112,
-   "material": "D65_Drape_Mustard|drape_mustard",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -13.82,
      29.63,
-     14.05
+     13.97
     ],
     [
      -12.78,
@@ -6504,42 +6571,42 @@
    "origin_plan": [
     -13.3,
     29.98,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_BR3_N2",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -21.954,
-     29.554,
+     29.604,
      24.32
     ],
     [
      -12.046,
-     29.98,
+     30.03,
      24.48
     ]
    ],
    "origin_plan": [
     -17.0,
-    29.98,
+    30.03,
     24.25
    ]
   },
   {
    "name": "Drape_Win_LR_W_B",
    "tris": 112,
-   "material": "D65_Drape_Mustard|drape_mustard",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -40.03,
      2.18,
-     0.05
+     -0.03
     ],
     [
      -39.63,
@@ -6550,28 +6617,28 @@
    "origin_plan": [
     -39.98,
     2.7,
-    0.05
+    -0.03
    ]
   },
   {
    "name": "DrapeRod_Win_LR_W",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
-     -39.98,
+     -40.03,
      -8.106,
      10.32
     ],
     [
-     -39.554,
+     -39.604,
      4.106,
      10.48
     ]
    ],
    "origin_plan": [
-    -39.98,
+    -40.03,
     -2.0,
     10.25
    ]
@@ -6579,13 +6646,13 @@
   {
    "name": "Drape_Win_BR3_W_A",
    "tris": 112,
-   "material": "D65_Drape_Mustard|drape_mustard",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -40.03,
      8.78,
-     14.05
+     13.97
     ],
     [
      -39.63,
@@ -6596,19 +6663,19 @@
    "origin_plan": [
     -39.98,
     9.3,
-    14.05
+    13.97
    ]
   },
   {
    "name": "Drape_Win_BR3_W_B",
    "tris": 112,
-   "material": "D65_Drape_Mustard|drape_mustard",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      -40.03,
      18.18,
-     14.05
+     13.97
     ],
     [
      -39.63,
@@ -6619,28 +6686,28 @@
    "origin_plan": [
     -39.98,
     18.7,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_BR3_W",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
-     -39.98,
+     -40.03,
      7.894,
      24.32
     ],
     [
-     -39.554,
+     -39.604,
      20.106,
      24.48
     ]
    ],
    "origin_plan": [
-    -39.98,
+    -40.03,
     14.0,
     24.25
    ]
@@ -6648,13 +6715,13 @@
   {
    "name": "Drape_Win_BR2_E_A",
    "tris": 112,
-   "material": "D65_Drape_Gold|drape_gold",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      39.63,
      -25.22,
-     14.05
+     13.97
     ],
     [
      40.03,
@@ -6665,28 +6732,28 @@
    "origin_plan": [
     39.98,
     -24.7,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_BR2_E",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
-     39.554,
+     39.604,
      -26.106,
      24.32
     ],
     [
-     39.98,
+     40.03,
      -13.894,
      24.48
     ]
    ],
    "origin_plan": [
-    39.98,
+    40.03,
     -20.0,
     24.25
    ]
@@ -6694,13 +6761,13 @@
   {
    "name": "Drape_Win_BR2_N_A",
    "tris": 112,
-   "material": "D65_Drape_Gold|drape_gold",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      18.78,
      3.13,
-     14.05
+     13.97
     ],
     [
      19.82,
@@ -6711,47 +6778,47 @@
    "origin_plan": [
     19.3,
     3.48,
-    14.05
+    13.97
    ]
   },
   {
    "name": "DrapeRod_Win_BR2_N",
    "tris": 188,
-   "material": "D65_DrapeRod|brass",
+   "material": "H_Drapes",
    "parent": null,
    "bbox_plan": [
     [
      17.741,
-     3.054,
+     3.104,
      24.32
     ],
     [
      32.259,
-     3.48,
+     3.53,
      24.48
     ]
    ],
    "origin_plan": [
     25.0,
-    3.48,
+    3.53,
     24.25
    ]
   },
   {
    "name": "Wear_G",
-   "tris": 70,
+   "tris": 98,
    "material": "T_Wear65",
    "parent": null,
    "bbox_plan": [
     [
-     -39.88,
-     -30.0,
-     0.12
+     -39.87,
+     -30.094,
+     0.13
     ],
     [
-     39.88,
+     39.667,
      30.0,
-     12.88
+     12.87
     ]
    ],
    "origin_plan": [
@@ -6762,19 +6829,19 @@
   },
   {
    "name": "Wear_U",
-   "tris": 36,
+   "tris": 58,
    "material": "T_Wear65",
    "parent": null,
    "bbox_plan": [
     [
-     -39.88,
-     -29.88,
-     14.12
+     -39.842,
+     -29.468,
+     14.13
     ],
     [
-     35.282,
-     29.88,
-     25.88
+     36.973,
+     29.87,
+     25.87
     ]
    ],
    "origin_plan": [
@@ -6784,5 +6851,5 @@
    ]
   }
  ],
- "total_tris": 69958
+ "total_tris": 68856
 }

@@ -1328,7 +1328,9 @@ def sand_drift(name="D65_SandDrift", w=4.0, d=2.0):
             a = j * (n + 1) + i
             faces.append((a, a + 1, a + n + 2, a + n + 1))
     mb.raw(verts, faces, "sand")
-    return finish(mb)
+    o = finish(mb)
+    o["open_shell"] = True      # a heightfield lying on the floor: its underside is never seen
+    return o
 
 
 def cobweb():
@@ -1341,7 +1343,9 @@ def cobweb():
     mb.raw([tuple(a), tuple(b), tuple(c)], [(0, 1, 2)], "web")
     off = -n * 0.03
     mb.raw([tuple(a + off), tuple(c + off), tuple(b + off)], [(0, 1, 2)], "web")
-    return finish(mb)
+    o = finish(mb)
+    o["open_shell"] = True      # a double-sided card (two faces 0.03 apart, each with its own normal)
+    return o
 
 
 def tin_rocket():

@@ -1,6 +1,55 @@
 {
  "note": "1965 desert test site. Same coordinates as house_shell.json (layout plan; outside ground z = -1). All art, CanCollide off, unreachable. Sky: tex/sky/sky_side.png for SkyboxBk/Ft/Lf/Rt, sky_up.png Up, sky_dn.png Dn. The v1 H_Trees (green trees) should NOT be imported with this exterior: its dry trees are DryTree_XX here.",
- "atlases": {},
+ "atlases": {
+  "Car1": {
+   "color": "tex/H_Car1_color.png",
+   "normal": "tex/H_Car1_normal.png",
+   "rough": "tex/H_Car1_rough.png",
+   "metal": "tex/H_Car1_metal.png"
+  },
+  "Car2": {
+   "color": "tex/H_Car2_color.png",
+   "normal": "tex/H_Car2_normal.png",
+   "rough": "tex/H_Car2_rough.png",
+   "metal": "tex/H_Car2_metal.png"
+  },
+  "Car3": {
+   "color": "tex/H_Car3_color.png",
+   "normal": "tex/H_Car3_normal.png",
+   "rough": "tex/H_Car3_rough.png",
+   "metal": "tex/H_Car3_metal.png"
+  },
+  "Car4": {
+   "color": "tex/H_Car4_color.png",
+   "normal": "tex/H_Car4_normal.png",
+   "rough": "tex/H_Car4_rough.png",
+   "metal": "tex/H_Car4_metal.png"
+  },
+  "Sandbags": {
+   "color": "tex/H_Sandbags_color.png",
+   "normal": "tex/H_Sandbags_normal.png",
+   "rough": "tex/H_Sandbags_rough.png",
+   "metal": "tex/H_Sandbags_metal.png"
+  },
+  "Signs": {
+   "color": "tex/H_Signs_color.png",
+   "normal": "tex/H_Signs_normal.png",
+   "rough": "tex/H_Signs_rough.png",
+   "metal": "tex/H_Signs_metal.png"
+  },
+  "DryTrees": {
+   "color": "tex/H_DryTrees_color.png",
+   "normal": "tex/H_DryTrees_normal.png",
+   "rough": "tex/H_DryTrees_rough.png",
+   "metal": "tex/H_DryTrees_metal.png"
+  },
+  "Mast": {
+   "color": "tex/H_Mast_color.png",
+   "normal": "tex/H_Mast_normal.png",
+   "rough": "tex/H_Mast_rough.png",
+   "metal": "tex/H_Mast_metal.png"
+  }
+ },
  "tiles": {
   "PaperSprig": "tex/tile/T_PaperSprig.png",
   "PaperSprigRose": "tex/tile/T_PaperSprigRose.png",
@@ -144,18 +193,18 @@
   },
   {
    "name": "Ext_Across_Pegboard",
-   "tris": 26,
+   "tris": 24,
    "material": [
     "T_Pegboard"
    ],
    "bbox_plan": [
     [
-     -30.05,
+     -30.0,
      -112.0,
      -0.4
     ],
     [
-     -17.95,
+     -18.0,
      -100.5,
      8.0
     ]
@@ -448,18 +497,18 @@
   },
   {
    "name": "Ext_AcrossW_Pegboard",
-   "tris": 26,
+   "tris": 24,
    "material": [
     "T_Pegboard"
    ],
    "bbox_plan": [
     [
-     -118.05,
+     -118.0,
      -116.0,
      -0.4
     ],
     [
-     -105.95,
+     -106.0,
      -104.5,
      8.0
     ]
@@ -1153,11 +1202,7 @@
    "name": "Dummy_Ext_Fence",
    "tris": 1240,
    "material": [
-    "D65_Dummy_Lean|cloth_suit",
-    "D65_Dummy_Lean|cloth_shirt",
-    "D65_Dummy_Lean|dummy_skin",
-    "D65_Dummy_Lean|dummy_joint",
-    "D65_Dummy_Lean|shoe"
+    "H_Dummies"
    ],
    "bbox_plan": [
     [
@@ -1173,47 +1218,21 @@
    ]
   },
   {
-   "name": "Dummy_Ext_Porch",
-   "tris": 1240,
-   "material": [
-    "D65_Dummy_SitB|cloth_suit",
-    "D65_Dummy_SitB|dummy_skin",
-    "D65_Dummy_SitB|dummy_joint",
-    "D65_Dummy_SitB|shoe"
-   ],
-   "bbox_plan": [
-    [
-     29.65,
-     -95.8,
-     -0.97
-    ],
-    [
-     31.35,
-     -92.98,
-     3.89
-    ]
-   ]
-  },
-  {
    "name": "Dummy_Ext_Truck",
    "tris": 1240,
    "material": [
-    "D65_Dummy_Lean|cloth_suit",
-    "D65_Dummy_Lean|cloth_shirt",
-    "D65_Dummy_Lean|dummy_skin",
-    "D65_Dummy_Lean|dummy_joint",
-    "D65_Dummy_Lean|shoe"
+    "H_Dummies"
    ],
    "bbox_plan": [
     [
      -64.08,
      -67.26,
-     -0.88
+     -1.0
     ],
     [
      -62.23,
      -65.54,
-     5.28
+     5.16
     ]
    ]
   },
@@ -1563,13 +1582,7 @@
    "name": "Car_Wagon",
    "tris": 800,
    "material": [
-    "Car_Wagon|car_mint",
-    "Car_Wagon|chrome_ext",
-    "Car_Wagon|glass65",
-    "Car_Wagon|lamp_lens",
-    "Car_Wagon|lamp_tail",
-    "Car_Wagon|tyre65",
-    "Car_Wagon|whitewall"
+    "H_Car1"
    ],
    "bbox_plan": [
     [
@@ -1588,13 +1601,7 @@
    "name": "Car_Sedan",
    "tris": 800,
    "material": [
-    "Car_Sedan|car_butter",
-    "Car_Sedan|chrome_ext",
-    "Car_Sedan|glass65",
-    "Car_Sedan|lamp_lens",
-    "Car_Sedan|lamp_tail",
-    "Car_Sedan|tyre65",
-    "Car_Sedan|whitewall"
+    "H_Car2"
    ],
    "bbox_plan": [
     [
@@ -1613,13 +1620,7 @@
    "name": "Car_SedanSalmon",
    "tris": 800,
    "material": [
-    "Car_SedanSalmon|car_salmon",
-    "Car_SedanSalmon|chrome_ext",
-    "Car_SedanSalmon|glass65",
-    "Car_SedanSalmon|lamp_lens",
-    "Car_SedanSalmon|lamp_tail",
-    "Car_SedanSalmon|tyre65",
-    "Car_SedanSalmon|whitewall"
+    "H_Car3"
    ],
    "bbox_plan": [
     [
@@ -1638,11 +1639,7 @@
    "name": "Truck_Dairy",
    "tris": 1384,
    "material": [
-    "Truck_Dairy|car_olive",
-    "Truck_Dairy|glass65",
-    "Truck_Dairy|car_cream",
-    "Truck_Dairy|tyre65",
-    "Truck_Dairy|whitewall"
+    "H_Car4"
    ],
    "bbox_plan": [
     [
@@ -1661,7 +1658,7 @@
    "name": "Sandbags_1",
    "tris": 3240,
    "material": [
-    "Sandbags_1|burlap"
+    "H_Sandbags"
    ],
    "bbox_plan": [
     [
@@ -1680,18 +1677,18 @@
    "name": "Sandbags_2",
    "tris": 1836,
    "material": [
-    "Sandbags_2|burlap"
+    "H_Sandbags"
    ],
    "bbox_plan": [
     [
      -57.14,
      54.94,
-     -0.85
+     -1.0
     ],
     [
      -53.55,
      64.71,
-     0.87
+     0.72
     ]
    ]
   },
@@ -1699,7 +1696,7 @@
    "name": "Sandbags_3",
    "tris": 3564,
    "material": [
-    "Sandbags_3|burlap"
+    "H_Sandbags"
    ],
    "bbox_plan": [
     [
@@ -1718,8 +1715,7 @@
    "name": "Sign_Restricted",
    "tris": 36,
    "material": [
-    "Sign_Restricted|post_wood",
-    "Sign_Restricted|sign_board"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1738,8 +1734,7 @@
    "name": "Sign_Danger",
    "tris": 36,
    "material": [
-    "Sign_Danger|post_wood",
-    "Sign_Danger|sign_board"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1758,8 +1753,7 @@
    "name": "Sign_RoadClosed",
    "tris": 36,
    "material": [
-    "Sign_RoadClosed|post_wood",
-    "Sign_RoadClosed|sign_board"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1778,8 +1772,7 @@
    "name": "Sign_Restricted2",
    "tris": 36,
    "material": [
-    "Sign_Restricted2|post_wood",
-    "Sign_Restricted2|sign_board"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1798,18 +1791,17 @@
    "name": "Trellis_Across",
    "tris": 584,
    "material": [
-    "Trellis_Across|post_wood",
-    "Trellis_Across|leaf_dry2"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
      -2.32,
-     -94.92,
+     -97.42,
      -1.0
     ],
     [
      2.32,
-     -92.8,
+     -95.3,
      7.74
     ]
    ]
@@ -1818,8 +1810,7 @@
    "name": "Trellis_Ours",
    "tris": 584,
    "material": [
-    "Trellis_Ours|post_wood",
-    "Trellis_Ours|leaf_dry2"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1838,9 +1829,7 @@
    "name": "Bike_1",
    "tris": 338,
    "material": [
-    "Bike_1|tyre65",
-    "Bike_1|car_olive",
-    "Bike_1|chrome_ext"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1859,9 +1848,7 @@
    "name": "Bike_2",
    "tris": 338,
    "material": [
-    "Bike_2|tyre65",
-    "Bike_2|car_olive",
-    "Bike_2|chrome_ext"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1880,8 +1867,7 @@
    "name": "Banner_Garage",
    "tris": 100,
    "material": [
-    "Banner_Garage|banner",
-    "Banner_Garage|post_wood"
+    "H_Signs"
    ],
    "bbox_plan": [
     [
@@ -1900,9 +1886,7 @@
    "name": "DryTree_01",
    "tris": 360,
    "material": [
-    "DryTree_01|bark_dry",
-    "DryTree_01|leaf_dry2",
-    "DryTree_01|leaf_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -1921,7 +1905,7 @@
    "name": "DryTree_02",
    "tris": 150,
    "material": [
-    "DryTree_02|bark_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -1940,9 +1924,7 @@
    "name": "DryTree_03",
    "tris": 360,
    "material": [
-    "DryTree_03|bark_dry",
-    "DryTree_03|leaf_dry2",
-    "DryTree_03|leaf_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -1961,7 +1943,7 @@
    "name": "DryTree_04",
    "tris": 150,
    "material": [
-    "DryTree_04|bark_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -1980,9 +1962,7 @@
    "name": "DryTree_05",
    "tris": 360,
    "material": [
-    "DryTree_05|bark_dry",
-    "DryTree_05|leaf_dry2",
-    "DryTree_05|leaf_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -2001,7 +1981,7 @@
    "name": "DryTree_06",
    "tris": 150,
    "material": [
-    "DryTree_06|bark_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -2020,9 +2000,7 @@
    "name": "DryTree_07",
    "tris": 360,
    "material": [
-    "DryTree_07|bark_dry",
-    "DryTree_07|leaf_dry2",
-    "DryTree_07|leaf_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -2041,9 +2019,7 @@
    "name": "DryTree_08",
    "tris": 360,
    "material": [
-    "DryTree_08|bark_dry",
-    "DryTree_08|leaf_dry2",
-    "DryTree_08|leaf_dry"
+    "H_DryTrees"
    ],
    "bbox_plan": [
     [
@@ -2062,10 +2038,7 @@
    "name": "Mast_South",
    "tris": 1620,
    "material": [
-    "Mast_South|steel_mast",
-    "Mast_South|cabin_paint",
-    "Mast_South|glass65",
-    "Mast_South|post_wood"
+    "H_Mast"
    ],
    "bbox_plan": [
     [
@@ -2084,10 +2057,7 @@
    "name": "Mast_NE",
    "tris": 1332,
    "material": [
-    "Mast_NE|steel_mast",
-    "Mast_NE|cabin_paint",
-    "Mast_NE|glass65",
-    "Mast_NE|post_wood"
+    "H_Mast"
    ],
    "bbox_plan": [
     [
@@ -2103,5 +2073,5 @@
    ]
   }
  ],
- "total_tris": 41534
+ "total_tris": 40290
 }

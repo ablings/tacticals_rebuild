@@ -1,118 +1,118 @@
-[  11.3s] built 125 masters 60154 tris
-[  11.3s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
-[  11.3s] bake Sofa ['H_Sofa_Sectional']
+[  11.7s] built 125 masters 60154 tris
+[  11.8s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
+[  11.8s] bake Sofa ['H_Sofa_Sectional']
 Info: Baking map saved to internal image, save it externally or pack it
-[  14.0s]    Sofa color 1.7s
+[  14.6s]    Sofa color 1.7s
 Info: Baking map saved to internal image, save it externally or pack it
-[  15.6s]    Sofa rough 1.6s
+[  16.2s]    Sofa rough 1.6s
 Info: Baking map saved to internal image, save it externally or pack it
-[  17.2s]    Sofa metal 1.6s
+[  17.8s]    Sofa metal 1.6s
 Info: Baking map saved to internal image, save it externally or pack it
-[  18.9s]    Sofa normal 1.7s
+[  19.5s]    Sofa normal 1.6s
 Info: Baking map saved to internal image, save it externally or pack it
-[  20.7s]    Sofa ao 1.8s
+[  21.1s]    Sofa ao 1.7s
 Info: Saved as "house_furniture.blend"
-[  21.2s] bake Chairs ['H_Armchair']
+[  21.6s] bake Chairs ['H_Armchair']
 Info: Baking map saved to internal image, save it externally or pack it
-[  34.5s]    Chairs color 1.6s
+[  35.8s]    Chairs color 1.6s
 Info: Baking map saved to internal image, save it externally or pack it
-[  36.1s]    Chairs rough 1.6s
+[  37.5s]    Chairs rough 1.6s
 Info: Baking map saved to internal image, save it externally or pack it
-[  37.8s]    Chairs metal 1.7s
+[  39.1s]    Chairs metal 1.6s
 Info: Baking map saved to internal image, save it externally or pack it
-[  39.5s]    Chairs normal 1.7s
+[  40.7s]    Chairs normal 1.6s
 Info: Baking map saved to internal image, save it externally or pack it
-[  41.3s]    Chairs ao 1.8s
+[  42.3s]    Chairs ao 1.6s
 Info: Saved as "house_furniture.blend"
-[  41.8s] bake Variants1 ['H_Armchair_Mustard', 'H_Bed_Double_Maple']
+[  42.8s] bake Variants1 ['H_Armchair_Mustard', 'H_Bed_Double_Maple']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  47.4s]    Variants1 color 3.0s
+[  48.1s]    Variants1 color 2.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  50.4s]    Variants1 rough 3.0s
+[  50.8s]    Variants1 rough 2.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  53.3s]    Variants1 metal 2.9s
+[  53.4s]    Variants1 metal 2.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  56.2s]    Variants1 normal 2.9s
+[  56.2s]    Variants1 normal 2.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  59.2s]    Variants1 ao 3.0s
+[  58.9s]    Variants1 ao 2.7s
 Info: Saved as "house_furniture.blend"
-[  59.8s] bake Beds ['H_Bed_Double', 'H_Bed_Single']
+[  59.4s] bake Beds ['H_Bed_Double', 'H_Bed_Single']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  65.4s]    Beds color 3.0s
+[  64.5s]    Beds color 2.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  68.4s]    Beds rough 3.0s
+[  67.2s]    Beds rough 2.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  71.2s]    Beds metal 2.8s
+[  69.8s]    Beds metal 2.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  74.2s]    Beds normal 3.0s
+[  72.5s]    Beds normal 2.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  77.0s]    Beds ao 2.7s
+[  75.2s]    Beds ao 2.7s
 Info: Saved as "house_furniture.blend"
-[  77.5s] bake WoodA ['H_Dresser', 'H_Nightstand', 'H_TVConsole', 'H_TVConsole_Buffet']
+[  75.7s] bake WoodA ['H_Dresser', 'H_Nightstand', 'H_TVConsole', 'H_TVConsole_Buffet']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  84.4s]    WoodA color 4.9s
+[  82.9s]    WoodA color 5.0s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  89.3s]    WoodA rough 4.9s
+[  87.9s]    WoodA rough 4.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  94.1s]    WoodA metal 4.8s
+[  92.8s]    WoodA metal 4.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  99.1s]    WoodA normal 5.0s
+[  97.8s]    WoodA normal 4.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 104.1s]    WoodA ao 5.0s
+[ 102.7s]    WoodA ao 5.0s
 Info: Saved as "house_furniture.blend"
-[ 104.8s] bake Variants2 ['H_Dresser_Credenza', 'H_Dresser_Phone', 'H_Dresser_Maple', 'H_Dresser_Cream']
+[ 103.3s] bake Variants2 ['H_Dresser_Credenza', 'H_Dresser_Phone', 'H_Dresser_Maple', 'H_Dresser_Cream']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 111.7s]    Variants2 color 5.1s
+[ 110.0s]    Variants2 color 5.1s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 116.7s]    Variants2 rough 5.0s
+[ 115.0s]    Variants2 rough 5.0s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 121.5s]    Variants2 metal 4.8s
+[ 120.0s]    Variants2 metal 4.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 126.5s]    Variants2 normal 5.0s
+[ 124.9s]    Variants2 normal 4.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 131.6s]    Variants2 ao 5.1s
+[ 130.0s]    Variants2 ao 5.0s
 Info: Saved as "house_furniture.blend"
-[ 132.2s] bake Decor ['H_CoffeeTable', 'H_SideTable', 'H_FloorLamp', 'H_FloorLamp_Shade', 'H_TableLamp', 'H_TableLamp_Shade', 'H_PendantLamp', 'H_PendantLamp_Bulb', 'H_PendantSputnik', 'H_PendantSputnik_Bulbs', 'H_TV', 'H_TV_Screen', 'H_Laptop']
+[ 130.4s] bake Decor ['H_CoffeeTable', 'H_SideTable', 'H_FloorLamp', 'H_FloorLamp_Shade', 'H_TableLamp', 'H_TableLamp_Shade', 'H_PendantLamp', 'H_PendantLamp_Bulb', 'H_PendantSputnik', 'H_PendantSputnik_Bulbs', 'H_TV', 'H_TV_Screen', 'H_Laptop']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -126,7 +126,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 148.5s]    Decor color 15.1s
+[ 146.6s]    Decor color 15.0s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -140,7 +140,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 163.1s]    Decor rough 14.6s
+[ 161.4s]    Decor rough 14.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -154,7 +154,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 178.4s]    Decor metal 15.3s
+[ 176.4s]    Decor metal 15.0s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -168,7 +168,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 194.1s]    Decor normal 15.7s
+[ 191.3s]    Decor normal 14.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -182,53 +182,53 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 209.6s]    Decor ao 15.5s
+[ 206.2s]    Decor ao 14.9s
 Info: Saved as "house_furniture.blend"
-[ 210.3s] bake Desk ['H_Desk', 'H_Desk_School', 'H_DeskChair']
+[ 206.8s] bake Desk ['H_Desk', 'H_Desk_School', 'H_DeskChair']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 217.6s]    Desk color 4.0s
+[ 213.0s]    Desk color 3.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 221.8s]    Desk rough 4.2s
+[ 216.8s]    Desk rough 3.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 225.5s]    Desk metal 3.7s
+[ 220.6s]    Desk metal 3.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 229.3s]    Desk normal 3.7s
+[ 224.5s]    Desk normal 3.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 232.8s]    Desk ao 3.5s
+[ 228.3s]    Desk ao 3.9s
 Info: Saved as "house_furniture.blend"
-[ 233.2s] bake Dining ['H_DiningTable', 'H_DiningChair', 'H_TableSetting']
+[ 228.8s] bake Dining ['H_DiningTable', 'H_DiningChair', 'H_TableSetting']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 238.0s]    Dining color 3.5s
+[ 233.6s]    Dining color 3.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 241.4s]    Dining rough 3.3s
+[ 237.1s]    Dining rough 3.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 244.7s]    Dining metal 3.4s
+[ 240.9s]    Dining metal 3.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 248.2s]    Dining normal 3.4s
+[ 244.6s]    Dining normal 3.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 251.6s]    Dining ao 3.5s
+[ 248.5s]    Dining ao 3.8s
 Info: Saved as "house_furniture.blend"
-[ 252.1s] bake Kitchen ['H_BarStool', 'H_KitchenIsland', 'H_FruitBowl', 'H_KitchenBase', 'H_KitchenSink', 'H_KitchenHob', 'H_KitchenUpper', 'H_RangeHood', 'H_Pantry']
+[ 248.9s] bake Kitchen ['H_BarStool', 'H_KitchenIsland', 'H_FruitBowl', 'H_KitchenBase', 'H_KitchenSink', 'H_KitchenHob', 'H_KitchenUpper', 'H_RangeHood', 'H_Pantry']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -238,7 +238,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 262.7s]    Kitchen color 9.5s
+[ 260.6s]    Kitchen color 10.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -248,7 +248,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 272.5s]    Kitchen rough 9.9s
+[ 271.1s]    Kitchen rough 10.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -258,7 +258,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 282.2s]    Kitchen metal 9.7s
+[ 281.6s]    Kitchen metal 10.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -268,7 +268,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 292.0s]    Kitchen normal 9.8s
+[ 292.2s]    Kitchen normal 10.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -278,41 +278,41 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 301.7s]    Kitchen ao 9.7s
+[ 302.7s]    Kitchen ao 10.5s
 Info: Saved as "house_furniture.blend"
-[ 302.3s] bake Appliances ['H_Fridge', 'H_Microwave', 'H_CoffeeMachine', 'H_Kettle', 'H_WashingMachine']
+[ 303.4s] bake Appliances ['H_Fridge', 'H_Microwave', 'H_CoffeeMachine', 'H_Kettle', 'H_WashingMachine']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 310.3s]    Appliances color 5.5s
+[ 311.9s]    Appliances color 5.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 315.7s]    Appliances rough 5.4s
+[ 317.9s]    Appliances rough 5.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 321.2s]    Appliances metal 5.4s
+[ 323.8s]    Appliances metal 5.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 326.7s]    Appliances normal 5.5s
+[ 329.7s]    Appliances normal 5.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 332.2s]    Appliances ao 5.5s
+[ 335.7s]    Appliances ao 6.0s
 Info: Saved as "house_furniture.blend"
-[ 332.7s] bake Bath ['H_Bathtub', 'H_Toilet', 'H_Toilet_Butter', 'H_Vanity', 'H_Vanity_Butter', 'H_Mirror', 'H_ShowerSet', 'H_ShowerGlass', 'H_ShowerGlassProfile', 'H_TowelRail']
+[ 336.2s] bake Bath ['H_Bathtub', 'H_Toilet', 'H_Toilet_Butter', 'H_Vanity', 'H_Vanity_Butter', 'H_Mirror', 'H_ShowerSet', 'H_ShowerGlass', 'H_ShowerGlassProfile', 'H_TowelRail']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -323,7 +323,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 344.1s]    Bath color 10.1s
+[ 348.5s]    Bath color 11.2s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -334,7 +334,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 354.4s]    Bath rough 10.3s
+[ 359.5s]    Bath rough 10.9s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -345,747 +345,4 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 364.6s]    Bath metal 10.2s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 374.8s]    Bath normal 10.2s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 384.9s]    Bath ao 10.1s
-Info: Saved as "house_furniture.blend"
-[ 385.4s] bake Variants3 ['H_Bathtub_Butter', 'H_Bookcase_Hutch', 'H_Bookcase_Maple']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 389.3s]    Variants3 color 3.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 392.4s]    Variants3 rough 3.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 395.5s]    Variants3 metal 3.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 398.6s]    Variants3 normal 3.0s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 401.8s]    Variants3 ao 3.2s
-Info: Saved as "house_furniture.blend"
-[ 402.2s] bake Storage ['H_Bookcase', 'H_Wardrobe', 'H_TallCabinet']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 406.1s]    Storage color 3.0s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 409.2s]    Storage rough 3.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 412.4s]    Storage metal 3.2s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 415.8s]    Storage normal 3.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 419.3s]    Storage ao 3.5s
-Info: Saved as "house_furniture.blend"
-[ 419.6s] bake Variants4 ['H_Wardrobe_Lockers', 'H_Wardrobe_Maple', 'H_Wardrobe_Cream', 'H_TallCabinet_HallTree']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 425.4s]    Variants4 color 4.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 429.7s]    Variants4 rough 4.3s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 434.3s]    Variants4 metal 4.6s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 438.7s]    Variants4 normal 4.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 443.3s]    Variants4 ao 4.6s
-Info: Saved as "house_furniture.blend"
-[ 443.5s] bake Art ['H_Frame_Abstract', 'H_Frame_Landscape', 'H_Frame_Botanical', 'H_Frame_Geometric', 'H_Frame_Notice', 'H_Frame_Pennant', 'H_Frame_Mesa', 'H_Rug_Living', 'H_Rug_Runner', 'H_Rug_Oval']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 455.8s]    Art color 9.7s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 465.2s]    Art rough 9.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 474.7s]    Art metal 9.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 484.4s]    Art normal 9.7s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 493.9s]    Art ao 9.5s
-Info: Saved as "house_furniture.blend"
-[ 494.2s] bake Plants ['H_PlantFiddle', 'H_PlantSnake', 'H_Planter', 'H_Planter_Tree']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 501.0s]    Plants color 3.8s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 504.8s]    Plants rough 3.9s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 508.9s]    Plants metal 4.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 512.9s]    Plants normal 4.0s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 516.7s]    Plants ao 3.8s
-Info: Saved as "house_furniture.blend"
-[ 517.0s] bake Toys ['H_ToyBlocks', 'H_ToyBall', 'H_ToyCar', 'H_Teddy']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 523.7s]    Toys color 3.9s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 527.5s]    Toys rough 3.8s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 531.4s]    Toys metal 3.9s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 535.3s]    Toys normal 3.9s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 539.3s]    Toys ao 4.0s
-Info: Saved as "house_furniture.blend"
-[ 539.6s] bake ShelfWall ['H_ShelfWall']
-Info: Baking map saved to internal image, save it externally or pack it
-[ 542.7s]    ShelfWall color 1.3s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 543.9s]    ShelfWall rough 1.2s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 545.2s]    ShelfWall metal 1.3s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 546.5s]    ShelfWall normal 1.3s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 547.8s]    ShelfWall ao 1.3s
-Info: Saved as "house_furniture.blend"
-[ 548.1s] bake ShelfBooks ['H_ShelfWall_Books']
-Info: Baking map saved to internal image, save it externally or pack it
-[ 549.6s]    ShelfBooks color 1.0s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 550.7s]    ShelfBooks rough 1.1s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 551.7s]    ShelfBooks metal 1.1s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 552.9s]    ShelfBooks normal 1.2s
-Info: Baking map saved to internal image, save it externally or pack it
-[ 554.1s]    ShelfBooks ao 1.2s
-Info: Saved as "house_furniture.blend"
-[ 554.4s] bake Storage3 ['H_OvenWall', 'H_SlatScreen']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 557.6s]    Storage3 color 2.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 559.8s]    Storage3 rough 2.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 561.8s]    Storage3 metal 2.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 564.0s]    Storage3 normal 2.2s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 566.2s]    Storage3 ao 2.3s
-Info: Saved as "house_furniture.blend"
-[ 566.5s] bake Storage4 ['H_HeadboardWall', 'H_DisplayColumn']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 574.0s]    Storage4 color 2.0s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 576.1s]    Storage4 rough 2.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 578.1s]    Storage4 metal 2.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 580.2s]    Storage4 normal 2.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 582.2s]    Storage4 ao 2.0s
-Info: Saved as "house_furniture.blend"
-[ 582.5s] bake Storage2 ['H_KitchenBench', 'H_HallBench_3', 'H_HallBench_8']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 587.3s]    Storage2 color 3.2s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 590.4s]    Storage2 rough 3.2s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 593.6s]    Storage2 metal 3.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 596.6s]    Storage2 normal 3.0s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 599.6s]    Storage2 ao 3.1s
-Info: Saved as "house_furniture.blend"
-[ 599.9s] bake Dress65 ['D65_Phone', 'D65_Radio', 'D65_RecordPlayer', 'D65_Papers', 'D65_BrokenPlates', 'D65_LampKnocked', 'D65_ChairKnocked', 'D65_SandDrift', 'D65_SandDriftSmall', 'D65_Cobweb', 'D65_TinRocket', 'D65_Clipboard', 'D65_Canisters', 'D65_CakeDome']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 613.6s]    Dress65 color 12.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 625.9s]    Dress65 rough 12.2s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 638.2s]    Dress65 metal 12.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 651.3s]    Dress65 normal 13.1s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 664.8s]    Dress65 ao 13.5s
-Info: Saved as "house_furniture.blend"
-[ 665.0s] bake Dummies ['D65_Dummy_SitA', 'D65_Dummy_SitB', 'D65_Dummy_SitC', 'D65_Dummy_SitD', 'D65_Dummy_SitE', 'D65_Dummy_Lean']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 671.5s]    Dummies color 5.8s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 677.2s]    Dummies rough 5.7s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 682.6s]    Dummies metal 5.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 688.1s]    Dummies normal 5.4s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 693.7s]    Dummies ao 5.6s
-Info: Saved as "house_furniture.blend"
-[ 693.9s] bake Posters ['D65_Poster_Travel', 'D65_Poster_Kitchen', 'D65_Calendar', 'D65_Notice', 'D65_Pennant']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 701.9s]    Posters color 4.6s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 706.6s]    Posters rough 4.6s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 711.2s]    Posters metal 4.6s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 715.8s]    Posters normal 4.7s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 720.5s]    Posters ao 4.7s
-Info: Saved as "house_furniture.blend"
-[ 720.7s] bake Drapes ['D65_Drape_Gold', 'D65_Drape_Mustard', 'D65_Drape_Green', 'D65_DrapeRod']
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 725.3s]    Drapes color 3.7s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 729.0s]    Drapes rough 3.6s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 732.9s]    Drapes metal 3.9s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 736.6s]    Drapes normal 3.7s
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-Info: Baking map saved to internal image, save it externally or pack it
-[ 740.3s]    Drapes ao 3.7s
-Info: Saved as "house_furniture.blend"
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Furniture_kit.fbx'
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.001' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.002' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.003' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.004' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.005' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningTable' mesh, 'H_DiningTable' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Decor' from 'H_TV' mesh, 'H_TV__H_TV' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Decor' from 'H_TV_Screen' mesh, 'H_TV__H_TV_Screen' object. Most likely, different objects using the same mesh, but different material slots layouts.
-export finished in 0.1858 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Sofa_Sectional.fbx'
-export finished in 0.0090 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Armchair.fbx'
-export finished in 0.0079 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_KitchenIsland.fbx'
-export finished in 0.0081 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_DiningSet.fbx'
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.001' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.002' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.003' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.004' object. Most likely, different objects using the same mesh, but different material slots layouts.
-WARNING: Cannot register a valid material index for 'H_Dining' from 'H_DiningChair' mesh, 'H_DiningSet__H_DiningChair.005' object. Most likely, different objects using the same mesh, but different material slots layouts.
-export finished in 0.0114 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_DiningTable.fbx'
-export finished in 0.0071 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_DiningChair.fbx'
-export finished in 0.0074 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bed_Double.fbx'
-export finished in 0.0081 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bed_Single.fbx'
-export finished in 0.0088 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Dresser.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bathtub.fbx'
-export finished in 0.0082 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TVConsole.fbx'
-export finished in 0.0078 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TVConsole_WithTV.fbx'
-export finished in 0.0135 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_KitchenBase.fbx'
-export finished in 0.0071 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_KitchenSink.fbx'
-export finished in 0.0078 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_KitchenHob.fbx'
-export finished in 0.0075 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bookcase.fbx'
-export finished in 0.0093 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Fridge.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Wardrobe.fbx'
-export finished in 0.0071 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TallCabinet.fbx'
-export finished in 0.0071 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Pantry.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_ShelfWall.fbx'
-export finished in 0.0144 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_OvenWall.fbx'
-export finished in 0.0082 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_SlatScreen.fbx'
-export finished in 0.0093 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_HeadboardWall.fbx'
-export finished in 0.0084 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_KitchenBench.fbx'
-export finished in 0.0075 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_HallBench_3.fbx'
-export finished in 0.0071 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_HallBench_8.fbx'
-export finished in 0.0075 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Planter.fbx'
-export finished in 0.0101 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_DisplayColumn.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_KitchenUpper.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_RangeHood.fbx'
-export finished in 0.0076 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_BarStool.fbx'
-export finished in 0.0085 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Nightstand.fbx'
-export finished in 0.0077 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_CoffeeTable.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_SideTable.fbx'
-export finished in 0.0076 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Desk.fbx'
-export finished in 0.0079 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_DeskChair.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_WashingMachine.fbx'
-export finished in 0.0071 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_FruitBowl.fbx'
-export finished in 0.0074 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Microwave.fbx'
-export finished in 0.0075 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_CoffeeMachine.fbx'
-export finished in 0.0075 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Kettle.fbx'
-export finished in 0.0069 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TV.fbx'
-export finished in 0.0099 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Laptop.fbx'
-export finished in 0.0084 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_FloorLamp.fbx'
-export finished in 0.0081 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TableLamp.fbx'
-export finished in 0.0085 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_PendantLamp.fbx'
-export finished in 0.0098 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Frame_Abstract.fbx'
-export finished in 0.0082 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Frame_Landscape.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Frame_Botanical.fbx'
-export finished in 0.0077 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Frame_Geometric.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Rug_Living.fbx'
-export finished in 0.0072 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Rug_Runner.fbx'
-export finished in 0.0078 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_PlantFiddle.fbx'
-export finished in 0.0083 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_PlantSnake.fbx'
-export finished in 0.0085 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Toilet.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Vanity.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Mirror.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_ShowerSet.fbx'
-export finished in 0.0078 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_ShowerGlass.fbx'
-export finished in 0.0094 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TowelRail.fbx'
-export finished in 0.0079 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_ToyBlocks.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_ToyBall.fbx'
-export finished in 0.0076 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_ToyCar.fbx'
-export finished in 0.0078 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Teddy.fbx'
-export finished in 0.0089 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Armchair_Mustard.fbx'
-export finished in 0.0090 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bed_Double_Maple.fbx'
-export finished in 0.0094 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Dresser_Credenza.fbx'
-export finished in 0.0077 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Dresser_Phone.fbx'
-export finished in 0.0077 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Dresser_Maple.fbx'
-export finished in 0.0076 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Dresser_Cream.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TVConsole_Buffet.fbx'
-export finished in 0.0078 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bathtub_Butter.fbx'
-export finished in 0.0085 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bookcase_Hutch.fbx'
-export finished in 0.0136 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Bookcase_Maple.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Wardrobe_Lockers.fbx'
-export finished in 0.0079 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Wardrobe_Maple.fbx'
-export finished in 0.0077 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Wardrobe_Cream.fbx'
-export finished in 0.0073 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_TallCabinet_HallTree.fbx'
-export finished in 0.0077 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Desk_School.fbx'
-export finished in 0.0074 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Toilet_Butter.fbx'
-export finished in 0.0080 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Vanity_Butter.fbx'
-export finished in 0.0086 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_PendantLamp_Sputnik.fbx'
-export finished in 0.0083 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Frame_Notice.fbx'
-export finished in 0.0075 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Frame_Pennant.fbx'
-export finished in 0.0077 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Frame_Mesa.fbx'
-export finished in 0.0075 sec.
-
-FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_Rug_Oval.fbx'
-export finished in 0.0085 sec.
-Info: Saved as "house_furniture.blend"
-Info: Total files 136 | Changed 104 | Failed 0
-Info: Saved "house_furniture.blend"
-[ 742.7s] DONE 135 objects; 60154 unique tris
-Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
-
-Blender quit
+[ 370.5s]    Bath metal 11.1s

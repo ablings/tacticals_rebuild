@@ -1,0 +1,50 @@
+00:02.062  blend            | Read blend: "C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\house.blend"
+C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\tools\preview_1965.py:94: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  w = bpy.data.worlds.new("PW"); sc.world = w; w.use_nodes = True
+00:08.109  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_lr.png'
+VIEW lr
+00:11.812  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_lr2.png'
+VIEW lr2
+00:15.781  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_fy.png'
+VIEW fy
+00:19.609  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_kt.png'
+VIEW kt
+00:23.578  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_kt2.png'
+VIEW kt2
+00:27.266  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_dr.png'
+VIEW dr
+00:31.172  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_bh.png'
+VIEW bh
+00:35.156  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_mr.png'
+VIEW mr
+00:39.187  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_gb.png'
+VIEW gb
+00:43.094  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_ld.png'
+VIEW ld
+00:46.828  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_mb.png'
+VIEW mb
+00:50.656  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_br2.png'
+VIEW br2
+00:54.547  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_br3.png'
+VIEW br3
+00:58.406  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_ub.png'
+VIEW ub
+01:02.062  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_win_s.png'
+VIEW win_s
+01:05.672  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_win_n.png'
+VIEW win_n
+01:09.500  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_win_fy.png'
+VIEW win_fy
+01:13.156  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_win_e.png'
+VIEW win_e
+01:16.859  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_win_w.png'
+VIEW win_w
+01:20.250  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_street.png'
+VIEW street
+01:23.531  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_aerial.png'
+VIEW aerial
+01:26.844  render           | Saved: 'C:\Users\aroki\Documents\tacticals_rebuild\art\house\v2\renders\preview\h65_across.png'
+VIEW across
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

@@ -243,8 +243,8 @@ def test_house(group, cx, cy, W, D, facing, siding, storeys=2, garage=True, porc
         wallb = gi0 if fs > 0 else gi1
         lo_, hi_ = sorted((wallb, wallb + fs * 0.1))
         boxp(group, "Pegboard", gw[0], gw[1], lo_, hi_, zb, zb + 8.4)
-        for xx in (gw[0], gw[1]):
-            boxp(group, "Pegboard", xx - 0.05, xx + 0.05, gi0, gi1, zb, zb + 8.4)
+        for xa_, xb_ in ((gw[0] + 0.02, gw[0] + 0.12), (gw[1] - 0.12, gw[1] - 0.02)):     # inner side walls, touching the frame
+            boxp(group, "Pegboard", xa_, xb_, gi0, gi1, zb, zb + 8.4)
         quad(group, "Ceiling65", gw[0], gw[1], gi0, gi1, zb + 8.4) if False else add_poly("Ceiling65", [(gw[0], gi1, zb + 8.4), (gw[1], gi1, zb + 8.4), (gw[1], gi0, zb + 8.4), (gw[0], gi0, zb + 8.4)], group)
         bl, bh_ = sorted((wallb + fs * 0.1, wallb + fs * 2.4))
         boxp(group, "FenceWood", gw[0] + 1, gw[0] + 7, bl, bh_, zb, zb + 3.2)
@@ -539,11 +539,11 @@ def main():
     for o in vehicles:
         add(o, *place[o.name])
     sb = [sandbags("Sandbags_1", 14.0, rows=4, curve=1.5), sandbags("Sandbags_2", 10.0, rows=3, curve=-1.0), sandbags("Sandbags_3", 12.0, rows=5)]
-    add(sb[0], (34.0, -86.0, GZ + 0.0), 10); add(sb[1], (-56.0, 60.0, GZ + 0.15), 75); add(sb[2], (120.0, -40.0, GZ), -20)
+    add(sb[0], (34.0, -86.0, GZ + 0.0), 10); add(sb[1], (-56.0, 60.0, GZ), 75); add(sb[2], (120.0, -40.0, GZ), -20)
     signs = [sign_post("Sign_Restricted", "sign_restricted", 5.0, 3.1, 4.5), sign_post("Sign_Danger", "sign_danger", 5.0, 3.1, 4.5, tilt=4),
              sign_post("Sign_RoadClosed", "sign_road", 5.0, 3.1, 3.5), sign_post("Sign_Restricted2", "sign_restricted", 4.0, 2.5, 4.0, tilt=-6)]
     add(signs[0], (40.0, -83.0, 0), 180); add(signs[1], (-30.0, 82.0, 0), 0); add(signs[2], (-120.0, -60.0, 0), 160); add(signs[3], (60.0, 82.0, 0), 10)
-    add(trellis("Trellis_Across"), (0.0, -94.0, 0), 0)
+    add(trellis("Trellis_Across"), (0.0, -96.5, 0), 0)
     add(trellis("Trellis_Ours"), (-10.0, 46.0, 0), 90)
     gw = th["garage"]
     gy = th["front"] - th["fs"] * 9.0
@@ -563,8 +563,7 @@ def main():
             o = bpy.data.objects.new(name, dm[m].data); coll("Exterior").objects.link(o)
             o.location = loc; o.rotation_euler = (0, 0, math.radians(rz)); o["atlas"] = "Dummies"; obs.append(o)
         dmy("D65_Dummy_Lean", "Dummy_Ext_Fence", (-16.0, -90.85, GZ), 180.0)     # hands on the fence top (3.45 = picket 3.5)
-        dmy("D65_Dummy_SitB", "Dummy_Ext_Porch", (30.5, -93.6, GZ + 1.6 + 0.3), 0.0)
-        dmy("D65_Dummy_Lean", "Dummy_Ext_Truck", (-63.5, -66.4, GZ + 0.12), 90.0)
+        dmy("D65_Dummy_Lean", "Dummy_Ext_Truck", (-63.5, -66.4, GZ), 90.0)          # feet on the ground plane (0.12 into the road)
     # power poles along the far sidewalk, wires, a service drop to our front wall
     poles = [(x, -78.0) for x in range(-200, 41, 40)]
     for i, (x, y) in enumerate(poles):

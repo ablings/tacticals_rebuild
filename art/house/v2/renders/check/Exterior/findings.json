@@ -1,0 +1,566 @@
+[
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_Across_Fieldstone",
+  "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Ext_Across_GlassDark",
+  "message": "64 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A19",
+  "object": "Ext_Across_Pegboard",
+  "message": "6 faces (102.480 sq studs) of different loose parts lie in one plane facing the same way and overlap: z-fighting. Lower / shrink the inner piece 0.03+, or cut it out"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_Across_SidingMint",
+  "message": "16 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_Across_TrimWhite",
+  "message": "48 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_AcrossE_Fieldstone",
+  "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Ext_AcrossE_GlassDark",
+  "message": "20 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_AcrossE_SidingSalmon",
+  "message": "10 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_AcrossE_TrimWhite",
+  "message": "22 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_AcrossW_Fieldstone",
+  "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Ext_AcrossW_GlassDark",
+  "message": "20 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A19",
+  "object": "Ext_AcrossW_Pegboard",
+  "message": "6 faces (102.480 sq studs) of different loose parts lie in one plane facing the same way and overlap: z-fighting. Lower / shrink the inner piece 0.03+, or cut it out"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_AcrossW_SidingButter",
+  "message": "10 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_AcrossW_TrimWhite",
+  "message": "24 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_BehindE_Fieldstone",
+  "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Ext_BehindE_GlassDark",
+  "message": "20 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_BehindE_SidingWhite",
+  "message": "10 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_BehindE_TrimWhite",
+  "message": "22 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_BehindW_Fieldstone",
+  "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Ext_BehindW_GlassDark",
+  "message": "20 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_BehindW_SidingMint",
+  "message": "10 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_BehindW_TrimWhite",
+  "message": "22 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A19",
+  "object": "Ext_Fences_FenceWood",
+  "message": "4 faces (0.792 sq studs) of different loose parts lie in one plane facing the same way and overlap: z-fighting. Lower / shrink the inner piece 0.03+, or cut it out"
+ },
+ {
+  "level": "WARN",
+  "code": "A19",
+  "object": "Ext_Fences_TrimWhite",
+  "message": "218 faces (140.635 sq studs) of different loose parts lie in one plane facing the same way and overlap: z-fighting. Lower / shrink the inner piece 0.03+, or cut it out"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_NeighbourE_Fieldstone",
+  "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Ext_NeighbourE_GlassDark",
+  "message": "64 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_NeighbourE_SidingSalmon",
+  "message": "16 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_NeighbourE_TrimWhite",
+  "message": "46 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_NeighbourW_Fieldstone",
+  "message": "4 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Ext_NeighbourW_GlassDark",
+  "message": "20 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_NeighbourW_SidingButter",
+  "message": "10 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A3b",
+  "object": "Ext_NeighbourW_TrimWhite",
+  "message": "22 non-manifold edges (faces sharing an edge 3+ ways, or duplicates)"
+ },
+ {
+  "level": "WARN",
+  "code": "A19",
+  "object": "Ext_Yard_TrimWhite",
+  "message": "202 faces (121.805 sq studs) of different loose parts lie in one plane facing the same way and overlap: z-fighting. Lower / shrink the inner piece 0.03+, or cut it out"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_Ext_Fence",
+  "message": "454 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Dummy_Ext_Truck",
+  "message": "454 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "PowerWires",
+  "message": "632 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "PowerWiresBack",
+  "message": "796 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Car_Wagon",
+  "message": "332 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Car_Sedan",
+  "message": "330 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Car_SedanSalmon",
+  "message": "330 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Truck_Dairy",
+  "message": "430 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Sandbags_1",
+  "message": "1131 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Sandbags_2",
+  "message": "564 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Sandbags_3",
+  "message": "1185 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Trellis_Across",
+  "message": "238 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Trellis_Ours",
+  "message": "229 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Bike_1",
+  "message": "90 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Bike_2",
+  "message": "90 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_01",
+  "message": "106 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_02",
+  "message": "46 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_03",
+  "message": "114 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_04",
+  "message": "48 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_05",
+  "message": "112 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_06",
+  "message": "50 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_07",
+  "message": "126 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "DryTree_08",
+  "message": "96 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Mast_South",
+  "message": "658 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A1b",
+  "object": "Mast_NE",
+  "message": "534 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Across_Ceiling65 + Ext_Across_SidingMint",
+  "message": "45 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Across_Concrete65 + Ext_Across_Fieldstone",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Across_Concrete65 + Ext_Across_Pegboard",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Across_Concrete65 + Ext_Across_TrimWhite",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Across_Fieldstone + Ext_Across_TrimWhite",
+  "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Across_SidingMint + Ext_Across_TrimWhite",
+  "message": "188 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossE_Ceiling65 + Ext_AcrossE_SidingSalmon",
+  "message": "32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossE_Fieldstone + Ext_AcrossE_TrimWhite",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossE_SidingSalmon + Ext_AcrossE_TrimWhite",
+  "message": "91 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossW_Ceiling65 + Ext_AcrossW_SidingButter",
+  "message": "37 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossW_Concrete65 + Ext_AcrossW_Fieldstone",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossW_Concrete65 + Ext_AcrossW_Pegboard",
+  "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossW_Concrete65 + Ext_AcrossW_TrimWhite",
+  "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossW_Fieldstone + Ext_AcrossW_TrimWhite",
+  "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_AcrossW_SidingButter + Ext_AcrossW_TrimWhite",
+  "message": "108 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_BehindE_Ceiling65 + Ext_BehindE_SidingWhite",
+  "message": "32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_BehindE_Fieldstone + Ext_BehindE_TrimWhite",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_BehindE_SidingWhite + Ext_BehindE_TrimWhite",
+  "message": "83 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_BehindW_Ceiling65 + Ext_BehindW_SidingMint",
+  "message": "32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_BehindW_Fieldstone + Ext_BehindW_TrimWhite",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_BehindW_SidingMint + Ext_BehindW_TrimWhite",
+  "message": "83 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_BehindW_SidingMint + DryTree_07",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Fences_TrimWhite + Ext_Ground_Desert",
+  "message": "288 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Ground_Desert + Ext_Yard_TrimWhite",
+  "message": "224 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_NeighbourE_Ceiling65 + Ext_NeighbourE_SidingSalmon",
+  "message": "44 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_NeighbourE_Fieldstone + Ext_NeighbourE_TrimWhite",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_NeighbourE_SidingSalmon + Ext_NeighbourE_TrimWhite",
+  "message": "171 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_NeighbourW_Ceiling65 + Ext_NeighbourW_SidingButter",
+  "message": "32 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_NeighbourW_Fieldstone + Ext_NeighbourW_TrimWhite",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_NeighbourW_SidingButter + Ext_NeighbourW_TrimWhite",
+  "message": "83 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Street_DirtRoad + Ext_Yard_Concrete65",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Street_DirtRoad + Ext_Yard_DryGrass",
+  "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Street_DirtRoad + Dummy_Ext_Truck",
+  "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Ext_Yard_Concrete65 + Ext_Yard_DryGrass",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Car_SedanSalmon + Bike_1",
+  "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ },
+ {
+  "level": "WARN",
+  "code": "A8",
+  "object": "Car_SedanSalmon + Bike_2",
+  "message": "16 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+ }
+]

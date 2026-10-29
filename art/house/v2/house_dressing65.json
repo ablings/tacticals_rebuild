@@ -605,7 +605,7 @@
    "at": [
     -36.7,
     -29.98,
-    0.05
+    -0.03
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -615,7 +615,7 @@
    "master": "D65_DrapeRod",
    "at": [
     -32.0,
-    -29.98,
+    -30.03,
     10.25
    ],
    "rot_z": 180.0,
@@ -627,7 +627,7 @@
    "at": [
     -13.3,
     -29.98,
-    0.05
+    -0.03
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -637,7 +637,7 @@
    "master": "D65_DrapeRod",
    "at": [
     -18.0,
-    -29.98,
+    -30.03,
     10.25
    ],
    "rot_z": 180.0,
@@ -649,7 +649,7 @@
    "at": [
     13.3,
     -29.98,
-    0.05
+    -0.03
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -659,7 +659,7 @@
    "master": "D65_DrapeRod",
    "at": [
     18.0,
-    -29.98,
+    -30.03,
     10.25
    ],
    "rot_z": 180.0,
@@ -671,7 +671,7 @@
    "at": [
     36.7,
     -29.98,
-    0.05
+    -0.03
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -681,7 +681,7 @@
    "master": "D65_DrapeRod",
    "at": [
     32.0,
-    -29.98,
+    -30.03,
     10.25
    ],
    "rot_z": 180.0,
@@ -693,7 +693,7 @@
    "at": [
     -3.7,
     -29.98,
-    14.05
+    13.97
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -704,7 +704,7 @@
    "at": [
     7.7,
     -29.98,
-    14.05
+    13.97
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -714,7 +714,7 @@
    "master": "D65_DrapeRod",
    "at": [
     2.0,
-    -29.98,
+    -30.03,
     24.75
    ],
    "rot_z": 180.0,
@@ -726,7 +726,7 @@
    "at": [
     15.3,
     -29.98,
-    14.05
+    13.97
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -737,7 +737,7 @@
    "at": [
     24.7,
     -29.98,
-    14.05
+    13.97
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -747,7 +747,7 @@
    "master": "D65_DrapeRod",
    "at": [
     20.0,
-    -29.98,
+    -30.03,
     24.25
    ],
    "rot_z": 180.0,
@@ -759,7 +759,7 @@
    "at": [
     36.7,
     -29.98,
-    14.05
+    13.97
    ],
    "rot_z": 180.0,
    "note": "pulled to the side of the window"
@@ -769,7 +769,7 @@
    "master": "D65_DrapeRod",
    "at": [
     33.0,
-    -29.98,
+    -30.03,
     24.25
    ],
    "rot_z": 180.0,
@@ -781,7 +781,7 @@
    "at": [
     -20.7,
     29.98,
-    0.05
+    -0.03
    ],
    "rot_z": 0.0,
    "note": "pulled to the side of the window"
@@ -791,7 +791,7 @@
    "master": "D65_DrapeRod",
    "at": [
     -17.0,
-    29.98,
+    30.03,
     10.25
    ],
    "rot_z": 0.0,
@@ -803,7 +803,7 @@
    "at": [
     -25.3,
     29.98,
-    14.05
+    13.97
    ],
    "rot_z": 0.0,
    "note": "pulled to the side of the window"
@@ -813,7 +813,7 @@
    "master": "D65_DrapeRod",
    "at": [
     -30.0,
-    29.98,
+    30.03,
     24.25
    ],
    "rot_z": 0.0,
@@ -825,7 +825,7 @@
    "at": [
     -13.3,
     29.98,
-    14.05
+    13.97
    ],
    "rot_z": 0.0,
    "note": "pulled to the side of the window"
@@ -835,7 +835,7 @@
    "master": "D65_DrapeRod",
    "at": [
     -17.0,
-    29.98,
+    30.03,
     24.25
    ],
    "rot_z": 0.0,
@@ -847,7 +847,7 @@
    "at": [
     -39.98,
     2.7,
-    0.05
+    -0.03
    ],
    "rot_z": 90.0,
    "note": "pulled to the side of the window"
@@ -856,7 +856,7 @@
    "name": "DrapeRod_Win_LR_W",
    "master": "D65_DrapeRod",
    "at": [
-    -39.98,
+    -40.03,
     -2.0,
     10.25
    ],
@@ -869,7 +869,7 @@
    "at": [
     -39.98,
     9.3,
-    14.05
+    13.97
    ],
    "rot_z": 90.0,
    "note": "pulled to the side of the window"
@@ -880,7 +880,7 @@
    "at": [
     -39.98,
     18.7,
-    14.05
+    13.97
    ],
    "rot_z": 90.0,
    "note": "pulled to the side of the window"
@@ -889,7 +889,7 @@
    "name": "DrapeRod_Win_BR3_W",
    "master": "D65_DrapeRod",
    "at": [
-    -39.98,
+    -40.03,
     14.0,
     24.25
    ],
@@ -902,7 +902,7 @@
    "at": [
     39.98,
     -24.7,
-    14.05
+    13.97
    ],
    "rot_z": -90.0,
    "note": "pulled to the side of the window"
@@ -911,7 +911,7 @@
    "name": "DrapeRod_Win_BR2_E",
    "master": "D65_DrapeRod",
    "at": [
-    39.98,
+    40.03,
     -20.0,
     24.25
    ],
@@ -924,7 +924,7 @@
    "at": [
     19.3,
     3.48,
-    14.05
+    13.97
    ],
    "rot_z": 0.0,
    "note": "pulled to the side of the window"
@@ -934,7 +934,7 @@
    "master": "D65_DrapeRod",
    "at": [
     25.0,
-    3.48,
+    3.53,
     24.25
    ],
    "rot_z": 0.0,
@@ -942,7 +942,7 @@
   }
  ],
  "wear_quads": {
-  "G": 35,
-  "U": 18
+  "G": 49,
+  "U": 29
  }
 }

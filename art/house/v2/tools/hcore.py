@@ -793,10 +793,100 @@ def mark_buried(bm):
     return count
 
 
+def resolve_coplanar(bm, step=0.03, passes=7):
+    """A19 fix at build time: inside one mesh, coplanar same-facing faces of two different loose parts that overlap
+    z-fight. Pull the face of the SMALLER part (bbox volume) `step` inward along its normal; the larger part keeps the
+    plane, so the outer extents (and the cover boxes derived from them) never change. Same overlap test as
+    roblox_kits blender_check.coplanar_overlaps. Returns the number of faces moved."""
+    from collections import defaultdict
+    from mathutils import geometry
+    moved = 0
+    for _ in range(passes):
+        bm.normal_update()
+        bm.verts.ensure_lookup_table()
+        part, comps = {}, []
+        seen = set()
+        for f in bm.faces:
+            if f in seen:
+                continue
+            stack, comp = [f], []
+            seen.add(f)
+            while stack:
+                g = stack.pop(); comp.append(g)
+                for v in g.verts:
+                    for h in v.link_faces:
+                        if h not in seen:
+                            seen.add(h); stack.append(h)
+            for g in comp:
+                part[g] = len(comps)
+            comps.append(comp)
+        vol = []
+        for comp in comps:
+            vs = {v for g in comp for v in g.verts}
+            lo = Vector((min(v.co.x for v in vs), min(v.co.y for v in vs), min(v.co.z for v in vs)))
+            hi = Vector((max(v.co.x for v in vs), max(v.co.y for v in vs), max(v.co.z for v in vs)))
+            d = hi - lo
+            vol.append(max(d.x, 1e-3) * max(d.y, 1e-3) * max(d.z, 1e-3))
+        tris = defaultdict(list)
+        for lt in bm.calc_loop_triangles():
+            tris[lt[0].face].append([l.vert.co.copy() for l in lt])
+        planes = defaultdict(list)
+        for f in bm.faces:
+            n = f.normal
+            if n.length < 0.5 or f.calc_area() < 1e-5:
+                continue
+            planes[(round(n.x, 3), round(n.y, 3), round(n.z, 3), round(n.dot(f.verts[0].co), 3))].append(f)
+        push = {}
+        for key, fs in planes.items():
+            if len(fs) < 2 or len({part[f] for f in fs}) < 2:
+                continue
+            drop = max(range(3), key=lambda i: abs(key[i]))
+            keep = [i for i in range(3) if i != drop]
+            flat = lambda v: Vector((v[keep[0]], v[keep[1]]))
+            t2 = {f: [[flat(v) for v in t] for t in tris[f]] for f in fs}
+            b2 = {f: (min(p.x for t in ts for p in t), min(p.y for t in ts for p in t), max(p.x for t in ts for p in t), max(p.y for t in ts for p in t)) for f, ts in t2.items() if ts}
+            def overlap(f, g):
+                if f not in b2 or g not in b2:
+                    return False
+                a, b = b2[f], b2[g]
+                if a[0] >= b[2] - 1e-6 or b[0] >= a[2] - 1e-6 or a[1] >= b[3] - 1e-6 or b[1] >= a[3] - 1e-6:
+                    return False
+                for small, big in ((f, g), (g, f)):
+                    for t in t2[small]:
+                        c = (t[0] + t[1] + t[2]) / 3
+                        for p in (c, (c + t[0]) / 2, (c + t[1]) / 2, (c + t[2]) / 2):
+                            if any(geometry.intersect_point_tri_2d(p, *u) for u in t2[big]):
+                                return True
+                return False
+            for i in range(len(fs)):
+                for j in range(i + 1, len(fs)):
+                    f, g = fs[i], fs[j]
+                    if part[f] != part[g] and overlap(f, g):
+                        loser = f if (vol[part[f]], part[f]) < (vol[part[g]], part[g]) else g
+                        n_ = loser.normal.copy()
+                        ds = [v.co.dot(n_) for g_ in comps[part[loser]] for v in g_.verts]
+                        push[loser] = (n_, min(step, 0.3 * (max(ds) - min(ds))))     # never through a thin part
+        if not push:
+            break
+        disp = defaultdict(lambda: Vector((0, 0, 0)))
+        for f, (n, st) in push.items():
+            for v in f.verts:
+                d = disp[v]
+                for k in range(3):
+                    c = -n[k] * st
+                    if abs(c) > abs(d[k]):
+                        d[k] = c
+        for v, d in disp.items():
+            v.co += d
+        moved += len(push)
+    return moved
+
+
 def finish(mb, loc=(0, 0, 0)):
     apply_decals(mb)
     bm = mb.bm
     bm.normal_update()
+    mb.coplanar_moved = resolve_coplanar(bm)
     # ship triangles: the importer must not pick the other diagonal of a concave or non-planar quad
     bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method="BEAUTY", ngon_method="BEAUTY")
     bm.normal_update()

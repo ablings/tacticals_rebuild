@@ -970,7 +970,8 @@ def window(op):
         tp = MB(op["id"] + "_GlassTape", "Windows" + str(sum(map(ord, op["id"])) % 4 + 1), H)
         tin_ = (t1 if op["line"] < 0 else t0)
         si_ = 1.0 if tin_ > tm else -1.0
-        for (lo, hi) in panes:
+        sashes = [((xs_main[i] + 0.1, zs[j] + 0.1), (xs_main[i + 1] - 0.1, zs[j + 1] - 0.1)) for i in range(len(xs_main) - 1) for j in range(len(zs) - 1)]
+        for (lo, hi) in sashes:          # one cross per sash (per pane read as a lattice)
             pa0, pz0 = lo; pa1, pz1 = hi
             ca, cz = (pa0 + pa1) / 2, (pz0 + pz1) / 2
             L = math.hypot(pa1 - pa0, pz1 - pz0) - 0.25
@@ -978,7 +979,7 @@ def window(op):
                 c_, s_ = math.cos(ang), math.sin(ang)
                 pts = [(-L / 2, -0.1), (L / 2, -0.1), (L / 2, 0.1), (-L / 2, 0.1)]
                 q2 = [(ca + x * c_ - y * s_, cz + x * s_ + y * c_) for x, y in pts]
-                ty0, ty1 = tm + si_ * 0.07, tm + si_ * 0.09
+                ty0, ty1 = tm + si_ * 0.015, tm + si_ * 0.05          # laid on the pane: overlaps the glass solidly
                 lo_t, hi_t = min(ty0, ty1), max(ty0, ty1)
                 if axis == "x":
                     vs = [(p[0], lo_t, p[1]) for p in q2] + [(p[0], hi_t, p[1]) for p in q2]
@@ -1028,7 +1029,7 @@ def main():
     baked = []
     plain = []
     sky = skylights()
-    log("trims", S65.trims(add_raw), "strips")
+    log("trims", S65.trims(add_raw, DOOR_OPS), "strips")
     log("deduped", dedupe_shell(), "hidden back-to-back faces;", len(BANDS), "wall bands filled")
     cs = coplanar_same_report()
     log("coplanar same-facing overlaps:", len(cs), cs[:6])
@@ -1142,14 +1143,25 @@ def main():
     dress, dlog = D65.place_all(P, masters, S65.SEGS, LAY, wins, frames_hang)
     fz = lambda rm: 0.0 if rm["storey"] == "G" else 14.0
     cz = lambda rm: 26.0 if (rm["storey"] == "U" or rm["id"] == "FY") else 13.0
-    wq = S65.wear(rooms, room_rects, fz, cz, lambda x, y, z, r: not P.floor_free(x, y, z - 0.12, r))
+    reserve = []
+    for d in LAY["doors"]:
+        if d["id"] in ("Door_Front", "Door_Back"):
+            ca, cb = d["opening"]; line = -30.0 if d["id"] == "Door_Front" else 30.0
+            reserve.append((Vector(((ca + cb) / 2, line + (2.0 if line < 0 else -2.0), 0.13)), 3.2))
+    bpy.context.view_layer.update()
+    for e in dlog:          # wall decals keep clear of the drapes and their rods
+        if e["name"].startswith("Drape"):
+            ob_ = bpy.data.objects[e["name"]]
+            lo_, hi_ = bbox([ob_])
+            reserve.append(((lo_ + hi_) / 2, (hi_ - lo_).length / 2 + 0.3))
+    wq = S65.wear(rooms, room_rects, fz, cz, lambda x, y, z, r: not P.floor_free(x, y, z - 0.13, r), reserve=reserve)
     for d in LAY["doors"]:                    # sand fans on the floor inside the two outer doors
         if d["id"] in ("Door_Front", "Door_Back"):
             ca, cb = d["opening"]; line = -30.0 if d["id"] == "Door_Front" else 30.0
             cx_, sgn = (ca + cb) / 2, (1.0 if line < 0 else -1.0)
             y0_, y1_ = line + sgn * 0.0, line + sgn * 4.0
-            q = [Vector((cx_ - 2.5, min(y0_, y1_), 0.12)), Vector((cx_ + 2.5, min(y0_, y1_), 0.12)),
-                 Vector((cx_ + 2.5, max(y0_, y1_), 0.12)), Vector((cx_ - 2.5, max(y0_, y1_), 0.12))]
+            q = [Vector((cx_ - 2.5, min(y0_, y1_), 0.13)), Vector((cx_ + 2.5, min(y0_, y1_), 0.13)),
+                 Vector((cx_ + 2.5, max(y0_, y1_), 0.13)), Vector((cx_ - 2.5, max(y0_, y1_), 0.13))]
             uvc = [(0, 0), (1, 0), (1, 1), (0, 1)] if sgn > 0 else [(1, 1), (0, 1), (0, 0), (1, 0)]
             wq["G"].append((q, "sand_fan", uvc))
     wear_obs = [D65.wear_mesh(f"Wear_{st}", qs, hcoll, os.path.join(TEX, "decals65", "wear_atlas.png")) for st, qs in wq.items() if qs]
