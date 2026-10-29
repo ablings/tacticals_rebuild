@@ -681,3 +681,25 @@ himself; we never publish.
 - Live checks for Edward: a Matchmaking or Ranked 1v1 shows House in the vote with its picture; in the house: spawns in the living room
   and the kitchen facing into the room, front/back doors locked, shooting a window breaks the glass but nobody can climb out; a 1v1 pad
   duel in the lobby can vote House.
+
+## Live port 48 (2026-10-28 20:40-20:56 Shadow PC time, House map builder; Edward: "GO FOR IT", then "publish") - House smoke alarms: Matchmaking + Ranked + LOBBY
+- What: the two shootable ceiling smoke alarms on House (notes/smoke_alarm.md, installer round 3; systems grader round 2 FIX 8.7, 0
+  blocking / 0 major, round-3 minors fixed). On top of live port 47. Tutorial unchanged. Nothing else changed.
+- match_place_ref.rbxl (cee3123): fix/smoke_alarm.lua, hash 90fedd14 -> 82903312, tests 47/47.
+- **Matchmaking** (97339328188402): copy of the committed port-47 Matchmaking_place.rbxl + the same install (82903312, 47/47); bot match
+  on House (shot -> 7 s blare, mask near / not far, housing open, round end -> whole). Publish As > gunsy funsy > tacticals > Matchmaking >
+  Overwrite > Grant. Read back (tools/house_cloud_readback.lua): PlaceId 97339328188402, DuelMaps Warehouse,Arena,Warehouse2,House,
+  PlaceKind Matchmaking, House 629 parts (+14 = the alarms), 30 shootables (28 windows + 2 alarms), doors Front/Back Locked, EN Closed,
+  rest Open, image 115831329348823, 354 scripts (+2), 0 test marks, SmokeAlarmRound 3, 2 alarms.
+- **Ranked** (122908502889013): same path; read back the same numbers, PlaceKind Ranked.
+- **tacticals lobby** (126491009194165): Tacticals_rebuild.rbxl + fix/smoke_alarm.lua (hub, installer fix 5baa675: the lobby has the fill
+  steam, so FillMuffled is hooked instead of the old footstep line; 4c250da8 -> 5192cd63, 47/47) + fix/duel_split_map.lua ONLY = "House"
+  (visual 754 / solid 345). Pad duel on House (D2): shot, mask, reset next round. Copied to Tacticals_main_ported.rbxl + Technology
+  Future, Publish As > ... > tacticals (search "tacticals") > Overwrite > Grant. Read back: PlaceId 126491009194165, DuelMaps incl.
+  House(1v1,2v2,3v3), TestPlace command + id kept, ArenaShootables LobbySteamFillRound 1 kept, 384 scripts, 0 test marks, alarms
+  visual 2 / solid 2, round 3, DuelTestSolo nil.
+- Incident, no harm: the first File click hit a stale Studio window (Tacticals_main_ported opened before port 47, no House) and opened
+  its "Publish with version notes" dialog; cancelled with the Publish button still disabled. Rule: minimize every other Studio window
+  before Publish As, and screenshot the File menu (the window title in it) before clicking Publish As.
+- Live checks for Edward: in a House match a small white alarm sits on the hall ceiling and the landing ceiling; every half-minute or so
+  one chirps (red light blinks); shoot one: it blares ~7 s, the cover drops open, and footsteps near it go quiet; next round it's back.
