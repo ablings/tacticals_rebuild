@@ -383,7 +383,7 @@ def bar_stool():
 
 
 # --- kitchen (harvest gold enamel, chrome bar handles, grey laminate counters with a chrome edge)
-EN = "enamel_olive"
+EN = "enamel_gold"
 
 
 def counter_top(mb, x0, x1, y0, y1, z0=3.12, z1=3.4, hole=None):
