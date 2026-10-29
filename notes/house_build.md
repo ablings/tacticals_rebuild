@@ -204,3 +204,41 @@ Every one read back from the cloud window: House in DuelMaps with tile image 115
 "Live port 47"). Bot match on House in Matchmaking and a lobby pad duel on House both put the players on A (-34,-19) / B (34,19).
 Smoke alarms NOT included. Open minors kept from round 5 (landing bookcase vs MB casing 0.05; upper vanity 0.32 into the doorway width;
 foyer bench vs locked front-door casing 0.35).
+
+## 1965 test-site restyle (2026-10-28 evening, main PC map builder; Edward: "the house is too clean for a shootout")
+Work order (Lead, approved by Edward): swap in the modeler's 1965 art (art/house/v2, DONE_1965.md) at unchanged footprints,
+add the smoke alarms, publish to the admin-only TEST place only (not Matchmaking / Ranked / lobby). Waited for DONE_1965.md and
+notes/TEST_PLACE_READY.md (both at 20:59).
+- **Import 3D** (my build window, desktop control through a PID-locked helper; another session's Studio window popped up once
+  with modal dialogs: one click landed on blank space in it, nothing pressed): H_Furniture_kit / H_House / H_Exterior, preset
+  "Last Imported" (scene position, anchored, pivot to scene origin), **Creator gunsy funsy, scale 0.01** set per file;
+  K_ScaleCube = 10.000 on all three. tools/house_kit_v2_prep.lua parks v1 (ServerStorage._HouseKit_v1, _HouseImport_v1: UNDO),
+  tools/house_kit_from_import.lua builds HouseKit (87 assemblies), tools/house_kit_v2_post.lua stamps ArtVersion 1965.
+- **Installer** (tools/house_installer.lua -> fix/map_house.lua): variants by layout id (v2 variant_map), 1965 lighting from the
+  style card (clock 15.5, bright 2.8, ambient 86/80/72, outdoor 170/160/140, atmosphere 0.35 / haze 2.5 / 214,196,166 /
+  150,120,90, grade sat -0.14 tint 255,246,228, bloom 0.25); **TARGET** = "live" | "staging" | "unstage" (staging: Test place
+  only; moves the built House + HouseExterior into ServerStorage.StagingMaps.House.Workspace with the registry entry, alarms
+  kept; MapInfo.ExtraModels = HouseExterior).
+- Found and fixed on the way: wear decals drew as solid squares (Import 3D gave them a TextureID, whose alpha Roblox ignores:
+  wrapped in a SurfaceAppearance, AlphaMode Transparency); three loose props outside the inner walls (lamp floating outside the
+  MB front, chair in the DR wall, papers through the BR2 wall: moved in); power poles / wires uncoloured (PLAIN Pole / Wire);
+  WINDOW false positives (a window's own frame, the pegboard band) tagged KitWindowOk.
+- Grade r1 FIX 7.6: cream tall cabinets read as fridges + black mirror (v1 fixes had been gated off by art version: walnut tint,
+  mirror pane for both kits; GB_Cabinet had no face in the layout and defaulted to its back to the room: faces N); walk blockers
+  for loose damage props were collision outside the checked layout (half exposure 9.6 -> 10.5 %) and a standing dummy read as
+  a player: blockers removed, the dummy / knocked-over lamp / chair hidden (Transparency 1, HiddenReason); LR coffee paint and
+  CH fieldstone near-black: LR / CH downlights 4.2 at 150 deg (LR p50 54 -> 106, still 37 lights); toy dry trees hidden;
+  read-back counted the alarms as windows (fixed).
+- Grade r2 FIX 8.2: Dummy_DR_2's head in the KT pass-through in spawn B's first look: hidden; carpets blown out by the brighter
+  downlights (252,230,136): SurfaceAppearance tint (172,166,158) -> ~(215,175,90); KT skylight Neon panels (modern) -> frosted.
+- Grade r3 FIX 8.5: one major, the dining set stands on open legs inside solid cover boxes (see-through cover): modeler fix
+  ordered (closed bases at the same boxes, H_Furniture_fix65.fbx).
+- Checks each round: read-back 0 differences (293 proxies, 8 doors, 28 windows), checker PASS on the read-back (same fairness
+  numbers as the graded clean House), walk-through 0, art fit 0.020, MapAudit (Edit) 0 FAIL / 1 WARN (HOLE 8), alarms 47/47.
+  Play (build copy): vote House, doors as briefed, 15/15 escape pushes, glass breaks (tape crosses hide with their pane),
+  alarms chirp + blare, 5 rounds 5-0, 3v3 six bodies on slots, pane back next round; two players (Studio Server + 2 clients,
+  StudioTeleportData Teams A ["-1"] B ["-2"] + the temporary HOUSE2P patch, removed after: 0 left): both clients see the broken
+  pane / blare / round-2 reset.
+- Open (not this map's to fix): no per-map Sky in the match code (the place's sky zenith shows blue through the high FY window
+  looking up); match place Technology is ShadowMap (place-wide); MapAudit WALK in Play counts CanQuery-off PCOL blockers as
+  missing (kit); tape crosses on 11 panes, far mesas, carpet path scuffs, bullet-hole decals in the single wear atlas (modeler).
