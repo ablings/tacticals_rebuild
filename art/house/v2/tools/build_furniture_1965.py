@@ -298,31 +298,58 @@ def desk_chair():
 
 
 # --- dining
+def pleated_rect(hx, hy, amp=0.07, pitch=0.9, grow=0.0):
+    """plan outline of a cloth drop hanging inside x +-hx, y +-hy: soft vertical pleats pull the cloth inward by up to amp
+    (never outward, so the cover box and the art bbox stay put); grow pushes the whole outline out (a hem over the drop)"""
+    pts = []
+    for (x0, y0), (x1, y1) in (((-hx, -hy), (hx, -hy)), ((hx, -hy), (hx, hy)), ((hx, hy), (-hx, hy)), ((-hx, hy), (-hx, -hy))):
+        L = math.hypot(x1 - x0, y1 - y0)
+        n = max(2, int(round(L / (pitch / 4))))
+        ux, uy = (x1 - x0) / L, (y1 - y0) / L
+        nx, ny = uy, -ux                         # outward normal of a counter-clockwise side
+        for i in range(n):
+            t = i / n * L
+            d = amp * (0.5 - 0.5 * math.cos(2 * math.pi * t / pitch)) * min(1.0, t / 0.4, (L - t) / 0.4) - grow
+            pts.append((x0 + ux * t - nx * d, y0 + uy * t - ny * d))
+    return pts
+
+
 def dining_table():
-    """walnut table with a chrome-edged top on a skirted apron and tapered legs (2.6 top)"""
+    """walnut table under a floor-length cream linen tablecloth (fix65: the cloth closes the 2.6 table box down to 0.1, so
+    a crouching player sees cloth, not floor, where shots stop). Olive woven hem, dust and stains; brass feet in the gap."""
     mb = MB("H_DiningTable", "Dining", 2.6)
-    mb.boxr((-3.96, -1.96, 2.36), (3.96, 1.96, 2.6), "walnut65")
-    for (a, b) in (((-4.0, -2.0), (4.0, -1.96)), ((-4.0, 1.96), (4.0, 2.0)), ((-4.0, -1.97), (-3.96, 1.97)), ((3.96, -1.97), (4.0, 1.97))):
-        mb.boxr((a[0], a[1], 2.36), (b[0], b[1], 2.6), "chrome65")
-    mb.boxr((-3.6, -1.6, 1.95), (3.6, 1.6, 2.37), "walnut65")
+    C, H = "tablecloth65", "hem65"
+    mb.boxr((-4.0, -2.0, 2.5), (4.0, 2.0, 2.6), C)                           # cloth over the top (the chrome edge is under it)
+    mb.prism(pleated_rect(3.96, 1.96), "Z", 0.16, 2.54, C)                   # the drop, pleated (the hem takes it to 0.1)
+    mb.prism(pleated_rect(3.96, 1.96, grow=0.025), "Z", 0.1, 0.34, H)        # woven hem band
     for sx in (-1, 1):
         for sy in (-1, 1):
-            mb.lathe([(0, 0), (0.07, 0), (0.12, 1.96), (0, 1.96)], 8, "walnut65", M=T(sx * 3.45, sy * 1.45, 0))
-            mb.lathe([(0, 0), (0.08, 0), (0.08, 0.1), (0, 0.1)], 8, "brass", M=T(sx * 3.45, sy * 1.45, 0))
-    stain(mb, "fx_rings", (0, 0, 1), (2.6, 0.6, 2.6), 0.8, 0.8, ["walnut65"])
+            mb.lathe([(0, 0), (0.09, 0), (0.09, 0.14), (0, 0.14)], 8, "brass", M=T(sx * 3.45, sy * 1.45, 0))
+    stain(mb, "fx_rings", (0, 0, 1), (2.6, 0.6, 2.6), 0.8, 0.8, [C])
+    stain(mb, "fx_blot", (0, 0, 1), (-2.4, -0.7, 2.6), 1.3, 1.1, [C], op=0.7)
+    stain(mb, "fx_blot", (0, -1, 0), (1.2, -2.0, 1.8), 1.4, 1.6, [C], op=0.55)
+    stain(mb, "fx_tear", (0, 1, 0), (-2.2, 2.0, 0.6), 0.9, 0.8, [C, H])
+    stain(mb, "fx_burn", (1, 0, 0), (4.0, 0.5, 2.1), 0.4, 0.4, [C], op=0.8)
     return finish(mb)
 
 
 def dining_chair():
-    """vinyl-and-chrome dinette chair, mustard seat and back (back top 3.39, matching v1), chrome tube legs"""
+    """vinyl-and-chrome dinette chair with a skirted seat and a solid back down to the floor (fix65: nothing see-through
+    inside the set's 1.75 seat and 3.4 back boxes). Mustard seat and back pad, cream vinyl skirt and kick panel, chrome
+    welt, kick band, back edges and glides. Back top 3.39 and extents exactly as before"""
     mb = MB("H_DiningChair", "Dining", 3.39)
-    for sx in (-1, 1):   # side frames: front leg up from the floor, back leg running up into the back
-        mb.tube([(sx * 0.82, -0.82, 0.0), (sx * 0.82, -0.82, 1.38), (sx * 0.82, 0.78, 1.38), (sx * 0.86, 0.86, 0.0)], 0.06, "chrome65", segs=8)
-        mb.tube([(sx * 0.8, 0.78, 1.38), (sx * 0.8, 0.86, 3.25)], 0.055, "chrome65", segs=8)
-    mb.tube([(-0.82, 0.3, 0.3), (0.82, 0.3, 0.3)], 0.04, "chrome65", segs=6)
-    rbox(mb, (-0.95, -0.95, 1.36), (0.95, 0.9, 1.72), "vinyl_mustard", r=0.12)
-    rbox(mb, (-0.92, 0.72, 2.1), (0.92, 0.987, 3.39), "vinyl_mustard", r=0.14)
+    rbox(mb, (-0.95, -0.95, 1.36), (0.95, 0.9, 1.72), "vinyl_mustard", r=0.12)          # seat cushion (unchanged extents)
+    rbox(mb, (-0.92, 0.72, 2.1), (0.92, 0.987, 3.392), "vinyl_mustard", r=0.14)         # back pad (top 3.392 = v1)
+    mb.boxr((-0.93, -0.93, 1.32), (0.93, 0.88, 1.42), "chrome65")                       # chrome welt under the seat
+    mb.boxr((-0.9, -0.9, 0.12), (0.9, 0.8, 1.4), "vinyl_cream")                         # skirt, closed to the floor
+    mb.boxr((-0.91, 0.72, 0.2), (0.91, 0.97, 2.18), "vinyl_cream")                      # solid kick panel under the back pad
+    mb.boxr((-0.92, -0.92, 0.08), (0.92, 0.98, 0.26), "chrome65")                       # chrome kick band
+    for sx in (-1, 1):                                                                  # chrome edges up the back
+        mb.tube([(sx * 0.9, 0.86, 0.22), (sx * 0.9, 0.86, 2.2)], 0.05, "chrome65", segs=8)
+        for sy in (-0.82, 0.82):                                                        # glides in the 0.1 gap
+            mb.lathe([(0, 0), (0.08, 0), (0.08, 0.12), (0, 0.12)], 8, "chrome65", M=T(sx * 0.8, sy, 0))
     stain(mb, "fx_tear", (0, 0, 1), (0.3, -0.2, 1.72), 0.6, 0.5, ["vinyl_mustard"])
+    stain(mb, "fx_blot", (0, 1, 0), (-0.3, 0.97, 0.9), 0.9, 1.0, ["vinyl_cream"], op=0.6)
     return finish(mb)
 
 
@@ -906,7 +933,7 @@ def kitchen_bench():
 
 def hall_bench(name, W, style):
     """W x 2 x 3.4, seat faces -Y; boxes back y 0.65..1 to 3.4, seat 1.65. style phone = gossip / telephone bench (walnut
-    frame, olive vinyl seat, closed front); slat = slatted pine mudroom bench with boots and a bag under it"""
+    frame, olive vinyl seat, closed front); slat = slatted pine mudroom bench, closed board-and-batten front (fix65)"""
     mb = MB(name, "Storage2", 3.4)
     if style == "phone":
         mb.boxr((-W / 2, -1.0, 0.0), (W / 2, 0.95, 1.3), "walnut65")
@@ -919,17 +946,15 @@ def hall_bench(name, W, style):
         for sx in (-1, 1):
             mb.boxr((sx * (W / 2 - 0.15) - 0.15, -1.0, 0.0), (sx * (W / 2 - 0.15) + 0.15, 1.0, 1.5), "pine65")
         mb.boxr((-W / 2 + 0.3, 0.75, 0.0), (W / 2 - 0.3, 1.0, 1.5), "pine65")      # kick board at the back (closed base)
-        mb.boxr((-W / 2 + 0.3, -0.98, 0.0), (W / 2 - 0.3, -0.9, 0.35), "pine65")  # toe board at the front
+        mb.boxr((-W / 2 + 0.25, -0.95, 0.0), (W / 2 - 0.25, -0.85, 1.5), "pine65")  # front panel (fix65: closed base)
+        for x in (-W / 6, W / 6):                                                     # battens on the front panel
+            mb.boxr((x - 0.12, -0.99, 0.05), (x + 0.12, -0.9, 1.4), "pine65")
         n = 6
         for i in range(n):
             z0 = 1.7 + i * 0.28
             mb.boxr((-W / 2 + 0.1, 0.7, z0), (W / 2 - 0.1, 1.0, z0 + 0.22), "pine65")
         mb.boxr((-W / 2 + 0.1, 0.92, 1.6), (W / 2 - 0.1, 1.0, 3.4), "pine65")     # solid backer
         mb.boxr((-W / 2, 0.65, 3.25), (W / 2, 1.0, 3.4), "pine65")
-        for x in (-1.6, -0.9):     # boots under the seat
-            mb.boxr((x - 0.2, -0.6, 0.0), (x + 0.2, 0.2, 0.25), "shoe")
-            mb.boxr((x - 0.18, -0.1, 0.2), (x + 0.18, 0.25, 1.1), "shoe")
-        rbox(mb, (1.0, -0.5, 0.0), (2.0, 0.3, 0.8), "cloth_skirt", r=0.15)          # canvas bag
     return finish(mb)
 
 
@@ -1756,4 +1781,5 @@ def main():
     log("DONE", len(allobjs), "objects;", man["unique_tris"], "unique tris")
 
 
-main()
+if __name__ == "__main__":
+    main()

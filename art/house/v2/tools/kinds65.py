@@ -40,6 +40,9 @@ NEW = {
     "chenille":      dict(paint=(226, 218, 192), weave=True, rough=0.98, mottle=0.06, bump=0.5, paintable=True),
     "spread":        dict(paint=(200, 190, 160), weave=True, rough=0.95, mottle=0.06, bump=0.3, paintable=True),
     "linen_old":     dict(paint=(222, 214, 192), weave=True, rough=0.95, mottle=0.08, bump=0.3),
+    # floor-length dining tablecloth: yellowed cream linen, dust on the top and folds, grime at the hem (fix65)
+    "hem65":         dict(paint=(122, 128, 80), weave=True, rough=0.95, mottle=0.1, bump=0.3, dirt=0.55, dust=0.2),
+    "tablecloth65":  dict(paint=(218, 208, 180), weave=True, rough=0.95, mottle=0.12, bump=0.35, dirt=0.5, dust=0.35, bleach=0.12, paintable=True),
     "foam":          dict(paint=(214, 192, 126), rough=0.95, mottle=0.2, bump=0.8),
     "drape_gold":    dict(paint=(118, 120, 72), weave=True, rough=0.95, mottle=0.12, bump=0.4, bleach=0.25),
     "drape_mustard": dict(paint=(156, 118, 62), weave=True, rough=0.95, mottle=0.12, bump=0.4, bleach=0.25),

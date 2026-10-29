@@ -191,6 +191,12 @@
    "normal": "tex/H_Drapes_normal.png",
    "rough": "tex/H_Drapes_rough.png",
    "metal": "tex/H_Drapes_metal.png"
+  },
+  "Fix65": {
+   "color": "tex/H_Fix65_color.png",
+   "normal": "tex/H_Fix65_normal.png",
+   "rough": "tex/H_Fix65_rough.png",
+   "metal": "tex/H_Fix65_metal.png"
   }
  },
  "assemblies": [
@@ -505,17 +511,17 @@
    "fbx": "fbx/H_DiningSet.fbx",
    "size_studio": [
     8.0,
-    3.394,
+    3.392,
     6.674
    ],
    "bbox_min_rel_pivot_studio": [
     -4.0,
-    -0.004,
+    0.0,
     -3.337
    ],
    "bbox_max_rel_pivot_studio": [
     4.0,
-    3.39,
+    3.392,
     3.337
    ],
    "pivot_blender_in_kit": [
@@ -589,8 +595,8 @@
     {
      "object": "H_DiningSet__H_DiningTable",
      "mesh": "H_DiningTable",
-     "atlas": "Dining",
-     "tris": 328,
+     "atlas": "Fix65",
+     "tris": 964,
      "centre_studio_rel_pivot": [
       -0.0,
       1.3,
@@ -606,16 +612,16 @@
     {
      "object": "H_DiningSet__H_DiningChair",
      "mesh": "H_DiningChair",
-     "atlas": "Dining",
-     "tris": 412,
+     "atlas": "Fix65",
+     "tris": 448,
      "centre_studio_rel_pivot": [
       2.1,
-      1.693,
+      1.696,
       -2.368
      ],
      "size_studio": [
       1.9,
-      3.394,
+      3.392,
       1.937
      ],
      "rot_z_deg": 180.0
@@ -623,16 +629,16 @@
     {
      "object": "H_DiningSet__H_DiningChair.001",
      "mesh": "H_DiningChair",
-     "atlas": "Dining",
-     "tris": 412,
+     "atlas": "Fix65",
+     "tris": 448,
      "centre_studio_rel_pivot": [
       2.1,
-      1.693,
+      1.696,
       2.368
      ],
      "size_studio": [
       1.9,
-      3.394,
+      3.392,
       1.937
      ],
      "rot_z_deg": 0.0
@@ -640,16 +646,16 @@
     {
      "object": "H_DiningSet__H_DiningChair.002",
      "mesh": "H_DiningChair",
-     "atlas": "Dining",
-     "tris": 412,
+     "atlas": "Fix65",
+     "tris": 448,
      "centre_studio_rel_pivot": [
       -0.0,
-      1.693,
+      1.696,
       -2.368
      ],
      "size_studio": [
       1.9,
-      3.394,
+      3.392,
       1.937
      ],
      "rot_z_deg": 180.0
@@ -657,16 +663,16 @@
     {
      "object": "H_DiningSet__H_DiningChair.003",
      "mesh": "H_DiningChair",
-     "atlas": "Dining",
-     "tris": 412,
+     "atlas": "Fix65",
+     "tris": 448,
      "centre_studio_rel_pivot": [
       -0.0,
-      1.693,
+      1.696,
       2.368
      ],
      "size_studio": [
       1.9,
-      3.394,
+      3.392,
       1.937
      ],
      "rot_z_deg": 0.0
@@ -674,16 +680,16 @@
     {
      "object": "H_DiningSet__H_DiningChair.004",
      "mesh": "H_DiningChair",
-     "atlas": "Dining",
-     "tris": 412,
+     "atlas": "Fix65",
+     "tris": 448,
      "centre_studio_rel_pivot": [
       -2.1,
-      1.693,
+      1.696,
       -2.368
      ],
      "size_studio": [
       1.9,
-      3.394,
+      3.392,
       1.937
      ],
      "rot_z_deg": 180.0
@@ -691,16 +697,16 @@
     {
      "object": "H_DiningSet__H_DiningChair.005",
      "mesh": "H_DiningChair",
-     "atlas": "Dining",
-     "tris": 412,
+     "atlas": "Fix65",
+     "tris": 448,
      "centre_studio_rel_pivot": [
       -2.1,
-      1.693,
+      1.696,
       2.368
      ],
      "size_studio": [
       1.9,
-      3.394,
+      3.392,
       1.937
      ],
      "rot_z_deg": 0.0
@@ -708,7 +714,7 @@
     {
      "object": "H_DiningSet__H_TableSetting",
      "mesh": "H_TableSetting",
-     "atlas": "Dining",
+     "atlas": "Fix65",
      "tris": 1868,
      "centre_studio_rel_pivot": [
       0.19,
@@ -723,14 +729,15 @@
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 4668,
+   "tris": 5520,
    "textures": [
-    "tex/H_Dining_color.png",
-    "tex/H_Dining_metal.png",
-    "tex/H_Dining_normal.png",
-    "tex/H_Dining_rough.png"
+    "tex/H_Fix65_color.png",
+    "tex/H_Fix65_metal.png",
+    "tex/H_Fix65_normal.png",
+    "tex/H_Fix65_rough.png"
    ],
-   "art_outside_box": 0.004
+   "art_outside_box": 0.0,
+   "fix65": "rebuilt 2026-10-28: closed base (tablecloth / skirted chairs / closed bench front); in fbx/H_Furniture_fix65.fbx"
   },
   {
    "assembly": "H_DiningTable",
@@ -778,8 +785,8 @@
     {
      "object": "H_DiningTable",
      "mesh": "H_DiningTable",
-     "atlas": "Dining",
-     "tris": 328,
+     "atlas": "Fix65",
+     "tris": 964,
      "centre_studio_rel_pivot": [
       -0.0,
       1.3,
@@ -793,14 +800,15 @@
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 328,
+   "tris": 964,
    "textures": [
-    "tex/H_Dining_color.png",
-    "tex/H_Dining_metal.png",
-    "tex/H_Dining_normal.png",
-    "tex/H_Dining_rough.png"
+    "tex/H_Fix65_color.png",
+    "tex/H_Fix65_metal.png",
+    "tex/H_Fix65_normal.png",
+    "tex/H_Fix65_rough.png"
    ],
-   "art_outside_box": 0.0
+   "art_outside_box": 0.0,
+   "fix65": "rebuilt 2026-10-28: closed base (tablecloth / skirted chairs / closed bench front); in fbx/H_Furniture_fix65.fbx"
   },
   {
    "assembly": "H_DiningChair",
@@ -812,17 +820,17 @@
    "fbx": "fbx/H_DiningChair.fbx",
    "size_studio": [
     1.9,
-    3.394,
+    3.392,
     1.937
    ],
    "bbox_min_rel_pivot_studio": [
     -0.95,
-    -0.004,
+    0.0,
     -0.95
    ],
    "bbox_max_rel_pivot_studio": [
     0.95,
-    3.39,
+    3.392,
     0.987
    ],
    "pivot_blender_in_kit": [
@@ -835,28 +843,29 @@
     {
      "object": "H_DiningChair",
      "mesh": "H_DiningChair",
-     "atlas": "Dining",
-     "tris": 412,
+     "atlas": "Fix65",
+     "tris": 448,
      "centre_studio_rel_pivot": [
       -0.0,
-      1.693,
+      1.696,
       0.019
      ],
      "size_studio": [
       1.9,
-      3.394,
+      3.392,
       1.937
      ],
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 412,
+   "tris": 448,
    "textures": [
-    "tex/H_Dining_color.png",
-    "tex/H_Dining_metal.png",
-    "tex/H_Dining_normal.png",
-    "tex/H_Dining_rough.png"
-   ]
+    "tex/H_Fix65_color.png",
+    "tex/H_Fix65_metal.png",
+    "tex/H_Fix65_normal.png",
+    "tex/H_Fix65_rough.png"
+   ],
+   "fix65": "rebuilt 2026-10-28: closed base (tablecloth / skirted chairs / closed bench front); in fbx/H_Furniture_fix65.fbx"
   },
   {
    "assembly": "H_Bed_Double",
@@ -2447,8 +2456,8 @@
     {
      "object": "H_HallBench_8",
      "mesh": "H_HallBench_8",
-     "atlas": "Storage2",
-     "tris": 312,
+     "atlas": "Fix65",
+     "tris": 180,
      "centre_studio_rel_pivot": [
       -0.0,
       1.7,
@@ -2462,14 +2471,15 @@
      "rot_z_deg": 0.0
     }
    ],
-   "tris": 312,
+   "tris": 180,
    "textures": [
-    "tex/H_Storage2_color.png",
-    "tex/H_Storage2_metal.png",
-    "tex/H_Storage2_normal.png",
-    "tex/H_Storage2_rough.png"
+    "tex/H_Fix65_color.png",
+    "tex/H_Fix65_metal.png",
+    "tex/H_Fix65_normal.png",
+    "tex/H_Fix65_rough.png"
    ],
-   "art_outside_box": 0.0
+   "art_outside_box": 0.0,
+   "fix65": "rebuilt 2026-10-28: closed base (tablecloth / skirted chairs / closed bench front); in fbx/H_Furniture_fix65.fbx"
   },
   {
    "assembly": "H_Planter",
@@ -7925,5 +7935,16 @@
    ]
   }
  ],
- "unique_tris": 60154
+ "unique_tris": 60694,
+ "fix65": {
+  "fbx": "fbx/H_Furniture_fix65.fbx",
+  "assemblies": [
+   "H_DiningSet",
+   "H_DiningTable",
+   "H_DiningChair",
+   "H_HallBench_8"
+  ],
+  "atlas": "Fix65",
+  "note": "replaces these assemblies one-for-one (same object names, pivots and boxes); import with the H_Fix65 atlas"
+ }
 }
