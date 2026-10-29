@@ -22,6 +22,13 @@ if saved then
 		if obj then obj[key] = v; n += 1 end
 	end
 end
-if saved then saved:Destroy() end -- (grade r2: a parked-values Configuration must not ship in a saved place)
+if saved then saved:Destroy() end
+-- the capture env also hides the BrokenGlass looks (attribute _CapHidden = their own Transparency): put them back
+-- (grade r3 blocking: a save after captures shipped all 28 at Transparency 1, so a shot-out window showed an empty frame)
+local nGlass = 0
+for _, d in workspace:GetDescendants() do
+	local t = d:GetAttribute("_CapHidden")
+	if t ~= nil then d.Transparency = t; d:SetAttribute("_CapHidden", nil); nGlass += 1 end
+end -- (grade r2: a parked-values Configuration must not ship in a saved place)
 local skies = {} for _, c in L:GetChildren() do if c:IsA("Sky") then table.insert(skies, c.Name) end end
-return ("restored %d lighting values; skies %s; farfield in store %s"):format(n, table.concat(skies, ","), tostring(SS.MapBackdrops:FindFirstChild("HouseFarField") ~= nil))
+return ("restored %d lighting values, %d capture-hidden looks; skies %s; farfield in store %s"):format(n, nGlass, table.concat(skies, ","), tostring(SS.MapBackdrops:FindFirstChild("HouseFarField") ~= nil))

@@ -5,6 +5,7 @@
 -- Baseplate, dev rigs) or a miss (sky below +0.5 deg) is a leak. Grader r1 lesson: report first hits by owner, not only misses.
 -- WINDOWS is filled by the runner: { name, ex, ey, ez, ox, oz } in world coordinates
 local WINDOWS = {} --@WINDOWS
+local AZR, AZS, ELS = 50, 2, 1 --@STEP (the runner may set 70, 0.5, 0.5: a 2-degree grid missed a 1-2 degree gap, grade r3)
 local OWN = { House = true, HouseExterior = true, HouseFarField = true }
 local changed = {}
 local function prep(root)
@@ -29,8 +30,8 @@ local ok, err = pcall(function()
 	for _, w in WINDOWS do
 		local name, ex, ey, ez, ox, oz = w[1], w[2], w[3], w[4], w[5], w[6]
 		local base = math.atan2(ox, -oz)
-		for azd = -50, 50, 2 do
-			for eld = -4, 6, 1 do
+		for azd = -AZR, AZR, AZS do
+			for eld = -4, 8, ELS do
 				local az, el = base + math.rad(azd), math.rad(eld)
 				local dir = Vector3.new(math.sin(az) * math.cos(el), math.sin(el), -math.cos(az) * math.cos(el))
 				local o = Vector3.new(ex, ey, ez)
@@ -49,7 +50,7 @@ local ok, err = pcall(function()
 					leaks += 1
 					byOwner[owner] = (byOwner[owner] or 0) + 1
 					local k = owner .. "@" .. name
-					if not examples[k] then examples[k] = ("%s az%+d el%+d d%.0f"):format(name, azd, eld, r and r.Distance or -1) end
+					if not examples[k] then examples[k] = ("%s az%+.1f el%+.1f d%.0f"):format(name, azd, eld, r and r.Distance or -1) end
 				end
 			end
 		end

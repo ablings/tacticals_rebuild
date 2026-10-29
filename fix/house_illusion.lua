@@ -300,7 +300,7 @@ local MID = {
 	-- Warehouse / Warehouse 2 (plan ~ 480..660, 0..-520; Warehouse2Exterior is 62 tall)
 	{ "X_Quonset", 10, -320, "E" }, { "X_Quonset", 91.3, -322, "E" }, { "X_TownHouse_B_White", 300, -120, "W" }, -- (r3: 9-stud gap between the hangars: now butted; a big hangar between the near butte's two rock masses)
 	{ "X_Mesa1_03", 440, -120, "E", Vector3.new(330, 100, 130), "X_Far" }, { "X_Mesa1_08", 440, -400, "E", Vector3.new(320, 80, 140), "X_Far" },
-	{ "X_Quonset", 372, -145, "N", Vector3.new(66, 40, 124), nil, "fills a butte gap" },
+	{ "X_Quonset", 372, -145, "N", Vector3.new(68, 46, 124), nil, "fills a butte gap" },
 	{ "X_Mesa1_11", 470, -78, "E", Vector3.new(70, 22, 55), "X_Far", "low rock at the near butte's foot (r3: a shed showed past it from the glass)" }, -- a big aircraft hangar in the gap between the near butte's two rock masses
 	-- pole lines running out to the horizon (the piece's 8 poles lie along its local X)
 	{ "X_PoleLine", 425, 130, "N" }, { "X_PoleLine", -485, -76, "N" }, { "X_PoleLine", 30, 385, "E" }, { "X_PoleLine", -60, -405, "E" },

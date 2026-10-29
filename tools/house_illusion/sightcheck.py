@@ -20,5 +20,10 @@ for o in L["openings"]:
         # world: x = OX + plan x, z = OZ - plan y; outward plan (ox, oy) -> world (ox, -oy)
         rows.append('{"%s_%s", %.2f, %.2f, %.2f, %d, %d}' % (o["id"], tag, OX + ex, OY + fl + h, OZ - ey, ox, -oy))
 src = open(os.path.join(HERE, "sightcheck.lua"), encoding="utf-8").read()
-src = src.replace("local WINDOWS = {} --@WINDOWS", "local WINDOWS = {" + ",\n".join(rows) + "}")
-print(house_mcp.lua(src, sys.argv[1] if len(sys.argv) > 1 else "Edit"))
+if "--fine" in sys.argv:
+    src = src.replace("local AZR, AZS, ELS = 50, 2, 1 --@STEP", "local AZR, AZS, ELS = 70, 0.5, 0.5 --@STEP")
+dm = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith("--") else "Edit"
+# one call per window pair on the fine grid (all 40 eyes in one call drops the Studio connection)
+step = 2 if "--fine" in sys.argv else len(rows)
+for i in range(0, len(rows), step):
+    print(house_mcp.lua(src.replace("local WINDOWS = {} --@WINDOWS", "local WINDOWS = {" + ",\n".join(rows[i:i + step]) + "}"), dm))
