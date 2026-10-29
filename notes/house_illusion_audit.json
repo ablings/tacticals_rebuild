@@ -1,0 +1,53 @@
+{
+ "house": {
+  "stats": {
+   "lights": 37,
+   "openSkyShare": 0,
+   "neon": 0,
+   "indoor": true,
+   "walkCells": 288,
+   "meshparts": 398,
+   "parts": 754
+  },
+  "fails": 0,
+  "opts": "map attribute Indoor = true",
+  "findings": [
+   {
+    "message": "8 floor-edge cells with a drop > 12 studs or no floor (check them; tag intended drops)",
+    "level": "WARN",
+    "where": "House",
+    "code": "HOLE"
+   }
+  ],
+  "warns": 1
+ },
+ "exterior": {
+  "stats": {
+   "lights": 0,
+   "openSkyShare": 0,
+   "neon": 0,
+   "indoor": false,
+   "walkCells": 0,
+   "meshparts": 111,
+   "parts": 111
+  },
+  "fails": 0,
+  "opts": "exterior attribute Indoor = false",
+  "findings": [],
+  "warns": 0
+ },
+ "farfield": {
+  "fails": 0,
+  "stats": {
+   "lights": 0,
+   "openSkyShare": 0,
+   "neon": 0,
+   "indoor": false,
+   "walkCells": 0,
+   "meshparts": 123,
+   "parts": 123
+  },
+  "findings": [],
+  "warns": 0
+ }
+}

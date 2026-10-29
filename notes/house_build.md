@@ -271,3 +271,23 @@ publish to the Test place only. Brief `briefs/map-house-illusion.md`, kit `brief
 - Found on the way: Creator Hub's upload result lists DECAL ids (a Sky needs the IMAGE id, else Roblox's default blue);
   a GPU "device removed" crash took down every Studio on the PC (everything re-ran from scripts); a crash-recovery prompt can
   render blank and block the window (kill + reopen + Ignore).
+- **Illusion grade** (fresh roblox-map-grader each round, xhigh, explicit illusion rubric; 0-10):
+
+  | Rubric item | r1 | r2 | r3 | r4 |
+  |---|---|---|---|---|
+  | 1 No void / edge at any angle | 5.5 | 9.0 | 9.0 | 9.2 |
+  | 2 Nothing floats | 8.5 | 9.0 | 9.0 | 9.0 |
+  | 3 Depth near / mid / far | 8.0 | 8.5 | 8.8 | 8.9 |
+  | 4 Believable horizon | 5.5 | 8.0 | 8.5 | 8.5 |
+  | 5 Sky matches ground | 8.0 | 8.0 | 8.5 | 8.5 |
+  | 6 No repeated cards / silhouettes | 7.5 | 8.0 | 8.5 | 8.5 |
+  | 7 Holds at graphics quality 1 | 5.5 | 6.5 | 8.6 | 8.6 |
+  | 8 Matches the Test Site House card | 8.0 | 8.5 | 9.0 | 9.0 |
+  | **Verdict / overall** | FIX 7.1 | FIX 8.2 | FIX 8.4 | **PASS 8.8** |
+
+  r1: other maps (Arena, Warehouse, Warehouse 2) and the place Baseplate line in view, landmarks lost at q1, horizon blue.
+  r2: landmarks still culled at q1 (Precise doesn't help), horizon -13 / +15. r3 (blocking): the capture env had hidden the 28
+  BrokenGlass looks and the save shipped them invisible (restore fixed, verified in the saved file). r4 PASS. Open minors: sky band
+  10-17 darker than the ground at the mountain foot in BR3_W; two similar far spires; one far-tier ridge step (modeler mesh); at q1
+  the east horizon is a haze band (buttes culled). Sheets: `notes/house_windows_sheet.jpg` (before / after q21 / after q1),
+  `captures/house/illusion/r4_q21_all.jpg`, `r4_q01_all.jpg`; grader sets `captures/house/illusion/grade_r1..r4/`.

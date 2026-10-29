@@ -730,3 +730,31 @@ himself; we never publish.
   MapInfo clock 15.5; HouseKit 832; image set; GlassController present; StudioTeleportData nil; 359 scripts, 0 test marks.
 - How Edward plays it: in the tacticals lobby type `;testplace` (admins), then in the Test place `;testmatch House 1v1 bots`
   (or 2v2 / 3v3, `admins` for other admins). Promote later with notes/test_place.md "Promote a map to the live places".
+
+## Test port 50 (2026-10-29 08:17-08:25, main PC, House map builder (illusion pass); work order: Lead's plan approved by Edward, "publish it to the admin-only TEST place only") - House: the world outside the windows: TEST PLACE ONLY
+- What: House's exterior made a complete world from every window (illusion grade r4 **PASS 8.8**, notes/house_build.md
+  "Illusion pass"): fix/map_sky.lua [MAPSKY] (per-map Sky / Atmosphere / backdrop models / look-only Hide in RoundManager's
+  applyMapEnv, restored after the match) + fix/house_illusion.lua [ILLUSION] (porch, stoop, driveway, gravel strip; HouseFarField
+  = 54 mid pieces + ground ring to r 4,000 + three mountain tiers, only in Workspace while House is loaded; own sky house_sky4;
+  Atmosphere 0.25 / 0.3 / haze 0.7 / (222,198,158); Hide Baseplate, R15, AnimRig; masts and water tower moved in to ~245 studs).
+  Kit meshes art/house/illusion (Import 3D, gunsy funsy) live in ServerStorage.HouseIllusionKit (not script-rebuildable: carry it).
+- **On top of** the systems session's Test publish of 04:28 (MOVE1029; not in this manifest): its installers were re-run on this
+  copy first: fix/move_rework_1029.lua (round 4), fix/noclimb_1029.lua, art/anim/pullup_lean/install_sources.lua,
+  fix/house_wallcover.lua; fix/move_rework_1029_tests.lua 92 passed, 0 failed.
+- **Not touched:** match_place_ref, Matchmaking, Ranked, Tutorial, the tacticals lobby (the lobby part of fix/map_sky.lua is NOT
+  ported: lobby pad duels on House keep the lobby sky until House is promoted).
+- Pre-checks: git pull (in sync), no repo-root .lock newer than 30 min, no session mid-port (MOVE1029 ended; its Test window and
+  the House builder's read-back window belonged to processes killed by the 05:00 GPU crash), out/test_place/pre.lua: PlaceKind
+  Test, DuelMaps Warehouse/Arena/Warehouse2/House, StagingMaps 0, StudioTeleportData nil, no hooks, compile all ok (360).
+  BrokenGlass 22 x 0.82 / 6 x 0.30 (= port 49), 0 capture marks, no MapSky / _HouseEnvSaved / _PlaceSkyPark saved.
+- File: out/house_illusion/Test_place_illusion.rbxl (saved 07:39) copied over Test_place.rbxl (old one kept as
+  out/house_illusion/Test_place_before_port50.rbxl). Publish As > gunsy funsy > tacticals > **Test** > Overwrite > Grant
+  Permissions and Publish ("tacticals is ready to test"); console: the old "permission to use asset 16049574146" line only.
+- Read back from a fresh cloud window (tools/house_cloud_readback.lua + out/house_illusion/readback_ill.lua): PlaceId
+  99722095417844, PlaceVersion 8, PlaceKind Test; DuelMaps Warehouse, Arena, Warehouse2, House; House 754 parts / 398 MeshParts /
+  293 proxies / 30 shootables / 8 doors as briefed (Front/Back Locked, EN Closed, rest Open); HouseExterior 141 (+Illusion_Near 7);
+  HouseKit 832; HouseIllusionKit 3; RoundManager applyMapSky 1 definition + call + Hide; MapInfo Sky house_sky4, Atmosphere as
+  above, Backdrop + Hide, WallCover line kept; HouseFarField 130 parts, 0 flag errors, in MapBackdrops (not Workspace);
+  Mast_South at plan (36, -240); CoverConfig MoveRework1029Round 4, WallProxy 67, NoClimb 283; 360 scripts, 0 test marks.
+- How Edward sees it: in the tacticals lobby `;testplace` (admins), then `;testmatch House 1v1 bots`; look out of any window,
+  also with graphics quality turned down to 1.

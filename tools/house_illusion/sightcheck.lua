@@ -23,7 +23,7 @@ params.FilterType = Enum.RaycastFilterType.Exclude
 local skip = {}
 for _, p in game:GetService("Players"):GetPlayers() do if p.Character then table.insert(skip, p.Character) end end
 -- invisible parts (e.g. a look hidden while the map is loaded: MapInfo.Hide) are not seen, so rays pass them
-for _, d in workspace:GetDescendants() do if d:IsA("BasePart") and d.Transparency >= 0.95 and d.CanQuery then table.insert(skip, d) end end
+for _, d in workspace:GetDescendants() do if d:IsA("BasePart") and d.Transparency >= 0.95 then table.insert(skip, d) end end -- (CanCollide parts are hit whatever CanQuery says, grade r4)
 params.FilterDescendantsInstances = skip
 local leaks, total, byOwner, examples = 0, 0, {}, {}
 local ok, err = pcall(function()
