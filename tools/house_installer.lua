@@ -349,6 +349,37 @@ if KIT and KIT:FindFirstChild("H_House") then
 else
 	table.insert(skipped, "shell: no " .. KIT_NAME .. ".H_House")
 end
+-- (1965 kit) loose dressing the modeler placed partly outside the inner walls (found by a scan of every placed piece's box
+-- against the shell, 2026-10-28): moved inside by a plan delta (dx, dy); and the pieces a body would walk through get an
+-- invisible walk blocker (House.ArtBlockers, tag WindowBarrier = bodies only; bullets, the camera and the AI's sight pass;
+-- not part of the checked layout: they sit beside furniture, never in a lane)
+local SHIFT65 = { LampDown_MB = { 0, 7.8 }, ChairDown_DR = { -2.2, -8.1 }, Papers_BR2 = { 0, 2.8 } }
+local BLOCK65 = { "Dummy_KT_Counter", "LampDown_MB", "ChairDown_DR" }
+local AB = folder("ArtBlockers", map)
+if shell then
+	for nm, dxy in SHIFT65 do
+		local a = shell:FindFirstChild(nm, true)
+		if a then a:PivotTo(a:GetPivot() + Vector3.new(dxy[1], 0, -dxy[2])) end
+	end
+	for _, nm in BLOCK65 do
+		local a = shell:FindFirstChild(nm, true)
+		if a and a:IsA("BasePart") then
+			local cf, sz = a.CFrame, a.Size
+			local mn, mx
+			for _, sx in { -1, 1 } do for _, sy in { -1, 1 } do for _, sz2 in { -1, 1 } do
+				local w = (cf * CFrame.new(sx * sz.X / 2, sy * sz.Y / 2, sz2 * sz.Z / 2)).Position
+				mn = mn and mn:Min(w) or w; mx = mx and mx:Max(w) or w
+			end end end
+			local top = math.min(mx.Y, mn.Y + 5)
+			local b = Instance.new("Part"); b.Name = "ABLK_" .. nm
+			b.Size = Vector3.new(mx.X - mn.X, top - mn.Y, mx.Z - mn.Z); b.CFrame = CFrame.new((mn.X + mx.X) / 2, (mn.Y + top) / 2, (mn.Z + mx.Z) / 2)
+			invisible(b); b.CanCollide, b.CanTouch, b.CanQuery = true, false, false
+			b:SetAttribute("NotCover", true); b:SetAttribute("Role", "artblocker")
+			CS:AddTag(b, "WindowBarrier")
+			b.Parent = AB
+		end
+	end
+end
 local function takeFromShell(name)
 	if not shell then return nil end
 	return shell:FindFirstChild(name, true)
@@ -547,6 +578,11 @@ for _, d in VIS:GetDescendants() do
 	if d:IsA("BasePart") and (d.Name:match("^Wear") or d.Name:match("Cobweb") or d.Name:match("Tape") or (d.Parent and d.Parent.Name:match("^Wear"))) then
 		d.CastShadow = false; nWear += 1
 		local sa = d:FindFirstChildOfClass("SurfaceAppearance")
+		-- Import 3D gives the wear meshes a plain TextureID, whose alpha Roblox ignores (every decal drew as a solid square):
+		-- the same image as a SurfaceAppearance ColorMap with AlphaMode Transparency cuts it out
+		if not sa and d:IsA("MeshPart") and d.TextureID ~= "" then
+			sa = Instance.new("SurfaceAppearance"); pcall(function() sa.ColorMap = d.TextureID end); sa.Parent = d
+		end
 		if sa then pcall(function() sa.AlphaMode = Enum.AlphaMode.Transparency end) end
 	end
 end
@@ -554,6 +590,13 @@ for _, d in SH:GetDescendants() do -- the tape crosses travel with their panes (
 	if d:IsA("BasePart") and d.Name:match("Tape") then d.CastShadow = false; nWear += 1 end
 end
 map:SetAttribute("ArtVersion", KIT1965 and "1965" or "v1")
+-- MapAudit WINDOW: a window's own frame / sash, and a wall band whose surface runs past the opening's reveal, are not art over
+-- the glass (checked on the window captures): tagged KitWindowOk with the reason
+for _, d in VIS:GetDescendants() do
+	if d:IsA("BasePart") and (d.Name:match("^Win_.+_Frame$") or d.Name:match("^Shell_._Pegboard$")) then
+		CS:AddTag(d, "KitWindowOk"); d:SetAttribute("WindowOkReason", "the window's own frame / the wall band beside the opening")
+	end
+end
 
 -- ====================================================================================================== map attributes, parent
 local floor = CP:FindFirstChild("COLP_Floor_G")

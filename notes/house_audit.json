@@ -7,8 +7,8 @@
     "neon": 2,
     "indoor": true,
     "walkCells": 288,
-    "meshparts": 273,
-    "parts": 615
+    "meshparts": 398,
+    "parts": 743
    },
    "fails": 0,
    "opts": "map attribute Indoor = true",
@@ -29,8 +29,8 @@
     "neon": 0,
     "indoor": false,
     "walkCells": 0,
-    "meshparts": 129,
-    "parts": 129
+    "meshparts": 104,
+    "parts": 104
    },
    "fails": 0,
    "opts": "exterior attribute Indoor = false",
