@@ -1,0 +1,25 @@
+House layout check (built_layout.json): PASS  (5s)
+nodes 26291, samples 1190, reached 18936 cells, outside shell 0
+spawn-to-spawn visible pairs: 0; landing (403 cells) sees a slot: 0
+[1v1] contact when A holds 1.44 s / when B holds 1.42 s (1.4 %); first contact A 1.42 s / B 1.24 s (12.7 %), mean of 10 A 1.32 / B 1.36 (-3.5 %) at A[np.float64(-18.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(33.2), np.float64(-2.8), np.float64(0.0)]
+      approach_exposure: A 15.2 / B 16.1 (-5.6 %) ok
+      half_exposure: A 14.4 / B 13.1 (9.6 %) ok
+      spawn_sight: A 12.3 / B 12.7 (-3.3 %) ok
+      spawn_exposure: A 12.3 / B 12.7 (-3.3 %) ok
+      enemy reaches a cell that sees the spawn after: A's spawn 2.58 s, B's 3.08 s; spawn-to-spawn sprint 4.42 s
+[2v2] contact when A holds 1.44 s / when B holds 1.42 s (1.4 %); first contact A 1.42 s / B 1.24 s (12.7 %), mean of 10 A 1.32 / B 1.36 (-3.5 %) at A[np.float64(-18.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(33.2), np.float64(-2.8), np.float64(0.0)]
+      approach_exposure: A 15.2 / B 16.1 (-5.6 %) ok
+      half_exposure: A 14.4 / B 13.1 (9.6 %) ok
+      spawn_sight: A 13.7 / B 14.4 (-4.7 %) ok
+      spawn_exposure: A 13.7 / B 14.4 (-4.7 %) ok
+      enemy reaches a cell that sees the spawn after: A's spawn 2.06 s, B's 2.31 s; spawn-to-spawn sprint 4.42 s
+[3v3] contact when A holds 1.36 s / when B holds 1.34 s (0.9 %); first contact A 1.34 s / B 1.25 s (6.7 %), mean of 10 A 1.27 / B 1.31 (-3.3 %) at A[np.float64(-18.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(27.2), np.float64(-4.8), np.float64(0.0)]
+      approach_exposure: A 15.2 / B 16.1 (-6.0 %) ok
+      half_exposure: A 14.4 / B 13.1 (9.1 %) ok
+      spawn_sight: A 13.7 / B 14.9 (-7.9 %) ok
+      spawn_exposure: A 13.7 / B 14.9 (-7.9 %) ok
+      enemy reaches a cell that sees the spawn after: A's spawn 1.97 s, B's 2.22 s; spawn-to-spawn sprint 4.34 s
+reach: FY 952/952, CH 423/423, BH 1066/1066, LR 2710/2710, MR 794/794, GB 640/640, DR 1264/1264, KT 2858/2858, LD 403/403, UH 408/408, MB 1940/1940, EN 0/0, BR2 2699/2699, BR3 2123/2123, UB 284/284
+room exposure: {'FY': 19.0, 'CH': 16.6, 'BH': 14.8, 'LR': 15.4, 'MR': 16.6, 'GB': 4.5, 'DR': 17.6, 'KT': 15.9, 'LD': 13.8, 'UH': 6.4, 'MB': 8.1, 'BR2': 12.4, 'BR3': 11.3, 'UB': 2.7}
+outside: []
+exposure {'mean': 13.4, 'p10': 7.5, 'p90': 18.8, 'max': 25.4}, sight {'max': 79.2, 'p90': 36.0, 'median': 17.2}, cover distance {'max': 10.9, 'mean': 3.34, 'worst': [-22.8, 17.2, 14.0]}

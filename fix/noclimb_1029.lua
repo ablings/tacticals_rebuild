@@ -102,8 +102,11 @@ if not IS_HUB then
 			if m then tag(m, entry.Name .. ":" .. extra) end
 		end
 	end
-	local hb = game:GetService("ServerScriptService"):FindFirstChild("HouseBounds")
-	local _ = hb
+	-- a place whose registry is stripped (the Tutorial keeps the Warehouse in Workspace without a DuelMaps entry)
+	for id in RULES do
+		local model = workspace:FindFirstChild(id)
+		if model and not (maps and maps:FindFirstChild(id)) then applyMap(model, id, id .. " (no registry)") end
+	end
 	-- the Test place's staging maps
 	local staging = SS:FindFirstChild("StagingMaps")
 	for _, entry in (staging and staging:GetChildren() or {}) do
