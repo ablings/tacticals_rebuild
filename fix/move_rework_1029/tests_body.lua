@@ -23,7 +23,7 @@ chk("no SilentVaultCoverReach", cfg.SilentVaultCoverReach == nil)
 chk("VaultCoverReach kept", cfg.VaultCoverReach == 3)
 chk("RevaultReach kept", cfg.RevaultReach ~= nil)
 for _, k in { "PeekTurnRate", "PeekTurnSharpness", "PeekSnapSharpness", "PeekFireMaxAngle", "FireBufferTime", "FireFacingTolerance",
-	"BlindFacingTolerance", "FacingRecheck", "LeanRoll", "LeanShift", "LeanTime", "LeanCameraRoll", "LeanCameraShift", "LeanInputDot",
+	"BlindFacingTolerance", "FacingRecheck", "FacingParallaxStuds", "FaceHoldTime", "FaceReturnRate", "LeanRoll", "LeanShift", "LeanTime", "LeanCameraRoll", "LeanCameraShift", "LeanInputDot",
 	"PullUpMaxHeight", "PullUpMinHeight", "PullUpReach", "PullUpStandDepth", "PullUpTime", "PullUpTimePerStud", "VaultNoiseRange" } do
 	chk("knob " .. k, type(cfg[k]) == "number")
 end

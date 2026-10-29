@@ -74,10 +74,14 @@ function MoveRules.FacingOk(dir: Vector3, facings: { Vector3 }, tolerance: numbe
 	return best <= tolerance, best
 end
 
--- What the server allows for a shot in this cover state (character attribute CoverState)
-function MoveRules.FacingTolerance(state: string?, cfg): number
-	if state == "Blind" or state == "Move" then return knob(cfg, "BlindFacingTolerance", 115) end
-	return knob(cfg, "FireFacingTolerance", 22)
+-- What the server allows for a shot in this cover state (character attribute CoverState), `dist` studs long: the gun and the
+-- over-the-shoulder camera sit a little apart, so a shot at something close leaves at an angle to the body even when the body
+-- faces the crosshair exactly (FacingParallaxStuds, measured: an honest shot at a shelf ~7 studs away left 25 deg off)
+function MoveRules.FacingTolerance(state: string?, cfg, dist: number?): number
+	local base = knob(cfg, "FireFacingTolerance", 22)
+	if state == "Blind" or state == "Move" then base = knob(cfg, "BlindFacingTolerance", 115) end
+	local d = math.max(tonumber(dist) or 1e4, 0.5)
+	return base + math.deg(math.atan(knob(cfg, "FacingParallaxStuds", 2) / d))
 end
 
 local function wrapDeg(a: number): number

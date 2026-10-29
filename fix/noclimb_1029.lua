@@ -139,8 +139,11 @@ else
 	end
 	if training then
 		for _, d in training:GetDescendants() do
-			if d:IsA("BasePart") and d.CanCollide and (has(d.Name:lower(), "wall") or has(d.Name:lower(), "rail") or has(d.Name:lower(), "bound")
-				or has(d.Name:lower(), "ceiling") or has(d.Name:lower(), "roof") or has(d.Name:lower(), "glass") or has(d.Name:lower(), "edge")) then
+			local low = d:IsA("BasePart") and d.Name:lower() or ""
+			-- the room shell (not the low walls you practise vaulting on) and the shooting gallery's counter (the firing line)
+			if d:IsA("BasePart") and d.CanCollide and ((has(low, "wall") and not has(low, "^low")) or has(low, "rail") or has(low, "bound")
+				or has(low, "ceiling") or has(low, "roof") or has(low, "glass") or has(low, "edge")
+				or (d.Name == "Counter" and d.Parent and d.Parent.Name == "Gallery")) then
 				tag(d, "Training shell")
 			end
 		end

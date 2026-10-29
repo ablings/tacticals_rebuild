@@ -23,7 +23,7 @@
 -- round (CoverConfig attribute MoveRework1029Round) before the first write and refuses another round; UNDO reverts its own
 -- edits, the MoveRules module and the MoveAction remote it created.
 local UNDO = false --@UNDO
-local ROUND = 1
+local ROUND = 4
 local MOVERULES_SRC = [=====[-- ReplicatedStorage.Modules.Shared.MoveRules [MOVE1029] (2026-10-29, Edward's five mechanics; fix/move_rework_1029.lua)
 -- Pure rules shared by the client controllers and the server (CombatManager, HitRewind, MovementManager), so both sides
 -- use the same numbers. No state, no remotes: unit-tested by fix/move_rework_1029_tests.lua.
@@ -100,10 +100,14 @@ function MoveRules.FacingOk(dir: Vector3, facings: { Vector3 }, tolerance: numbe
 	return best <= tolerance, best
 end
 
--- What the server allows for a shot in this cover state (character attribute CoverState)
-function MoveRules.FacingTolerance(state: string?, cfg): number
-	if state == "Blind" or state == "Move" then return knob(cfg, "BlindFacingTolerance", 115) end
-	return knob(cfg, "FireFacingTolerance", 22)
+-- What the server allows for a shot in this cover state (character attribute CoverState), `dist` studs long: the gun and the
+-- over-the-shoulder camera sit a little apart, so a shot at something close leaves at an angle to the body even when the body
+-- faces the crosshair exactly (FacingParallaxStuds, measured: an honest shot at a shelf ~7 studs away left 25 deg off)
+function MoveRules.FacingTolerance(state: string?, cfg, dist: number?): number
+	local base = knob(cfg, "FireFacingTolerance", 22)
+	if state == "Blind" or state == "Move" then base = knob(cfg, "BlindFacingTolerance", 115) end
+	local d = math.max(tonumber(dist) or 1e4, 0.5)
+	return base + math.deg(math.atan(knob(cfg, "FacingParallaxStuds", 2) / d))
 end
 
 local function wrapDeg(a: number): number
@@ -194,6 +198,12 @@ local TARGETS = {
 	PullUpStandDepth = 1.4,    -- room to stand: the top must carry a square this wide around the spot
 	PullUpTime = 0.5,          -- seconds for the pull-up, plus PullUpTimePerStud per stud of rise
 	PullUpTimePerStud = 0.06,
+	-- the animator's PullUp clip (art/anim/pullup_lean/DONE.md, published under the group; source CoverPullUp carries the id):
+	-- ledges PullUpKeyedMin..PullUpMaxHeight over your floor play it and move the body along its root path (t, y over the start
+	-- floor, z forward; authored for a 4.5 top and a face 1.6 ahead, offsets blended in over the first 0.10 s); lower ones
+	-- keep the Climb clip
+	PullUpKeyedMin = 4.0,
+	PullUpRootKeys = "0.00,2.80,0.00;0.03,3.01,-0.15;0.05,3.22,-0.30;0.10,3.35,-0.60;0.14,3.60,-0.68;0.17,3.85,-0.75;0.20,4.10,-0.82;0.24,4.35,-0.90;0.27,4.78,-1.04;0.30,5.20,-1.17;0.34,5.62,-1.31;0.35,5.85,-1.39;0.37,6.05,-1.45;0.40,6.55,-1.88;0.43,7.05,-2.30;0.44,7.00,-2.36;0.50,6.70,-2.70;0.62,7.30,-2.70;0.70,7.46,-2.70",
 ]=====] },
 		{ [=====[	-- Blind fire (left click in cover without aiming)
 ]=====], [=====[	-- [MOVE1029] PEEK TURN + FIRE GATE (Edward 2026-10-29: "when I peek I can shoot instantly before I fully turn ... The turn
@@ -207,6 +217,7 @@ local TARGETS = {
 	FireFacingTolerance = 22,  -- server: a shot further than this from where the body faced during the shooter's lag window is refused
 	BlindFacingTolerance = 115, -- server: ...for blind fire and shots fired mid vault / dash / dive
 	FacingRecheck = 0.1,       -- server: seconds it waits for the newest facing before refusing a shot on facing
+	FacingParallaxStuds = 2,   -- server: the gun / camera offset: a shot d studs long gets atan(this / d) more (close shots)
 	-- [MOVE1029] LEAN: at the peek pose of a side peek (a tall cover edge, the side-peek end of low cover), the key toward the edge
 	-- you can't slide past (A at a left edge, D at a right edge; the stick toward it; the Lean button on a phone) leans you out.
 	-- Real for everyone: the server keeps it (character attribute Lean), every client draws it, the hit check rewinds it.
@@ -216,6 +227,10 @@ local TARGETS = {
 	LeanCameraRoll = 4,        -- degrees the camera rolls with it
 	LeanCameraShift = 0.6,     -- studs the camera slides out with it
 	LeanInputDot = 0.5,        -- how directly the key / stick must point at the edge
+	-- [MOVE1029] a shot's facing (character attribute FaceYaw, set by the server before the hit): other clients turn the
+	-- shooter's body to it at once, hold it this long, then hand back to the replicated body at FaceReturnRate deg/s
+	FaceHoldTime = 0.6,
+	FaceReturnRate = 720,
 
 	-- Blind fire (left click in cover without aiming)
 ]=====] },
@@ -227,6 +242,10 @@ local TARGETS = {
 ]=====] },
 	} },
 	{ path = [=====[StarterPlayer.StarterPlayerScripts.Client.Controllers.CoverController]=====], optional = false, edits = {
+		{ [=====[			animation.AnimationId = id
+]=====], [=====[			animation.AnimationId = id
+			animation.Name = "Cover" .. name -- [MOVE1029] so every client can tell a lean clip is playing (AimPoseController)
+]=====] },
 		{ [=====[local Config = require(Shared:WaitForChild("Config"):WaitForChild("CoverConfig"))
 ]=====], [=====[local Config = require(Shared:WaitForChild("Config"):WaitForChild("CoverConfig"))
 local MoveRules = require(Shared:WaitForChild("MoveRules")) -- [MOVE1029] lean / pull-up / wall-cover / peek-gate rules
@@ -377,10 +396,28 @@ local function startClimb(c, stand: Vector3): boolean
 	vault = { from = from, over = face, to = stand, facing = -c.normal, start = os.clock(), track = track, fromCover = false, part = c.part,
 		duration = duration, fast = false, climb = true }
 	return true
-]=====], [=====[	local track = playMoveTrack("PullUp") or playMoveTrack("Climb") -- [MOVE1029] the animator's PullUp once it exists
+]=====], [=====[	-- [MOVE1029] the animator's PullUp clip for a chest-to-head-high ledge, moved along its root path; lower: the Climb clip
+	local rootOffset = hum.HipHeight + root.Size.Y / 2
+	local below = castWorld(from, Vector3.new(0, -(rootOffset + 8), 0))
+	local floorY = below and below.Position.Y or (from.Y - rootOffset)
+	local h = (stand.Y - rootOffset) - floorY
+	local keys = nil
+	local track
+	if h >= (Config.PullUpKeyedMin or 4.0) and type(Config.PullUpRootKeys) == "string" then
+		track = playMoveTrack("PullUp")
+		if track then
+			keys = {}
+			for t, y, z in Config.PullUpRootKeys:gmatch("([%-%d%.]+),([%-%d%.]+),([%-%d%.]+)") do
+				table.insert(keys, { tonumber(t), tonumber(y), tonumber(z) })
+			end
+			duration = keys[#keys][1] / mobility()
+		end
+	end
+	if not track then track = playMoveTrack("Climb") end
 	if track and track.Length > 0 then track:AdjustSpeed(track.Length / duration) end
+	local faceDist = math.max(((c.point - from) * FLAT):Dot(-c.normal), 0.5)
 	vault = { from = from, over = face, to = stand, facing = -c.normal, start = os.clock(), track = track, fromCover = false, part = c.part,
-		duration = duration, fast = false, climb = true }
+		duration = duration, fast = false, climb = true, keys = keys, keyH = h, keyD = faceDist, keyFloor = floorY }
 	moveAction("PullUp", from, stand) -- [MOVE1029] the server checks it (and drops you back if it can't find that ledge)
 	return true
 ]=====] },
@@ -575,6 +612,41 @@ function controller.IsSuppressed(): boolean
 			end
 			crosshairOverride = origin and look and { origin, look.Unit } or nil
 ]=====] },
+		{ [=====[		local position = a:Lerp(b, alpha)
+		if stopAtBarrier(root, position) then return true end -- [GLASS]
+		root.CFrame = CFrame.lookAt(position, position + vault.facing)
+]=====], [=====[		local position = a:Lerp(b, alpha)
+		if vault.keys then
+			-- [MOVE1029] the PullUp clip's root path (DONE.md): y over the start floor, z forward; the ledge-height and face-distance
+			-- offsets blend in over the hop (0..0.10 s); after TopReached the body eases onto the stand spot
+			local keys, tk = vault.keys, alpha * vault.keys[#vault.keys][1]
+			local k2 = 2
+			while k2 < #keys and keys[k2][1] < tk do k2 += 1 end
+			local k1 = keys[k2 - 1]
+			local kk = keys[k2]
+			local f = math.clamp((tk - k1[1]) / math.max(kk[1] - k1[1], 1e-3), 0, 1)
+			local y, z = k1[2] + (kk[2] - k1[2]) * f, k1[3] + (kk[3] - k1[3]) * f
+			local blend = math.clamp(tk / 0.10, 0, 1)
+			y += (vault.keyH - 4.5) * blend
+			z -= (vault.keyD - 1.6) * blend
+			local flatFrom = Vector3.new(vault.from.X, 0, vault.from.Z)
+			local p = flatFrom + vault.facing * -z
+			local settle = math.clamp((tk - 0.5) / 0.2, 0, 1)
+			p = p:Lerp(Vector3.new(vault.to.X, 0, vault.to.Z), settle)
+			position = Vector3.new(p.X, vault.keyFloor + y, p.Z):Lerp(vault.to, settle)
+		end
+		if stopAtBarrier(root, position) then return true end -- [GLASS]
+		root.CFrame = CFrame.lookAt(position, position + vault.facing)
+]=====] },
+		{ [=====[	for name, track in (coverTracks or {}) do
+		local weight = weights[name] or 0
+]=====], [=====[	-- [MOVE1029] the animator's lean clips carry the lean pose (crouched versions in low cover / crouched), weighted by the lean
+	if leanNow ~= 0 then
+		weights[(leanNow > 0 and "LeanRight" or "LeanLeft") .. (low and "Crouch" or "")] = math.abs(leanNow)
+	end
+	for name, track in (coverTracks or {}) do
+		local weight = weights[name] or 0
+]=====] },
 	} },
 	{ path = [=====[StarterPlayer.StarterPlayerScripts.Client.Controllers.CameraController]=====], optional = false, edits = {
 		{ [=====[local Config = require(Shared:WaitForChild("Config"):WaitForChild("CameraConfig"))
@@ -614,14 +686,38 @@ local CoverCfg1029 = require(Shared:WaitForChild("Config"):WaitForChild("CoverCo
 -- hit check eases it (MoveRules.Ease / LeanWaist), so what you see is what the server hits.
 local MoveRules = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Shared"):WaitForChild("MoveRules"))
 local leanShown = setmetatable({}, { __mode = "k" }) -- [Model] = eased lean
+-- a lean clip already playing on this body (yours, or replicated from its owner) carries the pose: the procedural roll fades out
+local leanIds = nil
+local function leanClipWeight(character: Model): number
+	if not leanIds then
+		leanIds = {}
+		local src = ReplicatedStorage:FindFirstChild("Repository") and ReplicatedStorage.Repository:FindFirstChild("AnimationSources")
+		for _, n in { "CoverLeanLeft", "CoverLeanRight", "CoverLeanLeftCrouch", "CoverLeanRightCrouch" } do
+			local srcItem = src and src:FindFirstChild(n)
+			local id = srcItem and srcItem:GetAttribute("PublishedId")
+			if type(id) == "string" and id ~= "" then leanIds[id] = true end
+		end
+	end
+	local hum = character:FindFirstChildOfClass("Humanoid")
+	local animator = hum and hum:FindFirstChildOfClass("Animator")
+	local w = 0
+	for _, tr in (animator and animator:GetPlayingAnimationTracks() or {}) do
+		local anim = tr.Animation
+		if anim and (anim.Name:sub(1, 9) == "CoverLean" or leanIds[anim.AnimationId]) then w = math.max(w, tr.WeightCurrent) end
+	end
+	return math.clamp(w, 0, 1)
+end
 local function leanOf(player: Player, character: Model, dt: number): number
+	local v
 	if player == localPlayer then
 		local cc = shared.Get and shared.Get("CoverController")
-		return (cc and cc.GetLean) and cc.GetLean() or 0
+		v = (cc and cc.GetLean) and cc.GetLean() or 0
+	else
+		local target = tonumber(character:GetAttribute("Lean")) or 0
+		v = MoveRules.Ease(leanShown[character] or 0, target, dt, Config)
+		leanShown[character] = v
 	end
-	local target = tonumber(character:GetAttribute("Lean")) or 0
-	local v = MoveRules.Ease(leanShown[character] or 0, target, dt, Config)
-	leanShown[character] = v
+	if v ~= 0 then v *= 1 - leanClipWeight(character) end
 	return v
 end
 local function bendLean(joint: Instance?, degrees: number, lean: number)
@@ -630,11 +726,42 @@ local function bendLean(joint: Instance?, degrees: number, lean: number)
 	(obj :: any)[prop] = restOf(obj, prop) * MoveRules.LeanWaist(lean, Config) * CFrame.Angles(math.rad(degrees), 0, 0)
 end
 
+-- [MOVE1029] a shot's facing reaches everyone with the hit (FaceYaw / FaceYawAt, set by the server before the damage), while
+-- the shooter's own turn arrives later through physics replication: turn their body (the Root joint) to it at once, so on
+-- your screen nobody hits you before facing you; after FaceHoldTime it eases back to the replicated body.
+local faceShown = setmetatable({}, { __mode = "k" }) -- [Model] = degrees of turn shown
+local function faceTurn(character: Model, dt: number)
+	local lower = character:FindFirstChild("LowerTorso")
+	local root = character:FindFirstChild("HumanoidRootPart")
+	local joint = lower and lower:FindFirstChild("Root")
+	if not (root and joint) then return end
+	local at = character:GetAttribute("FaceYawAt")
+	local want = nil
+	if typeof(at) == "number" and workspace:GetServerTimeNow() - at < (Config.FaceHoldTime or 0.6) then
+		local look = root.CFrame.LookVector
+		local rootYaw = math.deg(math.atan2(-look.X, -look.Z))
+		want = ((tonumber(character:GetAttribute("FaceYaw")) or rootYaw) - rootYaw + 180) % 360 - 180
+	end
+	local cur = faceShown[character] or 0
+	if want then
+		cur = want
+	elseif cur ~= 0 then
+		local step = (Config.FaceReturnRate or 720) * dt
+		cur = cur > 0 and math.max(cur - step, 0) or math.min(cur + step, 0)
+	else
+		return
+	end
+	faceShown[character] = cur
+	local obj, prop = jointTarget(joint)
+	if obj and prop then (obj :: any)[prop] = restOf(obj, prop) * CFrame.Angles(0, math.rad(cur), 0) end
+end
+
 local function update(dt: number)
 	-- Your own pitch from the camera
 ]=====] },
 		{ [=====[			bend(upperTorso:FindFirstChild("Waist"), waist)
 ]=====], [=====[			bendLean(upperTorso:FindFirstChild("Waist"), waist, leanOf(player, character, dt)) -- [MOVE1029] the lean rolls the waist out
+			if player ~= localPlayer then faceTurn(character, dt) end -- [MOVE1029] face the shot the server just let through
 ]=====] },
 	} },
 	{ path = [=====[StarterPlayer.StarterPlayerScripts.Client.Controllers.WeaponController]=====], optional = false, edits = {
@@ -782,6 +909,11 @@ local LeanCfg = require(game:GetService("ReplicatedStorage").Modules.Shared.Conf
 ]=====], [=====[	-- [MOVE1029] a leaning victim: the upper body is where every client draws it (MoveRules.LeanPart), now and rewound
 	local tr0 = tracks[victimCharacter]
 	local nowCF = hitPart.CFrame
+	-- the server's own copy of the body may already show the lean (a lean clip replicated from its owner): count it once
+	local ut = victimCharacter:FindFirstChild("UpperTorso")
+	local posed = tr0 ~= nil and ut ~= nil and math.abs(math.deg(math.asin(math.clamp(tr0.root.CFrame:VectorToObjectSpace(ut.CFrame.UpVector).X, -1, 1))))
+		> (LeanCfg.LeanRoll or 17) * 0.5
+	if posed then tr0 = nil end
 	if tr0 and (tr0.leanNow or 0) ~= 0 then nowCF = MoveRules.LeanPart(tr0.root.CFrame, hitPart.CFrame, hitPart.Name, tr0.leanNow, LeanCfg) end
 	local best = boxDistance(nowCF, hitPart.Size, hitPosition)
 	local detail = { rewound = nowCF, now = nowCF, size = hitPart.Size, age = 0, window = 0, ping = 0 }
@@ -789,7 +921,7 @@ local LeanCfg = require(game:GetService("ReplicatedStorage").Modules.Shared.Conf
 		{ [=====[			local cf = tr.cf[i] * rel
 			local d = boxDistance(cf, hitPart.Size, hitPosition)
 ]=====], [=====[			local cf = tr.cf[i] * rel
-			local li = tr.lean and tr.lean[i] or 0
+			local li = (not posed) and tr.lean and tr.lean[i] or 0
 			if li ~= 0 then cf = MoveRules.LeanPart(tr.cf[i], cf, hitPart.Name, li, LeanCfg) end -- [MOVE1029]
 			local d = boxDistance(cf, hitPart.Size, hitPosition)
 ]=====] },
@@ -820,16 +952,16 @@ end
 -- CombatManager runs this on every player shot: refused while the shooter's own report says the peek turn is still running
 -- (character attribute CoverState "Turn"), or when the shot leaves further than FireFacingTolerance from every facing of the
 -- shooter's lag window (+ `extra` seconds). Returns ok, reason.
-function HitRewind.FireGate(shooter: Player, character: Model, direction: Vector3, extra: number?): (boolean, string?)
+function HitRewind.FireGate(shooter: Player, character: Model, direction: Vector3, extra: number?, dist: number?): (boolean, string?)
 	local state = character:GetAttribute("CoverState")
 	if state == "Turn" then return false, "still turning to the peek" end
 	local ok, ping = pcall(shooter.GetNetworkPing, shooter)
 	ping = ok and tonumber(ping) or 0.1
 	local window = math.clamp(ping * 2 + HitRewind.Interp, HitRewind.MinWindow, HitRewind.MaxWindow) + (extra or 0)
-	local tol = MoveRules.FacingTolerance(state, LeanCfg)
+	local tol = MoveRules.FacingTolerance(state, LeanCfg, dist)
 	local good, best = MoveRules.FacingOk(direction, HitRewind.FacingsWithin(character, window), tol)
 	if good then return true, nil end
-	return false, ("facing %.0f deg away from the shot (allowed %d, state %s)"):format(best, tol, tostring(state or "None"))
+	return false, ("facing %.0f deg away from the shot (allowed %.0f, state %s, %.0f studs)"):format(best, tol, tostring(state or "None"), dist or -1)
 end
 function HitRewind.FacingRecheck(): number
 	return LeanCfg.FacingRecheck or 0.1
@@ -846,13 +978,25 @@ return HitRewind
 	-- while the shooter's own report says the peek turn is still running. The newest facing may still be on its way: one
 	-- short recheck before a refusal on facing. Refusals are logged in Studio (finish -> logReject).
 	do
-		local gateOk, gateWhy = HitRewind.FireGate(player, character, direction)
+		local gateDist = isValidVector(hitPosition) and (hitPosition - origin).Magnitude or state.config.Range
+		local gateOk, gateWhy = HitRewind.FireGate(player, character, direction, nil, gateDist)
 		if not gateOk and gateWhy ~= "still turning to the peek" then
 			task.wait(HitRewind.FacingRecheck())
 			if getEquippedWeapon(player) ~= tool then return finish("weapon gone during the facing recheck") end
-			gateOk, gateWhy = HitRewind.FireGate(player, character, direction, HitRewind.FacingRecheck())
+			gateOk, gateWhy = HitRewind.FireGate(player, character, direction, HitRewind.FacingRecheck(), gateDist)
 		end
 		if not gateOk then return finish("peek gate: " .. tostring(gateWhy)) end
+		-- the shot's facing goes to every client BEFORE the hit (a character's turn reaches other players through physics
+		-- replication, measured ~0.4 s behind damage in a two-player test: the victim saw the hit while the shooter still
+		-- looked away). AimPoseController turns the shooter's body to FaceYaw at once; a new facing waits one frame first.
+		local fy = math.floor(math.deg(math.atan2(-direction.X, -direction.Z)) + 0.5)
+		local prevYaw, prevAt = character:GetAttribute("FaceYaw"), character:GetAttribute("FaceYawAt") or 0
+		character:SetAttribute("FaceYaw", fy)
+		character:SetAttribute("FaceYawAt", workspace:GetServerTimeNow())
+		if type(prevYaw) ~= "number" or workspace:GetServerTimeNow() - prevAt > 0.3 or math.abs((fy - prevYaw + 180) % 360 - 180) > 5 then
+			RunService.Heartbeat:Wait()
+			if getEquippedWeapon(player) ~= tool then return finish("weapon gone before the hit") end
+		end
 	end
 	local head = character:FindFirstChild("Head")
 	if not head or (origin - head.Position).Magnitude > V.MaxOriginOffset then
@@ -1005,6 +1149,10 @@ local CoverCfgB = require(Shared.Config.CoverConfig)
 			self:_face(aimPoint, true)
 		end
 		self.gateSince = nil
+		-- every client turns the bot's body to the shot at once (its own turn reaches them later through replication)
+		local fd = aimPoint - self.root.Position
+		self.model:SetAttribute("FaceYaw", math.floor(math.deg(math.atan2(-fd.X, -fd.Z)) + 0.5))
+		self.model:SetAttribute("FaceYawAt", workspace:GetServerTimeNow())
 	end
 	self.lastShot = now
 ]=====] },
