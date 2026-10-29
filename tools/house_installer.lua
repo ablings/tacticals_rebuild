@@ -291,6 +291,7 @@ end
 
 -- ====================================================================================================== art (the modeler's kit)
 local KIT = SS:FindFirstChild(KIT_NAME)
+local KIT1965 = KIT and KIT:GetAttribute("ArtVersion") == "1965"
 local skipped, nMesh = {}, 0
 local function artFlags(inst)
 	for _, d in (inst:IsA("BasePart") and { inst } or {}) do d.Anchored, d.CanCollide, d.CanQuery, d.CanTouch = true, false, false, false end
@@ -357,6 +358,7 @@ local SHIFT65 = { LampDown_MB = { 0, 7.8 }, ChairDown_DR = { -2.2, -8.1 }, Paper
 -- grade 1965 r1: walk blockers for loose damage props add collision outside the checked layout (half exposure 9.6 -> 10.5 %),
 -- and a standing dummy in spawn B's room reads as a player: those three are hidden instead (Transparency 1, kept for UNDO)
 local HIDE65 = { Dummy_KT_Counter = "a standing figure in spawn B's room reads as a player",
+	Dummy_DR_2 = "its head framed in the kitchen pass-through is in spawn B's first look: reads as an enemy (grade r2)",
 	LampDown_MB = "loose damage prop: would need collision outside the checked layout", ChairDown_DR = "loose damage prop: would need collision outside the checked layout" }
 local BLOCK65 = {}
 local AB = folder("ArtBlockers", map)
@@ -548,6 +550,7 @@ local function plainOf(part)
 		glass(w and FROSTED[w.Name])
 	elseif win then glass(FROSTED[win])
 	elseif n:match("^Skylight_%d+_Glass$") then glass(true); part.Color = rgb(222, 212, 192) -- frosted: the place's own sky never shows
+	elseif KIT1965 and n:match("^Skylight_%d+_Glow$") then part.Material = M.SmoothPlastic; part.Color = rgb(226, 214, 188); part.CastShadow = false -- (1965) a frosted lay-light, not a Neon office panel (grade r2)
 	elseif n:match("Glow$") then part.Material = M.Neon; part.Color = rgb(255, 250, 236); part.CastShadow = false
 	elseif n:match("Glass$") then glass(false)
 	elseif n:match("^Tree_%d+$") then part.Color = rgb(92, 70, 52)
@@ -564,7 +567,6 @@ end
 for _, root in { map, ext } do
 	for _, d in root:GetDescendants() do if d:IsA("BasePart") and (d:FindFirstAncestor("Visuals") or d:FindFirstAncestor("Shootables") or d:FindFirstAncestor("Doors") or root == ext) and d.Transparency < 1 then plainOf(d) end end
 end
-local KIT1965 = KIT and KIT:GetAttribute("ArtVersion") == "1965"
 -- (v1 kit) the tall cabinets read as fridges (white with a long handle): a warm oak tint on their atlas (Edward 2026-10-28);
 -- the 1965 cabinets are walnut / painted already
 -- 1965 (grade r1): the cream tall cabinets read as fridges again: a walnut tint, like the room's wainscot
@@ -607,6 +609,14 @@ for _, d in SH:GetDescendants() do -- the tape crosses travel with their panes (
 	if d:IsA("BasePart") and d.Name:match("Tape") then d.CastShadow = false; nWear += 1 end
 end
 map:SetAttribute("ArtVersion", KIT1965 and "1965" or "v1")
+-- (1965, grade r2) the gold / greige carpets rendered near white under the LR / bedroom downlights (252,230,136): their tiling
+-- texture is wrapped in a SurfaceAppearance (TextureID ignores Color) with a ~33 % darker neutral tint, same hue (renders ~200,170,100)
+for _, d in VIS:GetDescendants() do
+	if KIT1965 and d:IsA("MeshPart") and d.Name:match("^Shell_._Carpet") and d.TextureID ~= "" and not d:FindFirstChildOfClass("SurfaceAppearance") then
+		local sa = Instance.new("SurfaceAppearance"); pcall(function() sa.ColorMap = d.TextureID end)
+		sa.Color = rgb(172, 166, 158); sa.Parent = d
+	end
+end
 -- MapAudit WINDOW: a window's own frame / sash, and a wall band whose surface runs past the opening's reveal, are not art over
 -- the glass (checked on the window captures): tagged KitWindowOk with the reason
 for _, d in VIS:GetDescendants() do
