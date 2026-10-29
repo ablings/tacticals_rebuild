@@ -1,0 +1,14 @@
+{
+ "objects": 14,
+ "triangles": 6522,
+ "fail": 0,
+ "warn": 0,
+ "findings": [],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check_mid\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check_mid\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check_mid\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check_mid\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check_mid\\check_below.png"
+ ]
+}

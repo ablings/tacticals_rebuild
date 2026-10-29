@@ -1,0 +1,3585 @@
+{
+ "note": "House illusion pass (art only: Anchored, CanCollide / CanQuery / CanTouch off, CastShadow off past the near field). Plan coordinates as art/house/v2 (x east, y north, z up; outside ground z -1; Blender (x,y,z) -> Studio (-x, z, y) before the map's own CFrame). FBX in cm: Import 3D at scale 0.01, verify with K_ScaleCube (10 studs). Far / Near: origin = plan origin (place the model as the v2 H_Exterior). Mid: origin = bottom centre on the ground (z 0 = the ground under the piece), front = -Y.",
+ "textures": {
+  "X_Ground": "art/house/illusion/tex/X_Ground.png",
+  "X_Mesa": "art/house/illusion/tex/X_Mesa.png",
+  "X_Town": "art/house/illusion/tex/X_Town.png",
+  "X_Site": "art/house/illusion/tex/X_Site.png",
+  "X_ChainLink": "art/house/illusion/tex/X_ChainLink.png",
+  "X_Near": "art/house/illusion/tex/X_Near.png"
+ },
+ "objects": [
+  {
+   "name": "X_Skirt_1_01",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    601.04,
+    0.0,
+    -3.27
+   ],
+   "bbox_max": [
+    2000.0,
+    1414.21,
+    -1.05
+   ],
+   "size": [
+    1398.96,
+    1414.21,
+    2.22
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_1_02",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    0.0,
+    601.04,
+    -4.68
+   ],
+   "bbox_max": [
+    1414.21,
+    2000.0,
+    -1.05
+   ],
+   "size": [
+    1414.21,
+    1398.96,
+    3.63
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_1_03",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    -1414.21,
+    601.04,
+    -3.32
+   ],
+   "bbox_max": [
+    0.0,
+    2000.0,
+    -1.05
+   ],
+   "size": [
+    1414.21,
+    1398.96,
+    2.27
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_1_04",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    -2000.0,
+    0.0,
+    -4.56
+   ],
+   "bbox_max": [
+    -601.04,
+    1414.21,
+    -1.05
+   ],
+   "size": [
+    1398.96,
+    1414.21,
+    3.51
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_1_05",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    -2000.0,
+    -1414.21,
+    -4.37
+   ],
+   "bbox_max": [
+    -601.04,
+    0.0,
+    -1.05
+   ],
+   "size": [
+    1398.96,
+    1414.21,
+    3.32
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_1_06",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    -1414.21,
+    -2000.0,
+    -3.67
+   ],
+   "bbox_max": [
+    -0.0,
+    -601.04,
+    -1.05
+   ],
+   "size": [
+    1414.21,
+    1398.96,
+    2.62
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_1_07",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    -0.0,
+    -2000.0,
+    -4.17
+   ],
+   "bbox_max": [
+    1414.21,
+    -601.04,
+    -1.05
+   ],
+   "size": [
+    1414.21,
+    1398.96,
+    3.12
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_1_08",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 96,
+   "bbox_min": [
+    601.04,
+    -1414.21,
+    -4.29
+   ],
+   "bbox_max": [
+    2000.0,
+    -0.0,
+    -1.05
+   ],
+   "size": [
+    1398.96,
+    1414.21,
+    3.24
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    200,
+    177,
+    137
+   ]
+  },
+  {
+   "name": "X_Skirt_2_01",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    1847.76,
+    0.0,
+    -5.27
+   ],
+   "bbox_max": [
+    3000.0,
+    1148.05,
+    -2.23
+   ],
+   "size": [
+    1152.24,
+    1148.05,
+    3.04
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_2_02",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    1414.21,
+    765.37,
+    -5.33
+   ],
+   "bbox_max": [
+    2771.64,
+    2121.32,
+    -3.04
+   ],
+   "size": [
+    1357.43,
+    1355.95,
+    2.29
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_03",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    765.37,
+    1414.21,
+    -4.68
+   ],
+   "bbox_max": [
+    2121.32,
+    2771.64,
+    -3.09
+   ],
+   "size": [
+    1355.95,
+    1357.43,
+    1.59
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_04",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    0.0,
+    1847.76,
+    -5.62
+   ],
+   "bbox_max": [
+    1148.05,
+    3000.0,
+    -2.84
+   ],
+   "size": [
+    1148.05,
+    1152.24,
+    2.78
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_2_05",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -1148.05,
+    1847.76,
+    -5.62
+   ],
+   "bbox_max": [
+    0.0,
+    3000.0,
+    -2.39
+   ],
+   "size": [
+    1148.05,
+    1152.24,
+    3.23
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_2_06",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -2121.32,
+    1414.21,
+    -5.62
+   ],
+   "bbox_max": [
+    -765.37,
+    2771.64,
+    -2.43
+   ],
+   "size": [
+    1355.95,
+    1357.43,
+    3.19
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_07",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -2771.64,
+    765.37,
+    -5.62
+   ],
+   "bbox_max": [
+    -1414.21,
+    2121.32,
+    -2.31
+   ],
+   "size": [
+    1357.43,
+    1355.95,
+    3.31
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_08",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -3000.0,
+    0.0,
+    -4.82
+   ],
+   "bbox_max": [
+    -1847.76,
+    1148.05,
+    -3.31
+   ],
+   "size": [
+    1152.24,
+    1148.05,
+    1.51
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_2_09",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -3000.0,
+    -1148.05,
+    -4.94
+   ],
+   "bbox_max": [
+    -1847.76,
+    0.0,
+    -2.62
+   ],
+   "size": [
+    1152.24,
+    1148.05,
+    2.32
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_2_10",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -2771.64,
+    -2121.32,
+    -5.19
+   ],
+   "bbox_max": [
+    -1414.21,
+    -765.37,
+    -2.56
+   ],
+   "size": [
+    1357.43,
+    1355.95,
+    2.63
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_11",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -2121.32,
+    -2771.64,
+    -5.88
+   ],
+   "bbox_max": [
+    -765.37,
+    -1414.21,
+    -1.92
+   ],
+   "size": [
+    1355.95,
+    1357.43,
+    3.96
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_12",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -1148.05,
+    -3000.0,
+    -5.59
+   ],
+   "bbox_max": [
+    -0.0,
+    -1847.76,
+    -1.92
+   ],
+   "size": [
+    1148.05,
+    1152.24,
+    3.67
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_2_13",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    -0.0,
+    -3000.0,
+    -5.15
+   ],
+   "bbox_max": [
+    1148.05,
+    -1847.76,
+    -3.64
+   ],
+   "size": [
+    1148.05,
+    1152.24,
+    1.52
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_2_14",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    765.37,
+    -2771.64,
+    -4.43
+   ],
+   "bbox_max": [
+    2121.32,
+    -1414.21,
+    -2.87
+   ],
+   "size": [
+    1355.95,
+    1357.43,
+    1.55
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_15",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    1414.21,
+    -2121.32,
+    -5.67
+   ],
+   "bbox_max": [
+    2771.64,
+    -765.37,
+    -2.87
+   ],
+   "size": [
+    1357.43,
+    1355.95,
+    2.8
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    190,
+    158
+   ]
+  },
+  {
+   "name": "X_Skirt_2_16",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 24,
+   "bbox_min": [
+    1847.76,
+    -1148.05,
+    -5.99
+   ],
+   "bbox_max": [
+    3000.0,
+    -0.0,
+    -2.04
+   ],
+   "size": [
+    1152.24,
+    1148.05,
+    3.95
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    190,
+    157
+   ]
+  },
+  {
+   "name": "X_Skirt_3_01",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    2771.64,
+    0.0,
+    -6.0
+   ],
+   "bbox_max": [
+    4000.0,
+    1530.73,
+    -4.0
+   ],
+   "size": [
+    1228.36,
+    1530.73,
+    2.0
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_02",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    2121.32,
+    1148.05,
+    -6.0
+   ],
+   "bbox_max": [
+    3695.52,
+    2828.43,
+    -4.04
+   ],
+   "size": [
+    1574.2,
+    1680.38,
+    1.96
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_03",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    1148.05,
+    2121.32,
+    -6.14
+   ],
+   "bbox_max": [
+    2828.43,
+    3695.52,
+    -3.42
+   ],
+   "size": [
+    1680.38,
+    1574.2,
+    2.72
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_04",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    0.0,
+    2771.64,
+    -6.17
+   ],
+   "bbox_max": [
+    1530.73,
+    4000.0,
+    -3.71
+   ],
+   "size": [
+    1530.73,
+    1228.36,
+    2.47
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_05",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -1530.73,
+    2771.64,
+    -6.18
+   ],
+   "bbox_max": [
+    0.0,
+    4000.0,
+    -4.8
+   ],
+   "size": [
+    1530.73,
+    1228.36,
+    1.38
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_06",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -2828.43,
+    2121.32,
+    -6.0
+   ],
+   "bbox_max": [
+    -1148.05,
+    3695.52,
+    -4.02
+   ],
+   "size": [
+    1680.38,
+    1574.2,
+    1.98
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_07",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -3695.52,
+    1148.05,
+    -6.0
+   ],
+   "bbox_max": [
+    -2121.32,
+    2828.43,
+    -3.63
+   ],
+   "size": [
+    1574.2,
+    1680.38,
+    2.37
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_08",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -4000.0,
+    0.0,
+    -6.0
+   ],
+   "bbox_max": [
+    -2771.64,
+    1530.73,
+    -3.31
+   ],
+   "size": [
+    1228.36,
+    1530.73,
+    2.69
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_09",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -4000.0,
+    -1530.73,
+    -6.65
+   ],
+   "bbox_max": [
+    -2771.64,
+    0.0,
+    -4.08
+   ],
+   "size": [
+    1228.36,
+    1530.73,
+    2.57
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_10",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -3695.52,
+    -2828.43,
+    -6.61
+   ],
+   "bbox_max": [
+    -2121.32,
+    -1148.05,
+    -4.68
+   ],
+   "size": [
+    1574.2,
+    1680.38,
+    1.93
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_11",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -2828.43,
+    -3695.52,
+    -6.0
+   ],
+   "bbox_max": [
+    -1148.05,
+    -2121.32,
+    -4.51
+   ],
+   "size": [
+    1680.38,
+    1574.2,
+    1.49
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_12",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -1530.73,
+    -4000.0,
+    -6.0
+   ],
+   "bbox_max": [
+    -0.0,
+    -2771.64,
+    -3.68
+   ],
+   "size": [
+    1530.73,
+    1228.36,
+    2.32
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_13",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    -0.0,
+    -4000.0,
+    -6.0
+   ],
+   "bbox_max": [
+    1530.73,
+    -2771.64,
+    -3.68
+   ],
+   "size": [
+    1530.73,
+    1228.36,
+    2.32
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_14",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    1148.05,
+    -3695.52,
+    -6.63
+   ],
+   "bbox_max": [
+    2828.43,
+    -2121.32,
+    -3.96
+   ],
+   "size": [
+    1680.38,
+    1574.2,
+    2.67
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_15",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    2121.32,
+    -2828.43,
+    -6.25
+   ],
+   "bbox_max": [
+    3695.52,
+    -1148.05,
+    -3.96
+   ],
+   "size": [
+    1574.2,
+    1680.38,
+    2.29
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Skirt_3_16",
+   "piece": "X_GroundSkirt",
+   "collection": "Far",
+   "material": "X_Ground",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 16,
+   "bbox_min": [
+    2771.64,
+    -1530.73,
+    -6.0
+   ],
+   "bbox_max": [
+    4000.0,
+    -0.0,
+    -5.13
+   ],
+   "size": [
+    1228.36,
+    1530.73,
+    0.87
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    213,
+    195,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa1_01",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "butte",
+     "w": 80,
+     "d": 47,
+     "h": 177,
+     "R": 1281,
+     "deg": 130.7
+    },
+    {
+     "kind": "stepped",
+     "w": 215,
+     "d": 126,
+     "h": 150,
+     "R": 1309,
+     "deg": 143.8
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 236,
+   "bbox_min": [
+    -1147.85,
+    666.31,
+    -14.45
+   ],
+   "bbox_max": [
+    -796.66,
+    998.71,
+    180.0
+   ],
+   "size": [
+    351.19,
+    332.4,
+    194.45
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    175,
+    134,
+    99
+   ]
+  },
+  {
+   "name": "X_Mesa1_02",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "mesa",
+     "w": 177,
+     "d": 105,
+     "h": 125,
+     "R": 1266,
+     "deg": 158.5
+    },
+    {
+     "kind": "butte",
+     "w": 68,
+     "d": 75,
+     "h": 164,
+     "R": 1192,
+     "deg": 173.1
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    -1233.78,
+    104.51,
+    -14.39
+   ],
+   "bbox_max": [
+    -1120.81,
+    563.34,
+    180.0
+   ],
+   "size": [
+    112.97,
+    458.83,
+    194.39
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    173,
+    133,
+    98
+   ]
+  },
+  {
+   "name": "X_Mesa1_03",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "mesa",
+     "w": 247,
+     "d": 88,
+     "h": 114,
+     "R": 1311,
+     "deg": 187.6
+    },
+    {
+     "kind": "cone",
+     "w": 127,
+     "d": 148,
+     "h": 63,
+     "R": 1246,
+     "deg": 206.9
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    -1362.07,
+    -632.52,
+    -14.44
+   ],
+   "bbox_max": [
+    -1050.31,
+    -46.46,
+    122.17
+   ],
+   "size": [
+    311.76,
+    586.06,
+    136.62
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    175,
+    135,
+    101
+   ]
+  },
+  {
+   "name": "X_Mesa1_04",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "twin",
+     "w": 283,
+     "d": 132,
+     "h": 95,
+     "R": 1312,
+     "deg": 225.6
+    },
+    {
+     "kind": "butte",
+     "w": 79,
+     "d": 80,
+     "h": 122,
+     "R": 1267,
+     "deg": 242.2
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    -1012.21,
+    -1163.1,
+    -14.48
+   ],
+   "bbox_max": [
+    -546.08,
+    -800.96,
+    130.97
+   ],
+   "size": [
+    466.13,
+    362.14,
+    145.45
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    173,
+    133,
+    99
+   ]
+  },
+  {
+   "name": "X_Mesa1_05",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "mesa",
+     "w": 255,
+     "d": 157,
+     "h": 81,
+     "R": 1293,
+     "deg": 256.6
+    },
+    {
+     "kind": "stepped",
+     "w": 239,
+     "d": 152,
+     "h": 112,
+     "R": 1184,
+     "deg": 276.1
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 236,
+   "bbox_min": [
+    -419.5,
+    -1336.47,
+    -14.46
+   ],
+   "bbox_max": [
+    251.58,
+    -1090.64,
+    123.95
+   ],
+   "size": [
+    671.08,
+    245.83,
+    138.41
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    174,
+    134,
+    100
+   ]
+  },
+  {
+   "name": "X_Mesa1_06",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "twin",
+     "w": 221,
+     "d": 83,
+     "h": 139,
+     "R": 1280,
+     "deg": 295.9
+    },
+    {
+     "kind": "butte",
+     "w": 82,
+     "d": 78,
+     "h": 179,
+     "R": 1237,
+     "deg": 310.6
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    449.1,
+    -1213.76,
+    -14.39
+   ],
+   "bbox_max": [
+    847.35,
+    -901.46,
+    180.0
+   ],
+   "size": [
+    398.25,
+    312.31,
+    194.39
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    175,
+    134,
+    99
+   ]
+  },
+  {
+   "name": "X_Mesa1_07",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "cone",
+     "w": 148,
+     "d": 115,
+     "h": 107,
+     "R": 1305,
+     "deg": 321.1
+    },
+    {
+     "kind": "mesa",
+     "w": 152,
+     "d": 99,
+     "h": 90,
+     "R": 1316,
+     "deg": 336.1
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    940.05,
+    -880.86,
+    -14.46
+   ],
+   "bbox_max": [
+    1275.26,
+    -464.5,
+    118.28
+   ],
+   "size": [
+    335.21,
+    416.35,
+    132.74
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    174,
+    134,
+    100
+   ]
+  },
+  {
+   "name": "X_Mesa1_08",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "mesa",
+     "w": 168,
+     "d": 130,
+     "h": 80,
+     "R": 1207,
+     "deg": 354.7
+    },
+    {
+     "kind": "cone",
+     "w": 151,
+     "d": 97,
+     "h": 86,
+     "R": 1256,
+     "deg": 12.4
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    1129.4,
+    -195.65,
+    -14.37
+   ],
+   "bbox_max": [
+    1281.47,
+    345.91,
+    97.86
+   ],
+   "size": [
+    152.07,
+    541.56,
+    112.23
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    173,
+    134,
+    101
+   ]
+  },
+  {
+   "name": "X_Mesa1_09",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "butte",
+     "w": 45,
+     "d": 84,
+     "h": 161,
+     "R": 1296,
+     "deg": 22.5
+    },
+    {
+     "kind": "butte",
+     "w": 99,
+     "d": 48,
+     "h": 161,
+     "R": 1285,
+     "deg": 33.3
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    1037.48,
+    467.16,
+    -14.41
+   ],
+   "bbox_max": [
+    1237.78,
+    747.43,
+    180.0
+   ],
+   "size": [
+    200.31,
+    280.26,
+    194.41
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    175,
+    133,
+    98
+   ]
+  },
+  {
+   "name": "X_Mesa1_10",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "mesa",
+     "w": 154,
+     "d": 114,
+     "h": 107,
+     "R": 1235,
+     "deg": 47.1
+    },
+    {
+     "kind": "twin",
+     "w": 291,
+     "d": 91,
+     "h": 86,
+     "R": 1266,
+     "deg": 65.1
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 188,
+   "bbox_min": [
+    391.1,
+    825.09,
+    -14.38
+   ],
+   "bbox_max": [
+    925.09,
+    1246.24,
+    116.49
+   ],
+   "size": [
+    534.0,
+    421.14,
+    130.88
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    174,
+    135,
+    100
+   ]
+  },
+  {
+   "name": "X_Mesa1_11",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "stepped",
+     "w": 163,
+     "d": 149,
+     "h": 113,
+     "R": 1242,
+     "deg": 81.6
+    },
+    {
+     "kind": "cone",
+     "w": 116,
+     "d": 125,
+     "h": 71,
+     "R": 1237,
+     "deg": 95.9
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 236,
+   "bbox_min": [
+    -182.62,
+    1146.89,
+    -14.38
+   ],
+   "bbox_max": [
+    269.58,
+    1306.46,
+    126.54
+   ],
+   "size": [
+    452.19,
+    159.57,
+    140.92
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    172,
+    133,
+    100
+   ]
+  },
+  {
+   "name": "X_Mesa1_12",
+   "piece": "X_MesaRing",
+   "tier": 1,
+   "shapes": [
+    {
+     "kind": "butte",
+     "w": 47,
+     "d": 61,
+     "h": 123,
+     "R": 1302,
+     "deg": 104.7
+    }
+   ],
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": false,
+   "tris": 94,
+   "bbox_min": [
+    -352.65,
+    1228.11,
+    -14.39
+   ],
+   "bbox_max": [
+    -302.45,
+    1286.6,
+    137.82
+   ],
+   "size": [
+    50.2,
+    58.49,
+    152.22
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    175,
+    134,
+    100
+   ]
+  },
+  {
+   "name": "X_Mesa2_01",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    1549.65,
+    0.0,
+    -18.02
+   ],
+   "bbox_max": [
+    2042.16,
+    1019.69,
+    320.0
+   ],
+   "size": [
+    492.51,
+    1019.69,
+    338.02
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    194,
+    169,
+    139
+   ]
+  },
+  {
+   "name": "X_Mesa2_02",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    886.91,
+    894.69,
+    -18.03
+   ],
+   "bbox_max": [
+    1766.16,
+    1752.68,
+    306.98
+   ],
+   "size": [
+    879.24,
+    857.99,
+    325.01
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    194,
+    169,
+    139
+   ]
+  },
+  {
+   "name": "X_Mesa2_03",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    0.0,
+    1536.18,
+    -18.03
+   ],
+   "bbox_max": [
+    1011.91,
+    2048.5,
+    297.49
+   ],
+   "size": [
+    1011.91,
+    512.32,
+    315.52
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    195,
+    169,
+    139
+   ]
+  },
+  {
+   "name": "X_Mesa2_04",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -1040.28,
+    1585.31,
+    -18.07
+   ],
+   "bbox_max": [
+    0.0,
+    2049.43,
+    200.67
+   ],
+   "size": [
+    1040.28,
+    464.12,
+    218.75
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    196,
+    170,
+    140
+   ]
+  },
+  {
+   "name": "X_Mesa2_05",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -1787.17,
+    906.83,
+    -18.07
+   ],
+   "bbox_max": [
+    -915.28,
+    1801.81,
+    203.56
+   ],
+   "size": [
+    871.9,
+    894.99,
+    221.63
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    196,
+    170,
+    140
+   ]
+  },
+  {
+   "name": "X_Mesa2_06",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -2052.43,
+    0.0,
+    -18.05
+   ],
+   "bbox_max": [
+    -1570.67,
+    1031.83,
+    264.64
+   ],
+   "size": [
+    481.77,
+    1031.83,
+    282.69
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    194,
+    169,
+    139
+   ]
+  },
+  {
+   "name": "X_Mesa2_07",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -2052.26,
+    -1008.99,
+    -18.04
+   ],
+   "bbox_max": [
+    -1531.11,
+    0.0,
+    259.57
+   ],
+   "size": [
+    521.14,
+    1008.99,
+    277.61
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    195,
+    169,
+    140
+   ]
+  },
+  {
+   "name": "X_Mesa2_08",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -1747.62,
+    -1765.93,
+    -18.02
+   ],
+   "bbox_max": [
+    -894.56,
+    -883.99,
+    305.74
+   ],
+   "size": [
+    853.06,
+    881.94,
+    323.75
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    194,
+    169,
+    139
+   ]
+  },
+  {
+   "name": "X_Mesa2_09",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -1019.56,
+    -2057.08,
+    -18.04
+   ],
+   "bbox_max": [
+    -0.0,
+    -1549.42,
+    264.58
+   ],
+   "size": [
+    1019.56,
+    507.66,
+    282.62
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    195,
+    169,
+    139
+   ]
+  },
+  {
+   "name": "X_Mesa2_10",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -0.0,
+    -2057.08,
+    -18.05
+   ],
+   "bbox_max": [
+    1031.04,
+    -1569.31,
+    256.15
+   ],
+   "size": [
+    1031.04,
+    487.77,
+    274.2
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    195,
+    170,
+    140
+   ]
+  },
+  {
+   "name": "X_Mesa2_11",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    906.04,
+    -1785.82,
+    -18.08
+   ],
+   "bbox_max": [
+    1795.62,
+    -911.7,
+    184.04
+   ],
+   "size": [
+    889.58,
+    874.11,
+    202.12
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    196,
+    171,
+    140
+   ]
+  },
+  {
+   "name": "X_Mesa2_12",
+   "piece": "X_MesaRing",
+   "tier": 2,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    1579.11,
+    -1036.7,
+    -18.06
+   ],
+   "bbox_max": [
+    2045.14,
+    0.0,
+    236.97
+   ],
+   "size": [
+    466.03,
+    1036.7,
+    255.03
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    196,
+    171,
+    140
+   ]
+  },
+  {
+   "name": "X_Mesa3_01",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    2469.27,
+    0.0,
+    -19.49
+   ],
+   "bbox_max": [
+    3232.32,
+    1600.64,
+    520.0
+   ],
+   "size": [
+    763.04,
+    1600.64,
+    539.49
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    191,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_02",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    1419.31,
+    1425.64,
+    -19.45
+   ],
+   "bbox_max": [
+    2772.38,
+    2761.43,
+    516.36
+   ],
+   "size": [
+    1353.07,
+    1335.8,
+    535.81
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    192,
+    166
+   ]
+  },
+  {
+   "name": "X_Mesa3_03",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    0.0,
+    2458.32,
+    -19.44
+   ],
+   "bbox_max": [
+    1594.31,
+    3184.72,
+    366.37
+   ],
+   "size": [
+    1594.31,
+    726.39,
+    385.81
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    192,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_04",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -1593.13,
+    2456.28,
+    -19.43
+   ],
+   "bbox_max": [
+    0.0,
+    3184.46,
+    428.17
+   ],
+   "size": [
+    1593.13,
+    728.19,
+    447.6
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    192,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_05",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -2782.81,
+    1431.66,
+    -19.47
+   ],
+   "bbox_max": [
+    -1418.13,
+    2759.39,
+    499.05
+   ],
+   "size": [
+    1364.68,
+    1327.73,
+    518.51
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    192,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_06",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -3211.59,
+    0.0,
+    -19.48
+   ],
+   "bbox_max": [
+    -2479.7,
+    1606.66,
+    456.45
+   ],
+   "size": [
+    731.88,
+    1606.66,
+    475.92
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    191,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_07",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -3211.59,
+    -1610.75,
+    -19.48
+   ],
+   "bbox_max": [
+    -2486.79,
+    0.0,
+    462.0
+   ],
+   "size": [
+    724.8,
+    1610.75,
+    481.48
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    191,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_08",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -2789.9,
+    -2762.83,
+    -19.48
+   ],
+   "bbox_max": [
+    -1420.12,
+    -1435.75,
+    467.67
+   ],
+   "size": [
+    1369.78,
+    1327.08,
+    487.15
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    192,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_09",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -1595.12,
+    -3171.63,
+    -19.43
+   ],
+   "bbox_max": [
+    -0.0,
+    -2459.72,
+    427.11
+   ],
+   "size": [
+    1595.12,
+    711.91,
+    446.54
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    191,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_10",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    -0.0,
+    -3172.22,
+    -19.45
+   ],
+   "bbox_max": [
+    1595.48,
+    -2460.35,
+    388.85
+   ],
+   "size": [
+    1595.48,
+    711.87,
+    408.3
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    192,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_11",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    1420.48,
+    -2763.46,
+    -19.46
+   ],
+   "bbox_max": [
+    2778.05,
+    -1428.91,
+    455.49
+   ],
+   "size": [
+    1357.57,
+    1334.55,
+    474.95
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    209,
+    192,
+    165
+   ]
+  },
+  {
+   "name": "X_Mesa3_12",
+   "piece": "X_MesaRing",
+   "tier": 3,
+   "collection": "Far",
+   "material": "X_Mesa",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 72,
+   "bbox_min": [
+    2474.94,
+    -1603.91,
+    -19.49
+   ],
+   "bbox_max": [
+    3232.32,
+    0.0,
+    519.89
+   ],
+   "size": [
+    757.37,
+    1603.91,
+    539.38
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    208,
+    191,
+    165
+   ]
+  },
+  {
+   "name": "X_PorchFront_Concrete65",
+   "piece": "X_PorchFront",
+   "collection": "Near",
+   "material": "T_Concrete65",
+   "alpha": false,
+   "texture": "art/house/v2/tex/tile/T_Concrete65.png (v2 tile, same image as the v2 exterior)",
+   "tris": 24,
+   "bbox_min": [
+    -3.0,
+    -36.0,
+    -1.1
+   ],
+   "bbox_max": [
+    9.0,
+    -30.95,
+    0.15
+   ],
+   "size": [
+    12.0,
+    5.05,
+    1.25
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    156,
+    150,
+    138
+   ]
+  },
+  {
+   "name": "X_PorchFront_TrimWhite",
+   "piece": "X_PorchFront",
+   "collection": "Near",
+   "material": "T_TrimWhite",
+   "alpha": false,
+   "texture": "art/house/v2/tex/tile/T_TrimWhite.png (v2 tile, same image as the v2 exterior)",
+   "tris": 24,
+   "bbox_min": [
+    -3.2,
+    -36.2,
+    0.1
+   ],
+   "bbox_max": [
+    9.2,
+    -30.95,
+    12.0
+   ],
+   "size": [
+    12.4,
+    5.25,
+    11.9
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    212,
+    208,
+    193
+   ]
+  },
+  {
+   "name": "X_PorchFront_Shingle",
+   "piece": "X_PorchFront",
+   "collection": "Near",
+   "material": "T_Shingle",
+   "alpha": false,
+   "texture": "art/house/v2/tex/tile/T_Shingle.png (v2 tile, same image as the v2 exterior)",
+   "tris": 2,
+   "bbox_min": [
+    -3.2,
+    -36.2,
+    12.0
+   ],
+   "bbox_max": [
+    9.2,
+    -30.95,
+    12.0
+   ],
+   "size": [
+    12.4,
+    5.25,
+    0.0
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    93,
+    86,
+    77
+   ]
+  },
+  {
+   "name": "X_BackStoop_Concrete65",
+   "piece": "X_BackStoop",
+   "collection": "Near",
+   "material": "T_Concrete65",
+   "alpha": false,
+   "texture": "art/house/v2/tex/tile/T_Concrete65.png (v2 tile, same image as the v2 exterior)",
+   "tris": 24,
+   "bbox_min": [
+    -7.65,
+    30.95,
+    -1.1
+   ],
+   "bbox_max": [
+    1.65,
+    36.0,
+    0.15
+   ],
+   "size": [
+    9.3,
+    5.05,
+    1.25
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    155,
+    148,
+    136
+   ]
+  },
+  {
+   "name": "X_BackStoop_Props",
+   "piece": "X_BackStoop",
+   "collection": "Near",
+   "material": "X_Near",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 104,
+   "bbox_min": [
+    -7.41,
+    31.15,
+    -0.5
+   ],
+   "bbox_max": [
+    1.45,
+    35.74,
+    3.38
+   ],
+   "size": [
+    8.86,
+    4.59,
+    3.88
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    66,
+    52,
+    40
+   ]
+  },
+  {
+   "name": "X_Driveway",
+   "piece": "X_Driveway",
+   "collection": "Near",
+   "material": "X_Near",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 8,
+   "bbox_min": [
+    15.9,
+    -56.1,
+    -1.1
+   ],
+   "bbox_max": [
+    30.1,
+    -30.95,
+    -0.69
+   ],
+   "size": [
+    14.2,
+    25.15,
+    0.41
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    151,
+    145,
+    132
+   ]
+  },
+  {
+   "name": "X_FoundationStrip_Gravel65",
+   "piece": "X_Driveway (foundation strip)",
+   "collection": "Near",
+   "material": "T_Gravel65",
+   "alpha": false,
+   "texture": "art/house/v2/tex/tile/T_Gravel65.png (v2 tile, same image as the v2 exterior)",
+   "tris": 40,
+   "bbox_min": [
+    -42.45,
+    -32.45,
+    -1.1
+   ],
+   "bbox_max": [
+    42.45,
+    32.45,
+    -0.72
+   ],
+   "size": [
+    84.9,
+    64.9,
+    0.38
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    117,
+    109,
+    96
+   ]
+  },
+  {
+   "name": "X_TownHouse_A_Butter",
+   "piece": "X_TownHouse_A",
+   "colourway": "Butter",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 370,
+   "bbox_min": [
+    -22.6,
+    -15.4,
+    -0.6
+   ],
+   "bbox_max": [
+    21.5,
+    14.5,
+    15.6
+   ],
+   "size": [
+    44.1,
+    29.9,
+    16.2
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    165,
+    154,
+    129
+   ]
+  },
+  {
+   "name": "X_TownHouse_B_Butter",
+   "piece": "X_TownHouse_B",
+   "colourway": "Butter",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 490,
+   "bbox_min": [
+    -20.6,
+    -16.8,
+    -0.6
+   ],
+   "bbox_max": [
+    19.2,
+    15.2,
+    25.5
+   ],
+   "size": [
+    39.8,
+    32.0,
+    26.1
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    169,
+    158,
+    127
+   ]
+  },
+  {
+   "name": "X_TownHouse_A_Salmon",
+   "piece": "X_TownHouse_A",
+   "colourway": "Salmon",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 370,
+   "bbox_min": [
+    -22.6,
+    -15.4,
+    -0.6
+   ],
+   "bbox_max": [
+    21.5,
+    14.5,
+    15.6
+   ],
+   "size": [
+    44.1,
+    29.9,
+    16.2
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    161,
+    149,
+    134
+   ]
+  },
+  {
+   "name": "X_TownHouse_B_Salmon",
+   "piece": "X_TownHouse_B",
+   "colourway": "Salmon",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 490,
+   "bbox_min": [
+    -20.6,
+    -16.8,
+    -0.6
+   ],
+   "bbox_max": [
+    19.2,
+    15.2,
+    25.5
+   ],
+   "size": [
+    39.8,
+    32.0,
+    26.1
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    164,
+    146,
+    130
+   ]
+  },
+  {
+   "name": "X_TownHouse_A_Mint",
+   "piece": "X_TownHouse_A",
+   "colourway": "Mint",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 370,
+   "bbox_min": [
+    -22.6,
+    -15.4,
+    -0.6
+   ],
+   "bbox_max": [
+    21.5,
+    14.5,
+    15.6
+   ],
+   "size": [
+    44.1,
+    29.9,
+    16.2
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    152,
+    153,
+    136
+   ]
+  },
+  {
+   "name": "X_TownHouse_B_Mint",
+   "piece": "X_TownHouse_B",
+   "colourway": "Mint",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 490,
+   "bbox_min": [
+    -20.6,
+    -16.8,
+    -0.6
+   ],
+   "bbox_max": [
+    19.2,
+    15.2,
+    25.5
+   ],
+   "size": [
+    39.8,
+    32.0,
+    26.1
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    150,
+    155,
+    137
+   ]
+  },
+  {
+   "name": "X_TownHouse_A_White",
+   "piece": "X_TownHouse_A",
+   "colourway": "White",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 370,
+   "bbox_min": [
+    -22.6,
+    -15.4,
+    -0.6
+   ],
+   "bbox_max": [
+    21.5,
+    14.5,
+    15.6
+   ],
+   "size": [
+    44.1,
+    29.9,
+    16.2
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    160,
+    153,
+    137
+   ]
+  },
+  {
+   "name": "X_TownHouse_B_White",
+   "piece": "X_TownHouse_B",
+   "colourway": "White",
+   "collection": "Mid",
+   "material": "X_Town",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 490,
+   "bbox_min": [
+    -20.6,
+    -16.8,
+    -0.6
+   ],
+   "bbox_max": [
+    19.2,
+    15.2,
+    25.5
+   ],
+   "size": [
+    39.8,
+    32.0,
+    26.1
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    164,
+    157,
+    142
+   ]
+  },
+  {
+   "name": "X_WaterTower",
+   "piece": "X_WaterTower",
+   "collection": "Mid",
+   "material": "X_Site",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 972,
+   "bbox_min": [
+    -11.6,
+    -11.6,
+    -0.57
+   ],
+   "bbox_max": [
+    11.6,
+    11.6,
+    70.0
+   ],
+   "size": [
+    23.2,
+    23.2,
+    70.57
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    164,
+    160,
+    149
+   ]
+  },
+  {
+   "name": "X_Bunker",
+   "piece": "X_Bunker",
+   "collection": "Mid",
+   "material": "X_Site",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 258,
+   "bbox_min": [
+    -15.0,
+    -14.85,
+    -0.5
+   ],
+   "bbox_max": [
+    22.05,
+    10.0,
+    17.0
+   ],
+   "size": [
+    37.05,
+    24.85,
+    17.5
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    142,
+    136,
+    121
+   ]
+  },
+  {
+   "name": "X_Quonset",
+   "piece": "X_Quonset",
+   "collection": "Mid",
+   "material": "X_Site",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 380,
+   "bbox_min": [
+    -20.6,
+    -40.6,
+    -0.5
+   ],
+   "bbox_max": [
+    20.6,
+    40.6,
+    21.8
+   ],
+   "size": [
+    41.2,
+    81.2,
+    22.3
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    135,
+    132,
+    116
+   ]
+  },
+  {
+   "name": "X_ObservationStand",
+   "piece": "X_ObservationStand",
+   "collection": "Mid",
+   "material": "X_Site",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 354,
+   "bbox_min": [
+    -15.6,
+    -5.6,
+    -0.4
+   ],
+   "bbox_max": [
+    15.6,
+    4.6,
+    14.0
+   ],
+   "size": [
+    31.2,
+    10.2,
+    14.4
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    132,
+    124,
+    109
+   ]
+  },
+  {
+   "name": "X_PoleLine",
+   "piece": "X_PoleLine",
+   "collection": "Mid",
+   "material": "X_Site",
+   "alpha": false,
+   "open_shell": true,
+   "tris": 1066,
+   "bbox_min": [
+    -219.13,
+    -3.3,
+    -0.5
+   ],
+   "bbox_max": [
+    219.05,
+    3.3,
+    30.0
+   ],
+   "size": [
+    438.18,
+    6.6,
+    30.51
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    81,
+    72,
+    58
+   ]
+  },
+  {
+   "name": "X_ChainLink",
+   "piece": "X_ChainLink",
+   "collection": "Mid",
+   "material": "X_ChainLink",
+   "alpha": true,
+   "open_shell": true,
+   "tris": 52,
+   "bbox_min": [
+    -30.17,
+    -0.17,
+    -0.5
+   ],
+   "bbox_max": [
+    30.17,
+    0.17,
+    8.0
+   ],
+   "size": [
+    60.34,
+    0.34,
+    8.5
+   ],
+   "origin": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "fallback_rgb": [
+    168,
+    169,
+    162
+   ]
+  }
+ ],
+ "errors": [],
+ "tris_by_file": {
+  "Far": 5442,
+  "Near": 226,
+  "Mid": 6522
+ },
+ "tris_by_piece": {
+  "X_GroundSkirt": 1408,
+  "X_MesaRing": 4034,
+  "X_PorchFront": 50,
+  "X_BackStoop": 128,
+  "X_Driveway": 8,
+  "X_Driveway (foundation strip)": 40,
+  "X_TownHouse_A": 1480,
+  "X_TownHouse_B": 1960,
+  "X_WaterTower": 972,
+  "X_Bunker": 258,
+  "X_Quonset": 380,
+  "X_ObservationStand": 354,
+  "X_PoleLine": 1066,
+  "X_ChainLink": 52
+ }
+}

@@ -1,0 +1,81 @@
+{
+ "objects": 97,
+ "triangles": 12190,
+ "fail": 0,
+ "warn": 11,
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_01",
+   "message": "60 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_02",
+   "message": "73 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_03",
+   "message": "54 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_04",
+   "message": "62 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_05",
+   "message": "71 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_06",
+   "message": "64 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_07",
+   "message": "65 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_08",
+   "message": "69 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_09",
+   "message": "62 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_10",
+   "message": "55 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "X_Mesa1_11",
+   "message": "77 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\illusion\\renders\\check\\check_below.png"
+ ]
+}
