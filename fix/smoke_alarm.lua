@@ -752,12 +752,17 @@ edit(MASK, "local CollectionService = game:GetService(\"CollectionService\")\n",
 edit(MASK, "function mask.IsMasked(position: Vector3): boolean\n\tlocal now = workspace:GetServerTimeNow()\n",
 	"function mask.IsMasked(position: Vector3): boolean\n\tlocal now = workspace:GetServerTimeNow()\n"
 	.. "\tif SmokeAlarm.Blaring(position, now) then return true end" .. TAG .. " footsteps / reloads in a blaring alarm's radius, its floor\n")
-if not HUB then
+-- A lobby that got the fill steam (its FootstepController asks SteamCloud.FootstepScale -> SteamMask.FillMuffled, 2026-10-28)
+-- takes the match places' footstep rule (FillMuffled asks the alarm); an older lobby keeps the FootstepController edits below.
+local HUBFILL = HUB and norm(FC.Source):find("SteamCloud.FootstepScale(", 1, true) ~= nil
+if not HUB or HUBFILL then
 	-- the fill steam's rule for players' footsteps (muffled, very faint; you in the blare can't hear people) and the AI (Muffled).
 	-- First thing in the function, BEFORE its Steam.Fill gate: turning the steam fill off must not turn the alarm's rule off.
 	local FILLM = "function mask.FillMuffled(source: Vector3, listener: Vector3?, now: number?): boolean\n"
 	edit(MASK, FILLM, FILLM
 		.. "\tif SmokeAlarm.Muffles(source, listener, now) then return true end" .. TAG .. " the walker or the listener in a blare (any Fill flag)\n")
+end
+if not HUB then
 
 	-- ShootableManager (match places)
 	local OPEN = "local Openings = require(Shared.Openings) -- [GLASS] window glass, player-only barriers, door states (the rules)\n"
@@ -806,13 +811,16 @@ if not HUB then
 	local FIRES = "\tfor _, f in fires do f.untilT = 0 end\n"
 	edit(SM, FIRES, "\tif alarms then alarms:Reset() end" .. TAG .. " alarms whole and chirping again\n" .. FIRES)
 else
-	-- FootstepController (hub): the steam's listener rule (you in a blare can't hear people); the source rule is IsMasked's
+	-- FootstepController (an older hub without the fill steam): the listener rule (you in a blare can't hear people); the
+	-- source rule is IsMasked's
+	if not HUBFILL then
 	edit(FC, "local SteamMask = require(Shared:WaitForChild(\"SteamMask\"))\n",
 		"local SteamMask = require(Shared:WaitForChild(\"SteamMask\"))\n"
 		.. "local SmokeAlarm = require(Shared:WaitForChild(\"SmokeAlarm\"))" .. TAG .. "\n")
 	edit(FC, "\t\t\t\t\tif character ~= me and SteamMask.IsMasked(position) then volume *= 0.04 end\n",
 		"\t\t\t\t\t-- [SMOKEALARM] a blaring smoke alarm drowns them too, and standing in one you can't hear people\n"
 		.. "\t\t\t\t\tif character ~= me and (SteamMask.IsMasked(position) or SmokeAlarm.Muffles(position)) then volume *= 0.04 end\n")
+	end
 
 	-- ArenaShootables: the alarms of ONE arena (state on its Solid layer; ArenaLoader draws the Visual twin)
 	local OPEN = "local Openings = require(Shared.Openings) -- [GLASS] window glass, player-only barriers, door states (the rules)\n"
