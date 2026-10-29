@@ -14,6 +14,7 @@ import os, sys, math, random, json
 HERE = os.path.dirname(os.path.abspath(__file__))
 IROOT = os.path.abspath(os.path.join(HERE, ".."))
 V2TOOLS = os.path.abspath(os.path.join(IROOT, "..", "v2", "tools"))
+sys.dont_write_bytecode = True     # importing the v2 helpers must not rewrite their tracked __pycache__
 sys.path.insert(0, V2TOOLS)
 import bpy, bmesh
 from mathutils import Vector
