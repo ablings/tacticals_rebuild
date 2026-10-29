@@ -10,7 +10,11 @@
 - Build log: notes/house_build.md; layout source tools/house_layout.py -> tools/house_lua.py -> fix/map_house.lua (generated).
 
 ## Half-done / open
-- Smoke alarms: built in their own copies by another session; NOT approved by Edward, NOT in any live place.
+- Smoke alarms: LIVE since port 48 (2026-10-28, Shadow PC, commit 33464c9d): Matchmaking, Ranked, lobby; read back.
+- 1965 restyle: art/house/v2 by the modeler (recolour pending); fix/map_house.lua carries uncommitted-then-checkpointed 1965 wiring
+  from the main PC; its build place is NOT in git. Import + swap is the next map-builder step once the modeler pushes.
+- Stale Studio windows on the Shadow PC (Tacticals_rebuild.rbxl, Tacticals_main_ported 'tacticals', Test place) were opened before
+  port 47: never save them; close without saving.
 - Round-5 minor clips kept on purpose (landing bookcase vs MB casing 0.05; upper vanity 0.32 into the doorway width; foyer bench vs
   front-door casing 0.35).
 - Uncommitted art/house/v2/* files belong to the House-1965 modeler session (tacticals-rebuild-16); `sync.py leave` checkpoints them.
