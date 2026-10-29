@@ -81,6 +81,8 @@ for d in L["doors"]:
         if k not in b["attrs"]: diffs.append(f"door {d['id']} no {k}")
     if not b["leaf"]["collide"] or not b["leaf"]["attrs"].get("NotCover"): diffs.append(f"door {d['id']} leaf flags")
 nwin = sum(1 for o in L["openings"] if o["kind"] == "window")
+# Shootables also holds the smoke alarms (Shootable = "SmokeAlarm"): only the glass entries are windows
+D["windows"] = [w for w in D["windows"] if w["shootable"] != "SmokeAlarm"]
 if len(D["windows"]) != nwin or any(w["shootable"] != "Glass" for w in D["windows"]): diffs.append("windows registry wrong")
 if D["art"]["colliding"]: diffs.append(f"{D['art']['colliding']} art parts collide/query/touch")
 if D.get("indoor") is not True: diffs.append("Indoor not true")

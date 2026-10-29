@@ -46,7 +46,7 @@ def room_lights():
                     x = q["x0"] + w * (i + 0.5) / nx
                     y = q["y0"] + d * (j + 0.5) / ny
                     out.append(dict(id=f"L_{r['id']}_{qi}_{i}{j}", kind="down", x=round(x, 2), y=round(y, 2), z=round(ceil - 0.3, 2),
-                                    angle=(150 if r["id"] in ("MB", "BR2", "BR3") else 120), range=round(h + 12, 1), bright=(5.0 if r["id"] in ("MB", "BR2", "BR3") else 2.4),
+                                    angle=(150 if r["id"] in ("MB", "BR2", "BR3", "LR", "CH") else 120), range=round(h + 12, 1), bright=(5.0 if r["id"] in ("MB", "BR2", "BR3") else (4.2 if r["id"] in ("LR", "CH") else 2.4)),  # LR / CH: dark 1965 coffee paint + fieldstone rendered near-black (grade 1965 r1)
                                     fill=(0.9 if r["id"] in ("MB", "BR2", "BR3") else 0),
                                     color=WARM, shadows=False))  # bedrooms brighter (Edward 2026-10-28)
     # the foyer plant read as a dark silhouette: a warm uplight in its planter (Edward 2026-10-28)

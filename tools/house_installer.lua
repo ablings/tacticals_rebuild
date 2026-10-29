@@ -354,12 +354,22 @@ end
 -- invisible walk blocker (House.ArtBlockers, tag WindowBarrier = bodies only; bullets, the camera and the AI's sight pass;
 -- not part of the checked layout: they sit beside furniture, never in a lane)
 local SHIFT65 = { LampDown_MB = { 0, 7.8 }, ChairDown_DR = { -2.2, -8.1 }, Papers_BR2 = { 0, 2.8 } }
-local BLOCK65 = { "Dummy_KT_Counter", "LampDown_MB", "ChairDown_DR" }
+-- grade 1965 r1: walk blockers for loose damage props add collision outside the checked layout (half exposure 9.6 -> 10.5 %),
+-- and a standing dummy in spawn B's room reads as a player: those three are hidden instead (Transparency 1, kept for UNDO)
+local HIDE65 = { Dummy_KT_Counter = "a standing figure in spawn B's room reads as a player",
+	LampDown_MB = "loose damage prop: would need collision outside the checked layout", ChairDown_DR = "loose damage prop: would need collision outside the checked layout" }
+local BLOCK65 = {}
 local AB = folder("ArtBlockers", map)
 if shell then
 	for nm, dxy in SHIFT65 do
 		local a = shell:FindFirstChild(nm, true)
 		if a then a:PivotTo(a:GetPivot() + Vector3.new(dxy[1], 0, -dxy[2])) end
+	end
+	for nm, why in HIDE65 do
+		local a = shell:FindFirstChild(nm, true)
+		for _, d in (a and (a:IsA("BasePart") and { a } or a:GetDescendants()) or {}) do
+			if d:IsA("BasePart") then d.Transparency = 1; d.CastShadow = false; d:SetAttribute("HiddenReason", why) end
+		end
 	end
 	for _, nm in BLOCK65 do
 		local a = shell:FindFirstChild(nm, true)
@@ -422,7 +432,7 @@ local RUN = { KitchenRun1 = { "H_KitchenBase" }, KitchenRun3 = { "H_KitchenBase"
 for _, f in L.furniture do
 	local cx, cy = (f.x0 + f.x1) / 2, (f.y0 + f.y1) / 2
 	local fit = { f.x1 - f.x0, f.y1 - f.y0, f.z1 - f.z0 }
-	local face = f.face
+	local face = f.face or ({ GB_Cabinet = "N" })[f.id] -- (no face in the layout: it defaulted to S, its back to the room)
 	if not face then face = (fit[1] >= fit[2]) and "S" or "E" end
 	local runs = RUN[f.model]
 	if runs and f.id == "LR_Sideboard" then runs = { "H_KitchenBase", "H_KitchenBase", "H_KitchenBase" } end
@@ -502,6 +512,11 @@ if KIT and KIT:FindFirstChild("H_Exterior") then
 		end
 		nMesh += 1
 	end
+	-- (1965) the dry trees' baked canopy clumps read as toy trees through the windows (grade r1, Corrections 2026-10-28
+	-- exterior): hidden, Transparency 1, until the modeler makes bare ones
+	for _, d in e:GetDescendants() do
+		if d:IsA("BasePart") and d.Name:match("^DryTree_%d+") then d.Transparency = 1; d.CastShadow = false; d:SetAttribute("HiddenReason", "toy-looking canopy") end
+	end
 else
 	table.insert(skipped, "exterior: no " .. KIT_NAME .. ".H_Exterior")
 end
@@ -532,6 +547,7 @@ local function plainOf(part)
 		local w = part:FindFirstAncestorWhichIsA("Model")
 		glass(w and FROSTED[w.Name])
 	elseif win then glass(FROSTED[win])
+	elseif n:match("^Skylight_%d+_Glass$") then glass(true); part.Color = rgb(222, 212, 192) -- frosted: the place's own sky never shows
 	elseif n:match("Glow$") then part.Material = M.Neon; part.Color = rgb(255, 250, 236); part.CastShadow = false
 	elseif n:match("Glass$") then glass(false)
 	elseif n:match("^Tree_%d+$") then part.Color = rgb(92, 70, 52)
@@ -551,13 +567,14 @@ end
 local KIT1965 = KIT and KIT:GetAttribute("ArtVersion") == "1965"
 -- (v1 kit) the tall cabinets read as fridges (white with a long handle): a warm oak tint on their atlas (Edward 2026-10-28);
 -- the 1965 cabinets are walnut / painted already
-for _, m in (KIT1965 and {} or VFU:GetChildren()) do
+-- 1965 (grade r1): the cream tall cabinets read as fridges again: a walnut tint, like the room's wainscot
+for _, m in VFU:GetChildren() do
 	for _, d in m:GetDescendants() do
-		if d:IsA("SurfaceAppearance") and m:GetAttribute("KitModel") == "H_TallCabinet" then d.Color = rgb(214, 172, 128) end
+		if d:IsA("SurfaceAppearance") and m:GetAttribute("KitModel") == "H_TallCabinet" then d.Color = KIT1965 and rgb(150, 104, 66) or rgb(214, 172, 128) end
 	end
 end
 -- the mirrors: the baked atlas of a mirror is black (a diffuse bake of a metal): a pale, slightly reflective pane instead
-for _, m in (KIT1965 and {} or VDR:GetChildren()) do -- (v1 kit only: the 1965 mirrors are baked with their glass)
+for _, m in VDR:GetChildren() do -- both kits (grade 1965 r1: the 1965 mirror bakes black too)
 	if m.Name:match("_Mirror$") then
 		for _, d in m:GetDescendants() do
 			if d:IsA("SurfaceAppearance") then d:Destroy() end
