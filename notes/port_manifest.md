@@ -637,8 +637,8 @@ himself; we never publish.
   tacticals > Add as a new place > Grant Permissions and Publish. Source: Test_place.rbxl (commit dd380aa) = match_place_ref.rbxl
   (port 44 state) + `split_build.py place <id> Test` + `test_place_install.lua` round 2 + `deploy_ui.py --matchmaking` +
   `fix/switch_now.lua`; StagingMaps empty; compile 353 ok, no Studio marks. Read back from the retitled cloud window: PlaceId
-  99722095417844, GameId 10769593848, PlaceKind Test. Name on Creator Hub is still the default "whitteguy's Place: 10292026_1"
-  (rename to "Test": not done, see notes/test_place.md).
+  99722095417844, GameId 10769593848, PlaceKind Test. Renamed "Test" on Creator Hub (Chrome, Edward's
+  logged-in browser); the universe's place list reads 99722095417844:Test, the other five names unchanged.
 - **tacticals lobby** (126491009194165), published 18:09: Tacticals_main_ported.rbxl = Tacticals_rebuild.rbxl (ce90e6a) with Technology
   Future. Lobby = live port 45 + `fix/test_lobby_install.lua` only (LobbyConfig.TestPlaceId = 99722095417844, AdminFramework
   Commands/TestPlace). House=false/false. Publish As > gunsy funsy > tacticals > tacticals > Overwrite > Grant Permissions and Publish.

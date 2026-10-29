@@ -4,8 +4,8 @@ Edward: a TEST place "where new maps are tried before they're pushed to Matchmak
 approved by Edward (his go to publish this place and the lobby change it needs).
 
 - **Place:** "Test", a new place in the Tacticals experience (universe 10769593848, group gunsy funsy). **Place id 99722095417844**
-  (published 2026-10-28 18:00 from the Shadow PC; notes/port_manifest.md "Live port 46"). Its Creator Hub name is still the default
-  "whitteguy's Place: 10292026_1" until someone renames it to "Test" (Creator Hub > tacticals > Places); in Publish As look for that name.
+  (published 2026-10-28 18:00 from the Shadow PC; notes/port_manifest.md "Live port 46"). Named "Test" on Creator Hub (renamed 2026-10-28 18:5x;
+  the universe's place list reads 99722095417844:Test).
   The lobby's `LobbyConfig.TestPlaceId` = 99722095417844.
 - **File:** `Test_place.rbxl` at the repo root (the published copy; staging maps live in it). Build log copies: `out/test_place/`.
 - **Who gets in:** players the admin framework rates **Admin or higher** (Config.Users list: ocxa = Owner; or gunsy funsy group rank
