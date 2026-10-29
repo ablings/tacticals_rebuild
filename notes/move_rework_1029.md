@@ -40,5 +40,51 @@ CoverAnimations.LeanLeft / LeanRight / LeanLeftCrouch / LeanRightCrouch ("" = th
 - Scan after tagging (tools/pullup_scan.lua): only low cover (as before: deep / end-on climbs) and furniture / crates remain;
   removed: Arena parapets on the decks, box rims; Warehouse 2 ceiling edges; House dressing blockers.
 
-## Tests
-(filled in below as they ran)
+## Tests (2026-10-29, my copies in out/move_rework/, Studio Play unless said)
+- **Installer:** offline anchor check against both places' dumps (every anchor once, token boundary); in Studio install, second
+  run all "=", UNDO back to the exact before-hash (lobby 9e09ced1 = the pristine sources as Studio holds them, LF), reinstall.
+  Older rounds refused by the stamp; round 3 -> 4 by UNDO with round 3's own installer. Unit + install checks: 92/92 (lobby,
+  match, Test, Tutorial, Matchmaking, Ranked builds).
+- **Measured body:** standing head top 5.09 over the floor (root 3.0) -> PullUpMaxHeight 5.1.
+- **Peek turn (same 120 deg peek at a pillar):** body within 10 deg of the aim 0.143 s -> 0.078-0.097 s (32-45 % quicker); full
+  peek pose 0.18 -> 0.115 s; gate "ready" seen at 0.137-0.173 s in Studio (frame latency included). Before: a shot could leave at 0 s.
+- **Fire gate (client):** click 0.008 s after aiming, body 84-90 deg off -> held, fired at 0.137 / 0.145 s with the body 0.0-0.8 deg
+  off; the server accepted it. Match copy and lobby pad duel.
+- **Fire gate (server, faked modded client):** a shot 90 deg sideways -> refused "facing 90 deg away (allowed 22)" after the
+  recheck; a shot while CoverState "Turn" -> refused "still turning to the peek"; straight shot -> accepted; sideways with
+  "Blind" -> accepted. Found + fixed: an honest shot at a shelf ~7 studs away refused at 25 deg (gun/camera parallax) -> tolerance
+  + atan(2 / length).
+- **Two players (Studio server + 2 clients, lobby pad duel, D1):** victim-side log (out/move_rework/victim.log): first run (round
+  2) the hit landed while the shooter's body on the victim's screen still faced 123 deg away (its turn arrived ~0.4 s after the
+  damage) -> FaceYaw fix (round 3/4); re-run: the body turned 90 -> 17 deg at 4.24 s, the hit at 4.27 s, then two more hits at 4.7 /
+  20 deg (close range, 6 studs). Lean: Player2 sees Player1's head 0.99 out, Lean attribute 1, Player2's shot at the leaned head
+  hit (150 -> 90). Recording: captures/move_rework/mp_gate/ (background Studio windows barely redraw, so the log is the evidence).
+- **Lean (solo):** head 1.05 / 1.00 / 0.97 out (match, pad duel, Training), camera roll 4 deg, server Lean 1, back to 0 on release,
+  key path and button path both; Training: the CoverLeanRight clip plays at weight 0.95 and the head still ends ~1.0 out.
+- **Vault:** walking and sprinting vaults over the House island take the same time (0.58-0.61 s, 3 studs): one vault.
+- **Pull-up:** House mudroom bench (1.7 up, Climb clip) and a Training crate (5.0 up, PullUp clip on its root path, 603 -> 608):
+  server "pull-up ok". Fake pull-up to no ledge -> refused "no ledge there", MoveFlags 1, PullUpRefused set. A dining chair row
+  beside the table won over the table (vault before climb), as designed.
+- **NoClimb:** tools/pullup_scan.lua on every map + Training before / after (out/move_rework/scan/): see the NoClimb list.
+- **Wall cover (Test copy, House 1965):** Q on room walls (COLP_I_X-9_U_1, COLP_I_Y17_U_3) -> in cover; Q at window sills -> no
+  cover. tools/house_check.py on the built House: PASS, fairness within 10 % (notes/maps/house_checks_wallcover1029.txt);
+  tools/house_wallcover_compare.py: mean distance to cover 5.15 -> 3.49, spots within 3 studs of cover 31 % -> 48 %.
+- **Tutorials (Tutorial build from match_place_ref + the port steps; out/move_rework/tutorials_driver.log):** a step driver
+  answered each step's report: Tutorial 1 ran every step to the end (Instructor taken down server-side for "aim and shoot",
+  credited to the player) -> Win -> FINISHED. Tutorial 2 ran through the rewritten vault step ("Vault the low wall with
+  [Space] ... a vault isn't silent up close") to the flash lesson, which needs a real flash from where the lesson expects you
+  (the driver skips the walking): not completed. Tutorial 3 started and ran its opening; its valve / kill steps need real shots:
+  not completed. No script errors in any. The Instructor's hold crate is 23 studs from the vault wall, at the 24-stud vault
+  hearing range: he may say "What was that?"; hearing alone never spots you (awareness caps at 0.95).
+- **AI:** bots turn before they fire (snap after 1.2 s, or when anchored); a vault is now a noise (it was silent to the AI:
+  the body's speed reads 0 mid-vault).
+- **Test place (published 04:28):** read back from the cloud copy: PlaceId 99722095417844, round 4, knobs as set, PullUp clip id,
+  House WallCover with 67 wall proxies, 283 NoClimb tags, no test marks, 360 scripts compile. Admin test matches (TestPlaceHook,
+  1v1 vs bots) reached Live on Arena, Warehouse, Warehouse 2 and House; no errors.
+
+## Found on the way (not mine, fixed in this port)
+- `ui/deploy_ui.py` (run by every Matchmaking / Ranked port) overwrites the [SET] controllers with ui/set sources that lack
+  fix/breakable_glass.lua's two client edits: **live ports 47/48 shipped Matchmaking / Ranked without them** (a vault / climb /
+  dive on House could carry a player out through a window; barriers counted as camera blockers). The port build
+  (tools/move_rework_port_build.sh) re-runs fix/breakable_glass.lua after the UI deploy (it re-adds exactly edits 3 and 4).
+- `ui/` after f714708e is ungraded (UI survey r2): the port deploys ui as of f714708e~1, which equals what's live.
