@@ -62,6 +62,15 @@ Read from match_place_ref.rbxl, 2026-10-16. Every source lives in `ReplicatedSto
 | CoverRoll | 0.50 | no | Dodge roll |
 | CoverVault | 0.55 | no | Vault over low cover |
 | CoverSneak | 1.2 | yes | Slow sneak walk |
+| CoverPullUp | 0.70 | no | **Final, published** (2026-10-29): jump, both hands catch a ledge 4.0-5.1 studs high, pull, knee over, stand. Action4, markers `EdgeGrab` 0.10 / `TopReached` 0.50, root motion in code (`RootKeys`). id 105938022338716 |
+| CoverLeanLeft / CoverLeanRight | 1.2 | yes | **Final, published**: tall-cover peek lean, torso 16 deg out, head 0.88 / gun 0.74-0.86 studs out, legs planted; keys only torso + legs so aim and fire layer on top. Action4, fade 0.1. ids 127076882923530 / 121823634742999 |
+| CoverLeanLeftCrouch / CoverLeanRightCrouch | 1.2 | yes | **Final, published**: the same on the CoverCrouchPeek legs (low-cover side peek). ids 135867304208492 / 85469112434832 |
+
+Pull-up / lean details, root-motion table and wiring notes: `art/anim/pullup_lean/DONE.md`; sources installer
+`art/anim/pullup_lean/install_sources.lua`. Published 2026-10-29 the same way as CoverClimb: Studio right-click the
+KeyframeSequence > Save / Export > Save to Roblox, Creator **gunsy funsy** (the dropdown starts on "Me" every time), Delete
+Local Instances off; then `PublishedId = "rbxassetid://<id>"` on the source; ownership checked on
+`economy.roblox.com/v2/assets/<id>/details` (Creator Group 102028987).
 
 ### Movement and hits
 | Name | Length | Loop | What it is |
