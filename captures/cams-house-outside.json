@@ -1,0 +1,10 @@
+[
+ {"name":"o1_front_street","eye":[0,5,-75],"at":[0,4,-30],"fov":70},
+ {"name":"o2_front_corner_SW","eye":[-60,5,-55],"at":[-38,2,-28],"fov":70},
+ {"name":"o3_back_yard","eye":[0,5,70],"at":[0,4,30],"fov":70},
+ {"name":"o4_east_side","eye":[75,5,0],"at":[40,3,0],"fov":70},
+ {"name":"o5_west_side","eye":[-75,5,0],"at":[-40,3,0],"fov":70},
+ {"name":"o6_porch_close","eye":[8,3,-45],"at":[0,1,-31],"fov":70},
+ {"name":"o7_high_overview","eye":[150,120,-250],"at":[0,0,0],"fov":70},
+ {"name":"o8_far_overview","eye":[600,300,-900],"at":[0,0,0],"fov":70}
+]

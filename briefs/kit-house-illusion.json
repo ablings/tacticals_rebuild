@@ -1,0 +1,31 @@
+{
+ "map": "House (illusion pass)",
+ "style": "Test Site House (vault) + notes/house_1965_style.md: 1965 desert test town, dusty, warm, hazy",
+ "units": "1 Blender unit = 1 stud, Z up, plan coordinates as art/house/v2 (x east, y north, z up; exterior ground plane z = -1, house floor z = 0; house walls x -40..40, y -30..30; front door x 0..6 on y -30, back door x -6..0 on y 30)",
+ "rules": [
+  "art only (no collision); max 2,000 studs on any axis per MeshPart (Roblox limit)",
+  "own textures only, 1024 atlases, worn and dusty like the 1965 exterior; reuse art/house/v2 exterior atlases where they fit",
+  "FBX in centimetres like v2 (Studio import at scale 0.01), pivots as v2"
+ ],
+ "pieces": [
+  {"name": "X_PorchFront", "kind": "near: front porch", "size": [12, 6, 11], "asset_library": "none (new)", "view": "5-40 studs, from MB_S / FY_S looking down", "collision": "none",
+   "notes": "outside y -36..-30 at x -3..9: concrete stoop z -1..0 with 2 steps down to the path, two slim white posts, a small flat canopy at z 10.5-11.5 over the door; must stay below z 13.5 (FY_S window x -3..7 z 14-24.5 above it) and clear of x 0..6 y -30.5..-30"},
+  {"name": "X_BackStoop", "kind": "near: back door stoop", "size": [8, 5, 4], "asset_library": "none", "view": "5-40 from BR3 / BH windows", "collision": "none",
+   "notes": "outside y 30..35 at x -7..1: concrete stoop z -1..0, 2 steps, iron handrail, doormat, a milk crate"},
+  {"name": "X_Driveway", "kind": "near: driveway + foundation strip", "size": [14, 25, 0.2], "asset_library": "none", "view": "DR_S / BR2_S windows", "collision": "none",
+   "notes": "cracked concrete slab x 16..30 y -56..-31 at z -0.95 with oil stains and tyre marks; plus a 1.5-wide gravel / soil strip round the house foot (outside x -40..40, y -30..30) so the fieldstone base meets dirt"},
+  {"name": "X_TownHouse_A", "kind": "mid: low-poly ranch house", "size": [40, 26, 14], "view": "150-500", "notes": "<=600 tris, one storey, low gable, 4 colourways in one atlas (butter, salmon, mint, white), dark window squares, fieldstone base band"},
+  {"name": "X_TownHouse_B", "kind": "mid: low-poly two-storey", "size": [36, 28, 24], "view": "150-500", "notes": "<=700 tris, same atlas, 4 colourways"},
+  {"name": "X_WaterTower", "kind": "mid: landmark silhouette", "size": [24, 24, 70], "view": "250-600", "notes": "<=1,500 tris, steel legs + cross bracing, tank with our own stencil 'T-7' or none"},
+  {"name": "X_Bunker", "kind": "mid: concrete blockhouse", "size": [30, 20, 10], "view": "150-500", "notes": "<=400 tris, slit window, blast door, sandbag ring"},
+  {"name": "X_Quonset", "kind": "mid: corrugated hangar", "size": [40, 80, 22], "view": "200-600", "notes": "<=800 tris, half-cylinder, end wall with doors"},
+  {"name": "X_ObservationStand", "kind": "mid: timber stand with shade roof", "size": [30, 10, 14], "view": "200-500", "notes": "<=800 tris"},
+  {"name": "X_ChainLink", "kind": "mid: chain-link fence run with posts", "size": [60, 0.5, 8], "view": "100-400", "notes": "alpha texture, <=60 tris per run"},
+  {"name": "X_PoleLine", "kind": "mid: 8 power poles 60 apart + sagging wires", "size": [480, 4, 32], "view": "100-1000", "notes": "<=1,200 tris, poles like v2 PowerPole"},
+  {"name": "X_GroundSkirt", "kind": "far: desert ground ring", "size": "annulus radius 850 -> 4,000 round (0,0)", "view": "500-4000",
+   "notes": "12 segments (< 2,000 on any axis), z -1.05 at the inner edge (just under the v2 1800-square ground) falling gently to z -6 at the outer edge; long low dunes, dirt tracks, scrub dots in the texture near the inner edge; colour fades to haze (214,196,166) at the outer edge; <=1,500 tris total"},
+  {"name": "X_MesaRing", "kind": "far: mesa / mountain ring, 3 tiers", "size": "tier 1 radius 1,100-1,400 height 60-180 (mesas, buttes, warm tan-rust (176,132,96)); tier 2 radius 1,800-2,200 height 150-320 (ridges, (196,170,140)); tier 3 radius 2,800-3,400 height 250-520 (range, close to haze (210,194,168))", "view": "1000-3500",
+   "notes": "faces toward the centre (backfaces may be culled), bases sunk 10+ under the skirt, no straight top edge, no two matching silhouettes in any 90-degree view, gaps in tier 1 show tier 2 / 3 behind so no sky shows below a ridge anywhere round the full 360; each tier 8-12 segments (< 2,000 on any axis); <=5,000 tris total"}
+ ],
+ "deliver": "art/house/illusion/: house_illusion.blend; fbx/X_Near.fbx (porch, stoop, driveway, strip in plan place), fbx/X_Mid.fbx (one of each mid piece at the origin + K_ScaleCube), fbx/X_Far.fbx (skirt + ring in plan place + K_ScaleCube); tex/; manifest house_illusion.json (each piece: size, tris, materials, atlas); preview renders; DONE.md"
+}
