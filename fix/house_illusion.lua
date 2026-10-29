@@ -27,11 +27,12 @@ local GROUND_Y = ORIGIN.Y - 1 -- the v2 desert ground (plan z -1)
 
 -- the sky (art/house/sky/make_sky.py) and the atmosphere tuned on the window captures (notes/house_build.md "Illusion pass")
 local SKY = {
-	SkyboxBk = "rbxassetid://114348272707345", SkyboxDn = "rbxassetid://86790958697926", SkyboxFt = "rbxassetid://95474979956768", --@SKYIDS1
-	SkyboxLf = "rbxassetid://119298313393503", SkyboxRt = "rbxassetid://115392060292720", SkyboxUp = "rbxassetid://72034095232801", --@SKYIDS2
+	SkyboxBk = "rbxassetid://102446141162442", SkyboxDn = "rbxassetid://113972147749161", SkyboxFt = "rbxassetid://122853852962734", --@SKYIDS1
+	SkyboxLf = "rbxassetid://80899676313805", SkyboxRt = "rbxassetid://92696806015951", SkyboxUp = "rbxassetid://116963117272298", --@SKYIDS2
 	CelestialBodiesShown = true, SunAngularSize = 9, MoonAngularSize = 7, StarCount = 0,
 }
-local ATMO = { Density = 0.25, Offset = 0.3, Haze = 0.7, Glare = 0.3, Color = { 214, 196, 166 }, Decay = { 150, 120, 90 } } --@ATMO
+local ATMO = { Density = 0.25, Offset = 0.3, Haze = 0.7, Glare = 0.3, Color = { 222, 198, 158 }, Decay = { 150, 120, 90 } } --@ATMO
+-- (r3: Color was 214,196,166; the horizon band read 13 less red / 15 more blue than the far ground)
 
 -- each piece's average texture colour (art/house/illusion/house_illusion.json fallback_rgb): shows while textures load
 local FALLBACK = {
@@ -212,6 +213,19 @@ end
 for _, d in ext:GetDescendants() do
 	if d:IsA("MeshPart") and d.Name:match("^Mast_") then
 		d.RenderFidelity = UNDO and Enum.RenderFidelity.Automatic or Enum.RenderFidelity.Precise
+		-- round 3 (grade r2): graphics quality 1 draws normal-size parts only to ~250 studs; the masts stood at ~362 and vanished.
+		-- Moved in along their own bearing to ~245 (plan), still framed by the same windows; the v2 spot is kept for UNDO.
+		local MOVE = { Mast_South = Vector2.new(36, -240), Mast_NE = Vector2.new(178, 170) }
+		local to = MOVE[d.Name]
+		if to then
+			local orig = d:GetAttribute("Illusion_OrigCF")
+			if UNDO then
+				if orig then d.CFrame = orig; d:SetAttribute("Illusion_OrigCF", nil) end
+			else
+				if not orig then d:SetAttribute("Illusion_OrigCF", d.CFrame); orig = d.CFrame end
+				d.CFrame = orig.Rotation + Vector3.new(ORIGIN.X + to.X, orig.Position.Y, ORIGIN.Z - to.Y)
+			end
+		end
 	elseif d:IsA("BasePart") and d.Name == "Dummy_Ext_Fence" then
 		if UNDO then
 			if d:GetAttribute("HiddenReason") == "illusion: in spawn A's first look" then d.Transparency = 0; d:SetAttribute("HiddenReason", nil) end
@@ -272,7 +286,7 @@ local MID = {
 	{ "X_TownHouse_A_Mint", 110, 195, "S" },
 	{ "X_TownHouse_A_White", -190, -215, "N" }, { "X_TownHouse_B_Butter", -122, -222, "N" },
 	-- the test site round the town
-	{ "X_WaterTower", 70, 430, "S" }, { "X_Quonset", 360, 175, "W" },
+	{ "X_WaterTower", 60, 262, "S" } --[[ r3: was (70, 430): culled at quality 1 past ~250 ]], { "X_Quonset", 360, 175, "W" },
 	{ "X_Bunker", 185, -300, "N" }, { "X_Bunker", -265, -335, "E" }, { "X_Bunker", 300, -218, "W" }, { "X_Bunker", -455, 150, "E" },
 	{ "X_ObservationStand", 250, -380, "S" }, -- (grade r1: at 125,-445 it stood half inside the Arena wall)
 	{ "X_ChainLink", 185, -265, "N" }, { "X_ChainLink", 185, -335, "N" }, { "X_ChainLink", 150, -300, "E" }, { "X_ChainLink", 220, -300, "E" },
@@ -286,7 +300,8 @@ local MID = {
 	-- Warehouse / Warehouse 2 (plan ~ 480..660, 0..-520; Warehouse2Exterior is 62 tall)
 	{ "X_Quonset", 10, -320, "E" }, { "X_Quonset", 91.3, -322, "E" }, { "X_TownHouse_B_White", 300, -120, "W" }, -- (r3: 9-stud gap between the hangars: now butted; a big hangar between the near butte's two rock masses)
 	{ "X_Mesa1_03", 440, -120, "E", Vector3.new(330, 100, 130), "X_Far" }, { "X_Mesa1_08", 440, -400, "E", Vector3.new(320, 80, 140), "X_Far" },
-	{ "X_Quonset", 372, -145, "N", Vector3.new(66, 40, 124), nil, "fills a butte gap" }, -- a big aircraft hangar in the gap between the near butte's two rock masses
+	{ "X_Quonset", 372, -145, "N", Vector3.new(66, 40, 124), nil, "fills a butte gap" },
+	{ "X_Mesa1_11", 470, -78, "E", Vector3.new(70, 22, 55), "X_Far", "low rock at the near butte's foot (r3: a shed showed past it from the glass)" }, -- a big aircraft hangar in the gap between the near butte's two rock masses
 	-- pole lines running out to the horizon (the piece's 8 poles lie along its local X)
 	{ "X_PoleLine", 425, 130, "N" }, { "X_PoleLine", -485, -76, "N" }, { "X_PoleLine", 30, 385, "E" }, { "X_PoleLine", -60, -405, "E" },
 }

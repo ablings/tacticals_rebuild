@@ -242,3 +242,32 @@ notes/TEST_PLACE_READY.md (both at 20:59).
 - Open (not this map's to fix): no per-map Sky in the match code (the place's sky zenith shows blue through the high FY window
   looking up); match place Technology is ShadowMap (place-wide); MapAudit WALK in Play counts CanQuery-off PCOL blockers as
   missing (kit); tape crosses on 11 panes, far mesas, carpet path scuffs, bullet-hole decals in the single wear atlas (modeler).
+
+## Illusion pass: the world outside the windows (2026-10-29, main PC map builder; Edward: "the house map looks like a floating object from the windows")
+Work order (Lead, approved by Edward): research how games fake unreachable surroundings, build it in a copy, grade the illusion,
+publish to the Test place only. Brief `briefs/map-house-illusion.md`, kit `briefs/kit-house-illusion.json`, vault
+`03 Map Building/Backdrops and World Illusion.md` (research + checklist + measured Roblox numbers).
+- **Before:** 7 houses on an 1800-stud square of desert, 22 low wedge mesas that read as roofs, an empty plain to a hard grey
+  line, the place's blue sky through every up-view (no per-map Sky in the match code). Sheet left column: `notes/house_windows_sheet.jpg`.
+- **Built** (copy `out/house_illusion/Test_place_illusion.rbxl`, from Test_place.rbxl of Test port 49):
+  - `fix/map_sky.lua` [MAPSKY]: RoundManager's applyMapEnv also applies MapInfo.Lighting.Sky (place skies parked, restored),
+    makes an Atmosphere when the place has none, moves MapInfo.Backdrop models from ServerStorage.MapBackdrops into Workspace
+    only while that map is loaded, and steps MapInfo.Hide children's look aside (collision untouched). Lobby part: ArenaLoader
+    moves the lobby Sky aside when a duel map brings one (tested in a lobby copy with the loader's own code; NOT ported: the lobby
+    keeps House on the lobby sky until promotion). UNDO byte-for-byte.
+  - `fix/house_illusion.lua` [ILLUSION] (after fix/map_house.lua): modeler kit art/house/illusion (X_Far / X_Near / X_Mid,
+    Import 3D, gunsy funsy) -> porch + canopy, back stoop, driveway, gravel strip; HouseFarField = 54 mid pieces (25 test-town
+    houses, water tower, hangars, bunkers, viewing stands, chain-link, 5 pole lines, 3 near buttes) + far field (ground ring to
+    r 4,000, three mesa / mountain tiers to r 3,400); v2 wedge mesas and the street dummy hidden; masts + water tower moved to
+    ~245 studs (quality 1 draws normal-size parts only to ~250); MapInfo Sky (own six faces, house_sky4), Atmosphere 0.25 / 0.3 /
+    haze 0.7 / (222,198,158), Backdrop, Hide = Baseplate, R15, AnimRig.
+  - Sky: `art/house/sky/make_sky.py` (procedural, ridges normalised over the full circle; face order measured: Lf = +X, Rt = -X).
+  - Cost: far 5,442 tris, mid 21.8k (54 placements), near 226; 6 new textures + 6 sky faces; no lights, particles, scripts;
+    all new art Anchored, CanCollide / CanQuery / CanTouch off, CastShadow off past the near field.
+- **Checks:** sight check `tools/house_illusion/sightcheck.py` (every clear window, standing + crouched eye, az +-50, el -4..+6,
+  first hit by owner): 192 foreign hits -> 0 of 22,440. MapAudit: House 0 FAIL (Edit 1 WARN HOLE, as before), HouseExterior 0/0,
+  HouseFarField 0/0. Play: during a House test match MapSky + far field + Hide on server and client; after it the place Sky,
+  Baseplate look and storage back.
+- Found on the way: Creator Hub's upload result lists DECAL ids (a Sky needs the IMAGE id, else Roblox's default blue);
+  a GPU "device removed" crash took down every Studio on the PC (everything re-ran from scripts); a crash-recovery prompt can
+  render blank and block the window (kill + reopen + Ignore).

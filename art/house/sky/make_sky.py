@@ -15,8 +15,8 @@ N = 1024
 rng = np.random.default_rng(1965)
 
 HAZE = np.array([214, 196, 166.0])
-HORIZON = np.array([222, 205, 166.0])  # r3: horizon join was 19 bluer than the far ground (grade r1)
-MID = np.array([201, 194, 174.0])
+HORIZON = np.array([222, 201, 150.0])  # r3/r4: the horizon join read 19, then 18 bluer than the far ground (grades r1, r2)
+MID = np.array([204, 193, 166.0])
 ZENITH = np.array([156, 172, 188.0])
 GROUND = np.array([200, 180, 146.0])
 RIDGE_FAR = np.array([196, 180, 154.0])

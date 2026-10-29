@@ -22,5 +22,6 @@ if saved then
 		if obj then obj[key] = v; n += 1 end
 	end
 end
+if saved then saved:Destroy() end -- (grade r2: a parked-values Configuration must not ship in a saved place)
 local skies = {} for _, c in L:GetChildren() do if c:IsA("Sky") then table.insert(skies, c.Name) end end
 return ("restored %d lighting values; skies %s; farfield in store %s"):format(n, table.concat(skies, ","), tostring(SS.MapBackdrops:FindFirstChild("HouseFarField") ~= nil))

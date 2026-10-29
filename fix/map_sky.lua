@@ -21,14 +21,14 @@
 --    when SKY below is set.
 local UNDO = false --@UNDO
 
--- House's sky (art/house/sky/make_sky.py; images uploaded under gunsy funsy 2026-10-29 as house_sky3_<face> (warmer horizon band, r3); these are the IMAGE ids (Creator Hub lists the decal ids, resolved by InsertService:LoadAsset); round 1 house_sky_* superseded). Used by B; A reads MapInfo.Lighting.Sky
+-- House's sky (art/house/sky/make_sky.py; images uploaded under gunsy funsy 2026-10-29 as house_sky4_<face> (horizon band warmed twice, r3/r4); these are the IMAGE ids (Creator Hub lists the decal ids, resolved by InsertService:LoadAsset); round 1 house_sky_* superseded). Used by B; A reads MapInfo.Lighting.Sky
 -- (written into House's MapInfo by fix/house_illusion.lua from the same ids).
 local SKY = {
-	SkyboxBk = "rbxassetid://114348272707345", SkyboxDn = "rbxassetid://86790958697926", SkyboxFt = "rbxassetid://95474979956768", --@SKYIDS1
-	SkyboxLf = "rbxassetid://119298313393503", SkyboxRt = "rbxassetid://115392060292720", SkyboxUp = "rbxassetid://72034095232801", --@SKYIDS2
+	SkyboxBk = "rbxassetid://102446141162442", SkyboxDn = "rbxassetid://113972147749161", SkyboxFt = "rbxassetid://122853852962734", --@SKYIDS1
+	SkyboxLf = "rbxassetid://80899676313805", SkyboxRt = "rbxassetid://92696806015951", SkyboxUp = "rbxassetid://116963117272298", --@SKYIDS2
 	CelestialBodiesShown = true, SunAngularSize = 9, MoonAngularSize = 7, StarCount = 0,
 }
-local HOUSE_ATMO = { Density = 0.25, Offset = 0.3, Haze = 0.7, Glare = 0.3, Color = Color3.fromRGB(214, 196, 166), Decay = Color3.fromRGB(150, 120, 90) } --@ATMO
+local HOUSE_ATMO = { Density = 0.25, Offset = 0.3, Haze = 0.7, Glare = 0.3, Color = Color3.fromRGB(222, 198, 158), Decay = Color3.fromRGB(150, 120, 90) } --@ATMO
 
 local out = {}
 local function edit(script, edits, tag)
