@@ -197,3 +197,10 @@ had no time for, and one minor:
 | Minor docs: "hidden" vs removed; MB print note | wording fixed (build log, layout note) |
 | Minor: Tree_15 crown vs the house behind (bbox 0.15) | render w10: the tree stands in the garden in front of the house; no visible clash |
 Re-run after: read-back 0, checker PASS (built), walk-through 0, art fit 0.02, MapAudit 0 FAIL / 1 WARN.
+
+## Published (2026-10-28 20:09-20:40, live port 47): Edward "Publish now"
+Matchmaking (97339328188402) 20:09, Ranked (122908502889013) 20:15, tacticals lobby (126491009194165) 20:38 on top of live port 46.
+Every one read back from the cloud window: House in DuelMaps with tile image 115831329348823, 0 test marks (notes/port_manifest.md
+"Live port 47"). Bot match on House in Matchmaking and a lobby pad duel on House both put the players on A (-34,-19) / B (34,19).
+Smoke alarms NOT included. Open minors kept from round 5 (landing bookcase vs MB casing 0.05; upper vanity 0.32 into the doorway width;
+foyer bench vs locked front-door casing 0.35).

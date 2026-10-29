@@ -659,7 +659,7 @@ himself; we never publish.
 - **Matchmaking** (97339328188402), published 20:09: copy of match_place_ref -> tools/port_prep.sh Matchmaking (split_build, deploy_ui
   --matchmaking, PLAYQUEUE, SWITCHNOW) -> bot match: vote listed Warehouse/Arena/Warehouse2/House, House won, me on A (-34,-19) and
   MatchBot on B (34,19), doors Front/Back Locked, EN Closed, the rest Open, clock 16.2. Publish As > gunsy funsy > tacticals > Matchmaking
-  > Overwrite > Grant Permissions and Publish. Read back from the cloud window (out/house_port/readback.lua): PlaceId 97339328188402,
+  > Overwrite > Grant Permissions and Publish. Read back from the cloud window (tools/house_cloud_readback.lua): PlaceId 97339328188402,
   DuelMaps Warehouse,Arena,Warehouse2,House; PlaceKind Matchmaking; House 615 parts / 273 MeshParts, 293 proxies, 28 windows, 8 doors;
   HouseExterior 166; HouseKit 625; Image rbxassetid://115831329348823; StudioTeleportData nil; 352 scripts, 0 test marks.
   Console: one old "not authorized to grant ... asset 16049574146" (an asset already in the pre-House Matchmaking place, not House) and the
@@ -672,7 +672,7 @@ himself; we never publish.
   1v1/2v2/3v3). Pad duel (Studio, DuelTestSolo, standing on Pad_1v1_A.Team1): D1 at 4000,100,0, vote House won, me on A (-34,-19), the
   bot on B (34,19), 28 glass + 61 window barriers + 8 doors in the Solid layer, my client at clock 16.2. Test flag cleared, saved 20:32,
   copied to Tacticals_main_ported.rbxl + Technology Future (tools/set_technology.py ... 4). Publish As > gunsy funsy > tacticals >
-  tacticals > Overwrite > Grant. Read back (out/house_port/readback_lobby.lua): PlaceId 126491009194165; DuelMaps Warehouse(1v1),
+  tacticals > Overwrite > Grant. Read back (tools/house_cloud_readback_lobby.lua): PlaceId 126491009194165; DuelMaps Warehouse(1v1),
   Arena(1v1,2v2,3v3), Warehouse2(1v1), House(1v1,2v2,3v3); House image set; _DuelSource.House 869 parts / 527 MeshParts; TestPlace command
   + TestPlaceId 99722095417844 kept; ArenaShootables LobbySteamFillRound 1 kept; 383 scripts, 0 test marks.
 - Publish notes: Studio's "Auto Recovery File Found" prompt can open off-screen as a borderless 366x40 window that holds the place
