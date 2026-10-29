@@ -631,3 +631,20 @@ himself; we never publish.
   still has no picture (as in Matchmaking).
 - Live checks for Edward: a 1v1 pad duel, vote Warehouse 2: night hall, doors stay shut, shooting a valve fills that end with steam;
   a friend in the hub keeps daylight.
+
+## Live port 46 (2026-10-28, Shadow PC systems session; Edward: the Test place work order, his go to publish it + the lobby change) - NEW Test place + LOBBY ONLY
+- **Test place (NEW): 99722095417844** in tacticals (universe 10769593848, gunsy funsy), published 17:57 with Publish As > gunsy funsy >
+  tacticals > Add as a new place > Grant Permissions and Publish. Source: Test_place.rbxl (commit dd380aa) = match_place_ref.rbxl
+  (port 44 state) + `split_build.py place <id> Test` + `test_place_install.lua` round 2 + `deploy_ui.py --matchmaking` +
+  `fix/switch_now.lua`; StagingMaps empty; compile 353 ok, no Studio marks. Read back from the retitled cloud window: PlaceId
+  99722095417844, GameId 10769593848, PlaceKind Test. Name on Creator Hub is still the default "whitteguy's Place: 10292026_1"
+  (rename to "Test": not done, see notes/test_place.md).
+- **tacticals lobby** (126491009194165), published 18:09: Tacticals_main_ported.rbxl = Tacticals_rebuild.rbxl (ce90e6a) with Technology
+  Future. Lobby = live port 45 + `fix/test_lobby_install.lua` only (LobbyConfig.TestPlaceId = 99722095417844, AdminFramework
+  Commands/TestPlace). House=false/false. Publish As > gunsy funsy > tacticals > tacticals > Overwrite > Grant Permissions and Publish.
+  Read back from the cloud window: PlaceId 126491009194165, DuelMaps Arena / Warehouse / Warehouse2, LobbySteamFillRound 1, no House,
+  TestPlaceId 99722095417844, the command module present, compile all ok (381 scripts).
+- Matchmaking, Ranked and Tutorial unchanged.
+- Tests: notes/test_place.md "Tests" (two-player Server + Clients on the Shadow PC; lobby Play).
+- Live check for Edward: in the lobby type `;testplace` (admins only) -> you land in the Test place's waiting area; `;maplist`,
+  `;testmatch Arena 1v1 bots`.

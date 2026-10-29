@@ -3,8 +3,10 @@
 Edward: a TEST place "where new maps are tried before they're pushed to Matchmaking, Ranked and the lobby". Plan by the Lead,
 approved by Edward (his go to publish this place and the lobby change it needs).
 
-- **Place:** "Test", a new place in the Tacticals experience (universe 10769593848, group gunsy funsy). Place id: **see
-  notes/TEST_PLACE_READY.md / notes/port_manifest.md "Live port 46"** (filled in after Publish As).
+- **Place:** "Test", a new place in the Tacticals experience (universe 10769593848, group gunsy funsy). **Place id 99722095417844**
+  (published 2026-10-28 18:00 from the Shadow PC; notes/port_manifest.md "Live port 46"). Its Creator Hub name is still the default
+  "whitteguy's Place: 10292026_1" until someone renames it to "Test" (Creator Hub > tacticals > Places); in Publish As look for that name.
+  The lobby's `LobbyConfig.TestPlaceId` = 99722095417844.
 - **File:** `Test_place.rbxl` at the repo root (the published copy; staging maps live in it). Build log copies: `out/test_place/`.
 - **Who gets in:** players the admin framework rates **Admin or higher** (Config.Users list: ocxa = Owner; or gunsy funsy group rank
   254+ = Admin, 255 = Owner). Everyone else is sent back to the lobby. Studio: everyone is Owner unless `;simlevel`.
@@ -91,4 +93,17 @@ The gate's level is `TP_LEVEL = "Admin"` at the top of the block.
 - Refusals: unknown map, 4v4, `admins` alone, a second `;testmatch` while one runs; `;endmatch` -> waiting area, nobody paid.
 - Gate: `;simlevel none me` -> within the recheck: body removed, "ADMINS ONLY" notice, back-to-lobby x2 (Studio logs it), kicked
   "This test server is for admins only." (console in out/test_place/console_gate.txt).
-- Two players (Studio server + 2 clients), lobby entry: see notes/port_manifest.md "Live port 46".
+- Two players (Studio Server + 2 clients, Shadow PC, round 2 of the installer):
+  - Player2 `;simlevel none`: within the 10 s recheck lost the body, "ADMINS ONLY" notice, back-to-lobby x2, kicked after 3 notices;
+    Player1 kept playing (captures/test_place/tp_mp_p2_denied.png).
+  - **Bug found + fixed (installer round 2):** Studio clients have UserIds -1, -2, and runMatchServer counted every id <= 0 as a test
+    bot, so `;testmatch Arena 1v1 admins` turned both admins into bots: nobody moved into the arena, round 1 a draw in the waiting
+    area (tp_mp_p1_live.png). Now a present player is never a bot and a test bot skips present players' ids. Live ids are
+    positive, so live was not affected.
+  - After the fix: admin vs admin Arena 1v1, both on their spawns (tp_mp_admins_arena.png), 5-0, back to waiting; Wins / Kills /
+    Matches / Level / Streak / ELO unchanged, view-only profiles. Warehouse 2v2 admins + bot fill: bots -3 / -4; `;endmatch` ->
+    waiting area. Server console: no errors.
+- Lobby (Tacticals_rebuild.rbxl, Studio Play): `;testplace` / `;testplace new` -> the Studio line with place 99722095417844;
+  TestPlaceId 0 -> "isn't set up yet"; refused on a pad, in a duel, and for a Tester (`;simlevel Tester`).
+- Known limit: the place's SpawnLocation (the waiting area) is inside the Warehouse near its SpawnA, so admins waiting beside a
+  Warehouse test match stand in that team's spawn room.
