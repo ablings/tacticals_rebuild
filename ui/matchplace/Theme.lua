@@ -69,6 +69,19 @@ Theme.font = {
 -- panel transparencies (the lobby shows through, blurred)
 Theme.alpha = { panel = 0.42, header = 0.25, bar = 0, scrim = 0.3 }
 
+-- (2026-10-29, UI survey fix 1) THE text stroke: soft, ~1.5 design px at 0.65 (UI Corrections 2026-10-10; audit: <= 2 px, >= 0.55).
+-- Every glyph outline reads this token; a tween that fades a stroke in fades it to Theme.stroke.transparency.
+Theme.stroke = { thickness = 1.5, transparency = 0.65, color = Color3.new(0, 0, 0) }
+function Theme.textStroke(parent, color)
+	local s = Instance.new("UIStroke")
+	s.ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual
+	s.Thickness = Theme.stroke.thickness
+	s.Transparency = Theme.stroke.transparency
+	s.Color = color or Theme.stroke.color
+	s.Parent = parent
+	return s
+end
+
 Theme.corner = 3
 Theme.blur = 24 -- BlurEffect size behind menus
 Theme.design = Vector2.new(1920, 1080) -- design canvas; screens lay out in these pixels

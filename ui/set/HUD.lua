@@ -111,7 +111,9 @@ function hud.SetBlocked(screenPosition: Vector2?)
 	local marker = getGui().BlockedMarker
 	marker.Visible = screenPosition ~= nil
 	if screenPosition then
-		marker.Position = UDim2.fromOffset(screenPosition.X, screenPosition.Y)
+		-- (2026-10-29, UI survey fix 4) Scale only: the screen point as a share of the HUD (was Offset)
+		local vs = getGui().AbsoluteSize
+		marker.Position = UDim2.fromScale(screenPosition.X / math.max(vs.X, 1), screenPosition.Y / math.max(vs.Y, 1))
 	end
 end
 
@@ -157,8 +159,11 @@ function hud.ShowHitmarker(zone: string, killed: boolean, headshot: boolean?)
 	-- (2026-10-21, RIVALS' MouseCrosshair from the reference: a critically damped spring, speed 20, reset on every hit) the
 	-- ticks open wide and turned +-15 deg, then close in and straighten over ~0.25 s; every bullet restarts it
 	local close = TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-	marker.Size = UDim2.fromOffset(from * 1.6 * f, from * 1.6 * f)
-	TweenService:Create(marker, close, { Size = UDim2.fromOffset(to * f, to * f) }):Play()
+	-- (2026-10-29, UI survey fix 4) Scale only: the px size as a share of the screen on each axis (was fromOffset)
+	local vs = root.AbsoluteSize
+	local function px(n) return UDim2.fromScale(n * f / math.max(vs.X, 1), n * f / math.max(vs.Y, 1)) end
+	marker.Size = px(from * 1.6)
+	TweenService:Create(marker, close, { Size = px(to) }):Play()
 	marker.Rotation = (math.random() < 0.5 and -1 or 1) * 15
 	TweenService:Create(marker, close, { Rotation = 0 }):Play()
 	local life = head and CRIT_TIME or HITMARKER_TIME

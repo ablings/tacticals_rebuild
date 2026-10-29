@@ -978,8 +978,11 @@ local function markEnemy(on: boolean)
 	br.Adornee = body
 	br.AlwaysOnTop = true
 	br.LightInfluence = 0
-	br.Size = UDim2.new(4.2, 40, 6.2, 56)
+	-- (2026-10-29, UI survey fix 4) Scale only: the 40 x 56 px floor and the 4 px line width are turned into studs / shares of
+	-- the box every frame from the camera distance (fitBrackets), instead of Offsets on the BillboardGui and its lines
+	br.Size = UDim2.fromScale(4.2, 6.2)
 	br.StudsOffsetWorldSpace = Vector3.new(0, 0.4, 0)
+	local lines = {}
 	for _, c in { { 0, 0 }, { 1, 0 }, { 0, 1 }, { 1, 1 } } do
 		for _, horiz in { true, false } do
 			local f = Instance.new("Frame")
@@ -987,9 +990,18 @@ local function markEnemy(on: boolean)
 			f.BorderSizePixel = 0
 			f.AnchorPoint = Vector2.new(c[1], c[2])
 			f.Position = UDim2.fromScale(c[1], c[2])
-			f.Size = horiz and UDim2.new(0.26, 0, 0, 4) or UDim2.new(0, 4, 0.18, 0)
+			f.Size = horiz and UDim2.fromScale(0.26, 0.02) or UDim2.fromScale(0.03, 0.18)
 			f.Parent = br
+			table.insert(lines, { f = f, horiz = horiz })
 		end
+	end
+	-- studs (W, H) + a pixel floor (pw, ph) at this distance -> Scale size, with 4 px lines
+	local function fitBrackets(cam, d, W, H, pw, ph)
+		local spp = 2 * d * math.tan(math.rad(cam.FieldOfView / 2)) / math.max(cam.ViewportSize.Y, 1) -- studs per screen px
+		local sw, sh = W + pw * spp, H + ph * spp
+		br.Size = UDim2.fromScale(sw, sh)
+		local lw, lh = 4 * spp / sw, 4 * spp / sh
+		for _, l in lines do l.f.Size = l.horiz and UDim2.fromScale(0.26, lh) or UDim2.fromScale(lw, 0.18) end
 	end
 	br.Parent = workspace.CurrentCamera
 	enemyBrackets = br
@@ -1020,7 +1032,8 @@ local function markEnemy(on: boolean)
 			local ang = math.deg(math.acos(math.clamp(cam.CFrame.LookVector:Dot(toward), -1, 1)))
 			local locked = ang <= math.deg(math.atan(2.5 / math.max(d, 1))) + 2.5
 			if enemyBrackets then
-				enemyBrackets.Size = locked and UDim2.new(3.4, 18, 5.4, 26) or UDim2.new(4.2, 40, 6.2, 56)
+				if locked then fitBrackets(cam, (cam.CFrame.Position - body.Position).Magnitude, 3.4, 5.4, 18, 26)
+				else fitBrackets(cam, (cam.CFrame.Position - body.Position).Magnitude, 4.2, 6.2, 40, 56) end
 			end
 			if strip and strip.reticle.Visible then
 				paintFace(strip.reticle.Face, locked and AMBER or KEY_WHITE)

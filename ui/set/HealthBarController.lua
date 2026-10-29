@@ -20,6 +20,7 @@ local LOW_AT = 0.3 -- fraction of max health
 -- no plate, just the big white number with a cross and a rounded quartered bar on dark glass, like RIVALS.
 -- Built in 1920x1080 design px on a UIKit canvas, then Kit.toScale (Scale only).
 local Kit = require(game:GetService("ReplicatedStorage"):WaitForChild("UIKit"):WaitForChild("Kit"))
+local STROKE_T = require(game:GetService("ReplicatedStorage").UIKit:WaitForChild("Theme")).stroke.transparency -- the soft glyph stroke
 local STENCIL = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells cleanup) Oswald Bold, was Montserrat Heavy
 local FIELD = Color3.fromRGB(200, 200, 206)
 
@@ -70,7 +71,7 @@ local function build()
 	number.Text = "100"
 	number.ZIndex = 6
 	number.Parent = back
-	local ns = Instance.new("UIStroke") ns.Thickness = 1.5 ns.Transparency = 0.35 ns.Parent = number
+	require(game:GetService("ReplicatedStorage").UIKit.Theme).textStroke(number) -- (2026-10-29, UI survey fix 1) Theme.stroke, was 1.5 px @ 0.35
 	local cross = box(back, { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(W - 22, H / 2), Size = UDim2.fromOffset(18, 18), BackgroundTransparency = 1, ZIndex = 6 })
 	for _, sz in { Vector2.new(18, 6), Vector2.new(6, 18) } do
 		local arm = box(cross, { AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromOffset(9, 9), Size = UDim2.fromOffset(sz.X, sz.Y), BackgroundColor3 = Color3.new(1, 1, 1), ZIndex = 6 })
@@ -151,7 +152,7 @@ local function update(dt)
 	local base = onFill and Color3.fromRGB(46, 42, 36) or Color3.new(1, 1, 1)
 	number.TextColor3 = base:Lerp(COLOR_LOW, low and 0 or flash)
 	local nstroke = number:FindFirstChildOfClass("UIStroke")
-	if nstroke then nstroke.Transparency = onFill and 1 or 0.35 end
+	if nstroke then nstroke.Transparency = onFill and 1 or STROKE_T end
 	for _, arm in crossArms do
 		arm.BackgroundColor3 = base
 		local ast = arm:FindFirstChildOfClass("UIStroke")

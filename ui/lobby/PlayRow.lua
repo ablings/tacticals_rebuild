@@ -91,7 +91,7 @@ function PlayRow.Init(ctx)
 	playLabel = RKit.label({ Text = "Play", FontFace = PLAY_FONT, TextSize = PLAY_SIZE, TextScaled = true, TextColor3 = RC.text, TextXAlignment = Enum.TextXAlignment.Center,
 		AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(206, 40), ZIndex = 3, Parent = play })
 	labelCap = new("UITextSizeConstraint", { MaxTextSize = PLAY_SIZE, Parent = playLabel })
-	labelStroke = new("UIStroke", { Thickness = 1.5, Transparency = 0.2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = playLabel })
+	labelStroke = require(UIKit:WaitForChild("Theme")).textStroke(playLabel) -- (2026-10-29, UI survey fix 1) Theme.stroke, was 1.5 px @ 0.2
 	-- hover: the replica grows Play 1.08 from its centre (Kit.bindButton); live RIVALS also brightens it, so a white sheen at
 	-- 0.85 fades in under the label. Press 0.93 like every replica button. The "Hovered" attribute tells LobbyHud to hide its
 	-- "Join the queue" bubble while PLAY is hovered.

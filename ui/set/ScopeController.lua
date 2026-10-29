@@ -183,8 +183,11 @@ local function buildOverlay()
 		ZIndex = 20, Parent = gui })
 	-- the lens: everything outside it is the black of the scope tube
 	local lens = new("Frame", { Name = "Lens", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5),
-		Size = UDim2.fromOffset(600, 600), ZIndex = 5, Parent = gui }, { circle() })
+		Size = UDim2.fromScale(0.5, 0.5), ZIndex = 5, Parent = gui }, { circle() })
 	ui.lens = lens
+	-- (2026-10-29, UI survey fix 4) Scale only: the lens box and every reticle line are written as Scale each frame; thin lines
+	-- keep their design px width (x screen height / 1080, at least 1 px) as a share of the lens (ui.fitReticle)
+	ui.px = {}
 	ui.mask = new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 3000, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = lens })
 	-- soft inner edge (the tube's shadow on the glass) and a dark metal rim
 	ui.rings = {}
@@ -214,8 +217,9 @@ local function buildOverlay()
 	-- reticle: thin crosshair through the middle, thick posts toward the edge, mil dots, lit centre
 	local ink = Color3.fromRGB(8, 8, 10)
 	local function bar(x, y, w, h)
-		new("Frame", { BackgroundColor3 = ink, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(x, y),
-			Size = UDim2.new(w[1], w[2], h[1], h[2]), ZIndex = 2, Parent = glass })
+		local f = new("Frame", { BackgroundColor3 = ink, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(x, y),
+			Size = UDim2.fromScale(w[1], h[1]), ZIndex = 2, Parent = glass })
+		table.insert(ui.px, { o = f, w = w, h = h })
 	end
 	bar(0.5, 0.5, { 1, 0 }, { 0, 1.5 })          -- thin horizontal
 	bar(0.5, 0.5, { 0, 1.5 }, { 1, 0 })          -- thin vertical
@@ -225,24 +229,36 @@ local function buildOverlay()
 	bar(0.5, 0.17, { 0, 4 }, { 0.34, 0 })         -- top post (slimmer)
 	for _, d in { -0.135, -0.1, -0.065, -0.03, 0.03, 0.065, 0.1, 0.135 } do
 		for _, axis in { "x", "y" } do
-			new("Frame", { BackgroundColor3 = ink, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+			local md = new("Frame", { BackgroundColor3 = ink, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = axis == "x" and UDim2.fromScale(0.5 + d, 0.5) or UDim2.fromScale(0.5, 0.5 + d),
-				Size = UDim2.fromOffset(5, 5), ZIndex = 2, Parent = glass }, { circle() })
+				Size = UDim2.fromScale(0, 0), ZIndex = 2, Parent = glass }, { circle() })
+			table.insert(ui.px, { o = md, w = { 0, 5 }, h = { 0, 5 } })
 		end
 	end
 	local dot = new("Frame", { BackgroundColor3 = Color3.fromRGB(255, 40, 40), BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(4, 4), ZIndex = 3, Parent = glass }, { circle() })
-	new("Frame", { BackgroundColor3 = Color3.fromRGB(255, 60, 60), BackgroundTransparency = 0.75, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromOffset(10, 10), ZIndex = 2, Parent = glass }, { circle() })
+		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0, 0), ZIndex = 3, Parent = glass }, { circle() })
+	table.insert(ui.px, { o = dot, w = { 0, 4 }, h = { 0, 4 } })
+	table.insert(ui.px, { w = { 0, 10 }, h = { 0, 10 }, o = new("Frame", { BackgroundColor3 = Color3.fromRGB(255, 60, 60), BackgroundTransparency = 0.75, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0, 0), ZIndex = 2, Parent = glass }, { circle() }) })
 	ui.dot = dot
 
 	gui.Parent = localPlayer:WaitForChild("PlayerGui")
+end
+
+-- the reticle's thin lines and dots: a design px width (scaled by the screen, at least 1 px) written as a share of the lens d
+function ui.fitReticle(d, f)
+	if d < 1 then return end
+	local function axis(a) return a[1] + (a[2] ~= 0 and math.max(1, a[2] * f) / d or 0) end
+	for _, e in ui.px do
+		if e.o then e.o.Size = UDim2.fromScale(axis(e.w), axis(e.h)) end
+	end
 end
 
 local function layout()
 	local vs = workspace.CurrentCamera and workspace.CurrentCamera.ViewportSize or Vector2.new(1280, 720)
 	local d = math.min(vs.X, vs.Y) * 0.94
 	ui.size = d
+	ui.vs = vs
 	ui.mask.Thickness = math.max(vs.X, vs.Y) * 1.6
 	for _, r in ui.rings do r.stroke.Thickness = math.max(3, d * 0.0075) end
 end
@@ -328,8 +344,10 @@ local function update(dt: number)
 	local e = smootherstep(o)
 	local d = ui.size * (1 + (1 - e) * 1.1)
 	local shake = Vector2.new(springs.lensX.x, springs.lensY.x) * 0.4
-	ui.lens.Size = UDim2.fromOffset(d, d)
-	ui.lens.Position = UDim2.new(0.5, lensOffset.X + shake.X, 0.5, lensOffset.Y + shake.Y)
+	local vs = ui.vs
+	ui.lens.Size = UDim2.fromScale(d / vs.X, d / vs.Y)
+	ui.lens.Position = UDim2.fromScale(0.5 + (lensOffset.X + shake.X) / vs.X, 0.5 + (lensOffset.Y + shake.Y) / vs.Y)
+	ui.fitReticle(d, vs.Y / 1080)
 	ui.mask.Transparency = 1 - math.min(1, e * 1.4)
 	ui.dark.BackgroundTransparency = 1 -- (2026-10-21) no black blink at the eye: it read as a cut (RIVALS has none)
 	ui.glass.GroupTransparency = 1 - clamp01((o - 0.55) / 0.45)

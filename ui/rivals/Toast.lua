@@ -8,6 +8,7 @@ local TweenService = game:GetService("TweenService")
 local UIKit = script.Parent
 local Theme = require(UIKit:WaitForChild("Theme"))
 local Assets = require(UIKit:WaitForChild("Assets"))
+local TOKEN_STROKE = require(UIKit.Parent:WaitForChild("Theme")).stroke -- UIKit.Theme: the one soft glyph stroke
 
 local Toast = {}
 local RUBIK = "rbxassetid://12187365977"
@@ -73,7 +74,7 @@ function Toast.show(opt)
 		if opt.count then
 			countLbl = make("TextLabel", { BackgroundTransparency = 1, Text = "×" .. opt.count, FontFace = FB, TextSize = 20 * scale, TextColor3 = Color3.new(1, 1, 1),
 				AnchorPoint = Vector2.new(0.5, 0), Position = UDim2.fromScale(sx(556), sy(44)), Size = UDim2.fromScale(sx(60), sy(24)), ZIndex = 2, Parent = pill },
-				{ make("UIStroke", { Thickness = 1.5, Transparency = 0.3 }) })
+				{ make("UIStroke", { Thickness = TOKEN_STROKE.thickness, Transparency = TOKEN_STROKE.transparency }) }) -- (2026-10-29, UI survey fix 1) Theme.stroke, was @ 0.3
 		end
 	end
 	-- in: drop from above; hold; out: fade

@@ -50,7 +50,8 @@ local ui = {} -- built pieces
 
 local player = Players.LocalPlayer
 local function A(name) return player:GetAttribute(name) end
-local function stroke(l, t) new("UIStroke", { Thickness = t or 2, Transparency = 0.3, Parent = l }) return l end
+-- (2026-10-29, UI survey fix 1) every glyph outline is the soft Theme.stroke (was 2-3 px @ 0.3); the width argument is ignored
+local function stroke(l, t) Theme.textStroke(l) return l end
 local function label(parent, text, font, size, x, y, w, h, color, align)
 	local l = Kit.label({ Text = text, FontFace = font, TextSize = size, TextColor3 = color or WHITE, TextXAlignment = align or Enum.TextXAlignment.Center,
 		Position = UDim2.fromOffset(x, y), Size = UDim2.fromOffset(w, h), Parent = parent })
@@ -76,7 +77,7 @@ local function emblem(holder, rank)
 	})
 	local t = new("TextLabel", { BackgroundTransparency = 1, Rotation = -45, Text = rank and rank:sub(1, 1) or "?", FontFace = FB, TextScaled = true,
 		TextColor3 = WHITE, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.55, 0.55), Parent = badge })
-	new("UIStroke", { Thickness = 2, Transparency = 0.4, Parent = t })
+	Theme.textStroke(t)
 end
 
 local function ladderKey()
@@ -561,7 +562,7 @@ local function build()
 			BorderSizePixel = 0, ZIndex = 5, Parent = card }, { new("UICorner", { CornerRadius = UDim.new(0, 10) }) })
 		local green = new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.fromRGB(141, 191, 90), Color3.fromRGB(76, 122, 46)), Parent = bar })
 		local status = label(bar, "PLAY", Theme.font.chunky, 30, 0, 0, 432, 62, WHITE)
-		new("UIStroke", { Color = Color3.fromRGB(28, 44, 16), Thickness = 2, Transparency = 0.3, Parent = status }) -- text outline, not a border
+		Theme.textStroke(status, Color3.fromRGB(28, 44, 16)) -- text outline, not a border (Theme.stroke, was 2 px @ 0.3)
 		Kit.bindButton(card, { hover = 1.05, press = 0.97 }) -- (menus e6, grader C: RIVALS' tiles lift further on hover)
 		card.Activated:Connect(function()
 			local q, st = searching()

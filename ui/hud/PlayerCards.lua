@@ -261,7 +261,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 	local function goldText(text, y, size, font)
 		local l = label(card, text, font, size, 8, y, 122, size + 2, RC.gold, Enum.TextXAlignment.Center, 3)
 		l.TextTruncate = Enum.TextTruncate.None
-		new("UIStroke", { Color = tok("goldEdge", hex("#5A3A00")), Thickness = 2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual, Parent = l })
+		Theme.textStroke(l, tok("goldEdge", hex("#5A3A00"))) -- (2026-10-29, UI survey fix 1) Theme.stroke, was 2 px opaque
 	end
 	goldText(commas(wins), 172, 26, RF.chunky)
 	goldText("wins", 197, 15, F_BOLD)
@@ -296,7 +296,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 			ZIndex = 3, Parent = card }, { Kit.corner(6), new("UIGradient", { Rotation = 90, Color = ColorSequence.new(tok("tileTop", hex("#6E6E78")), tok("tileBottom", hex("#26262C"))) }) })
 		local nameL = label(t, "", F_BOLD, 15, -8, 54, 88, 18, RC.text, Enum.TextXAlignment.Center, 5)
 		nameL.TextTruncate = Enum.TextTruncate.None
-		new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.5, Transparency = 0.2, Parent = nameL })
+		Theme.textStroke(nameL) -- (2026-10-29, UI survey fix 1) Theme.stroke, was 1.5 px @ 0.2
 		tiles[i] = { frame = t, name = nameL }
 	end
 	-- buttons under the card: the X, and for anyone else INVITE / CHALLENGE beside it (live RIVALS: from the list too)
@@ -319,7 +319,7 @@ function PlayerCards.Profile(p: Player, world: boolean?)
 		local cc = b:FindFirstChildOfClass("UICorner"); if cc then cc.CornerRadius = UDim.new(0, 8) end
 		label(b, a[2], F_SUB, 15, 0, 5, 150, 18, RC.textDark, Enum.TextXAlignment.Center, 4).TextTransparency = 0.35
 		local big = label(b, a[1], RF.chunky, 32, 0, 20, 150, 40, RC.text, Enum.TextXAlignment.Center, 4)
-		new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.5, Transparency = 0.5, Parent = big })
+		Theme.textStroke(big) -- (2026-10-29) Theme.stroke, was 1.5 px @ 0.5
 		b.Activated:Connect(a[4])
 		table.insert(buttons, b)
 	end

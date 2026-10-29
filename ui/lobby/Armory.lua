@@ -3065,9 +3065,9 @@ function Armory.BuildOverlay()
 	overlay.title = ctx.label({ Text = "ARMORY", FontFace = FX, TextSize = 64, TextColor3 = ctx.THEME.Accent, TextTransparency = 1,
 		TextScaled = true, Size = UDim2.fromScale(1, 0.065), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.48), TextXAlignment = Enum.TextXAlignment.Center,
 		ZIndex = 6, Parent = gui })
-	overlay.titleStroke = ctx.new("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 3, Transparency = 1, Parent = overlay.title })
-	overlay.titleLine = ctx.new("Frame", { BackgroundColor3 = ctx.THEME.Accent, BorderSizePixel = 0, AnchorPoint = Vector2.new(0.5, 0.5),
-		Position = UDim2.fromScale(0.5, 0.56), Size = UDim2.fromScale(0, 0.0037), ZIndex = 6, Parent = gui })
+	-- (2026-10-29, UI survey fixes 1 + 3) the soft Theme.stroke (was 3 px @ 0.2); the yellow underline below the title is gone
+	overlay.titleStroke = require(ReplicatedStorage.UIKit.Theme).textStroke(overlay.title)
+	overlay.titleStroke.Transparency = 1
 	overlay.flash = ctx.new("Frame", { BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 8, Parent = gui })
 	overlay.blur = Lighting:FindFirstChild("TransitionBlur") or Instance.new("BlurEffect")
 	overlay.blur.Name = "TransitionBlur"
@@ -3084,8 +3084,7 @@ end
 local function showTitle(text: string, on: boolean, time: number)
 	overlay.title.Text = text
 	tw(overlay.title, time, { TextTransparency = on and 0 or 1 })
-	tw(overlay.titleStroke, time, { Transparency = on and 0.2 or 1 })
-	tw(overlay.titleLine, time, { Size = UDim2.fromScale(on and 0.135 or 0, 0.0037) }, Enum.EasingStyle.Quart)
+	tw(overlay.titleStroke, time, { Transparency = on and require(ReplicatedStorage.UIKit.Theme).stroke.transparency or 1 })
 end
 
 local function shake(cam, strength: number, times: number)

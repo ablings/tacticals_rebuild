@@ -29,8 +29,10 @@ function Kit.corner(r) return new("UICorner", { CornerRadius = UDim.new(0, r or 
 function Kit.stroke(color, thick, t)
 	return new("UIStroke", { Color = color or C.textDark, Thickness = thick or 2, Transparency = t or 0 })
 end
+-- (2026-10-29, UI survey fix 1) every glyph outline is UIKit.Theme.stroke (~1.5 px @ 0.65); `thick` is ignored
+local TOKEN_STROKE = require(script.Parent.Parent:WaitForChild("Theme")).stroke
 function Kit.textStroke(thick)
-	return new("UIStroke", { Color = C.textDark, Thickness = thick or 2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual })
+	return new("UIStroke", { Color = C.textDark, Thickness = TOKEN_STROKE.thickness, Transparency = TOKEN_STROKE.transparency, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual })
 end
 function Kit.vgrad(pair)
 	return new("UIGradient", { Rotation = 90, Color = ColorSequence.new(pair[1], pair[2]) })

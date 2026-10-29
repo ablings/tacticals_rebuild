@@ -61,8 +61,9 @@ function Kit.corner(r) return new("UICorner", { CornerRadius = UDim.new(0, r or 
 function Kit.stroke(color, thick, t)
 	return new("UIStroke", { Color = color or C.textDark, Thickness = thick or 2, Transparency = t or 0 })
 end
+-- (2026-10-29, UI survey fix 1) every glyph outline is Theme.stroke (~1.5 px @ 0.65); `thick` is ignored (was 1.5-2.5 px opaque)
 function Kit.textStroke(thick)
-	return new("UIStroke", { Color = C.textDark, Thickness = thick or 2, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual })
+	return new("UIStroke", { Color = C.textDark, Thickness = Theme.stroke.thickness, Transparency = Theme.stroke.transparency, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual })
 end
 function Kit.vgrad(pair)
 	return new("UIGradient", { Rotation = 90, Color = ColorSequence.new(pair[1], pair[2]) })
@@ -1187,6 +1188,7 @@ function Kit.levelNumber(n)
 	n.TextColor3 = Color3.new(1, 1, 1)
 	local st = n:FindFirstChildOfClass("UIStroke") or new("UIStroke", { Parent = n })
 	st.Color, st.Transparency, st.LineJoinMode = Kit.LEVEL_EDGE, 0, Enum.LineJoinMode.Round
+	st:SetAttribute("KeepStroke", true) -- (2026-10-29) reviewed exception to the soft-stroke rule: Edward asked for RIVALS' thick level edge (2026-10-22)
 	local function edge()
 		local h = n.TextScaled and n.AbsoluteSize.Y or (n.TextBounds.Y > 0 and n.TextBounds.Y or n.AbsoluteSize.Y)
 		st.Thickness = math.max(1, h * 0.09)
@@ -1227,7 +1229,7 @@ function Kit.streak(parent, n, pos, size, z)
 	local l = new("TextLabel", { Name = "N", BackgroundTransparency = 1, Text = tostring(n or 0), FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold), -- (2026-10-21: no Builder Sans)
 		TextScaled = true, TextColor3 = Color3.new(1, 1, 1), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.64), Size = UDim2.fromScale(0.7, 0.5),
 		ZIndex = (z or 3) + 1, Parent = f })
-	new("UIStroke", { Thickness = 2.5, Transparency = 0, Color = Color3.fromRGB(240, 70, 30), Parent = l }) -- (2026-10-20) RIVALS: a thick orange-red edge on the number
+	new("UIStroke", { Thickness = 2.5, Transparency = 0, Color = Color3.fromRGB(240, 70, 30), Parent = l }):SetAttribute("KeepStroke", true) -- (2026-10-20) RIVALS: a thick orange-red edge on the number (reviewed exception, the streak seal's edge like the level's)
 	-- (Edward: "white number also has his gradient") white at the top easing to a warm cream at the bottom
 	new("UIGradient", { Rotation = 90, Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(255, 222, 196)), Parent = l })
 	return f

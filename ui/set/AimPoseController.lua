@@ -19,8 +19,10 @@ local AimPitchRemote = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Co
 local localPlayer = Players.LocalPlayer
 
 local controller = {}
-local currentPitch = setmetatable({}, { __mode = "k" }) -- [Model] = smoothed degrees (losing one is harmless)
-local raisedAmt = setmetatable({}, { __mode = "k" })    -- [Model] = 0..1, how far the aim pose is blended in [POSE]
+-- (2026-10-29, UI survey A6) a strong table cleared on Destroying: Instance keys in a weak table can drop while the instance lives
+-- (here: entries for characters that left are dropped each frame, see the loop)
+local currentPitch = {} -- [Model] = smoothed degrees
+local raisedAmt = {}    -- [Model] = 0..1, how far the aim pose is blended in [POSE]
 local lastSentPitch, lastSentTime = 0, 0
 local lastSentRaised = nil -- [POSE]
 local myHeadPitch = 0 -- radians, read by HeadLookController (it owns your own neck)
@@ -145,6 +147,7 @@ local function update(dt: number)
 	end
 
 	local blend = 1 - math.exp(-15 * dt)
+	for m in currentPitch do if not m.Parent then currentPitch[m] = nil; raisedAmt[m] = nil end end
 	for _, player in Players:GetPlayers() do
 		local character = player.Character
 		local upperTorso = character and character:FindFirstChild("UpperTorso")

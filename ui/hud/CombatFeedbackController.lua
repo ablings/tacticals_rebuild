@@ -50,10 +50,11 @@ local function flash(model: Model)
 	TweenService:Create(h, info, { FillColor = fade, OutlineColor = fade, FillTransparency = 1, OutlineTransparency = 1 }):Play()
 end
 
-local watched = setmetatable({}, { __mode = "k" })
+local watched = {} -- (2026-10-29, UI survey A6) a strong table cleared on Destroying: Instance keys in a weak table can drop while the instance lives
 local function watch(hum: Instance)
 	if not hum:IsA("Humanoid") or watched[hum] then return end
 	watched[hum] = true
+	hum.Destroying:Once(function() watched[hum] = nil end)
 	local last = hum.Health
 	hum.HealthChanged:Connect(function(hp)
 		local model = hum.Parent
@@ -98,7 +99,7 @@ end
 --   exit  : after LIFE s without a hit it turns ~90 deg, drifts up-right, shrinks and fades
 -- Numbers keep one decimal ("11.2", "15"). Sizes are studs (a BillboardGui): it shrinks with distance like the target does.
 local LIFE, EXIT = 0.7, 0.45
-local FONT_NUM = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+local FONT_NUM = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular) -- (2026-10-29, UI survey A5) the family only ships Regular 400 (Bold silently fell back)
 local function numberText(n: number): string
 	local r = math.floor(n * 10 + 0.5) / 10
 	if math.abs(r - math.floor(r + 0.5)) < 0.05 then return tostring(math.floor(r + 0.5)) end

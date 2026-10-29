@@ -267,7 +267,7 @@ local RUNNERS = {
 	Side = runSide,
 }
 
-local started = setmetatable({}, { __mode = "k" })
+local started = {} -- (2026-10-29, UI survey A6) a strong table cleared on Destroying: Instance keys in a weak table can drop while the instance lives
 
 local function attach(part)
 	if started[part] or not part:IsA("BasePart") then return end
@@ -275,6 +275,7 @@ local function attach(part)
 	local fn = RUNNERS[kind]
 	if not fn then return end
 	started[part] = true
+	part.Destroying:Once(function() started[part] = nil end)
 	task.spawn(fn, part)
 end
 

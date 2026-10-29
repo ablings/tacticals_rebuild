@@ -509,7 +509,7 @@ local function distantShot(tool: Tool?, origin: Vector3)
 end
 
 -- A character that takes a hit jolts (everyone sees it)
-local flinchTracks = setmetatable({}, { __mode = "k" })
+local flinchTracks = {} -- (2026-10-29, UI survey A6) a strong table cleared on Destroying: Instance keys in a weak table can drop while the instance lives
 local function flinch(position: Vector3)
 	local closest, best = nil, 4
 	local candidates = {}
@@ -538,6 +538,7 @@ local function flinch(position: Vector3)
 		if not ok2 then return end
 		t.Priority = Enum.AnimationPriority.Action4
 		flinchTracks[animator] = t
+		animator.Destroying:Once(function() flinchTracks[animator] = nil end)
 		track = t
 	end
 	track:Play(0.03)

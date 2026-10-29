@@ -88,7 +88,9 @@ local function firstButton(gui)
 	return list[1]
 end
 
--- the selection box: bone outline, olive corner ticks
+-- the selection box: a bone outline ring
+-- (2026-10-29, UI survey fix 4) Scale only: the corner is a share of the button (was 8 px), and the four 10 px corner ticks are gone
+-- (they were Offset, and a 4-corner tick box is the bracket look UI Corrections 2026-10-16 retired)
 local function selectionImage()
 	local f = Instance.new("Frame")
 	f.Name = "TacticalsSelection"
@@ -100,17 +102,8 @@ local function selectionImage()
 	st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 	st.Parent = f
 	local c = Instance.new("UICorner")
-	c.CornerRadius = UDim.new(0, 8)
+	c.CornerRadius = UDim.new(0.12, 0)
 	c.Parent = f
-	for _, corner in { Vector2.new(0, 0), Vector2.new(1, 0), Vector2.new(0, 1), Vector2.new(1, 1) } do
-		local t = Instance.new("Frame")
-		t.BorderSizePixel = 0
-		t.BackgroundColor3 = Color3.fromRGB(236, 230, 210) -- (2026-10-21, AI-tells cleanup) accent ticks: cream (was comic yellow); the 3 px ring above is a selection ring, kept
-		t.AnchorPoint = corner
-		t.Position = UDim2.new(corner.X, corner.X == 0 and -4 or 4, corner.Y, corner.Y == 0 and -4 or 4)
-		t.Size = UDim2.fromOffset(10, 10)
-		t.Parent = f
-	end
 	return f
 end
 

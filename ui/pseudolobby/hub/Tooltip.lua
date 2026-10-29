@@ -17,9 +17,14 @@ local RUBIK = Font.new("rbxassetid://12187365977", Enum.FontWeight.Medium)
 local DELAY = 0.35
 local MAX_W = 280
 
-local gui, bubble, scale, accent, titleL, bodyL, tail
+local gui, bubble, scale, titleL, bodyL
 local owner, token = nil, 0
 local enabledFn = function() return true end
+
+-- (2026-10-29, UI survey fixes 3 + 4) a plain cream bubble: the 4 px tan "Lip" under it is gone (UI Corrections 2026-10-22: no
+-- lips or accent bars), and it is Scale only: text sizes, padding and the bubble box come from the screen height (1080 design px)
+-- each frame, the box and both lines are written as Scale (was AutomaticSize + Offset padding / position).
+local PAD_X, PAD_T, PAD_B, GAP = 12, 8, 9, 3 -- design px
 
 local function build()
 	gui = Instance.new("ScreenGui")
@@ -33,54 +38,48 @@ local function build()
 	bubble = Instance.new("Frame")
 	bubble.Name = "Bubble"
 	bubble.Visible = false
-	bubble.AutomaticSize = Enum.AutomaticSize.XY
-	bubble.Size = UDim2.fromOffset(0, 0)
+	bubble.Size = UDim2.fromScale(0, 0)
 	bubble.BackgroundColor3 = CREAM
 	bubble.BorderSizePixel = 0
 	bubble.ZIndex = 10
 	bubble.Parent = gui
 	scale = Instance.new("UIScale") scale.Parent = bubble
 
-	-- a darker lip under the pill instead of a border
-	accent = Instance.new("Frame")
-	accent.Name = "Lip"
-	accent.BackgroundColor3 = TAN
-	accent.BorderSizePixel = 0
-	accent.Position = UDim2.new(0, 0, 1, 0)
-	accent.Size = UDim2.new(1, 0, 0, 4)
-	accent.ZIndex = 9
-	accent.Parent = bubble
-
-	-- title + body stack
-	local content = Instance.new("Frame")
-	content.BackgroundTransparency = 1
-	content.AutomaticSize = Enum.AutomaticSize.XY
-	content.Size = UDim2.fromOffset(0, 0)
-	content.ZIndex = 11
-	content.Parent = bubble
-	local p = Instance.new("UIPadding")
-	p.PaddingLeft, p.PaddingRight, p.PaddingTop, p.PaddingBottom = UDim.new(0, 12), UDim.new(0, 12), UDim.new(0, 8), UDim.new(0, 9)
-	p.Parent = content
-	local l = Instance.new("UIListLayout") l.Padding = UDim.new(0, 3) l.SortOrder = Enum.SortOrder.LayoutOrder l.Parent = content
-
-	local function text(order, font, size, color)
+	local function text(order, font, color)
 		local t = Instance.new("TextLabel")
+		t.Name = order == 1 and "Title" or "Body"
 		t.BackgroundTransparency = 1
 		t.FontFace = font
-		t.TextSize = size
 		t.TextColor3 = color
 		t.TextXAlignment = Enum.TextXAlignment.Left
 		t.TextWrapped = true
 		t.AutomaticSize = Enum.AutomaticSize.XY
-		t.Size = UDim2.fromOffset(0, 0)
-		t.LayoutOrder = order
+		t.Size = UDim2.fromScale(0, 0)
 		t.ZIndex = 11
-		local m = Instance.new("UISizeConstraint") m.MaxSize = Vector2.new(MAX_W - 28, 400) m.Parent = t
-		t.Parent = content
+		Instance.new("UISizeConstraint").Parent = t
+		t.Parent = bubble
 		return t
 	end
-	titleL = text(1, OSWALD, 19, INK)
-	bodyL = text(2, RUBIK, 15, INK)
+	titleL = text(1, OSWALD, INK)
+	bodyL = text(2, RUBIK, INK)
+
+	-- lays the bubble out for this screen; returns its size in screen px (before the pop scale)
+	local function layout(view)
+		local f = view.Y / 1080
+		titleL.TextSize = math.max(9, math.floor(19 * f + 0.5))
+		bodyL.TextSize = math.max(9, math.floor(15 * f + 0.5))
+		for _, t in { titleL, bodyL } do t:FindFirstChildOfClass("UISizeConstraint").MaxSize = Vector2.new((MAX_W - 28) * f, 400 * f) end
+		local k = math.max(scale.Scale, 0.01) -- AbsoluteSize includes the pop's UIScale: measure at rest size
+		local ts = titleL.Visible and titleL.AbsoluteSize / k or Vector2.zero
+		local bs = bodyL.Visible and bodyL.AbsoluteSize / k or Vector2.zero
+		local gap = (ts.Y > 0 and bs.Y > 0) and GAP * f or 0
+		local w = math.max(ts.X, bs.X) + 2 * PAD_X * f
+		local h = PAD_T * f + ts.Y + gap + bs.Y + PAD_B * f
+		bubble.Size = UDim2.fromScale(w / view.X, h / view.Y)
+		titleL.Position = UDim2.fromScale(PAD_X * f / w, PAD_T * f / h)
+		bodyL.Position = UDim2.fromScale(PAD_X * f / w, (PAD_T * f + ts.Y + gap) / h)
+		return Vector2.new(w, h) * k
+	end
 
 	RunService.RenderStepped:Connect(function()
 		if not bubble.Visible then return end
@@ -99,11 +98,13 @@ local function build()
 			if hg and og and hg ~= og and hg:IsA("ScreenGui") and og:IsA("ScreenGui") and hg.DisplayOrder > og.DisplayOrder then Tooltip.Hide() return end
 		end
 		local view = gui.AbsoluteSize
-		local size = bubble.AbsoluteSize
-		local x, y = m.X + 18, m.Y + 14
-		if x + size.X > view.X - 8 then x = m.X - size.X - 14 end
-		if y + size.Y > view.Y - 8 then y = m.Y - size.Y - 10 end
-		bubble.Position = UDim2.fromOffset(x, y)
+		if view.X < 1 or view.Y < 1 then return end
+		local size = layout(view)
+		local f = view.Y / 1080
+		local x, y = m.X + 18 * f, m.Y + 14 * f
+		if x + size.X > view.X - 8 * f then x = m.X - size.X - 14 * f end
+		if y + size.Y > view.Y - 8 * f then y = m.Y - size.Y - 10 * f end
+		bubble.Position = UDim2.fromScale(x / view.X, y / view.Y)
 	end)
 end
 

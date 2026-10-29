@@ -62,6 +62,7 @@ FILES = [
     ("StarterPlayer.StarterPlayerScripts.Client.Controllers", "MatchFoundGate", "ModuleScript", "hud/MatchFoundGate.lua"),  # (2026-10-19) match found: every lobby UI off, MATCH FOUND only
     ("ReplicatedStorage.Modules.Shared", "Binds", "ModuleScript", "settings/Binds.lua"),
     ("ReplicatedFirst", "LoadingScreen", "LocalScript", "intro/LoadingScreen.lua"),  # same file in both places; QuickIntro only in the match place
+    ("ReplicatedStorage.UIKit", "Assets", "ModuleScript", "pseudolobby/hub/Assets.lua"),  # (2026-10-29, UI survey 16) one UIKit.Assets in all places (the lobby had the 10-11 copy)
 ]
 
 
@@ -90,8 +91,11 @@ SET_FILES = [
     (C + ".LobbyUIController", "Armory", "lobby/Armory.lua"),
 ]
 
+# (2026-10-29, UI survey round 2) stored GUIs (MainUI ResetOnSpawn, MainUI / HUD Offsets -> Scale) + off-rule fonts: every place
+SURVEY_PATCH = open(os.path.join(HERE, 'matchplace', 'ui_survey_place.lua'), encoding='utf-8').read()
 # small source patches to scripts the UI session doesn't own (idempotent)
 PATCHES = [
+    SURVEY_PATCH,
     # pads wait for real players in Studio too (RIVALS); set true to test a full bay alone
     "local m = game.ReplicatedStorage.Modules.Shared.Config.LobbyConfig; m.Source = m.Source:gsub('LobbyConfig%.StudioSoloStart = true', 'LobbyConfig.StudioSoloStart = false')",
     # (2026-10-20) LobbyUIController.Icons (Studio-only source; snapshot in pseudolobby/hub/Icons.lua): the Riot Shield shows its
@@ -199,7 +203,7 @@ def _hub():
     return out
 MATCH_SET_FILES = [e for e in SET_FILES if e[1] not in ("TrainingBinsController", "Armory", "SettingsScreen")]
 # old pass-38 match HUD pieces that DuelHUD / MatchFlowUI replace (see the file)
-MATCH_PATCHES = [open(os.path.join(HERE, 'matchplace', 'match_patches.lua'), encoding='utf-8').read()]
+MATCH_PATCHES = [open(os.path.join(HERE, 'matchplace', 'match_patches.lua'), encoding='utf-8').read(), SURVEY_PATCH]
 # (2026-10-16) the split places: Tutorial / Matchmaking / Ranked are one codebase (ReplicatedStorage.PlaceKind, set by the lead
 # session's installer), so they take the match-place UI set. Per-kind differences: notes/place_split.md.
 PLACE_KIND = next((k for k in ('tutorial', 'matchmaking', 'ranked') if '--' + k in sys.argv), None)

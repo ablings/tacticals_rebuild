@@ -152,17 +152,17 @@ local function toast(text: string, kind: string?)
 	-- Settings > Account > Delivery Mode = Disabled: no pop-ups (UI session 2026-10-16)
 	if player:GetAttribute("Setting_DeliveryMode") == "Disabled" then return end
 	if not toastHost then return end
-	local color = kind == "good" and THEME.Good or kind == "bad" and THEME.Bad or THEME.Cyan
+	-- (2026-10-29, UI survey fixes 3 + 4) a plain pill: the 4 px "KindBar" along its foot is gone (no accent bars), and it is
+	-- Scale only: a fixed-width pill (the host's width, 600 x 40 design px at the 900 px canvas), text scaled into it (was
+	-- AutomaticSize width + 22 / 18 px padding + TextSize 16)
 	local t = new("Frame", {
-		BackgroundColor3 = THEME.Panel2, BackgroundTransparency = 0.3, Size = UDim2.new(0, 0, 0, 40),
-		AutomaticSize = Enum.AutomaticSize.X, Parent = toastHost,
+		Name = "Toast", BackgroundColor3 = THEME.Panel2, BackgroundTransparency = 0.3, Size = UDim2.fromScale(1, 0.2), Parent = toastHost,
 	}, {
-		corner(2),
-		-- (2026-10-21, AI-tells cleanup) the kind colour was a thin left bar: now a solid bar along the bottom edge (spans the padding)
-		new("Frame", { Name = "KindBar", BackgroundColor3 = color, Size = UDim2.new(1, 40, 0, 4), Position = UDim2.new(0, -22, 1, -4), BorderSizePixel = 0 }),
-		new("UIPadding", { PaddingLeft = UDim.new(0, 22), PaddingRight = UDim.new(0, 18) }),
-		label({ Text = text, AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.new(0, 0, 1, 0), TextSize = 16, TextWrapped = false }),
+		new("UICorner", { CornerRadius = UDim.new(0.1, 0) }),
+		label({ Text = text, AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0.5, 0.5), Size = UDim2.fromScale(0.92, 0.5),
+			TextScaled = true, TextXAlignment = Enum.TextXAlignment.Center }),
 	})
+	if kind == "bad" then t:SetAttribute("Kind", "bad") end
 	task.delay(3.2, function()
 		if t.Parent then
 			TweenService:Create(t, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play()
@@ -1492,7 +1492,8 @@ local function build()
 	-- (2026-10-21, AI-tells sweep) no olive TacBar down the left of the title any more (a left accent bar)
 	panelTitle = label({ Text = "", FontFace = THEME.Title, TextSize = 30, Size = UDim2.new(0.6, 0, 0, 40), Position = UDim2.new(0, 24, 0, 12), Parent = panelFrame })
 	panelSub = label({ Text = "", FontFace = THEME.Bold, TextSize = 15, TextColor3 = THEME.Sub, Size = UDim2.new(0.6, 0, 0, 18), Position = UDim2.new(0, 26, 0, 52), Parent = panelFrame })
-	local closeBtn = new("TextButton", { Name = "Close", AutoButtonColor = false, Text = "", Size = UDim2.new(0, 56, 0, 40), Position = UDim2.new(1, -76, 0, 16), Parent = panelFrame }, {
+	-- (2026-10-29, UI survey B12) not named "Close": the legacy InterfaceController hooks any button with that name
+	local closeBtn = new("TextButton", { Name = "PanelClose", AutoButtonColor = false, Text = "", Size = UDim2.new(0, 56, 0, 40), Position = UDim2.new(1, -76, 0, 16), Parent = panelFrame }, {
 		new("UICorner", { CornerRadius = UDim.new(0, 2) }),
 	})
 	UITheme.Fill(closeBtn, Color3.fromRGB(46, 50, 42), Color3.fromRGB(21, 24, 19))
@@ -1515,8 +1516,11 @@ local function build()
 	panelTitle.TextSize = 38
 
 	-- toasts (bottom centre)
-	toastHost = new("Frame", { BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.new(0.5, 0, 1, -230), Size = UDim2.new(0, 600, 0, 200), Parent = root }, {
-		new("UIListLayout", { Padding = UDim.new(0, 6), HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Bottom, SortOrder = Enum.SortOrder.LayoutOrder }),
+	-- (2026-10-29, UI survey fix 4) Scale only: the same 600 x 200 box 230 px above the bottom of the 900 px canvas (was Offset)
+	toastHost = new("Frame", { Name = "Toasts", BackgroundTransparency = 1, AnchorPoint = Vector2.new(0.5, 1), Position = UDim2.fromScale(0.5, 1 - 230 / 900),
+		Size = UDim2.fromScale(1, 200 / 900), Parent = root }, {
+		new("UIAspectRatioConstraint", { AspectRatio = 3, DominantAxis = Enum.DominantAxis.Height }),
+		new("UIListLayout", { Padding = UDim.new(6 / 200, 0), HorizontalAlignment = Enum.HorizontalAlignment.Center, VerticalAlignment = Enum.VerticalAlignment.Bottom, SortOrder = Enum.SortOrder.LayoutOrder }),
 	})
 
 	buildQueuePill()

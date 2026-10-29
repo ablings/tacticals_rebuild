@@ -83,7 +83,8 @@ local function text(parent, pw, ph, x, y, w, h, str, font, color, align, outline
 	local l = at("TextLabel", parent, pw, ph, x, y, w, h, { BackgroundTransparency = 1, Text = str, FontFace = font, TextScaled = true,
 		TextColor3 = color, TextXAlignment = align or Enum.TextXAlignment.Left, ZIndex = 3 })
 	-- RIVALS' board text carries a dark outline (the numbers over icons most); fixed 940x580 canvas, so px thickness is stable
-	if outline then new("UIStroke", { Color = COL.ink, Thickness = outline, Transparency = 0.15, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual }, l) end
+	-- (2026-10-29, UI survey fix 1) the soft Theme.stroke for every outline (was up to 2.5 px @ 0.15); `outline` only switches it on
+	if outline then local ST = require(UIKit:WaitForChild("Theme")).stroke; new("UIStroke", { Color = COL.ink, Thickness = ST.thickness, Transparency = ST.transparency, ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual }, l) end
 	return l
 end
 local function grad(o, pair)
