@@ -1,0 +1,7929 @@
+{
+ "note": "1965 test-site restyle. Blender (x, y, z) -> Studio (-x, z, y). 1 unit = 1 stud. Pivot = bottom centre of the collision box. Kit FBX has K_ScaleCube (10 studs) and K_Marker. Every visual mesh: CanCollide/CanQuery/CanTouch off; collision = the listed boxes (v1's, unchanged). Variants share their base's box; D65_* are placed by build_house.py.",
+ "cover_heights": {
+  "low": 3.4,
+  "tall": "8.0",
+  "source": "notes/warehouse_study/movement_configs.txt CoverConfig"
+ },
+ "variant_map": {
+  "MB_Chair": "H_Armchair_Mustard",
+  "BR2_Bed": "H_Bed_Double_Maple",
+  "LR_Sideboard": "H_Dresser_Credenza",
+  "FY_Console": "H_Dresser_Phone",
+  "BR2_Dresser": "H_Dresser_Maple",
+  "BR3_Dresser": "H_Dresser_Cream",
+  "DR_Sideboard": "H_TVConsole_Buffet",
+  "UB_Tub": "H_Bathtub_Butter",
+  "DR_Cabinet": "H_Bookcase_Hutch",
+  "BR2_Bookcase": "H_Bookcase_Maple",
+  "MR_Lockers": "H_Wardrobe_Lockers",
+  "BR2_Wardrobe": "H_Wardrobe_Maple",
+  "BR3_Wardrobe": "H_Wardrobe_Cream",
+  "BH_CoatTree": "H_TallCabinet_HallTree",
+  "BR3_Desk": "H_Desk_School",
+  "UB_Toilet": "H_Toilet_Butter",
+  "UB_Vanity": "H_Vanity_Butter",
+  "FY_Pend": "H_PendantLamp_Sputnik",
+  "MR_Art": "H_Frame_Notice",
+  "BR2_Art": "H_Frame_Pennant",
+  "MB_Art": "H_Frame_Mesa",
+  "MB_Rug": "H_Rug_Oval"
+ },
+ "atlases": {
+  "Sofa": {
+   "color": "tex/H_Sofa_color.png",
+   "normal": "tex/H_Sofa_normal.png",
+   "rough": "tex/H_Sofa_rough.png",
+   "metal": "tex/H_Sofa_metal.png"
+  },
+  "Chairs": {
+   "color": "tex/H_Chairs_color.png",
+   "normal": "tex/H_Chairs_normal.png",
+   "rough": "tex/H_Chairs_rough.png",
+   "metal": "tex/H_Chairs_metal.png"
+  },
+  "Variants1": {
+   "color": "tex/H_Variants1_color.png",
+   "normal": "tex/H_Variants1_normal.png",
+   "rough": "tex/H_Variants1_rough.png",
+   "metal": "tex/H_Variants1_metal.png"
+  },
+  "Beds": {
+   "color": "tex/H_Beds_color.png",
+   "normal": "tex/H_Beds_normal.png",
+   "rough": "tex/H_Beds_rough.png",
+   "metal": "tex/H_Beds_metal.png"
+  },
+  "WoodA": {
+   "color": "tex/H_WoodA_color.png",
+   "normal": "tex/H_WoodA_normal.png",
+   "rough": "tex/H_WoodA_rough.png",
+   "metal": "tex/H_WoodA_metal.png"
+  },
+  "Variants2": {
+   "color": "tex/H_Variants2_color.png",
+   "normal": "tex/H_Variants2_normal.png",
+   "rough": "tex/H_Variants2_rough.png",
+   "metal": "tex/H_Variants2_metal.png"
+  },
+  "Decor": {
+   "color": "tex/H_Decor_color.png",
+   "normal": "tex/H_Decor_normal.png",
+   "rough": "tex/H_Decor_rough.png",
+   "metal": "tex/H_Decor_metal.png"
+  },
+  "Desk": {
+   "color": "tex/H_Desk_color.png",
+   "normal": "tex/H_Desk_normal.png",
+   "rough": "tex/H_Desk_rough.png",
+   "metal": "tex/H_Desk_metal.png"
+  },
+  "Dining": {
+   "color": "tex/H_Dining_color.png",
+   "normal": "tex/H_Dining_normal.png",
+   "rough": "tex/H_Dining_rough.png",
+   "metal": "tex/H_Dining_metal.png"
+  },
+  "Kitchen": {
+   "color": "tex/H_Kitchen_color.png",
+   "normal": "tex/H_Kitchen_normal.png",
+   "rough": "tex/H_Kitchen_rough.png",
+   "metal": "tex/H_Kitchen_metal.png"
+  },
+  "Appliances": {
+   "color": "tex/H_Appliances_color.png",
+   "normal": "tex/H_Appliances_normal.png",
+   "rough": "tex/H_Appliances_rough.png",
+   "metal": "tex/H_Appliances_metal.png"
+  },
+  "Bath": {
+   "color": "tex/H_Bath_color.png",
+   "normal": "tex/H_Bath_normal.png",
+   "rough": "tex/H_Bath_rough.png",
+   "metal": "tex/H_Bath_metal.png"
+  },
+  "Variants3": {
+   "color": "tex/H_Variants3_color.png",
+   "normal": "tex/H_Variants3_normal.png",
+   "rough": "tex/H_Variants3_rough.png",
+   "metal": "tex/H_Variants3_metal.png"
+  },
+  "Storage": {
+   "color": "tex/H_Storage_color.png",
+   "normal": "tex/H_Storage_normal.png",
+   "rough": "tex/H_Storage_rough.png",
+   "metal": "tex/H_Storage_metal.png"
+  },
+  "Variants4": {
+   "color": "tex/H_Variants4_color.png",
+   "normal": "tex/H_Variants4_normal.png",
+   "rough": "tex/H_Variants4_rough.png",
+   "metal": "tex/H_Variants4_metal.png"
+  },
+  "Art": {
+   "color": "tex/H_Art_color.png",
+   "normal": "tex/H_Art_normal.png",
+   "rough": "tex/H_Art_rough.png",
+   "metal": "tex/H_Art_metal.png"
+  },
+  "Plants": {
+   "color": "tex/H_Plants_color.png",
+   "normal": "tex/H_Plants_normal.png",
+   "rough": "tex/H_Plants_rough.png",
+   "metal": "tex/H_Plants_metal.png"
+  },
+  "Toys": {
+   "color": "tex/H_Toys_color.png",
+   "normal": "tex/H_Toys_normal.png",
+   "rough": "tex/H_Toys_rough.png",
+   "metal": "tex/H_Toys_metal.png"
+  },
+  "ShelfWall": {
+   "color": "tex/H_ShelfWall_color.png",
+   "normal": "tex/H_ShelfWall_normal.png",
+   "rough": "tex/H_ShelfWall_rough.png",
+   "metal": "tex/H_ShelfWall_metal.png"
+  },
+  "ShelfBooks": {
+   "color": "tex/H_ShelfBooks_color.png",
+   "normal": "tex/H_ShelfBooks_normal.png",
+   "rough": "tex/H_ShelfBooks_rough.png",
+   "metal": "tex/H_ShelfBooks_metal.png"
+  },
+  "Storage3": {
+   "color": "tex/H_Storage3_color.png",
+   "normal": "tex/H_Storage3_normal.png",
+   "rough": "tex/H_Storage3_rough.png",
+   "metal": "tex/H_Storage3_metal.png"
+  },
+  "Storage4": {
+   "color": "tex/H_Storage4_color.png",
+   "normal": "tex/H_Storage4_normal.png",
+   "rough": "tex/H_Storage4_rough.png",
+   "metal": "tex/H_Storage4_metal.png"
+  },
+  "Storage2": {
+   "color": "tex/H_Storage2_color.png",
+   "normal": "tex/H_Storage2_normal.png",
+   "rough": "tex/H_Storage2_rough.png",
+   "metal": "tex/H_Storage2_metal.png"
+  },
+  "Dress65": {
+   "color": "tex/H_Dress65_color.png",
+   "normal": "tex/H_Dress65_normal.png",
+   "rough": "tex/H_Dress65_rough.png",
+   "metal": "tex/H_Dress65_metal.png"
+  },
+  "Dummies": {
+   "color": "tex/H_Dummies_color.png",
+   "normal": "tex/H_Dummies_normal.png",
+   "rough": "tex/H_Dummies_rough.png",
+   "metal": "tex/H_Dummies_metal.png"
+  },
+  "Posters": {
+   "color": "tex/H_Posters_color.png",
+   "normal": "tex/H_Posters_normal.png",
+   "rough": "tex/H_Posters_rough.png",
+   "metal": "tex/H_Posters_metal.png"
+  },
+  "Drapes": {
+   "color": "tex/H_Drapes_color.png",
+   "normal": "tex/H_Drapes_normal.png",
+   "rough": "tex/H_Drapes_rough.png",
+   "metal": "tex/H_Drapes_metal.png"
+  }
+ },
+ "assemblies": [
+  {
+   "assembly": "H_Sofa_Sectional",
+   "role": "skirted L-sectional, cream vinyl; boxes: back 3.4, arms 2.6, seats 1.8",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Sofa_Sectional"
+   ],
+   "fbx": "fbx/H_Sofa_Sectional.fbx",
+   "size_studio": [
+    12.0,
+    3.4,
+    7.2
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -6.0,
+    0.0,
+    -3.6
+   ],
+   "bbox_max_rel_pivot_studio": [
+    6.0,
+    3.4,
+    3.6
+   ],
+   "pivot_blender_in_kit": [
+    6.0,
+    -1.8,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      12.0,
+      3.4,
+      1.65
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      2.775
+     ]
+    },
+    {
+     "size": [
+      0.95,
+      2.6,
+      1.95
+     ],
+     "centre_rel_pivot": [
+      5.525,
+      1.3,
+      0.975
+     ]
+    },
+    {
+     "size": [
+      0.95,
+      2.6,
+      5.55
+     ],
+     "centre_rel_pivot": [
+      -5.525,
+      1.3,
+      -0.825
+     ]
+    },
+    {
+     "size": [
+      10.1,
+      1.8,
+      1.95
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.9,
+      0.975
+     ]
+    },
+    {
+     "size": [
+      2.85,
+      1.8,
+      3.6
+     ],
+     "centre_rel_pivot": [
+      -3.625,
+      0.9,
+      -1.8
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Sofa_Sectional",
+     "mesh": "H_Sofa_Sectional",
+     "atlas": "Sofa",
+     "tris": 2116,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      -0.0
+     ],
+     "size_studio": [
+      12.0,
+      3.4,
+      7.2
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 2116,
+   "textures": [
+    "tex/H_Sofa_color.png",
+    "tex/H_Sofa_metal.png",
+    "tex/H_Sofa_normal.png",
+    "tex/H_Sofa_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Armchair",
+   "role": "club armchair, olive tweed; boxes: back 3.4, arms 2.5, seat 1.8",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Armchair"
+   ],
+   "fbx": "fbx/H_Armchair.fbx",
+   "size_studio": [
+    4.2,
+    3.4,
+    4.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.1,
+    0.0,
+    -2.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.1,
+    3.4,
+    2.0
+   ],
+   "pivot_blender_in_kit": [
+    18.1,
+    0.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      4.2,
+      3.4,
+      1.65
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      1.175
+     ]
+    },
+    {
+     "size": [
+      0.75,
+      2.5,
+      2.35
+     ],
+     "centre_rel_pivot": [
+      1.725,
+      1.25,
+      -0.825
+     ]
+    },
+    {
+     "size": [
+      0.75,
+      2.5,
+      2.35
+     ],
+     "centre_rel_pivot": [
+      -1.725,
+      1.25,
+      -0.825
+     ]
+    },
+    {
+     "size": [
+      2.7,
+      1.8,
+      2.35
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.9,
+      -0.825
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Armchair",
+     "mesh": "H_Armchair",
+     "atlas": "Chairs",
+     "tris": 792,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      4.2,
+      3.4,
+      4.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 792,
+   "textures": [
+    "tex/H_Chairs_color.png",
+    "tex/H_Chairs_metal.png",
+    "tex/H_Chairs_normal.png",
+    "tex/H_Chairs_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_KitchenIsland",
+   "role": "gold enamel island, laminate top, seating side +Y",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_KitchenIsland"
+   ],
+   "fbx": "fbx/H_KitchenIsland.fbx",
+   "size_studio": [
+    10.0,
+    3.4,
+    4.68
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -5.0,
+    0.0,
+    -2.34
+   ],
+   "bbox_max_rel_pivot_studio": [
+    5.0,
+    3.4,
+    2.34
+   ],
+   "pivot_blender_in_kit": [
+    29.2,
+    -0.04,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      10.0,
+      3.4,
+      4.68
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_KitchenIsland",
+     "mesh": "H_KitchenIsland",
+     "atlas": "Kitchen",
+     "tris": 480,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      10.0,
+      3.4,
+      4.68
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 480,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_DiningSet",
+   "role": "walnut table set for six + 6 dinette chairs; boxes: table 2.6 + a 3.4 box per chair row",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_DiningSet__H_DiningTable",
+    "H_DiningSet__H_DiningChair",
+    "H_DiningSet__H_DiningChair.001",
+    "H_DiningSet__H_DiningChair.002",
+    "H_DiningSet__H_DiningChair.003",
+    "H_DiningSet__H_DiningChair.004",
+    "H_DiningSet__H_DiningChair.005",
+    "H_DiningSet__H_TableSetting"
+   ],
+   "fbx": "fbx/H_DiningSet.fbx",
+   "size_studio": [
+    8.0,
+    3.394,
+    6.674
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -4.0,
+    -0.004,
+    -3.337
+   ],
+   "bbox_max_rel_pivot_studio": [
+    4.0,
+    3.39,
+    3.337
+   ],
+   "pivot_blender_in_kit": [
+    42.2,
+    0.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      8.0,
+      2.6,
+      4.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.3,
+      0.0
+     ]
+    },
+    {
+     "size": [
+      6.1,
+      3.4,
+      0.35
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      -3.175
+     ]
+    },
+    {
+     "size": [
+      6.1,
+      3.4,
+      0.35
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      3.175
+     ]
+    },
+    {
+     "size": [
+      6.1,
+      1.75,
+      1.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.875,
+      -2.5
+     ]
+    },
+    {
+     "size": [
+      6.1,
+      1.75,
+      1.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.875,
+      2.5
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_DiningSet__H_DiningTable",
+     "mesh": "H_DiningTable",
+     "atlas": "Dining",
+     "tris": 328,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.3,
+      0.0
+     ],
+     "size_studio": [
+      8.0,
+      2.6,
+      4.0
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_DiningSet__H_DiningChair",
+     "mesh": "H_DiningChair",
+     "atlas": "Dining",
+     "tris": 412,
+     "centre_studio_rel_pivot": [
+      2.1,
+      1.693,
+      -2.368
+     ],
+     "size_studio": [
+      1.9,
+      3.394,
+      1.937
+     ],
+     "rot_z_deg": 180.0
+    },
+    {
+     "object": "H_DiningSet__H_DiningChair.001",
+     "mesh": "H_DiningChair",
+     "atlas": "Dining",
+     "tris": 412,
+     "centre_studio_rel_pivot": [
+      2.1,
+      1.693,
+      2.368
+     ],
+     "size_studio": [
+      1.9,
+      3.394,
+      1.937
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_DiningSet__H_DiningChair.002",
+     "mesh": "H_DiningChair",
+     "atlas": "Dining",
+     "tris": 412,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.693,
+      -2.368
+     ],
+     "size_studio": [
+      1.9,
+      3.394,
+      1.937
+     ],
+     "rot_z_deg": 180.0
+    },
+    {
+     "object": "H_DiningSet__H_DiningChair.003",
+     "mesh": "H_DiningChair",
+     "atlas": "Dining",
+     "tris": 412,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.693,
+      2.368
+     ],
+     "size_studio": [
+      1.9,
+      3.394,
+      1.937
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_DiningSet__H_DiningChair.004",
+     "mesh": "H_DiningChair",
+     "atlas": "Dining",
+     "tris": 412,
+     "centre_studio_rel_pivot": [
+      -2.1,
+      1.693,
+      -2.368
+     ],
+     "size_studio": [
+      1.9,
+      3.394,
+      1.937
+     ],
+     "rot_z_deg": 180.0
+    },
+    {
+     "object": "H_DiningSet__H_DiningChair.005",
+     "mesh": "H_DiningChair",
+     "atlas": "Dining",
+     "tris": 412,
+     "centre_studio_rel_pivot": [
+      -2.1,
+      1.693,
+      2.368
+     ],
+     "size_studio": [
+      1.9,
+      3.394,
+      1.937
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_DiningSet__H_TableSetting",
+     "mesh": "H_TableSetting",
+     "atlas": "Dining",
+     "tris": 1868,
+     "centre_studio_rel_pivot": [
+      0.19,
+      2.93,
+      0.0
+     ],
+     "size_studio": [
+      5.94,
+      0.74,
+      3.7
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 4668,
+   "textures": [
+    "tex/H_Dining_color.png",
+    "tex/H_Dining_metal.png",
+    "tex/H_Dining_normal.png",
+    "tex/H_Dining_rough.png"
+   ],
+   "art_outside_box": 0.004
+  },
+  {
+   "assembly": "H_DiningTable",
+   "role": "dining table alone (top 2.6)",
+   "cover": "low obstacle 2.6",
+   "objects": [
+    "H_DiningTable"
+   ],
+   "fbx": "fbx/H_DiningTable.fbx",
+   "size_studio": [
+    8.0,
+    2.6,
+    4.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -4.0,
+    0.0,
+    -2.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    4.0,
+    2.6,
+    2.0
+   ],
+   "pivot_blender_in_kit": [
+    54.2,
+    0.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      8.0,
+      2.6,
+      4.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.3,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_DiningTable",
+     "mesh": "H_DiningTable",
+     "atlas": "Dining",
+     "tris": 328,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.3,
+      0.0
+     ],
+     "size_studio": [
+      8.0,
+      2.6,
+      4.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 328,
+   "textures": [
+    "tex/H_Dining_color.png",
+    "tex/H_Dining_metal.png",
+    "tex/H_Dining_normal.png",
+    "tex/H_Dining_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_DiningChair",
+   "role": "dinette chair alone",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_DiningChair"
+   ],
+   "fbx": "fbx/H_DiningChair.fbx",
+   "size_studio": [
+    1.9,
+    3.394,
+    1.937
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.95,
+    -0.004,
+    -0.95
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.95,
+    3.39,
+    0.987
+   ],
+   "pivot_blender_in_kit": [
+    63.15,
+    0.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_DiningChair",
+     "mesh": "H_DiningChair",
+     "atlas": "Dining",
+     "tris": 412,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.693,
+      0.019
+     ],
+     "size_studio": [
+      1.9,
+      3.394,
+      1.937
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 412,
+   "textures": [
+    "tex/H_Dining_color.png",
+    "tex/H_Dining_metal.png",
+    "tex/H_Dining_normal.png",
+    "tex/H_Dining_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Bed_Double",
+   "role": "walnut bed, chenille spread to the floor, head at +Y",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Bed_Double"
+   ],
+   "fbx": "fbx/H_Bed_Double.fbx",
+   "size_studio": [
+    7.7,
+    3.4,
+    10.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.85,
+    0.0,
+    -5.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.85,
+    3.4,
+    5.0
+   ],
+   "pivot_blender_in_kit": [
+    71.95,
+    0.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      7.7,
+      3.4,
+      0.6
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      4.7
+     ]
+    },
+    {
+     "size": [
+      7.4,
+      2.4,
+      9.45
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.2,
+      -0.275
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bed_Double",
+     "mesh": "H_Bed_Double",
+     "atlas": "Beds",
+     "tris": 604,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      7.7,
+      3.4,
+      10.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 604,
+   "textures": [
+    "tex/H_Beds_color.png",
+    "tex/H_Beds_metal.png",
+    "tex/H_Beds_normal.png",
+    "tex/H_Beds_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Bed_Single",
+   "role": "maple spindle bed, cowboy-print spread, head at +Y",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Bed_Single"
+   ],
+   "fbx": "fbx/H_Bed_Single.fbx",
+   "size_studio": [
+    4.7,
+    3.4,
+    8.6
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.35,
+    0.0,
+    -4.3
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.35,
+    3.4,
+    4.3
+   ],
+   "pivot_blender_in_kit": [
+    82.15,
+    0.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      4.7,
+      3.4,
+      0.55
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      4.025
+     ]
+    },
+    {
+     "size": [
+      4.4,
+      2.4,
+      8.1
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.2,
+      -0.25
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bed_Single",
+     "mesh": "H_Bed_Single",
+     "atlas": "Beds",
+     "tris": 1284,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      4.7,
+      3.4,
+      8.6
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1284,
+   "textures": [
+    "tex/H_Beds_color.png",
+    "tex/H_Beds_metal.png",
+    "tex/H_Beds_normal.png",
+    "tex/H_Beds_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Dresser",
+   "role": "walnut lowboy dresser",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Dresser"
+   ],
+   "fbx": "fbx/H_Dresser.fbx",
+   "size_studio": [
+    6.0,
+    3.4,
+    2.3
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    3.4,
+    1.15
+   ],
+   "pivot_blender_in_kit": [
+    91.5,
+    -0.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Dresser",
+     "mesh": "H_Dresser",
+     "atlas": "WoodA",
+     "tris": 340,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 340,
+   "textures": [
+    "tex/H_WoodA_color.png",
+    "tex/H_WoodA_metal.png",
+    "tex/H_WoodA_normal.png",
+    "tex/H_WoodA_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Bathtub",
+   "role": "built-in tub, mint tiled apron and ledge to 3.4",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Bathtub"
+   ],
+   "fbx": "fbx/H_Bathtub.fbx",
+   "above_box": "thin tap / the TV / the plant stands above the 3.4 box: no collision needed",
+   "size_studio": [
+    7.0,
+    4.119,
+    3.6
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.5,
+    0.0,
+    -1.8
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.5,
+    4.119,
+    1.8
+   ],
+   "pivot_blender_in_kit": [
+    102.0,
+    0.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      7.0,
+      3.4,
+      3.6
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bathtub",
+     "mesh": "H_Bathtub",
+     "atlas": "Bath",
+     "tris": 752,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      2.059,
+      0.0
+     ],
+     "size_studio": [
+      7.0,
+      4.119,
+      3.6
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 752,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_TVConsole",
+   "role": "console TV + radiogram, walnut",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_TVConsole"
+   ],
+   "fbx": "fbx/H_TVConsole.fbx",
+   "size_studio": [
+    8.0,
+    3.4,
+    2.02
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -4.0,
+    0.0,
+    -1.01
+   ],
+   "bbox_max_rel_pivot_studio": [
+    4.0,
+    3.4,
+    1.01
+   ],
+   "pivot_blender_in_kit": [
+    113.5,
+    -0.01,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      8.0,
+      3.4,
+      2.02
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_TVConsole",
+     "mesh": "H_TVConsole.001",
+     "atlas": "WoodA",
+     "tris": 636,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      8.0,
+      3.4,
+      2.02
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 636,
+   "textures": [
+    "tex/H_WoodA_color.png",
+    "tex/H_WoodA_metal.png",
+    "tex/H_WoodA_normal.png",
+    "tex/H_WoodA_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_TVConsole_WithTV",
+   "role": "console with a portable TV on it",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_TVConsole_WithTV__H_TVConsole",
+    "H_TVConsole_WithTV__H_TV",
+    "H_TVConsole_WithTV__H_TV_Screen"
+   ],
+   "fbx": "fbx/H_TVConsole_WithTV.fbx",
+   "above_box": "thin tap / the TV / the plant stands above the 3.4 box: no collision needed",
+   "size_studio": [
+    8.0,
+    7.42,
+    2.02
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -4.0,
+    0.0,
+    -1.01
+   ],
+   "bbox_max_rel_pivot_studio": [
+    4.0,
+    7.42,
+    1.01
+   ],
+   "pivot_blender_in_kit": [
+    4.0,
+    -16.01,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      8.0,
+      3.4,
+      2.02
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_TVConsole_WithTV__H_TVConsole",
+     "mesh": "H_TVConsole",
+     "atlas": "WoodA",
+     "tris": 636,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      8.0,
+      3.4,
+      2.02
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_TVConsole_WithTV__H_TV",
+     "mesh": "H_TV",
+     "atlas": "Decor",
+     "tris": 204,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      5.39,
+      0.18
+     ],
+     "size_studio": [
+      6.4,
+      4.06,
+      0.759
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_TVConsole_WithTV__H_TV_Screen",
+     "mesh": "H_TV_Screen",
+     "atlas": "Decor",
+     "tris": 108,
+     "centre_studio_rel_pivot": [
+      0.15,
+      6.075,
+      -0.14
+     ],
+     "size_studio": [
+      1.8,
+      1.75,
+      0.1
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 948,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png",
+    "tex/H_WoodA_color.png",
+    "tex/H_WoodA_metal.png",
+    "tex/H_WoodA_normal.png",
+    "tex/H_WoodA_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_KitchenBase",
+   "role": "gold enamel base module 4 wide",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_KitchenBase"
+   ],
+   "fbx": "fbx/H_KitchenBase.fbx",
+   "size_studio": [
+    4.0,
+    3.4,
+    2.46
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.0,
+    -1.23
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    3.4,
+    1.23
+   ],
+   "pivot_blender_in_kit": [
+    14.0,
+    -16.03,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      4.0,
+      3.4,
+      2.46
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_KitchenBase",
+     "mesh": "H_KitchenBase",
+     "atlas": "Kitchen",
+     "tris": 216,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      4.0,
+      3.4,
+      2.46
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 216,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_KitchenSink",
+   "role": "base with a steel sink and a chrome tap",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_KitchenSink"
+   ],
+   "fbx": "fbx/H_KitchenSink.fbx",
+   "above_box": "thin tap / the TV / the plant stands above the 3.4 box: no collision needed",
+   "size_studio": [
+    4.0,
+    5.007,
+    2.46
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.0,
+    -1.23
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    5.007,
+    1.23
+   ],
+   "pivot_blender_in_kit": [
+    22.0,
+    -16.03,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      4.0,
+      3.4,
+      2.46
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_KitchenSink",
+     "mesh": "H_KitchenSink",
+     "atlas": "Kitchen",
+     "tris": 416,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      2.503,
+      0.0
+     ],
+     "size_studio": [
+      4.0,
+      5.007,
+      2.46
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 416,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_KitchenHob",
+   "role": "cream enamel range, coil burners, oven",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_KitchenHob"
+   ],
+   "fbx": "fbx/H_KitchenHob.fbx",
+   "size_studio": [
+    4.0,
+    3.4,
+    2.58
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.0,
+    -1.29
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    3.4,
+    1.29
+   ],
+   "pivot_blender_in_kit": [
+    30.0,
+    -16.09,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      4.0,
+      3.4,
+      2.58
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_KitchenHob",
+     "mesh": "H_KitchenHob",
+     "atlas": "Kitchen",
+     "tris": 1116,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      4.0,
+      3.4,
+      2.58
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1116,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Bookcase",
+   "role": "walnut glass-front bookcase on a closed base",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Bookcase__H_Bookcase",
+    "H_Bookcase__H_Bookcase_Glass"
+   ],
+   "fbx": "fbx/H_Bookcase.fbx",
+   "size_studio": [
+    6.0,
+    8.0,
+    1.6
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -0.8
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    0.8
+   ],
+   "pivot_blender_in_kit": [
+    39.0,
+    -16.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      1.6
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bookcase__H_Bookcase",
+     "mesh": "H_Bookcase",
+     "atlas": "Storage",
+     "tris": 1120,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      1.6
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_Bookcase__H_Bookcase_Glass",
+     "mesh": "H_Bookcase_Glass",
+     "atlas": "Plain:H_Glass",
+     "tris": 24,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      5.16,
+      -0.745
+     ],
+     "size_studio": [
+      5.36,
+      4.88,
+      0.03
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1144,
+   "textures": [
+    "tex/H_Storage_color.png",
+    "tex/H_Storage_metal.png",
+    "tex/H_Storage_normal.png",
+    "tex/H_Storage_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Fridge",
+   "role": "rounded-top fridge + walnut cabinet over it to 8",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Fridge"
+   ],
+   "fbx": "fbx/H_Fridge.fbx",
+   "size_studio": [
+    3.6,
+    8.0,
+    2.854
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.8,
+    0.0,
+    -1.427
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.8,
+    8.0,
+    1.427
+   ],
+   "pivot_blender_in_kit": [
+    47.8,
+    -16.127,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      3.6,
+      8.0,
+      2.854
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Fridge",
+     "mesh": "H_Fridge",
+     "atlas": "Appliances",
+     "tris": 700,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      -0.0
+     ],
+     "size_studio": [
+      3.6,
+      8.0,
+      2.854
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 700,
+   "textures": [
+    "tex/H_Appliances_color.png",
+    "tex/H_Appliances_metal.png",
+    "tex/H_Appliances_normal.png",
+    "tex/H_Appliances_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Wardrobe",
+   "role": "walnut wardrobe",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Wardrobe"
+   ],
+   "fbx": "fbx/H_Wardrobe.fbx",
+   "size_studio": [
+    6.0,
+    8.0,
+    2.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.25
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    1.25
+   ],
+   "pivot_blender_in_kit": [
+    56.6,
+    -16.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Wardrobe",
+     "mesh": "H_Wardrobe",
+     "atlas": "Storage",
+     "tris": 148,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 148,
+   "textures": [
+    "tex/H_Storage_color.png",
+    "tex/H_Storage_metal.png",
+    "tex/H_Storage_normal.png",
+    "tex/H_Storage_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_TallCabinet",
+   "role": "painted linen press (cream)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_TallCabinet"
+   ],
+   "fbx": "fbx/H_TallCabinet.fbx",
+   "size_studio": [
+    3.0,
+    8.0,
+    2.12
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -1.06
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    8.0,
+    1.06
+   ],
+   "pivot_blender_in_kit": [
+    65.1,
+    -16.06,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      3.0,
+      8.0,
+      2.12
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_TallCabinet",
+     "mesh": "H_TallCabinet",
+     "atlas": "Storage",
+     "tris": 248,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      3.0,
+      8.0,
+      2.12
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 248,
+   "textures": [
+    "tex/H_Storage_color.png",
+    "tex/H_Storage_metal.png",
+    "tex/H_Storage_normal.png",
+    "tex/H_Storage_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Pantry",
+   "role": "gold enamel pantry",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Pantry"
+   ],
+   "fbx": "fbx/H_Pantry.fbx",
+   "size_studio": [
+    4.0,
+    8.0,
+    2.46
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.0,
+    -1.23
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    8.0,
+    1.23
+   ],
+   "pivot_blender_in_kit": [
+    72.6,
+    -16.03,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      4.0,
+      8.0,
+      2.46
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Pantry",
+     "mesh": "H_Pantry",
+     "atlas": "Kitchen",
+     "tris": 144,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      4.0,
+      8.0,
+      2.46
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 144,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_ShelfWall",
+   "role": "walnut room divider dressed on both faces (team A spawn wall)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_ShelfWall__H_ShelfWall",
+    "H_ShelfWall__H_ShelfWall_Books"
+   ],
+   "fbx": "fbx/H_ShelfWall.fbx",
+   "size_studio": [
+    12.0,
+    8.0,
+    2.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -6.0,
+    0.0,
+    -1.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    6.0,
+    8.0,
+    1.0
+   ],
+   "pivot_blender_in_kit": [
+    84.6,
+    -16.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      12.0,
+      8.0,
+      2.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_ShelfWall__H_ShelfWall",
+     "mesh": "H_ShelfWall",
+     "atlas": "ShelfWall",
+     "tris": 252,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      12.0,
+      8.0,
+      2.0
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_ShelfWall__H_ShelfWall_Books",
+     "mesh": "H_ShelfWall_Books",
+     "atlas": "ShelfBooks",
+     "tris": 3992,
+     "centre_studio_rel_pivot": [
+      0.03,
+      4.849,
+      -0.0
+     ],
+     "size_studio": [
+      11.45,
+      5.157,
+      1.938
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 4244,
+   "textures": [
+    "tex/H_ShelfBooks_color.png",
+    "tex/H_ShelfBooks_metal.png",
+    "tex/H_ShelfBooks_normal.png",
+    "tex/H_ShelfBooks_rough.png",
+    "tex/H_ShelfWall_color.png",
+    "tex/H_ShelfWall_metal.png",
+    "tex/H_ShelfWall_normal.png",
+    "tex/H_ShelfWall_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_OvenWall",
+   "role": "twin steel wall ovens in gold enamel (team B spawn wall); ovens on -Y",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_OvenWall"
+   ],
+   "fbx": "fbx/H_OvenWall.fbx",
+   "size_studio": [
+    12.0,
+    8.0,
+    1.988
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -6.0,
+    0.0,
+    -0.994
+   ],
+   "bbox_max_rel_pivot_studio": [
+    6.0,
+    8.0,
+    0.994
+   ],
+   "pivot_blender_in_kit": [
+    100.6,
+    -16.001,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      12.0,
+      8.0,
+      1.988
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_OvenWall",
+     "mesh": "H_OvenWall",
+     "atlas": "Storage3",
+     "tris": 452,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      12.0,
+      8.0,
+      1.988
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 452,
+   "textures": [
+    "tex/H_Storage3_color.png",
+    "tex/H_Storage3_metal.png",
+    "tex/H_Storage3_normal.png",
+    "tex/H_Storage3_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_SlatScreen",
+   "role": "spindle room divider on a walnut base",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_SlatScreen"
+   ],
+   "fbx": "fbx/H_SlatScreen.fbx",
+   "size_studio": [
+    6.0,
+    8.0,
+    2.04
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.02
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    1.02
+   ],
+   "pivot_blender_in_kit": [
+    113.6,
+    -16.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      2.04
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_SlatScreen",
+     "mesh": "H_SlatScreen",
+     "atlas": "Storage3",
+     "tris": 3276,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      2.04
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 3276,
+   "textures": [
+    "tex/H_Storage3_color.png",
+    "tex/H_Storage3_metal.png",
+    "tex/H_Storage3_normal.png",
+    "tex/H_Storage3_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_HeadboardWall",
+   "role": "walnut panelled bed wall with a padded mustard headboard (-Y)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_HeadboardWall"
+   ],
+   "fbx": "fbx/H_HeadboardWall.fbx",
+   "size_studio": [
+    14.0,
+    8.0,
+    1.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -7.0,
+    0.0,
+    -0.75
+   ],
+   "bbox_max_rel_pivot_studio": [
+    7.0,
+    8.0,
+    0.75
+   ],
+   "pivot_blender_in_kit": [
+    7.0,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      14.0,
+      8.0,
+      1.5
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_HeadboardWall",
+     "mesh": "H_HeadboardWall",
+     "atlas": "Storage4",
+     "tris": 1020,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      14.0,
+      8.0,
+      1.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1020,
+   "textures": [
+    "tex/H_Storage4_color.png",
+    "tex/H_Storage4_metal.png",
+    "tex/H_Storage4_normal.png",
+    "tex/H_Storage4_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_KitchenBench",
+   "role": "diner booth, seat faces -Y; boxes: back 3.4, seat 1.95",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_KitchenBench"
+   ],
+   "fbx": "fbx/H_KitchenBench.fbx",
+   "size_studio": [
+    10.0,
+    3.4,
+    3.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -5.0,
+    0.0,
+    -1.75
+   ],
+   "bbox_max_rel_pivot_studio": [
+    5.0,
+    3.4,
+    1.75
+   ],
+   "pivot_blender_in_kit": [
+    23.0,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      10.0,
+      3.4,
+      1.25
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      1.125
+     ]
+    },
+    {
+     "size": [
+      10.0,
+      1.95,
+      2.25
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.975,
+      -0.625
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_KitchenBench",
+     "mesh": "H_KitchenBench",
+     "atlas": "Storage2",
+     "tris": 804,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      10.0,
+      3.4,
+      3.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 804,
+   "textures": [
+    "tex/H_Storage2_color.png",
+    "tex/H_Storage2_metal.png",
+    "tex/H_Storage2_normal.png",
+    "tex/H_Storage2_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_HallBench_3",
+   "role": "telephone / gossip bench; boxes: back 3.4, seat 1.65",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_HallBench_3"
+   ],
+   "fbx": "fbx/H_HallBench_3.fbx",
+   "size_studio": [
+    3.5,
+    3.4,
+    2.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.75,
+    0.0,
+    -1.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.75,
+    3.4,
+    1.0
+   ],
+   "pivot_blender_in_kit": [
+    33.75,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      3.5,
+      3.4,
+      0.35
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.825
+     ]
+    },
+    {
+     "size": [
+      3.5,
+      1.65,
+      1.65
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.825,
+      -0.175
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_HallBench_3",
+     "mesh": "H_HallBench_3",
+     "atlas": "Storage2",
+     "tris": 188,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      3.5,
+      3.4,
+      2.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 188,
+   "textures": [
+    "tex/H_Storage2_color.png",
+    "tex/H_Storage2_metal.png",
+    "tex/H_Storage2_normal.png",
+    "tex/H_Storage2_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_HallBench_8",
+   "role": "slatted pine mudroom bench; boxes: back 3.4, seat 1.65",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_HallBench_8"
+   ],
+   "fbx": "fbx/H_HallBench_8.fbx",
+   "size_studio": [
+    8.0,
+    3.4,
+    2.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -4.0,
+    0.0,
+    -1.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    4.0,
+    3.4,
+    1.0
+   ],
+   "pivot_blender_in_kit": [
+    43.5,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      8.0,
+      3.4,
+      0.35
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.825
+     ]
+    },
+    {
+     "size": [
+      8.0,
+      1.65,
+      1.65
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.825,
+      -0.175
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_HallBench_8",
+     "mesh": "H_HallBench_8",
+     "atlas": "Storage2",
+     "tris": 312,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      8.0,
+      3.4,
+      2.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 312,
+   "textures": [
+    "tex/H_Storage2_color.png",
+    "tex/H_Storage2_metal.png",
+    "tex/H_Storage2_normal.png",
+    "tex/H_Storage2_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Planter",
+   "role": "brick planter (cover 3.4) + rubber plant as art",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Planter__H_Planter",
+    "H_Planter__H_Planter_Tree"
+   ],
+   "fbx": "fbx/H_Planter.fbx",
+   "above_box": "thin tap / the TV / the plant stands above the 3.4 box: no collision needed",
+   "size_studio": [
+    3.0,
+    8.954,
+    3.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -1.5
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    8.954,
+    1.5
+   ],
+   "pivot_blender_in_kit": [
+    53.0,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      3.0,
+      3.4,
+      3.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Planter__H_Planter",
+     "mesh": "H_Planter",
+     "atlas": "Plants",
+     "tris": 24,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      3.0,
+      3.4,
+      3.0
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_Planter__H_Planter_Tree",
+     "mesh": "H_Planter_Tree",
+     "atlas": "Plants",
+     "tris": 1124,
+     "centre_studio_rel_pivot": [
+      -0.019,
+      6.075,
+      0.012
+     ],
+     "size_studio": [
+      2.359,
+      5.758,
+      1.981
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1148,
+   "textures": [
+    "tex/H_Plants_color.png",
+    "tex/H_Plants_metal.png",
+    "tex/H_Plants_normal.png",
+    "tex/H_Plants_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_DisplayColumn",
+   "role": "fieldstone column with walnut niches on -Y and +Y",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_DisplayColumn"
+   ],
+   "fbx": "fbx/H_DisplayColumn.fbx",
+   "size_studio": [
+    3.0,
+    8.0,
+    3.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -1.5
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    8.0,
+    1.5
+   ],
+   "pivot_blender_in_kit": [
+    60.0,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      3.0,
+      8.0,
+      3.0
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_DisplayColumn",
+     "mesh": "H_DisplayColumn",
+     "atlas": "Storage4",
+     "tris": 240,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      3.0,
+      8.0,
+      3.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 240,
+   "textures": [
+    "tex/H_Storage4_color.png",
+    "tex/H_Storage4_metal.png",
+    "tex/H_Storage4_normal.png",
+    "tex/H_Storage4_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_KitchenUpper",
+   "role": "gold enamel wall cabinet, bottom 5.8 above the floor",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_KitchenUpper"
+   ],
+   "fbx": "fbx/H_KitchenUpper.fbx",
+   "size_studio": [
+    4.0,
+    2.6,
+    1.45
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.0,
+    -0.7
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    2.6,
+    0.75
+   ],
+   "pivot_blender_in_kit": [
+    67.5,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_KitchenUpper",
+     "mesh": "H_KitchenUpper",
+     "atlas": "Kitchen",
+     "tris": 60,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.3,
+      0.025
+     ],
+     "size_studio": [
+      4.0,
+      2.6,
+      1.45
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 60,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_RangeHood",
+   "role": "gold enamel hood, bottom 5.8 above the floor",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_RangeHood"
+   ],
+   "fbx": "fbx/H_RangeHood.fbx",
+   "size_studio": [
+    3.2,
+    3.44,
+    1.65
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.6,
+    -0.04,
+    -0.9
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.6,
+    3.4,
+    0.75
+   ],
+   "pivot_blender_in_kit": [
+    75.1,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_RangeHood",
+     "mesh": "H_RangeHood",
+     "atlas": "Kitchen",
+     "tris": 44,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.68,
+      -0.075
+     ],
+     "size_studio": [
+      3.2,
+      3.44,
+      1.65
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 44,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_BarStool",
+   "role": "chrome stool, olive vinyl top",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_BarStool"
+   ],
+   "fbx": "fbx/H_BarStool.fbx",
+   "size_studio": [
+    1.48,
+    2.605,
+    1.48
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.74,
+    -0.005,
+    -0.74
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.74,
+    2.6,
+    0.74
+   ],
+   "pivot_blender_in_kit": [
+    81.44,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_BarStool",
+     "mesh": "H_BarStool",
+     "atlas": "Kitchen",
+     "tris": 392,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.297,
+      0.0
+     ],
+     "size_studio": [
+      1.48,
+      2.605,
+      1.48
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 392,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Nightstand",
+   "role": "walnut nightstand",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Nightstand"
+   ],
+   "fbx": "fbx/H_Nightstand.fbx",
+   "size_studio": [
+    2.2,
+    2.0,
+    2.05
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.1,
+    0.0,
+    -1.1
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.1,
+    2.0,
+    0.95
+   ],
+   "pivot_blender_in_kit": [
+    87.28,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Nightstand",
+     "mesh": "H_Nightstand",
+     "atlas": "WoodA",
+     "tris": 164,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.0,
+      -0.075
+     ],
+     "size_studio": [
+      2.2,
+      2.0,
+      2.05
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 164,
+   "textures": [
+    "tex/H_WoodA_color.png",
+    "tex/H_WoodA_metal.png",
+    "tex/H_WoodA_normal.png",
+    "tex/H_WoodA_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_CoffeeTable",
+   "role": "kidney coffee table, magazines, ashtray",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_CoffeeTable"
+   ],
+   "fbx": "fbx/H_CoffeeTable.fbx",
+   "size_studio": [
+    5.0,
+    1.651,
+    2.8
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.5,
+    0.009,
+    -1.4
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.5,
+    1.66,
+    1.4
+   ],
+   "pivot_blender_in_kit": [
+    94.88,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_CoffeeTable",
+     "mesh": "H_CoffeeTable",
+     "atlas": "Decor",
+     "tris": 492,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.835,
+      0.0
+     ],
+     "size_studio": [
+      5.0,
+      1.651,
+      2.8
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 492,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_SideTable",
+   "role": "round walnut side table",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_SideTable"
+   ],
+   "fbx": "fbx/H_SideTable.fbx",
+   "size_studio": [
+    1.8,
+    2.149,
+    1.8
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.9,
+    -0.009,
+    -0.9
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.9,
+    2.14,
+    0.9
+   ],
+   "pivot_blender_in_kit": [
+    102.28,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_SideTable",
+     "mesh": "H_SideTable",
+     "atlas": "Decor",
+     "tris": 212,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.066,
+      0.0
+     ],
+     "size_studio": [
+      1.8,
+      2.149,
+      1.8
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 212,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Desk",
+   "role": "steel tanker desk",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Desk"
+   ],
+   "fbx": "fbx/H_Desk.fbx",
+   "size_studio": [
+    5.0,
+    2.62,
+    2.43
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.5,
+    0.0,
+    -1.23
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.5,
+    2.62,
+    1.2
+   ],
+   "pivot_blender_in_kit": [
+    109.68,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Desk",
+     "mesh": "H_Desk",
+     "atlas": "Desk",
+     "tris": 204,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.31,
+      -0.015
+     ],
+     "size_studio": [
+      5.0,
+      2.62,
+      2.43
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 204,
+   "textures": [
+    "tex/H_Desk_color.png",
+    "tex/H_Desk_metal.png",
+    "tex/H_Desk_normal.png",
+    "tex/H_Desk_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_DeskChair",
+   "role": "wooden spindle-back chair",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_DeskChair"
+   ],
+   "fbx": "fbx/H_DeskChair.fbx",
+   "size_studio": [
+    2.182,
+    3.582,
+    2.09
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.091,
+    0.008,
+    -0.95
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.091,
+    3.59,
+    1.14
+   ],
+   "pivot_blender_in_kit": [
+    117.271,
+    -32.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_DeskChair",
+     "mesh": "H_DeskChair",
+     "atlas": "Desk",
+     "tris": 224,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.799,
+      0.095
+     ],
+     "size_studio": [
+      2.182,
+      3.582,
+      2.09
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 224,
+   "textures": [
+    "tex/H_Desk_color.png",
+    "tex/H_Desk_metal.png",
+    "tex/H_Desk_normal.png",
+    "tex/H_Desk_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_WashingMachine",
+   "role": "top-loading washer",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_WashingMachine"
+   ],
+   "fbx": "fbx/H_WashingMachine.fbx",
+   "size_studio": [
+    2.6,
+    3.0,
+    2.52
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.3,
+    0.0,
+    -1.32
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.3,
+    3.0,
+    1.2
+   ],
+   "pivot_blender_in_kit": [
+    1.3,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_WashingMachine",
+     "mesh": "H_WashingMachine",
+     "atlas": "Appliances",
+     "tris": 396,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.5,
+      -0.06
+     ],
+     "size_studio": [
+      2.6,
+      3.0,
+      2.52
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 396,
+   "textures": [
+    "tex/H_Appliances_color.png",
+    "tex/H_Appliances_metal.png",
+    "tex/H_Appliances_normal.png",
+    "tex/H_Appliances_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_FruitBowl",
+   "role": "olive bowl of wax fruit",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_FruitBowl"
+   ],
+   "fbx": "fbx/H_FruitBowl.fbx",
+   "size_studio": [
+    1.5,
+    0.66,
+    1.477
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.75,
+    0.0,
+    -0.739
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.75,
+    0.66,
+    0.739
+   ],
+   "pivot_blender_in_kit": [
+    7.35,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_FruitBowl",
+     "mesh": "H_FruitBowl",
+     "atlas": "Kitchen",
+     "tris": 312,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.33,
+      0.0
+     ],
+     "size_studio": [
+      1.5,
+      0.66,
+      1.477
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 312,
+   "textures": [
+    "tex/H_Kitchen_color.png",
+    "tex/H_Kitchen_metal.png",
+    "tex/H_Kitchen_normal.png",
+    "tex/H_Kitchen_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Microwave",
+   "role": "toaster + bread bin (no microwaves in 1965)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Microwave"
+   ],
+   "fbx": "fbx/H_Microwave.fbx",
+   "size_studio": [
+    1.93,
+    1.1,
+    1.36
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.98,
+    0.0,
+    -0.71
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.95,
+    1.1,
+    0.65
+   ],
+   "pivot_blender_in_kit": [
+    13.05,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Microwave",
+     "mesh": "H_Microwave",
+     "atlas": "Appliances",
+     "tris": 276,
+     "centre_studio_rel_pivot": [
+      -0.015,
+      0.55,
+      -0.03
+     ],
+     "size_studio": [
+      1.93,
+      1.1,
+      1.36
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 276,
+   "textures": [
+    "tex/H_Appliances_color.png",
+    "tex/H_Appliances_metal.png",
+    "tex/H_Appliances_normal.png",
+    "tex/H_Appliances_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_CoffeeMachine",
+   "role": "percolator",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_CoffeeMachine"
+   ],
+   "fbx": "fbx/H_CoffeeMachine.fbx",
+   "size_studio": [
+    0.9,
+    1.3,
+    1.54
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.45,
+    0.0,
+    -0.9
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.45,
+    1.3,
+    0.64
+   ],
+   "pivot_blender_in_kit": [
+    18.48,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_CoffeeMachine",
+     "mesh": "H_CoffeeMachine",
+     "atlas": "Appliances",
+     "tris": 300,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.65,
+      -0.13
+     ],
+     "size_studio": [
+      0.9,
+      1.3,
+      1.54
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 300,
+   "textures": [
+    "tex/H_Appliances_color.png",
+    "tex/H_Appliances_metal.png",
+    "tex/H_Appliances_normal.png",
+    "tex/H_Appliances_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Kettle",
+   "role": "whistling kettle",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Kettle"
+   ],
+   "fbx": "fbx/H_Kettle.fbx",
+   "size_studio": [
+    0.8,
+    0.89,
+    0.945
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.4,
+    0.0,
+    -0.545
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.4,
+    0.89,
+    0.4
+   ],
+   "pivot_blender_in_kit": [
+    23.33,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Kettle",
+     "mesh": "H_Kettle",
+     "atlas": "Appliances",
+     "tris": 248,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.445,
+      -0.072
+     ],
+     "size_studio": [
+      0.8,
+      0.89,
+      0.945
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 248,
+   "textures": [
+    "tex/H_Appliances_color.png",
+    "tex/H_Appliances_metal.png",
+    "tex/H_Appliances_normal.png",
+    "tex/H_Appliances_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_TV",
+   "role": "portable TV on a wire stand; screen is its own mesh",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_TV__H_TV",
+    "H_TV__H_TV_Screen"
+   ],
+   "fbx": "fbx/H_TV.fbx",
+   "size_studio": [
+    6.4,
+    4.06,
+    0.759
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.2,
+    -0.04,
+    -0.409
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.2,
+    4.02,
+    0.35
+   ],
+   "pivot_blender_in_kit": [
+    30.93,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_TV__H_TV",
+     "mesh": "H_TV",
+     "atlas": "Decor",
+     "tris": 204,
+     "centre_studio_rel_pivot": [
+      0.0,
+      1.99,
+      -0.03
+     ],
+     "size_studio": [
+      6.4,
+      4.06,
+      0.759
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_TV__H_TV_Screen",
+     "mesh": "H_TV_Screen",
+     "atlas": "Decor",
+     "tris": 108,
+     "centre_studio_rel_pivot": [
+      0.15,
+      2.675,
+      -0.35
+     ],
+     "size_studio": [
+      1.8,
+      1.75,
+      0.1
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 312,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Laptop",
+   "role": "portable typewriter",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Laptop"
+   ],
+   "fbx": "fbx/H_Laptop.fbx",
+   "size_studio": [
+    1.5,
+    0.985,
+    1.286
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.75,
+    0.0,
+    -0.5
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.75,
+    0.985,
+    0.786
+   ],
+   "pivot_blender_in_kit": [
+    38.88,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Laptop",
+     "mesh": "H_Laptop",
+     "atlas": "Decor",
+     "tris": 528,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.493,
+      0.143
+     ],
+     "size_studio": [
+      1.5,
+      0.985,
+      1.286
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 528,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_FloorLamp",
+   "role": "tripod lamp, drum shade; PointLight in the shade at z 5.3",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_FloorLamp__H_FloorLamp",
+    "H_FloorLamp__H_FloorLamp_Shade"
+   ],
+   "fbx": "fbx/H_FloorLamp.fbx",
+   "size_studio": [
+    1.9,
+    6.011,
+    1.9
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.95,
+    -0.011,
+    -0.95
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.95,
+    6.0,
+    0.95
+   ],
+   "pivot_blender_in_kit": [
+    44.58,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_FloorLamp__H_FloorLamp",
+     "mesh": "H_FloorLamp",
+     "atlas": "Decor",
+     "tris": 108,
+     "centre_studio_rel_pivot": [
+      -0.224,
+      2.444,
+      0.0
+     ],
+     "size_studio": [
+      1.435,
+      4.911,
+      1.656
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_FloorLamp__H_FloorLamp_Shade",
+     "mesh": "H_FloorLamp_Shade",
+     "atlas": "Decor",
+     "tris": 96,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      5.375,
+      0.0
+     ],
+     "size_studio": [
+      1.9,
+      1.25,
+      1.9
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 204,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_TableLamp",
+   "role": "ceramic lamp, pleated shade; PointLight at z 1.6",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_TableLamp__H_TableLamp",
+    "H_TableLamp__H_TableLamp_Shade"
+   ],
+   "fbx": "fbx/H_TableLamp.fbx",
+   "size_studio": [
+    1.29,
+    2.0,
+    1.29
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.645,
+    0.0,
+    -0.645
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.645,
+    2.0,
+    0.645
+   ],
+   "pivot_blender_in_kit": [
+    50.175,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_TableLamp__H_TableLamp",
+     "mesh": "H_TableLamp",
+     "atlas": "Decor",
+     "tris": 192,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.65,
+      0.0
+     ],
+     "size_studio": [
+      0.88,
+      1.3,
+      0.88
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_TableLamp__H_TableLamp_Shade",
+     "mesh": "H_TableLamp_Shade",
+     "atlas": "Decor",
+     "tris": 96,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.6,
+      0.0
+     ],
+     "size_studio": [
+      1.29,
+      0.8,
+      1.29
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 288,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_PendantLamp",
+   "role": "opal globe pendant on a brass chain: origin = ceiling point (_Bulb glows)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_PendantLamp__H_PendantLamp",
+    "H_PendantLamp__H_PendantLamp_Bulb"
+   ],
+   "fbx": "fbx/H_PendantLamp.fbx",
+   "size_studio": [
+    1.8,
+    4.05,
+    1.8
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.9,
+    -4.0,
+    -0.9
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.9,
+    0.05,
+    0.9
+   ],
+   "pivot_blender_in_kit": [
+    55.72,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_PendantLamp__H_PendantLamp",
+     "mesh": "H_PendantLamp",
+     "atlas": "Decor",
+     "tris": 792,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      -1.5,
+      0.0
+     ],
+     "size_studio": [
+      0.6,
+      3.1,
+      0.6
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_PendantLamp__H_PendantLamp_Bulb",
+     "mesh": "H_PendantLamp_Bulb",
+     "atlas": "Decor",
+     "tris": 240,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      -3.525,
+      0.0
+     ],
+     "size_studio": [
+      1.8,
+      0.95,
+      1.8
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1032,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Frame_Abstract",
+   "role": "mid-century print, thin walnut frame 4 x 4",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Frame_Abstract"
+   ],
+   "fbx": "fbx/H_Frame_Abstract.fbx",
+   "size_studio": [
+    4.0,
+    4.0,
+    0.15
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.0,
+    -0.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    4.0,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    62.62,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Frame_Abstract",
+     "mesh": "H_Frame_Abstract",
+     "atlas": "Art",
+     "tris": 60,
+     "centre_studio_rel_pivot": [
+      0.0,
+      2.0,
+      -0.075
+     ],
+     "size_studio": [
+      4.0,
+      4.0,
+      0.15
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 60,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Frame_Landscape",
+   "role": "desert oil in a gold frame 5.4 x 3.6",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Frame_Landscape"
+   ],
+   "fbx": "fbx/H_Frame_Landscape.fbx",
+   "size_studio": [
+    5.4,
+    3.6,
+    0.15
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.7,
+    0.0,
+    -0.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.7,
+    3.6,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    71.32,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Frame_Landscape",
+     "mesh": "H_Frame_Landscape",
+     "atlas": "Art",
+     "tris": 72,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.8,
+      -0.075
+     ],
+     "size_studio": [
+      5.4,
+      3.6,
+      0.15
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 72,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Frame_Botanical",
+   "role": "cactus-flower oil in a gold frame 2.6 x 3.4",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Frame_Botanical"
+   ],
+   "fbx": "fbx/H_Frame_Botanical.fbx",
+   "size_studio": [
+    2.6,
+    3.4,
+    0.15
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.3,
+    0.0,
+    -0.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.3,
+    3.4,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    79.32,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Frame_Botanical",
+     "mesh": "H_Frame_Botanical",
+     "atlas": "Art",
+     "tris": 72,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      -0.075
+     ],
+     "size_studio": [
+      2.6,
+      3.4,
+      0.15
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 72,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Frame_Geometric",
+   "role": "kid's rocket drawing, framed 3 x 3",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Frame_Geometric"
+   ],
+   "fbx": "fbx/H_Frame_Geometric.fbx",
+   "size_studio": [
+    3.0,
+    3.0,
+    0.15
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -0.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    3.0,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    86.12,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Frame_Geometric",
+     "mesh": "H_Frame_Geometric",
+     "atlas": "Art",
+     "tris": 60,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.5,
+      -0.075
+     ],
+     "size_studio": [
+      3.0,
+      3.0,
+      0.15
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 60,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Rug_Living",
+   "role": "olive shag rug 12 x 8",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Rug_Living"
+   ],
+   "fbx": "fbx/H_Rug_Living.fbx",
+   "size_studio": [
+    12.0,
+    0.06,
+    8.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -6.0,
+    0.0,
+    -4.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    6.0,
+    0.06,
+    4.0
+   ],
+   "pivot_blender_in_kit": [
+    97.62,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Rug_Living",
+     "mesh": "H_Rug_Living",
+     "atlas": "Art",
+     "tris": 44,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.03,
+      0.0
+     ],
+     "size_studio": [
+      12.0,
+      0.06,
+      8.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 44,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Rug_Runner",
+   "role": "braided runner 4 x 10",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Rug_Runner"
+   ],
+   "fbx": "fbx/H_Rug_Runner.fbx",
+   "size_studio": [
+    4.0,
+    0.06,
+    10.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.0,
+    -5.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    0.06,
+    5.0
+   ],
+   "pivot_blender_in_kit": [
+    109.62,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Rug_Runner",
+     "mesh": "H_Rug_Runner",
+     "atlas": "Art",
+     "tris": 148,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.03,
+      0.0
+     ],
+     "size_studio": [
+      4.0,
+      0.06,
+      10.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 148,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_PlantFiddle",
+   "role": "rubber plant in a brass pot",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_PlantFiddle"
+   ],
+   "fbx": "fbx/H_PlantFiddle.fbx",
+   "size_studio": [
+    2.605,
+    5.475,
+    2.031
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.347,
+    0.0,
+    -0.933
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.258,
+    5.475,
+    1.098
+   ],
+   "pivot_blender_in_kit": [
+    116.878,
+    -48.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_PlantFiddle",
+     "mesh": "H_PlantFiddle",
+     "atlas": "Plants",
+     "tris": 1176,
+     "centre_studio_rel_pivot": [
+      -0.045,
+      2.738,
+      0.083
+     ],
+     "size_studio": [
+      2.605,
+      5.475,
+      2.031
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1176,
+   "textures": [
+    "tex/H_Plants_color.png",
+    "tex/H_Plants_metal.png",
+    "tex/H_Plants_normal.png",
+    "tex/H_Plants_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_PlantSnake",
+   "role": "snake plant, terracotta",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_PlantSnake"
+   ],
+   "fbx": "fbx/H_PlantSnake.fbx",
+   "size_studio": [
+    1.107,
+    2.833,
+    1.05
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.607,
+    0.0,
+    -0.55
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.5,
+    2.833,
+    0.5
+   ],
+   "pivot_blender_in_kit": [
+    0.5,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_PlantSnake",
+     "mesh": "H_PlantSnake",
+     "atlas": "Plants",
+     "tris": 576,
+     "centre_studio_rel_pivot": [
+      -0.053,
+      1.417,
+      -0.025
+     ],
+     "size_studio": [
+      1.107,
+      2.833,
+      1.05
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 576,
+   "textures": [
+    "tex/H_Plants_color.png",
+    "tex/H_Plants_metal.png",
+    "tex/H_Plants_normal.png",
+    "tex/H_Plants_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Toilet",
+   "role": "mint toilet, back to the wall (+Y)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Toilet"
+   ],
+   "fbx": "fbx/H_Toilet.fbx",
+   "size_studio": [
+    1.9,
+    2.64,
+    2.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.95,
+    0.0,
+    -1.25
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.95,
+    2.64,
+    1.25
+   ],
+   "pivot_blender_in_kit": [
+    6.057,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Toilet",
+     "mesh": "H_Toilet",
+     "atlas": "Bath",
+     "tris": 564,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.32,
+      0.0
+     ],
+     "size_studio": [
+      1.9,
+      2.64,
+      2.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 564,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Vanity",
+   "role": "mint vanity: back on the wall at +Y 0.9",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Vanity"
+   ],
+   "fbx": "fbx/H_Vanity.fbx",
+   "size_studio": [
+    4.1,
+    3.043,
+    1.92
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.05,
+    1.0,
+    -1.02
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.05,
+    4.043,
+    0.9
+   ],
+   "pivot_blender_in_kit": [
+    13.057,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Vanity",
+     "mesh": "H_Vanity",
+     "atlas": "Bath",
+     "tris": 528,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      2.522,
+      -0.06
+     ],
+     "size_studio": [
+      4.1,
+      3.043,
+      1.92
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 528,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Mirror",
+   "role": "chrome medicine cabinet, back on y = 0, hang bottom at 3.9",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Mirror"
+   ],
+   "fbx": "fbx/H_Mirror.fbx",
+   "size_studio": [
+    3.0,
+    4.0,
+    0.19
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -0.19
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    4.0,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    20.607,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Mirror",
+     "mesh": "H_Mirror",
+     "atlas": "Bath",
+     "tris": 48,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      2.0,
+      -0.095
+     ],
+     "size_studio": [
+      3.0,
+      4.0,
+      0.19
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 48,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_ShowerSet",
+   "role": "chrome shower head + cross taps, back on y = 0",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_ShowerSet"
+   ],
+   "fbx": "fbx/H_ShowerSet.fbx",
+   "size_studio": [
+    1.1,
+    3.31,
+    1.606
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.55,
+    3.35,
+    -1.6
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.55,
+    6.66,
+    0.006
+   ],
+   "pivot_blender_in_kit": [
+    26.657,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_ShowerSet",
+     "mesh": "H_ShowerSet",
+     "atlas": "Bath",
+     "tris": 260,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      5.005,
+      -0.797
+     ],
+     "size_studio": [
+      1.1,
+      3.31,
+      1.606
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 260,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_ShowerGlass",
+   "role": "vinyl shower curtain on a chrome rod (opaque, baked) + rod flange",
+   "cover": "player blocker box 3 x 6.6 x 0.1 (as v1)",
+   "objects": [
+    "H_ShowerGlass__H_ShowerGlass",
+    "H_ShowerGlass__H_ShowerGlassProfile"
+   ],
+   "fbx": "fbx/H_ShowerGlass.fbx",
+   "size_studio": [
+    3.12,
+    6.6,
+    0.228
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.62,
+    0.0,
+    -0.114
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    6.6,
+    0.114
+   ],
+   "pivot_blender_in_kit": [
+    32.707,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_ShowerGlass__H_ShowerGlass",
+     "mesh": "H_ShowerGlass",
+     "atlas": "Bath",
+     "tris": 704,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      3.3,
+      0.0
+     ],
+     "size_studio": [
+      3.0,
+      6.6,
+      0.2
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_ShowerGlass__H_ShowerGlassProfile",
+     "mesh": "H_ShowerGlassProfile",
+     "atlas": "Bath",
+     "tris": 52,
+     "centre_studio_rel_pivot": [
+      -1.56,
+      3.27,
+      0.0
+     ],
+     "size_studio": [
+      0.12,
+      6.54,
+      0.228
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 756,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_TowelRail",
+   "role": "chrome rail, faded towels, back on y = 0",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_TowelRail"
+   ],
+   "fbx": "fbx/H_TowelRail.fbx",
+   "size_studio": [
+    2.2,
+    1.32,
+    0.49
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.1,
+    1.4,
+    -0.49
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.1,
+    2.72,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    39.427,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_TowelRail",
+     "mesh": "H_TowelRail",
+     "atlas": "Bath",
+     "tris": 96,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      2.06,
+      -0.245
+     ],
+     "size_studio": [
+      2.2,
+      1.32,
+      0.49
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 96,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_ToyBlocks",
+   "role": "wooden blocks",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_ToyBlocks"
+   ],
+   "fbx": "fbx/H_ToyBlocks.fbx",
+   "size_studio": [
+    2.172,
+    1.11,
+    1.772
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.382,
+    0.0,
+    -0.882
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.79,
+    1.11,
+    0.89
+   ],
+   "pivot_blender_in_kit": [
+    45.317,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_ToyBlocks",
+     "mesh": "H_ToyBlocks",
+     "atlas": "Toys",
+     "tris": 84,
+     "centre_studio_rel_pivot": [
+      -0.296,
+      0.555,
+      0.004
+     ],
+     "size_studio": [
+      2.172,
+      1.11,
+      1.772
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 84,
+   "textures": [
+    "tex/H_Toys_color.png",
+    "tex/H_Toys_metal.png",
+    "tex/H_Toys_normal.png",
+    "tex/H_Toys_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_ToyBall",
+   "role": "rubber ball",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_ToyBall"
+   ],
+   "fbx": "fbx/H_ToyBall.fbx",
+   "size_studio": [
+    1.2,
+    1.2,
+    1.2
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.6,
+    0.0,
+    -0.6
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.6,
+    1.2,
+    0.6
+   ],
+   "pivot_blender_in_kit": [
+    51.299,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_ToyBall",
+     "mesh": "H_ToyBall",
+     "atlas": "Toys",
+     "tris": 288,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.6,
+      0.0
+     ],
+     "size_studio": [
+      1.2,
+      1.2,
+      1.2
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 288,
+   "textures": [
+    "tex/H_Toys_color.png",
+    "tex/H_Toys_metal.png",
+    "tex/H_Toys_normal.png",
+    "tex/H_Toys_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_ToyCar",
+   "role": "tin toy car",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_ToyCar"
+   ],
+   "fbx": "fbx/H_ToyCar.fbx",
+   "size_studio": [
+    0.96,
+    0.78,
+    1.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.48,
+    -0.0,
+    -0.75
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.48,
+    0.78,
+    0.75
+   ],
+   "pivot_blender_in_kit": [
+    56.379,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_ToyCar",
+     "mesh": "H_ToyCar",
+     "atlas": "Toys",
+     "tris": 376,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.39,
+      0.0
+     ],
+     "size_studio": [
+      0.96,
+      0.78,
+      1.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 376,
+   "textures": [
+    "tex/H_Toys_color.png",
+    "tex/H_Toys_metal.png",
+    "tex/H_Toys_normal.png",
+    "tex/H_Toys_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Teddy",
+   "role": "worn teddy (a split seam)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Teddy"
+   ],
+   "fbx": "fbx/H_Teddy.fbx",
+   "size_studio": [
+    1.199,
+    1.57,
+    0.96
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.599,
+    0.0,
+    -0.6
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.599,
+    1.57,
+    0.36
+   ],
+   "pivot_blender_in_kit": [
+    61.459,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Teddy",
+     "mesh": "H_Teddy",
+     "atlas": "Toys",
+     "tris": 480,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.785,
+      -0.12
+     ],
+     "size_studio": [
+      1.199,
+      1.57,
+      0.96
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 480,
+   "textures": [
+    "tex/H_Toys_color.png",
+    "tex/H_Toys_metal.png",
+    "tex/H_Toys_normal.png",
+    "tex/H_Toys_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Armchair_Mustard",
+   "role": "slipper chair, mustard tweed (MB)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Armchair_Mustard"
+   ],
+   "fbx": "fbx/H_Armchair_Mustard.fbx",
+   "variant_of": "H_Armchair",
+   "size_studio": [
+    4.2,
+    3.4,
+    4.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.1,
+    0.0,
+    -2.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.1,
+    3.4,
+    2.0
+   ],
+   "pivot_blender_in_kit": [
+    68.158,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      4.2,
+      3.4,
+      1.65
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      1.175
+     ]
+    },
+    {
+     "size": [
+      0.75,
+      2.5,
+      2.35
+     ],
+     "centre_rel_pivot": [
+      1.725,
+      1.25,
+      -0.825
+     ]
+    },
+    {
+     "size": [
+      0.75,
+      2.5,
+      2.35
+     ],
+     "centre_rel_pivot": [
+      -1.725,
+      1.25,
+      -0.825
+     ]
+    },
+    {
+     "size": [
+      2.7,
+      1.8,
+      2.35
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      0.9,
+      -0.825
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Armchair_Mustard",
+     "mesh": "H_Armchair_Mustard",
+     "atlas": "Variants1",
+     "tris": 792,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      4.2,
+      3.4,
+      4.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 792,
+   "textures": [
+    "tex/H_Variants1_color.png",
+    "tex/H_Variants1_metal.png",
+    "tex/H_Variants1_normal.png",
+    "tex/H_Variants1_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Bed_Double_Maple",
+   "role": "maple spindle bed, plaid spread (BR2)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Bed_Double_Maple"
+   ],
+   "fbx": "fbx/H_Bed_Double_Maple.fbx",
+   "variant_of": "H_Bed_Double",
+   "size_studio": [
+    7.7,
+    3.4,
+    10.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.85,
+    0.0,
+    -5.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.85,
+    3.4,
+    5.0
+   ],
+   "pivot_blender_in_kit": [
+    78.108,
+    -64.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      7.7,
+      3.4,
+      0.6
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      4.7
+     ]
+    },
+    {
+     "size": [
+      7.4,
+      2.4,
+      9.45
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.2,
+      -0.275
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bed_Double_Maple",
+     "mesh": "H_Bed_Double_Maple",
+     "atlas": "Variants1",
+     "tris": 1752,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      7.7,
+      3.4,
+      10.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1752,
+   "textures": [
+    "tex/H_Variants1_color.png",
+    "tex/H_Variants1_metal.png",
+    "tex/H_Variants1_normal.png",
+    "tex/H_Variants1_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Dresser_Credenza",
+   "role": "walnut credenza, sliding louvred doors (LR)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Dresser_Credenza"
+   ],
+   "fbx": "fbx/H_Dresser_Credenza.fbx",
+   "variant_of": "H_Dresser",
+   "size_studio": [
+    6.0,
+    3.4,
+    2.3
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    3.4,
+    1.15
+   ],
+   "pivot_blender_in_kit": [
+    88.958,
+    -64.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Dresser_Credenza",
+     "mesh": "H_Dresser_Credenza",
+     "atlas": "Variants2",
+     "tris": 100,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 100,
+   "textures": [
+    "tex/H_Variants2_color.png",
+    "tex/H_Variants2_metal.png",
+    "tex/H_Variants2_normal.png",
+    "tex/H_Variants2_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Dresser_Phone",
+   "role": "walnut telephone table, skirted cupboard (FY)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Dresser_Phone"
+   ],
+   "fbx": "fbx/H_Dresser_Phone.fbx",
+   "variant_of": "H_Dresser",
+   "size_studio": [
+    6.0,
+    3.4,
+    2.3
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    3.4,
+    1.15
+   ],
+   "pivot_blender_in_kit": [
+    98.958,
+    -64.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Dresser_Phone",
+     "mesh": "H_Dresser_Phone",
+     "atlas": "Variants2",
+     "tris": 284,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 284,
+   "textures": [
+    "tex/H_Variants2_color.png",
+    "tex/H_Variants2_metal.png",
+    "tex/H_Variants2_normal.png",
+    "tex/H_Variants2_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Dresser_Maple",
+   "role": "maple dresser (BR2)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Dresser_Maple"
+   ],
+   "fbx": "fbx/H_Dresser_Maple.fbx",
+   "variant_of": "H_Dresser",
+   "size_studio": [
+    6.0,
+    3.4,
+    2.3
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    3.4,
+    1.15
+   ],
+   "pivot_blender_in_kit": [
+    108.958,
+    -64.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Dresser_Maple",
+     "mesh": "H_Dresser_Maple",
+     "atlas": "Variants2",
+     "tris": 340,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 340,
+   "textures": [
+    "tex/H_Variants2_color.png",
+    "tex/H_Variants2_metal.png",
+    "tex/H_Variants2_normal.png",
+    "tex/H_Variants2_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Dresser_Cream",
+   "role": "painted cream chest of drawers (BR3)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Dresser_Cream"
+   ],
+   "fbx": "fbx/H_Dresser_Cream.fbx",
+   "variant_of": "H_Dresser",
+   "size_studio": [
+    6.0,
+    3.4,
+    2.3
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    3.4,
+    1.15
+   ],
+   "pivot_blender_in_kit": [
+    118.958,
+    -64.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Dresser_Cream",
+     "mesh": "H_Dresser_Cream",
+     "atlas": "Variants2",
+     "tris": 340,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      3.4,
+      2.3
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 340,
+   "textures": [
+    "tex/H_Variants2_color.png",
+    "tex/H_Variants2_metal.png",
+    "tex/H_Variants2_normal.png",
+    "tex/H_Variants2_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_TVConsole_Buffet",
+   "role": "walnut buffet, louvred doors (DR)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_TVConsole_Buffet"
+   ],
+   "fbx": "fbx/H_TVConsole_Buffet.fbx",
+   "variant_of": "H_TVConsole",
+   "size_studio": [
+    8.0,
+    3.4,
+    2.02
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -4.0,
+    0.0,
+    -1.01
+   ],
+   "bbox_max_rel_pivot_studio": [
+    4.0,
+    3.4,
+    1.01
+   ],
+   "pivot_blender_in_kit": [
+    4.0,
+    -80.01,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      8.0,
+      3.4,
+      2.02
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_TVConsole_Buffet",
+     "mesh": "H_TVConsole_Buffet",
+     "atlas": "WoodA",
+     "tris": 408,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ],
+     "size_studio": [
+      8.0,
+      3.4,
+      2.02
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 408,
+   "textures": [
+    "tex/H_WoodA_color.png",
+    "tex/H_WoodA_metal.png",
+    "tex/H_WoodA_normal.png",
+    "tex/H_WoodA_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Bathtub_Butter",
+   "role": "built-in tub, butter-yellow tiles (UB)",
+   "cover": "LOW 3.4",
+   "objects": [
+    "H_Bathtub_Butter"
+   ],
+   "fbx": "fbx/H_Bathtub_Butter.fbx",
+   "variant_of": "H_Bathtub",
+   "above_box": "thin tap / the TV / the plant stands above the 3.4 box: no collision needed",
+   "size_studio": [
+    7.0,
+    4.119,
+    3.6
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.5,
+    0.0,
+    -1.8
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.5,
+    4.119,
+    1.8
+   ],
+   "pivot_blender_in_kit": [
+    15.5,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      7.0,
+      3.4,
+      3.6
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      1.7,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bathtub_Butter",
+     "mesh": "H_Bathtub_Butter",
+     "atlas": "Variants3",
+     "tris": 752,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      2.059,
+      0.0
+     ],
+     "size_studio": [
+      7.0,
+      4.119,
+      3.6
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 752,
+   "textures": [
+    "tex/H_Variants3_color.png",
+    "tex/H_Variants3_metal.png",
+    "tex/H_Variants3_normal.png",
+    "tex/H_Variants3_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Bookcase_Hutch",
+   "role": "walnut china hutch, plates on display (DR)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Bookcase_Hutch__H_Bookcase_Hutch",
+    "H_Bookcase_Hutch__H_Bookcase_Hutch_Glass"
+   ],
+   "fbx": "fbx/H_Bookcase_Hutch.fbx",
+   "variant_of": "H_Bookcase",
+   "size_studio": [
+    6.0,
+    8.0,
+    1.6
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -0.8
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    0.8
+   ],
+   "pivot_blender_in_kit": [
+    26.0,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      1.6
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bookcase_Hutch__H_Bookcase_Hutch",
+     "mesh": "H_Bookcase_Hutch",
+     "atlas": "Variants3",
+     "tris": 3004,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      1.6
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_Bookcase_Hutch__H_Bookcase_Hutch_Glass",
+     "mesh": "H_Bookcase_Hutch_Glass",
+     "atlas": "Plain:H_Glass",
+     "tris": 24,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      5.16,
+      -0.745
+     ],
+     "size_studio": [
+      5.36,
+      4.88,
+      0.03
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 3028,
+   "textures": [
+    "tex/H_Variants3_color.png",
+    "tex/H_Variants3_metal.png",
+    "tex/H_Variants3_normal.png",
+    "tex/H_Variants3_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Bookcase_Maple",
+   "role": "open maple bookcase (BR2)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Bookcase_Maple"
+   ],
+   "fbx": "fbx/H_Bookcase_Maple.fbx",
+   "variant_of": "H_Bookcase",
+   "size_studio": [
+    6.0,
+    8.0,
+    1.6
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -0.8
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    0.8
+   ],
+   "pivot_blender_in_kit": [
+    36.0,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      1.6
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Bookcase_Maple",
+     "mesh": "H_Bookcase_Maple",
+     "atlas": "Variants3",
+     "tris": 1000,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      1.6
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1000,
+   "textures": [
+    "tex/H_Variants3_color.png",
+    "tex/H_Variants3_metal.png",
+    "tex/H_Variants3_normal.png",
+    "tex/H_Variants3_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Wardrobe_Lockers",
+   "role": "painted green coat lockers, chalked numbers (MR)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Wardrobe_Lockers"
+   ],
+   "fbx": "fbx/H_Wardrobe_Lockers.fbx",
+   "variant_of": "H_Wardrobe",
+   "size_studio": [
+    6.0,
+    8.0,
+    2.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.25
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    1.25
+   ],
+   "pivot_blender_in_kit": [
+    46.0,
+    -80.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Wardrobe_Lockers",
+     "mesh": "H_Wardrobe_Lockers",
+     "atlas": "Variants4",
+     "tris": 292,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 292,
+   "textures": [
+    "tex/H_Variants4_color.png",
+    "tex/H_Variants4_metal.png",
+    "tex/H_Variants4_normal.png",
+    "tex/H_Variants4_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Wardrobe_Maple",
+   "role": "maple wardrobe (BR2)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Wardrobe_Maple"
+   ],
+   "fbx": "fbx/H_Wardrobe_Maple.fbx",
+   "variant_of": "H_Wardrobe",
+   "size_studio": [
+    6.0,
+    8.0,
+    2.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.25
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    1.25
+   ],
+   "pivot_blender_in_kit": [
+    56.0,
+    -80.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Wardrobe_Maple",
+     "mesh": "H_Wardrobe_Maple",
+     "atlas": "Variants4",
+     "tris": 148,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 148,
+   "textures": [
+    "tex/H_Variants4_color.png",
+    "tex/H_Variants4_metal.png",
+    "tex/H_Variants4_normal.png",
+    "tex/H_Variants4_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Wardrobe_Cream",
+   "role": "painted cream wardrobe (BR3)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_Wardrobe_Cream"
+   ],
+   "fbx": "fbx/H_Wardrobe_Cream.fbx",
+   "variant_of": "H_Wardrobe",
+   "size_studio": [
+    6.0,
+    8.0,
+    2.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -3.0,
+    0.0,
+    -1.25
+   ],
+   "bbox_max_rel_pivot_studio": [
+    3.0,
+    8.0,
+    1.25
+   ],
+   "pivot_blender_in_kit": [
+    66.0,
+    -80.05,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_Wardrobe_Cream",
+     "mesh": "H_Wardrobe_Cream",
+     "atlas": "Variants4",
+     "tris": 148,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      6.0,
+      8.0,
+      2.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 148,
+   "textures": [
+    "tex/H_Variants4_color.png",
+    "tex/H_Variants4_metal.png",
+    "tex/H_Variants4_normal.png",
+    "tex/H_Variants4_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_TallCabinet_HallTree",
+   "role": "walnut hall tree with mirror, coat and hat (BH)",
+   "cover": "TALL 8.0",
+   "objects": [
+    "H_TallCabinet_HallTree"
+   ],
+   "fbx": "fbx/H_TallCabinet_HallTree.fbx",
+   "variant_of": "H_TallCabinet",
+   "size_studio": [
+    3.0,
+    8.0,
+    2.12
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -1.06
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    8.0,
+    1.06
+   ],
+   "pivot_blender_in_kit": [
+    74.5,
+    -80.06,
+    0.0
+   ],
+   "collision_boxes_studio": [
+    {
+     "size": [
+      3.0,
+      8.0,
+      2.12
+     ],
+     "centre_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ]
+    }
+   ],
+   "parts": [
+    {
+     "object": "H_TallCabinet_HallTree",
+     "mesh": "H_TallCabinet_HallTree",
+     "atlas": "Variants4",
+     "tris": 228,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      0.0
+     ],
+     "size_studio": [
+      3.0,
+      8.0,
+      2.12
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 228,
+   "textures": [
+    "tex/H_Variants4_color.png",
+    "tex/H_Variants4_metal.png",
+    "tex/H_Variants4_normal.png",
+    "tex/H_Variants4_rough.png"
+   ],
+   "art_outside_box": 0.0
+  },
+  {
+   "assembly": "H_Desk_School",
+   "role": "maple school desk (BR3)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Desk_School"
+   ],
+   "fbx": "fbx/H_Desk_School.fbx",
+   "variant_of": "H_Desk",
+   "size_studio": [
+    5.0,
+    2.604,
+    2.44
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.5,
+    0.016,
+    -1.24
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.5,
+    2.62,
+    1.2
+   ],
+   "pivot_blender_in_kit": [
+    82.5,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Desk_School",
+     "mesh": "H_Desk_School",
+     "atlas": "Desk",
+     "tris": 196,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.318,
+      -0.02
+     ],
+     "size_studio": [
+      5.0,
+      2.604,
+      2.44
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 196,
+   "textures": [
+    "tex/H_Desk_color.png",
+    "tex/H_Desk_metal.png",
+    "tex/H_Desk_normal.png",
+    "tex/H_Desk_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Toilet_Butter",
+   "role": "butter toilet (UB)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Toilet_Butter"
+   ],
+   "fbx": "fbx/H_Toilet_Butter.fbx",
+   "variant_of": "H_Toilet",
+   "size_studio": [
+    1.9,
+    2.64,
+    2.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.95,
+    0.0,
+    -1.25
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.95,
+    2.64,
+    1.25
+   ],
+   "pivot_blender_in_kit": [
+    89.95,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Toilet_Butter",
+     "mesh": "H_Toilet_Butter",
+     "atlas": "Bath",
+     "tris": 564,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.32,
+      0.0
+     ],
+     "size_studio": [
+      1.9,
+      2.64,
+      2.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 564,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Vanity_Butter",
+   "role": "butter vanity (UB)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Vanity_Butter"
+   ],
+   "fbx": "fbx/H_Vanity_Butter.fbx",
+   "variant_of": "H_Vanity",
+   "size_studio": [
+    4.1,
+    3.043,
+    1.92
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.05,
+    1.0,
+    -1.02
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.05,
+    4.043,
+    0.9
+   ],
+   "pivot_blender_in_kit": [
+    96.95,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Vanity_Butter",
+     "mesh": "H_Vanity_Butter",
+     "atlas": "Bath",
+     "tris": 528,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      2.522,
+      -0.06
+     ],
+     "size_studio": [
+      4.1,
+      3.043,
+      1.92
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 528,
+   "textures": [
+    "tex/H_Bath_color.png",
+    "tex/H_Bath_metal.png",
+    "tex/H_Bath_normal.png",
+    "tex/H_Bath_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_PendantLamp_Sputnik",
+   "role": "brass sputnik chandelier (FY)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_PendantLamp_Sputnik__H_PendantSputnik",
+    "H_PendantLamp_Sputnik__H_PendantSputnik_Bulbs"
+   ],
+   "fbx": "fbx/H_PendantLamp_Sputnik.fbx",
+   "variant_of": "H_PendantLamp",
+   "size_studio": [
+    1.8,
+    4.05,
+    1.8
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.9,
+    -4.0,
+    -0.9
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.9,
+    0.05,
+    0.9
+   ],
+   "pivot_blender_in_kit": [
+    103.9,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_PendantLamp_Sputnik__H_PendantSputnik",
+     "mesh": "H_PendantSputnik",
+     "atlas": "Decor",
+     "tris": 356,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      -1.975,
+      0.0
+     ],
+     "size_studio": [
+      1.8,
+      4.05,
+      1.8
+     ],
+     "rot_z_deg": 0.0
+    },
+    {
+     "object": "H_PendantLamp_Sputnik__H_PendantSputnik_Bulbs",
+     "mesh": "H_PendantSputnik_Bulbs",
+     "atlas": "Decor",
+     "tris": 384,
+     "centre_studio_rel_pivot": [
+      -0.03,
+      -3.24,
+      0.0
+     ],
+     "size_studio": [
+      1.671,
+      0.924,
+      1.522
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 740,
+   "textures": [
+    "tex/H_Decor_color.png",
+    "tex/H_Decor_metal.png",
+    "tex/H_Decor_normal.png",
+    "tex/H_Decor_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Frame_Notice",
+   "role": "household drill notice board (MR)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Frame_Notice"
+   ],
+   "fbx": "fbx/H_Frame_Notice.fbx",
+   "variant_of": "H_Frame_Geometric",
+   "size_studio": [
+    3.0,
+    3.0,
+    0.15
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -0.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    3.0,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    110.3,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Frame_Notice",
+     "mesh": "H_Frame_Notice",
+     "atlas": "Art",
+     "tris": 60,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.5,
+      -0.075
+     ],
+     "size_studio": [
+      3.0,
+      3.0,
+      0.15
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 60,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Frame_Pennant",
+   "role": "framed pennant (BR2)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Frame_Pennant"
+   ],
+   "fbx": "fbx/H_Frame_Pennant.fbx",
+   "variant_of": "H_Frame_Botanical",
+   "size_studio": [
+    2.6,
+    3.4,
+    0.15
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.3,
+    0.0,
+    -0.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.3,
+    3.4,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    117.1,
+    -80.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Frame_Pennant",
+     "mesh": "H_Frame_Pennant",
+     "atlas": "Art",
+     "tris": 60,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.7,
+      -0.075
+     ],
+     "size_studio": [
+      2.6,
+      3.4,
+      0.15
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 60,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Frame_Mesa",
+   "role": "ranch-and-mesas oil in a gold frame (MB)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Frame_Mesa"
+   ],
+   "fbx": "fbx/H_Frame_Mesa.fbx",
+   "variant_of": "H_Frame_Landscape",
+   "size_studio": [
+    5.4,
+    3.6,
+    0.15
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.7,
+    0.0,
+    -0.15
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.7,
+    3.6,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    2.7,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Frame_Mesa",
+     "mesh": "H_Frame_Mesa",
+     "atlas": "Art",
+     "tris": 72,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.8,
+      -0.075
+     ],
+     "size_studio": [
+      5.4,
+      3.6,
+      0.15
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 72,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "H_Rug_Oval",
+   "role": "braided oval rug (MB)",
+   "cover": "none (dressing)",
+   "objects": [
+    "H_Rug_Oval"
+   ],
+   "fbx": "fbx/H_Rug_Oval.fbx",
+   "variant_of": "H_Rug_Living",
+   "size_studio": [
+    12.0,
+    0.06,
+    8.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -6.0,
+    0.0,
+    -4.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    6.0,
+    0.06,
+    4.0
+   ],
+   "pivot_blender_in_kit": [
+    15.4,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "H_Rug_Oval",
+     "mesh": "H_Rug_Oval",
+     "atlas": "Art",
+     "tris": 148,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.03,
+      0.0
+     ],
+     "size_studio": [
+      12.0,
+      0.06,
+      8.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 148,
+   "textures": [
+    "tex/H_Art_color.png",
+    "tex/H_Art_metal.png",
+    "tex/H_Art_normal.png",
+    "tex/H_Art_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Phone",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Phone"
+   ],
+   "fbx": "fbx/D65_Phone.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    2.011,
+    0.6,
+    0.92
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.011,
+    -0.02,
+    -0.5
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.0,
+    0.58,
+    0.42
+   ],
+   "pivot_blender_in_kit": [
+    26.4,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Phone",
+     "mesh": "D65_Phone",
+     "atlas": "Dress65",
+     "tris": 360,
+     "centre_studio_rel_pivot": [
+      -0.005,
+      0.28,
+      -0.04
+     ],
+     "size_studio": [
+      2.011,
+      0.6,
+      0.92
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 360,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Radio",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Radio"
+   ],
+   "fbx": "fbx/D65_Radio.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.6,
+    0.9,
+    0.87
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.8,
+    0.0,
+    -0.52
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.8,
+    0.9,
+    0.35
+   ],
+   "pivot_blender_in_kit": [
+    32.211,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Radio",
+     "mesh": "D65_Radio",
+     "atlas": "Dress65",
+     "tris": 292,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.45,
+      -0.085
+     ],
+     "size_studio": [
+      1.6,
+      0.9,
+      0.87
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 292,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_RecordPlayer",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_RecordPlayer"
+   ],
+   "fbx": "fbx/D65_RecordPlayer.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.8,
+    0.444,
+    1.5
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.9,
+    0.0,
+    -0.75
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.9,
+    0.444,
+    0.75
+   ],
+   "pivot_blender_in_kit": [
+    37.911,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_RecordPlayer",
+     "mesh": "D65_RecordPlayer",
+     "atlas": "Dress65",
+     "tris": 124,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.222,
+      0.0
+     ],
+     "size_studio": [
+      1.8,
+      0.444,
+      1.5
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 124,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Papers",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Papers"
+   ],
+   "fbx": "fbx/D65_Papers.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    4.067,
+    0.09,
+    3.155
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.067,
+    -0.028,
+    -1.534
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    0.062,
+    1.621
+   ],
+   "pivot_blender_in_kit": [
+    44.811,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Papers",
+     "mesh": "D65_Papers",
+     "atlas": "Dress65",
+     "tris": 120,
+     "centre_studio_rel_pivot": [
+      -0.034,
+      0.017,
+      0.044
+     ],
+     "size_studio": [
+      4.067,
+      0.09,
+      3.155
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 120,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_BrokenPlates",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_BrokenPlates"
+   ],
+   "fbx": "fbx/D65_BrokenPlates.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    2.155,
+    0.39,
+    1.912
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.8,
+    0.0,
+    -0.902
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.355,
+    0.39,
+    1.01
+   ],
+   "pivot_blender_in_kit": [
+    52.234,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_BrokenPlates",
+     "mesh": "D65_BrokenPlates",
+     "atlas": "Dress65",
+     "tris": 152,
+     "centre_studio_rel_pivot": [
+      0.278,
+      0.195,
+      0.054
+     ],
+     "size_studio": [
+      2.155,
+      0.39,
+      1.912
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 152,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_LampKnocked",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_LampKnocked"
+   ],
+   "fbx": "fbx/D65_LampKnocked.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    6.153,
+    1.9,
+    3.242
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -5.945,
+    0.0,
+    -2.445
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.208,
+    1.9,
+    0.797
+   ],
+   "pivot_blender_in_kit": [
+    57.242,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_LampKnocked",
+     "mesh": "D65_LampKnocked",
+     "atlas": "Dress65",
+     "tris": 172,
+     "centre_studio_rel_pivot": [
+      -2.868,
+      0.95,
+      -0.824
+     ],
+     "size_studio": [
+      6.153,
+      1.9,
+      3.242
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 172,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_ChairKnocked",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_ChairKnocked"
+   ],
+   "fbx": "fbx/D65_ChairKnocked.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.9,
+    1.937,
+    3.394
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.95,
+    0.0,
+    -0.004
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.95,
+    1.937,
+    3.39
+   ],
+   "pivot_blender_in_kit": [
+    68.137,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_ChairKnocked",
+     "mesh": "D65_ChairKnocked",
+     "atlas": "Dress65",
+     "tris": 392,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.969,
+      1.693
+     ],
+     "size_studio": [
+      1.9,
+      1.937,
+      3.394
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 392,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_SandDrift",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_SandDrift"
+   ],
+   "fbx": "fbx/D65_SandDrift.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    4.0,
+    0.096,
+    2.0
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -2.0,
+    0.005,
+    -1.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    2.0,
+    0.101,
+    1.0
+   ],
+   "pivot_blender_in_kit": [
+    75.087,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_SandDrift",
+     "mesh": "D65_SandDrift",
+     "atlas": "Dress65",
+     "tris": 200,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.053,
+      0.0
+     ],
+     "size_studio": [
+      4.0,
+      0.096,
+      2.0
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 200,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_SandDriftSmall",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_SandDriftSmall"
+   ],
+   "fbx": "fbx/D65_SandDriftSmall.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    2.4,
+    0.096,
+    1.4
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.2,
+    0.005,
+    -0.7
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.2,
+    0.101,
+    0.7
+   ],
+   "pivot_blender_in_kit": [
+    82.287,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_SandDriftSmall",
+     "mesh": "D65_SandDriftSmall",
+     "atlas": "Dress65",
+     "tris": 200,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.053,
+      0.0
+     ],
+     "size_studio": [
+      2.4,
+      0.096,
+      1.4
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 200,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Cobweb",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Cobweb"
+   ],
+   "fbx": "fbx/D65_Cobweb.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.517,
+    1.517,
+    1.517
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.517,
+    -1.517,
+    0.0
+   ],
+   "bbox_max_rel_pivot_studio": [
+    -0.0,
+    0.0,
+    1.517
+   ],
+   "pivot_blender_in_kit": [
+    87.487,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Cobweb",
+     "mesh": "D65_Cobweb",
+     "atlas": "Dress65",
+     "tris": 2,
+     "centre_studio_rel_pivot": [
+      -0.759,
+      -0.759,
+      0.759
+     ],
+     "size_studio": [
+      1.517,
+      1.517,
+      1.517
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 2,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_TinRocket",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_TinRocket"
+   ],
+   "fbx": "fbx/D65_TinRocket.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    0.626,
+    1.4,
+    0.708
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.4,
+    0.0,
+    -0.361
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.226,
+    1.4,
+    0.346
+   ],
+   "pivot_blender_in_kit": [
+    93.23,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_TinRocket",
+     "mesh": "D65_TinRocket",
+     "atlas": "Dress65",
+     "tris": 96,
+     "centre_studio_rel_pivot": [
+      -0.087,
+      0.7,
+      -0.007
+     ],
+     "size_studio": [
+      0.626,
+      1.4,
+      0.708
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 96,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Clipboard",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Clipboard"
+   ],
+   "fbx": "fbx/D65_Clipboard.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    0.9,
+    1.2,
+    0.1
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.45,
+    0.0,
+    -0.1
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.45,
+    1.2,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    98.08,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Clipboard",
+     "mesh": "D65_Clipboard",
+     "atlas": "Dress65",
+     "tris": 36,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.6,
+      -0.05
+     ],
+     "size_studio": [
+      0.9,
+      1.2,
+      0.1
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 36,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Canisters",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Canisters"
+   ],
+   "fbx": "fbx/D65_Canisters.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    2.58,
+    1.16,
+    0.624
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.26,
+    0.0,
+    -0.312
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.32,
+    1.16,
+    0.312
+   ],
+   "pivot_blender_in_kit": [
+    103.85,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Canisters",
+     "mesh": "D65_Canisters",
+     "atlas": "Dress65",
+     "tris": 560,
+     "centre_studio_rel_pivot": [
+      0.03,
+      0.58,
+      0.0
+     ],
+     "size_studio": [
+      2.58,
+      1.16,
+      0.624
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 560,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_CakeDome",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_CakeDome"
+   ],
+   "fbx": "fbx/D65_CakeDome.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.5,
+    1.1,
+    1.477
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.75,
+    0.0,
+    -0.739
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.75,
+    1.1,
+    0.739
+   ],
+   "pivot_blender_in_kit": [
+    109.86,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_CakeDome",
+     "mesh": "D65_CakeDome",
+     "atlas": "Dress65",
+     "tris": 316,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.55,
+      0.0
+     ],
+     "size_studio": [
+      1.5,
+      1.1,
+      1.477
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 316,
+   "textures": [
+    "tex/H_Dress65_color.png",
+    "tex/H_Dress65_metal.png",
+    "tex/H_Dress65_normal.png",
+    "tex/H_Dress65_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Dummy_SitA",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Dummy_SitA"
+   ],
+   "fbx": "fbx/D65_Dummy_SitA.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.706,
+    4.924,
+    2.822
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.853,
+    -1.93,
+    -2.2
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.853,
+    2.994,
+    0.622
+   ],
+   "pivot_blender_in_kit": [
+    115.463,
+    -96.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Dummy_SitA",
+     "mesh": "D65_Dummy_SitA",
+     "atlas": "Dummies",
+     "tris": 1348,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.532,
+      -0.789
+     ],
+     "size_studio": [
+      1.706,
+      4.924,
+      2.822
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1348,
+   "textures": [
+    "tex/H_Dummies_color.png",
+    "tex/H_Dummies_metal.png",
+    "tex/H_Dummies_normal.png",
+    "tex/H_Dummies_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Dummy_SitB",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Dummy_SitB"
+   ],
+   "fbx": "fbx/D65_Dummy_SitB.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.706,
+    4.864,
+    2.822
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.853,
+    -1.87,
+    -2.2
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.853,
+    2.994,
+    0.622
+   ],
+   "pivot_blender_in_kit": [
+    0.853,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Dummy_SitB",
+     "mesh": "D65_Dummy_SitB",
+     "atlas": "Dummies",
+     "tris": 1240,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.562,
+      -0.789
+     ],
+     "size_studio": [
+      1.706,
+      4.864,
+      2.822
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1240,
+   "textures": [
+    "tex/H_Dummies_color.png",
+    "tex/H_Dummies_metal.png",
+    "tex/H_Dummies_normal.png",
+    "tex/H_Dummies_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Dummy_SitC",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Dummy_SitC"
+   ],
+   "fbx": "fbx/D65_Dummy_SitC.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.706,
+    4.864,
+    2.822
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.853,
+    -1.87,
+    -2.2
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.853,
+    2.994,
+    0.622
+   ],
+   "pivot_blender_in_kit": [
+    6.56,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Dummy_SitC",
+     "mesh": "D65_Dummy_SitC",
+     "atlas": "Dummies",
+     "tris": 1240,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.562,
+      -0.789
+     ],
+     "size_studio": [
+      1.706,
+      4.864,
+      2.822
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1240,
+   "textures": [
+    "tex/H_Dummies_color.png",
+    "tex/H_Dummies_metal.png",
+    "tex/H_Dummies_normal.png",
+    "tex/H_Dummies_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Dummy_SitD",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Dummy_SitD"
+   ],
+   "fbx": "fbx/D65_Dummy_SitD.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.706,
+    5.094,
+    2.822
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.853,
+    -2.1,
+    -2.2
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.853,
+    2.994,
+    0.622
+   ],
+   "pivot_blender_in_kit": [
+    12.266,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Dummy_SitD",
+     "mesh": "D65_Dummy_SitD",
+     "atlas": "Dummies",
+     "tris": 1348,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.447,
+      -0.789
+     ],
+     "size_studio": [
+      1.706,
+      5.094,
+      2.822
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1348,
+   "textures": [
+    "tex/H_Dummies_color.png",
+    "tex/H_Dummies_metal.png",
+    "tex/H_Dummies_normal.png",
+    "tex/H_Dummies_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Dummy_SitE",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Dummy_SitE"
+   ],
+   "fbx": "fbx/D65_Dummy_SitE.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.706,
+    5.394,
+    2.822
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.853,
+    -2.4,
+    -2.2
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.853,
+    2.994,
+    0.622
+   ],
+   "pivot_blender_in_kit": [
+    17.972,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Dummy_SitE",
+     "mesh": "D65_Dummy_SitE",
+     "atlas": "Dummies",
+     "tris": 1348,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.297,
+      -0.789
+     ],
+     "size_studio": [
+      1.706,
+      5.394,
+      2.822
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1348,
+   "textures": [
+    "tex/H_Dummies_color.png",
+    "tex/H_Dummies_metal.png",
+    "tex/H_Dummies_normal.png",
+    "tex/H_Dummies_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Dummy_Lean",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Dummy_Lean"
+   ],
+   "fbx": "fbx/D65_Dummy_Lean.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.713,
+    6.161,
+    1.849
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.856,
+    0.0,
+    -1.27
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.856,
+    6.161,
+    0.579
+   ],
+   "pivot_blender_in_kit": [
+    23.682,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Dummy_Lean",
+     "mesh": "D65_Dummy_Lean",
+     "atlas": "Dummies",
+     "tris": 1240,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      3.081,
+      -0.346
+     ],
+     "size_studio": [
+      1.713,
+      6.161,
+      1.849
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 1240,
+   "textures": [
+    "tex/H_Dummies_color.png",
+    "tex/H_Dummies_metal.png",
+    "tex/H_Dummies_normal.png",
+    "tex/H_Dummies_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Poster_Travel",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Poster_Travel"
+   ],
+   "fbx": "fbx/D65_Poster_Travel.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    2.4,
+    3.2,
+    0.27
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.2,
+    0.0,
+    -0.27
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.2,
+    3.2,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    29.738,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Poster_Travel",
+     "mesh": "D65_Poster_Travel",
+     "atlas": "Posters",
+     "tris": 12,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.6,
+      -0.135
+     ],
+     "size_studio": [
+      2.4,
+      3.2,
+      0.27
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 12,
+   "textures": [
+    "tex/H_Posters_color.png",
+    "tex/H_Posters_metal.png",
+    "tex/H_Posters_normal.png",
+    "tex/H_Posters_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Poster_Kitchen",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Poster_Kitchen"
+   ],
+   "fbx": "fbx/D65_Poster_Kitchen.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    2.4,
+    3.2,
+    0.12
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.2,
+    0.0,
+    -0.12
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.2,
+    3.2,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    36.138,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Poster_Kitchen",
+     "mesh": "D65_Poster_Kitchen",
+     "atlas": "Posters",
+     "tris": 12,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.6,
+      -0.06
+     ],
+     "size_studio": [
+      2.4,
+      3.2,
+      0.12
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 12,
+   "textures": [
+    "tex/H_Posters_color.png",
+    "tex/H_Posters_metal.png",
+    "tex/H_Posters_normal.png",
+    "tex/H_Posters_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Calendar",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Calendar"
+   ],
+   "fbx": "fbx/D65_Calendar.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.4,
+    2.1,
+    0.22
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.7,
+    0.0,
+    -0.22
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.7,
+    2.1,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    42.038,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Calendar",
+     "mesh": "D65_Calendar",
+     "atlas": "Posters",
+     "tris": 12,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      1.05,
+      -0.11
+     ],
+     "size_studio": [
+      1.4,
+      2.1,
+      0.22
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 12,
+   "textures": [
+    "tex/H_Posters_color.png",
+    "tex/H_Posters_metal.png",
+    "tex/H_Posters_normal.png",
+    "tex/H_Posters_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Notice",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Notice"
+   ],
+   "fbx": "fbx/D65_Notice.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.8,
+    1.8,
+    0.12
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.9,
+    0.0,
+    -0.12
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.9,
+    1.8,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    47.638,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Notice",
+     "mesh": "D65_Notice",
+     "atlas": "Posters",
+     "tris": 12,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.9,
+      -0.06
+     ],
+     "size_studio": [
+      1.8,
+      1.8,
+      0.12
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 12,
+   "textures": [
+    "tex/H_Posters_color.png",
+    "tex/H_Posters_metal.png",
+    "tex/H_Posters_normal.png",
+    "tex/H_Posters_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Pennant",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Pennant"
+   ],
+   "fbx": "fbx/D65_Pennant.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    3.0,
+    1.5,
+    0.12
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -1.5,
+    0.0,
+    -0.12
+   ],
+   "bbox_max_rel_pivot_studio": [
+    1.5,
+    1.5,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    54.038,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Pennant",
+     "mesh": "D65_Pennant",
+     "atlas": "Posters",
+     "tris": 12,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.75,
+      -0.06
+     ],
+     "size_studio": [
+      3.0,
+      1.5,
+      0.12
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 12,
+   "textures": [
+    "tex/H_Posters_color.png",
+    "tex/H_Posters_metal.png",
+    "tex/H_Posters_normal.png",
+    "tex/H_Posters_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Drape_Gold",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Drape_Gold"
+   ],
+   "fbx": "fbx/D65_Drape_Gold.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.04,
+    8.0,
+    0.4
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.52,
+    0.0,
+    -0.35
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.52,
+    8.0,
+    0.05
+   ],
+   "pivot_blender_in_kit": [
+    60.058,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Drape_Gold",
+     "mesh": "D65_Drape_Gold",
+     "atlas": "Drapes",
+     "tris": 112,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      -0.15
+     ],
+     "size_studio": [
+      1.04,
+      8.0,
+      0.4
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 112,
+   "textures": [
+    "tex/H_Drapes_color.png",
+    "tex/H_Drapes_metal.png",
+    "tex/H_Drapes_normal.png",
+    "tex/H_Drapes_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Drape_Mustard",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Drape_Mustard"
+   ],
+   "fbx": "fbx/D65_Drape_Mustard.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.04,
+    8.0,
+    0.4
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.52,
+    0.0,
+    -0.35
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.52,
+    8.0,
+    0.05
+   ],
+   "pivot_blender_in_kit": [
+    65.098,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Drape_Mustard",
+     "mesh": "D65_Drape_Mustard",
+     "atlas": "Drapes",
+     "tris": 112,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      -0.15
+     ],
+     "size_studio": [
+      1.04,
+      8.0,
+      0.4
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 112,
+   "textures": [
+    "tex/H_Drapes_color.png",
+    "tex/H_Drapes_metal.png",
+    "tex/H_Drapes_normal.png",
+    "tex/H_Drapes_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_Drape_Green",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_Drape_Green"
+   ],
+   "fbx": "fbx/D65_Drape_Green.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.04,
+    8.0,
+    0.4
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.52,
+    0.0,
+    -0.35
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.52,
+    8.0,
+    0.05
+   ],
+   "pivot_blender_in_kit": [
+    70.138,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_Drape_Green",
+     "mesh": "D65_Drape_Green",
+     "atlas": "Drapes",
+     "tris": 112,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      4.0,
+      -0.15
+     ],
+     "size_studio": [
+      1.04,
+      8.0,
+      0.4
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 112,
+   "textures": [
+    "tex/H_Drapes_color.png",
+    "tex/H_Drapes_metal.png",
+    "tex/H_Drapes_normal.png",
+    "tex/H_Drapes_rough.png"
+   ]
+  },
+  {
+   "assembly": "D65_DrapeRod",
+   "role": "1965 loose dressing (placed by build_house.py)",
+   "cover": "none (dressing)",
+   "objects": [
+    "D65_DrapeRod"
+   ],
+   "fbx": "fbx/D65_DrapeRod.fbx",
+   "dressing_1965": true,
+   "size_studio": [
+    1.152,
+    0.16,
+    0.426
+   ],
+   "bbox_min_rel_pivot_studio": [
+    -0.576,
+    0.07,
+    -0.426
+   ],
+   "bbox_max_rel_pivot_studio": [
+    0.576,
+    0.23,
+    0.0
+   ],
+   "pivot_blender_in_kit": [
+    75.234,
+    -112.0,
+    0.0
+   ],
+   "collision_boxes_studio": [],
+   "parts": [
+    {
+     "object": "D65_DrapeRod",
+     "mesh": "D65_DrapeRod",
+     "atlas": "Drapes",
+     "tris": 188,
+     "centre_studio_rel_pivot": [
+      -0.0,
+      0.15,
+      -0.213
+     ],
+     "size_studio": [
+      1.152,
+      0.16,
+      0.426
+     ],
+     "rot_z_deg": 0.0
+    }
+   ],
+   "tris": 188,
+   "textures": [
+    "tex/H_Drapes_color.png",
+    "tex/H_Drapes_metal.png",
+    "tex/H_Drapes_normal.png",
+    "tex/H_Drapes_rough.png"
+   ]
+  }
+ ],
+ "unique_tris": 60154
+}

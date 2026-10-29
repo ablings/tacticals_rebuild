@@ -1,4 +1,4 @@
-House layout check (built_layout.json): PASS  (4s)
+House layout check (built_layout.json): PASS  (5s)
 nodes 26291, samples 1190, reached 18936 cells, outside shell 0
 spawn-to-spawn visible pairs: 0; landing (403 cells) sees a slot: 0
 [1v1] contact when A holds 1.44 s / when B holds 1.42 s (1.4 %); first contact A 1.42 s / B 1.24 s (12.7 %), mean of 10 A 1.32 / B 1.36 (-3.5 %) at A[np.float64(-18.8), np.float64(-28.8), np.float64(0.0)] B[np.float64(33.2), np.float64(-2.8), np.float64(0.0)]

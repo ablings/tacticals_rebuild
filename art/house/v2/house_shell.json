@@ -1,0 +1,6788 @@
+{
+ "note": "Blender = layout plan coordinates (x east, y north, z up), 1 unit = 1 stud. Layout world = ORIGIN + (x, z, -y). Import 3D: measure K_ScaleCube (10 studs, Blender (0,-120,5)) and read K_Marker (long arm +X, upright +Z, short arm +Y, Blender (12,-120,0)) to confirm the axes before placing; 'Insert Using Scene Position' keeps the layout position. All meshes are art: CanCollide / CanQuery / CanTouch off; the layout Parts are the collision.",
+ "shell_tiles": {
+  "PaperSprig": {
+   "file": "tex/tile/T_PaperSprig.png",
+   "studs_per_tile": 3.5
+  },
+  "PaperSprigRose": {
+   "file": "tex/tile/T_PaperSprigRose.png",
+   "studs_per_tile": 3.5
+  },
+  "PaperVine": {
+   "file": "tex/tile/T_PaperVine.png",
+   "studs_per_tile": 3.5
+  },
+  "PaperVineYellow": {
+   "file": "tex/tile/T_PaperVineYellow.png",
+   "studs_per_tile": 3.5
+  },
+  "PaperDiamond": {
+   "file": "tex/tile/T_PaperDiamond.png",
+   "studs_per_tile": 3.5
+  },
+  "PaperSprigRoseLow": {
+   "file": "tex/tile/T_PaperSprigRoseLow.png",
+   "studs_per_tile": 3.5
+  },
+  "PaperVineYellowLow": {
+   "file": "tex/tile/T_PaperVineYellowLow.png",
+   "studs_per_tile": 3.5
+  },
+  "Wainscot": {
+   "file": "tex/tile/T_Wainscot.png",
+   "studs_per_tile": 3.15
+  },
+  "PaintCoffee": {
+   "file": "tex/tile/T_PaintCoffee.png",
+   "studs_per_tile": 3.5
+  },
+  "PaintCoffeeLow": {
+   "file": "tex/tile/T_PaintCoffeeLow.png",
+   "studs_per_tile": 3.5
+  },
+  "PaintMustard": {
+   "file": "tex/tile/T_PaintMustard.png",
+   "studs_per_tile": 3.5
+  },
+  "PaintMustardLow": {
+   "file": "tex/tile/T_PaintMustardLow.png",
+   "studs_per_tile": 3.5
+  },
+  "Pegboard": {
+   "file": "tex/tile/T_Pegboard.png",
+   "studs_per_tile": 4.0
+  },
+  "Pine": {
+   "file": "tex/tile/T_Pine.png",
+   "studs_per_tile": 4.8
+  },
+  "Fieldstone": {
+   "file": "tex/tile/T_Fieldstone.png",
+   "studs_per_tile": 6.0
+  },
+  "TileMint": {
+   "file": "tex/tile/T_TileMint.png",
+   "studs_per_tile": 4.5
+  },
+  "TileButter": {
+   "file": "tex/tile/T_TileButter.png",
+   "studs_per_tile": 4.5
+  },
+  "TilePink": {
+   "file": "tex/tile/T_TilePink.png",
+   "studs_per_tile": 4.5
+  },
+  "TileCream": {
+   "file": "tex/tile/T_TileCream.png",
+   "studs_per_tile": 4.5
+  },
+  "Ceiling65": {
+   "file": "tex/tile/T_Ceiling65.png",
+   "studs_per_tile": 8.0
+  },
+  "PaintCream": {
+   "file": "tex/tile/T_PaintCream.png",
+   "studs_per_tile": 8.0
+  },
+  "TrimWalnut": {
+   "file": "tex/tile/T_TrimWalnut.png",
+   "studs_per_tile": 4.0
+  },
+  "Parquet": {
+   "file": "tex/tile/T_Parquet.png",
+   "studs_per_tile": 4.0
+  },
+  "LinoA": {
+   "file": "tex/tile/T_LinoA.png",
+   "studs_per_tile": 4.0
+  },
+  "LinoB": {
+   "file": "tex/tile/T_LinoB.png",
+   "studs_per_tile": 4.0
+  },
+  "CarpetGold": {
+   "file": "tex/tile/T_CarpetGold.png",
+   "studs_per_tile": 6.0
+  },
+  "CarpetGreige": {
+   "file": "tex/tile/T_CarpetGreige.png",
+   "studs_per_tile": 6.0
+  },
+  "CarpetTiles": {
+   "file": "tex/tile/T_CarpetTiles.png",
+   "studs_per_tile": 4.0
+  },
+  "HexTile": {
+   "file": "tex/tile/T_HexTile.png",
+   "studs_per_tile": 3.0
+  },
+  "Desert": {
+   "file": "tex/tile/T_Desert.png",
+   "studs_per_tile": 16.0
+  },
+  "DryGrass": {
+   "file": "tex/tile/T_DryGrass.png",
+   "studs_per_tile": 12.0
+  },
+  "Asphalt65": {
+   "file": "tex/tile/T_Asphalt65.png",
+   "studs_per_tile": 12.0
+  },
+  "Concrete65": {
+   "file": "tex/tile/T_Concrete65.png",
+   "studs_per_tile": 10.0
+  },
+  "SidingWhite": {
+   "file": "tex/tile/T_SidingWhite.png",
+   "studs_per_tile": 6.0
+  },
+  "SidingMint": {
+   "file": "tex/tile/T_SidingMint.png",
+   "studs_per_tile": 6.0
+  },
+  "SidingButter": {
+   "file": "tex/tile/T_SidingButter.png",
+   "studs_per_tile": 6.0
+  },
+  "SidingSalmon": {
+   "file": "tex/tile/T_SidingSalmon.png",
+   "studs_per_tile": 6.0
+  },
+  "Shingle": {
+   "file": "tex/tile/T_Shingle.png",
+   "studs_per_tile": 6.0
+  },
+  "FenceWood": {
+   "file": "tex/tile/T_FenceWood.png",
+   "studs_per_tile": 6.0
+  },
+  "Gravel65": {
+   "file": "tex/tile/T_Gravel65.png",
+   "studs_per_tile": 6.0
+  }
+ },
+ "atlases": {},
+ "doors": [
+  {
+   "id": "Door_Front",
+   "objects": [
+    "Door_Front"
+   ],
+   "hinge_plan": [
+    0.1,
+    -30.125,
+    0.0
+   ],
+   "leaf": {
+    "w": 5.8,
+    "t": 0.25,
+    "h": 9.9
+   },
+   "state": "Locked",
+   "angle_deg": 0.0,
+   "leaf_yaw_deg": 0.0,
+   "closed_yaw_deg": 0.0
+  },
+  {
+   "id": "Door_Back",
+   "objects": [
+    "Door_Back",
+    "Door_Back_Glass",
+    "Door_Back_BrokenGlass"
+   ],
+   "hinge_plan": [
+    -0.1,
+    30.125,
+    0.0
+   ],
+   "leaf": {
+    "w": 5.8,
+    "t": 0.25,
+    "h": 9.9
+   },
+   "state": "Locked",
+   "angle_deg": 0.0,
+   "leaf_yaw_deg": -180.0,
+   "closed_yaw_deg": -180.0
+  },
+  {
+   "id": "Door_GB",
+   "objects": [
+    "Door_GB"
+   ],
+   "hinge_plan": [
+    -24.375,
+    25.9,
+    0.0
+   ],
+   "leaf": {
+    "w": 4.8,
+    "t": 0.25,
+    "h": 8.9
+   },
+   "state": "Ajar",
+   "angle_deg": 70.0,
+   "leaf_yaw_deg": -160.0,
+   "closed_yaw_deg": -90.0
+  },
+  {
+   "id": "Door_MB",
+   "objects": [
+    "Door_MB"
+   ],
+   "hinge_plan": [
+    -9.375,
+    2.4,
+    14.0
+   ],
+   "leaf": {
+    "w": 5.8,
+    "t": 0.25,
+    "h": 8.9
+   },
+   "state": "Ajar",
+   "angle_deg": 70.0,
+   "leaf_yaw_deg": -160.0,
+   "closed_yaw_deg": -90.0
+  },
+  {
+   "id": "Door_BR2",
+   "objects": [
+    "Door_BR2"
+   ],
+   "hinge_plan": [
+    9.375,
+    -2.4,
+    14.0
+   ],
+   "leaf": {
+    "w": 5.8,
+    "t": 0.25,
+    "h": 8.9
+   },
+   "state": "Ajar",
+   "angle_deg": 70.0,
+   "leaf_yaw_deg": 20.0,
+   "closed_yaw_deg": 90.0
+  },
+  {
+   "id": "Door_BR3",
+   "objects": [
+    "Door_BR3"
+   ],
+   "hinge_plan": [
+    -9.375,
+    13.9,
+    14.0
+   ],
+   "leaf": {
+    "w": 4.8,
+    "t": 0.25,
+    "h": 8.9
+   },
+   "state": "Ajar",
+   "angle_deg": 70.0,
+   "leaf_yaw_deg": -160.0,
+   "closed_yaw_deg": -90.0
+  },
+  {
+   "id": "Door_UB",
+   "objects": [
+    "Door_UB"
+   ],
+   "hinge_plan": [
+    -6.9,
+    17.375,
+    14.0
+   ],
+   "leaf": {
+    "w": 4.8,
+    "t": 0.25,
+    "h": 8.9
+   },
+   "state": "Ajar",
+   "angle_deg": 70.0,
+   "leaf_yaw_deg": 70.0,
+   "closed_yaw_deg": 0.0
+  },
+  {
+   "id": "Door_EN",
+   "objects": [
+    "Door_EN"
+   ],
+   "hinge_plan": [
+    -30.6,
+    -19.375,
+    14.0
+   ],
+   "leaf": {
+    "w": 4.8,
+    "t": 0.25,
+    "h": 8.9
+   },
+   "state": "Closed",
+   "angle_deg": 0.0,
+   "leaf_yaw_deg": -180.0,
+   "closed_yaw_deg": -180.0
+  }
+ ],
+ "windows": [
+  {
+   "id": "Win_LR_S1",
+   "frame": "Win_LR_S1_Frame",
+   "glass": "Win_LR_S1_Glass",
+   "broken": "Win_LR_S1_BrokenGlass",
+   "origin_plan": [
+    -32.0,
+    -30.5,
+    3.0
+   ],
+   "opening": {
+    "a": -36,
+    "b": -28,
+    "z0": 3.0,
+    "z1": 10.0,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_LR_S2",
+   "frame": "Win_LR_S2_Frame",
+   "glass": "Win_LR_S2_Glass",
+   "broken": "Win_LR_S2_BrokenGlass",
+   "origin_plan": [
+    -18.0,
+    -30.5,
+    3.0
+   ],
+   "opening": {
+    "a": -22,
+    "b": -14,
+    "z0": 3.0,
+    "z1": 10.0,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_DR_S1",
+   "frame": "Win_DR_S1_Frame",
+   "glass": "Win_DR_S1_Glass",
+   "broken": "Win_DR_S1_BrokenGlass",
+   "origin_plan": [
+    18.0,
+    -30.5,
+    3.0
+   ],
+   "opening": {
+    "a": 14,
+    "b": 22,
+    "z0": 3.0,
+    "z1": 10.0,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_DR_S2",
+   "frame": "Win_DR_S2_Frame",
+   "glass": "Win_DR_S2_Glass",
+   "broken": "Win_DR_S2_BrokenGlass",
+   "origin_plan": [
+    32.0,
+    -30.5,
+    3.0
+   ],
+   "opening": {
+    "a": 28,
+    "b": 36,
+    "z0": 3.0,
+    "z1": 10.0,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_EN_S",
+   "frame": "Win_EN_S_Frame",
+   "glass": "Win_EN_S_Glass",
+   "broken": "Win_EN_S_BrokenGlass",
+   "origin_plan": [
+    -34.5,
+    -30.5,
+    19.0
+   ],
+   "opening": {
+    "a": -37,
+    "b": -32,
+    "z0": 19,
+    "z1": 23,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": true,
+   "interior": false
+  },
+  {
+   "id": "Win_MB_S",
+   "frame": "Win_MB_S_Frame",
+   "glass": "Win_MB_S_Glass",
+   "broken": "Win_MB_S_BrokenGlass",
+   "origin_plan": [
+    -19.0,
+    -30.5,
+    17.0
+   ],
+   "opening": {
+    "a": -24,
+    "b": -14,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_FY_S",
+   "frame": "Win_FY_S_Frame",
+   "glass": "Win_FY_S_Glass",
+   "broken": "Win_FY_S_BrokenGlass",
+   "origin_plan": [
+    2.0,
+    -30.5,
+    14.0
+   ],
+   "opening": {
+    "a": -3,
+    "b": 7,
+    "z0": 14.0,
+    "z1": 24.5,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_BR2_S1",
+   "frame": "Win_BR2_S1_Frame",
+   "glass": "Win_BR2_S1_Glass",
+   "broken": "Win_BR2_S1_BrokenGlass",
+   "origin_plan": [
+    20.0,
+    -30.5,
+    17.0
+   ],
+   "opening": {
+    "a": 16,
+    "b": 24,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_BR2_S2",
+   "frame": "Win_BR2_S2_Frame",
+   "glass": "Win_BR2_S2_Glass",
+   "broken": "Win_BR2_S2_BrokenGlass",
+   "origin_plan": [
+    33.0,
+    -30.5,
+    17.0
+   ],
+   "opening": {
+    "a": 30,
+    "b": 36,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "x",
+    "line": -30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_GB_N",
+   "frame": "Win_GB_N_Frame",
+   "glass": "Win_GB_N_Glass",
+   "broken": "Win_GB_N_BrokenGlass",
+   "origin_plan": [
+    -33.0,
+    30.5,
+    6.0
+   ],
+   "opening": {
+    "a": -36,
+    "b": -30,
+    "z0": 6,
+    "z1": 10,
+    "axis": "x",
+    "line": 30.0
+   },
+   "frosted": true,
+   "interior": false
+  },
+  {
+   "id": "Win_BH_N",
+   "frame": "Win_BH_N_Frame",
+   "glass": "Win_BH_N_Glass",
+   "broken": "Win_BH_N_BrokenGlass",
+   "origin_plan": [
+    -17.0,
+    30.5,
+    3.0
+   ],
+   "opening": {
+    "a": -20,
+    "b": -14,
+    "z0": 3.0,
+    "z1": 10.0,
+    "axis": "x",
+    "line": 30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_KT_N1",
+   "frame": "Win_KT_N1_Frame",
+   "glass": "Win_KT_N1_Glass",
+   "broken": "Win_KT_N1_BrokenGlass",
+   "origin_plan": [
+    18.0,
+    30.5,
+    4.5
+   ],
+   "opening": {
+    "a": 14,
+    "b": 22,
+    "z0": 4.5,
+    "z1": 10.0,
+    "axis": "x",
+    "line": 30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_KT_N2",
+   "frame": "Win_KT_N2_Frame",
+   "glass": "Win_KT_N2_Glass",
+   "broken": "Win_KT_N2_BrokenGlass",
+   "origin_plan": [
+    30.0,
+    30.5,
+    4.5
+   ],
+   "opening": {
+    "a": 26,
+    "b": 34,
+    "z0": 4.5,
+    "z1": 10.0,
+    "axis": "x",
+    "line": 30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_BR3_N1",
+   "frame": "Win_BR3_N1_Frame",
+   "glass": "Win_BR3_N1_Glass",
+   "broken": "Win_BR3_N1_BrokenGlass",
+   "origin_plan": [
+    -30.0,
+    30.5,
+    17.0
+   ],
+   "opening": {
+    "a": -34,
+    "b": -26,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "x",
+    "line": 30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_BR3_N2",
+   "frame": "Win_BR3_N2_Frame",
+   "glass": "Win_BR3_N2_Glass",
+   "broken": "Win_BR3_N2_BrokenGlass",
+   "origin_plan": [
+    -17.0,
+    30.5,
+    17.0
+   ],
+   "opening": {
+    "a": -20,
+    "b": -14,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "x",
+    "line": 30.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_UB_N",
+   "frame": "Win_UB_N_Frame",
+   "glass": "Win_UB_N_Glass",
+   "broken": "Win_UB_N_BrokenGlass",
+   "origin_plan": [
+    -3.0,
+    30.5,
+    19.0
+   ],
+   "opening": {
+    "a": -6,
+    "b": 0,
+    "z0": 19,
+    "z1": 24.0,
+    "axis": "x",
+    "line": 30.0
+   },
+   "frosted": true,
+   "interior": false
+  },
+  {
+   "id": "Win_EN_W",
+   "frame": "Win_EN_W_Frame",
+   "glass": "Win_EN_W_Glass",
+   "broken": "Win_EN_W_BrokenGlass",
+   "origin_plan": [
+    -40.5,
+    -25.0,
+    19.0
+   ],
+   "opening": {
+    "a": -27,
+    "b": -23,
+    "z0": 19,
+    "z1": 23,
+    "axis": "y",
+    "line": -40.0
+   },
+   "frosted": true,
+   "interior": false
+  },
+  {
+   "id": "Win_LR_W",
+   "frame": "Win_LR_W_Frame",
+   "glass": "Win_LR_W_Glass",
+   "broken": "Win_LR_W_BrokenGlass",
+   "origin_plan": [
+    -40.5,
+    -2.0,
+    3.0
+   ],
+   "opening": {
+    "a": -6,
+    "b": 2,
+    "z0": 3.0,
+    "z1": 10.0,
+    "axis": "y",
+    "line": -40.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_BR3_W",
+   "frame": "Win_BR3_W_Frame",
+   "glass": "Win_BR3_W_Glass",
+   "broken": "Win_BR3_W_BrokenGlass",
+   "origin_plan": [
+    -40.5,
+    14.0,
+    17.0
+   ],
+   "opening": {
+    "a": 10,
+    "b": 18,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "y",
+    "line": -40.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_GB_W",
+   "frame": "Win_GB_W_Frame",
+   "glass": "Win_GB_W_Glass",
+   "broken": "Win_GB_W_BrokenGlass",
+   "origin_plan": [
+    -40.5,
+    21.0,
+    6.0
+   ],
+   "opening": {
+    "a": 18,
+    "b": 24,
+    "z0": 6,
+    "z1": 10,
+    "axis": "y",
+    "line": -40.0
+   },
+   "frosted": true,
+   "interior": false
+  },
+  {
+   "id": "Win_DR_E",
+   "frame": "Win_DR_E_Frame",
+   "glass": "Win_DR_E_Glass",
+   "broken": "Win_DR_E_BrokenGlass",
+   "origin_plan": [
+    40.5,
+    -22.0,
+    3.0
+   ],
+   "opening": {
+    "a": -26,
+    "b": -18,
+    "z0": 3.0,
+    "z1": 10.0,
+    "axis": "y",
+    "line": 40.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_KT_E",
+   "frame": "Win_KT_E_Frame",
+   "glass": "Win_KT_E_Glass",
+   "broken": "Win_KT_E_BrokenGlass",
+   "origin_plan": [
+    40.5,
+    12.0,
+    4.5
+   ],
+   "opening": {
+    "a": 6,
+    "b": 18,
+    "z0": 4.5,
+    "z1": 10.0,
+    "axis": "y",
+    "line": 40.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_BR2_E",
+   "frame": "Win_BR2_E_Frame",
+   "glass": "Win_BR2_E_Glass",
+   "broken": "Win_BR2_E_BrokenGlass",
+   "origin_plan": [
+    40.5,
+    -20.0,
+    17.0
+   ],
+   "opening": {
+    "a": -24,
+    "b": -16,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "y",
+    "line": 40.0
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_BR2_N",
+   "frame": "Win_BR2_N_Frame",
+   "glass": "Win_BR2_N_Glass",
+   "broken": "Win_BR2_N_BrokenGlass",
+   "origin_plan": [
+    25.0,
+    4.0,
+    17.0
+   ],
+   "opening": {
+    "a": 20,
+    "b": 30,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "x",
+    "line": 4
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_MB_FY",
+   "frame": "Win_MB_FY_Frame",
+   "glass": "Win_MB_FY_Glass",
+   "broken": "Win_MB_FY_BrokenGlass",
+   "origin_plan": [
+    -9.0,
+    -16.0,
+    17.0
+   ],
+   "opening": {
+    "a": -20,
+    "b": -12,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "y",
+    "line": -9
+   },
+   "frosted": false,
+   "interior": true
+  },
+  {
+   "id": "Win_BR2_FY",
+   "frame": "Win_BR2_FY_Frame",
+   "glass": "Win_BR2_FY_Glass",
+   "broken": "Win_BR2_FY_BrokenGlass",
+   "origin_plan": [
+    9.0,
+    -24.0,
+    17.0
+   ],
+   "opening": {
+    "a": -28,
+    "b": -20,
+    "z0": 17.0,
+    "z1": 24.0,
+    "axis": "y",
+    "line": 9
+   },
+   "frosted": false,
+   "interior": true
+  },
+  {
+   "id": "Win_ST2_E",
+   "frame": "Win_ST2_E_Frame",
+   "glass": "Win_ST2_E_Glass",
+   "broken": "Win_ST2_E_BrokenGlass",
+   "origin_plan": [
+    9.0,
+    14.0,
+    18.0
+   ],
+   "opening": {
+    "a": 10,
+    "b": 18,
+    "z0": 18,
+    "z1": 24.0,
+    "axis": "y",
+    "line": 9
+   },
+   "frosted": false,
+   "interior": false
+  },
+  {
+   "id": "Win_UB_E",
+   "frame": "Win_UB_E_Frame",
+   "glass": "Win_UB_E_Glass",
+   "broken": "Win_UB_E_BrokenGlass",
+   "origin_plan": [
+    9.0,
+    26.5,
+    19.0
+   ],
+   "opening": {
+    "a": 24.5,
+    "b": 28.5,
+    "z0": 19,
+    "z1": 24.0,
+    "axis": "y",
+    "line": 9
+   },
+   "frosted": true,
+   "interior": false
+  }
+ ],
+ "objects": [
+  {
+   "name": "Shell_G_CarpetGold",
+   "tris": 2,
+   "material": "T_CarpetGold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     0.0
+    ],
+    [
+     -9.0,
+     10.0,
+     0.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_Ceiling65",
+   "tris": 18,
+   "material": "T_Ceiling65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     13.0
+    ],
+    [
+     40.0,
+     30.0,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_Concrete65",
+   "tris": 12,
+   "material": "T_Concrete65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.0,
+     -31.0,
+     -1.0
+    ],
+    [
+     41.0,
+     31.0,
+     0.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_Fieldstone",
+   "tris": 90,
+   "material": "T_Fieldstone",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.0,
+     -31.0,
+     0.0
+    ],
+    [
+     41.0,
+     31.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_HexTile",
+   "tris": 2,
+   "material": "T_HexTile",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     10.0,
+     0.0
+    ],
+    [
+     -24.0,
+     30.0,
+     0.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_LinoA",
+   "tris": 12,
+   "material": "T_LinoA",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -24.0,
+     -30.0,
+     0.0
+    ],
+    [
+     40.0,
+     30.5,
+     0.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_LinoB",
+   "tris": 2,
+   "material": "T_LinoB",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.0,
+     -10.0,
+     0.0
+    ],
+    [
+     40.0,
+     30.0,
+     0.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_PaintCoffee",
+   "tris": 38,
+   "material": "T_PaintCoffee",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     3.15
+    ],
+    [
+     -9.5,
+     9.5,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_PaintCoffeeLow",
+   "tris": 20,
+   "material": "T_PaintCoffeeLow",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -23.5,
+     10.5,
+     0.0
+    ],
+    [
+     -6.0,
+     30.0,
+     3.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_PaintCream",
+   "tris": 122,
+   "material": "T_PaintCream",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.0,
+     -31.0,
+     0.0
+    ],
+    [
+     41.0,
+     31.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_PaperDiamond",
+   "tris": 54,
+   "material": "T_PaperDiamond",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.5,
+     -18.0,
+     4.5
+    ],
+    [
+     40.0,
+     30.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_PaperSprig",
+   "tris": 134,
+   "material": "T_PaperSprig",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     3.15
+    ],
+    [
+     40.0,
+     30.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_PaperVine",
+   "tris": 40,
+   "material": "T_PaperVine",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.5,
+     -3.5,
+     3.15
+    ],
+    [
+     14.0,
+     30.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_Parquet",
+   "tris": 6,
+   "material": "T_Parquet",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.0,
+     -30.5,
+     0.0
+    ],
+    [
+     9.0,
+     4.0,
+     0.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_Pegboard",
+   "tris": 26,
+   "material": "T_Pegboard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -23.5,
+     10.5,
+     3.5
+    ],
+    [
+     -6.0,
+     30.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_SidingWhite",
+   "tris": 162,
+   "material": "T_SidingWhite",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.0,
+     -31.0,
+     2.5
+    ],
+    [
+     41.0,
+     31.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_TileCream",
+   "tris": 42,
+   "material": "T_TileCream",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.5,
+     -18.0,
+     0.0
+    ],
+    [
+     40.0,
+     30.0,
+     4.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_TileMint",
+   "tris": 30,
+   "material": "T_TileMint",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     10.5,
+     0.0
+    ],
+    [
+     -20.0,
+     30.0,
+     4.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_TrimWalnut",
+   "tris": 1260,
+   "material": "T_TrimWalnut",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     0.0
+    ],
+    [
+     40.0,
+     30.0,
+     13.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_G_Wainscot",
+   "tris": 110,
+   "material": "T_Wainscot",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     0.0
+    ],
+    [
+     40.0,
+     30.0,
+     3.15
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_R_Concrete65",
+   "tris": 16,
+   "material": "T_Concrete65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -7.5,
+     -34.0,
+     -1.0
+    ],
+    [
+     7.5,
+     34.0,
+     0.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_R_PaintCream",
+   "tris": 40,
+   "material": "T_PaintCream",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -42.5,
+     -35.5,
+     11.2
+    ],
+    [
+     42.5,
+     32.5,
+     34.254
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_R_Shingle",
+   "tris": 6,
+   "material": "T_Shingle",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -42.5,
+     -32.5,
+     27.746
+    ],
+    [
+     42.5,
+     32.5,
+     34.254
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_R_SidingWhite",
+   "tris": 86,
+   "material": "T_SidingWhite",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.0,
+     -31.0,
+     13.0
+    ],
+    [
+     41.0,
+     31.0,
+     33.281
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_CarpetGold",
+   "tris": 4,
+   "material": "T_CarpetGold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     14.0
+    ],
+    [
+     -9.0,
+     4.0,
+     14.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_CarpetGreige",
+   "tris": 6,
+   "material": "T_CarpetGreige",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.0,
+     -30.0,
+     14.0
+    ],
+    [
+     40.0,
+     17.0,
+     14.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_CarpetTiles",
+   "tris": 2,
+   "material": "T_CarpetTiles",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     4.0,
+     14.0
+    ],
+    [
+     -9.0,
+     30.0,
+     14.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_Ceiling65",
+   "tris": 20,
+   "material": "T_Ceiling65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     26.0
+    ],
+    [
+     40.0,
+     30.0,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_Gravel65",
+   "tris": 2,
+   "material": "T_Gravel65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.5,
+     4.5,
+     14.0
+    ],
+    [
+     40.0,
+     30.0,
+     14.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_HexTile",
+   "tris": 6,
+   "material": "T_HexTile",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     14.0
+    ],
+    [
+     9.0,
+     30.0,
+     14.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaintCream",
+   "tris": 160,
+   "material": "T_PaintCream",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.0,
+     -31.0,
+     13.0
+    ],
+    [
+     41.0,
+     31.0,
+     27.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaintMustard",
+   "tris": 42,
+   "material": "T_PaintMustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     7.0,
+     -30.0,
+     17.5
+    ],
+    [
+     40.0,
+     3.5,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaintMustardLow",
+   "tris": 36,
+   "material": "T_PaintMustardLow",
+   "parent": null,
+   "bbox_plan": [
+    [
+     7.0,
+     -30.0,
+     14.0
+    ],
+    [
+     40.0,
+     3.5,
+     17.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaperSprig",
+   "tris": 64,
+   "material": "T_PaperSprig",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -14.0,
+     -30.0,
+     13.0
+    ],
+    [
+     8.5,
+     -4.0,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaperSprigRose",
+   "tris": 78,
+   "material": "T_PaperSprigRose",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     17.5
+    ],
+    [
+     -9.5,
+     3.5,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaperSprigRoseLow",
+   "tris": 24,
+   "material": "T_PaperSprigRoseLow",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     14.0
+    ],
+    [
+     -9.5,
+     3.5,
+     17.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaperVine",
+   "tris": 62,
+   "material": "T_PaperVine",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.5,
+     -4.0,
+     17.15
+    ],
+    [
+     8.5,
+     30.0,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaperVineYellow",
+   "tris": 50,
+   "material": "T_PaperVineYellow",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     2.0,
+     17.5
+    ],
+    [
+     -6.0,
+     30.0,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_PaperVineYellowLow",
+   "tris": 40,
+   "material": "T_PaperVineYellowLow",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     2.0,
+     14.0
+    ],
+    [
+     -6.0,
+     30.0,
+     17.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_Pine",
+   "tris": 12,
+   "material": "T_Pine",
+   "parent": null,
+   "bbox_plan": [
+    [
+     40.0,
+     -30.0,
+     14.0
+    ],
+    [
+     40.0,
+     3.5,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_SidingWhite",
+   "tris": 292,
+   "material": "T_SidingWhite",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.0,
+     -31.0,
+     13.0
+    ],
+    [
+     41.0,
+     31.0,
+     27.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_TileButter",
+   "tris": 20,
+   "material": "T_TileButter",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.5,
+     14.0,
+     14.0
+    ],
+    [
+     8.5,
+     30.0,
+     18.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_TilePink",
+   "tris": 22,
+   "material": "T_TilePink",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     14.0
+    ],
+    [
+     -24.0,
+     -19.5,
+     18.5
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_TrimWalnut",
+   "tris": 868,
+   "material": "T_TrimWalnut",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     -30.0,
+     14.0
+    ],
+    [
+     40.0,
+     30.0,
+     26.0
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Shell_U_Wainscot",
+   "tris": 16,
+   "material": "T_Wainscot",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.5,
+     -4.0,
+     14.0
+    ],
+    [
+     8.5,
+     23.0,
+     17.15
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Stair_Main",
+   "tris": 1028,
+   "material": "Stair_Main|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.5,
+     -23.16,
+     -0.1
+    ],
+    [
+     -3.5,
+     -4.0,
+     14.09
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Stair_Back",
+   "tris": 516,
+   "material": "Stair_Back|paint_cream",
+   "parent": null,
+   "bbox_plan": [
+    [
+     4.0,
+     4.0,
+     0.0
+    ],
+    [
+     8.5,
+     23.08,
+     14.02
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Rail_Gallery",
+   "tris": 1568,
+   "material": "Rail_Gallery|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -3.71,
+     -4.247,
+     13.95
+    ],
+    [
+     8.71,
+     -3.753,
+     17.75
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Rail_MainStair",
+   "tris": 2464,
+   "material": "Rail_MainStair|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -3.71,
+     -23.247,
+     0.388
+    ],
+    [
+     -3.19,
+     -4.63,
+     16.838
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Rail_BackStair",
+   "tris": 1856,
+   "material": "Rail_BackStair|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     3.69,
+     9.353,
+     0.388
+    ],
+    [
+     4.21,
+     23.247,
+     13.753
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Door_Front",
+   "tris": 712,
+   "material": "Door_Front|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     0.099,
+     -30.46,
+     -0.001
+    ],
+    [
+     5.901,
+     -29.79,
+     9.901
+    ]
+   ],
+   "origin_plan": [
+    0.1,
+    -30.125,
+    0.0
+   ]
+  },
+  {
+   "name": "Door_Back",
+   "tris": 244,
+   "material": "Door_Back|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -5.9,
+     29.79,
+     0.0
+    ],
+    [
+     -0.1,
+     30.46,
+     9.9
+    ]
+   ],
+   "origin_plan": [
+    -0.1,
+    30.125,
+    0.0
+   ]
+  },
+  {
+   "name": "Door_GB",
+   "tris": 172,
+   "material": "Door_GB|birch",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -28.928,
+     24.035,
+     0.0
+    ],
+    [
+     -24.332,
+     26.017,
+     8.9
+    ]
+   ],
+   "origin_plan": [
+    -24.375,
+    25.9,
+    0.0
+   ]
+  },
+  {
+   "name": "Door_MB",
+   "tris": 172,
+   "material": "Door_MB|birch",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -14.868,
+     0.193,
+     14.0
+    ],
+    [
+     -9.332,
+     2.517,
+     22.9
+    ]
+   ],
+   "origin_plan": [
+    -9.375,
+    2.4,
+    14.0
+   ]
+  },
+  {
+   "name": "Door_BR2",
+   "tris": 172,
+   "material": "Door_BR2|birch",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.332,
+     -2.517,
+     14.0
+    ],
+    [
+     14.868,
+     -0.193,
+     22.9
+    ]
+   ],
+   "origin_plan": [
+    9.375,
+    -2.4,
+    14.0
+   ]
+  },
+  {
+   "name": "Door_BR3",
+   "tris": 172,
+   "material": "Door_BR3|birch",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -13.928,
+     12.035,
+     14.0
+    ],
+    [
+     -9.332,
+     14.017,
+     22.9
+    ]
+   ],
+   "origin_plan": [
+    -9.375,
+    13.9,
+    14.0
+   ]
+  },
+  {
+   "name": "Door_UB",
+   "tris": 172,
+   "material": "Door_UB|birch",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -7.017,
+     17.332,
+     14.0
+    ],
+    [
+     -5.035,
+     21.928,
+     22.9
+    ]
+   ],
+   "origin_plan": [
+    -6.9,
+    17.375,
+    14.0
+   ]
+  },
+  {
+   "name": "Door_EN",
+   "tris": 172,
+   "material": "Door_EN|birch",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -35.4,
+     -19.71,
+     14.0
+    ],
+    [
+     -30.6,
+     -19.04,
+     22.9
+    ]
+   ],
+   "origin_plan": [
+    -30.6,
+    -19.375,
+    14.0
+   ]
+  },
+  {
+   "name": "Win_LR_S1_Frame",
+   "tris": 120,
+   "material": "Win_LR_S1_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -36.25,
+     -31.3,
+     2.9
+    ],
+    [
+     -27.75,
+     -29.65,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    -32.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_LR_S2_Frame",
+   "tris": 120,
+   "material": "Win_LR_S2_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -22.25,
+     -31.3,
+     2.9
+    ],
+    [
+     -13.75,
+     -29.65,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    -18.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "DoorFrame_Front",
+   "tris": 108,
+   "material": "DoorFrame_Front|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -0.35,
+     -31.21,
+     0.0
+    ],
+    [
+     6.35,
+     -29.79,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Win_DR_S1_Frame",
+   "tris": 120,
+   "material": "Win_DR_S1_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     13.75,
+     -31.3,
+     2.9
+    ],
+    [
+     22.25,
+     -29.65,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_DR_S2_Frame",
+   "tris": 120,
+   "material": "Win_DR_S2_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     27.75,
+     -31.3,
+     2.9
+    ],
+    [
+     36.25,
+     -29.65,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    32.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_EN_S_Frame",
+   "tris": 96,
+   "material": "Win_EN_S_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -37.25,
+     -31.3,
+     18.9
+    ],
+    [
+     -31.75,
+     -29.65,
+     23.05
+    ]
+   ],
+   "origin_plan": [
+    -34.5,
+    -30.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_MB_S_Frame",
+   "tris": 120,
+   "material": "Win_MB_S_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -24.25,
+     -31.3,
+     16.9
+    ],
+    [
+     -13.75,
+     -29.65,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    -19.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_FY_S_Frame",
+   "tris": 120,
+   "material": "Win_FY_S_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -3.25,
+     -31.3,
+     13.9
+    ],
+    [
+     7.25,
+     -29.65,
+     24.55
+    ]
+   ],
+   "origin_plan": [
+    2.0,
+    -30.5,
+    14.0
+   ]
+  },
+  {
+   "name": "Win_BR2_S1_Frame",
+   "tris": 120,
+   "material": "Win_BR2_S1_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     15.75,
+     -31.3,
+     16.9
+    ],
+    [
+     24.25,
+     -29.65,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    20.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_S2_Frame",
+   "tris": 120,
+   "material": "Win_BR2_S2_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     29.75,
+     -31.3,
+     16.9
+    ],
+    [
+     36.25,
+     -29.65,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    33.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_GB_N_Frame",
+   "tris": 120,
+   "material": "Win_GB_N_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -36.25,
+     29.65,
+     5.9
+    ],
+    [
+     -29.75,
+     31.3,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    -33.0,
+    30.5,
+    6.0
+   ]
+  },
+  {
+   "name": "Win_BH_N_Frame",
+   "tris": 120,
+   "material": "Win_BH_N_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -20.25,
+     29.65,
+     2.9
+    ],
+    [
+     -13.75,
+     31.3,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "DoorFrame_Back",
+   "tris": 108,
+   "material": "DoorFrame_Back|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -6.35,
+     29.79,
+     0.0
+    ],
+    [
+     0.35,
+     31.21,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Win_KT_N1_Frame",
+   "tris": 120,
+   "material": "Win_KT_N1_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     13.75,
+     29.65,
+     4.4
+    ],
+    [
+     22.25,
+     31.3,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    30.5,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_KT_N2_Frame",
+   "tris": 120,
+   "material": "Win_KT_N2_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     25.75,
+     29.65,
+     4.4
+    ],
+    [
+     34.25,
+     31.3,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    30.0,
+    30.5,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_BR3_N1_Frame",
+   "tris": 120,
+   "material": "Win_BR3_N1_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -34.25,
+     29.65,
+     16.9
+    ],
+    [
+     -25.75,
+     31.3,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    -30.0,
+    30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR3_N2_Frame",
+   "tris": 120,
+   "material": "Win_BR3_N2_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -20.25,
+     29.65,
+     16.9
+    ],
+    [
+     -13.75,
+     31.3,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_UB_N_Frame",
+   "tris": 120,
+   "material": "Win_UB_N_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -6.25,
+     29.65,
+     18.9
+    ],
+    [
+     0.25,
+     31.3,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    -3.0,
+    30.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_EN_W_Frame",
+   "tris": 96,
+   "material": "Win_EN_W_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.3,
+     -27.25,
+     18.9
+    ],
+    [
+     -39.65,
+     -22.75,
+     23.05
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    -25.0,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_LR_W_Frame",
+   "tris": 120,
+   "material": "Win_LR_W_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.3,
+     -6.25,
+     2.9
+    ],
+    [
+     -39.65,
+     2.25,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    -2.0,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_BR3_W_Frame",
+   "tris": 120,
+   "material": "Win_BR3_W_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.3,
+     9.75,
+     16.9
+    ],
+    [
+     -39.65,
+     18.25,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    14.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_GB_W_Frame",
+   "tris": 120,
+   "material": "Win_GB_W_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -41.3,
+     17.75,
+     5.9
+    ],
+    [
+     -39.65,
+     24.25,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    21.0,
+    6.0
+   ]
+  },
+  {
+   "name": "Win_DR_E_Frame",
+   "tris": 120,
+   "material": "Win_DR_E_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     39.65,
+     -26.25,
+     2.9
+    ],
+    [
+     41.3,
+     -17.75,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    -22.0,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_KT_E_Frame",
+   "tris": 144,
+   "material": "Win_KT_E_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     39.65,
+     5.75,
+     4.4
+    ],
+    [
+     41.3,
+     18.25,
+     10.05
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    12.0,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_BR2_E_Frame",
+   "tris": 120,
+   "material": "Win_BR2_E_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     39.65,
+     -24.25,
+     16.9
+    ],
+    [
+     41.3,
+     -15.75,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    -20.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_N_Frame",
+   "tris": 120,
+   "material": "Win_BR2_N_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     19.75,
+     3.15,
+     16.9
+    ],
+    [
+     30.25,
+     4.8,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    25.0,
+    4.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_MB_FY_Frame",
+   "tris": 96,
+   "material": "Win_MB_FY_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.2,
+     -20.05,
+     16.95
+    ],
+    [
+     -8.8,
+     -11.95,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    -9.0,
+    -16.0,
+    17.0
+   ]
+  },
+  {
+   "name": "DoorFrame_MB",
+   "tris": 108,
+   "material": "DoorFrame_MB|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.71,
+     -3.85,
+     14.0
+    ],
+    [
+     -8.29,
+     2.85,
+     23.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "DoorFrame_BR3",
+   "tris": 108,
+   "material": "DoorFrame_BR3|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.71,
+     8.65,
+     14.0
+    ],
+    [
+     -8.29,
+     14.35,
+     23.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Win_BR2_FY_Frame",
+   "tris": 96,
+   "material": "Win_BR2_FY_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.8,
+     -28.05,
+     16.95
+    ],
+    [
+     9.2,
+     -19.95,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    -24.0,
+    17.0
+   ]
+  },
+  {
+   "name": "DoorFrame_BR2",
+   "tris": 108,
+   "material": "DoorFrame_BR2|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.29,
+     -2.85,
+     14.0
+    ],
+    [
+     9.71,
+     3.85,
+     23.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Win_ST2_E_Frame",
+   "tris": 120,
+   "material": "Win_ST2_E_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.15,
+     9.75,
+     17.9
+    ],
+    [
+     9.8,
+     18.25,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    14.0,
+    18.0
+   ]
+  },
+  {
+   "name": "Win_UB_E_Frame",
+   "tris": 96,
+   "material": "Win_UB_E_Frame|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.15,
+     24.25,
+     18.9
+    ],
+    [
+     9.8,
+     28.75,
+     24.05
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    26.5,
+    19.0
+   ]
+  },
+  {
+   "name": "DoorFrame_GB",
+   "tris": 108,
+   "material": "DoorFrame_GB|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -24.71,
+     20.65,
+     0.0
+    ],
+    [
+     -23.29,
+     26.35,
+     9.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "DoorFrame_EN",
+   "tris": 108,
+   "material": "DoorFrame_EN|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -35.85,
+     -19.71,
+     14.0
+    ],
+    [
+     -30.15,
+     -18.29,
+     23.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "DoorFrame_UB",
+   "tris": 108,
+   "material": "DoorFrame_UB|walnut_trim",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -7.35,
+     16.29,
+     14.0
+    ],
+    [
+     -1.65,
+     17.71,
+     23.35
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Win_LR_S2_GlassTape",
+   "tris": 192,
+   "material": "Win_LR_S2_GlassTape|tape",
+   "parent": "Win_LR_S2_Glass",
+   "bbox_plan": [
+    [
+     -21.834,
+     -30.43,
+     3.248
+    ],
+    [
+     -14.166,
+     -30.41,
+     9.752
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    30.5,
+    -3.0
+   ]
+  },
+  {
+   "name": "Win_DR_S1_GlassTape",
+   "tris": 192,
+   "material": "Win_DR_S1_GlassTape|tape",
+   "parent": "Win_DR_S1_Glass",
+   "bbox_plan": [
+    [
+     14.166,
+     -30.43,
+     3.248
+    ],
+    [
+     21.834,
+     -30.41,
+     9.752
+    ]
+   ],
+   "origin_plan": [
+    -18.0,
+    30.5,
+    -3.0
+   ]
+  },
+  {
+   "name": "Win_FY_S_GlassTape",
+   "tris": 192,
+   "material": "Win_FY_S_GlassTape|tape",
+   "parent": "Win_FY_S_Glass",
+   "bbox_plan": [
+    [
+     -2.846,
+     -30.43,
+     14.26
+    ],
+    [
+     6.846,
+     -30.41,
+     24.24
+    ]
+   ],
+   "origin_plan": [
+    -2.0,
+    30.5,
+    -14.0
+   ]
+  },
+  {
+   "name": "Win_BR2_S1_GlassTape",
+   "tris": 192,
+   "material": "Win_BR2_S1_GlassTape|tape",
+   "parent": "Win_BR2_S1_Glass",
+   "bbox_plan": [
+    [
+     16.166,
+     -30.43,
+     17.248
+    ],
+    [
+     23.834,
+     -30.41,
+     23.752
+    ]
+   ],
+   "origin_plan": [
+    -20.0,
+    30.5,
+    -17.0
+   ]
+  },
+  {
+   "name": "Win_BH_N_GlassTape",
+   "tris": 192,
+   "material": "Win_BH_N_GlassTape|tape",
+   "parent": "Win_BH_N_Glass",
+   "bbox_plan": [
+    [
+     -19.852,
+     30.41,
+     3.265
+    ],
+    [
+     -14.148,
+     30.43,
+     9.735
+    ]
+   ],
+   "origin_plan": [
+    17.0,
+    -30.5,
+    -3.0
+   ]
+  },
+  {
+   "name": "Win_BR3_N1_GlassTape",
+   "tris": 192,
+   "material": "Win_BR3_N1_GlassTape|tape",
+   "parent": "Win_BR3_N1_Glass",
+   "bbox_plan": [
+    [
+     -33.834,
+     30.41,
+     17.248
+    ],
+    [
+     -26.166,
+     30.43,
+     23.752
+    ]
+   ],
+   "origin_plan": [
+    30.0,
+    -30.5,
+    -17.0
+   ]
+  },
+  {
+   "name": "Win_BR3_N2_GlassTape",
+   "tris": 192,
+   "material": "Win_BR3_N2_GlassTape|tape",
+   "parent": "Win_BR3_N2_Glass",
+   "bbox_plan": [
+    [
+     -19.852,
+     30.41,
+     17.265
+    ],
+    [
+     -14.148,
+     30.43,
+     23.735
+    ]
+   ],
+   "origin_plan": [
+    17.0,
+    -30.5,
+    -17.0
+   ]
+  },
+  {
+   "name": "Win_DR_E_GlassTape",
+   "tris": 192,
+   "material": "Win_DR_E_GlassTape|tape",
+   "parent": "Win_DR_E_Glass",
+   "bbox_plan": [
+    [
+     40.41,
+     -25.834,
+     3.248
+    ],
+    [
+     40.43,
+     -18.166,
+     9.752
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    22.0,
+    -3.0
+   ]
+  },
+  {
+   "name": "Win_KT_E_GlassTape",
+   "tris": 288,
+   "material": "Win_KT_E_GlassTape|tape",
+   "parent": "Win_KT_E_Glass",
+   "bbox_plan": [
+    [
+     40.41,
+     6.187,
+     4.728
+    ],
+    [
+     40.43,
+     17.813,
+     9.772
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    -12.0,
+    -4.5
+   ]
+  },
+  {
+   "name": "Win_BR2_E_GlassTape",
+   "tris": 192,
+   "material": "Win_BR2_E_GlassTape|tape",
+   "parent": "Win_BR2_E_Glass",
+   "bbox_plan": [
+    [
+     40.41,
+     -23.834,
+     17.248
+    ],
+    [
+     40.43,
+     -16.166,
+     23.752
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    20.0,
+    -17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_N_GlassTape",
+   "tris": 192,
+   "material": "Win_BR2_N_GlassTape|tape",
+   "parent": "Win_BR2_N_Glass",
+   "bbox_plan": [
+    [
+     20.183,
+     3.91,
+     17.232
+    ],
+    [
+     29.817,
+     3.93,
+     23.768
+    ]
+   ],
+   "origin_plan": [
+    -25.0,
+    -4.0,
+    -17.0
+   ]
+  },
+  {
+   "name": "Skylight_1_Trim",
+   "tris": 48,
+   "material": "Skylight_1_Trim|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     16.7,
+     14.7,
+     12.55
+    ],
+    [
+     23.3,
+     21.3,
+     13.05
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Skylight_2_Trim",
+   "tris": 48,
+   "material": "Skylight_2_Trim|paint_white65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     31.7,
+     14.7,
+     12.55
+    ],
+    [
+     38.3,
+     21.3,
+     13.05
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Door_Back_Glass",
+   "tris": 12,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -5.51,
+     30.095,
+     2.54
+    ],
+    [
+     -0.49,
+     30.155,
+     9.51
+    ]
+   ],
+   "origin_plan": [
+    -0.1,
+    30.125,
+    0.0
+   ]
+  },
+  {
+   "name": "Door_Back_BrokenGlass",
+   "tris": 352,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -5.51,
+     30.095,
+     2.54
+    ],
+    [
+     -0.49,
+     30.155,
+     9.51
+    ]
+   ],
+   "origin_plan": [
+    -0.1,
+    30.125,
+    0.0
+   ]
+  },
+  {
+   "name": "Win_LR_S1_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -35.81,
+     -30.53,
+     3.19
+    ],
+    [
+     -28.19,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -32.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_LR_S1_BrokenGlass",
+   "tris": 1168,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -35.81,
+     -30.53,
+     3.19
+    ],
+    [
+     -28.19,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -32.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_LR_S2_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -21.81,
+     -30.53,
+     3.19
+    ],
+    [
+     -14.19,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -18.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_LR_S2_BrokenGlass",
+   "tris": 1152,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -21.81,
+     -30.53,
+     3.19
+    ],
+    [
+     -14.19,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -18.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_DR_S1_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     14.19,
+     -30.53,
+     3.19
+    ],
+    [
+     21.81,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_DR_S1_BrokenGlass",
+   "tris": 1168,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     14.19,
+     -30.53,
+     3.19
+    ],
+    [
+     21.81,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_DR_S2_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     28.19,
+     -30.53,
+     3.19
+    ],
+    [
+     35.81,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    32.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_DR_S2_BrokenGlass",
+   "tris": 1160,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     28.19,
+     -30.53,
+     3.19
+    ],
+    [
+     35.81,
+     -30.47,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    32.0,
+    -30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_EN_S_Glass",
+   "tris": 48,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -36.81,
+     -30.53,
+     19.19
+    ],
+    [
+     -32.19,
+     -30.47,
+     22.81
+    ]
+   ],
+   "origin_plan": [
+    -34.5,
+    -30.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_EN_S_BrokenGlass",
+   "tris": 512,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -36.81,
+     -30.53,
+     19.19
+    ],
+    [
+     -32.19,
+     -30.47,
+     22.81
+    ]
+   ],
+   "origin_plan": [
+    -34.5,
+    -30.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_MB_S_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -23.81,
+     -30.53,
+     17.19
+    ],
+    [
+     -14.19,
+     -30.47,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -19.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_MB_S_BrokenGlass",
+   "tris": 1256,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -23.81,
+     -30.53,
+     17.19
+    ],
+    [
+     -14.19,
+     -30.47,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -19.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_FY_S_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -2.81,
+     -30.53,
+     14.19
+    ],
+    [
+     6.81,
+     -30.47,
+     24.31
+    ]
+   ],
+   "origin_plan": [
+    2.0,
+    -30.5,
+    14.0
+   ]
+  },
+  {
+   "name": "Win_FY_S_BrokenGlass",
+   "tris": 1776,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -2.81,
+     -30.53,
+     14.19
+    ],
+    [
+     6.81,
+     -30.47,
+     24.31
+    ]
+   ],
+   "origin_plan": [
+    2.0,
+    -30.5,
+    14.0
+   ]
+  },
+  {
+   "name": "Win_BR2_S1_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     16.19,
+     -30.53,
+     17.19
+    ],
+    [
+     23.81,
+     -30.47,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    20.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_S1_BrokenGlass",
+   "tris": 1160,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     16.19,
+     -30.53,
+     17.19
+    ],
+    [
+     23.81,
+     -30.47,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    20.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_S2_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     30.19,
+     -30.53,
+     17.19
+    ],
+    [
+     35.81,
+     -30.47,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    33.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_S2_BrokenGlass",
+   "tris": 1096,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     30.19,
+     -30.53,
+     17.19
+    ],
+    [
+     35.81,
+     -30.47,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    33.0,
+    -30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_GB_N_Glass",
+   "tris": 96,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -35.81,
+     30.47,
+     6.19
+    ],
+    [
+     -30.19,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -33.0,
+    30.5,
+    6.0
+   ]
+  },
+  {
+   "name": "Win_GB_N_BrokenGlass",
+   "tris": 784,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -35.81,
+     30.47,
+     6.19
+    ],
+    [
+     -30.19,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -33.0,
+    30.5,
+    6.0
+   ]
+  },
+  {
+   "name": "Win_BH_N_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -19.81,
+     30.47,
+     3.19
+    ],
+    [
+     -14.19,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_BH_N_BrokenGlass",
+   "tris": 1144,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -19.81,
+     30.47,
+     3.19
+    ],
+    [
+     -14.19,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    30.5,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_KT_N1_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     14.19,
+     30.47,
+     4.69
+    ],
+    [
+     21.81,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    30.5,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_KT_N1_BrokenGlass",
+   "tris": 1024,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     14.19,
+     30.47,
+     4.69
+    ],
+    [
+     21.81,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    30.5,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_KT_N2_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     26.19,
+     30.47,
+     4.69
+    ],
+    [
+     33.81,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    30.0,
+    30.5,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_KT_N2_BrokenGlass",
+   "tris": 1016,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     26.19,
+     30.47,
+     4.69
+    ],
+    [
+     33.81,
+     30.53,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    30.0,
+    30.5,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_BR3_N1_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -33.81,
+     30.47,
+     17.19
+    ],
+    [
+     -26.19,
+     30.53,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -30.0,
+    30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR3_N1_BrokenGlass",
+   "tris": 1272,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -33.81,
+     30.47,
+     17.19
+    ],
+    [
+     -26.19,
+     30.53,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -30.0,
+    30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR3_N2_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -19.81,
+     30.47,
+     17.19
+    ],
+    [
+     -14.19,
+     30.53,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR3_N2_BrokenGlass",
+   "tris": 1128,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -19.81,
+     30.47,
+     17.19
+    ],
+    [
+     -14.19,
+     30.53,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    30.5,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_UB_N_Glass",
+   "tris": 96,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -5.81,
+     30.47,
+     19.19
+    ],
+    [
+     -0.19,
+     30.53,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -3.0,
+    30.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_UB_N_BrokenGlass",
+   "tris": 856,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -5.81,
+     30.47,
+     19.19
+    ],
+    [
+     -0.19,
+     30.53,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -3.0,
+    30.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_EN_W_Glass",
+   "tris": 48,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     -26.81,
+     19.19
+    ],
+    [
+     -40.47,
+     -23.19,
+     22.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    -25.0,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_EN_W_BrokenGlass",
+   "tris": 440,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     -26.81,
+     19.19
+    ],
+    [
+     -40.47,
+     -23.19,
+     22.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    -25.0,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_LR_W_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     -5.81,
+     3.19
+    ],
+    [
+     -40.47,
+     1.81,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    -2.0,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_LR_W_BrokenGlass",
+   "tris": 1176,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     -5.81,
+     3.19
+    ],
+    [
+     -40.47,
+     1.81,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    -2.0,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_BR3_W_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     10.19,
+     17.19
+    ],
+    [
+     -40.47,
+     17.81,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    14.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR3_W_BrokenGlass",
+   "tris": 1160,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     10.19,
+     17.19
+    ],
+    [
+     -40.47,
+     17.81,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    14.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_GB_W_Glass",
+   "tris": 96,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     18.19,
+     6.19
+    ],
+    [
+     -40.47,
+     23.81,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    21.0,
+    6.0
+   ]
+  },
+  {
+   "name": "Win_GB_W_BrokenGlass",
+   "tris": 760,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.53,
+     18.19,
+     6.19
+    ],
+    [
+     -40.47,
+     23.81,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    -40.5,
+    21.0,
+    6.0
+   ]
+  },
+  {
+   "name": "Win_DR_E_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     40.47,
+     -25.81,
+     3.19
+    ],
+    [
+     40.53,
+     -18.19,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    -22.0,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_DR_E_BrokenGlass",
+   "tris": 1192,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     40.47,
+     -25.81,
+     3.19
+    ],
+    [
+     40.53,
+     -18.19,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    -22.0,
+    3.0
+   ]
+  },
+  {
+   "name": "Win_KT_E_Glass",
+   "tris": 144,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     40.47,
+     6.19,
+     4.69
+    ],
+    [
+     40.53,
+     17.81,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    12.0,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_KT_E_BrokenGlass",
+   "tris": 1544,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     40.47,
+     6.19,
+     4.69
+    ],
+    [
+     40.53,
+     17.81,
+     9.81
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    12.0,
+    4.5
+   ]
+  },
+  {
+   "name": "Win_BR2_E_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     40.47,
+     -23.81,
+     17.19
+    ],
+    [
+     40.53,
+     -16.19,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    -20.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_E_BrokenGlass",
+   "tris": 1200,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     40.47,
+     -23.81,
+     17.19
+    ],
+    [
+     40.53,
+     -16.19,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    40.5,
+    -20.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_N_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     20.19,
+     3.97,
+     17.19
+    ],
+    [
+     29.81,
+     4.03,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    25.0,
+    4.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_N_BrokenGlass",
+   "tris": 1296,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     20.19,
+     3.97,
+     17.19
+    ],
+    [
+     29.81,
+     4.03,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    25.0,
+    4.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_MB_FY_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.03,
+     -19.81,
+     17.19
+    ],
+    [
+     -8.97,
+     -12.19,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -9.0,
+    -16.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_MB_FY_BrokenGlass",
+   "tris": 1184,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -9.03,
+     -19.81,
+     17.19
+    ],
+    [
+     -8.97,
+     -12.19,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    -9.0,
+    -16.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_FY_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.97,
+     -27.81,
+     17.19
+    ],
+    [
+     9.03,
+     -20.19,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    -24.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_BR2_FY_BrokenGlass",
+   "tris": 1144,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.97,
+     -27.81,
+     17.19
+    ],
+    [
+     9.03,
+     -20.19,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    -24.0,
+    17.0
+   ]
+  },
+  {
+   "name": "Win_ST2_E_Glass",
+   "tris": 96,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.97,
+     10.19,
+     18.19
+    ],
+    [
+     9.03,
+     17.81,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    14.0,
+    18.0
+   ]
+  },
+  {
+   "name": "Win_ST2_E_BrokenGlass",
+   "tris": 1064,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.97,
+     10.19,
+     18.19
+    ],
+    [
+     9.03,
+     17.81,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    14.0,
+    18.0
+   ]
+  },
+  {
+   "name": "Win_UB_E_Glass",
+   "tris": 48,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.97,
+     24.69,
+     19.19
+    ],
+    [
+     9.03,
+     28.31,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    26.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Win_UB_E_BrokenGlass",
+   "tris": 440,
+   "material": "H_GlassFrost",
+   "parent": null,
+   "bbox_plan": [
+    [
+     8.97,
+     24.69,
+     19.19
+    ],
+    [
+     9.03,
+     28.31,
+     23.81
+    ]
+   ],
+   "origin_plan": [
+    9.0,
+    26.5,
+    19.0
+   ]
+  },
+  {
+   "name": "Skylight_1_Glass",
+   "tris": 12,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     16.95,
+     14.95,
+     14.9
+    ],
+    [
+     23.05,
+     21.05,
+     15.05
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Skylight_1_Glow",
+   "tris": 12,
+   "material": "H_Glow",
+   "parent": null,
+   "bbox_plan": [
+    [
+     16.98,
+     14.98,
+     12.7
+    ],
+    [
+     23.02,
+     21.02,
+     12.8
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Skylight_2_Glass",
+   "tris": 12,
+   "material": "H_Glass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     31.95,
+     14.95,
+     14.9
+    ],
+    [
+     38.05,
+     21.05,
+     15.05
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Skylight_2_Glow",
+   "tris": 12,
+   "material": "H_Glow",
+   "parent": null,
+   "bbox_plan": [
+    [
+     31.98,
+     14.98,
+     12.7
+    ],
+    [
+     38.02,
+     21.02,
+     12.8
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Dummy_LR_Sofa",
+   "tris": 1308,
+   "material": "D65_Dummy_SitA|cloth_skirt",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -18.3,
+     -18.559,
+     -0.04
+    ],
+    [
+     -15.554,
+     -16.841,
+     5.1
+    ]
+   ],
+   "origin_plan": [
+    -16.2,
+    -17.7,
+    1.93
+   ]
+  },
+  {
+   "name": "Dummy_DR_1",
+   "tris": 1296,
+   "material": "D65_Dummy_SitB|cloth_suit",
+   "parent": null,
+   "bbox_plan": [
+    [
+     20.141,
+     -18.715,
+     -0.1
+    ],
+    [
+     21.859,
+     -15.969,
+     5.04
+    ]
+   ],
+   "origin_plan": [
+    21.0,
+    -16.615,
+    1.87
+   ]
+  },
+  {
+   "name": "Dummy_DR_2",
+   "tris": 1296,
+   "material": "D65_Dummy_SitC|cloth_suit",
+   "parent": null,
+   "bbox_plan": [
+    [
+     26.041,
+     -21.961,
+     -0.1
+    ],
+    [
+     27.759,
+     -19.215,
+     5.04
+    ]
+   ],
+   "origin_plan": [
+    26.9,
+    -21.315,
+    1.87
+   ]
+  },
+  {
+   "name": "Dummy_KT_Booth",
+   "tris": 1308,
+   "material": "D65_Dummy_SitD|cloth_skirt",
+   "parent": null,
+   "bbox_plan": [
+    [
+     18.054,
+     21.641,
+     0.13
+    ],
+    [
+     20.8,
+     23.359,
+     5.27
+    ]
+   ],
+   "origin_plan": [
+    18.7,
+    22.5,
+    2.1
+   ]
+  },
+  {
+   "name": "Dummy_BR2_Bed",
+   "tris": 1308,
+   "material": "D65_Dummy_SitE|cloth_skirt",
+   "parent": null,
+   "bbox_plan": [
+    [
+     32.141,
+     -15.35,
+     14.43
+    ],
+    [
+     33.859,
+     -12.604,
+     19.57
+    ]
+   ],
+   "origin_plan": [
+    33.0,
+    -13.25,
+    16.4
+   ]
+  },
+  {
+   "name": "Dummy_KT_Counter",
+   "tris": 1296,
+   "material": "D65_Dummy_Lean|cloth_suit",
+   "parent": null,
+   "bbox_plan": [
+    [
+     12.763,
+     24.517,
+     0.0
+    ],
+    [
+     14.437,
+     27.25,
+     6.17
+    ]
+   ],
+   "origin_plan": [
+    13.6,
+    25.94,
+    0.0
+   ]
+  },
+  {
+   "name": "Phone_FY",
+   "tris": 360,
+   "material": "D65_Phone|phone_olive",
+   "parent": null,
+   "bbox_plan": [
+    [
+     7.05,
+     -9.111,
+     3.38
+    ],
+    [
+     7.97,
+     -7.1,
+     3.98
+    ]
+   ],
+   "origin_plan": [
+    7.55,
+    -8.1,
+    3.4
+   ]
+  },
+  {
+   "name": "Radio_KT",
+   "tris": 292,
+   "material": "D65_Radio|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     29.2,
+     28.05,
+     3.4
+    ],
+    [
+     30.8,
+     28.92,
+     4.3
+    ]
+   ],
+   "origin_plan": [
+    30.0,
+    28.57,
+    3.4
+   ]
+  },
+  {
+   "name": "Canisters_KT",
+   "tris": 560,
+   "material": "D65_Canisters|enamel_cream",
+   "parent": null,
+   "bbox_plan": [
+    [
+     38.158,
+     1.74,
+     3.4
+    ],
+    [
+     38.782,
+     4.32,
+     4.56
+    ]
+   ],
+   "origin_plan": [
+    38.47,
+    3.0,
+    3.4
+   ]
+  },
+  {
+   "name": "Cake_KT",
+   "tris": 316,
+   "material": "D65_CakeDome|china",
+   "parent": null,
+   "bbox_plan": [
+    [
+     20.75,
+     7.401,
+     3.4
+    ],
+    [
+     22.25,
+     8.879,
+     4.5
+    ]
+   ],
+   "origin_plan": [
+    21.5,
+    8.14,
+    3.4
+   ]
+  },
+  {
+   "name": "RecordPlayer_BR2",
+   "tris": 124,
+   "material": "D65_RecordPlayer|enamel_cream",
+   "parent": null,
+   "bbox_plan": [
+    [
+     34.3,
+     1.7,
+     17.4
+    ],
+    [
+     36.1,
+     3.2,
+     17.844
+    ]
+   ],
+   "origin_plan": [
+    35.2,
+    2.45,
+    17.4
+   ]
+  },
+  {
+   "name": "TinRocket_BR3",
+   "tris": 96,
+   "material": "D65_TinRocket|tin",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -27.8,
+     5.104,
+     17.4
+    ],
+    [
+     -27.174,
+     5.811,
+     18.8
+    ]
+   ],
+   "origin_plan": [
+    -27.4,
+    5.45,
+    17.4
+   ]
+  },
+  {
+   "name": "Radio_MB",
+   "tris": 292,
+   "material": "D65_Radio|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -22.419,
+     -16.937,
+     16.0
+    ],
+    [
+     -21.361,
+     -15.263,
+     16.9
+    ]
+   ],
+   "origin_plan": [
+    -21.9,
+    -16.1,
+    16.0
+   ]
+  },
+  {
+   "name": "Papers_LR",
+   "tris": 120,
+   "material": "D65_Papers|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -26.645,
+     3.267,
+     -0.028
+    ],
+    [
+     -23.138,
+     7.067,
+     0.062
+    ]
+   ],
+   "origin_plan": [
+    -24.479,
+    4.984,
+    0.0
+   ]
+  },
+  {
+   "name": "Papers_BR2",
+   "tris": 120,
+   "material": "D65_Papers|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     30.893,
+     -32.686,
+     13.972
+    ],
+    [
+     34.746,
+     -29.44,
+     14.062
+    ]
+   ],
+   "origin_plan": [
+    32.586,
+    -31.456,
+    14.0
+   ]
+  },
+  {
+   "name": "Papers_MB",
+   "tris": 120,
+   "material": "D65_Papers|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -11.189,
+     -12.718,
+     13.972
+    ],
+    [
+     -8.023,
+     -8.896,
+     14.062
+    ]
+   ],
+   "origin_plan": [
+    -9.962,
+    -10.557,
+    14.0
+   ]
+  },
+  {
+   "name": "Plates_DR",
+   "tris": 152,
+   "material": "D65_BrokenPlates|china",
+   "parent": null,
+   "bbox_plan": [
+    [
+     12.779,
+     -27.838,
+     0.0
+    ],
+    [
+     14.489,
+     -25.853,
+     0.39
+    ]
+   ],
+   "origin_plan": [
+    13.255,
+    -26.999,
+    0.0
+   ]
+  },
+  {
+   "name": "Plates_KT",
+   "tris": 152,
+   "material": "D65_BrokenPlates|china",
+   "parent": null,
+   "bbox_plan": [
+    [
+     23.488,
+     9.937,
+     0.0
+    ],
+    [
+     25.636,
+     11.84,
+     0.39
+    ]
+   ],
+   "origin_plan": [
+    24.849,
+    10.89,
+    0.0
+   ]
+  },
+  {
+   "name": "LampDown_MB",
+   "tris": 172,
+   "material": "D65_LampKnocked|walnut65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -26.881,
+     -37.707,
+     14.0
+    ],
+    [
+     -22.865,
+     -31.603,
+     15.9
+    ]
+   ],
+   "origin_plan": [
+    -26.129,
+    -31.929,
+    14.0
+   ]
+  },
+  {
+   "name": "ChairDown_DR",
+   "tris": 392,
+   "material": "D65_ChairKnocked|chrome65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     38.354,
+     -17.422,
+     0.0
+    ],
+    [
+     42.009,
+     -13.783,
+     1.937
+    ]
+   ],
+   "origin_plan": [
+    41.364,
+    -14.437,
+    0.0
+   ]
+  },
+  {
+   "name": "Sand_Door_Front",
+   "tris": 200,
+   "material": "D65_SandDrift|sand",
+   "parent": null,
+   "bbox_plan": [
+    [
+     1.0,
+     -30.0,
+     0.005
+    ],
+    [
+     5.0,
+     -28.0,
+     0.101
+    ]
+   ],
+   "origin_plan": [
+    3.0,
+    -29.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Sand_Door_Back",
+   "tris": 200,
+   "material": "D65_SandDrift|sand",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -5.0,
+     28.0,
+     0.005
+    ],
+    [
+     -1.0,
+     30.0,
+     0.101
+    ]
+   ],
+   "origin_plan": [
+    -3.0,
+    29.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Sand_Win_DR_E",
+   "tris": 200,
+   "material": "D65_SandDriftSmall|sand",
+   "parent": null,
+   "bbox_plan": [
+    [
+     38.55,
+     -23.2,
+     0.005
+    ],
+    [
+     39.95,
+     -20.8,
+     0.101
+    ]
+   ],
+   "origin_plan": [
+    39.25,
+    -22.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Sand_Win_BR3_W",
+   "tris": 200,
+   "material": "D65_SandDriftSmall|sand",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.95,
+     12.8,
+     14.005
+    ],
+    [
+     -38.55,
+     15.2,
+     14.101
+    ]
+   ],
+   "origin_plan": [
+    -39.25,
+    14.0,
+    14.0
+   ]
+  },
+  {
+   "name": "Cobweb_FY_0",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.98,
+     -29.98,
+     24.463
+    ],
+    [
+     -7.463,
+     -28.463,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -8.98,
+    -29.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_BH_1",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.98,
+     28.463,
+     11.463
+    ],
+    [
+     -7.463,
+     29.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    -8.98,
+    29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_BH_2",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     7.463,
+     28.463,
+     11.463
+    ],
+    [
+     8.98,
+     29.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    8.98,
+    29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_LR_3",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.98,
+     8.463,
+     11.463
+    ],
+    [
+     -38.463,
+     9.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    9.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_MR_4",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -10.537,
+     10.02,
+     11.463
+    ],
+    [
+     -9.02,
+     11.537,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    -9.02,
+    10.02,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_MR_5",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -10.537,
+     28.463,
+     11.463
+    ],
+    [
+     -9.02,
+     29.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    -9.02,
+    29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_MR_6",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -23.98,
+     28.463,
+     11.463
+    ],
+    [
+     -22.463,
+     29.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    -23.98,
+    29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_GB_7",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -25.537,
+     28.463,
+     11.463
+    ],
+    [
+     -24.02,
+     29.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    -24.02,
+    29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_DR_8",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.02,
+     -29.98,
+     11.463
+    ],
+    [
+     10.537,
+     -28.463,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    9.02,
+    -29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_DR_9",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     38.463,
+     -29.98,
+     11.463
+    ],
+    [
+     39.98,
+     -28.463,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    39.98,
+    -29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_KT_10",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     38.463,
+     28.463,
+     11.463
+    ],
+    [
+     39.98,
+     29.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    39.98,
+    29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_KT_11",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.02,
+     28.463,
+     11.463
+    ],
+    [
+     10.537,
+     29.98,
+     12.98
+    ]
+   ],
+   "origin_plan": [
+    9.02,
+    29.98,
+    12.98
+   ]
+  },
+  {
+   "name": "Cobweb_UH_12",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.98,
+     15.463,
+     24.463
+    ],
+    [
+     -7.463,
+     16.98,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -8.98,
+    16.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_MB_13",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.98,
+     -18.98,
+     24.463
+    ],
+    [
+     -38.463,
+     -17.463,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    -18.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_MB_14",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -10.537,
+     2.463,
+     24.463
+    ],
+    [
+     -9.02,
+     3.98,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -9.02,
+    3.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_MB_15",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.98,
+     2.463,
+     24.463
+    ],
+    [
+     -38.463,
+     3.98,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    3.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_MB_16",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -10.537,
+     -29.98,
+     24.463
+    ],
+    [
+     -9.02,
+     -28.463,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -9.02,
+    -29.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_BR3_17",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -10.537,
+     28.463,
+     24.463
+    ],
+    [
+     -9.02,
+     29.98,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -9.02,
+    29.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_UB_18",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.98,
+     17.02,
+     24.463
+    ],
+    [
+     -7.463,
+     18.537,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -8.98,
+    17.02,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_UB_19",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.98,
+     28.463,
+     24.463
+    ],
+    [
+     -7.463,
+     29.98,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    -8.98,
+    29.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_UB_20",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     7.463,
+     23.02,
+     24.463
+    ],
+    [
+     8.98,
+     24.537,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    8.98,
+    23.02,
+    25.98
+   ]
+  },
+  {
+   "name": "Cobweb_UB_21",
+   "tris": 2,
+   "material": "D65_Cobweb|web",
+   "parent": null,
+   "bbox_plan": [
+    [
+     7.463,
+     28.463,
+     24.463
+    ],
+    [
+     8.98,
+     29.98,
+     25.98
+    ]
+   ],
+   "origin_plan": [
+    8.98,
+    29.98,
+    25.98
+   ]
+  },
+  {
+   "name": "Calendar_KT",
+   "tris": 12,
+   "material": "D65_Calendar|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     9.5,
+     -7.296,
+     4.763
+    ],
+    [
+     9.62,
+     -5.788,
+     6.934
+    ]
+   ],
+   "origin_plan": [
+    9.5,
+    -6.597,
+    4.8
+   ]
+  },
+  {
+   "name": "Poster_KT",
+   "tris": 12,
+   "material": "D65_Poster_Kitchen|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     32.996,
+     -9.5,
+     4.958
+    ],
+    [
+     35.506,
+     -9.48,
+     8.24
+    ]
+   ],
+   "origin_plan": [
+    34.195,
+    -9.5,
+    5.0
+   ]
+  },
+  {
+   "name": "Poster_BR2",
+   "tris": 12,
+   "material": "D65_Poster_Travel|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     30.568,
+     3.33,
+     18.516
+    ],
+    [
+     33.185,
+     3.5,
+     21.876
+    ]
+   ],
+   "origin_plan": [
+    31.765,
+    3.5,
+    18.6
+   ]
+  },
+  {
+   "name": "Notice_BH",
+   "tris": 12,
+   "material": "D65_Notice|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -8.5,
+     5.038,
+     4.6
+    ],
+    [
+     -8.48,
+     6.838,
+     6.4
+    ]
+   ],
+   "origin_plan": [
+    -8.5,
+    5.938,
+    4.6
+   ]
+  },
+  {
+   "name": "Clipboard_MR",
+   "tris": 36,
+   "material": "D65_Clipboard|pine65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -12.133,
+     10.5,
+     4.2
+    ],
+    [
+     -11.233,
+     10.6,
+     5.4
+    ]
+   ],
+   "origin_plan": [
+    -11.683,
+    10.5,
+    4.2
+   ]
+  },
+  {
+   "name": "Pennant_BR3",
+   "tris": 12,
+   "material": "D65_Pennant|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.0,
+     25.996,
+     19.869
+    ],
+    [
+     -39.98,
+     29.116,
+     21.625
+    ]
+   ],
+   "origin_plan": [
+    -40.0,
+    27.621,
+    20.0
+   ]
+  },
+  {
+   "name": "Calendar_MR",
+   "tris": 12,
+   "material": "D65_Calendar|paper65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -23.5,
+     18.339,
+     4.776
+    ],
+    [
+     -23.38,
+     19.812,
+     6.923
+    ]
+   ],
+   "origin_plan": [
+    -23.5,
+    19.039,
+    4.8
+   ]
+  },
+  {
+   "name": "Drape_Win_LR_S1_A",
+   "tris": 112,
+   "material": "D65_Drape_Mustard|drape_mustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -37.22,
+     -30.03,
+     0.05
+    ],
+    [
+     -36.18,
+     -29.63,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    -36.7,
+    -29.98,
+    0.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_LR_S1",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -38.106,
+     -29.98,
+     10.32
+    ],
+    [
+     -25.894,
+     -29.554,
+     10.48
+    ]
+   ],
+   "origin_plan": [
+    -32.0,
+    -29.98,
+    10.25
+   ]
+  },
+  {
+   "name": "Drape_Win_LR_S2_B",
+   "tris": 112,
+   "material": "D65_Drape_Mustard|drape_mustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -13.82,
+     -30.03,
+     0.05
+    ],
+    [
+     -12.78,
+     -29.63,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    -13.3,
+    -29.98,
+    0.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_LR_S2",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -24.106,
+     -29.98,
+     10.32
+    ],
+    [
+     -11.894,
+     -29.554,
+     10.48
+    ]
+   ],
+   "origin_plan": [
+    -18.0,
+    -29.98,
+    10.25
+   ]
+  },
+  {
+   "name": "Drape_Win_DR_S1_A",
+   "tris": 112,
+   "material": "D65_Drape_Green|drape_green",
+   "parent": null,
+   "bbox_plan": [
+    [
+     12.78,
+     -30.03,
+     0.05
+    ],
+    [
+     13.82,
+     -29.63,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    13.3,
+    -29.98,
+    0.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_DR_S1",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     11.894,
+     -29.98,
+     10.32
+    ],
+    [
+     24.106,
+     -29.554,
+     10.48
+    ]
+   ],
+   "origin_plan": [
+    18.0,
+    -29.98,
+    10.25
+   ]
+  },
+  {
+   "name": "Drape_Win_DR_S2_B",
+   "tris": 112,
+   "material": "D65_Drape_Green|drape_green",
+   "parent": null,
+   "bbox_plan": [
+    [
+     36.18,
+     -30.03,
+     0.05
+    ],
+    [
+     37.22,
+     -29.63,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    36.7,
+    -29.98,
+    0.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_DR_S2",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     25.894,
+     -29.98,
+     10.32
+    ],
+    [
+     38.106,
+     -29.554,
+     10.48
+    ]
+   ],
+   "origin_plan": [
+    32.0,
+    -29.98,
+    10.25
+   ]
+  },
+  {
+   "name": "Drape_Win_FY_S_A",
+   "tris": 112,
+   "material": "D65_Drape_Gold|drape_gold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -4.22,
+     -30.03,
+     14.05
+    ],
+    [
+     -3.18,
+     -29.63,
+     24.85
+    ]
+   ],
+   "origin_plan": [
+    -3.7,
+    -29.98,
+    14.05
+   ]
+  },
+  {
+   "name": "Drape_Win_FY_S_B",
+   "tris": 112,
+   "material": "D65_Drape_Gold|drape_gold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     7.18,
+     -30.03,
+     14.05
+    ],
+    [
+     8.22,
+     -29.63,
+     24.85
+    ]
+   ],
+   "origin_plan": [
+    7.7,
+    -29.98,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_FY_S",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -5.259,
+     -29.98,
+     24.82
+    ],
+    [
+     9.259,
+     -29.554,
+     24.98
+    ]
+   ],
+   "origin_plan": [
+    2.0,
+    -29.98,
+    24.75
+   ]
+  },
+  {
+   "name": "Drape_Win_BR2_S1_A",
+   "tris": 112,
+   "material": "D65_Drape_Gold|drape_gold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     14.78,
+     -30.03,
+     14.05
+    ],
+    [
+     15.82,
+     -29.63,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    15.3,
+    -29.98,
+    14.05
+   ]
+  },
+  {
+   "name": "Drape_Win_BR2_S1_B",
+   "tris": 112,
+   "material": "D65_Drape_Gold|drape_gold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     24.18,
+     -30.03,
+     14.05
+    ],
+    [
+     25.22,
+     -29.63,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    24.7,
+    -29.98,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BR2_S1",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     13.894,
+     -29.98,
+     24.32
+    ],
+    [
+     26.106,
+     -29.554,
+     24.48
+    ]
+   ],
+   "origin_plan": [
+    20.0,
+    -29.98,
+    24.25
+   ]
+  },
+  {
+   "name": "Drape_Win_BR2_S2_B",
+   "tris": 112,
+   "material": "D65_Drape_Gold|drape_gold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     36.18,
+     -30.03,
+     14.05
+    ],
+    [
+     37.22,
+     -29.63,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    36.7,
+    -29.98,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BR2_S2",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     28.046,
+     -29.98,
+     24.32
+    ],
+    [
+     37.954,
+     -29.554,
+     24.48
+    ]
+   ],
+   "origin_plan": [
+    33.0,
+    -29.98,
+    24.25
+   ]
+  },
+  {
+   "name": "Drape_Win_BH_N_A",
+   "tris": 112,
+   "material": "D65_Drape_Green|drape_green",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -21.22,
+     29.63,
+     0.05
+    ],
+    [
+     -20.18,
+     30.03,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    -20.7,
+    29.98,
+    0.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BH_N",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -21.954,
+     29.554,
+     10.32
+    ],
+    [
+     -12.046,
+     29.98,
+     10.48
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    29.98,
+    10.25
+   ]
+  },
+  {
+   "name": "Drape_Win_BR3_N1_B",
+   "tris": 112,
+   "material": "D65_Drape_Mustard|drape_mustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -25.82,
+     29.63,
+     14.05
+    ],
+    [
+     -24.78,
+     30.03,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    -25.3,
+    29.98,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BR3_N1",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -36.106,
+     29.554,
+     24.32
+    ],
+    [
+     -23.894,
+     29.98,
+     24.48
+    ]
+   ],
+   "origin_plan": [
+    -30.0,
+    29.98,
+    24.25
+   ]
+  },
+  {
+   "name": "Drape_Win_BR3_N2_B",
+   "tris": 112,
+   "material": "D65_Drape_Mustard|drape_mustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -13.82,
+     29.63,
+     14.05
+    ],
+    [
+     -12.78,
+     30.03,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    -13.3,
+    29.98,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BR3_N2",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -21.954,
+     29.554,
+     24.32
+    ],
+    [
+     -12.046,
+     29.98,
+     24.48
+    ]
+   ],
+   "origin_plan": [
+    -17.0,
+    29.98,
+    24.25
+   ]
+  },
+  {
+   "name": "Drape_Win_LR_W_B",
+   "tris": 112,
+   "material": "D65_Drape_Mustard|drape_mustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.03,
+     2.18,
+     0.05
+    ],
+    [
+     -39.63,
+     3.22,
+     10.35
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    2.7,
+    0.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_LR_W",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.98,
+     -8.106,
+     10.32
+    ],
+    [
+     -39.554,
+     4.106,
+     10.48
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    -2.0,
+    10.25
+   ]
+  },
+  {
+   "name": "Drape_Win_BR3_W_A",
+   "tris": 112,
+   "material": "D65_Drape_Mustard|drape_mustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.03,
+     8.78,
+     14.05
+    ],
+    [
+     -39.63,
+     9.82,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    9.3,
+    14.05
+   ]
+  },
+  {
+   "name": "Drape_Win_BR3_W_B",
+   "tris": 112,
+   "material": "D65_Drape_Mustard|drape_mustard",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -40.03,
+     18.18,
+     14.05
+    ],
+    [
+     -39.63,
+     19.22,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    18.7,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BR3_W",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.98,
+     7.894,
+     24.32
+    ],
+    [
+     -39.554,
+     20.106,
+     24.48
+    ]
+   ],
+   "origin_plan": [
+    -39.98,
+    14.0,
+    24.25
+   ]
+  },
+  {
+   "name": "Drape_Win_BR2_E_A",
+   "tris": 112,
+   "material": "D65_Drape_Gold|drape_gold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     39.63,
+     -25.22,
+     14.05
+    ],
+    [
+     40.03,
+     -24.18,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    39.98,
+    -24.7,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BR2_E",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     39.554,
+     -26.106,
+     24.32
+    ],
+    [
+     39.98,
+     -13.894,
+     24.48
+    ]
+   ],
+   "origin_plan": [
+    39.98,
+    -20.0,
+    24.25
+   ]
+  },
+  {
+   "name": "Drape_Win_BR2_N_A",
+   "tris": 112,
+   "material": "D65_Drape_Gold|drape_gold",
+   "parent": null,
+   "bbox_plan": [
+    [
+     18.78,
+     3.13,
+     14.05
+    ],
+    [
+     19.82,
+     3.53,
+     24.35
+    ]
+   ],
+   "origin_plan": [
+    19.3,
+    3.48,
+    14.05
+   ]
+  },
+  {
+   "name": "DrapeRod_Win_BR2_N",
+   "tris": 188,
+   "material": "D65_DrapeRod|brass",
+   "parent": null,
+   "bbox_plan": [
+    [
+     17.741,
+     3.054,
+     24.32
+    ],
+    [
+     32.259,
+     3.48,
+     24.48
+    ]
+   ],
+   "origin_plan": [
+    25.0,
+    3.48,
+    24.25
+   ]
+  },
+  {
+   "name": "Wear_G",
+   "tris": 70,
+   "material": "T_Wear65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.88,
+     -30.0,
+     0.12
+    ],
+    [
+     39.88,
+     30.0,
+     12.88
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "name": "Wear_U",
+   "tris": 36,
+   "material": "T_Wear65",
+   "parent": null,
+   "bbox_plan": [
+    [
+     -39.88,
+     -29.88,
+     14.12
+    ],
+    [
+     35.282,
+     29.88,
+     25.88
+    ]
+   ],
+   "origin_plan": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ ],
+ "total_tris": 69958
+}

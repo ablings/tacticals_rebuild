@@ -1,0 +1,948 @@
+{
+ "note": "1965 dressing placed in the house file (plan coordinates; all art: CanCollide / CanQuery / CanTouch off). blocker_xy_r: pieces a player could walk into; add a PCOL blocker there if wanted. Wear_G / Wear_U: alpha decals (TextureID with alpha; CastShadow off).",
+ "placed": [
+  {
+   "name": "Dummy_LR_Sofa",
+   "master": "D65_Dummy_SitA",
+   "at": [
+    -16.2,
+    -17.7,
+    1.93
+   ],
+   "rot_z": -90.0,
+   "note": "seated on the ambush sofa's left seat"
+  },
+  {
+   "name": "Dummy_DR_1",
+   "master": "D65_Dummy_SitB",
+   "at": [
+    21.0,
+    -16.615,
+    1.87
+   ],
+   "rot_z": 0.0,
+   "note": "at the dining table"
+  },
+  {
+   "name": "Dummy_DR_2",
+   "master": "D65_Dummy_SitC",
+   "at": [
+    26.9,
+    -21.315,
+    1.87
+   ],
+   "rot_z": 180.0,
+   "note": "at the dining table"
+  },
+  {
+   "name": "Dummy_KT_Booth",
+   "master": "D65_Dummy_SitD",
+   "at": [
+    18.7,
+    22.5,
+    2.1
+   ],
+   "rot_z": 90.0,
+   "note": "in the diner booth"
+  },
+  {
+   "name": "Dummy_BR2_Bed",
+   "master": "D65_Dummy_SitE",
+   "at": [
+    33.0,
+    -13.25,
+    16.4
+   ],
+   "rot_z": 0.0,
+   "note": "sitting on the bed's edge"
+  },
+  {
+   "name": "Dummy_KT_Counter",
+   "master": "D65_Dummy_Lean",
+   "at": [
+    13.6,
+    25.94,
+    0.0
+   ],
+   "rot_z": 180.0,
+   "note": "standing, leaning on the north counter (behind spawn B's look direction)",
+   "blocker_xy_r": [
+    13.6,
+    25.64,
+    0.9
+   ]
+  },
+  {
+   "name": "Phone_FY",
+   "master": "D65_Phone",
+   "at": [
+    7.55,
+    -8.1,
+    3.4
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Radio_KT",
+   "master": "D65_Radio",
+   "at": [
+    30.0,
+    28.57,
+    3.4
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Canisters_KT",
+   "master": "D65_Canisters",
+   "at": [
+    38.47,
+    3.0,
+    3.4
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cake_KT",
+   "master": "D65_CakeDome",
+   "at": [
+    21.5,
+    8.14,
+    3.4
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "RecordPlayer_BR2",
+   "master": "D65_RecordPlayer",
+   "at": [
+    35.2,
+    2.45,
+    17.4
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "TinRocket_BR3",
+   "master": "D65_TinRocket",
+   "at": [
+    -27.4,
+    5.45,
+    17.4
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Radio_MB",
+   "master": "D65_Radio",
+   "at": [
+    -21.9,
+    -16.1,
+    16.0
+   ],
+   "rot_z": 105.0,
+   "note": ""
+  },
+  {
+   "name": "Papers_LR",
+   "master": "D65_Papers",
+   "at": [
+    -24.479,
+    4.984,
+    0.0
+   ],
+   "rot_z": 57.3,
+   "note": "on the floor"
+  },
+  {
+   "name": "Papers_BR2",
+   "master": "D65_Papers",
+   "at": [
+    32.586,
+    -31.456,
+    14.0
+   ],
+   "rot_z": 340.3,
+   "note": "on the floor"
+  },
+  {
+   "name": "Papers_MB",
+   "master": "D65_Papers",
+   "at": [
+    -9.962,
+    -10.557,
+    14.0
+   ],
+   "rot_z": 255.2,
+   "note": "on the floor"
+  },
+  {
+   "name": "Plates_DR",
+   "master": "D65_BrokenPlates",
+   "at": [
+    13.255,
+    -26.999,
+    0.0
+   ],
+   "rot_z": 229.9,
+   "note": "on the floor"
+  },
+  {
+   "name": "Plates_KT",
+   "master": "D65_BrokenPlates",
+   "at": [
+    24.849,
+    10.89,
+    0.0
+   ],
+   "rot_z": 5.4,
+   "note": "on the floor"
+  },
+  {
+   "name": "LampDown_MB",
+   "master": "D65_LampKnocked",
+   "at": [
+    -26.129,
+    -31.929,
+    14.0
+   ],
+   "rot_z": 309.0,
+   "note": "on the floor",
+   "blocker_xy_r": [
+    -26.13,
+    -31.93,
+    2.2
+   ]
+  },
+  {
+   "name": "ChairDown_DR",
+   "master": "D65_ChairKnocked",
+   "at": [
+    41.364,
+    -14.437,
+    0.0
+   ],
+   "rot_z": 134.6,
+   "note": "on the floor",
+   "blocker_xy_r": [
+    41.36,
+    -14.44,
+    1.8
+   ]
+  },
+  {
+   "name": "Sand_Door_Front",
+   "master": "D65_SandDrift",
+   "at": [
+    3.0,
+    -29.0,
+    0.0
+   ],
+   "rot_z": 0.0,
+   "note": "inside the door"
+  },
+  {
+   "name": "Sand_Door_Back",
+   "master": "D65_SandDrift",
+   "at": [
+    -3.0,
+    29.0,
+    0.0
+   ],
+   "rot_z": 180.0,
+   "note": "inside the door"
+  },
+  {
+   "name": "Sand_Win_DR_E",
+   "master": "D65_SandDriftSmall",
+   "at": [
+    39.25,
+    -22.0,
+    0.0
+   ],
+   "rot_z": 90.0,
+   "note": "blown in under the window"
+  },
+  {
+   "name": "Sand_Win_BR3_W",
+   "master": "D65_SandDriftSmall",
+   "at": [
+    -39.25,
+    14.0,
+    14.0
+   ],
+   "rot_z": -90.0,
+   "note": "blown in under the window"
+  },
+  {
+   "name": "Cobweb_FY_0",
+   "master": "D65_Cobweb",
+   "at": [
+    -8.98,
+    -29.98,
+    25.98
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_BH_1",
+   "master": "D65_Cobweb",
+   "at": [
+    -8.98,
+    29.98,
+    12.98
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_BH_2",
+   "master": "D65_Cobweb",
+   "at": [
+    8.98,
+    29.98,
+    12.98
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_LR_3",
+   "master": "D65_Cobweb",
+   "at": [
+    -39.98,
+    9.98,
+    12.98
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_MR_4",
+   "master": "D65_Cobweb",
+   "at": [
+    -9.02,
+    10.02,
+    12.98
+   ],
+   "rot_z": 90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_MR_5",
+   "master": "D65_Cobweb",
+   "at": [
+    -9.02,
+    29.98,
+    12.98
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_MR_6",
+   "master": "D65_Cobweb",
+   "at": [
+    -23.98,
+    29.98,
+    12.98
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_GB_7",
+   "master": "D65_Cobweb",
+   "at": [
+    -24.02,
+    29.98,
+    12.98
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_DR_8",
+   "master": "D65_Cobweb",
+   "at": [
+    9.02,
+    -29.98,
+    12.98
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_DR_9",
+   "master": "D65_Cobweb",
+   "at": [
+    39.98,
+    -29.98,
+    12.98
+   ],
+   "rot_z": 90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_KT_10",
+   "master": "D65_Cobweb",
+   "at": [
+    39.98,
+    29.98,
+    12.98
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_KT_11",
+   "master": "D65_Cobweb",
+   "at": [
+    9.02,
+    29.98,
+    12.98
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_UH_12",
+   "master": "D65_Cobweb",
+   "at": [
+    -8.98,
+    16.98,
+    25.98
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_MB_13",
+   "master": "D65_Cobweb",
+   "at": [
+    -39.98,
+    -18.98,
+    25.98
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_MB_14",
+   "master": "D65_Cobweb",
+   "at": [
+    -9.02,
+    3.98,
+    25.98
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_MB_15",
+   "master": "D65_Cobweb",
+   "at": [
+    -39.98,
+    3.98,
+    25.98
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_MB_16",
+   "master": "D65_Cobweb",
+   "at": [
+    -9.02,
+    -29.98,
+    25.98
+   ],
+   "rot_z": 90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_BR3_17",
+   "master": "D65_Cobweb",
+   "at": [
+    -9.02,
+    29.98,
+    25.98
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_UB_18",
+   "master": "D65_Cobweb",
+   "at": [
+    -8.98,
+    17.02,
+    25.98
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_UB_19",
+   "master": "D65_Cobweb",
+   "at": [
+    -8.98,
+    29.98,
+    25.98
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_UB_20",
+   "master": "D65_Cobweb",
+   "at": [
+    8.98,
+    23.02,
+    25.98
+   ],
+   "rot_z": 90.0,
+   "note": ""
+  },
+  {
+   "name": "Cobweb_UB_21",
+   "master": "D65_Cobweb",
+   "at": [
+    8.98,
+    29.98,
+    25.98
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Calendar_KT",
+   "master": "D65_Calendar",
+   "at": [
+    9.5,
+    -6.597,
+    4.8
+   ],
+   "rot_z": 90.0,
+   "note": "on the KT wall"
+  },
+  {
+   "name": "Poster_KT",
+   "master": "D65_Poster_Kitchen",
+   "at": [
+    34.195,
+    -9.5,
+    5.0
+   ],
+   "rot_z": 180.0,
+   "note": "on the KT wall"
+  },
+  {
+   "name": "Poster_BR2",
+   "master": "D65_Poster_Travel",
+   "at": [
+    31.765,
+    3.5,
+    18.6
+   ],
+   "rot_z": 0.0,
+   "note": "on the BR2 wall"
+  },
+  {
+   "name": "Notice_BH",
+   "master": "D65_Notice",
+   "at": [
+    -8.5,
+    5.938,
+    4.6
+   ],
+   "rot_z": 90.0,
+   "note": "on the BH wall"
+  },
+  {
+   "name": "Clipboard_MR",
+   "master": "D65_Clipboard",
+   "at": [
+    -11.683,
+    10.5,
+    4.2
+   ],
+   "rot_z": 180.0,
+   "note": "on the MR wall"
+  },
+  {
+   "name": "Pennant_BR3",
+   "master": "D65_Pennant",
+   "at": [
+    -40.0,
+    27.621,
+    20.0
+   ],
+   "rot_z": 90.0,
+   "note": "on the BR3 wall"
+  },
+  {
+   "name": "Calendar_MR",
+   "master": "D65_Calendar",
+   "at": [
+    -23.5,
+    19.039,
+    4.8
+   ],
+   "rot_z": 90.0,
+   "note": "on the MR wall"
+  },
+  {
+   "name": "Drape_Win_LR_S1_A",
+   "master": "D65_Drape_Mustard",
+   "at": [
+    -36.7,
+    -29.98,
+    0.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_LR_S1",
+   "master": "D65_DrapeRod",
+   "at": [
+    -32.0,
+    -29.98,
+    10.25
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_LR_S2_B",
+   "master": "D65_Drape_Mustard",
+   "at": [
+    -13.3,
+    -29.98,
+    0.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_LR_S2",
+   "master": "D65_DrapeRod",
+   "at": [
+    -18.0,
+    -29.98,
+    10.25
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_DR_S1_A",
+   "master": "D65_Drape_Green",
+   "at": [
+    13.3,
+    -29.98,
+    0.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_DR_S1",
+   "master": "D65_DrapeRod",
+   "at": [
+    18.0,
+    -29.98,
+    10.25
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_DR_S2_B",
+   "master": "D65_Drape_Green",
+   "at": [
+    36.7,
+    -29.98,
+    0.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_DR_S2",
+   "master": "D65_DrapeRod",
+   "at": [
+    32.0,
+    -29.98,
+    10.25
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_FY_S_A",
+   "master": "D65_Drape_Gold",
+   "at": [
+    -3.7,
+    -29.98,
+    14.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "Drape_Win_FY_S_B",
+   "master": "D65_Drape_Gold",
+   "at": [
+    7.7,
+    -29.98,
+    14.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_FY_S",
+   "master": "D65_DrapeRod",
+   "at": [
+    2.0,
+    -29.98,
+    24.75
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BR2_S1_A",
+   "master": "D65_Drape_Gold",
+   "at": [
+    15.3,
+    -29.98,
+    14.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "Drape_Win_BR2_S1_B",
+   "master": "D65_Drape_Gold",
+   "at": [
+    24.7,
+    -29.98,
+    14.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BR2_S1",
+   "master": "D65_DrapeRod",
+   "at": [
+    20.0,
+    -29.98,
+    24.25
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BR2_S2_B",
+   "master": "D65_Drape_Gold",
+   "at": [
+    36.7,
+    -29.98,
+    14.05
+   ],
+   "rot_z": 180.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BR2_S2",
+   "master": "D65_DrapeRod",
+   "at": [
+    33.0,
+    -29.98,
+    24.25
+   ],
+   "rot_z": 180.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BH_N_A",
+   "master": "D65_Drape_Green",
+   "at": [
+    -20.7,
+    29.98,
+    0.05
+   ],
+   "rot_z": 0.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BH_N",
+   "master": "D65_DrapeRod",
+   "at": [
+    -17.0,
+    29.98,
+    10.25
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BR3_N1_B",
+   "master": "D65_Drape_Mustard",
+   "at": [
+    -25.3,
+    29.98,
+    14.05
+   ],
+   "rot_z": 0.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BR3_N1",
+   "master": "D65_DrapeRod",
+   "at": [
+    -30.0,
+    29.98,
+    24.25
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BR3_N2_B",
+   "master": "D65_Drape_Mustard",
+   "at": [
+    -13.3,
+    29.98,
+    14.05
+   ],
+   "rot_z": 0.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BR3_N2",
+   "master": "D65_DrapeRod",
+   "at": [
+    -17.0,
+    29.98,
+    24.25
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_LR_W_B",
+   "master": "D65_Drape_Mustard",
+   "at": [
+    -39.98,
+    2.7,
+    0.05
+   ],
+   "rot_z": 90.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_LR_W",
+   "master": "D65_DrapeRod",
+   "at": [
+    -39.98,
+    -2.0,
+    10.25
+   ],
+   "rot_z": 90.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BR3_W_A",
+   "master": "D65_Drape_Mustard",
+   "at": [
+    -39.98,
+    9.3,
+    14.05
+   ],
+   "rot_z": 90.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "Drape_Win_BR3_W_B",
+   "master": "D65_Drape_Mustard",
+   "at": [
+    -39.98,
+    18.7,
+    14.05
+   ],
+   "rot_z": 90.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BR3_W",
+   "master": "D65_DrapeRod",
+   "at": [
+    -39.98,
+    14.0,
+    24.25
+   ],
+   "rot_z": 90.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BR2_E_A",
+   "master": "D65_Drape_Gold",
+   "at": [
+    39.98,
+    -24.7,
+    14.05
+   ],
+   "rot_z": -90.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BR2_E",
+   "master": "D65_DrapeRod",
+   "at": [
+    39.98,
+    -20.0,
+    24.25
+   ],
+   "rot_z": -90.0,
+   "note": ""
+  },
+  {
+   "name": "Drape_Win_BR2_N_A",
+   "master": "D65_Drape_Gold",
+   "at": [
+    19.3,
+    3.48,
+    14.05
+   ],
+   "rot_z": 0.0,
+   "note": "pulled to the side of the window"
+  },
+  {
+   "name": "DrapeRod_Win_BR2_N",
+   "master": "D65_DrapeRod",
+   "at": [
+    25.0,
+    3.48,
+    24.25
+   ],
+   "rot_z": 0.0,
+   "note": ""
+  }
+ ],
+ "wear_quads": {
+  "G": 35,
+  "U": 18
+ }
+}

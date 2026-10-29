@@ -1,0 +1,27 @@
+{
+ "note": "Optional room looks: layout furniture/dressing id -> 1965 variant asset (same box and size as the base name). Without this map every base name still works.",
+ "map": {
+  "MB_Chair": "H_Armchair_Mustard",
+  "BR2_Bed": "H_Bed_Double_Maple",
+  "LR_Sideboard": "H_Dresser_Credenza",
+  "FY_Console": "H_Dresser_Phone",
+  "BR2_Dresser": "H_Dresser_Maple",
+  "BR3_Dresser": "H_Dresser_Cream",
+  "DR_Sideboard": "H_TVConsole_Buffet",
+  "UB_Tub": "H_Bathtub_Butter",
+  "DR_Cabinet": "H_Bookcase_Hutch",
+  "BR2_Bookcase": "H_Bookcase_Maple",
+  "MR_Lockers": "H_Wardrobe_Lockers",
+  "BR2_Wardrobe": "H_Wardrobe_Maple",
+  "BR3_Wardrobe": "H_Wardrobe_Cream",
+  "BH_CoatTree": "H_TallCabinet_HallTree",
+  "BR3_Desk": "H_Desk_School",
+  "UB_Toilet": "H_Toilet_Butter",
+  "UB_Vanity": "H_Vanity_Butter",
+  "FY_Pend": "H_PendantLamp_Sputnik",
+  "MR_Art": "H_Frame_Notice",
+  "BR2_Art": "H_Frame_Pennant",
+  "MB_Art": "H_Frame_Mesa",
+  "MB_Rug": "H_Rug_Oval"
+ }
+}

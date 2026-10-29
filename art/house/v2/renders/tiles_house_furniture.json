@@ -1,0 +1,74 @@
+[
+ {
+  "name": "D65_Dummy_SitA",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Dummy_SitA.png",
+  "size": [
+   1.706,
+   4.924,
+   2.822
+  ],
+  "tris": 1252,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Dummy_SitB",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Dummy_SitB.png",
+  "size": [
+   1.706,
+   4.864,
+   2.822
+  ],
+  "tris": 1240,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Dummy_SitC",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Dummy_SitC.png",
+  "size": [
+   1.706,
+   4.864,
+   2.822
+  ],
+  "tris": 1240,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Dummy_SitD",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Dummy_SitD.png",
+  "size": [
+   1.706,
+   5.094,
+   2.822
+  ],
+  "tris": 1252,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Dummy_SitE",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Dummy_SitE.png",
+  "size": [
+   1.706,
+   5.394,
+   2.822
+  ],
+  "tris": 1252,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Dummy_Lean",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Dummy_Lean.png",
+  "size": [
+   1.713,
+   6.161,
+   1.849
+  ],
+  "tris": 1240,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ }
+]

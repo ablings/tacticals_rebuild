@@ -2,13 +2,13 @@
  "Edit": {
   "house": {
    "stats": {
-    "lights": 34,
+    "lights": 37,
     "openSkyShare": 0,
     "neon": 2,
     "indoor": true,
-    "walkCells": 285,
-    "meshparts": 278,
-    "parts": 619
+    "walkCells": 288,
+    "meshparts": 273,
+    "parts": 615
    },
    "fails": 0,
    "opts": "map attribute Indoor = true",
@@ -29,8 +29,8 @@
     "neon": 0,
     "indoor": false,
     "walkCells": 0,
-    "meshparts": 144,
-    "parts": 144
+    "meshparts": 129,
+    "parts": 129
    },
    "fails": 0,
    "opts": "exterior attribute Indoor = false",

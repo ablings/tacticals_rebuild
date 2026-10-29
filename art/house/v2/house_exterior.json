@@ -1,0 +1,2107 @@
+{
+ "note": "1965 desert test site. Same coordinates as house_shell.json (layout plan; outside ground z = -1). All art, CanCollide off, unreachable. Sky: tex/sky/sky_side.png for SkyboxBk/Ft/Lf/Rt, sky_up.png Up, sky_dn.png Dn. The v1 H_Trees (green trees) should NOT be imported with this exterior: its dry trees are DryTree_XX here.",
+ "atlases": {},
+ "tiles": {
+  "PaperSprig": "tex/tile/T_PaperSprig.png",
+  "PaperSprigRose": "tex/tile/T_PaperSprigRose.png",
+  "PaperVine": "tex/tile/T_PaperVine.png",
+  "PaperVineYellow": "tex/tile/T_PaperVineYellow.png",
+  "PaperDiamond": "tex/tile/T_PaperDiamond.png",
+  "PaperSprigRoseLow": "tex/tile/T_PaperSprigRoseLow.png",
+  "PaperVineYellowLow": "tex/tile/T_PaperVineYellowLow.png",
+  "Wainscot": "tex/tile/T_Wainscot.png",
+  "PaintCoffee": "tex/tile/T_PaintCoffee.png",
+  "PaintCoffeeLow": "tex/tile/T_PaintCoffeeLow.png",
+  "PaintMustard": "tex/tile/T_PaintMustard.png",
+  "PaintMustardLow": "tex/tile/T_PaintMustardLow.png",
+  "Pegboard": "tex/tile/T_Pegboard.png",
+  "Pine": "tex/tile/T_Pine.png",
+  "Fieldstone": "tex/tile/T_Fieldstone.png",
+  "TileMint": "tex/tile/T_TileMint.png",
+  "TileButter": "tex/tile/T_TileButter.png",
+  "TilePink": "tex/tile/T_TilePink.png",
+  "TileCream": "tex/tile/T_TileCream.png",
+  "Ceiling65": "tex/tile/T_Ceiling65.png",
+  "PaintCream": "tex/tile/T_PaintCream.png",
+  "TrimWalnut": "tex/tile/T_TrimWalnut.png",
+  "Parquet": "tex/tile/T_Parquet.png",
+  "LinoA": "tex/tile/T_LinoA.png",
+  "LinoB": "tex/tile/T_LinoB.png",
+  "CarpetGold": "tex/tile/T_CarpetGold.png",
+  "CarpetGreige": "tex/tile/T_CarpetGreige.png",
+  "CarpetTiles": "tex/tile/T_CarpetTiles.png",
+  "HexTile": "tex/tile/T_HexTile.png",
+  "Desert": "tex/tile/T_Desert.png",
+  "DryGrass": "tex/tile/T_DryGrass.png",
+  "Asphalt65": "tex/tile/T_Asphalt65.png",
+  "Concrete65": "tex/tile/T_Concrete65.png",
+  "SidingWhite": "tex/tile/T_SidingWhite.png",
+  "SidingMint": "tex/tile/T_SidingMint.png",
+  "SidingButter": "tex/tile/T_SidingButter.png",
+  "SidingSalmon": "tex/tile/T_SidingSalmon.png",
+  "Shingle": "tex/tile/T_Shingle.png",
+  "FenceWood": "tex/tile/T_FenceWood.png",
+  "Gravel65": "tex/tile/T_Gravel65.png",
+  "TrimWhite": "tex/tile/T_TrimWhite.png",
+  "MesaRock": "tex/tile/T_MesaRock.png",
+  "DirtRoad": "tex/tile/T_DirtRoad.png"
+ },
+ "objects": [
+  {
+   "name": "Ext_Across_Ceiling65",
+   "tris": 4,
+   "material": [
+    "T_Ceiling65"
+   ],
+   "bbox_plan": [
+    [
+     -33.0,
+     -140.0,
+     8.0
+    ],
+    [
+     33.0,
+     -100.0,
+     21.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_Concrete65",
+   "tris": 20,
+   "material": [
+    "T_Concrete65"
+   ],
+   "bbox_plan": [
+    [
+     -30.0,
+     -112.0,
+     -1.2
+    ],
+    [
+     3.0,
+     -94.0,
+     -0.4
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_FenceWood",
+   "tris": 8,
+   "material": [
+    "T_FenceWood"
+   ],
+   "bbox_plan": [
+    [
+     -29.0,
+     -111.9,
+     -0.4
+    ],
+    [
+     -23.0,
+     -109.6,
+     2.8
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_Fieldstone",
+   "tris": 118,
+   "material": [
+    "T_Fieldstone"
+   ],
+   "bbox_plan": [
+    [
+     -33.3,
+     -140.3,
+     -1.2
+    ],
+    [
+     33.3,
+     -99.7,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_GlassDark",
+   "tris": 132,
+   "material": [
+    "H_GlassDark"
+   ],
+   "bbox_plan": [
+    [
+     -32.65,
+     -139.65,
+     2.58
+    ],
+    [
+     32.65,
+     -100.35,
+     19.62
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_Pegboard",
+   "tris": 26,
+   "material": [
+    "T_Pegboard"
+   ],
+   "bbox_plan": [
+    [
+     -30.05,
+     -112.0,
+     -0.4
+    ],
+    [
+     -17.95,
+     -100.5,
+     8.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_Shingle",
+   "tris": 14,
+   "material": [
+    "T_Shingle"
+   ],
+   "bbox_plan": [
+    [
+     -34.4,
+     -141.4,
+     9.0
+    ],
+    [
+     34.4,
+     -93.7,
+     26.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_SidingMint",
+   "tris": 730,
+   "material": [
+    "T_SidingMint"
+   ],
+   "bbox_plan": [
+    [
+     -33.0,
+     -140.0,
+     2.0
+    ],
+    [
+     33.0,
+     -100.0,
+     26.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Across_TrimWhite",
+   "tris": 720,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     -34.4,
+     -141.4,
+     -0.7
+    ],
+    [
+     34.4,
+     -94.15,
+     26.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossE_Ceiling65",
+   "tris": 2,
+   "material": [
+    "T_Ceiling65"
+   ],
+   "bbox_plan": [
+    [
+     59.0,
+     -140.0,
+     10.6
+    ],
+    [
+     121.0,
+     -104.0,
+     10.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossE_Concrete65",
+   "tris": 10,
+   "material": [
+    "T_Concrete65"
+   ],
+   "bbox_plan": [
+    [
+     84.5,
+     -104.0,
+     -1.2
+    ],
+    [
+     95.0,
+     -98.0,
+     -0.4
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossE_Fieldstone",
+   "tris": 86,
+   "material": [
+    "T_Fieldstone"
+   ],
+   "bbox_plan": [
+    [
+     58.7,
+     -140.3,
+     -1.2
+    ],
+    [
+     121.3,
+     -103.7,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossE_GlassDark",
+   "tris": 60,
+   "material": [
+    "H_GlassDark"
+   ],
+   "bbox_plan": [
+    [
+     59.35,
+     -139.65,
+     2.58
+    ],
+    [
+     120.65,
+     -104.35,
+     8.62
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossE_Shingle",
+   "tris": 14,
+   "material": [
+    "T_Shingle"
+   ],
+   "bbox_plan": [
+    [
+     57.6,
+     -141.4,
+     9.0
+    ],
+    [
+     122.4,
+     -97.7,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossE_SidingSalmon",
+   "tris": 316,
+   "material": [
+    "T_SidingSalmon"
+   ],
+   "bbox_plan": [
+    [
+     59.0,
+     -140.0,
+     2.0
+    ],
+    [
+     121.0,
+     -104.0,
+     15.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossE_TrimWhite",
+   "tris": 350,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     57.6,
+     -141.4,
+     -0.7
+    ],
+    [
+     122.4,
+     -98.15,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_Ceiling65",
+   "tris": 4,
+   "material": [
+    "T_Ceiling65"
+   ],
+   "bbox_plan": [
+    [
+     -121.0,
+     -140.0,
+     8.0
+    ],
+    [
+     -59.0,
+     -104.0,
+     10.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_Concrete65",
+   "tris": 20,
+   "material": [
+    "T_Concrete65"
+   ],
+   "bbox_plan": [
+    [
+     -118.0,
+     -116.0,
+     -1.2
+    ],
+    [
+     -85.0,
+     -98.0,
+     -0.4
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_FenceWood",
+   "tris": 8,
+   "material": [
+    "T_FenceWood"
+   ],
+   "bbox_plan": [
+    [
+     -117.0,
+     -115.9,
+     -0.4
+    ],
+    [
+     -111.0,
+     -113.6,
+     2.8
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_Fieldstone",
+   "tris": 94,
+   "material": [
+    "T_Fieldstone"
+   ],
+   "bbox_plan": [
+    [
+     -121.3,
+     -140.3,
+     -1.2
+    ],
+    [
+     -58.7,
+     -103.7,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_GlassDark",
+   "tris": 60,
+   "material": [
+    "H_GlassDark"
+   ],
+   "bbox_plan": [
+    [
+     -120.65,
+     -139.65,
+     2.58
+    ],
+    [
+     -59.35,
+     -104.35,
+     8.62
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_Pegboard",
+   "tris": 26,
+   "material": [
+    "T_Pegboard"
+   ],
+   "bbox_plan": [
+    [
+     -118.05,
+     -116.0,
+     -0.4
+    ],
+    [
+     -105.95,
+     -104.5,
+     8.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_Shingle",
+   "tris": 14,
+   "material": [
+    "T_Shingle"
+   ],
+   "bbox_plan": [
+    [
+     -122.4,
+     -141.4,
+     9.0
+    ],
+    [
+     -57.6,
+     -97.7,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_SidingButter",
+   "tris": 394,
+   "material": [
+    "T_SidingButter"
+   ],
+   "bbox_plan": [
+    [
+     -121.0,
+     -140.0,
+     2.0
+    ],
+    [
+     -59.0,
+     -104.0,
+     15.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_AcrossW_TrimWhite",
+   "tris": 384,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     -122.4,
+     -141.4,
+     -0.7
+    ],
+    [
+     -57.6,
+     -98.15,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindE_Ceiling65",
+   "tris": 2,
+   "material": [
+    "T_Ceiling65"
+   ],
+   "bbox_plan": [
+    [
+     11.0,
+     91.0,
+     10.6
+    ],
+    [
+     69.0,
+     125.0,
+     10.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindE_Fieldstone",
+   "tris": 86,
+   "material": [
+    "T_Fieldstone"
+   ],
+   "bbox_plan": [
+    [
+     10.7,
+     90.7,
+     -1.2
+    ],
+    [
+     69.3,
+     125.3,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindE_GlassDark",
+   "tris": 60,
+   "material": [
+    "H_GlassDark"
+   ],
+   "bbox_plan": [
+    [
+     11.35,
+     91.35,
+     2.58
+    ],
+    [
+     68.65,
+     124.65,
+     8.62
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindE_Shingle",
+   "tris": 4,
+   "material": [
+    "T_Shingle"
+   ],
+   "bbox_plan": [
+    [
+     9.6,
+     89.6,
+     10.73
+    ],
+    [
+     70.4,
+     126.4,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindE_SidingWhite",
+   "tris": 316,
+   "material": [
+    "T_SidingWhite"
+   ],
+   "bbox_plan": [
+    [
+     11.0,
+     91.0,
+     2.0
+    ],
+    [
+     69.0,
+     125.0,
+     15.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindE_TrimWhite",
+   "tris": 334,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     9.6,
+     89.6,
+     -0.7
+    ],
+    [
+     70.4,
+     126.4,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindW_Ceiling65",
+   "tris": 2,
+   "material": [
+    "T_Ceiling65"
+   ],
+   "bbox_plan": [
+    [
+     -69.0,
+     91.0,
+     10.6
+    ],
+    [
+     -11.0,
+     125.0,
+     10.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindW_Fieldstone",
+   "tris": 86,
+   "material": [
+    "T_Fieldstone"
+   ],
+   "bbox_plan": [
+    [
+     -69.3,
+     90.7,
+     -1.2
+    ],
+    [
+     -10.7,
+     125.3,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindW_GlassDark",
+   "tris": 60,
+   "material": [
+    "H_GlassDark"
+   ],
+   "bbox_plan": [
+    [
+     -68.65,
+     91.35,
+     2.58
+    ],
+    [
+     -11.35,
+     124.65,
+     8.62
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindW_Shingle",
+   "tris": 4,
+   "material": [
+    "T_Shingle"
+   ],
+   "bbox_plan": [
+    [
+     -70.4,
+     89.6,
+     10.73
+    ],
+    [
+     -9.6,
+     126.4,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindW_SidingMint",
+   "tris": 316,
+   "material": [
+    "T_SidingMint"
+   ],
+   "bbox_plan": [
+    [
+     -69.0,
+     91.0,
+     2.0
+    ],
+    [
+     -11.0,
+     125.0,
+     15.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_BehindW_TrimWhite",
+   "tris": 334,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     -70.4,
+     89.6,
+     -0.7
+    ],
+    [
+     -9.6,
+     126.4,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Fences_FenceWood",
+   "tris": 630,
+   "material": [
+    "T_FenceWood"
+   ],
+   "bbox_plan": [
+    [
+     -46.33,
+     -40.33,
+     -1.0
+    ],
+    [
+     46.33,
+     75.33,
+     6.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Fences_TrimWhite",
+   "tris": 2344,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     -46.0,
+     -92.05,
+     -1.0
+    ],
+    [
+     46.0,
+     -91.8,
+     2.7
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Ground_Desert",
+   "tris": 2,
+   "material": [
+    "T_Desert"
+   ],
+   "bbox_plan": [
+    [
+     -900.0,
+     -900.0,
+     -1.0
+    ],
+    [
+     900.0,
+     900.0,
+     -1.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Mesas_MesaRock",
+   "tris": 220,
+   "material": [
+    "T_MesaRock"
+   ],
+   "bbox_plan": [
+    [
+     -820.32,
+     -789.24,
+     -3.0
+    ],
+    [
+     671.28,
+     673.93,
+     68.1
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourE_Ceiling65",
+   "tris": 2,
+   "material": [
+    "T_Ceiling65"
+   ],
+   "bbox_plan": [
+    [
+     56.0,
+     -25.0,
+     21.6
+    ],
+    [
+     116.0,
+     13.0,
+     21.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourE_Fieldstone",
+   "tris": 110,
+   "material": [
+    "T_Fieldstone"
+   ],
+   "bbox_plan": [
+    [
+     55.7,
+     -25.3,
+     -1.2
+    ],
+    [
+     116.3,
+     13.3,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourE_GlassDark",
+   "tris": 132,
+   "material": [
+    "H_GlassDark"
+   ],
+   "bbox_plan": [
+    [
+     56.35,
+     -24.65,
+     2.58
+    ],
+    [
+     115.65,
+     12.65,
+     19.62
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourE_Shingle",
+   "tris": 4,
+   "material": [
+    "T_Shingle"
+   ],
+   "bbox_plan": [
+    [
+     54.6,
+     -26.4,
+     21.77
+    ],
+    [
+     117.4,
+     14.4,
+     26.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourE_SidingSalmon",
+   "tris": 656,
+   "material": [
+    "T_SidingSalmon"
+   ],
+   "bbox_plan": [
+    [
+     56.0,
+     -25.0,
+     2.0
+    ],
+    [
+     116.0,
+     13.0,
+     26.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourE_TrimWhite",
+   "tris": 670,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     54.6,
+     -26.4,
+     -0.7
+    ],
+    [
+     117.4,
+     14.4,
+     26.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourW_Ceiling65",
+   "tris": 2,
+   "material": [
+    "T_Ceiling65"
+   ],
+   "bbox_plan": [
+    [
+     -116.0,
+     -25.0,
+     10.6
+    ],
+    [
+     -56.0,
+     13.0,
+     10.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourW_Fieldstone",
+   "tris": 86,
+   "material": [
+    "T_Fieldstone"
+   ],
+   "bbox_plan": [
+    [
+     -116.3,
+     -25.3,
+     -1.2
+    ],
+    [
+     -55.7,
+     13.3,
+     2.0
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourW_GlassDark",
+   "tris": 60,
+   "material": [
+    "H_GlassDark"
+   ],
+   "bbox_plan": [
+    [
+     -115.65,
+     -24.65,
+     2.58
+    ],
+    [
+     -56.35,
+     12.65,
+     8.62
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourW_Shingle",
+   "tris": 4,
+   "material": [
+    "T_Shingle"
+   ],
+   "bbox_plan": [
+    [
+     -117.4,
+     -26.4,
+     10.77
+    ],
+    [
+     -54.6,
+     14.4,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourW_SidingButter",
+   "tris": 316,
+   "material": [
+    "T_SidingButter"
+   ],
+   "bbox_plan": [
+    [
+     -116.0,
+     -25.0,
+     2.0
+    ],
+    [
+     -56.0,
+     13.0,
+     15.3
+    ]
+   ]
+  },
+  {
+   "name": "Ext_NeighbourW_TrimWhite",
+   "tris": 334,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     -117.4,
+     -26.4,
+     -0.7
+    ],
+    [
+     -54.6,
+     14.4,
+     15.6
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Street_Concrete65",
+   "tris": 16,
+   "material": [
+    "T_Concrete65"
+   ],
+   "bbox_plan": [
+    [
+     -260.0,
+     -79.0,
+     -1.3
+    ],
+    [
+     0.0,
+     -57.0,
+     -0.7
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Street_DirtRoad",
+   "tris": 88,
+   "material": [
+    "T_DirtRoad"
+   ],
+   "bbox_plan": [
+    [
+     -260.0,
+     -83.0,
+     -1.3
+    ],
+    [
+     29.0,
+     -53.0,
+     -0.88
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Yard_Concrete65",
+   "tris": 26,
+   "material": [
+    "T_Concrete65"
+   ],
+   "bbox_plan": [
+    [
+     -14.0,
+     -56.0,
+     -1.2
+    ],
+    [
+     30.0,
+     43.0,
+     -0.75
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Yard_DryGrass",
+   "tris": 36,
+   "material": [
+    "T_DryGrass"
+   ],
+   "bbox_plan": [
+    [
+     -44.0,
+     -55.0,
+     -1.2
+    ],
+    [
+     44.0,
+     74.0,
+     -0.85
+    ]
+   ]
+  },
+  {
+   "name": "Ext_Yard_TrimWhite",
+   "tris": 1852,
+   "material": [
+    "T_TrimWhite"
+   ],
+   "bbox_plan": [
+    [
+     -44.0,
+     -55.35,
+     -1.0
+    ],
+    [
+     44.0,
+     -55.1,
+     2.7
+    ]
+   ]
+  },
+  {
+   "name": "Dummy_Ext_Fence",
+   "tris": 1240,
+   "material": [
+    "D65_Dummy_Lean|cloth_suit",
+    "D65_Dummy_Lean|cloth_shirt",
+    "D65_Dummy_Lean|dummy_skin",
+    "D65_Dummy_Lean|dummy_joint",
+    "D65_Dummy_Lean|shoe"
+   ],
+   "bbox_plan": [
+    [
+     -16.86,
+     -91.43,
+     -1.0
+    ],
+    [
+     -15.14,
+     -89.58,
+     5.16
+    ]
+   ]
+  },
+  {
+   "name": "Dummy_Ext_Porch",
+   "tris": 1240,
+   "material": [
+    "D65_Dummy_SitB|cloth_suit",
+    "D65_Dummy_SitB|dummy_skin",
+    "D65_Dummy_SitB|dummy_joint",
+    "D65_Dummy_SitB|shoe"
+   ],
+   "bbox_plan": [
+    [
+     29.65,
+     -95.8,
+     -0.97
+    ],
+    [
+     31.35,
+     -92.98,
+     3.89
+    ]
+   ]
+  },
+  {
+   "name": "Dummy_Ext_Truck",
+   "tris": 1240,
+   "material": [
+    "D65_Dummy_Lean|cloth_suit",
+    "D65_Dummy_Lean|cloth_shirt",
+    "D65_Dummy_Lean|dummy_skin",
+    "D65_Dummy_Lean|dummy_joint",
+    "D65_Dummy_Lean|shoe"
+   ],
+   "bbox_plan": [
+    [
+     -64.08,
+     -67.26,
+     -0.88
+    ],
+    [
+     -62.23,
+     -65.54,
+     5.28
+    ]
+   ]
+  },
+  {
+   "name": "PowerPole_01",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -200.7,
+     -81.2,
+     -1.3
+    ],
+    [
+     -199.3,
+     -74.8,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPole_02",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -160.7,
+     -81.2,
+     -1.3
+    ],
+    [
+     -159.3,
+     -74.8,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPole_03",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -120.7,
+     -81.2,
+     -1.3
+    ],
+    [
+     -119.3,
+     -74.8,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPole_04",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -80.7,
+     -81.2,
+     -1.3
+    ],
+    [
+     -79.3,
+     -74.8,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPole_05",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -40.7,
+     -81.2,
+     -1.3
+    ],
+    [
+     -39.3,
+     -74.8,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPole_06",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -0.7,
+     -81.2,
+     -1.3
+    ],
+    [
+     0.7,
+     -74.8,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPole_07",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     39.3,
+     -81.2,
+     -1.3
+    ],
+    [
+     40.7,
+     -74.8,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerWires",
+   "tris": 1292,
+   "material": [
+    "H_Wire"
+   ],
+   "bbox_plan": [
+    [
+     -200.01,
+     -80.87,
+     21.82
+    ],
+    [
+     40.01,
+     -31.19,
+     24.37
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_01",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -160.7,
+     78.8,
+     -1.3
+    ],
+    [
+     -159.3,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_02",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -120.7,
+     78.8,
+     -1.3
+    ],
+    [
+     -119.3,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_03",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -80.7,
+     78.8,
+     -1.3
+    ],
+    [
+     -79.3,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_04",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -40.7,
+     78.8,
+     -1.3
+    ],
+    [
+     -39.3,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_05",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     -0.7,
+     78.8,
+     -1.3
+    ],
+    [
+     0.7,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_06",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     39.3,
+     78.8,
+     -1.3
+    ],
+    [
+     40.7,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_07",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     79.3,
+     78.8,
+     -1.3
+    ],
+    [
+     80.7,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_08",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     119.3,
+     78.8,
+     -1.3
+    ],
+    [
+     120.7,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerPoleBack_09",
+   "tris": 148,
+   "material": [
+    "H_Pole"
+   ],
+   "bbox_plan": [
+    [
+     159.3,
+     78.8,
+     -1.3
+    ],
+    [
+     160.7,
+     85.2,
+     25.0
+    ]
+   ]
+  },
+  {
+   "name": "PowerWiresBack",
+   "tris": 1632,
+   "material": [
+    "H_Wire"
+   ],
+   "bbox_plan": [
+    [
+     -160.01,
+     79.13,
+     22.03
+    ],
+    [
+     160.01,
+     84.87,
+     24.37
+    ]
+   ]
+  },
+  {
+   "name": "Car_Wagon",
+   "tris": 800,
+   "material": [
+    "Car_Wagon|car_mint",
+    "Car_Wagon|chrome_ext",
+    "Car_Wagon|glass65",
+    "Car_Wagon|lamp_lens",
+    "Car_Wagon|lamp_tail",
+    "Car_Wagon|tyre65",
+    "Car_Wagon|whitewall"
+   ],
+   "bbox_plan": [
+    [
+     20.04,
+     -50.56,
+     -0.83
+    ],
+    [
+     25.96,
+     -35.38,
+     4.63
+    ]
+   ]
+  },
+  {
+   "name": "Car_Sedan",
+   "tris": 800,
+   "material": [
+    "Car_Sedan|car_butter",
+    "Car_Sedan|chrome_ext",
+    "Car_Sedan|glass65",
+    "Car_Sedan|lamp_lens",
+    "Car_Sedan|lamp_tail",
+    "Car_Sedan|tyre65",
+    "Car_Sedan|whitewall"
+   ],
+   "bbox_plan": [
+    [
+     -41.36,
+     -66.96,
+     -0.89
+    ],
+    [
+     -26.58,
+     -61.04,
+     4.47
+    ]
+   ]
+  },
+  {
+   "name": "Car_SedanSalmon",
+   "tris": 800,
+   "material": [
+    "Car_SedanSalmon|car_salmon",
+    "Car_SedanSalmon|chrome_ext",
+    "Car_SedanSalmon|glass65",
+    "Car_SedanSalmon|lamp_lens",
+    "Car_SedanSalmon|lamp_tail",
+    "Car_SedanSalmon|tyre65",
+    "Car_SedanSalmon|whitewall"
+   ],
+   "bbox_plan": [
+    [
+     -25.65,
+     -113.6,
+     -0.83
+    ],
+    [
+     -18.35,
+     -98.42,
+     4.53
+    ]
+   ]
+  },
+  {
+   "name": "Truck_Dairy",
+   "tris": 1384,
+   "material": [
+    "Truck_Dairy|car_olive",
+    "Truck_Dairy|glass65",
+    "Truck_Dairy|car_cream",
+    "Truck_Dairy|tyre65",
+    "Truck_Dairy|whitewall"
+   ],
+   "bbox_plan": [
+    [
+     -78.5,
+     -74.76,
+     -0.84
+    ],
+    [
+     -61.5,
+     -68.24,
+     8.12
+    ]
+   ]
+  },
+  {
+   "name": "Sandbags_1",
+   "tris": 3240,
+   "material": [
+    "Sandbags_1|burlap"
+   ],
+   "bbox_plan": [
+    [
+     26.93,
+     -86.92,
+     -1.0
+    ],
+    [
+     40.68,
+     -83.15,
+     1.27
+    ]
+   ]
+  },
+  {
+   "name": "Sandbags_2",
+   "tris": 1836,
+   "material": [
+    "Sandbags_2|burlap"
+   ],
+   "bbox_plan": [
+    [
+     -57.14,
+     54.94,
+     -0.85
+    ],
+    [
+     -53.55,
+     64.71,
+     0.87
+    ]
+   ]
+  },
+  {
+   "name": "Sandbags_3",
+   "tris": 3564,
+   "material": [
+    "Sandbags_3|burlap"
+   ],
+   "bbox_plan": [
+    [
+     114.3,
+     -42.49,
+     -1.0
+    ],
+    [
+     125.7,
+     -37.52,
+     1.82
+    ]
+   ]
+  },
+  {
+   "name": "Sign_Restricted",
+   "tris": 36,
+   "material": [
+    "Sign_Restricted|post_wood",
+    "Sign_Restricted|sign_board"
+   ],
+   "bbox_plan": [
+    [
+     37.5,
+     -83.15,
+     -1.3
+    ],
+    [
+     42.5,
+     -82.75,
+     6.6
+    ]
+   ]
+  },
+  {
+   "name": "Sign_Danger",
+   "tris": 36,
+   "material": [
+    "Sign_Danger|post_wood",
+    "Sign_Danger|sign_board"
+   ],
+   "bbox_plan": [
+    [
+     -32.43,
+     81.75,
+     -1.46
+    ],
+    [
+     -27.05,
+     82.15,
+     6.76
+    ]
+   ]
+  },
+  {
+   "name": "Sign_RoadClosed",
+   "tris": 36,
+   "material": [
+    "Sign_RoadClosed|post_wood",
+    "Sign_RoadClosed|sign_board"
+   ],
+   "bbox_plan": [
+    [
+     -122.3,
+     -60.94,
+     -1.3
+    ],
+    [
+     -117.57,
+     -58.91,
+     5.6
+    ]
+   ]
+  },
+  {
+   "name": "Sign_Restricted2",
+   "tris": 36,
+   "material": [
+    "Sign_Restricted2|post_wood",
+    "Sign_Restricted2|sign_board"
+   ],
+   "bbox_plan": [
+    [
+     57.5,
+     81.31,
+     -1.49
+    ],
+    [
+     61.97,
+     82.49,
+     5.68
+    ]
+   ]
+  },
+  {
+   "name": "Trellis_Across",
+   "tris": 584,
+   "material": [
+    "Trellis_Across|post_wood",
+    "Trellis_Across|leaf_dry2"
+   ],
+   "bbox_plan": [
+    [
+     -2.32,
+     -94.92,
+     -1.0
+    ],
+    [
+     2.32,
+     -92.8,
+     7.74
+    ]
+   ]
+  },
+  {
+   "name": "Trellis_Ours",
+   "tris": 584,
+   "material": [
+    "Trellis_Ours|post_wood",
+    "Trellis_Ours|leaf_dry2"
+   ],
+   "bbox_plan": [
+    [
+     -10.96,
+     43.68,
+     -1.0
+    ],
+    [
+     -9.08,
+     48.32,
+     7.71
+    ]
+   ]
+  },
+  {
+   "name": "Bike_1",
+   "tris": 338,
+   "material": [
+    "Bike_1|tyre65",
+    "Bike_1|car_olive",
+    "Bike_1|chrome_ext"
+   ],
+   "bbox_plan": [
+    [
+     -23.72,
+     -109.07,
+     2.8
+    ],
+    [
+     -18.28,
+     -108.94,
+     6.15
+    ]
+   ]
+  },
+  {
+   "name": "Bike_2",
+   "tris": 338,
+   "material": [
+    "Bike_2|tyre65",
+    "Bike_2|car_olive",
+    "Bike_2|chrome_ext"
+   ],
+   "bbox_plan": [
+    [
+     -22.22,
+     -108.47,
+     2.6
+    ],
+    [
+     -16.78,
+     -108.34,
+     5.95
+    ]
+   ]
+  },
+  {
+   "name": "Banner_Garage",
+   "tris": 100,
+   "material": [
+    "Banner_Garage|banner",
+    "Banner_Garage|post_wood"
+   ],
+   "bbox_plan": [
+    [
+     -26.7,
+     -111.11,
+     4.2
+    ],
+    [
+     -21.3,
+     -110.9,
+     7.56
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_01",
+   "tris": 360,
+   "material": [
+    "DryTree_01|bark_dry",
+    "DryTree_01|leaf_dry2",
+    "DryTree_01|leaf_dry"
+   ],
+   "bbox_plan": [
+    [
+     -34.24,
+     -48.81,
+     -1.32
+    ],
+    [
+     -23.37,
+     -40.33,
+     11.71
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_02",
+   "tris": 150,
+   "material": [
+    "DryTree_02|bark_dry"
+   ],
+   "bbox_plan": [
+    [
+     32.78,
+     59.16,
+     -1.34
+    ],
+    [
+     39.18,
+     65.78,
+     9.46
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_03",
+   "tris": 360,
+   "material": [
+    "DryTree_03|bark_dry",
+    "DryTree_03|leaf_dry2",
+    "DryTree_03|leaf_dry"
+   ],
+   "bbox_plan": [
+    [
+     -67.16,
+     -99.89,
+     -1.34
+    ],
+    [
+     -59.89,
+     -91.29,
+     13.14
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_04",
+   "tris": 150,
+   "material": [
+    "DryTree_04|bark_dry"
+   ],
+   "bbox_plan": [
+    [
+     55.83,
+     -100.5,
+     -1.37
+    ],
+    [
+     63.06,
+     -93.02,
+     9.71
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_05",
+   "tris": 360,
+   "material": [
+    "DryTree_05|bark_dry",
+    "DryTree_05|leaf_dry2",
+    "DryTree_05|leaf_dry"
+   ],
+   "bbox_plan": [
+    [
+     -119.76,
+     -52.64,
+     -1.33
+    ],
+    [
+     -111.66,
+     -43.63,
+     12.53
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_06",
+   "tris": 150,
+   "material": [
+    "DryTree_06|bark_dry"
+   ],
+   "bbox_plan": [
+    [
+     115.04,
+     -55.77,
+     -1.34
+    ],
+    [
+     120.69,
+     -49.56,
+     8.41
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_07",
+   "tris": 360,
+   "material": [
+    "DryTree_07|bark_dry",
+    "DryTree_07|leaf_dry2",
+    "DryTree_07|leaf_dry"
+   ],
+   "bbox_plan": [
+    [
+     -24.58,
+     88.42,
+     -1.31
+    ],
+    [
+     -14.08,
+     96.38,
+     11.05
+    ]
+   ]
+  },
+  {
+   "name": "DryTree_08",
+   "tris": 360,
+   "material": [
+    "DryTree_08|bark_dry",
+    "DryTree_08|leaf_dry2",
+    "DryTree_08|leaf_dry"
+   ],
+   "bbox_plan": [
+    [
+     143.2,
+     -100.09,
+     -1.32
+    ],
+    [
+     152.05,
+     -88.89,
+     11.44
+    ]
+   ]
+  },
+  {
+   "name": "Mast_South",
+   "tris": 1620,
+   "material": [
+    "Mast_South|steel_mast",
+    "Mast_South|cabin_paint",
+    "Mast_South|glass65",
+    "Mast_South|post_wood"
+   ],
+   "bbox_plan": [
+    [
+     22.04,
+     -371.96,
+     -1.15
+    ],
+    [
+     50.8,
+     -348.04,
+     141.0
+    ]
+   ]
+  },
+  {
+   "name": "Mast_NE",
+   "tris": 1332,
+   "material": [
+    "Mast_NE|steel_mast",
+    "Mast_NE|cabin_paint",
+    "Mast_NE|glass65",
+    "Mast_NE|post_wood"
+   ],
+   "bbox_plan": [
+    [
+     250.68,
+     240.68,
+     -1.13
+    ],
+    [
+     273.72,
+     259.32,
+     109.0
+    ]
+   ]
+  }
+ ],
+ "total_tris": 41534
+}
