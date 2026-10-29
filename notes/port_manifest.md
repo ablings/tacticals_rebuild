@@ -648,3 +648,36 @@ himself; we never publish.
 - Tests: notes/test_place.md "Tests" (two-player Server + Clients on the Shadow PC; lobby Play).
 - Live check for Edward: in the lobby type `;testplace` (admins only) -> you land in the Test place's waiting area; `;maplist`,
   `;testmatch Arena 1v1 bots`.
+
+## Live port 47 (2026-10-28 20:09-20:40, House map builder; Edward: "Publish now; upload the tile in Browser 1") - House: Matchmaking + Ranked + LOBBY
+- What: the new duel map **House** (two-storey modern house, extra map in the vote; every other map stays; Tutorial unchanged) with
+  breakable window glass (fix/breakable_glass.lua round 1). Grade: round 5 PASS 8.6, Edward's changes after the sheets, round 6 items
+  fixed (notes/house_build.md). Smoke alarms are NOT in this port (separate work, not approved).
+- match_place_ref.rbxl (af5ac0d): fix/breakable_glass.lua (match, hash 858f3888 -> 1e6ec360) + tools/house_kit_copy.py from
+  out/house/build.rbxl (fingerprint MATCH: 625 instances, 391 MeshParts, 166 SA) + fix/map_house.lua (301 gameplay parts, 448 art parts,
+  28 windows, 8 doors, 37 lights; BotConfig CoverFolders += House/CollisionProxies). Read-back 0 differences, walk-through 0, art fit 0.020.
+- **Matchmaking** (97339328188402), published 20:09: copy of match_place_ref -> tools/port_prep.sh Matchmaking (split_build, deploy_ui
+  --matchmaking, PLAYQUEUE, SWITCHNOW) -> bot match: vote listed Warehouse/Arena/Warehouse2/House, House won, me on A (-34,-19) and
+  MatchBot on B (34,19), doors Front/Back Locked, EN Closed, the rest Open, clock 16.2. Publish As > gunsy funsy > tacticals > Matchmaking
+  > Overwrite > Grant Permissions and Publish. Read back from the cloud window (out/house_port/readback.lua): PlaceId 97339328188402,
+  DuelMaps Warehouse,Arena,Warehouse2,House; PlaceKind Matchmaking; House 615 parts / 273 MeshParts, 293 proxies, 28 windows, 8 doors;
+  HouseExterior 166; HouseKit 625; Image rbxassetid://115831329348823; StudioTeleportData nil; 352 scripts, 0 test marks.
+  Console: one old "not authorized to grant ... asset 16049574146" (an asset already in the pre-House Matchmaking place, not House) and the
+  old WrapConfig "Asset type does not match" lines (pre-existing).
+- **Ranked** (122908502889013), published 20:15: same path > Ranked. Read back: same numbers, PlaceKind Ranked.
+- **tacticals lobby** (126491009194165), published 20:38: on top of live port 46 (ce90e6a, ;testplace). Tacticals_rebuild.rbxl:
+  fix/breakable_glass.lua (hub, hash 6be35ab4 -> 0f5497cf) -> tools/duel_map_port.py match_place_ref -> lobby House House,HouseExterior
+  (1,163 instances, 0 missing meshes; no older _DuelSource.House existed) -> fix/house_lobby_prep.lua (exterior folded in, ground/street
+  cut to 320, 4 far poles cut; footprint 321 x 360) -> fix/duel_split_map.lua with ONLY = "House" (visual 740 parts, solid 331, modes
+  1v1/2v2/3v3). Pad duel (Studio, DuelTestSolo, standing on Pad_1v1_A.Team1): D1 at 4000,100,0, vote House won, me on A (-34,-19), the
+  bot on B (34,19), 28 glass + 61 window barriers + 8 doors in the Solid layer, my client at clock 16.2. Test flag cleared, saved 20:32,
+  copied to Tacticals_main_ported.rbxl + Technology Future (tools/set_technology.py ... 4). Publish As > gunsy funsy > tacticals >
+  tacticals > Overwrite > Grant. Read back (out/house_port/readback_lobby.lua): PlaceId 126491009194165; DuelMaps Warehouse(1v1),
+  Arena(1v1,2v2,3v3), Warehouse2(1v1), House(1v1,2v2,3v3); House image set; _DuelSource.House 869 parts / 527 MeshParts; TestPlace command
+  + TestPlaceId 99722095417844 kept; ArenaShootables LobbySteamFillRound 1 kept; 383 scripts, 0 test marks.
+- Publish notes: Studio's "Auto Recovery File Found" prompt can open off-screen as a borderless 366x40 window that holds the place
+  window disabled (Ctrl+S does nothing). Never hide it: bring it on screen and press Ignore. With Studio windows of other sessions open,
+  a "front" can lose to their modal dialogs: minimize other Studio windows during Publish As (restore after).
+- Live checks for Edward: a Matchmaking or Ranked 1v1 shows House in the vote with its picture; in the house: spawns in the living room
+  and the kitchen facing into the room, front/back doors locked, shooting a window breaks the glass but nobody can climb out; a 1v1 pad
+  duel in the lobby can vote House.
