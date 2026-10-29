@@ -207,3 +207,4 @@ On top of live port 47 (House live, no alarms). Working copies in `out/alarm_por
 Steps when allowed: Publish As each window (alarm_Matchmaking > Matchmaking, alarm_Ranked > Ranked, alarm_lobby_ported > tacticals;
 gunsy funsy > tacticals > Overwrite > Grant), read back (tools/house_cloud_readback*.lua + SmokeAlarmRound 3), then copy the copies
 over Matchmaking_place / Ranked_place / Tacticals_rebuild / Tacticals_main_ported and add port_manifest "Live port 48".
+**PUBLISHED** after Edward's "publish" (2026-10-28 ~20:56 Shadow PC time): live port 48 (notes/port_manifest.md), all three read back.
