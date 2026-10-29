@@ -1,4 +1,4 @@
--- test_place_install.lua [TESTPLACE] round 1, 2026-10-28 (notes/test_place.md): the code of the admin-only Test place.
+-- test_place_install.lua [TESTPLACE] round 2, 2026-10-28 (notes/test_place.md): the code of the admin-only Test place.
 -- Run on an opened COPY of the match place AFTER `split_build.py place <id> Test` (that sets ReplicatedStorage.PlaceKind = "Test"
 -- and routes a Test server to manager.RunTestPlace):
 --     python tools/test_place_build.py place <window name> [UNDO]
@@ -16,7 +16,7 @@
 --   AdminFramework  Commands/TestPlace (new: ;maplist, ;testmatch); Commands/Duel ;endmatch says where players go.
 --   ServerStorage.StagingMaps (empty Folder) if missing: map builders put staging maps there.
 local UNDO = false --@UNDO
-local ROUND = 1
+local ROUND = 2
 
 local RS = game:GetService("ReplicatedStorage")
 local SS = game:GetService("ServerStorage")
@@ -607,7 +607,8 @@ local EDITS = {
 	{ "RoundManager",
 		"\t\t\t\tif IS_STUDIO and (id == \"bot\" or (n and n <= 0)) then bots[side] += 1\n",
 		"\t\t\t\t-- [TESTPLACE] test bots also on the Test place (live); a Test match never pays\n"
-			.. "\t\t\t\tif (IS_STUDIO or first.TestPlace == true) and (id == \"bot\" or (n and n <= 0)) then bots[side] += 1\n" },
+			.. "\t\t\t\t-- (a player who is here is never a bot: Studio's Server + Clients test gives real players ids -1, -2...)\n"
+			.. "\t\t\t\tif (IS_STUDIO or first.TestPlace == true) and (id == \"bot\" or (n and n <= 0 and not Players:GetPlayerByUserId(n))) then bots[side] += 1\n" },
 	-- RoundManager 3: a cancelled test match stays on the Test place
 	{ "RoundManager",
 		"\t\ttask.wait(5)\n\t\tbackToLobby(Players:GetPlayers())\n\t\treturn\n\tend\n\t-- strangers (not on either list) can't play here\n",
@@ -644,6 +645,13 @@ local EDITS = {
 		"\t\t\t\tif not player:GetAttribute(\"InMatch\") and not ReplicatedStorage:GetAttribute(\"LiveMatch\") then\n",
 		"\t\t\t\t-- [TESTPLACE] (or manager._testPlace: admins waiting beside a running test match respawn too)\n"
 			.. "\t\t\t\tif not player:GetAttribute(\"InMatch\") and (not ReplicatedStorage:GetAttribute(\"LiveMatch\") or manager._testPlace) then\n" },
+	-- RoundManager 9: a test bot never takes a present player's id (Studio Server + Clients players are -1, -2...)
+	{ "RoundManager",
+		"\t\t\tbotN += 1\n\t\t\ttable.insert(teams[side], { isBot = true, userId = -botN, name = \"TestBot\" })\n",
+		"\t\t\tbotN += 1\n"
+			.. "\t\t\t-- [TESTPLACE] a test bot never takes a present player's id (Studio Server + Clients players are -1, -2...)\n"
+			.. "\t\t\twhile Players:GetPlayerByUserId(-botN) do botN += 1 end\n"
+			.. "\t\t\ttable.insert(teams[side], { isBot = true, userId = -botN, name = \"TestBot\" })\n" },
 	-- DataManager 1: the Test place switch
 	{ "DataManager",
 		"dataManager.key = dataKey\n",
