@@ -703,3 +703,30 @@ himself; we never publish.
   before Publish As, and screenshot the File menu (the window title in it) before clicking Publish As.
 - Live checks for Edward: in a House match a small white alarm sits on the hall ceiling and the landing ceiling; every half-minute or so
   one chirps (red light blinks); shoot one: it blares ~7 s, the cover drops open, and footsteps near it go quiet; next round it's back.
+
+## Test port 49 (2026-10-29 02:24-03:06, main PC, House map builder; work order: Lead's plan approved by Edward, "publish to the admin-only TEST place ONLY"; Edward 02:00: "Go now") - House 1965 restyle: TEST PLACE ONLY
+- What: the House duel map with the gritty 1965 test-site art (art/house/v2, harvest-gold kitchen per Edward, fix65 closed-base
+  dining set), breakable glass, both smoke alarms; map grade r4 PASS 8.7 (notes/house_build.md "1965 test-site restyle").
+- **Not touched:** match_place_ref, Matchmaking, Ranked, Tutorial, the tacticals lobby (they keep the clean House of ports 47/48).
+- Pre-checks: git pull (merged the Shadow PC's harvest-gold recolour), no repo-root .lock newer than 30 min (all from 19:57-20:32),
+  no other session mid-port (last port 48, 20:56), no Studio window on a live place or another Test place copy.
+- Test_place.rbxl (from dd380aa7) copied to out/house/Test_place_stage.rbxl: fix/breakable_glass.lua (match, 4c4066b8 -> 71373f28),
+  tools/house_kit_copy.py build -> stage (MATCH: 832 instances, 465 MeshParts, 278 SA, hash 275383555), fix/map_house.lua (live
+  spot -650, 1.2, -450), fix/smoke_alarm.lua (90fedd14 -> 82903312, both alarms). Read-back 0 differences, art fit 0.020.
+- **Installed as a normal DuelMaps map, not in StagingMaps.** Staging was tried first (TARGET staging works: StagingMaps.House with
+  House + HouseExterior), but the Test place refuses a staging map whose world box overlaps another map: the exterior set (~1800
+  studs) overlaps Arena at any nearby spot; at a far spot (ORIGIN_MODE test, z -3200) it placed, but ShootableManager arms glass /
+  alarms only at server start (known limit in notes/test_place.md), so a staged House had no working windows or alarms
+  (GlassTestHook "no player / window", SmokeAlarmTestHook alarms []). On the Test place the live-place vote never runs (admins pick
+  maps with ;testmatch), so a DuelMaps entry there is still admin-only.
+- Studio Play on the copy: TestPlaceHook start House 1v1 bots -> "Starting a 1v1 test match on House", phase Playing, me on spawn A
+  side, bot on B, clock 15.5, doors Front/Back Locked, EN Closed, rest Open; glass shot -> broken (client: pane hidden, shards shown);
+  SmokeAlarm_G shot -> blaring, AlarmBroken true; 2 alarms registered. Play stopped, StudioTeleportData nil. Saved, copied over
+  Test_place.rbxl.
+- Publish As > gunsy funsy > tacticals > **Test** > Overwrite > Grant Permissions and Publish ("tacticals is ready to test"); the
+  permissions prompt opened on the right monitor behind Edward's game (moved it by window handle). Read back from the cloud window
+  "Test (placeId: 99722095417844)" (tools/house_cloud_readback.lua): PlaceKind Test; DuelMaps Warehouse, Arena, Warehouse2, House;
+  House 754 parts / 398 MeshParts, 293 proxies, 28 windows + 2 alarms, 8 doors as briefed; ArtVersion 1965; 4 fix65 kit pieces;
+  MapInfo clock 15.5; HouseKit 832; image set; GlassController present; StudioTeleportData nil; 359 scripts, 0 test marks.
+- How Edward plays it: in the tacticals lobby type `;testplace` (admins), then in the Test place `;testmatch House 1v1 bots`
+  (or 2v2 / 3v3, `admins` for other admins). Promote later with notes/test_place.md "Promote a map to the live places".

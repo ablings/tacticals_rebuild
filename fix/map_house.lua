@@ -26,7 +26,11 @@
 -- Idempotent: each run rebuilds all of it. A House it didn't build goes to ServerStorage._House_Backup (never deleted).
 -- UNDO = true removes House, HouseExterior, the registry entry, HouseBounds and the BotConfig line.
 local UNDO = false --@UNDO
-local ORIGIN = Vector3.new(-650, 1.2, -450) -- plan (0, 0, 0) = house centre at ground-floor top; clear of every other map;
+-- ORIGIN_MODE "test": the Test place's staging spot. The Test place refuses a staging map whose world box overlaps a map in
+-- Workspace, and the exterior set (~1800 studs across) overlaps the Arena / Warehouses at the live spot (live places don't
+-- check: the set is art only). Promotion to the live places runs this installer with "live" in match_place_ref.
+local ORIGIN_MODE = "live" --@ORIGIN
+local ORIGIN = ORIGIN_MODE == "test" and Vector3.new(-650, 1.2, -3200) or Vector3.new(-650, 1.2, -450) -- plan (0, 0, 0) = house centre at ground-floor top; clear of every other map;
 -- 1.2 up so the exterior ground (plan z -1) clears the place's Baseplate top (y 0)
 local MAP_NAME, EXT_NAME, REG_ID, KIT_NAME = "House", "HouseExterior", "House", "HouseKit"
 local SHELL_YAW = math.pi -- the shell FBX is in plan coordinates; Import 3D maps Blender (x, y, z) to Studio (-x, z, y)
@@ -601,7 +605,7 @@ if TARGET == "unstage" or (UNDO and staged0) then
 	if not UNDO then return "unstaged: House back in Workspace + ReplicatedStorage.DuelMaps (rebuild or add the alarms, then TARGET staging)" end
 	old, oldExt, entry0 = workspace:FindFirstChild(MAP_NAME), workspace:FindFirstChild(EXT_NAME), staged0
 end
-if TARGET == "staging" and old and old:GetAttribute("Builder") == "map_house" and entry0 then
+if TARGET == "staging" and old and old:GetAttribute("Builder") == "map_house" and entry0 and old:GetAttribute("PlanOrigin") == ORIGIN then
 	assert(not staged0, "map_house: StagingMaps already has " .. REG_ID .. " (TARGET unstage first)")
 	return stageNow(entry0, { old, oldExt }) .. " (moved the built House, its alarms kept; no rebuild)"
 end
