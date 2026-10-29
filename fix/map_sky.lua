@@ -11,6 +11,8 @@
 --      "MapSky" with those values goes into Lighting; any other map / the after-match lobby (info nil) puts the place's back.
 --    - info.Lighting.Atmosphere when the place has no Atmosphere: a "MapAtmosphere" is made (removed again after). (With one,
 --      [PRANGE] already sets its values.)
+--    - info.Hide = { "<Workspace child>", ... }: their look (Transparency, decals, textures) steps aside while the map is loaded,
+--      collision untouched (House hides the place Baseplate: a grey line at its horizon, grade r1).
 --    - info.Backdrop = { "<model name>", ... }: models kept in ServerStorage.MapBackdrops are moved into Workspace while that map
 --      is loaded and back afterwards (a far field never sits round the other maps).
 -- B. Lobby place (the duel client ArenaLoader): when the duel map's Lighting Configuration holds a Sky, the lobby's Sky steps
@@ -19,11 +21,11 @@
 --    when SKY below is set.
 local UNDO = false --@UNDO
 
--- House's sky (art/house/sky/make_sky.py; images uploaded under gunsy funsy 2026-10-29 as house_sky2_<face>; these are the IMAGE ids (Creator Hub lists the decal ids, resolved by InsertService:LoadAsset); round 1 house_sky_* superseded). Used by B; A reads MapInfo.Lighting.Sky
+-- House's sky (art/house/sky/make_sky.py; images uploaded under gunsy funsy 2026-10-29 as house_sky3_<face> (warmer horizon band, r3); these are the IMAGE ids (Creator Hub lists the decal ids, resolved by InsertService:LoadAsset); round 1 house_sky_* superseded). Used by B; A reads MapInfo.Lighting.Sky
 -- (written into House's MapInfo by fix/house_illusion.lua from the same ids).
 local SKY = {
-	SkyboxBk = "rbxassetid://81762886351750", SkyboxDn = "rbxassetid://77338582117017", SkyboxFt = "rbxassetid://87799674438352", --@SKYIDS1
-	SkyboxLf = "rbxassetid://100767626058643", SkyboxRt = "rbxassetid://118666199799096", SkyboxUp = "rbxassetid://73509087156195", --@SKYIDS2
+	SkyboxBk = "rbxassetid://114348272707345", SkyboxDn = "rbxassetid://86790958697926", SkyboxFt = "rbxassetid://95474979956768", --@SKYIDS1
+	SkyboxLf = "rbxassetid://119298313393503", SkyboxRt = "rbxassetid://115392060292720", SkyboxUp = "rbxassetid://72034095232801", --@SKYIDS2
 	CelestialBodiesShown = true, SunAngularSize = 9, MoonAngularSize = 7, StarCount = 0,
 }
 local HOUSE_ATMO = { Density = 0.25, Offset = 0.3, Haze = 0.7, Glare = 0.3, Color = Color3.fromRGB(214, 196, 166), Decay = Color3.fromRGB(150, 120, 90) } --@ATMO
@@ -92,6 +94,26 @@ local function applyMapSky(info)
 		for _, m in store:GetChildren() do if want[m.Name] then m.Parent = workspace end end
 		for _, m in workspace:GetChildren() do
 			if m:GetAttribute("MapBackdrop") and not want[m.Name] then m.Parent = store end
+		end
+	end
+	-- MapInfo.Hide: Workspace children whose LOOK steps aside while this map is loaded (the place's Baseplate drew a grey line
+	-- along a desert map's horizon); collision untouched; any other map / nil shows them again
+	local hide = {}
+	for _, n in (info and type(info.Hide) == "table" and info.Hide or {}) do hide[n] = true end
+	for _, c in workspace:GetChildren() do
+		if hide[c.Name] or c:GetAttribute("MapSky_Hidden") then
+			local list = c:GetDescendants(); table.insert(list, c)
+			for _, d in list do
+				if d:IsA("BasePart") or d:IsA("Decal") or d:IsA("Texture") then
+					local saved = d:GetAttribute("MapSky_T")
+					if hide[c.Name] then
+						if saved == nil then d:SetAttribute("MapSky_T", d.Transparency); d.Transparency = 1 end
+					elseif saved ~= nil then
+						d.Transparency = saved; d:SetAttribute("MapSky_T", nil)
+					end
+				end
+			end
+			c:SetAttribute("MapSky_Hidden", hide[c.Name] or nil)
 		end
 	end
 end

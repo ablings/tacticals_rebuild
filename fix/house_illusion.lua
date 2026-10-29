@@ -15,7 +15,7 @@
 --      round Arena / the Warehouses).
 --   4. The v2 wedge mesas (Ext_Mesas_MesaRock, r 470-800) hidden (Transparency 1, HiddenReason): the new tiers replace them.
 --   5. House's MapInfo (DuelMaps.House, or StagingMaps.House): Lighting.Sky (our six faces) + the tuned Atmosphere, and
---      Backdrop = { "HouseFarField" }. Original source kept in attribute Illusion_OrigSource (UNDO puts it back).
+--      Backdrop = { "HouseFarField" }. Edits the current source (other installers' lines kept); the original Atmosphere line is kept in attribute Illusion_OrigAtmo (UNDO).
 -- Idempotent (rebuilds 2-5 each run). UNDO removes 2, 3 and 5's edit, shows 4 again, puts the kit's imports back in Workspace.
 local UNDO = false --@UNDO
 
@@ -27,8 +27,8 @@ local GROUND_Y = ORIGIN.Y - 1 -- the v2 desert ground (plan z -1)
 
 -- the sky (art/house/sky/make_sky.py) and the atmosphere tuned on the window captures (notes/house_build.md "Illusion pass")
 local SKY = {
-	SkyboxBk = "rbxassetid://81762886351750", SkyboxDn = "rbxassetid://77338582117017", SkyboxFt = "rbxassetid://87799674438352", --@SKYIDS1
-	SkyboxLf = "rbxassetid://100767626058643", SkyboxRt = "rbxassetid://118666199799096", SkyboxUp = "rbxassetid://73509087156195", --@SKYIDS2
+	SkyboxBk = "rbxassetid://114348272707345", SkyboxDn = "rbxassetid://86790958697926", SkyboxFt = "rbxassetid://95474979956768", --@SKYIDS1
+	SkyboxLf = "rbxassetid://119298313393503", SkyboxRt = "rbxassetid://115392060292720", SkyboxUp = "rbxassetid://72034095232801", --@SKYIDS2
 	CelestialBodiesShown = true, SunAngularSize = 9, MoonAngularSize = 7, StarCount = 0,
 }
 local ATMO = { Density = 0.25, Offset = 0.3, Haze = 0.7, Glare = 0.3, Color = { 214, 196, 166 }, Decay = { 150, 120, 90 } } --@ATMO
@@ -209,6 +209,18 @@ for _, d in ext:GetDescendants() do
 	end
 end
 
+for _, d in ext:GetDescendants() do
+	if d:IsA("MeshPart") and d.Name:match("^Mast_") then
+		d.RenderFidelity = UNDO and Enum.RenderFidelity.Automatic or Enum.RenderFidelity.Precise
+	elseif d:IsA("BasePart") and d.Name == "Dummy_Ext_Fence" then
+		if UNDO then
+			if d:GetAttribute("HiddenReason") == "illusion: in spawn A's first look" then d.Transparency = 0; d:SetAttribute("HiddenReason", nil) end
+		else
+			d.Transparency = 1; d.CastShadow = false; d:SetAttribute("HiddenReason", "illusion: in spawn A's first look")
+		end
+	end
+end
+
 -- 5 (UNDO side first, so UNDO can return before building)
 local function mapInfos()
 	local t = {}
@@ -219,8 +231,11 @@ local function mapInfos()
 end
 if UNDO then
 	for _, mi in mapInfos() do
-		local o = mi:GetAttribute("Illusion_OrigSource")
-		if o then mi.Source = o; mi:SetAttribute("Illusion_OrigSource", nil) end
+		local src = mi.Source:gsub("[^\n]*%-%- %[ILLUSION%][^\n]*\n", "")
+		local o = mi:GetAttribute("Illusion_OrigAtmo")
+		if o then src = src:gsub("\t\tAtmosphere = %b{},", function() return o end, 1) end
+		mi.Source = src
+		mi:SetAttribute("Illusion_OrigAtmo", nil); mi:SetAttribute("Illusion_OrigSource", nil)
 	end
 	return "UNDO: Illusion_Near, HouseFarField, MapInfo edit removed; v2 mesas shown; imports back in Workspace"
 end
@@ -236,6 +251,7 @@ local farField = Instance.new("Model")
 farField.Name = "HouseFarField"
 farField:SetAttribute("MapBackdrop", true)
 farField:SetAttribute("Builder", "house_illusion")
+farField:SetAttribute("Indoor", false) -- outdoor set: MapAudit SKY knows what it is (grade r1)
 local far = kit.X_Far:Clone()
 far.Name = "Far"
 far:PivotTo(place)
@@ -257,33 +273,44 @@ local MID = {
 	{ "X_TownHouse_A_White", -190, -215, "N" }, { "X_TownHouse_B_Butter", -122, -222, "N" },
 	-- the test site round the town
 	{ "X_WaterTower", 70, 430, "S" }, { "X_Quonset", 360, 175, "W" },
-	{ "X_Bunker", 185, -300, "N" }, { "X_Bunker", -265, -335, "E" }, { "X_Bunker", 430, -205, "W" }, { "X_Bunker", -455, 150, "E" },
-	{ "X_ObservationStand", 125, -445, "S" },
+	{ "X_Bunker", 185, -300, "N" }, { "X_Bunker", -265, -335, "E" }, { "X_Bunker", 300, -218, "W" }, { "X_Bunker", -455, 150, "E" },
+	{ "X_ObservationStand", 250, -380, "S" }, -- (grade r1: at 125,-445 it stood half inside the Arena wall)
 	{ "X_ChainLink", 185, -265, "N" }, { "X_ChainLink", 185, -335, "N" }, { "X_ChainLink", 150, -300, "E" }, { "X_ChainLink", 220, -300, "E" },
 	{ "X_ChainLink", 330, 225, "N" }, { "X_ChainLink", 390, 225, "N" },
 	-- round 2: the west plain read empty from BR3_W / LR_W (a flat floor straight to the buttes)
 	{ "X_TownHouse_A_Mint", -455, -27, "S" }, { "X_TownHouse_B_White", -520, -112, "N" }, { "X_TownHouse_B_Salmon", -250, 85, "S" },
 	{ "X_TownHouse_A_Butter", -320, 80, "S" }, { "X_Quonset", -580, 45, "E" }, { "X_ChainLink", -540, 100, "N" }, { "X_ChainLink", -600, 100, "N" },
 	{ "X_Bunker", -660, -150, "E" }, { "X_ObservationStand", -420, 320, "W" }, { "X_PoleLine", -500, 230, "E" },
+	-- round 3 (grade r1): blockers on the sight lines to the other maps of the place. Two hangars in front of the Arena's north
+	-- wall (plan -27..127, -393..-507); two nearer buttes (far-tier mesas scaled down, { size, kit "X_Far" }) between the house and
+	-- Warehouse / Warehouse 2 (plan ~ 480..660, 0..-520; Warehouse2Exterior is 62 tall)
+	{ "X_Quonset", 10, -320, "E" }, { "X_Quonset", 91.3, -322, "E" }, { "X_TownHouse_B_White", 300, -120, "W" }, -- (r3: 9-stud gap between the hangars: now butted; a big hangar between the near butte's two rock masses)
+	{ "X_Mesa1_03", 440, -120, "E", Vector3.new(330, 100, 130), "X_Far" }, { "X_Mesa1_08", 440, -400, "E", Vector3.new(320, 80, 140), "X_Far" },
+	{ "X_Quonset", 372, -145, "N", Vector3.new(66, 40, 124), nil, "fills a butte gap" }, -- a big aircraft hangar in the gap between the near butte's two rock masses
 	-- pole lines running out to the horizon (the piece's 8 poles lie along its local X)
-	{ "X_PoleLine", 425, -70, "N" }, { "X_PoleLine", -485, -76, "N" }, { "X_PoleLine", 30, 385, "E" }, { "X_PoleLine", -60, -405, "E" },
+	{ "X_PoleLine", 425, 130, "N" }, { "X_PoleLine", -485, -76, "N" }, { "X_PoleLine", 30, 385, "E" }, { "X_PoleLine", -60, -405, "E" },
 }
 local mid = Instance.new("Model"); mid.Name = "Mid"; mid.Parent = farField
 local boxes, clashes = {}, {}
 for i, e in MID do
-	local src = kit.X_Mid:FindFirstChild(e[1])
+	local src = kit[e[6] or "X_Mid"]:FindFirstChild(e[1], true)
 	if not src then say("mid: no " .. e[1]) continue end
 	local p = src:Clone()
 	p.Name = e[1] .. "_" .. i
 	local yaw = FACE[e[4]]
 	-- bottom 0.3 into the ground so nothing floats on the slight skirt / ground seam
-	p.CFrame = CFrame.new(ORIGIN.X + e[2], GROUND_Y - 0.3 + p.Size.Y / 2, ORIGIN.Z - e[3]) * CFrame.Angles(0, yaw, 0)
+	if e[5] then p.Size = e[5] end
+	-- landmarks and big silhouettes keep their full mesh at graphics quality 1 (grade r1: the masts and the water tower vanished)
+	if p.Name:match("^X_WaterTower") or p.Name:match("^X_Quonset") or p.Name:match("^X_Mesa") then p.RenderFidelity = Enum.RenderFidelity.Precise end
+	-- bottom 0.3 into the ground (a scaled butte 3: its base is uneven) so nothing floats on the slight skirt / ground seam
+	local sink = e[6] == "X_Far" and 3 or 0.3
+	p.CFrame = CFrame.new(ORIGIN.X + e[2], GROUND_Y - sink + p.Size.Y / 2, ORIGIN.Z - e[3]) * CFrame.Angles(0, yaw, 0)
 	p.Parent = mid
 	local turned = (e[4] == "E" or e[4] == "W")
 	local hx, hy = (turned and p.Size.Z or p.Size.X) / 2, (turned and p.Size.X or p.Size.Z) / 2
-	local b = { e[2] - hx, e[3] - hy, e[2] + hx, e[3] + hy, p.Name }
+	local b = { e[2] - hx, e[3] - hy, e[2] + hx, e[3] + hy, p.Name, e[7] } -- e[7]: a deliberate fill inside a butte's box (its two rock masses leave a gap)
 	for _, o in boxes do
-		if b[1] < o[3] and o[1] < b[3] and b[2] < o[4] and o[2] < b[4] and not (p.Name:match("ChainLink") or o[5]:match("ChainLink")) then
+		if b[1] < o[3] and o[1] < b[3] and b[2] < o[4] and o[2] < b[4] and not (p.Name:match("ChainLink") or o[5]:match("ChainLink")) and not ((p.Name:match("^X_Mesa") or e[7]) and (o[5]:match("^X_Mesa") or o[6])) then -- buttes may merge into one landform
 			table.insert(clashes, b[5] .. " x " .. o[5])
 		end
 	end
@@ -307,15 +334,23 @@ local atmoLine = ("\t\tAtmosphere = { Density = %s, Offset = %s, Haze = %s, Glar
 	:format(ATMO.Density, ATMO.Offset, ATMO.Haze, ATMO.Glare, c3(ATMO.Color), c3(ATMO.Decay))
 local nInfo = 0
 for _, mi in mapInfos() do
-	local src = mi:GetAttribute("Illusion_OrigSource") or mi.Source
-	if not mi:GetAttribute("Illusion_OrigSource") then mi:SetAttribute("Illusion_OrigSource", src) end
+	-- edit the CURRENT source (other installers edit MapInfo too, e.g. fix/house_wallcover.lua's WallCover line): drop this
+	-- installer's own [ILLUSION] lines, keep the original Atmosphere line once (attribute Illusion_OrigAtmo) for UNDO
+	local first = mi:GetAttribute("Illusion_OrigSource") or mi.Source -- (round-1 copies stored the whole source)
+	if not mi:GetAttribute("Illusion_OrigAtmo") then
+		local a = first:match("\t\tAtmosphere = %b{},")
+		assert(a, "house_illusion: MapInfo has no Atmosphere line")
+		mi:SetAttribute("Illusion_OrigAtmo", a)
+	end
+	mi:SetAttribute("Illusion_OrigSource", nil)
+	local src = mi.Source:gsub("[^\n]*%-%- %[ILLUSION%][^\n]*\n", "")
 	local s, n1 = src:gsub("\t\tAtmosphere = %b{},", function() return atmoLine end, 1)
 	assert(n1 == 1, "house_illusion: MapInfo has no Atmosphere line")
 	local n2
 	s, n2 = s:gsub("(\t\tBloom = %b{},\n)", "%1" .. skyLine:gsub("%%", "%%%%"), 1)
 	assert(n2 == 1, "house_illusion: MapInfo has no Bloom line")
 	local n3
-	s, n3 = s:gsub("(\tDynamic = %b{},\n)", "%1\tBackdrop = { \"HouseFarField\" }, -- [ILLUSION] far + mid field, in Workspace only while House is loaded\n", 1)
+	s, n3 = s:gsub("(\tDynamic = %b{},\n)", "%1\tBackdrop = { \"HouseFarField\" }, -- [ILLUSION] far + mid field, in Workspace only while House is loaded\n\tHide = { \"Baseplate\", \"R15\", \"AnimRig\" }, -- [ILLUSION] look only, while House is loaded: the place floor drew a grey line at the horizon (fix/map_sky.lua)\n", 1)
 	assert(n3 == 1, "house_illusion: MapInfo has no Dynamic line")
 	assert(loadstring(s), "house_illusion: MapInfo would not parse")
 	mi.Source = s

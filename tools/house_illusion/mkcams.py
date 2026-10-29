@@ -12,9 +12,9 @@ for o in L['openings']:
     ex, ey = wx - ox * 3.5, wy - oy * 3.5
     room = o['id'].split('_')[1]
     for tag, h, yaw, pitch in [('st', 4.6, 0, 0), ('swL', 4.6, 40, 0), ('swR', 4.6, -40, 0), ('up', 4.6, 0, 32), ('dn', 4.6, 0, -30), ('cr', 3.3, 0, 0)]:
-        if o.get('feature') and tag == 'cr': continue
+        pass
         hh = fl + h
-        if o.get('feature'): hh = fl + 4.6  # landing-level view up/out of the tall foyer window
+        # the tall foyer window: standing and crouched eyes from the landing floor
         a = math.radians(yaw)
         dx = ox * math.cos(a) - oy * math.sin(a); dy = ox * math.sin(a) + oy * math.cos(a)
         D = 40

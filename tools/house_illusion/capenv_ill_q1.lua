@@ -70,6 +70,16 @@ do
 	local a = L:FindFirstChildOfClass("Atmosphere")
 	for k, v in info.Lighting.Atmosphere do a[k] = v end
 	for _, n in (info.Backdrop or {}) do local m = SS.MapBackdrops:FindFirstChild(n) if m then m.Parent = workspace end end
+	for _, n in (info.Hide or {}) do
+		local c = workspace:FindFirstChild(n)
+		if c then
+			local list = c:GetDescendants(); table.insert(list, c)
+			for _, d in list do
+				if (d:IsA("BasePart") or d:IsA("Decal") or d:IsA("Texture")) and d:GetAttribute("MapSky_T") == nil then d:SetAttribute("MapSky_T", d.Transparency); d.Transparency = 1 end
+			end
+			c:SetAttribute("MapSky_Hidden", true)
+		end
+	end
 end
 
 return MODE .. " lighting applied: clock " .. L.ClockTime .. " bright " .. L.Brightness .. " exp " .. L.ExposureCompensation .. " | EditQualityLevel " .. tostring(settings().Rendering.EditQualityLevel)
