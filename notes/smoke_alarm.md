@@ -186,3 +186,24 @@ lobby copy, or any published place. When Edward says go, add to the House's port
   copies them into Visual / Solid (7 parts each).
 - Read-back: `SmokeAlarmRound` = 3 on ShootableManager; Workspace.House.Shootables.SmokeAlarm_G / _U (match);
   ReplicatedStorage.DuelMaps.House.Visual + ServerStorage.DuelMaps.House.Solid hold both (lobby).
+
+## Port prepared (2026-10-28 evening, Shadow PC, House map builder; Edward: "GO FOR IT" on the held alarms) - NOT PUBLISHED
+On top of live port 47 (House live, no alarms). Working copies in `out/alarm_port/` (gitignored), all saved:
+- `alarm_ref.rbxl` (= match_place_ref.rbxl, copied back to the repo root): installer round 3, 10 "+", hash 90fedd14 -> 82903312,
+  second run all "=", tests 47/47.
+- `alarm_Matchmaking.rbxl` / `alarm_Ranked.rbxl` (= the committed port-47 Matchmaking_place / Ranked_place, so port_prep's steps are
+  already in): same install and hashes, 47/47 each. Bot match on Matchmaking (House voted): shot -> blare 7 s, masked near / not far,
+  housing open on the client; round end (MatchTestHook kill) -> next round whole, housing shut. StudioTeleportData cleared, 0 test marks.
+- `alarm_lobby.rbxl` (= Tacticals_rebuild.rbxl at port 47): **the lobby has the fill steam now** (FootstepController asks
+  SteamCloud.FootstepScale -> SteamMask.FillMuffled), so round 3's FootstepController anchor was gone ("edit 5 anchor not found",
+  nothing written). Installer fixed (5baa675): a lobby with the fill steam gets the match places' FillMuffled edit and skips the two
+  FootstepController edits. 13 "+", 4c250da8 -> 5192cd63, second run "=", UNDO back to 4c250da8, glass r1 DRY all "=", tests 47/47
+  (the fill tests run in the lobby now). duel_split_map ONLY = "House": visual 754 / solid 345 (+14 each = 2 alarms x 7 parts).
+  Pad duel (DuelTestSolo, House voted, D2 at 4000,100,0): shot -> Bullet, 7 s; IsMasked near true / 43 off false / landing false;
+  FillMuffled listener rule true; client: Solid broken replicated, Visual housing hangs open; kill -> 1-0, next round whole.
+  Lobby footsteps in a blare: Steam.Fill.Footsteps volume 0.06 + EQ muffle (was x0.04 in the round-3 lobby design).
+- `alarm_lobby_ported.rbxl` = alarm_lobby + Technology Future (tools/set_technology.py 4): the lobby publish file.
+**Publish blocked** in this session by the permission check (Publish As is a production deploy); waits for Edward's explicit OK.
+Steps when allowed: Publish As each window (alarm_Matchmaking > Matchmaking, alarm_Ranked > Ranked, alarm_lobby_ported > tacticals;
+gunsy funsy > tacticals > Overwrite > Grant), read back (tools/house_cloud_readback*.lua + SmokeAlarmRound 3), then copy the copies
+over Matchmaking_place / Ranked_place / Tacticals_rebuild / Tacticals_main_ported and add port_manifest "Live port 48".
