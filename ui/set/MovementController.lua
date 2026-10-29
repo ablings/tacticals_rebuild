@@ -150,8 +150,9 @@ local function buildStaminaBar()
 	gui.IgnoreGuiInset = true
 	local back = Instance.new("Frame")
 	back.AnchorPoint = Vector2.new(0.5, 1)
-	back.Position = UDim2.new(0.5, 0, 1, -28)
-	back.Size = UDim2.fromOffset(160, 5)
+	-- (2026-10-29, UI survey fix 4) Scale only: 160 x 5 design px, 28 px above the bottom of the 1920 x 1080 canvas (was Offset)
+	back.Position = UDim2.fromScale(0.5, 1 - 28 / 1080)
+	back.Size = UDim2.fromScale(160 / 1920, 5 / 1080)
 	back.BackgroundColor3 = Color3.new(0, 0, 0)
 	back.BackgroundTransparency = 0.5
 	back.BorderSizePixel = 0

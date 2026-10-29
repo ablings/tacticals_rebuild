@@ -1853,8 +1853,10 @@ local function showCoverHint(text: string)
 		gui.IgnoreGuiInset = true
 		local label = Instance.new("TextLabel")
 		label.AnchorPoint = Vector2.new(0.5, 0)
-		label.Position = UDim2.new(0.5, 0, 0.5, 34)
-		label.Size = UDim2.fromOffset(200, 22)
+		-- (2026-10-29, UI survey fix 4) Scale only: 34 design px under the centre, a 320 x 16 px line, text scaled into it (was Offset + TextSize 14)
+		label.Position = UDim2.fromScale(0.5, 0.5 + 34 / 1080)
+		label.Size = UDim2.fromScale(320 / 1920, 16 / 1080)
+		label.TextScaled = true
 		label.BackgroundTransparency = 1
 		label.FontFace = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold) -- (2026-10-21, AI-tells sweep) Rubik Bold, was GothamBold
 		label.TextSize = 14
