@@ -18,9 +18,10 @@ NEW = {
     "birch":         dict(under=(196, 168, 120), wood=True, stain=0.15, rough=0.5, mottle=0.06, paintable=True),
     "walnut_slat65": dict(under=(96, 62, 34), wood=True, groove=True, stain=0.2, rough=0.5, mottle=0.1),
     # paints and enamels: chipped edges show the under colour (metal for enamel, raw wood for painted wood)
-    "enamel_gold":   dict(paint=(206, 160, 52), under=(110, 108, 104), chip=0.35, metal_under=0.8, under_rough=0.35, rough=0.28, paintable=True),
-    # the kitchen's one saturated colour: avocado / olive enamel (Tacticals' own olive; Design Rules: no yellow / orange
-    # map accents, so the brief's harvest gold became olive, the card's named alternative)
+    # the kitchen's one saturated colour: harvest gold enamel (the brief). (206,160,52) read lemon under the warm sun,
+    # so the value is lowered (184,128,36 then read peach-orange: 172,128,34) and the grime raised. The no-yellow rule is for the lobby only (Edward, 2026-10-28).
+    "enamel_gold":   dict(paint=(172, 128, 34), under=(110, 108, 104), dirt=0.32, chip=0.4, metal_under=0.8, under_rough=0.35, rough=0.28, paintable=True),
+    # avocado / olive enamel: the card's named alternative (not used by the kitchen since 2026-10-28)
     "enamel_olive":  dict(paint=(98, 106, 56), under=(110, 108, 104), chip=0.35, metal_under=0.8, under_rough=0.35, rough=0.28, paintable=True),
     "enamel_white":  dict(paint=(232, 228, 212), under=(70, 68, 66), chip=0.25, metal_under=0.6, rough=0.25, paintable=True),
     "enamel_cream":  dict(paint=(226, 216, 186), under=(70, 68, 66), chip=0.25, metal_under=0.6, rough=0.28, paintable=True),
@@ -32,17 +33,17 @@ NEW = {
     "paint_grey_green": dict(paint=(120, 128, 112), under=(80, 80, 80), chip=0.3, metal_under=0.7, rough=0.45, paintable=True),
     # upholstery: vinyl cracks + stains, tweed, chenille; dirt in creases
     "vinyl_cream":   dict(paint=(210, 200, 162), stitch=True, rough=0.4, mottle=0.12, bump=0.3, dirt=0.42),
-    "vinyl_mustard": dict(paint=(166, 122, 58), stitch=True, rough=0.38, mottle=0.12, bump=0.3, dirt=0.4),
+    "vinyl_mustard": dict(paint=(196, 146, 46), stitch=True, rough=0.38, mottle=0.12, bump=0.3, dirt=0.4),
     "vinyl_olive":   dict(paint=(118, 124, 70), stitch=True, rough=0.4, mottle=0.12, bump=0.3, dirt=0.4),
     "tweed_olive":   dict(paint=(118, 112, 70), weave=True, stitch=True, rough=0.95, mottle=0.12, bump=0.45, dirt=0.4),
-    "tweed_mustard": dict(paint=(158, 120, 66), weave=True, stitch=True, rough=0.95, mottle=0.12, bump=0.45, dirt=0.4),
+    "tweed_mustard": dict(paint=(186, 142, 58), weave=True, stitch=True, rough=0.95, mottle=0.12, bump=0.45, dirt=0.4),
     "tweed_brown":   dict(paint=(110, 84, 58), weave=True, stitch=True, rough=0.95, mottle=0.12, bump=0.45, dirt=0.4),
     "chenille":      dict(paint=(226, 218, 192), weave=True, rough=0.98, mottle=0.06, bump=0.5, paintable=True),
     "spread":        dict(paint=(200, 190, 160), weave=True, rough=0.95, mottle=0.06, bump=0.3, paintable=True),
     "linen_old":     dict(paint=(222, 214, 192), weave=True, rough=0.95, mottle=0.08, bump=0.3),
     "foam":          dict(paint=(214, 192, 126), rough=0.95, mottle=0.2, bump=0.8),
-    "drape_gold":    dict(paint=(118, 120, 72), weave=True, rough=0.95, mottle=0.12, bump=0.4, bleach=0.25),
-    "drape_mustard": dict(paint=(156, 118, 62), weave=True, rough=0.95, mottle=0.12, bump=0.4, bleach=0.25),
+    "drape_gold":    dict(paint=(190, 146, 58), weave=True, rough=0.95, mottle=0.12, bump=0.4, bleach=0.25),
+    "drape_mustard": dict(paint=(196, 156, 60), weave=True, rough=0.95, mottle=0.12, bump=0.4, bleach=0.25),
     "drape_green":   dict(paint=(52, 78, 58), weave=True, rough=0.95, mottle=0.12, bump=0.4, bleach=0.25),
     "runner_moss":   dict(paint=(82, 98, 58), weave=True, rough=0.98, mottle=0.12, bump=0.5),
     "rug65":         dict(paint=(190, 170, 130), weave=True, rough=0.98, paintable=True, bump=0.5),

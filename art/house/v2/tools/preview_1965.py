@@ -81,9 +81,10 @@ for d in LAY["dressing"]:
 sc.render.engine = "CYCLES"
 try:
     pr = bpy.context.preferences.addons["cycles"].preferences
-    pr.compute_device_type = "OPTIX"; pr.get_devices()
+    DEV = A[A.index("--device") + 1] if "--device" in A else "OPTIX"     # Shadow PC: OptiX fails, use --device CUDA
+    pr.compute_device_type = DEV; pr.get_devices()
     for dv in pr.devices:
-        dv.use = dv.type == "OPTIX"
+        dv.use = dv.type == DEV
     sc.cycles.device = "GPU"
 except Exception:
     pass
