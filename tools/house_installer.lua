@@ -76,13 +76,50 @@ local old, oldExt = workspace:FindFirstChild(MAP_NAME), workspace:FindFirstChild
 local reg = RS:FindFirstChild("DuelMaps")
 local entry0 = reg and reg:FindFirstChild(REG_ID)
 local bounds0 = SSS:FindFirstChild("HouseBounds")
+-- staging (the admin-only Test place, notes/test_place.md): ServerStorage.StagingMaps.House = the registry entry (MapInfo +
+-- attributes) with a Workspace folder holding House + HouseExterior; no live vote ever sees it, the Test place places it on
+-- first use. TARGET = "staging": moves the House this installer built (Workspace + DuelMaps) there, building it first if there
+-- is none (so the smoke alarms, fix/smoke_alarm.lua, go in between: build live -> alarms -> staging). TARGET = "unstage": moves
+-- a staged House back to Workspace / DuelMaps (to rebuild or re-run the alarms), nothing rebuilt. Only on PlaceKind "Test".
+local TARGET = "live" --@TARGET
+local STG = SS:FindFirstChild("StagingMaps")
+local staged0 = STG and STG:FindFirstChild(REG_ID)
+local function isTestPlace() local k = RS:FindFirstChild("PlaceKind") return k and k.Value == "Test" end
+local function stageNow(entry, models)
+	assert(isTestPlace(), "map_house: TARGET staging only on the Test place (ReplicatedStorage.PlaceKind = Test)")
+	if not STG then STG = Instance.new("Folder"); STG.Name = "StagingMaps"; STG.Parent = SS end
+	local ws = Instance.new("Folder"); ws.Name = "Workspace"
+	for _, m in models do m.Parent = ws end
+	ws.Parent = entry
+	entry:SetAttribute("StagedFrom", "DuelMaps")
+	entry.Parent = STG
+	return ("staged: ServerStorage.StagingMaps.%s (%s) - live places never see it"):format(REG_ID,
+		table.concat((function() local t = {} for _, m in models do table.insert(t, m.Name) end return t end)(), " + "))
+end
+if TARGET == "unstage" or (UNDO and staged0) then
+	assert(staged0, "map_house: no ServerStorage.StagingMaps." .. REG_ID)
+	assert(not old and not entry0, "map_house: a live House is already in Workspace / DuelMaps")
+	local ws = staged0:FindFirstChild("Workspace")
+	for _, m in (ws and ws:GetChildren() or {}) do m.Parent = workspace end
+	if ws then ws:Destroy() end
+	staged0:SetAttribute("StagedFrom", nil)
+	staged0.Parent = reg
+	if not UNDO then return "unstaged: House back in Workspace + ReplicatedStorage.DuelMaps (rebuild or add the alarms, then TARGET staging)" end
+	old, oldExt, entry0 = workspace:FindFirstChild(MAP_NAME), workspace:FindFirstChild(EXT_NAME), staged0
+end
+if TARGET == "staging" and old and old:GetAttribute("Builder") == "map_house" and entry0 then
+	assert(not staged0, "map_house: StagingMaps already has " .. REG_ID .. " (TARGET unstage first)")
+	return stageNow(entry0, { old, oldExt }) .. " (moved the built House, its alarms kept; no rebuild)"
+end
+assert(TARGET ~= "live" or not staged0, "map_house: House is staged on this place: TARGET unstage first (or UNDO)")
 if UNDO then
 	if old and old:GetAttribute("Builder") == "map_house" then old:Destroy() end
 	if oldExt and oldExt:GetAttribute("Builder") == "map_house" then oldExt:Destroy() end
 	if entry0 then entry0:Destroy() end
 	if bounds0 then bounds0:Destroy() end
-	return "UNDO: House, HouseExterior, DuelMaps.House, HouseBounds removed; " .. botConfig(false)
+	return "UNDO: House, HouseExterior, DuelMaps.House (or StagingMaps.House), HouseBounds removed; " .. botConfig(false)
 end
+if staged0 then staged0:Destroy() end -- TARGET staging with no built House: rebuild from scratch
 for _, m in { old, oldExt } do
 	if m and m:GetAttribute("Builder") ~= "map_house" then
 		local bk = SS:FindFirstChild("_House_Backup") or Instance.new("Folder")
@@ -266,7 +303,10 @@ local function asModel(src)
 	if c:IsA("BasePart") then local h = Instance.new("Model") h.Name = src.Name c.Parent = h return h end
 	return c
 end
-local ART_ABOVE = { H_TVConsole_WithTV = true, H_Planter = true, H_Bathtub = true }
+local ART_ABOVE = { H_TVConsole_WithTV = true, H_Planter = true, H_Bathtub = true, H_Bathtub_Butter = true }
+-- the 1965 kit's room looks (art/house/v2 variant_map): layout id -> model, same collision box; a variant missing from the kit
+-- falls back to the base model
+local function modelFor(id, model) local v = L.variants and L.variants[id] return (v and KIT and KIT:FindFirstChild(v)) and v or model end
 -- place a kit model with its bounding box's bottom centre on plan (x, y, z), its front (local -Z) toward `face`
 local function placeKit(name, parent, x, y, z, face, fit, label)
 	local src = KIT and KIT:FindFirstChild(name)
@@ -368,15 +408,16 @@ for _, f in L.furniture do
 		placeKit("H_DiningSet", VFU, f.x0 + (f.x1 - f.x0) * 0.25, cy, f.z0, face or "S", nil, f.id .. "_1")
 		placeKit("H_DiningSet", VFU, f.x0 + (f.x1 - f.x0) * 0.75, cy, f.z0, face or "S", nil, f.id .. "_2")
 	else
-		placeKit(f.model, VFU, cx, cy, f.z0, face, fit, f.id)
+		placeKit(modelFor(f.id, f.model), VFU, cx, cy, f.z0, face, fit, f.id)
 	end
 end
 -- dressing (art only; the floor pieces have their PCOL blockers in CollisionProxies)
 for _, d in L.dressing do
+	local mdl = modelFor(d.id, d.model)
 	if d.model == "H_PendantLamp" then
-		local m = placeKit(d.model, VDR, d.x, d.y, d.z - d.size[2], d.face, nil, d.id)
+		local m = placeKit(mdl, VDR, d.x, d.y, d.z - d.size[2], d.face, nil, d.id)
 	else
-		placeKit(d.model, VDR, d.x, d.y, d.z, d.face, nil, d.id)
+		placeKit(mdl, VDR, d.x, d.y, d.z, d.face, nil, d.id)
 	end
 end
 
@@ -463,6 +504,8 @@ local function plainOf(part)
 	elseif n:match("Glow$") then part.Material = M.Neon; part.Color = rgb(255, 250, 236); part.CastShadow = false
 	elseif n:match("Glass$") then glass(false)
 	elseif n:match("^Tree_%d+$") then part.Color = rgb(92, 70, 52)
+	elseif n:match("^PowerPole") then part.Color = rgb(table.unpack(PLAIN.Pole)); part.Material = M.Wood -- 1965 exterior (build_exterior_1965.py PLAIN_KIND)
+	elseif n:match("^PowerWires") then part.Color = rgb(table.unpack(PLAIN.Wire))
 	else
 		local key = n:match("_([%a%d]+)$") or n
 		local c = PLAIN[key] or PLAIN[n]
@@ -474,14 +517,16 @@ end
 for _, root in { map, ext } do
 	for _, d in root:GetDescendants() do if d:IsA("BasePart") and (d:FindFirstAncestor("Visuals") or d:FindFirstAncestor("Shootables") or d:FindFirstAncestor("Doors") or root == ext) and d.Transparency < 1 then plainOf(d) end end
 end
--- the tall cabinets read as fridges (white with a long handle): a warm oak tint on their atlas (Edward 2026-10-28)
-for _, m in VFU:GetChildren() do
+local KIT1965 = KIT and KIT:GetAttribute("ArtVersion") == "1965"
+-- (v1 kit) the tall cabinets read as fridges (white with a long handle): a warm oak tint on their atlas (Edward 2026-10-28);
+-- the 1965 cabinets are walnut / painted already
+for _, m in (KIT1965 and {} or VFU:GetChildren()) do
 	for _, d in m:GetDescendants() do
 		if d:IsA("SurfaceAppearance") and m:GetAttribute("KitModel") == "H_TallCabinet" then d.Color = rgb(214, 172, 128) end
 	end
 end
 -- the mirrors: the baked atlas of a mirror is black (a diffuse bake of a metal): a pale, slightly reflective pane instead
-for _, m in VDR:GetChildren() do
+for _, m in (KIT1965 and {} or VDR:GetChildren()) do -- (v1 kit only: the 1965 mirrors are baked with their glass)
 	if m.Name:match("_Mirror$") then
 		for _, d in m:GetDescendants() do
 			if d:IsA("SurfaceAppearance") then d:Destroy() end
@@ -489,10 +534,26 @@ for _, m in VDR:GetChildren() do
 		end
 	end
 end
--- the shower screens' glass (baked atlas, opaque): see-through as the modeler intended (Transparency 0.7)
-for _, d in VIS:GetDescendants() do
+-- (v1 kit) the shower screens' glass (baked atlas, opaque): see-through as the modeler intended (Transparency 0.7); the 1965
+-- kit has an opaque vinyl curtain there instead (its PCOL walk blocker stays)
+for _, d in (KIT1965 and {} or VIS:GetDescendants()) do
 	if d:IsA("BasePart") and d.Parent and d.Parent.Name:match("ShowerGlass") and d.Name:match("Glass") then d.Transparency = 0.7 end
 end
+
+-- (1965 kit) the wear layer (Wear_G / Wear_U: stains, peel, scuffs, dust, chalk marks, 0.13 off their surfaces) and the other
+-- see-through dressing (cobwebs, sand fans, tape crosses) cast no shadow; alpha-cut atlases render as Transparency
+local nWear = 0
+for _, d in VIS:GetDescendants() do
+	if d:IsA("BasePart") and (d.Name:match("^Wear") or d.Name:match("Cobweb") or d.Name:match("Tape") or (d.Parent and d.Parent.Name:match("^Wear"))) then
+		d.CastShadow = false; nWear += 1
+		local sa = d:FindFirstChildOfClass("SurfaceAppearance")
+		if sa then pcall(function() sa.AlphaMode = Enum.AlphaMode.Transparency end) end
+	end
+end
+for _, d in SH:GetDescendants() do -- the tape crosses travel with their panes (Shootables), so they hide when the glass breaks
+	if d:IsA("BasePart") and d.Name:match("Tape") then d.CastShadow = false; nWear += 1 end
+end
+map:SetAttribute("ArtVersion", KIT1965 and "1965" or "v1")
 
 -- ====================================================================================================== map attributes, parent
 local floor = CP:FindFirstChild("COLP_Floor_G")
@@ -577,6 +638,7 @@ return {
 	KillDepth = 20,
 	WorkspaceName = "%s",
 	Exterior = "%s",
+	ExtraModels = { "%s" },
 	Dynamic = {},
 	SourceOrigin = Vector3.new(%.3f, %.3f, %.3f),
 	Lighting = {
@@ -588,7 +650,7 @@ return {
 		Bloom = { Intensity = %s, Size = %s, Threshold = %s },
 	},
 }
-]]):format(REG_ID, 2 * (L.shell.x1 + 1), 2 * (L.shell.y1 + 1), MAP_NAME, EXT_NAME, ORIGIN.X, ORIGIN.Y, ORIGIN.Z,
+]]):format(REG_ID, 2 * (L.shell.x1 + 1), 2 * (L.shell.y1 + 1), MAP_NAME, EXT_NAME, EXT_NAME, ORIGIN.X, ORIGIN.Y, ORIGIN.Z,
 	LG.clock, LG.latitude, LG.bright, LG.exposure, LG.ambient, LG.outdoor, LG.diffuse, LG.specular,
 	LG.density, LG.offset, LG.haze, LG.glare, LG.atmoColor, LG.decay, LG.gradeBright, LG.contrast, LG.saturation, LG.tint,
 	LG.bloom, LG.bloomSize, LG.threshold)
@@ -596,6 +658,7 @@ info.Parent = entry
 entry.Parent = reg
 
 local botLine = botConfig(true)
+local stagedLine = TARGET == "staging" and ("; " .. stageNow(entry, { map, ext })) or ""
 return ("House built at %s: %d gameplay parts, %d art parts (%d kit placements), %d windows, %d doors, %d lights; %s; %s; registry %s%s")
 	:format(tostring(ORIGIN), nProxy, nArt, nMesh, nWin, #L.doors, nLights, KIT and ("kit " .. KIT_NAME) or "NO KIT (gameplay layer only)",
-		botLine, entry:GetFullName(), #skipped > 0 and ("\nnot placed / off-size (" .. #skipped .. "): " .. table.concat(skipped, "; ")) or "")
+		botLine .. stagedLine, entry:GetFullName(), #skipped > 0 and ("\nnot placed / off-size (" .. #skipped .. "): " .. table.concat(skipped, "; ")) or "")
