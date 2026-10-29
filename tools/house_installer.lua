@@ -370,7 +370,7 @@ if shell then
 				local w = (cf * CFrame.new(sx * sz.X / 2, sy * sz.Y / 2, sz2 * sz.Z / 2)).Position
 				mn = mn and mn:Min(w) or w; mx = mx and mx:Max(w) or w
 			end end end
-			local top = math.min(mx.Y, mn.Y + 5)
+			local top = mn.Y + 5 -- 5 tall whatever the piece: a body steps up onto anything under ~2 (a 1.9 box under a lying chair was a step)
 			local b = Instance.new("Part"); b.Name = "ABLK_" .. nm
 			b.Size = Vector3.new(mx.X - mn.X, top - mn.Y, mx.Z - mn.Z); b.CFrame = CFrame.new((mn.X + mx.X) / 2, (mn.Y + top) / 2, (mn.Z + mx.Z) / 2)
 			invisible(b); b.CanCollide, b.CanTouch, b.CanQuery = true, false, false
