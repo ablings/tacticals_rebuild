@@ -60,9 +60,11 @@ major items first, then report with its verdict. Full rule: vault `meta/Claude S
   Lobby_DOF / SunRays disabled (kept by name: scripts look them up). Two Sky objects remain (Sky, Lobby_Sky): decide which.
 - Technology is still ShadowMap (3): patch to Future (4) offline with `tools/set_technology.py` while the place is closed.
 
-## Computer use (Edward, 2026-10-14 23:00)
-- While Edward is on the PC: do NOTHING that needs tabbing into a window (no computer use, no File menu saves, no Import 3D).
-  Work through scripts, the Studio MCP and the Blender MCP only; leave saves and imports for Edward or for when he says so.
+## Computer use (Edward, 2026-10-29, replaces the 2026-10-14 rule)
+- The screen is yours whenever a step needs it (Import 3D, File menu saves, Publish As, computer use): don't wait for Edward to
+  be idle and don't run tools/wait_idle.ps1. He uses his other monitor (videos, games) while agents work, so his mouse and
+  keyboard moving does not mean he needs this screen.
+- Touch only your own Studio/Blender windows, never his other windows. If he messages you to stop, stop.
 
 ## Queued (Edward, 2026-10-15)
 - After the rebuild: **remove particle effects that RIVALS doesn't have** (compare RIVALS' lobby ParticleEmitters/Beams/Trails/Fire/
