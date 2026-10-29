@@ -181,6 +181,12 @@
    "rough": "tex/H_Stairs_rough.png",
    "metal": "tex/H_Stairs_metal.png"
   },
+  "Stairs2": {
+   "color": "tex/H_Stairs2_color.png",
+   "normal": "tex/H_Stairs2_normal.png",
+   "rough": "tex/H_Stairs2_rough.png",
+   "metal": "tex/H_Stairs2_metal.png"
+  },
   "Rails": {
    "color": "tex/H_Rails_color.png",
    "normal": "tex/H_Rails_normal.png",
@@ -222,6 +228,24 @@
    "normal": "tex/H_Windows2_normal.png",
    "rough": "tex/H_Windows2_rough.png",
    "metal": "tex/H_Windows2_metal.png"
+  },
+  "Windows5": {
+   "color": "tex/H_Windows5_color.png",
+   "normal": "tex/H_Windows5_normal.png",
+   "rough": "tex/H_Windows5_rough.png",
+   "metal": "tex/H_Windows5_metal.png"
+  },
+  "Windows6": {
+   "color": "tex/H_Windows6_color.png",
+   "normal": "tex/H_Windows6_normal.png",
+   "rough": "tex/H_Windows6_rough.png",
+   "metal": "tex/H_Windows6_metal.png"
+  },
+  "Tape": {
+   "color": "tex/H_Tape_color.png",
+   "normal": "tex/H_Tape_normal.png",
+   "rough": "tex/H_Tape_rough.png",
+   "metal": "tex/H_Tape_metal.png"
   },
   "Windows": {
    "color": "tex/H_Windows_color.png",
@@ -2046,7 +2070,7 @@
   {
    "name": "Stair_Back",
    "tris": 516,
-   "material": "H_Stairs",
+   "material": "H_Stairs2",
    "parent": null,
    "bbox_plan": [
     [
@@ -2073,13 +2097,13 @@
    "parent": null,
    "bbox_plan": [
     [
-     -3.71,
-     -4.247,
+     -3.67,
+     -4.22,
      13.95
     ],
     [
-     8.71,
-     -3.753,
+     8.67,
+     -3.78,
      17.75
     ]
    ],
@@ -2096,14 +2120,14 @@
    "parent": null,
    "bbox_plan": [
     [
-     -3.71,
-     -23.247,
+     -3.67,
+     -23.22,
      0.388
     ],
     [
-     -3.19,
+     -3.23,
      -4.63,
-     16.838
+     16.811
     ]
    ],
    "origin_plan": [
@@ -2119,13 +2143,13 @@
    "parent": null,
    "bbox_plan": [
     [
-     3.69,
-     9.353,
+     3.73,
+     9.38,
      0.388
     ],
     [
-     4.21,
-     23.247,
+     4.17,
+     23.22,
      13.753
     ]
    ],
@@ -2391,7 +2415,7 @@
   {
    "name": "Win_DR_S1_Frame",
    "tris": 120,
-   "material": "H_Windows3",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -2414,7 +2438,7 @@
   {
    "name": "Win_DR_S2_Frame",
    "tris": 120,
-   "material": "H_Windows4",
+   "material": "H_Windows2",
    "parent": null,
    "bbox_plan": [
     [
@@ -2460,7 +2484,7 @@
   {
    "name": "Win_MB_S_Frame",
    "tris": 120,
-   "material": "H_Windows3",
+   "material": "H_Windows5",
    "parent": null,
    "bbox_plan": [
     [
@@ -2506,7 +2530,7 @@
   {
    "name": "Win_BR2_S1_Frame",
    "tris": 120,
-   "material": "H_Windows3",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -2529,7 +2553,7 @@
   {
    "name": "Win_BR2_S2_Frame",
    "tris": 120,
-   "material": "H_Windows4",
+   "material": "H_Windows2",
    "parent": null,
    "bbox_plan": [
     [
@@ -2552,7 +2576,7 @@
   {
    "name": "Win_GB_N_Frame",
    "tris": 120,
-   "material": "H_Windows4",
+   "material": "H_Windows6",
    "parent": null,
    "bbox_plan": [
     [
@@ -2621,7 +2645,7 @@
   {
    "name": "Win_KT_N1_Frame",
    "tris": 120,
-   "material": "H_Windows3",
+   "material": "H_Windows5",
    "parent": null,
    "bbox_plan": [
     [
@@ -2644,7 +2668,7 @@
   {
    "name": "Win_KT_N2_Frame",
    "tris": 120,
-   "material": "H_Windows4",
+   "material": "H_Windows6",
    "parent": null,
    "bbox_plan": [
     [
@@ -2736,7 +2760,7 @@
   {
    "name": "Win_EN_W_Frame",
    "tris": 96,
-   "material": "H_Windows3",
+   "material": "H_Windows1",
    "parent": null,
    "bbox_plan": [
     [
@@ -2759,7 +2783,7 @@
   {
    "name": "Win_LR_W_Frame",
    "tris": 120,
-   "material": "H_Windows2",
+   "material": "H_Windows6",
    "parent": null,
    "bbox_plan": [
     [
@@ -2782,7 +2806,7 @@
   {
    "name": "Win_BR3_W_Frame",
    "tris": 120,
-   "material": "H_Windows3",
+   "material": "H_Windows5",
    "parent": null,
    "bbox_plan": [
     [
@@ -2805,7 +2829,7 @@
   {
    "name": "Win_GB_W_Frame",
    "tris": 120,
-   "material": "H_Windows1",
+   "material": "H_Windows3",
    "parent": null,
    "bbox_plan": [
     [
@@ -2989,7 +3013,7 @@
   {
    "name": "Win_BR2_FY_Frame",
    "tris": 96,
-   "material": "H_Windows2",
+   "material": "H_Windows4",
    "parent": null,
    "bbox_plan": [
     [
@@ -3035,7 +3059,7 @@
   {
    "name": "Win_ST2_E_Frame",
    "tris": 120,
-   "material": "H_Windows3",
+   "material": "H_Windows5",
    "parent": null,
    "bbox_plan": [
     [
@@ -3058,7 +3082,7 @@
   {
    "name": "Win_UB_E_Frame",
    "tris": 96,
-   "material": "H_Windows1",
+   "material": "H_Windows5",
    "parent": null,
    "bbox_plan": [
     [
@@ -3150,7 +3174,7 @@
   {
    "name": "Win_LR_S2_GlassTape",
    "tris": 96,
-   "material": "H_Windows4",
+   "material": "H_Tape",
    "parent": "Win_LR_S2_Glass",
    "bbox_plan": [
     [
@@ -3173,7 +3197,7 @@
   {
    "name": "Win_DR_S1_GlassTape",
    "tris": 96,
-   "material": "H_Windows3",
+   "material": "H_Tape",
    "parent": "Win_DR_S1_Glass",
    "bbox_plan": [
     [
@@ -3196,7 +3220,7 @@
   {
    "name": "Win_FY_S_GlassTape",
    "tris": 96,
-   "material": "H_Windows3",
+   "material": "H_Tape",
    "parent": "Win_FY_S_Glass",
    "bbox_plan": [
     [
@@ -3219,7 +3243,7 @@
   {
    "name": "Win_BR2_S1_GlassTape",
    "tris": 96,
-   "material": "H_Windows3",
+   "material": "H_Tape",
    "parent": "Win_BR2_S1_Glass",
    "bbox_plan": [
     [
@@ -3242,7 +3266,7 @@
   {
    "name": "Win_BH_N_GlassTape",
    "tris": 96,
-   "material": "H_Windows1",
+   "material": "H_Tape",
    "parent": "Win_BH_N_Glass",
    "bbox_plan": [
     [
@@ -3265,7 +3289,7 @@
   {
    "name": "Win_BR3_N1_GlassTape",
    "tris": 96,
-   "material": "H_Windows3",
+   "material": "H_Tape",
    "parent": "Win_BR3_N1_Glass",
    "bbox_plan": [
     [
@@ -3288,7 +3312,7 @@
   {
    "name": "Win_BR3_N2_GlassTape",
    "tris": 96,
-   "material": "H_Windows4",
+   "material": "H_Tape",
    "parent": "Win_BR3_N2_Glass",
    "bbox_plan": [
     [
@@ -3311,7 +3335,7 @@
   {
    "name": "Win_DR_E_GlassTape",
    "tris": 96,
-   "material": "H_Windows4",
+   "material": "H_Tape",
    "parent": "Win_DR_E_Glass",
    "bbox_plan": [
     [
@@ -3334,7 +3358,7 @@
   {
    "name": "Win_KT_E_GlassTape",
    "tris": 144,
-   "material": "H_Windows1",
+   "material": "H_Tape",
    "parent": "Win_KT_E_Glass",
    "bbox_plan": [
     [
@@ -3357,7 +3381,7 @@
   {
    "name": "Win_BR2_E_GlassTape",
    "tris": 96,
-   "material": "H_Windows4",
+   "material": "H_Tape",
    "parent": "Win_BR2_E_Glass",
    "bbox_plan": [
     [
@@ -3380,7 +3404,7 @@
   {
    "name": "Win_BR2_N_GlassTape",
    "tris": 96,
-   "material": "H_Windows1",
+   "material": "H_Tape",
    "parent": "Win_BR2_N_Glass",
    "bbox_plan": [
     [

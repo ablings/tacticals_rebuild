@@ -659,7 +659,7 @@ def finish_plain(mb, matname):
 # ----------------------------------------------------------------------------------------------------------- stairs + rails
 def stair(st):
     name = "Stair_Main" if st["id"] == "Stair_Main" else "Stair_Back"
-    mb = MB(name, "Stairs", 14.0)
+    mb = MB(name, "Stairs" if st["id"] == "Stair_Main" else "Stairs2", 14.0)
     n, rise, run = st["steps"], st["step_rise"], st["step_run"]
     x0, x1 = st["x0"], st["x1"]
     foot, top = st["foot_y"], st["top_y"]
@@ -718,7 +718,7 @@ def railing(name, x0, x1, y0, y1, zfn, along, length_pts, atlas="Rails", newel_e
             z = zfn(a)
             p = at(a, z)
             mb.boxr((p.x - 0.22, p.y - 0.22, z - 0.05), (p.x + 0.22, p.y + 0.22, z + 3.45), "walnut65")
-            mb.lathe([(0, 3.4), (0.26, 3.4), (0.26, 3.5), (0.2, 3.58), (0.14, 3.65), (0.1, 3.75), (0, 3.75)], 10, "walnut65",
+            mb.lathe([(0, 3.4), (0.22, 3.4), (0.22, 3.5), (0.18, 3.58), (0.13, 3.65), (0.09, 3.75), (0, 3.75)], 10, "walnut65",
                      M=Matrix.Translation((p.x, p.y, z)))
     # handrail as a sloped / straight bar along the run (top 3.5 above the line)
     segs = 1
@@ -731,7 +731,7 @@ def railing(name, x0, x1, y0, y1, zfn, along, length_pts, atlas="Rails", newel_e
     for p in (pa, pb):
         for s, t in ((-1, -1), (1, -1), (1, 1), (-1, 1)):
             vs.append(p + side * (s * w) + up * (t * h))
-    mb.tube([pa, pb], 0.16, "walnut65", segs=10)
+    mb.tube([pa, pb], 0.125, "walnut65", segs=10)          # inside v1's 0.35 x 0.25 rail section
     # bottom rail 0.3 above the line (keeps the balusters tied)
     qa, qb = at(a0, zfn(a0) + 0.3), at(a1, zfn(a1) + 0.3)
     vs = []
@@ -903,7 +903,7 @@ def window(op):
     ncol = max(1, int(math.ceil(W / 5.2)))
     nrow = 2 if H > 2.5 else 1
     fw, fd = 0.25, 0.2           # frame member width (in the wall plane), half depth across the wall
-    fr = MB(op["id"] + "_Frame", "Windows" + str(sum(map(ord, op["id"])) % 4 + 1), H)
+    fr = MB(op["id"] + "_Frame", "Windows" + str(sum(map(ord, op["id"])) % 6 + 1), H)
     def B(alo, ahi, zlo, zhi, tlo, thi, kind):
         if axis == "x":
             fr.boxr((alo, tlo, zlo), (ahi, thi, zhi), kind)
@@ -967,7 +967,7 @@ def window(op):
     # masking-tape crosses (test prep) on about one window in three, on the inside face of every pane; parented to the
     # glass after baking so the breakable-glass script hides them with the pane
     if not frost and not interior and (sum(map(ord, op["id"])) % 3 == 0 or op["id"] in TAPE_ALWAYS):
-        tp = MB(op["id"] + "_GlassTape", "Windows" + str(sum(map(ord, op["id"])) % 4 + 1), H)
+        tp = MB(op["id"] + "_GlassTape", "Tape", H)
         tin_ = (t1 if op["line"] < 0 else t0)
         si_ = 1.0 if tin_ > tm else -1.0
         sashes = [((xs_main[i] + 0.1, zs[j] + 0.1), (xs_main[i + 1] - 0.1, zs[j + 1] - 0.1)) for i in range(len(xs_main) - 1) for j in range(len(zs) - 1)]

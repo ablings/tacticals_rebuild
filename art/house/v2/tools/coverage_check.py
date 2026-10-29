@@ -17,6 +17,8 @@ bm = bmesh.new()
 for o in bpy.data.collections["House"].objects:
     if o.type != "MESH" or "Glass" in o.name or "Scale" in o.name or "Marker" in o.name:
         continue
+    if not o.name.startswith(("Shell_", "Stair_", "Rail_", "Door", "Win_", "Skylight", "Corner")):
+        continue      # 1965 art in front of the walls (drapes, wear decals, dressing, dummies) must not hide a hole
     t = bmesh.new(); t.from_mesh(o.data); t.transform(o.matrix_world)
     me = bpy.data.meshes.new("tmp"); t.to_mesh(me); t.free()
     bm.from_mesh(me); bpy.data.meshes.remove(me)

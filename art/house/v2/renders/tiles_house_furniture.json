@@ -1,5 +1,1217 @@
 [
  {
+  "name": "H_Sofa_Sectional",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Sofa_Sectional.png",
+  "size": [
+   12.0,
+   3.4,
+   7.2
+  ],
+  "tris": 2116,
+  "cover": "LOW 3.4",
+  "role": "skirted L-sectional, cream vinyl; boxes: back 3.4, arms 2.6, seats 1.8"
+ },
+ {
+  "name": "H_Armchair",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Armchair.png",
+  "size": [
+   4.2,
+   3.4,
+   4.0
+  ],
+  "tris": 792,
+  "cover": "LOW 3.4",
+  "role": "club armchair, olive tweed; boxes: back 3.4, arms 2.5, seat 1.8"
+ },
+ {
+  "name": "H_KitchenIsland",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_KitchenIsland.png",
+  "size": [
+   10.0,
+   3.4,
+   4.68
+  ],
+  "tris": 480,
+  "cover": "LOW 3.4",
+  "role": "gold enamel island, laminate top, seating side +Y"
+ },
+ {
+  "name": "H_DiningSet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_DiningSet.png",
+  "size": [
+   8.0,
+   3.394,
+   6.674
+  ],
+  "tris": 4668,
+  "cover": "LOW 3.4",
+  "role": "walnut table set for six + 6 dinette chairs; boxes: table 2.6 + a 3.4 box per chair row"
+ },
+ {
+  "name": "H_DiningTable",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_DiningTable.png",
+  "size": [
+   8.0,
+   2.6,
+   4.0
+  ],
+  "tris": 328,
+  "cover": "low obstacle 2.6",
+  "role": "dining table alone (top 2.6)"
+ },
+ {
+  "name": "H_DiningChair",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_DiningChair.png",
+  "size": [
+   1.9,
+   3.394,
+   1.937
+  ],
+  "tris": 412,
+  "cover": "none (dressing)",
+  "role": "dinette chair alone"
+ },
+ {
+  "name": "H_Bed_Double",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bed_Double.png",
+  "size": [
+   7.7,
+   3.4,
+   10.0
+  ],
+  "tris": 604,
+  "cover": "LOW 3.4",
+  "role": "walnut bed, chenille spread to the floor, head at +Y"
+ },
+ {
+  "name": "H_Bed_Single",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bed_Single.png",
+  "size": [
+   4.7,
+   3.4,
+   8.6
+  ],
+  "tris": 1284,
+  "cover": "LOW 3.4",
+  "role": "maple spindle bed, cowboy-print spread, head at +Y"
+ },
+ {
+  "name": "H_Dresser",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Dresser.png",
+  "size": [
+   6.0,
+   3.4,
+   2.3
+  ],
+  "tris": 340,
+  "cover": "LOW 3.4",
+  "role": "walnut lowboy dresser"
+ },
+ {
+  "name": "H_Bathtub",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bathtub.png",
+  "size": [
+   7.0,
+   4.119,
+   3.6
+  ],
+  "tris": 752,
+  "cover": "LOW 3.4",
+  "role": "built-in tub, mint tiled apron and ledge to 3.4"
+ },
+ {
+  "name": "H_TVConsole",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TVConsole.png",
+  "size": [
+   8.0,
+   3.4,
+   2.02
+  ],
+  "tris": 636,
+  "cover": "LOW 3.4",
+  "role": "console TV + radiogram, walnut"
+ },
+ {
+  "name": "H_TVConsole_WithTV",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TVConsole_WithTV.png",
+  "size": [
+   8.0,
+   7.42,
+   2.02
+  ],
+  "tris": 948,
+  "cover": "LOW 3.4",
+  "role": "console with a portable TV on it"
+ },
+ {
+  "name": "H_KitchenBase",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_KitchenBase.png",
+  "size": [
+   4.0,
+   3.4,
+   2.46
+  ],
+  "tris": 216,
+  "cover": "LOW 3.4",
+  "role": "gold enamel base module 4 wide"
+ },
+ {
+  "name": "H_KitchenSink",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_KitchenSink.png",
+  "size": [
+   4.0,
+   5.007,
+   2.46
+  ],
+  "tris": 416,
+  "cover": "LOW 3.4",
+  "role": "base with a steel sink and a chrome tap"
+ },
+ {
+  "name": "H_KitchenHob",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_KitchenHob.png",
+  "size": [
+   4.0,
+   3.4,
+   2.58
+  ],
+  "tris": 1116,
+  "cover": "LOW 3.4",
+  "role": "cream enamel range, coil burners, oven"
+ },
+ {
+  "name": "H_Bookcase",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bookcase.png",
+  "size": [
+   6.0,
+   8.0,
+   1.6
+  ],
+  "tris": 1144,
+  "cover": "TALL 8.0",
+  "role": "walnut glass-front bookcase on a closed base"
+ },
+ {
+  "name": "H_Fridge",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Fridge.png",
+  "size": [
+   3.6,
+   8.0,
+   2.854
+  ],
+  "tris": 700,
+  "cover": "TALL 8.0",
+  "role": "rounded-top fridge + walnut cabinet over it to 8"
+ },
+ {
+  "name": "H_Wardrobe",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Wardrobe.png",
+  "size": [
+   6.0,
+   8.0,
+   2.5
+  ],
+  "tris": 148,
+  "cover": "TALL 8.0",
+  "role": "walnut wardrobe"
+ },
+ {
+  "name": "H_TallCabinet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TallCabinet.png",
+  "size": [
+   3.0,
+   8.0,
+   2.12
+  ],
+  "tris": 248,
+  "cover": "TALL 8.0",
+  "role": "painted linen press (cream)"
+ },
+ {
+  "name": "H_Pantry",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Pantry.png",
+  "size": [
+   4.0,
+   8.0,
+   2.46
+  ],
+  "tris": 144,
+  "cover": "TALL 8.0",
+  "role": "gold enamel pantry"
+ },
+ {
+  "name": "H_ShelfWall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_ShelfWall.png",
+  "size": [
+   12.0,
+   8.0,
+   2.0
+  ],
+  "tris": 4244,
+  "cover": "TALL 8.0",
+  "role": "walnut room divider dressed on both faces (team A spawn wall)"
+ },
+ {
+  "name": "H_OvenWall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_OvenWall.png",
+  "size": [
+   12.0,
+   8.0,
+   1.988
+  ],
+  "tris": 452,
+  "cover": "TALL 8.0",
+  "role": "twin steel wall ovens in gold enamel (team B spawn wall); ovens on -Y"
+ },
+ {
+  "name": "H_SlatScreen",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_SlatScreen.png",
+  "size": [
+   6.0,
+   8.0,
+   2.04
+  ],
+  "tris": 3276,
+  "cover": "TALL 8.0",
+  "role": "spindle room divider on a walnut base"
+ },
+ {
+  "name": "H_HeadboardWall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_HeadboardWall.png",
+  "size": [
+   14.0,
+   8.0,
+   1.5
+  ],
+  "tris": 1020,
+  "cover": "TALL 8.0",
+  "role": "walnut panelled bed wall with a padded mustard headboard (-Y)"
+ },
+ {
+  "name": "H_KitchenBench",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_KitchenBench.png",
+  "size": [
+   10.0,
+   3.4,
+   3.5
+  ],
+  "tris": 804,
+  "cover": "LOW 3.4",
+  "role": "diner booth, seat faces -Y; boxes: back 3.4, seat 1.95"
+ },
+ {
+  "name": "H_HallBench_3",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_HallBench_3.png",
+  "size": [
+   3.5,
+   3.4,
+   2.0
+  ],
+  "tris": 188,
+  "cover": "LOW 3.4",
+  "role": "telephone / gossip bench; boxes: back 3.4, seat 1.65"
+ },
+ {
+  "name": "H_HallBench_8",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_HallBench_8.png",
+  "size": [
+   8.0,
+   3.4,
+   2.0
+  ],
+  "tris": 312,
+  "cover": "LOW 3.4",
+  "role": "slatted pine mudroom bench; boxes: back 3.4, seat 1.65"
+ },
+ {
+  "name": "H_Planter",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Planter.png",
+  "size": [
+   3.0,
+   8.954,
+   3.0
+  ],
+  "tris": 1148,
+  "cover": "LOW 3.4",
+  "role": "brick planter (cover 3.4) + rubber plant as art"
+ },
+ {
+  "name": "H_DisplayColumn",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_DisplayColumn.png",
+  "size": [
+   3.0,
+   8.0,
+   3.0
+  ],
+  "tris": 240,
+  "cover": "TALL 8.0",
+  "role": "fieldstone column with walnut niches on -Y and +Y"
+ },
+ {
+  "name": "H_KitchenUpper",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_KitchenUpper.png",
+  "size": [
+   4.0,
+   2.6,
+   1.45
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "gold enamel wall cabinet, bottom 5.8 above the floor"
+ },
+ {
+  "name": "H_RangeHood",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_RangeHood.png",
+  "size": [
+   3.2,
+   3.44,
+   1.65
+  ],
+  "tris": 44,
+  "cover": "none (dressing)",
+  "role": "gold enamel hood, bottom 5.8 above the floor"
+ },
+ {
+  "name": "H_BarStool",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_BarStool.png",
+  "size": [
+   1.48,
+   2.605,
+   1.48
+  ],
+  "tris": 392,
+  "cover": "none (dressing)",
+  "role": "chrome stool, olive vinyl top"
+ },
+ {
+  "name": "H_Nightstand",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Nightstand.png",
+  "size": [
+   2.2,
+   2.0,
+   2.05
+  ],
+  "tris": 164,
+  "cover": "none (dressing)",
+  "role": "walnut nightstand"
+ },
+ {
+  "name": "H_CoffeeTable",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_CoffeeTable.png",
+  "size": [
+   5.0,
+   1.651,
+   2.8
+  ],
+  "tris": 492,
+  "cover": "none (dressing)",
+  "role": "kidney coffee table, magazines, ashtray"
+ },
+ {
+  "name": "H_SideTable",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_SideTable.png",
+  "size": [
+   1.8,
+   2.149,
+   1.8
+  ],
+  "tris": 212,
+  "cover": "none (dressing)",
+  "role": "round walnut side table"
+ },
+ {
+  "name": "H_Desk",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Desk.png",
+  "size": [
+   5.0,
+   2.62,
+   2.43
+  ],
+  "tris": 204,
+  "cover": "none (dressing)",
+  "role": "steel tanker desk"
+ },
+ {
+  "name": "H_DeskChair",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_DeskChair.png",
+  "size": [
+   2.182,
+   3.582,
+   2.09
+  ],
+  "tris": 224,
+  "cover": "none (dressing)",
+  "role": "wooden spindle-back chair"
+ },
+ {
+  "name": "H_WashingMachine",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_WashingMachine.png",
+  "size": [
+   2.6,
+   3.0,
+   2.52
+  ],
+  "tris": 396,
+  "cover": "none (dressing)",
+  "role": "top-loading washer"
+ },
+ {
+  "name": "H_FruitBowl",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_FruitBowl.png",
+  "size": [
+   1.5,
+   0.66,
+   1.477
+  ],
+  "tris": 312,
+  "cover": "none (dressing)",
+  "role": "olive bowl of wax fruit"
+ },
+ {
+  "name": "H_Microwave",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Microwave.png",
+  "size": [
+   1.93,
+   1.1,
+   1.36
+  ],
+  "tris": 276,
+  "cover": "none (dressing)",
+  "role": "toaster + bread bin (no microwaves in 1965)"
+ },
+ {
+  "name": "H_CoffeeMachine",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_CoffeeMachine.png",
+  "size": [
+   0.9,
+   1.3,
+   1.54
+  ],
+  "tris": 300,
+  "cover": "none (dressing)",
+  "role": "percolator"
+ },
+ {
+  "name": "H_Kettle",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Kettle.png",
+  "size": [
+   0.8,
+   0.89,
+   0.945
+  ],
+  "tris": 248,
+  "cover": "none (dressing)",
+  "role": "whistling kettle"
+ },
+ {
+  "name": "H_TV",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TV.png",
+  "size": [
+   6.4,
+   4.06,
+   0.759
+  ],
+  "tris": 312,
+  "cover": "none (dressing)",
+  "role": "portable TV on a wire stand; screen is its own mesh"
+ },
+ {
+  "name": "H_Laptop",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Laptop.png",
+  "size": [
+   1.5,
+   0.985,
+   1.286
+  ],
+  "tris": 528,
+  "cover": "none (dressing)",
+  "role": "portable typewriter"
+ },
+ {
+  "name": "H_FloorLamp",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_FloorLamp.png",
+  "size": [
+   1.9,
+   6.011,
+   1.9
+  ],
+  "tris": 204,
+  "cover": "none (dressing)",
+  "role": "tripod lamp, drum shade; PointLight in the shade at z 5.3"
+ },
+ {
+  "name": "H_TableLamp",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TableLamp.png",
+  "size": [
+   1.29,
+   2.0,
+   1.29
+  ],
+  "tris": 288,
+  "cover": "none (dressing)",
+  "role": "ceramic lamp, pleated shade; PointLight at z 1.6"
+ },
+ {
+  "name": "H_PendantLamp",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_PendantLamp.png",
+  "size": [
+   1.8,
+   4.05,
+   1.8
+  ],
+  "tris": 1032,
+  "cover": "none (dressing)",
+  "role": "opal globe pendant on a brass chain: origin = ceiling point (_Bulb glows)"
+ },
+ {
+  "name": "H_Frame_Abstract",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Frame_Abstract.png",
+  "size": [
+   4.0,
+   4.0,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "mid-century print, thin walnut frame 4 x 4"
+ },
+ {
+  "name": "H_Frame_Landscape",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Frame_Landscape.png",
+  "size": [
+   5.4,
+   3.6,
+   0.15
+  ],
+  "tris": 72,
+  "cover": "none (dressing)",
+  "role": "desert oil in a gold frame 5.4 x 3.6"
+ },
+ {
+  "name": "H_Frame_Botanical",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Frame_Botanical.png",
+  "size": [
+   2.6,
+   3.4,
+   0.15
+  ],
+  "tris": 72,
+  "cover": "none (dressing)",
+  "role": "cactus-flower oil in a gold frame 2.6 x 3.4"
+ },
+ {
+  "name": "H_Frame_Geometric",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Frame_Geometric.png",
+  "size": [
+   3.0,
+   3.0,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "kid's rocket drawing, framed 3 x 3"
+ },
+ {
+  "name": "H_Rug_Living",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Rug_Living.png",
+  "size": [
+   12.0,
+   0.06,
+   8.0
+  ],
+  "tris": 44,
+  "cover": "none (dressing)",
+  "role": "olive shag rug 12 x 8"
+ },
+ {
+  "name": "H_Rug_Runner",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Rug_Runner.png",
+  "size": [
+   4.0,
+   0.06,
+   10.0
+  ],
+  "tris": 148,
+  "cover": "none (dressing)",
+  "role": "braided runner 4 x 10"
+ },
+ {
+  "name": "H_PlantFiddle",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_PlantFiddle.png",
+  "size": [
+   2.605,
+   5.475,
+   2.031
+  ],
+  "tris": 1176,
+  "cover": "none (dressing)",
+  "role": "rubber plant in a brass pot"
+ },
+ {
+  "name": "H_PlantSnake",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_PlantSnake.png",
+  "size": [
+   1.107,
+   2.833,
+   1.05
+  ],
+  "tris": 576,
+  "cover": "none (dressing)",
+  "role": "snake plant, terracotta"
+ },
+ {
+  "name": "H_Toilet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Toilet.png",
+  "size": [
+   1.9,
+   2.64,
+   2.5
+  ],
+  "tris": 564,
+  "cover": "none (dressing)",
+  "role": "mint toilet, back to the wall (+Y)"
+ },
+ {
+  "name": "H_Vanity",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Vanity.png",
+  "size": [
+   4.1,
+   3.043,
+   1.92
+  ],
+  "tris": 528,
+  "cover": "none (dressing)",
+  "role": "mint vanity: back on the wall at +Y 0.9"
+ },
+ {
+  "name": "H_Mirror",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Mirror.png",
+  "size": [
+   3.0,
+   4.0,
+   0.19
+  ],
+  "tris": 48,
+  "cover": "none (dressing)",
+  "role": "chrome medicine cabinet, back on y = 0, hang bottom at 3.9"
+ },
+ {
+  "name": "H_ShowerSet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_ShowerSet.png",
+  "size": [
+   1.1,
+   3.31,
+   1.606
+  ],
+  "tris": 260,
+  "cover": "none (dressing)",
+  "role": "chrome shower head + cross taps, back on y = 0"
+ },
+ {
+  "name": "H_ShowerGlass",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_ShowerGlass.png",
+  "size": [
+   3.12,
+   6.6,
+   0.228
+  ],
+  "tris": 756,
+  "cover": "player blocker box 3 x 6.6 x 0.1 (as v1)",
+  "role": "vinyl shower curtain on a chrome rod (opaque, baked) + rod flange"
+ },
+ {
+  "name": "H_TowelRail",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TowelRail.png",
+  "size": [
+   2.2,
+   1.32,
+   0.49
+  ],
+  "tris": 96,
+  "cover": "none (dressing)",
+  "role": "chrome rail, faded towels, back on y = 0"
+ },
+ {
+  "name": "H_ToyBlocks",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_ToyBlocks.png",
+  "size": [
+   2.172,
+   1.11,
+   1.772
+  ],
+  "tris": 84,
+  "cover": "none (dressing)",
+  "role": "wooden blocks"
+ },
+ {
+  "name": "H_ToyBall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_ToyBall.png",
+  "size": [
+   1.2,
+   1.2,
+   1.2
+  ],
+  "tris": 288,
+  "cover": "none (dressing)",
+  "role": "rubber ball"
+ },
+ {
+  "name": "H_ToyCar",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_ToyCar.png",
+  "size": [
+   0.96,
+   0.78,
+   1.5
+  ],
+  "tris": 376,
+  "cover": "none (dressing)",
+  "role": "tin toy car"
+ },
+ {
+  "name": "H_Teddy",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Teddy.png",
+  "size": [
+   1.199,
+   1.57,
+   0.96
+  ],
+  "tris": 480,
+  "cover": "none (dressing)",
+  "role": "worn teddy (a split seam)"
+ },
+ {
+  "name": "H_Armchair_Mustard",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Armchair_Mustard.png",
+  "size": [
+   4.2,
+   3.4,
+   4.0
+  ],
+  "tris": 792,
+  "cover": "LOW 3.4",
+  "role": "slipper chair, mustard tweed (MB)"
+ },
+ {
+  "name": "H_Bed_Double_Maple",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bed_Double_Maple.png",
+  "size": [
+   7.7,
+   3.4,
+   10.0
+  ],
+  "tris": 1752,
+  "cover": "LOW 3.4",
+  "role": "maple spindle bed, plaid spread (BR2)"
+ },
+ {
+  "name": "H_Dresser_Credenza",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Dresser_Credenza.png",
+  "size": [
+   6.0,
+   3.4,
+   2.3
+  ],
+  "tris": 100,
+  "cover": "LOW 3.4",
+  "role": "walnut credenza, sliding louvred doors (LR)"
+ },
+ {
+  "name": "H_Dresser_Phone",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Dresser_Phone.png",
+  "size": [
+   6.0,
+   3.4,
+   2.3
+  ],
+  "tris": 284,
+  "cover": "LOW 3.4",
+  "role": "walnut telephone table, skirted cupboard (FY)"
+ },
+ {
+  "name": "H_Dresser_Maple",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Dresser_Maple.png",
+  "size": [
+   6.0,
+   3.4,
+   2.3
+  ],
+  "tris": 340,
+  "cover": "LOW 3.4",
+  "role": "maple dresser (BR2)"
+ },
+ {
+  "name": "H_Dresser_Cream",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Dresser_Cream.png",
+  "size": [
+   6.0,
+   3.4,
+   2.3
+  ],
+  "tris": 340,
+  "cover": "LOW 3.4",
+  "role": "painted cream chest of drawers (BR3)"
+ },
+ {
+  "name": "H_TVConsole_Buffet",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TVConsole_Buffet.png",
+  "size": [
+   8.0,
+   3.4,
+   2.02
+  ],
+  "tris": 408,
+  "cover": "LOW 3.4",
+  "role": "walnut buffet, louvred doors (DR)"
+ },
+ {
+  "name": "H_Bathtub_Butter",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bathtub_Butter.png",
+  "size": [
+   7.0,
+   4.119,
+   3.6
+  ],
+  "tris": 752,
+  "cover": "LOW 3.4",
+  "role": "built-in tub, butter-yellow tiles (UB)"
+ },
+ {
+  "name": "H_Bookcase_Hutch",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bookcase_Hutch.png",
+  "size": [
+   6.0,
+   8.0,
+   1.6
+  ],
+  "tris": 3028,
+  "cover": "TALL 8.0",
+  "role": "walnut china hutch, plates on display (DR)"
+ },
+ {
+  "name": "H_Bookcase_Maple",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Bookcase_Maple.png",
+  "size": [
+   6.0,
+   8.0,
+   1.6
+  ],
+  "tris": 1000,
+  "cover": "TALL 8.0",
+  "role": "open maple bookcase (BR2)"
+ },
+ {
+  "name": "H_Wardrobe_Lockers",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Wardrobe_Lockers.png",
+  "size": [
+   6.0,
+   8.0,
+   2.5
+  ],
+  "tris": 292,
+  "cover": "TALL 8.0",
+  "role": "painted green coat lockers, chalked numbers (MR)"
+ },
+ {
+  "name": "H_Wardrobe_Maple",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Wardrobe_Maple.png",
+  "size": [
+   6.0,
+   8.0,
+   2.5
+  ],
+  "tris": 148,
+  "cover": "TALL 8.0",
+  "role": "maple wardrobe (BR2)"
+ },
+ {
+  "name": "H_Wardrobe_Cream",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Wardrobe_Cream.png",
+  "size": [
+   6.0,
+   8.0,
+   2.5
+  ],
+  "tris": 148,
+  "cover": "TALL 8.0",
+  "role": "painted cream wardrobe (BR3)"
+ },
+ {
+  "name": "H_TallCabinet_HallTree",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_TallCabinet_HallTree.png",
+  "size": [
+   3.0,
+   8.0,
+   2.12
+  ],
+  "tris": 228,
+  "cover": "TALL 8.0",
+  "role": "walnut hall tree with mirror, coat and hat (BH)"
+ },
+ {
+  "name": "H_Desk_School",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Desk_School.png",
+  "size": [
+   5.0,
+   2.604,
+   2.44
+  ],
+  "tris": 196,
+  "cover": "none (dressing)",
+  "role": "maple school desk (BR3)"
+ },
+ {
+  "name": "H_Toilet_Butter",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Toilet_Butter.png",
+  "size": [
+   1.9,
+   2.64,
+   2.5
+  ],
+  "tris": 564,
+  "cover": "none (dressing)",
+  "role": "butter toilet (UB)"
+ },
+ {
+  "name": "H_Vanity_Butter",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Vanity_Butter.png",
+  "size": [
+   4.1,
+   3.043,
+   1.92
+  ],
+  "tris": 528,
+  "cover": "none (dressing)",
+  "role": "butter vanity (UB)"
+ },
+ {
+  "name": "H_PendantLamp_Sputnik",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_PendantLamp_Sputnik.png",
+  "size": [
+   1.8,
+   4.05,
+   1.8
+  ],
+  "tris": 740,
+  "cover": "none (dressing)",
+  "role": "brass sputnik chandelier (FY)"
+ },
+ {
+  "name": "H_Frame_Notice",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Frame_Notice.png",
+  "size": [
+   3.0,
+   3.0,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "household drill notice board (MR)"
+ },
+ {
+  "name": "H_Frame_Pennant",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Frame_Pennant.png",
+  "size": [
+   2.6,
+   3.4,
+   0.15
+  ],
+  "tris": 60,
+  "cover": "none (dressing)",
+  "role": "framed pennant (BR2)"
+ },
+ {
+  "name": "H_Frame_Mesa",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Frame_Mesa.png",
+  "size": [
+   5.4,
+   3.6,
+   0.15
+  ],
+  "tris": 72,
+  "cover": "none (dressing)",
+  "role": "ranch-and-mesas oil in a gold frame (MB)"
+ },
+ {
+  "name": "H_Rug_Oval",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\H_Rug_Oval.png",
+  "size": [
+   12.0,
+   0.06,
+   8.0
+  ],
+  "tris": 148,
+  "cover": "none (dressing)",
+  "role": "braided oval rug (MB)"
+ },
+ {
+  "name": "D65_Phone",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Phone.png",
+  "size": [
+   2.011,
+   0.6,
+   0.92
+  ],
+  "tris": 360,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Radio",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Radio.png",
+  "size": [
+   1.6,
+   0.9,
+   0.87
+  ],
+  "tris": 292,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_RecordPlayer",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_RecordPlayer.png",
+  "size": [
+   1.8,
+   0.444,
+   1.5
+  ],
+  "tris": 124,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Papers",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Papers.png",
+  "size": [
+   4.067,
+   0.09,
+   3.155
+  ],
+  "tris": 120,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_BrokenPlates",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_BrokenPlates.png",
+  "size": [
+   2.155,
+   0.39,
+   1.912
+  ],
+  "tris": 152,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_LampKnocked",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_LampKnocked.png",
+  "size": [
+   6.153,
+   1.9,
+   3.242
+  ],
+  "tris": 172,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_ChairKnocked",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_ChairKnocked.png",
+  "size": [
+   1.9,
+   1.937,
+   3.394
+  ],
+  "tris": 392,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_SandDrift",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_SandDrift.png",
+  "size": [
+   4.0,
+   0.096,
+   2.0
+  ],
+  "tris": 200,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_SandDriftSmall",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_SandDriftSmall.png",
+  "size": [
+   2.4,
+   0.096,
+   1.4
+  ],
+  "tris": 200,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Cobweb",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Cobweb.png",
+  "size": [
+   1.517,
+   1.517,
+   1.517
+  ],
+  "tris": 2,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_TinRocket",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_TinRocket.png",
+  "size": [
+   0.626,
+   1.4,
+   0.708
+  ],
+  "tris": 96,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Clipboard",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Clipboard.png",
+  "size": [
+   0.9,
+   1.2,
+   0.1
+  ],
+  "tris": 36,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Canisters",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Canisters.png",
+  "size": [
+   2.58,
+   1.16,
+   0.624
+  ],
+  "tris": 560,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_CakeDome",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_CakeDome.png",
+  "size": [
+   1.5,
+   1.1,
+   1.477
+  ],
+  "tris": 316,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
   "name": "D65_Dummy_SitA",
   "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Dummy_SitA.png",
   "size": [
@@ -7,7 +1219,7 @@
    4.924,
    2.822
   ],
-  "tris": 1252,
+  "tris": 1348,
   "cover": "none (dressing)",
   "role": "1965 loose dressing (placed by build_house.py)"
  },
@@ -43,7 +1255,7 @@
    5.094,
    2.822
   ],
-  "tris": 1252,
+  "tris": 1348,
   "cover": "none (dressing)",
   "role": "1965 loose dressing (placed by build_house.py)"
  },
@@ -55,7 +1267,7 @@
    5.394,
    2.822
   ],
-  "tris": 1252,
+  "tris": 1348,
   "cover": "none (dressing)",
   "role": "1965 loose dressing (placed by build_house.py)"
  },
@@ -68,6 +1280,114 @@
    1.849
   ],
   "tris": 1240,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Poster_Travel",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Poster_Travel.png",
+  "size": [
+   2.4,
+   3.2,
+   0.27
+  ],
+  "tris": 12,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Poster_Kitchen",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Poster_Kitchen.png",
+  "size": [
+   2.4,
+   3.2,
+   0.12
+  ],
+  "tris": 12,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Calendar",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Calendar.png",
+  "size": [
+   1.4,
+   2.1,
+   0.22
+  ],
+  "tris": 12,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Notice",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Notice.png",
+  "size": [
+   1.8,
+   1.8,
+   0.12
+  ],
+  "tris": 12,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Pennant",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Pennant.png",
+  "size": [
+   3.0,
+   1.5,
+   0.12
+  ],
+  "tris": 12,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Drape_Gold",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Drape_Gold.png",
+  "size": [
+   1.04,
+   8.0,
+   0.4
+  ],
+  "tris": 112,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Drape_Mustard",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Drape_Mustard.png",
+  "size": [
+   1.04,
+   8.0,
+   0.4
+  ],
+  "tris": 112,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_Drape_Green",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_Drape_Green.png",
+  "size": [
+   1.04,
+   8.0,
+   0.4
+  ],
+  "tris": 112,
+  "cover": "none (dressing)",
+  "role": "1965 loose dressing (placed by build_house.py)"
+ },
+ {
+  "name": "D65_DrapeRod",
+  "png": "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\renders\\D65_DrapeRod.png",
+  "size": [
+   1.152,
+   0.16,
+   0.426
+  ],
+  "tris": 188,
   "cover": "none (dressing)",
   "role": "1965 loose dressing (placed by build_house.py)"
  }

@@ -1,46 +1,52 @@
 [   0.4s] trims 192 strips
-[   0.5s] deduped 504 hidden back-to-back faces; 4 wall bands filled
-[   0.6s] coplanar same-facing overlaps: 0 []
-[   9.6s] baked 62 plain 62
-[   9.6s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
-[   9.7s] bake Stairs ['Stair_Main', 'Stair_Back']
+[   0.4s] deduped 504 hidden back-to-back faces; 4 wall bands filled
+[   0.5s] coplanar same-facing overlaps: 0 []
+[   8.8s] baked 62 plain 62
+[   8.9s] cycles device OPTIX ['NVIDIA GeForce RTX 5070 Ti']
+[   8.9s] bake Stairs ['Stair_Main']
 Info: Baking map saved to internal image, save it externally or pack it
+[  11.6s]    Stairs color 1.2s
 Info: Baking map saved to internal image, save it externally or pack it
-[  13.1s]    Stairs color 2.4s
+[  12.8s]    Stairs rough 1.2s
 Info: Baking map saved to internal image, save it externally or pack it
+[  13.9s]    Stairs metal 1.1s
 Info: Baking map saved to internal image, save it externally or pack it
-[  15.4s]    Stairs rough 2.3s
+[  15.1s]    Stairs normal 1.2s
 Info: Baking map saved to internal image, save it externally or pack it
+[  16.3s]    Stairs ao 1.2s
+[  16.5s] bake Stairs2 ['Stair_Back']
 Info: Baking map saved to internal image, save it externally or pack it
-[  17.7s]    Stairs metal 2.3s
+[  20.1s]    Stairs2 color 1.3s
 Info: Baking map saved to internal image, save it externally or pack it
+[  21.5s]    Stairs2 rough 1.3s
 Info: Baking map saved to internal image, save it externally or pack it
-[  20.0s]    Stairs normal 2.3s
+[  22.8s]    Stairs2 metal 1.3s
 Info: Baking map saved to internal image, save it externally or pack it
+[  24.2s]    Stairs2 normal 1.4s
 Info: Baking map saved to internal image, save it externally or pack it
-[  22.4s]    Stairs ao 2.4s
-[  22.7s] bake Rails ['Rail_Gallery', 'Rail_MainStair', 'Rail_BackStair']
+[  25.6s]    Stairs2 ao 1.4s
+[  25.8s] bake Rails ['Rail_Gallery', 'Rail_MainStair', 'Rail_BackStair']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  26.7s]    Rails color 3.2s
+[  29.3s]    Rails color 2.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  29.8s]    Rails rough 3.2s
+[  32.1s]    Rails rough 2.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  33.0s]    Rails metal 3.2s
+[  34.9s]    Rails metal 2.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  36.3s]    Rails normal 3.2s
+[  37.7s]    Rails normal 2.8s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  39.5s]    Rails ao 3.2s
-[  39.8s] bake Doors ['Door_Front', 'Door_Back', 'Door_GB', 'Door_MB', 'Door_BR2', 'Door_BR3', 'Door_UB', 'Door_EN']
+[  40.6s]    Rails ao 2.8s
+[  40.8s] bake Doors ['Door_Front', 'Door_Back', 'Door_GB', 'Door_MB', 'Door_BR2', 'Door_BR3', 'Door_UB', 'Door_EN']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -49,7 +55,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  50.2s]    Doors color 8.3s
+[  50.1s]    Doors color 7.3s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -58,7 +64,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  58.5s]    Doors rough 8.3s
+[  57.7s]    Doors rough 7.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -67,7 +73,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  67.0s]    Doors metal 8.5s
+[  65.0s]    Doors metal 7.3s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -76,7 +82,7 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  75.5s]    Doors normal 8.4s
+[  72.4s]    Doors normal 7.4s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
@@ -85,39 +91,369 @@ Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  83.8s]    Doors ao 8.3s
-[  84.2s] bake Windows3 ['Win_LR_S1_Frame', 'Win_DR_S1_Frame', 'Win_EN_S_Frame', 'Win_MB_S_Frame', 'Win_FY_S_Frame', 'Win_BR2_S1_Frame', 'Win_KT_N1_Frame', 'Win_BR3_N1_Frame', 'Win_EN_W_Frame', 'Win_BR3_W_Frame', 'Win_MB_FY_Frame', 'Win_ST2_E_Frame', 'Win_DR_S1_GlassTape', 'Win_FY_S_GlassTape', 'Win_BR2_S1_GlassTape', 'Win_BR3_N1_GlassTape']
+[  79.9s]    Doors ao 7.4s
+[  80.2s] bake Windows3 ['Win_LR_S1_Frame', 'Win_EN_S_Frame', 'Win_FY_S_Frame', 'Win_BR3_N1_Frame', 'Win_GB_W_Frame', 'Win_MB_FY_Frame']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
+[  86.5s]    Windows3 color 5.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
+[  92.0s]    Windows3 rough 5.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[  99.3s]    Windows3 color 14.7s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
+[  97.5s]    Windows3 metal 5.5s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
+[ 103.1s]    Windows3 normal 5.6s
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
+[ 108.7s]    Windows3 ao 5.6s
+[ 109.0s] bake Windows4 ['Win_LR_S2_Frame', 'Win_BR3_N2_Frame', 'Win_DR_E_Frame', 'Win_BR2_E_Frame', 'Win_BR2_FY_Frame']
 Info: Baking map saved to internal image, save it externally or pack it
 Info: Baking map saved to internal image, save it externally or pack it
-[ 114.0s]    Windows3 rough 14.6s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 114.3s]    Windows4 color 4.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 119.0s]    Windows4 rough 4.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 123.6s]    Windows4 metal 4.6s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 128.3s]    Windows4 normal 4.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 133.0s]    Windows4 ao 4.7s
+[ 133.2s] bake DoorFrames ['DoorFrame_Front', 'DoorFrame_Back', 'DoorFrame_MB', 'DoorFrame_BR3', 'DoorFrame_BR2', 'DoorFrame_GB', 'DoorFrame_EN', 'DoorFrame_UB']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 140.8s]    DoorFrames color 7.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 148.0s]    DoorFrames rough 7.2s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 155.1s]    DoorFrames metal 7.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 162.2s]    DoorFrames normal 7.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 169.4s]    DoorFrames ao 7.2s
+[ 169.6s] bake Windows1 ['Win_DR_S1_Frame', 'Win_BR2_S1_Frame', 'Win_BH_N_Frame', 'Win_EN_W_Frame', 'Win_KT_E_Frame', 'Win_BR2_N_Frame']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 175.9s]    Windows1 color 5.5s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 181.4s]    Windows1 rough 5.5s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 187.0s]    Windows1 metal 5.5s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 192.5s]    Windows1 normal 5.5s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 198.0s]    Windows1 ao 5.5s
+[ 198.3s] bake Windows2 ['Win_DR_S2_Frame', 'Win_BR2_S2_Frame', 'Win_UB_N_Frame']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 201.9s]    Windows2 color 2.9s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 204.9s]    Windows2 rough 3.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 207.9s]    Windows2 metal 3.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 210.8s]    Windows2 normal 3.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 213.9s]    Windows2 ao 3.0s
+[ 214.1s] bake Windows5 ['Win_MB_S_Frame', 'Win_KT_N1_Frame', 'Win_BR3_W_Frame', 'Win_ST2_E_Frame', 'Win_UB_E_Frame']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 219.9s]    Windows5 color 4.6s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 224.6s]    Windows5 rough 4.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 229.3s]    Windows5 metal 4.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 233.9s]    Windows5 normal 4.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 238.7s]    Windows5 ao 4.8s
+[ 238.9s] bake Windows6 ['Win_GB_N_Frame', 'Win_KT_N2_Frame', 'Win_LR_W_Frame']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 242.7s]    Windows6 color 2.9s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 245.7s]    Windows6 rough 3.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 248.6s]    Windows6 metal 2.9s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 251.6s]    Windows6 normal 3.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 254.6s]    Windows6 ao 3.0s
+[ 254.8s] bake Tape ['Win_LR_S2_GlassTape', 'Win_DR_S1_GlassTape', 'Win_FY_S_GlassTape', 'Win_BR2_S1_GlassTape', 'Win_BH_N_GlassTape', 'Win_BR3_N1_GlassTape', 'Win_BR3_N2_GlassTape', 'Win_DR_E_GlassTape', 'Win_KT_E_GlassTape', 'Win_BR2_E_GlassTape', 'Win_BR2_N_GlassTape']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 264.9s]    Tape color 9.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 274.3s]    Tape rough 9.4s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 284.1s]    Tape metal 9.7s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 293.6s]    Tape normal 9.5s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 303.1s]    Tape ao 9.5s
+[ 303.4s] bake Windows ['Skylight_1_Trim', 'Skylight_2_Trim']
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 306.2s]    Windows color 2.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 308.2s]    Windows rough 2.1s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 310.2s]    Windows metal 2.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 312.3s]    Windows normal 2.0s
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+[ 314.3s]    Windows ao 2.0s
+[ 315.0s] 1965 dressing 84 objects; {'G': 49, 'U': 29} wear quads; 11 taped windows
+
+FBX export starting... 'C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\house\\v2\\fbx\\H_House.fbx'
+WARNING: Cannot register a valid material index for 'H_Posters' from 'D65_Calendar' mesh, 'Calendar_MR' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_BH_2' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_BR3_17' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_DR_8' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_DR_9' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_FY_0' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_GB_7' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_KT_10' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_KT_11' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_LR_3' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_MB_13' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_MB_14' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_MB_15' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_MB_16' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_MR_4' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_MR_5' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_MR_6' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_UB_18' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_UB_19' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_UB_20' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_UB_21' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Cobweb' mesh, 'Cobweb_UH_12' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_BR2_E' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_BR2_N' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_BR2_S1' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_BR2_S2' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_BR3_N1' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_BR3_N2' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_BR3_W' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_DR_S1' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_DR_S2' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_FY_S' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_LR_S1' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_LR_S2' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_DrapeRod' mesh, 'DrapeRod_Win_LR_W' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Gold' mesh, 'Drape_Win_BR2_N_A' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Gold' mesh, 'Drape_Win_BR2_S1_A' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Gold' mesh, 'Drape_Win_BR2_S1_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Gold' mesh, 'Drape_Win_BR2_S2_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Mustard' mesh, 'Drape_Win_BR3_N2_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Mustard' mesh, 'Drape_Win_BR3_W_A' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Mustard' mesh, 'Drape_Win_BR3_W_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Green' mesh, 'Drape_Win_DR_S1_A' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Green' mesh, 'Drape_Win_DR_S2_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Gold' mesh, 'Drape_Win_FY_S_A' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Gold' mesh, 'Drape_Win_FY_S_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Mustard' mesh, 'Drape_Win_LR_S1_A' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Mustard' mesh, 'Drape_Win_LR_S2_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Drapes' from 'D65_Drape_Mustard' mesh, 'Drape_Win_LR_W_B' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Papers' mesh, 'Papers_LR' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Papers' mesh, 'Papers_MB' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_BrokenPlates' mesh, 'Plates_KT' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_Radio' mesh, 'Radio_MB' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_SandDrift' mesh, 'Sand_Door_Front' object. Most likely, different objects using the same mesh, but different material slots layouts.
+WARNING: Cannot register a valid material index for 'H_Dress65' from 'D65_SandDriftSmall' mesh, 'Sand_Win_DR_E' object. Most likely, different objects using the same mesh, but different material slots layouts.
+export finished in 0.2579 sec.
+Info: Saved as "house.blend"
+Info: Total files 153 | Changed 0 | Failed 0
+Info: Saved "house.blend"
+[ 315.6s] DONE 255 objects 68856 tris
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit
