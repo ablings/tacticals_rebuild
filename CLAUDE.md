@@ -65,6 +65,8 @@ major items first, then report with its verdict. Full rule: vault `meta/Claude S
   be idle and don't run tools/wait_idle.ps1. He uses his other monitor (videos, games) while agents work, so his mouse and
   keyboard moving does not mean he needs this screen.
 - Touch only your own Studio/Blender windows, never his other windows. If he messages you to stop, stop.
+- Several agents share the right monitor: Studio MCP first; for clicks take the stage with
+  `pwsh -NoProfile -File ../roblox_kits/tools/screen.ps1 stage -place <file>` and release it after (vault Standing Rules 8c).
 
 ## Queued (Edward, 2026-10-15)
 - After the rebuild: **remove particle effects that RIVALS doesn't have** (compare RIVALS' lobby ParticleEmitters/Beams/Trails/Fire/
@@ -85,5 +87,5 @@ major items first, then report with its verdict. Full rule: vault `meta/Claude S
 ## Overnight polish (Edward, 2026-10-15 night)
 - Plan and progress: `notes/overnight_polish.md`. RIVALS = aesthetics blueprint (craft); theme = ours (sky military base, olive/cream).
   Every room must look different. Everything logically sound (checklist in the plan).
-- The UI session (`local_f4630eda-86ab-4003-89fd-fb92f76724bc`) drives the primary monitor all night: no computer use without its
-  OK. Studio MCP / Blender MCP only; saves and Import 3D are batched into pauses it agrees to.
+- (Ended. The 2026-10-15 "UI session drives the primary monitor, no computer use without its OK" rule no longer applies.
+  Sharing the screen now follows vault Standing Rules 8c: Studio MCP first, `tools/screen.ps1 stage` for clicks.)
