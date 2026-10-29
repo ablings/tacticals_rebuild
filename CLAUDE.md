@@ -66,7 +66,7 @@ major items first, then report with its verdict. Full rule: vault `meta/Claude S
   keyboard moving does not mean he needs this screen.
 - Touch only your own Studio/Blender windows, never his other windows. If he messages you to stop, stop.
 - Several agents share the right monitor: Studio MCP first; for clicks take the stage with
-  `pwsh -NoProfile -File ../roblox_kits/tools/screen.ps1 stage -place <file>` and release it after (vault Standing Rules 8c).
+  `pwsh -NoProfile -ExecutionPolicy Bypass -File ../roblox_kits/tools/screen.ps1 stage -place <file>` and release it after (vault Standing Rules 8c).
 
 ## Queued (Edward, 2026-10-15)
 - After the rebuild: **remove particle effects that RIVALS doesn't have** (compare RIVALS' lobby ParticleEmitters/Beams/Trails/Fire/
