@@ -34,8 +34,8 @@ FLAT_FRONT = {"R": ((0.2, -1.91, 0.15), (-15, 0, 0)), "L": ((-0.2, -1.9, 0.2), (
 FLAT_BACK = {"R": ((0.3, -1.91, -0.1), (20, 0, 0)), "L": ((-0.25, -1.9, -0.15), (10, 0, 0))}  # on the back, toes up
 SIDE = {"R": ((0.1, -1.45, -0.7), (40, 0, 0)), "L": ((-0.1, -1.55, -0.45), (30, 0, 0))}        # on the side, knees bent
 ARMS_UP_FRONT = (((1.2, 1.7, 0.25), (150, 0, -10)), ((-1.25, 1.55, 0.2), (150, 0, 10)))    # hands beside the head
-ARMS_OUT_BACK = (((1.75, 0.7, -0.3), (80, 0, -60)), ((-1.7, 0.9, -0.3), (80, 0, 60)))           # arms out to the sides
-ARMS_SIDE = (((0.9, -0.55, -0.6), (0, 0, -10)), ((-1.0, 0.9, -0.7), (90, 0, 20)))
+ARMS_OUT_BACK = (((1.75, 0.7, 0.0), (80, 0, -60)), ((-1.7, 0.9, 0.0), (80, 0, 60)))           # arms out to the sides
+ARMS_SIDE = (((0.9, -0.55, -0.6), (0, 0, -10)), ((-0.6, 1.1, -1.35), (90, 0, 20)))  # under-arm forward, off the shoulder line
 START = (((0.3, 0.75, -1.0), (0, 0, 0)), ((-0.42, 0.95, -0.9), (70, -60, 0)))  # the low ready the deaths start from
 
 
@@ -56,9 +56,10 @@ def death_from(c, K, ground=(), torso_rest=True):
         c.hand_free("R", f(fr), rp, rr, ease=e)
         c.hand_free("L", f(fr), lp, lr, ease=e)
         # elbow poles: behind the body by default; lying on the back, in FRONT (= up) so the elbows don't dig into the floor
-        pz = -1.6 if arms is ARMS_OUT_BACK else 1.5
-        c.pole("R", f(fr), (2.07, 0.67, pz), ease=e)
-        c.pole("L", f(fr), (-2.07, 0.67, pz), ease=e)
+        # elbow poles out to the SIDES and never switched across the arm's plane (an up/behind switch flipped the
+        # elbows 90 deg in a frame, and an 'up' pole held dead arms in the air)
+        c.pole("R", f(fr), (2.8, 0.67, 0.0), ease=e)
+        c.pole("L", f(fr), (-2.8, 0.67, 0.0), ease=e)
     c.finish()
     last = int(round(c.length * 60))
     clamp_exact(c, last, both=False)               # lift anything under the floor, every frame
@@ -110,8 +111,8 @@ def death_crumple():
          (2, dict(y=-0.1, z=0.05, pitch=-4), "plant", (-6, 0, 0), (-6, 0, 0), START, "CubicIn"),
          (20, dict(y=-1.15, z=-0.45, pitch=-8, roll=3), ("plant", {"R": dict(pitch=-60), "L": dict(pitch=-60)}), (-14, 0, 2), (-14, 0, 0),
           (((0.8, -0.6, -0.5), (0, 0, -10)), ((-0.8, -0.6, -0.5), (0, 0, 10))), "QuadIn"),
-         (50, dict(y=-1.6, z=-0.3, pitch=-12, roll=86), SIDE, (-8, 0, -4), (4, 0, -10), ARMS_SIDE, "CubicOut"),
-         (84, dict(y=-1.62, z=-0.3, pitch=-12, roll=88), SIDE, (-7, 0, -4), (6, 0, -12), ARMS_SIDE, E)]
+         (50, dict(y=-1.6, z=-0.3, pitch=-12, roll=66), SIDE, (-8, 0, -4), (4, 0, -10), ARMS_SIDE, "CubicOut"),
+         (84, dict(y=-1.62, z=-0.3, pitch=-12, roll=68), SIDE, (-7, 0, -4), (6, 0, -12), ARMS_SIDE, E)]
     death_from(c, K, ground=[50, 84])
     c.marker("DropGun", f(12)); c.marker("Ground", f(50))
     return c
@@ -124,7 +125,7 @@ def death_headshot():
     c.free("L", 0, 1.0); c.free("R", 0, 1.0)
     K = [(0, dict(y=-0.04), "plant", (0, 0, 0), (0, 0, 0), START, "Linear"),
          (1, dict(y=-0.05), "plant", (4, 0, 0), (25, 0, 0), START, "QuadIn"),
-         (18, dict(y=-1.1, z=0.25, pitch=-6), ("plant", {"R": dict(pitch=-50), "L": dict(pitch=-50)}), (-4, 0, 0), (12, 0, 0),
+         (18, dict(y=-1.35, z=0.25, pitch=-6), ("plant", {"R": dict(x=0.15, pitch=-50), "L": dict(x=-0.15, pitch=-50)}), (-4, 0, 0), (12, 0, 0),
           (((0.75, -0.7, -0.2), (0, 0, -10)), ((-0.75, -0.7, -0.2), (0, 0, 10))), "QuadIn"),
          (30, dict(y=-1.72, z=1.6, pitch=86, roll=-6), FLAT_BACK, (3, 0, 0), (-12, -8, 0), ARMS_OUT_BACK, "CubicOut"),
          (48, dict(y=-1.74, z=1.62, pitch=89, roll=-6), FLAT_BACK, (2, 0, 0), (-12, -8, 0), ARMS_OUT_BACK, E)]
@@ -156,8 +157,8 @@ def death_cover():
     out in front, heels on the floor, hands beside the thighs; head drops to the side (f30-f45); Ground f30; DropGun f5."""
     c = Clip("DeathCover", 1.2, loop=False, priority="Action4", joints=BODY)
     c.free("L", 0, 1.0); c.free("R", 0, 1.0)
-    SIT = ("plant", {"R": dict(x=0.25, z=-1.55, pitch=15), "L": dict(x=-0.25, z=-1.4, yaw=12, pitch=12)})
-    HANDS = (((0.95, -0.95, -0.75), (0, 0, -10)), ((-0.95, -0.95, -0.7), (0, 0, 10)))
+    SIT = ("plant", {"R": dict(x=0.25, z=-1.75, pitch=15), "L": dict(x=-0.25, z=-1.65, yaw=12, pitch=12)})
+    HANDS = (((1.35, -0.95, -0.7), (0, 0, -10)), ((-1.35, -0.95, -0.7), (0, 0, 10)))
     K = [(0, dict(y=-0.04, z=0.15), ("plant", {"L": dict(z=0.12)}), (0, 0, 0), (0, 0, 0), START, "Linear"),
          (3, dict(y=-0.1, z=0.18, pitch=-6), ("plant", {"L": dict(z=0.12)}), (-8, 0, 0), (-8, 0, 0),
           (((0.6, 0.3, -0.9), (0, 0, 0)), ((-0.6, 0.6, -0.9), (40, 0, 0))), "QuadIn"),
@@ -200,6 +201,7 @@ def fidget_gun_check():
         spine(c, f(fr), pitch=(-3 if 8 <= fr <= 120 else 0), ease=e)
         c.gun_at_wrist(f(fr), wr, rot, ease=e)
         c.hand_on("L", f(fr), (0.0, -0.62, 0.0), (0, 0, 0), ease=e)
+        c.pole("L", f(fr), (-1.6, -0.6, -0.6), ease=e)  # off elbow dropped: the forearm runs under the gun
     return c
 
 
@@ -256,7 +258,7 @@ def victory():
         c.gun_at_wrist(f(fr), wr, rot, ease=e)
         c.pole("R", f(fr), (1.9, 0.9, -0.6), ease=e)
         c.free("L", f(fr), 1.0, ease=e)
-        c.hand_free("L", f(fr), (-0.42, 0.95, -0.9), (70, -60, 0), ease=e)
+        c.hand_free("L", f(fr), (-0.6, 0.4, -0.85), (40, -40, 0), ease=e)  # off hand low, clear of the gun across the chest
     return c
 
 
@@ -266,9 +268,9 @@ def defeat():
     for fr, ch, hd, x, roll, e in ((0, (0, 0, 0), (0, 0, 0), 0, 0, "CubicOut"), (20, (-6, 0, 0), (-22, 0, 0), 0, 0, E),
                                    (60, (-10, 0, 2), (-24, 4, 0), 0.04, 1.5, E), (150, (-10, 0, 2), (-25, -3, 0), 0.08, 2.5, E)):
         stand(c, fr, y=-0.06, x=x, roll=roll, chest=ch, hd=hd, e=e)
-        c.gun_at_wrist(f(fr), (1.3, -0.35, -0.3) if fr >= 20 else (0.3, 0.75, -1.0), (-80, 0, 0) if fr >= 20 else (-42, 52, -18), ease=e)
+        c.gun_at_wrist(f(fr), (1.6, -0.35, -0.3) if fr >= 20 else (0.3, 0.75, -1.0), (-80, 0, 0) if fr >= 20 else (-42, 52, -18), ease=e)
         c.free("L", f(fr), 1.0, ease=e)
-        c.hand_free("L", f(fr), (-1.3, -0.3, -0.25) if fr >= 60 else (-0.42, 0.95, -0.9), (0, 0, 10) if fr >= 60 else (70, -60, 0), ease=e)
+        c.hand_free("L", f(fr), (-1.6, -0.3, -0.25) if fr >= 60 else (-0.42, 0.95, -0.9), (0, 0, 10) if fr >= 60 else (70, -60, 0), ease=e)
     return c
 
 

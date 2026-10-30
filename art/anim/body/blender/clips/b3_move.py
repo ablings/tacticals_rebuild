@@ -33,7 +33,7 @@ def cycle(name, length, speed, heading, steps, root_y, pitch, lift, contact, bob
             # hips keyed at contact / down / passing; the chest counters BOTH yaw and roll on the same frames so the
             # shoulders, head and muzzle stay on line (hip_open = a constant opening toward a side step)
             for tt, yy, ya, ro in ((t0, root_y, sd * hip_yaw, sd * hip_roll),
-                                   (t0 + min(f(3), per * 0.3), root_y - bob, sd * hip_yaw * 0.7, sd * hip_roll * 1.2),
+                                   (t0 + min(f(3), per * 0.3), root_y - bob, sd * hip_yaw * 0.7, sd * hip_roll),
                                    (t0 + per * 0.65, root_y + bob, 0.0, 0.0)):
                 c.root(tt, y=yy, pitch=pitch, yaw=ya + hip_open, roll=ro, ease=E)
                 if counter:
@@ -69,15 +69,15 @@ def cycle(name, length, speed, heading, steps, root_y, pitch, lift, contact, bob
 
 # arms for the sprints: gun low and canted 30 across the body, two hands (rifle-style) / pistol low at the chest
 def sprint_arms_rifle(c, t, sd):
-    c.gun_at_wrist(t, (0.35, 0.55 + 0.03 * sd, -0.95), (-28, 30, -30 - 2 * sd), ease=E)
+    c.gun_at_wrist(t, (0.45, 0.6 + 0.03 * sd, -1.1), (-28, 30, -30 - 2 * sd), ease=E)
     c.hand_on("L", t, (0.0, -0.3, -0.5), (0, 0, 0), ease=E)  # support hand at the magwell (in reach on R15)
 
 
 def sprint_arms_pistol(c, t, sd):
-    c.gun_at_wrist(t, (0.3, 0.75, -0.85), (-55, 20, -10), ease=E)
+    c.gun_at_wrist(t, (0.55, 0.8, -1.2), (-55, 20, -10), ease=E)
     c.free("L", t, 1.0, ease=E)
     # off arm pumps opposite the left leg (sd = +1: right foot down -> left arm forward)
-    c.hand_free("L", t, (-1.25, 0.5 + 0.15 * sd, -0.55 * sd - 0.1), (50 * sd, 0, 15), ease=E)
+    c.hand_free("L", t, (-1.5, 0.45 + 0.15 * sd, -0.55 * sd - 0.1), (50 * sd, 0, 15), ease=E)
 
 
 ARMS_UP = ARMS + ["UpperTorso"]
@@ -100,11 +100,11 @@ def slide():
     under with the shin flat, torso leaning back 15, gun forward (arms from the Hold). Sine micro-bob 0.03 + 0.5 deg."""
     c = Clip("MoveSlide", 0.5, loop=True, priority="Action4", joints=LEGS + ["UpperTorso", "Head"])
     for t, s in ((0, 0), (0.25, 1), (0.5, 0)):
-        c.root(t, y=-1.45 + 0.03 * s, z=0.15, pitch=10 + 0.5 * s, roll=-5, ease=E)
+        c.root(t, y=-1.6 + 0.03 * s, z=0.15, pitch=10 + 0.5 * s, roll=-5, ease=E)
         foot(c, "R", t, x=0.05, z=-1.75, pitch=12, ease=E)       # heel on the floor, toe up
         foot(c, "L", t, x=-0.3, z=1.55, pitch=-80, roll=-10, ease=E)  # thigh down-back, shin flat, instep on the floor
-        spine(c, t, pitch=-24 - 0.5 * s, ease=E)
-        head(c, t, pitch=-6, ease=E)
+        spine(c, t, pitch=5 - 0.5 * s, ease=E)   # chest ~15 back in the world
+        head(c, t, pitch=-14, ease=E)
     c.finish()
     clamp_exact(c, 30, both=True)
     bpy.context.scene.frame_set(0)
@@ -116,16 +116,16 @@ CLIPS = {
     "MoveRun": cycle("MoveRun", 0.70, 10.0, 0, 2, -0.34, -6, 0.42, 0.46, 0.05, spine_p=4, width=0.05, hip_yaw=5, hip_roll=3.5, heel=0),
     "MoveWalkAim": cycle("MoveWalkAim", 1.0, 6.0, 0, 4, -0.17, -3, 0.22, 1.0, 0.025, spine_p=2, width=0.05, hip_yaw=4, hip_roll=2.5, heel=0),
     "MoveStrafeLeft": cycle("MoveStrafeLeft", 0.70, 10.0, 90, 2, -0.42, -4, 0.38, 0.42, 0.05, spine_p=3,
-                            depth={"R": 0.5, "L": -0.5}, hip_yaw=3, hip_roll=3, foot_yaw=10, hip_open=12, lift_p=0),
+                            depth={"R": 0.5, "L": -0.5}, hip_yaw=3, hip_roll=3, foot_yaw=24, hip_open=35, lift_p=0),
     "MoveStrafeRight": cycle("MoveStrafeRight", 0.70, 10.0, -90, 2, -0.42, -4, 0.38, 0.42, 0.05, spine_p=3,
-                             depth={"R": -0.5, "L": 0.5}, hip_yaw=3, hip_roll=3, foot_yaw=-10, hip_open=-12, lift_p=0),
+                             depth={"R": -0.5, "L": 0.5}, hip_yaw=3, hip_roll=3, foot_yaw=-24, hip_open=-35, lift_p=0),
     "MoveBackpedal": cycle("MoveBackpedal", 0.70, 7.5, 180, 2, -0.34, -6, 0.32, 0.55, 0.04, spine_p=6, width=0.08, hip_yaw=4, hip_roll=2.5),
     "MoveSprint": cycle("MoveSprint", 0.50, 20.0, 0, 2, -0.46, -12, 0.75, 0.24, 0.09, spine_p=4, width=0.04, hip_yaw=6, hip_roll=5,
                         joints=LEGS + ARMS_UP, arms=sprint_arms_rifle, heel=6),
     "MoveSprintPistol": cycle("MoveSprintPistol", 0.50, 20.0, 0, 2, -0.46, -12, 0.75, 0.24, 0.09, spine_p=4, width=0.04, hip_yaw=6,
                               hip_roll=5, joints=LEGS + ARMS_UP, arms=sprint_arms_pistol, heel=0),
     "MoveCrouchIdle": crouch_idle,
-    "MoveCrouchWalk": cycle("MoveCrouchWalk", 1.2, 6.0, 0, 4, -1.0, -14, 0.24, 1.0, 0.02, priority="Action", spine_p=6, width=0.2, heel=0, plant_p=-16),
+    "MoveCrouchWalk": cycle("MoveCrouchWalk", 1.2, 6.0, 0, 4, -1.0, -14, 0.4, 1.0, 0.02, priority="Action", spine_p=6, width=0.2, heel=0, plant_p=-16),
     "MoveSlide": slide,
 }
 MIRROR = {}

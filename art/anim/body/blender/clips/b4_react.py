@@ -22,8 +22,9 @@ def move_start():
     c = Clip("MoveStart", 0.25, loop=False, priority="Movement", joints=LEGS + ["UpperTorso"])
     c.travel = (0.0, 0.0)
     def d(t):  # studs the HRP has moved forward by clip time t
-        a = 10.0 / 0.15
-        return 0.5 * a * t * t if t <= 0.15 else 0.5 * a * 0.15 ** 2 + 10.0 * (t - 0.15)
+        T = 0.11  # MoveFeelConfig.AccelTime (the game's own ramp to the 10 studs/s walk)
+        a = 10.0 / T
+        return 0.5 * a * t * t if t <= T else 0.5 * a * T ** 2 + 10.0 * (t - T)
     for fr, z, p, sp in ((0, 0.0, 0, 0), (4, -0.08, -6, -2), (8, -0.1, -7, -3), (15, -0.1, -6, -3)):
         c.root(f(fr), y=(-0.22 if fr else -0.04), z=z, pitch=p, ease=("CubicOut" if fr == 0 else E))
         spine(c, f(fr), pitch=sp, ease=E)
@@ -31,7 +32,7 @@ def move_start():
     for fr in range(0, 10):
         foot(c, "L", f(fr), z=0.12 + d(f(fr)), yaw=8, ease="Linear")
     foot(c, "L", f(11), z=0.12 + d(f(9)) + 0.05, y=0.14, pitch=-22, ease="CubicInOut")
-    foot(c, "L", f(15), z=0.6, y=0.35, pitch=-12, ease=E)
+    foot(c, "L", f(15), z=-0.05, y=0.37, pitch=-8, ease=E)  # = MoveRun f7 (hand-over pose)
     # right foot: lifts f4, lands f8 ahead, then planted
     for fr in range(0, 4):
         foot(c, "R", f(fr), x=0.08, z=d(f(fr)), yaw=-8, ease="Linear")
@@ -219,9 +220,9 @@ def burning():
     for fr, sp, hd in ((0, -8, -6), (36, -9, -7), (72, -8, -6)):
         spine(c, f(fr), pitch=sp, yaw=6, roll=3, ease=E)
         head(c, f(fr), pitch=hd, yaw=-14, roll=4, ease=E)
-    rest = ((-1.05, 0.35, -0.6), (40, -20, 10))
-    swat = ((-1.15, -0.55, -0.35), (-10, 0, 15))   # slaps at the burning trouser leg
-    for fr, (pos, rot), e in ((0, rest, E), (8, rest, "CubicOut"), (12, swat, "CubicOut"), (16, rest, E), (44, rest, "CubicOut"),
+    rest = ((-1.35, 0.35, -0.95), (40, -20, 10))
+    swat = ((-1.3, -0.45, -0.6), (-10, 0, 15))   # slaps at the burning trouser leg, on the thigh's surface
+    for fr, (pos, rot), e in ((0, rest, E), (8, rest, "CubicOut"), (12, swat, "CubicOut"), (16, rest, E), (30, ((-1.36, 0.37, -0.96), (41, -20, 10)), E), (44, rest, "CubicOut"),
                               (48, swat, "CubicOut"), (52, rest, E), (72, rest, E)):
         c.hand_free("L", f(fr), pos, rot, ease=e)
     return c

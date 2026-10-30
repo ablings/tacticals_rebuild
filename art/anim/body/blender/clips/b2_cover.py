@@ -49,15 +49,15 @@ def blind_over():
     c.obstacle = ((-4.0, 0.0, -2.85), (4.0, 3.4, -0.85), None)
     c.free("L", 0, 1.0)
     for t, s in DRIFT:
-        c.root(t, x=0.1, y=-1.4 - 0.012 * s, z=0.4, pitch=-4 - 0.3 * s, roll=4, ease=E)
-        foot(c, "R", t, x=0.25, z=0.3, yaw=-12, ease=E)
-        foot(c, "L", t, x=-0.3, z=0.05, yaw=12, ease=E)
+        c.root(t, x=0.1, y=-1.7 - 0.012 * s, z=0.6, pitch=-4 - 0.3 * s, roll=6, ease=E)
+        foot(c, "R", t, x=0.25, z=0.55, yaw=-12, ease=E)
+        foot(c, "L", t, x=-0.3, z=0.3, yaw=12, ease=E)
         spine(c, t, pitch=-6 - 0.3 * s, yaw=-4, roll=4, ease=E)
-        head(c, t, pitch=-22, yaw=12, roll=4, ease=E)
+        head(c, t, pitch=-22, yaw=12, roll=6, ease=E)
     c.finish()
     for t, s in DRIFT:
         gun_world(c, t, (0.6, 3.85 + 0.01 * s, -1.05), (-4 + 0.4 * s, 0, 0), ease=E)
-        hand_world(c, "L", t, (-1.0, 3.78, -1.2), (-80, 20, 0), ease=E)
+        hand_world(c, "L", t, (-0.9, 3.62, -1.1), (0, 0, 0), ease=E)
     c._finished = False
     return c
 
@@ -86,12 +86,12 @@ def run_cycle(name, length, speed, steps, root_y, pitch, lift, contact, bob, pri
         for i in range(steps):
             t0 = i * per
             side = 1 if i % 2 == 0 else -1
-            c.root(t0, y=root_y, pitch=pitch, yaw=side * 4, roll=side * 2.5, ease=E)
-            c.root(t0 + min(f(3), per * 0.3), y=root_y - bob, pitch=pitch, yaw=side * 3, roll=side * 3, ease=E)
-            c.root(t0 + per * 0.7, y=root_y + bob, pitch=pitch, yaw=0, roll=0, ease=E)
-            spine(c, t0, pitch=spine_p, yaw=-side * 4, ease=E)
+            for tt, yy, ya, ro in ((t0, root_y, side * 4, side * 2.5), (t0 + min(f(3), per * 0.3), root_y - bob, side * 3, side * 3),
+                                   (t0 + per * 0.7, root_y + bob, 0.0, 0.0)):
+                c.root(tt, y=yy, pitch=pitch, yaw=ya, roll=ro, ease=E)
+                spine(c, tt, pitch=spine_p, yaw=-ya, roll=-ro, ease=E)
         c.root(L, y=root_y, pitch=pitch, yaw=4, roll=2.5, ease=E)
-        spine(c, L, pitch=spine_p, yaw=-4, ease=E)
+        spine(c, L, pitch=spine_p, yaw=-4, roll=-2.5, ease=E)
         for side, first in (("R", 0), ("L", 1)):
             k = []
             for i in range(first, steps, 2):
@@ -139,10 +139,10 @@ def roll():
                 foot(c, side, f(fr), x=(0.2 if side == "R" else -0.2), z=(-0.45 if side == "R" else 0.3) if fr >= 20 else (-0.2 if side == "R" else 0.2),
                      yaw=0, ease=e)
         else:
-            root_and_feet(c, f(fr), y=y, z=z, pitch=p, roll=(50 if 6 <= fr <= 16 else 22), yaw=(-18 if 6 <= fr <= 16 else -8), feet=ft, ease=e)
+            root_and_feet(c, f(fr), y=y, z=z, pitch=p, roll=(55 if 4 <= fr <= 16 else 22), yaw=(-20 if 4 <= fr <= 16 else -8), feet=ft, ease=e)
         tuck = fr not in (0, 30)
         spine(c, f(fr), pitch=(-35 if tuck else -10), ease=e)
-        head(c, f(fr), pitch=(-35 if tuck else 0), yaw=(-15 if tuck else 0), roll=(-28 if tuck else 0), ease=e)  # tucked aside: the right shoulder and the back take the floor
+        head(c, f(fr), pitch=(-40 if tuck else 0), yaw=(-25 if tuck else 0), roll=(-38 if tuck else 0), ease=e)  # tucked aside: the right shoulder and the back take the floor
         c.gun_at_wrist(f(fr), (0.25, 0.55, -0.7) if tuck else (0.2, 0.5, -1.0), (-45, 50, -15), ease=e)
         c.free("L", f(fr), 1.0, ease=e)
         c.hand_free("L", f(fr), (-0.45, 0.9, -0.7), (70, -60, 0), ease=e)
@@ -231,8 +231,8 @@ def dive_aim():
     LEGS_BACK = {"R": ((0.05, -1.55, 1.05), (-55, 0, 0)), "L": ((-0.05, -1.45, 1.2), (-60, 0, 0))}
     for t, s in DRIFT:
         legs = {k: ((v[0][0], v[0][1] + 0.04 * s, v[0][2] + 0.03 * s), v[1]) for k, v in LEGS_BACK.items()}
-        root_and_feet(c, t, y=0.1, pitch=-22 - 0.5 * s, feet=legs, ease=E)
-        spine(c, t, pitch=12 + 0.5 * s, ease=E)
+        root_and_feet(c, t, y=0.1 - 0.015 * s, pitch=-22 - 0.5 * s, feet=legs, ease=E)
+        spine(c, t, pitch=12 + 0.1 * s, ease=E)
         head(c, t, pitch=14, ease=E)
     return c
 
@@ -241,7 +241,7 @@ CLIPS = {
     "CoverBlindCorner": blind_corner("CoverBlindCorner", False),
     "CoverBlindCornerCrouch": blind_corner("CoverBlindCornerCrouch", True),
     "CoverBlindOver": blind_over,
-    "CoverDash": run_cycle("CoverDash", 0.48, 24.0, 2, -0.8, -22, 0.75, 0.2, 0.07, priority="Action3", spine_p=8, stride_z=0.2, width=0.12, plant_p=-12),
+    "CoverDash": run_cycle("CoverDash", 0.48, 24.0, 2, -0.8, -22, 0.75, 0.3, 0.07, priority="Action3", spine_p=8, stride_z=0.2, width=0.12, plant_p=-12),
     "CoverSneak": run_cycle("CoverSneak", 1.2, 8.0, 4, -0.95, -16, 0.28, 1.0, 0.03, priority="Action", spine_p=6, width=0.18, plant_p=-16),
     "CoverRoll": roll,
     "CoverVault": vault,
