@@ -25,6 +25,8 @@ public class Dk {
   [DllImport("user32.dll")] public static extern bool EnumWindows(EnumProc f, IntPtr l);
   [DllImport("user32.dll")] public static extern bool IsWindowVisible(IntPtr h);
   [DllImport("user32.dll")] public static extern bool SetWindowPos(IntPtr h, IntPtr after, int x, int y, int cx, int cy, uint f);
+  [StructLayout(LayoutKind.Sequential)] public struct RECT { public int L; public int T; public int R; public int B; }
+  [DllImport("user32.dll")] public static extern bool GetWindowRect(IntPtr h, out RECT r);
 }
 '@
 function IsStudio([IntPtr]$h) {
@@ -83,6 +85,15 @@ switch ($cmd) {
     elseif ($a2 -eq 'unpin') { [Dk]::SetWindowPos($script:found, [IntPtr](-2), 0, 0, 0, 0, 3) | Out-Null }
     [Dk]::SetForegroundWindow($script:found) | Out-Null; Start-Sleep -Milliseconds 300
     "fg: " + [Dk]::Title([Dk]::GetForegroundWindow())
+  }
+  'rect' {
+    # rect of MY Studio's top-level window titled $a1: L T R B (screen px)
+    $found = $null
+    $cb = [Dk+EnumProc]{ param($h, $l) if (([Dk]::Pid($h) -eq [uint32]$env:MY_STUDIO_PID) -and ([Dk]::Title($h) -like "*$a1*") -and [Dk]::IsWindowVisible($h)) { $script:found = $h }; return $true }
+    [Dk]::EnumWindows($cb, [IntPtr]::Zero) | Out-Null
+    if (-not $script:found) { "none"; exit 0 }
+    $r = New-Object Dk+RECT; [Dk]::GetWindowRect($script:found, [ref]$r) | Out-Null
+    "$($r.L) $($r.T) $($r.R) $($r.B)"
   }
   'wheel' {
     $pt = New-Object Dk+POINT; $pt.X = [int]$a1; $pt.Y = [int]$a2
