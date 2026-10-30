@@ -1,0 +1,12 @@
+[
+ {"clip": "MoveRun", "layers": ["PistolHold"], "where": "flat", "len": 0.7, "loop": true, "span": [0, 0.7]},
+ {"clip": "MoveWalkAim", "layers": ["PistolHold"], "where": "flat", "len": 1.0, "loop": true, "span": [0, 0.5]},
+ {"clip": "MoveStrafeLeft", "layers": ["PistolHold"], "where": "flat", "len": 0.7, "loop": true, "span": [0, 0.7]},
+ {"clip": "MoveStrafeRight", "layers": ["PistolHold"], "where": "flat", "len": 0.7, "loop": true, "span": [0, 0.7]},
+ {"clip": "MoveBackpedal", "layers": ["PistolHold"], "where": "flat", "len": 0.7, "loop": true, "span": [0, 0.7]},
+ {"clip": "MoveSprint", "where": "flat", "len": 0.5, "loop": true, "gun": "AutoRifle", "span": [0, 0.5]},
+ {"clip": "MoveSprintPistol", "where": "flat", "len": 0.5, "loop": true, "span": [0, 0.5]},
+ {"clip": "MoveCrouchIdle", "layers": ["PistolHold"], "where": "flat", "len": 1.0, "loop": true},
+ {"clip": "MoveCrouchWalk", "layers": ["PistolHold"], "where": "flat", "len": 1.2, "loop": true, "span": [0, 0.6]},
+ {"clip": "MoveSlide", "layers": ["PistolHold"], "where": "flat", "len": 0.5, "loop": true, "span": [0, 0.5]}
+]

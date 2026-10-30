@@ -184,3 +184,22 @@ def ground_clamp(c, frames, target=0.0, passes=3):
                             k.handle_left.y += d[fc.array_index]
                             k.handle_right.y += d[fc.array_index]
                     fc.update()
+
+
+# Quaternion keys are interpolated per component: q and -q are the same rotation but blending across a sign flip swings
+# the bone the long way (a roll's body popped upright mid-spin). Keep each key in the previous key's hemisphere.
+_orig_key_basis = Clip.key_basis
+
+
+def _key_basis(self, bone, t, loc=None, quat=None, **kw):
+    if quat is not None:
+        last = getattr(self, "_lastq", {}).get(bone)
+        if last is not None and quat.dot(last) < 0:
+            quat = -quat
+        if not hasattr(self, "_lastq"):
+            self._lastq = {}
+        self._lastq[bone] = quat.copy()
+    return _orig_key_basis(self, bone, t, loc=loc, quat=quat, **kw)
+
+
+Clip.key_basis = _key_basis
