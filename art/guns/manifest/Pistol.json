@@ -39,7 +39,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "frame + dust cover + rail + raked grip; grip panels are inset (stipple patches)"
+   "note": "frame + dust cover + rail + raked grip; grip panels are inset (stipple patches)",
+   "mesh_id": "rbxassetid://127219226101170"
   },
   {
    "name": "Slide",
@@ -70,7 +71,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "rear serrations, ejection port (right), rear notch + front post sights"
+   "note": "rear serrations, ejection port (right), rear notch + front post sights",
+   "mesh_id": "rbxassetid://78772267867369"
   },
   {
    "name": "Barrel",
@@ -101,7 +103,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "static: barrel crown, chamber hood (shows in the port), recoil spring guide"
+   "note": "static: barrel crown, chamber hood (shows in the port), recoil spring guide",
+   "mesh_id": "rbxassetid://137908624415585"
   },
   {
    "name": "Mag",
@@ -132,7 +135,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "magazine body (inside the grip) + flared base plate"
+   "note": "magazine body (inside the grip) + flared base plate",
+   "mesh_id": "rbxassetid://117025178990291"
   },
   {
    "name": "MagRelease",
@@ -163,7 +167,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "cross-bolt: button on the left side behind the trigger guard, runs through the frame"
+   "note": "cross-bolt: button on the left side behind the trigger guard, runs through the frame",
+   "mesh_id": "rbxassetid://125828175241170"
   },
   {
    "name": "SlideStop",
@@ -194,7 +199,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "left side lever on its cross pin, with the inner tab that catches the slide"
+   "note": "left side lever on its cross pin, with the inner tab that catches the slide",
+   "mesh_id": "rbxassetid://138740655520734"
   },
   {
    "name": "Trigger",
@@ -225,7 +231,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "blade + hidden trigger bar inside the frame"
+   "note": "blade + hidden trigger bar inside the frame",
+   "mesh_id": "rbxassetid://94370299389768"
   },
   {
    "name": "Round",
@@ -256,7 +263,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "9mm cartridge"
+   "note": "9mm cartridge",
+   "mesh_id": "rbxassetid://107204104408148"
   }
  ],
  "attachments": {
@@ -317,5 +325,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/Pistol_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

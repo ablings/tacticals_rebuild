@@ -39,7 +39,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "upper receiver, ejection port (right), full-length top rail"
+   "note": "upper receiver, ejection port (right), full-length top rail",
+   "mesh_id": "rbxassetid://119822706188319"
   },
   {
    "name": "Lower",
@@ -70,7 +71,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "lower receiver, mag well, trigger guard"
+   "note": "lower receiver, mag well, trigger guard",
+   "mesh_id": "rbxassetid://118558542322941"
   },
   {
    "name": "Grip",
@@ -101,7 +103,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "olive pistol grip, inset panels"
+   "note": "olive pistol grip, inset panels",
+   "mesh_id": "rbxassetid://104911700993309"
   },
   {
    "name": "Handguard",
@@ -132,7 +135,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "hollow handguard, three slot rows through"
+   "note": "hollow handguard, three slot rows through",
+   "mesh_id": "rbxassetid://121606606068278"
   },
   {
    "name": "Barrel",
@@ -163,7 +167,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "barrel, gas block, two-port brake"
+   "note": "barrel, gas block, two-port brake",
+   "mesh_id": "rbxassetid://125578904653912"
   },
   {
    "name": "BufferTube",
@@ -194,7 +199,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://77597452872597"
   },
   {
    "name": "Stock",
@@ -225,7 +231,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "skeleton precision stock"
+   "note": "skeleton precision stock",
+   "mesh_id": "rbxassetid://74812070752042"
   },
   {
    "name": "ButtPad",
@@ -256,7 +263,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://96929622091791"
   },
   {
    "name": "CheekRiser",
@@ -287,7 +295,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://96420653957505"
   },
   {
    "name": "Scope",
@@ -318,7 +327,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "4x scope: eyepiece, tube, objective bell, elevation + windage turrets"
+   "note": "4x scope: eyepiece, tube, objective bell, elevation + windage turrets",
+   "mesh_id": "rbxassetid://85126481165890"
   },
   {
    "name": "ScopeRings",
@@ -349,7 +359,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://115993810997626"
   },
   {
    "name": "ScopeLensFront",
@@ -380,7 +391,8 @@
    ],
    "material": "Glass",
    "wrap": "skip",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://136647731657384"
   },
   {
    "name": "ScopeLensRear",
@@ -411,7 +423,8 @@
    ],
    "material": "Glass",
    "wrap": "skip",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://128273680565221"
   },
   {
    "name": "Mag",
@@ -442,7 +455,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "straight 20-round box mag"
+   "note": "straight 20-round box mag",
+   "mesh_id": "rbxassetid://90286005839710"
   },
   {
    "name": "ChargingHandle",
@@ -473,7 +487,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "non-reciprocating side charger (left) + hidden link to the carrier"
+   "note": "non-reciprocating side charger (left) + hidden link to the carrier",
+   "mesh_id": "rbxassetid://138394485737048"
   },
   {
    "name": "BoltCarrier",
@@ -504,7 +519,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://134107539642351"
   },
   {
    "name": "DustCover",
@@ -535,7 +551,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://74827739334634"
   },
   {
    "name": "Trigger",
@@ -566,7 +583,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://95842474990182"
   },
   {
    "name": "Selector",
@@ -597,7 +615,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "ambi safety"
+   "note": "ambi safety",
+   "mesh_id": "rbxassetid://77629277824446"
   },
   {
    "name": "MagRelease",
@@ -628,7 +647,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "button on the right, cross-bolt catch into the mag"
+   "note": "button on the right, cross-bolt catch into the mag",
+   "mesh_id": "rbxassetid://81406313514410"
   },
   {
    "name": "BoltCatch",
@@ -659,7 +679,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "left paddle"
+   "note": "left paddle",
+   "mesh_id": "rbxassetid://135794344882796"
   },
   {
    "name": "Round",
@@ -690,7 +711,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ".308 round"
+   "note": ".308 round",
+   "mesh_id": "rbxassetid://138275379829997"
   }
  ],
  "attachments": {
@@ -759,5 +781,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/SemiAuto_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

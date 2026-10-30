@@ -39,7 +39,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "compact frame, rail, flared mag well, stippled inset panels"
+   "note": "compact frame, rail, flared mag well, stippled inset panels",
+   "mesh_id": "rbxassetid://126747868250938"
   },
   {
    "name": "Slide",
@@ -70,7 +71,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear"
+   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear",
+   "mesh_id": "rbxassetid://109648080915259"
   },
   {
    "name": "Barrel",
@@ -101,7 +103,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "static barrel, chamber hood, guide rod"
+   "note": "static barrel, chamber hood, guide rod",
+   "mesh_id": "rbxassetid://95178986734490"
   },
   {
    "name": "Comp",
@@ -132,7 +135,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)"
+   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)",
+   "mesh_id": "rbxassetid://136987688408234"
   },
   {
    "name": "Mag",
@@ -163,7 +167,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://71509709177529"
   },
   {
    "name": "MagRelease",
@@ -194,7 +199,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "extended cross-bolt"
+   "note": "extended cross-bolt",
+   "mesh_id": "rbxassetid://127540936491785"
   },
   {
    "name": "SlideStop",
@@ -225,7 +231,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "extended lever reaching back to the thumb"
+   "note": "extended lever reaching back to the thumb",
+   "mesh_id": "rbxassetid://123020168286505"
   },
   {
    "name": "Trigger",
@@ -256,7 +263,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "flat skeleton trigger + hidden trigger bar"
+   "note": "flat skeleton trigger + hidden trigger bar",
+   "mesh_id": "rbxassetid://80559040409334"
   },
   {
    "name": "Round",
@@ -287,7 +295,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://113681995238724"
   },
   {
    "name": "LeftFrame",
@@ -318,7 +327,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "compact frame, rail, flared mag well, stippled inset panels"
+   "note": "compact frame, rail, flared mag well, stippled inset panels",
+   "mesh_id": "rbxassetid://104930746309365"
   },
   {
    "name": "LeftSlide",
@@ -349,7 +359,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear"
+   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear",
+   "mesh_id": "rbxassetid://118016878049892"
   },
   {
    "name": "LeftBarrel",
@@ -380,7 +391,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "static barrel, chamber hood, guide rod"
+   "note": "static barrel, chamber hood, guide rod",
+   "mesh_id": "rbxassetid://98718354258064"
   },
   {
    "name": "LeftComp",
@@ -411,7 +423,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)"
+   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)",
+   "mesh_id": "rbxassetid://137072923087967"
   },
   {
    "name": "LeftMag",
@@ -442,7 +455,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://118939856070480"
   },
   {
    "name": "LeftMagRelease",
@@ -473,7 +487,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "extended cross-bolt"
+   "note": "extended cross-bolt",
+   "mesh_id": "rbxassetid://139672894464460"
   },
   {
    "name": "LeftSlideStop",
@@ -504,7 +519,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "extended lever reaching back to the thumb"
+   "note": "extended lever reaching back to the thumb",
+   "mesh_id": "rbxassetid://101699003351737"
   },
   {
    "name": "LeftTrigger",
@@ -535,7 +551,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "flat skeleton trigger + hidden trigger bar"
+   "note": "flat skeleton trigger + hidden trigger bar",
+   "mesh_id": "rbxassetid://85189807211719"
   },
   {
    "name": "LeftRound",
@@ -566,7 +583,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://89180321622115"
   }
  ],
  "attachments": {
@@ -651,5 +669,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/DualPistols_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }
