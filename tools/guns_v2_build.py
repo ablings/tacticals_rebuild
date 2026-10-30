@@ -16,6 +16,9 @@ import json, os, re, sys, hashlib
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 DONE = os.path.join(ROOT, "art/anim/guns/DONE.md")
 MAN = os.path.join(ROOT, "art/guns/manifest")
+# the uploaded mesh ids, kept apart from DONE.md / the manifests: the 3fb039d0 recolour regenerated both and wiped the ids
+IDS = os.path.join(ROOT, "fix/guns_v2_ids.json")
+MELEE = {"Knife", "Katana", "Bat", "RiotShield", "Fists"}  # tools in Repository.Melee (gadgets have no Tool: built in code)
 
 
 def parse_done():
@@ -37,6 +40,11 @@ def parse_done():
     return guns
 
 
+def part_id(gun, p, done):
+    ids = json.load(open(IDS, encoding="utf-8"))["guns"] if os.path.exists(IDS) else {}
+    return done["ids"].get(p["name"]) or p.get("mesh_id") or ids.get(gun, {}).get(p["name"], "")
+
+
 def lua_v3(v): return f"Vector3.new({v[0]}, {v[1]}, {v[2]})"
 
 
@@ -44,26 +52,26 @@ def gun_lua(gun, done, standin):
     man = json.load(open(os.path.join(MAN, gun + ".json"), encoding="utf-8"))
     parts = []
     for p in man["parts"]:
-        mid = done["ids"].get(p["name"], "")
+        mid = part_id(gun, p, done)
         moving = not str(p.get("motion", "static")).startswith("static")
         glass = p.get("wrap") == "skip" or p.get("material") == "Glass"
-        parts.append("\t\t{ name = %s, parent = %s, mesh = %s, pivot = %s, centre = %s, size = %s, colour = Color3.fromRGB(%d, %d, %d), material = %s, wrap = %s, moving = %s, glass = %s },\n" % (
+        parts.append("\t\t{ name = %s, parent = %s, mesh = %s, pivot = %s, centre = %s, size = %s, colour = Color3.fromRGB(%d, %d, %d), material = %s, wrap = %s, moving = %s, glass = %s, hidden = %s },\n" % (
             json.dumps(p["name"]), json.dumps(p["motor_part0"]), json.dumps("" if standin else mid), lua_v3(p["pivot"]), lua_v3(p["bbox_centre"]),
             lua_v3(p["size"]), *p["colour"], json.dumps(p.get("material", "SmoothPlastic")), json.dumps(p.get("wrap", "A")),
-            "true" if moving else "false", "true" if glass else "false"))
+            "true" if moving else "false", "true" if glass else "false", "false" if p.get("visible_at_rest", True) else "true"))
     att = []
     for name, part, x, y, z in done["att"]:
         if gun == "DualPistols" and name == "Muzzle": part = "Barrel"
         if gun == "DualPistols" and name == "LeftMuzzle": part, name = "LeftBarrel", "Muzzle"
         att.append(f"\t\t{{ name = {json.dumps(name)}, part = {json.dumps(part)}, pos = Vector3.new({x}, {y}, {z}) }},\n")
-    return f"\t[{json.dumps(gun)}] = {{\n\thandle = {lua_v3(man['handle']['size'])},\n\tparts = {{\n{''.join(parts)}\t}},\n\tattachments = {{\n{''.join(att)}\t}},\n\t}},\n"
+    return f"\t[{json.dumps(gun)}] = {{\n\tfolder = {json.dumps('Melee' if gun in MELEE else 'Weapons')},\n\thandle = {lua_v3(man['handle']['size'])},\n\tparts = {{\n{''.join(parts)}\t}},\n\tattachments = {{\n{''.join(att)}\t}},\n\t}},\n"
 
 
 BODY = r'''
 local RS = game:GetService("ReplicatedStorage")
 local SS = game:GetService("ServerStorage")
 local AssetService = game:GetService("AssetService")
-local Weapons = RS.Repository.Weapons
+local Repo = RS.Repository
 local res = {}
 
 local backup = SS:FindFirstChild("_GunsV1")
@@ -103,6 +111,7 @@ local function undoGun(tool: Tool)
 		if a:IsA("Attachment") or a:IsA("Motor6D") or a:IsA("WeldConstraint") then a:Destroy() end
 	end
 	local oldHandle = saved:FindFirstChild("HandleLook")
+	if oldHandle and oldHandle:GetAttribute("Grip") then tool.Grip = oldHandle:GetAttribute("Grip") end
 	if handle and oldHandle then
 		handle.Size = oldHandle:GetAttribute("Size")
 		handle.Transparency = oldHandle:GetAttribute("Transparency")
@@ -160,6 +169,7 @@ local function buildGun(tool: Tool, spec)
 	look:SetAttribute("Transparency", handle.Transparency)
 	look:SetAttribute("Color", handle.Color)
 	look:SetAttribute("WrapChannel", handle:GetAttribute("WrapChannel"))
+	look:SetAttribute("Grip", tool.Grip)
 	look.Parent = saved
 	for _, k in muzzleKids do k.Parent = nil end
 	for _, c in visualChildren(tool) do c.Parent = saved end
@@ -173,9 +183,12 @@ local function buildGun(tool: Tool, spec)
 	handle:SetAttribute("WrapSkip", true)
 	handle:SetAttribute("WrapChannel", nil)
 	local hcf = handle.CFrame
+	-- the manifests' frame: Tool.Grip = identity (guns already are; the old Knife had its own grip, kept in HandleLook for UNDO)
+	tool.Grip = CFrame.new()
 	for _, p in spec.parts do
 		local part = made[p.name].part
-		part.CFrame = hcf * CFrame.new(p.centre)
+		-- uploaded meshes come in turned 180 deg about Y against the manifest frame (the FBX import; art/guns manifests "upload")
+		part.CFrame = hcf * CFrame.new(p.centre) * (p.mesh ~= "" and CFrame.Angles(0, math.pi, 0) or CFrame.new())
 		part.Color = p.colour
 		local okM, mat = pcall(function() return Enum.Material[p.material] end)
 		part.Material = okM and mat or Enum.Material.SmoothPlastic
@@ -187,6 +200,7 @@ local function buildGun(tool: Tool, spec)
 		part.Massless = true
 		part.CastShadow = true
 		part:SetAttribute("GunsV2Part", true)
+		if p.hidden then part.Transparency = 1 part:SetAttribute("GunsV2HiddenAtRest", true) end -- sheath / saya: draw clips show them
 		part.Parent = tool
 	end
 	for _, p in spec.parts do
@@ -233,9 +247,12 @@ local function buildGun(tool: Tool, spec)
 end
 
 for gun, spec in GUNS do
-	local tool = Weapons:FindFirstChild(gun)
+	local folder = Repo:FindFirstChild(spec.folder)
+	local tool = folder and folder:FindFirstChild(gun)
 	if not tool then
 		table.insert(res, gun .. " n/a")
+	elseif not tool:FindFirstChild("Handle") then
+		table.insert(res, gun .. " no Handle (skipped)")
 	elseif UNDO then
 		table.insert(res, gun .. " " .. (tool:GetAttribute("GunsV2") and undoGun(tool) or "="))
 	elseif tool:GetAttribute("GunsV2") == STAMP then
@@ -260,9 +277,9 @@ def main():
         if want and g not in want: continue
         if not os.path.exists(os.path.join(MAN, g + ".json")): continue
         man = json.load(open(os.path.join(MAN, g + ".json"), encoding="utf-8"))
-        ready = all(d["ids"].get(p["name"]) for p in man["parts"])
+        ready = all(part_id(g, p, d) for p in man["parts"])
         if standin or ready: guns.append(g)
-        else: print(f"{g}: mesh ids missing ({sum(1 for p in man['parts'] if not d['ids'].get(p['name']))} parts) - skipped")
+        else: print(f"{g}: mesh ids missing ({sum(1 for p in man['parts'] if not part_id(g, p, d))} parts) - skipped")
     body = "".join(gun_lua(g, done[g], standin) for g in guns)
     stamp = ("standin-" if standin else "") + hashlib.sha1(body.encode()).hexdigest()[:10]
     head = ("-- fix/guns_v2.lua [GUNSV2] (GENERATED by tools/guns_v2_build.py from art/anim/guns/DONE.md + art/guns/manifest; never hand-edit)\n"
