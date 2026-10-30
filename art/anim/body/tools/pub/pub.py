@@ -119,12 +119,12 @@ def publish(name, ref_mode=False):
     if y > 330:
         return None, "row too low in the Explorer"
     desk("click", X0 + 1726, y, "right"); time.sleep(0.8)
-    # the context menu opens downward from the row: Save / Export is 280 px below; its submenu opens to the left
+    # the context menu opens downward from the row: Save / Export is 311 px below (this Studio has a Script Sync entry); its submenu opens to the left
     im = shot()
-    if im.getpixel((1790, y + 280))[0] < 200:
+    if im.getpixel((1790, y + 311))[0] < 200:
         desk("click", X0 + 800, 600); return None, "menu not where expected"
-    desk("click", X0 + 1790, y + 280); time.sleep(0.8)
-    desk("click", X0 + 1645, y + 280); time.sleep(3.5)
+    desk("click", X0 + 1790, y + 311); time.sleep(0.8)
+    desk("click", X0 + 1645, y + 311); time.sleep(3.5)
     im = shot()
     r, last = "none", None
     for _ in range(14):   # the dialog opens at the screen corner, then centres itself: wait until it stops moving

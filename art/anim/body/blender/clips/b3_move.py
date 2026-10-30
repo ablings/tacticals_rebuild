@@ -11,7 +11,7 @@ f = lambda n: n / 60.0
 
 def cycle(name, length, speed, heading, steps, root_y, pitch, lift, contact, bob, priority="Movement", spine_p=0.0,
           width=0.0, depth=None, hip_yaw=4.0, hip_roll=2.5, counter=True, joints=None, arms=None, foot_yaw=0.0,
-          heel=0.0, plant_p=0.0, hip_open=0.0, lift_p=-22.0):
+          heel=0.0, plant_p=0.0, hip_open=0.0, lift_p=-22.0, lift_y=0.13):
     """A stepping cycle travelling at `speed` toward `heading` (deg, 0 = forward, +90 = the character's left). R foot down
     at even steps. A planted foot moves under the body at exactly `speed` from 1.5 f before touch-down to 1.5 f after lift.
     depth = {"R": dz, "L": dz} stagger for side steps (feet pass in front of / behind each other, never through).
@@ -56,7 +56,7 @@ def cycle(name, length, speed, heading, steps, root_y, pitch, lift, contact, bob
                 k += [(t0 - e1, at(sweep / 2 + speed * e1, 0.1, heel), "Linear"),
                       (t0, at(sweep / 2, 0.0, heel + plant_p), "Linear"),
                       (t0 + tc, at(-sweep / 2, 0.0, plant_p), "Linear"),
-                      (t0 + tc + e1, at(-sweep / 2 - speed * e1, 0.13, lift_p), "CubicInOut"),
+                      (t0 + tc + e1, at(-sweep / 2 - speed * e1, lift_y, lift_p), "CubicInOut"),
                       (t0 + tc + (2 * per - tc) * 0.45, at(0.0, lift, -8), "CubicInOut")]
             k = [((t % L) if (t < 0 or t >= L) else t, v, e) for t, v, e in k]
             cyclic(c, L, k, lambda t, v, e, side=side: foot(c, side, t, x=v["x"], y=v["y"], z=v["z"], pitch=v["p"],
@@ -115,17 +115,17 @@ def slide():
 CLIPS = {
     "MoveRun": cycle("MoveRun", 0.70, 10.0, 0, 2, -0.34, -6, 0.42, 0.46, 0.05, spine_p=4, width=0.05, hip_yaw=5, hip_roll=3.5, heel=0),
     "MoveWalkAim": cycle("MoveWalkAim", 1.0, 6.0, 0, 4, -0.17, -3, 0.22, 1.0, 0.025, spine_p=2, width=0.05, hip_yaw=4, hip_roll=2.5, heel=0),
-    "MoveStrafeLeft": cycle("MoveStrafeLeft", 0.70, 10.0, 90, 2, -0.42, -4, 0.38, 0.42, 0.05, spine_p=3,
-                            depth={"R": 0.5, "L": -0.5}, hip_yaw=3, hip_roll=3, foot_yaw=24, hip_open=35, lift_p=0),
-    "MoveStrafeRight": cycle("MoveStrafeRight", 0.70, 10.0, -90, 2, -0.42, -4, 0.38, 0.42, 0.05, spine_p=3,
-                             depth={"R": -0.5, "L": 0.5}, hip_yaw=3, hip_roll=3, foot_yaw=-24, hip_open=-35, lift_p=0),
+    "MoveStrafeLeft": cycle("MoveStrafeLeft", 0.70, 10.0, 90, 2, -0.5, -4, 0.38, 0.42, 0.05, spine_p=3,
+                            depth={"R": 0.5, "L": -0.5}, width=0.22, hip_yaw=3, hip_roll=2, foot_yaw=10, hip_open=12, lift_p=0),
+    "MoveStrafeRight": cycle("MoveStrafeRight", 0.70, 10.0, -90, 2, -0.5, -4, 0.38, 0.42, 0.05, spine_p=3,
+                             depth={"R": -0.5, "L": 0.5}, width=0.22, hip_yaw=3, hip_roll=2, foot_yaw=-10, hip_open=-12, lift_p=0),
     "MoveBackpedal": cycle("MoveBackpedal", 0.70, 7.5, 180, 2, -0.34, -6, 0.32, 0.55, 0.04, spine_p=6, width=0.08, hip_yaw=4, hip_roll=2.5),
     "MoveSprint": cycle("MoveSprint", 0.50, 20.0, 0, 2, -0.46, -12, 0.75, 0.24, 0.09, spine_p=4, width=0.04, hip_yaw=6, hip_roll=5,
                         joints=LEGS + ARMS_UP, arms=sprint_arms_rifle, heel=6),
     "MoveSprintPistol": cycle("MoveSprintPistol", 0.50, 20.0, 0, 2, -0.46, -12, 0.75, 0.24, 0.09, spine_p=4, width=0.04, hip_yaw=6,
                               hip_roll=5, joints=LEGS + ARMS_UP, arms=sprint_arms_pistol, heel=0),
     "MoveCrouchIdle": crouch_idle,
-    "MoveCrouchWalk": cycle("MoveCrouchWalk", 1.2, 6.0, 0, 4, -1.0, -14, 0.4, 1.0, 0.02, priority="Action", spine_p=6, width=0.2, heel=0, plant_p=-16),
+    "MoveCrouchWalk": cycle("MoveCrouchWalk", 1.2, 6.0, 0, 4, -1.0, -14, 0.4, 1.0, 0.02, lift_y=0.32, priority="Action", spine_p=6, width=0.2, heel=0, plant_p=-16),
     "MoveSlide": slide,
 }
 MIRROR = {}

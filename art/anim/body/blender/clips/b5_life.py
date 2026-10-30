@@ -33,7 +33,7 @@ def pose_keys(c, fr, root, feet=None, chest=(0, 0, 0), headr=(0, 0, 0), gun=None
 FLAT_FRONT = {"R": ((0.2, -1.91, 0.15), (-15, 0, 0)), "L": ((-0.2, -1.9, 0.2), (-20, 0, 0))}     # face down, soles up
 FLAT_BACK = {"R": ((0.3, -1.91, -0.1), (20, 0, 0)), "L": ((-0.25, -1.9, -0.15), (10, 0, 0))}  # on the back, toes up
 SIDE = {"R": ((0.1, -1.45, -0.7), (40, 0, 0)), "L": ((-0.1, -1.55, -0.45), (30, 0, 0))}        # on the side, knees bent
-ARMS_UP_FRONT = (((1.2, 1.7, 0.25), (150, 0, -10)), ((-1.25, 1.55, 0.2), (150, 0, 10)))    # hands beside the head
+ARMS_UP_FRONT = (((1.15, -0.55, 0.2), (0, 0, -10)), ((-1.15, -0.5, 0.2), (0, 0, 10)))  # arms along the sides (an overhead swing whipped the upper arms)    # hands beside the head
 ARMS_OUT_BACK = (((1.75, 0.7, 0.0), (80, 0, -60)), ((-1.7, 0.9, 0.0), (80, 0, 60)))           # arms out to the sides
 ARMS_SIDE = (((0.9, -0.55, -0.6), (0, 0, -10)), ((-0.6, 1.1, -1.35), (90, 0, 20)))  # under-arm forward, off the shoulder line
 START = (((0.3, 0.75, -1.0), (0, 0, 0)), ((-0.42, 0.95, -0.9), (70, -60, 0)))  # the low ready the deaths start from
@@ -111,8 +111,8 @@ def death_crumple():
          (2, dict(y=-0.1, z=0.05, pitch=-4), "plant", (-6, 0, 0), (-6, 0, 0), START, "CubicIn"),
          (20, dict(y=-1.15, z=-0.45, pitch=-8, roll=3), ("plant", {"R": dict(pitch=-60), "L": dict(pitch=-60)}), (-14, 0, 2), (-14, 0, 0),
           (((0.8, -0.6, -0.5), (0, 0, -10)), ((-0.8, -0.6, -0.5), (0, 0, 10))), "QuadIn"),
-         (50, dict(y=-1.6, z=-0.3, pitch=-12, roll=66), SIDE, (-8, 0, -4), (4, 0, -10), ARMS_SIDE, "CubicOut"),
-         (84, dict(y=-1.62, z=-0.3, pitch=-12, roll=68), SIDE, (-7, 0, -4), (6, 0, -12), ARMS_SIDE, E)]
+         (50, dict(y=-2.0, z=-0.3, pitch=-12, roll=66), SIDE, (-8, 0, -4), (4, 0, -10), ARMS_SIDE, "CubicOut"),
+         (84, dict(y=-2.05, z=-0.3, pitch=-12, roll=68), SIDE, (-7, 0, -4), (6, 0, -12), ARMS_SIDE, E)]
     death_from(c, K, ground=[50, 84])
     c.marker("DropGun", f(12)); c.marker("Ground", f(50))
     return c
@@ -125,7 +125,7 @@ def death_headshot():
     c.free("L", 0, 1.0); c.free("R", 0, 1.0)
     K = [(0, dict(y=-0.04), "plant", (0, 0, 0), (0, 0, 0), START, "Linear"),
          (1, dict(y=-0.05), "plant", (4, 0, 0), (25, 0, 0), START, "QuadIn"),
-         (18, dict(y=-1.35, z=0.25, pitch=-6), ("plant", {"R": dict(x=0.15, pitch=-50), "L": dict(x=-0.15, pitch=-50)}), (-4, 0, 0), (12, 0, 0),
+         (18, dict(y=-1.35, z=0.25, pitch=-6), ("plant", {"R": dict(pitch=-50), "L": dict(pitch=-50)}), (-4, 0, 0), (12, 0, 0),
           (((0.75, -0.7, -0.2), (0, 0, -10)), ((-0.75, -0.7, -0.2), (0, 0, 10))), "QuadIn"),
          (30, dict(y=-1.72, z=1.6, pitch=86, roll=-6), FLAT_BACK, (3, 0, 0), (-12, -8, 0), ARMS_OUT_BACK, "CubicOut"),
          (48, dict(y=-1.74, z=1.62, pitch=89, roll=-6), FLAT_BACK, (2, 0, 0), (-12, -8, 0), ARMS_OUT_BACK, E)]
@@ -200,7 +200,7 @@ def fidget_gun_check():
         head(c, f(fr), *hd, ease=e)
         spine(c, f(fr), pitch=(-3 if 8 <= fr <= 120 else 0), ease=e)
         c.gun_at_wrist(f(fr), wr, rot, ease=e)
-        c.hand_on("L", f(fr), (0.0, -0.62, 0.0), (0, 0, 0), ease=e)
+        c.hand_on("L", f(fr), (0.0, -0.95, 0.15), (0, 0, 0), ease=e)
         c.pole("L", f(fr), (-1.6, -0.6, -0.6), ease=e)  # off elbow dropped: the forearm runs under the gun
     return c
 

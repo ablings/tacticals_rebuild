@@ -19,6 +19,7 @@ public class Dk {
   [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr h);
   [DllImport("user32.dll")] public static extern bool ShowWindow(IntPtr h, int c);
   [DllImport("user32.dll")] public static extern bool IsZoomed(IntPtr h);
+  [DllImport("user32.dll")] public static extern bool IsIconic(IntPtr h);
   [DllImport("user32.dll")] public static extern int GetWindowText(IntPtr h, StringBuilder s, int n);
   public static string Title(IntPtr h) { var sb = new StringBuilder(512); GetWindowText(h, sb, 512); return sb.ToString(); }
   public static uint Pid(IntPtr h) { uint p; GetWindowThreadProcessId(h, out p); return p; }
@@ -56,7 +57,8 @@ switch ($cmd) {
     $p = Get-Process RobloxStudioBeta -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowTitle -like "*$a1*" } | Select-Object -First 1
     if (-not $p) { Write-Error "no Studio window with '$a1'"; exit 1 }
     # SW_SHOW keeps a maximized (staged) window maximized; SW_RESTORE (9) only for a minimized one
-    if ([Dk]::IsZoomed($p.MainWindowHandle)) { [Dk]::ShowWindow($p.MainWindowHandle, 5) | Out-Null } else { [Dk]::ShowWindow($p.MainWindowHandle, 9) | Out-Null }
+    # restore only a minimized window: SW_RESTORE on the staged (resized) window would send it back to its slot size
+    if ([Dk]::IsIconic($p.MainWindowHandle)) { [Dk]::ShowWindow($p.MainWindowHandle, 9) | Out-Null } else { [Dk]::ShowWindow($p.MainWindowHandle, 5) | Out-Null }
     (New-Object -ComObject WScript.Shell).AppActivate($p.Id) | Out-Null
     Start-Sleep -Milliseconds 300
     [Dk]::SetForegroundWindow($p.MainWindowHandle) | Out-Null
