@@ -68,3 +68,23 @@ Written by the weapons animator, 2026-10-30, for every animator on Tacticals. Pr
 - Players' joints are AnimationConstraints: anything that reads joints (capture tools, procedural aim) must handle both
   kinds (`Attachment0/1.CFrame` = C0/C1).
 - `execute_luau` returns the chunk's return value; `print` output goes to the Studio console, not to the caller.
+
+## Guns, carried parts and reach (added after the full weapon set)
+- **Gun parts:** `setup_rig(gun=load_gun("<Gun>"))` reads the modeler's manifest (`art/guns/manifest/<Gun>.json`) and adds a
+  bone `P_<Part>` per part at its pivot, in the same parent chain as the Motor6Ds (Handle -> Crane -> Cylinder ...).
+  `Clip.part(name, t, pos, rot)` keys it in the gun frame. The export writes each keyed part's Motor6D Transform relative
+  to its parent part (C0/C1 at the pivot, no rotation), so the clip moves the real gun through its own joints. In game
+  the Animator drives them through the plain RightGrip weld: nothing to change in code.
+- **Carried parts** (Mag, LoadShell, Rounds): a twin bone `H_<Part>` under the left hand; the part blends onto it with the
+  pose-bone property `inhand` (0 = rides the gun, 1 = rides the hand). `held_at(c, part, f, W)` puts the twin so the part
+  is exactly where it sits on the gun when the off-hand wrist is at gun-frame point W: switch `inhand` on the frame the
+  hand reaches W and nothing pops.
+- **The gun is welded to the gun hand** in game: the off hand works every mechanism (slide, charging handle, bolt, pump,
+  cylinder). Never let the gun hand leave the grip while the gun should stay put.
+- **Reach:** `key_pose` slides the gun (both hands on it) until both wrists are within 97% of their arm's reach; the
+  exporter prints `INFO ... gun slid` and `WARN ... ik_gap at frame N` for anything left (in-betweens). Fix a WARN by giving
+  the pose keyed around that frame the off-hand point it must reach (`L=("gun", point, rot)`).
+- **Previews:** `tools/review.sh <set> <Clip> <frames>` renders 3 views x frames in Blender with exact R15 boxes and the
+  remodel's part boxes; `tools/strip.sh` / `fp.sh` capture Studio strips (side, gameplay camera, first person).
+- Studio calls: one at a time per Studio (the helpers share `out/anim_weapons/_args.json`); `MCP_WARMUP=1` makes each
+  call ~1 s instead of 4.

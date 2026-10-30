@@ -116,7 +116,7 @@ def inspect():
     h = G.hold(c)
     show = P(h, gun=((0.2, 1.05, -0.65), (8, 25, 60)), head=(-12, 12, 0), L=("free", (-0.5, 0.6, -0.7), (70, 0, 0)))
     show2 = add(show, gun=((0, 0.02, 0), (1.5, 1, 2)))
-    look = P(show, gun=((0.1, 1.1, -0.6), (10, 5, 15)), head=(-14, 4, 0))
+    look = P(show, gun=((0.1, 1.1, -0.6), (10, 5, 15)), head=(-14, 4, 0), L=("gun", (0.0, -0.84, 0.3), (0, 0, 0)))
     seq(c, [(0, h, "CubicInOut"), (20, show, "SineInOut"), (60, show2, "SineInOut"), (68, look, "SineInOut"), (140, add(look, gun=((0, 0.02, 0), (1, 0, 2))), "CubicOut"),
             (180, h)], only=("root", "chest", "head", "gun", "R", "poles", "feet"))
     knob = (0.0, 0.62, 0.05)

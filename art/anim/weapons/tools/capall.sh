@@ -2,7 +2,7 @@
 # capall.sh: side (15 fps) + gameplay (10 fps) strips of every right-hand clip, every-frame strips of the fire clips
 cd "$(dirname "$0")"
 SCR="C:/Users/aroki/Documents/roblox_kits/tools/screen.ps1"
-for n in $(cat ../../../../out/anim_weapons/_all.txt | grep -v 'Left$'); do
+for n in $(cat ../../../../out/anim_weapons/_all.txt | grep -v "Left$" | grep -vxF -f ../../../../out/anim_weapons/_captured.txt); do
   case $n in Pistol*|QuickMeleeBash) g=Pistol;; Revolver*) g=Revolver;; SMG*) g=MiniUzi;; Rifle*) g=AutoRifle;; Shotgun*) g=PumpShotgun;;
     Sniper*) g=Sniper;; Bat*) g=Bat;; Katana*) g=Katana;; RiotShield*) g=RiotShield;; MeleeSlash|MeleeKnife*) g=Knife;; *) g=-;; esac
   pwsh -NoProfile -ExecutionPolicy Bypass -File "$SCR" stage -place anim_weapons.rbxl > /dev/null 2>&1

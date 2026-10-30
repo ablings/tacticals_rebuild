@@ -121,9 +121,10 @@ def make(poses, prefix="Pistol"):
         near = (0.25, h["gun"][0][1] - 0.1, -0.85)
         showL = P(h, gun=(near, (10, 25, 70)), head=(-10, 8, 0), poleR=(1.6, -0.8, 0.8))
         showL2 = add(showL, gun=((0, 0.02, 0), (1.5, 1, 2)), head=(1, 0, 0))
-        showR = P(showL, gun=(near, (10, -10, -60)), head=(-12, 0, 0))
+        showR = P(showL, gun=(near, (10, -10, -60)), head=(-12, 0, 0), L=("gun", (0.0, 0.42, 0.27), (0, 0, 90)))
         showR2 = add(showR, gun=((0, 0.02, 0), (1.5, -1, -2)))
-        check = P(showR, gun=(add_t(near, (0, 0.05, 0.05)), (5, 0, -25)), head=(-14, 4, 0))
+        check = P(showR, gun=(add_t(near, (0, 0.05, 0.05)), (5, 0, -25)), head=(-14, 4, 0),
+                  L=("gun", (0.0, 0.42, 0.27), (0, 0, 90)))  # reach check at the pinch's rear point
         seq(c, [(0, h, "CubicInOut"), (20, showL, "SineInOut"), (60, showL2, "CubicInOut"), (80, showR, "SineInOut"),
                 (98, showR2, "SineInOut"), (100, check, "SineInOut"), (118, check, "SineInOut"),
                 (150, add(check, gun=((0, 0.03, 0), (2, 0, 3))), "CubicOut"), (180, h)],

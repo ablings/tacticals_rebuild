@@ -607,7 +607,10 @@ def sample(clip, gun_joints=None):
         for s in ("R", "L"):
             ik = ob.pose.bones["IK_Hand." + s].matrix.translation
             wrist = ob.pose.bones["Hand." + s].matrix.translation
-            worst["ik_gap_" + s] = max(worst.get("ik_gap_" + s, 0.0), (ik - wrist).length)
+            gap = (ik - wrist).length
+            if gap > worst.get("ik_gap_" + s, 0.0):
+                worst["ik_gap_" + s] = gap
+                worst["at_f_" + s] = i
         frames.append((t, tr))
     return frames, worst
 
@@ -723,7 +726,7 @@ def export_clip(clip, out_dir, gun_joints=None, mirror=False, name=None, extra_k
         json.dump(out, f)
     for k, v in worst.items():
         if k.startswith("ik_gap_") and v > 0.02:
-            print("WARN", nm, k, round(v, 3), "(a hand target is out of reach)")
+            print("WARN", nm, k, round(v, 3), "at frame", worst.get("at_f_" + k[-1]), "(a hand target is out of reach)")
     if getattr(clip, "reach_moves", 0) > 0.05:
         print("INFO", nm, "gun slid into both hands' reach by up to", round(clip.reach_moves, 2))
     if getattr(clip, "clamped", 0) > 0.05:

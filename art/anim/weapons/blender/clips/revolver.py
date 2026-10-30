@@ -111,8 +111,8 @@ def inspect():
     c = Clip("RevolverInspect", 3.0)
     h, _, _ = poses(c)
     near = (0.2, h["gun"][0][1] - 0.15, -0.85)
-    show = P(h, gun=(near, (10, 25, 60)), head=(-10, 8, 0))
-    openp = P(show, gun=(near, (25, 15, 35)), head=(-14, 4, 0))
+    show = P(h, gun=(near, (10, 25, 60)), head=(-10, 8, 0), L=("gun", (0.05, -0.05, -0.35), (0, 0, -30)))
+    openp = P(show, gun=(near, (25, 15, 35)), head=(-14, 4, 0), L=("gun", (-0.2, 0.1, -0.4), (0, 0, -30)))
     seq(c, [(0, h, "CubicInOut"), (20, show, "SineInOut"), (50, add(show, gun=((0, 0.02, 0), (1.5, 1, 2))), "SineInOut"), (56, openp, "SineInOut"),
             (100, add(openp, gun=((0, 0.02, 0), (1, 0, 2))), "SineInOut"), (140, show, "CubicOut"), (180, h)],
         only=("root", "chest", "head", "gun", "R", "poles", "feet"))
