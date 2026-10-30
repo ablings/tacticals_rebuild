@@ -789,7 +789,29 @@ himself; we never publish.
   round 1 costs the streak; buying credits still grants once.
 - Rollback: Creator Hub > tacticals > each place > Version History, restore the version before 2026-10-30 05:00.
 
-## Port 52 PREPARED, NOT PUBLISHED (2026-10-30 11:40-12:00, main PC, systems session; Edward: "go" on notes/perf_settings_1030.md) - [PERFSET] Performance settings: all five places
+## Live port 52 (2026-10-30 16:18-16:30, main PC, systems session; Edward: "publish what the workers are asking you to publish") - [PERFSET] Performance settings: Tutorial + Ranked + Matchmaking + LOBBY
+- What: the port-52 files exactly as prepared below (commit 3b606197, unchanged on disk: git status clean for them), i.e. live port 51 +
+  `fix/perf_settings_1030.lua`. No MOVE1029, no UI r2 (both wait on Edward). The port-52 Test_place.rbxl was NOT published (Test port 53 replaces it).
+- Pre-checks: git pull up to date; repo-root .locks all from 05:21-11:53 (> 4 h old); play lock `publish52`.
+- Publish As > gunsy funsy > tacticals > <place> > Overwrite > Grant Permissions and Publish ("tacticals is ready to test"), in order:
+  **Tutorial** (118492914954668), **Ranked** (122908502889013), **Matchmaking** (97339328188402), **tacticals lobby** (126491009194165;
+  the row is named "tacticals", the last one: scroll the place list).
+- Read back in each publishing window after the upload (tools/perf_settings_hash.lua + out/port51/readback.lua): SettingsData 31203/1651814608,
+  SettingsEffectsController 10073/101658185, ExplosionController 13907/1388818873, all [PERFSET], _PerfSetOrig park true, PlaceId right;
+  PlaceKind right; DuelMaps Warehouse/Arena/Warehouse2/House (match places + lobby); Survey1025 2/2, LeaveRule; MoveRework1029 nil, UI r2
+  absent; House ArtVersion / illusion absent; SmokeAlarmRound 3 (match + lobby); lobby LobbySteamFillRound 1, TestPlaceId 99722095417844,
+  AssetCheck parked; no test hooks, 0 test marks; compile all ok (Tutorial 353, Ranked 364, Matchmaking 364, lobby 394) = port 51 + perf only.
+- Publish notes: this Studio has **no Publish As shortcut** (Alt+Shift+P does nothing; Alt+P is Publish): File menu > Publish As. The
+  first File click only activates a background Studio window; the second opens the menu. The group list needs scrolling (wheel down 6,
+  up 2 lands "gunsy funsy" in view). After Matchmaking and the lobby, Studio showed "Applying script changes. Studio will close
+  automatically" and the window became a cloud session ("<place> (placeId: ...)" in MCP): read back BEFORE pressing OK, edit nothing,
+  then close the process. Edward had Discord maximised on the agents' monitor and a game focused on his: every click went through a
+  guard (out/port52/g.py: the window under the point must be a Studio process; keys only while Studio has focus).
+- Live checks for Edward: Settings > Video > Performance shows the five rows (all off); Optimized Lighting on = no shadows, Fewer Lights
+  = far lamps off; turning them off restores the look.
+- Rollback: Creator Hub > tacticals > each place > Version History, the version before 2026-10-30 16:15; or UNDO in fix/perf_settings_1030.lua.
+
+## Port 52 PREPARED, NOT PUBLISHED (published 16:18-16:30 as Live port 52, above) (2026-10-30 11:40-12:00, main PC, systems session; Edward: "go" on notes/perf_settings_1030.md) - [PERFSET] Performance settings: all five places
 - What: Settings > Video > Performance: Optimized Lighting (now also lamp shadows, and kept off when a match map turns shadows on:
   bug fixed), Optimized Textures (every map), Fewer Lights, Low Effects, Hide Far Screens; all off by default (notes/perf_settings_1030.md).
 - Built on the committed port-51 files (git HEAD 7524f3f4, Test = port 50 c12c0a43) + `fix/perf_settings_1030.lua`, run twice in each
