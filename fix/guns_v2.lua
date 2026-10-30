@@ -501,11 +501,13 @@ local function undoGun(tool: Tool)
 	for _, c in saved:GetChildren() do
 		c.Parent = (c:IsA("Attachment") and handle) or tool
 	end
+	local flashOn = saved:GetAttribute("FlashOn")
+	local target
 	for _, m in tool:GetDescendants() do
-		if m:IsA("Attachment") and m.Name == "Muzzle" and #m:GetChildren() == 0 then
-			for _, k in muzzleKids do k.Parent = m end
-			break
-		end
+		if m:IsA("Attachment") and m.Name == "Muzzle" and (flashOn == nil or m.Parent.Name == flashOn) then target = m break end
+	end
+	for _, k in muzzleKids do
+		if target and #target:GetChildren() < #muzzleKids then k.Parent = target else k:Destroy() end
 	end
 	saved:Destroy()
 	tool:SetAttribute("GunsV2", nil)
@@ -531,13 +533,15 @@ local function buildGun(tool: Tool, spec)
 		part.Size = p.size
 		made[p.name] = { part = part, spec = p }
 	end
+	tool:SetAttribute("GunsV2", "building") -- stamped before the first write (an interrupted build is refused next run)
 	-- the old look goes to the backup
 	local saved = Instance.new("Folder")
 	saved.Name = tool.Name
 	local muzzleKids = {}
 	for _, m in tool:GetDescendants() do
-		if m:IsA("Attachment") and m.Name == "Muzzle" then
+		if m:IsA("Attachment") and m.Name == "Muzzle" and #m:GetChildren() > 0 then
 			for _, k in m:GetChildren() do table.insert(muzzleKids, k) end
+			saved:SetAttribute("FlashOn", m.Parent.Name) -- UNDO gives the set back to this muzzle only
 			break -- one flash set; a second muzzle gets copies (the old second set stays with the old parts in the backup)
 		end
 	end
@@ -635,9 +639,37 @@ for gun, spec in GUNS do
 		table.insert(res, gun .. " " .. (tool:GetAttribute("GunsV2") and undoGun(tool) or "="))
 	elseif tool:GetAttribute("GunsV2") == STAMP then
 		table.insert(res, gun .. " =")
+	elseif tool:GetAttribute("GunsV2") == "building" then
+		table.insert(res, gun .. " HALF-BUILT (an earlier run stopped): fix by hand from ServerStorage._GunsV1, then re-run")
 	else
 		if tool:GetAttribute("GunsV2") then undoGun(tool) end -- an older build: back to the old look, then the new one
 		table.insert(res, gun .. " + " .. buildGun(tool, spec))
+	end
+end
+-- scripts written for the old part names [GUNSV2PATCH]
+local SSS = game:GetService("ServerScriptService")
+local PATCHES = {
+	{ script = SSS:FindFirstChild("DualGrip"), anchor = "	if tool:GetAttribute(\"DualGripHooked\") then return end",
+	  add = "	if tool:GetAttribute(\"GunsV2\") then return end -- [GUNSV2PATCH] the rebuilt rig's clips drive the LeftFrame motor; re-welding LeftBarrel tore it off" },
+	{ script = SSS:FindFirstChild("HolsterManager"), anchor = "local root = mm:FindFirstChild(\"LeftGrip\") or mm.PrimaryPart",
+	  replace = "local root = mm:FindFirstChild(\"LeftGrip\") or mm:FindFirstChild(\"LeftFrame\") or mm.PrimaryPart -- [GUNSV2PATCH] LeftFrame on the rebuilt rig" },
+}
+for _, pt in PATCHES do
+	local sc = pt.script
+	if not sc then table.insert(res, "patch n/a") continue end
+	local src = sc.Source
+	local new = pt.add and (pt.anchor .. string.char(10) .. pt.add) or pt.replace
+	local has = src:find(new, 1, true) ~= nil
+	if UNDO then
+		if has then sc.Source = src:gsub(new:gsub("%p", "%%%0"), (pt.anchor:gsub("%%", "%%%%")), 1) table.insert(res, sc.Name .. " patch removed") end
+	elseif has then
+		table.insert(res, sc.Name .. " patch =")
+	else
+		local a, b = src:find(pt.anchor, 1, true)
+		if not a or src:find(pt.anchor, b + 1, true) then table.insert(res, sc.Name .. " patch ANCHOR MISSING") else
+			sc.Source = src:sub(1, a - 1) .. new .. src:sub(b + 1)
+			table.insert(res, sc.Name .. " patch +")
+		end
 	end
 end
 if UNDO and backup and #backup:GetChildren() == 0 then backup:Destroy() end
