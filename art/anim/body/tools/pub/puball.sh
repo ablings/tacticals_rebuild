@@ -19,7 +19,7 @@ while [ $# -gt 0 ]; do
   python pub.py $B > _last.txt 2>&1; cat _last.txt
   powershell -NoProfile -ExecutionPolicy Bypass -File desk.ps1 frontdlg anim_body.rbxl unpin > /dev/null 2>&1
   pwsh -NoProfile -ExecutionPolicy Bypass -File "C:/Users/aroki/Documents/roblox_kits/tools/screen.ps1" release -place anim_body.rbxl > /dev/null 2>&1
-  grep -q "STOP\|Traceback" _last.txt && { echo STOPPED; exit 1; }
+  grep -q "STOP\|Traceback\|Error" _last.txt && { echo STOPPED; exit 1; }
   sleep 20
 done
 echo PUBALLDONE

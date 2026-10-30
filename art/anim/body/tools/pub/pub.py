@@ -93,15 +93,13 @@ def publish(name, ref_mode=False):
     time.sleep(1.8)  # let the Explorer move its highlight to the new selection
     im = shot()
     y = find_row(im)
-    for direction in (2, 2, 2, -4, -2, -2):  # scroll the Explorer until the whole row shows
+    for direction in (-3, -3, -3, -3, 2, 2, 2, 2, 2, 2):  # scroll the Explorer until the whole row shows
         if y is not None:
             break
         if direction > 0:
             desk("wheel", X0 + 1760, 400, direction)
         else:
-            subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command",
-                            "Add-Type -AssemblyName System.Windows.Forms"], capture_output=True)
-            desk("wheel", X0 + 1760, 400, 0)
+            desk("wheelup", X0 + 1760, 400, -direction)  # (the original scrolled by 0 here: rows above were never reached)
         time.sleep(0.6)
         im = shot()
         y = find_row(im)
@@ -184,6 +182,16 @@ def publish(name, ref_mode=False):
     return aid, ("verified" if ok else "NOT VERIFIED")
 
 
+def publish_safe(name, ref_mode=False):
+    try:
+        return publish(name, ref_mode)
+    finally:
+        run_lua('local f = workspace:FindFirstChild("!!Pub") '
+                'if f then for _, k in f:GetChildren() do '
+                'k.Parent = game.ReplicatedStorage.Repository.AnimationSources end f:Destroy() end '
+                'return "back"')
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
     ref = "--ref" in args
@@ -192,7 +200,7 @@ if __name__ == "__main__":
     for n in names:
         if n in pub and not ref:
             print(n, "already", pub[n]); continue
-        aid, msg = publish(n, ref)
+        aid, msg = publish_safe(n, ref)
         print(n, aid, msg, flush=True)
         if aid and msg == "verified":
             pub[n] = "rbxassetid://" + aid

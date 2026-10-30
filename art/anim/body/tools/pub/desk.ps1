@@ -99,6 +99,14 @@ switch ($cmd) {
     $r = New-Object Dk+RECT; [Dk]::GetWindowRect($script:found, [ref]$r) | Out-Null
     "$($r.L) $($r.T) $($r.R) $($r.B)"
   }
+  'wheelup' {
+    $pt = New-Object Dk+POINT; $pt.X = [int]$a1; $pt.Y = [int]$a2
+    $h = [Dk]::WindowFromPoint($pt)
+    if ([Dk]::Pid($h) -ne [uint32]$env:MY_STUDIO_PID) { Write-Error "refused: not my Studio"; exit 1 }
+    [Dk]::SetCursorPos($pt.X, $pt.Y) | Out-Null; Start-Sleep -Milliseconds 100
+    for ($i = 0; $i -lt [int]$a3; $i++) { [Dk]::mouse_event(0x0800, 0, 0, [uint32]120, [IntPtr]::Zero); Start-Sleep -Milliseconds 40 }
+    "wheel up x" + $a3
+  }
   'wheel' {
     $pt = New-Object Dk+POINT; $pt.X = [int]$a1; $pt.Y = [int]$a2
     $h = [Dk]::WindowFromPoint($pt)
