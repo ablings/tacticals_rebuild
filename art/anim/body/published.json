@@ -1,10 +1,26 @@
 {
+ "CoverBlindCorner": "rbxassetid://96330153824052",
+ "CoverBlindCornerCrouch": "rbxassetid://138756973592785",
+ "CoverBlindCornerCrouchLeft": "rbxassetid://80937732751202",
+ "CoverBlindCornerLeft": "rbxassetid://116035927197080",
+ "CoverBlindOver": "rbxassetid://93000495562510",
+ "CoverBlindOverLeft": "rbxassetid://105947273990022",
+ "CoverBrace": "rbxassetid://91758202406623",
+ "CoverBraceCrouch": "rbxassetid://110508655316626",
  "CoverCrouch": "rbxassetid://124832453155823",
  "CoverCrouchLeft": "rbxassetid://112818189818941",
  "CoverCrouchPeek": "rbxassetid://89536713819196",
  "CoverCrouchPeekLeft": "rbxassetid://70445628915689",
+ "CoverDash": "rbxassetid://123563916742295",
  "CoverIdleTall": "rbxassetid://107919974947086",
  "CoverIdleTallLeft": "rbxassetid://89825449450442",
  "CoverLookNeg": "rbxassetid://83092379873846",
- "CoverLookPos": "rbxassetid://134408081619717"
+ "CoverLookNegCrouch": "rbxassetid://124538442952747",
+ "CoverLookPos": "rbxassetid://134408081619717",
+ "CoverLookPosCrouch": "rbxassetid://90844255479709",
+ "CoverShuffleCrouch": "rbxassetid://118447547866788",
+ "CoverShuffleCrouchRight": "rbxassetid://140578531767031",
+ "CoverShuffleTall": "rbxassetid://120172574979982",
+ "CoverShuffleTallRight": "rbxassetid://129456933995960",
+ "CoverSneak": "rbxassetid://103928091102252"
 }

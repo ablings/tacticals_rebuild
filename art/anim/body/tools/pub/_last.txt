@@ -1,3 +1,0 @@
-CoverLookNeg 83092379873846 verified
-CoverLookPosCrouch None no configuration dialog
-STOP on CoverLookPosCrouch

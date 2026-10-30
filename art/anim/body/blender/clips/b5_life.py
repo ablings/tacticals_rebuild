@@ -33,13 +33,13 @@ def pose_keys(c, fr, root, feet=None, chest=(0, 0, 0), headr=(0, 0, 0), gun=None
 FLAT_FRONT = {"R": ((0.2, -1.91, 0.15), (-15, 0, 0)), "L": ((-0.2, -1.9, 0.2), (-20, 0, 0))}     # face down, soles up
 FLAT_BACK = {"R": ((0.3, -1.91, -0.1), (20, 0, 0)), "L": ((-0.25, -1.9, -0.15), (10, 0, 0))}  # on the back, toes up
 SIDE = {"R": ((0.1, -1.45, -0.7), (40, 0, 0)), "L": ((-0.1, -1.55, -0.45), (30, 0, 0))}        # on the side, knees bent
-ARMS_UP_FRONT = (((1.15, -0.55, 0.2), (0, 0, -10)), ((-1.15, -0.5, 0.2), (0, 0, 10)))  # arms along the sides (an overhead swing whipped the upper arms)    # hands beside the head
+ARMS_UP_FRONT = (((1.6, -0.45, 0.1), (0, 0, -25)), ((-1.6, -0.4, 0.1), (0, 0, 25)))  # arms along the sides (an overhead swing whipped the upper arms)    # hands beside the head
 ARMS_OUT_BACK = (((1.75, 0.7, 0.0), (80, 0, -60)), ((-1.7, 0.9, 0.0), (80, 0, 60)))           # arms out to the sides
 ARMS_SIDE = (((0.9, -0.55, -0.6), (0, 0, -10)), ((-0.6, 1.1, -1.35), (90, 0, 20)))  # under-arm forward, off the shoulder line
 START = (((0.3, 0.75, -1.0), (0, 0, 0)), ((-0.42, 0.95, -0.9), (70, -60, 0)))  # the low ready the deaths start from
 
 
-def death_from(c, K, ground=(), torso_rest=True):
+def death_from(c, K, ground=(), torso_rest=True, pole=(2.8, 0.0)):
     for fr, root, feet, chest, hd, arms, e in K:
         if feet == "plant" or isinstance(feet, tuple) and feet and feet[0] == "plant":
             off = feet[1] if isinstance(feet, tuple) else {}
@@ -58,8 +58,8 @@ def death_from(c, K, ground=(), torso_rest=True):
         # elbow poles: behind the body by default; lying on the back, in FRONT (= up) so the elbows don't dig into the floor
         # elbow poles out to the SIDES and never switched across the arm's plane (an up/behind switch flipped the
         # elbows 90 deg in a frame, and an 'up' pole held dead arms in the air)
-        c.pole("R", f(fr), (2.8, 0.67, 0.0), ease=e)
-        c.pole("L", f(fr), (-2.8, 0.67, 0.0), ease=e)
+        c.pole("R", f(fr), (pole[0], 0.67, pole[1]), ease=e)
+        c.pole("L", f(fr), (-pole[0], 0.67, pole[1]), ease=e)
     c.finish()
     last = int(round(c.length * 60))
     clamp_exact(c, last, both=False)               # lift anything under the floor, every frame
@@ -80,7 +80,7 @@ def death_forward():
          (40, dict(y=-1.72, z=-1.7, pitch=-88, roll=2), FLAT_FRONT, (-2, 0, 2), (32, 8, 0), ARMS_UP_FRONT, "CubicOut"),
          (50, dict(y=-1.74, z=-1.72, pitch=-90, roll=2), FLAT_FRONT, (-1, 0, 2), (32, 8, 0), ARMS_UP_FRONT, E),
          (72, dict(y=-1.74, z=-1.72, pitch=-90.5, roll=2), FLAT_FRONT, (-1, 0, 2), (32, 8, 0), ARMS_UP_FRONT, E)]
-    death_from(c, K, ground=[40, 50])
+    death_from(c, K, ground=[40, 50], pole=(2.07, 1.5))  # face down: elbows to the back (= up), one side all clip
     c.marker("DropGun", f(6)); c.marker("Ground", f(40))
     return c
 
