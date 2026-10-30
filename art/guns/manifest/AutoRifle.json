@@ -1,0 +1,670 @@
+{
+ "gun": "AutoRifle",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Upper",
+   "parent": "Handle",
+   "motor6d": "Upper",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0175,
+    0.4775,
+    -1.18
+   ],
+   "bbox_centre": [
+    0.0175,
+    0.4775,
+    -1.18
+   ],
+   "size": [
+    0.295,
+    0.305,
+    2.66
+   ],
+   "tris": 84,
+   "colour": [
+    150,
+    128,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "upper receiver, ejection port (right), top rail with side grooves, forward-assist housing"
+  },
+  {
+   "name": "Lower",
+   "parent": "Handle",
+   "motor6d": "Lower",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.14,
+    -0.465
+   ],
+   "bbox_centre": [
+    0.0,
+    0.14,
+    -0.465
+   ],
+   "size": [
+    0.24,
+    0.43,
+    1.19
+   ],
+   "tris": 68,
+   "colour": [
+    150,
+    128,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "lower receiver, mag well, trigger guard"
+  },
+  {
+   "name": "Grip",
+   "parent": "Handle",
+   "motor6d": "Grip",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.125,
+    0.04
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.125,
+    0.04
+   ],
+   "size": [
+    0.2,
+    0.7,
+    0.52
+   ],
+   "tris": 64,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "raked pistol grip with inset panels"
+  },
+  {
+   "name": "Handguard",
+   "parent": "Handle",
+   "motor6d": "Handguard",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.45,
+    -1.75
+   ],
+   "bbox_centre": [
+    0.0,
+    0.45,
+    -1.75
+   ],
+   "size": [
+    0.27,
+    0.28,
+    1.5
+   ],
+   "tris": 614,
+   "colour": [
+    150,
+    128,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "hollow octagonal handguard: M-LOK slots go through, barrel and gas block show inside"
+  },
+  {
+   "name": "Barrel",
+   "parent": "Handle",
+   "motor6d": "Barrel",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.45,
+    -1.95
+   ],
+   "bbox_centre": [
+    0.0,
+    0.45,
+    -1.95
+   ],
+   "size": [
+    0.205,
+    0.23,
+    1.9
+   ],
+   "tris": 140,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "barrel, gas block, birdcage flash hider"
+  },
+  {
+   "name": "BufferTube",
+   "parent": "Handle",
+   "motor6d": "BufferTube",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.425,
+    0.4
+   ],
+   "bbox_centre": [
+    0.0,
+    0.425,
+    0.4
+   ],
+   "size": [
+    0.2,
+    0.2,
+    1.0
+   ],
+   "tris": 56,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "buffer tube + castle nut"
+  },
+  {
+   "name": "Stock",
+   "parent": "Handle",
+   "motor6d": "Stock",
+   "motor_part0": "Handle",
+   "motion": "translate along the buffer tube +z 0.25 (collapse / extend)",
+   "pivot": [
+    0.0,
+    0.425,
+    0.7
+   ],
+   "bbox_centre": [
+    0.0,
+    0.1975,
+    0.785
+   ],
+   "size": [
+    0.22,
+    0.715,
+    0.87
+   ],
+   "tris": 48,
+   "colour": [
+    150,
+    128,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "skeleton stock"
+  },
+  {
+   "name": "ButtPad",
+   "parent": "Stock",
+   "motor6d": "ButtPad",
+   "motor_part0": "Stock",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.195,
+    1.25
+   ],
+   "bbox_centre": [
+    0.0,
+    0.195,
+    1.25
+   ],
+   "size": [
+    0.24,
+    0.72,
+    0.1
+   ],
+   "tris": 12,
+   "colour": [
+    36,
+    36,
+    38
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Optic",
+   "parent": "Handle",
+   "motor6d": "Optic",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0152,
+    0.8,
+    -0.61
+   ],
+   "bbox_centre": [
+    0.0152,
+    0.8,
+    -0.61
+   ],
+   "size": [
+    0.2396,
+    0.35,
+    0.38
+   ],
+   "tris": 184,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "red-dot: mount, tube, turrets"
+  },
+  {
+   "name": "OpticLens",
+   "parent": "Optic",
+   "motor6d": "OpticLens",
+   "motor_part0": "Optic",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.84,
+    -0.77
+   ],
+   "bbox_centre": [
+    0.0,
+    0.84,
+    -0.77
+   ],
+   "size": [
+    0.175,
+    0.184,
+    0.02
+   ],
+   "tris": 36,
+   "colour": [
+    40,
+    70,
+    90
+   ],
+   "material": "Glass",
+   "wrap": "skip",
+   "note": "glass, WrapSkip"
+  },
+  {
+   "name": "Mag",
+   "parent": "Handle",
+   "motor6d": "Mag",
+   "motor_part0": "Handle",
+   "motion": "drop out down/forward along its curve; new mag rocked in about x at the well",
+   "pivot": [
+    0.0,
+    0.235,
+    -0.8
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.195,
+    -0.84
+   ],
+   "size": [
+    0.17,
+    1.1,
+    0.52
+   ],
+   "tris": 44,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "curved 30-round polymer mag + base plate"
+  },
+  {
+   "name": "ChargingHandle",
+   "parent": "Handle",
+   "motor6d": "ChargingHandle",
+   "motor_part0": "Handle",
+   "motion": "translate +z 0.45 (pull back), release forward",
+   "pivot": [
+    0.0,
+    0.585,
+    0.16
+   ],
+   "bbox_centre": [
+    0.0,
+    0.5825,
+    -0.0
+   ],
+   "size": [
+    0.26,
+    0.145,
+    0.4
+   ],
+   "tris": 36,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "T-handle + latch"
+  },
+  {
+   "name": "BoltCarrier",
+   "parent": "Handle",
+   "motor6d": "BoltCarrier",
+   "motor_part0": "Handle",
+   "motion": "translate +z 0.45 per shot (shows through the open port)",
+   "pivot": [
+    0.0,
+    0.46,
+    -0.4
+   ],
+   "bbox_centre": [
+    0.0,
+    0.4325,
+    -0.44
+   ],
+   "size": [
+    0.24,
+    0.175,
+    0.78
+   ],
+   "tris": 52,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "carrier + bolt head"
+  },
+  {
+   "name": "DustCover",
+   "parent": "Handle",
+   "motor6d": "DustCover",
+   "motor_part0": "Handle",
+   "motion": "rotate about z (the barrel axis) 100 deg down: springs open on the first shot / charge",
+   "pivot": [
+    0.135,
+    0.345,
+    -0.615
+   ],
+   "bbox_centre": [
+    0.1075,
+    0.4025,
+    -0.615
+   ],
+   "size": [
+    0.075,
+    0.135,
+    0.31
+   ],
+   "tris": 24,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Trigger",
+   "parent": "Handle",
+   "motor6d": "Trigger",
+   "motor_part0": "Handle",
+   "motion": "rotate about x, bottom back 12 deg",
+   "pivot": [
+    0.0,
+    0.205,
+    -0.35
+   ],
+   "bbox_centre": [
+    0.0,
+    0.1675,
+    -0.285
+   ],
+   "size": [
+    0.035,
+    0.375,
+    0.27
+   ],
+   "tris": 40,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "blade + hidden tail under the selector cam"
+  },
+  {
+   "name": "Selector",
+   "parent": "Handle",
+   "motor6d": "Selector",
+   "motor_part0": "Handle",
+   "motion": "rotate about x 45/90 deg (safe / semi / auto)",
+   "pivot": [
+    0.0,
+    0.255,
+    -0.17
+   ],
+   "bbox_centre": [
+    0.0,
+    0.255,
+    -0.18
+   ],
+   "size": [
+    0.29,
+    0.2,
+    0.16
+   ],
+   "tris": 64,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "ambi levers on a cross drum"
+  },
+  {
+   "name": "MagRelease",
+   "parent": "Handle",
+   "motor6d": "MagRelease",
+   "motor_part0": "Handle",
+   "motion": "translate -x 0.03 (pressed)",
+   "pivot": [
+    0.13,
+    0.255,
+    -0.545
+   ],
+   "bbox_centre": [
+    0.0225,
+    0.255,
+    -0.545
+   ],
+   "size": [
+    0.245,
+    0.06,
+    0.06
+   ],
+   "tris": 28,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "button on the right, cross-bolt to the mag catch"
+  },
+  {
+   "name": "BoltCatch",
+   "parent": "Handle",
+   "motor6d": "BoltCatch",
+   "motor_part0": "Handle",
+   "motion": "rotate about x 10 deg (paddle up locks the bolt back)",
+   "pivot": [
+    -0.12,
+    0.255,
+    -0.9
+   ],
+   "bbox_centre": [
+    -0.0712,
+    0.285,
+    -0.86
+   ],
+   "size": [
+    0.1425,
+    0.18,
+    0.2
+   ],
+   "tris": 52,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "left side paddle"
+  },
+  {
+   "name": "Round",
+   "parent": "Mag",
+   "motor6d": "Round",
+   "motor_part0": "Mag",
+   "motion": "rides in the mag top; animate to ShellEject",
+   "pivot": [
+    0.0,
+    0.325,
+    -0.8
+   ],
+   "bbox_centre": [
+    0.0,
+    0.325,
+    -0.82
+   ],
+   "size": [
+    0.06,
+    0.06,
+    0.3
+   ],
+   "tris": 62,
+   "colour": [
+    168,
+    144,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "5.56 round"
+  }
+ ],
+ "attachments": {
+  "Muzzle": {
+   "part": "Barrel",
+   "position_handle_space": [
+    0.0,
+    0.46,
+    -2.9
+   ]
+  },
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "ShellEject": {
+   "part": "Upper",
+   "position_handle_space": [
+    0.16,
+    0.455,
+    -0.62
+   ]
+  },
+  "Mag": {
+   "part": "Mag",
+   "position_handle_space": [
+    0.0,
+    -0.715,
+    -0.9
+   ]
+  },
+  "Handguard": {
+   "part": "Handguard",
+   "position_handle_space": [
+    0.0,
+    0.315,
+    -1.7
+   ]
+  },
+  "AimPoint": {
+   "part": "Optic",
+   "position_handle_space": [
+    0.0,
+    0.84,
+    -0.45
+   ]
+  }
+ },
+ "total_tris": 1708,
+ "overall_size_LxHxW": [
+  4.2,
+  1.72,
+  0.31
+ ],
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}
