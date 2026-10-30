@@ -9,7 +9,7 @@ sys.path.insert(0, HERE)
 from mcpsess import Session
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", "..", ".."))
 POSE = open(os.path.join(ROOT, "art/anim/body/studio/pose.lua"), encoding="utf-8").read()
-SPOTS = {"flat": (0, 0, -8), "tall": (0, 0, 0.45), "low": (-14, 0, 0.45), "stairs": (14, 2.0, -2.0)}
+SPOTS = {"flat": (0, 0, -8), "tall": (0, 0, 0.2), "low": (-14, 0, 0.2), "stairs": (14, 2.0, -2.0)}
 
 
 def views_for(where, k=1.0):
@@ -46,10 +46,17 @@ def shoot(s, sheet, clip, times, views, avatar="AvatarA", gun="Pistol", hand="R"
     tiles = []
     for t in times:
         layers = [(clip, t)] + ([(l, t) for l in layer.split("+")] if layer else [])
-        s.luau(pose_code(avatar, layers, where, gun, hand, extra_at))
+        r = s.luau(pose_code(avatar, layers, where, gun, hand, extra_at))
+        head = None
+        if "|" in r and "nil" not in r.split("|")[1]:
+            head = [float(x) for x in r.split("|")[1].strip().strip('"').split(",")]
         for v in views:
             c, l = V[v]
             out = os.path.join(ROOT, "out/anim_body/shots", "%s_%s_%s_%.3f.png" % (clip, where, v, t))
+            if v == "first" and head:
+                s.capture(out, head[:3], head[3:])
+                tiles.append((t, v, out))
+                continue
             s.capture(out, (sp[0] + c[0], 800 + sp[1] + c[1], sp[2] + c[2]), (sp[0] + l[0], 800 + sp[1] + l[1], sp[2] + l[2]))
             tiles.append((t, v, out))
     S = size

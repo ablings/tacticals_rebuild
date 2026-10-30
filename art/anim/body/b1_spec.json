@@ -1,0 +1,12 @@
+[
+ {"clip": "CoverIdleTall", "over": ["CoverLookPos"], "where": "tall", "len": 1.0, "loop": true, "mirror": "CoverIdleTallLeft"},
+ {"clip": "CoverCrouch", "over": ["CoverLookNegCrouch"], "where": "low", "len": 1.0, "loop": true, "mirror": "CoverCrouchLeft"},
+ {"clip": "CoverCrouchPeek", "where": "low", "len": 1.0, "loop": true, "mirror": "CoverCrouchPeekLeft"},
+ {"clip": "CoverLookPos", "layers": ["CoverIdleTall"], "where": "tall", "len": 1.0, "loop": true},
+ {"clip": "CoverLookNeg", "layers": ["CoverIdleTall"], "where": "tall", "len": 1.0, "loop": true},
+ {"clip": "CoverLookPosCrouch", "layers": ["CoverCrouch"], "where": "low", "len": 1.0, "loop": true},
+ {"clip": "CoverLookNegCrouch", "layers": ["CoverCrouch"], "where": "low", "len": 1.0, "loop": true},
+ {"clip": "CoverShuffleTall", "layers": ["CoverIdleTall"], "over": ["CoverLookPos"], "where": "tall", "len": 0.6, "loop": true, "span": [0, 0.6]},
+ {"clip": "CoverShuffleCrouch", "layers": ["CoverCrouch"], "over": ["CoverLookPosCrouch"], "where": "low", "len": 0.72, "loop": true, "span": [0, 0.72]},
+ {"clip": "CoverBrace", "layers": ["CoverIdleTall"], "where": "tall", "len": 0.75, "loop": false}
+]

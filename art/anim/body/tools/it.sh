@@ -2,7 +2,7 @@
 # it.sh <set> <clip[,clip...]> : build in Blender, push to Studio (incl. mirrors listed by the set)
 cd /c/Users/aroki/Documents/tacticals_rebuild
 SET=$1; CL=$(echo "$2" | tr ',' ' ')
-"/c/Program Files/Blender Foundation/Blender 4.5/blender.exe" -b art/anim/rig/Starter_Blocky_Rig.blend --python art/anim/body/blender/make_body.py -- $SET $CL 2>&1 | grep -E "EXPORTED|Error|Traceback|line [0-9]" 
+"/c/Program Files/Blender Foundation/Blender 4.5/blender.exe" -b art/anim/rig/Starter_Blocky_Rig.blend --python art/anim/body/blender/make_body.py -- $SET $CL 2>&1 | grep -E "EXPORTED|BODYQ|Error|Traceback|line [0-9]" 
 NAMES=$(ls -t out/anim_body/json/*.json | head -40 | xargs -n1 basename | sed 's/.json$//' )
 python - "$SET" $CL <<'PY'
 import sys, json, os, subprocess, time

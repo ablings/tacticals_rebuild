@@ -103,3 +103,22 @@ def cyclic(c, length, keys, setter):
     out.append((length, [o for o in out if abs(o[0]) < 1e-6][0][1], "Linear"))
     for t, v, e in sorted(out, key=lambda o: o[0]):
         setter(t, v, e)
+
+
+# The rest legs/arms are perfectly straight: Blender's IK can't choose a bend direction from a straight chain, so the
+# chain just translates (knees 0 deg, feet through the floor). Start every clip with a small bend in the solver's
+# initial pose (unkeyed basis rotation; the IK result replaces it). Knees bend forward, elbows backward.
+_orig_init = Clip.__init__
+
+
+def _init(self, *a, **kw):
+    _orig_init(self, *a, **kw)
+    from mathutils import Quaternion
+    for s in ("R", "L"):
+        self.ob.pose.bones["Lowerleg." + s].rotation_quaternion = Quaternion((1, 0, 0), math.radians(PREBEND_LEG))
+        self.ob.pose.bones["Lowerarm." + s].rotation_quaternion = Quaternion((1, 0, 0), math.radians(PREBEND_ARM))
+
+
+PREBEND_LEG = -8.0
+PREBEND_ARM = 8.0
+Clip.__init__ = _init

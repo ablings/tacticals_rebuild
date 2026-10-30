@@ -16,6 +16,8 @@ local function build(clip)
 	ks.Loop = clip.loop
 	ks.Priority = Enum.AnimationPriority[clip.priority]
 	-- clip.tree: { PartName = ParentName } (HumanoidRootPart is the root)
+	local owned = nil
+	if clip.owned then owned = {}; for _, j in clip.owned do owned[j] = true end end
 	local times = {}
 	for _, k in clip.keys do times[k.t] = true end
 	for _, m in clip.markers do times[m.t] = true end
@@ -37,7 +39,7 @@ local function build(clip)
 		if p then return p end
 		p = Instance.new("Pose")
 		p.Name = part
-		p.Weight = 1
+		p.Weight = 0 -- parent-chain placeholder: only owned joints get weight 1 (below)
 		p.CFrame = CFrame.identity
 		local parentName = clip.tree[part]
 		p.Parent = parentName and poseFor(entry, parentName) or entry.kf
@@ -48,7 +50,7 @@ local function build(clip)
 		local entry = kfAt[k.t]
 		local p = poseFor(entry, k.part)
 		p.CFrame = cf(k.cf)
-		p.Weight = 1
+		p.Weight = (owned == nil or owned[k.part]) and 1 or 0
 		p.EasingStyle = Enum.PoseEasingStyle[k.ease or "Linear"]
 		p.EasingDirection = Enum.PoseEasingDirection.InOut
 	end

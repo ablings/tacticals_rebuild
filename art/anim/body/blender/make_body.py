@@ -26,10 +26,22 @@ OUT = os.path.join(ROOT, "out", "anim_body", "json")
 rbxanim.setup_rig()
 
 
-def fix_source(path, clipname):
+def fix_source(path, clipname, clip=None, mirrored=False):
     with open(path) as f:
         d = json.load(f)
     d["attrs"]["Source"] = "art/anim/body/blender/clips/%s.py (%s)" % (setname, clipname)
+    if clip is not None:
+        own = [rbxanim.mirror_name(j) if mirrored else j for j in clip.joints]
+        d["owned"] = own  # build_clips writes every other (parent-chain) pose at Weight 0: layers key only what they own
+        if mirrored:
+            for m in d["markers"]:
+                if m["name"] == "Footstep" and m["value"] in ("L", "R"):
+                    m["value"] = "R" if m["value"] == "L" else "L"
+        # a loop's closing key at exactly the code length (60 fps sampling stops at a whole frame)
+        last = max(k["t"] for k in d["keys"])
+        if d["loop"] and d["length"] - last > 1e-4:
+            first = [dict(k, t=round(d["length"], 4)) for k in d["keys"] if k["t"] == 0]
+            d["keys"] += first
     with open(path, "w") as f:
         json.dump(d, f)
 
@@ -78,6 +90,43 @@ def render_preview(clip):
             bpy.ops.render.render(write_still=True)
 
 
+def body_quality(clip):
+    """knee / elbow bend range, ankle height over the floor (rest ankle pivot = 0.262), head forward (+ = in front of the
+    hips), sampled every frame. Printed and stored in the JSON's quality block."""
+    ob = clip.ob; sc = bpy.context.scene; pb = ob.pose.bones
+    n = int(round(clip.length * 60))
+    q = {"kneeR": [], "kneeL": [], "elbowR": [], "elbowL": [], "ankleR": [], "ankleL": [], "headFwd": [], "headTop": []}
+    for i in range(n + 1):
+        sc.frame_set(i)
+        for s, S in (("R", "R"), ("L", "L")):
+            a = pb["Upperleg." + s].matrix.to_3x3().col[1]; b = pb["Lowerleg." + s].matrix.to_3x3().col[1]
+            q["knee" + S].append(math.degrees(a.angle(b)))
+            a = pb["Upperarm." + s].matrix.to_3x3().col[1]; b = pb["Lowerarm." + s].matrix.to_3x3().col[1]
+            q["elbow" + S].append(math.degrees(a.angle(b)))
+            q["ankle" + S].append(pb["Foot." + s].head.z - 0.262)
+        h = pb["Head"].head
+        q["headFwd"].append(h.y - pb["Lowertorso"].head.y)
+        q["headTop"].append((pb["Head"].matrix @ Vector((0, 1.2, 0))).z)
+    out = {k: [round(min(v), 3), round(max(v), 3)] for k, v in q.items()}
+    tr = getattr(clip, "travel", None)  # (vx, vz) studs/s of the character in Roblox axes: planted feet must hold still
+    if tr:
+        for s in ("R", "L"):
+            runs, cur = [], []
+            for i in range(n + 1):
+                sc.frame_set(i)
+                h = pb["Foot." + s].head
+                wx, wz = h.x + tr[0] * i / 60.0, -h.y + tr[1] * i / 60.0
+                if h.z - 0.262 < 0.02:
+                    cur.append((wx, wz))
+                elif cur:
+                    runs.append(cur); cur = []
+            if cur:
+                runs.append(cur)
+            out["slide" + s] = round(max((max(math.hypot(a[0] - b[0], a[1] - b[1]) for a in r for b in r) for r in runs), default=0), 3)
+    print("BODYQ", clip.name, out)
+    return out
+
+
 results = []
 mirrors = getattr(mod, "MIRROR", {})
 for name, builder in mod.CLIPS.items():
@@ -86,12 +135,14 @@ for name, builder in mod.CLIPS.items():
     clip = builder()
     clip.finish()
     clip.act.use_fake_user = True
+    bq = body_quality(clip)
     out = rbxanim.export_clip(clip, OUT)
-    fix_source(os.path.join(OUT, out["name"] + ".json"), name)
+    fix_source(os.path.join(OUT, out["name"] + ".json"), name, clip)
+    _p = os.path.join(OUT, out["name"] + ".json"); _d = json.load(open(_p)); _d["quality"]["body"] = bq; json.dump(_d, open(_p, "w"))
     results.append(out)
     if name in mirrors:
         mo = rbxanim.export_clip(clip, OUT, mirror=True, name=mirrors[name])
-        fix_source(os.path.join(OUT, mo["name"] + ".json"), name)
+        fix_source(os.path.join(OUT, mo["name"] + ".json"), name, clip, True)
     if preview:
         render_preview(clip)
 os.makedirs(os.path.join(HERE, "sets"), exist_ok=True)

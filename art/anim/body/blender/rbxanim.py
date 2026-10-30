@@ -174,6 +174,8 @@ def setup_rig(gun_parts=None):
     pbs = ob.pose.bones
     for pb in pbs:
         pb.rotation_mode = "QUATERNION"
+        pb.use_ik_limit_x = pb.use_ik_limit_y = pb.use_ik_limit_z = False  # (from the shared copy: the starter rig
+        pb.lock_ik_x = pb.lock_ik_y = pb.lock_ik_z = False                 #  locks IK axes, so knees/elbows stayed straight)
     for s in ("R", "L"):
         ik = pbs["IK_Hand." + s]
         c1 = ik.constraints.new("COPY_TRANSFORMS"); c1.name = "OnGun"; c1.target = ob; c1.subtarget = s + "_Gun"

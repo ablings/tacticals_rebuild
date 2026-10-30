@@ -1,5 +1,6 @@
 -- pose.lua: anchored puppets of avatars posed by a clip at time t (exact FK from the KeyframeSequence, Linear keys as the
 -- exporter writes them). Prepend: PUPPETS = { {avatar=, clip=, t=, at=CFrame (HRP), gun=?, hand="R"|"L", extra=?{clip,t}} }.
+-- Joints a clip keys at Weight 0 are not applied (layers then keep the lower clip; list layers low -> high priority).
 -- Works with Motor6D and AnimationConstraint joints. Puppets go in workspace._AnimStage._Puppets.
 local SRC = game.ReplicatedStorage.Repository.AnimationSources
 local store = game.ServerStorage._AnimAvatars
@@ -13,7 +14,7 @@ local function frames(ks)
 	local list = {}
 	for _, kf in ks:GetKeyframes() do
 		local poses = {}
-		for _, p in kf:GetDescendants() do if p:IsA("Pose") then poses[p.Name] = p.CFrame end end
+		for _, p in kf:GetDescendants() do if p:IsA("Pose") and p.Weight > 0 then poses[p.Name] = p.CFrame end end
 		table.insert(list, { t = kf.Time, poses = poses })
 	end
 	table.sort(list, function(a, b) return a.t < b.t end)
@@ -52,6 +53,7 @@ local ORDER = { "LowerTorso", "UpperTorso", "Head", "LeftUpperArm", "LeftLowerAr
 	"RightLowerArm", "RightHand", "LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "RightUpperLeg", "RightLowerLeg", "RightFoot" }
 
 local report = {}
+local HEAD = nil
 for n, P in PUPPETS do
 	local src = store[P.avatar]
 	local js = joints(src)
@@ -111,6 +113,11 @@ for n, P in PUPPETS do
 			end
 		end
 	end
+	if n == 1 and world.Head then
+		local e = world.Head * CFrame.new(0, 0.15, -0.65)
+		local l = e.Position + e.LookVector * 6 - e.UpVector * 1.2
+		HEAD = ("%.3f,%.3f,%.3f,%.3f,%.3f,%.3f"):format(e.X, e.Y, e.Z, l.X, l.Y, l.Z)
+	end
 	m.Parent = folder
 end
-return "posed " .. #PUPPETS .. (#report > 0 and (" | " .. table.concat(report, "; ")) or "")
+return "posed " .. #PUPPETS .. "|" .. tostring(HEAD) .. (#report > 0 and (" | " .. table.concat(report, "; ")) or "")
