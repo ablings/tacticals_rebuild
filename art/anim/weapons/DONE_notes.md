@@ -42,3 +42,14 @@
 - Small reach gaps left (studs): PistolInspect 0.04, RevolverInspect 0.06, BatEquip 0.03 (one moment
   each, off hand short of the gun while it moves).
 - Neck: shouldered holds turn the head 15 deg back toward the aim; HeadLookController adds the rest.
+
+## Publishing (done 2026-10-30 06:50)
+- All 140 clips published under **gunsy funsy** (group 102028987); every id re-checked on
+  `economy.roblox.com/v2/assets/<id>/details` (name = clip, AssetTypeId 24 Animation, creator group). Ids:
+  `art/anim/weapons/published.json`, written as `PublishedId` by `install_sources.lua`.
+- Two stray uploads with no source pointing at them (a mis-click duplicate of RevolverDraw and one PistolLoweredLeft
+  whose id wasn't read; `publish_orphans.json`): harmless, can be archived on the Creator Hub.
+- Group-owned animations may not load in a local Studio file under a personal account: to preview in Studio, clear
+  `PublishedId` on the client so the code plays the KeyframeSequence; live servers play the ids.
+- Tool: `tools/pub.py` / `publoop.sh` (Explorer > Save / Export > Save to Roblox, Creator checked against a crop
+  before Save, id from the copy button, API check; it waits for the screen stage and releases it between batches).

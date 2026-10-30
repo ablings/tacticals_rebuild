@@ -14,7 +14,7 @@ Read from match_place_ref.rbxl, 2026-10-16. Every source lives in `ReplicatedSto
 ## 0. FINAL weapon / melee / gadget set (weapons animator, 2026-10-30)
 Authored in Blender on Edward's Starter Blocky rig (R15 pivots), gun parts keyed on the remodelled guns. **140 clips**
 (right-hand + `...Left` mirrors) in `ReplicatedStorage.Repository.AnimationSources` via `art/anim/weapons/install_sources.lua`.
-Per clip (length, loop, markers, published id): `art/anim/weapons/DONE.md`; wiring for systems at its end.
+Per clip (length, loop, markers, **published id: all 140 published under gunsy funsy**): `art/anim/weapons/DONE.md`; wiring for systems at its end.
 - Prefix sets (Hold, Lowered, Equip, Fire, Reload, ReloadEmpty, Draw, Holster, Inspect, +Left): `Pistol`, `Revolver`
   (no ReloadEmpty), `SMG`, `Rifle`, `Shotgun` (ReloadStart / ReloadShell / ReloadEnd / ReloadEndEmpty instead of
   Reload), `Sniper` (ReloadTactical instead of ReloadEmpty).

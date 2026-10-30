@@ -54,24 +54,24 @@ Grade: by HQ's fresh grader after this task (the task did not self-grade: HQ rul
 
 | Clip | Length | Loop | Priority | Markers (s) | Gun parts keyed | Published id |
 |---|---|---|---|---|---|---|
-| SMGDraw | 0.500 | no | Action | Grip 0.083 | - | ready to publish |
-| SMGDrawLeft | 0.500 | no | Action | Grip 0.083 | - | ready to publish |
-| SMGEquip | 0.350 | no | Action | - | - | ready to publish |
-| SMGEquipLeft | 0.350 | no | Action | - | - | ready to publish |
-| SMGFire | 0.100 | no | Action | ShellEject 0.017 | Trigger | ready to publish |
-| SMGFireLeft | 0.100 | no | Action | ShellEject 0.017 | Trigger | ready to publish |
-| SMGHold | 1.000 | yes | Action | - | - | ready to publish |
-| SMGHoldLeft | 1.000 | yes | Action | - | - | ready to publish |
-| SMGHolster | 0.450 | no | Action | Holstered 0.300 | - | ready to publish |
-| SMGHolsterLeft | 0.450 | no | Action | Holstered 0.300 | - | ready to publish |
-| SMGInspect | 3.000 | no | Action | SlideRack 1.700 | CockingKnob | ready to publish |
-| SMGInspectLeft | 3.000 | no | Action | SlideRack 1.700 | CockingKnob | ready to publish |
-| SMGLowered | 1.000 | yes | Action | - | - | ready to publish |
-| SMGLoweredLeft | 1.000 | yes | Action | - | - | ready to publish |
-| SMGReload | 1.900 | no | Action | MagOut 0.167, MagStowed 0.567, MagIn 0.933 | Mag | ready to publish |
-| SMGReloadEmpty | 2.300 | no | Action | SlideRack 1.333, MagHide 0.367, MagShow 0.383, MagOut 0.167, MagIn 0.933 | CockingKnob, Mag | ready to publish |
-| SMGReloadEmptyLeft | 2.300 | no | Action | SlideRack 1.333, MagHide 0.367, MagShow 0.383, MagOut 0.167, MagIn 0.933 | CockingKnob, Mag | ready to publish |
-| SMGReloadLeft | 1.900 | no | Action | MagOut 0.167, MagStowed 0.567, MagIn 0.933 | Mag | ready to publish |
+| SMGDraw | 0.500 | no | Action | Grip 0.083 | - | rbxassetid://139899581143843 |
+| SMGDrawLeft | 0.500 | no | Action | Grip 0.083 | - | rbxassetid://139828598369747 |
+| SMGEquip | 0.350 | no | Action | - | - | rbxassetid://82879950177011 |
+| SMGEquipLeft | 0.350 | no | Action | - | - | rbxassetid://122287179640755 |
+| SMGFire | 0.100 | no | Action | ShellEject 0.017 | Trigger | rbxassetid://135498287813133 |
+| SMGFireLeft | 0.100 | no | Action | ShellEject 0.017 | Trigger | rbxassetid://138254234405946 |
+| SMGHold | 1.000 | yes | Action | - | - | rbxassetid://81855466073341 |
+| SMGHoldLeft | 1.000 | yes | Action | - | - | rbxassetid://72524833200237 |
+| SMGHolster | 0.450 | no | Action | Holstered 0.300 | - | rbxassetid://92264760425285 |
+| SMGHolsterLeft | 0.450 | no | Action | Holstered 0.300 | - | rbxassetid://109537126075587 |
+| SMGInspect | 3.000 | no | Action | SlideRack 1.700 | CockingKnob | rbxassetid://113392822510388 |
+| SMGInspectLeft | 3.000 | no | Action | SlideRack 1.700 | CockingKnob | rbxassetid://70609148856313 |
+| SMGLowered | 1.000 | yes | Action | - | - | rbxassetid://98826481599159 |
+| SMGLoweredLeft | 1.000 | yes | Action | - | - | rbxassetid://133903090777985 |
+| SMGReload | 1.900 | no | Action | MagOut 0.167, MagStowed 0.567, MagIn 0.933 | Mag | rbxassetid://89053287470895 |
+| SMGReloadEmpty | 2.300 | no | Action | SlideRack 1.333, MagHide 0.367, MagShow 0.383, MagOut 0.167, MagIn 0.933 | CockingKnob, Mag | rbxassetid://78025293458607 |
+| SMGReloadEmptyLeft | 2.300 | no | Action | SlideRack 1.333, MagHide 0.367, MagShow 0.383, MagOut 0.167, MagIn 0.933 | CockingKnob, Mag | rbxassetid://123497054043521 |
+| SMGReloadLeft | 1.900 | no | Action | MagOut 0.167, MagStowed 0.567, MagIn 0.933 | Mag | rbxassetid://90269547737037 |
 
 ## Rifle (Auto Rifle, Semi-Auto)
 
@@ -100,51 +100,51 @@ Grade: by HQ's fresh grader after this task (the task did not self-grade: HQ rul
 
 | Clip | Length | Loop | Priority | Markers (s) | Gun parts keyed | Published id |
 |---|---|---|---|---|---|---|
-| ShotgunDraw | 0.650 | no | Action | Grip 0.100 | - | ready to publish |
-| ShotgunDrawLeft | 0.650 | no | Action | Grip 0.100 | - | ready to publish |
-| ShotgunEquip | 0.350 | no | Action | - | - | ready to publish |
-| ShotgunEquipLeft | 0.350 | no | Action | - | - | ready to publish |
-| ShotgunFire | 0.850 | no | Action | ShellEject 0.300, PumpClosed 0.467 | Pump, Trigger | ready to publish |
-| ShotgunFireLeft | 0.850 | no | Action | ShellEject 0.300, PumpClosed 0.467 | Pump, Trigger | ready to publish |
-| ShotgunHold | 1.000 | yes | Action | - | - | ready to publish |
-| ShotgunHoldLeft | 1.000 | yes | Action | - | - | ready to publish |
-| ShotgunHolster | 0.600 | no | Action | Holstered 0.400 | - | ready to publish |
-| ShotgunHolsterLeft | 0.600 | no | Action | Holstered 0.400 | - | ready to publish |
-| ShotgunInspect | 3.000 | no | Action | PumpClosed 1.767 | Pump | ready to publish |
-| ShotgunInspectLeft | 3.000 | no | Action | PumpClosed 1.767 | Pump | ready to publish |
-| ShotgunLowered | 1.000 | yes | Action | - | - | ready to publish |
-| ShotgunLoweredLeft | 1.000 | yes | Action | - | - | ready to publish |
-| ShotgunReloadEnd | 0.300 | no | Action | - | - | ready to publish |
-| ShotgunReloadEndEmpty | 0.550 | no | Action | PumpClosed 0.417 | Pump | ready to publish |
-| ShotgunReloadEndEmptyLeft | 0.550 | no | Action | PumpClosed 0.417 | Pump | ready to publish |
-| ShotgunReloadEndLeft | 0.300 | no | Action | - | - | ready to publish |
-| ShotgunReloadShell | 0.500 | no | Action | ShellIn 0.233 | LoadShell | ready to publish |
-| ShotgunReloadShellLeft | 0.500 | no | Action | ShellIn 0.233 | LoadShell | ready to publish |
-| ShotgunReloadStart | 0.200 | no | Action | - | - | ready to publish |
-| ShotgunReloadStartLeft | 0.200 | no | Action | - | - | ready to publish |
+| ShotgunDraw | 0.650 | no | Action | Grip 0.100 | - | rbxassetid://115141069201994 |
+| ShotgunDrawLeft | 0.650 | no | Action | Grip 0.100 | - | rbxassetid://99997708469416 |
+| ShotgunEquip | 0.350 | no | Action | - | - | rbxassetid://76462161474588 |
+| ShotgunEquipLeft | 0.350 | no | Action | - | - | rbxassetid://100631029871433 |
+| ShotgunFire | 0.850 | no | Action | ShellEject 0.300, PumpClosed 0.467 | Pump, Trigger | rbxassetid://97752432615734 |
+| ShotgunFireLeft | 0.850 | no | Action | ShellEject 0.300, PumpClosed 0.467 | Pump, Trigger | rbxassetid://110339519197598 |
+| ShotgunHold | 1.000 | yes | Action | - | - | rbxassetid://109039339835782 |
+| ShotgunHoldLeft | 1.000 | yes | Action | - | - | rbxassetid://136595331427035 |
+| ShotgunHolster | 0.600 | no | Action | Holstered 0.400 | - | rbxassetid://121016814942668 |
+| ShotgunHolsterLeft | 0.600 | no | Action | Holstered 0.400 | - | rbxassetid://110618638652841 |
+| ShotgunInspect | 3.000 | no | Action | PumpClosed 1.767 | Pump | rbxassetid://91527909600722 |
+| ShotgunInspectLeft | 3.000 | no | Action | PumpClosed 1.767 | Pump | rbxassetid://83117063589424 |
+| ShotgunLowered | 1.000 | yes | Action | - | - | rbxassetid://119653069434011 |
+| ShotgunLoweredLeft | 1.000 | yes | Action | - | - | rbxassetid://93590651616929 |
+| ShotgunReloadEnd | 0.300 | no | Action | - | - | rbxassetid://119689693103398 |
+| ShotgunReloadEndEmpty | 0.550 | no | Action | PumpClosed 0.417 | Pump | rbxassetid://139999152740244 |
+| ShotgunReloadEndEmptyLeft | 0.550 | no | Action | PumpClosed 0.417 | Pump | rbxassetid://123661806912215 |
+| ShotgunReloadEndLeft | 0.300 | no | Action | - | - | rbxassetid://126278826358361 |
+| ShotgunReloadShell | 0.500 | no | Action | ShellIn 0.233 | LoadShell | rbxassetid://127056356318801 |
+| ShotgunReloadShellLeft | 0.500 | no | Action | ShellIn 0.233 | LoadShell | rbxassetid://102350637819305 |
+| ShotgunReloadStart | 0.200 | no | Action | - | - | rbxassetid://122787017514697 |
+| ShotgunReloadStartLeft | 0.200 | no | Action | - | - | rbxassetid://87557707748454 |
 
 ## Sniper
 
 | Clip | Length | Loop | Priority | Markers (s) | Gun parts keyed | Published id |
 |---|---|---|---|---|---|---|
-| SniperDraw | 0.750 | no | Action | Grip 0.117 | - | ready to publish |
-| SniperDrawLeft | 0.750 | no | Action | Grip 0.117 | - | ready to publish |
-| SniperEquip | 0.350 | no | Action | - | - | ready to publish |
-| SniperEquipLeft | 0.350 | no | Action | - | - | ready to publish |
-| SniperFire | 1.300 | no | Action | ShellEject 0.433, BoltClosed 0.683 | Bolt, Trigger | ready to publish |
-| SniperFireLeft | 1.300 | no | Action | ShellEject 0.433, BoltClosed 0.683 | Bolt, Trigger | ready to publish |
-| SniperHold | 1.000 | yes | Action | - | - | ready to publish |
-| SniperHoldLeft | 1.000 | yes | Action | - | - | ready to publish |
-| SniperHolster | 0.650 | no | Action | Holstered 0.433 | - | ready to publish |
-| SniperHolsterLeft | 0.650 | no | Action | Holstered 0.433 | - | ready to publish |
-| SniperInspect | 3.000 | no | Action | BoltClosed 1.833 | Bolt | ready to publish |
-| SniperInspectLeft | 3.000 | no | Action | BoltClosed 1.833 | Bolt | ready to publish |
-| SniperLowered | 1.000 | yes | Action | - | - | ready to publish |
-| SniperLoweredLeft | 1.000 | yes | Action | - | - | ready to publish |
-| SniperReload | 3.000 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400, BoltClosed 2.033 | Bolt, Mag, MagRelease | ready to publish |
-| SniperReloadLeft | 3.000 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400, BoltClosed 2.033 | Bolt, Mag, MagRelease | ready to publish |
-| SniperReloadTactical | 2.500 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400 | Mag, MagRelease | ready to publish |
-| SniperReloadTacticalLeft | 2.500 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400 | Mag, MagRelease | ready to publish |
+| SniperDraw | 0.750 | no | Action | Grip 0.117 | - | rbxassetid://97293573106645 |
+| SniperDrawLeft | 0.750 | no | Action | Grip 0.117 | - | rbxassetid://120706208972165 |
+| SniperEquip | 0.350 | no | Action | - | - | rbxassetid://81255611082018 |
+| SniperEquipLeft | 0.350 | no | Action | - | - | rbxassetid://114252300951947 |
+| SniperFire | 1.300 | no | Action | ShellEject 0.433, BoltClosed 0.683 | Bolt, Trigger | rbxassetid://124505173264012 |
+| SniperFireLeft | 1.300 | no | Action | ShellEject 0.433, BoltClosed 0.683 | Bolt, Trigger | rbxassetid://98874952461167 |
+| SniperHold | 1.000 | yes | Action | - | - | rbxassetid://84376567409236 |
+| SniperHoldLeft | 1.000 | yes | Action | - | - | rbxassetid://84770959490053 |
+| SniperHolster | 0.650 | no | Action | Holstered 0.433 | - | rbxassetid://101446212074227 |
+| SniperHolsterLeft | 0.650 | no | Action | Holstered 0.433 | - | rbxassetid://138430372363800 |
+| SniperInspect | 3.000 | no | Action | BoltClosed 1.833 | Bolt | rbxassetid://101265949648163 |
+| SniperInspectLeft | 3.000 | no | Action | BoltClosed 1.833 | Bolt | rbxassetid://82603547165004 |
+| SniperLowered | 1.000 | yes | Action | - | - | rbxassetid://76247832626359 |
+| SniperLoweredLeft | 1.000 | yes | Action | - | - | rbxassetid://137194531471322 |
+| SniperReload | 3.000 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400, BoltClosed 2.033 | Bolt, Mag, MagRelease | rbxassetid://83303414943500 |
+| SniperReloadLeft | 3.000 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400, BoltClosed 2.033 | Bolt, Mag, MagRelease | rbxassetid://133417120642784 |
+| SniperReloadTactical | 2.500 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400 | Mag, MagRelease | rbxassetid://71573938604451 |
+| SniperReloadTacticalLeft | 2.500 | no | Action | MagOut 0.300, MagStowed 0.833, MagIn 1.400 | Mag, MagRelease | rbxassetid://83700468005436 |
 
 ## Melee
 
@@ -182,7 +182,7 @@ Grade: by HQ's fresh grader after this task (the task did not self-grade: HQ rul
 | RiotShieldBash | 1.000 | no | Action | Hit 0.117 | - | rbxassetid://74464731581821 |
 | RiotShieldBreak | 0.600 | no | Action | DropGun 0.067 | - | rbxassetid://97614848249187 |
 | RiotShieldHold | 1.000 | yes | Action | - | - | rbxassetid://121983717239708 |
-| RiotShieldImpact | 0.250 | no | Action | - | - | ready to publish |
+| RiotShieldImpact | 0.250 | no | Action | - | - | rbxassetid://80086398683674 |
 
 ## Gadgets
 
@@ -196,10 +196,10 @@ Grade: by HQ's fresh grader after this task (the task did not self-grade: HQ rul
 | FragThrowLeft | 0.400 | no | Action | Release 0.150 | - | rbxassetid://89044847366527 |
 | LandminePlace | 0.900 | no | Action | Placed 0.367 | - | rbxassetid://94762691342089 |
 | MedkitUse | 2.500 | no | Action | Open 0.367, Heal 0.700 | - | rbxassetid://72050726044106 |
-| SmokeHold | 1.000 | yes | Action | - | - | ready to publish |
-| SmokeRoll | 0.550 | no | Action | Release 0.267 | - | ready to publish |
-| SmokeThrow | 0.400 | no | Action | Release 0.150 | - | ready to publish |
-| SmokeThrowLeft | 0.400 | no | Action | Release 0.150 | - | ready to publish |
+| SmokeHold | 1.000 | yes | Action | - | - | rbxassetid://139214478538922 |
+| SmokeRoll | 0.550 | no | Action | Release 0.267 | - | rbxassetid://131675794464063 |
+| SmokeThrow | 0.400 | no | Action | Release 0.150 | - | rbxassetid://78375752661516 |
+| SmokeThrowLeft | 0.400 | no | Action | Release 0.150 | - | rbxassetid://93419713622049 |
 
 ## Wiring for systems (the animator does not edit game scripts)
 1. **Prefixes.** `AnimationSourcePrefix`: Pistol / SilencedPistol / DualPistols -> `Pistol`; Revolver -> `Revolver`;
@@ -245,3 +245,14 @@ Grade: by HQ's fresh grader after this task (the task did not self-grade: HQ rul
 - Small reach gaps left (studs): PistolInspect 0.04, RevolverInspect 0.06, BatEquip 0.03 (one moment
   each, off hand short of the gun while it moves).
 - Neck: shouldered holds turn the head 15 deg back toward the aim; HeadLookController adds the rest.
+
+## Publishing (done 2026-10-30 06:50)
+- All 140 clips published under **gunsy funsy** (group 102028987); every id re-checked on
+  `economy.roblox.com/v2/assets/<id>/details` (name = clip, AssetTypeId 24 Animation, creator group). Ids:
+  `art/anim/weapons/published.json`, written as `PublishedId` by `install_sources.lua`.
+- Two stray uploads with no source pointing at them (a mis-click duplicate of RevolverDraw and one PistolLoweredLeft
+  whose id wasn't read; `publish_orphans.json`): harmless, can be archived on the Creator Hub.
+- Group-owned animations may not load in a local Studio file under a personal account: to preview in Studio, clear
+  `PublishedId` on the client so the code plays the KeyframeSequence; live servers play the ids.
+- Tool: `tools/pub.py` / `publoop.sh` (Explorer > Save / Export > Save to Roblox, Creator checked against a crop
+  before Save, id from the copy button, API check; it waits for the screen stage and releases it between batches).
