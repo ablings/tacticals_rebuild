@@ -789,6 +789,21 @@ himself; we never publish.
   round 1 costs the streak; buying credits still grants once.
 - Rollback: Creator Hub > tacticals > each place > Version History, restore the version before 2026-10-30 05:00.
 
+## Test port 53 (2026-10-30 17:25-17:31, main PC, systems session; Edward: "publish what the workers are asking you to publish") - new gun + melee models, reload variants, perf settings, move feel, ANIMFINAL r2: TEST PLACE ONLY
+- Build out/publish53/Test_53.rbxl (now also Test_place.rbxl; the unpublished port-52 Test file kept as out/publish53/Test_place_port52.rbxl)
+  = out/move_feel/Test_movefeel.rbxl (MOVEFEEL + RELOADVAR, ANIMFINAL r2, MOVE1029 r4, House 1965 + illusion, admin gate) +
+  fix/guns_v2.lua (stamp 02fce1b1d4; commits 5a0869c2, d4d6171b: 9 guns + Knife / Katana / Bat / RiotShield from the uploaded meshes,
+  ids fix/guns_v2_ids.json, 180 deg import turn, neutral colours, DualGrip / HolsterManager [GUNSV2PATCH]) +
+  art/anim/reload_variants/install_sources.lua (38/38 PublishedId) + fix/perf_settings_1030.lua (live hashes).
+- Tests: notes/PUBLISH_1030_DONE.md (342/342, 51/51, every gun at full / low / empty in Play, bot match Live on all four maps, wraps,
+  melee in hand, UNDO -> reinstall exact). Systems grade r1 FIX 7.9 (Dual Pistols left barrel torn off by DualGrip): fixed and measured
+  (0.000 drift); not re-graded (HQ grades after). No 2-player run.
+- Publish As > gunsy funsy > tacticals > Test > Overwrite > Grant Permissions and Publish. Read back in the publishing window: PlaceId
+  99722095417844, PlaceKind Test, DuelMaps 4, House ArtVersion 1965 + illusion + map sky, MOVE1029 r4, the 13 tools stamped with 153
+  meshes, patches in, 38/38 variant ids, [PERFSET] hashes, compile all ok (368), 0 test marks, no hooks.
+- Not touched: Matchmaking, Ranked, Tutorial, the lobby (live port 52).
+- Rollback: Creator Hub > tacticals > Test > Version History, the version before 2026-10-30 17:25; or UNDO in fix/guns_v2.lua.
+
 ## Live port 52 (2026-10-30 16:18-16:30, main PC, systems session; Edward: "publish what the workers are asking you to publish") - [PERFSET] Performance settings: Tutorial + Ranked + Matchmaking + LOBBY
 - What: the port-52 files exactly as prepared below (commit 3b606197, unchanged on disk: git status clean for them), i.e. live port 51 +
   `fix/perf_settings_1030.lua`. No MOVE1029, no UI r2 (both wait on Edward). The port-52 Test_place.rbxl was NOT published (Test port 53 replaces it).
