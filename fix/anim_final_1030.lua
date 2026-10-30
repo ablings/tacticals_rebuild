@@ -284,6 +284,7 @@ function Lib.Load(animator: Animator?, name: string?, priority: Enum.AnimationPr
 		local id = Lib.Id(name)
 		if id then
 			local a = Instance.new("Animation")
+			a.Name = name -- the track carries the clip"s name (tests, debugging)
 			a.AnimationId = id
 			local ok, track = pcall(animator.LoadAnimation, animator, a)
 			if ok and track then t = track end
@@ -1035,13 +1036,18 @@ function controller.Start()
 				local w = {}
 				for k, e in loco do w[k] = math.floor(e.w * 100 + 0.5) / 100 end
 				local playing = {}
-				if animator then for _, t in (animator :: Animator):GetPlayingAnimationTracks() do table.insert(playing, t.Animation and t.Animation.AnimationId or "?") end end
-				return { ready = ready, weights = w, exertion = myExertion, sway = controller.BreathSway(), playing = #playing,
+				if animator then for _, t in (animator :: Animator):GetPlayingAnimationTracks() do table.insert(playing, t.Name) end end
+				return { ready = ready, weights = w, exertion = myExertion, sway = controller.BreathSway(), playing = playing,
 					fidget = fidgetTrack ~= nil and fidgetTrack.IsPlaying, dive = diveTrack ~= nil and diveTrack.IsPlaying,
 					bodies = (function() local n = 0 for _ in bodies do n += 1 end return n end)() }
 			elseif action == "exert" then
 				myExertion = tonumber(arg) or 1
 				return myExertion
+			elseif action == "ctl" then -- arg = { controller, function, ... }: call a controller in the game"s VM
+				local c = Get(arg[1])
+				local f = c and c[arg[2]]
+				if type(f) ~= "function" then return "no " .. tostring(arg[1]) .. "." .. tostring(arg[2]) end
+				return f(table.unpack(arg, 3))
 			elseif action == "oneshot" then
 				return controller.PlayOneShot(tostring(arg))
 			end
@@ -1410,6 +1416,17 @@ function controller.Inspect(): boolean
 	if enemyNear1030(AF1030.Weapon.InspectNearEnemy) then return false end
 	track:Play(0.15)
 	return true
+end
+
+-- Studio tests: which of the gun's clips are playing, and which exist
+function controller._AnimDebug()
+	local playing, have = {}, {}
+	for k, t in (equipped and equipped.tracks or {}) do
+		table.insert(have, k)
+		if t.IsPlaying then table.insert(playing, k) end
+	end
+	table.sort(playing) table.sort(have)
+	return { playing = playing, have = have, holstering = equipped ~= nil and equipped.holsterAt1030 ~= nil, ammo = getAmmo() }
 end
 
 -- Holster: play the gun's Holster clip and call done() when it ends (no shot meanwhile). false = no clip: switch at once.

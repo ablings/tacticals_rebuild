@@ -681,13 +681,18 @@ function controller.Start()
 				local w = {}
 				for k, e in loco do w[k] = math.floor(e.w * 100 + 0.5) / 100 end
 				local playing = {}
-				if animator then for _, t in (animator :: Animator):GetPlayingAnimationTracks() do table.insert(playing, t.Animation and t.Animation.AnimationId or "?") end end
-				return { ready = ready, weights = w, exertion = myExertion, sway = controller.BreathSway(), playing = #playing,
+				if animator then for _, t in (animator :: Animator):GetPlayingAnimationTracks() do table.insert(playing, t.Name) end end
+				return { ready = ready, weights = w, exertion = myExertion, sway = controller.BreathSway(), playing = playing,
 					fidget = fidgetTrack ~= nil and fidgetTrack.IsPlaying, dive = diveTrack ~= nil and diveTrack.IsPlaying,
 					bodies = (function() local n = 0 for _ in bodies do n += 1 end return n end)() }
 			elseif action == "exert" then
 				myExertion = tonumber(arg) or 1
 				return myExertion
+			elseif action == "ctl" then -- arg = { controller, function, ... }: call a controller in the game's VM
+				local c = Get(arg[1])
+				local f = c and c[arg[2]]
+				if type(f) ~= "function" then return "no " .. tostring(arg[1]) .. "." .. tostring(arg[2]) end
+				return f(table.unpack(arg, 3))
 			elseif action == "oneshot" then
 				return controller.PlayOneShot(tostring(arg))
 			end

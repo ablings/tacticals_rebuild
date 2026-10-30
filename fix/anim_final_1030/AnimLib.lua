@@ -89,6 +89,7 @@ function Lib.Load(animator: Animator?, name: string?, priority: Enum.AnimationPr
 		local id = Lib.Id(name)
 		if id then
 			local a = Instance.new("Animation")
+			a.Name = name -- the track carries the clip's name (tests, debugging)
 			a.AnimationId = id
 			local ok, track = pcall(animator.LoadAnimation, animator, a)
 			if ok and track then t = track end
