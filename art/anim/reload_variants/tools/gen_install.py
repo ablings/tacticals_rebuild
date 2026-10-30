@@ -9,11 +9,15 @@ R = os.path.join(H, "..", "..", "..")
 D = os.path.join(R, "out", "anim_reload_variants", "json")
 P = os.path.join(H, "published.json")
 pub = json.load(open(P)) if os.path.exists(P) else {}
+HP = os.path.join(H, "published_hash.json")   # {clip: SourceHash of the uploaded clip} (tools/record_hashes.py)
+hashes = json.load(open(HP)) if os.path.exists(HP) else {}
 clips = []
 for p in sorted(glob.glob(os.path.join(D, "*.json"))):
     c = json.load(open(p))
     c.pop("quality", None); c.pop("nkeys", None)
-    if c["name"] in pub:
+    if c["name"] in pub and hashes.get(c["name"]) != c["attrs"]["SourceHash"]:
+        print("STALE or unrecorded id dropped (clip differs from the upload):", c["name"])
+    elif c["name"] in pub:
         c["attrs"]["PublishedId"] = pub[c["name"]]
     clips.append(c)
 build = open(os.path.join(H, "..", "weapons", "studio", "build_clips.lua"), encoding="utf-8").read()

@@ -22,27 +22,27 @@ Ready, or CylinderOpen / ShellIn / CylinderClosed) on the same frames. Design an
 - **Grade:** pending (HQ's fresh grader runs after this task).
 
 ## Clips
-| Clip (+Left) | Rounds left | Length | Base it replaces | Markers (s) | Published id | Grade |
+| Clip (+Left) | Rounds left | Length | Base it replaces | Markers (s) | Published id (group gunsy funsy) | Grade |
 |---|---|---|---|---|---|---|
-| PistolReload_Drop | Pistol 1-6, Suppressed 1-5 | 1.300 | PistolReload | MagOut 0.100, MagHide 0.267, MagShow 0.283, MagIn 0.700, PressCheck 0.783, Ready 1.033 | ready to publish | pending (HQ grader) |
-| PistolReload_Dry | 0 | 1.300 | PistolReload | MagOut 0.100, MagHide 0.267, MagShow 0.283, MagIn 0.700, SlideRack 0.800, Ready 1.033 | ready to publish | pending (HQ grader) |
-| PistolReload_Retain | Pistol 7-11, Suppressed 6-9 | 1.300 | PistolReload | MagOut 0.100, MagStowed 0.400, MagIn 0.700, Ready 1.033 | ready to publish | pending (HQ grader) |
-| RevolverReload_Dry | 0 (6 spent) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.417, MagHide 0.600 (Rounds), MagShow 0.667 (Rounds), LoaderShow 0.667, ShellIn 1.333, LoaderHide 1.367, CylinderClosed 1.600 | ready to publish | pending (HQ grader) |
-| RevolverReload_Dump | 1-3 (the live count shows in the props) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.467, MagHide 0.650 (Rounds), MagShow 0.800 (Rounds), LoaderShow 0.800, ShellIn 1.333, LoaderHide 1.367, CylinderClosed 1.600 | ready to publish | pending (HQ grader) |
-| RevolverReload_Pluck1 | 5 (1 spent) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.417 (Round1), RoundHide 0.500 (Round1), RoundShow 0.733 (Round1), ShellIn 1.333, CylinderClosed 1.600 | ready to publish | pending (HQ grader) |
-| RevolverReload_Pluck2 | 4 (2 spent) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.400 (Round1), RoundHide 0.467 (Round1), ShellEject 0.583 (Round2), RoundHide 0.650 (Round2), RoundShow 0.767 (Round2), RoundShow 0.767 (Round1), ShellIn 1.033 (Round2), ShellIn 1.333, CylinderClosed 1.600 | ready to publish | pending (HQ grader) |
-| RifleReload_Drop | Auto Rifle 1-15, Semi-Auto 1-6 | 2.200 | RifleReload | MagOut 0.267, MagHide 0.500, MagShow 0.517, MagIn 1.167, MagTug 1.283, MagTap 1.367, Ready 2.000 | ready to publish | pending (HQ grader) |
-| RifleReload_Dry | 0 | 2.200 | RifleReload | MagOut 0.267, MagHide 0.500, MagShow 0.517, MagIn 1.167, SlideRack 1.567, Ready 2.000 | ready to publish | pending (HQ grader) |
-| RifleReload_Retain | Auto Rifle 16-29, Semi-Auto 7-11 | 2.200 | RifleReload | MagOut 0.267, MagStowed 0.733, MagIn 1.167, MagTug 1.283, Ready 2.000 | ready to publish | pending (HQ grader) |
-| SMGReload_Drop | 1-15 | 1.700 | SMGReload | MagOut 0.167, MagHide 0.367, MagShow 0.383, MagIn 0.933, MagTug 1.050, Ready 1.533 | ready to publish | pending (HQ grader) |
-| SMGReload_Dry | 0 | 1.700 | SMGReload | MagOut 0.167, MagHide 0.367, MagShow 0.383, MagIn 0.933, SlideRack 1.233, Ready 1.533 | ready to publish | pending (HQ grader) |
-| SMGReload_Retain | 16-29 | 1.700 | SMGReload | MagOut 0.167, MagStowed 0.567, MagIn 0.933, Ready 1.533 | ready to publish | pending (HQ grader) |
-| ShotgunReloadShell_B | any tube shell (alternate with A) | 0.500 | ShotgunReloadShell | ShellIn 0.233 | ready to publish | pending (HQ grader) |
-| ShotgunReloadShell_Last | the shell that fills the tube | 0.500 | ShotgunReloadShell | ShellIn 0.233, GateSlap 0.333 | ready to publish | pending (HQ grader) |
-| ShotgunReloadShell_Port | 0 (the first shell when empty) | 0.500 | ShotgunReloadShell | ShellIn 0.200, PumpClosed 0.417 | ready to publish | pending (HQ grader) |
-| ShotgunReloadStart_Dry | 0 (reload started empty) | 0.200 | ShotgunReloadStart | - | ready to publish | pending (HQ grader) |
-| SniperReload_Dry | 0 | 3.000 | SniperReload | MagOut 0.300, MagHide 0.500, MagShow 0.517, MagIn 1.400, BoltClosed 2.033, Ready 2.667 | ready to publish | pending (HQ grader) |
-| SniperReload_TopUp | 1-4 | 3.000 | SniperReload | MagOut 0.300, MagStowed 0.833, MagIn 1.400, RoundCheck 1.567, Ready 2.667 | ready to publish | pending (HQ grader) |
+| PistolReload_Drop | Pistol 1-6, Suppressed 1-5 | 1.300 | PistolReload | MagOut 0.100, MagHide 0.267, MagShow 0.283, MagIn 0.700, PressCheck 0.783, Ready 1.033 | 90713018220901 / Left 122833769205334 | pending (HQ grader) |
+| PistolReload_Dry | 0 | 1.300 | PistolReload | MagOut 0.100, MagHide 0.267, MagShow 0.283, MagIn 0.700, SlideRack 0.800, Ready 1.033 | 104778273307794 / Left 109027298645350 | pending (HQ grader) |
+| PistolReload_Retain | Pistol 7-11, Suppressed 6-9 | 1.300 | PistolReload | MagOut 0.100, MagStowed 0.400, MagIn 0.700, Ready 1.033 | 72593412054076 / Left 117729358865390 | pending (HQ grader) |
+| RevolverReload_Dry | 0 (6 spent) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.417, MagHide 0.600 (Rounds), MagShow 0.667 (Rounds), LoaderShow 0.667, ShellIn 1.333, LoaderHide 1.367, CylinderClosed 1.600 | 106531139960482 / Left 111485922050686 | pending (HQ grader) |
+| RevolverReload_Dump | 1-3 (the live count shows in the props) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.467, MagHide 0.650 (Rounds), MagShow 0.800 (Rounds), LoaderShow 0.800, ShellIn 1.333, LoaderHide 1.367, CylinderClosed 1.600 | 140382349482785 / Left 99094447569081 | pending (HQ grader) |
+| RevolverReload_Pluck1 | 5 (1 spent) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.417 (Round1), RoundHide 0.500 (Round1), RoundShow 0.733 (Round1), ShellIn 1.333, CylinderClosed 1.600 | 88563516231275 / Left 88979664314954 | pending (HQ grader) |
+| RevolverReload_Pluck2 | 4 (2 spent) | 2.000 | RevolverReload | CylinderOpen 0.217, ShellEject 0.400 (Round1), RoundHide 0.467 (Round1), ShellEject 0.583 (Round2), RoundHide 0.650 (Round2), RoundShow 0.767 (Round2), RoundShow 0.767 (Round1), ShellIn 1.033 (Round2), ShellIn 1.333, CylinderClosed 1.600 | 111913696579654 / Left 103778766606416 | pending (HQ grader) |
+| RifleReload_Drop | Auto Rifle 1-15, Semi-Auto 1-6 | 2.200 | RifleReload | MagOut 0.267, MagHide 0.500, MagShow 0.517, MagIn 1.167, MagTug 1.283, MagTap 1.367, Ready 2.000 | 101016662138436 / Left 117698758877985 | pending (HQ grader) |
+| RifleReload_Dry | 0 | 2.200 | RifleReload | MagOut 0.267, MagHide 0.500, MagShow 0.517, MagIn 1.167, SlideRack 1.567, Ready 2.000 | 104402976094340 / Left 110595254522060 | pending (HQ grader) |
+| RifleReload_Retain | Auto Rifle 16-29, Semi-Auto 7-11 | 2.200 | RifleReload | MagOut 0.267, MagStowed 0.733, MagIn 1.167, MagTug 1.283, Ready 2.000 | 132138030558148 / Left 92072787960044 | pending (HQ grader) |
+| SMGReload_Drop | 1-15 | 1.700 | SMGReload | MagOut 0.167, MagHide 0.367, MagShow 0.383, MagIn 0.933, MagTug 1.050, Ready 1.533 | 135514183449993 / Left 117631285466342 | pending (HQ grader) |
+| SMGReload_Dry | 0 | 1.700 | SMGReload | MagOut 0.167, MagHide 0.367, MagShow 0.383, MagIn 0.933, SlideRack 1.233, Ready 1.533 | 113736703498906 / Left 128782512004439 | pending (HQ grader) |
+| SMGReload_Retain | 16-29 | 1.700 | SMGReload | MagOut 0.167, MagStowed 0.567, MagIn 0.933, Ready 1.533 | 96768036288478 / Left 100853684077631 | pending (HQ grader) |
+| ShotgunReloadShell_B | any tube shell (alternate with A) | 0.500 | ShotgunReloadShell | ShellIn 0.233 | 96758791648121 / Left 109227361200099 | pending (HQ grader) |
+| ShotgunReloadShell_Last | the shell that fills the tube | 0.500 | ShotgunReloadShell | ShellIn 0.233, GateSlap 0.333 | 109741059002155 / Left 122821270505887 | pending (HQ grader) |
+| ShotgunReloadShell_Port | 0 (the first shell when empty) | 0.500 | ShotgunReloadShell | ShellIn 0.200, PumpClosed 0.417 | 124063888099816 / Left 90014217449519 | pending (HQ grader) |
+| ShotgunReloadStart_Dry | 0 (reload started empty) | 0.200 | ShotgunReloadStart | - | 135920247195017 / Left 79403973304116 | pending (HQ grader) |
+| SniperReload_Dry | 0 | 3.000 | SniperReload | MagOut 0.300, MagHide 0.500, MagShow 0.517, MagIn 1.400, BoltClosed 2.033, Ready 2.667 | 88792925459978 / Left 114362587610900 | pending (HQ grader) |
+| SniperReload_TopUp | 1-4 | 3.000 | SniperReload | MagOut 0.300, MagStowed 0.833, MagIn 1.400, RoundCheck 1.567, Ready 2.667 | 113116242724472 / Left 101818986174965 | pending (HQ grader) |
 
 ## Code hooks (for systems; the animator does not edit game scripts)
 1. **Pick the variant at reload start** from the rounds left (`getAmmo()` before `ReloadWeapon:FireServer()`), play
@@ -77,9 +77,7 @@ Ready, or CylinderOpen / ShellIn / CylinderClosed) on the same frames. Design an
 - **Dual Pistols variants (Stagger / Pair / Dry) not made.** The game welds the left gun to the left hand (DualGrip script), so
   the clip must drive the left hand as a mirror of the right hand's reload (time-shifted for Stagger) and key only the left
   gun's own parts (LeftMag, LeftSlide, LeftSlideStop). Needs a mirror-bake step in the build; next round.
-- **Not published yet** (no ids). Publishing is per clip through Studio's Save to Roblox dialog and needs the screen stage,
-  which the weapons animator held for its own 140 uploads the whole session. Ready: `tools/pub.py <Clip> ...` (the weapons
-  animator's verified flow, pointed at this place and `published.json`), then `python tools/gen_install.py`.
+- **Published 2026-10-30** (anim-reload-upload): all 38 under gunsy funsy, ids in the table and `UPLOADED.md`.
 - Place file not saved (File > Save needs the stage too); `install_sources.lua` rebuilds everything in any copy.
 - Small reach gap: RevolverReload_Dry 0.033 studs on one frame (f23, the off hand arriving at the ejector).
 - Shared helper bug found (weapons animator's files, not edited): `Clip.free(..., 1)` / `inhand(..., 1)` with ints makes an int
