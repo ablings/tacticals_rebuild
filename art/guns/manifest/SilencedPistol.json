@@ -1,0 +1,352 @@
+{
+ "gun": "SilencedPistol",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Frame",
+   "parent": "Handle",
+   "motor6d": "Frame",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.1135,
+    -0.365
+   ],
+   "bbox_centre": [
+    0.0,
+    0.1135,
+    -0.365
+   ],
+   "size": [
+    0.18,
+    0.615,
+    1.17
+   ],
+   "tris": 204,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "olive polymer frame, rail, stippled inset grip panels"
+  },
+  {
+   "name": "Slide",
+   "parent": "Handle",
+   "motor6d": "Slide",
+   "motor_part0": "Handle",
+   "motion": "translate +z (back) up to 0.30: blowback, rack, lock open",
+   "pivot": [
+    0.0,
+    0.46,
+    -0.4
+   ],
+   "bbox_centre": [
+    0.0,
+    0.491,
+    -0.396
+   ],
+   "size": [
+    0.165,
+    0.2,
+    1.122
+   ],
+   "tris": 432,
+   "colour": [
+    54,
+    57,
+    62
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "front + rear vertical serrations, ejection port (right), tall suppressor sights"
+  },
+  {
+   "name": "Barrel",
+   "parent": "Handle",
+   "motor6d": "Barrel",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.4258,
+    -0.6225
+   ],
+   "bbox_centre": [
+    0.0,
+    0.4258,
+    -0.6225
+   ],
+   "size": [
+    0.118,
+    0.1805,
+    0.885
+   ],
+   "tris": 104,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "static: threaded barrel (sticks out past the slide), chamber hood, guide rod"
+  },
+  {
+   "name": "Suppressor",
+   "parent": "Barrel",
+   "motor6d": "Suppressor",
+   "motor_part0": "Barrel",
+   "motion": "static (screw on/off: rotate about z, translate -z)",
+   "pivot": [
+    0.0,
+    0.46,
+    -1.01
+   ],
+   "bbox_centre": [
+    0.0,
+    0.456,
+    -1.335
+   ],
+   "size": [
+    0.1642,
+    0.1642,
+    0.69
+   ],
+   "tris": 336,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "12-sided can, two grooves, recessed bore"
+  },
+  {
+   "name": "Mag",
+   "parent": "Handle",
+   "motor6d": "Mag",
+   "motor_part0": "Handle",
+   "motion": "translate down the grip axis: drop out / insert",
+   "pivot": [
+    0.0,
+    0.221,
+    -0.065
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.0465,
+    0.014
+   ],
+   "size": [
+    0.165,
+    0.535,
+    0.388
+   ],
+   "tris": 24,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "extended magazine with a tall base pad"
+  },
+  {
+   "name": "MagRelease",
+   "parent": "Handle",
+   "motor6d": "MagRelease",
+   "motor_part0": "Handle",
+   "motion": "translate +x 0.03 (pressed in)",
+   "pivot": [
+    -0.08,
+    0.206,
+    -0.18
+   ],
+   "bbox_centre": [
+    -0.0175,
+    0.206,
+    -0.18
+   ],
+   "size": [
+    0.175,
+    0.06,
+    0.08
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "cross-bolt, button on the left"
+  },
+  {
+   "name": "SlideStop",
+   "parent": "Handle",
+   "motor6d": "SlideStop",
+   "motor_part0": "Handle",
+   "motion": "rotate about x, lever tip up 12 deg",
+   "pivot": [
+    -0.08,
+    0.331,
+    -0.355
+   ],
+   "bbox_centre": [
+    -0.05,
+    0.3635,
+    -0.4075
+   ],
+   "size": [
+    0.1,
+    0.105,
+    0.145
+   ],
+   "tris": 52,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Trigger",
+   "parent": "Handle",
+   "motor6d": "Trigger",
+   "motor_part0": "Handle",
+   "motion": "rotate about x, bottom back 15 deg",
+   "pivot": [
+    0.0,
+    0.276,
+    -0.33
+   ],
+   "bbox_centre": [
+    0.0,
+    0.281,
+    -0.2775
+   ],
+   "size": [
+    0.035,
+    0.25,
+    0.235
+   ],
+   "tris": 48,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "blade + hidden trigger bar"
+  },
+  {
+   "name": "Round",
+   "parent": "Mag",
+   "motor6d": "Round",
+   "motor_part0": "Mag",
+   "motion": "rides in the mag top; animate to ShellEject",
+   "pivot": [
+    0.0,
+    0.221,
+    -0.045
+   ],
+   "bbox_centre": [
+    0.0,
+    0.221,
+    -0.045
+   ],
+   "size": [
+    0.048,
+    0.048,
+    0.15
+   ],
+   "tris": 46,
+   "colour": [
+    168,
+    144,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "9mm cartridge"
+  }
+ ],
+ "attachments": {
+  "Muzzle": {
+   "part": "Suppressor",
+   "position_handle_space": [
+    0.0,
+    0.46,
+    -1.68
+   ]
+  },
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "ShellEject": {
+   "part": "Slide",
+   "position_handle_space": [
+    0.07,
+    0.536,
+    -0.32
+   ]
+  },
+  "Mag": {
+   "part": "Mag",
+   "position_handle_space": [
+    0.0,
+    -0.294,
+    0.06
+   ]
+  },
+  "SlideGrab": {
+   "part": "Slide",
+   "position_handle_space": [
+    0.0,
+    0.456,
+    0.03
+   ]
+  }
+ },
+ "total_tris": 1258,
+ "overall_size_LxHxW": [
+  1.9,
+  0.905,
+  0.195
+ ],
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}
