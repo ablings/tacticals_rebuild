@@ -42,6 +42,17 @@ do -- [ANIMFINAL] each gun family's own animation set (AnimFinalConfig.GunPrefix
             local w = WeaponConfig.Weapons[id]
             if w then w.AnimationSourcePrefix = prefix; w.AnimationFallbackPrefix = AFc.GunFallbackPrefix end
         end
+        -- an id written in this table (the Revolver's old placeholders) gives way to a FINAL clip of the same name (built by the
+        -- animators' pipeline: attribute SourceHash) once that clip is published (PublishedId), or in Studio (it plays its source)
+        local repo = game:GetService("ReplicatedStorage"):FindFirstChild("Repository")
+        local srcs = repo and repo:FindFirstChild("AnimationSources")
+        local studio = game:GetService("RunService"):IsStudio()
+        for _, w in WeaponConfig.Weapons do
+            for name, aid in w.Animations or {} do
+                local src = aid ~= "" and srcs and srcs:FindFirstChild((w.AnimationSourcePrefix or "") .. name)
+                if src and src:GetAttribute("SourceHash") and (src:GetAttribute("PublishedId") or studio) then w.Animations[name] = "" end
+            end
+        end
     end
 end
 '''),
