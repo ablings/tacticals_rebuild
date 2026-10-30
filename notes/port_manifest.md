@@ -788,3 +788,20 @@ himself; we never publish.
 - Live checks for Edward: in a lobby pad duel, Play > a queue says "You're in a match right now!"; leaving a casual match after
   round 1 costs the streak; buying credits still grants once.
 - Rollback: Creator Hub > tacticals > each place > Version History, restore the version before 2026-10-30 05:00.
+
+## Port 52 PREPARED, NOT PUBLISHED (2026-10-30 11:40-12:00, main PC, systems session; Edward: "go" on notes/perf_settings_1030.md) - [PERFSET] Performance settings: all five places
+- What: Settings > Video > Performance: Optimized Lighting (now also lamp shadows, and kept off when a match map turns shadows on:
+  bug fixed), Optimized Textures (every map), Fewer Lights, Low Effects, Hide Far Screens; all off by default (notes/perf_settings_1030.md).
+- Built on the committed port-51 files (git HEAD 7524f3f4, Test = port 50 c12c0a43) + `fix/perf_settings_1030.lua`, run twice in each
+  (second run all "="): Tutorial_place, Ranked_place, Matchmaking_place, Test_place, Tacticals_rebuild (-> Tacticals_main_ported =
+  copy + tools/set_technology.py Future), and the source copy match_place_ref. Same three source hashes in every place
+  (SettingsData 31203/1651814608, SettingsEffectsController 10073/101658185, ExplosionController 13907/1388818873).
+- Checks: Play smoke in Tutorial, Ranked, Matchmaking, Test and the lobby (tools/perf_settings_smoke.lua): 5/5 rows; all on -> GlobalShadows
+  off, lamp shadows 0, far lamps off; all off again -> the exact start state; no new console errors (Ranked / Matchmaking: the known
+  "infinite yield on HUD" of a Studio server without a match). Saved files checked offline (tools/perf_settings_filecheck.py):
+  [PERFSET] x16 + the rows + _PerfSetOrig in all seven; port-51 HEAD has none.
+- NOT PUBLISHED: the Publish As step was refused by this session's permission check ("Production Deploy"). To publish, in this
+  order: Tutorial (118492914954668), Ranked (122908502889013), Matchmaking (97339328188402), Test (99722095417844), tacticals lobby
+  (126491009194165): open the file, Alt+Shift+P > gunsy funsy > tacticals > <place> > Overwrite > Grant Permissions and Publish;
+  read back with tools/perf_settings_hash.lua (expects the hashes above, park true, the PlaceId).
+- Rollback after a publish: Creator Hub > Version History, the version before this one; or UNDO = true in fix/perf_settings_1030.lua.
