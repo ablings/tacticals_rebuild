@@ -24,7 +24,15 @@ for i, t in JOB.times do
 	else
 		off = Vector3.new((i - (n + 1) / 2) * gap * 1.4, 0, 0)
 	end
-	C.puppet("P" .. i, poses, CFrame.new(O + off + Vector3.new(0, 3, 0)), JOB.gun, { left = JOB.left })
+	if JOB.view == "fp" then off = Vector3.zero end
+	local pm, w = C.puppet("P" .. i, poses, CFrame.new(O + off + Vector3.new(0, 3, 0)), JOB.gun, { left = JOB.left, hideHead = JOB.view == "fp" })
+	if JOB.view == "fp" then
+		-- first person: the camera at the eyes (head centre + 0.15 up, 0.2 forward), looking where the body faces
+		local head = CFrame.new(O + Vector3.new(0, 3, 0)) * w.Head
+		workspace.CurrentCamera.FieldOfView = 70
+		local eye = head.Position + Vector3.new(0, 0.15, -0.25)
+		return string.format("CAM %.3f %.3f %.3f %.3f %.3f %.3f", eye.X, eye.Y, eye.Z, eye.X, eye.Y - 0.35, eye.Z - 10)
+	end
 end
 local width = (n - 1) * gap * (JOB.view == "side" and 1 or 1.4) + 5
 local vp = workspace.CurrentCamera.ViewportSize

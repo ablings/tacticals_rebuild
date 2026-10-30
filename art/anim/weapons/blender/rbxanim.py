@@ -210,7 +210,46 @@ def setup_rig(gun_parts=None, tool="Pistol"):
     bpy.context.view_layer.update()
     scn = bpy.context.scene
     scn.render.fps = FPS
+    build_preview(ob, r15, tool)
     return ob
+
+
+def build_preview(ob, r15, tool):
+    """Exact R15 part boxes (and the tool's parts) parented to the bones: the Blender view then matches Roblox. The
+    starter rig's own skinned meshes are hidden (their helper-bone skinning was made for the starter pivots)."""
+    for o in bpy.data.objects:
+        if o.type == "MESH" and o.name not in ("GunProxy",) and not o.name.startswith("R15_"):
+            o.hide_render = True
+            o.hide_viewport = True
+    col = bpy.data.collections.get("R15 preview") or bpy.data.collections.new("R15 preview")
+    if col.name not in bpy.context.scene.collection.children:
+        bpy.context.scene.collection.children.link(col)
+    mat = bpy.data.materials.get("R15Grey") or bpy.data.materials.new("R15Grey")
+    mat.diffuse_color = (0.62, 0.6, 0.56, 1)
+    gmat = bpy.data.materials.get("GunDark") or bpy.data.materials.new("GunDark")
+    gmat.diffuse_color = (0.08, 0.08, 0.09, 1)
+    import bmesh
+
+    def box(name, size, world_b, bone, m):
+        me = bpy.data.meshes.new(name)
+        bm = bmesh.new()
+        bmesh.ops.create_cube(bm, size=1.0)
+        for v in bm.verts:
+            v.co = Vector((v.co.x * size[0], v.co.y * size[2], v.co.z * size[1]))  # Roblox (x, y, z) size -> Blender
+        bm.to_mesh(me); bm.free()
+        me.materials.append(m)
+        o = bpy.data.objects.new(name, me)
+        col.objects.link(o)
+        o.parent = ob; o.parent_type = "BONE"; o.parent_bone = bone
+        bpy.context.view_layer.update()
+        o.matrix_world = world_b
+        return o
+    for part, bn in BONE.items():
+        box("R15_" + part, r15["parts"][part]["size"], part_rest_b(r15, part), bn, mat)
+    hand = cf2m(r15["parts"]["RightHand"]["cf"])
+    handle = hand @ cf2m(r15["tools"][tool]["grip"])
+    for pn, pd in r15["tools"][tool]["parts"].items():
+        box("R15_gun_" + pn, pd["size"], r2b(handle @ cf2m(pd["cf"])), "Gun", gmat)
 
 
 # ----------------------------------------------------------------------------------------------------------- authoring
@@ -364,6 +403,13 @@ class Clip:
         self.key_basis(side + "_Gun", t, loc=loc, quat=q, **kw)
 
     def hand_free(self, side, t, pos, rot=(0, 0, 0), **kw):
+        # keep the wrist within 98% of the arm's reach from the shoulder (chest frame): what is keyed is what plays
+        sh = Vector(self.anchor["shoulderR"]) if side == "R" else Vector(self.anchor["shoulderL"])
+        reach = 0.98 * (self.ob.data.bones["Upperarm." + side].length + self.ob.data.bones["Lowerarm." + side].length)
+        v = Vector(pos) - sh
+        if v.length > reach:
+            self.clamped = max(getattr(self, "clamped", 0.0), v.length - reach)
+            pos = tuple(sh + v.normalized() * reach)
         """Free hand (IK target) in chest space: wrist position from the Waist pivot, rot relative to the rest hand."""
         self.chest_space_key(side + "_Free", t, pos, rot, **kw)
 
@@ -584,6 +630,8 @@ def export_clip(clip, out_dir, gun_joints=None, mirror=False, name=None, extra_k
     for k, v in worst.items():
         if k.startswith("ik_gap_") and v > 0.02:
             print("WARN", nm, k, round(v, 3), "(a hand target is out of reach)")
+    if getattr(clip, "clamped", 0) > 0.05:
+        print("INFO", nm, "free-hand targets pulled into reach by up to", round(clip.clamped, 2))
     print("EXPORTED", nm, "frames", len(frames), "keys", len(kept), "quality", out["quality"])
     return out
 

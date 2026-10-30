@@ -6,8 +6,11 @@ from mathutils import Vector
 
 argv = sys.argv[sys.argv.index("--") + 1:]
 n = 6
+frames = None
 if "--n" in argv:
     i = argv.index("--n"); n = int(argv[i + 1]); argv = argv[:i] + argv[i + 2:]
+if "--f" in argv:  # explicit frames: --f 0,4,9,15,24
+    i = argv.index("--f"); frames = [float(x) for x in argv[i + 1].split(",")]; argv = argv[:i] + argv[i + 2:]
 out, clips = argv[0], argv[1:]
 os.makedirs(out, exist_ok=True)
 sc = bpy.context.scene
@@ -24,7 +27,7 @@ for o in bpy.data.objects:  # hide the starter rig's widget shapes
         o.hide_render = True
 ob = bpy.data.objects["Blocky Rig"]
 # a stand-in gun box on the Gun bone (the real gun is checked in Studio)
-if "GunProxy" not in bpy.data.objects:
+if False:
     bpy.ops.mesh.primitive_cube_add(size=1)
     g = bpy.context.active_object; g.name = "GunProxy"
     g.scale = (0.18, 0.9, 0.35)
@@ -32,10 +35,10 @@ if "GunProxy" not in bpy.data.objects:
     g.location = (0, -0.65, 0.1)  # bone-tail relative; barrel along +Y of the bone
 cam_data = bpy.data.cameras.new("cam"); cam = bpy.data.objects.new("cam", cam_data)
 sc.collection.objects.link(cam); sc.camera = cam
-cam_data.lens = 50
-VIEWS = {"side": (Vector((9, 1.5, 3.4)), Vector((0, 1.0, 3.2))),
-         "game": (Vector((2.6, -6.5, 5.6)), Vector((0.4, 3.0, 4.2))),
-         "front": (Vector((1.5, 9, 3.6)), Vector((0, 0, 3.0)))}
+cam_data.lens = 45
+VIEWS = {"side": (Vector((11, 0.6, 3.0)), Vector((0, 0.6, 3.0))),
+         "game": (Vector((3.2, -9.0, 5.4)), Vector((0.3, 1.5, 3.4))),
+         "front": (Vector((-5.5, 9.0, 3.6)), Vector((0, 0.3, 3.0)))}
 for name in clips:
     act = bpy.data.actions[name]
     ob.animation_data.action = act
@@ -43,8 +46,8 @@ for name in clips:
     for vi, (pos, look) in VIEWS.items():
         cam.location = pos
         cam.rotation_euler = (look - pos).to_track_quat("-Z", "Y").to_euler()
-        for k in range(n):
-            f = f0 + (f1 - f0) * k / max(1, n - 1)
+        fl = frames if frames else [f0 + (f1 - f0) * k / max(1, n - 1) for k in range(n)]
+        for k, f in enumerate(fl):
             sc.frame_set(int(f), subframe=f - int(f))
             sc.render.filepath = os.path.join(out, "%s_%s_%d.png" % (name, vi, k))
             bpy.ops.render.render(write_still=True)
