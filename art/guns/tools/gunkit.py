@@ -18,23 +18,22 @@ resolve_coplanar = _g["resolve_coplanar"]
 
 # ---------------------------------------------------------------- palette (SmoothPlastic colours, sRGB 0-255)
 PALETTE = {
+    # neutral base (Edward 2026-10-30: gear is white / grey / black; skins and wraps add the colour)
+    "White":     (210, 212, 215),
+    "LightGrey": (152, 154, 158),
+    "Grey":      (112, 114, 118),
+    "MidGrey":   (80, 82, 86),
+    "DarkGrey":  (52, 54, 58),
     "Polymer":   (28, 29, 31),
     "Gunmetal":  (54, 57, 62),
     "Steel":     (110, 112, 118),
     "DarkSteel": (20, 21, 23),
-    "Olive":     (107, 122, 58),
-    "OliveLt":   (138, 156, 74),
-    "Tan":       (150, 128, 96),
-    "Cream":     (200, 196, 186),
-    "Wood":      (92, 58, 35),
     "Rubber":    (36, 36, 38),
+    # functional accents only
     "Lens":      (40, 70, 90),
     "Brass":     (168, 144, 96),
     "Bore":      (8, 8, 9),
-    "Sage":      (167, 173, 152),
-    "Glow":      (190, 214, 120),
-    "Ash":       (200, 168, 120),
-    "Red":       (150, 40, 36),
+    "Glow":      (230, 236, 240),
 }
 
 

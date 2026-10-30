@@ -38,9 +38,9 @@
     62
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "receiver, ejection port (right), loading port (bottom), trigger guard, ghost-ring rear sight",
-   "mesh_id": "rbxassetid://75754136151381"
+   "note": "receiver, ejection port (right), loading port (bottom), trigger guard, ghost-ring rear sight"
   },
   {
    "name": "Stock",
@@ -70,9 +70,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "synthetic pistol-grip stock, inset grip panels",
-   "mesh_id": "rbxassetid://71706756590775"
+   "note": "synthetic pistol-grip stock, inset grip panels"
   },
   {
    "name": "ButtPad",
@@ -102,9 +102,9 @@
     38
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://84260305785290"
+   "note": ""
   },
   {
    "name": "Barrel",
@@ -134,9 +134,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "barrel, bead sight, barrel clamp",
-   "mesh_id": "rbxassetid://117130909499387"
+   "note": "barrel, bead sight, barrel clamp"
   },
   {
    "name": "MagTube",
@@ -166,9 +166,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "tube magazine + end cap",
-   "mesh_id": "rbxassetid://81541019617699"
+   "note": "tube magazine + end cap"
   },
   {
    "name": "Pump",
@@ -198,9 +198,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "ribbed fore-end on twin action bars",
-   "mesh_id": "rbxassetid://104197151642948"
+   "note": "ribbed fore-end on twin action bars"
   },
   {
    "name": "Lifter",
@@ -230,9 +230,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "shell lifter in the loading port",
-   "mesh_id": "rbxassetid://85979066234609"
+   "note": "shell lifter in the loading port"
   },
   {
    "name": "Trigger",
@@ -262,9 +262,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://70690026432025"
+   "note": ""
   },
   {
    "name": "Safety",
@@ -294,9 +294,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://83545871615256"
+   "note": ""
   },
   {
    "name": "SideSaddle",
@@ -326,9 +326,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "left side shell carrier",
-   "mesh_id": "rbxassetid://90991529874602"
+   "note": "left side shell carrier"
   },
   {
    "name": "SaddleShells",
@@ -353,14 +353,14 @@
    ],
    "tris": 112,
    "colour": [
-    107,
-    122,
-    58
+    112,
+    114,
+    118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "4 olive hulls",
-   "mesh_id": "rbxassetid://119837291079443"
+   "note": "4 grey hulls"
   },
   {
    "name": "SaddleHeads",
@@ -390,9 +390,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "steel shell heads",
-   "mesh_id": "rbxassetid://80074792654179"
+   "note": "steel shell heads"
   },
   {
    "name": "LoadShell",
@@ -417,14 +417,14 @@
    ],
    "tris": 44,
    "colour": [
-    107,
-    122,
-    58
+    112,
+    114,
+    118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "12-gauge hull",
-   "mesh_id": "rbxassetid://92869047172461"
+   "note": "12-gauge hull"
   },
   {
    "name": "LoadShellHead",
@@ -454,9 +454,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://74984813149007"
+   "note": ""
   }
  ],
  "attachments": {
@@ -507,6 +507,7 @@
   0.8,
   0.307
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -517,11 +518,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/PumpShotgun_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

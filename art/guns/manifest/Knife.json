@@ -33,15 +33,14 @@
    ],
    "tris": 118,
    "colour": [
-    107,
-    122,
-    58
+    28,
+    29,
+    31
    ],
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "grip with finger grooves, lanyard hole, inset panels",
-   "mesh_id": "rbxassetid://137679589885785"
+   "note": "grip with finger grooves, lanyard hole, inset panels"
   },
   {
    "name": "Blade",
@@ -73,8 +72,7 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "clip-point blade: flat (0.035) above the grind line, thin edge bevel (0.014) below; tang into the grip",
-   "mesh_id": "rbxassetid://111824052179505"
+   "note": "clip-point blade: flat (0.035) above the grind line, thin edge bevel (0.014) below; tang into the grip"
   },
   {
    "name": "Guard",
@@ -106,8 +104,7 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://78593531517149"
+   "note": ""
   },
   {
    "name": "Pommel",
@@ -139,8 +136,7 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://120447759922088"
+   "note": ""
   },
   {
    "name": "Sheath",
@@ -172,8 +168,7 @@
    "material": "SmoothPlastic",
    "visible_at_rest": false,
    "wrap": "B",
-   "note": "sheath with belt clip; set Transparency 1 at rest",
-   "mesh_id": "rbxassetid://120645036920227"
+   "note": "sheath with belt clip; set Transparency 1 at rest"
   }
  ],
  "attachments": {
@@ -227,11 +222,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/Knife_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

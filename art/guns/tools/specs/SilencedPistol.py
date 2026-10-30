@@ -1,4 +1,4 @@
-# SilencedPistol: full-size polymer pistol (olive frame) with a threaded barrel and a screw-on suppressor, suppressor-height
+# SilencedPistol: full-size polymer pistol (grey frame) with a threaded barrel and a screw-on suppressor, suppressor-height
 # sights, front + rear serrations, extended magazine. Read off grid/SilencedPistol.png (1.9 studs long with the suppressor).
 NAME = "SilencedPistol"
 ORIGIN = (0.22, 0.314)         # grip centre; bore lands at y = 0.46
@@ -27,10 +27,10 @@ SUP = [1.21, 1.23, 1.275, 1.70, 1.70, 1.716, 1.716, 1.745, 1.745, 1.761, 1.761, 
 SUR = [0.0, 0.044, 0.085, 0.085, 0.078, 0.078, 0.085, 0.085, 0.078, 0.078, 0.085, 0.085, 0.077, 0.024, 0.024, 0.0]
 
 PARTS = [
-    Part("Frame", "Olive", [
+    Part("Frame", "MidGrey", [
         P(frame_outline, FW, cut=[P(guard_hole, 0.4)] + [B(f, f + 0.035, 0.597, 0.624, 0.4) for f in (0.90, 0.97, 1.04)]),
         P(grip_panel, 0.18, cut=[B(0.03, 0.42, 0.20, 0.55, 0.06, x=0.105), B(0.03, 0.42, 0.20, 0.55, 0.06, x=-0.105)]),
-    ], wrap="A", note="olive polymer frame, rail, stippled inset grip panels"),
+    ], wrap="A", note="grey polymer frame, rail, stippled inset grip panels"),
     Part("Slide", "Gunmetal", [
         PF(slide_section, 0.055, 1.177, cut=cuts(0.11, 5, 0.034, 1) + cuts(0.11, 5, 0.034, -1) + cuts(0.96, 3, 0.034, 1) +
            cuts(0.96, 3, 0.034, -1) + [B(0.42, 0.66, 0.765, 0.90, 0.1, x=0.05), C(1.10, 1.20, BORE, 0.026)]),

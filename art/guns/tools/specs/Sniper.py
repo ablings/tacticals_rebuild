@@ -1,4 +1,4 @@
-# Sniper: bolt-action precision rifle on an olive aluminium chassis: skeleton stock with adjustable cheek piece, rubber
+# Sniper: bolt-action precision rifle on an grey aluminium chassis: skeleton stock with adjustable cheek piece, rubber
 # butt pad, octagonal receiver (bolt shows through the port), bolt with a ball-knob handle, detachable box mag, folding
 # bipod (two legs, folded forward), heavy barrel with a three-port brake, long scope on two rings with flip-up caps (open).
 # Read off grid/Sniper_a/b.png (6.2 studs).
@@ -38,9 +38,9 @@ def leg(x):
 
 
 PARTS = [
-    Part("Chassis", "OliveLt", [P(chassis, 0.22, cut=ch_cuts), P(guard, 0.06, cut=[P(guard_hole, 0.2)])], wrap="A",
+    Part("Chassis", "Grey", [P(chassis, 0.22, cut=ch_cuts), P(guard, 0.06, cut=[P(guard_hole, 0.2)])], wrap="A",
          note="aluminium chassis: mag well, trigger guard, U-channel fore-end with slots through"),
-    Part("Stock", "OliveLt", [P(stock, 0.20, cut=[P(stock_hole, 0.4)])], wrap="A", note="skeleton stock"),
+    Part("Stock", "Grey", [P(stock, 0.20, cut=[P(stock_hole, 0.4)])], wrap="A", note="skeleton stock"),
     Part("ButtPad", "Rubber", [B(0.0, 0.11, 0.08, 0.88, 0.24)], wrap="B"),
     Part("CheekPiece", "Polymer", [B(0.42, 1.13, 0.82, 0.95, 0.17), CZ(0.62, 0.74, 0.84, 0.02, rot=0), CZ(0.86, 0.74, 0.84, 0.02, rot=0)],
          parent="Stock", pivot=(0.78, 0.82), motion="translate +y 0.1 (adjust)", explode=(0, 0.15, 0), wrap="B"),

@@ -1,4 +1,4 @@
-# RiotShield: curved tactical shield (2.2 x 3.6 like the old one): near-black body, warm grey rim, view window (glass),
+# RiotShield: curved tactical shield (2.2 x 3.6 like the old one): near-black body, light grey rim, view window (glass),
 # flashlight top right with a glowing lens, vertical back grip on two standoffs. f = forward (shield in front of the hand).
 NAME = "RiotShield"
 ORIGIN = (0.0, 0.0)
@@ -40,7 +40,7 @@ corner_strips = [diag((-HW, 1.42), (-0.82, Z1), -1), diag((HW, 1.42), (0.82, Z1)
 PARTS = [
     Part("Shield", "Polymer", [PT(band(-HW, HW, 0, 0, 12), Z0, Z1, cut=corners + [window])], wrap="A",
          note="curved shield body (sagitta 0.15), chamfered corners, window cut through"),
-    Part("Rim", "Cream", [PT(band(-HW - 0.03, -HW + 0.10, 0.02, 0.02, 4), -1.70, 1.42),
+    Part("Rim", "LightGrey", [PT(band(-HW - 0.03, -HW + 0.10, 0.02, 0.02, 4), -1.70, 1.42),
                           PT(band(HW - 0.10, HW + 0.03, 0.02, 0.02, 4), -1.70, 1.42),
                           PT(band(-0.82, 0.82, 0.025, 0.025, 12), Z1 - 0.10, Z1 + 0.03),
                           PT(band(-0.90, 0.90, 0.025, 0.025, 12), Z0 - 0.03, Z0 + 0.10)] + corner_strips,

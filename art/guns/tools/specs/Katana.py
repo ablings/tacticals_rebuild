@@ -1,5 +1,5 @@
-# Katana: curved single-edge blade (two-thickness: flat + edge bevel), round guard, brass collar, black wrap over cream ray
-# skin with diamond windows (inset method), end cap, olive scabbard (hidden at rest, for draw / sheath).
+# Katana: curved single-edge blade (two-thickness: flat + edge bevel), round guard, brass collar, black wrap over white ray
+# skin with diamond windows (inset method), end cap, grey scabbard (hidden at rest, for draw / sheath).
 # 4.0 studs long like the old katana. f = toward the tip, z = spine up.
 import math
 NAME = "Katana"
@@ -25,14 +25,14 @@ for i in range(7):
     for s in (1, -1):
         diamonds.append(P([(c - 0.05, 0.0), (c, 0.05), (c + 0.05, 0.0), (c, -0.05)], 0.03, x=s * 0.06))
 PARTS = [
-    Part("Tsuka", "Cream", [B(-0.98, 0.01, -0.06, 0.06, 0.104)], wrap="B", note="ray-skin core of the grip"),
+    Part("Tsuka", "White", [B(-0.98, 0.01, -0.06, 0.06, 0.104)], wrap="B", note="ray-skin core of the grip"),
     Part("Wrap", "Polymer", [B(-0.96, 0.005, -0.075, 0.075, 0.12, cut=diamonds)], wrap="A", note="black wrap with diamond windows"),
     Part("Kashira", "DarkSteel", [B(-1.04, -0.95, -0.08, 0.08, 0.13)], wrap="B", note="end cap"),
     Part("Tsuba", "DarkSteel", [L([-0.03, 0.02], [0.16, 0.16], 0.0, seg=12)], wrap="B", note="round guard"),
     Part("Habaki", "Brass", [B(0.0, 0.13, -0.075, 0.07, 0.065)], wrap="B", note="blade collar"),
     Part("Blade", "Steel", [P(blade_flat, 0.04), P(blade_edge, 0.015), B(-0.5, 0.12, -0.04, 0.04, 0.03)], wrap="A",
          note="curved blade, flat above the temper line, thin edge bevel below; tang into the grip"),
-    Part("Saya", "Olive", [P(saya, 0.09)], pivot=(0.0, 0.0), visible=False,
+    Part("Saya", "Polymer", [P(saya, 0.09)], pivot=(0.0, 0.0), visible=False,
          motion="hidden at rest; for draw / sheath: slides along the blade curve (translate -z, follow the sori)", explode=(0, -0.3, 0),
          note="scabbard; set Transparency 1 at rest"),
 ]

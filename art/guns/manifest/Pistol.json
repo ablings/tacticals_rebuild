@@ -38,9 +38,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "frame + dust cover + rail + raked grip; grip panels are inset (stipple patches)",
-   "mesh_id": "rbxassetid://127219226101170"
+   "note": "frame + dust cover + rail + raked grip; grip panels are inset (stipple patches)"
   },
   {
    "name": "Slide",
@@ -70,9 +70,9 @@
     62
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "rear serrations, ejection port (right), rear notch + front post sights",
-   "mesh_id": "rbxassetid://78772267867369"
+   "note": "rear serrations, ejection port (right), rear notch + front post sights"
   },
   {
    "name": "Barrel",
@@ -102,9 +102,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "static: barrel crown, chamber hood (shows in the port), recoil spring guide",
-   "mesh_id": "rbxassetid://137908624415585"
+   "note": "static: barrel crown, chamber hood (shows in the port), recoil spring guide"
   },
   {
    "name": "Mag",
@@ -134,9 +134,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "magazine body (inside the grip) + flared base plate",
-   "mesh_id": "rbxassetid://117025178990291"
+   "note": "magazine body (inside the grip) + flared base plate"
   },
   {
    "name": "MagRelease",
@@ -166,9 +166,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "cross-bolt: button on the left side behind the trigger guard, runs through the frame",
-   "mesh_id": "rbxassetid://125828175241170"
+   "note": "cross-bolt: button on the left side behind the trigger guard, runs through the frame"
   },
   {
    "name": "SlideStop",
@@ -198,9 +198,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "left side lever on its cross pin, with the inner tab that catches the slide",
-   "mesh_id": "rbxassetid://138740655520734"
+   "note": "left side lever on its cross pin, with the inner tab that catches the slide"
   },
   {
    "name": "Trigger",
@@ -230,9 +230,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "blade + hidden trigger bar inside the frame",
-   "mesh_id": "rbxassetid://94370299389768"
+   "note": "blade + hidden trigger bar inside the frame"
   },
   {
    "name": "Round",
@@ -262,9 +262,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "9mm cartridge",
-   "mesh_id": "rbxassetid://107204104408148"
+   "note": "9mm cartridge"
   }
  ],
  "attachments": {
@@ -315,6 +315,7 @@
   0.79,
   0.195
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -325,11 +326,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/Pistol_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

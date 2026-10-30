@@ -38,9 +38,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "frame with top strap, cylinder window, round trigger guard, hammer slot",
-   "mesh_id": "rbxassetid://124793181910851"
+   "note": "frame with top strap, cylinder window, round trigger guard, hammer slot"
   },
   {
    "name": "Barrel",
@@ -70,9 +70,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "barrel tube, full underlug with the ejector-rod slot, top rib, ramp front sight",
-   "mesh_id": "rbxassetid://137523643657669"
+   "note": "barrel tube, full underlug with the ejector-rod slot, top rib, ramp front sight"
   },
   {
    "name": "Grip",
@@ -97,14 +97,14 @@
    ],
    "tris": 128,
    "colour": [
-    92,
-    58,
-    35
+    28,
+    29,
+    31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "finger-groove wood grip with inset checkering panels",
-   "mesh_id": "rbxassetid://122969305956644"
+   "note": "finger-groove wood grip with inset checkering panels"
   },
   {
    "name": "Crane",
@@ -134,9 +134,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "yoke: pivot tube + arm to the cylinder axis",
-   "mesh_id": "rbxassetid://92403739716786"
+   "note": "yoke: pivot tube + arm to the cylinder axis"
   },
   {
    "name": "Cylinder",
@@ -166,9 +166,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://99528801193432"
+   "note": ""
   },
   {
    "name": "EjectorRod",
@@ -198,9 +198,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "rod + knurl head + extractor star at the cylinder's rear",
-   "mesh_id": "rbxassetid://90460085133578"
+   "note": "rod + knurl head + extractor star at the cylinder's rear"
   },
   {
    "name": "Rounds",
@@ -230,9 +230,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "six .357 rounds as one piece",
-   "mesh_id": "rbxassetid://81276054690769"
+   "note": "six .357 rounds as one piece"
   },
   {
    "name": "Hammer",
@@ -262,9 +262,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "spur hammer + firing-pin nose to the top round",
-   "mesh_id": "rbxassetid://81487095739494"
+   "note": "spur hammer + firing-pin nose to the top round"
   },
   {
    "name": "Trigger",
@@ -294,9 +294,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "blade + the hand (pawl) that turns the cylinder + hidden sear bar to the hammer",
-   "mesh_id": "rbxassetid://102937569117175"
+   "note": "blade + the hand (pawl) that turns the cylinder + hidden sear bar to the hammer"
   },
   {
    "name": "CylinderLatch",
@@ -326,9 +326,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "thumb latch (left side) + hidden link and centre pin into the cylinder",
-   "mesh_id": "rbxassetid://124769507571226"
+   "note": "thumb latch (left side) + hidden link and centre pin into the cylinder"
   }
  ],
  "attachments": {
@@ -371,6 +371,7 @@
   0.878,
   0.28
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -381,11 +382,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/Revolver_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

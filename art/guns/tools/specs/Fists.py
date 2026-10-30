@@ -1,4 +1,4 @@
-# Fists: padded fingerless hand wraps for both blocky hands: olive wrap shell with three wrap grooves, near-black knuckle
+# Fists: padded fingerless hand wraps for both blocky hands: grey wrap shell with three wrap grooves, near-black knuckle
 # pad + wrist strap. Frame = the right grip point (Roblox RightGripAttachment): the arm runs back along -f, the knuckles
 # face +z (the character's front at rest). The left pair sits 3 studs to the left and follows Hand.L in Blender.
 NAME = "Fists"
@@ -20,9 +20,9 @@ def pad(x0):
 
 
 PARTS = [
-    Part("RightWrap", "Olive", [wrap(0.0)], wrap="A", note="right hand wrap (static on the right grip)"),
+    Part("RightWrap", "MidGrey", [wrap(0.0)], wrap="A", note="right hand wrap (static on the right grip)"),
     Part("RightPad", "Polymer", pad(0.0), parent="RightWrap", wrap="B", note="knuckle pad + wrist strap"),
-    Part("LeftWrap", "Olive", [wrap(-3.0)], pivot=(0.0, 0.0, -3.0), motion="follows the left hand (weld to the left arm's grip point)",
+    Part("LeftWrap", "MidGrey", [wrap(-3.0)], pivot=(0.0, 0.0, -3.0), motion="follows the left hand (weld to the left arm's grip point)",
          wrap="A", explode=(0, 0, -0.3), note="left hand wrap"),
     Part("LeftPad", "Polymer", pad(-3.0), parent="LeftWrap", wrap="B"),
 ]

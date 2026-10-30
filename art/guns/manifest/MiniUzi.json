@@ -38,9 +38,9 @@
     62
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "stamped receiver, ribbed top cover (3 slots a side), ejection port (right), cocking slot, rear plate, rear sight",
-   "mesh_id": "rbxassetid://135271044873779"
+   "note": "stamped receiver, ribbed top cover (3 slots a side), ejection port (right), cocking slot, rear plate, rear sight"
   },
   {
    "name": "LowerFrame",
@@ -70,9 +70,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "grip + trigger guard, inset grip panels",
-   "mesh_id": "rbxassetid://117488124601130"
+   "note": "grip + trigger guard, inset grip panels"
   },
   {
    "name": "Barrel",
@@ -102,9 +102,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "barrel nut, barrel, hooded front sight",
-   "mesh_id": "rbxassetid://71202189194908"
+   "note": "barrel nut, barrel, hooded front sight"
   },
   {
    "name": "Mag",
@@ -134,9 +134,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "32-round stick mag + base plate",
-   "mesh_id": "rbxassetid://124585330965644"
+   "note": "32-round stick mag + base plate"
   },
   {
    "name": "CockingKnob",
@@ -166,9 +166,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://87815030542798"
+   "note": ""
   },
   {
    "name": "Trigger",
@@ -198,9 +198,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "blade + hidden trigger bar",
-   "mesh_id": "rbxassetid://105440383952332"
+   "note": "blade + hidden trigger bar"
   },
   {
    "name": "Selector",
@@ -230,9 +230,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "left side",
-   "mesh_id": "rbxassetid://111653861220990"
+   "note": "left side"
   },
   {
    "name": "GripSafety",
@@ -262,9 +262,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://74306002756281"
+   "note": ""
   },
   {
    "name": "Stock",
@@ -294,9 +294,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "folding wire stock: two rails a side, butt loop, hinge pin",
-   "mesh_id": "rbxassetid://90610743392820"
+   "note": "folding wire stock: two rails a side, butt loop, hinge pin"
   },
   {
    "name": "Round",
@@ -326,9 +326,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://132856756911456"
+   "note": ""
   }
  ],
  "attachments": {
@@ -379,6 +379,7 @@
   1.245,
   0.23
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -389,11 +390,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/MiniUzi_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

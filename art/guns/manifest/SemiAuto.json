@@ -38,9 +38,9 @@
     62
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "upper receiver, ejection port (right), full-length top rail",
-   "mesh_id": "rbxassetid://119822706188319"
+   "note": "upper receiver, ejection port (right), full-length top rail"
   },
   {
    "name": "Lower",
@@ -70,9 +70,9 @@
     62
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "lower receiver, mag well, trigger guard",
-   "mesh_id": "rbxassetid://118558542322941"
+   "note": "lower receiver, mag well, trigger guard"
   },
   {
    "name": "Grip",
@@ -97,14 +97,14 @@
    ],
    "tris": 80,
    "colour": [
-    107,
-    122,
-    58
+    80,
+    82,
+    86
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "olive pistol grip, inset panels",
-   "mesh_id": "rbxassetid://104911700993309"
+   "note": "grey pistol grip, inset panels"
   },
   {
    "name": "Handguard",
@@ -129,14 +129,14 @@
    ],
    "tris": 992,
    "colour": [
-    107,
-    122,
-    58
+    80,
+    82,
+    86
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "hollow handguard, three slot rows through",
-   "mesh_id": "rbxassetid://121606606068278"
+   "note": "hollow handguard, three slot rows through"
   },
   {
    "name": "Barrel",
@@ -166,9 +166,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "barrel, gas block, two-port brake",
-   "mesh_id": "rbxassetid://125578904653912"
+   "note": "barrel, gas block, two-port brake"
   },
   {
    "name": "BufferTube",
@@ -198,9 +198,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://77597452872597"
+   "note": ""
   },
   {
    "name": "Stock",
@@ -225,14 +225,14 @@
    ],
    "tris": 70,
    "colour": [
-    107,
-    122,
-    58
+    80,
+    82,
+    86
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "skeleton precision stock",
-   "mesh_id": "rbxassetid://74812070752042"
+   "note": "skeleton precision stock"
   },
   {
    "name": "ButtPad",
@@ -262,9 +262,9 @@
     38
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://96929622091791"
+   "note": ""
   },
   {
    "name": "CheekRiser",
@@ -289,14 +289,14 @@
    ],
    "tris": 68,
    "colour": [
-    107,
-    122,
-    58
+    80,
+    82,
+    86
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "",
-   "mesh_id": "rbxassetid://96420653957505"
+   "note": ""
   },
   {
    "name": "Scope",
@@ -326,9 +326,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "4x scope: eyepiece, tube, objective bell, elevation + windage turrets",
-   "mesh_id": "rbxassetid://85126481165890"
+   "note": "4x scope: eyepiece, tube, objective bell, elevation + windage turrets"
   },
   {
    "name": "ScopeRings",
@@ -358,9 +358,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://115993810997626"
+   "note": ""
   },
   {
    "name": "ScopeLensFront",
@@ -390,9 +390,9 @@
     90
    ],
    "material": "Glass",
+   "visible_at_rest": true,
    "wrap": "skip",
-   "note": "",
-   "mesh_id": "rbxassetid://136647731657384"
+   "note": ""
   },
   {
    "name": "ScopeLensRear",
@@ -422,9 +422,9 @@
     90
    ],
    "material": "Glass",
+   "visible_at_rest": true,
    "wrap": "skip",
-   "note": "",
-   "mesh_id": "rbxassetid://128273680565221"
+   "note": ""
   },
   {
    "name": "Mag",
@@ -454,9 +454,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "straight 20-round box mag",
-   "mesh_id": "rbxassetid://90286005839710"
+   "note": "straight 20-round box mag"
   },
   {
    "name": "ChargingHandle",
@@ -486,9 +486,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "non-reciprocating side charger (left) + hidden link to the carrier",
-   "mesh_id": "rbxassetid://138394485737048"
+   "note": "non-reciprocating side charger (left) + hidden link to the carrier"
   },
   {
    "name": "BoltCarrier",
@@ -518,9 +518,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://134107539642351"
+   "note": ""
   },
   {
    "name": "DustCover",
@@ -550,9 +550,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://74827739334634"
+   "note": ""
   },
   {
    "name": "Trigger",
@@ -582,9 +582,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://95842474990182"
+   "note": ""
   },
   {
    "name": "Selector",
@@ -614,9 +614,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "ambi safety",
-   "mesh_id": "rbxassetid://77629277824446"
+   "note": "ambi safety"
   },
   {
    "name": "MagRelease",
@@ -646,9 +646,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "button on the right, cross-bolt catch into the mag",
-   "mesh_id": "rbxassetid://81406313514410"
+   "note": "button on the right, cross-bolt catch into the mag"
   },
   {
    "name": "BoltCatch",
@@ -678,9 +678,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "left paddle",
-   "mesh_id": "rbxassetid://135794344882796"
+   "note": "left paddle"
   },
   {
    "name": "Round",
@@ -710,9 +710,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": ".308 round",
-   "mesh_id": "rbxassetid://138275379829997"
+   "note": ".308 round"
   }
  ],
  "attachments": {
@@ -771,6 +771,7 @@
   1.48,
   0.31
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -781,11 +782,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/SemiAuto_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

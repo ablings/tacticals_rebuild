@@ -1,4 +1,4 @@
-# Knife: fixed-blade field knife: olive grip with finger grooves and a lanyard hole, steel clip-point blade with a grind
+# Knife: fixed-blade field knife: grey grip with finger grooves and a lanyard hole, steel clip-point blade with a grind
 # line (two-thickness blade, the flat-lowpoly way), finger guard, pommel cap, sheath (hidden at rest, for draw / holster).
 # Read off ref/Knife_side.png; 1.9 studs long like the old knife. f = toward the tip, z = spine up, edge down.
 NAME = "Knife"
@@ -8,7 +8,7 @@ grip = [(-0.85, -0.07), (-0.62, -0.10), (-0.47, -0.075), (-0.33, -0.105), (-0.17
 blade_flat = [(0.0, -0.02), (0.72, -0.02), (0.95, 0.0), (0.62, 0.06), (0.0, 0.06)]
 blade_edge = [(0.02, -0.10), (0.70, -0.10), (0.86, -0.065), (0.95, 0.0), (0.72, -0.01), (0.02, -0.01)]
 PARTS = [
-    Part("Grip", "Olive", [P(grip, 0.16, cut=[CX(-0.78, 0.0, 0.026, -0.2, 0.2, seg=8), B(-0.70, -0.10, -0.06, 0.06, 0.06, x=0.09),
+    Part("Grip", "Polymer", [P(grip, 0.16, cut=[CX(-0.78, 0.0, 0.026, -0.2, 0.2, seg=8), B(-0.70, -0.10, -0.06, 0.06, 0.06, x=0.09),
                                               B(-0.70, -0.10, -0.06, 0.06, 0.06, x=-0.09)])],
          wrap="A", note="grip with finger grooves, lanyard hole, inset panels"),
     Part("Blade", "Steel", [P(blade_flat, 0.035), P(blade_edge, 0.014), B(-0.10, 0.02, -0.06, 0.05, 0.03)], wrap="A",

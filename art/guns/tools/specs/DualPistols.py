@@ -1,4 +1,4 @@
-# DualPistols: a matched pair of compact striker pistols with ported compensators, cream slides, flared mag wells.
+# DualPistols: a matched pair of compact striker pistols with ported compensators, white slides, flared mag wells.
 # Read off grid/DualPistols.png (1.2 image studs) and scaled to compact size (SCALE 0.875 -> 1.05 studs long).
 # Right pistol hangs off the Handle; the left pistol is a full copy under its own root part LeftFrame (1.1 studs to the
 # left, as the old tool), so it can be animated to / welded on the left hand.
@@ -35,14 +35,14 @@ def pistol(pre, x0, root):
             pivot=None if not pre else (0.24, 0.219, x0),
             motion="static" if not pre else "whole left pistol: animate / weld to the left hand (pivot = its grip centre)",
             note="compact frame, rail, flared mag well, stippled inset panels"),
-        Part(pre + "Slide", "Cream", [
+        Part(pre + "Slide", "LightGrey", [
             PF([(x0 + a, b) for a, b in slide_section], 0.083, 1.04,
                cut=cuts(0.15, 5, 0.04, 1, x0) + cuts(0.15, 5, 0.04, -1, x0) + cuts(0.85, 3, 0.04, 1, x0) + cuts(0.85, 3, 0.04, -1, x0) +
                [B(0.40, 0.70, 0.745, 0.90, 0.1, x=x0 + 0.05)]),
             P([(0.13, 0.81), (0.20, 0.81), (0.20, 0.865), (0.13, 0.865)], 0.12, x=x0, cut=[B(0.12, 0.21, 0.84, 0.88, 0.03, x=x0)]),
             B(0.96, 1.02, 0.81, 0.865, 0.045, x=x0),
         ], parent=fr, pivot=(0.60, BORE, x0), motion="translate +z (back) up to 0.28", wrap="A", explode=(0, 0.22, 0),
-            note="cream slide, front + rear slanted cuts, ejection port, optic-cut rear"),
+            note="white slide, front + rear slanted cuts, ejection port, optic-cut rear"),
         Part(pre + "Barrel", "DarkSteel", [
             T(0.90, 1.08, BORE, 0.032, 0.018, x=x0),
             B(0.38, 0.91, 0.69, 0.81, 0.118, x=x0),

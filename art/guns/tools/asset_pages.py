@@ -41,7 +41,7 @@ for g, kind in KIND.items():
     mv = [p for p in m["parts"] if p["motion"] != "static"]
     L = ["---", "kind: weapon", "style: flat-lowpoly (articulated)", f"name: {kind}", f"tris: {m['total_tris']}",
          f"size_studs: {m['overall_size_LxHxW'][0]} L x {m['overall_size_LxHxW'][1]} H x {m['overall_size_LxHxW'][2]} W",
-         f"splits: {len(m['parts'])} meshes / {len(mv)} moving parts", "materials: SmoothPlastic flat colours, Glass for lenses",
+         f"splits: {len(m['parts'])} meshes / {len(mv)} moving parts", "materials: SmoothPlastic neutral white / grey / black (skins add colour), Glass lenses, Neon lights",
          "collision: none (held tool)", "source_log: \"built 2026-10-30 from a generated side-view reference (own design)\"", "---",
          f"# Articulated Lowpoly {kind}", "", f"![[al_art_{slug}_side.png]]", f"![[al_art_{slug}_exploded.png]]",
          "*Top: side view. Bottom: every moving part pulled out along its motion.*", "",

@@ -1,4 +1,4 @@
-# SemiAuto: semi-automatic marksman rifle: dark receivers, olive furniture, side charging handle (left, folds out and
+# SemiAuto: semi-automatic marksman rifle: dark receivers, grey furniture, side charging handle (left, folds out and
 # pulls back), dust cover over the port with the bolt carrier behind it, straight 20-round mag, skeleton stock with an
 # adjustable cheek riser, hollow slotted handguard, two-port brake, 4x scope with recessed glass on two rings.
 # Read off grid/SemiAuto_a/b.png (4.9 studs).
@@ -28,22 +28,22 @@ PARTS = [
         B(1.38, 4.45, 0.995, 1.04, 0.12, cut=[B(1.30, 4.50, 1.01, 1.025, 0.02, x=0.06), B(1.30, 4.50, 1.01, 1.025, 0.02, x=-0.06)]),
     ], wrap="A", note="upper receiver, ejection port (right), full-length top rail"),
     Part("Lower", "Gunmetal", [P(lower, 0.24, cut=[P(guard_hole, 0.4)])], wrap="A", note="lower receiver, mag well, trigger guard"),
-    Part("Grip", "Olive", [P([(1.35, 0.80), (1.62, 0.80), (1.62, 0.66), (1.50, 0.30), (1.45, 0.04), (1.30, 0.03), (1.17, 0.15)], 0.20,
+    Part("Grip", "MidGrey", [P([(1.35, 0.80), (1.62, 0.80), (1.62, 0.66), (1.50, 0.30), (1.45, 0.04), (1.30, 0.03), (1.17, 0.15)], 0.20,
                              cut=[B(1.20, 1.52, 0.12, 0.55, 0.06, x=0.115), B(1.20, 1.52, 0.12, 0.55, 0.06, x=-0.115)])],
-         wrap="B", note="olive pistol grip, inset panels"),
-    Part("Handguard", "Olive", [PF(hg_section, 2.55, 4.46, cut=hg_cuts)], wrap="A", note="hollow handguard, three slot rows through"),
+         wrap="B", note="grey pistol grip, inset panels"),
+    Part("Handguard", "MidGrey", [PF(hg_section, 2.55, 4.46, cut=hg_cuts)], wrap="A", note="hollow handguard, three slot rows through"),
     Part("Barrel", "DarkSteel", [
         L([2.45, 2.50, 2.63], [0.0, 0.045, 0.045], BORE, rot=0), T(2.62, 4.65, BORE, 0.045, 0.02, rot=0),
         B(4.20, 4.32, 0.74, 0.98, 0.205),
         B(4.62, 4.90, 0.77, 0.95, 0.17, cut=[B(4.67, 4.73, 0.81, 0.91, 0.4), B(4.77, 4.83, 0.81, 0.91, 0.4), C(4.85, 4.95, BORE, 0.025)]),
     ], wrap="B", note="barrel, gas block, two-port brake"),
     Part("BufferTube", "DarkSteel", [C(0.40, 1.62, 0.85, 0.065, rot=0), C(1.0, 1.27, 0.85, 0.085, rot=0)], wrap="B"),
-    Part("Stock", "Olive", [P(stock, 0.22, cut=[P([(0.30, 0.40), (0.70, 0.40), (0.86, 0.66), (0.30, 0.66)], 0.4),
+    Part("Stock", "MidGrey", [P(stock, 0.22, cut=[P([(0.30, 0.40), (0.70, 0.40), (0.86, 0.66), (0.30, 0.66)], 0.4),
                                                   B(0.30, 0.70, 0.29, 0.34, 0.4)])],
          pivot=(0.70, 0.85), motion="translate along the buffer tube +z 0.2 (length of pull)", wrap="A", explode=(-0.25, 0, 0),
          note="skeleton precision stock"),
     Part("ButtPad", "Rubber", [B(0.0, 0.10, 0.22, 0.93, 0.24)], parent="Stock", wrap="B"),
-    Part("CheekRiser", "Olive", [B(0.28, 0.92, 0.95, 1.02, 0.18), CZ(0.43, 0.88, 0.97, 0.02, rot=0), CZ(0.78, 0.88, 0.97, 0.02, rot=0)],
+    Part("CheekRiser", "MidGrey", [B(0.28, 0.92, 0.95, 1.02, 0.18), CZ(0.43, 0.88, 0.97, 0.02, rot=0), CZ(0.78, 0.88, 0.97, 0.02, rot=0)],
          parent="Stock", pivot=(0.60, 0.95), motion="translate +y 0.1 (adjust)", wrap="A", explode=(0, 0.15, 0)),
     Part("Scope", "Polymer", [scope_body, CZ(2.15, 1.38, 1.47, 0.075, seg=10), CX(2.15, SZ, 0.06, 0.05, 0.15, seg=10)], wrap="B",
          note="4x scope: eyepiece, tube, objective bell, elevation + windage turrets"),

@@ -38,9 +38,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "compact frame, rail, flared mag well, stippled inset panels",
-   "mesh_id": "rbxassetid://126747868250938"
+   "note": "compact frame, rail, flared mag well, stippled inset panels"
   },
   {
    "name": "Slide",
@@ -65,14 +65,14 @@
    ],
    "tris": 400,
    "colour": [
-    200,
-    196,
-    186
+    152,
+    154,
+    158
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear",
-   "mesh_id": "rbxassetid://109648080915259"
+   "note": "white slide, front + rear slanted cuts, ejection port, optic-cut rear"
   },
   {
    "name": "Barrel",
@@ -102,9 +102,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "static barrel, chamber hood, guide rod",
-   "mesh_id": "rbxassetid://95178986734490"
+   "note": "static barrel, chamber hood, guide rod"
   },
   {
    "name": "Comp",
@@ -134,9 +134,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)",
-   "mesh_id": "rbxassetid://136987688408234"
+   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)"
   },
   {
    "name": "Mag",
@@ -166,9 +166,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://71509709177529"
+   "note": ""
   },
   {
    "name": "MagRelease",
@@ -198,9 +198,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "extended cross-bolt",
-   "mesh_id": "rbxassetid://127540936491785"
+   "note": "extended cross-bolt"
   },
   {
    "name": "SlideStop",
@@ -230,9 +230,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "extended lever reaching back to the thumb",
-   "mesh_id": "rbxassetid://123020168286505"
+   "note": "extended lever reaching back to the thumb"
   },
   {
    "name": "Trigger",
@@ -262,9 +262,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "flat skeleton trigger + hidden trigger bar",
-   "mesh_id": "rbxassetid://80559040409334"
+   "note": "flat skeleton trigger + hidden trigger bar"
   },
   {
    "name": "Round",
@@ -294,9 +294,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://113681995238724"
+   "note": ""
   },
   {
    "name": "LeftFrame",
@@ -326,9 +326,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "compact frame, rail, flared mag well, stippled inset panels",
-   "mesh_id": "rbxassetid://104930746309365"
+   "note": "compact frame, rail, flared mag well, stippled inset panels"
   },
   {
    "name": "LeftSlide",
@@ -353,14 +353,14 @@
    ],
    "tris": 400,
    "colour": [
-    200,
-    196,
-    186
+    152,
+    154,
+    158
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear",
-   "mesh_id": "rbxassetid://118016878049892"
+   "note": "white slide, front + rear slanted cuts, ejection port, optic-cut rear"
   },
   {
    "name": "LeftBarrel",
@@ -390,9 +390,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "static barrel, chamber hood, guide rod",
-   "mesh_id": "rbxassetid://98718354258064"
+   "note": "static barrel, chamber hood, guide rod"
   },
   {
    "name": "LeftComp",
@@ -422,9 +422,9 @@
     118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)",
-   "mesh_id": "rbxassetid://137072923087967"
+   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)"
   },
   {
    "name": "LeftMag",
@@ -454,9 +454,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://118939856070480"
+   "note": ""
   },
   {
    "name": "LeftMagRelease",
@@ -486,9 +486,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "extended cross-bolt",
-   "mesh_id": "rbxassetid://139672894464460"
+   "note": "extended cross-bolt"
   },
   {
    "name": "LeftSlideStop",
@@ -518,9 +518,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "extended lever reaching back to the thumb",
-   "mesh_id": "rbxassetid://101699003351737"
+   "note": "extended lever reaching back to the thumb"
   },
   {
    "name": "LeftTrigger",
@@ -550,9 +550,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "flat skeleton trigger + hidden trigger bar",
-   "mesh_id": "rbxassetid://85189807211719"
+   "note": "flat skeleton trigger + hidden trigger bar"
   },
   {
    "name": "LeftRound",
@@ -582,9 +582,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://89180321622115"
+   "note": ""
   }
  ],
  "attachments": {
@@ -659,6 +659,7 @@
   0.757,
   1.277
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -669,11 +670,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/DualPistols_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

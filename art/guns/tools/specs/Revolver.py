@@ -37,7 +37,7 @@ PARTS = [
         B(0.96, 1.495, 0.79, 0.835, 0.08),
         P([(1.36, 0.83), (1.47, 0.83), (1.47, 0.878), (1.44, 0.878)], 0.035),
     ], wrap="A", note="barrel tube, full underlug with the ejector-rod slot, top rib, ramp front sight"),
-    Part("Grip", "Wood", [P(grip, 0.20, cut=[B(0.05, 0.30, 0.08, 0.50, 0.06, x=0.115), B(0.05, 0.30, 0.08, 0.50, 0.06, x=-0.115)])],
+    Part("Grip", "Polymer", [P(grip, 0.20, cut=[B(0.05, 0.30, 0.08, 0.50, 0.06, x=0.115), B(0.05, 0.30, 0.08, 0.50, 0.06, x=-0.115)])],
          wrap="A", note="finger-groove wood grip with inset checkering panels"),
     Part("Crane", "Steel", [
         C(0.79, 0.93, 0.585, 0.032, x=-0.04, rot=0),

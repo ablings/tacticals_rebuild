@@ -33,14 +33,14 @@
    ],
    "tris": 84,
    "colour": [
-    150,
-    128,
-    96
+    112,
+    114,
+    118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "upper receiver, ejection port (right), top rail with side grooves, forward-assist housing",
-   "mesh_id": "rbxassetid://117385245446688"
+   "note": "upper receiver, ejection port (right), top rail with side grooves, forward-assist housing"
   },
   {
    "name": "Lower",
@@ -65,14 +65,14 @@
    ],
    "tris": 68,
    "colour": [
-    150,
-    128,
-    96
+    112,
+    114,
+    118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "lower receiver, mag well, trigger guard",
-   "mesh_id": "rbxassetid://120477386637444"
+   "note": "lower receiver, mag well, trigger guard"
   },
   {
    "name": "Grip",
@@ -102,9 +102,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "raked pistol grip with inset panels",
-   "mesh_id": "rbxassetid://129698243302690"
+   "note": "raked pistol grip with inset panels"
   },
   {
    "name": "Handguard",
@@ -129,14 +129,14 @@
    ],
    "tris": 614,
    "colour": [
-    150,
-    128,
-    96
+    112,
+    114,
+    118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "hollow octagonal handguard: M-LOK slots go through, barrel and gas block show inside",
-   "mesh_id": "rbxassetid://133762735156602"
+   "note": "hollow octagonal handguard: M-LOK slots go through, barrel and gas block show inside"
   },
   {
    "name": "Barrel",
@@ -166,9 +166,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "barrel, gas block, birdcage flash hider",
-   "mesh_id": "rbxassetid://108364654159899"
+   "note": "barrel, gas block, birdcage flash hider"
   },
   {
    "name": "BufferTube",
@@ -198,9 +198,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "buffer tube + castle nut",
-   "mesh_id": "rbxassetid://100038210247680"
+   "note": "buffer tube + castle nut"
   },
   {
    "name": "Stock",
@@ -225,14 +225,14 @@
    ],
    "tris": 48,
    "colour": [
-    150,
-    128,
-    96
+    112,
+    114,
+    118
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "skeleton stock",
-   "mesh_id": "rbxassetid://120312203273600"
+   "note": "skeleton stock"
   },
   {
    "name": "ButtPad",
@@ -262,9 +262,9 @@
     38
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://93248832620519"
+   "note": ""
   },
   {
    "name": "Optic",
@@ -294,9 +294,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "red-dot: mount, tube, turrets",
-   "mesh_id": "rbxassetid://136156624673862"
+   "note": "red-dot: mount, tube, turrets"
   },
   {
    "name": "OpticLens",
@@ -326,9 +326,9 @@
     90
    ],
    "material": "Glass",
+   "visible_at_rest": true,
    "wrap": "skip",
-   "note": "glass, WrapSkip",
-   "mesh_id": "rbxassetid://80506467854127"
+   "note": "glass, WrapSkip"
   },
   {
    "name": "Mag",
@@ -358,9 +358,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "curved 30-round polymer mag + base plate",
-   "mesh_id": "rbxassetid://103069771903063"
+   "note": "curved 30-round polymer mag + base plate"
   },
   {
    "name": "ChargingHandle",
@@ -390,9 +390,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "T-handle + latch",
-   "mesh_id": "rbxassetid://126044133519712"
+   "note": "T-handle + latch"
   },
   {
    "name": "BoltCarrier",
@@ -422,9 +422,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "carrier + bolt head",
-   "mesh_id": "rbxassetid://131796782184153"
+   "note": "carrier + bolt head"
   },
   {
    "name": "DustCover",
@@ -454,9 +454,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://100489970974455"
+   "note": ""
   },
   {
    "name": "Trigger",
@@ -486,9 +486,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "blade + hidden tail under the selector cam",
-   "mesh_id": "rbxassetid://135468727136592"
+   "note": "blade + hidden tail under the selector cam"
   },
   {
    "name": "Selector",
@@ -518,9 +518,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "ambi levers on a cross drum",
-   "mesh_id": "rbxassetid://122247329170281"
+   "note": "ambi levers on a cross drum"
   },
   {
    "name": "MagRelease",
@@ -550,9 +550,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "button on the right, cross-bolt to the mag catch",
-   "mesh_id": "rbxassetid://111421079423934"
+   "note": "button on the right, cross-bolt to the mag catch"
   },
   {
    "name": "BoltCatch",
@@ -582,9 +582,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "left side paddle",
-   "mesh_id": "rbxassetid://88931704313345"
+   "note": "left side paddle"
   },
   {
    "name": "Round",
@@ -614,9 +614,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "5.56 round",
-   "mesh_id": "rbxassetid://93219279928063"
+   "note": "5.56 round"
   }
  ],
  "attachments": {
@@ -675,6 +675,7 @@
   1.72,
   0.31
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -685,11 +686,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/AutoRifle_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

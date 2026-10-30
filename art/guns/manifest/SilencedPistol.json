@@ -33,14 +33,14 @@
    ],
    "tris": 204,
    "colour": [
-    107,
-    122,
-    58
+    80,
+    82,
+    86
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "olive polymer frame, rail, stippled inset grip panels",
-   "mesh_id": "rbxassetid://105424696629904"
+   "note": "grey polymer frame, rail, stippled inset grip panels"
   },
   {
    "name": "Slide",
@@ -70,9 +70,9 @@
     62
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "A",
-   "note": "front + rear vertical serrations, ejection port (right), tall suppressor sights",
-   "mesh_id": "rbxassetid://107779239952173"
+   "note": "front + rear vertical serrations, ejection port (right), tall suppressor sights"
   },
   {
    "name": "Barrel",
@@ -102,9 +102,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "static: threaded barrel (sticks out past the slide), chamber hood, guide rod",
-   "mesh_id": "rbxassetid://95287981894716"
+   "note": "static: threaded barrel (sticks out past the slide), chamber hood, guide rod"
   },
   {
    "name": "Suppressor",
@@ -134,9 +134,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "12-sided can, two grooves, recessed bore",
-   "mesh_id": "rbxassetid://109447055151622"
+   "note": "12-sided can, two grooves, recessed bore"
   },
   {
    "name": "Mag",
@@ -166,9 +166,9 @@
     31
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "extended magazine with a tall base pad",
-   "mesh_id": "rbxassetid://121718675597046"
+   "note": "extended magazine with a tall base pad"
   },
   {
    "name": "MagRelease",
@@ -198,9 +198,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "cross-bolt, button on the left",
-   "mesh_id": "rbxassetid://106828620432178"
+   "note": "cross-bolt, button on the left"
   },
   {
    "name": "SlideStop",
@@ -230,9 +230,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://96173671318887"
+   "note": ""
   },
   {
    "name": "Trigger",
@@ -262,9 +262,9 @@
     23
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "blade + hidden trigger bar",
-   "mesh_id": "rbxassetid://86010249801221"
+   "note": "blade + hidden trigger bar"
   },
   {
    "name": "Round",
@@ -294,9 +294,9 @@
     96
    ],
    "material": "SmoothPlastic",
+   "visible_at_rest": true,
    "wrap": "B",
-   "note": "9mm cartridge",
-   "mesh_id": "rbxassetid://131976951642861"
+   "note": "9mm cartridge"
   }
  ],
  "attachments": {
@@ -347,6 +347,7 @@
   0.905,
   0.195
  ],
+ "follow": {},
  "rig_attach": {
   "rig": "Starter_Blocky_Rig (appended copy)",
   "bone": "Hand.R",
@@ -357,11 +358,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/SilencedPistol_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

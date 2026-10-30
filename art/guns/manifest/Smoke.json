@@ -33,15 +33,14 @@
    ],
    "tris": 336,
    "colour": [
-    107,
-    122,
-    58
+    80,
+    82,
+    86
    ],
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "can with 6 side holes top and bottom",
-   "mesh_id": "rbxassetid://136785365417305"
+   "note": "can with 6 side holes top and bottom"
   },
   {
    "name": "Band",
@@ -66,15 +65,14 @@
    ],
    "tris": 44,
    "colour": [
-    200,
-    196,
-    186
+    210,
+    212,
+    215
    ],
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "",
-   "mesh_id": "rbxassetid://100057634855706"
+   "note": ""
   },
   {
    "name": "Fuze",
@@ -106,8 +104,7 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "fuze head + striker housing",
-   "mesh_id": "rbxassetid://83275385782842"
+   "note": "fuze head + striker housing"
   },
   {
    "name": "Spoon",
@@ -139,8 +136,7 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "safety lever",
-   "mesh_id": "rbxassetid://139929232520555"
+   "note": "safety lever"
   },
   {
    "name": "Pin",
@@ -172,8 +168,7 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "cotter pin + pull ring (rests against the body)",
-   "mesh_id": "rbxassetid://138214283851657"
+   "note": "cotter pin + pull ring (rests against the body)"
   }
  ],
  "attachments": {
@@ -227,11 +222,5 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
- },
- "upload": {
-  "date": "2026-10-30",
-  "creator": "group gunsy funsy (102028987)",
-  "method": "Studio Import 3D of art/guns/fbx/Smoke_roblox.fbx",
-  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

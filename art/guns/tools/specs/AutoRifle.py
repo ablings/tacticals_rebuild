@@ -20,16 +20,16 @@ stock = [(0.08, 0.585), (0.17, 0.62), (0.33, 0.92), (0.60, 0.92), (0.75, 0.97), 
 mag = [(1.88, 1.10), (2.31, 1.10), (2.32, 0.80), (2.36, 0.45), (2.40, 0.15), (2.38, 0.05), (2.00, 0.04), (1.92, 0.40), (1.89, 0.78)]
 
 PARTS = [
-    Part("Upper", "Tan", [
+    Part("Upper", "Grey", [
         B(1.15, 2.36, 1.07, 1.335, 0.26, cut=[B(1.77, 2.06, 1.10, 1.21, 0.12, x=0.11)]),
         B(1.15, 3.81, 1.33, 1.375, 0.12, cut=[B(1.10, 3.90, 1.345, 1.36, 0.02, x=0.06), B(1.10, 3.90, 1.345, 1.36, 0.02, x=-0.06)]),
         B(1.30, 1.62, 1.15, 1.29, 0.06, x=0.135),
     ], wrap="A", note="upper receiver, ejection port (right), top rail with side grooves, forward-assist housing"),
-    Part("Lower", "Tan", [P(lower, 0.24, cut=[P(guard_hole, 0.4)])], wrap="A", note="lower receiver, mag well, trigger guard"),
+    Part("Lower", "Grey", [P(lower, 0.24, cut=[P(guard_hole, 0.4)])], wrap="A", note="lower receiver, mag well, trigger guard"),
     Part("Grip", "Polymer", [P([(1.25, 0.97), (1.52, 0.91), (1.33, 0.32), (1.24, 0.27), (1.00, 0.37)], 0.20,
                                cut=[B(1.05, 1.45, 0.40, 0.85, 0.06, x=0.115), B(1.05, 1.45, 0.40, 0.85, 0.06, x=-0.115)])],
          wrap="B", note="raked pistol grip with inset panels"),
-    Part("Handguard", "Tan", [PF(hg_section, 2.30, 3.80, cut=hg_cuts)], wrap="A",
+    Part("Handguard", "Grey", [PF(hg_section, 2.30, 3.80, cut=hg_cuts)], wrap="A",
          note="hollow octagonal handguard: M-LOK slots go through, barrel and gas block show inside"),
     Part("Barrel", "DarkSteel", [
         T(2.30, 3.92, BORE, 0.036, 0.016),
@@ -37,7 +37,7 @@ PARTS = [
         T(3.86, 4.20, BORE, 0.062, 0.03),
     ], wrap="B", note="barrel, gas block, birdcage flash hider"),
     Part("BufferTube", "DarkSteel", [C(0.40, 1.40, 1.17, 0.075, rot=0), C(0.95, 1.16, 1.17, 0.10, rot=0)], wrap="B", note="buffer tube + castle nut"),
-    Part("Stock", "Tan", [P(stock, 0.22, cut=[P([(0.19, 0.80), (0.38, 1.0), (0.19, 1.0)], 0.4)])], pivot=(0.60, 1.17),
+    Part("Stock", "Grey", [P(stock, 0.22, cut=[P([(0.19, 0.80), (0.38, 1.0), (0.19, 1.0)], 0.4)])], pivot=(0.60, 1.17),
          motion="translate along the buffer tube +z 0.25 (collapse / extend)", wrap="A", explode=(-0.25, 0, 0), note="skeleton stock"),
     Part("ButtPad", "Rubber", [B(0.0, 0.10, 0.58, 1.30, 0.24)], parent="Stock", wrap="B"),
     Part("Optic", "DarkSteel", [
