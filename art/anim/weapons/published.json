@@ -64,5 +64,16 @@
  "RifleHold": "rbxassetid://76751408627265",
  "RifleHoldLeft": "rbxassetid://99702035736726",
  "RifleHolster": "rbxassetid://75035408703914",
- "RifleHolsterLeft": "rbxassetid://108383560587785"
+ "RifleHolsterLeft": "rbxassetid://108383560587785",
+ "RifleInspect": "rbxassetid://128418389822265",
+ "RifleInspectLeft": "rbxassetid://77571797826621",
+ "RifleLowered": "rbxassetid://102774795254703",
+ "RifleLoweredLeft": "rbxassetid://132015717320543",
+ "RifleReload": "rbxassetid://74065368140291",
+ "RifleReloadEmpty": "rbxassetid://111382130366290",
+ "RifleReloadEmptyLeft": "rbxassetid://103012093992408",
+ "RifleReloadLeft": "rbxassetid://126569505805502",
+ "RiotShieldBash": "rbxassetid://74464731581821",
+ "RiotShieldBreak": "rbxassetid://97614848249187",
+ "RiotShieldHold": "rbxassetid://121983717239708"
 }

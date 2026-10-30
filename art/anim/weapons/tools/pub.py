@@ -89,6 +89,7 @@ def publish(name, ref_mode=False):
     run_lua('local ks = game.ReplicatedStorage.Repository.AnimationSources:FindFirstChild("%s")\n'
             'game:GetService("Selection"):Set({ ks })\nreturn ks and "ok" or "missing"' % name)
     desk("front", "anim_weapons")
+    desk("frontdlg", "anim_weapons.rbxl - Roblox Studio", "pin")  # I hold the stage: keep my window above pinned others
     time.sleep(1.8)  # let the Explorer move its highlight to the new selection
     im = shot()
     y = find_row(im)
