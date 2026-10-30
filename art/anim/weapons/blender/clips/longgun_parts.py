@@ -22,7 +22,7 @@ def tilt_pose(G, c, roll=-25, pitch=-10, well=(0, 0.235, -0.8), at=(-0.15, 1.12,
 
 def mag_reload(G, name, length, beats, mag="Mag", under=(0.0, -0.7, -0.85), pouch=(-0.25, 0.75, -0.6),
                empty=False, charge=None, release="MagRelease", drop=(0, -2.4, -0.3), extra_parts=None, tilt=None,
-               charge_shift=(-1.0, 0.05, 0.75)):
+               charge_shift=(-1.0, -0.35, 0.75)):
     """beats (frames): tilt, release, out, stowed, seat, (empty: hide, show), rewrap, shoulder, end.
     charge = (part, travel, grab W, f_grab, f_back, f_hold, f_fwd) for the run-the-gun beat."""
     b = beats

@@ -100,7 +100,8 @@ def reload():
     # the spent rounds drop out (MagHide), the new ones go in with the loader (ShellIn)
     for f, y, e in ((0, 0, "Constant"), (22, 0, "QuadIn"), (32, -2.5, "Constant"), (71, -2.5, "Constant"), (72, 0, "Constant"),
                     (144, 0, "Constant")):
-        c.part("Rounds", fr(f), (0, y, 0.2 if 22 < f < 72 else 0), ease=e)
+        # Rounds ride the crane (swung out 90 about z): the part's own -x is the gun's down while it is open
+        c.part("Rounds", fr(f), (y, 0, 0.2 if 22 < f < 72 else 0), ease=e)
     c.marker("CylinderOpen", fr(13)); c.marker("ShellEject", fr(22)); c.marker("MagHide", fr(32))
     c.marker("ShellIn", fr(72)); c.marker("CylinderClosed", fr(99))
     return c

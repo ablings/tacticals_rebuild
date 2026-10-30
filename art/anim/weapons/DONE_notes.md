@@ -39,6 +39,6 @@
   magwell / receiver front, not the handguard: rifles and the sniper use a 56-60 deg bladed stance with the off hand at
   the magwell; the shotgun uses an underarm hold so the off hand can ride the pump. Scaling the long guns to ~0.7 would
   allow the textbook handguard grip: a modeler / Edward decision.
-- Small reach gaps left (studs): PistolInspect 0.12, SMGInspect 0.15, RevolverInspect 0.07, BatEquip 0.23 (one moment
+- Small reach gaps left (studs): PistolInspect 0.04, RevolverInspect 0.06, BatEquip 0.03 (one moment
   each, off hand short of the gun while it moves).
 - Neck: shouldered holds turn the head 15 deg back toward the aim; HeadLookController adds the rest.
