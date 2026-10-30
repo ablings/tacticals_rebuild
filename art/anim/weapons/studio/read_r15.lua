@@ -23,6 +23,8 @@ for _, j in rig:GetDescendants() do
 		kinds.Motor6D = (kinds.Motor6D or 0) + 1
 	elseif j:IsA("AnimationConstraint") then
 		kinds.AnimationConstraint = (kinds.AnimationConstraint or 0) + 1
+		local a0, a1 = j.Attachment0, j.Attachment1
+		out.joints[a1.Parent.Name] = { name = j.Name, part0 = a0.Parent.Name, C0 = arr(a0.CFrame), C1 = arr(a1.CFrame) }
 	end
 end
 local att = rig.RightHand:FindFirstChild("RightGripAttachment")
@@ -45,5 +47,5 @@ for _, t in game:GetDescendants() do
 	end
 end
 rig:Destroy()
-print("KINDS", HttpService:JSONEncode(kinds))
-print("R15JSON" .. HttpService:JSONEncode(out))
+out.kinds = kinds
+return "R15JSON" .. HttpService:JSONEncode(out)

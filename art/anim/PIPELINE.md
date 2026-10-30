@@ -46,5 +46,25 @@ Written by the weapons animator, 2026-10-30, for every animator on Tacticals. Pr
 - Publishing: right-click the KeyframeSequence > Save to Roblox, Creator **gunsy funsy** (the dropdown starts on "Me" every
   time), then `PublishedId = "rbxassetid://<id>"` on the source (`art/anim/weapons/install_sources.lua`).
 
-## Proof
-(filled in below once the first clip has made the full trip)
+## Proof (2026-10-30, 02:45)
+- Rig check: the default R15 (`CreateHumanoidModelFromDescription`, the joints are **AnimationConstraints**, like players'
+  avatars) vs the starter rig: shoulders were 0.53 studs too far out and 0.55 too low, hips/knees/neck off by 0.1-0.4.
+  After `setup_rig()` every deform bone sits on the R15 pivot: the export's "pivot slide" (joint translation a rotation-only
+  joint would need) is **0.000** on every clip.
+- PistolHold / Lowered / Equip / Fire / Draw / Holster: Blender -> `out/anim_weapons/json` -> `build_clips.lua` -> 
+  `ReplicatedStorage.Repository.AnimationSources` in `out/anim_weapons/anim_weapons.rbxl` (a copy of match_place_ref):
+  lengths 1.000 / 1.000 / 0.350 / 0.150 / 0.500 / 0.450, Loop and markers as authored.
+- In Play mode the game's own WeaponController loaded `PistolLowered` from the new KeyframeSequence (Studio preview path,
+  `RegisterKeyframeSequence`) and played it on the player's real avatar: length 1.000, looped, Action
+  (`captures/anim/weapons/roundtrip_ingame.png`, left; right = PistolHold on the same avatar).
+- Hand contact: the IK reach check is 0.000 studs on both hands in every pistol frame (the export warns when a target is
+  out of reach: arm reach shoulder -> wrist is 1.73 studs on R15, so an isosceles hold sits <= 1.40 forward).
+
+## Gotchas
+- R15 arm reach is short (1.73 studs shoulder -> wrist, shoulders 1.94 apart): two-handed poses must stay inside it or
+  the hand leaves the gun. The exporter prints `WARN <clip> ik_gap_L` when that happens.
+- Every gun's Tool.Grip is identity: with the arm hanging the barrel points at the floor (Handle -Z along the hand); the
+  bore is ~0.46 above the Handle origin. `gun(rot=(0,0,0))` = barrel forward, level.
+- Players' joints are AnimationConstraints: anything that reads joints (capture tools, procedural aim) must handle both
+  kinds (`Attachment0/1.CFrame` = C0/C1).
+- `execute_luau` returns the chunk's return value; `print` output goes to the Studio console, not to the caller.

@@ -16,7 +16,8 @@ function C.stage()
 		p.Color = color; p.Material = mat or Enum.Material.SmoothPlastic; p.Parent = f; return p
 	end
 	part("Floor", Vector3.new(200, 1, 80), CFrame.new(O + Vector3.new(0, -0.5, 0)), Color3.fromRGB(150, 152, 158), Enum.Material.Concrete)
-	part("Back", Vector3.new(200, 40, 1), CFrame.new(O + Vector3.new(0, 20, 30)), Color3.fromRGB(200, 196, 186))
+	part("BackSide", Vector3.new(1, 40, 200), CFrame.new(O + Vector3.new(-12, 20, 0)), Color3.fromRGB(120, 128, 110))
+	part("BackGame", Vector3.new(200, 40, 1), CFrame.new(O + Vector3.new(0, 20, -16)), Color3.fromRGB(120, 128, 110))
 	local rig = game:GetService("Players"):CreateHumanoidModelFromDescription(Instance.new("HumanoidDescription"), Enum.HumanoidRigType.R15)
 	rig.Name = "AnimRig"
 	rig:PivotTo(CFrame.new(O + Vector3.new(0, 3, -200)))
@@ -58,16 +59,26 @@ function C.pose(list)
 	for tr, t in trs do tr.TimePosition = t end
 	animator:StepAnimations(0)
 	local out = {}
-	for _, m in rig:GetDescendants() do
-		if m:IsA("Motor6D") then out[m.Part1.Name] = m.Transform end
-	end
+	for n, j in C.joints() do out[n] = j.obj.Transform end
 	return out
 end
 
-function C.fk(poses)
+-- R15 joints of the capture rig: Part1 name -> {part0, C0, C1, obj} (Motor6D or AnimationConstraint)
+function C.joints()
 	local rig = C.rig()
-	local motors = {}
-	for _, m in rig:GetDescendants() do if m:IsA("Motor6D") then motors[m.Part1.Name] = m end end
+	local js = {}
+	for _, m in rig:GetDescendants() do
+		if m:IsA("Motor6D") and m.Part1 then
+			js[m.Part1.Name] = { Part0 = m.Part0, C0 = m.C0, C1 = m.C1, obj = m }
+		elseif m:IsA("AnimationConstraint") and m.Attachment1 then
+			js[m.Attachment1.Parent.Name] = { Part0 = m.Attachment0.Parent, C0 = m.Attachment0.CFrame, C1 = m.Attachment1.CFrame, obj = m }
+		end
+	end
+	return js
+end
+
+function C.fk(poses)
+	local motors = C.joints()
 	local world = { HumanoidRootPart = CFrame.identity }
 	for _, n in { "LowerTorso", "UpperTorso", "Head", "LeftUpperArm", "LeftLowerArm", "LeftHand", "RightUpperArm",
 		"RightLowerArm", "RightHand", "LeftUpperLeg", "LeftLowerLeg", "LeftFoot", "RightUpperLeg", "RightLowerLeg", "RightFoot" } do
@@ -93,6 +104,9 @@ function C.puppet(name, poses, rootCF, gunName, opts)
 			local c = src:Clone()
 			for _, d in c:GetChildren() do if not (d:IsA("Decal") or d:IsA("SpecialMesh") or d:IsA("SurfaceAppearance")) then d:Destroy() end end
 			c.Anchored = true; c.CanCollide = false
+			c.Color = (n == "Head") and Color3.fromRGB(226, 222, 210) or Color3.fromRGB(196, 192, 182)
+			c.Material = Enum.Material.SmoothPlastic
+			c.TextureID = ""
 			c.Transparency = (opts.hideHead and (n == "Head")) and 1 or 0
 			c.CFrame = rootCF * cfw
 			c.Parent = pm

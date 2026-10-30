@@ -13,14 +13,14 @@ def poses(c):
     feet = dict(footL=((0.04, 0, -0.22), (0, 10, 0)), footR=((0.0, 0, 0.18), (0, -14, 0)))
     # HOLD: isosceles, arms near straight (elbows soft), gun at the eye line, knees ~6 deg (hips sink), chest a touch forward
     hold = P(root=(0, -0.07, 0.02, -2, 0, 0), chest=(-2, 0, 0), head=(-3, 0, 0),
-             gun=((0.1, sh[1] + 0.02, sh[2] - 1.55), (0, 0, 0)),
-             R=("gun", (0, 0, 0), (0, 0, 0)), L=("gun", (-0.1, -0.1, 0.03), (0, 0, -15)),
+             gun=((0.05, sh[1] + 0.0, -1.27), (0, 0, 0)),
+             R=("gun", (0, 0, 0), (0, 0, 0)), L=("gun", (-0.13, -0.07, 0.2), (0, 0, -15)),
              poleR=(1.7, -0.6, 0.6), poleL=(-1.7, -0.6, 0.6), **feet)
     # LOWERED: gun hand at the thigh, muzzle 45 down in front of the foot, off hand relaxed at the belt
-    low = P(hold, gun=((0.55, -0.55, -0.55), (-45, 4, 0)), head=(-2, 0, 0), chest=(-1, 0, 0),
-            L=("free", (-0.75, -0.55, -0.35), (0, 0, 0)), poleR=(1.6, -1.0, 0.8), poleL=(-1.6, -1.0, 0.8))
+    low = P(hold, gun=((0.6, -0.05, -0.62), (-45, 4, 0)), head=(-2, 0, 0), chest=(-1, 0, 0),
+            L=("free", (-0.72, -0.05, -0.45), (10, 0, 0)), poleR=(1.6, -1.0, 0.8), poleL=(-1.6, -1.0, 0.8))
     # holster mouth at the right thigh (gun muzzle down, grip up)
-    holst = P(low, gun=((0.95, -0.95, 0.0), (-90, 0, 0)), head=(-6, 0, 0), poleR=(2.0, -0.6, 1.5))
+    holst = P(low, gun=((1.0, -0.2, 0.02), (-90, 0, 0)), head=(-6, 0, 0), poleR=(2.0, -0.6, 1.5))
     return hold, low, holst
 
 
@@ -74,12 +74,12 @@ def draw():
     meets f16); f20-f24 Back Out 4%; f24-f30 hold"""
     c = Clip("PistolDraw", 0.5)
     h, l, hs = poses(c)
-    rest = P(hs, R=("free", (1.05, -0.75, -0.05), (0, 0, 0)), L=("free", (-0.75, -0.6, -0.2), (0, 0, 0)), head=(-4, 0, 0))
+    rest = P(hs, R=("free", (1.02, -0.22, -0.05), (0, 0, 0)), L=("free", (-1.0, -0.22, -0.05), (0, 0, 0)), head=(-4, 0, 0))
     out = add(hs, gun=((-0.1, 0.45, -0.05), (35, 0, 0)), chest=(0, 0, 0))
     over = add(h, gun=((0, 0.01, -0.02), (0.6, 0, 0)))
     seq(c, [(0, rest, "CubicOut"), (4, P(hs), "QuartOut"), (10, out, "QuartOut"), (20, over, "BackOut:0.5"),
             (24, h), (30, h)], only=("root", "chest", "head", "gun", "R", "poles", "feet"))
-    seq(c, [(0, rest, "SineInOut"), (10, P(rest, L=("free", (-0.6, -0.1, -0.6), (0, 0, 0))), "QuartOut"),
+    seq(c, [(0, rest, "SineInOut"), (10, P(rest, L=("free", (-0.55, 0.45, -0.75), (60, 0, 0))), "QuartOut"),
             (16, h), (30, h)], only=("L",))
     c.marker("Grip", fr(4))
     return c
@@ -90,9 +90,9 @@ def holster():
     f16-f19 Linear push in; f19-f27 Cubic Out hand off, relaxed"""
     c = Clip("PistolHolster", 0.45)
     h, l, hs = poses(c)
-    chest = P(h, gun=((0.35, 0.35, -0.7), (-80, 0, 0)), L=("free", (-0.5, 0.1, -0.7), (0, 0, 0)))
+    chest = P(h, gun=((0.35, 0.55, -0.8), (-80, 0, 0)), L=("free", (-0.45, 0.4, -0.75), (60, 0, 0)))
     mouth = add(hs, gun=((0, 0.3, 0), (0, 0, 0)))
-    after = P(hs, R=("free", (1.05, -0.65, -0.1), (0, 0, 0)), L=("free", (-0.75, -0.6, -0.2), (0, 0, 0)), head=(-2, 0, 0))
+    after = P(hs, R=("free", (1.02, -0.2, -0.1), (0, 0, 0)), L=("free", (-1.0, -0.22, -0.05), (0, 0, 0)), head=(-2, 0, 0))
     seq(c, [(0, h, "CubicInOut"), (8, chest, "SineInOut"), (16, mouth, "Linear"), (19, hs, "CubicOut"), (27, after)],
         only=("root", "chest", "gun", "R", "L", "poles", "feet"))
     seq(c, [(0, h), (6, h, "SineInOut"), (12, P(h, head=(-12, 0, 0))), (20, P(h, head=(-6, 0, 0))), (27, after)],

@@ -20,7 +20,7 @@ only = set(argv[1:])
 mod = importlib.import_module(setname)
 OUT = os.path.join(HERE, "..", "..", "..", "..", "out", "anim_weapons", "json")
 gun = getattr(mod, "GUN", None)
-rbxanim.setup_rig(gun_parts=gun and gun.get("parts_b"))
+rbxanim.setup_rig(gun_parts=gun and gun.get("parts_b"), tool=getattr(mod, "TOOL", "Pistol"))
 results = []
 for name, builder in mod.CLIPS.items():
     if only and name not in only:

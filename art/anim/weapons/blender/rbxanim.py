@@ -99,7 +99,7 @@ def pivot_b(r15, part1):
     return r2b(m).translation.copy()
 
 
-def setup_rig(gun_parts=None):
+def setup_rig(gun_parts=None, tool="Pistol"):
     """Build the animation rig in the open (copied) starter file. gun_parts: {name: rest matrix in Gun-bone space}."""
     r15 = load_r15()
     ob = arm_obj()
@@ -148,7 +148,7 @@ def setup_rig(gun_parts=None):
         return b
     # the held item: the Handle's rest pose = RightHand rest * grip (r15.json "grip": RightHand -> Handle)
     hand_r = cf2m(r15["parts"]["RightHand"]["cf"])
-    handle_r = hand_r @ cf2m(r15["grip"])
+    handle_r = hand_r @ cf2m(r15["tools"][tool]["grip"])
     hb = r2b(handle_r)
     # Gun bone: head at the Handle origin; Y axis = the Handle's -Z (barrel forward), Z axis = Handle's Y (up)
     g = new("Gun", hb.translation, hb.translation + (hb.to_3x3() @ Vector((0, 1, 0))) * 0.6, "Uppertorso",
@@ -581,6 +581,9 @@ def export_clip(clip, out_dir, gun_joints=None, mirror=False, name=None, extra_k
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, nm + ".json"), "w") as f:
         json.dump(out, f)
+    for k, v in worst.items():
+        if k.startswith("ik_gap_") and v > 0.02:
+            print("WARN", nm, k, round(v, 3), "(a hand target is out of reach)")
     print("EXPORTED", nm, "frames", len(frames), "keys", len(kept), "quality", out["quality"])
     return out
 
