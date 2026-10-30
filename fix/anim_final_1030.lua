@@ -15,7 +15,7 @@
 -- unchanged. Idempotent; checks every anchor in every script before writing; stamps the round (WeaponConfig attribute
 -- AnimFinal1030Round) before the first write and refuses another round; UNDO reverts its edits and removes its modules.
 local UNDO = false --@UNDO
-local ROUND = 1
+local ROUND = 2
 local MODULES = {
 	{ parent = "ReplicatedStorage.Modules.Shared.Config", name = "AnimFinalConfig", src = [=[
 -- ReplicatedStorage.Modules.Shared.Config.AnimFinalConfig [ANIMFINAL] (2026-10-30, systems session; installed by
@@ -304,10 +304,11 @@ end
 
 -- the prefix whose set has this clip: the gun"s own (AnimationSourcePrefix), else AnimationFallbackPrefix, else the own one
 function Lib.GunPrefix(config, clip: string): string
+	-- PLAYABLE, not just present: live, a clip without a PublishedId plays nothing, so the fallback set"s published clip wins
 	local own = config and config.AnimationSourcePrefix or ""
-	if Lib.Source(own .. clip) then return own end
+	if Lib.Id(own .. clip) then return own end
 	local fb = config and config.AnimationFallbackPrefix
-	if type(fb) == "string" and Lib.Source(fb .. clip) then return fb end
+	if type(fb) == "string" and Lib.Id(fb .. clip) then return fb end
 	return own
 end
 
@@ -1222,9 +1223,9 @@ end
 	{ path = [=[
 StarterPlayer.StarterPlayerScripts.Client.Controllers.WeaponController]=], optional = false, soft = false, edits = {
 		{ [=[
-local MoveRules = require(Shared:WaitForChild("MoveRules")) -- [MOVE1029]
+local WeaponUtil = require(Shared:WaitForChild("WeaponUtil"))
 ]=], [=[
-local MoveRules = require(Shared:WaitForChild("MoveRules")) -- [MOVE1029]
+local WeaponUtil = require(Shared:WaitForChild("WeaponUtil"))
 local AnimLib1030 = require(Shared:WaitForChild("AnimLib")) -- [ANIMFINAL] clips by name (AnimFinalConfig)
 local AF1030 = AnimLib1030.Config -- [ANIMFINAL]
 local drawnThisLife1030 = false -- [ANIMFINAL] the Draw clip plays on the first pull-out of a life, the quick Equip after that

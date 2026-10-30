@@ -8,7 +8,7 @@ has new. Scripts marked optional are skipped where missing."""
 import os, sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-ROUND = 1
+ROUND = 2
 
 
 def T(s):
@@ -60,8 +60,8 @@ end
 
 WEAPONCONTROLLER = [
     # requires + state
-    E('''local MoveRules = require(Shared:WaitForChild("MoveRules")) -- [MOVE1029]
-''', '''local MoveRules = require(Shared:WaitForChild("MoveRules")) -- [MOVE1029]
+    E('''local WeaponUtil = require(Shared:WaitForChild("WeaponUtil"))
+''', '''local WeaponUtil = require(Shared:WaitForChild("WeaponUtil"))
 local AnimLib1030 = require(Shared:WaitForChild("AnimLib")) -- [ANIMFINAL] clips by name (AnimFinalConfig)
 local AF1030 = AnimLib1030.Config -- [ANIMFINAL]
 local drawnThisLife1030 = false -- [ANIMFINAL] the Draw clip plays on the first pull-out of a life, the quick Equip after that
