@@ -1,0 +1,15 @@
+=== FPS House 3v3 05:58:37
+start->live: frames 2511 over 42.2s | avg 59.5 fps (16.81 ms) | 1%low 53.3 fps (p99 18.8 ms) | p99.9 26.7 ms | max 360.3 ms | >50ms 1
+q1: frames 739 over 12.3s | avg 60.0 fps (16.67 ms) | 1%low 54.6 fps (p99 18.3 ms) | p99.9 18.7 ms | max 19.4 ms | >50ms 0 || fb 1268x737 | view 41k tris 81 draws | all ~42k tris 86 batches | gpu -nan(ind)ms render-thread 3.7ms | mem tex 209 MB
+q3: frames 742 over 12.4s | avg 60.0 fps (16.67 ms) | 1%low 54.4 fps (p99 18.4 ms) | p99.9 19.2 ms | max 21.8 ms | >50ms 0 || fb 1268x737 | view 41k tris 80 draws | all ~42k tris 88 batches | gpu -nan(ind)ms render-thread 3.9ms | mem tex 209 MB
+q5: frames 185 over 12.3s | avg 15.0 fps (66.84 ms) | 1%low 14.4 fps (p99 69.2 ms) | p99.9 82.6 ms | max 83.1 ms | >50ms 185 || fb 1268x737 | view 41k tris 80 draws | all ~42k tris 88 batches | gpu -nan(ind)ms render-thread 3.6ms | mem tex 209 MB
+q10: frames 184 over 12.3s | avg 15.0 fps (66.66 ms) | 1%low 14.6 fps (p99 68.6 ms) | p99.9 68.7 ms | max 69.4 ms | >50ms 184 || fb 1268x737 | view 41k tris 81 draws | all ~322k tris 732 batches | gpu -nan(ind)ms render-thread 4.2ms | mem tex 209 MB
+q21: frames 185 over 12.3s | avg 15.0 fps (66.66 ms) | 1%low 14.6 fps (p99 68.6 ms) | p99.9 68.7 ms | max 69.0 ms | >50ms 185 || fb 1268x737 | view 41k tris 82 draws | all ~425k tris 969 batches | gpu -nan(ind)ms render-thread 4.3ms | mem tex 209 MB
+q21 frag: frames 188 over 12.6s | avg 15.0 fps (66.67 ms) | 1%low 14.5 fps (p99 68.8 ms) | p99.9 68.8 ms | max 69.9 ms | >50ms 188
+q1 cpu-lowphone (1 core(s) at 25%): frames 145 over 12.4s | avg 11.7 fps (85.63 ms) | 1%low 4.3 fps (p99 232.1 ms) | p99.9 232.2 ms | max 282.4 ms | >50ms 145
+   frag under lowphone: 
+q1 cpu-midphone (2 core(s) at 30%): 
+   frag under midphone: Client datamodel is not available in Edit mode
+isError=true
+q1 cpu-tablet (2 core(s) at 60%): 
+   frag under tablet: 

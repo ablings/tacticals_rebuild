@@ -1,0 +1,18 @@
+arenaA     L01 | tris 178 draws 8 | gpu 17.41ms rthread 3.04ms | batches 10 | Opaque 178/8
+arenaA     L10 | tris 1434 draws 80 | gpu 18.81ms rthread 3.39ms | batches 88 | Opaque 178/9, UI 1256/71
+arenaA     L21 | tris 1596 draws 88 | gpu 16.59ms rthread 3.67ms | batches 106 | Opaque 178/8, UI 1418/80
+arenaMid   L01 | tris 838 draws 8 | gpu 15.03ms rthread 2.80ms | batches 10 | Opaque 838/8
+arenaMid   L10 | tris 838 draws 14 | gpu 18.29ms rthread 3.21ms | batches 21 | Opaque 838/14
+arenaMid   L21 | tris 838 draws 8 | gpu 16.45ms rthread 3.07ms | batches 25 | Opaque 838/8
+wh         L01 | tris 123238 draws 145 | gpu 18.60ms rthread 3.07ms | batches 343 | Opaque 122594/128, UI 644/17
+wh         L10 | tris 123850 draws 146 | gpu 17.22ms rthread 3.16ms | batches 444 | Opaque 123206/129, UI 644/17
+wh         L21 | tris 121942 draws 145 | gpu 18.38ms rthread 3.24ms | batches 454 | Opaque 121298/128, UI 644/17
+wh2A       L01 | tris 48066 draws 204 | gpu 18.34ms rthread 3.27ms | batches 407 | Opaque 46820/146, UI 1246/58
+wh2A       L10 | tris 48494 draws 246 | gpu 18.51ms rthread 3.44ms | batches 480 | Opaque 46832/168, UI 1662/78
+wh2A       L21 | tris 48434 draws 227 | gpu 17.67ms rthread 3.34ms | batches 494 | Opaque 46772/149, UI 1662/78
+houseA     L01 | tris 23510 draws 81 | gpu 18.46ms rthread 3.50ms | batches 87 | Opaque 23510/81
+houseA     L10 | tris 23976 draws 105 | gpu 18.67ms rthread 3.37ms | batches 179 | Opaque 23510/81, UI 466/24
+houseA     L21 | tris 23964 draws 104 | gpu 18.97ms rthread 3.24ms | batches 196 | Opaque 23498/80, UI 466/24
+houseB     L01 | tris 23048 draws 82 | gpu 16.44ms rthread 3.30ms | batches 87 | Opaque 23048/82
+houseB     L10 | tris 23048 draws 82 | gpu 17.38ms rthread 3.44ms | batches 152 | Opaque 23048/82
+houseB     L21 | tris 21644 draws 79 | gpu 18.80ms rthread 3.38ms | batches 168 | Opaque 21644/79

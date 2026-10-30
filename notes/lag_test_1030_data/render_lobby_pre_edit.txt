@@ -1,0 +1,20 @@
+hub        L01 | tris 264360 draws 714 | gpu 1.19ms rthread 4.26ms | batches 721 | Opaque 259845/447, Transparent 9/5, UI 4502/258, Cloud 4/4
+hub        L05 | tris 264384 draws 714 | gpu 1.19ms rthread 4.41ms | batches 724 | Opaque 259869/447, Transparent 9/5, UI 4502/258, Cloud 4/4
+hub        L10 | tris 264637 draws 716 | gpu 1.23ms rthread 4.74ms | batches 997 | Opaque 260121/448, Transparent 9/5, UI 4502/258, Cloud 5/5
+hub        L21 | tris 264914 draws 714 | gpu 2.33ms rthread 4.32ms | batches 1057 | Opaque 260397/445, Transparent 9/5, UI 4502/258, Cloud 6/6
+hub_s      L01 | tris 192250 draws 555 | gpu 1.18ms rthread 3.80ms | batches 562 | Opaque 186685/277, Transparent 61/9, UI 5496/264, Cloud 4/4, Particles 4/1
+hub_s      L05 | tris 192750 draws 579 | gpu 2.37ms rthread 3.68ms | batches 589 | Opaque 187189/302, Transparent 59/8, UI 5496/264, Cloud 4/4, Particles 2/1
+hub_s      L10 | tris 193684 draws 583 | gpu 3.57ms rthread 4.20ms | batches 732 | Opaque 188109/303, Transparent 65/9, UI 5496/264, Cloud 6/6, Particles 8/1
+hub_s      L21 | tris 195404 draws 560 | gpu 1.25ms rthread 4.50ms | batches 788 | Opaque 189813/280, Transparent 73/9, UI 5496/264, Cloud 6/6, Particles 16/1
+training   L01 | tris 20593 draws 152 | gpu 3.60ms rthread 3.16ms | batches 159 | Opaque 19396/48, Transparent 1/1, UI 1192/99, Cloud 4/4
+training   L05 | tris 21261 draws 182 | gpu 3.37ms rthread 3.46ms | batches 199 | Opaque 19996/66, Transparent 1/1, UI 1260/111, Cloud 4/4
+training   L10 | tris 21275 draws 200 | gpu 2.36ms rthread 3.50ms | batches 227 | Opaque 20008/82, Transparent 1/1, UI 1260/111, Cloud 6/6
+training   L21 | tris 21262 draws 164 | gpu 1.20ms rthread 3.59ms | batches 232 | Opaque 19996/47, Transparent 1/1, UI 1260/111, Cloud 5/5
+armory     L01 | tris 68675 draws 167 | gpu 2.42ms rthread 3.48ms | batches 174 | Opaque 67942/126, Transparent 49/3, UI 680/34, Cloud 4/4
+armory     L05 | tris 68911 draws 171 | gpu 0.00ms rthread 3.38ms | batches 188 | Opaque 68170/127, Transparent 53/5, UI 680/34, Cloud 4/4, Particles 4/1
+armory     L10 | tris 68920 draws 172 | gpu 5.59ms rthread 3.38ms | batches 281 | Opaque 68170/127, Transparent 57/5, UI 680/34, Cloud 5/5, Particles 8/1
+armory     L21 | tris 68808 draws 170 | gpu 5.98ms rthread 3.45ms | batches 299 | Opaque 68038/125, Transparent 67/5, UI 680/34, Cloud 5/5, Particles 18/1
+gunwall    L01 | tris 43977 draws 64 | gpu 0.00ms rthread 3.15ms | batches 80 | Opaque 43834/55, Transparent 27/3, UI 110/1, Cloud 4/4, Particles 2/1
+gunwall    L05 | tris 43989 draws 65 | gpu 3.41ms rthread 3.20ms | batches 84 | Opaque 43846/56, Transparent 27/3, UI 110/1, Cloud 4/4, Particles 2/1
+gunwall    L10 | tris 43998 draws 66 | gpu 1.12ms rthread 3.30ms | batches 115 | Opaque 43846/56, Transparent 31/3, UI 110/1, Cloud 5/5, Particles 6/1
+gunwall    L21 | tris 43894 draws 65 | gpu 0.00ms rthread 3.45ms | batches 132 | Opaque 43738/55, Transparent 33/3, UI 110/1, Cloud 5/5, Particles 8/1

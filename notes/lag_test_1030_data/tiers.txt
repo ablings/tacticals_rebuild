@@ -1,0 +1,6 @@
+=== TIERS House 3v3 q1 06:32:32
+=== TIERS lobby hub q1 06:45
+q1 cpu-none (0 core(s) at 0%): frames 216 over 14.4s | avg 15.0 fps (66.66 ms) | 1%low 14.6 fps (p99 68.5 ms) | p99.9 68.7 ms | max 70.7 ms | >50ms 216
+q1 cpu-tablet (2 core(s) at 60%): frames 216 over 14.4s | avg 15.0 fps (66.66 ms) | 1%low 14.5 fps (p99 68.9 ms) | p99.9 69.3 ms | max 69.4 ms | >50ms 216
+q1 cpu-midphone (2 core(s) at 30%): frames 9 over 20.2s | avg 0.6 fps (1781.05 ms) | 1%low 0.4 fps (p99 2368.2 ms) | p99.9 2368.2 ms | max 2941.6 ms | >50ms 9
+q1 cpu-lowphone (1 core(s) at 25%): 

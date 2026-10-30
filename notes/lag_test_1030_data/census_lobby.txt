@@ -1,0 +1,66 @@
+TOTAL Workspace.LobbyMap | inst 17065 | parts 7716 (mesh 2999, union 8) visible 4059 shadowCast 1622 unanch 76 | lights 146 on 86 shadowed 10 | PE 46 on 7 rate 8 | beams 51 trails 0 fx 0 | tex 2696 decal 56 SA 1603 uniqTex 99 | uniqMesh 1109
+      gui 376 el 1583 | scripts 3 sounds 0
+  Training [Folder] | inst 4934 | parts 1036 (mesh 157, union 8) visible 499 shadowCast 362 unanch 0 | lights 31 on 19 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 2424 decal 0 SA 0 uniqTex 4 | uniqMesh 33
+      gui 141 el 621 | scripts 0 sounds 0
+  Showroom [Model] | inst 109 | parts 71 (mesh 61, union 0) visible 43 shadowCast 36 unanch 0 | lights 6 on 6 shadowed 1 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 12 decal 0 SA 5 uniqTex 10 | uniqMesh 61
+      gui 1 el 1 | scripts 0 sounds 0
+  Instances [Folder] | inst 2406 | parts 1174 (mesh 1174, union 0) visible 0 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 1012 uniqTex 43 | uniqMesh 118
+      gui 0 el 0 | scripts 0 sounds 0
+  Lights [Folder] | inst 78 | parts 39 (mesh 0, union 0) visible 0 shadowCast 0 unanch 0 | lights 39 on 8 shadowed 1 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 0
+      gui 0 el 0 | scripts 0 sounds 0
+  FX [Folder] | inst 609 | parts 188 (mesh 2, union 0) visible 2 shadowCast 0 unanch 0 | lights 6 on 1 shadowed 0 | PE 39 on 0 rate 0 | beams 26 trails 0 fx 0 | tex 2 decal 51 SA 0 uniqTex 9 | uniqMesh 1
+      gui 40 el 180 | scripts 0 sounds 0
+  HubProps [Folder] | inst 873 | parts 373 (mesh 373, union 0) visible 0 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 373 uniqTex 16 | uniqMesh 26
+      gui 0 el 0 | scripts 0 sounds 0
+  Rooms [Folder] | inst 311 | parts 196 (mesh 76, union 0) visible 20 shadowCast 0 unanch 0 | lights 9 on 8 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 1 SA 61 uniqTex 15 | uniqMesh 28
+      gui 0 el 0 | scripts 0 sounds 0
+  NPCs [Folder] | inst 879 | parts 57 (mesh 45, union 0) visible 54 shadowCast 54 unanch 54 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 1 | uniqMesh 15
+      gui 3 el 3 | scripts 3 sounds 0
+  Exfil [Folder] | inst 7 | parts 5 (mesh 0, union 0) visible 1 shadowCast 0 unanch 0 | lights 2 on 2 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 0
+      gui 0 el 0 | scripts 0 sounds 0
+  Hub1 [Folder] | inst 341 | parts 213 (mesh 156, union 0) visible 179 shadowCast 151 unanch 0 | lights 24 on 24 shadowed 4 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 61 decal 4 SA 0 uniqTex 8 | uniqMesh 156
+      gui 4 el 4 | scripts 0 sounds 0
+  Features [Folder] | inst 397 | parts 251 (mesh 147, union 0) visible 226 shadowCast 136 unanch 22 | lights 11 on 11 shadowed 2 | PE 7 on 7 rate 8 | beams 3 trails 0 fx 0 | tex 4 decal 0 SA 0 uniqTex 2 | uniqMesh 62
+      gui 10 el 14 | scripts 0 sounds 0
+  Polish [Folder] | inst 4629 | parts 3215 (mesh 42, union 0) visible 2573 shadowCast 503 unanch 0 | lights 9 on 7 shadowed 2 | PE 0 on 0 rate 0 | beams 15 trails 0 fx 0 | tex 60 decal 0 SA 0 uniqTex 4 | uniqMesh 17
+      gui 140 el 681 | scripts 0 sounds 0
+TOTAL ReplicatedStorage | inst 8128 | parts 2336 (mesh 682, union 0) visible 1702 shadowCast 1387 unanch 120 | lights 90 on 78 shadowed 14 | PE 38 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 1399 decal 0 SA 384 uniqTex 217 | uniqMesh 540
+      gui 102 el 486 | scripts 128 sounds 37
+  Repository [Folder] | inst 2524 | parts 127 (mesh 7, union 0) visible 127 shadowCast 120 unanch 120 | lights 10 on 0 shadowed 0 | PE 38 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 7
+      gui 0 el 0 | scripts 0 sounds 35
+  DuelMaps [Folder] | inst 5284 | parts 2102 (mesh 568, union 0) visible 1468 shadowCast 1255 unanch 0 | lights 80 on 78 shadowed 14 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 1399 decal 0 SA 384 uniqTex 205 | uniqMesh 426
+      gui 102 el 483 | scripts 4 sounds 0
+TOTAL ServerStorage | inst 39467 | parts 17220 (mesh 4907, union 8) visible 14180 shadowCast 10934 unanch 158 | lights 797 on 795 shadowed 46 | PE 78 on 78 rate 466 | beams 52 trails 0 fx 0 | tex 3122 decal 134 SA 2121 uniqTex 356 | uniqMesh 2265
+      gui 830 el 9033 | scripts 119 sounds 0
+  RoqerWorld [Model] | inst 2471 | parts 1693 (mesh 154, union 0) visible 1610 shadowCast 572 unanch 0 | lights 147 on 147 shadowed 7 | PE 0 on 0 rate 0 | beams 5 trails 0 fx 0 | tex 21 decal 0 SA 0 uniqTex 1 | uniqMesh 59
+      gui 96 el 275 | scripts 0 sounds 0
+  LobbyMap_Old [Folder] | inst 14679 | parts 5959 (mesh 0, union 0) visible 5954 shadowCast 5675 unanch 0 | lights 204 on 204 shadowed 11 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 1 decal 0 SA 0 uniqTex 1 | uniqMesh 0
+      gui 351 el 7551 | scripts 0 sounds 0
+  LobbyMap_V1 [Folder] | inst 1714 | parts 960 (mesh 744, union 0) visible 886 shadowCast 886 unanch 0 | lights 119 on 119 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 4 SA 0 uniqTex 2 | uniqMesh 606
+      gui 154 el 222 | scripts 0 sounds 0
+  _ArmoryKitArchive [Folder] | inst 654 | parts 61 (mesh 47, union 0) visible 53 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 1 | uniqMesh 17
+      gui 0 el 0 | scripts 0 sounds 0
+  LobbyMap_V2 [Folder] | inst 3015 | parts 1311 (mesh 855, union 0) visible 881 shadowCast 77 unanch 54 | lights 159 on 159 shadowed 1 | PE 39 on 39 rate 159 | beams 14 trails 0 fx 0 | tex 178 decal 72 SA 0 uniqTex 10 | uniqMesh 530
+      gui 34 el 151 | scripts 3 sounds 0
+  _LobbyReplaced [Folder] | inst 66 | parts 40 (mesh 29, union 0) visible 29 shadowCast 20 unanch 0 | lights 3 on 3 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 4 SA 14 uniqTex 12 | uniqMesh 20
+      gui 0 el 0 | scripts 0 sounds 0
+  _RebuildRemoved [Folder] | inst 514 | parts 410 (mesh 49, union 0) visible 52 shadowCast 42 unanch 4 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 6 decal 0 SA 12 uniqTex 12 | uniqMesh 45
+      gui 0 el 0 | scripts 70 sounds 0
+  _FeaturesKitRemoved [Folder] | inst 417 | parts 111 (mesh 0, union 0) visible 108 shadowCast 18 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 45 decal 0 SA 0 uniqTex 1 | uniqMesh 0
+      gui 0 el 0 | scripts 0 sounds 0
+  _MainGame_2026-10-16 [Folder] | inst 7540 | parts 3038 (mesh 1982, union 8) visible 2367 shadowCast 1663 unanch 54 | lights 83 on 83 shadowed 5 | PE 39 on 39 rate 307 | beams 33 trails 0 fx 0 | tex 974 decal 52 SA 1615 uniqTex 93 | uniqMesh 384
+      gui 75 el 257 | scripts 3 sounds 0
+  _DuelSource [Folder] | inst 6024 | parts 2499 (mesh 703, union 0) visible 1827 shadowCast 1629 unanch 0 | lights 82 on 80 shadowed 22 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 1409 decal 0 SA 425 uniqTex 205 | uniqMesh 427
+      gui 120 el 577 | scripts 0 sounds 0
+  DuelMaps [Folder] | inst 846 | parts 715 (mesh 30, union 0) visible 0 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 23
+      gui 0 el 0 | scripts 0 sounds 0
+  _ArenaV1_Backup [Folder] | inst 595 | parts 99 (mesh 0, union 0) visible 97 shadowCast 97 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 485 decal 0 SA 0 uniqTex 1 | uniqMesh 0
+      gui 0 el 0 | scripts 0 sounds 0
+Lighting tech The current thread cannot read 'Technology' (lacking capability RobloxScript) style Enum.LightingStyle.Realistic GlobalShadows true ShadowSoftness 0.50 | Streaming true | instances 69204
+  Lighting.Sky [Sky]
+  Lighting.SunRays [SunRaysEffect] enabled=false
+  Lighting.Lobby_Atmosphere [Atmosphere]
+  Lighting.Lobby_Bloom [BloomEffect] enabled=false
+  Lighting.Lobby_CC [ColorCorrectionEffect] enabled=true
+  Lighting.Lobby_DOF [DepthOfFieldEffect] enabled=false
+  Lighting.Lobby_Sky [Sky]

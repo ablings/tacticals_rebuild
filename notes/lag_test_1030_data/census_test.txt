@@ -1,0 +1,40 @@
+TOTAL Workspace | inst 6357 | parts 2516 (mesh 713, union 0) visible 1827 shadowCast 1590 unanch 30 | lights 82 on 80 shadowed 22 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 1410 decal 2 SA 486 uniqTex 331 | uniqMesh 589
+      gui 120 el 577 | scripts 0 sounds 0
+  Warehouse [Model] | inst 555 | parts 338 (mesh 93, union 0) visible 226 shadowCast 166 unanch 0 | lights 11 on 11 shadowed 8 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 86 uniqTex 44 | uniqMesh 93
+      gui 30 el 30 | scripts 0 sounds 0
+  Arena [Model] | inst 1504 | parts 105 (mesh 0, union 0) visible 103 shadowCast 101 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 1389 decal 0 SA 0 uniqTex 1 | uniqMesh 0
+      gui 0 el 0 | scripts 0 sounds 0
+  Warehouse2 [Model] | inst 2021 | parts 905 (mesh 77, union 0) visible 728 shadowCast 673 unanch 0 | lights 28 on 28 shadowed 12 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 10 decal 0 SA 77 uniqTex 38 | uniqMesh 23
+      gui 72 el 453 | scripts 0 sounds 0
+  Warehouse2Exterior [Model] | inst 589 | parts 266 (mesh 6, union 0) visible 230 shadowCast 224 unanch 0 | lights 4 on 4 shadowed 2 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 10 decal 0 SA 6 uniqTex 9 | uniqMesh 2
+      gui 18 el 94 | scripts 0 sounds 0
+  House [Model] | inst 1242 | parts 754 (mesh 398, union 0) visible 407 shadowCast 293 unanch 0 | lights 39 on 37 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 289 uniqTex 194 | uniqMesh 352
+      gui 0 el 0 | scripts 0 sounds 0
+TOTAL ReplicatedStorage | inst 102282 | parts 223 (mesh 103, union 0) visible 223 shadowCast 120 unanch 120 | lights 10 on 0 shadowed 0 | PE 38 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 1 | uniqMesh 103
+      gui 0 el 2 | scripts 146 sounds 37
+  Repository [Folder] | inst 101963 | parts 127 (mesh 7, union 0) visible 127 shadowCast 120 unanch 120 | lights 10 on 0 shadowed 0 | PE 38 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 7
+      gui 0 el 0 | scripts 0 sounds 35
+TOTAL ServerStorage | inst 17160 | parts 7696 (mesh 3599, union 0) visible 4565 shadowCast 2031 unanch 91 | lights 122 on 74 shadowed 16 | PE 46 on 7 rate 8 | beams 51 trails 0 fx 0 | tex 757 decal 57 SA 1935 uniqTex 397 | uniqMesh 1708
+      gui 283 el 1031 | scripts 83 sounds 0
+  PseudoLobby [Folder] | inst 12199 | parts 6687 (mesh 2842, union 0) visible 3567 shadowCast 1260 unanch 76 | lights 115 on 67 shadowed 10 | PE 46 on 7 rate 8 | beams 51 trails 0 fx 0 | tex 272 decal 56 SA 1603 uniqTex 96 | uniqMesh 1085
+      gui 263 el 990 | scripts 3 sounds 0
+  _ArenaV1_Backup [Folder] | inst 597 | parts 99 (mesh 0, union 0) visible 97 shadowCast 97 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 485 decal 0 SA 0 uniqTex 1 | uniqMesh 0
+      gui 0 el 0 | scripts 1 sounds 0
+  _SplitStripped [Folder] | inst 238 | parts 151 (mesh 0, union 0) visible 143 shadowCast 143 unanch 0 | lights 7 on 7 shadowed 6 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 0
+      gui 20 el 41 | scripts 0 sounds 0
+  HouseKit [Folder] | inst 832 | parts 465 (mesh 465, union 0) visible 465 shadowCast 465 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 278 uniqTex 245 | uniqMesh 465
+      gui 0 el 0 | scripts 0 sounds 0
+  _AnimSourcesPre1030 [Folder] | inst 2609 | parts 0 (mesh 0, union 0) visible 0 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 0
+      gui 0 el 0 | scripts 0 sounds 0
+TOTAL ServerStorage.MapBackdrops | inst 141 | parts 130 (mesh 130, union 0) visible 130 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 8 uniqTex 5 | uniqMesh 90
+      gui 0 el 0 | scripts 0 sounds 0
+TOTAL StarterPlayer | inst 73 | parts 0 (mesh 0, union 0) visible 0 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 0
+      gui 0 el 0 | scripts 66 sounds 0
+TOTAL StarterGui | inst 42 | parts 0 (mesh 0, union 0) visible 0 shadowCast 0 unanch 0 | lights 0 on 0 shadowed 0 | PE 0 on 0 rate 0 | beams 0 trails 0 fx 0 | tex 0 decal 0 SA 0 uniqTex 0 | uniqMesh 0
+      gui 0 el 23 | scripts 0 sounds 1
+Lighting tech The current thread cannot read 'Technology' (lacking capability RobloxScript) style Enum.LightingStyle.Realistic GlobalShadows true ShadowSoftness 0.12 | Streaming false | instances 130268
+  Lighting.Atmosphere [Atmosphere]
+  Lighting.Bloom [BloomEffect] enabled=true
+  Lighting.MapGrade [ColorCorrectionEffect] enabled=true
+  Lighting.TutorialArenaOriginalLighting [Configuration]
+  Lighting.Sky [Sky]
