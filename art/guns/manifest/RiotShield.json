@@ -40,7 +40,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "curved shield body (sagitta 0.15), chamfered corners, window cut through"
+   "note": "curved shield body (sagitta 0.15), chamfered corners, window cut through",
+   "mesh_id": "rbxassetid://113628790910041"
   },
   {
    "name": "Rim",
@@ -72,7 +73,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "raised rim: side, top and bottom strips + diagonal corner strips"
+   "note": "raised rim: side, top and bottom strips + diagonal corner strips",
+   "mesh_id": "rbxassetid://90803774702893"
   },
   {
    "name": "Window",
@@ -104,7 +106,8 @@
    "material": "Glass",
    "visible_at_rest": true,
    "wrap": "skip",
-   "note": "view window glass"
+   "note": "view window glass",
+   "mesh_id": "rbxassetid://91292931001213"
   },
   {
    "name": "Grip",
@@ -136,7 +139,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "vertical back grip on two standoffs"
+   "note": "vertical back grip on two standoffs",
+   "mesh_id": "rbxassetid://103820350344812"
   },
   {
    "name": "Light",
@@ -168,7 +172,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "flashlight + mount"
+   "note": "flashlight + mount",
+   "mesh_id": "rbxassetid://125800445133273"
   },
   {
    "name": "LightLens",
@@ -200,7 +205,8 @@
    "material": "Neon",
    "visible_at_rest": true,
    "wrap": "skip",
-   "note": "Neon lens: switch Material / Color to turn the light on and off"
+   "note": "Neon lens: switch Material / Color to turn the light on and off",
+   "mesh_id": "rbxassetid://85076532967844"
   }
  ],
  "attachments": {
@@ -246,5 +252,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/RiotShield_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

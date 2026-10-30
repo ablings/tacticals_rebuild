@@ -40,7 +40,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "ray-skin core of the grip"
+   "note": "ray-skin core of the grip",
+   "mesh_id": "rbxassetid://89647319080878"
   },
   {
    "name": "Wrap",
@@ -72,7 +73,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "black wrap with diamond windows"
+   "note": "black wrap with diamond windows",
+   "mesh_id": "rbxassetid://96989652673049"
   },
   {
    "name": "Kashira",
@@ -104,7 +106,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "end cap"
+   "note": "end cap",
+   "mesh_id": "rbxassetid://122054948463173"
   },
   {
    "name": "Tsuba",
@@ -136,7 +139,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "round guard"
+   "note": "round guard",
+   "mesh_id": "rbxassetid://132876601609667"
   },
   {
    "name": "Habaki",
@@ -168,7 +172,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "blade collar"
+   "note": "blade collar",
+   "mesh_id": "rbxassetid://115518144667897"
   },
   {
    "name": "Blade",
@@ -200,7 +205,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "curved blade, flat above the temper line, thin edge bevel below; tang into the grip"
+   "note": "curved blade, flat above the temper line, thin edge bevel below; tang into the grip",
+   "mesh_id": "rbxassetid://105849292075703"
   },
   {
    "name": "Saya",
@@ -232,7 +238,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": false,
    "wrap": "B",
-   "note": "scabbard; set Transparency 1 at rest"
+   "note": "scabbard; set Transparency 1 at rest",
+   "mesh_id": "rbxassetid://108835780085004"
   }
  ],
  "attachments": {
@@ -294,5 +301,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/Katana_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

@@ -40,7 +40,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "right hand wrap (static on the right grip)"
+   "note": "right hand wrap (static on the right grip)",
+   "mesh_id": "rbxassetid://101865705339989"
   },
   {
    "name": "RightPad",
@@ -72,7 +73,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "knuckle pad + wrist strap"
+   "note": "knuckle pad + wrist strap",
+   "mesh_id": "rbxassetid://123724094830409"
   },
   {
    "name": "LeftWrap",
@@ -104,7 +106,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "left hand wrap"
+   "note": "left hand wrap",
+   "mesh_id": "rbxassetid://72741555659813"
   },
   {
    "name": "LeftPad",
@@ -136,7 +139,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://139383211054396"
   }
  ],
  "attachments": {
@@ -184,5 +188,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/Fists_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

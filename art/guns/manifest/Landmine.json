@@ -40,7 +40,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "disc body"
+   "note": "disc body",
+   "mesh_id": "rbxassetid://82426118174988"
   },
   {
    "name": "Plate",
@@ -72,7 +73,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "pressure plate"
+   "note": "pressure plate",
+   "mesh_id": "rbxassetid://109247218022939"
   },
   {
    "name": "ArmSwitch",
@@ -104,7 +106,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "rotary arming switch"
+   "note": "rotary arming switch",
+   "mesh_id": "rbxassetid://126508432385294"
   },
   {
    "name": "SafetyPin",
@@ -136,7 +139,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "pin + ring"
+   "note": "pin + ring",
+   "mesh_id": "rbxassetid://138474216093991"
   },
   {
    "name": "Indicator",
@@ -168,7 +172,8 @@
    "material": "Neon",
    "visible_at_rest": true,
    "wrap": "skip",
-   "note": "Neon indicator: dark = safe, lit = armed; switch Color / Material"
+   "note": "Neon indicator: dark = safe, lit = armed; switch Color / Material",
+   "mesh_id": "rbxassetid://88012123016104"
   }
  ],
  "attachments": {
@@ -214,5 +219,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/Landmine_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

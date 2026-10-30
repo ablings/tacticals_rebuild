@@ -18,10 +18,16 @@ mesh with its pivot on its real hinge / slide axis.
 - WrapChannel: `A` = body surfaces, `B` = details, `skip` = glass (set WrapSkip). Material SmoothPlastic, Glass for lenses.
 - Rebuild one gun: `blender -b --factory-startup --python art/guns/tools/build_gun.py -- <Gun>` (spec in tools/specs/).
 
-## Studio import / upload (not done yet)
-- Meshes are **not uploaded yet**: Creator Hub only takes images/audio/video, and AssetService:CreateAssetAsync answers
-  "not available yet" in Studio (tested 2026-10-30). Upload = Studio Import 3D of `art/guns/fbx/<Gun>_roblox.fbx`
-  (Creator = gunsy funsy, Insert Using Scene Position), which needs a session with computer use (clicks in the dialog).
+## Studio import / upload (done 2026-10-30)
+- **All 9 guns and the 11 melee/gadget items are uploaded** under the group gunsy funsy (102028987): 192 meshes (guns 132, melee/gadgets 60), every id
+  checked on economy.roblox.com/v2/assets/<id>/details. Ids are in each table's Mesh id column and as `mesh_id` per part in
+  `art/guns/manifest/<Gun>.json`. Method: Studio Import Queue (Home > Import, several FBX at once), Creator dropdown = gunsy funsy
+  on every row, scratch place `out/gun_upload/upload.rbxl` (notes: `out/gun_upload/NOTES.md`).
+- **Import facts for the Tool builder** (checked on all 192 parts against the manifests, error <= 0.0001 stud):
+  the FBX imports at 100x (ScaleCube = 1000 studs, centimetres): set each MeshPart.Size = manifest `size`;
+  the imported mesh data is turned 180 deg about Y against the manifest frame (Orientation reads 0, 0, 0, yet x and z come out
+  negated): place each MeshPart at `CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)` relative to Handle.
+- If a gun's `_roblox.fbx` changes, re-upload it and replace its ids.
 - After import: measure ScaleCube (B1), check Marker orientation (B2), delete both, then build the Tool from the manifest:
   invisible Handle at the origin, each MeshPart placed at its bbox_centre, Motor6D named after the part at its pivot,
   colour/material/WrapChannel from the manifest, attachments from the manifest (Muzzle keeps the old flash children).
@@ -215,32 +221,32 @@ Attachments: `Muzzle` on Barrel at (0.0, 0.46, -3.48); `Grip` on Handle at (0.0,
 - Size L x H x W: [6.2, 1.647, 0.36] studs; 1996 tris; 22 meshes, 11 moving.
 - Script check: 22 objects, 1996 tris, 0 FAIL, 25 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 22 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Chassis | Handle | (0.0, 0.19, -1.435) | static | 360 | A |  |
-| Stock | Handle | (0.0, 0.07, 0.78) | static | 68 | A |  |
-| ButtPad | Handle | (0.0, 0.07, 1.425) | static | 12 | B |  |
-| CheekPiece | Stock | (0.0, 0.41, 0.7) | translate +y 0.1 (adjust) | 68 | B |  |
-| Grip | Handle | (0.0, -0.145, -0.005) | static | 68 | B |  |
-| Receiver | Handle | (0.0, 0.49, -0.96) | static | 88 | A |  |
-| Barrel | Handle | (0.0, 0.46, -3.045) | static | 138 | B |  |
-| Scope | Handle | (0.0076, 0.8726, -1.23) | static | 380 | B |  |
-| ScopeRings | Handle | (0.0, 0.7686, -1.065) | static | 112 | B |  |
-| ScopeLensFront | Scope | (0.0, 0.85, -2.505) | static | 44 | skip |  |
-| ScopeLensRear | Scope | (0.0, 0.85, 0.05) | static | 44 | skip |  |
-| ScopeCapRear | Scope | (0.0, 0.975, 0.08) | rotate about x: open 50 deg up-forward (rest) / closed over the eyepiece (-130 deg) | 72 | B |  |
-| ScopeCapFront | Scope | (0.0, 1.0, -2.54) | rotate about x: open 120 deg (rest) / closed over the objective | 72 | B |  |
-| Bolt | Handle | (0.0, 0.46, -0.52) | rotate about z 70 deg (lift), translate +z 0.55 (back), reverse | 56 | B |  |
-| BoltHandle | Bolt | (0.0, 0.46, -0.52) | rides the bolt (same pivot); lift + pull | 108 | B |  |
-| Mag | Handle | (0.0, 0.21, -0.97) | translate -y (straight down) | 24 | B |  |
-| MagRelease | Handle | (0.0, 0.11, -0.7) | rotate about x, bottom forward 15 deg (paddle) | 12 | B |  |
-| Trigger | Handle | (0.0, 0.17, -0.46) | rotate about x, bottom back 8 deg | 28 | B |  |
-| BipodMount | Handle | (0.0, 0.11, -2.6) | static | 12 | B |  |
-| BipodLegL | Handle | (-0.028, 0.145, -2.62) | rotate about x 90 deg down (deploy) and splay 15 deg out | 84 | B |  |
-| BipodLegR | Handle | (0.028, 0.145, -2.62) | rotate about x 90 deg down (deploy) and splay 15 deg out | 84 | B |  |
-| Round | Mag | (0.0, 0.17, -0.97) | rides in the mag top; shown in the port on the bolt cycle | 62 | B |  |
+| Chassis | Handle | (0.0, 0.19, -1.435) | static | 360 | A | 94117445305183 |
+| Stock | Handle | (0.0, 0.07, 0.78) | static | 68 | A | 95556194132474 |
+| ButtPad | Handle | (0.0, 0.07, 1.425) | static | 12 | B | 138507043521047 |
+| CheekPiece | Stock | (0.0, 0.41, 0.7) | translate +y 0.1 (adjust) | 68 | B | 112192300559074 |
+| Grip | Handle | (0.0, -0.145, -0.005) | static | 68 | B | 111898141006954 |
+| Receiver | Handle | (0.0, 0.49, -0.96) | static | 88 | A | 83978522441898 |
+| Barrel | Handle | (0.0, 0.46, -3.045) | static | 138 | B | 89880050540178 |
+| Scope | Handle | (0.0076, 0.8726, -1.23) | static | 380 | B | 97902988534988 |
+| ScopeRings | Handle | (0.0, 0.7686, -1.065) | static | 112 | B | 126447011124474 |
+| ScopeLensFront | Scope | (0.0, 0.85, -2.505) | static | 44 | skip | 74351465344035 |
+| ScopeLensRear | Scope | (0.0, 0.85, 0.05) | static | 44 | skip | 76058495077078 |
+| ScopeCapRear | Scope | (0.0, 0.975, 0.08) | rotate about x: open 50 deg up-forward (rest) / closed over the eyepiece (-130 deg) | 72 | B | 97892261979501 |
+| ScopeCapFront | Scope | (0.0, 1.0, -2.54) | rotate about x: open 120 deg (rest) / closed over the objective | 72 | B | 124770015300348 |
+| Bolt | Handle | (0.0, 0.46, -0.52) | rotate about z 70 deg (lift), translate +z 0.55 (back), reverse | 56 | B | 136607683603605 |
+| BoltHandle | Bolt | (0.0, 0.46, -0.52) | rides the bolt (same pivot); lift + pull | 108 | B | 133892630006145 |
+| Mag | Handle | (0.0, 0.21, -0.97) | translate -y (straight down) | 24 | B | 117614578363839 |
+| MagRelease | Handle | (0.0, 0.11, -0.7) | rotate about x, bottom forward 15 deg (paddle) | 12 | B | 123124100157515 |
+| Trigger | Handle | (0.0, 0.17, -0.46) | rotate about x, bottom back 8 deg | 28 | B | 108244069885406 |
+| BipodMount | Handle | (0.0, 0.11, -2.6) | static | 12 | B | 108130643530667 |
+| BipodLegL | Handle | (-0.028, 0.145, -2.62) | rotate about x 90 deg down (deploy) and splay 15 deg out | 84 | B | 140161907798301 |
+| BipodLegR | Handle | (0.028, 0.145, -2.62) | rotate about x 90 deg down (deploy) and splay 15 deg out | 84 | B | 112583716974774 |
+| Round | Mag | (0.0, 0.17, -0.97) | rides in the mag top; shown in the port on the bolt cycle | 62 | B | 133129438702722 |
 
 Attachments: `Muzzle` on Barrel at (0.0, 0.46, -4.72); `Grip` on Handle at (0.0, 0.0, -0.0); `ShellEject` on Receiver at (0.12, 0.47, -0.99); `Mag` on Mag at (0.0, -0.26, -0.97); `BoltKnob` on BoltHandle at (0.15, 0.22, -0.5); `AimPoint` on Scope at (0.0, 0.85, 0.08); `ScopeGlare` on Scope at (0.0, 0.85, -2.52)
 
@@ -275,15 +281,15 @@ Attachments: `Muzzle` on Barrel at (0.0, 0.305, -2.84); `Grip` on Handle at (0.0
 - Size L x H x W: [1.95, 0.25, 0.16] studs; 218 tris; 5 meshes, 1 moving.
 - Script check: 5 objects, 218 tris, 0 FAIL, 7 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 5 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Grip | Handle | (0.0, -0.0075, 0.02) | static | 118 | A |  |
-| Blade | Handle | (0.0, -0.02, -0.845) | static | 48 | A |  |
-| Guard | Handle | (0.0, -0.02, -0.4175) | static | 12 | B |  |
-| Pommel | Handle | (0.0, 0.0, 0.46) | static | 12 | B |  |
-| Sheath | Handle | (0.0, 0.0, -0.42) | hidden at rest; for draw / holster: slides off along +z (-f) from the blade | 28 | B |  |
+| Grip | Handle | (0.0, -0.0075, 0.02) | static | 118 | A | 137679589885785 |
+| Blade | Handle | (0.0, -0.02, -0.845) | static | 48 | A | 111824052179505 |
+| Guard | Handle | (0.0, -0.02, -0.4175) | static | 12 | B | 78593531517149 |
+| Pommel | Handle | (0.0, 0.0, 0.46) | static | 12 | B | 120447759922088 |
+| Sheath | Handle | (0.0, 0.0, -0.42) | hidden at rest; for draw / holster: slides off along +z (-f) from the blade | 28 | B | 120645036920227 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Blade at (0.0, 0.0, -1.37); `EdgeMid` on Blade at (0.0, -0.1, -0.87); `Lanyard` on Grip at (0.0, 0.0, 0.36)
 
@@ -291,17 +297,17 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Blade at (0.0, 0.0, 
 - Size L x H x W: [4.08, 0.365, 0.309] studs; 580 tris; 7 meshes, 1 moving.
 - Script check: 7 objects, 580 tris, 0 FAIL, 16 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 7 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Tsuka | Handle | (0.0, 0.0, -0.065) | static | 12 | B |  |
-| Wrap | Handle | (0.0, 0.0, -0.0725) | static | 264 | A |  |
-| Kashira | Handle | (0.0, 0.0, 0.445) | static | 12 | B |  |
-| Tsuba | Handle | (0.0, 0.0, -0.545) | static | 44 | B |  |
-| Habaki | Handle | (0.0, -0.0025, -0.615) | static | 12 | B |  |
-| Blade | Handle | (0.0, 0.0552, -1.8) | static | 156 | A |  |
-| Saya | Handle | (0.0, 0.0, -0.55) | hidden at rest; for draw / sheath: slides along the blade curve (translate -z, follow the sori) | 80 | B |  |
+| Tsuka | Handle | (0.0, 0.0, -0.065) | static | 12 | B | 89647319080878 |
+| Wrap | Handle | (0.0, 0.0, -0.0725) | static | 264 | A | 96989652673049 |
+| Kashira | Handle | (0.0, 0.0, 0.445) | static | 12 | B | 122054948463173 |
+| Tsuba | Handle | (0.0, 0.0, -0.545) | static | 44 | B | 132876601609667 |
+| Habaki | Handle | (0.0, -0.0025, -0.615) | static | 12 | B | 115518144667897 |
+| Blade | Handle | (0.0, 0.0552, -1.8) | static | 156 | A | 105849292075703 |
+| Saya | Handle | (0.0, 0.0, -0.55) | hidden at rest; for draw / sheath: slides along the blade curve (translate -z, follow the sori) | 80 | B | 108835780085004 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Blade at (0.0, 0.13, -3.55); `EdgeMid` on Blade at (0.0, -0.0252, -2.05); `Trail0` on Blade at (0.0, 0.0, -0.75); `Trail1` on Blade at (0.0, 0.13, -3.45)
 
@@ -309,13 +315,13 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Blade at (0.0, 0.13,
 - Size L x H x W: [2.9, 0.258, 0.258] studs; 336 tris; 3 meshes, 0 moving.
 - Script check: 3 objects, 336 tris, 0 FAIL, 1 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 3 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Bat | Handle | (0.0, 0.0, -0.9) | static | 240 | A |  |
-| GripTape | Handle | (0.0, 0.0, -0.065) | static | 48 | B |  |
-| Band | Handle | (0.0, 0.0, -1.685) | static | 48 | B |  |
+| Bat | Handle | (0.0, 0.0, -0.9) | static | 240 | A | 119296360920517 |
+| GripTape | Handle | (0.0, 0.0, -0.065) | static | 48 | B | 98151046054872 |
+| Band | Handle | (0.0, 0.0, -1.685) | static | 48 | B | 88580720857117 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Bat at (0.0, 0.0, -2.35); `SweetSpot` on Bat at (0.0, 0.0, -1.9); `Trail0` on Bat at (0.0, 0.0, -0.95)
 
@@ -323,16 +329,16 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Bat at (0.0, 0.0, -2
 - Size L x H x W: [0.748, 3.727, 2.327] studs; 692 tris; 6 meshes, 0 moving.
 - Script check: 6 objects, 692 tris, 0 FAIL, 6 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 6 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Shield | Handle | (0.0, -0.1, -0.435) | static | 184 | A |  |
-| Rim | Handle | (0.0, -0.1, -0.4334) | static | 320 | B |  |
-| Window | Handle | (0.0, 1.275, -0.4813) | static | 68 | skip |  |
-| Grip | Handle | (0.0, 0.0, -0.22) | static | 52 | B |  |
-| Light | Handle | (0.93, 1.4854, -0.5378) | static | 40 | B |  |
-| LightLens | Light | (0.93, 1.5, -0.6853) | static | 28 | skip |  |
+| Shield | Handle | (0.0, -0.1, -0.435) | static | 184 | A | 113628790910041 |
+| Rim | Handle | (0.0, -0.1, -0.4334) | static | 320 | B | 90803774702893 |
+| Window | Handle | (0.0, 1.275, -0.4813) | static | 68 | skip | 91292931001213 |
+| Grip | Handle | (0.0, 0.0, -0.22) | static | 52 | B | 103820350344812 |
+| Light | Handle | (0.93, 1.4854, -0.5378) | static | 40 | B | 125800445133273 |
+| LightLens | Light | (0.93, 1.5, -0.6853) | static | 28 | skip | 85076532967844 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Bash` on Shield at (0.0, 0.0, -0.55); `LightBeam` on LightLens at (0.93, 1.5, -0.7028)
 
@@ -340,14 +346,14 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Bash` on Shield at (0.0, 0.0
 - Size L x H x W: [0.59, 1.145, 4.11] studs; 600 tris; 4 meshes, 1 moving.
 - Script check: 4 objects, 600 tris, 0 FAIL, 4 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 4 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| RightWrap | Handle | (0.0, 0.0, 0.26) | static | 276 | A |  |
-| RightPad | RightWrap | (0.0, 0.0175, 0.28) | static | 24 | B |  |
-| LeftWrap | Handle | (-3.0, 0.0, -0.0) | follows the left hand (weld to the left arm's grip point) | 276 | A |  |
-| LeftPad | LeftWrap | (-3.0, 0.0175, 0.28) | static | 24 | B |  |
+| RightWrap | Handle | (0.0, 0.0, 0.26) | static | 276 | A | 101865705339989 |
+| RightPad | RightWrap | (0.0, 0.0175, 0.28) | static | 24 | B | 123724094830409 |
+| LeftWrap | Handle | (-3.0, 0.0, -0.0) | follows the left hand (weld to the left arm's grip point) | 276 | A | 72741555659813 |
+| LeftPad | LeftWrap | (-3.0, 0.0175, 0.28) | static | 24 | B | 139383211054396 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `RightKnuckles` on RightPad at (0.0, 0.6, 0.15); `LeftKnuckles` on LeftPad at (-3.0, 0.6, 0.15)
 
@@ -357,15 +363,15 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `RightKnuckles` on RightPad a
 - Size L x H x W: [0.326, 0.51, 0.296] studs; 542 tris; 5 meshes, 2 moving.
 - Script check: 5 objects, 542 tris, 0 FAIL, 6 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 5 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Body | Handle | (0.0, -0.025, -0.0) | static | 166 | A |  |
-| Band | Handle | (0.0, -0.02, -0.0) | static | 44 | B |  |
-| Fuze | Handle | (0.0, 0.215, -0.0075) | static | 72 | B |  |
-| Spoon | Handle | (0.0, 0.27, -0.05) | rotate about x away from the body (flies off when released) | 44 | B |  |
-| Pin | Handle | (0.0, 0.23, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+| Body | Handle | (0.0, -0.025, -0.0) | static | 166 | A | 105108742050719 |
+| Band | Handle | (0.0, -0.02, -0.0) | static | 44 | B | 137147661828196 |
+| Fuze | Handle | (0.0, 0.215, -0.0075) | static | 72 | B | 101588107296408 |
+| Spoon | Handle | (0.0, 0.27, -0.05) | rotate about x away from the body (flies off when released) | 44 | B | 87591480856309 |
+| Pin | Handle | (0.0, 0.23, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B | 96110446397046 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.17, 0.155); `Throw` on Body at (0.0, 0.0, -0.0)
 
@@ -373,15 +379,15 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.1
 - Size L x H x W: [0.326, 0.67, 0.278] studs; 696 tris; 5 meshes, 2 moving.
 - Script check: 5 objects, 696 tris, 0 FAIL, 6 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 5 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Body | Handle | (0.0, -0.085, -0.0) | static | 336 | A |  |
-| Band | Handle | (0.0, -0.08, -0.0) | static | 44 | B |  |
-| Fuze | Handle | (0.0, 0.235, -0.0075) | static | 72 | B |  |
-| Spoon | Handle | (0.0, 0.29, -0.05) | rotate about x away from the body (flies off when released) | 28 | B |  |
-| Pin | Handle | (0.0, 0.25, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+| Body | Handle | (0.0, -0.085, -0.0) | static | 336 | A | 136785365417305 |
+| Band | Handle | (0.0, -0.08, -0.0) | static | 44 | B | 100057634855706 |
+| Fuze | Handle | (0.0, 0.235, -0.0075) | static | 72 | B | 83275385782842 |
+| Spoon | Handle | (0.0, 0.29, -0.05) | rotate about x away from the body (flies off when released) | 28 | B | 139929232520555 |
+| Pin | Handle | (0.0, 0.25, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B | 138214283851657 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.19, 0.165); `SmokeTop` on Body at (0.0, 0.13, -0.0); `SmokeBottom` on Body at (0.0, -0.3, -0.0)
 
@@ -389,15 +395,15 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.1
 - Size L x H x W: [0.286, 0.7, 0.24] studs; 652 tris; 5 meshes, 2 moving.
 - Script check: 5 objects, 652 tris, 0 FAIL, 7 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 5 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Body | Handle | (0.0, -0.08, -0.0) | static | 288 | A |  |
-| Band | Handle | (0.0, -0.35, -0.0) | static | 48 | B |  |
-| Fuze | Handle | (0.0, 0.255, -0.0075) | static | 72 | B |  |
-| Spoon | Handle | (0.0, 0.31, -0.05) | rotate about x away from the body (flies off when released) | 28 | B |  |
-| Pin | Handle | (0.0, 0.27, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+| Body | Handle | (0.0, -0.08, -0.0) | static | 288 | A | 106339266881933 |
+| Band | Handle | (0.0, -0.35, -0.0) | static | 48 | B | 76662467775618 |
+| Fuze | Handle | (0.0, 0.255, -0.0075) | static | 72 | B | 92299871337919 |
+| Spoon | Handle | (0.0, 0.31, -0.05) | rotate about x away from the body (flies off when released) | 28 | B | 130717629009388 |
+| Pin | Handle | (0.0, 0.27, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B | 128456587691794 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.21, 0.145); `Flash` on Body at (0.0, 0.0, -0.0)
 
@@ -405,16 +411,16 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.2
 - Size L x H x W: [0.443, 0.51, 0.406] studs; 560 tris; 6 meshes, 3 moving.
 - Script check: 6 objects, 560 tris, 0 FAIL, 10 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 6 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Body | Handle | (0.0, 0.0, -0.0) | static | 168 | A |  |
-| Band | Handle | (0.0, -0.07, -0.0) | static | 44 | B |  |
-| Backing | Handle | (0.0, 0.03, -0.22) | rotate about x, peel down and off before the throw | 24 | B |  |
-| Fuze | Handle | (0.0, 0.235, -0.0075) | static | 72 | B |  |
-| Spoon | Handle | (0.0, 0.29, -0.05) | rotate about x away from the body (flies off when released) | 36 | B |  |
-| Pin | Handle | (0.0, 0.25, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+| Body | Handle | (0.0, 0.0, -0.0) | static | 168 | A | 99559481718916 |
+| Band | Handle | (0.0, -0.07, -0.0) | static | 44 | B | 74420429858316 |
+| Backing | Handle | (0.0, 0.03, -0.22) | rotate about x, peel down and off before the throw | 24 | B | 100085235081284 |
+| Fuze | Handle | (0.0, 0.235, -0.0075) | static | 72 | B | 82754032788024 |
+| Spoon | Handle | (0.0, 0.29, -0.05) | rotate about x away from the body (flies off when released) | 36 | B | 137520699000629 |
+| Pin | Handle | (0.0, 0.25, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B | 79591832687318 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.25, 0.2); `StickFace` on Body at (0.0, 0.0, -0.21)
 
@@ -422,15 +428,15 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.2
 - Size L x H x W: [0.891, 0.18, 0.588] studs; 400 tris; 5 meshes, 3 moving.
 - Script check: 5 objects, 400 tris, 0 FAIL, 3 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 5 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Body | Handle | (0.0, -0.01, -0.0) | static | 96 | A |  |
-| Plate | Handle | (0.0, 0.1, -0.0) | translate -y 0.025 when stepped on | 48 | B |  |
-| ArmSwitch | Handle | (0.0, 0.0, -0.3) | rotate about z (its own axis) 90 deg: safe / armed | 40 | B |  |
-| SafetyPin | Handle | (0.0, 0.0, 0.3) | translate +z (pull out backward) to arm | 188 | B |  |
-| Indicator | Handle | (0.198, 0.0525, 0.198) | static | 28 | skip |  |
+| Body | Handle | (0.0, -0.01, -0.0) | static | 96 | A | 82426118174988 |
+| Plate | Handle | (0.0, 0.1, -0.0) | translate -y 0.025 when stepped on | 48 | B | 109247218022939 |
+| ArmSwitch | Handle | (0.0, 0.0, -0.3) | rotate about z (its own axis) 90 deg: safe / armed | 40 | B | 126508432385294 |
+| SafetyPin | Handle | (0.0, 0.0, 0.3) | translate +z (pull out backward) to arm | 188 | B | 138474216093991 |
+| Indicator | Handle | (0.198, 0.0525, 0.198) | static | 28 | skip | 88012123016104 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Trigger` on Plate at (0.0, 0.1, -0.0); `Blast` on Body at (0.0, 0.0, -0.0)
 
@@ -438,18 +444,18 @@ Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Trigger` on Plate at (0.0, 0
 - Size L x H x W: [0.52, 0.475, 0.27] studs; 248 tris; 9 meshes, 7 moving.
 - Script check: 9 objects, 248 tris, 0 FAIL, 14 WARN.
 - Grade: pending (HQ grader).
-- Mesh ids: pending upload.
+- Mesh ids: uploaded 2026-10-30 (Import 3D, Creator gunsy funsy, group 102028987, ownership checked on economy API); 9 meshes.
 
 | Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
 |---|---|---|---|---|---|---|
-| Body | Handle | (0.0, -0.28, -0.0) | static | 40 | A |  |
-| Lid | Handle | (-0.12, -0.105, -0.0) | rotate about z (the case length) 110 deg up-back on its rear hinge | 12 | A |  |
-| Cross | Body | (0.12, -0.315, -0.0) | static | 44 | B |  |
-| Handle | Lid | (0.0, -0.095, -0.0) | rotate about x 90 deg to fold flat on the lid | 28 | B |  |
-| LatchL | Body | (0.13, -0.165, 0.215) | rotate about z 120 deg outward-down to unlatch | 12 | B |  |
-| LatchR | Body | (0.13, -0.165, -0.215) | rotate about z 120 deg outward-down to unlatch | 12 | B |  |
-| Injector | Body | (-0.05, -0.355, 0.08) | the hand takes it out: free move; stab = translate along -z | 32 | B |  |
-| InjectorCap | Injector | (-0.05, -0.355, -0.09) | pull off along -z before use | 32 | B |  |
-| Bandage | Body | (0.0, -0.345, -0.0) | the hand takes it out; unroll = rotate about x | 36 | B |  |
+| Body | Handle | (0.0, -0.28, -0.0) | static | 40 | A | 72433472575071 |
+| Lid | Handle | (-0.12, -0.105, -0.0) | rotate about z (the case length) 110 deg up-back on its rear hinge | 12 | A | 78883312302130 |
+| Cross | Body | (0.12, -0.315, -0.0) | static | 44 | B | 123854199118956 |
+| Handle | Lid | (0.0, -0.095, -0.0) | rotate about x 90 deg to fold flat on the lid | 28 | B | 111354513516794 |
+| LatchL | Body | (0.13, -0.165, 0.215) | rotate about z 120 deg outward-down to unlatch | 12 | B | 127051280880731 |
+| LatchR | Body | (0.13, -0.165, -0.215) | rotate about z 120 deg outward-down to unlatch | 12 | B | 84587605521508 |
+| Injector | Body | (-0.05, -0.355, 0.08) | the hand takes it out: free move; stab = translate along -z | 32 | B | 95579931490607 |
+| InjectorCap | Injector | (-0.05, -0.355, -0.09) | pull off along -z before use | 32 | B | 82521893511702 |
+| Bandage | Body | (0.0, -0.345, -0.0) | the hand takes it out; unroll = rotate about x | 36 | B | 117280858561724 |
 
 Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `LidOpen` on Lid at (0.12, -0.085, -0.0); `InjectorTip` on Injector at (-0.05, -0.355, 0.23)

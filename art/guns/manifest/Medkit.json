@@ -40,7 +40,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "case tray + base rim"
+   "note": "case tray + base rim",
+   "mesh_id": "rbxassetid://72433472575071"
   },
   {
    "name": "Lid",
@@ -72,7 +73,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "flat lid"
+   "note": "flat lid",
+   "mesh_id": "rbxassetid://78883312302130"
   },
   {
    "name": "Cross",
@@ -104,7 +106,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "cream cross on the front"
+   "note": "cream cross on the front",
+   "mesh_id": "rbxassetid://123854199118956"
   },
   {
    "name": "Handle",
@@ -136,7 +139,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "carry handle across the lid, feet over the side walls"
+   "note": "carry handle across the lid, feet over the side walls",
+   "mesh_id": "rbxassetid://111354513516794"
   },
   {
    "name": "LatchL",
@@ -168,7 +172,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://127051280880731"
   },
   {
    "name": "LatchR",
@@ -200,7 +205,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://84587605521508"
   },
   {
    "name": "Injector",
@@ -232,7 +238,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "auto-injector"
+   "note": "auto-injector",
+   "mesh_id": "rbxassetid://95579931490607"
   },
   {
    "name": "InjectorCap",
@@ -264,7 +271,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://82521893511702"
   },
   {
    "name": "Bandage",
@@ -296,7 +304,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "bandage roll"
+   "note": "bandage roll",
+   "mesh_id": "rbxassetid://117280858561724"
   }
  ],
  "attachments": {
@@ -342,5 +351,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/Medkit_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

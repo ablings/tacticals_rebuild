@@ -40,7 +40,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "A",
-   "note": "one lathe: knob, handle, taper, barrel, rounded end"
+   "note": "one lathe: knob, handle, taper, barrel, rounded end",
+   "mesh_id": "rbxassetid://119296360920517"
   },
   {
    "name": "GripTape",
@@ -72,7 +73,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "grip tape sleeve over the handle"
+   "note": "grip tape sleeve over the handle",
+   "mesh_id": "rbxassetid://98151046054872"
   },
   {
    "name": "Band",
@@ -104,7 +106,8 @@
    "material": "SmoothPlastic",
    "visible_at_rest": true,
    "wrap": "B",
-   "note": "burned band"
+   "note": "burned band",
+   "mesh_id": "rbxassetid://88580720857117"
   }
  ],
  "attachments": {
@@ -158,5 +161,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/Bat_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }

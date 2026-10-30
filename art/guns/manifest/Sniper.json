@@ -39,7 +39,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "aluminium chassis: mag well, trigger guard, U-channel fore-end with slots through"
+   "note": "aluminium chassis: mag well, trigger guard, U-channel fore-end with slots through",
+   "mesh_id": "rbxassetid://94117445305183"
   },
   {
    "name": "Stock",
@@ -70,7 +71,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "skeleton stock"
+   "note": "skeleton stock",
+   "mesh_id": "rbxassetid://95556194132474"
   },
   {
    "name": "ButtPad",
@@ -101,7 +103,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://138507043521047"
   },
   {
    "name": "CheekPiece",
@@ -132,7 +135,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://112192300559074"
   },
   {
    "name": "Grip",
@@ -163,7 +167,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://111898141006954"
   },
   {
    "name": "Receiver",
@@ -194,7 +199,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "A",
-   "note": "octagonal receiver, ejection port (right), top rail"
+   "note": "octagonal receiver, ejection port (right), top rail",
+   "mesh_id": "rbxassetid://83978522441898"
   },
   {
    "name": "Barrel",
@@ -225,7 +231,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "heavy barrel (free-floated in the channel), three-port brake"
+   "note": "heavy barrel (free-floated in the channel), three-port brake",
+   "mesh_id": "rbxassetid://89880050540178"
   },
   {
    "name": "Scope",
@@ -256,7 +263,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "long scope: eyepiece, tube, turrets, objective bell"
+   "note": "long scope: eyepiece, tube, turrets, objective bell",
+   "mesh_id": "rbxassetid://97902988534988"
   },
   {
    "name": "ScopeRings",
@@ -287,7 +295,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://126447011124474"
   },
   {
    "name": "ScopeLensFront",
@@ -318,7 +327,8 @@
    ],
    "material": "Glass",
    "wrap": "skip",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://74351465344035"
   },
   {
    "name": "ScopeLensRear",
@@ -349,7 +359,8 @@
    ],
    "material": "Glass",
    "wrap": "skip",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://76058495077078"
   },
   {
    "name": "ScopeCapRear",
@@ -380,7 +391,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://97892261979501"
   },
   {
    "name": "ScopeCapFront",
@@ -411,7 +423,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://124770015300348"
   },
   {
    "name": "Bolt",
@@ -442,7 +455,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "bolt body + rear shroud"
+   "note": "bolt body + rear shroud",
+   "mesh_id": "rbxassetid://136607683603605"
   },
   {
    "name": "BoltHandle",
@@ -473,7 +487,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "handle + ball knob (right)"
+   "note": "handle + ball knob (right)",
+   "mesh_id": "rbxassetid://133892630006145"
   },
   {
    "name": "Mag",
@@ -504,7 +519,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "detachable 5-round box"
+   "note": "detachable 5-round box",
+   "mesh_id": "rbxassetid://117614578363839"
   },
   {
    "name": "MagRelease",
@@ -535,7 +551,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://123124100157515"
   },
   {
    "name": "Trigger",
@@ -566,7 +583,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://108244069885406"
   },
   {
    "name": "BipodMount",
@@ -597,7 +615,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://108130643530667"
   },
   {
    "name": "BipodLegL",
@@ -628,7 +647,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": "telescoping leg + foot"
+   "note": "telescoping leg + foot",
+   "mesh_id": "rbxassetid://140161907798301"
   },
   {
    "name": "BipodLegR",
@@ -659,7 +679,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ""
+   "note": "",
+   "mesh_id": "rbxassetid://112583716974774"
   },
   {
    "name": "Round",
@@ -690,7 +711,8 @@
    ],
    "material": "SmoothPlastic",
    "wrap": "B",
-   "note": ".308 round"
+   "note": ".308 round",
+   "mesh_id": "rbxassetid://133129438702722"
   }
  ],
  "attachments": {
@@ -767,5 +789,11 @@
    2.0
   ],
   "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ },
+ "upload": {
+  "date": "2026-10-30",
+  "creator": "group gunsy funsy (102028987)",
+  "method": "Studio Import 3D of art/guns/fbx/Sniper_roblox.fbx",
+  "import_note": "FBX imports at 100x (centimetres): set each MeshPart.Size = manifest size. Imported mesh data is turned 180 deg about Y vs this manifest frame: place each MeshPart at CFrame.new(bbox_centre) * CFrame.Angles(0, math.pi, 0)."
  }
 }
