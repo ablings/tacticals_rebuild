@@ -72,6 +72,9 @@ All clips key only the joints they own (other poses are Weight 0), so they layer
     weight 0 on everything but the arms (and chest if needed) and re-publish.
 23. **Body shape.** Players are normalised (PlayerRegistry.normalizeAppearance) to HipHeight 2.000; bots and the authoring rig
     are 2.192. Every ground contact authored on the bot body sinks 0.19-0.21 on players. Recommended: normalise players to the
-    bots' description (BodyTypeScale 0.3, ProportionScale 1) so one body is used everywhere (decision for Edward).
+    bots' description (BodyTypeScale 0.3, ProportionScale 1) so one body is used everywhere.
+    **DECIDED by Edward (2026-10-30): players use the bots' body shape.** Systems: change PlayerRegistry.normalizeAppearance to
+    the bot description (BotManager.buildRig's default HumanoidDescription: HipHeight 2.192), then check in Play that a
+    player's HipHeight reads 2.192. The animations stay as authored (they are fitted to that body).
 24. **Vault.** The vault's off hand plants for a 3.0 top; the arena's low walls are 3.4. With VaultClearance 2.3 the legs clear
     better; a per-height plant needs the code to pass the top height (or lift the root by top - 3.0 during BlindOver).
