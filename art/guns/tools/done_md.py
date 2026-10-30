@@ -23,6 +23,13 @@ L = ["# Guns: remodel status (modeler)", "",
      "  after the part** (Part0 = parent part, Part1 = the part, C0/C1 at the pivot, no rotation: joint axes = gun axes).",
      "- WrapChannel: `A` = body surfaces, `B` = details, `skip` = glass (set WrapSkip). Material SmoothPlastic, Glass for lenses.",
      "- Rebuild one gun: `blender -b --factory-startup --python art/guns/tools/build_gun.py -- <Gun>` (spec in tools/specs/).", "",
+     "## Studio import / upload (not done yet)",
+     "- Meshes are **not uploaded yet**: Creator Hub only takes images/audio/video, and AssetService:CreateAssetAsync answers",
+     "  \"not available yet\" in Studio (tested 2026-10-30). Upload = Studio Import 3D of `art/guns/fbx/<Gun>_roblox.fbx`",
+     "  (Creator = gunsy funsy, Insert Using Scene Position), which needs a session with computer use (clicks in the dialog).",
+     "- After import: measure ScaleCube (B1), check Marker orientation (B2), delete both, then build the Tool from the manifest:",
+     "  invisible Handle at the origin, each MeshPart placed at its bbox_centre, Motor6D named after the part at its pivot,",
+     "  colour/material/WrapChannel from the manifest, attachments from the manifest (Muzzle keeps the old flash children).", "",
      "## Guns"]
 for g in G:
     m = json.load(open(os.path.join(R, "art", "guns", "manifest", g + ".json")))
