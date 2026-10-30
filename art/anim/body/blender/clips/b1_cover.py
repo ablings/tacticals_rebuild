@@ -44,10 +44,10 @@ def look(name, sign, crouched=False):
 
 
 # ---------------------------------------------------------------------------------------------------- low cover
-CROUCH_ROOT = dict(x=0.0, y=-1.66, z=0.26)
+CROUCH_ROOT = dict(x=0.0, y=-1.72, z=0.26)
 CROUCH_PITCH = -30
 CROUCH_CHEST, CROUCH_HEAD = -18, 25
-CROUCH_FEET = {"R": dict(x=0.2, z=-0.6, yaw=-14), "L": dict(x=-0.2, z=0.2, yaw=12, pitch=0)}
+CROUCH_FEET = {"R": dict(x=0.2, z=-0.6, yaw=-14, pitch=-14), "L": dict(x=-0.2, z=0.2, yaw=12, pitch=-24)}
 
 
 def crouch_legs(c, t, s=0.0, pitch=-30, ease=E):
@@ -99,13 +99,13 @@ def shuffle(name, length, crouched):
             t0 = i * q
             sd = 1 if i % 2 == 0 else -1
             c.root(t0, y=base_y, z=z, pitch=pitch, roll=sd * 0.8, ease=E)
-            c.root(t0 + q * 0.5, y=base_y + 0.05, z=z, pitch=pitch, roll=0, ease=E)
+            c.root(t0 + q * 0.5, y=base_y + (0.02 if crouched else 0.05), z=z, pitch=pitch, roll=0, ease=E)
         c.root(L, y=base_y, z=z, pitch=pitch, roll=0.8, ease=E)
         for side, starts in (("L", [i * q for i in range(0, n, 2)]), ("R", [i * q for i in range(1, n, 2)])):
-            yaw = (CROUCH_FEET[side]["yaw"] if crouched else (6 if side == "L" else -6))
+            yaw = (CROUCH_FEET[side]["yaw"] if crouched else 0)
             dz = (CROUCH_FEET[side]["z"] if crouched else (-0.08 if side == "L" else 0.08))
             # lane: the planted foot travels +x from its outer edge to its inner edge (x relative to its rest ankle)
-            x_in = (0.0 if side == "L" else sweep) + (CROUCH_FEET[side]["x"] if crouched else 0.0)
+            x_in = (-0.05 if side == "L" else sweep + 0.05) + (CROUCH_FEET[side]["x"] if crouched else 0.0)
             x_out = x_in - sweep
             keys = []
             for t0 in starts:
@@ -124,32 +124,34 @@ def shuffle(name, length, crouched):
 
 
 # ---------------------------------------------------------------------------------------------------- brace
-def brace():
-    """near miss: tuck in 3 f (Quart Out), moving hold, back by 0.75. Upper body only (works tall and crouched)."""
-    c = Clip("CoverBrace", 0.75, loop=False, priority="Action4", joints=["UpperTorso", "Head"] + ARMS)
-    f = lambda n: n / 60.0
-    spine(c, 0, pitch=0, ease="QuartOut")
-    head(c, 0, pitch=-3, ease="QuartOut")
-    low_ready(c, 0, 0, ease="QuartOut")
-    # f3: flinch peak
-    spine(c, f(3), pitch=-11, yaw=4, roll=-3, ease=E)
-    head(c, f(4), pitch=-15, yaw=-6, roll=4, ease=E)
-    c.gun_at_wrist(f(3), (0.3, 0.6, -0.95), (-50, 60, -25), ease=E)
-    c.pole("R", f(3), (1.9, 0.6, -0.4), ease=E)
-    c.hand_free("L", f(3), (-0.75, 1.3, -0.75), (60, -20, 30), ease=E)  # off forearm up, shielding the head
-    # f20: moving hold
-    spine(c, f(20), pitch=-12, yaw=4.5, roll=-3.4, ease="CubicOut")
-    head(c, f(21), pitch=-16, yaw=-6, roll=4, ease="CubicOut")
-    c.gun_at_wrist(f(20), (0.31, 0.6, -0.97), (-49, 60, -25), ease="CubicOut")
-    c.pole("R", f(20), (1.9, 0.6, -0.4), ease="CubicOut")
-    c.hand_free("L", f(20), (-0.75, 1.27, -0.77), (58, -20, 30), ease="CubicOut")
-    # f45: back to the low ready
-    spine(c, f(45), pitch=0, ease=E)
-    head(c, f(45), pitch=-3, ease=E)
-    low_ready(c, f(45), 0)
-    for side in ("L",):
-        c.free(side, 0, 1.0)
-    return c
+def brace(name="CoverBrace", crouched=False):
+    """near miss: tuck in 3 f (Quart Out), moving hold, back by 0.75. Upper body only. Starts and ends on its stance's own
+    chest / head / arm values (CoverBraceCrouch for low cover: the crouch chest -18 / head +25 under the flinch), so it
+    never pops the base pose."""
+    def build():
+        c = Clip(name, 0.75, loop=False, priority="Action4", joints=["UpperTorso", "Head"] + ARMS)
+        f = lambda n: n / 60.0
+        sp0, hd0 = (CROUCH_CHEST, CROUCH_HEAD) if crouched else (0, -3)
+        wr = (0.3, 0.85, -1.05) if crouched else (0.3, 0.75, -1.0)
+        spine(c, 0, pitch=sp0, ease="QuartOut")
+        head(c, 0, pitch=hd0, ease="QuartOut")
+        low_ready(c, 0, 0, wrist=wr, ease="QuartOut")
+        spine(c, f(3), pitch=sp0 - 11, yaw=4, roll=-3, ease=E)
+        head(c, f(4), pitch=hd0 - 12, yaw=-6, roll=4, ease=E)
+        c.gun_at_wrist(f(3), (wr[0], wr[1] - 0.15, wr[2] + 0.05), (-50, 60, -25), ease=E)
+        c.pole("R", f(3), (1.9, 0.6, -0.4), ease=E)
+        c.hand_free("L", f(3), (-0.75, 1.3, -0.75), (60, -20, 30), ease=E)  # off forearm up, shielding the head
+        spine(c, f(20), pitch=sp0 - 12, yaw=4.5, roll=-3.4, ease="CubicOut")
+        head(c, f(21), pitch=hd0 - 13, yaw=-6, roll=4, ease="CubicOut")
+        c.gun_at_wrist(f(20), (wr[0] + 0.01, wr[1] - 0.15, wr[2] + 0.03), (-49, 60, -25), ease="CubicOut")
+        c.pole("R", f(20), (1.9, 0.6, -0.4), ease="CubicOut")
+        c.hand_free("L", f(20), (-0.75, 1.27, -0.77), (58, -20, 30), ease="CubicOut")
+        spine(c, f(45), pitch=sp0, ease=E)
+        head(c, f(45), pitch=hd0, ease=E)
+        low_ready(c, f(45), 0, wrist=wr)
+        c.free("L", 0, 1.0)
+        return c
+    return build
 
 
 CLIPS = {
@@ -162,7 +164,8 @@ CLIPS = {
     "CoverLookNegCrouch": look("CoverLookNegCrouch", -1, True),
     "CoverShuffleTall": shuffle("CoverShuffleTall", 0.60, False),
     "CoverShuffleCrouch": shuffle("CoverShuffleCrouch", 0.72, True),
-    "CoverBrace": brace,
+    "CoverBrace": brace("CoverBrace", False),
+    "CoverBraceCrouch": brace("CoverBraceCrouch", True),
 }
 MIRROR = {"CoverIdleTall": "CoverIdleTallLeft", "CoverCrouch": "CoverCrouchLeft", "CoverCrouchPeek": "CoverCrouchPeekLeft",
           "CoverShuffleTall": "CoverShuffleTallRight", "CoverShuffleCrouch": "CoverShuffleCrouchRight"}

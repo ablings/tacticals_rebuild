@@ -10,7 +10,7 @@ f = lambda n: n / 60.0
 
 def cycle(name, length, speed, heading, steps, root_y, pitch, lift, contact, bob, priority="Movement", spine_p=0.0,
           width=0.0, depth=None, hip_yaw=4.0, hip_roll=2.5, counter=True, joints=None, arms=None, foot_yaw=0.0,
-          heel=0.0):
+          heel=0.0, plant_p=0.0):
     """A stepping cycle travelling at `speed` toward `heading` (deg, 0 = forward, +90 = the character's left). R foot down
     at even steps. A planted foot moves under the body at exactly `speed` from 1.5 f before touch-down to 1.5 f after lift.
     depth = {"R": dz, "L": dz} stagger for side steps (feet pass in front of / behind each other, never through).
@@ -50,8 +50,8 @@ def cycle(name, length, speed, heading, steps, root_y, pitch, lift, contact, bob
                 def at(u, y, p):  # u = position along the travel axis relative to the foot's centre (+ = ahead)
                     return {"x": sx + dx * u, "z": sz + dz * u, "y": y, "p": p}
                 k += [(t0 - e1, at(sweep / 2 + speed * e1, 0.05, heel + 4), "Linear"),
-                      (t0, at(sweep / 2, 0.0, heel), "Linear"),
-                      (t0 + tc, at(-sweep / 2, 0.0, 0), "Linear"),
+                      (t0, at(sweep / 2, 0.0, heel + plant_p), "Linear"),
+                      (t0 + tc, at(-sweep / 2, 0.0, plant_p), "Linear"),
                       (t0 + tc + e1, at(-sweep / 2 - speed * e1, 0.07, -22), "CubicInOut"),
                       (t0 + tc + (2 * per - tc) * 0.45, at(0.0, lift, -8), "CubicInOut")]
             k = [((t % L) if (t < 0 or t >= L) else t, v, e) for t, v, e in k]
@@ -117,7 +117,7 @@ CLIPS = {
     "MoveSprintPistol": cycle("MoveSprintPistol", 0.50, 20.0, 0, 2, -0.46, -12, 0.75, 0.24, 0.09, spine_p=4, width=0.04, hip_yaw=6,
                               hip_roll=5, joints=LEGS + ARMS_UP, arms=sprint_arms_pistol, heel=6),
     "MoveCrouchIdle": crouch_idle,
-    "MoveCrouchWalk": cycle("MoveCrouchWalk", 1.2, 6.0, 0, 4, -1.0, -14, 0.24, 1.0, 0.02, priority="Action", spine_p=6, width=0.2, heel=10),
+    "MoveCrouchWalk": cycle("MoveCrouchWalk", 1.2, 6.0, 0, 4, -1.0, -14, 0.24, 1.0, 0.02, priority="Action", spine_p=6, width=0.2, heel=0, plant_p=-16),
     "MoveSlide": slide,
 }
 MIRROR = {}
