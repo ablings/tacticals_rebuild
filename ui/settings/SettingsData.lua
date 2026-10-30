@@ -18,8 +18,11 @@ return {
 		-- Ranges marked (guess) are not confirmed yet.
 		{ name = "Video", glyph = "🖥", icon = "video", sections = {
 			{ title = "Performance", rows = {
-				{ kind = "toggle", name = "Optimized Lighting", icon = "lightbulb", value = false, desc = "Uses simpler lighting so the game runs faster on older devices" },
+				{ kind = "toggle", name = "Optimized Lighting", icon = "lightbulb", value = false, desc = "Turns off shadows (sun and lamps) and glow so the game runs faster on older devices" }, -- [PERFSET] text
 				{ kind = "toggle", name = "Optimized Textures", icon = "texture", gen = "row_texture", value = false, desc = "Swaps detailed surface images for plain colours to save memory" },
+				{ kind = "toggle", name = "Fewer Lights", icon = "lightbulb", value = false, desc = "Turns off lamps far away from you so the game runs faster" }, -- [PERFSET] 
+				{ kind = "toggle", name = "Low Effects", icon = "muzzle", value = false, desc = "Smaller explosions: fewer sparks and no flying debris. Smoke stays the same" }, -- [PERFSET] 
+				{ kind = "toggle", name = "Hide Far Screens", icon = "window", value = false, desc = "Signs and screens far away stop drawing" }, -- [PERFSET] 
 			} },
 			{ title = "Camera", rows = {
 				{ kind = "slider", name = "Sensitivity", icon = "camera", min = 5, max = 400, step = 5, arrow = 50, value = 100, fmt = pct, desc = "How fast the camera turns when you move the mouse or stick" },

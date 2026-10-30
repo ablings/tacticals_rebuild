@@ -142,3 +142,8 @@ Keep each knob a config value with a flag, so a level never shows MORE than as b
 - Open: the 2-client run (per-process memory, network per player) and Device Emulator pass need a session with desktop control
   (set the player count box to 2 once; then `multiplayer.py start`), and a staged FPS run where no other agent takes the
   foreground.
+
+## Follow-up: in-game Performance settings (2026-10-30)
+Edward: "now with the in game settings what can we turn off to lower this". Built: notes/perf_settings_1030.md (5 rows in
+Settings > Video > Performance, all off by default). Graphics 21: lobby hub 1,993k tris / 2,318 batches -> 186k / 162 with all on;
+House 304k / 648 -> 76k / 180. Not live yet: ships with the next port.

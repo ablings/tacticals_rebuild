@@ -1,0 +1,16 @@
+OFF  : GlobalShadows true | lamp shadows 23 | lights on 80 off 3 | hidden decals/textures 3 | SurfaceAppearances 494 | screens capped 0 | bloom true
+      fb 308x264 | view 38k tris 80 draws | all ~304k tris 648 batches | gpu -nan(ind)ms render-thread 3.5ms | mem tex 151 MB
+OptimizedLighting: GlobalShadows false | lamp shadows 0 | lights on 80 off 3 | hidden decals/textures 3 | SurfaceAppearances 494 | screens capped 0 | bloom false
+      fb 308x264 | view 38k tris 80 draws | all ~77k tris 171 batches | gpu -nan(ind)ms render-thread 3.4ms | mem tex 153 MB
+OptimizedTextures: GlobalShadows true | lamp shadows 23 | lights on 80 off 3 | hidden decals/textures 1412 | SurfaceAppearances 0 | screens capped 0 | bloom true
+      fb 308x264 | view 38k tris 86 draws | all ~322k tris 675 batches | gpu -nan(ind)ms render-thread 3.8ms | mem tex 127 MB
+FewerLights: GlobalShadows true | lamp shadows 23 | lights on 36 off 47 | hidden decals/textures 3 | SurfaceAppearances 494 | screens capped 0 | bloom true
+      fb 308x264 | view 38k tris 80 draws | all ~304k tris 648 batches | gpu -nan(ind)ms render-thread 3.6ms | mem tex 127 MB
+HideFarScreens: GlobalShadows true | lamp shadows 23 | lights on 80 off 3 | hidden decals/textures 3 | SurfaceAppearances 494 | screens capped 120 | bloom true
+      fb 308x264 | view 39k tris 89 draws | all ~307k tris 668 batches | gpu -nan(ind)ms render-thread 3.6ms | mem tex 127 MB
+ALL  : GlobalShadows false | lamp shadows 0 | lights on 36 off 47 | hidden decals/textures 1412 | SurfaceAppearances 0 | screens capped 120 | bloom false
+      fb 308x264 | view 38k tris 86 draws | all ~76k tris 180 batches | gpu -nan(ind)ms render-thread 3.5ms | mem tex 127 MB
+LowEffects=false: debris chunks 4, shadowed flash lights 1 |  view 39k tris 91 draws | all ~446k tris 1033 batches 
+   frag frames: frames 1300 over 21.7s | avg 60.0 fps (16.67 ms) | 1%low 54.2 fps (p99 18.4 ms) | p99.9 19.4 ms | max 20.2 ms | >50ms 0
+LowEffects=true: debris chunks 0, shadowed flash lights 0 |  view 38k tris 100 draws | all ~499k tris 1298 batches 
+   frag frames: frames 1298 over 21.6s | avg 60.0 fps (16.67 ms) | 1%low 53.8 fps (p99 18.6 ms) | p99.9 19.0 ms | max 20.0 ms | >50ms 0

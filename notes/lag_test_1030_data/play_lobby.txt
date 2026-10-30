@@ -1,0 +1,14 @@
+OFF  : GlobalShadows true | lamp shadows 14 | lights on 46 off 102 | hidden decals/textures 1154 | SurfaceAppearances 1603 | screens capped 9 | bloom false
+      fb 308x264 | view 107k tris 115 draws | all ~1993k tris 2318 batches | gpu -nan(ind)ms render-thread 5.2ms | mem tex 130 MB
+OptimizedLighting: GlobalShadows false | lamp shadows 0 | lights on 46 off 102 | hidden decals/textures 1154 | SurfaceAppearances 1603 | screens capped 9 | bloom false
+      fb 308x264 | view 107k tris 115 draws | all ~200k tris 197 batches | gpu -nan(ind)ms render-thread 4.0ms | mem tex 130 MB
+OptimizedTextures: GlobalShadows true | lamp shadows 14 | lights on 46 off 102 | hidden decals/textures 2751 | SurfaceAppearances 0 | screens capped 9 | bloom false
+      fb 308x264 | view 93k tris 89 draws | all ~1968k tris 2264 batches | gpu -nan(ind)ms render-thread 5.0ms | mem tex 126 MB
+FewerLights: GlobalShadows true | lamp shadows 14 | lights on 18 off 130 | hidden decals/textures 1154 | SurfaceAppearances 1603 | screens capped 9 | bloom false
+      fb 308x264 | view 107k tris 115 draws | all ~1305k tris 1518 batches | gpu -nan(ind)ms render-thread 4.9ms | mem tex 126 MB
+HideFarScreens: GlobalShadows true | lamp shadows 14 | lights on 46 off 102 | hidden decals/textures 1154 | SurfaceAppearances 1603 | screens capped 376 | bloom false
+      fb 308x264 | view 106k tris 106 draws | all ~1991k tris 2304 batches | gpu -nan(ind)ms render-thread 5.2ms | mem tex 126 MB
+ALL  : GlobalShadows false | lamp shadows 0 | lights on 18 off 130 | hidden decals/textures 2751 | SurfaceAppearances 0 | screens capped 376 | bloom false
+      fb 308x264 | view 92k tris 80 draws | all ~186k tris 162 batches | gpu -nan(ind)ms render-thread 4.1ms | mem tex 126 MB
+BACK OFF: GlobalShadows true | lamp shadows 14 | lights on 46 off 102 | hidden decals/textures 1154 | SurfaceAppearances 1603 | screens capped 9 | bloom false
+      fb 308x264 | view 109k tris 122 draws | all ~2000k tris 2337 batches | gpu -nan(ind)ms render-thread 5.2ms | mem tex 126 MB
