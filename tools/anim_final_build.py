@@ -277,6 +277,17 @@ function controller.Inspect(): boolean
     return true
 end
 
+-- Studio tests: which of the gun's clips are playing, and which exist
+function controller._AnimDebug()
+    local playing, have = {}, {}
+    for k, t in (equipped and equipped.tracks or {}) do
+        table.insert(have, k)
+        if t.IsPlaying then table.insert(playing, k) end
+    end
+    table.sort(playing) table.sort(have)
+    return { playing = playing, have = have, holstering = equipped ~= nil and equipped.holsterAt1030 ~= nil, ammo = getAmmo() }
+end
+
 -- Holster: play the gun's Holster clip and call done() when it ends (no shot meanwhile). false = no clip: switch at once.
 function controller.Holster(done): boolean
     if AF1030.Enabled == false or not AF1030.Weapon.HolsterWait or not equipped or not isAlive() then return false end
@@ -349,6 +360,48 @@ WEAPONEFFECTS = [
 '''),
     E('''            flinch(endPos)
 ''', '''            flinch(endPos, direction.Unit) -- [ANIMFINAL]
+'''),
+    # the new guns' shell: out of the ShellEject port, the gun's own round mesh (GUNSV2 tools have both)
+    E('''            local casing = Instance.new("Part")
+            casing.Name = "Casing"
+            casing.Shape = Enum.PartType.Cylinder
+            casing.Size = Vector3.new(0.18, 0.07, 0.07)
+            casing.Color = Color3.fromRGB(196, 156, 72)
+            casing.Material = Enum.Material.Metal
+            casing.Reflectance = 0.2
+            casing.CanQuery = false
+            casing.CanTouch = false
+            casing.CFrame = handle.CFrame * CFrame.new((math.random() - 0.5) * 0.2, 0.3, -0.3)
+            casing.Parent = workspace
+''', '''            -- [ANIMFINAL] a GUNSV2 gun: its own shell mesh (Round / LoadShell) out of its ShellEject attachment
+            local eject1030 = tool:FindFirstChild("ShellEject", true)
+            local round1030 = tool:FindFirstChild("Round", true) or tool:FindFirstChild("LoadShell", true)
+            local casing
+            if round1030 and round1030:IsA("BasePart") and eject1030 and eject1030:IsA("Attachment") then
+                casing = round1030:Clone()
+                casing:ClearAllChildren()
+                for k in casing:GetAttributes() do casing:SetAttribute(k, nil) end
+                casing.Name = "Casing"
+                casing.Transparency = 0
+                casing.Massless = false
+                casing.CanCollide = true
+                casing.CanQuery = false
+                casing.CanTouch = false
+                casing.Anchored = false
+                casing.CFrame = eject1030.WorldCFrame
+            else
+                casing = Instance.new("Part")
+                casing.Name = "Casing"
+                casing.Shape = Enum.PartType.Cylinder
+                casing.Size = Vector3.new(0.18, 0.07, 0.07)
+                casing.Color = Color3.fromRGB(196, 156, 72)
+                casing.Material = Enum.Material.Metal
+                casing.Reflectance = 0.2
+                casing.CanQuery = false
+                casing.CanTouch = false
+                casing.CFrame = handle.CFrame * CFrame.new((math.random() - 0.5) * 0.2, 0.3, -0.3)
+            end
+            casing.Parent = workspace
 '''),
 ]
 

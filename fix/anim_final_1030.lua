@@ -1514,6 +1514,49 @@ local function flinch(position: Vector3, dir: Vector3?) -- [ANIMFINAL] dir = the
 ]=], [=[
 			flinch(endPos, direction.Unit) -- [ANIMFINAL]
 ]=] },
+		{ [=[
+			local casing = Instance.new("Part")
+			casing.Name = "Casing"
+			casing.Shape = Enum.PartType.Cylinder
+			casing.Size = Vector3.new(0.18, 0.07, 0.07)
+			casing.Color = Color3.fromRGB(196, 156, 72)
+			casing.Material = Enum.Material.Metal
+			casing.Reflectance = 0.2
+			casing.CanQuery = false
+			casing.CanTouch = false
+			casing.CFrame = handle.CFrame * CFrame.new((math.random() - 0.5) * 0.2, 0.3, -0.3)
+			casing.Parent = workspace
+]=], [=[
+			-- [ANIMFINAL] a GUNSV2 gun: its own shell mesh (Round / LoadShell) out of its ShellEject attachment
+			local eject1030 = tool:FindFirstChild("ShellEject", true)
+			local round1030 = tool:FindFirstChild("Round", true) or tool:FindFirstChild("LoadShell", true)
+			local casing
+			if round1030 and round1030:IsA("BasePart") and eject1030 and eject1030:IsA("Attachment") then
+				casing = round1030:Clone()
+				casing:ClearAllChildren()
+				for k in casing:GetAttributes() do casing:SetAttribute(k, nil) end
+				casing.Name = "Casing"
+				casing.Transparency = 0
+				casing.Massless = false
+				casing.CanCollide = true
+				casing.CanQuery = false
+				casing.CanTouch = false
+				casing.Anchored = false
+				casing.CFrame = eject1030.WorldCFrame
+			else
+				casing = Instance.new("Part")
+				casing.Name = "Casing"
+				casing.Shape = Enum.PartType.Cylinder
+				casing.Size = Vector3.new(0.18, 0.07, 0.07)
+				casing.Color = Color3.fromRGB(196, 156, 72)
+				casing.Material = Enum.Material.Metal
+				casing.Reflectance = 0.2
+				casing.CanQuery = false
+				casing.CanTouch = false
+				casing.CFrame = handle.CFrame * CFrame.new((math.random() - 0.5) * 0.2, 0.3, -0.3)
+			end
+			casing.Parent = workspace
+]=] },
 	} },
 	{ path = [=[
 StarterPlayer.StarterPlayerScripts.Client.Controllers.HotbarController]=], optional = false, edits = {
