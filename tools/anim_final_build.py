@@ -630,7 +630,8 @@ TARGETS = [
     (MGR + "BotManager", BOTMANAGER, True),
     (MGR + "CombatManager", COMBAT, False),
     (MGR + "MeleeManager", MELEE, False),
-    (MGR + "ShootableManager", SHOOTABLE, True),
+    (MGR + "ShootableManager", SHOOTABLE, "soft"),
+    ("ServerScriptService.Shared.ArenaShootables", SHOOTABLE, "soft"),  # the lobby's blast damage
 ]
 
 MODULES = [  # (file, parent path, name)
@@ -660,6 +661,8 @@ def check(dirs):
                 continue
             s = open(f, encoding="utf-8", errors="replace").read().replace("\r\n", "\n")
             marks = []
+            if optional == "soft" and any(new not in s and s.count(old) != 1 for old, new in edits):
+                print(f"{os.path.basename(d)}: {path.split('.')[-1]} soft: anchor not here, skipped"); continue
             for i, (old, new) in enumerate(edits, 1):
                 if new in s: marks.append(f"{i}="); continue
                 n = s.count(old)
@@ -689,7 +692,7 @@ def build():
         out.append(f"\t{{ parent = {parent!r}, name = {name!r}, src = {lua_long(src)} }},\n".replace("'", '"'))
     out.append("}\nlocal TARGETS = {\n")
     for path, edits, optional in TARGETS:
-        out.append(f"\t{{ path = {lua_long(path)}, optional = {'true' if optional else 'false'}, edits = {{\n")
+        out.append(f"\t{{ path = {lua_long(path)}, optional = {'true' if optional else 'false'}, soft = {'true' if optional == 'soft' else 'false'}, edits = {{\n")
         for old, new in edits:
             out.append(f"\t\t{{ {lua_long(old)}, {lua_long(new)} }},\n")
         out.append("\t} },\n")

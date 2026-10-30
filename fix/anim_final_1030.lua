@@ -1154,7 +1154,7 @@ return DeathAnims
 }
 local TARGETS = {
 	{ path = [=[
-ReplicatedStorage.Modules.Shared.Config.WeaponConfig]=], optional = false, edits = {
+ReplicatedStorage.Modules.Shared.Config.WeaponConfig]=], optional = false, soft = false, edits = {
 		{ [=[
 table.insert(WeaponConfig.Loadout, "DualPistols")
 ]=], [=[
@@ -1183,7 +1183,7 @@ end
 ]=] },
 	} },
 	{ path = [=[
-StarterPlayer.StarterPlayerScripts.Client.Controllers.WeaponController]=], optional = false, edits = {
+StarterPlayer.StarterPlayerScripts.Client.Controllers.WeaponController]=], optional = false, soft = false, edits = {
 		{ [=[
 local MoveRules = require(Shared:WaitForChild("MoveRules")) -- [MOVE1029]
 ]=], [=[
@@ -1489,7 +1489,7 @@ local function updatePose()
 ]=] },
 	} },
 	{ path = [=[
-StarterPlayer.StarterPlayerScripts.Client.Controllers.WeaponController.WeaponEffects]=], optional = false, edits = {
+StarterPlayer.StarterPlayerScripts.Client.Controllers.WeaponController.WeaponEffects]=], optional = false, soft = false, edits = {
 		{ [=[
 	local humanoid = closest and closest:FindFirstChildOfClass("Humanoid")
 	local animator = humanoid and humanoid:FindFirstChildOfClass("Animator")
@@ -1570,7 +1570,7 @@ local function flinch(position: Vector3, dir: Vector3?) -- [ANIMFINAL] dir = the
 ]=] },
 	} },
 	{ path = [=[
-StarterPlayer.StarterPlayerScripts.Client.Controllers.HotbarController]=], optional = false, edits = {
+StarterPlayer.StarterPlayerScripts.Client.Controllers.HotbarController]=], optional = false, soft = false, edits = {
 		{ [=[
 local function select(slot: number)
 	local hum = humanoidOf()
@@ -1630,7 +1630,7 @@ local function select(slot: number, afterHolster: boolean?)
 ]=] },
 	} },
 	{ path = [=[
-StarterPlayer.StarterPlayerScripts.Client.Controllers.GadgetController]=], optional = false, edits = {
+StarterPlayer.StarterPlayerScripts.Client.Controllers.GadgetController]=], optional = false, soft = false, edits = {
 		{ [=[
 local function loadTracks(humanoid: Humanoid)
 	if trackOwner == humanoid and tracks then return tracks end
@@ -1693,7 +1693,7 @@ end
 ]=] },
 	} },
 	{ path = [=[
-ServerScriptService.ServerScripts.[Server] Init.PlayerManager.PlayerRegistry]=], optional = false, edits = {
+ServerScriptService.ServerScripts.[Server] Init.PlayerManager.PlayerRegistry]=], optional = false, soft = false, edits = {
 		{ [=[
 	humanoid.Died:Once(function()
 		ragdoll(character)
@@ -1717,7 +1717,7 @@ ServerScriptService.ServerScripts.[Server] Init.PlayerManager.PlayerRegistry]=],
 ]=] },
 	} },
 	{ path = [=[
-ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.BotManager]=], optional = true, edits = {
+ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.BotManager]=], optional = true, soft = false, edits = {
 		{ [=[
 function Bot:_onDied()
 	self.state = "Dead"
@@ -1763,7 +1763,7 @@ function Bot:_onDied()
 ]=] },
 	} },
 	{ path = [=[
-ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.CombatManager]=], optional = false, edits = {
+ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.CombatManager]=], optional = false, soft = false, edits = {
 		{ [=[
 	victimHumanoid:SetAttribute("LastHitZone", zone)
 ]=], [=[
@@ -1780,7 +1780,7 @@ ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.CombatManag
 ]=] },
 	} },
 	{ path = [=[
-ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.MeleeManager]=], optional = false, edits = {
+ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.MeleeManager]=], optional = false, soft = false, edits = {
 		{ [=[
 	victimHum:SetAttribute("LastHitZone", backstab and "Back" or "Body")
 ]=], [=[
@@ -1789,7 +1789,18 @@ ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.MeleeManage
 ]=] },
 	} },
 	{ path = [=[
-ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.ShootableManager]=], optional = true, edits = {
+ServerScriptService.ServerScripts.[Server] Init.GameManager.Managers.ShootableManager]=], optional = true, soft = true, edits = {
+		{ [=[
+	hum:SetAttribute("LastHitZone", nil)
+	local hpBefore = hum.Health -- [HITINFO]
+]=], [=[
+	hum:SetAttribute("LastHitZone", nil)
+	hum:SetAttribute("LastHitFrom", from) -- [ANIMFINAL] the blast's centre (nil for burning)
+	local hpBefore = hum.Health -- [HITINFO]
+]=] },
+	} },
+	{ path = [=[
+ServerScriptService.Shared.ArenaShootables]=], optional = true, soft = true, edits = {
 		{ [=[
 	hum:SetAttribute("LastHitZone", nil)
 	local hpBefore = hum.Health -- [HITINFO]
