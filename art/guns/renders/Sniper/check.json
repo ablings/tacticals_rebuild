@@ -1,0 +1,168 @@
+{
+ "summary": "MODEL CHECK Sniper: 22 objects, 1996 tris, 0 FAIL, 25 WARN",
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Chassis",
+   "message": "148 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Stock",
+   "message": "18 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "CheekPiece",
+   "message": "18 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Barrel",
+   "message": "38 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Scope",
+   "message": "138 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + Stock",
+   "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + Grip",
+   "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + Receiver",
+   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + Barrel",
+   "message": "14 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + Mag",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + MagRelease",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + Trigger",
+   "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Chassis + BipodMount",
+   "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Stock + ButtPad",
+   "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Stock + CheekPiece",
+   "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Receiver + Bolt",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Scope + ScopeRings",
+   "message": "48 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Scope + ScopeLensFront",
+   "message": "25 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Scope + ScopeLensRear",
+   "message": "20 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Scope + ScopeCapRear",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "ScopeLensRear + ScopeCapRear",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Mag + MagRelease",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "BipodMount + BipodLegL",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "BipodMount + BipodLegR",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "BipodLegL + BipodLegR",
+   "message": "42 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Sniper\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Sniper\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Sniper\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Sniper\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Sniper\\check\\check_below.png"
+ ],
+ "size": [
+  6.2,
+  1.647,
+  0.36
+ ],
+ "tris": 1996
+}
