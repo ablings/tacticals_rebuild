@@ -25,6 +25,19 @@ Per clip (length, loop, markers, published id): `art/anim/weapons/DONE.md`; wiri
 - Every gun part is moved by the clip through the gun's own Motor6Ds (no code needed); `MagHide` / `MagShow` markers
   ask the code to hide the dropped mag on empty reloads.
 
+## 0b. Ammo-aware reload variants (reload-variants animator, 2026-10-30)
+The reload looks different by rounds left; every variant of a gun is exactly the gun's runtime ReloadTime long (AdjustSpeed
+1.0) and shares its anchor markers. Design: `notes/reload_variants_design.md`. **19 clips + 19 `...Left` mirrors** in
+`ReplicatedStorage.Repository.AnimationSources` via `art/anim/reload_variants/install_sources.lua`; per clip (rounds left,
+length, markers, id, grade): `art/anim/reload_variants/DONE.md`. Published ids: not yet (ready to publish, group gunsy funsy).
+- `PistolReload_Retain / _Drop / _Dry` 1.3 s (Pistol 7-11 / 1-6 / 0; Suppressed 6-9 / 1-5 / 0 at AdjustSpeed 1.3/1.5)
+- `SMGReload_Retain / _Drop / _Dry` 1.7 s (Mini Uzi 16-29 / 1-15 / 0)
+- `RifleReload_Retain / _Drop / _Dry` 2.2 s (Auto Rifle 16-29 / 1-15 / 0; Semi-Auto 7-11 / 1-6 / 0 at AdjustSpeed 2.2/2.5)
+- `SniperReload_TopUp / _Dry` 3.0 s (1-4 / 0)
+- `RevolverReload_Pluck1 / _Pluck2 / _Dump / _Dry` 2.0 s (5 / 4 / 1-3 / 0): needs `Round1..Round6` split in the model
+- `ShotgunReloadStart_Dry` 0.2 s, `ShotgunReloadShell_Port / _B / _Last` 0.5 s (first shell when empty / alternate / fills the tube)
+- Dual Pistols: not made yet (needs the left-hand mirror bake; see DONE.md open issues).
+
 ## 1. Character animations that exist (54)
 
 ### Pistol (used by Pistol, Suppressed, **and for now Mini Uzi, Auto Rifle, Semi-Auto, Sniper**)
