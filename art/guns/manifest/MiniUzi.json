@@ -1,0 +1,383 @@
+{
+ "gun": "MiniUzi",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Receiver",
+   "parent": "Handle",
+   "motor6d": "Receiver",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.47,
+    -0.18
+   ],
+   "bbox_centre": [
+    0.0,
+    0.47,
+    -0.18
+   ],
+   "size": [
+    0.22,
+    0.34,
+    1.06
+   ],
+   "tris": 192,
+   "colour": [
+    54,
+    57,
+    62
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "stamped receiver, ribbed top cover (3 slots a side), ejection port (right), cocking slot, rear plate, rear sight"
+  },
+  {
+   "name": "LowerFrame",
+   "parent": "Handle",
+   "motor6d": "LowerFrame",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.115,
+    -0.14
+   ],
+   "bbox_centre": [
+    0.0,
+    0.115,
+    -0.14
+   ],
+   "size": [
+    0.18,
+    0.41,
+    0.54
+   ],
+   "tris": 100,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "grip + trigger guard, inset grip panels"
+  },
+  {
+   "name": "Barrel",
+   "parent": "Handle",
+   "motor6d": "Barrel",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.5179,
+    -0.855
+   ],
+   "bbox_centre": [
+    0.0,
+    0.5179,
+    -0.855
+   ],
+   "size": [
+    0.1183,
+    0.2441,
+    0.31
+   ],
+   "tris": 148,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "barrel nut, barrel, hooded front sight"
+  },
+  {
+   "name": "Mag",
+   "parent": "Handle",
+   "motor6d": "Mag",
+   "motor_part0": "Handle",
+   "motion": "translate -y (straight down out of the grip)",
+   "pivot": [
+    0.0,
+    0.31,
+    -0.01
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.11,
+    -0.01
+   ],
+   "size": [
+    0.15,
+    0.84,
+    0.19
+   ],
+   "tris": 24,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "32-round stick mag + base plate"
+  },
+  {
+   "name": "CockingKnob",
+   "parent": "Handle",
+   "motor6d": "CockingKnob",
+   "motor_part0": "Handle",
+   "motion": "translate +z (back) 0.35 along the top slot, snap forward",
+   "pivot": [
+    0.0,
+    0.57,
+    -0.23
+   ],
+   "bbox_centre": [
+    0.0,
+    0.6275,
+    -0.23
+   ],
+   "size": [
+    0.084,
+    0.175,
+    0.0799
+   ],
+   "tris": 64,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Trigger",
+   "parent": "Handle",
+   "motor6d": "Trigger",
+   "motor_part0": "Handle",
+   "motion": "rotate about x, bottom back 15 deg",
+   "pivot": [
+    0.0,
+    0.3,
+    -0.23
+   ],
+   "bbox_centre": [
+    0.0,
+    0.2525,
+    -0.165
+   ],
+   "size": [
+    0.035,
+    0.155,
+    0.21
+   ],
+   "tris": 36,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "blade + hidden trigger bar"
+  },
+  {
+   "name": "Selector",
+   "parent": "Handle",
+   "motor6d": "Selector",
+   "motor_part0": "Handle",
+   "motion": "rotate about x 30 deg (safe / semi / auto)",
+   "pivot": [
+    -0.1,
+    0.34,
+    -0.24
+   ],
+   "bbox_centre": [
+    -0.06,
+    0.34,
+    -0.284
+   ],
+   "size": [
+    0.12,
+    0.044,
+    0.132
+   ],
+   "tris": 40,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "left side"
+  },
+  {
+   "name": "GripSafety",
+   "parent": "Handle",
+   "motor6d": "GripSafety",
+   "motor_part0": "Handle",
+   "motion": "rotate about x, bottom in 8 deg when gripped",
+   "pivot": [
+    0.0,
+    0.27,
+    0.095
+   ],
+   "bbox_centre": [
+    0.0,
+    0.19,
+    0.1
+   ],
+   "size": [
+    0.12,
+    0.22,
+    0.08
+   ],
+   "tris": 12,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Stock",
+   "parent": "Handle",
+   "motor6d": "Stock",
+   "motor_part0": "Handle",
+   "motion": "rotate about x ~185 deg to fold under the receiver",
+   "pivot": [
+    0.0,
+    0.41,
+    0.315
+   ],
+   "bbox_centre": [
+    0.0,
+    0.319,
+    0.6775
+   ],
+   "size": [
+    0.22,
+    0.408,
+    0.785
+   ],
+   "tris": 216,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "folding wire stock: two rails a side, butt loop, hinge pin"
+  },
+  {
+   "name": "Round",
+   "parent": "Mag",
+   "motor6d": "Round",
+   "motor_part0": "Mag",
+   "motion": "rides in the mag top; animate to ShellEject",
+   "pivot": [
+    0.0,
+    0.29,
+    0.02
+   ],
+   "bbox_centre": [
+    0.0,
+    0.29,
+    0.0175
+   ],
+   "size": [
+    0.044,
+    0.044,
+    0.145
+   ],
+   "tris": 46,
+   "colour": [
+    168,
+    144,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  }
+ ],
+ "attachments": {
+  "Muzzle": {
+   "part": "Barrel",
+   "position_handle_space": [
+    0.0,
+    0.46,
+    -1.01
+   ]
+  },
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "ShellEject": {
+   "part": "Receiver",
+   "position_handle_space": [
+    0.11,
+    0.43,
+    -0.37
+   ]
+  },
+  "Mag": {
+   "part": "Mag",
+   "position_handle_space": [
+    0.0,
+    -0.51,
+    -0.01
+   ]
+  },
+  "StockButt": {
+   "part": "Stock",
+   "position_handle_space": [
+    0.0,
+    0.32,
+    1.05
+   ]
+  }
+ },
+ "total_tris": 878,
+ "overall_size_LxHxW": [
+  2.08,
+  1.245,
+  0.23
+ ],
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

@@ -1,0 +1,375 @@
+{
+ "gun": "Revolver",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Frame",
+   "parent": "Handle",
+   "motor6d": "Frame",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.1475,
+    -0.355
+   ],
+   "bbox_centre": [
+    0.0,
+    0.1475,
+    -0.355
+   ],
+   "size": [
+    0.16,
+    0.735,
+    0.87
+   ],
+   "tris": 146,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "frame with top strap, cylinder window, round trigger guard, hammer slot"
+  },
+  {
+   "name": "Barrel",
+   "parent": "Handle",
+   "motor6d": "Barrel",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.4265,
+    -0.9625
+   ],
+   "bbox_centre": [
+    0.0,
+    0.4265,
+    -0.9625
+   ],
+   "size": [
+    0.12,
+    0.263,
+    0.705
+   ],
+   "tris": 116,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "barrel tube, full underlug with the ejector-rod slot, top rib, ramp front sight"
+  },
+  {
+   "name": "Grip",
+   "parent": "Handle",
+   "motor6d": "Grip",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0125,
+    -0.05
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0125,
+    -0.05
+   ],
+   "size": [
+    0.2,
+    0.665,
+    0.42
+   ],
+   "tris": 128,
+   "colour": [
+    92,
+    58,
+    35
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "finger-groove wood grip with inset checkering panels"
+  },
+  {
+   "name": "Crane",
+   "parent": "Handle",
+   "motor6d": "Crane",
+   "motor_part0": "Handle",
+   "motion": "rotate about z (the bore axis direction) up to 95 deg: swings the cylinder out to the left",
+   "pivot": [
+    -0.04,
+    0.265,
+    -0.68
+   ],
+   "bbox_centre": [
+    -0.0235,
+    0.3265,
+    -0.68
+   ],
+   "size": [
+    0.097,
+    0.187,
+    0.14
+   ],
+   "tris": 40,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "yoke: pivot tube + arm to the cylinder axis"
+  },
+  {
+   "name": "Cylinder",
+   "parent": "Crane",
+   "motor6d": "Cylinder",
+   "motor_part0": "Crane",
+   "motion": "rotate about its own axis (z) 60 deg per shot; spin when swung out",
+   "pivot": [
+    0.0,
+    0.37,
+    -0.49
+   ],
+   "bbox_centre": [
+    0.0,
+    0.37,
+    -0.49
+   ],
+   "size": [
+    0.2801,
+    0.2801,
+    0.26
+   ],
+   "tris": 370,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "EjectorRod",
+   "parent": "Cylinder",
+   "motor6d": "EjectorRod",
+   "motor_part0": "Cylinder",
+   "motion": "translate +z (back) 0.2: pushes the extractor star and the rounds out",
+   "pivot": [
+    0.0,
+    0.37,
+    -0.36
+   ],
+   "bbox_centre": [
+    0.0,
+    0.37,
+    -0.669
+   ],
+   "size": [
+    0.21,
+    0.21,
+    0.642
+   ],
+   "tris": 100,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "rod + knurl head + extractor star at the cylinder's rear"
+  },
+  {
+   "name": "Rounds",
+   "parent": "EjectorRod",
+   "motor6d": "Rounds",
+   "motor_part0": "EjectorRod",
+   "motion": "group of 6 in the chambers: out with the extractor, new set in (speed loader)",
+   "pivot": [
+    0.0,
+    0.37,
+    -0.47
+   ],
+   "bbox_centre": [
+    0.0,
+    0.37,
+    -0.4685
+   ],
+   "size": [
+    0.2179,
+    0.242,
+    0.243
+   ],
+   "tris": 372,
+   "colour": [
+    168,
+    144,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "six .357 rounds as one piece"
+  },
+  {
+   "name": "Hammer",
+   "parent": "Handle",
+   "motor6d": "Hammer",
+   "motor_part0": "Handle",
+   "motion": "rotate about x: cock back 35 deg, fall forward on fire",
+   "pivot": [
+    0.0,
+    0.32,
+    -0.18
+   ],
+   "bbox_centre": [
+    0.0,
+    0.41,
+    -0.2215
+   ],
+   "size": [
+    0.04,
+    0.27,
+    0.293
+   ],
+   "tris": 40,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "spur hammer + firing-pin nose to the top round"
+  },
+  {
+   "name": "Trigger",
+   "parent": "Handle",
+   "motor6d": "Trigger",
+   "motor_part0": "Handle",
+   "motion": "rotate about x, bottom back 20 deg (double action)",
+   "pivot": [
+    0.0,
+    0.18,
+    -0.4
+   ],
+   "bbox_centre": [
+    0.0,
+    0.185,
+    -0.3225
+   ],
+   "size": [
+    0.04,
+    0.39,
+    0.245
+   ],
+   "tris": 56,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "blade + the hand (pawl) that turns the cylinder + hidden sear bar to the hammer"
+  },
+  {
+   "name": "CylinderLatch",
+   "parent": "Handle",
+   "motor6d": "CylinderLatch",
+   "motor_part0": "Handle",
+   "motion": "translate -z (forward) 0.04 to release the cylinder",
+   "pivot": [
+    -0.09,
+    0.32,
+    -0.245
+   ],
+   "bbox_centre": [
+    -0.0465,
+    0.336,
+    -0.305
+   ],
+   "size": [
+    0.117,
+    0.092,
+    0.23
+   ],
+   "tris": 52,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "thumb latch (left side) + hidden link and centre pin into the cylinder"
+  }
+ ],
+ "attachments": {
+  "Muzzle": {
+   "part": "Barrel",
+   "position_handle_space": [
+    0.0,
+    0.46,
+    -1.315
+   ]
+  },
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "ShellEject": {
+   "part": "Cylinder",
+   "position_handle_space": [
+    -0.25,
+    0.37,
+    -0.36
+   ]
+  },
+  "Mag": {
+   "part": "Rounds",
+   "position_handle_space": [
+    0.0,
+    0.37,
+    -0.34
+   ]
+  }
+ },
+ "total_tris": 1420,
+ "overall_size_LxHxW": [
+  1.475,
+  0.878,
+  0.28
+ ],
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

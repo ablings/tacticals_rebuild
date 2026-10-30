@@ -1,0 +1,258 @@
+{
+ "summary": "MODEL CHECK DualPistols: 18 objects, 2084 tris, 0 FAIL, 40 WARN",
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Frame",
+   "message": "58 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Comp",
+   "message": "63 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "LeftFrame",
+   "message": "58 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "LeftComp",
+   "message": "63 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Slide",
+   "message": "72 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Barrel",
+   "message": "54 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Comp",
+   "message": "44 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Mag",
+   "message": "59 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + MagRelease",
+   "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + SlideStop",
+   "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Trigger",
+   "message": "25 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Round",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Slide + Barrel",
+   "message": "75 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Slide + Comp",
+   "message": "34 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Slide + SlideStop",
+   "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Slide + Trigger",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Barrel + Comp",
+   "message": "48 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Barrel + SlideStop",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Barrel + Trigger",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Mag + MagRelease",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "MagRelease + Trigger",
+   "message": "13 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "SlideStop + Trigger",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftSlide",
+   "message": "72 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftBarrel",
+   "message": "56 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftComp",
+   "message": "34 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftMag",
+   "message": "58 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftMagRelease",
+   "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftSlideStop",
+   "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftTrigger",
+   "message": "25 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftFrame + LeftRound",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftSlide + LeftBarrel",
+   "message": "75 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftSlide + LeftComp",
+   "message": "34 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftSlide + LeftSlideStop",
+   "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftSlide + LeftTrigger",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftBarrel + LeftComp",
+   "message": "48 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftBarrel + LeftSlideStop",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftBarrel + LeftTrigger",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftMag + LeftMagRelease",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftMagRelease + LeftTrigger",
+   "message": "13 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftSlideStop + LeftTrigger",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\DualPistols\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\DualPistols\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\DualPistols\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\DualPistols\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\DualPistols\\check\\check_below.png"
+ ],
+ "size": [
+  1.05,
+  0.757,
+  1.277
+ ],
+ "tris": 2084
+}

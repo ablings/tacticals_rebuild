@@ -2,7 +2,8 @@
   "C:/Program Files/Blender Foundation/Blender 4.5/blender.exe" -b --factory-startup --python art/guns/tools/build_gun.py -- Pistol [Revolver ...]
 Writes art/anim/guns/<Gun>.blend + .fbx (rig attached to a copy of the Starter Blocky rig's right hand),
 art/guns/manifest/<Gun>.json, art/guns/renders/<Gun>/{side,exploded,persp,top}.png and runs blender_check (--render)."""
-import sys, os, json, types, math
+import sys, os, json, types, math, faulthandler
+faulthandler.enable()
 sys.dont_write_bytecode = True
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -34,7 +35,7 @@ def run_check(objs, render_dir):
     col = bpy.data.collections.get(objs)
     # the kit check skips names containing "rig" (rig helpers): "Trigger" would be skipped, so rename while checking
     ren = {}
-    for o in bpy.data.collections[objs].all_objects:
+    for o in list(bpy.data.collections[objs].all_objects):
         if "rig" in o.name.lower() and o.type == "MESH":
             ren[o] = o.name
             o.name = o.name.replace("rigger", "r1gger").replace("Rig", "R1g").replace("rig", "r1g")
@@ -65,7 +66,7 @@ def build(name):
     bpy.context.view_layer.update()
     rig_col = bpy.data.collections.get("StarterRig_ref")
     if rig_col:
-        for o in rig_col.all_objects:
+        for o in [ob for ob in bpy.data.objects if rig_col.name in [c.name for c in ob.users_collection]]:
             o.hide_render = True
     gunkit.render_ortho(meshes, os.path.join(rdir, "side.png"), "right")
     gunkit.render_ortho(meshes, os.path.join(rdir, "left.png"), "left")
@@ -92,7 +93,7 @@ def build(name):
     gunkit.render_ortho(meshes, os.path.join(rdir, "exploded.png"), "right", pad=1.08, offsets=off)
     rep = run_check("Gun_" + name, os.path.join(rdir, "check"))
     if rig_col:
-        for o in rig_col.all_objects:
+        for o in [ob for ob in bpy.data.objects if rig_col.name in [c.name for c in ob.users_collection]]:
             o.hide_render = False
     # a render with the rig holding it (rest pose: arm down, muzzle down)
     arm.parent = par
@@ -101,7 +102,7 @@ def build(name):
         arm.matrix_basis = Matrix.Identity(4)
     bpy.context.view_layer.update()
     if rig_col:
-        allm = [o for o in list(rig_col.all_objects) + meshes if o.type == "MESH"]
+        allm = [o for o in [ob for ob in bpy.data.objects if rig_col.name in [c.name for c in ob.users_collection]] + meshes if o.type == "MESH"]
         gunkit.render_ortho(allm, os.path.join(rdir, "on_rig.png"), "persp", res=(900, 1100))
     bpy.ops.wm.save_as_mainfile(filepath=blend)
     summary = f"MODEL CHECK {name}: {rep['objects']} objects, {rep['triangles']} tris, {rep['fail']} FAIL, {rep['warn']} WARN"

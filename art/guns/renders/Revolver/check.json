@@ -1,0 +1,168 @@
+{
+ "summary": "MODEL CHECK Revolver: 10 objects, 1420 tris, 0 FAIL, 25 WARN",
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Barrel",
+   "message": "10 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Grip",
+   "message": "50 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Crane",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Cylinder",
+   "message": "14 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + EjectorRod",
+   "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Hammer",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + Trigger",
+   "message": "13 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Frame + CylinderLatch",
+   "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Barrel + EjectorRod",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Crane + Cylinder",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Crane + EjectorRod",
+   "message": "8 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Crane + Rounds",
+   "message": "1 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Cylinder + EjectorRod",
+   "message": "26 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Cylinder + Rounds",
+   "message": "103 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Cylinder + Hammer",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Cylinder + Trigger",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Cylinder + CylinderLatch",
+   "message": "7 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "EjectorRod + Rounds",
+   "message": "56 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "EjectorRod + Hammer",
+   "message": "5 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "EjectorRod + Trigger",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "EjectorRod + CylinderLatch",
+   "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Rounds + CylinderLatch",
+   "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Hammer + Trigger",
+   "message": "3 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Hammer + CylinderLatch",
+   "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Trigger + CylinderLatch",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Revolver\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Revolver\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Revolver\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Revolver\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Revolver\\check\\check_below.png"
+ ],
+ "size": [
+  1.475,
+  0.878,
+  0.28
+ ],
+ "tris": 1420
+}

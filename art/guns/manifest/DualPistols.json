@@ -1,0 +1,655 @@
+{
+ "gun": "DualPistols",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Frame",
+   "parent": "Handle",
+   "motor6d": "Frame",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.1431,
+    -0.2537
+   ],
+   "bbox_centre": [
+    0.0,
+    0.1431,
+    -0.2537
+   ],
+   "size": [
+    0.1706,
+    0.5644,
+    0.9275
+   ],
+   "tris": 204,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "compact frame, rail, flared mag well, stippled inset panels"
+  },
+  {
+   "name": "Slide",
+   "parent": "Frame",
+   "motor6d": "Slide",
+   "motor_part0": "Frame",
+   "motion": "translate +z (back) up to 0.28",
+   "pivot": [
+    0.0,
+    0.4603,
+    -0.315
+   ],
+   "bbox_centre": [
+    0.0,
+    0.4909,
+    -0.2813
+   ],
+   "size": [
+    0.1444,
+    0.1488,
+    0.8374
+   ],
+   "tris": 400,
+   "colour": [
+    200,
+    196,
+    186
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear"
+  },
+  {
+   "name": "Barrel",
+   "parent": "Frame",
+   "motor6d": "Barrel",
+   "motor_part0": "Frame",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.442,
+    -0.4288
+   ],
+   "bbox_centre": [
+    0.0,
+    0.442,
+    -0.4288
+   ],
+   "size": [
+    0.1032,
+    0.1502,
+    0.6125
+   ],
+   "tris": 104,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "static barrel, chamber hood, guide rod"
+  },
+  {
+   "name": "Comp",
+   "parent": "Barrel",
+   "motor6d": "Comp",
+   "motor_part0": "Barrel",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.4493,
+    -0.7656
+   ],
+   "bbox_centre": [
+    0.0,
+    0.4493,
+    -0.7656
+   ],
+   "size": [
+    0.1488,
+    0.1619,
+    0.1488
+   ],
+   "tris": 132,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)"
+  },
+  {
+   "name": "Mag",
+   "parent": "Frame",
+   "motor6d": "Mag",
+   "motor_part0": "Frame",
+   "motion": "translate down the grip axis",
+   "pivot": [
+    0.0,
+    0.1846,
+    -0.0613
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0052,
+    -0.0031
+   ],
+   "size": [
+    0.1313,
+    0.3938,
+    0.3386
+   ],
+   "tris": 24,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "MagRelease",
+   "parent": "Frame",
+   "motor6d": "MagRelease",
+   "motor_part0": "Frame",
+   "motion": "translate +x 0.03 (pressed in)",
+   "pivot": [
+    -0.07,
+    0.224,
+    -0.1575
+   ],
+   "bbox_centre": [
+    -0.0153,
+    0.224,
+    -0.1575
+   ],
+   "size": [
+    0.1531,
+    0.0613,
+    0.0525
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "extended cross-bolt"
+  },
+  {
+   "name": "SlideStop",
+   "parent": "Frame",
+   "motor6d": "SlideStop",
+   "motor_part0": "Frame",
+   "motion": "rotate about x, lever tail up 12 deg",
+   "pivot": [
+    -0.07,
+    0.364,
+    -0.3325
+   ],
+   "bbox_centre": [
+    -0.0437,
+    0.3903,
+    -0.28
+   ],
+   "size": [
+    0.0875,
+    0.0875,
+    0.2275
+   ],
+   "tris": 56,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "extended lever reaching back to the thumb"
+  },
+  {
+   "name": "Trigger",
+   "parent": "Frame",
+   "motor6d": "Trigger",
+   "motor_part0": "Frame",
+   "motion": "rotate about x, bottom back 12 deg",
+   "pivot": [
+    0.0,
+    0.3159,
+    -0.28
+   ],
+   "bbox_centre": [
+    0.0,
+    0.3071,
+    -0.2319
+   ],
+   "size": [
+    0.0306,
+    0.2275,
+    0.2188
+   ],
+   "tris": 64,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "flat skeleton trigger + hidden trigger bar"
+  },
+  {
+   "name": "Round",
+   "parent": "Mag",
+   "motor6d": "Round",
+   "motor_part0": "Mag",
+   "motion": "rides in the mag top; animate to ShellEject",
+   "pivot": [
+    0.0,
+    0.1846,
+    -0.0525
+   ],
+   "bbox_centre": [
+    0.0,
+    0.1846,
+    -0.0481
+   ],
+   "size": [
+    0.042,
+    0.042,
+    0.1313
+   ],
+   "tris": 46,
+   "colour": [
+    168,
+    144,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "LeftFrame",
+   "parent": "Handle",
+   "motor6d": "LeftFrame",
+   "motor_part0": "Handle",
+   "motion": "whole left pistol: animate / weld to the left hand (pivot = its grip centre)",
+   "pivot": [
+    -1.1,
+    0.0,
+    -0.0
+   ],
+   "bbox_centre": [
+    -1.1,
+    0.1431,
+    -0.2537
+   ],
+   "size": [
+    0.1706,
+    0.5644,
+    0.9275
+   ],
+   "tris": 204,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "compact frame, rail, flared mag well, stippled inset panels"
+  },
+  {
+   "name": "LeftSlide",
+   "parent": "LeftFrame",
+   "motor6d": "LeftSlide",
+   "motor_part0": "LeftFrame",
+   "motion": "translate +z (back) up to 0.28",
+   "pivot": [
+    -1.1,
+    0.4603,
+    -0.315
+   ],
+   "bbox_centre": [
+    -1.1,
+    0.4909,
+    -0.2813
+   ],
+   "size": [
+    0.1444,
+    0.1488,
+    0.8374
+   ],
+   "tris": 400,
+   "colour": [
+    200,
+    196,
+    186
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "cream slide, front + rear slanted cuts, ejection port, optic-cut rear"
+  },
+  {
+   "name": "LeftBarrel",
+   "parent": "LeftFrame",
+   "motor6d": "LeftBarrel",
+   "motor_part0": "LeftFrame",
+   "motion": "static",
+   "pivot": [
+    -1.1,
+    0.442,
+    -0.4288
+   ],
+   "bbox_centre": [
+    -1.1,
+    0.442,
+    -0.4288
+   ],
+   "size": [
+    0.1033,
+    0.1502,
+    0.6125
+   ],
+   "tris": 104,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "static barrel, chamber hood, guide rod"
+  },
+  {
+   "name": "LeftComp",
+   "parent": "LeftBarrel",
+   "motor6d": "LeftComp",
+   "motor_part0": "LeftBarrel",
+   "motion": "static",
+   "pivot": [
+    -1.1,
+    0.4493,
+    -0.7656
+   ],
+   "bbox_centre": [
+    -1.1,
+    0.4493,
+    -0.7656
+   ],
+   "size": [
+    0.1487,
+    0.1619,
+    0.1488
+   ],
+   "tris": 132,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "ported compensator: two top ports, two side windows (the RIVALS inset method)"
+  },
+  {
+   "name": "LeftMag",
+   "parent": "LeftFrame",
+   "motor6d": "LeftMag",
+   "motor_part0": "LeftFrame",
+   "motion": "translate down the grip axis",
+   "pivot": [
+    -1.1,
+    0.1846,
+    -0.0613
+   ],
+   "bbox_centre": [
+    -1.1,
+    0.0052,
+    -0.0031
+   ],
+   "size": [
+    0.1313,
+    0.3938,
+    0.3386
+   ],
+   "tris": 24,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "LeftMagRelease",
+   "parent": "LeftFrame",
+   "motor6d": "LeftMagRelease",
+   "motor_part0": "LeftFrame",
+   "motion": "translate +x 0.03 (pressed in)",
+   "pivot": [
+    -1.17,
+    0.224,
+    -0.1575
+   ],
+   "bbox_centre": [
+    -1.1153,
+    0.224,
+    -0.1575
+   ],
+   "size": [
+    0.1531,
+    0.0613,
+    0.0525
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "extended cross-bolt"
+  },
+  {
+   "name": "LeftSlideStop",
+   "parent": "LeftFrame",
+   "motor6d": "LeftSlideStop",
+   "motor_part0": "LeftFrame",
+   "motion": "rotate about x, lever tail up 12 deg",
+   "pivot": [
+    -1.17,
+    0.364,
+    -0.3325
+   ],
+   "bbox_centre": [
+    -1.1437,
+    0.3903,
+    -0.28
+   ],
+   "size": [
+    0.0875,
+    0.0875,
+    0.2275
+   ],
+   "tris": 56,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "extended lever reaching back to the thumb"
+  },
+  {
+   "name": "LeftTrigger",
+   "parent": "LeftFrame",
+   "motor6d": "LeftTrigger",
+   "motor_part0": "LeftFrame",
+   "motion": "rotate about x, bottom back 12 deg",
+   "pivot": [
+    -1.1,
+    0.3159,
+    -0.28
+   ],
+   "bbox_centre": [
+    -1.1,
+    0.3071,
+    -0.2319
+   ],
+   "size": [
+    0.0306,
+    0.2275,
+    0.2188
+   ],
+   "tris": 64,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "flat skeleton trigger + hidden trigger bar"
+  },
+  {
+   "name": "LeftRound",
+   "parent": "LeftMag",
+   "motor6d": "LeftRound",
+   "motor_part0": "LeftMag",
+   "motion": "rides in the mag top; animate to ShellEject",
+   "pivot": [
+    -1.1,
+    0.1846,
+    -0.0525
+   ],
+   "bbox_centre": [
+    -1.1,
+    0.1846,
+    -0.0481
+   ],
+   "size": [
+    0.042,
+    0.042,
+    0.1313
+   ],
+   "tris": 46,
+   "colour": [
+    168,
+    144,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  }
+ ],
+ "attachments": {
+  "Muzzle": {
+   "part": "Comp",
+   "position_handle_space": [
+    0.0,
+    0.4603,
+    -0.84
+   ]
+  },
+  "LeftMuzzle": {
+   "part": "LeftComp",
+   "position_handle_space": [
+    -1.1,
+    0.4603,
+    -0.84
+   ]
+  },
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "LeftGrip": {
+   "part": "LeftFrame",
+   "position_handle_space": [
+    -1.1,
+    0.0,
+    -0.0
+   ]
+  },
+  "ShellEject": {
+   "part": "Slide",
+   "position_handle_space": [
+    0.0613,
+    0.5346,
+    -0.2713
+   ]
+  },
+  "LeftShellEject": {
+   "part": "LeftSlide",
+   "position_handle_space": [
+    -1.0387,
+    0.5346,
+    -0.2713
+   ]
+  },
+  "Mag": {
+   "part": "Mag",
+   "position_handle_space": [
+    0.0,
+    -0.1741,
+    0.0437
+   ]
+  },
+  "LeftMag": {
+   "part": "LeftMag",
+   "position_handle_space": [
+    -1.1,
+    -0.1741,
+    0.0437
+   ]
+  }
+ },
+ "total_tris": 2084,
+ "overall_size_LxHxW": [
+  1.05,
+  0.757,
+  1.277
+ ],
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

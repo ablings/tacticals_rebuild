@@ -93,14 +93,14 @@ def CX(fc, zc, r, x0, x1, seg=8, cut=None, rot=0.0):
     return Solid("cyl", cut, a=Vector((x0, fc, zc)), b=Vector((x1, fc, zc)), r=r, r1=r, seg=seg, rot=rot)
 
 
-def CZ(fc, z0, z1, r, x=0.0, seg=8, r1=None, cut=None):
+def CZ(fc, z0, z1, r, x=0.0, seg=8, r1=None, cut=None, rot=None):
     """vertical cylinder (knobs, turrets)"""
-    return Solid("cyl", cut, a=Vector((x, fc, z0)), b=Vector((x, fc, z1)), r=r, r1=r if r1 is None else r1, seg=seg)
+    return Solid("cyl", cut, a=Vector((x, fc, z0)), b=Vector((x, fc, z1)), r=r, r1=r if r1 is None else r1, seg=seg, rot=rot)
 
 
-def CA(p0, p1, r, seg=8, r1=None, cut=None):
+def CA(p0, p1, r, seg=8, r1=None, cut=None, rot=None):
     """cylinder between two (x, f, z) points (angled rods: bipod legs, wire stocks)"""
-    return Solid("cyl", cut, a=Vector(p0), b=Vector(p1), r=r, r1=r if r1 is None else r1, seg=seg)
+    return Solid("cyl", cut, a=Vector(p0), b=Vector(p1), r=r, r1=r if r1 is None else r1, seg=seg, rot=rot)
 
 
 def L(fs, rs, zc, x=0.0, seg=8, rot=None):
@@ -303,9 +303,10 @@ def solid_with_cuts(s):
     out = bmesh.new()
     out.from_mesh(me)
     bpy.data.meshes.remove(me)
-    for co in cutters:
-        bpy.data.meshes.remove(co.data)
-    bpy.data.meshes.remove(o.data)
+    for ob in cutters + [o]:
+        me_ = ob.data
+        bpy.data.objects.remove(ob, do_unlink=True)
+        bpy.data.meshes.remove(me_)
     return out
 
 
@@ -526,7 +527,7 @@ def build_gun(spec, out_blend, out_fbx, manifest_path, render_dir, rig_blend=Non
     bpy.context.view_layer.update()
     for o in bpy.context.scene.objects:
         o.select_set(False)
-    for o in gcol.all_objects:
+    for o in [ob for ob in bpy.data.objects if gcol.name in [c.name for c in ob.users_collection]]:
         o.select_set(True)
     bpy.ops.export_scene.fbx(filepath=out_fbx, use_selection=True, object_types={"ARMATURE", "MESH", "EMPTY"},
                              apply_unit_scale=True, global_scale=1.0, bake_space_transform=False, add_leaf_bones=False,
