@@ -28,7 +28,7 @@ ok(type(AL.Load) == "function" and type(AL.GunPrefix) == "function", "AnimLib lo
 local function pick(kind, zone, cover, rel) return DA.Pick({ config = AL.Config, kind = kind, zone = zone, coverState = cover, rel = rel }) end
 ok(pick("Gun", "Head", nil, Vector3.new(0, 0, -10)) == "DeathHeadshot", "headshot kill -> DeathHeadshot")
 ok(pick("Frag", nil, nil, Vector3.new(0, 0, -10)) == "DeathExplosion", "frag kill -> DeathExplosion")
-ok(pick("Gun", "Body", "Cover", Vector3.new(0, 0, -10)) == "DeathSide", "in cover, shot from the front -> DeathSide (cover rule)")
+ok(pick("Gun", "Body", "Cover", Vector3.new(0, 0, -10)) == "DeathInCover", "in cover, shot from the front -> DeathInCover (cover rule)")
 ok(pick("Gun", "Body", nil, Vector3.new(0, 0, -10)) == "DeathFromFront", "shot from the front -> DeathFromFront")
 ok(pick("Gun", "Body", nil, Vector3.new(0, 0, 10)) == "DeathFromBehind", "shot from behind -> DeathFromBehind")
 ok(pick("Gun", "Body", nil, Vector3.new(10, 0, 0)) == "DeathSide", "shot from the right -> DeathSide")

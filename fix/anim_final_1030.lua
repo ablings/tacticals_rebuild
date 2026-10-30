@@ -55,7 +55,8 @@ C.Clips = { -- names from notes/anim_style_targets.md (2026-10-30) first, older 
 	-- deaths (the server plays them, then ragdolls)
 	DeathFromFront = { "DeathBackward" },  -- shot from the front: thrown back
 	DeathFromBehind = { "DeathForward" },  -- shot from behind: falls face down
-	DeathSide = { "DeathCrumple" },        -- from the side, and in cover (a wall at your back)
+	DeathSide = { "DeathCrumple" },        -- from the side
+	DeathInCover = { "DeathCover", "DeathCrumple" }, -- in cover (a wall at your back)
 	DeathHeadshot = { "DeathHeadshot" },
 	DeathExplosion = { "DeathExplosion" },
 	DeathAny = { "DeathCrumple", "DeathBackward", "DeathForward" },
@@ -668,6 +669,41 @@ local function bindReact(model: Model)
 	burn()
 end
 
+-- // markers on every body: MagHide / MagShow hide the held gun"s Mag (revolver: Rounds) so a dropped mag doesn"t jump back
+-- to the hand (a local LocalTransparencyModifier: each client does it for what it sees; tracks of other bodies replicate)
+local markerHooked = {} -- [Animator] = true (cleared when it leaves the game)
+local MAG_PARTS = { "Mag", "Rounds", "LeftMag" }
+local magEvents = 0 -- (Studio test hook)
+local magLog = {}
+local function setMagHidden(model: Model, hidden: boolean, why: string?)
+	magEvents += 1
+	if why then table.insert(magLog, why) if #magLog > 8 then table.remove(magLog, 1) end end
+	local tool = model:FindFirstChildOfClass("Tool")
+	if not tool then return end
+	for _, n in MAG_PARTS do
+		local part = tool:FindFirstChild(n)
+		if part and part:IsA("BasePart") then
+			part.LocalTransparencyModifier = hidden and 1 or 0
+			for _, d in part:GetDescendants() do if d:IsA("BasePart") then d.LocalTransparencyModifier = hidden and 1 or 0 end end
+		end
+	end
+end
+local function hookMarkers(model: Model)
+	local hum = model:FindFirstChildOfClass("Humanoid")
+	local anim = hum and hum:FindFirstChildOfClass("Animator")
+	if not anim or markerHooked[anim] then return end
+	markerHooked[anim] = true
+	anim.Destroying:Once(function() markerHooked[anim] = nil end)
+	anim.AnimationPlayed:Connect(function(track)
+		local c1 = track:GetMarkerReachedSignal("MagHide"):Connect(function() setMagHidden(model, true, "hide " .. track.Name) end)
+		local c2 = track:GetMarkerReachedSignal("MagShow"):Connect(function() setMagHidden(model, false, "show " .. track.Name) end)
+		track.Stopped:Once(function()
+			c1:Disconnect() c2:Disconnect()
+			setMagHidden(model, false) -- a cut reload never leaves the mag hidden
+		end)
+	end)
+end
+
 -- // breathing (every body) ------------------------------------------------------------------------------------------------
 local bodies = {} -- [Model] = { e, phase, lastPos, burstAt, sound }
 local myExertion = 0
@@ -779,6 +815,7 @@ local function updateBreath(dt: number)
 			b = { e = 0, phase = math.random() * math.pi * 2 }
 			bodies[model] = b
 		end
+		if not b.markers then b.markers = true hookMarkers(model) end
 		if model == character then
 			b.e = myExertion
 		else
@@ -1039,7 +1076,7 @@ function controller.Start()
 				local playing = {}
 				if animator then for _, t in (animator :: Animator):GetPlayingAnimationTracks() do table.insert(playing, t.Name) end end
 				return { ready = ready, weights = w, exertion = myExertion, sway = controller.BreathSway(), playing = playing,
-					fidget = controller._lastFidget, dive = diveTrack ~= nil and diveTrack.IsPlaying,
+					fidget = controller._lastFidget, magEvents = magEvents, magLog = table.concat(magLog, ","), dive = diveTrack ~= nil and diveTrack.IsPlaying,
 					bodies = (function() local n = 0 for _ in bodies do n += 1 end return n end)() }
 			elseif action == "exert" then
 				myExertion = tonumber(arg) or 1
@@ -1072,7 +1109,7 @@ return controller
 -- how long to wait before the ragdoll takes over (0 = at once, the old behaviour, e.g. no clip made yet).
 --   headshot kill (LastHitZone Head, a gun)  -> DeathHeadshot
 --   explosion kill (AnimFinalConfig.Hits.StaggerKinds) -> DeathExplosion
---   in cover (character attribute CoverState) -> DeathSide (a wall at your back: crumple)
+--   in cover (character attribute CoverState) -> DeathInCover (DeathCover, else the crumple: a wall at your back)
 --   else by the hit"s direction relative to the body"s facing: from the front -> DeathFromFront (thrown back),
 --   from behind -> DeathFromBehind (falls forward), from a side -> DeathSide
 -- The hit"s direction: humanoid attribute LastHitFrom (Vector3, set where the damage is applied), else the attacker"s root.
@@ -1107,7 +1144,7 @@ function DeathAnims.Pick(info): string
 	local AF = info.config
 	if info.kind == "Gun" and info.zone == "Head" then return "DeathHeadshot" end
 	if info.kind and AF.Hits.StaggerKinds[info.kind] then return "DeathExplosion" end
-	if info.coverState ~= nil and info.coverState ~= "None" then return "DeathSide" end
+	if info.coverState ~= nil and info.coverState ~= "None" then return "DeathInCover" end
 	local rel = info.rel
 	if not rel or rel.Magnitude < 0.01 then return "DeathAny" end
 	local flat = Vector3.new(rel.X, 0, rel.Z)

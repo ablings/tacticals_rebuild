@@ -4,7 +4,7 @@
 -- how long to wait before the ragdoll takes over (0 = at once, the old behaviour, e.g. no clip made yet).
 --   headshot kill (LastHitZone Head, a gun)  -> DeathHeadshot
 --   explosion kill (AnimFinalConfig.Hits.StaggerKinds) -> DeathExplosion
---   in cover (character attribute CoverState) -> DeathSide (a wall at your back: crumple)
+--   in cover (character attribute CoverState) -> DeathInCover (DeathCover, else the crumple: a wall at your back)
 --   else by the hit's direction relative to the body's facing: from the front -> DeathFromFront (thrown back),
 --   from behind -> DeathFromBehind (falls forward), from a side -> DeathSide
 -- The hit's direction: humanoid attribute LastHitFrom (Vector3, set where the damage is applied), else the attacker's root.
@@ -39,7 +39,7 @@ function DeathAnims.Pick(info): string
 	local AF = info.config
 	if info.kind == "Gun" and info.zone == "Head" then return "DeathHeadshot" end
 	if info.kind and AF.Hits.StaggerKinds[info.kind] then return "DeathExplosion" end
-	if info.coverState ~= nil and info.coverState ~= "None" then return "DeathSide" end
+	if info.coverState ~= nil and info.coverState ~= "None" then return "DeathInCover" end
 	local rel = info.rel
 	if not rel or rel.Magnitude < 0.01 then return "DeathAny" end
 	local flat = Vector3.new(rel.X, 0, rel.Z)

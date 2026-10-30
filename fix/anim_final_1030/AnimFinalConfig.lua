@@ -35,7 +35,8 @@ C.Clips = { -- names from notes/anim_style_targets.md (2026-10-30) first, older 
 	-- deaths (the server plays them, then ragdolls)
 	DeathFromFront = { "DeathBackward" },  -- shot from the front: thrown back
 	DeathFromBehind = { "DeathForward" },  -- shot from behind: falls face down
-	DeathSide = { "DeathCrumple" },        -- from the side, and in cover (a wall at your back)
+	DeathSide = { "DeathCrumple" },        -- from the side
+	DeathInCover = { "DeathCover", "DeathCrumple" }, -- in cover (a wall at your back)
 	DeathHeadshot = { "DeathHeadshot" },
 	DeathExplosion = { "DeathExplosion" },
 	DeathAny = { "DeathCrumple", "DeathBackward", "DeathForward" },

@@ -313,6 +313,41 @@ local function bindReact(model: Model)
 	burn()
 end
 
+-- // markers on every body: MagHide / MagShow hide the held gun's Mag (revolver: Rounds) so a dropped mag doesn't jump back
+-- to the hand (a local LocalTransparencyModifier: each client does it for what it sees; tracks of other bodies replicate)
+local markerHooked = {} -- [Animator] = true (cleared when it leaves the game)
+local MAG_PARTS = { "Mag", "Rounds", "LeftMag" }
+local magEvents = 0 -- (Studio test hook)
+local magLog = {}
+local function setMagHidden(model: Model, hidden: boolean, why: string?)
+	magEvents += 1
+	if why then table.insert(magLog, why) if #magLog > 8 then table.remove(magLog, 1) end end
+	local tool = model:FindFirstChildOfClass("Tool")
+	if not tool then return end
+	for _, n in MAG_PARTS do
+		local part = tool:FindFirstChild(n)
+		if part and part:IsA("BasePart") then
+			part.LocalTransparencyModifier = hidden and 1 or 0
+			for _, d in part:GetDescendants() do if d:IsA("BasePart") then d.LocalTransparencyModifier = hidden and 1 or 0 end end
+		end
+	end
+end
+local function hookMarkers(model: Model)
+	local hum = model:FindFirstChildOfClass("Humanoid")
+	local anim = hum and hum:FindFirstChildOfClass("Animator")
+	if not anim or markerHooked[anim] then return end
+	markerHooked[anim] = true
+	anim.Destroying:Once(function() markerHooked[anim] = nil end)
+	anim.AnimationPlayed:Connect(function(track)
+		local c1 = track:GetMarkerReachedSignal("MagHide"):Connect(function() setMagHidden(model, true, "hide " .. track.Name) end)
+		local c2 = track:GetMarkerReachedSignal("MagShow"):Connect(function() setMagHidden(model, false, "show " .. track.Name) end)
+		track.Stopped:Once(function()
+			c1:Disconnect() c2:Disconnect()
+			setMagHidden(model, false) -- a cut reload never leaves the mag hidden
+		end)
+	end)
+end
+
 -- // breathing (every body) ------------------------------------------------------------------------------------------------
 local bodies = {} -- [Model] = { e, phase, lastPos, burstAt, sound }
 local myExertion = 0
@@ -424,6 +459,7 @@ local function updateBreath(dt: number)
 			b = { e = 0, phase = math.random() * math.pi * 2 }
 			bodies[model] = b
 		end
+		if not b.markers then b.markers = true hookMarkers(model) end
 		if model == character then
 			b.e = myExertion
 		else
@@ -684,7 +720,7 @@ function controller.Start()
 				local playing = {}
 				if animator then for _, t in (animator :: Animator):GetPlayingAnimationTracks() do table.insert(playing, t.Name) end end
 				return { ready = ready, weights = w, exertion = myExertion, sway = controller.BreathSway(), playing = playing,
-					fidget = controller._lastFidget, dive = diveTrack ~= nil and diveTrack.IsPlaying,
+					fidget = controller._lastFidget, magEvents = magEvents, magLog = table.concat(magLog, ","), dive = diveTrack ~= nil and diveTrack.IsPlaying,
 					bodies = (function() local n = 0 for _ in bodies do n += 1 end return n end)() }
 			elseif action == "exert" then
 				myExertion = tonumber(arg) or 1
