@@ -70,9 +70,9 @@ C.MeleeBackstabRange = 6 -- the knife swing plays the backstab clip when the nea
 
 -- gadgets: per gadget id, its own throw (fallback: the Smoke set)
 C.Gadgets = {
-	Frag = { Throw = { "FragThrow" }, Hold = { "FragCook" }, Press = { "FragPinPull" } },
-	Flash = { Throw = { "FlashThrow" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
-	Flashbang = { Throw = { "FlashThrow" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
+	Frag = { Throw = { "FragThrow" }, ThrowLeft = { "FragThrowLeft" }, Hold = { "FragCook" }, Press = { "FragPinPull" } },
+	Flash = { Throw = { "FlashThrow" }, ThrowLeft = { "FlashThrowLeft" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
+	Flashbang = { Throw = { "FlashThrow" }, ThrowLeft = { "FlashThrowLeft" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
 	StickyGrenade = { Throw = { "StickyThrow", "FragThrow" }, Hold = { "FragCook" } },
 	Landmine = { Throw = { "LandminePlace" }, Roll = { "LandminePlace" } }, -- the mine is still thrown (code); the clip plays on the throw
 	Medkit = { Use = { "MedkitUse", "MedkitHeal" } },

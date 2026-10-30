@@ -90,9 +90,9 @@ C.MeleeBackstabRange = 6 -- the knife swing plays the backstab clip when the nea
 
 -- gadgets: per gadget id, its own throw (fallback: the Smoke set)
 C.Gadgets = {
-	Frag = { Throw = { "FragThrow" }, Hold = { "FragCook" }, Press = { "FragPinPull" } },
-	Flash = { Throw = { "FlashThrow" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
-	Flashbang = { Throw = { "FlashThrow" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
+	Frag = { Throw = { "FragThrow" }, ThrowLeft = { "FragThrowLeft" }, Hold = { "FragCook" }, Press = { "FragPinPull" } },
+	Flash = { Throw = { "FlashThrow" }, ThrowLeft = { "FlashThrowLeft" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
+	Flashbang = { Throw = { "FlashThrow" }, ThrowLeft = { "FlashThrowLeft" }, Roll = { "FlashRoll" }, Hold = { "FlashHold" } },
 	StickyGrenade = { Throw = { "StickyThrow", "FragThrow" }, Hold = { "FragCook" } },
 	Landmine = { Throw = { "LandminePlace" }, Roll = { "LandminePlace" } }, -- the mine is still thrown (code); the clip plays on the throw
 	Medkit = { Use = { "MedkitUse", "MedkitHeal" } },
@@ -579,8 +579,9 @@ local function updateLife()
 	elseif now >= nextFidgetAt and not (fidgetTrack and fidgetTrack.IsPlaying) then
 		local list = AnimLib.All(AF.Clips.Fidgets)
 		if #list > 0 and animator then
-			fidgetTrack = AnimLib.Load(animator, list[math.random(1, #list)], Enum.AnimationPriority.Action, false)
-			if fidgetTrack then fidgetTrack:Play(0.25) end
+			local pickName = list[math.random(1, #list)]
+			fidgetTrack = AnimLib.Load(animator, pickName, Enum.AnimationPriority.Action, false)
+			if fidgetTrack then fidgetTrack:Play(0.25) controller._lastFidget = pickName .. "@" .. math.floor(now - stillSince + 0.5) end
 		end
 		scheduleFidget(false)
 	end
@@ -1038,11 +1039,16 @@ function controller.Start()
 				local playing = {}
 				if animator then for _, t in (animator :: Animator):GetPlayingAnimationTracks() do table.insert(playing, t.Name) end end
 				return { ready = ready, weights = w, exertion = myExertion, sway = controller.BreathSway(), playing = playing,
-					fidget = fidgetTrack ~= nil and fidgetTrack.IsPlaying, dive = diveTrack ~= nil and diveTrack.IsPlaying,
+					fidget = controller._lastFidget, dive = diveTrack ~= nil and diveTrack.IsPlaying,
 					bodies = (function() local n = 0 for _ in bodies do n += 1 end return n end)() }
 			elseif action == "exert" then
 				myExertion = tonumber(arg) or 1
 				return myExertion
+			elseif action == "shot" then -- arg = { tool, origin, endPos }: a shot effect as if relayed from another shooter
+				local fx = require(script.Parent:WaitForChild("WeaponController"):WaitForChild("WeaponEffects"))
+				local WC = require(Shared.Config.WeaponConfig)
+				fx.PlayShot(arg[1], arg[2], arg[3], true, nil, WC.Weapons.Pistol.Effects)
+				return true
 			elseif action == "ctl" then -- arg = { controller, function, ... }: call a controller in the game"s VM
 				local c = Get(arg[1])
 				local f = c and c[arg[2]]
