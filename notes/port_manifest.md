@@ -758,3 +758,33 @@ himself; we never publish.
   Mast_South at plan (36, -240); CoverConfig MoveRework1029Round 4, WallProxy 67, NoClimb 283; 360 scripts, 0 test marks.
 - How Edward sees it: in the tacticals lobby `;testplace` (admins), then `;testmatch House 1v1 bots`; look out of any window,
   also with graphics quality turned down to 1.
+
+## Live port 51 (2026-10-30 02:04-05:33, main PC, systems session; work order: Lead's plan approved by Edward, "one live port of MOVE1029 + SURVEY1025 + UI survey r2 to all four places; anything that doesn't PASS after 2 rounds is left out") - SURVEY1025 + [GLASS] restore: lobby + Tutorial + Matchmaking + Ranked
+- **Shipped:** SURVEY1025 round 2 (fix/survey1025_security.lua + fix/survey1025_data.lua: FindMatch refused mid-duel, SelectWeapon
+  ownership everywhere, receipts granted after the save landed, AssetCheck parked, one DataManager + before-release hook, ranked
+  mark charge, rewards via PlayerStore, leave rule, Studio_ boards, Template defaults); in Matchmaking / Ranked also
+  fix/breakable_glass.lua re-run (the [GLASS] Cover / Camera client edits that live ports 47/48 lost to the UI deploy).
+- **Left out:** MOVE1029 (systems grade r1 FIX 7.0, r2 FIX 7.9 after the fix/move1029_r5.lua patch: the server facing gate is
+  flag-only, so a faked backwards shot lands and is only counted, against the 2026-10-29 correction as written: Edward decides) and
+  UI survey r2 (UI grade FIX 7.3: hard strokes remain, phone sizes regressed, tooltip clipped). Why and what's next: notes/PORT51_DONE.md.
+- Pre-checks: git pull (up to date), repo-root .locks all from 10-29 (no session mid-port), latest live = port 48, Test ports 49/50
+  untouched (House 1965 / illusion stay Test-only: read-back shows no ArtVersion, no HouseIllusionKit, no applyMapSky).
+- Builds: the committed port-48 files (git HEAD) + the installers above, each re-run all "=" (SURVEY1025 tests 30/30 match places,
+  32/32 lobby); Tacticals_main_ported.rbxl = Tacticals_rebuild.rbxl + Technology Future. match_place_ref.rbxl unchanged (SURVEY1025
+  refuses non-split places by design; tools/port_prep.sh now runs it after the split).
+- Tests: notes/PORT51_DONE.md (bot matches on all 4 maps, ranked bot match, 2-player lobby pad duel incl. FindMatch refused mid-duel,
+  all three tutorials, two systems grader rounds, one UI grade). Final SURVEY-only Matchmaking: House bot match clean.
+- Publish As > gunsy funsy > tacticals > <place> > Overwrite > Grant Permissions and Publish ("tacticals is ready to test"), in order:
+  **Tutorial** (118492914954668), **Ranked** (122908502889013), **Matchmaking** (97339328188402), **tacticals lobby**
+  (126491009194165). Read back with tools/port_readback.lua in each publishing window after the upload (PlaceId set by the upload):
+  PlaceKind right, DuelMaps Warehouse/Arena/Warehouse2/House (match places + lobby), Survey1025 security 2 / data 2, LeaveRule, GLASS
+  client edits (Matchmaking / Ranked / lobby), SmokeAlarmRound 3, lobby LobbySteamFillRound 1 + TestPlaceId 99722095417844 + AssetCheck
+  parked, no MOVE1029 / UI r2 code, StudioTeleportData nil, no hooks, 0 test marks, compile all ok (Tutorial 353, Ranked 364,
+  Matchmaking 364, lobby 394). NOT done: a read-back from a fresh File > Open from Roblox window (the shared screen was contended).
+- Publish notes: the permission prompt opened on Edward's monitor once (moved by window handle); another agent's "Convert To Package"
+  dialog sat topmost over the agents' monitor: moved MY dialog with MoveWindow instead of touching theirs; a "Share Game" notice
+  rendered invisibly and blocked Ctrl+S on Tutorial (closed with WM_CLOSE). Publish dialog: the Overwrite button is at window
+  (870, 719), not where a half-size screenshot suggests.
+- Live checks for Edward: in a lobby pad duel, Play > a queue says "You're in a match right now!"; leaving a casual match after
+  round 1 costs the streak; buying credits still grants once.
+- Rollback: Creator Hub > tacticals > each place > Version History, restore the version before 2026-10-30 05:00.

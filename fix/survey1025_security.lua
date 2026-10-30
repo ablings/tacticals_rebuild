@@ -16,6 +16,8 @@
 -- applied. Edits this installer wrote are listed in the script's attribute Survey1025Edits; UNDO reverts only those.
 -- Backups of the first-touched sources: ServerStorage._RebuildRemoved.SURVEY1025_<name>_Orig.
 local UNDO = false --@UNDO
+local ROUND = 2 -- [SURVEY1025] round 2 (2026-10-29): re-anchored on the port-48 sources; round stamp + token-boundary anchors
+local STAMP = "Survey1025SecurityRound" -- ServerScriptService attribute: the installed round
 local RS = game:GetService("ReplicatedStorage")
 local SSS = game:GetService("ServerScriptService")
 local SS = game:GetService("ServerStorage")
@@ -156,6 +158,30 @@ end
 -------------------------------------------------------------------------------------------------------------------------------
 -- the source edits: work out every new source first (assert), then write
 -------------------------------------------------------------------------------------------------------------------------------
+-- an anchor must match at a token boundary (replacing `x:Play()` must not also hit `v.x:Play()`)
+local function atBoundary(s: string, a: number, b: number): boolean
+	local first, last = s:sub(a, a), s:sub(b, b)
+	if first:match("[%w_]") and s:sub(a - 1, a - 1):match("[%w_%.:]") then return false end
+	if last:match("[%w_]") and s:sub(b + 1, b + 1):match("[%w_]") then return false end
+	return true
+end
+
+-- round stamp: refuse any other round (an older round's output can still match these anchors and install twice). An unstamped
+-- place that carries Survey1025Edits holds the 2026-10-25 round 1: UNDO it with that installer from git (503ee89) first.
+local installed = SSS:GetAttribute(STAMP)
+do
+	local unstamped = false
+	for _, P in PATCHES do
+		local inst = P.find()
+		if inst and inst:GetAttribute("Survey1025Edits") then unstamped = true end
+	end
+	if installed ~= nil and installed ~= ROUND then
+		error(("survey1025: round %s is installed here (%s); UNDO with that round's installer from git, then run round %d"):format(tostring(installed), STAMP, ROUND))
+	elseif installed == nil and unstamped then
+		error("survey1025: an unstamped (round 1, 2026-10-25) install is here; UNDO with git 503ee89's installer, then run round " .. ROUND)
+	end
+end
+
 local writes = {}
 for _, P in PATCHES do
 	local applicable = {}
@@ -194,6 +220,7 @@ for _, P in PATCHES do
 			local a, b = s:find(e.old, 1, true)
 			assert(a, "survey1025: " .. P.key .. " " .. e.id .. " anchor not found")
 			assert(not s:find(e.old, b + 1, true), "survey1025: " .. P.key .. " " .. e.id .. " anchor not unique")
+			assert(atBoundary(s, a, b), "survey1025: " .. P.key .. " " .. e.id .. " anchor inside a longer token")
 			s = s:sub(1, a - 1) .. e.new .. s:sub(b + 1)
 			mine[e.id] = true
 			table.insert(out, P.key .. " " .. e.id .. " +")
@@ -223,6 +250,7 @@ local function backup(inst)
 	if b:IsA("BaseScript") then b.Disabled = true end
 	b.Parent = folder
 end
+if not UNDO then SSS:SetAttribute(STAMP, ROUND) end -- stamped BEFORE the first write: an interrupted run can be redone / undone
 for _, w in writes do
 	if w.s ~= w.src then
 		if not UNDO then backup(w.inst) end
@@ -271,4 +299,6 @@ else
 	table.insert(out, "AssetCheck n/a")
 end
 
+if UNDO then SSS:SetAttribute(STAMP, nil) end -- every edit reverted: no round installed
+table.insert(out, "round " .. (UNDO and "-" or tostring(ROUND)))
 return table.concat(out, " | ")

@@ -35,7 +35,9 @@ end
 
 -- 2. the fixes are in the sources of this place
 local IS_MATCH = RS:FindFirstChild("PlaceKind") ~= nil
-local M = SSS.ServerScripts["[Server] Init"].GameManager.Managers
+check("round stamp: security round 2", SSS:GetAttribute("Survey1025SecurityRound") == 2)
+check("round stamp: data round 2", SSS:GetAttribute("Survey1025DataRound") == 2)
+local M =SSS.ServerScripts["[Server] Init"].GameManager.Managers
 local function has(inst, text) return inst ~= nil and string.find(inst.Source, text, 1, true) ~= nil end
 local DM = SSS.Data.DataManager
 check("(2) DataManager class-token cache", has(DM, "classTokens[player.UserId] = token"))

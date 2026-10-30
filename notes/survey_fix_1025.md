@@ -81,6 +81,15 @@ Matchmaking / Tutorial from the port-42 files.
     lobby's, which has run live with that code. Live two-account check after port 43: leave a match server and rejoin it -> no "token
     already created" error, scissors still shown.
 
+## Round 2 (2026-10-29 re-anchor, shipped in live port 51 on 2026-10-30)
+- Round 2 (the 2026-10-29 systems session, which then waited for MOVE1029 and stopped): the edit texts are UNCHANGED; added a round
+  stamp (`ServerScriptService` attributes `Survey1025SecurityRound` / `Survey1025DataRound` = 2; any other round or an unstamped
+  round-1 install is refused) and a token-boundary check on every anchor. Offline anchor check against the MOVE1029 builds: all apply.
+- Port 51: installed in lobby, Tutorial, Matchmaking, Ranked (`+`, re-run all `=`), tests 30/30 (match places), 32/32 (lobby).
+  match_place_ref is not a split place: the installers refuse it by design; `tools/port_prep.sh` now runs them after the split.
+- 2 players (Studio server + 2 clients, lobby pad duel): FindMatch refused mid-duel for both players and for R1v1, offline
+  message before / after. Ranked bot match: result written. Leave rule / receipts: the 10-25 tests stand (code unchanged).
+
 ## Open / notes
 - Systems grader round 1: FIX 7.5 (major: lobby 2v2 free leave re-charged on disconnect; fixed in round 2 above).
 - Systems grader round 2: **PASS 8.8** (lobby replayed in its own copy: 2v2 free leave, two duels at once, receipts, kick; installers re-run / UNDO exact).

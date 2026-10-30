@@ -11,7 +11,8 @@ local function apply(path, edits)
 	local done, skip = 0, 0
 	for i, e in edits do
 		local o, n = e[1], e[2] -- (Lua drops the newline right after a long-bracket opener)
-		local a = src:find(o, 1, true)
+		-- an edit whose new text still holds its anchor is 'already in' when the new text is there (else it re-applied every run)
+		local a = if n:find(o, 1, true) and src:find(n, 1, true) then nil else src:find(o, 1, true)
 		if a and src:find(o, a + 1, true) then table.insert(report, path .. ' edit ' .. i .. ': anchor x2'); bad += 1; return end
 		if a then src = src:sub(1, a - 1) .. n .. src:sub(a + #o); done += 1
 		elseif src:find(n, 1, true) then skip += 1

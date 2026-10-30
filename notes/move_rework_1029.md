@@ -88,3 +88,17 @@ CoverAnimations.LeanLeft / LeanRight / LeanLeftCrouch / LeanRightCrouch ("" = th
   dive on House could carry a player out through a window; barriers counted as camera blockers). The port build
   (tools/move_rework_port_build.sh) re-runs fix/breakable_glass.lua after the UI deploy (it re-adds exactly edits 3 and 4).
 - `ui/` after f714708e is ungraded (UI survey r2): the port deploys ui as of f714708e~1, which equals what's live.
+
+## Round 5 patch [MOVE1029R5] (2026-10-30, live port 51)
+Port-51 systems grade round 1: FIX 7.0, MOVE1029 not shippable: the server facing gate refused honest peek shots (the client's
+turn reaches the server 0.17-0.43 s after the shot remote, median ~0.36 s in Studio; FacingRecheck 0.1 s was too short), a
+refused shot had already spent its ammo, the recheck wait pushed the hit rewind out of its window, no alive re-check after the
+waits, and a refused pull-up teleported the body to the client's claimed start point. `fix/move1029_r5.lua` (on top of round 4,
+stamped CoverConfig `MoveRework1029R5` = 1, all anchors checked first, UNDO exact):
+- CombatManager: the server facing gate only FLAGS (player attribute `FacingFlags`, Studio print), no wait, no refusal. The
+  client still holds the shot until the body faces the aim; FaceYaw still turns the body on every screen before the damage.
+- CombatManager: after the one-frame FaceYaw wait the shooter must still be alive.
+- MovementManager: a refused pull-up puts the body back where the server saw it.
+Still open (minor): Cover-state messages other than Turn / lean have no rate limit; AimPoseController leanShown / faceShown are
+weak tables; lobby BotManager lookup warns on every vault; the Tutorial build carries House / Warehouse2 geometry it never uses
+(split_build strips only their MapInfo).

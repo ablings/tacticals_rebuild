@@ -39,7 +39,33 @@ Work order: fix the blocking UI findings from the 2026-10-25 survey (HQ task 202
    `StarterGui.MainUI.ResetOnSpawn == false`; `StarterGui.HUD:GetAttribute("UISurveyScale") == true`.
 
 ## Tests
-(to fill: UI audit counts before / after, Play pass desktop / phone / tablet, sheet notes/ui_survey_r2_sheet.jpg, grader verdict)
+**NOT in live port 51** (2026-10-30): UI grade round 1 = **FIX 7.3** (captures/port51/ui/, audits/*.json). Tested on the port-51
+builds, then every place was rebuilt WITHOUT it (the installer has no UNDO). To do before it ships (UI designer):
+1. Blocking: ~427 hard text strokes remain in the lobby (ShopScreen's local `stroke()` 2 px @ 0.2 and Rivals.Kit.stroke calls should read
+   Theme.stroke; SettingsUI tabs, LobbyUI dock, WeaponBin, ArmoryUI, Hotbar HeldName, VictoryScreen, PostMatchPanel, MatchFlow glyph,
+   HUD Takedown, RewardStand), 32-33 in matches.
+2. Major (regression): px -> Scale with no floor on phones (750x390): toast text 16 -> 8 px, crosshair dot 4 -> 1.4 px, hitmarker
+   8x2 -> 2.9x0.7 px, stamina bar 160x5 -> 62x1.8 px, cover hint ~5.8 px. Use a px floor written as Scale (ui.fitReticle) + min text 9-10 px.
+3. Major (regression): tooltip body clipped ("Invite a"): AutomaticSize labels inside a bubble sized from them; give the label a wrap width.
+4. Major (pre-existing): lobby tooltips never show: the "menu above" check counts transparent full-screen canvases.
+5. Minor: dead stored-HUD boxes, 7 weak tables left, "Close"-named buttons still hooked, toast lost its good/bad meaning (KindBar gone),
+   cover hint stroke 0.5, TutorialController:867 fromOffset, stamina bar / cover hint without aspect constraint.
+6. **Edward:** the tutorial's red corner brackets around the Instructor vs his 2026-10-16 "no corner brackets" rule (the grader asks).
+7. Installer process (systems grade): no round stamp, writes per script (a later missing anchor half-installs), no token-boundary
+   check; tools/ui_survey_r2_offline.py still has the old apply rule. Copy fix/survey1025_*.lua's pattern.
+
+What was done on it tonight (before it was left out):
+- **Installer bug found + fixed:** three edits whose new text still holds their anchor (Theme 1, Toast 1, ScopeController 1)
+  re-applied on EVERY run (a second run inserted the Theme.stroke block again). Fix in the installer and the builder: an edit
+  whose new text contains its anchor counts as "already in" when the new text is present. After the fix: run 1 `OK`, run 2
+  `0 applied` in every place. (Matchmaking had been run twice before the fix: its three scripts were restored from the saved
+  build's sources first, then installed once.)
+- Installed in lobby (Tacticals_rebuild -> Tacticals_main_ported), Tutorial, Matchmaking, Ranked and match_place_ref: `OK`,
+  0 problems; read-back: Theme.stroke, UIStyleController stubbed (match places), MainUI.ResetOnSpawn false, HUD UISurveyScale.
+- Play: 4 bot matches (Matchmaking), 1 ranked bot match, a 2-player lobby pad duel, all three tutorials: no script errors.
+  One warning on Player1 in the 2-player run: `Infinite yield possible on PlayerGui:WaitForChild("MainUI")`
+  (InterfaceController:344; MainUI did arrive).
+- UI grader: see notes/PORT51_DONE.md.
 
 ## Lessons
 - A whole-file deploy from a source folder that isn't the only writer silently rolls back other installers' edits. Ship
