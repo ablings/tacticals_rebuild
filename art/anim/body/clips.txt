@@ -14,6 +14,7 @@ CoverShuffleTallRight
 CoverShuffleCrouch
 CoverShuffleCrouchRight
 CoverBrace
+CoverBraceCrouch
 CoverBlindCorner
 CoverBlindCornerLeft
 CoverBlindCornerCrouch

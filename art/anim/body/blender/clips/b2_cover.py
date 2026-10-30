@@ -97,10 +97,10 @@ def run_cycle(name, length, speed, steps, root_y, pitch, lift, contact, bob, pri
             for i in range(first, steps, 2):
                 t0 = i * per
                 x = width if side == "R" else -width
-                k += [(t0 - e1, {"z": -sweep / 2 - speed * e1, "y": 0.05, "p": 8}, "Linear"),
+                k += [(t0 - e1, {"z": -sweep / 2 - speed * e1, "y": 0.1, "p": 8}, "Linear"),
                       (t0, {"z": -sweep / 2, "y": 0.0, "p": plant_p}, "Linear"),
                       (t0 + tc, {"z": sweep / 2, "y": 0.0, "p": plant_p}, "Linear"),
-                      (t0 + tc + e1, {"z": sweep / 2 + speed * e1, "y": 0.07, "p": -25}, "CubicInOut"),
+                      (t0 + tc + e1, {"z": sweep / 2 + speed * e1, "y": 0.13, "p": -25}, "CubicInOut"),
                       (t0 + tc + (2 * per - tc) * 0.45, {"z": stride_z, "y": lift, "p": -10}, "CubicInOut")]
             k = [((t % L) if (t < 0 or t >= L) else t, v, e) for t, v, e in k]
             cyclic(c, L, k, lambda t, v, e, side=side: foot(c, side, t, x=(width if side == "R" else -width), y=v["y"],

@@ -372,4 +372,5 @@ _orig_foot = foot
 
 def foot(c, side, t, x=0.0, y=0.0, z=0.0, pitch=0.0, yaw=0.0, roll=0.0, **kw):
     need = 0.5 * math.sin(math.radians(abs(pitch))) + 0.16 * (1 - math.cos(math.radians(abs(pitch))))
-    return _orig_foot(c, side, t, x=x, y=max(y, need), z=z, pitch=pitch, yaw=yaw, roll=roll, **kw)
+    # a swing key's clearance is ADDED to the pitch lift (taking the larger ate the clearance: heels skimmed the floor)
+    return _orig_foot(c, side, t, x=x, y=(y + need) if y > 1e-6 else need, z=z, pitch=pitch, yaw=yaw, roll=roll, **kw)

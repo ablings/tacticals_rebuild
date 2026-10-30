@@ -127,11 +127,17 @@ def body_quality(clip):
     if tr:
         for s in ("R", "L"):
             runs, cur = [], []
+            part = "RightFoot" if s == "R" else "LeftFoot"
             for i in range(n + 1):
                 sc.frame_set(i)
-                h = pb["Foot." + s].head
-                wx, wz = h.x + tr[0] * i / 60.0, -h.y + tr[1] * i / 60.0
-                if h.z - 0.262 < 0.02:
+                # the foot box's lowest corner (a pitched foot can keep its ankle high while the heel skims the floor)
+                M, hh = [(Mx, h_) for p_, Mx, h_ in bodyanim.part_boxes(clip) if p_ == part][0]
+                cs = [M @ Vector((sx * hh[0], -sz * hh[2], sy * hh[1])) for sx in (-1, 1) for sy in (-1, 1) for sz in (-1, 1)]
+                lo = min(w.z for w in cs)
+                low = [w for w in cs if w.z < lo + 0.01]  # a flat sole ties 4 corners: track their middle, not one corner
+                best = sum(low, Vector((0, 0, 0))) / len(low)
+                wx, wz = best.x + tr[0] * i / 60.0, -best.y + tr[1] * i / 60.0
+                if best.z < 0.02:
                     cur.append((wx, wz))
                 elif cur:
                     runs.append(cur); cur = []

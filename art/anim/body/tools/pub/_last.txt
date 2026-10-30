@@ -1,0 +1,2 @@
+CoverIdleTall None no configuration dialog
+STOP on CoverIdleTall

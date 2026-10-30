@@ -15,20 +15,30 @@ def smooth(u):
 
 # ---------------------------------------------------------------------------------------------------- start / stop
 def move_start():
-    """from standing into the run: hips lead (f0-f4 Cubic Out 0.1 forward, chest leans in), the right foot lifts f4 and
-    lands f8 a stride ahead (Footstep f8), the left heel peels as the weight goes over. Legs + torso; arms from the Hold."""
+    """from standing into the run, authored against the HRP really accelerating (0 -> 10 studs/s over 0.15 s, the
+    humanoid's ramp): the hips lead (f0-f4), the planted left foot sweeps back at the root's speed, the right foot lifts f4
+    and lands f8 a stride ahead (Footstep f8) and is then planted, sweeping back too; the left foot peels and swings at f11.
+    Ends in MoveRun's phase at f7 (right foot just after contact): start MoveRun at TimePosition 0.12."""
     c = Clip("MoveStart", 0.25, loop=False, priority="Movement", joints=LEGS + ["UpperTorso"])
-    for fr, z, p, sp in ((0, 0.0, 0, 0), (4, -0.12, -6, -2), (8, -0.3, -7, -3), (15, -0.42, -6, -3)):
-        c.root(f(fr), y=(-0.08 if fr else -0.04), z=z, pitch=p, ease=("CubicOut" if fr == 0 else E))
+    c.travel = (0.0, 0.0)
+    def d(t):  # studs the HRP has moved forward by clip time t
+        a = 10.0 / 0.15
+        return 0.5 * a * t * t if t <= 0.15 else 0.5 * a * 0.15 ** 2 + 10.0 * (t - 0.15)
+    for fr, z, p, sp in ((0, 0.0, 0, 0), (4, -0.08, -6, -2), (8, -0.1, -7, -3), (15, -0.1, -6, -3)):
+        c.root(f(fr), y=(-0.22 if fr else -0.04), z=z, pitch=p, ease=("CubicOut" if fr == 0 else E))
         spine(c, f(fr), pitch=sp, ease=E)
-    foot(c, "R", f(0), ease="CubicOut")
-    foot(c, "R", f(4), y=0.05, z=0.05, pitch=-10, ease="CubicInOut")
-    foot(c, "R", f(6), y=0.3, z=-0.45, pitch=-5, ease="QuadIn")
-    foot(c, "R", f(8), z=-0.72, pitch=6, ease="Linear")
-    foot(c, "R", f(15), z=-0.72, ease=E)
-    foot(c, "L", f(0), ease=E)
-    foot(c, "L", f(8), ease=E)
-    foot(c, "L", f(15), y=0.08, pitch=-18, ease=E)  # heel peels as the weight goes over
+    # left foot planted from f0 to f11 (moves back against the travel), then peels and swings
+    for fr in range(0, 10):
+        foot(c, "L", f(fr), z=0.12 + d(f(fr)), yaw=8, ease="Linear")
+    foot(c, "L", f(11), z=0.12 + d(f(9)) + 0.05, y=0.14, pitch=-22, ease="CubicInOut")
+    foot(c, "L", f(15), z=0.6, y=0.35, pitch=-12, ease=E)
+    # right foot: lifts f4, lands f8 ahead, then planted
+    for fr in range(0, 4):
+        foot(c, "R", f(fr), x=0.08, z=d(f(fr)), yaw=-8, ease="Linear")
+    foot(c, "R", f(6), x=0.05, y=0.3, z=-0.3, pitch=-5, ease="QuadIn")
+    land = -0.72
+    for fr in range(8, 16):
+        foot(c, "R", f(fr), x=0.05, z=land + (d(f(fr)) - d(f(8))), ease="Linear")
     c.marker("Footstep", f(8), "R")
     return c
 
@@ -42,12 +52,15 @@ def move_stop():
         c.root(f(fr), y=y, z=z, pitch=p, ease=e)
         spine(c, f(fr), pitch=sp, ease=e)
     foot(c, "R", f(0), z=-0.35, ease=E)
-    foot(c, "R", f(21), z=-0.35, ease=E)
+    foot(c, "R", f(10), z=-0.35, ease=E)
+    foot(c, "R", f(13), x=0.04, y=0.08, z=-0.15, ease="CubicInOut")
+    foot(c, "R", f(16), x=0.08, z=0.0, yaw=-8, ease="Linear")
+    foot(c, "R", f(21), x=0.08, z=0.0, yaw=-8, ease=E)
     foot(c, "L", f(0), z=0.6, pitch=-15, y=0.05, ease="CubicInOut")
     foot(c, "L", f(6), z=0.55, y=0.08, pitch=-20, ease="CubicInOut")
     foot(c, "L", f(8), z=0.2, y=0.18, pitch=-5, ease="QuadIn")
-    foot(c, "L", f(10), z=0.0, ease="Linear")
-    foot(c, "L", f(21), z=0.0, ease=E)
+    foot(c, "L", f(10), x=-0.08, z=0.12, yaw=8, ease="Linear")
+    foot(c, "L", f(21), x=-0.08, z=0.12, yaw=8, ease=E)
     c.marker("Footstep", 0.0, "R")
     c.marker("Footstep", f(10), "L")
     return c
@@ -61,16 +74,20 @@ def turn(name, sign):
     def build():
         c = Clip(name, 0.5, loop=False, priority="Movement", joints=LEGS + ["UpperTorso", "Head"])
         A = 90.0 * sign
-        root_a = lambda fr: A * smooth((fr - 4) / 16.0)          # what the code has turned the HRP by at frame fr
+        def cubic_io(u):
+            u = max(0.0, min(1.0, u))
+            return 4 * u ** 3 if u < 0.5 else 1 - (-2 * u + 2) ** 3 / 2
+        root_a = lambda fr: A * cubic_io((fr - 4) / 16.0)          # the code turns the HRP: Cubic InOut, f4-f20
         inside, outside = ("L", "R") if sign > 0 else ("R", "L")
 
         def foot_world(side, fr, world_yaw):
             """foot at its rest spot rotated by world_yaw about the HRP, expressed in the root's (turned) frame."""
             rel = math.radians(world_yaw - root_a(fr))
-            ax, az = ANKLE[side][0], 0.0
+            wide = 1.0 + 0.6 * (abs(world_yaw) / abs(A) if side == inside else 0.0)  # the inside foot lands 0.3 wider
+            ax, az = ANKLE[side][0] * wide, 0.0
             x = ax * math.cos(rel) + az * math.sin(rel)
             z = -ax * math.sin(rel) + az * math.cos(rel)
-            return x - ax, z, world_yaw - root_a(fr)
+            return x - ANKLE[side][0], z, world_yaw - root_a(fr)
         frames = list(range(0, 31, 2))
         for fr in frames:
             # foot world yaw: 0 until it steps, then A (the inside foot f6-f14, the outside foot f14-f24)
@@ -105,9 +122,9 @@ def land_hard():
         c.root(f(fr), y=y, pitch=p, ease=e)
         spine(c, f(fr), pitch=sp, ease=e)
         head(c, f(fr), pitch=hd, ease=e)
-    for side, x, z in (("R", 0.12, -0.15), ("L", -0.12, 0.15)):
-        foot(c, side, f(0), x=x, z=z, yaw=(-10 if side == "R" else 10), ease=E)
-        foot(c, side, f(27), x=x, z=z, yaw=(-10 if side == "R" else 10), ease=E)
+    for side, x, z in (("R", 0.08, 0.0), ("L", -0.08, 0.12)):  # lands in the idle stance
+        foot(c, side, f(0), x=x, z=z, yaw=(-8 if side == "R" else 8), ease=E)
+        foot(c, side, f(27), x=x, z=z, yaw=(-8 if side == "R" else 8), ease=E)
     c.marker("Land", 0.0)
     return c
 
@@ -121,27 +138,27 @@ def limp():
     speed = 4.0
     c = Clip("MoveLimp", L, loop=True, priority="Movement", joints=LEGS + ["UpperTorso", "Head"])
     c.travel = (0.0, -speed)
-    plan = {"R": (0.0, 0.42, 0.2), "L": (0.40, 0.55, 0.12)}   # touch-down, lift, swing height
+    plan = {"R": (0.0, 0.5, 0.2), "L": (0.467, 0.84, 0.12)}   # touch-down, lift, swing height
     for side, (td, lo, lift) in plan.items():
         tc = lo - td
         sweep = speed * tc
         e1 = 1.0 / 60
-        keys = [(td - e1, {"z": -sweep / 2 - speed * e1, "y": 0.04, "p": 6}, "Linear"),
-                (td, {"z": -sweep / 2, "y": 0.0, "p": 4}, "Linear"),
+        keys = [(td - e1, {"z": -sweep / 2 - speed * e1, "y": 0.1, "p": 0}, "Linear"),
+                (td, {"z": -sweep / 2, "y": 0.0, "p": 0}, "Linear"),
                 (lo, {"z": sweep / 2, "y": 0.0, "p": 0}, "Linear"),
-                (lo + e1, {"z": sweep / 2 + speed * e1, "y": 0.05, "p": -15}, "CubicInOut"),
+                (lo + e1, {"z": sweep / 2 + speed * e1, "y": 0.12, "p": -15}, "CubicInOut"),
                 (lo + (L - tc) * 0.5, {"z": 0.0, "y": lift, "p": -6}, "CubicInOut")]
         keys = [((t % L) if (t < 0 or t >= L) else t, v, e) for t, v, e in keys]
         x = 0.1 if side == "R" else -0.06
         cyclic(c, L, keys, lambda t, v, e, side=side, x=x: foot(c, side, t, x=x, y=v["y"], z=v["z"], pitch=v["p"], ease=e))
     # body: over the good leg most of the cycle; drops and dips toward the injured side when it takes weight
-    for t, y, roll, sp, sroll, hd in ((0, -0.3, 2, -5, -4, 3), (0.21, -0.26, 3, -5, -5, 3), (0.40, -0.32, -1, -6, -2, 2),
-                                      (0.46, -0.42, -5, -9, 3, 6), (0.55, -0.38, -3, -7, 1, 4), (L, -0.3, 2, -5, -4, 3)):
+    for t, y, roll, sp, sroll, hd in ((0, -0.3, 2, -5, -4, 3), (0.25, -0.26, 3, -5, -5, 3), (0.467, -0.32, -1, -6, -2, 2),
+                                      (0.52, -0.42, -5, -9, 3, 6), (0.65, -0.38, -3, -7, 1, 4), (L, -0.3, 2, -5, -4, 3)):
         c.root(t, y=y, roll=roll, pitch=-4, ease=E)
         spine(c, t, pitch=sp, roll=sroll, ease=E)
         head(c, t, pitch=hd, roll=-sroll * 0.5, ease=E)
     c.marker("Footstep", 0.0, "R")
-    c.marker("Footstep", 0.40, "L")
+    c.marker("Footstep", 0.467, "L")
     return c
 
 
@@ -202,8 +219,8 @@ def burning():
     for fr, sp, hd in ((0, -8, -6), (36, -9, -7), (72, -8, -6)):
         spine(c, f(fr), pitch=sp, yaw=6, roll=3, ease=E)
         head(c, f(fr), pitch=hd, yaw=-14, roll=4, ease=E)
-    rest = ((-0.75, 0.75, -0.65), (60, -30, 0))
-    swat = ((-0.55, 1.55, -0.25), (130, -40, 30))
+    rest = ((-1.05, 0.35, -0.6), (40, -20, 10))
+    swat = ((-1.15, -0.55, -0.35), (-10, 0, 15))   # slaps at the burning trouser leg
     for fr, (pos, rot), e in ((0, rest, E), (8, rest, "CubicOut"), (12, swat, "CubicOut"), (16, rest, E), (44, rest, "CubicOut"),
                               (48, swat, "CubicOut"), (52, rest, E), (72, rest, E)):
         c.hand_free("L", f(fr), pos, rot, ease=e)

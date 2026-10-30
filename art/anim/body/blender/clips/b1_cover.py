@@ -109,10 +109,10 @@ def shuffle(name, length, crouched):
             x_out = x_in - sweep
             keys = []
             for t0 in starts:
-                keys += [(t0 - e1, {"x": x_out - speed * e1, "y": 0.05}, "Linear"),
+                keys += [(t0 - e1, {"x": x_out - speed * e1, "y": 0.1}, "Linear"),
                          (t0, {"x": x_out, "y": 0.0}, "Linear"),
                          (t0 + q, {"x": x_in, "y": 0.0}, "Linear"),
-                         (t0 + q + e1, {"x": x_in + speed * e1 * 0.5, "y": 0.06}, "CubicInOut"),
+                         (t0 + q + e1, {"x": x_in + speed * e1 * 0.5, "y": 0.11}, "CubicInOut"),
                          (t0 + q + (q - 2 * e1) * 0.5 + e1, {"x": (x_in + x_out) / 2, "y": lift}, "CubicInOut")]
             keys = [((t % L) if (t < 0 or t >= L) else t, v, e) for t, v, e in keys]
             cyclic(c, L, keys, lambda t, v, e, side=side, yaw=yaw, dz=dz:
