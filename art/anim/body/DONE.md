@@ -33,47 +33,47 @@ Batch grades (roblox-animation-grader, xhigh; pass 8.0, max 4 rounds): 1 cover c
 | CoverBlindOverLeft | rbxassetid://105947273990022 | 1.00 | yes | Action4 | - | 5.8 |
 | CoverDash | rbxassetid://123563916742295 | 0.48 | yes | Action3 | Footstep 0.000, Footstep 0.233 | 8.0 |
 | CoverSneak | rbxassetid://103928091102252 | 1.20 | yes | Action | Footstep 0.000, Footstep 0.300, Footstep 0.600, Footstep 0.900 | 8.5 |
-| CoverRoll | ready to publish | 0.50 | no | Action4 | Land 0.333 | 6.5 |
-| CoverVault | ready to publish | 0.55 | no | Action4 | EdgeGrab 0.100, Land 0.550 | 6.0 |
-| CoverDiveAim | ready to publish | 1.00 | yes | Action4 | - | 8.6 |
-| MoveRun | ready to publish | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 8.6 |
-| MoveWalkAim | ready to publish | 1.00 | yes | Movement | Footstep 0.000, Footstep 0.250, Footstep 0.500, Footstep 0.750 | 8.6 |
-| MoveStrafeLeft | ready to publish | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 6.6 |
-| MoveStrafeRight | ready to publish | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 6.6 |
-| MoveBackpedal | ready to publish | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 8.5 |
-| MoveSprint | ready to publish | 0.50 | yes | Movement | Footstep 0.000, Footstep 0.250 | 6.0 |
-| MoveSprintPistol | ready to publish | 0.50 | yes | Movement | Footstep 0.000, Footstep 0.250 | 7.8 |
-| MoveCrouchIdle | ready to publish | 1.00 | yes | Action | - | 8.3 |
-| MoveCrouchWalk | ready to publish | 1.20 | yes | Action | Footstep 0.000, Footstep 0.300, Footstep 0.600, Footstep 0.900 | 7.6 |
-| MoveSlide | ready to publish | 0.50 | yes | Action4 | - | 6.8 |
-| MoveStart | ready to publish | 0.25 | no | Movement | Footstep 0.133 | 8.0 |
-| MoveStop | ready to publish | 0.35 | no | Movement | Footstep 0.000, Footstep 0.167 | 8.5 |
-| TurnInPlaceLeft | ready to publish | 0.50 | no | Movement | Footstep 0.233, Footstep 0.400 | 6.5 |
-| TurnInPlaceRight | ready to publish | 0.50 | no | Movement | Footstep 0.233, Footstep 0.400 | 6.5 |
-| MoveLandHard | ready to publish | 0.45 | no | Action | Land 0.000 | 8.5 |
-| MoveLimp | ready to publish | 0.84 | yes | Movement | Footstep 0.000, Footstep 0.467 | 7.5 |
-| HitFlinch | ready to publish | 0.30 | no | Action4 | - | 8.0 |
-| HitFlinchF | ready to publish | 0.30 | no | Action4 | - | 8.0 |
-| HitFlinchB | ready to publish | 0.30 | no | Action4 | - | 8.0 |
-| HitFlinchL | ready to publish | 0.30 | no | Action4 | - | 8.0 |
-| HitFlinchR | ready to publish | 0.30 | no | Action4 | - | 8.0 |
-| HitHeadshot | ready to publish | 0.25 | no | Action4 | - | 8.5 |
-| HitExplosionStagger | ready to publish | 0.90 | no | Action4 | Footstep 0.233, Footstep 0.733 | 8.0 |
-| HitBurning | ready to publish | 1.20 | yes | Action4 | - | 7.5 |
-| DeathForward | ready to publish | 1.20 | no | Action4 | DropGun 0.100, Ground 0.667 | 6.0 (end pose re-fixed after r4: torso 0.08 off the floor, not re-graded) |
-| DeathBackward | ready to publish | 1.10 | no | Action4 | DropGun 0.067, Ground 0.600 | 8.3 |
-| DeathCrumple | ready to publish | 1.40 | no | Action4 | DropGun 0.200, Ground 0.833 | 5.4 |
-| DeathHeadshot | ready to publish | 0.80 | no | Action4 | DropGun 0.033, Ground 0.500 | 5.6 |
-| DeathExplosion | ready to publish | 0.90 | no | Action4 | DropGun 0.017, Ragdoll 0.200, Ground 0.500 | 8.3 |
-| DeathCover | ready to publish | 1.20 | no | Action4 | DropGun 0.083, Ground 0.500 | 8.0 |
-| IdleFidgetShift | ready to publish | 2.50 | no | Idle | - | 8.3 |
-| IdleFidgetGunCheck | ready to publish | 3.00 | no | Action2 | - | 7.2 |
-| IdleFidgetLook | ready to publish | 3.00 | no | Idle | - | 8.3 |
-| BreatheCalm | ready to publish | 4.00 | yes | Idle | - | 8.2 |
-| BreatheHeavy | ready to publish | 1.50 | yes | Idle | - | 8.2 |
-| RoundReady | ready to publish | 1.20 | no | Action2 | Tap 0.533 | 8.2 |
-| Victory | ready to publish | 3.00 | no | Action2 | - | 8.0 |
-| Defeat | ready to publish | 2.50 | no | Action2 | - | 8.3 |
-| DoorOpen | ready to publish | 0.80 | no | Action2 | Push 0.200 | 8.3 |
-| BotLeanLeft | ready to publish | 1.00 | yes | Action2 | - | 8.2 |
-| BotLeanRight | ready to publish | 1.00 | yes | Action2 | - | 8.2 |
+| CoverRoll | rbxassetid://101467461293252 | 0.50 | no | Action4 | Land 0.333 | 6.5 |
+| CoverVault | rbxassetid://120466140375523 | 0.55 | no | Action4 | EdgeGrab 0.100, Land 0.550 | 6.0 |
+| CoverDiveAim | rbxassetid://134716794178042 | 1.00 | yes | Action4 | - | 8.6 |
+| MoveRun | rbxassetid://118427692424171 | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 8.6 |
+| MoveWalkAim | rbxassetid://135236629798923 | 1.00 | yes | Movement | Footstep 0.000, Footstep 0.250, Footstep 0.500, Footstep 0.750 | 8.6 |
+| MoveStrafeLeft | rbxassetid://136184400282880 | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 6.6 |
+| MoveStrafeRight | rbxassetid://70505804224712 | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 6.6 |
+| MoveBackpedal | rbxassetid://131118274457615 | 0.70 | yes | Movement | Footstep 0.000, Footstep 0.350 | 8.5 |
+| MoveSprint | rbxassetid://76612882663608 | 0.50 | yes | Movement | Footstep 0.000, Footstep 0.250 | 6.0 |
+| MoveSprintPistol | rbxassetid://104270755847833 | 0.50 | yes | Movement | Footstep 0.000, Footstep 0.250 | 7.8 |
+| MoveCrouchIdle | rbxassetid://106031756902563 | 1.00 | yes | Action | - | 8.3 |
+| MoveCrouchWalk | rbxassetid://116348401259766 | 1.20 | yes | Action | Footstep 0.000, Footstep 0.300, Footstep 0.600, Footstep 0.900 | 7.6 |
+| MoveSlide | rbxassetid://86281107626923 | 0.50 | yes | Action4 | - | 6.8 |
+| MoveStart | rbxassetid://110858853897177 | 0.25 | no | Movement | Footstep 0.133 | 8.0 |
+| MoveStop | rbxassetid://123795924964393 | 0.35 | no | Movement | Footstep 0.000, Footstep 0.167 | 8.5 |
+| TurnInPlaceLeft | rbxassetid://80907277837230 | 0.50 | no | Movement | Footstep 0.233, Footstep 0.400 | 6.5 |
+| TurnInPlaceRight | rbxassetid://140508983974396 | 0.50 | no | Movement | Footstep 0.233, Footstep 0.400 | 6.5 |
+| MoveLandHard | rbxassetid://89748984805507 | 0.45 | no | Action | Land 0.000 | 8.5 |
+| MoveLimp | rbxassetid://131808375248481 | 0.84 | yes | Movement | Footstep 0.000, Footstep 0.467 | 7.5 |
+| HitFlinch | rbxassetid://137924260635164 | 0.30 | no | Action4 | - | 8.0 |
+| HitFlinchF | rbxassetid://117600568867694 | 0.30 | no | Action4 | - | 8.0 |
+| HitFlinchB | rbxassetid://139432313549069 | 0.30 | no | Action4 | - | 8.0 |
+| HitFlinchL | rbxassetid://85427912758804 | 0.30 | no | Action4 | - | 8.0 |
+| HitFlinchR | rbxassetid://129809115843844 | 0.30 | no | Action4 | - | 8.0 |
+| HitHeadshot | rbxassetid://112386382958367 | 0.25 | no | Action4 | - | 8.5 |
+| HitExplosionStagger | rbxassetid://118994177928699 | 0.90 | no | Action4 | Footstep 0.233, Footstep 0.733 | 8.0 |
+| HitBurning | rbxassetid://109989639305229 | 1.20 | yes | Action4 | - | 7.5 |
+| DeathForward | rbxassetid://139213142082186 | 1.20 | no | Action4 | DropGun 0.100, Ground 0.667 | 6.0 (end pose re-fixed after r4: torso 0.08 off the floor, not re-graded) |
+| DeathBackward | rbxassetid://96347742372009 | 1.10 | no | Action4 | DropGun 0.067, Ground 0.600 | 8.3 |
+| DeathCrumple | rbxassetid://91088610296571 | 1.40 | no | Action4 | DropGun 0.200, Ground 0.833 | 5.4 |
+| DeathHeadshot | rbxassetid://73655435885643 | 0.80 | no | Action4 | DropGun 0.033, Ground 0.500 | 5.6 |
+| DeathExplosion | rbxassetid://140033826752688 | 0.90 | no | Action4 | DropGun 0.017, Ragdoll 0.200, Ground 0.500 | 8.3 |
+| DeathCover | rbxassetid://91164817154753 | 1.20 | no | Action4 | DropGun 0.083, Ground 0.500 | 8.0 |
+| IdleFidgetShift | rbxassetid://100165012437106 | 2.50 | no | Idle | - | 8.3 |
+| IdleFidgetGunCheck | rbxassetid://119510657086234 | 3.00 | no | Action2 | - | 7.2 |
+| IdleFidgetLook | rbxassetid://88871280422009 | 3.00 | no | Idle | - | 8.3 |
+| BreatheCalm | rbxassetid://87582158838198 | 4.00 | yes | Idle | - | 8.2 |
+| BreatheHeavy | rbxassetid://118340529857418 | 1.50 | yes | Idle | - | 8.2 |
+| RoundReady | rbxassetid://136637802249999 | 1.20 | no | Action2 | Tap 0.533 | 8.2 |
+| Victory | rbxassetid://135090972214280 | 3.00 | no | Action2 | - | 8.0 |
+| Defeat | rbxassetid://113199909442055 | 2.50 | no | Action2 | - | 8.3 |
+| DoorOpen | rbxassetid://114719938099020 | 0.80 | no | Action2 | Push 0.200 | 8.3 |
+| BotLeanLeft | rbxassetid://87227710428437 | 1.00 | yes | Action2 | - | 8.2 |
+| BotLeanRight | rbxassetid://89773592075854 | 1.00 | yes | Action2 | - | 8.2 |
