@@ -1,0 +1,16 @@
+[
+ {"clip": "MoveStart", "layers": ["PistolHold"], "where": "flat", "len": 0.25, "loop": false},
+ {"clip": "MoveStop", "layers": ["PistolHold"], "where": "flat", "len": 0.35, "loop": false},
+ {"clip": "TurnInPlaceLeft", "layers": ["PistolHold"], "where": "flat", "len": 0.5, "loop": false},
+ {"clip": "TurnInPlaceRight", "layers": ["PistolHold"], "where": "flat", "len": 0.5, "loop": false},
+ {"clip": "MoveLandHard", "layers": ["PistolHold"], "where": "flat", "len": 0.45, "loop": false},
+ {"clip": "MoveLimp", "layers": ["PistolLowered"], "where": "flat", "len": 0.84, "loop": true, "span": [0, 0.84]},
+ {"clip": "HitFlinch", "layers": ["PistolHold"], "where": "flat", "len": 0.3, "loop": false},
+ {"clip": "HitFlinchF", "layers": ["PistolHold"], "where": "flat", "len": 0.3, "loop": false},
+ {"clip": "HitFlinchB", "layers": ["PistolHold"], "where": "flat", "len": 0.3, "loop": false},
+ {"clip": "HitFlinchL", "layers": ["MoveCrouchIdle", "PistolHold"], "where": "flat", "len": 0.3, "loop": false},
+ {"clip": "HitFlinchR", "layers": ["PistolHold"], "where": "flat", "len": 0.3, "loop": false},
+ {"clip": "HitHeadshot", "layers": ["PistolHold"], "where": "flat", "len": 0.25, "loop": false},
+ {"clip": "HitExplosionStagger", "layers": ["PistolHold"], "where": "flat", "len": 0.9, "loop": false},
+ {"clip": "HitBurning", "layers": ["PistolLowered"], "where": "flat", "len": 1.2, "loop": true}
+]
