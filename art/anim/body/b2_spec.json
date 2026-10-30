@@ -1,0 +1,10 @@
+[
+ {"clip": "CoverBlindCorner", "where": "flat", "len": 1.0, "loop": true, "mirror": "CoverBlindCornerLeft"},
+ {"clip": "CoverBlindCornerCrouch", "where": "flat", "len": 1.0, "loop": true, "mirror": "CoverBlindCornerCrouchLeft"},
+ {"clip": "CoverBlindOver", "where": "flat", "len": 1.0, "loop": true, "mirror": "CoverBlindOverLeft"},
+ {"clip": "CoverDash", "where": "flat", "len": 0.48, "loop": true, "span": [0, 0.48]},
+ {"clip": "CoverSneak", "where": "flat", "len": 1.2, "loop": true, "span": [0, 0.6]},
+ {"clip": "CoverRoll", "where": "flat", "len": 0.5, "loop": false},
+ {"clip": "CoverVault", "where": "flat", "len": 0.55, "loop": false},
+ {"clip": "CoverDiveAim", "where": "flat", "len": 1.0, "loop": true}
+]

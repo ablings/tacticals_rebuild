@@ -122,3 +122,65 @@ def _init(self, *a, **kw):
 PREBEND_LEG = -8.0
 PREBEND_ARM = 8.0
 Clip.__init__ = _init
+
+
+def root_and_feet(c, t, x=0.0, y=0.0, z=0.0, pitch=0.0, yaw=0.0, roll=0.0, feet=None, ease="SineInOut"):
+    """Key the root and put the IK feet where the body carries them (rolls, vaults, dives, falls): feet = {side:
+    (off_xyz, rot_pyr)} with off measured from the hip pivot in the BODY's frame (x right, y up, z back) and rot the foot
+    rotation relative to the body. Feet keyed this way are not planted; they ride the hips."""
+    from mathutils import Vector
+    c.root(t, x=x, y=y, z=z, pitch=pitch, yaw=yaw, roll=roll, ease=ease)
+    R = rb_rot(pitch, yaw, roll).to_3x3()
+    rp = Vector((0.0, 2.192, 0.0))
+    for side, (off, rot) in (feet or {}).items():
+        hip = Vector((0.5 if side == "R" else -0.5, 0.0, 0.0))
+        w = rp + Vector((x, y, z)) + R @ (hip + Vector(off))
+        a = Vector(ANKLE[side])
+        d = w - a
+        # foot rotation = body rotation then the local foot rotation (Euler composition is close enough for keys)
+        Rf = R @ rb_rot(*rot).to_3x3()
+        e = Rf.to_euler("ZXY")  # matrix Ry @ Rx @ Rz (rb_rot order)
+        c.foot(side, t, (d.x, d.y, d.z), (math.degrees(e.x), math.degrees(e.y), math.degrees(e.z)), ease=ease)
+
+
+def lowest_point(c):
+    """lowest body surface point (Roblox y) in the current evaluated pose: bone ends minus a 0.45 limb half-thickness,
+    the head's crown (1.2 up the head bone) minus 0.5."""
+    from mathutils import Vector
+    pb = c.ob.pose.bones
+    zs = []
+    for n in ("Lowertorso", "Uppertorso", "Upperarm.R", "Lowerarm.R", "Hand.R", "Upperarm.L", "Lowerarm.L", "Hand.L",
+              "Upperleg.R", "Lowerleg.R", "Upperleg.L", "Lowerleg.L"):
+        zs += [pb[n].head.z - 0.45, pb[n].tail.z - 0.45]
+    for s in ("R", "L"):
+        zs.append(pb["Foot." + s].head.z - 0.262)
+    zs.append((pb["Head"].matrix @ Vector((0, 1.0, 0))).z - 0.5)
+    zs.append(pb["Head"].head.z - 0.4)
+    return min(zs)
+
+
+def ground_clamp(c, frames, target=0.0, passes=3):
+    """at each frame, move the root (and IK feet keyed at that frame) up/down so the lowest body point sits at `target`."""
+    from mathutils import Vector
+    sc = bpy.context.scene
+    pb = c.ob.pose.bones
+    for _ in range(passes):
+        for fr in frames:
+            sc.frame_set(int(round(fr)))
+            dz = target - lowest_point(c)
+            if abs(dz) < 0.005:
+                continue
+            for bone in ("Lowertorso", "IK_Foot.R", "IK_Foot.L"):
+                b = c.ob.data.bones[bone]
+                fcs = [fc for fc in c.act.fcurves if fc.data_path == 'pose.bones["%s"].location' % bone]
+                if not fcs or (bone != "Lowertorso" and not any(abs(k.co.x - fr) < 1e-3 for k in fcs[0].keyframe_points)):
+                    continue
+                rest = b.matrix_local.to_3x3()
+                d = rest.inverted() @ Vector((0, 0, dz))
+                for fc in fcs:
+                    for k in fc.keyframe_points:
+                        if abs(k.co.x - fr) < 1e-3:
+                            k.co.y += d[fc.array_index]
+                            k.handle_left.y += d[fc.array_index]
+                            k.handle_right.y += d[fc.array_index]
+                    fc.update()
