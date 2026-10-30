@@ -1,0 +1,250 @@
+{
+ "gun": "RiotShield",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Shield",
+   "parent": "Handle",
+   "motor6d": "Shield",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.1,
+    -0.435
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.1,
+    -0.435
+   ],
+   "size": [
+    2.2,
+    3.6,
+    0.23
+   ],
+   "tris": 184,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "curved shield body (sagitta 0.15), chamfered corners, window cut through"
+  },
+  {
+   "name": "Rim",
+   "parent": "Handle",
+   "motor6d": "Rim",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.1,
+    -0.4334
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.1,
+    -0.4334
+   ],
+   "size": [
+    2.3273,
+    3.7273,
+    0.2833
+   ],
+   "tris": 320,
+   "colour": [
+    200,
+    196,
+    186
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "raised rim: side, top and bottom strips + diagonal corner strips"
+  },
+  {
+   "name": "Window",
+   "parent": "Handle",
+   "motor6d": "Window",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    1.275,
+    -0.4813
+   ],
+   "bbox_centre": [
+    0.0,
+    1.275,
+    -0.4813
+   ],
+   "size": [
+    1.36,
+    0.29,
+    0.0873
+   ],
+   "tris": 68,
+   "colour": [
+    40,
+    70,
+    90
+   ],
+   "material": "Glass",
+   "visible_at_rest": true,
+   "wrap": "skip",
+   "note": "view window glass"
+  },
+  {
+   "name": "Grip",
+   "parent": "Handle",
+   "motor6d": "Grip",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.22
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.0,
+    -0.22
+   ],
+   "size": [
+    0.1,
+    0.56,
+    0.54
+   ],
+   "tris": 52,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "vertical back grip on two standoffs"
+  },
+  {
+   "name": "Light",
+   "parent": "Handle",
+   "motor6d": "Light",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.93,
+    1.4854,
+    -0.5378
+   ],
+   "bbox_centre": [
+    0.93,
+    1.4854,
+    -0.5378
+   ],
+   "size": [
+    0.1016,
+    0.1308,
+    0.29
+   ],
+   "tris": 40,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "flashlight + mount"
+  },
+  {
+   "name": "LightLens",
+   "parent": "Light",
+   "motor6d": "LightLens",
+   "motor_part0": "Light",
+   "motion": "static",
+   "pivot": [
+    0.93,
+    1.5,
+    -0.6853
+   ],
+   "bbox_centre": [
+    0.93,
+    1.5,
+    -0.6853
+   ],
+   "size": [
+    0.0831,
+    0.0831,
+    0.025
+   ],
+   "tris": 28,
+   "colour": [
+    190,
+    214,
+    120
+   ],
+   "material": "Neon",
+   "visible_at_rest": true,
+   "wrap": "skip",
+   "note": "Neon lens: switch Material / Color to turn the light on and off"
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "Bash": {
+   "part": "Shield",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.55
+   ]
+  },
+  "LightBeam": {
+   "part": "LightLens",
+   "position_handle_space": [
+    0.93,
+    1.5,
+    -0.7028
+   ]
+  }
+ },
+ "total_tris": 692,
+ "overall_size_LxHxW": [
+  0.748,
+  3.727,
+  2.327
+ ],
+ "follow": {},
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

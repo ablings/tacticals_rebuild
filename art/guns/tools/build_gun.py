@@ -68,6 +68,11 @@ def build(name):
     if rig_col:
         for o in [ob for ob in bpy.data.objects if rig_col.name in [c.name for c in ob.users_collection]]:
             o.hide_render = True
+    hidden_rest = [objs[p.name] for p in spec.PARTS if not getattr(p, "visible", True)]
+    for o in hidden_rest:
+        o.hide_render = True
+    gunkit.render_ortho(meshes, os.path.join(rdir, "sheet.png"), getattr(spec, "SHEET_VIEW", "right"),
+                        res=(1200, 900) if getattr(spec, "SHEET_VIEW", "right") in ("front", "persp") else (1600, 700))
     gunkit.render_ortho(meshes, os.path.join(rdir, "side.png"), "right")
     gunkit.render_ortho(meshes, os.path.join(rdir, "left.png"), "left")
     gunkit.render_ortho(meshes, os.path.join(rdir, "top.png"), "top")
@@ -90,6 +95,8 @@ def build(name):
             par_name = pp.parent
         if acc.length:
             off[objs[p.name]] = off.get(objs[p.name], Vector()) + acc
+    for o in hidden_rest:
+        o.hide_render = False
     gunkit.render_ortho(meshes, os.path.join(rdir, "exploded.png"), "right", pad=1.08, offsets=off)
     rep = run_check("Gun_" + name, os.path.join(rdir, "check"))
     if rig_col:

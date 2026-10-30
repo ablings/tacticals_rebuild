@@ -1,4 +1,4 @@
-# Guns: remodel status (modeler)
+# Guns, melee and gadgets: remodel status (modeler)
 
 Flat low-poly (RIVALS weapon method: profile extrusions, 8-sided cylinders, inset slots, one mesh per colour per moving
 part) with real-world proportions from a Codex side-view reference per gun, and many more moving parts, each its own
@@ -25,6 +25,16 @@ mesh with its pivot on its real hinge / slide axis.
 - After import: measure ScaleCube (B1), check Marker orientation (B2), delete both, then build the Tool from the manifest:
   invisible Handle at the origin, each MeshPart placed at its bbox_centre, Motor6D named after the part at its pivot,
   colour/material/WrapChannel from the manifest, attachments from the manifest (Muzzle keeps the old flash children).
+
+## Melee and gadget notes
+- Same rig and files as the guns (`art/anim/guns/<Item>.blend/.fbx`, manifest, Roblox FBX). Melee blade/barrel points along -z
+  (Roblox) like a gun muzzle; grenades stand upright in the hand (body centre = grip).
+- `visible_at_rest: false` parts (Knife Sheath, Katana Saya) start with Transparency 1; show them for draw / sheath clips.
+- Fists: no Handle mesh. RightWrap sits on the right grip point; LeftWrap is the same 3 studs left and, in Blender, follows
+  `Hand.L` (Child Of). In Roblox weld each wrap to its arm's grip point (R6: 1 stud below the arm centre, -90 deg about X).
+- Neon parts (RiotShield LightLens, Landmine Indicator) are their own mesh so code can switch them on and off.
+- Gadgets were plain Parts made in code before (HolsterManager); these are the model replacements at the same sizes.
+
 
 ## Guns
 
@@ -258,3 +268,188 @@ Attachments: `Muzzle` on Barrel at (0.0, 0.46, -4.72); `Grip` on Handle at (0.0,
 | LoadShellHead | LoadShell | (0.0, 0.16, -0.8525) | static | 28 | B |  |
 
 Attachments: `Muzzle` on Barrel at (0.0, 0.305, -2.84); `Grip` on Handle at (0.0, 0.0, -0.0); `ShellEject` on Receiver at (0.13, 0.3, -0.92); `Mag` on Receiver at (0.0, 0.1, -0.88); `Pump` on Pump at (0.0, 0.06, -1.88)
+
+## Melee
+
+### Knife
+- Size L x H x W: [1.95, 0.25, 0.16] studs; 218 tris; 5 meshes, 1 moving.
+- Script check: 5 objects, 218 tris, 0 FAIL, 7 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Grip | Handle | (0.0, -0.0075, 0.02) | static | 118 | A |  |
+| Blade | Handle | (0.0, -0.02, -0.845) | static | 48 | A |  |
+| Guard | Handle | (0.0, -0.02, -0.4175) | static | 12 | B |  |
+| Pommel | Handle | (0.0, 0.0, 0.46) | static | 12 | B |  |
+| Sheath | Handle | (0.0, 0.0, -0.42) | hidden at rest; for draw / holster: slides off along +z (-f) from the blade | 28 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Blade at (0.0, 0.0, -1.37); `EdgeMid` on Blade at (0.0, -0.1, -0.87); `Lanyard` on Grip at (0.0, 0.0, 0.36)
+
+### Katana
+- Size L x H x W: [4.08, 0.365, 0.309] studs; 580 tris; 7 meshes, 1 moving.
+- Script check: 7 objects, 580 tris, 0 FAIL, 16 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Tsuka | Handle | (0.0, 0.0, -0.065) | static | 12 | B |  |
+| Wrap | Handle | (0.0, 0.0, -0.0725) | static | 264 | A |  |
+| Kashira | Handle | (0.0, 0.0, 0.445) | static | 12 | B |  |
+| Tsuba | Handle | (0.0, 0.0, -0.545) | static | 44 | B |  |
+| Habaki | Handle | (0.0, -0.0025, -0.615) | static | 12 | B |  |
+| Blade | Handle | (0.0, 0.0552, -1.8) | static | 156 | A |  |
+| Saya | Handle | (0.0, 0.0, -0.55) | hidden at rest; for draw / sheath: slides along the blade curve (translate -z, follow the sori) | 80 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Blade at (0.0, 0.13, -3.55); `EdgeMid` on Blade at (0.0, -0.0252, -2.05); `Trail0` on Blade at (0.0, 0.0, -0.75); `Trail1` on Blade at (0.0, 0.13, -3.45)
+
+### Bat
+- Size L x H x W: [2.9, 0.258, 0.258] studs; 336 tris; 3 meshes, 0 moving.
+- Script check: 3 objects, 336 tris, 0 FAIL, 1 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Bat | Handle | (0.0, 0.0, -0.9) | static | 240 | A |  |
+| GripTape | Handle | (0.0, 0.0, -0.065) | static | 48 | B |  |
+| Band | Handle | (0.0, 0.0, -1.685) | static | 48 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Tip` on Bat at (0.0, 0.0, -2.35); `SweetSpot` on Bat at (0.0, 0.0, -1.9); `Trail0` on Bat at (0.0, 0.0, -0.95)
+
+### RiotShield
+- Size L x H x W: [0.748, 3.727, 2.327] studs; 692 tris; 6 meshes, 0 moving.
+- Script check: 6 objects, 692 tris, 0 FAIL, 6 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Shield | Handle | (0.0, -0.1, -0.435) | static | 184 | A |  |
+| Rim | Handle | (0.0, -0.1, -0.4334) | static | 320 | B |  |
+| Window | Handle | (0.0, 1.275, -0.4813) | static | 68 | skip |  |
+| Grip | Handle | (0.0, 0.0, -0.22) | static | 52 | B |  |
+| Light | Handle | (0.93, 1.4854, -0.5378) | static | 40 | B |  |
+| LightLens | Light | (0.93, 1.5, -0.6853) | static | 28 | skip |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Bash` on Shield at (0.0, 0.0, -0.55); `LightBeam` on LightLens at (0.93, 1.5, -0.7028)
+
+### Fists
+- Size L x H x W: [0.59, 1.145, 4.11] studs; 600 tris; 4 meshes, 1 moving.
+- Script check: 4 objects, 600 tris, 0 FAIL, 4 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| RightWrap | Handle | (0.0, 0.0, 0.26) | static | 276 | A |  |
+| RightPad | RightWrap | (0.0, 0.0175, 0.28) | static | 24 | B |  |
+| LeftWrap | Handle | (-3.0, 0.0, -0.0) | follows the left hand (weld to the left arm's grip point) | 276 | A |  |
+| LeftPad | LeftWrap | (-3.0, 0.0175, 0.28) | static | 24 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `RightKnuckles` on RightPad at (0.0, 0.6, 0.15); `LeftKnuckles` on LeftPad at (-3.0, 0.6, 0.15)
+
+## Gadgets
+
+### Frag
+- Size L x H x W: [0.326, 0.51, 0.296] studs; 542 tris; 5 meshes, 2 moving.
+- Script check: 5 objects, 542 tris, 0 FAIL, 6 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Body | Handle | (0.0, -0.025, -0.0) | static | 166 | A |  |
+| Band | Handle | (0.0, -0.02, -0.0) | static | 44 | B |  |
+| Fuze | Handle | (0.0, 0.215, -0.0075) | static | 72 | B |  |
+| Spoon | Handle | (0.0, 0.27, -0.05) | rotate about x away from the body (flies off when released) | 44 | B |  |
+| Pin | Handle | (0.0, 0.23, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.17, 0.155); `Throw` on Body at (0.0, 0.0, -0.0)
+
+### Smoke
+- Size L x H x W: [0.326, 0.67, 0.278] studs; 696 tris; 5 meshes, 2 moving.
+- Script check: 5 objects, 696 tris, 0 FAIL, 6 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Body | Handle | (0.0, -0.085, -0.0) | static | 336 | A |  |
+| Band | Handle | (0.0, -0.08, -0.0) | static | 44 | B |  |
+| Fuze | Handle | (0.0, 0.235, -0.0075) | static | 72 | B |  |
+| Spoon | Handle | (0.0, 0.29, -0.05) | rotate about x away from the body (flies off when released) | 28 | B |  |
+| Pin | Handle | (0.0, 0.25, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.19, 0.165); `SmokeTop` on Body at (0.0, 0.13, -0.0); `SmokeBottom` on Body at (0.0, -0.3, -0.0)
+
+### Flash
+- Size L x H x W: [0.286, 0.7, 0.24] studs; 652 tris; 5 meshes, 2 moving.
+- Script check: 5 objects, 652 tris, 0 FAIL, 7 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Body | Handle | (0.0, -0.08, -0.0) | static | 288 | A |  |
+| Band | Handle | (0.0, -0.35, -0.0) | static | 48 | B |  |
+| Fuze | Handle | (0.0, 0.255, -0.0075) | static | 72 | B |  |
+| Spoon | Handle | (0.0, 0.31, -0.05) | rotate about x away from the body (flies off when released) | 28 | B |  |
+| Pin | Handle | (0.0, 0.27, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.21, 0.145); `Flash` on Body at (0.0, 0.0, -0.0)
+
+### StickyGrenade
+- Size L x H x W: [0.443, 0.51, 0.406] studs; 560 tris; 6 meshes, 3 moving.
+- Script check: 6 objects, 560 tris, 0 FAIL, 10 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Body | Handle | (0.0, 0.0, -0.0) | static | 168 | A |  |
+| Band | Handle | (0.0, -0.07, -0.0) | static | 44 | B |  |
+| Backing | Handle | (0.0, 0.03, -0.22) | rotate about x, peel down and off before the throw | 24 | B |  |
+| Fuze | Handle | (0.0, 0.235, -0.0075) | static | 72 | B |  |
+| Spoon | Handle | (0.0, 0.29, -0.05) | rotate about x away from the body (flies off when released) | 36 | B |  |
+| Pin | Handle | (0.0, 0.25, -0.0) | translate -z (pull back along the shaft), ring swings about x | 216 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `PinRing` on Pin at (0.0, 0.25, 0.2); `StickFace` on Body at (0.0, 0.0, -0.21)
+
+### Landmine
+- Size L x H x W: [0.891, 0.18, 0.588] studs; 400 tris; 5 meshes, 3 moving.
+- Script check: 5 objects, 400 tris, 0 FAIL, 3 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Body | Handle | (0.0, -0.01, -0.0) | static | 96 | A |  |
+| Plate | Handle | (0.0, 0.1, -0.0) | translate -y 0.025 when stepped on | 48 | B |  |
+| ArmSwitch | Handle | (0.0, 0.0, -0.3) | rotate about z (its own axis) 90 deg: safe / armed | 40 | B |  |
+| SafetyPin | Handle | (0.0, 0.0, 0.3) | translate +z (pull out backward) to arm | 188 | B |  |
+| Indicator | Handle | (0.198, 0.0525, 0.198) | static | 28 | skip |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `Trigger` on Plate at (0.0, 0.1, -0.0); `Blast` on Body at (0.0, 0.0, -0.0)
+
+### Medkit
+- Size L x H x W: [0.52, 0.475, 0.27] studs; 248 tris; 9 meshes, 7 moving.
+- Script check: 9 objects, 248 tris, 0 FAIL, 14 WARN.
+- Grade: pending (HQ grader).
+- Mesh ids: pending upload.
+
+| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |
+|---|---|---|---|---|---|---|
+| Body | Handle | (0.0, -0.28, -0.0) | static | 40 | A |  |
+| Lid | Handle | (-0.12, -0.105, -0.0) | rotate about z (the case length) 110 deg up-back on its rear hinge | 12 | A |  |
+| Cross | Body | (0.12, -0.315, -0.0) | static | 44 | B |  |
+| Handle | Lid | (0.0, -0.095, -0.0) | rotate about x 90 deg to fold flat on the lid | 28 | B |  |
+| LatchL | Body | (0.13, -0.165, 0.215) | rotate about z 120 deg outward-down to unlatch | 12 | B |  |
+| LatchR | Body | (0.13, -0.165, -0.215) | rotate about z 120 deg outward-down to unlatch | 12 | B |  |
+| Injector | Body | (-0.05, -0.355, 0.08) | the hand takes it out: free move; stab = translate along -z | 32 | B |  |
+| InjectorCap | Injector | (-0.05, -0.355, -0.09) | pull off along -z before use | 32 | B |  |
+| Bandage | Body | (0.0, -0.345, -0.0) | the hand takes it out; unroll = rotate about x | 36 | B |  |
+
+Attachments: `Grip` on Handle at (0.0, 0.0, -0.0); `LidOpen` on Lid at (0.12, -0.085, -0.0); `InjectorTip` on Injector at (-0.05, -0.355, 0.23)

@@ -1,0 +1,114 @@
+{
+ "summary": "MODEL CHECK Katana: 7 objects, 580 tris, 0 FAIL, 16 WARN",
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "A1b",
+   "object": "Wrap",
+   "message": "74 faces point toward the centre: check for flipped faces (concave shapes can be fine)"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tsuka + Wrap",
+   "message": "149 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tsuka + Kashira",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tsuka + Tsuba",
+   "message": "20 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tsuka + Blade",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Wrap + Kashira",
+   "message": "4 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Wrap + Tsuba",
+   "message": "17 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Wrap + Habaki",
+   "message": "2 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Wrap + Blade",
+   "message": "68 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Wrap + Saya",
+   "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tsuba + Habaki",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tsuba + Blade",
+   "message": "6 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Tsuba + Saya",
+   "message": "11 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Habaki + Blade",
+   "message": "9 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Habaki + Saya",
+   "message": "22 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Blade + Saya",
+   "message": "162 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Katana\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Katana\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Katana\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Katana\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Katana\\check\\check_below.png"
+ ],
+ "size": [
+  4.08,
+  0.365,
+  0.309
+ ],
+ "tris": 580
+}

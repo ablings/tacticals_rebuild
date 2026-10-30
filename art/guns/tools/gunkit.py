@@ -32,6 +32,9 @@ PALETTE = {
     "Brass":     (168, 144, 96),
     "Bore":      (8, 8, 9),
     "Sage":      (167, 173, 152),
+    "Glow":      (190, 214, 120),
+    "Ash":       (200, 168, 120),
+    "Red":       (150, 40, 36),
 }
 
 
@@ -108,6 +111,11 @@ def L(fs, rs, zc, x=0.0, seg=8, rot=None):
     return Solid("lathe", None, fs=fs, rs=rs, zc=zc, x=x, seg=seg, rot=rot)
 
 
+def LZ(zs, rs, fc=0.0, x=0.0, seg=12, rot=None, cut=None):
+    """vertical lathe (grenade bodies, mines, cans): stations zs with radii rs around the axis at (x, fc)"""
+    return Solid("lathe", cut, fs=zs, rs=rs, zc=fc, x=x, seg=seg, rot=rot, axis="z")
+
+
 def T(f0, f1, zc, ro, ri, x=0.0, seg=8, rot=None):
     """closed tube along f (muzzle, suppressor bore)"""
     return Solid("tube", None, a=Vector((x, f0, zc)), b=Vector((x, f1, zc)), ro=ro, ri=ri, seg=seg, rot=rot)
@@ -174,14 +182,18 @@ def add_cyl(bm, a, b, r, r1, seg, rot=None):
     _orient_outward(bm, ra + rb, (a + b) / 2)
 
 
-def add_lathe(bm, fs, rs, zc, x, seg, rot):
+def add_lathe(bm, fs, rs, zc, x, seg, rot, axis="f"):
     rot = math.pi / seg if rot is None else rot
+
+    def P3(a, r, i):
+        c, s_ = r * math.cos(rot + 2 * math.pi * i / seg), r * math.sin(rot + 2 * math.pi * i / seg)
+        return (x + c, a, zc + s_) if axis == "f" else (x + c, zc + s_, a)
     rings = []
     for f, r in zip(fs, rs):
         if r <= 1e-6:
-            rings.append([bm.verts.new((x, f, zc))])
+            rings.append([bm.verts.new((x, f, zc) if axis == "f" else (x, zc, f))])
         else:
-            rings.append([bm.verts.new((x + r * math.cos(rot + 2 * math.pi * i / seg), f, zc + r * math.sin(rot + 2 * math.pi * i / seg))) for i in range(seg)])
+            rings.append([bm.verts.new(P3(f, r, i)) for i in range(seg)])
     for ra, rb in zip(rings, rings[1:]):
         if len(ra) == 1 and len(rb) == 1:
             continue
@@ -247,7 +259,7 @@ def solid_bmesh(s):
     elif k == "cyl":
         add_cyl(bm, s.kw["a"], s.kw["b"], s.kw["r"], s.kw["r1"], s.kw["seg"], s.kw.get("rot"))
     elif k == "lathe":
-        add_lathe(bm, s.kw["fs"], s.kw["rs"], s.kw["zc"], s.kw["x"], s.kw["seg"], s.kw["rot"])
+        add_lathe(bm, s.kw["fs"], s.kw["rs"], s.kw["zc"], s.kw["x"], s.kw["seg"], s.kw["rot"], s.kw.get("axis", "f"))
     elif k == "tube":
         add_tube(bm, s.kw["a"], s.kw["b"], s.kw["ro"], s.kw["ri"], s.kw["seg"], s.kw.get("rot"))
     elif k == "sphere":
@@ -312,8 +324,9 @@ def solid_with_cuts(s):
 
 # ---------------------------------------------------------------- gun assembly
 class Part:
-    def __init__(self, name, mat, solids, parent="Handle", pivot=None, wrap="B", motion="static", note="", open_shell=False, explode=(0, 0, 0)):
+    def __init__(self, name, mat, solids, parent="Handle", pivot=None, wrap="B", motion="static", note="", open_shell=False, explode=(0, 0, 0), visible=True):
         self.explode = explode
+        self.visible = visible
         self.name, self.mat, self.solids, self.parent = name, mat, solids, parent
         self.pivot, self.wrap, self.motion, self.note, self.open_shell = pivot, wrap, motion, note, open_shell
 
@@ -475,7 +488,8 @@ def build_gun(spec, out_blend, out_fbx, manifest_path, render_dir, rig_blend=Non
         man["parts"].append({
             "name": p.name, "parent": p.parent, "motor6d": p.name, "motor_part0": p.parent, "motion": p.motion,
             "pivot": blender_to_roblox(piv), "bbox_centre": blender_to_roblox(c), "size": [round(s[0], 4), round(s[2], 4), round(s[1], 4)],
-            "tris": tris[p.name], "colour": list(PALETTE[p.mat]), "material": "SmoothPlastic" if p.mat != "Lens" else "Glass",
+            "tris": tris[p.name], "colour": list(PALETTE[p.mat]), "material": {"Lens": "Glass", "Glow": "Neon"}.get(p.mat, "SmoothPlastic"),
+            "visible_at_rest": getattr(p, "visible", True),
             "wrap": p.wrap, "note": p.note})
     for an, (pn, loc) in att.items():
         man["attachments"][an] = {"part": pn, "position_handle_space": blender_to_roblox(loc)}
@@ -513,6 +527,20 @@ def build_gun(spec, out_blend, out_fbx, manifest_path, render_dir, rig_blend=Non
             arm.parent = grip
             arm.matrix_parent_inverse = Matrix.Identity(4)
             arm.matrix_basis = Matrix.Identity(4)
+            # parts that ride another rig bone (the left fist wrap on Hand.L): their meshes are bone-parented to that rig bone
+            bpy.context.view_layer.update()
+            for bn, tgt in getattr(spec, "FOLLOW", {}).items():
+                fam = {bn} | {p.name for p in spec.PARTS if p.parent == bn}
+                for p in spec.PARTS:
+                    if p.name in fam and tgt in rig.data.bones:
+                        o = objs[p.name]
+                        mw = o.matrix_world.copy()
+                        o.parent = rig
+                        o.parent_type = "BONE"
+                        o.parent_bone = tgt
+                        bpy.context.view_layer.update()
+                        o.matrix_world = mw
+            man["follow"] = getattr(spec, "FOLLOW", {})
             man["rig_attach"] = {"rig": "Starter_Blocky_Rig (appended copy)", "bone": "Hand.R", "empty": "RightGripAttachment",
                                  "grip_world": [1.5, 0, 2.0], "rotation": "-90 deg about X (Roblox RightGripAttachment)"}
             json.dump(man, open(manifest_path, "w"), indent=1)
@@ -589,6 +617,10 @@ def render_ortho(objs, path, view="right", pad=1.12, res=(1600, 700), offsets=No
         cam.location = c + Vector((-10, 0, 0))
         cam.rotation_euler = (math.radians(90), 0, math.radians(-90))
         w, h = hi.y - lo.y, hi.z - lo.z
+    elif view == "front":
+        cam.location = c + Vector((0, 10, 0))
+        cam.rotation_euler = (math.radians(90), 0, math.radians(180))
+        w, h = hi.x - lo.x, hi.z - lo.z
     elif view == "top":
         cam.location = c + Vector((0, 0, 10))
         cam.rotation_euler = (0, 0, math.radians(90))

@@ -1,0 +1,162 @@
+{
+ "gun": "Bat",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Bat",
+   "parent": "Handle",
+   "motor6d": "Bat",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.9
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    -0.9
+   ],
+   "size": [
+    0.255,
+    0.255,
+    2.9
+   ],
+   "tris": 240,
+   "colour": [
+    200,
+    168,
+    120
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "one lathe: knob, handle, taper, barrel, rounded end"
+  },
+  {
+   "name": "GripTape",
+   "parent": "Handle",
+   "motor6d": "GripTape",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.065
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    -0.065
+   ],
+   "size": [
+    0.108,
+    0.108,
+    1.03
+   ],
+   "tris": 48,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "grip tape sleeve over the handle"
+  },
+  {
+   "name": "Band",
+   "parent": "Handle",
+   "motor6d": "Band",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    -1.685
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    -1.685
+   ],
+   "size": [
+    0.258,
+    0.258,
+    0.11
+   ],
+   "tris": 48,
+   "colour": [
+    92,
+    58,
+    35
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "burned band"
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "Tip": {
+   "part": "Bat",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -2.35
+   ]
+  },
+  "SweetSpot": {
+   "part": "Bat",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -1.9
+   ]
+  },
+  "Trail0": {
+   "part": "Bat",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.95
+   ]
+  }
+ },
+ "total_tris": 336,
+ "overall_size_LxHxW": [
+  2.9,
+  0.258,
+  0.258
+ ],
+ "follow": {},
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

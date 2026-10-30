@@ -1,0 +1,346 @@
+{
+ "gun": "Medkit",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Body",
+   "parent": "Handle",
+   "motor6d": "Body",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.28,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.28,
+    -0.0
+   ],
+   "size": [
+    0.26,
+    0.35,
+    0.52
+   ],
+   "tris": 40,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "case tray + base rim"
+  },
+  {
+   "name": "Lid",
+   "parent": "Handle",
+   "motor6d": "Lid",
+   "motor_part0": "Handle",
+   "motion": "rotate about z (the case length) 110 deg up-back on its rear hinge",
+   "pivot": [
+    -0.12,
+    -0.105,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.096,
+    -0.0
+   ],
+   "size": [
+    0.24,
+    0.022,
+    0.5
+   ],
+   "tris": 12,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "flat lid"
+  },
+  {
+   "name": "Cross",
+   "parent": "Body",
+   "motor6d": "Cross",
+   "motor_part0": "Body",
+   "motion": "static",
+   "pivot": [
+    0.12,
+    -0.315,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.12,
+    -0.315,
+    -0.0
+   ],
+   "size": [
+    0.03,
+    0.1,
+    0.08
+   ],
+   "tris": 44,
+   "colour": [
+    200,
+    196,
+    186
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "cream cross on the front"
+  },
+  {
+   "name": "Handle",
+   "parent": "Lid",
+   "motor6d": "Handle",
+   "motor_part0": "Lid",
+   "motion": "rotate about x 90 deg to fold flat on the lid",
+   "pivot": [
+    0.0,
+    -0.095,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.045,
+    0.0
+   ],
+   "size": [
+    0.22,
+    0.13,
+    0.06
+   ],
+   "tris": 28,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "carry handle across the lid, feet over the side walls"
+  },
+  {
+   "name": "LatchL",
+   "parent": "Body",
+   "motor6d": "LatchL",
+   "motor_part0": "Body",
+   "motion": "rotate about z 120 deg outward-down to unlatch",
+   "pivot": [
+    0.13,
+    -0.165,
+    0.215
+   ],
+   "bbox_centre": [
+    0.125,
+    -0.1175,
+    0.215
+   ],
+   "size": [
+    0.03,
+    0.095,
+    0.035
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "LatchR",
+   "parent": "Body",
+   "motor6d": "LatchR",
+   "motor_part0": "Body",
+   "motion": "rotate about z 120 deg outward-down to unlatch",
+   "pivot": [
+    0.13,
+    -0.165,
+    -0.215
+   ],
+   "bbox_centre": [
+    0.125,
+    -0.1175,
+    -0.215
+   ],
+   "size": [
+    0.03,
+    0.095,
+    0.035
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Injector",
+   "parent": "Body",
+   "motor6d": "Injector",
+   "motor_part0": "Body",
+   "motion": "the hand takes it out: free move; stab = translate along -z",
+   "pivot": [
+    -0.05,
+    -0.355,
+    0.08
+   ],
+   "bbox_centre": [
+    -0.05,
+    -0.355,
+    0.08
+   ],
+   "size": [
+    0.06,
+    0.06,
+    0.3
+   ],
+   "tris": 32,
+   "colour": [
+    167,
+    173,
+    152
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "auto-injector"
+  },
+  {
+   "name": "InjectorCap",
+   "parent": "Injector",
+   "motor6d": "InjectorCap",
+   "motor_part0": "Injector",
+   "motion": "pull off along -z before use",
+   "pivot": [
+    -0.05,
+    -0.355,
+    -0.09
+   ],
+   "bbox_centre": [
+    -0.05,
+    -0.355,
+    -0.09
+   ],
+   "size": [
+    0.068,
+    0.068,
+    0.08
+   ],
+   "tris": 32,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Bandage",
+   "parent": "Body",
+   "motor6d": "Bandage",
+   "motor_part0": "Body",
+   "motion": "the hand takes it out; unroll = rotate about x",
+   "pivot": [
+    0.0,
+    -0.345,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.01,
+    -0.345,
+    -0.0
+   ],
+   "size": [
+    0.21,
+    0.0856,
+    0.09
+   ],
+   "tris": 36,
+   "colour": [
+    200,
+    196,
+    186
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "bandage roll"
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "LidOpen": {
+   "part": "Lid",
+   "position_handle_space": [
+    0.12,
+    -0.085,
+    -0.0
+   ]
+  },
+  "InjectorTip": {
+   "part": "Injector",
+   "position_handle_space": [
+    -0.05,
+    -0.355,
+    0.23
+   ]
+  }
+ },
+ "total_tris": 248,
+ "overall_size_LxHxW": [
+  0.52,
+  0.475,
+  0.27
+ ],
+ "follow": {},
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

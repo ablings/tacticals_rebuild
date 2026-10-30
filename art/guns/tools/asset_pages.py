@@ -5,7 +5,10 @@ V = os.path.expanduser(r"~\Documents\ObsidianVault\wiki\02 Modeling\Asset Librar
 IMG = os.path.expanduser(r"~\Documents\ObsidianVault\wiki\02 Modeling\Asset Library\Weapon\img")
 KIND = {"Pistol": "Service Pistol", "SilencedPistol": "Suppressed Pistol", "DualPistols": "Compensated Compact Pistol",
         "Revolver": "Swing-Out Revolver", "MiniUzi": "Open-Bolt Machine Pistol", "AutoRifle": "Gas Carbine",
-        "SemiAuto": "Marksman Rifle", "Sniper": "Chassis Bolt-Action Rifle", "PumpShotgun": "Tactical Pump Shotgun"}
+        "SemiAuto": "Marksman Rifle", "Sniper": "Chassis Bolt-Action Rifle", "PumpShotgun": "Tactical Pump Shotgun",
+        "Knife": "Field Knife", "Katana": "Katana", "Bat": "Baseball Bat", "RiotShield": "Riot Shield", "Fists": "Hand Wraps",
+        "Frag": "Egg Frag Grenade", "Smoke": "Can Smoke Grenade", "Flash": "Slotted Flashbang", "StickyGrenade": "Sticky Ball Grenade",
+        "Landmine": "Pressure Plate Mine", "Medkit": "Hard-Case Medkit"}
 KNOBS = {
  "Pistol": [("Slide cuts", "5 slanted rear", "0-6, front and/or rear, vertical or slanted"), ("Grip", "raked, inset panels", "rake 0-20 deg, finger grooves, flared well"), ("Frame colour", "near-black", "any furniture colour vs a dark slide")],
  "SilencedPistol": [("Suppressor", "12-sided can, 2 grooves", "8-16 sides, 0-4 grooves, offset (piggyback) can"), ("Sights", "tall suppressor sights", "standard / optic plate"), ("Mag", "extended pad", "flush")],
@@ -16,6 +19,17 @@ KNOBS = {
  "SemiAuto": [("Scope", "4x on 2 rings", "1-6x, LPVO, red-dot"), ("Stock", "skeleton + cheek riser", "fixed rifle stock"), ("Brake", "2 ports", "1-4 ports, flash hider")],
  "Sniper": [("Chassis", "slotted U-channel", "wood stock, thumbhole"), ("Scope", "long + flip caps", "short fixed power"), ("Bipod", "two folding legs", "none, monopod")],
  "PumpShotgun": [("Pump", "8 grooves", "smooth, shorter"), ("Saddle", "4 shells left side", "none, 6-shell"), ("Stock", "pistol-grip synthetic", "straight stock, folding")],
+ "Knife": [("Blade", "clip point + grind line", "drop point, tanto, serrated spine"), ("Grip", "finger grooves", "straight, cord wrap"), ("Guard", "single finger guard", "double, none")],
+ "Katana": [("Curve", "0.13 sori", "0-0.2"), ("Wrap", "7 diamond windows", "5-10, solid wrap"), ("Guard", "round", "square, cut-out pattern")],
+ "Bat": [("Profile", "classic taper", "drop-end, softball"), ("Tape", "black sleeve", "spiral bands, none"), ("Band", "burned band", "none, 2 bands")],
+ "RiotShield": [("Outline", "chamfered rectangle", "round top, full-length window"), ("Curve", "sagitta 0.15", "flat - 0.3"), ("Light", "top-right torch", "none, two lights")],
+ "Fists": [("Wrap", "3 groove bands", "1-5 bands, smooth glove"), ("Pad", "knuckle pad + strap", "studded, none")],
+ "Frag": [("Body", "tall egg", "ball, ribbed pineapple (cut grid)"), ("Band", "one cream band", "none, two bands")],
+ "Smoke": [("Holes", "2 rows of 6 side holes", "top-face holes, slots"), ("Band", "cream band", "colour-coded cap")],
+ "Flash": [("Ports", "3 rows of 4 slots", "round holes, 2 rows"), ("Body", "slim can", "hex body")],
+ "StickyGrenade": [("Cover", "adhesive band + backing tab", "full sticky shell"), ("Body", "ball", "puck")],
+ "Landmine": [("Plate", "small raised plate", "flush plate, prongs"), ("Controls", "rotary switch + pin", "toggle switch")],
+ "Medkit": [("Case", "flat-lid hard case", "soft pouch with zip"), ("Contents", "injector + bandage", "pill tube, splint")],
 }
 os.makedirs(IMG, exist_ok=True)
 for g, kind in KIND.items():
@@ -52,7 +66,7 @@ for g, kind in KIND.items():
           "   parts truly overlap instead of nearly touching.",
           "5. Build with resolve_coplanar, normal_update, then BEAUTY triangulation; armature with one bone per moving part.", "",
           "## Originality knobs", "| Knob | Base | Range |", "|---|---|---|"]
-    for k in KNOBS[g]:
+    for k in KNOBS.get(g) or KNOBS.get(kind):
         L.append(f"| {k[0]} | {k[1]} | {k[2]} |")
     L += ["", "## Proof check", f"{c['summary']}; warnings are flush-face notes on stepped surfaces inside other parts.", "",
           "## Siblings", "[[Flat Lowpoly Handgun]] · [[Flat Lowpoly Assault Rifle]] · [[Flat Lowpoly Revolver]] · [[Flat Lowpoly Pump Shotgun]] · [[Flat Lowpoly Bolt-Action Sniper]] · [[Flat Lowpoly Machine Pistol]]", ""]

@@ -1,0 +1,24 @@
+{
+ "summary": "MODEL CHECK Bat: 3 objects, 336 tris, 0 FAIL, 1 WARN",
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "Bat + GripTape",
+   "message": "12 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Bat\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Bat\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Bat\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Bat\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Bat\\check\\check_below.png"
+ ],
+ "size": [
+  2.9,
+  0.258,
+  0.258
+ ],
+ "tris": 336
+}

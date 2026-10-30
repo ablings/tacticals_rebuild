@@ -1,0 +1,226 @@
+{
+ "gun": "Knife",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Grip",
+   "parent": "Handle",
+   "motor6d": "Grip",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.0075,
+    0.02
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.0075,
+    0.02
+   ],
+   "size": [
+    0.16,
+    0.195,
+    0.84
+   ],
+   "tris": 118,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "grip with finger grooves, lanyard hole, inset panels"
+  },
+  {
+   "name": "Blade",
+   "parent": "Handle",
+   "motor6d": "Blade",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.02,
+    -0.845
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.02,
+    -0.845
+   ],
+   "size": [
+    0.035,
+    0.16,
+    1.05
+   ],
+   "tris": 48,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "clip-point blade: flat (0.035) above the grind line, thin edge bevel (0.014) below; tang into the grip"
+  },
+  {
+   "name": "Guard",
+   "parent": "Handle",
+   "motor6d": "Guard",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.02,
+    -0.4175
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.02,
+    -0.4175
+   ],
+   "size": [
+    0.07,
+    0.24,
+    0.055
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Pommel",
+   "parent": "Handle",
+   "motor6d": "Pommel",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    0.46
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    0.46
+   ],
+   "size": [
+    0.15,
+    0.15,
+    0.1
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Sheath",
+   "parent": "Handle",
+   "motor6d": "Sheath",
+   "motor_part0": "Handle",
+   "motion": "hidden at rest; for draw / holster: slides off along +z (-f) from the blade",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.42
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.025,
+    -0.9
+   ],
+   "size": [
+    0.1,
+    0.25,
+    1.08
+   ],
+   "tris": 28,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": false,
+   "wrap": "B",
+   "note": "sheath with belt clip; set Transparency 1 at rest"
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "Tip": {
+   "part": "Blade",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -1.37
+   ]
+  },
+  "EdgeMid": {
+   "part": "Blade",
+   "position_handle_space": [
+    0.0,
+    -0.1,
+    -0.87
+   ]
+  },
+  "Lanyard": {
+   "part": "Grip",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    0.36
+   ]
+  }
+ },
+ "total_tris": 218,
+ "overall_size_LxHxW": [
+  1.95,
+  0.25,
+  0.16
+ ],
+ "follow": {},
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

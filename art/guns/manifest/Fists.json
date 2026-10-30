@@ -1,0 +1,188 @@
+{
+ "gun": "Fists",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "RightWrap",
+   "parent": "Handle",
+   "motor6d": "RightWrap",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    0.26
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    0.26
+   ],
+   "size": [
+    1.06,
+    1.06,
+    0.58
+   ],
+   "tris": 276,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "right hand wrap (static on the right grip)"
+  },
+  {
+   "name": "RightPad",
+   "parent": "RightWrap",
+   "motor6d": "RightPad",
+   "motor_part0": "RightWrap",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0175,
+    0.28
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0175,
+    0.28
+   ],
+   "size": [
+    1.11,
+    1.145,
+    0.56
+   ],
+   "tris": 24,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "knuckle pad + wrist strap"
+  },
+  {
+   "name": "LeftWrap",
+   "parent": "Handle",
+   "motor6d": "LeftWrap",
+   "motor_part0": "Handle",
+   "motion": "follows the left hand (weld to the left arm's grip point)",
+   "pivot": [
+    -3.0,
+    0.0,
+    -0.0
+   ],
+   "bbox_centre": [
+    -3.0,
+    -0.0,
+    0.26
+   ],
+   "size": [
+    1.06,
+    1.06,
+    0.58
+   ],
+   "tris": 276,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "left hand wrap"
+  },
+  {
+   "name": "LeftPad",
+   "parent": "LeftWrap",
+   "motor6d": "LeftPad",
+   "motor_part0": "LeftWrap",
+   "motion": "static",
+   "pivot": [
+    -3.0,
+    0.0175,
+    0.28
+   ],
+   "bbox_centre": [
+    -3.0,
+    0.0175,
+    0.28
+   ],
+   "size": [
+    1.11,
+    1.145,
+    0.56
+   ],
+   "tris": 24,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": ""
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "RightKnuckles": {
+   "part": "RightPad",
+   "position_handle_space": [
+    0.0,
+    0.6,
+    0.15
+   ]
+  },
+  "LeftKnuckles": {
+   "part": "LeftPad",
+   "position_handle_space": [
+    -3.0,
+    0.6,
+    0.15
+   ]
+  }
+ },
+ "total_tris": 600,
+ "overall_size_LxHxW": [
+  0.59,
+  1.145,
+  4.11
+ ],
+ "follow": {
+  "LeftWrap": "Hand.L"
+ },
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

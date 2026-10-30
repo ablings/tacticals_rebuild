@@ -1,0 +1,298 @@
+{
+ "gun": "Katana",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Tsuka",
+   "parent": "Handle",
+   "motor6d": "Tsuka",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.065
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    -0.065
+   ],
+   "size": [
+    0.104,
+    0.12,
+    0.99
+   ],
+   "tris": 12,
+   "colour": [
+    200,
+    196,
+    186
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "ray-skin core of the grip"
+  },
+  {
+   "name": "Wrap",
+   "parent": "Handle",
+   "motor6d": "Wrap",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.0725
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    -0.0725
+   ],
+   "size": [
+    0.12,
+    0.15,
+    0.965
+   ],
+   "tris": 264,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "black wrap with diamond windows"
+  },
+  {
+   "name": "Kashira",
+   "parent": "Handle",
+   "motor6d": "Kashira",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    0.445
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    0.445
+   ],
+   "size": [
+    0.13,
+    0.16,
+    0.09
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "end cap"
+  },
+  {
+   "name": "Tsuba",
+   "parent": "Handle",
+   "motor6d": "Tsuba",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.545
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    -0.545
+   ],
+   "size": [
+    0.3091,
+    0.3091,
+    0.05
+   ],
+   "tris": 44,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "round guard"
+  },
+  {
+   "name": "Habaki",
+   "parent": "Handle",
+   "motor6d": "Habaki",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.0025,
+    -0.615
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.0025,
+    -0.615
+   ],
+   "size": [
+    0.065,
+    0.145,
+    0.13
+   ],
+   "tris": 12,
+   "colour": [
+    168,
+    144,
+    96
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "blade collar"
+  },
+  {
+   "name": "Blade",
+   "parent": "Handle",
+   "motor6d": "Blade",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.0552,
+    -1.8
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0552,
+    -1.8
+   ],
+   "size": [
+    0.04,
+    0.2295,
+    3.5
+   ],
+   "tris": 156,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "curved blade, flat above the temper line, thin edge bevel below; tang into the grip"
+  },
+  {
+   "name": "Saya",
+   "parent": "Handle",
+   "motor6d": "Saya",
+   "motor_part0": "Handle",
+   "motion": "hidden at rest; for draw / sheath: slides along the blade curve (translate -z, follow the sori)",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.55
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0625,
+    -2.07
+   ],
+   "size": [
+    0.09,
+    0.295,
+    3.04
+   ],
+   "tris": 80,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": false,
+   "wrap": "B",
+   "note": "scabbard; set Transparency 1 at rest"
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "Tip": {
+   "part": "Blade",
+   "position_handle_space": [
+    0.0,
+    0.13,
+    -3.55
+   ]
+  },
+  "EdgeMid": {
+   "part": "Blade",
+   "position_handle_space": [
+    0.0,
+    -0.0252,
+    -2.05
+   ]
+  },
+  "Trail0": {
+   "part": "Blade",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.75
+   ]
+  },
+  "Trail1": {
+   "part": "Blade",
+   "position_handle_space": [
+    0.0,
+    0.13,
+    -3.45
+   ]
+  }
+ },
+ "total_tris": 580,
+ "overall_size_LxHxW": [
+  4.08,
+  0.365,
+  0.309
+ ],
+ "follow": {},
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

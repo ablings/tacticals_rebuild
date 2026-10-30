@@ -1,0 +1,218 @@
+{
+ "gun": "Landmine",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Body",
+   "parent": "Handle",
+   "motor6d": "Body",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.01,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.01,
+    -0.0
+   ],
+   "size": [
+    0.5885,
+    0.14,
+    0.5885
+   ],
+   "tris": 96,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "disc body"
+  },
+  {
+   "name": "Plate",
+   "parent": "Handle",
+   "motor6d": "Plate",
+   "motor_part0": "Handle",
+   "motion": "translate -y 0.025 when stepped on",
+   "pivot": [
+    0.0,
+    0.1,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    0.065,
+    -0.0
+   ],
+   "size": [
+    0.1932,
+    0.07,
+    0.1932
+   ],
+   "tris": 48,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "pressure plate"
+  },
+  {
+   "name": "ArmSwitch",
+   "parent": "Handle",
+   "motor6d": "ArmSwitch",
+   "motor_part0": "Handle",
+   "motion": "rotate about z (its own axis) 90 deg: safe / armed",
+   "pivot": [
+    0.0,
+    0.0,
+    -0.3
+   ],
+   "bbox_centre": [
+    0.0,
+    0.0,
+    -0.32
+   ],
+   "size": [
+    0.08,
+    0.08,
+    0.1
+   ],
+   "tris": 40,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "rotary arming switch"
+  },
+  {
+   "name": "SafetyPin",
+   "parent": "Handle",
+   "motor6d": "SafetyPin",
+   "motor_part0": "Handle",
+   "motion": "translate +z (pull out backward) to arm",
+   "pivot": [
+    0.0,
+    0.0,
+    0.3
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.0,
+    0.3957
+   ],
+   "size": [
+    0.024,
+    0.1302,
+    0.2515
+   ],
+   "tris": 188,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "pin + ring"
+  },
+  {
+   "name": "Indicator",
+   "parent": "Handle",
+   "motor6d": "Indicator",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.198,
+    0.0525,
+    0.198
+   ],
+   "bbox_centre": [
+    0.198,
+    0.0525,
+    0.198
+   ],
+   "size": [
+    0.044,
+    0.045,
+    0.044
+   ],
+   "tris": 28,
+   "colour": [
+    190,
+    214,
+    120
+   ],
+   "material": "Neon",
+   "visible_at_rest": true,
+   "wrap": "skip",
+   "note": "Neon indicator: dark = safe, lit = armed; switch Color / Material"
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "Trigger": {
+   "part": "Plate",
+   "position_handle_space": [
+    0.0,
+    0.1,
+    -0.0
+   ]
+  },
+  "Blast": {
+   "part": "Body",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  }
+ },
+ "total_tris": 400,
+ "overall_size_LxHxW": [
+  0.891,
+  0.18,
+  0.588
+ ],
+ "follow": {},
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

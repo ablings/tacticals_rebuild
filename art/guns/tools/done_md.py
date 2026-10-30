@@ -1,12 +1,14 @@
 """Write art/anim/guns/DONE.md from the manifests, check results and (optional) art/guns/mesh_ids.json."""
 import json, os
 R = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
-G = "Pistol SilencedPistol DualPistols Revolver MiniUzi AutoRifle SemiAuto Sniper PumpShotgun".split()
+SECTIONS = [("Guns", "Pistol SilencedPistol DualPistols Revolver MiniUzi AutoRifle SemiAuto Sniper PumpShotgun".split()),
+            ("Melee", "Knife Katana Bat RiotShield Fists".split()),
+            ("Gadgets", "Frag Smoke Flash StickyGrenade Landmine Medkit".split())]
 ids_path = os.path.join(R, "art", "guns", "mesh_ids.json")
 ids = json.load(open(ids_path)) if os.path.exists(ids_path) else {}
 grades_path = os.path.join(R, "art", "guns", "grades.json")
 grades = json.load(open(grades_path)) if os.path.exists(grades_path) else {}
-L = ["# Guns: remodel status (modeler)", "",
+L = ["# Guns, melee and gadgets: remodel status (modeler)", "",
      "Flat low-poly (RIVALS weapon method: profile extrusions, 8-sided cylinders, inset slots, one mesh per colour per moving",
      "part) with real-world proportions from a Codex side-view reference per gun, and many more moving parts, each its own",
      "mesh with its pivot on its real hinge / slide axis.", "",
@@ -30,19 +32,28 @@ L = ["# Guns: remodel status (modeler)", "",
      "- After import: measure ScaleCube (B1), check Marker orientation (B2), delete both, then build the Tool from the manifest:",
      "  invisible Handle at the origin, each MeshPart placed at its bbox_centre, Motor6D named after the part at its pivot,",
      "  colour/material/WrapChannel from the manifest, attachments from the manifest (Muzzle keeps the old flash children).", "",
-     "## Guns"]
-for g in G:
-    m = json.load(open(os.path.join(R, "art", "guns", "manifest", g + ".json")))
-    c = json.load(open(os.path.join(R, "art", "guns", "renders", g, "check.json")))
-    mv = [p for p in m["parts"] if p["motion"] != "static"]
-    L += ["", f"### {g}", f"- Size L x H x W: {m['overall_size_LxHxW']} studs; {m['total_tris']} tris; {len(m['parts'])} meshes, {len(mv)} moving.",
-          f"- Script check: {c['summary'].split(': ', 1)[1]}.",
-          f"- Grade: {grades.get(g, 'pending (HQ grader)')}.",
-          f"- Mesh ids: {('see table' if g in ids else 'pending upload')}.", "",
-          "| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |", "|---|---|---|---|---|---|---|"]
-    for p in m["parts"]:
-        mid = ids.get(g, {}).get(p["name"], "")
-        L.append(f"| {p['name']} | {p['parent']} | {tuple(p['pivot'])} | {p['motion']} | {p['tris']} | {p['wrap']} | {mid} |")
-    L += ["", "Attachments: " + "; ".join(f"`{k}` on {v['part']} at {tuple(v['position_handle_space'])}" for k, v in m["attachments"].items())]
+     "## Melee and gadget notes",
+     "- Same rig and files as the guns (`art/anim/guns/<Item>.blend/.fbx`, manifest, Roblox FBX). Melee blade/barrel points along -z",
+     "  (Roblox) like a gun muzzle; grenades stand upright in the hand (body centre = grip).",
+     "- `visible_at_rest: false` parts (Knife Sheath, Katana Saya) start with Transparency 1; show them for draw / sheath clips.",
+     "- Fists: no Handle mesh. RightWrap sits on the right grip point; LeftWrap is the same 3 studs left and, in Blender, follows",
+     "  `Hand.L` (Child Of). In Roblox weld each wrap to its arm's grip point (R6: 1 stud below the arm centre, -90 deg about X).",
+     "- Neon parts (RiotShield LightLens, Landmine Indicator) are their own mesh so code can switch them on and off.",
+     "- Gadgets were plain Parts made in code before (HolsterManager); these are the model replacements at the same sizes.", ""]
+for sec, G in SECTIONS:
+  L += ["", f"## {sec}"]
+  for g in G:
+      m = json.load(open(os.path.join(R, "art", "guns", "manifest", g + ".json")))
+      c = json.load(open(os.path.join(R, "art", "guns", "renders", g, "check.json")))
+      mv = [p for p in m["parts"] if p["motion"] != "static"]
+      L += ["", f"### {g}", f"- Size L x H x W: {m['overall_size_LxHxW']} studs; {m['total_tris']} tris; {len(m['parts'])} meshes, {len(mv)} moving.",
+            f"- Script check: {c['summary'].split(': ', 1)[1]}.",
+            f"- Grade: {grades.get(g, 'pending (HQ grader)')}.",
+            f"- Mesh ids: {('see table' if g in ids else 'pending upload')}.", "",
+            "| Part | Parent (Motor6D Part0) | Pivot (x, y, z) | Motion | Tris | Wrap | Mesh id |", "|---|---|---|---|---|---|---|"]
+      for p in m["parts"]:
+          mid = ids.get(g, {}).get(p["name"], "")
+          L.append(f"| {p['name']} | {p['parent']} | {tuple(p['pivot'])} | {p['motion']} | {p['tris']} | {p['wrap']} | {mid} |")
+      L += ["", "Attachments: " + "; ".join(f"`{k}` on {v['part']} at {tuple(v['position_handle_space'])}" for k, v in m["attachments"].items())]
 open(os.path.join(R, "art", "anim", "guns", "DONE.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
 print("DONE.md written")

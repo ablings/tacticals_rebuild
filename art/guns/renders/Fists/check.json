@@ -1,0 +1,42 @@
+{
+ "summary": "MODEL CHECK Fists: 4 objects, 600 tris, 0 FAIL, 4 WARN",
+ "findings": [
+  {
+   "level": "WARN",
+   "code": "junk",
+   "object": "R1ghtWrap",
+   "message": "36 zero-area faces"
+  },
+  {
+   "level": "WARN",
+   "code": "junk",
+   "object": "LeftWrap",
+   "message": "36 zero-area faces"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "R1ghtWrap + R1ghtPad",
+   "message": "44 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  },
+  {
+   "level": "WARN",
+   "code": "A8",
+   "object": "LeftWrap + LeftPad",
+   "message": "44 faces lie flush (< 0.12 apart, parallel): z-fighting. Push overlays 0.12+ off, or overlap solidly"
+  }
+ ],
+ "renders": [
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Fists\\check\\check_front.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Fists\\check\\check_back.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Fists\\check\\check_left.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Fists\\check\\check_right.png",
+  "C:\\Users\\aroki\\Documents\\tacticals_rebuild\\art\\guns\\renders\\Fists\\check\\check_below.png"
+ ],
+ "size": [
+  0.59,
+  1.145,
+  4.11
+ ],
+ "tris": 600
+}

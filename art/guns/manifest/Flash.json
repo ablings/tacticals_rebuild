@@ -1,0 +1,218 @@
+{
+ "gun": "Flash",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Body",
+   "parent": "Handle",
+   "motor6d": "Body",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.08,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.08,
+    -0.0
+   ],
+   "size": [
+    0.2318,
+    0.6,
+    0.2318
+   ],
+   "tris": 288,
+   "colour": [
+    200,
+    196,
+    186
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "A",
+   "note": "body with 12 tall vent slots"
+  },
+  {
+   "name": "Band",
+   "parent": "Handle",
+   "motor6d": "Band",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.35,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.35,
+    -0.0
+   ],
+   "size": [
+    0.2395,
+    0.06,
+    0.2395
+   ],
+   "tris": 48,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "dark base cap"
+  },
+  {
+   "name": "Fuze",
+   "parent": "Handle",
+   "motor6d": "Fuze",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.255,
+    -0.0075
+   ],
+   "bbox_centre": [
+    0.0,
+    0.255,
+    -0.0075
+   ],
+   "size": [
+    0.0951,
+    0.13,
+    0.115
+   ],
+   "tris": 72,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "fuze head + striker housing"
+  },
+  {
+   "name": "Spoon",
+   "parent": "Handle",
+   "motor6d": "Spoon",
+   "motor_part0": "Handle",
+   "motion": "rotate about x away from the body (flies off when released)",
+   "pivot": [
+    0.0,
+    0.31,
+    -0.05
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.005,
+    -0.065
+   ],
+   "size": [
+    0.07,
+    0.65,
+    0.13
+   ],
+   "tris": 28,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "safety lever"
+  },
+  {
+   "name": "Pin",
+   "parent": "Handle",
+   "motor6d": "Pin",
+   "motor_part0": "Handle",
+   "motion": "translate -z (pull back along the shaft), ring swings about x",
+   "pivot": [
+    0.0,
+    0.27,
+    -0.0
+   ],
+   "bbox_centre": [
+    0.0,
+    0.213,
+    0.0407
+   ],
+   "size": [
+    0.022,
+    0.1361,
+    0.2315
+   ],
+   "tris": 216,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "visible_at_rest": true,
+   "wrap": "B",
+   "note": "cotter pin + pull ring (rests against the body)"
+  }
+ ],
+ "attachments": {
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "PinRing": {
+   "part": "Pin",
+   "position_handle_space": [
+    0.0,
+    0.21,
+    0.145
+   ]
+  },
+  "Flash": {
+   "part": "Body",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  }
+ },
+ "total_tris": 652,
+ "overall_size_LxHxW": [
+  0.286,
+  0.7,
+  0.24
+ ],
+ "follow": {},
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}

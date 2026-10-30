@@ -1,0 +1,972 @@
+[
+ {
+  "class": "Folder",
+  "AttributesSerialize": {
+   "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+  },
+  "Name": "Melee",
+  "Tags": "<type 28>",
+  "children": [
+   {
+    "class": "Tool",
+    "AttributesSerialize": {
+     "MeleeId": "Knife"
+    },
+    "Enabled": true,
+    "Grip": [
+     0.0,
+     0.0,
+     0.15,
+     1.0,
+     -0.0,
+     0.0,
+     0.0,
+     -0.0,
+     1.0,
+     0.0,
+     -1.0,
+     -0.0
+    ],
+    "Name": "Knife",
+    "RequiresHandle": true,
+    "Tags": "<type 28>",
+    "TextureId": "",
+    "ToolTip": "Knife",
+    "children": [
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       0.0,
+       0.0,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       28,
+       28,
+       30
+      ],
+      "Material": 256,
+      "MaterialVariantSerialized": "",
+      "Name": "Handle",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.22,
+       0.22,
+       0.9
+      ],
+      "children": [
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Swing",
+        "SoundId": "rbxassetid://12222216",
+        "Tags": "<type 28>"
+       },
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Hit",
+        "SoundId": "rbxassetid://12222208",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "B"
+      },
+      "CFrame": [
+       0.0,
+       0.0,
+       -0.5,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       60,
+       60,
+       64
+      ],
+      "Material": 1088,
+      "MaterialVariantSerialized": "",
+      "Name": "Guard",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.5,
+       0.1,
+       0.12
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       0.02,
+       -1.1,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       190,
+       195,
+       200
+      ],
+      "Material": 1088,
+      "MaterialVariantSerialized": "",
+      "Name": "Blade",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.06,
+       0.24,
+       1.1
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "class": "Tool",
+    "AttributesSerialize": {
+     "MeleeId": "Fists"
+    },
+    "Enabled": true,
+    "Grip": [
+     0.0,
+     0.0,
+     0.0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ],
+    "Name": "Fists",
+    "RequiresHandle": false,
+    "Tags": "<type 28>",
+    "TextureId": "",
+    "ToolTip": "Fists"
+   },
+   {
+    "class": "Tool",
+    "AttributesSerialize": {
+     "MeleeId": "Katana"
+    },
+    "Enabled": true,
+    "Grip": [
+     0.0,
+     0.0,
+     0.0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ],
+    "Name": "Katana",
+    "RequiresHandle": true,
+    "Tags": "<type 28>",
+    "TextureId": "",
+    "ToolTip": "",
+    "children": [
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       0.0,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       24,
+       24,
+       26
+      ],
+      "Material": 272,
+      "MaterialVariantSerialized": "",
+      "Name": "Handle",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.16,
+       0.2,
+       1.0
+      ],
+      "children": [
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Swing",
+        "SoundId": "rbxassetid://12222216",
+        "Tags": "<type 28>"
+       },
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Hit",
+        "SoundId": "rbxassetid://12222208",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "B"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       -0.53,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       32,
+       33,
+       35
+      ],
+      "Material": 1088,
+      "MaterialVariantSerialized": "",
+      "Name": "Guard",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.42,
+       0.42,
+       0.06
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       -1.3,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       205,
+       210,
+       215
+      ],
+      "Material": 1088,
+      "MaterialVariantSerialized": "",
+      "Name": "BladeLow",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.05,
+       0.2,
+       1.5
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.06,
+       -2.7,
+       1.0,
+       0.0,
+       0.0,
+       0.0,
+       0.9976,
+       -0.0698,
+       0.0,
+       0.0698,
+       0.9976
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       205,
+       210,
+       215
+      ],
+      "Material": 1088,
+      "MaterialVariantSerialized": "",
+      "Name": "BladeHigh",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.05,
+       0.18,
+       1.4
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "class": "Tool",
+    "AttributesSerialize": {
+     "MeleeId": "Bat"
+    },
+    "Enabled": true,
+    "Grip": [
+     0.0,
+     0.0,
+     0.0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ],
+    "Name": "Bat",
+    "RequiresHandle": true,
+    "Tags": "<type 28>",
+    "TextureId": "",
+    "ToolTip": "",
+    "children": [
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       0.0,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       24,
+       24,
+       26
+      ],
+      "Material": 272,
+      "MaterialVariantSerialized": "",
+      "Name": "Handle",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.18,
+       0.18,
+       0.9
+      ],
+      "children": [
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Swing",
+        "SoundId": "rbxassetid://12222216",
+        "Tags": "<type 28>"
+       },
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Hit",
+        "SoundId": "rbxassetid://12222208",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "B"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       0.47,
+       -0.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       -1.0,
+       0.0,
+       -0.0
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       24,
+       24,
+       26
+      ],
+      "Material": 272,
+      "MaterialVariantSerialized": "",
+      "Name": "Knob",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.08,
+       0.28,
+       0.28
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       -0.5,
+       -0.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       -1.0,
+       0.0,
+       -0.0
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       120,
+       78,
+       44
+      ],
+      "Material": 512,
+      "MaterialVariantSerialized": "",
+      "Name": "Taper",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.3,
+       0.2,
+       0.2
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       -0.91,
+       -0.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       -1.0,
+       0.0,
+       -0.0
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       120,
+       78,
+       44
+      ],
+      "Material": 512,
+      "MaterialVariantSerialized": "",
+      "Name": "Barrel1",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.58,
+       0.24,
+       0.24
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       -1.43,
+       -0.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       -1.0,
+       0.0,
+       -0.0
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       120,
+       78,
+       44
+      ],
+      "Material": 512,
+      "MaterialVariantSerialized": "",
+      "Name": "Barrel2",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.58,
+       0.3,
+       0.3
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       -1.95,
+       -0.0,
+       0.0,
+       1.0,
+       0.0,
+       1.0,
+       0.0,
+       -1.0,
+       0.0,
+       -0.0
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       120,
+       78,
+       44
+      ],
+      "Material": 512,
+      "MaterialVariantSerialized": "",
+      "Name": "Barrel3",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.58,
+       0.36,
+       0.36
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "class": "Tool",
+    "AttributesSerialize": {
+     "MeleeId": "RiotShield"
+    },
+    "Enabled": true,
+    "Grip": [
+     0.0,
+     0.0,
+     0.0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1
+    ],
+    "Name": "RiotShield",
+    "RequiresHandle": true,
+    "Tags": "<type 28>",
+    "TextureId": "",
+    "ToolTip": "",
+    "children": [
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.0,
+       0.0,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       24,
+       24,
+       26
+      ],
+      "Material": 272,
+      "MaterialVariantSerialized": "",
+      "Name": "Handle",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       0.2,
+       0.5,
+       0.2
+      ],
+      "children": [
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Swing",
+        "SoundId": "rbxassetid://12222216",
+        "Tags": "<type 28>"
+       },
+       {
+        "class": "Sound",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "Hit",
+        "SoundId": "rbxassetid://12222208",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "A"
+      },
+      "CFrame": [
+       0.0,
+       50.3,
+       -0.17,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       30,
+       34,
+       38
+      ],
+      "Material": 272,
+      "MaterialVariantSerialized": "",
+      "Name": "Shield",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       2.2,
+       3.6,
+       0.14
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapSkip": true
+      },
+      "CFrame": [
+       0.0,
+       51.35,
+       -0.17,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       120,
+       150,
+       170
+      ],
+      "Material": 1568,
+      "MaterialVariantSerialized": "",
+      "Name": "Window",
+      "Tags": "<type 28>",
+      "Transparency": 0.35,
+      "size": [
+       1.3,
+       0.35,
+       0.16
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     },
+     {
+      "class": "Part",
+      "AttributesSerialize": {
+       "WrapChannel": "B"
+      },
+      "CFrame": [
+       0.0,
+       48.5,
+       -0.17,
+       1,
+       0,
+       0,
+       0,
+       1,
+       0,
+       0,
+       0,
+       1
+      ],
+      "CanCollide": false,
+      "Color3uint8": [
+       200,
+       190,
+       60
+      ],
+      "Material": 272,
+      "MaterialVariantSerialized": "",
+      "Name": "Rim",
+      "Tags": "<type 28>",
+      "Transparency": 0.0,
+      "size": [
+       2.3,
+       0.12,
+       0.18
+      ],
+      "children": [
+       {
+        "class": "WeldConstraint",
+        "AttributesSerialize": {
+         "_err": "unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 (actual buffer size is 0)"
+        },
+        "Name": "WeldConstraint",
+        "Tags": "<type 28>"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+]
