@@ -50,3 +50,28 @@ All clips key only the joints they own (other poses are Weight 0), so they layer
 15. `BotLeanLeft` / `BotLeanRight` (Action2) now key hips, legs, chest and head (a real lean with planted feet); bots should
     not play the cover shuffle at MoveTo speed 10 without `AdjustSpeed(10/8)`.
 16. Ragdoll notes: deaths hand off cleanly to a ragdoll at any frame after `DropGun`; DeathExplosion expects it at `Ragdoll`.
+
+## Added after grading rounds (the clips depend on these; 2026-10-30 06:30)
+17. **Reactions add, they don't replace.** Roblox priorities replace joints, so HitFlinch* / HitHeadshot / HitBurning over a
+    crouch or cover pose pop the chest (18 deg over CoverCrouch). Apply them as Waist / Neck offsets in code (the clip's delta
+    from its f0, like the breathing layer), or play the clips only over a neutral chest. If clips are used: load them at
+    **Action4** (AnimFinalConfig.Hits.Priority = Action3 ties with the cover poses and averages 50/50) and set the cover Look
+    weight to 0 while one plays.
+18. **MoveStart -> MoveRun.** MoveStart is authored on MoveFeelConfig.AccelTime 0.11 and ends in MoveRun's f7 pose: start
+    MoveRun at `TimePosition = 0.12` when MoveStart ends, and don't blend WalkF in under MoveStart (BodyAnimController plays
+    both at Movement).
+19. **Limp speed.** MoveLimp is authored at **4 studs/s**: set `Loco.Authored.Limp = 4` (config says 8). Played at 10 the feet
+    skate 1.4-2 studs per step; a no-flight limp at 10 studs/s doesn't fit the 0.84 s cycle on blocky legs. Decision pending:
+    slow low-health players to ~4-5 studs/s, or re-author at a new length.
+20. **Turn in place contract.** The clip expects the code to turn the HRP 90 deg with TweenService Cubic InOut over f4-f20
+    *after* the clip starts. BodyAnimController plays it after a 55 deg camera-driven turn: the feet then spin 34-36 deg.
+21. **Sprint arms.** MoveSprint / MoveSprintPistol key the arms at Movement priority; the weapon Hold / Lowered (Action) hides
+    them. Stop the Hold (or weight 0) while sprinting.
+22. **Cross-team blocker (weapons animator).** The published weapon Hold / Lowered clips key hips, legs and head at weight 1,
+    Action: every Movement-priority locomotion clip freezes under them (knees 0, feet skate 7 studs per cycle). They must write
+    weight 0 on everything but the arms (and chest if needed) and re-publish.
+23. **Body shape.** Players are normalised (PlayerRegistry.normalizeAppearance) to HipHeight 2.000; bots and the authoring rig
+    are 2.192. Every ground contact authored on the bot body sinks 0.19-0.21 on players. Recommended: normalise players to the
+    bots' description (BodyTypeScale 0.3, ProportionScale 1) so one body is used everywhere (decision for Edward).
+24. **Vault.** The vault's off hand plants for a 3.0 top; the arena's low walls are 3.4. With VaultClearance 2.3 the legs clear
+    better; a per-height plant needs the code to pass the top height (or lift the root by top - 3.0 during BlindOver).
