@@ -38,6 +38,9 @@ def fix_source(path, clipname, clip=None, mirrored=False):
                 if m["name"] == "Footstep" and m["value"] in ("L", "R"):
                     m["value"] = "R" if m["value"] == "L" else "L"
         # a loop's closing key at exactly the code length (60 fps sampling stops at a whole frame)
+        if d["loop"]:  # 60 fps sampling can overshoot a non-whole-frame length (0.48 s = 28.8 f): cut, then close
+            d["keys"] = [k for k in d["keys"] if k["t"] <= d["length"] + 1e-4]
+            d["markers"] = [m for m in d["markers"] if m["t"] < d["length"] - 1e-4]
         last = max(k["t"] for k in d["keys"])
         if d["loop"] and d["length"] - last > 1e-4:
             first = [dict(k, t=round(d["length"], 4)) for k in d["keys"] if k["t"] == 0]
@@ -106,8 +109,20 @@ def body_quality(clip):
             q["ankle" + S].append(pb["Foot." + s].head.z - 0.262)
         h = pb["Head"].head
         q["headFwd"].append(h.y - pb["Lowertorso"].head.y)
+        q.setdefault("headBoxTop", []).append(max((M.translation.z + abs(M.to_3x3()[2][0]) * hh[0] + abs(M.to_3x3()[2][2]) * hh[1] + abs(M.to_3x3()[2][1]) * hh[2])
+                                                  for p, M, hh in bodyanim.part_boxes(clip) if p == "Head"))
+        q.setdefault("lowest", []).append(bodyanim.lowest_point(clip))
         q["headTop"].append((pb["Head"].matrix @ Vector((0, 1.2, 0))).z)
     out = {k: [round(min(v), 3), round(max(v), 3)] for k, v in q.items()}
+    ob_ = getattr(clip, "obstacle", None)  # (min, max, path_fn(frame)->(dy, dz) or None): deepest part-box corner inside it
+    if ob_:
+        worst = (0.0, None, None)
+        for i in range(n + 1):
+            pth = (0.0,) + tuple(ob_[2](i)) if ob_[2] else (0.0, 0.0, 0.0)
+            d, who = bodyanim.obstacle_overlap(clip, i, ob_[0], ob_[1], pth)
+            if d > worst[0]:
+                worst = (round(d, 3), who, i)
+        out["obstacle"] = worst
     tr = getattr(clip, "travel", None)  # (vx, vz) studs/s of the character in Roblox axes: planted feet must hold still
     if tr:
         for s in ("R", "L"):

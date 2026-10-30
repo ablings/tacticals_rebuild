@@ -9,47 +9,54 @@ f = lambda n: n / 60.0
 
 # ---------------------------------------------------------------------------------------------------- blind fire
 def blind_corner(name, crouched):
-    """Blind fire round a tall edge. The code turns the character to face the edge (CoverController: wantRotation =
-    facing along the wall); the wall is on the character's RIGHT here (as the placeholder), so the gun arm reaches past the
-    edge and curls right round the corner; the body stays tucked behind it (leaning away), head turned away 10."""
+    """Blind fire round a tall edge. CoverController faces the character along the wall toward the edge; for the
+    right-handed clip the wall is on the character's LEFT (worked out from the code's facing / shoulder maths). Stage
+    geometry: wall face at x -0.85 (WallOffset), the edge 1.25 ahead (EdgeMargin), so the corner is at (-0.85, -1.25).
+    The gun hand reaches past the corner and the barrel turns left round it (muzzle >= 0.2 past the edge); the body shifts
+    right, away from the wall, and stays behind it; the off (wall-side) arm tucks in front of the chest."""
     def build():
-        joints = BODY
-        c = Clip(name, 1.0, loop=True, priority="Action4", joints=joints)
+        c = Clip(name, 1.0, loop=True, priority="Action4", joints=BODY)
+        c.obstacle = ((-2.85, 0.0, -1.25), (-0.85, 8.0, 6.0), None)  # the wall on the left, ending 1.25 ahead
+        c.free("L", 0, 1.0)
         for t, s in DRIFT:
             if crouched:
-                crouch_legs(c, t, s, pitch=-18)
-                spine(c, t, pitch=8 - 0.5 * s, yaw=-6, roll=4, ease=E)
-                head(c, t, pitch=6, yaw=10, roll=0, ease=E)
-                wrist = (0.95, 0.95, -1.05)
+                crouch_legs(c, t, 0.5 * s, pitch=-18)
+                spine(c, t, pitch=8 - 0.3 * s, yaw=26, roll=-4, ease=E)
+                head(c, t, pitch=8, yaw=-10, ease=E)
             else:
-                c.root(t, x=-0.12, y=-0.06 - 0.012 * s, roll=3 + 0.3 * s, ease=E)
-                foot(c, "R", t, x=0.05, z=0.1, yaw=-10, ease=E)
-                foot(c, "L", t, x=-0.15, z=-0.1, yaw=10, ease=E)
-                spine(c, t, pitch=-2 - 0.5 * s, yaw=-6, roll=5, ease=E)
-                head(c, t, pitch=-2, yaw=10, roll=-2, ease=E)
-                wrist = (1.05, 1.15, -1.0)
-            # gun arm out past the edge, wrist cocked so the barrel points round the corner (yaw -70 = to the right)
-            c.gun_at_wrist(t, wrist, (2 + 0.4 * s, -70 - 0.8 * s, 0), ease=E)
-            c.free("L", t, 1.0, ease=E)
-            c.hand_free("L", t, (-0.35, 0.95 - 0.01 * s, -0.75), (70, -60, 0), ease=E)  # off hand tucked at the chest
+                c.root(t, x=0.45, y=-0.07 - 0.012 * s, yaw=8, roll=-2 - 0.3 * s, ease=E)
+                foot(c, "R", t, x=0.35, z=0.15, yaw=-6, ease=E)
+                foot(c, "L", t, x=0.15, z=-0.1, yaw=10, ease=E)
+                spine(c, t, pitch=-1 - 0.4 * s, yaw=24, roll=-4, ease=E)
+                head(c, t, pitch=-2, yaw=-10, ease=E)
+        c.finish()
+        for t, s in DRIFT:
+            wy = (2.75 if crouched else 3.95) + 0.01 * s
+            gun_world(c, t, (-0.55, wy, -1.62), (1 + 0.4 * s, 62 + 0.6 * s, 0), ease=E)
+            hand_world(c, "L", t, (0.15, wy - 0.55, -0.95), (70, -40, 0), ease=E)
+        c._finished = False
         return c
     return build
 
 
 def blind_over():
-    """Blind fire over low cover: the code turns the character to FACE the crate. Crouched behind it, the gun hand up over
-    the top (barrel level, a little down), the off hand flat on the top (authored for a 3.0-stud cover top 0.85 ahead of the
-    HRP, the stage's lowest low cover); head down behind the cover."""
+    """Blind fire over low cover: the code turns the character to FACE the crate (face 0.85 ahead, top 3.0 on the stage,
+    3.4 in the arena). Crouched low behind it, torso leaned left so the head stays low, the gun hand up over the top (wrist
+    3.45, barrel level, muzzle well past the face), the off hand's palm flat on the top 1.0 ahead."""
     c = Clip("CoverBlindOver", 1.0, loop=True, priority="Action4", joints=BODY)
+    c.obstacle = ((-4.0, 0.0, -2.85), (4.0, 3.0, -0.85), None)
+    c.free("L", 0, 1.0)
     for t, s in DRIFT:
-        c.root(t, x=0.0, y=-1.42 - 0.015 * s, z=0.18, pitch=-14 - 0.5 * s, roll=0.5, ease=E)
-        foot(c, "R", t, x=0.2, z=0.25, yaw=-12, ease=E)
-        foot(c, "L", t, x=-0.2, z=-0.35, yaw=12, ease=E)
-        spine(c, t, pitch=6 - 0.4 * s, ease=E)
-        head(c, t, pitch=-6, yaw=-8, ease=E)
-        c.gun_at_wrist(t, (0.45, 1.75, -1.15), (-6 + 0.5 * s, 0, 0), ease=E)
-        c.free("L", t, 1.0, ease=E)
-        c.hand_free("L", t, (-0.55, 1.12, -1.15), (-80, 0, 0), ease=E)
+        c.root(t, x=-0.2, y=-1.7 - 0.012 * s, z=0.35, pitch=0 - 0.3 * s, roll=14, ease=E)
+        foot(c, "R", t, x=0.25, z=0.3, yaw=-12, ease=E)
+        foot(c, "L", t, x=-0.3, z=-0.3, yaw=12, ease=E)
+        spine(c, t, pitch=-5 - 0.3 * s, yaw=-10, roll=14, ease=E)
+        head(c, t, pitch=-20, yaw=10, roll=10, ease=E)
+    c.finish()
+    for t, s in DRIFT:
+        gun_world(c, t, (0.55, 3.4 + 0.01 * s, -1.0), (-3 + 0.4 * s, 0, 0), ease=E)
+        hand_world(c, "L", t, (-0.6, 3.18, -1.2), (-90, 0, 0), ease=E)
+    c._finished = False
     return c
 
 
@@ -130,54 +137,82 @@ def roll():
                 foot(c, side, f(fr), x=(0.2 if side == "R" else -0.2), z=(-0.45 if side == "R" else 0.3) if fr >= 20 else (-0.2 if side == "R" else 0.2),
                      yaw=0, ease=e)
         else:
-            root_and_feet(c, f(fr), y=y, z=z, pitch=p, feet=ft, ease=e)
+            root_and_feet(c, f(fr), y=y, z=z, pitch=p, roll=(28 if 6 <= fr <= 16 else 14), yaw=(-12 if 6 <= fr <= 16 else -6), feet=ft, ease=e)
         tuck = fr not in (0, 30)
         spine(c, f(fr), pitch=(-35 if tuck else -10), ease=e)
-        head(c, f(fr), pitch=(-30 if tuck else 0), ease=e)
+        head(c, f(fr), pitch=(-30 if tuck else 0), yaw=(-14 if tuck else 0), roll=(-20 if tuck else 0), ease=e)  # tucked aside: the right shoulder and the back take the floor
         c.gun_at_wrist(f(fr), (0.25, 0.55, -0.7) if tuck else (0.2, 0.5, -1.0), (-45, 50, -15), ease=e)
         c.free("L", f(fr), 1.0, ease=e)
         c.hand_free("L", f(fr), (-0.45, 0.9, -0.7), (70, -60, 0), ease=e)
     c.marker("Land", f(20))
     c.finish()  # easing in place before the clamp evaluates the curves
-    ground_clamp(c, [4 * 1, 8, 12, 16])
+    clamp_exact(c, 30, both=True)
     return c
 
 
 # ---------------------------------------------------------------------------------------------------- vault
+VAULT_TOP, VAULT_DEPTH, VAULT_OFF = 3.0, 2.0, 0.85
+
+
+def vault_path(fr, L=0.55):
+    """the code's HRP path (startVault + updateMovement): quadratic Bezier from the start, through `over` (top + 1.8,
+    middle of the crate) to the landing (WallOffset + 0.4 past the far face), alpha = clip time / length (played in
+    VaultTime). Returns (dy, dz) of the HRP from its start, for a 3.0 top, 2.0-deep crate, start 0.85 from the face."""
+    a = min(1.0, max(0.0, fr / 60.0 / L))
+    y0 = 3.19
+    over_y, over_z = VAULT_TOP + 1.8, -(VAULT_OFF + VAULT_DEPTH / 2)
+    land_z = -(VAULT_OFF + VAULT_DEPTH + VAULT_OFF + 0.4)
+    cy, cz = 2 * over_y - y0, 2 * over_z - land_z / 2
+    y = (1 - a) ** 2 * y0 + 2 * a * (1 - a) * cy + a * a * y0
+    z = 2 * a * (1 - a) * cz + a * a * land_z
+    return y - y0, z
+
+
 def vault():
-    """One fast speed-vault (played in VaultTime 0.344 s; the code flies the HRP over a Bezier whose top is 1.8 above the
-    cover top). f0-f4 reach, f6 EdgeGrab: the off (left) hand plants on the top, f6-f20 the legs swing over to the right
-    side, tucked, f22 Land, f22-f33 rise. The gun arm is left to the weapon Hold (aiming / firing works mid-vault)."""
+    """One fast speed-vault on the code's real path (VaultTime 0.344 s: the clip's 0.55 s map to alpha 0..1). f0-f4 reach,
+    EdgeGrab f6: the off (left) hand plants on the top and stays still in the world to f14 while the body passes over it;
+    the legs tuck up and swing to the right, every part box above the crate (checked against the path); f22-f31 the legs
+    reach down; Land f32 at the code's touchdown (alpha ~0.97); f33 light crouch. Gun arm left to the weapon Hold."""
     joints = LEGS + ["UpperTorso", "Head", "LeftUpperArm", "LeftLowerArm", "LeftHand"]
     c = Clip("CoverVault", 0.55, loop=False, priority="Action4", joints=joints)
-    TUCKR = {"R": ((0.9, -0.55, -0.7), (20, -40, 70)), "L": ((0.8, -0.9, -0.5), (20, -40, 70))}
-    MIDR = {"R": ((0.45, -1.2, -0.6), (10, -20, 35)), "L": ((0.3, -1.4, -0.3), (10, -20, 35))}
-    # f0 take-off crouch (feet planted)
+    c.obstacle = ((-4.0, 0.0, -(VAULT_OFF + VAULT_DEPTH)), (4.0, VAULT_TOP, -VAULT_OFF), vault_path)
+    TUCK = {"R": ((1.15, -0.25, -0.45), (30, -50, 75)), "L": ((1.0, -0.45, -0.2), (30, -50, 75))}
+    HALF = {"R": ((0.55, -0.9, -0.55), (20, -25, 40)), "L": ((0.4, -1.1, -0.3), (20, -25, 40))}
+    REACH = {"R": ((0.15, -1.6, -0.35), (10, -5, 10)), "L": ((0.0, -1.7, 0.1), (5, -5, 10))}
     c.root(f(0), y=-0.45, pitch=-18, ease="CubicOut")
     for side in ("R", "L"):
         foot(c, side, f(0), x=(0.1 if side == "R" else -0.1), z=(-0.15 if side == "R" else 0.2), ease="CubicOut")
-    root_and_feet(c, f(4), y=-0.2, pitch=-25, roll=-8, feet=MIDR, ease=E)
-    root_and_feet(c, f(6), y=-0.1, pitch=-28, roll=-15, feet=MIDR, ease=E)
-    root_and_feet(c, f(12), y=0.05, pitch=-22, roll=-30, feet=TUCKR, ease=E)
-    root_and_feet(c, f(17), y=-0.05, pitch=-12, roll=-20, feet=MIDR, ease="QuadIn")
-    # land: feet down, compress
-    c.root(f(22), y=-0.55, pitch=-14, roll=-4, ease="CubicOut")
-    for side in ("R", "L"):
-        foot(c, side, f(22), x=(0.15 if side == "R" else -0.15), z=(-0.1 if side == "R" else 0.25), ease="CubicOut")
-    c.root(f(33), y=-0.08, pitch=-4, ease=E)
-    for side in ("R", "L"):
-        foot(c, side, f(33), x=(0.15 if side == "R" else -0.15), z=(-0.1 if side == "R" else 0.25), ease=E)
-    for fr, sp, hd in ((0, -10, 0), (4, -18, 10), (6, -20, 14), (12, -15, 12), (17, -8, 6), (22, -10, 4), (33, -3, 0)):
+    root_and_feet(c, f(4), y=-0.25, pitch=-24, roll=8, feet=HALF, ease=E)
+    root_and_feet(c, f(8), y=-0.15, pitch=-26, roll=26, feet=TUCK, ease=E)
+    root_and_feet(c, f(16), y=-0.1, pitch=-22, roll=34, feet=TUCK, ease=E)
+    root_and_feet(c, f(23), y=-0.15, pitch=-14, roll=22, feet=HALF, ease=E)
+    root_and_feet(c, f(29), y=-0.25, pitch=-8, roll=6, feet=REACH, ease="QuadIn")
+    c.root(f(32), y=-0.45, pitch=-10, roll=-2, ease="CubicOut")
+    c.root(f(33), y=-0.5, pitch=-10, roll=-2, ease=E)
+    for fr in (32, 33):
+        dy, dz = vault_path(fr)
+        for side in ("R", "L"):  # planted on the landing floor (world y 0 => clip y -dy)
+            foot(c, side, f(fr), x=(0.15 if side == "R" else -0.15), y=-dy, z=(-0.1 if side == "R" else 0.25), ease=E)
+    for fr, sp, hd in ((0, -10, 0), (4, -18, 10), (8, -20, 14), (16, -15, 12), (23, -8, 6), (29, -6, 3), (33, -8, 2)):
         spine(c, f(fr), pitch=sp, ease=E)
         head(c, f(fr), pitch=hd, ease=E)
-    # off hand: reach f0-f4, plant f6 (wrist under the chest, forward), stays on the top while the body passes, releases f14
     c.free("L", 0, 1.0)
-    for fr, pos, rot in ((0, (-0.5, 0.9, -0.8), (70, -60, 0)), (4, (-0.55, -0.2, -1.25), (-60, 0, 0)),
-                         (6, (-0.5, -0.65, -1.1), (-80, 0, 0)), (10, (-0.45, -0.8, -0.5), (-85, 0, 0)),
-                         (14, (-0.5, -0.6, 0.1), (-70, 0, 0)), (22, (-0.8, 0.3, -0.6), (20, 0, 0)), (33, (-0.5, 0.9, -0.8), (70, -60, 0))):
-        c.hand_free("L", f(fr), pos, rot, ease=("QuartOut" if fr == 4 else E))
+    c.finish()
+    plant_w = (-0.55, VAULT_TOP + 0.18, -(VAULT_OFF + 0.5))
+    for fr, kind, e in ((0, "rest", "CubicOut"), (4, "reach", "QuartOut"), (6, "plant", "Linear"), (10, "plant", "Linear"),
+                        (14, "plant", "CubicOut"), (22, "up", E), (33, "rest", E)):
+        dy, dz = vault_path(fr)
+        if kind == "plant":
+            hand_world(c, "L", f(fr), (plant_w[0], plant_w[1] - dy, plant_w[2] - dz), (-90, 0, 0), ease=e)
+        elif kind == "reach":
+            hand_world(c, "L", f(fr), (plant_w[0], plant_w[1] - dy + 0.25, plant_w[2] - dz + 0.15), (-70, 0, 0), ease=e)
+        elif kind == "up":
+            c.hand_free("L", f(fr), (-0.9, 0.5, -0.4), (20, 0, 0), ease=e)
+        else:
+            c.hand_free("L", f(fr), (-0.45, 0.95, -0.9), (70, -60, 0), ease=e)
+    c._finished = False
     c.marker("EdgeGrab", f(6))
-    c.marker("Land", f(22))
+    c.marker("Land", f(32))
     return c
 
 
@@ -191,8 +226,8 @@ def dive_aim():
     LEGS_BACK = {"R": ((0.05, -1.55, 1.05), (-55, 0, 0)), "L": ((-0.05, -1.45, 1.2), (-60, 0, 0))}
     for t, s in DRIFT:
         legs = {k: ((v[0][0], v[0][1] + 0.04 * s, v[0][2] + 0.03 * s), v[1]) for k, v in LEGS_BACK.items()}
-        root_and_feet(c, t, y=0.15, pitch=-42 - 1.0 * s, feet=legs, ease=E)
-        spine(c, t, pitch=26 + 0.6 * s, ease=E)
+        root_and_feet(c, t, y=0.1, pitch=-22 - 0.6 * s, feet=legs, ease=E)
+        spine(c, t, pitch=12 + 0.4 * s, ease=E)
         head(c, t, pitch=14, ease=E)
     return c
 
@@ -201,7 +236,7 @@ CLIPS = {
     "CoverBlindCorner": blind_corner("CoverBlindCorner", False),
     "CoverBlindCornerCrouch": blind_corner("CoverBlindCornerCrouch", True),
     "CoverBlindOver": blind_over,
-    "CoverDash": run_cycle("CoverDash", 0.48, 24.0, 2, -0.75, -22, 0.75, 0.32, 0.07, priority="Action3", spine_p=8, stride_z=0.2, width=0.12),
+    "CoverDash": run_cycle("CoverDash", 0.48, 24.0, 2, -0.8, -22, 0.75, 0.2, 0.07, priority="Action3", spine_p=8, stride_z=0.2, width=0.12),
     "CoverSneak": run_cycle("CoverSneak", 1.2, 8.0, 4, -0.95, -16, 0.28, 1.0, 0.03, priority="Action", spine_p=6, width=0.18),
     "CoverRoll": roll,
     "CoverVault": vault,
