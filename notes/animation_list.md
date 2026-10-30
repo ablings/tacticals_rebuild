@@ -152,3 +152,18 @@ Not in the game yet: name them like this and I'll wire them into the scripts.
 ## Hand-off
 Export each action from Blender as FBX (R15 rig, one action each, names as above). When you send them over, I'll import them into
 AnimationSources, set Loop and priority, add the gun Motor6Ds, and update the scripts. Uploads go under Gunsy Funsy.
+
+## 5. Final body / movement set (anim-body, 2026-10-30)
+Every body placeholder above (Cover*, Move*, HitFlinch, BotLean*) is replaced by a final clip with the **same name, length and
+Loop**, made in Blender on the Starter Blocky rig (style Grounded Tactical). Per-clip ids, lengths, markers and grades:
+`art/anim/body/DONE.md`; install: `art/anim/body/install_sources.lua`; code wiring: `art/anim/body/HANDOFF_systems.md`.
+- **New names the code must add** (hand-off): `CoverShuffleTallRight`, `CoverShuffleCrouchRight` (shuffles step toward the
+  character's left; pick by cover.side), `CoverLookPosCrouch` / `CoverLookNegCrouch`, `CoverBraceCrouch`, `CoverDiveAim`
+  (MoveAnimations.DiveAim), locomotion `MoveRun` / `MoveWalkAim` / `MoveStrafeLeft` / `MoveStrafeRight` / `MoveBackpedal` /
+  `MoveSprint` / `MoveSprintPistol` / `MoveStart` / `MoveStop` / `TurnInPlaceLeft` / `TurnInPlaceRight` / `MoveLandHard` /
+  `MoveLimp`, reactions `HitFlinchF/B/L/R`, `HitHeadshot`, `HitExplosionStagger`, `HitBurning`, deaths `DeathForward` /
+  `DeathBackward` / `DeathCrumple` / `DeathHeadshot` / `DeathExplosion` / `DeathCover`, life `IdleFidgetShift` /
+  `IdleFidgetGunCheck` / `IdleFidgetLook` / `BreatheCalm` / `BreatheHeavy` / `RoundReady` / `Victory` / `Defeat` / `DoorOpen`.
+- Changed on purpose: shuffles step 6 times per cycle (zero foot slide at 8 studs/s on blocky legs), CoverSneak 4 steps per
+  cycle, MoveWalkAim / MoveCrouchWalk 4 steps per cycle; MoveSlide is a real 0.5 s loop; BotLean* key hips + legs + chest.
+- Every clip keys only the joints it owns (the others are Weight 0), so layers never reset the hips.

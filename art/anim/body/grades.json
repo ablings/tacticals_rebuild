@@ -1,0 +1,8 @@
+{"_batches": {"1 cover core": "7.9 (r4, final)", "2 cover actions": "7.2 (r4, final)", "3 locomotion": "pending", "4 transitions + hits": "7.5 (r3; no change after)", "5 deaths + life": "pending"},
+ "CoverIdleTall": 8.6, "CoverIdleTallLeft": 8.6, "CoverLookPos": 8.6, "CoverLookNeg": 8.6, "CoverShuffleTall": 8.4, "CoverShuffleTallRight": 8.4,
+ "CoverCrouchPeek": 8.3, "CoverCrouchPeekLeft": 8.3, "CoverShuffleCrouch": 8.0, "CoverShuffleCrouchRight": 8.0, "CoverLookPosCrouch": 7.7, "CoverLookNegCrouch": 7.7,
+ "CoverCrouch": 7.6, "CoverCrouchLeft": 7.6, "CoverBrace": 7.2, "CoverBraceCrouch": "new after r4 (not graded)",
+ "CoverDiveAim": 8.6, "CoverSneak": 8.5, "CoverDash": 8.0, "CoverBlindCorner": 8.0, "CoverBlindCornerLeft": 8.0, "CoverBlindCornerCrouch": 7.2, "CoverBlindCornerCrouchLeft": 7.2,
+ "CoverRoll": 6.5, "CoverVault": 6.0, "CoverBlindOver": 5.8, "CoverBlindOverLeft": 5.8,
+ "MoveStart": 8.0, "MoveStop": 8.5, "TurnInPlaceLeft": 6.5, "TurnInPlaceRight": 6.5, "MoveLandHard": 8.5, "MoveLimp": 7.5,
+ "HitFlinch": 8.0, "HitFlinchF": 8.0, "HitFlinchB": 8.0, "HitFlinchL": 8.0, "HitFlinchR": 8.0, "HitHeadshot": 8.5, "HitExplosionStagger": 8.0, "HitBurning": 7.5}
