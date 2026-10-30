@@ -3,7 +3,7 @@ Positions: studs from the Waist pivot (x right, y up, -z forward); rotations (pi
 import rbxanim
 from rbxanim import Clip, P, add, mix, seq, fr
 
-GUN = None
+GUN = "Pistol"  # the remodel (art/guns/manifest/Pistol.json)
 TOOL = "Pistol"
 
 
@@ -59,7 +59,7 @@ def equip():
     return c
 
 
-def fire():
+def fire_old():
     """f0 = Hold, f1 peak (wrist +8, elbows +4, shoulders 0.06 back, chest +1) Linear, f1-f9 Cubic Out return"""
     c = Clip("PistolFire", 0.15)
     h, _, _ = poses(c)
@@ -101,5 +101,9 @@ def holster():
     return c
 
 
-CLIPS = {"PistolHold": hold, "PistolLowered": lowered, "PistolEquip": equip, "PistolFire": fire,
+CLIPS = {"PistolHold": hold, "PistolLowered": lowered, "PistolEquip": equip, "PistolFire": fire_old,
          "PistolDraw": draw, "PistolHolster": holster}
+
+import pistol_gun
+CLIPS.pop("PistolFire", None)
+CLIPS.update(pistol_gun.make(poses, "Pistol"))

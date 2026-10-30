@@ -11,6 +11,20 @@ Read from match_place_ref.rbxl, 2026-10-16. Every source lives in `ReplicatedSto
   HeadLookController owns the neck. Animate at **level aim**, and keep the neck light.
 - Loop / priority below are what the game sets now; tell me if you want one changed.
 
+## 0. FINAL weapon / melee / gadget set (weapons animator, 2026-10-30)
+Authored in Blender on Edward's Starter Blocky rig (R15 pivots), gun parts keyed on the remodelled guns. **140 clips**
+(right-hand + `...Left` mirrors) in `ReplicatedStorage.Repository.AnimationSources` via `art/anim/weapons/install_sources.lua`.
+Per clip (length, loop, markers, published id): `art/anim/weapons/DONE.md`; wiring for systems at its end.
+- Prefix sets (Hold, Lowered, Equip, Fire, Reload, ReloadEmpty, Draw, Holster, Inspect, +Left): `Pistol`, `Revolver`
+  (no ReloadEmpty), `SMG`, `Rifle`, `Shotgun` (ReloadStart / ReloadShell / ReloadEnd / ReloadEndEmpty instead of
+  Reload), `Sniper` (ReloadTactical instead of ReloadEmpty).
+- Melee: QuickMeleeBash (gun-butt), MeleeSlash, MeleePunch, MeleeKnifeHeavy, MeleeKnifeBackstab; Bat (Hold, Equip, Swing,
+  ChargeWindup, ChargeHold, SwingCharged), Katana (Hold, Equip, Slash), RiotShield (Hold, Bash, Impact, Break).
+- Gadgets: SmokeHold, SmokeThrow (+L), SmokeRoll, FragPinPull, FragCook, FragThrow (+L), FlashThrow (+L), LandminePlace,
+  MedkitUse.
+- Every gun part is moved by the clip through the gun's own Motor6Ds (no code needed); `MagHide` / `MagShow` markers
+  ask the code to hide the dropped mag on empty reloads.
+
 ## 1. Character animations that exist (54)
 
 ### Pistol (used by Pistol, Suppressed, **and for now Mini Uzi, Auto Rifle, Semi-Auto, Sniper**)

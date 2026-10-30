@@ -73,12 +73,24 @@ def b2r(m):
     return A @ m @ AI
 
 
+GUN_DIR = os.path.join(HERE, "..", "..", "..", "guns", "manifest")
+
+
+def load_gun(name):
+    """the modeler's manifest (art/guns/manifest/<Gun>.json): parts with parent, pivot (Handle space), bbox, motion"""
+    with open(os.path.join(GUN_DIR, name + ".json")) as f:
+        d = json.load(f)
+    parts = {p["name"]: p for p in d["parts"]}
+    return {"name": name, "parts": parts, "atts": d.get("attachments")}
+
+
 def load_r15():
     with open(R15_JSON) as f:
         return json.load(f)
 
 
 # ----------------------------------------------------------------------------------------------------------- rig setup
+CARRY = ("Mag", "LoadShell", "Rounds")
 KEEP = {"Master", "FlipBone", "Lowertorso", "Hips", "Uppertorso", "Head", "Head.001", "Head Stretcher", "TorsoXHandle",
         "TorsoBendy", "TorsoTHandle", "Upperarm.R", "Lowerarm.R", "Hand.R", "Upperarm.L", "Lowerarm.L", "Hand.L",
         "Upperleg.R", "Lowerleg.R", "Foot.R", "Upperleg.L", "Lowerleg.L", "Foot.L"}
@@ -99,7 +111,7 @@ def pivot_b(r15, part1):
     return r2b(m).translation.copy()
 
 
-def setup_rig(gun_parts=None, tool="Pistol"):
+def setup_rig(gun_parts=None, tool="Pistol", gun=None):
     """Build the animation rig in the open (copied) starter file. gun_parts: {name: rest matrix in Gun-bone space}."""
     r15 = load_r15()
     ob = arm_obj()
@@ -166,9 +178,29 @@ def setup_rig(gun_parts=None, tool="Pistol"):
         new("IK_Foot." + s, a, a - up * 0.2, None, eb["Foot." + s].z_axis.copy())
         k = piv[S + "LowerLeg"]
         new("Pole_Leg." + s, k + Vector((0, 2.0, 0)), k + Vector((0, 2.0, 0.3)), "IK_Foot." + s)
-    for name, rest in (gun_parts or {}).items():
-        new(name, rest.translation, rest.translation + rest.to_3x3() @ Vector((0, 0.2, 0)), "Gun",
-            rest.to_3x3() @ Vector((0, 0, 1)))
+    if gun:
+        hb3 = hb.to_3x3()
+        def mk(pn):
+            if pn in eb:
+                return
+            pd = gun["parts"][pn]
+            par = pd["parent"]
+            if par != "Handle":
+                mk(par)
+            head = hb @ r2b(Matrix.Translation(pd["pivot"])).translation if False else                 (hb @ Matrix.Translation(Vector((pd["pivot"][0], -pd["pivot"][2], pd["pivot"][1])))).translation
+            new("P_" + pn, head, head + (hb3 @ Vector((0, 1, 0))) * 0.15, "Gun" if par == "Handle" else "P_" + par,
+                hb3 @ Vector((0, 0, 1)))
+        for pn in gun["parts"]:
+            mk(pn)
+        # hand-held twins for carried parts: H_<part> under Hand.L, rest = the part as if the gun sat in the left hand
+        lh = cf2m(r15["parts"]["LeftHand"]["cf"])
+        x, y, z, r00, r01, r02, r10, r11, r12, r20, r21, r22 = r15["tools"][tool]["grip"]
+        gripL = cf2m([-x, y, z, r00, -r01, -r02, -r10, r11, r12, -r20, r21, r22])
+        for pn in CARRY:
+            if pn in gun["parts"]:
+                w = r2b(lh @ gripL @ Matrix.Translation(gun["parts"][pn]["pivot"]))
+                new("H_" + pn, w.translation, w.translation + w.to_3x3() @ Vector((0, 1, 0)) * 0.15, "Hand.L",
+                    w.to_3x3() @ Vector((0, 0, 1)))
     bpy.ops.object.mode_set(mode="POSE")
     pbs = ob.pose.bones
     for pb in pbs:
@@ -192,6 +224,15 @@ def setup_rig(gun_parts=None, tool="Pistol"):
         c.target = ob; c.subtarget = "IK_Foot." + s; c.pole_target = ob; c.pole_subtarget = "Pole_Leg." + s
         c.chain_count = 2; c.use_tail = True
         c = pbs["Foot." + s].constraints.new("COPY_ROTATION"); c.target = ob; c.subtarget = "IK_Foot." + s
+    for pn in CARRY:
+        if gun and pn in gun["parts"]:
+            pb = pbs["P_" + pn]
+            c = pb.constraints.new("COPY_TRANSFORMS"); c.name = "InHand"; c.target = ob; c.subtarget = "H_" + pn
+            pb["inhand"] = 0.0
+            d = c.driver_add("influence").driver
+            d.type = "SCRIPTED"; d.expression = "v"
+            v = d.variables.new(); v.name = "v"; v.type = "SINGLE_PROP"
+            v.targets[0].id = ob; v.targets[0].data_path = 'pose.bones["P_%s"]["inhand"]' % pn
     # pole angles: pick the one that leaves the rest pose untouched
     bpy.context.view_layer.update()
     for s in ("R", "L"):
@@ -210,11 +251,18 @@ def setup_rig(gun_parts=None, tool="Pistol"):
     bpy.context.view_layer.update()
     scn = bpy.context.scene
     scn.render.fps = FPS
-    build_preview(ob, r15, tool)
+    build_preview(ob, r15, tool, gun)
+    global GUNDEF, TOOLNAME
+    GUNDEF = gun
+    TOOLNAME = tool
     return ob
 
 
-def build_preview(ob, r15, tool):
+GUNDEF = None
+TOOLNAME = "Pistol"
+
+
+def build_preview(ob, r15, tool, gun=None):
     """Exact R15 part boxes (and the tool's parts) parented to the bones: the Blender view then matches Roblox. The
     starter rig's own skinned meshes are hidden (their helper-bone skinning was made for the starter pivots)."""
     for o in bpy.data.objects:
@@ -248,8 +296,13 @@ def build_preview(ob, r15, tool):
         box("R15_" + part, r15["parts"][part]["size"], part_rest_b(r15, part), bn, mat)
     hand = cf2m(r15["parts"]["RightHand"]["cf"])
     handle = hand @ cf2m(r15["tools"][tool]["grip"])
-    for pn, pd in r15["tools"][tool]["parts"].items():
-        box("R15_gun_" + pn, pd["size"], r2b(handle @ cf2m(pd["cf"])), "Gun", gmat)
+    if gun:
+        for pn, pd in gun["parts"].items():
+            c = pd["bbox_centre"]
+            box("R15_gun_" + pn, pd["size"], r2b(handle @ Matrix.Translation(c)), "P_" + pn, gmat)
+    else:
+        for pn, pd in r15["tools"][tool]["parts"].items():
+            box("R15_gun_" + pn, pd["size"], r2b(handle @ cf2m(pd["cf"])), "Gun", gmat)
 
 
 # ----------------------------------------------------------------------------------------------------------- authoring
@@ -280,6 +333,8 @@ class Clip:
             pb.matrix_basis = Matrix()
             if "free" in pb.keys():
                 pb["free"] = 0.0
+            if "inhand" in pb.keys():
+                pb["inhand"] = 0.0
         self.interp = {}  # (bone, frame) -> interpolation for the segment starting there
         # anchors in Roblox axes relative to the Waist pivot (where chest-space positions are measured from)
         r15 = self.r15
@@ -372,6 +427,12 @@ class Clip:
         h_b = w_b - R @ v
         self.gun(t, tuple(b2r(Matrix.Translation(h_b)).translation), rot, **kw)
 
+    def gun_by_point(self, t, gun_pt, target, rot=(0, 0, 0), **kw):
+        """Key the gun so its point gun_pt (Handle space, Roblox axes) lands on target (chest space, studs from the Waist)."""
+        R = rb_rot(*rot)
+        h = Vector(target) - (R @ Matrix.Translation(gun_pt)).translation
+        self.gun(t, tuple(h), rot, **kw)
+
     def world_key(self, bone, t, pos=(0, 0, 0), rot=(0, 0, 0), **kw):
         """Key a parentless bone (IK_Foot.*) by a world offset from its rest (studs, Roblox axes) and rotation."""
         rest = self.ob.data.bones[bone].matrix_local.to_3x3()
@@ -421,12 +482,27 @@ class Clip:
 
     def part(self, name, t, pos=(0, 0, 0), rot=(0, 0, 0), **kw):
         """A gun part relative to its rest, in the Gun bone's frame (studs, degrees, Roblox axes of the Handle)."""
-        b = self.ob.data.bones[name]
+        b = self.ob.data.bones["P_" + name]
         g = self.ob.data.bones["Gun"]
         rr = g.matrix_local.inverted() @ b.matrix_local
         d = rr.to_3x3().inverted() @ r2b(Matrix.Translation(pos)).translation
         R = rr.to_3x3().inverted() @ r2b(rb_rot(*rot)).to_3x3() @ rr.to_3x3()
-        self.key_basis(name, t, loc=d, quat=R.to_quaternion(), **kw)
+        self.key_basis("P_" + name, t, loc=d, quat=R.to_quaternion(), **kw)
+
+    def inhand(self, part, t, value, **kw):
+        """0 = the part rides the gun, 1 = it rides the left hand (its H_ twin)"""
+        self.key_prop("P_" + part, "inhand", t, value, **kw)
+
+    def held(self, part, t, pos=(0, 0, 0), rot=(0, 0, 0), **kw):
+        """where the left hand holds a carried part: offset from 'as if the gun sat in the left hand', in the left
+        hand's own frame (studs; x right, y up the arm, z back; rot pitch/yaw/roll)"""
+        r15 = self.r15
+        lh = r2b(cf2m(r15["parts"]["LeftHand"]["cf"]))
+        Q = lh @ r2b(Matrix.Translation(pos) @ rb_rot(*rot)) @ lh.inverted()
+        rest = self.ob.data.bones["H_" + part].matrix_local
+        basis = rest.inverted() @ Q @ rest
+        loc, q, _ = basis.decompose()
+        self.key_basis("H_" + part, t, loc=loc, quat=q, **kw)
 
     def marker(self, name, t, value=""):
         self.markers.append({"name": name, "t": round(t, 4), "value": value})
@@ -513,17 +589,20 @@ def sample(clip, gun_joints=None):
                 worst["pivot_slide"] = max(worst["pivot_slide"], T.translation.length)
                 T = T.to_3x3().to_4x4()  # rotation only: real avatars keep their own proportions
             tr[p] = T
-        # gun parts relative to the Handle
+        # gun parts: Motor6D parent part -> part, C0/C1 at the pivot with no rotation: T = C0^-1 * Wparent^-1 * Wpart
         if gun_joints:
-            gb = ob.pose.bones["Gun"].matrix
-            for name, (c0, c1) in gun_joints.items():
-                pm = ob.pose.bones[name].matrix
-                rel_rest = ob.data.bones["Gun"].matrix_local.inverted() @ ob.data.bones[name].matrix_local
-                rel = gb.inverted() @ pm
-                D = b2r(rel @ rel_rest.inverted())  # part motion in Handle space (Roblox axes)
-                # Motor6D Handle->part: P1 = Handle*C0*T*C1^-1; rest P1r = Handle*C0*C1^-1
-                T = cf2m(c0).inverted() @ D @ cf2m(c0)
-                tr[name] = T
+            hrest_r = cf2m(r15["parts"]["RightHand"]["cf"]) @ cf2m(r15["tools"][TOOLNAME]["grip"])
+            def W(pn):
+                bn = "Gun" if pn == "Handle" else "P_" + pn
+                D = b2r(ob.pose.bones[bn].matrix @ ob.data.bones[bn].matrix_local.inverted())
+                piv = Vector((0, 0, 0)) if pn == "Handle" else Vector(GUNDEF["parts"][pn]["pivot"])
+                return D @ hrest_r @ Matrix.Translation(piv)
+            for pn in gun_joints:
+                par = GUNDEF["parts"][pn]["parent"]
+                T = W(par).inverted() @ W(pn)
+                pp = Vector((0, 0, 0)) if par == "Handle" else Vector(GUNDEF["parts"][par]["pivot"])
+                # W already includes the pivot frames, so C0 (= pivot - parent pivot) is inside: T is the joint motion
+                tr[pn] = Matrix.Translation(-(Vector(GUNDEF["parts"][pn]["pivot"]) - pp)) @ T
         # IK reach check: the gun hand's wrist vs its target
         for s in ("R", "L"):
             ik = ob.pose.bones["IK_Hand." + s].matrix.translation
@@ -571,7 +650,22 @@ def reduce_keys(frames, joints, tol_deg=0.12, tol_pos=0.004):
     return [frames[k] for k in keep]
 
 
+def keyed_parts(clip):
+    if not GUNDEF:
+        return []
+    names = set()
+    for fc in clip.act.fcurves:
+        bn = fc.data_path.split('"')[1]
+        if bn.startswith("P_"):
+            pn = bn[2:]
+            while pn != "Handle":
+                names.add(pn)
+                pn = GUNDEF["parts"][pn]["parent"]
+    return sorted(names, key=lambda n: (n.count("/"), n))
+
+
 def export_clip(clip, out_dir, gun_joints=None, mirror=False, name=None, extra_keep_times=()):
+    gun_joints = keyed_parts(clip) or None
     frames, worst = sample(clip, gun_joints)
     joints = [j for j in clip.joints]
     for j in list(joints):  # parents up to the root
@@ -580,11 +674,11 @@ def export_clip(clip, out_dir, gun_joints=None, mirror=False, name=None, extra_k
             if p not in joints:
                 joints.append(p)
             p = TREE.get(p)
-    gun_names = list((gun_joints or {}).keys())
+    gun_names = list(gun_joints or [])
     tree = dict(TREE)
     tree["HumanoidRootPart"] = None
     for g in gun_names:
-        tree[g] = "Handle"
+        tree[g] = GUNDEF["parts"][g]["parent"] if GUNDEF else "Handle"
     if gun_names:
         tree["Handle"] = "RightHand"
     all_j = joints + gun_names
@@ -630,6 +724,8 @@ def export_clip(clip, out_dir, gun_joints=None, mirror=False, name=None, extra_k
     for k, v in worst.items():
         if k.startswith("ik_gap_") and v > 0.02:
             print("WARN", nm, k, round(v, 3), "(a hand target is out of reach)")
+    if getattr(clip, "reach_moves", 0) > 0.05:
+        print("INFO", nm, "gun slid into both hands' reach by up to", round(clip.reach_moves, 2))
     if getattr(clip, "clamped", 0) > 0.05:
         print("INFO", nm, "free-hand targets pulled into reach by up to", round(clip.clamped, 2))
     print("EXPORTED", nm, "frames", len(frames), "keys", len(kept), "quality", out["quality"])
@@ -692,8 +788,13 @@ def add(p, **d):
     q = dict(p)
     for k, v in d.items():
         if k == "gun":
-            (w, r), (dw, dr) = p["gun"], v
-            q["gun"] = (tuple(a + b for a, b in zip(w, dw)), tuple(a + b for a, b in zip(r, dr)))
+            if len(p["gun"]) == 3:
+                gp, w, r = p["gun"]
+                (dw, dr) = v
+                q["gun"] = (gp, tuple(a + b for a, b in zip(w, dw)), tuple(a + b for a, b in zip(r, dr)))
+            else:
+                (w, r), (dw, dr) = p["gun"], v
+                q["gun"] = (tuple(a + b for a, b in zip(w, dw)), tuple(a + b for a, b in zip(r, dr)))
         elif k in ("R", "L"):
             sp, w, r = p[k]
             dw, dr = v
@@ -721,7 +822,14 @@ def key_pose(c, t, p, ease="SineInOut", only=None):
     if "head" in g:
         c.joint_rot("Head", t, *p["head"], **kw)
     if "gun" in g and p["gun"] is not None:
-        c.gun_at_wrist(t, p["gun"][0], p["gun"][1], **kw)
+        rot = p["gun"][-1]
+        R = (rb_rot(*rot).to_3x3() @ (A.to_3x3() @ LEVEL @ AI.to_3x3()))  # gun frame (Roblox) -> chest (Roblox)
+        if len(p["gun"]) == 3:
+            H = Vector(p["gun"][1]) - R @ Vector(p["gun"][0])
+        else:
+            H = Vector(p["gun"][0]) - R @ Vector((0, 0, 0.29))
+        H = reach_fix(c, H, R, p)
+        c.gun(t, tuple(H), rot, **kw)
     for s in ("R", "L"):
         if s in g:
             space, pos, rot = p[s]
@@ -741,6 +849,32 @@ def key_pose(c, t, p, ease="SineInOut", only=None):
     if "parts" in g:
         for name, (pos, rot) in p.get("parts", {}).items():
             c.part(name, t, pos, rot, **kw)
+
+
+def reach_fix(c, H, R, p):
+    """slide the gun (Handle position H, chest frame) so both on-gun hands are within 97% reach of their shoulders"""
+    reach = 0.97 * (c.ob.data.bones["Upperarm.R"].length + c.ob.data.bones["Lowerarm.R"].length)
+    pts = []
+    if p["R"][0] == "gun":
+        pts.append((Vector(c.anchor["shoulderR"]), Vector((0, 0, 0.29))))
+    if p["L"][0] == "gun":
+        pts.append((Vector(c.anchor["shoulderL"]), Vector(p["L"][1])))
+    moved = 0.0
+    for _ in range(40):
+        worst = None
+        for sh, loc in pts:
+            w = H + R @ loc
+            over = (w - sh).length - reach
+            if over > 0.002 and (worst is None or over > worst[0]):
+                worst = (over, (sh - w).normalized())
+        if not worst:
+            break
+        step = worst[1] * (worst[0] + 0.005)
+        H = H + step
+        moved += step.length
+    if moved > 0.01:
+        c.reach_moves = max(getattr(c, "reach_moves", 0.0), moved)
+    return H
 
 
 def seq(c, keys, only=None):

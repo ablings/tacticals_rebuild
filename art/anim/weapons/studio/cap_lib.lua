@@ -60,6 +60,10 @@ function C.pose(list)
 	animator:StepAnimations(0)
 	local out = {}
 	for n, j in C.joints() do out[n] = j.obj.Transform end
+	local held = rig:FindFirstChild("_HeldTool")
+	if held then
+		for _, m in held:GetDescendants() do if m:IsA("Motor6D") then out[m.Part1.Name] = m.Transform end end
+	end
 	return out
 end
 
@@ -89,7 +93,25 @@ function C.fk(poses)
 end
 
 function C.findTool(name)
-	return game.ReplicatedStorage.Repository:FindFirstChild(name, true)
+	local proxies = game.ReplicatedStorage:FindFirstChild("_AnimGuns")
+	return (proxies and proxies:FindFirstChild(name)) or game.ReplicatedStorage.Repository:FindFirstChild(name, true)
+end
+
+-- hang a copy of the tool on the capture rig (weld, like Roblox's RightGrip) so the clip's gun-part poses are evaluated
+function C.attach(gunName)
+	local rig = C.rig()
+	local cur = rig:FindFirstChild("_HeldTool")
+	if cur and cur:GetAttribute("Gun") == gunName then return end
+	if cur then cur:Destroy() end
+	local g = rig.RightHand:FindFirstChild("RightGrip"); if g then g:Destroy() end
+	if not gunName then return end
+	local src = C.findTool(gunName)
+	local m = Instance.new("Model"); m.Name = "_HeldTool"; m:SetAttribute("Gun", gunName)
+	for _, ch in src:GetChildren() do ch:Clone().Parent = m end
+	for _, p in m:GetDescendants() do if p:IsA("BasePart") then p.Anchored = false; p.CanCollide = false end end
+	m.Parent = rig
+	local w = Instance.new("Weld"); w.Name = "RightGrip"; w.Part0 = rig.RightHand; w.Part1 = m.Handle
+	w.C0 = rig.RightHand.RightGripAttachment.CFrame; w.C1 = src.Grip; w.Parent = rig.RightHand
 end
 
 -- an anchored copy of the posed body (+ gun in the gun hand, gun parts posed by `poses` if jointed), HRP at rootCF

@@ -16,6 +16,7 @@ local n = #JOB.times
 local gap = JOB.gap or (JOB.view == "side" and 3.3 or 3.0)
 local cams = {}
 local fov = JOB.fov or 18
+C.attach(JOB.gun)
 for i, t in JOB.times do
 	local poses = C.pose({ { JOB.clip, t, 1 } })
 	local off
