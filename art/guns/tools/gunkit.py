@@ -108,9 +108,9 @@ def L(fs, rs, zc, x=0.0, seg=8, rot=None):
     return Solid("lathe", None, fs=fs, rs=rs, zc=zc, x=x, seg=seg, rot=rot)
 
 
-def T(f0, f1, zc, ro, ri, x=0.0, seg=8):
+def T(f0, f1, zc, ro, ri, x=0.0, seg=8, rot=None):
     """closed tube along f (muzzle, suppressor bore)"""
-    return Solid("tube", None, a=Vector((x, f0, zc)), b=Vector((x, f1, zc)), ro=ro, ri=ri, seg=seg)
+    return Solid("tube", None, a=Vector((x, f0, zc)), b=Vector((x, f1, zc)), ro=ro, ri=ri, seg=seg, rot=rot)
 
 
 def S(fc, zc, r, x=0.0, seg=8, rings=4):
@@ -208,9 +208,9 @@ def add_lathe(bm, fs, rs, zc, x, seg, rot):
             f.normal_flip()
 
 
-def add_tube(bm, a, b, ro, ri, seg):
+def add_tube(bm, a, b, ro, ri, seg, rot=None):
     ax, u, v = _frame(a, b)
-    rot = math.pi / seg
+    rot = math.pi / seg if rot is None else rot
     oa = [bm.verts.new(p) for p in _ring(a, u, v, ro, seg, rot)]
     ob = [bm.verts.new(p) for p in _ring(b, u, v, ro, seg, rot)]
     ia = [bm.verts.new(p) for p in _ring(a, u, v, ri, seg, rot)]
@@ -249,7 +249,7 @@ def solid_bmesh(s):
     elif k == "lathe":
         add_lathe(bm, s.kw["fs"], s.kw["rs"], s.kw["zc"], s.kw["x"], s.kw["seg"], s.kw["rot"])
     elif k == "tube":
-        add_tube(bm, s.kw["a"], s.kw["b"], s.kw["ro"], s.kw["ri"], s.kw["seg"])
+        add_tube(bm, s.kw["a"], s.kw["b"], s.kw["ro"], s.kw["ri"], s.kw["seg"], s.kw.get("rot"))
     elif k == "sphere":
         add_sphere(bm, s.kw["c"], s.kw["r"], s.kw["seg"], s.kw["rings"])
     bm.normal_update()

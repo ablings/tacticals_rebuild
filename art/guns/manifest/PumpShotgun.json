@@ -1,0 +1,507 @@
+{
+ "gun": "PumpShotgun",
+ "frame": "Roblox studs, Handle space: x right, y up, z back (muzzle toward -z); Tool.Grip = identity",
+ "handle": {
+  "size": [
+   0.2,
+   0.6,
+   0.3
+  ],
+  "note": "invisible root Part at the grip centre; every mesh hangs off it by Motor6D"
+ },
+ "parts": [
+  {
+   "name": "Receiver",
+   "parent": "Handle",
+   "motor6d": "Receiver",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.2525,
+    -0.74
+   ],
+   "bbox_centre": [
+    0.0,
+    0.2525,
+    -0.74
+   ],
+   "size": [
+    0.22,
+    0.535,
+    0.9
+   ],
+   "tris": 160,
+   "colour": [
+    54,
+    57,
+    62
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "receiver, ejection port (right), loading port (bottom), trigger guard, ghost-ring rear sight"
+  },
+  {
+   "name": "Stock",
+   "parent": "Handle",
+   "motor6d": "Stock",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.04,
+    0.2
+   ],
+   "bbox_centre": [
+    0.0,
+    0.04,
+    0.2
+   ],
+   "size": [
+    0.2,
+    0.64,
+    1.12
+   ],
+   "tris": 96,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "synthetic pistol-grip stock, inset grip panels"
+  },
+  {
+   "name": "ButtPad",
+   "parent": "Stock",
+   "motor6d": "ButtPad",
+   "motor_part0": "Stock",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    -0.015,
+    0.8
+   ],
+   "bbox_centre": [
+    0.0,
+    -0.015,
+    0.8
+   ],
+   "size": [
+    0.21,
+    0.53,
+    0.12
+   ],
+   "tris": 12,
+   "colour": [
+    36,
+    36,
+    38
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Barrel",
+   "parent": "Handle",
+   "motor6d": "Barrel",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.254,
+    -1.99
+   ],
+   "bbox_centre": [
+    0.0,
+    0.254,
+    -1.99
+   ],
+   "size": [
+    0.11,
+    0.268,
+    1.7
+   ],
+   "tris": 104,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "barrel, bead sight, barrel clamp"
+  },
+  {
+   "name": "MagTube",
+   "parent": "Handle",
+   "motor6d": "MagTube",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.165,
+    -1.93
+   ],
+   "bbox_centre": [
+    0.0,
+    0.165,
+    -1.93
+   ],
+   "size": [
+    0.1141,
+    0.12,
+    1.68
+   ],
+   "tris": 64,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "tube magazine + end cap"
+  },
+  {
+   "name": "Pump",
+   "parent": "Handle",
+   "motor6d": "Pump",
+   "motor_part0": "Handle",
+   "motion": "translate +z 0.35 (rack back) and return",
+   "pivot": [
+    0.0,
+    0.165,
+    -1.88
+   ],
+   "bbox_centre": [
+    0.0,
+    0.155,
+    -1.725
+   ],
+   "size": [
+    0.22,
+    0.19,
+    1.17
+   ],
+   "tris": 308,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "A",
+   "note": "ribbed fore-end on twin action bars"
+  },
+  {
+   "name": "Lifter",
+   "parent": "Handle",
+   "motor6d": "Lifter",
+   "motor_part0": "Handle",
+   "motion": "rotate about x: front end up 15 deg to lift a shell to the chamber",
+   "pivot": [
+    0.0,
+    0.12,
+    -0.66
+   ],
+   "bbox_centre": [
+    0.0,
+    0.15,
+    -0.92
+   ],
+   "size": [
+    0.13,
+    0.09,
+    0.52
+   ],
+   "tris": 12,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "shell lifter in the loading port"
+  },
+  {
+   "name": "Trigger",
+   "parent": "Handle",
+   "motor6d": "Trigger",
+   "motor_part0": "Handle",
+   "motion": "rotate about x, bottom back 12 deg",
+   "pivot": [
+    0.0,
+    0.14,
+    -0.48
+   ],
+   "bbox_centre": [
+    -0.05,
+    0.1225,
+    -0.43
+   ],
+   "size": [
+    0.16,
+    0.195,
+    0.18
+   ],
+   "tris": 60,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "Safety",
+   "parent": "Handle",
+   "motor6d": "Safety",
+   "motor_part0": "Handle",
+   "motion": "translate x 0.03 (cross-bolt safe / fire)",
+   "pivot": [
+    0.0,
+    0.18,
+    -0.72
+   ],
+   "bbox_centre": [
+    0.0,
+    0.18,
+    -0.72
+   ],
+   "size": [
+    0.26,
+    0.05,
+    0.05
+   ],
+   "tris": 28,
+   "colour": [
+    20,
+    21,
+    23
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  },
+  {
+   "name": "SideSaddle",
+   "parent": "Handle",
+   "motor6d": "SideSaddle",
+   "motor_part0": "Handle",
+   "motion": "static",
+   "pivot": [
+    -0.125,
+    0.2475,
+    -0.5
+   ],
+   "bbox_centre": [
+    -0.125,
+    0.2475,
+    -0.5
+   ],
+   "size": [
+    0.05,
+    0.215,
+    0.34
+   ],
+   "tris": 12,
+   "colour": [
+    28,
+    29,
+    31
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "left side shell carrier"
+  },
+  {
+   "name": "SaddleShells",
+   "parent": "SideSaddle",
+   "motor6d": "SaddleShells",
+   "motor_part0": "SideSaddle",
+   "motion": "static (hand pulls one for a reload)",
+   "pivot": [
+    -0.14,
+    0.2625,
+    -0.5
+   ],
+   "bbox_centre": [
+    -0.14,
+    0.2625,
+    -0.5
+   ],
+   "size": [
+    0.068,
+    0.175,
+    0.308
+   ],
+   "tris": 112,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "4 olive hulls"
+  },
+  {
+   "name": "SaddleHeads",
+   "parent": "SideSaddle",
+   "motor6d": "SaddleHeads",
+   "motor_part0": "SideSaddle",
+   "motion": "static",
+   "pivot": [
+    -0.14,
+    0.1625,
+    -0.5
+   ],
+   "bbox_centre": [
+    -0.14,
+    0.1625,
+    -0.5
+   ],
+   "size": [
+    0.074,
+    0.045,
+    0.314
+   ],
+   "tris": 112,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "steel shell heads"
+  },
+  {
+   "name": "LoadShell",
+   "parent": "Handle",
+   "motor6d": "LoadShell",
+   "motor_part0": "Handle",
+   "motion": "the shell the hand carries: rest on the lifter in the loading port; animate from the saddle into the loading port",
+   "pivot": [
+    0.0,
+    0.16,
+    -0.99
+   ],
+   "bbox_centre": [
+    0.0,
+    0.16,
+    -0.99
+   ],
+   "size": [
+    0.068,
+    0.068,
+    0.24
+   ],
+   "tris": 44,
+   "colour": [
+    107,
+    122,
+    58
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": "12-gauge hull"
+  },
+  {
+   "name": "LoadShellHead",
+   "parent": "LoadShell",
+   "motor6d": "LoadShellHead",
+   "motor_part0": "LoadShell",
+   "motion": "static",
+   "pivot": [
+    0.0,
+    0.16,
+    -0.8525
+   ],
+   "bbox_centre": [
+    0.0,
+    0.16,
+    -0.8525
+   ],
+   "size": [
+    0.074,
+    0.074,
+    0.045
+   ],
+   "tris": 28,
+   "colour": [
+    110,
+    112,
+    118
+   ],
+   "material": "SmoothPlastic",
+   "wrap": "B",
+   "note": ""
+  }
+ ],
+ "attachments": {
+  "Muzzle": {
+   "part": "Barrel",
+   "position_handle_space": [
+    0.0,
+    0.305,
+    -2.84
+   ]
+  },
+  "Grip": {
+   "part": "Handle",
+   "position_handle_space": [
+    0.0,
+    0.0,
+    -0.0
+   ]
+  },
+  "ShellEject": {
+   "part": "Receiver",
+   "position_handle_space": [
+    0.13,
+    0.3,
+    -0.92
+   ]
+  },
+  "Mag": {
+   "part": "Receiver",
+   "position_handle_space": [
+    0.0,
+    0.1,
+    -0.88
+   ]
+  },
+  "Pump": {
+   "part": "Pump",
+   "position_handle_space": [
+    0.0,
+    0.06,
+    -1.88
+   ]
+  }
+ },
+ "total_tris": 1152,
+ "overall_size_LxHxW": [
+  3.7,
+  0.8,
+  0.307
+ ],
+ "rig_attach": {
+  "rig": "Starter_Blocky_Rig (appended copy)",
+  "bone": "Hand.R",
+  "empty": "RightGripAttachment",
+  "grip_world": [
+   1.5,
+   0,
+   2.0
+  ],
+  "rotation": "-90 deg about X (Roblox RightGripAttachment)"
+ }
+}
